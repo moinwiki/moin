@@ -66,26 +66,8 @@
                         {% for doc in history %}
                             <tr>
                                 <td class="moin-wordbreak">
-                                    {% if fqname.field == NAME_EXACT %}
-                                        {% for name in doc.name %}
-                                            {% if not loop.first %}|{% endif %}
-                                            <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
-                                        {% endfor %}
-                                    {% elif doc.get('summary', None) %}
-                                        <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.summary }}</a>
-                                    {% else %}
-                                        {% if doc.name %}
-                                            {# If this is deleted item, earlier versions may have names. #}
-                                            {% for name in doc.name %}
-                                                {% if not loop.first %}|{% endif %}
-                                                <a href="{{ url_for_item(name, namespace=fqname.namespace, endpoint='frontend.history') }}">{{ name }}</a>
-                                            {% endfor %}
-                                        {% else %}
-                                            <a href="{{ url_for_item(doc.itemid, field='itemid', namespace=fqname.namespace, endpoint='frontend.history') }}">{{ doc.itemid|shorten_id }}</a>
-                                        {% endif %}
-                                    {% endif %}
+                                    {{ utils.item_moniker(doc, doc.fqnames) }}
                                 </td>
-
                                 <td class="moin-integer">{{ doc.rev_number or doc.revid|shorten_id }}</td>
                                 <td>{{ doc.mtime|datetimeformat }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
