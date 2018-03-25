@@ -1268,6 +1268,7 @@ def history(item_name):
     for rev in revs:
         entry = dict(rev.meta)
         entry[FQNAME] = rev.fqname
+        entry[FQNAMES] = rev.fqnames
         history.append(entry)
         if isinstance(rev.data, file):
             rev.data.close()
