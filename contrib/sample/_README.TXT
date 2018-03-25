@@ -4,6 +4,8 @@ To add an improved item to the sample wiki:
   * in a console window, activate the Python environment
     * Unix: . activate
     * Windows: activate
+  * Run the command "moin maint-reduce-revisions" - this will change the metadata,
+    setting the rev-number to 1 and clearing the parentid field.
   * Run the following command, replacing 3 instances of 'Home' with the target item name.
     * If the item is a subitem or has a leading namespace, then avoid creating
       subdirectories within contrib/sample by replacing the "/" in the names within the
@@ -15,10 +17,12 @@ To add an improved item to the sample wiki:
 
 
 To add or improve items with a non-ASCII names:
-  * save your wiki data: ./m backup xxxxx
+  * save your wiki data: ./m backup <path-to-file>
   * delete wiki: ./m del-wiki
   * restore unicode.moin: ./m restore contrib/sample/unicode.moin
   * make improvements (do not register new users or create unwanted items)
+  * Run the command "moin maint-reduce-revisions" - this will change the metadata,
+    setting the rev-number to 1 and clearing the parentid field.
   * save the changes: ./m backup contrib/sample/unicode.moin
   * Review the changes, do code review, commit, pull request, or push (whatever is appropriate)
 
