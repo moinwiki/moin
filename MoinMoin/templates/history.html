@@ -9,11 +9,11 @@
 
 {% set (history, next_offset, previous_offset) = history_page %}
 {% set summary = history[0].get('summary', None) if history else None %}
-{% set title = _("History of '%(fqname)s'", fqname=fqname) %}
+{% set heading = _("History of '%(fqname)s'", fqname=fqname|shorten_fqname) %}
 
 {% block content %}
     {% if history %}
-        <h1>{{ title }}</h1>
+        <h1>{{ heading }}</h1>
 
         {# add button to switch between history by name or history by item id #}
         {% if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
