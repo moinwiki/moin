@@ -946,21 +946,21 @@ class MarkupItem(Text):
 class MoinWiki(MarkupItem):
     """ MoinMoin wiki markup """
     contenttype = 'text/x.moin.wiki'
-    display_name = 'Wiki (MoinMoin)'
+    display_name = 'MoinMoin'
 
 
 @register
 class CreoleWiki(MarkupItem):
     """ Creole wiki markup """
     contenttype = 'text/x.moin.creole'
-    display_name = 'Wiki (Creole)'
+    display_name = 'Creole'
 
 
 @register
 class MediaWiki(MarkupItem):
     """ MediaWiki markup """
     contenttype = 'text/x-mediawiki'
-    display_name = 'Wiki (MediaWiki)'
+    display_name = 'MediaWiki'
 
 
 @register
