@@ -21,8 +21,8 @@
 
 {% block content %}
     {% set (my_changes, next_offset, previous_offset) = my_changes_page %}
+    <h1>{{ _('My Changes') }}</h1>
     {% if my_changes %}
-        <h1>{{ _('My Changes') }}</h1>
         {{ next_page(next_offset, previous_offset) }}
         <div class="moin-clr"></div>
         <div class="moin-mychanges">
