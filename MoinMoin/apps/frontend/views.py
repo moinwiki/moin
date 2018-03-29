@@ -1164,6 +1164,15 @@ def _mychanges(userid):
     return history
 
 
+def shorten_item_id(name, length=7):
+    """
+    Shorten IDs starting with @itemid/ to specified length,
+    """
+    if name.startswith('@itemid/'):
+        return name[8:8 + length]
+    return name
+
+
 @frontend.route('/+forwardrefs/<itemname:item_name>')
 def forwardrefs(item_name):
     """
@@ -1177,7 +1186,7 @@ def forwardrefs(item_name):
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_(u"Items that are referred by '%(item_name)s'", item_name=item_name),
+                           headline=_(u"Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=split_fqname_list(refs),
     )
 
@@ -1219,7 +1228,7 @@ def backrefs(item_name):
                            item=item,
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_(u"Items which refer to '%(item_name)s'", item_name=item_name),
+                           headline=_(u"Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=refs_here,
     )
 
@@ -2297,7 +2306,7 @@ def similar_names(item_name):
             if rank == wanted_rank:
                 fq_names.append(fqname)
     return render_template("link_list_item_panel.html",
-                           headline=_("Items with similar names to '%(item_name)s'", item_name=item_name),
+                           headline=_("Items with similar names to '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            item=item,
                            item_name=item_name,  # XXX no item
                            fqname=split_fqname(item_name),
