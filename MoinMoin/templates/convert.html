@@ -6,7 +6,8 @@
 {% import "forms.html" as forms %}
 {% extends theme("show.html") %}
 
-{% set title = _("Convert '%(item_name)s'", item_name=item.fqname.value) %}
+{% set title = _("Convert '%(item_name)s'", item_name=item.fqname|shorten_fqname) %}
+
 {% block content %}
     <h1>{{ title }}</h1>
     <div class="moin-form">
