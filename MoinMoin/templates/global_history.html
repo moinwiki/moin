@@ -45,8 +45,8 @@
                     </td>
                 </tr>
 
-                {# create a row for each item that was changed on this date #}
-                {% for rev in revs|sort(attribute='meta.mtime') %}
+                {# create a row for each item that was changed on this date, incoming items are sorted in descending order by time #}
+                {% for rev in revs %}
                     {% set meta = rev.meta %}
                     <tr>
                         {# create an icon with a link to diff, or other icon indicating state of item #}
