@@ -10,6 +10,7 @@
 {% set (history, next_offset, previous_offset) = history_page %}
 {% set summary = history[0].get('summary', None) if history else None %}
 {% set heading = _("History of '%(fqname)s'", fqname=fqname|shorten_fqname) %}
+{% set first_itemid = history[0].itemid %}
 
 {% block content %}
     {% if history %}
@@ -72,18 +73,21 @@
                                 <td>{{ doc.mtime|datetimeformat }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
                                 <td>
-                                    <div class="moin-hist-rev">
-                                        {% set check1, check2 = '', '' %}
-                                        {% if len and len(history) > 1 %}
-                                            {% if loop.index == 1 %}
-                                                {% set check2 = 'checked' %}
-                                            {% elif loop.index == 2 %}
-                                                {% set check1 = 'checked' %}
+                                    {# do not create radio buttons if item was deleted and recreated with same name, different itemid #}
+                                    {% if doc.itemid == first_itemid %}
+                                        <div class="moin-hist-rev">
+                                            {% set check1, check2 = '', '' %}
+                                            {% if len and len(history) > 1 %}
+                                                {% if loop.index == 1 %}
+                                                    {% set check2 = 'checked' %}
+                                                {% elif loop.index == 2 %}
+                                                    {% set check1 = 'checked' %}
+                                                {% endif %}
                                             {% endif %}
-                                        {% endif %}
-                                        <input type="radio" name="rev1" value="{{ doc.revid }}" {{ check1 }} />
-                                        <input type="radio" name="rev2" value="{{ doc.revid }}" {{ check2 }} />
-                                    </div>
+                                            <input type="radio" name="rev1" value="{{ doc.revid }}" {{ check1 }} />
+                                            <input type="radio" name="rev2" value="{{ doc.revid }}" {{ check2 }} />
+                                        </div>
+                                    {% endif %}
                                 </td>
                                 <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
                                 <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
@@ -122,9 +126,12 @@
                                         </td>
                                     {%- else %}
                                         <td>
-                                            <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
-                                                <span class="fa fa-reply"></span>
-                                            </a>
+                                            {# do not create invalid revert link if item was deleted and recreated with same name, different itemid #}
+                                            {% if doc.itemid == first_itemid %}
+                                                <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
+                                                    <span class="fa fa-reply"></span>
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     {% endif %}
                                 {% else %}

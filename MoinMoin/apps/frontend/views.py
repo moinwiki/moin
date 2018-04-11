@@ -2230,7 +2230,10 @@ def _diff(item, revid1, revid2):
     terms.extend(Term(term, value) for term, value in item.fqname.query.iteritems())
     query = And(terms)
     rev_ids = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=False, limit=None)
-    rev_ids = [x.meta['revid'] for x in rev_ids]
+    rev_ids = [x.meta for x in rev_ids]
+    # we do not do diffs across item IDs should an item be deleted and recreated with same name
+    item_id = rev_ids[-1]['itemid']
+    rev_ids = [x['revid'] for x in rev_ids if x['itemid'] == item_id]
     rev_links = {}
     if len(rev_ids) > 2:
         rev1_idx = rev_ids.index(revid1)
