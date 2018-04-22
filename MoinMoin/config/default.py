@@ -20,7 +20,6 @@ from MoinMoin.i18n import _, L_, N_
 from MoinMoin import error
 from MoinMoin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
 from MoinMoin.constants.keys import *
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
 from MoinMoin import datastruct
 from MoinMoin.auth import MoinAuth
 from MoinMoin.util import plugins
