@@ -80,28 +80,46 @@
         {% else %}
             <p>
                 <i class="fa fa-minus-circle fa-lg" style="color: red;"></i>
-                {{ _("Read permission denied for all existing subitems.") }}
+                {{ _("There are no items or read permission is denied for all.") }}
             </p>
         {% endif %}
+
+        <a class="moin-ct-toggle moin-button" title="{{ _('Filter by content type') }}">
+            <i class="fa fa-filter"></i>
+            {{ _("Filter") }}
+        </a>
+        <a class="moin-ns-toggle moin-button" title="{{ _('Change namespace') }}">
+            <i class="fa fa-list-alt"></i>
+            {{ _("Namespace") }}
+        </a>
+
         <a class="moin-button" id="moin-create-new-item" href="#">
            <i class="fa fa-file-o fa-lg"></i>
            {{ _("New Item") }}
         </a>
+
     </div>
 
-    <div class="moin-contenttypes-wrapper">
-        <span class="moin-ct-hide moin-button">
+    <div class="moin-namespace-selection" style="display: none;">
+        <p> {{ _("Click home icon to view namespace home page or click name to view namespace index.") }} </p>
+        <ul class="moin-namespaces">
+            <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
+            {% for namespace, root in theme_supp.get_namespaces()|sort -%}
+                {% set index = '%s/%s' % ('+index', root.namespace) %}
+                <li>
+                    <a href="{{ url_for('frontend.show_item', item_name=root) }}"><i class="fa fa-home"></i></a>
+                    <a href="{{ url_for('frontend.show_item', item_name=index) }}">{{ namespace }}</a>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
 
-            <i class="fa fa-filter"></i>
-            {{ _("Filter by content type") }}
-        </span>
+    <div class="moin-contenttype-selection" style="display: none;">
         {% set unknown_items_label = _("items having unknown mime types") %}
         {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
             <ul>
                 {{ forms.render(form['contenttype']) }}
             </ul>
-
-
             <a href="#" class="moin-filter-toggle moin-button">
                 <i class="fa fa-refresh"></i>
                 {{ _("Toggle") }}
