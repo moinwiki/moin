@@ -408,32 +408,38 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 
 .moin-clr { clear: both; }
 .moin-index-menu li { display: inline-block; }
-#moin-create-new-item { float: right; }
 .moin-show-action: after { content: url("../img/moin-moveup.png"); margin: 0 .2em; }
 .moin-action-visible .moin-show-action: after { content: url("../img/moin-movedown.png"); margin: 0 .2em; }
 .moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
 .moin-select-all { padding: .5em; color: #00008b; background: #eef1f6; border: 1px solid #4e7da9; text-align: left; }
 .moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
-.moin-index-message span { padding: 4px; background-color: #d8dfe9; color: #000; }
+.moin-index-message span { padding: 4px; background-color: #eee; color: red; }
 .moin-download-link { display: none; }
-.moin-contenttypes-wrapper { margin: .5em 0; }
-.moin-contenttypes-wrapper div { cursor: pointer; margin: .1em; padding: .5em 1.2em .5em .5em; height: 1em; }
+.moin-contenttype-selection { margin: .5em 0; }
+.moin-contenttype-selection div { cursor: pointer; margin: .1em; padding: .5em 1.2em .5em .5em; height: 1em; }
 div.moin-ct-shown { background: #d8dfe9 url("../img/moin-movedown.png") no-repeat center right; color: #000; }
 div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
-.moin-contenttypes-wrapper form { border-top: 1px solid #4e7da9; z-index: 2; background: #fff; border: 1px solid #4e7da9; padding: .2em; display: none; }
-.moin-contenttypes-wrapper ul li { list-style-type: none; }
-.moin-contenttypes-wrapper ul li label { display: inline; vertical-align: middle; }
-.moin-contenttypes-wrapper ul li .helper-text { font-size: .7em; color: #737373; }
-.moin-contenttypes-wrapper ul li a { font-size: 80%; }
-.moin-contenttypes-wrapper form input[type="submit"] { margin-left: 22%; padding-left: 20%; padding-right: 20%; }
-.moin-contenttypes-wrapper: hover div { background-color: #d8dfe9; color: #1f9ae0; }
+
+.moin-contenttype-selection form { z-index: 2; background-color: #fff; border: 1px solid #4e7da9; padding: .2em; }
+.moin-contenttype-selection ul li { list-style-type: none; }
+.moin-contenttype-selection ul li label { display: inline; vertical-align: middle; }
+.moin-contenttype-selection ul li .helper-text { font-size: .7em; color: #737373; }
+.moin-contenttype-selection ul li a { font-size: 80%; }
+.moin-contenttype-selection form input[type="submit"] { margin-left: 22%; padding-left: 20%; padding-right: 20%; }
+.moin-contenttype-selection: hover div { background-color: #d8dfe9; color: #1f9ae0; }
+
 .moin-filter-toggle { margin: 0 .2em; font-size: 90%; }
 .moin-more-index { background: transparent url("../img/moin-expand.png") no-repeat; display: inline-block; width: 20px; }
 .moin-more-index: hover { text-decoration: none; }
-.moin-index-path { margin-left: .5em; }
+.moin-index-path { margin-left: .5em; margin-top: 2em; }
 .moin-index-path: before { content: url("../img/moin-parent.png"); margin: 0 .3em; }
 .moin-path-separator { font-size: 120%; color: #00008b; }
 .moin-index-separator { clear: both; border-top: 1px solid #4e7da9; width: 99%; margin-left: .5%; display: none; }
+
+.moin-namespace-selection { background: #fff; border: 1px solid #4e7da9; padding: .2em; }
+.moin-namespace-selection ul li { list-style-type: none; font-size: 1.25em; }
+.moin-ns-toggle,
+.moin-ct-toggle { color: black; }
 
 #moin-initials { width: 90%; margin: 5px auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }

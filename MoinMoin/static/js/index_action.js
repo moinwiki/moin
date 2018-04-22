@@ -242,14 +242,14 @@ $("document").ready(function () {
     // -- Filter by content type handlers start here
 
     // add click handler to "Filter by content type" button
-    $(".moin-contenttypes-wrapper").children("span").click(function () {
+    $(".moin-contenttype-selection").children("span").click(function () {
         // show/hide content type dropdown
         var wrapper = $(this).parent();
         if (wrapper.find("form:visible").length) {
-            $(".moin-contenttypes-wrapper").find("form").fadeOut(POPUP_FADE_TIME);
+            $(".moin-contenttype-selection").find("form").fadeOut(POPUP_FADE_TIME);
             $(this).removeClass("moin-ct-shown").addClass("moin-ct-hide");
         } else {
-            $(".moin-contenttypes-wrapper").find("form").fadeIn(POPUP_FADE_TIME);
+            $(".moin-contenttype-selection").find("form").fadeIn(POPUP_FADE_TIME);
             $(this).removeClass("moin-ct-hide").addClass("moin-ct-shown");
         }
     });
@@ -257,10 +257,26 @@ $("document").ready(function () {
     // add click handler to "Toggle" button on "Filter by content type" dropdown
     $(".moin-filter-toggle").click(function () {
         // reverse checked/unchecked for each content type
-        $(".moin-contenttypes-wrapper form").find("input[type='checkbox']").each(function () {
+        $(".moin-contenttype-selection form").find("input[type='checkbox']").each(function () {
             $(this).prop('checked', !$(this).is(':checked'));
         });
         return false;
+    });
+
+    // add click handler to toggle button for content type
+    $(".moin-ct-toggle").click(function () {
+        // show/hide content type selection
+        $(".moin-contenttype-selection").toggle();
+        $(".moin-namespace-selection").css("display", "none");
+    });
+
+    // -- namespace handler
+
+    // add click handler to "Toggle" button on "Namespace" dropdown
+    $(".moin-ns-toggle").click(function () {
+        // show/hide namespace selection
+        $(".moin-namespace-selection").toggle();
+        $(".moin-contenttype-selection").css("display", "none");
     });
 
     // -- individual item handlers start here
