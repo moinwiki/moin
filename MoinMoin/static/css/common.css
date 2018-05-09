@@ -553,13 +553,14 @@ form.upload_file button { display: none; }
 figcaption { font-weight: bold; }
 
 /* moin-flash */
-#moin-flash { margin:-2px -15px -2px -14px; }
-.moin-flash { background-color: #eee; border: 2px solid color: #181be2; padding: 1em 1em 1em 3em; border-radius: 9px;
-    background-repeat: no-repeat; background-position: 1em 1em; }
-.moin-flash-hint { background-image:url("../../../static/img/smileys/idea.png"); }
-.moin-flash-info { background-image:url("../../../static/img/smileys/icon-info.png"); }
-.moin-flash-warning { background-image:url("../../../static/img/smileys/alert.png"); color:#ff2727; }
-.moin-flash-error { background-image:url("../../../static/img/smileys/icon-error.png"); color:#ff2727; }
+.moin-flash { background-color: #fee; border: 1px solid red; padding: 1em; margin-top: .5em; border-radius: 5px;
+    position: relative; }
+/* \f2d3 below is fontawesome fa-window-close */
+.moin-flash:after { content: "\f2d3"; font-family: FontAwesome; color: red; position: absolute; top: -1px; right: 0px; }
+.moin-flash-hint:before { content: url("../img/smileys/idea.png"); padding-right: 1em; }
+.moin-flash-info:before { content: url("../img/smileys/icon-info.png"); padding-right: 1em; }
+.moin-flash-warning:before { content: url("../img/smileys/alert.png"); padding-right: 1em; }
+.moin-flash-error:before { content: url("../img/smileys/icon-error.png"); padding-right: 1em; }
 
 /* +modify template */
 #moin-modify dd { width: 100%; float: none; }

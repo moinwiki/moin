@@ -7,13 +7,16 @@
 function MoinMoin() {
     "use strict";
 }
-// Utility function to add a message to moin flash area.
+// Utility function to add a message to moin flash area. Message can be removed by clicking on it.
 MoinMoin.prototype.MOINFLASHINFO = "moin-flash moin-flash-info";
 MoinMoin.prototype.MOINFLASHWARNING = "moin-flash moin-flash-warning";
 MoinMoin.prototype.moinFlashMessage = function (classes, message) {
     "use strict";
     var pTag = '<P class="' + classes + '">' + message + '</p>';
     $(pTag).appendTo($('#moin-flash'));
+    $('.moin-flash').click(function () {
+        this.remove();
+    });
 };
 
 
@@ -758,6 +761,11 @@ $(document).ready(function () {
     if (document.getElementById('moin-navibar') !== null) {
         moin.QuicklinksExpander();
     }
+
+    // remove a server-side flash message by clicking on it
+    $('.moin-flash').click(function () {
+        this.remove();
+    });
 
     $('.moin-insertname-action').click(function () {
         var fullname = $(this).data('name');
