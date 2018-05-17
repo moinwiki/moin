@@ -78,10 +78,12 @@ $("document").ready(function () {
             var itemname = $(this).attr("title");
             links.push(itemname);
         });
-        // hide comment popup, display "deleting..." or "destroying..."
+        // remove any flash messages, display "deleting..." or "destroying..." briefly while process is in progress
         $("#popup").css("display", "none");
-        $(".moin-index-message span").text(ACTION_LOADING[action]);
-        $(".moin-index-message").css("display", "block");
+        // note the parent of .moin-flash messages is #moin-flash; moin-flash is used as both id and class
+        $(".moin-flash").remove();
+        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, ACTION_LOADING[action]);
+
         // create a transaction to delete or destroy selected items
         itemnames = JSON.stringify(links);
         actionTrigger = "moin-" + action + "-trigger";
@@ -106,15 +108,13 @@ $("document").ready(function () {
                     left_item += 1;
                 }
             });
-            // show a message summarizing delete/destroy results for 4 seconds
+            // show a message summarizing delete/destroy
             message = ACTION_DONE[action] + success_item;
             if (left_item) {
                 message += ACTION_FAILED[action] + left_item + ".";
             }
-            $(".moin-index-message span").text(message);
-            setTimeout(function () {
-                $(".moin-index-message").fadeOut();
-            }, MESSAGE_VIEW_TIME);
+            $(".moin-flash").remove();
+            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, message);
         }, "json");
     }
 
@@ -192,12 +192,8 @@ $("document").ready(function () {
     // add click handler to "Download" button of Actions dropdown
     $("#moin-download-trigger").click(function () {
         if (!($("div.selected-item").length)) {
-            // no items selected, show message for 4 seconds
-            $('.moin-index-message span').text(_("Nothing was selected."));
-            $(".moin-index-message").fadeIn();
-            setTimeout(function () {
-                $(".moin-index-message").fadeOut();
-            }, MESSAGE_VIEW_TIME);
+            $(".moin-flash").remove();
+            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Nothing was selected."));
         } else {
             // download selected files (add small delay to start of multiple downloads for IE9)
             $(".selected-item").children(".moin-download-link").each(function (index, element) {
@@ -212,13 +208,11 @@ $("document").ready(function () {
 
     // add click handler to "Delete" and "Destroy" buttons of Actions dropdown
     $(".moin-action-tab").click(function () {
+        var action = this.text;
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
         if (!($("div.selected-item").length)) {
-            $('.moin-index-message span').text(_("Nothing was selected."));
-            $(".moin-index-message").fadeIn();
-            setTimeout(function () {
-                $(".moin-index-message").fadeOut();
-            }, MESSAGE_VIEW_TIME);
+            $(".moin-flash").remove();
+            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, action + ' failed, nothing was selected.');
         } else {
             if (this.id === "moin-delete-trigger") {
                 showpop("delete");
