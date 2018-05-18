@@ -193,7 +193,7 @@ $("document").ready(function () {
     $("#moin-download-trigger").click(function () {
         if (!($("div.selected-item").length)) {
             $(".moin-flash").remove();
-            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Nothing was selected."));
+            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Download failed, no items were selected."));
         } else {
             // download selected files (add small delay to start of multiple downloads for IE9)
             $(".selected-item").children(".moin-download-link").each(function (index, element) {
@@ -212,7 +212,7 @@ $("document").ready(function () {
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
         if (!($("div.selected-item").length)) {
             $(".moin-flash").remove();
-            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, action + ' failed, nothing was selected.');
+            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, action + ' failed, no items were selected.');
         } else {
             if (this.id === "moin-delete-trigger") {
                 showpop("delete");
