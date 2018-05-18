@@ -25,6 +25,10 @@ a:hover { text-decoration: underline; }
 .wikilink,
 .moin-panel-heading { font-weight: bold; display: inherit; }
 
+/* global index */
+#popup { border: 2px solid #000; }
+.popup-header { background-color: #c9e2f8; color: #000; }
+
 /* styling for topbar */
 @media (max-width: 1024px) {
     #moin-header { background-image: url("../../../static/img/white-clouds.jpg");
