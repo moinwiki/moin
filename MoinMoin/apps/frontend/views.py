@@ -994,6 +994,10 @@ def destroy_item(item_name, rev):
     return ret
 
 
+import threading
+jfu_server_lock = threading.Lock()
+
+
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+jfu-server', defaults=dict(item_name=''), methods=['POST'])
 def jfu_server(item_name):
@@ -1008,17 +1012,20 @@ def jfu_server(item_name):
     else:
         subitem_prefix = u''
     item_name = subitem_prefix + subitem_name
+    jfu_server_lock.acquire()
     try:
         item = Item.create(item_name)
         revid, size = item.modify({}, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
                            fqname=item.fqname, action=ACTION_SAVE)
+        jfu_server_lock.release()
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
                        contenttype=contenttype_to_class(contenttype),
         )
     except AccessDenied:
+        jfu_server_lock.release()
         abort(403)
 
 
