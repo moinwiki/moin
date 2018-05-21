@@ -172,6 +172,10 @@
                 $(this).fadeOut(function () {
                     if (!$('.files .file_upload_start button:visible:first').length) {
                         uploadHandler.multiButtons.find('.file_upload_start:first').fadeOut();
+                        if (!uploadHandler.downloadTable.find("h3:visible").length) {
+                            uploadHandler.downloadTable.find("h3:first").fadeIn();
+                            $(".moin-index-separator").fadeIn();
+                        }
                     }
                 });
                 callBack();
@@ -182,10 +186,6 @@
         this.onCompleteAll = function (list) {
             if (!uploadHandler.uploadTable.find('.file_upload_progress div:visible:first').length) {
                 uploadHandler.multiButtons.find('.file_upload_start:first, .file_upload_cancel:first').fadeOut();
-            }
-            if (!uploadHandler.downloadTable.find("h3:visible").length) {
-                uploadHandler.downloadTable.find("h3:first").fadeIn();
-                $(".moin-index-separator").fadeIn();
             }
             uploadHandler.fileArray.length = 0;
         };
