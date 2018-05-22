@@ -188,6 +188,9 @@
                 uploadHandler.multiButtons.find('.file_upload_start:first, .file_upload_cancel:first').fadeOut();
             }
             uploadHandler.fileArray.length = 0;
+            // hide popup form when file uploads are complete
+            $("#popup").css("display", "none");
+            $("#lightbox").css("display", "none");
         };
 
         this.initEventHandlers = function () {
