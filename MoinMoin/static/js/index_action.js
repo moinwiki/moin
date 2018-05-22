@@ -75,7 +75,7 @@ $("document").ready(function () {
             actionTrigger,
             url;
         $(".selected-item").children("a.moin-item").each(function () {
-            var itemname = $(this).attr("title");
+            var itemname = $(this).attr("href").slice(1);
             links.push(itemname);
         });
         // remove any flash messages, display "deleting..." or "destroying..." briefly while process is in progress
@@ -101,10 +101,10 @@ $("document").ready(function () {
             $.each(itemnames, function (itemindex, itemname) {
                 // hide (remove) deleted/destroyed items, or show conflict (ACL rules, or ?)
                 if (action_status[itemindex]) {
-                    hide($('.selected-item').children('a.moin-item[title="' + itemname + '"]'));
+                    hide($('.selected-item').children('a.moin-item[href="/' + itemname + '"]'));
                     success_item += 1;
                 } else {
-                    show_conflict($('.selected-item').children('a.moin-item[title="' + itemname + '"]'));
+                    show_conflict($('.selected-item').children('a.moin-item[href="/' + itemname + '"]'));
                     left_item += 1;
                 }
             });
