@@ -1291,6 +1291,7 @@ def history(item_name):
     history_page = util.getPageContent(history, offset, results_per_page)
     if isinstance(item.rev.data, file):
         item.rev.data.close()
+    trash = item.meta['trash'] if 'trash' in item.meta else False
     ret = render_template('history.html',
                           fqname=fqname,
                           item=item,
@@ -1299,6 +1300,7 @@ def history(item_name):
                           bookmark_time=bookmark_time,
                           NAME_EXACT=NAME_EXACT,
                           len=len,
+                          trash=trash,
     )
     if isinstance(item.rev.data, file):
         item.rev.data.close()

@@ -15,18 +15,19 @@
 {% block content %}
     {% if history %}
         <h1>{{ heading }}</h1>
-
-        {# add button to switch between history by name or history by item id #}
-        {% if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
-            <p class="moin-no-print">
-                <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqname, bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
-                Click to show history spanning item delete and recreate.
-            </p>
-        {% else %}
-            <p class="moin-no-print">
-                <a class="moin-button" href="{{ url_for('frontend.history', item_name='@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
-                Click to show history spanning item renames.
-            </p>
+        {% if not trash %}
+            {# add button to switch between history by name or history by item id #}
+            {% if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
+                <p class="moin-no-print">
+                    <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqname, bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
+                    Click to show history spanning item delete and recreate.
+                </p>
+            {% else %}
+                <p class="moin-no-print">
+                    <a class="moin-button" href="{{ url_for('frontend.history', item_name='@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
+                    Click to show history spanning item renames.
+                </p>
+            {% endif %}
         {% endif %}
 
         {# if history is long, create links to show next and/or prior pages #}
