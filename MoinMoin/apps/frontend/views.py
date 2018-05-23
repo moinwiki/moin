@@ -1015,7 +1015,7 @@ def jfu_server(item_name):
     jfu_server_lock.acquire()
     try:
         item = Item.create(item_name)
-        revid, size = item.modify({}, data, contenttype_guessed=contenttype)
+        revid, size = item.modify({'itemtype': ITEMTYPE_DEFAULT, }, data, contenttype_guessed=contenttype)
         item_modified.send(app._get_current_object(),
                            fqname=item.fqname, action=ACTION_SAVE)
         jfu_server_lock.release()
