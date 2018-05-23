@@ -569,6 +569,11 @@ figcaption { font-weight: bold; }
 #moin-modify textarea { width: 99.5%; }
 #moin-modify input[type="submit"] { margin-left: 0; }
 .moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }
+.moin-edit-no-help { float: right; border: 1px solid #00417F; border-radius: 6px; cursor: pointer;
+    font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
+.moin-edit-no-help:before { content: url("../img/smileys/alert.png"); padding-right: 1em; }
+
+
 .moin-edit-help { float: right; }
 .moin-edit-help a { color: black; }
 

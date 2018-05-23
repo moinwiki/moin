@@ -138,7 +138,11 @@
 
 {% macro help_on_editing(help) %}
     {% if help %}
+        {% if "<a " == help[:3] %}
             <span class="moin-edit-help moin-button"> {{ help|safe }} </span>
+        {% else %}
+            <span class="moin-edit-no-help"> {{ help|safe }} </span>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
