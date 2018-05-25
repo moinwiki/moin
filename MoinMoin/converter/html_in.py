@@ -14,6 +14,8 @@ from __future__ import absolute_import, division
 
 import re
 
+from flask import flash
+
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
@@ -25,6 +27,19 @@ from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 from MoinMoin import log
 logging = log.getLogger(__name__)
+
+
+class NoDupsFlash(object):
+    """
+    Issue flash messages for unsupported HTML tags; but do not create duplicate messages.
+    """
+    def __init__(self):
+        self.messages = set()
+
+    def log(self, message, category):
+        if message not in self.messages:
+            self.messages.add(message)
+            flash(message, category)
 
 
 class Converter(object):
@@ -89,6 +104,8 @@ class Converter(object):
 
         TODO: Add support for different arguments
         """
+        self.no_dups_flash = NoDupsFlash()
+
         text = decode_data(data, contenttype)
         # data cleanup is not needed by html_out, but is needed by moinwiki_out; CKEditor adds unwanted \n\t
         while '\t\t' in text:
@@ -246,10 +263,15 @@ class Converter(object):
 
         # We should ignore this tag
         if element.tag.name in self.ignored_tags:
+            # tell user output from obsolete tags like "center" is suppressed
+            msg = _("Tag '%(invalid_tag)s' is not supported; all tag contents are discarded.", invalid_tag=element.tag.name)
+            self.no_dups_flash.log(msg, "info")
             logging.debug("WARNING : Ignored tag : {0}".format(element.tag.name))
             return
 
         # Otherwise we process children of the unknown element
+        msg = _("Tag '%(invalid_tag)s' is not known; tag ignored but children are processed.", invalid_tag=element.tag.name)
+        self.no_dups_flash.log(msg, "info")
         logging.debug("WARNING : Unknown tag : {0}".format(element.tag.name))
         return self.do_children(element)
 
