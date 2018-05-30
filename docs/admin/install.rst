@@ -5,24 +5,19 @@ Downloading and Installing
 Downloading
 ===========
 The recommended way to download moin2 is to clone
-the moin2 Mercurial repository or its mirror. Open a terminal
+the moin2 Mercurial repository on BitBucket. Open a terminal
 window or a command prompt, cd to the directory that will hold
-your project root directory and enter either one of the commands
+your project root directory and enter either the command
 below::
-
- hg clone http://hg.moinmo.in/moin/2.0 moin-2.0
-
- OR
 
  hg clone http://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
 
-Now make sure your work directory is using the default branch::
+GitHub fans may clone the moin2 mirror at
+https://github.com/mirror/moin-2.0
+
+Make sure your work directory is using the default branch::
 
  hg up -C default
-
-An alternative installation method is to download the bz2 archive
-from http://hg.moinmo.in/moin/2.0 and unpack it. Once unpacked,
-continue to follow the instructions below.
 
 Installing
 ==========
