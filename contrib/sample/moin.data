@@ -32,7 +32,8 @@
 
 == Text Formatting ==
 
-||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result'''   ||
+||<width="50%"> '''Markup''' || '''Result'''   ||
+====
 ||  `''italic''`     || ''italic''       ||
 ||  `'''bold'''`     || '''bold'''       ||
 ||  `__underline__`  || __underline__   ||
@@ -45,7 +46,8 @@
 == Linking ==
 === Internal Links ===
 
-||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result''' ||
+||<width="50%"> '''Markup''' || '''Result''' ||
+====
 || `[[Home]]` || [[Home]] ||
 || `[[Home/subitem]]` || [[Home/subitem]] ||
 || `[[/MissingSubitem]]` || [[/MissingSubitem]] ||
@@ -57,14 +59,18 @@
 || `[[creole#Internal_Links]]` || [[creole#Internal_Links]] ||
 || `[[creole#Internal_Links|description]]` || [[creole#Internal_Links|description]] ||
 || `[[MissingPage]]` || [[MissingPage]] ||
+|| `[[creole|description|target=_blank]]` || [[creole|description|target=_blank]] ||
+|| `[[creole|description|target=_blank,class=orange]]` || [[creole|description|target=_blank,class=orange]] ||
+|| `[[creole|description|download=creole,title="Hi"]]` || [[creole|description|download=creole,title="Hi"]] ||
+|| `[[creole|description|accesskey=1]]` || [[creole|description|accesskey=1]] ||
 
 === External Links ===
 
-||<rowbgcolor="#ffffcc" width="50%"> '''Markup''' || '''Result''' ||
-|| `[[https://moinmo.in/]]` || [[https://moinmo.in/]] ||
-|| `[[https://moinmo.in/|MoinMoin Wiki]]` || [[https://moinmo.in/|MoinMoin Wiki]] ||
+||<width="50%"> '''Markup''' || '''Result''' ||
+====
+|| `[[https://moinmo.in/| |title="go there!"]]` || [[https://moinmo.in/| |title="go there!"]] ||
+|| `[[https://moinmo.in/|MoinMoin Wiki|class=orange]]` || [[https://moinmo.in/|MoinMoin Wiki|class=orange]] ||
 || `[[https://static.moinmo.in/logos/moinmoin.png]]` || [[https://static.moinmo.in/logos/moinmoin.png]] ||
-
 || `[[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]` || [[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]] ||
 || `[[MeatBall:InterWiki]]` || [[MeatBall:InterWiki]] ||
 || `[[MeatBall:InterWiki|InterWiki page on MeatBall]]` || [[MeatBall:InterWiki|InterWiki page on MeatBall]] ||
@@ -537,18 +543,19 @@ Variable expansion is global and happens everywhere within an item, including co
 
 === Predefined Variables ===
 
-||<rowbgcolor="#ffffcc"> '''Variable''' || '''Description'''                            || '''Resulting Markup'''                             || '''Example Rendering''' ||
-|| @``PAGE@                             || Name of the item (useful for templates) || `HelpOnPageCreation`                               || HelpOnPageCreation     ||
-|| @``ITEM@                             || Name of the item (useful for templates) || `HelpOnPageCreation`                               || HelpOnPageCreation     ||
-|| @``TIMESTAMP@                        || Raw time stamp                               || `2004-08-30T06:38:05Z`                             || 2004-08-30T06:38:05Z   ||
-|| @``DATE@                             || Current date in the system's format          || `<<Date(2004-08-30T06:38:05Z)>>`                   || <<Date(2004-08-30T06:38:05Z)>> ||
-|| @``TIME@                             || Current date and time in the user's format   || `<<DateTime(2004-08-30T06:38:05Z)>>`               || <<DateTime(2004-08-30T06:38:05Z)>> ||
-|| @``ME@                               || user's name or "anonymous"                        || `TheAnarcat`                                       || TheAnarcat ||
-|| @``USERNAME@                         || user's name or his domain/IP      || `TheAnarcat`                                       || TheAnarcat ||
-|| @``USER@                             || Signature "-- loginname"                     || `-- TheAnarcat`                                    || -- TheAnarcat ||
-|| @``SIG@                              || Dated Signature "-- loginname date time"     || `-- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>>` || -- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>> ||
-|| @``EMAIL@                            || Replaced with `<<MailTo()>>` macro with editor's obfuscated email address ||`<<MailTo(testuser AT example DOT com)` ||testuser@example.com <<BR>> or <<BR>> testuser AT example DOT com ||
-|| @``MAILTO@                           || Replaced with `<<MailTo()>>` macro with editor's email address||`<<MailTo(testuser@example.com)`  ||`testuser@example.com` -- no obfuscation, use @``EMAIL@ on public sites ||
+|| '''Variable'''              || '''Description'''                       || '''Resulting Markup'''                  || '''Example Rendering''' ||
+====
+|| @``PAGE@                    || Name of the item (useful for templates) || `HelpOnPageCreation`                    || HelpOnPageCreation     ||
+|| @``ITEM@                    || Name of the item (useful for templates) || `HelpOnPageCreation`                    || HelpOnPageCreation     ||
+|| @``TIMESTAMP@               || Raw time stamp                          || `2004-08-30T06:38:05Z`                  || 2004-08-30T06:38:05Z   ||
+|| @``DATE@                    || Current date in the system's format     || `<<Date(2004-08-30T06:38:05Z)>>`        || <<Date(2004-08-30T06:38:05Z)>> ||
+|| @``TIME@                    || Current date and time in the user's format || `<<DateTime(2004-08-30T06:38:05Z)>>` || <<DateTime(2004-08-30T06:38:05Z)>> ||
+|| @``ME@                      || user's name or "anonymous"              || `TheAnarcat`                            || TheAnarcat ||
+|| @``USERNAME@                || user's name or his domain/IP      || `TheAnarcat`                                  || TheAnarcat ||
+|| @``USER@                    || Signature "-- loginname"                || `-- TheAnarcat`                         || -- TheAnarcat ||
+|| @``SIG@                     || Dated Signature "-- loginname date time"     || `-- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>>` || -- TheAnarcat <<DateTime(2004-08-30T06:38:05Z)>> ||
+|| @``EMAIL@                   || Replaced with `<<MailTo()>>` macro with editor's obfuscated email address ||`<<MailTo(testuser AT example DOT com)` ||testuser@example.com <<BR>> or <<BR>> testuser AT example DOT com ||
+|| @``MAILTO@                  || Replaced with `<<MailTo()>>` macro with editor's email address||`<<MailTo(testuser@example.com)`  ||`testuser@example.com` -- no obfuscation, use @``EMAIL@ on public sites ||
 
 '''Notes:'''
 
