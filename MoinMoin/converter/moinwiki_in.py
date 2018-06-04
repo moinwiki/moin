@@ -716,28 +716,43 @@ class Converter(ConverterMacro):
             else:
                 # assume local language uses ":" inside of words, set link_item and continue
                 link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
+
+        attribs = {}
+        query = []
         if link_args:
             link_args = parse_arguments(link_args)  # XXX needs different parsing
-            query = url_encode(link_args.keyword, charset=CHARSET, encode_keys=True)
-        else:
-            query = None
+            for key in link_args.keys():
+                if key in ('target', 'title', 'download', 'class', 'accesskey'):
+                    attribs[html(key)] = link_args[key]
+                if key[0] == '&':
+                    query.append('{0}={1}'.format(key[1:], link_args[key]))
         if link_item is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
                 link_item = '/' + link_item[len(att):]  # now we have a subitem
             if '#' in link_item:
-                path, fragment = link_item.rsplit('#', 1)
                 if link_item.startswith('#') and '/+convert/' in request.url:
                     # avoid traceback in link.py when converting moinwiki item to ReST | HTML | Docbook
-                    path = request.url.split('+convert/')[-1]
+                    link_item = request.url.split('+convert/')[-1] + link_item
+                link_item, fragment = link_item.rsplit('#', 1)
             else:
-                path, fragment = link_item, None
+                link_item, fragment = link_item, None
+            if '?' in link_item:
+                path, link_query = link_item.rsplit('?', 1)
+                query.insert(0, link_query)
+            else:
+                path, link_query = link_item, None
+            if query:
+                query = '&' + '&'.join(query)
+            else:
+                query = None
             target = Iri(scheme='wiki.local', path=path, query=query, fragment=fragment)
             text = link_item
         else:
             target = Iri(link_url)
             text = link_url
-        element = moin_page.a(attrib={xlink.href: target})
+        attribs[xlink.href] = target
+        element = moin_page.a(attrib=attribs)
         stack.push(element)
         if link_text:
             self.parse_inline(link_text, stack, self.inlinedesc_re)

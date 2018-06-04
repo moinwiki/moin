@@ -62,13 +62,14 @@ class TestConverter(Base):
     def test_link(self):
         data = [
             (u'<page:a xlink:href="wiki.local:SomePage#subsection">subsection of Some Page</page:a>', '[[SomePage#subsection|subsection of Some Page]]'),
-            (u'<page:a xlink:target="_blank" xlink:href="wiki.local:SomePage">{{attachment:samplegraphic.png}}</page:a>', '[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]'),
-            (u'<page:a xlink:href="wiki.local:SomePage?target=_blank">{{attachment:samplegraphic.png}}</page:a>', '[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]'),
+            (u'<page:a html:target="_blank" xlink:href="wiki.local:SomePage">{{attachment:samplegraphic.png}}</page:a>', '[[SomePage|{{attachment:samplegraphic.png}}|target="_blank"]]'),
+            (u'<page:a xlink:href="wiki.local:SomePage?target=_blank">{{attachment:samplegraphic.png}}</page:a>', '[[SomePage?target=_blank|{{attachment:samplegraphic.png}}]]'),
+            (u'<page:a html:target="_blank" xlink:href="wiki.local:SomePage">{{/samplegraphic.png}}</page:a>', '[[SomePage|{{/samplegraphic.png}}|target="_blank"]]'),
             (u'<page:a xlink:href="../SisterPage">link text</page:a>', '[[../SisterPage|link text]]'),
-            (u'<page:a xlink:target="_blank" xlink:class="aaa" xlink:href="http://static.moinmo.in/logos/moinmoin.png">{{attachment:samplegraphic.png}}</page:a>', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank,class=aaa]]'),
-            (u'<page:a xlink:class="green dotted" xlink:accesskey="1" xlink:href="http://moinmo.in/">MoinMoin Wiki</page:a>', '[[http://moinmo.in/|MoinMoin Wiki|accesskey=1,class=green dotted]]'),
-            (u'<page:a xlink:href="MoinMoin:MoinMoinWiki?action=diff&amp;rev1=1&amp;rev2=2">MoinMoin Wiki</page:a>', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]'),
-            (u'<page:a xlink:href="attachment:HelpOnImages/pineapple.jpg?do=get">a pineapple</page:a>', '[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]'),
+            (u'<page:a html:target="_blank" html:class="aaa" xlink:href="http://static.moinmo.in/logos/moinmoin.png">{{attachment:samplegraphic.png}}</page:a>', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|class="aaa",target="_blank"]]'),
+            (u'<page:a html:class="green dotted" html:accesskey="1" xlink:href="http://moinmo.in/">MoinMoin Wiki</page:a>', '[[http://moinmo.in/|MoinMoin Wiki|accesskey="1",class="green dotted"]]'),
+            (u'<page:a xlink:href="MoinMoin:MoinMoinWiki?action=diff&amp;rev1=1&amp;rev2=2">MoinMoin Wiki</page:a>', '[[MoinMoin:MoinMoinWiki?action=diff&rev1=1&rev2=2|MoinMoin Wiki]]'),
+            (u'<page:a xlink:href="attachment:HelpOnImages/pineapple.jpg?do=get">a pineapple</page:a>', '[[attachment:HelpOnImages/pineapple.jpg?do=get|a pineapple]]'),
             (u'<page:a xlink:href="attachment:filename.txt">attachment:filename.txt</page:a>', '[[attachment:filename.txt]]')
         ]
         for i in data:

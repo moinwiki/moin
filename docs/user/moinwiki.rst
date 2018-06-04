@@ -99,6 +99,19 @@ The following is a table of inline markup that can be used to control text forma
 Hyperlinks
 ==========
 
+Moin2 hyperlinks are enclosed within double brackets. There are three possible
+fields separated by "|" characters: ::
+
+  1. PageName, relative URL, or fully qualified URL
+  2. Text description or transcluded icon: [[ItemName|{{MyLogo.png}}]]
+  3. Parameters: target, title, download, class, and accesskey are supported
+
+Examples with parameters are not shown below because the effect cannot be
+duplicated with ReST markup. To open a link in a new tab or window with a
+mouseover title, do: ::
+
+  * [[ItemName|my favorite item|target=_blank,title="Go There!"]]
+
 Internal Links
 --------------
 

@@ -183,36 +183,39 @@ class Converter(object):
 
     def open_moinpage_a(self, elem):
         href = elem.get(xlink.href, None)
-
-        # This part doesn't work in moinwiki_in converter
         params = {}
-        params['target'] = elem.get(xlink.target, None)
-        params['class'] = elem.get(xlink.class_, None)
-        params['title'] = elem.get(xlink.title, None)
-        params['accesskey'] = elem.get(xlink.accesskey, None)
-        params = u','.join([u'{0}={1}'.format(p, params[p]) for p in params if params[p]])
+        params['target'] = elem.get(html.target, None)
+        params['title'] = elem.get(html.title_, None)
+        params['download'] = elem.get(html.download, None)
+        params['class'] = elem.get(html.class_, None)
+        params['accesskey'] = elem.get(html.accesskey, None)
+        # we sort so output order is predictable for tests
+        params = u','.join([u'{0}="{1}"'.format(p, params[p]) for p in sorted(params) if params[p]])
 
         # XXX: We don't have Iri support for now
         if isinstance(href, Iri):
             href = unicode(href)
         # TODO: this can be done using one regex, can it?
+        href = href.split(u'#')
+        if len(href) > 1:
+            href, fragment = href
+        else:
+            href, fragment = href[0], ''
         href = href.split(u'?')
         args = u''
         if len(href) > 1:
             # With normal
-            args = u','.join([u'&' + s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$|)', href[1])])
+            args = u''.join([u'&' + s for s in findall(r'(?:^|;|,|&|)(\w+=\w+)(?:,|&|$|)', href[1])])
         href = href[0].split(u'wiki.local:')[-1]
-        args = u','.join(s for s in [args, params] if s)
-
-        # TODO: rewrite this using % formatting
-        ret = href
-        text = u''.join(elem.itertext())
-        if not args and text == href:
-            text = u''
-        if text:
-            ret += Moinwiki.a_separator + text  # XXX future bug when args are supported: [[SomePage||&target=_blank]]
         if args:
-            ret += Moinwiki.a_separator + args
+            args = '?' + args[1:]
+        if fragment:
+            args += '#' + fragment
+        text = self.open_children(elem)
+        if text == href:
+            text = u''
+        ret = u'{0}{1}|{2}|{3}'.format(href, args, text, params)
+        ret = ret.rstrip('|')
         if ret.startswith('wiki://'):
             # interwiki fixup
             ret = ret[7:]
