@@ -225,7 +225,7 @@ class Converter(object):
         href = elem.get(_tag_xlink_href)
         if href:
             attrib[_tag_html_href] = href
-        # XXX should support more tag attrs
+        # html attibutes are copied by default (html.target, html.class, html.download...
         return self.new_copy(_tag_html_a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):

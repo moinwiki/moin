@@ -88,21 +88,25 @@ class TestConverter(object):
     def test_link(self):
         data = [
             (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
-            # (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{/samplegraphic.png}}|target=_blank]]\n'),
-            # (u'[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]', '[[SomePage|{{attachment:samplegraphic.png}}|&target=_blank]]\n'),
-            # (u'[[SomePage||&target=_blank]]', '[[SomePage||&target=_blank]]\n'),
+            (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{/samplegraphic.png}}|target="_blank"]]\n'),
             (u'[[../SisterPage|link text]]', '[[../SisterPage|link text]]\n'),
-            # (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]\n'),
-            # (u'[[http://moinmo.in/|MoinMoin Wiki|class=green dotted, accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|class=green dotted,accesskey=1]]\n'),
+            (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{/samplegraphic.png}}|target="_blank"]]\n'),
+            (u'[[http://moinmo.in/|MoinMoin Wiki|class="green dotted", accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|accesskey="1",class="green dotted"]]\n'),
             # interwiki
-            # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]\n'),
+            # TODO: should this obsolete (1.9.x) form be made to work?
+            # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
             (u'[[MeatBall:InterWiki]]', '[[MeatBall:InterWiki]]'),
             (u'[[MeatBall:InterWiki|InterWiki page on MeatBall]]', '[[MeatBall:InterWiki|InterWiki page on MeatBall]]'),
 
             # TODO: attachments should be converted within import19.py and support removed from moin2
-            # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is passed but ignored
-            (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[/HelpOnImages/pineapple.jpg|a pineapple|&2526do=get]]\n'),
-            (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n')
+            # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is appended to link and where it is ignored
+            (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[/HelpOnImages/pineapple.jpg?do=get|a pineapple]]\n'),
+            (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
+            # test parameters
+            (u'[[SomePage|Some Page|target=_blank]]', '[[SomePage|Some Page|target="_blank"]]\n'),
+            (u'[[SomePage|Some Page|download=MyItem,title=Download]]', '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
+            (u'[[SomePage|Some Page|download="MyItem",title="Download"]]', '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
+            (u'[[SomePage|Some Page|class=orange,accesskey=1]]', '[[SomePage|Some Page|accesskey="1",class="orange"]]\n'),
         ]
         for i in data:
             yield (self.do, ) + i
