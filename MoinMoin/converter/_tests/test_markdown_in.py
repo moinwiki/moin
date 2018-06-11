@@ -133,9 +133,9 @@ class TestConverter(object):
     def test_image(self):
         data = [
             (u'![Alt text](png "Optional title")',
-                '<p><xinclude:include html:alt="Alt text" xinclude:href="wiki.local:png" /></p>'),
+                '<p><xinclude:include html:alt="Alt text" html:title="Optional title" xinclude:href="wiki.local:png" /></p>'),
             (u'![](png "Optional title")',
-                '<p><xinclude:include xinclude:href="wiki.local:png" /></p>'),
+                '<p><xinclude:include html:title="Optional title" xinclude:href="wiki.local:png" /></p>'),
             (u'![remote image](http://static.moinmo.in/logos/moinmoin.png)',
                 '<p><object html:alt="remote image" xlink:href="http://static.moinmo.in/logos/moinmoin.png" /></p>'),
             (u'![Alt text](http://test.moinmo.in/png)',

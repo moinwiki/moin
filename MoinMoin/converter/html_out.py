@@ -424,7 +424,7 @@ class Converter(object):
         href = elem.get(xlink.href, None)
         attrib = {}
 
-        whitelist = ['width', 'height', 'alt', 'class', 'data-href', 'style']
+        whitelist = ['width', 'height', 'alt', 'class', 'data-href', 'style', 'title']
         for key in elem.attrib:
             if key.name in whitelist:
                 if key.name == 'style':
