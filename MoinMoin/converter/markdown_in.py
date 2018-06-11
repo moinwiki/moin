@@ -247,6 +247,8 @@ class Converter(object):
         url = Iri(element.attrib.get('src'))
         if element.attrib.get('alt'):
             attrib[html.alt] = element.attrib.get('alt')
+        if element.attrib.get('title'):
+            attrib[html.title_] = element.attrib.get('title')
         if url.scheme is None:
             # img tag
             target = Iri(scheme='wiki.local', path=element.attrib.get("src"), fragment=None)
