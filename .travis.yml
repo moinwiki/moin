@@ -5,4 +5,4 @@ os: linux
 dist: xenial
 
 install: pip install .
-script: py.test MoinMoin/
+script: pytest MoinMoin/
