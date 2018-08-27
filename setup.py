@@ -98,7 +98,7 @@ setup_args = dict(
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.11.2',  # wsgi toolkit
-        'pytest<3.0',  # unit tests
+        'pytest<4.0',  # unit tests
         'pytest-pep8<1.1',  # coding style checker (only tested with 1.0.x)
         'whoosh>=2.7.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs

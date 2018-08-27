@@ -17,10 +17,10 @@ from MoinMoin.auth import handle_login
 
 msg = check_environ()
 if msg:
-    pytest.skip(msg)
+    pytestmark = pytest.mark.skip(msg)
 del msg
 
-import ldap
+pytest.importorskip('ldap')
 
 
 class TestLDAPServer(LDAPTstBase):

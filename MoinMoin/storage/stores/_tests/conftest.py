@@ -47,28 +47,36 @@ def pytest_generate_tests(metafunc):
 
     if 'store' in argnames:
         klasses = 'BytesStore', 'FileStore'
+        argname = 'store'
     elif 'bst' in argnames:
         klasses = 'BytesStore',
+        argname = 'bst'
     elif 'fst' in argnames:
         klasses = 'FileStore',
+        argname = 'fst'
     else:
         klasses = None
+        argname = None
 
     if klasses is not None:
+        ids = []
+        argvalues = []
         for storename in STORES:
             for klass in klasses:
-                metafunc.addcall(
-                    id='{0}/{1}'.format(storename, klass),
-                    param=(storename, klass))
+                ids.append('{0}/{1}'.format(storename, klass))
+                argvalues.append((storename, klass))
+        metafunc.parametrize(argname, argvalues, ids=ids, indirect=True)
 
     multi_mark = getattr(metafunc.function, 'multi', None)
     if multi_mark is not None:
         # XXX: hack
+        ids = []
+        argvalues = []
         stores = multi_mark.kwargs['Store']
         for store in stores:
-            metafunc.addcall(id=store.__name__, funcargs={
-                'Store': store,
-            })
+            ids.append(store.__name__)
+            argvalues.append(store)
+        metafunc.parametrize('Store', argvalues, ids=ids)
 
 
 def make_store(request):

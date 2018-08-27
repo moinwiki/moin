@@ -30,23 +30,19 @@ class TestCleanInput(object):
 
 
 class TestAnchorNames(object):
-    def test_anchor_name_encoding(self):
-        tests = [
-            # text, expected output
-            # note: recent werkzeug encodes a "+" to %2B, giving .2B in the end
-            (u'\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
-            (u'level 2', 'level_2'),
-            (u'level_2', 'level_2'),
-            (u'', 'A'),
-            (u'123', 'A123'),
-            # make sure that a valid anchor is not modified:
-            (u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-',
-             u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-')
-        ]
-        for text, expected in tests:
-            yield self._check, text, expected
-
-    def _check(self, text, expected):
+    @pytest.mark.parametrize('text,expected', [
+        # text, expected output
+        # note: recent werkzeug encodes a "+" to %2B, giving .2B in the end
+        (u'\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
+        (u'level 2', 'level_2'),
+        (u'level_2', 'level_2'),
+        (u'', 'A'),
+        (u'123', 'A123'),
+        # make sure that a valid anchor is not modified:
+        (u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-',
+         u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-')
+    ])
+    def test_anchor_name_encoding(self, text, expected):
         encoded = wikiutil.anchor_name_from_text(text)
         assert expected == encoded
 
@@ -55,29 +51,23 @@ class TestRelativeTools(object):
     tests = [
         # test                      expected output
         # CHILD_PREFIX
-        (('MainPage', '/SubPage1'), 'MainPage/SubPage1'),
-        (('MainPage', '/SubPage1/SubPage2'), 'MainPage/SubPage1/SubPage2'),
-        (('MainPage/SubPage1', '/SubPage2/SubPage3'), 'MainPage/SubPage1/SubPage2/SubPage3'),
-        (('', '/OtherMainPage'), 'OtherMainPage'),  # strange
+        ('MainPage', '/SubPage1', 'MainPage/SubPage1'),
+        ('MainPage', '/SubPage1/SubPage2', 'MainPage/SubPage1/SubPage2'),
+        ('MainPage/SubPage1', '/SubPage2/SubPage3', 'MainPage/SubPage1/SubPage2/SubPage3'),
+        ('', '/OtherMainPage', 'OtherMainPage'),  # strange
         # PARENT_PREFIX
-        (('MainPage/SubPage', '../SisterPage'), 'MainPage/SisterPage'),
-        (('MainPage/SubPage1/SubPage2', '../SisterPage'), 'MainPage/SubPage1/SisterPage'),
-        (('MainPage/SubPage1/SubPage2', '../../SisterPage'), 'MainPage/SisterPage'),
-        (('MainPage', '../SisterPage'), 'SisterPage'),  # strange
+        ('MainPage/SubPage', '../SisterPage', 'MainPage/SisterPage'),
+        ('MainPage/SubPage1/SubPage2', '../SisterPage', 'MainPage/SubPage1/SisterPage'),
+        ('MainPage/SubPage1/SubPage2', '../../SisterPage', 'MainPage/SisterPage'),
+        ('MainPage', '../SisterPage', 'SisterPage'),  # strange
     ]
 
-    def test_abs_pagename(self):
-        for (current_page, relative_page), absolute_page in self.tests:
-            yield self._check_abs_pagename, current_page, relative_page, absolute_page
-
-    def _check_abs_pagename(self, current_page, relative_page, absolute_page):
+    @pytest.mark.parametrize('current_page,relative_page,absolute_page', tests)
+    def test_abs_pagename(self, current_page, relative_page, absolute_page):
         assert absolute_page == wikiutil.AbsItemName(current_page, relative_page)
 
-    def test_rel_pagename(self):
-        for (current_page, relative_page), absolute_page in self.tests:
-            yield self._check_rel_pagename, current_page, absolute_page, relative_page
-
-    def _check_rel_pagename(self, current_page, absolute_page, relative_page):
+    @pytest.mark.parametrize('current_page,relative_page,absolute_page', tests)
+    def test_rel_pagename(self, current_page, relative_page, absolute_page):
         assert relative_page == wikiutil.RelItemName(current_page, absolute_page)
 
 

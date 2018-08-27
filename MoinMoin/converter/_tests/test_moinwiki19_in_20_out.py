@@ -42,17 +42,17 @@ class TestConverter(object):
         self.conv_in = conv_in()
         self.conv_out = conv_out()
 
-    def test_link(self):
-        data = [
-            # Note: old style attachments are are supported in moinwiki_in so conversion to moin 2 markup is not necessary
-            # TODO: in a perfect world, moinwiki19_in should convert attachments
-            (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
-            # moin 1.9 to 2.0 conversion
-            (u'TestPage', '[[TestPage]]\n'),
-            # (u'../SisterPage', '[[../SisterPage]]\n'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        # Note: old style attachments are are supported in moinwiki_in so conversion to moin 2 markup is not necessary
+        # TODO: in a perfect world, moinwiki19_in should convert attachments
+        (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
+        # moin 1.9 to 2.0 conversion
+        (u'TestPage', '[[TestPage]]\n'),
+        # (u'../SisterPage', '[[../SisterPage]]\n'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_link(self, input, output):
+        self.do(input, output)
 
     def handle_input(self, input):
         i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)

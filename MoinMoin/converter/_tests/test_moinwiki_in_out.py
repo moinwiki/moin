@@ -40,139 +40,151 @@ class TestConverter(object):
         self.conv_in = conv_in()
         self.conv_out = conv_out()
 
-    def test_base(self):
-        data = [
-            (u'Text', 'Text\n'),
-            (u"Text\n\nText\n", 'Text\n\nText\n'),
-            (u"----\n-----\n------\n", '----\n-----\n------\n'),
-            (u"'''strong'''\n", "'''strong'''\n"),
-            (u"''emphasis''\n", "''emphasis''\n"),
-            # extraneous x required below to prevent IndexError, side effect of serializer
-            (u"{{{{{x\nblockcode\n}}}}}\n", "{{{{{x\nblockcode\n}}}}}\n"),
-            (u"`monospace`\n", '`monospace`\n'),
-            (u"--(stroke)--\n", '--(stroke)--\n'),
-            (u"__underline__\n", '__underline__\n'),
-            (u"~+larger+~\n", '~+larger+~\n'),
-            (u"~-smaller-~\n", '~-smaller-~\n'),
-            (u"^super^script\n", '^super^script\n'),
-            (u",,sub,,script\n", ',,sub,,script\n'),
-            (u"#ANY any", "#ANY any\n"),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        (u'Text', 'Text\n'),
+        (u"Text\n\nText\n", 'Text\n\nText\n'),
+        (u"----\n-----\n------\n", '----\n-----\n------\n'),
+        (u"'''strong'''\n", "'''strong'''\n"),
+        (u"''emphasis''\n", "''emphasis''\n"),
+        # extraneous x required below to prevent IndexError, side effect of serializer
+        (u"{{{{{x\nblockcode\n}}}}}\n", "{{{{{x\nblockcode\n}}}}}\n"),
+        (u"`monospace`\n", '`monospace`\n'),
+        (u"--(stroke)--\n", '--(stroke)--\n'),
+        (u"__underline__\n", '__underline__\n'),
+        (u"~+larger+~\n", '~+larger+~\n'),
+        (u"~-smaller-~\n", '~-smaller-~\n'),
+        (u"^super^script\n", '^super^script\n'),
+        (u",,sub,,script\n", ',,sub,,script\n'),
+        (u"#ANY any", "#ANY any\n"),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_base(self, input, output):
+        self.do(input, output)
 
-    def test_comments(self):
-        data = [
-            (u"/* simple inline */", u"/* simple inline */"),
-            (u"text /* text ''with '''markup''''' */ text", u"text /* text ''with '''markup''''' */ text"),
-            (u"## block 1\n\n## block 2", u"## block 1\n\n## block 2"),
+    data = [
+        (u"/* simple inline */", u"/* simple inline */"),
+        (u"text /* text ''with '''markup''''' */ text", u"text /* text ''with '''markup''''' */ text"),
+        (u"## block 1\n\n## block 2", u"## block 1\n\n## block 2"),
 
-            # \n is omitted from output because serialize method (see below) joins adjacent text children
-            (u"## block line 1\n## block line 2\n\n", u"## block line 1## block line 2\n\n"),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+        # \n is omitted from output because serialize method (see below) joins adjacent text children
+        (u"## block line 1\n## block line 2\n\n", u"## block line 1## block line 2\n\n"),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_comments(self, input, output):
+        self.do(input, output)
 
-    def test_macros(self):
-        data = [
-            (u"<<Anchor(anchorname)>>", '<<Anchor(anchorname)>>\n'),
-            # (u"<<MonthCalendar(,,12)>>", '<<MonthCalendar(,,12)>>\n'), # MonthCalendar macro not implemented
-            (u"<<FootNote(test)>>", "<<FootNote(test)>>\n"),
-            (u"<<TableOfContents(2)>>", "<<TableOfContents(2)>>\n"),
-            (u"<<TeudView()>>", "<<TeudView()>>\n"),
-            (u"||<<TeudView()>>||", "||<<TeudView()>>||\n"),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        (u"<<Anchor(anchorname)>>", '<<Anchor(anchorname)>>\n'),
+        # (u"<<MonthCalendar(,,12)>>", '<<MonthCalendar(,,12)>>\n'), # MonthCalendar macro not implemented
+        (u"<<FootNote(test)>>", "<<FootNote(test)>>\n"),
+        (u"<<TableOfContents(2)>>", "<<TableOfContents(2)>>\n"),
+        (u"<<TeudView()>>", "<<TeudView()>>\n"),
+        (u"||<<TeudView()>>||", "||<<TeudView()>>||\n"),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_macros(self, input, output):
+        self.do(input, output)
 
-    def test_link(self):
-        data = [
-            (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
-            (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]', '[[SomePage|{{/samplegraphic.png}}|target="_blank"]]\n'),
-            (u'[[../SisterPage|link text]]', '[[../SisterPage|link text]]\n'),
-            (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]', '[[http://static.moinmo.in/logos/moinmoin.png|{{/samplegraphic.png}}|target="_blank"]]\n'),
-            (u'[[http://moinmo.in/|MoinMoin Wiki|class="green dotted", accesskey=1]]', '[[http://moinmo.in/|MoinMoin Wiki|accesskey="1",class="green dotted"]]\n'),
-            # interwiki
-            # TODO: should this obsolete (1.9.x) form be made to work?
-            # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
-            (u'[[MeatBall:InterWiki]]', '[[MeatBall:InterWiki]]'),
-            (u'[[MeatBall:InterWiki|InterWiki page on MeatBall]]', '[[MeatBall:InterWiki|InterWiki page on MeatBall]]'),
+    data = [
+        (u'[[SomePage#subsection|subsection of Some Page]]', '[[SomePage#subsection|subsection of Some Page]]\n'),
+        (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]',
+         '[[SomePage|{{/samplegraphic.png}}|target="_blank"]]\n'),
+        (u'[[../SisterPage|link text]]', '[[../SisterPage|link text]]\n'),
+        (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]',
+         '[[http://static.moinmo.in/logos/moinmoin.png|{{/samplegraphic.png}}|target="_blank"]]\n'),
+        (u'[[http://moinmo.in/|MoinMoin Wiki|class="green dotted", accesskey=1]]',
+         '[[http://moinmo.in/|MoinMoin Wiki|accesskey="1",class="green dotted"]]\n'),
+        # interwiki
+        # TODO: should this obsolete (1.9.x) form be made to work?
+        # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
+        (u'[[MeatBall:InterWiki]]', '[[MeatBall:InterWiki]]'),
+        (u'[[MeatBall:InterWiki|InterWiki page on MeatBall]]', '[[MeatBall:InterWiki|InterWiki page on MeatBall]]'),
 
-            # TODO: attachments should be converted within import19.py and support removed from moin2
-            # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is appended to link and where it is ignored
-            (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]', '[[/HelpOnImages/pineapple.jpg?do=get|a pineapple]]\n'),
-            (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
-            # test parameters
-            (u'[[SomePage|Some Page|target=_blank]]', '[[SomePage|Some Page|target="_blank"]]\n'),
-            (u'[[SomePage|Some Page|download=MyItem,title=Download]]', '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
-            (u'[[SomePage|Some Page|download="MyItem",title="Download"]]', '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
-            (u'[[SomePage|Some Page|class=orange,accesskey=1]]', '[[SomePage|Some Page|accesskey="1",class="orange"]]\n'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+        # TODO: attachments should be converted within import19.py and support removed from moin2
+        # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is appended to link and where it is ignored
+        (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]',
+         '[[/HelpOnImages/pineapple.jpg?do=get|a pineapple]]\n'),
+        (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
+        # test parameters
+        (u'[[SomePage|Some Page|target=_blank]]', '[[SomePage|Some Page|target="_blank"]]\n'),
+        (u'[[SomePage|Some Page|download=MyItem,title=Download]]',
+         '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
+        (u'[[SomePage|Some Page|download="MyItem",title="Download"]]',
+         '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
+        (u'[[SomePage|Some Page|class=orange,accesskey=1]]', '[[SomePage|Some Page|accesskey="1",class="orange"]]\n'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_link(self, input, output):
+        self.do(input, output)
 
-    def test_list(self):
-        data = [
-            (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n", ' * A\n * B\n   1. C\n   1. D\n      I. E\n      I. F\n'),
-            (u" * A\n  1. C\n   I. E\n", ' * A\n   1. C\n      I. E\n'),
-            (u" * A\n  1. C\n  1. D\n", ' * A\n   1. C\n   1. D\n'),
-            (u" i. E\n i. F\n", " i. E\n i. F\n"),
-            (u" i.#11 K\n i. L\n", " i.#11 K\n i. L\n"),
-            (u" 1.#11 eleven\n 1. twelve\n", " 1.#11 eleven\n 1. twelve\n"),
-            (u" A:: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
-            (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n", ' * A\n * B\n   1. C\n   1. D\n      I. E\n      I. F\n'),
+        (u" * A\n  1. C\n   I. E\n", ' * A\n   1. C\n      I. E\n'),
+        (u" * A\n  1. C\n  1. D\n", ' * A\n   1. C\n   1. D\n'),
+        (u" i. E\n i. F\n", " i. E\n i. F\n"),
+        (u" i.#11 K\n i. L\n", " i.#11 K\n i. L\n"),
+        (u" 1.#11 eleven\n 1. twelve\n", " 1.#11 eleven\n 1. twelve\n"),
+        (u" A:: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
+        (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_list(self, input, output):
+        self.do(input, output)
 
-    def test_table(self):
-        data = [
-            (u"||A||B||<|2>D||\n||||C||\n",
-             u'||A||B||<rowspan="2">D||\n||<colspan="2">C||\n'),
-            (u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n",
-             u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n"),
-            (u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<-2>test||\n||||test||",
-             u'||<rowspan="2"> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<colspan="2">test||\n||<colspan="2">test||\n'),
-            (u'|| narrow ||<99%> wide ||',
-             u'|| narrow ||<style="width: 99%;"> wide ||\n'),
-            (u'|| narrow ||<:> wide ||',
-             u'|| narrow ||<style="text-align: center;"> wide ||\n'),
-            (u'||table 1||\n\n||table 2||',
-             u'||table 1||\n\n||table 2||'),
-            (u'||<#FF8080> red ||<#80FF80> green ||<#8080FF> blue ||',
-             u'||<style="background-color: #FF8080;"> red ||<style="background-color: #80FF80;"> green ||<style="background-color: #8080FF;"> blue ||\n'),
-            (u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||',
-             u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||\n'),
-            (u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||',
-             u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||\n'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        (u"||A||B||<|2>D||\n||||C||\n",
+         u'||A||B||<rowspan="2">D||\n||<colspan="2">C||\n'),
+        (u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n",
+         u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n"),
+        (
+        u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<-2>test||\n||||test||",
+        u'||<rowspan="2"> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<colspan="2">test||\n||<colspan="2">test||\n'),
+        (u'|| narrow ||<99%> wide ||',
+         u'|| narrow ||<style="width: 99%;"> wide ||\n'),
+        (u'|| narrow ||<:> wide ||',
+         u'|| narrow ||<style="text-align: center;"> wide ||\n'),
+        (u'||table 1||\n\n||table 2||',
+         u'||table 1||\n\n||table 2||'),
+        (u'||<#FF8080> red ||<#80FF80> green ||<#8080FF> blue ||',
+         u'||<style="background-color: #FF8080;"> red ||<style="background-color: #80FF80;"> green ||<style="background-color: #8080FF;"> blue ||\n'),
+        (
+        u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||',
+        u'|| normal ||<style="font-weight: bold;"> bold ||<style="color: #FF0000;"> red ||<style="color: #FF0000; font-weight: bold;"> boldred ||\n'),
+        (
+        u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||',
+        u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||\n'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_table(self, input, output):
+        self.do(input, output)
 
-    def test_object(self):
-        data = [
-            (u'{{png}}', '{{png}}\n'),
-            (u'{{png|png}}', '{{png|png}}\n'),  # alt text same as default test
-            (u'{{png|my png}}', '{{png|my png}}\n'),
-            # output attributes will always be quoted, even if input is not quoted
-            (u'{{png|my png|width=100}}', '{{png|my png|width="100"}}\n'),
-            (u'{{png|my png|&w=100"}}', '{{png|my png|&w=100}}\n'),
-            (u'{{png||width="100"}}', '{{png||width="100"}}\n'),
-            (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
-            (u"{{http://static.moinmo.in/logos/moinmoin.png}}\n", '{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
-            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n', '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
-            # output sequence of height, width, class may not be the same as input, so here we test only one attribute at a time to avoid random test failures
-            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|height="150"}}\n', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|height="150"}}\n'),
-            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width="100"}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width="100"}}\n'),
-            (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|class="right"}}', '{{http://static.moinmo.in/logos/moinmoin.png|alt text|class="right"}}\n'),
-            # Note: old style attachments are converted to new style sub-item syntax
-            (u'{{attachment:image.png}}', '{{/image.png}}\n'),
-            (u'{{attachment:image.png|alt text}}', '{{/image.png|alt text}}\n'),
-            (u'{{attachment:image.png|alt text|height="150"}}', '{{/image.png|alt text|height="150"}}\n'),
-
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        (u'{{png}}', '{{png}}\n'),
+        (u'{{png|png}}', '{{png|png}}\n'),  # alt text same as default test
+        (u'{{png|my png}}', '{{png|my png}}\n'),
+        # output attributes will always be quoted, even if input is not quoted
+        (u'{{png|my png|width=100}}', '{{png|my png|width="100"}}\n'),
+        (u'{{png|my png|&w=100"}}', '{{png|my png|&w=100}}\n'),
+        (u'{{png||width="100"}}', '{{png||width="100"}}\n'),
+        (u"{{drawing:anywikitest.adraw}}", '{{drawing:anywikitest.adraw}}\n'),
+        (u"{{http://static.moinmo.in/logos/moinmoin.png}}\n", '{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
+        (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n',
+         '{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
+        # output sequence of height, width, class may not be the same as input, so here we test only one attribute at a time to avoid random test failures
+        (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|height="150"}}\n',
+         '{{http://static.moinmo.in/logos/moinmoin.png|alt text|height="150"}}\n'),
+        (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|width="100"}}',
+         '{{http://static.moinmo.in/logos/moinmoin.png|alt text|width="100"}}\n'),
+        (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text|class="right"}}',
+         '{{http://static.moinmo.in/logos/moinmoin.png|alt text|class="right"}}\n'),
+        # Note: old style attachments are converted to new style sub-item syntax
+        (u'{{attachment:image.png}}', '{{/image.png}}\n'),
+        (u'{{attachment:image.png|alt text}}', '{{/image.png|alt text}}\n'),
+        (u'{{attachment:image.png|alt text|height="150"}}', '{{/image.png|alt text|height="150"}}\n'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_object(self, input, output):
+        self.do(input, output)
 
     def test_page(self):
         pytest.skip("please help fixing moin wiki round trip tests")  # XXX TODO
