@@ -39,7 +39,7 @@ scenarios = [
 
 
 def pytest_generate_tests(metafunc):
-    metafunc.addcall(id='Simple->Simple', param=('Simple', 'Simple'))
+    metafunc.parametrize('source,target', [('Simple', 'Simple'), ], ids=['Simple->Simple', ], indirect=True)
 
 
 @pytest.fixture

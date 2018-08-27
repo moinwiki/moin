@@ -13,8 +13,13 @@ from MoinMoin.converter.smiley import Converter, moin_page, ET
 
 
 def pytest_generate_tests(metafunc):
+    ids = []
+    argvalues = []
     for name, (input, query) in sorted(test_data.items()):
-        metafunc.addcall(id=name, funcargs={'input': input, 'query': query})
+        ids.append(name)
+        argvalues.append((input, query))
+    metafunc.parametrize('input,query', argvalues, ids=ids)
+
 
 output_namespaces = {
     moin_page.namespace: '',
