@@ -17,7 +17,7 @@ from MoinMoin._tests import check_connection
 try:
     check_connection(1978)
 except Exception as err:
-    pytest.skip(str(err))
+    pytestmark = pytest.mark.skip(str(err))
 
 
 from ..kt import BytesStore, FileStore
