@@ -55,24 +55,29 @@ class TestConverter(object):
         self.conv_in = conv_in()
         self.conv_out = conv_out()
 
-    def test_parsers(self):
-        data = [
-            # no arguments
-            (u'{{{#!python\nimport sys\n}}}', u'{{{#!python\nimport sys\n}}}'),
-            (u'{{{#!creole\n... **bold** ...\n}}}', u'{{{#!creole\n... **bold** ...\n}}}'),
-            # old style arguments
-            (u'{{{#!csv ,\nA,B\n1,2\n}}}', u'{{{#!csv ,\nA,B\n1,2\n}}}'),
-            (u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}', u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}'),
-            (u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}', u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}'),
-            # new style arguments
-            (u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}', u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}'),
-            (u'{{{#!wiki (style="color: green")\ngreen\n}}}', u'{{{#!wiki (style="color: green")\ngreen\n}}}'),
-            (u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}', u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}'),
-            # multi-level
-            (u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}', u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        # no arguments
+        (u'{{{#!python\nimport sys\n}}}', u'{{{#!python\nimport sys\n}}}'),
+        (u'{{{#!creole\n... **bold** ...\n}}}', u'{{{#!creole\n... **bold** ...\n}}}'),
+        # old style arguments
+        (u'{{{#!csv ,\nA,B\n1,2\n}}}', u'{{{#!csv ,\nA,B\n1,2\n}}}'),
+        (u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}',
+         u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}'),
+        (u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}',
+         u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}'),
+        # new style arguments
+        (u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}',
+         u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}'),
+        (u'{{{#!wiki (style="color: green")\ngreen\n}}}', u'{{{#!wiki (style="color: green")\ngreen\n}}}'),
+        (u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}',
+         u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}'),
+        # multi-level
+        (u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}',
+         u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_parsers(self, input, output):
+        self.do(input, output)
 
     def handle_input(self, input):
         i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)

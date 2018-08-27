@@ -83,20 +83,15 @@ class TestParamParsing(object):
             for val in result[2]:
                 assert val is None or isinstance(val, unicode)
 
-    def testDoubleNameValueSeparator(self):
-        tests = [
-            # regular and quoting tests
-            (u'd==4,=3 ', ([], {u'd': u'=4', u'': u'3'}, [])),
-            (u'===a,b,c,d', ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
-            (u'a,b,===,c,d', ([u'a', u'b'], {u'': u'=='}, [u'c', u'd'])),
-        ]
-
-        def _check(a, e):
-            r = paramparser.parse_quoted_separated(a)
-            assert r == e
-
-        for args, expected in tests:
-            yield _check, args, expected
+    @pytest.mark.parametrize('args,expected', [
+        # regular and quoting tests
+        (u'd==4,=3 ', ([], {u'd': u'=4', u'': u'3'}, [])),
+        (u'===a,b,c,d', ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
+        (u'a,b,===,c,d', ([u'a', u'b'], {u'': u'=='}, [u'c', u'd'])),
+    ])
+    def testDoubleNameValueSeparator(self, args, expected):
+        result = paramparser.parse_quoted_separated(args)
+        assert result == expected
 
     def testNoNameValue(self):
         abcd = [u'a', u'b', u'c', u'd']
@@ -128,181 +123,151 @@ class TestParamParsing(object):
         pytest.raises(ValueError, result.parse_argument, u'7')
         pytest.raises(ValueError, result.parse_argument, u'mm')
 
-    def testExtendedParser(self):
-        tests = [
-            (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-            (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
-            (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
-            (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
-            (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
-            (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
-            (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
-            (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
-            (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
-            (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
-            (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
-            (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
-            (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
-            (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
-            (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
-            (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
-            (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
-            (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
-            (u'a:b:c d:e:f', None, u':', [(u'a', u'b:c'), (u'd', 'e:f')]),
-            (u'a:b:c:d', None, u':', [(u'a', u'b:c:d')]),
-        ]
+    @pytest.mark.parametrize('args,sep,kwsep,expected', [
+        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
+        (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
+        (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
+        (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
+        (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
+        (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
+        (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
+        (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
+        (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
+        (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
+        (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
+        (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
+        (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
+        (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
+        (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
+        (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
+        (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
+        (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
+        (u'a:b:c d:e:f', None, u':', [(u'a', u'b:c'), (u'd', 'e:f')]),
+        (u'a:b:c:d', None, u':', [(u'a', u'b:c:d')]),
+    ])
+    def testExtendedParser(self, args, sep, kwsep, expected):
+        res = paramparser.parse_quoted_separated_ext(args, sep, kwsep)
+        assert res == expected
 
-        def _check(args, sep, kwsep, expected):
-            res = paramparser.parse_quoted_separated_ext(args, sep, kwsep)
-            assert res == expected
+    @pytest.mark.parametrize('args,sep,kwsep,expected', [
+        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
+        (u'("a", "b", "c")', u',', None, [[u'(', u'a', u'b', u'c']]),
+        (u'("a"("b", "c"))', u',', None, [[u'(', u'a', [u'(', u'b', u'c']]]),
+        (u'("a"("b)))", "c"))', u',', None, [[u'(', u'a', [u'(', u'b)))', u'c']]]),
+        (u'("a"("b>>> ( ab )>", "c"))', u',', None, [[u'(', u'a', [u'(', u'b>>> ( ab )>', u'c']]]),
+        (u'("a" ("b" "c"))', None, None, [[u'(', u'a', [u'(', u'b', u'c']]]),
+        (u'("a"("b", "c") ) ', u',', None, [[u'(', u'a', [u'(', u'b', u'c']]]),
+        (u'("a", <"b", ("c")>)', u',', None, [[u'(', u'a', [u'<', u'b', [u'(', u'c']]]]),
+        (u',,,(a, b, c)', u',', None, [None, None, None, [u'(', u'a', u'b', u'c']]),
+    ])
+    def testExtendedParserBracketing(self, args, sep, kwsep, expected):
+        res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, brackets=(u'<>', u'()'))
+        assert res == expected
 
-        for test in tests:
-            yield [_check] + list(test)
+    @pytest.mark.parametrize('args,quotes,expected', [
+        (u'"a b" -a b-', u'"', [u'a b', u'-a', u'b-']),
+        (u'"a b" -a b-', u"-", [u'"a', u'b"', u'a b']),
+        (u'"a b" -a b-', u'"-', [u'a b', u'a b']),
+        (u'"a- b" -a b-', u'"-', [u'a- b', u'a b']),
+        (u'"a- b" -a" b-', u'"-', [u'a- b', u'a" b']),
+    ])
+    def testExtendedParserQuoting(self, args, quotes, expected):
+        res = paramparser.parse_quoted_separated_ext(args, quotes=quotes)
+        assert res == expected
 
-    def testExtendedParserBracketing(self):
-        tests = [
-            (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-            (u'("a", "b", "c")', u',', None, [[u'(', u'a', u'b', u'c']]),
-            (u'("a"("b", "c"))', u',', None, [[u'(', u'a', [u'(', u'b', u'c']]]),
-            (u'("a"("b)))", "c"))', u',', None, [[u'(', u'a', [u'(', u'b)))', u'c']]]),
-            (u'("a"("b>>> ( ab )>", "c"))', u',', None, [[u'(', u'a', [u'(', u'b>>> ( ab )>', u'c']]]),
-            (u'("a" ("b" "c"))', None, None, [[u'(', u'a', [u'(', u'b', u'c']]]),
-            (u'("a"("b", "c") ) ', u',', None, [[u'(', u'a', [u'(', u'b', u'c']]]),
-            (u'("a", <"b", ("c")>)', u',', None, [[u'(', u'a', [u'<', u'b', [u'(', u'c']]]]),
-            (u',,,(a, b, c)', u',', None, [None, None, None, [u'(', u'a', u'b', u'c']]),
-        ]
+    @pytest.mark.parametrize('args,sep,kwsep,expected', [
+        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
+        (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
+        (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
+        (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
+        (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
+        (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
+        (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
+        (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
+        (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
+        (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
+        (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
+        (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
+        (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
+        (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
+        (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
+        (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
+        (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
+        (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
+        (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
+        (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
+        (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
+    ])
+    def testExtendedParserMultikey(self, args, sep, kwsep, expected):
+        res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, multikey=True)
+        assert res == expected
 
-        def _check(args, sep, kwsep, expected):
-            res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, brackets=(u'<>', u'()'))
-            assert res == expected
+    P = paramparser.ParserPrefix('+')
+    M = paramparser.ParserPrefix('-')
+    @pytest.mark.parametrize('args,sep,kwsep,expected', [
+        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
+        (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
+        (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
+        (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
+        (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
+        (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
+        (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
+        (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
+        (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
+        (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
+        (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
+        (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
+        (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
+        (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
+        (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
+        (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
+        (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
+        (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
+        (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
+        (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
+        (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
+        (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
+        (u'-a:b:d', None, u':', [(M, u'a', u'b', u'd')]),
+        (u'"-a:b:d"', None, u':', [(u'-a:b:d')]),
+        (u'-"a:b:d"', None, u':', [(M, u'a:b:d')]),
+        (u'-a:"b:c":"d e f g"', None, u':', [(M, u'a', u'b:c', u'd e f g')]),
+        (u'+-a:b:d', None, u':', [(P, u'-a', u'b', u'd')]),
+        (u'-"+a:b:d"', None, u':', [(M, u'+a:b:d')]),
+        # bit of a weird case...
+        (u'-+"a:b:d"', None, u':', [(M, u'+"a', u'b', u'd"')]),
+        (u'-a:"b:c" a +b', None, u':', [(M, u'a', u'b:c'), u'a', (P, u'b')]),
+    ])
+    def testExtendedParserPrefix(self, args, sep, kwsep, expected):
+        res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, multikey=True, prefixes='-+')
+        assert res == expected
 
-        for test in tests:
-            yield [_check] + list(test)
-
-    def testExtendedParserQuoting(self):
-        tests = [
-            (u'"a b" -a b-', u'"', [u'a b', u'-a', u'b-']),
-            (u'"a b" -a b-', u"-", [u'"a', u'b"', u'a b']),
-            (u'"a b" -a b-', u'"-', [u'a b', u'a b']),
-            (u'"a- b" -a b-', u'"-', [u'a- b', u'a b']),
-            (u'"a- b" -a" b-', u'"-', [u'a- b', u'a" b']),
-        ]
-
-        def _check(args, quotes, expected):
-            res = paramparser.parse_quoted_separated_ext(args, quotes=quotes)
-            assert res == expected
-
-        for test in tests:
-            yield [_check] + list(test)
-
-    def testExtendedParserMultikey(self):
-        tests = [
-            (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-            (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
-            (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
-            (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
-            (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
-            (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
-            (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
-            (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
-            (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
-            (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
-            (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
-            (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
-            (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
-            (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
-            (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
-            (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
-            (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
-            (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
-            (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
-            (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
-            (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
-        ]
-
-        def _check(args, sep, kwsep, expected):
-            res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, multikey=True)
-            assert res == expected
-
-        for test in tests:
-            yield [_check] + list(test)
-
-    def testExtendedParserPrefix(self):
-        P = paramparser.ParserPrefix('+')
-        M = paramparser.ParserPrefix('-')
-        tests = [
-            (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-            (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
-            (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
-            (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
-            (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
-            (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
-            (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-            (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
-            (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
-            (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
-            (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
-            (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
-            (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
-            (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
-            (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
-            (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
-            (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
-            (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
-            (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
-            (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
-            (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
-            (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
-            (u'-a:b:d', None, u':', [(M, u'a', u'b', u'd')]),
-            (u'"-a:b:d"', None, u':', [(u'-a:b:d')]),
-            (u'-"a:b:d"', None, u':', [(M, u'a:b:d')]),
-            (u'-a:"b:c":"d e f g"', None, u':', [(M, u'a', u'b:c', u'd e f g')]),
-            (u'+-a:b:d', None, u':', [(P, u'-a', u'b', u'd')]),
-            (u'-"+a:b:d"', None, u':', [(M, u'+a:b:d')]),
-            # bit of a weird case...
-            (u'-+"a:b:d"', None, u':', [(M, u'+"a', u'b', u'd"')]),
-            (u'-a:"b:c" a +b', None, u':', [(M, u'a', u'b:c'), u'a', (P, u'b')]),
-        ]
-
-        def _check(args, sep, kwsep, expected):
-            res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, multikey=True, prefixes='-+')
-            assert res == expected
-
-        for test in tests:
-            yield [_check] + list(test)
-
-    def testExtendedParserBracketingErrors(self):
-        UCE = paramparser.BracketUnexpectedCloseError
-        MCE = paramparser.BracketMissingCloseError
-        tests = [
-            (u'("a", "b", "c"', u',', None, MCE),
-            (u'("a"("b", "c")', u',', None, MCE),
-            (u'("a"<"b", "c")>', u',', None, UCE),
-            (u')("a" ("b" "c"))', None, None, UCE),
-            (u'("a", ("b", "c">))', u',', None, UCE),
-            (u'("a", ("b", <"c">>))', u',', None, UCE),
-            (u'(<(<)>)>', u',', None, UCE),
-        ]
-
-        def _check(args, sep, kwsep, err):
-            pytest.raises(err,
-                          paramparser.parse_quoted_separated_ext,
-                          args, sep, kwsep,
-                          brackets=(u'<>', u'()'))
-
-        for test in tests:
-            yield [_check] + list(test)
+    UCE = paramparser.BracketUnexpectedCloseError
+    MCE = paramparser.BracketMissingCloseError
+    @pytest.mark.parametrize('args,sep,kwsep,err', [
+        (u'("a", "b", "c"', u',', None, MCE),
+        (u'("a"("b", "c")', u',', None, MCE),
+        (u'("a"<"b", "c")>', u',', None, UCE),
+        (u')("a" ("b" "c"))', None, None, UCE),
+        (u'("a", ("b", "c">))', u',', None, UCE),
+        (u'("a", ("b", <"c">>))', u',', None, UCE),
+        (u'(<(<)>)>', u',', None, UCE),
+    ])
+    def testExtendedParserBracketingErrors(self, args, sep, kwsep, err):
+        pytest.raises(err,
+                      paramparser.parse_quoted_separated_ext,
+                      args, sep, kwsep,
+                      brackets=(u'<>', u'()'))
 
 
 class TestArgGetters(object):

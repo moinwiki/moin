@@ -27,26 +27,26 @@ class TestConverter(object):
     def setup_class(self):
         self.conv = ConverterFormat19()
 
-    def test_freelink(self):
-        data = [
-            (u'MoinMoin',
-                '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
-            (u'!MoinMoin',
-                '<page><body><p>MoinMoin</p></body></page>'),
-            (u'Self:FrontPage',
-                '<page><body><p><a xlink:href="wiki://Self/FrontPage">FrontPage</a></p></body></page>'),
-            (u'http://moinmo.in/',
-                '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
-            # email tests
-            (u'mailto:foo@bar.baz',
-                '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>'),
-            (u'foo@bar.baz',
-                '<page><body><p><a xlink:href="mailto:foo@bar.baz">foo@bar.baz</a></p></body></page>'),
-            (u'foo@bar',  # 1.9 requires domain
-                '<page><body><p>foo@bar</p></body></page>'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    data = [
+        (u'MoinMoin',
+         '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
+        (u'!MoinMoin',
+         '<page><body><p>MoinMoin</p></body></page>'),
+        (u'Self:FrontPage',
+         '<page><body><p><a xlink:href="wiki://Self/FrontPage">FrontPage</a></p></body></page>'),
+        (u'http://moinmo.in/',
+         '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
+        # email tests
+        (u'mailto:foo@bar.baz',
+         '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>'),
+        (u'foo@bar.baz',
+         '<page><body><p><a xlink:href="mailto:foo@bar.baz">foo@bar.baz</a></p></body></page>'),
+        (u'foo@bar',  # 1.9 requires domain
+         '<page><body><p>foo@bar</p></body></page>'),
+    ]
+    @pytest.mark.parametrize('input,output', data)
+    def test_freelink(self, input, output):
+        self.do(input, output)
 
     def serialize(self, elem, **options):
         from StringIO import StringIO
