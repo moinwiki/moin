@@ -10,6 +10,8 @@ from __future__ import absolute_import, division
 
 from StringIO import StringIO
 
+import pytest
+
 from ..indexing import IndexingMiddleware, WHOOSH_FILESTORAGE
 from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
@@ -40,12 +42,14 @@ def pytest_generate_tests(metafunc):
     metafunc.addcall(id='Simple->Simple', param=('Simple', 'Simple'))
 
 
-def pytest_funcarg__source(request):
+@pytest.fixture
+def source(request):
     # scenario
     return make_middleware(request)
 
 
-def pytest_funcarg__target(request):
+@pytest.fixture
+def target(request):
     # scenario
     return make_middleware(request)
 
