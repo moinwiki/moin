@@ -8,8 +8,10 @@ MoinMoin - PDF input converter
 
 from __future__ import absolute_import, division
 
-from pdfminer.pdfparser import PDFDocument, PDFParser
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter, process_pdf
+from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfdevice import PDFDevice
 from pdfminer.converter import TextConverter
 from pdfminer.cmapdb import CMapDB
@@ -59,7 +61,9 @@ class PDFIndexingConverter(object):
         rsrcmgr = PDFResourceManager()
         device = UnicodeConverter(rsrcmgr, laparams=LAPARAMS)
         try:
-            process_pdf(rsrcmgr, device, rev)
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
+            for page in PDFPage.get_pages(rev):
+                interpreter.process_page(page)
             return device.read_result()
         finally:
             device.close()

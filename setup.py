@@ -103,7 +103,7 @@ setup_args = dict(
         'whoosh>=2.7.0',  # needed for indexed search
         'sphinx>=1.1',  # needed to build the docs
         'sphinx_rtd_theme>=0.1.9',  # mobile ready theme
-        'pdfminer==20110515',  # pdf -> text/plain conversion, XXX 20131113 fails see #385
+        'pdfminer',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
