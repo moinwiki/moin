@@ -89,15 +89,18 @@ def make_store(request):
     return store
 
 
-def pytest_funcarg__bst(request):
+@pytest.fixture
+def bst(request):
     return make_store(request)
 
 
-def pytest_funcarg__fst(request):
+@pytest.fixture
+def fst(request):
     return make_store(request)
 
 
-def pytest_funcarg__store(request):
+@pytest.fixture
+def store(request):
     store = make_store(request)
     storename, kind = request.param
     if kind == 'FileStore':
