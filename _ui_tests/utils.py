@@ -9,17 +9,15 @@ import urllib
 
 import pytest
 
-try:
-    from selenium import webdriver
-except ImportError:
-    pytest.skip('selenium needs to be installed for this test')
+pytest.importorskip('selenium')
+webdriver = selenium.webdriver
 
 import config
 
 try:
     f = urllib.urlopen(config.BASE_URL)
 except IOError:
-    pytest.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
+    pytestmark = pytest.mark.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
 
 import driver_register
 
