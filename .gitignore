@@ -25,6 +25,7 @@ HTML/
 .DS_Store
 .cache/
 .pytest_cache/
+.tox/
 .idea/
 .sqlite
 *.orig
