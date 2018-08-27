@@ -24,6 +24,7 @@ HTML/
 .settings
 .DS_Store
 .cache/
+.pytest_cache/
 .idea/
 .sqlite
 *.orig
