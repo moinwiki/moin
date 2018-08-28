@@ -402,7 +402,7 @@ class Converter(object):
 
         whitelist = {html.width: 'width', html.height: 'height', html.class_: 'class'}
         options = []
-        for attr, value in elem.attrib.items():
+        for attr, value in sorted(elem.attrib.items()):
             if attr in whitelist.keys():
                 options.append('{0}="{1}"'.format(whitelist[attr], value))
 

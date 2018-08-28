@@ -99,7 +99,7 @@ class TestConverter(Base):
          '{{attachment:image.png|alt text}}'),
         (
         u'<page:object xlink:href="attachment:image.png" html:width="100" html:height="150" html:class="left">alt text</page:object>',
-        '{{attachment:image.png|alt text|height="150" width="100" class="left"}}'),
+        '{{attachment:image.png|alt text|class="left" height="150" width="100"}}'),
     ]
     @pytest.mark.parametrize('input,output', data)
     def test_object(self, input, output):
