@@ -169,11 +169,11 @@ class TestConverter(object):
 
     data = [
         (
-        u'.. image:: png\n   :height: 100\n   :width: 200\n   :scale: 50\n   :alt: alternate text png\n   :align: center',
-        '\n.. image:: png\n   :height: 50\n   :width: 100\n   :alt: alternate text png\n   :align: center\n'),
+        u'.. image:: png\n   :scale: 50\n   :alt: alternate text png\n   :align: center\n   :height: 100\n   :width: 200\n',
+        '\n.. image:: png\n   :alt: alternate text png\n   :align: center\n   :height: 50\n   :width: 100\n'),
         (
-        u'.. figure:: png\n   :height: 100\n   :width: 200\n   :scale: 50\n   :alt: alternate text png\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
-        '\n.. figure:: png\n   :height: 50\n   :width: 100\n   :alt: alternate text png\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n'),
+        u'.. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n   :scale: 50\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
+        '\n.. figure:: png\n   :alt: alternate text png\n   :height: 50\n   :width: 100\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n'),
     ]
     @pytest.mark.parametrize('input,output', data)
     def test_object(self, input, output):

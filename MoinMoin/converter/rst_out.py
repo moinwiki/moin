@@ -496,7 +496,7 @@ class Converter(object):
             href = elem.attrib[xinclude.href]
             href = href.split(u'wiki.local:')[-1]
             ret = [u'\n.. image:: {0}'.format(href)]
-        for key, val in whitelist.items():
+        for key, val in sorted(whitelist.items()):
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))
         if len(ret) == 1:
