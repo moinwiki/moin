@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright: 2001 by Juergen Hermann <jh@web.de>
-# Copyright: 2001-2012 MoinMoin:ThomasWaldmann
+# Copyright: 2001-2018 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import os
