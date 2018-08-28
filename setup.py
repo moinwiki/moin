@@ -10,7 +10,7 @@ import MoinMoin  # validate python version
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(basedir, 'README.txt')) as f:
+with open(os.path.join(basedir, 'README.rst')) as f:
     long_description = f.read()
 
 
