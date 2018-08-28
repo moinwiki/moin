@@ -20,9 +20,9 @@ from __future__ import absolute_import, division
 
 import pytest
 import py
+
 import MoinMoin.log
 import MoinMoin
-
 from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
 from MoinMoin._tests import wikiconfig
 from MoinMoin.storage import create_simple_mapping
@@ -80,18 +80,3 @@ def app_ctx(cfg):
 @pytest.fixture(autouse=True)
 def app(app_ctx):
     return app_ctx[0]
-
-
-def pytest_pycollect_makemodule(path, parent):
-    return Module(path, parent=parent)
-
-
-def pytest_report_header(config):
-    return "The tests here are implemented only for pytest-2"
-
-
-class Module(pytest.collect.Module):
-    def run(self, *args, **kwargs):
-        if coverage is not None:
-            coverage_modules.update(getattr(self.obj, 'coverage_modules', []))
-        return super(Module, self).run(*args, **kwargs)
