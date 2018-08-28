@@ -62,9 +62,13 @@ import pygments.lexers
 for name, short, patterns, mime in pygments.lexers.get_all_lexers():
     for pattern in patterns:
         if pattern.startswith('*.') and mime:
+            if pattern in ('*.txt', ):
+                # there are some pygments lexers that claim *.txt for different
+                # stuff than text/plain, we do not want that.
+                continue
             MIMETYPES_MORE[pattern[1:]] = mime[0]
 
-[mimetypes.add_type(mimetype, ext, True) for ext, mimetype in MIMETYPES_MORE.items()]
+[mimetypes.add_type(mimetype, ext, True) for ext, mimetype in sorted(MIMETYPES_MORE.items())]
 
 MIMETYPES_sanitize_mapping = {
     # this stuff is text, but got application/* for unknown reasons
