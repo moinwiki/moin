@@ -28,7 +28,7 @@ def test_datetimeunix():
     assert d.value == timestamp
     assert d.u == dt_u
 
-    incorrect_timestamp = 999999999999
+    incorrect_timestamp = 99999999999999999
     d = DateTimeUNIX(incorrect_timestamp)
     assert d.value is None
     assert d.u == unicode(incorrect_timestamp)
