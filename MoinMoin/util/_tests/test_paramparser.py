@@ -616,7 +616,6 @@ class TestExtensionInvoking(object):
 
         pytest.raises(TypeError, ief, hex, u'15')
         pytest.raises(TypeError, ief, cmp, u'15')
-        pytest.raises(AttributeError, ief, unicode, u'15')
 
     def testAllDefault(self):
         ief = paramparser.invoke_extension_function
