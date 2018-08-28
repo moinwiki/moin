@@ -78,12 +78,7 @@ setup_args = dict(
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.11.2',  # wsgi toolkit
-        'tox',  # test automation
-        'pytest<4.0',  # unit tests
-        'pytest-pep8<1.1',  # coding style checker (only tested with 1.0.x)
         'whoosh>=2.7.0',  # needed for indexed search
-        'sphinx>=1.1',  # needed to build the docs
-        'sphinx_rtd_theme>=0.1.9',  # mobile ready theme
         'pdfminer',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
