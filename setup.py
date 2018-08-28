@@ -49,17 +49,6 @@ setup_args = dict(
 
     packages=find_packages(exclude=['_tests', ]),
 
-    # package_dir={'MoinMoin.translations': 'MoinMoin/translations',
-    #             'MoinMoin.static': 'MoinMoin/static',
-    #             'MoinMoin.themes.modernized': 'MoinMoin/themes/modernized',
-    #             'MoinMoin.themes.basic': 'MoinMoin/themes/basic',
-    #             'MoinMoin.themes.basic': 'MoinMoin/themes/topside',
-    #             'MoinMoin.themes.basic': 'MoinMoin/themes/topside_cms',
-    #             'MoinMoin.templates': 'MoinMoin/templates',
-    #             'MoinMoin.apps.admin.templates': 'MoinMoin/apps/admin/templates',
-    #             'MoinMoin.apps.misc.templates': 'MoinMoin/apps/misc/templates',
-    #            },
-
     package_data={
         'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
         'MoinMoin.static': ['*', ],
@@ -73,15 +62,6 @@ setup_args = dict(
     },
     include_package_data=True,
     zip_safe=False,
-    dependency_links=[
-        # 'https://github.com/mitsuhiko/werkzeug/tarball/master#egg=Werkzeug-0.9.2-dev',
-        # 'https://github.com/mitsuhiko/flask/tarball/master#egg=Flask-0.11-dev',
-        # 'https://bitbucket.org/thomaswaldmann/whoosh/get/default.tar.gz#egg=Whoosh-2.5.99dev',
-        # use a pre-release and fixed flask-themes 0.2.0 as 0.1.3 does not work for flask 0.8.x:
-        # 'https://bitbucket.org/thomaswaldmann/flask-themes/get/a87399231886.tar.gz#egg=Flask-Themes-0.2.0',
-        # 'https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0',
-        # 'https://bitbucket.org/thomaswaldmann/flatland-fixes/get/bb7ecc64bf96.tar.gz#egg=flatland-0.0.3',
-    ],
     install_requires=[
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.8.1',  # reST markup processing
@@ -147,8 +127,8 @@ setup_args = dict(
             ('MoinMoin/**.py', 'python', None),
         ],
     },
-
 )
+
 
 if __name__ == '__main__':
     setup(**setup_args)
