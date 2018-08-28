@@ -20,10 +20,10 @@ setup_args = dict(
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
     long_description=long_description,
     author="Juergen Hermann et al.",
-    author_email="moin-user@lists.sourceforge.net",
+    author_email="moin-user@python.org",
     # maintainer(_email) not active because distutils/register can't handle author and maintainer at once
-    download_url='http://static.moinmo.in/files/moin-%s.tar.gz' % (MoinMoin.version, ),
-    url="http://moinmo.in/",
+    download_url='https://static.moinmo.in/files/moin-%s.tar.gz' % (MoinMoin.version, ),
+    url="https://moinmo.in/",
     license="GNU GPL v2 (or any later version)",
     keywords="wiki web",
     platforms="any",
