@@ -11,8 +11,7 @@ You can get free support and information here:
   of information about moin2 and also links to all sorts of moin2 resources:
   https://moinmo.in/MoinMoin2.0
 * on our mailing list, see https://moinmo.in/MoinMoinMailingLists
-* on our issue tracker: https://bitbucket.org/thomaswaldmann/moin-2.0/issues
-* from our repository: https://bitbucket.org/thomaswaldmann/moin-2.0/overview
+* on github: https://github.com/moinwiki/moin
 
 .. note::
    All free support is done voluntarily by helpful MoinMoin community members.
@@ -40,13 +39,12 @@ others searching for support there.
 
 Found a bug?
 ------------
-* File a bug report on the issue tracker on bitbucket.
-* Even better: fix the bug, file a bug report and submit a patch and consider
-  adding a unit test
+* File a bug report on the issue tracker.
+* Even better: fix the bug, submit a pull request with a unit test and a fix.
 
 Have an idea?
 -------------
-* Discuss it on IRC and file a feature request on bitbucket.
+* Discuss it on IRC and file a feature request.
 * Even better: discuss and write some Python code implementing it.
 
 Born to code?

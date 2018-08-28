@@ -12,7 +12,7 @@ start with the steps below. If not, please take a look at `If your
 language doesn't exist yet`_.
 
 
-1. Make sure you have the latest version of the source tree (hg).
+1. Make sure you have the latest version of the source tree (git).
    You will also need to have python installed, with setuptools and babel
    packages.
 

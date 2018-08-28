@@ -24,15 +24,13 @@ Once setuptools is installed, do "`easy_install virtualenv`".
 Current ActiveState distributions include virtualenv in the installation bundle.
 If all else fails, try Google.
 
-Mercurial (hg) is required should you wish to contribute
+git is required should you wish to contribute
 patches to the moin2 development effort. Even if you do not
-intend to contribute, Mercurial is highly recommended as it
+intend to contribute, git is highly recommended as it
 will make it easy for you to obtain fixes and enhancements
-from the moin2 repositories. Mercurial can be installed
+from the moin2 repositories. git can be installed
 with most linux package managers or downloaded
-from http://mercurial.selenic.com/. As an alternative,
-most Windows users will prefer to install TortoiseHG
-(includes Mercurial) from http://tortoisehg.bitbucket.org/.
+from https://git-scm.com/. You can also find GUI clients there.
 
 
 Servers
