@@ -4,9 +4,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import os
+import sys
 from setuptools import setup, find_packages
 
-import MoinMoin  # validate python version
+
+if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
+    sys.exit("Error: MoinMoin requires Python 2.7.x., current version is %s\n" % (platform.python_version(), ))
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -16,13 +19,11 @@ with open(os.path.join(basedir, 'README.rst')) as f:
 
 setup_args = dict(
     name="moin",
-    version=str(MoinMoin.version),
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
     long_description=long_description,
     author="Juergen Hermann et al.",
     author_email="moin-user@python.org",
     # maintainer(_email) not active because distutils/register can't handle author and maintainer at once
-    download_url='https://static.moinmo.in/files/moin-%s.tar.gz' % (MoinMoin.version, ),
     url="https://moinmo.in/",
     license="GNU GPL v2 (or any later version)",
     keywords="wiki web",
@@ -62,6 +63,12 @@ setup_args = dict(
     },
     include_package_data=True,
     zip_safe=False,
+    use_scm_version={
+        'write_to': os.path.join(basedir, 'MoinMoin', '_version.py'),
+    },
+    setup_requires=[
+        'setuptools_scm',  # magically cares for version and packaged files
+    ],
     install_requires=[
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.8.1',  # reST markup processing
