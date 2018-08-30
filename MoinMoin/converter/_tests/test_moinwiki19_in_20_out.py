@@ -50,6 +50,7 @@ class TestConverter(object):
         (u'TestPage', '[[TestPage]]\n'),
         # (u'../SisterPage', '[[../SisterPage]]\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_link(self, input, output):
         self.do(input, output)

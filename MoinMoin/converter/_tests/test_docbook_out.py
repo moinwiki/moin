@@ -81,6 +81,7 @@ class TestConverter(Base):
          # <article><simpara xml:base="http://base.tld" xml:id="id" xml:lang="en">Text</p></body></page>
          '/article/para[text()="Text"][title="Title"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_base(self, input, xpath):
         self.do(input, xpath)
@@ -90,6 +91,7 @@ class TestConverter(Base):
         '<page><body><h page:outline-level="1">Heading 1</h><p>First</p><h page:outline-level="2">Heading 2</h><p>Second</p></body></page>',
         '/article/sect1[title="Heading 1"][simpara="First"]/sect2[title="Heading 2"][simpara="Second"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_title(self, input, xpath):
         self.do(input, xpath)
@@ -131,6 +133,7 @@ class TestConverter(Base):
         # <article><variablelist><varlistentry><term>First Term</term><listitem><simpara>First Definition</simpara></listitem></varlistentry><varlistentry><term>Second term</term><listitem><simpara>Second Definition</simpara></listitem></varlistentry></variablelist></article>
         '/article/variablelist[varlistentry[1][./term[text()="First Term"]][./listitem/simpara[text()="First Definition"]]][varlistentry[2][./term[text()="Second Term"]][./listitem/simpara[text()="Second Definition"]]]')
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_list(self, input, xpath):
         self.do(input, xpath)
@@ -155,6 +158,7 @@ class TestConverter(Base):
         # <article><table><tbody><tr><td rowspan="2">Cell</td></tr></tbody></table></article>
         '/article/table/tbody/tr/td[@rowspan="2"][text()="Cell"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_table(self, input, xpath):
         self.do(input, xpath)
@@ -211,6 +215,7 @@ class TestConverter(Base):
         # <article><blockquote><attribution>Socrates</attribution><simpara>One thing ... nothing</simpara></blockquote></article>
         '/article/blockquote[attribution="Socrates"][simpara="One thing only I know, and that is that I know nothing."]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_simparagraph_elements(self, input, xpath):
         self.do(input, xpath)
@@ -226,6 +231,7 @@ class TestConverter(Base):
          # <article><simpara><inlinemediaobject><videoobject><videodata fileref="video.ogg"></videoobject></inlinemediaobject></simpara></article>
          '/article/simpara/inlinemediaobject/videoobject/videodata[@fileref="video.ogg"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_object(self, input, xpath):
         self.do(input, xpath)

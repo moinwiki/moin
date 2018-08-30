@@ -36,6 +36,7 @@ class TestConverter(object):
         (u'Head A;Head B\n1;2\n3;4',
          '<page><body><table class="moin-sortable"><table-header><table-row><table-cell class="moin-integer">Head A</table-cell><table-cell class="moin-integer">Head B</table-cell></table-row></table-header><table-body><table-row><table-cell class="moin-integer">1</table-cell><table-cell class="moin-integer">2</table-cell></table-row><table-row><table-cell class="moin-integer">3</table-cell><table-cell class="moin-integer">4</table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_csv(self, input, output):
         self.do(input, output)

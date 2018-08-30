@@ -66,6 +66,7 @@ class TestConverter(object):
         (u'\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n',
          u'\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_headers(self, input, output):
         self.do(input, output)
@@ -87,6 +88,7 @@ class TestConverter(object):
         # line blocks
         ('\n| Lend us a couple of bob till Thursday.\n', '\n| Lend us a couple of bob till Thursday.\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -98,6 +100,7 @@ class TestConverter(object):
         (u"..\n this:: too!", u"\n..\n this:: too!\n"),
         (u"..\n |even| this:: !", u"\n..\n |even| this:: !\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_comments(self, input, output):
         self.do(input, output)
@@ -111,6 +114,7 @@ class TestConverter(object):
         (u".. macro:: <<RandomItem(5)>>", '\n.. macro:: <<RandomItem(5)>>\n'),
         (u".. macro:: <<Date>>", '\n.. macro:: <<Date()>>\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_macros(self, input, output):
         self.do(input, output)
@@ -142,6 +146,7 @@ class TestConverter(object):
         u'\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n',
         u'\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_link(self, input, output):
         self.do(input, output)
@@ -154,6 +159,7 @@ class TestConverter(object):
         (u"1. a\n#. b\n\n   (A) aa\n   (#) ab\n",
          "\n1. a\n#. b\n\n   A. aa\n   #. ab\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -163,6 +169,7 @@ class TestConverter(object):
         (u'== == ==\na  b  c  \n== == ==\n1  2  3\n== == ==', u'\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
         (u'\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n', u'\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -175,6 +182,7 @@ class TestConverter(object):
         u'.. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n   :scale: 50\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
         '\n.. figure:: png\n   :alt: alternate text png\n   :height: 50\n   :width: 100\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_object(self, input, output):
         self.do(input, output)

@@ -75,6 +75,7 @@ class TestConverter(object):
         (u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}',
          u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_parsers(self, input, output):
         self.do(input, output)

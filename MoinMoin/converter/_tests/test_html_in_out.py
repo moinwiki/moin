@@ -69,6 +69,7 @@ class TestConverter(Base):
         ('<div><p class="class" title="title">Test</p></div>',
          '/div/div/p[@class="class"][@title="title"][text()="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_base(self, input, xpath):
         self.do(input, xpath)
@@ -79,6 +80,7 @@ class TestConverter(Base):
         ('<html><h6>Test</h6></html>',
          '/div[h6="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_title(self, input, xpath):
         self.do(input, xpath)
@@ -93,6 +95,7 @@ class TestConverter(Base):
         ('<html><p><b>Test</b></p></html>',
          '/div/p[strong="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_basic_style(self, input, xpath):
         self.do(input, xpath)
@@ -121,6 +124,7 @@ class TestConverter(Base):
          # <div><p><s>Test</s></p></div>
          '/div/p/s [text()="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_span(self, input, xpath):
         self.do(input, xpath)
@@ -137,6 +141,7 @@ class TestConverter(Base):
         ('<html><p><kbd>Text</kbd></p></html>',
          '/div/p/span[@class="html-kbd"][text()="Text"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_span_html_element(self, input, xpath):
         self.do(input, xpath)
@@ -145,6 +150,7 @@ class TestConverter(Base):
         ('<html><p><a href="http:test">Test</a></p></html>',
          '/div/p/a[text()="Test"][@href="http:test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_link(self, input, xpath):
         self.do(input, xpath)
@@ -159,6 +165,7 @@ class TestConverter(Base):
         ('<html><p><tt>Code</tt></p></html>',
          '/div/p[code="Code"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_code(self, input, xpath):
         self.do(input, xpath)
@@ -188,6 +195,7 @@ class TestConverter(Base):
         ('<div><ol><li>\n Item 1</li>\n<li>\n Item 2</li>\n<li>\n Item 3</li>\n</ol></div>',
          '/div/div/ol[li[1]="\n Item 1"][li[2]="\n Item 2"][li[3]="\n Item 3"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_list(self, input, xpath):
         self.do(input, xpath)
@@ -198,6 +206,7 @@ class TestConverter(Base):
         ('<html><div><object data="href"></object></div></html>',
          '/div/div/object[@data="href"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_object(self, input, xpath):
         self.do(input, xpath)
@@ -218,6 +227,7 @@ class TestConverter(Base):
         '<div><table>\n<tbody>\n<tr>\n<td>\n Cell 1:1</td>\n<td>\n Cell 1:2</td>\n</tr>\n<tr>\n<td>\n Cell 2:1</td>\n<td>\n Cell 2:2</td>\n</tr>\n</tbody>\n</table></div>',
         '/div/div/table/tbody[tr[1][td[1]="\n Cell 1:1"][td[2]="\n Cell 1:2"]][tr[2][td[1]="\n Cell 2:1"][td[2]="\n Cell 2:2"]]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_table(self, input, xpath):
         self.do(input, xpath)

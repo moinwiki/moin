@@ -56,6 +56,7 @@ class TestConverter(object):
          u'<page><body><h outline-level="1">level 1</h><h outline-level="2">level 2</h><h outline-level="3">level 3</h><h outline-level="4">level 4</h><h outline-level="5">level 5</h><h outline-level="6">level 6</h></body></page>'),
         (u"[javascript:alert('xss')]", "<page><body><p>[javascript:alert('xss')]</p></body></page>"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -112,6 +113,7 @@ no point
 """,
          u'<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>one</p></list-item-body></list-item><list-item><list-item-body><p>two</p><list item-label-generate="unordered"><list-item><list-item-body><p>two point one</p></list-item-body></list-item><list-item><list-item-body><p>two point two</p></list-item-body></list-item></list></list-item-body></list-item><list-item><list-item-body><p>three</p><list><list-item><list-item-label>three item one</list-item-label><list-item-body><p>three def one</p></list-item-body></list-item></list></list-item-body></list-item></list></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -146,6 +148,7 @@ Apple
 """,
          u'<page><body><table><table-body><table-row><table-cell class="test">text</table-cell><table-cell style="border:1px">test</table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -178,6 +181,7 @@ Apple
         (u"[[File:Test.jpg|\xe8]]",
          u'<page><body><p><object alt="\xe8" xlink:href="wiki.local:Test.jpg?do=get">\xe8</object></p></body></page>')
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_links(self, input, output):
         self.do(input, output)

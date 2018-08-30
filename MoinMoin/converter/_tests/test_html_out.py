@@ -90,6 +90,7 @@ class TestConverter(Base):
         '<page:page><page:body><page:div><page:p><page:quote>Quotation</page:quote></page:p></page:div></page:body></page:page>',
         '/div/div/p/q[text()="Quotation"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_base(self, input, xpath):
         self.do(input, xpath)
@@ -100,6 +101,7 @@ class TestConverter(Base):
         ('<page><body class="red" /></page>',
          '/div[@class="red"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_body(self, input, xpath):
         self.do(input, xpath)
@@ -115,6 +117,7 @@ class TestConverter(Base):
          # '/span/a[@href="http://base.tld/page.html"][text()="Test"]'),
          '/span/a[@href="/page.html"][text()="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_link(self, input, xpath):
         self.do(input, xpath)
@@ -125,6 +128,7 @@ class TestConverter(Base):
         ('<div html:id="a" id="b"><p id="c">Test</p></div>',
          '/div[@id="a"]/p[@id="c"][text()="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_html(self, input, xpath):
         self.do(input, xpath)
@@ -141,6 +145,7 @@ class TestConverter(Base):
          # <div><p><span class="moin-error">Text</span></p></div>
          '/div/p/span[@class="moin-error"][text()="Text"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_inline_part(self, input, xpath):
         self.do(input, xpath)
@@ -163,6 +168,7 @@ class TestConverter(Base):
         ('<page><body><p><span font-size="120%">big</span></p></body></page>',
          '/div/p/span[@class="moin-big"][text()="big"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_span(self, input, xpath):
         self.do(input, xpath)
@@ -190,6 +196,7 @@ class TestConverter(Base):
         '<page><body><list item-label-generate="ordered" list-style-type="lower-roman"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
         '/div/ol[@class="moin-lowerroman-list"][li="Item"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_list(self, input, xpath):
         self.do(input, xpath)
@@ -205,6 +212,7 @@ class TestConverter(Base):
          # '/span/img[@src="http://base.tld/href.png"]'),
          '/span/img[@src="href.png"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_object(self, input, xpath):
         self.do(input, xpath)
@@ -221,6 +229,7 @@ class TestConverter(Base):
          # <div><p class="moin-error">Error</p></div>
          '/div/p[@class="moin-error"][text()="Error"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_part(self, input, xpath):
         self.do(input, xpath)
@@ -231,6 +240,7 @@ class TestConverter(Base):
         ('<page><body><p style="color: black; font-size: 1em">Text</p></body></page>',
          '/div/p[@style="color: black; font-size: 1em"][text()="Text"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_style(self, input, xpath):
         self.do(input, xpath)
@@ -247,6 +257,7 @@ class TestConverter(Base):
         '<page><body><table><table-body><table-row><table-cell number-rows-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
         '/div/table/tbody/tr/td[@rowspan="2"][text()="Cell"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_table(self, input, xpath):
         self.do(input, xpath)
@@ -255,6 +266,7 @@ class TestConverter(Base):
         ('<page><body><admonition page:type="warning"><p>text</p></admonition></body></page>',
          '/div/div[@class="warning"][p="text"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_admonition(self, input, xpath):
         self.do(input, xpath)
