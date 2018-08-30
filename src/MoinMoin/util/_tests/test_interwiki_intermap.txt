@@ -1,0 +1,5 @@
+# reduced InterWiki map for unit tests
+
+MoinMaster https://master.moinmo.in/
+MoinMoin https://moinmo.in/
+PythonInfo https://wiki.python.org/moin/
