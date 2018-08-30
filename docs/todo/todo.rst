@@ -2,7 +2,7 @@ General
 =======
 - verify if these TODO items are still valid
 - move valid TODO items either to the respective code file or to the issue
-  tracker (on bitbucket.org) and remove them from here
+  tracker and remove them from here
 
 
 DOM Converters

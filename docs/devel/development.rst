@@ -13,26 +13,14 @@ IRC channels on chat.freenode.net (quick communication and discussion):
 Wikis:
 
 * https://moinmo.in/  (production wiki, using moin 1.9)
-* http://test.moinmo.in/  (test wiki, using moin 2)
 
 Documentation (installation, configuration, user docs, api reference):
 
 * http://readthedocs.org/docs/moin-20/en/latest/
 
-Issue tracker (bugs, proposals, todo):
+Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
 
-* http://bitbucket.org/thomaswaldmann/moin-2.0/issues
-
-Code Repositories (using Mercurial DVCS http://mercurial.selenic.com/):
-
-* http://hg.moinmo.in/moin/2.0  (main repository)
-* http://bitbucket.org/thomaswaldmann/moin-2.0  (bitbucket mirror for your
-  convenience, simplifying forking and contributing)
-
-Code review (always use this to get feedback about code changes):
-
-* http://code.google.com/p/rietveld/wiki/CodeReviewHelp
-* http://codereview.appspot.com/ (list of current codereview activity)
+* https://gitub.com/moinwiki/moin
 
 Pastebin (temporary storage - do not use for code review or any long-term need):
 
@@ -46,15 +34,12 @@ This is the typical workflow for anyone that wants to contribute to the developm
 create your development environment
 -----------------------------------
 
-* if you do not have a bitbucket account, create one at https://bitbucket.org
-* fork the main repository on bitbucket: https://bitbucket.org/thomaswaldmann/moin-2.0
-* clone the main repository to your local development machine::
+* if you do not have a github account, create one at https://github.com/
+* fork the main repository: https://github.com/moinwiki/moin to your gh user
+* clone your gh repo to your local development machine::
 
     cd <parent_directory_of_your_future_repo>
-    hg clone https://bitbucket.org/thomaswaldmann/moin-2.0 moin-2.0
-* ensure you are in default branch::
-
-    hg update default
+    git clone https://github.com/yourname/moin.git
 * create the virtualenv and download packages::
 
     python quickinstall.py
@@ -73,17 +58,10 @@ add more tools, exercise tools
 * install additional software that developers may require, including upload.py::
 
     ./m extras  # Windows: m extras
-* if you do not have a google account, create one at http://codereview.appspot.com
-* read about code review at: http://code.google.com/p/rietveld/wiki/CodeReviewHelp
-* practice using codereview by making a trivial change to any source file, do "python upload.py --oauth2"
-
-  * inspect your patch set at http://codereview.appspot.com
-  * experiment by adding comments, upload a second patchset "python upload.py --oauth2 -i <issue_ID>"
-  * revert the changes on your local repo "hg revert --all"
 
 * run the unit tests, note any existing test failures::
 
-     ./m tests  # Windows: m tests
+    ./m tests  # Windows: m tests
 
 * install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
 
@@ -102,18 +80,18 @@ add more tools, exercise tools
 * regenerate CSS files::
 
     ./m css  # Windows: m css
-    hg diff  # verify nothing changed
+    git diff  # verify nothing changed
 * check for coding errors (tabs, trailing spaces, line endings, template indentation and spacing)::
 
     ./m coding-std  # Windows: m coding-std
-    hg diff  # verify nothing changed
+    git diff  # verify nothing changed
 * check for uncommitted API doc changes::
 
     ./m api  # Windows m api
-    hg diff  # verify nothing changed
+    git diff  # verify nothing changed
 * revert any changes from above::
 
-    hg revert --all
+    git reset --hard
 
 * create local docs::
 
@@ -124,10 +102,9 @@ add more tools, exercise tools
   - delete trailing blanks on file save
   - use unix line endings (use Windows line endings on .bat and .cmd files)
   - use mono-spaced font for editing
-* if you are new to mercurial, read a tutorial (http://hginit.com/),
+* if you are new to git, read about it (https://git-scm.com/book/),
   consider printing a cheatsheet
 * if you want a Python IDE, try http://www.jetbrains.com/pycharm/ Free Community Edition
-* if you want a graphical interface to Mercurial, install SourceTree (best for mac) or TortoiseHG (best for Windows)
 * join #moin-dev IRC channel; ask questions, learn what other developers are doing
 
 review configuration options
@@ -153,11 +130,17 @@ find a task to work on
   working on that issue
 * just before you start to code changes, bring your repo up to date::
 
-    hg pull -u      # pull all recent changes
-    ./m coding-std  # just in case someone else forgot to do it
-    ./m css         # just in case
-    hg diff         # expect no changes
-    ./m tests       # note existing errors
+    git checkout master       # make sure you are on master branch
+    git pull mm master        # update your master branch
+    git checkout -b mychange  # create a new branch "mychange"
+    ...                       # implement your change
+    tox                       # run the tests, fix any new failure!
+    git status                # check what new files you created
+    git diff                  # check what changes you did
+    git add ...               # add the files you want to commit
+    git commit                # commit, write a nice commit comment
+    git push                  # push to your gh user's moin repo
+    ...                       # go to gh moinwiki/moin and make a PR
 
 develop a testing strategy
 --------------------------
@@ -187,10 +170,10 @@ develop a working solution
 review your working solution
 ----------------------------
 
-* use hg diff, hg status - read everything you changed - slowly, look for
+* use git diff, git status - read everything you changed - slowly, look for
   things that can be improved
 
-  - if you have TortoiseHG or SourceTree, use those graphical tools to review changes
+  - if you have TortoiseGIT, use those graphical tools to review changes
 * look for poor variable names, spelling errors in comments, accidental addition
   or deletion of blank lines, complex code without comments, missing/extra spaces
 * fix everything you find before requesting feedback from others
@@ -224,12 +207,9 @@ publish your change
 
         <concise description of your change>, fixes #123
 
-* pull any changes made by others from the main repo on Bitbucket,
-  merge, then commit the merge
-* push the changeset to your public bitbucket repo
+* push the changeset to your public github repo
 * create a pull request so your changes will get pulled into the
   main repository
-* optionally, request a pull on the IRC channel
 * if you fixed an issue from the issue tracker, be sure the issue gets
   closed after your fix has been pulled into main repo.
 * celebrate, loop back to "find a task to work on"
@@ -242,13 +222,6 @@ dependent packages. If any new packages are installed, do a
 quick check for breakages by running tests, starting the
 build-in server, modify an item, etc.
 
-Alternate contribution workflows
-================================
-If the above workflow looks like overkill (e.g. for simple changes)
-or you can't work with the tools we usually use, then just create or
-update an issue on the issue tracker
-https://bitbucket.org/thomaswaldmann/moin-2.0/issues)
-or join us on IRC #moin-dev.
 
 MoinMoin architecture
 =====================

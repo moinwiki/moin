@@ -8,8 +8,7 @@ This page introduces you to the most important elements of the Markdown syntax.
 For details on the Python implementation of Markdown see https://pythonhosted.org/Markdown/
 
 In addition to being supported by moin2, the Markdown markup language is used by issue trackers
-such as those found in Bitbucket and Github. So what you learn here can be used to create or
-edit issues on the `moin issue tracker <https://bitbucket.org/thomaswaldmann/moin-2.0/issues>`_.
+such as those found in Bitbucket and Github. So what you learn here can be used there also.
 
 Features currently not working with moin's Markdown parser are marked with **MDTODO**.
 
@@ -496,7 +495,7 @@ To highlight code syntax, wrap the code in triple backtick characters and specif
     var s = "JavaScript syntax highlighting";
     alert(s);
 
-**MDTODO**: Syntax highlighting is not working. [#169](https://bitbucket.org/thomaswaldmann/moin-2.0/issue/169/highlight-python-does-not-work) documents a similar issue for the moinwiki converter.
+**MDTODO**: Syntax highlighting is not working. [#169](https://github.com/moinwiki/moin/issues/169) documents a similar issue for the moinwiki converter.
 
 
 Fenced Code
