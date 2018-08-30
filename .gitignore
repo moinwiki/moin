@@ -14,6 +14,7 @@ wiki/
 wiki_local/
 instance/
 wikiconfig_*.py
+MoinMoin/_version.py
 MoinMoin/translations/.*/LC_MESSAGES/messages.mo
 MoinMoin/_tests/wiki/index/
 MoinMoin/themes/modernized/static/css/stylus/normalize.css
