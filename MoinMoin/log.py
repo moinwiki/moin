@@ -203,7 +203,14 @@ class EmailHandler(logging.Handler):
         # the app config is accessible after logging is initialized, so set the
         # arguments and make the decision to send mail or not here
         from flask import current_app as app
-        if not app.cfg.email_tracebacks:
+        try:
+            email_tracebacks = app.cfg.email_tracebacks
+        except RuntimeError:
+            # likely: RuntimeError: working outside of application context
+            # if we get that, we can't access the cfg and can't send mail anyway.
+            email_tracebacks = False
+
+        if not email_tracebacks:
             return
 
         if self.in_email_handler:
