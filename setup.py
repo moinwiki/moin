@@ -48,7 +48,8 @@ setup_args = dict(
         "Topic :: Text Processing :: Markup",
     ],
 
-    packages=find_packages(exclude=['_tests', ]),
+    packages=find_packages(where='src', exclude=['_tests', ]),
+    package_dir={'': 'src'},
 
     package_data={
         'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
@@ -64,7 +65,7 @@ setup_args = dict(
     include_package_data=True,
     zip_safe=False,
     use_scm_version={
-        'write_to': os.path.join(basedir, 'MoinMoin', '_version.py'),
+        'write_to': os.path.join(basedir, 'src', 'MoinMoin', '_version.py'),
     },
     setup_requires=[
         'setuptools_scm',  # magically cares for version and packaged files

@@ -211,15 +211,15 @@ class TestInterWikiMapBackend(object):
         """
         Test a 'real' interwiki file.
         """
-        abspath = __file__.rsplit('MoinMoin')[0]
-        testfile = os.path.join(abspath, 'contrib', 'interwiki', 'intermap.txt')
+        this_dir = os.path.dirname(__file__)
+        testfile = os.path.join(this_dir, 'test_interwiki_intermap.txt')
         testiwm = InterWikiMap.from_file(testfile)
 
         assert 'MoinMaster' in testiwm.iwmap
-        assert testiwm.iwmap['MoinMaster'] == 'http://master.moinmo.in/'
+        assert testiwm.iwmap['MoinMaster'] == 'https://master.moinmo.in/'
         assert 'PythonInfo' in testiwm.iwmap
         assert 'this' not in testiwm.iwmap
-        assert testiwm.iwmap['MoinMoin'] == 'http://moinmo.in/'
+        assert testiwm.iwmap['MoinMoin'] == 'https://moinmo.in/'
 
 
 coverage_modules = ['MoinMoin.util.interwiki']
