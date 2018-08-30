@@ -193,4 +193,5 @@ Apple
         print self.serialize(out)
         assert self.serialize(out) == output
 
+
 coverage_modules = ['MoinMoin.converter.mediawiki_in']

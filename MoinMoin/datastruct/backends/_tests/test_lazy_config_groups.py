@@ -62,4 +62,5 @@ class TestCompositeAndLazyConfigGroups(GroupsBackendTest):
 
         return Config
 
+
 coverage_modules = ['MoinMoin.datastruct.backends.config_lazy_groups']

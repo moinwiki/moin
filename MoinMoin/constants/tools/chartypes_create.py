@@ -41,5 +41,6 @@ CHARS_SPACES = u"%(chars_spaces)s"
 
 """ % locals()
 
+
 if __name__ == '__main__':
     main()

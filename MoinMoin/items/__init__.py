@@ -312,6 +312,7 @@ def _build_contenttype_query(groups):
             queries.append(Prefix(CONTENTTYPE, ct_unicode + u';'))
     return Or(queries)
 
+
 IndexEntry = namedtuple('IndexEntry', 'relname fullname meta')
 
 MixedIndexEntry = namedtuple('MixedIndexEntry', 'relname fullname meta hassubitems')

@@ -34,4 +34,5 @@ class TestCompositeDict(DictsBackendTest):
 
         return Config
 
+
 coverage_modules = ['MoinMoin.datastruct.backends.composite_dicts']

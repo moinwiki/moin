@@ -136,6 +136,7 @@ class Converter(object):
             # if the text was not a smiley, just return the markup without any transformations
             return text
 
+
 from . import default_registry
 from MoinMoin.util.mime import type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

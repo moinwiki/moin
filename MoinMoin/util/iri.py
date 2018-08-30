@@ -23,6 +23,7 @@ def _iriquote_replace(exc):
     text = ''.join((u'%%%02X' % ord(a) for a in exc.object[exc.start:exc.end]))
     return text, exc.end
 
+
 codecs.register_error('iriquote', _iriquote_replace)
 
 

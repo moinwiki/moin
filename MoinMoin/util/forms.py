@@ -19,6 +19,8 @@ def label_filter(tagname, attributes, contents, context, bind):
     if bind is not None and not contents:
         contents = _(bind.label)
     return contents
+
+
 label_filter.tags = set(['label'])
 
 
@@ -33,6 +35,8 @@ def button_filter(tagname, attributes, contents, context, bind):
     elif tagname == 'button' and not contents:
         contents = _(bind.default_value)
     return contents
+
+
 button_filter.tags = set(['input', 'button'])
 
 
@@ -41,6 +45,8 @@ def required_filter(tagname, attributes, contents, context, bind):
         if tagname == 'input':
             attributes[u'required'] = u'required'
     return contents
+
+
 required_filter.tags = set(['input', 'label'])
 
 
@@ -50,6 +56,8 @@ def autofocus_filter(tagname, attributes, contents, context, bind):
         if autofocus:
             attributes[u'autofocus'] = u'autofocus'
     return contents
+
+
 autofocus_filter.tags = set(['input', 'textarea', ])
 
 
@@ -59,6 +67,8 @@ def placeholder_filter(tagname, attributes, contents, context, bind):
         if placeholder:
             attributes[u'placeholder'] = placeholder
     return contents
+
+
 placeholder_filter.tags = set(['input', 'textarea', ])
 
 
@@ -77,6 +87,7 @@ def error_filter_factory(class_='moin-error'):
         return contents
     error_filter.tags = set(['input'])
     return error_filter
+
 
 error_filter = error_filter_factory()
 

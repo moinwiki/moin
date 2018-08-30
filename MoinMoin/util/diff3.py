@@ -270,5 +270,6 @@ AAA 014
     text = text_merge(text0, text1, text2)
     print(text)
 
+
 if __name__ == '__main__':
     main()

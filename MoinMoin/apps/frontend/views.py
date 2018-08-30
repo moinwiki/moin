@@ -1035,6 +1035,7 @@ def contenttype_selects_gen():
         yield g, None, description
     yield u'Unknown Items', None, u'Items of contenttype unknown to MoinMoin'
 
+
 ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
 
 

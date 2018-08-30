@@ -675,6 +675,7 @@ class Converter(ConverterMacro):
         self.parse_inline(text, stack, self.inline_re)
         return p
 
+
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document, type_moin_creole
 default_registry.register(Converter.factory, type_moin_creole, type_moin_document)

@@ -17,6 +17,8 @@ class Bind(object):
         self.optional = True
         self.properties = {'autofocus': False, 'placeholder': None}
         self.errors = None
+
+
 test_bind = Bind()
 
 test_attributes = {'type': 'submit', u'required': 'test_required', 'autofocus': None, 'placeholder': None}
