@@ -51,7 +51,7 @@ if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
 
 # text files created by commands with high volume output
 QUICKINSTALL = 'm-quickinstall.txt'
-PYTEST = 'm-pytest.txt'
+TOX = 'm-tox.txt'
 CODING_STD = 'm-coding-std.txt'
 DOCS = 'm-docs.txt'
 NEWWIKI = 'm-new-wiki.txt'
@@ -81,7 +81,7 @@ else:
 # commands that create log files
 CMD_LOGS = {
     'quickinstall': QUICKINSTALL,
-    'tests': PYTEST,
+    'tests': TOX,
     # 'coding-std': CODING_STD,  # not logged due to small output
     'docs': DOCS,
     'new-wiki': NEWWIKI,
@@ -114,7 +114,7 @@ dump-html *     create a static HTML image of wiki *options, see docs
 index           delete and rebuild indexes
 
 css             run Stylus and lessc to update theme CSS files
-tests *         run tests, output to pytest.txt *options (-v -k my_test)
+tests *         run tests, log output (-v -k my_test)
 coding-std      correct scripts that taint the repository with trailing spaces..
 api             update moin api docs (files are under hg version control)
 
@@ -136,7 +136,7 @@ def search_for_phrase(filename):
         DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
-        PYTEST: ('seconds =', 'INTERNALERROR', 'traceback', ),
+        TOX: ('seconds =', 'INTERNALERROR', 'traceback', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
         DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'Exception occurred', )
@@ -499,12 +499,12 @@ class Commands(object):
             print 'Error: Basic theme CSS files update failed, see error messages above.'
 
     def cmd_tests(self, *args):
-        """run tests, output goes to m-pytest.txt"""
-        print 'Running tests... output written to {0}.'.format(PYTEST)
-        command = '{0}py.test --pep8 > {1} {2} 2>&1'.format(ACTIVATE, PYTEST, ' '.join(args))
+        """run tests, output goes to m-tox.txt"""
+        print 'Running tests... output written to {0}.'.format(TOX)
+        command = '{0}tox -- {2} > {1} 2>&1'.format(ACTIVATE, TOX, ' '.join(args))
         result = subprocess.call(command, shell=True)
-        print 'Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(PYTEST, M)
-        search_for_phrase(PYTEST)
+        print 'Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(TOX, M)
+        search_for_phrase(TOX)
 
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
