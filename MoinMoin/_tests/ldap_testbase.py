@@ -236,6 +236,7 @@ class LdapEnvironment(object):
         """ remove the temporary LDAP server environment """
         shutil.rmtree(self.ldap_dir)
 
+
 try:
     import pytest
 

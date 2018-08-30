@@ -121,6 +121,7 @@ def access_denied_decorator(fn):
     else:
         return fn
 
+
 stat = access_denied_decorator(os.stat)
 mkdir = access_denied_decorator(os.mkdir)
 rmdir = access_denied_decorator(os.rmdir)

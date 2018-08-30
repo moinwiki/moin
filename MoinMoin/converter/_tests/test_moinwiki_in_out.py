@@ -57,6 +57,7 @@ class TestConverter(object):
         (u",,sub,,script\n", ',,sub,,script\n'),
         (u"#ANY any", "#ANY any\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -69,6 +70,7 @@ class TestConverter(object):
         # \n is omitted from output because serialize method (see below) joins adjacent text children
         (u"## block line 1\n## block line 2\n\n", u"## block line 1## block line 2\n\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_comments(self, input, output):
         self.do(input, output)
@@ -81,6 +83,7 @@ class TestConverter(object):
         (u"<<TeudView()>>", "<<TeudView()>>\n"),
         (u"||<<TeudView()>>||", "||<<TeudView()>>||\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_macros(self, input, output):
         self.do(input, output)
@@ -113,6 +116,7 @@ class TestConverter(object):
          '[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
         (u'[[SomePage|Some Page|class=orange,accesskey=1]]', '[[SomePage|Some Page|accesskey="1",class="orange"]]\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_link(self, input, output):
         self.do(input, output)
@@ -127,6 +131,7 @@ class TestConverter(object):
         (u" A:: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
         (u" A::\n :: B\n :: C\n :: D\n", ' A::\n :: B\n :: C\n :: D\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -154,6 +159,7 @@ class TestConverter(object):
         u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||',
         u'||<style="background-color: red;"> red ||<style="background-color: green;"> green ||<style="background-color: blue;"> blue ||\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -182,6 +188,7 @@ class TestConverter(object):
         (u'{{attachment:image.png|alt text}}', '{{/image.png|alt text}}\n'),
         (u'{{attachment:image.png|alt text|height="150"}}', '{{/image.png|alt text|height="150"}}\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_object(self, input, output):
         self.do(input, output)

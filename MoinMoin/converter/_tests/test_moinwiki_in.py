@@ -65,6 +65,7 @@ class TestConverter(object):
         (u'----',
          '<page><body><separator class="moin-hr1" /></body></page>'),
     ]
+
     @pytest.mark.parametrize('args', data)
     def test_base(self, args):
         self.do(*args)
@@ -74,6 +75,7 @@ class TestConverter(object):
          '<page><body style="background-color: red"><p>Text</p></body></page>',
          {'arguments': Arguments(keyword={'style': 'background-color: red'})}),
     ]
+
     @pytest.mark.parametrize('input,output,args', data)
     def test_args(self, input, output, args):
         self.do(input, output, args)
@@ -100,6 +102,7 @@ class TestConverter(object):
         ("'''strong '''''italic '''strongitalic''''' normal",
          '<page><body><p><strong>strong </strong><emphasis>italic <strong>strongitalic</strong></emphasis> normal</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_emphasis(self, input, output):
         self.do(input, output)
@@ -120,6 +123,7 @@ class TestConverter(object):
         (u'====== Heading 6 ======',
          '<page><body><h outline-level="6">Heading 6</h></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_heading(self, input, output):
         self.do(input, output)
@@ -148,6 +152,7 @@ class TestConverter(object):
         (u'&#x22;',
          '<page><body><p>"</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_inline(self, input, output):
         self.do(input, output)
@@ -176,6 +181,7 @@ class TestConverter(object):
         (u' * List 1\n 1. List 2',
          '<page><body><list item-label-generate="unordered"><list-item><list-item-body>List 1</list-item-body></list-item></list><list item-label-generate="ordered"><list-item><list-item-body>List 2</list-item-body></list-item></list></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -205,6 +211,7 @@ class TestConverter(object):
         (u'Text\n\n<<Macro>>',
          '<page><body><p>Text</p><part alt="&lt;&lt;Macro&gt;&gt;" content-type="x-moin/macro;name=Macro" /></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_macro(self, input, output):
         self.do(input, output)
@@ -223,6 +230,7 @@ class TestConverter(object):
         (u'||<<DateTime>>||',
          '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><inline-part alt="&lt;&lt;DateTime&gt;&gt;" content-type="x-moin/macro;name=DateTime" /></table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -281,6 +289,7 @@ class TestConverter(object):
          '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="background-color: pink; color: black;">[ Error: "X" is invalid within &lt;X&gt;' +
          u'\xa0' + ']<line-break />Cell</table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table_attributes(self, input, output):
         self.do(input, output)
@@ -312,6 +321,7 @@ class TestConverter(object):
         (u'{{{#!text/plain\ntext\n}}}',
          u'<page><body><nowiki>3<nowiki-args>#!text/plain</nowiki-args>text</nowiki></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_nowiki(self, input, output):
         self.do(input, output)
@@ -350,6 +360,7 @@ class TestConverter(object):
         (u'{{{#!mediawiki\n=== Level 3 ===\n}}}',
          u"<page><body><nowiki>3<nowiki-args>#!mediawiki</nowiki-args>=== Level 3 ===</nowiki></body></page>"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_nowiki_parsers(self, input, output):
         self.do(input, output)
@@ -360,6 +371,7 @@ class TestConverter(object):
         (u'Text\n||Item||\nText',
          '<page><body><p>Text</p><table class="moin-wiki-table"><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_composite(self, input, output):
         self.do(input, output)
@@ -376,6 +388,7 @@ class TestConverter(object):
         (u'[[InvalidWikiName:RecentChanges]]',
          '<page><body><p><a xlink:href="wiki.local:InvalidWikiName:RecentChanges">InvalidWikiName:RecentChanges</a></p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_interwiki(self, input, output):
         self.do(input, output)
@@ -390,6 +403,7 @@ class TestConverter(object):
         (u'[[mailto:foo.bar_baz@bar.baz]]',  # . and _ are special characters commonly allowed by email systems
          '<page><body><p><a xlink:href="mailto:foo.bar_baz@bar.baz">mailto:foo.bar_baz@bar.baz</a></p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_email(self, input, output):
         self.do(input, output)

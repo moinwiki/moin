@@ -653,6 +653,7 @@ def shorten_id(name, length=7):
         return name[8:8 + length]
     return name[:length]
 
+
 MIMETYPE_TO_CLASS = {
     'application/pdf': 'pdf',
     'application/zip': 'package',

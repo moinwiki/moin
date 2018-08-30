@@ -57,6 +57,7 @@ class TestConverter(Base):
         (u'<page:tag><page:span page:baseline-shift="super">super</page:span>script</page:tag>', '^super^script'),
         (u'<page:tag><page:span page:baseline-shift="sub">sub</page:span>script</page:tag>', ',,sub,,script'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -83,6 +84,7 @@ class TestConverter(Base):
         (
         u'<page:a xlink:href="attachment:filename.txt">attachment:filename.txt</page:a>', '[[attachment:filename.txt]]')
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_link(self, input, output):
         self.do(input, output)
@@ -101,6 +103,7 @@ class TestConverter(Base):
         u'<page:object xlink:href="attachment:image.png" html:width="100" html:height="150" html:class="left">alt text</page:object>',
         '{{attachment:image.png|alt text|class="left" height="150" width="100"}}'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_object(self, input, output):
         self.do(input, output)
@@ -122,6 +125,7 @@ class TestConverter(Base):
         u"<page:list><page:list-item><page:list-item-label>A</page:list-item-label><page:list-item-body><page:p>B</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>C</page:p></page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>D</page:p></page:list-item-body></page:list-item></page:list>",
         " A::\n :: B\n :: C\n :: D\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -137,6 +141,7 @@ class TestConverter(Base):
         u"<page:table><page:table-body><page:table-row><page:table-cell page:number-rows-spanned=\"2\">cell spanning 2 rows</page:table-cell><page:table-cell>cell in the 2nd column</page:table-cell></page:table-row><page:table-row><page:table-cell>cell in the 2nd column of the 2nd row</page:table-cell></page:table-row><page:table-row><page:table-cell page:number-columns-spanned=\"2\">test</page:table-cell></page:table-row><page:table-row><page:table-cell page:number-columns-spanned=\"2\">test</page:table-cell></page:table-row></page:table-body></page:table>",
         '||<rowspan="2">cell spanning 2 rows||cell in the 2nd column||\n||cell in the 2nd column of the 2nd row||\n||<colspan="2">test||\n||<colspan="2">test||\n'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -152,6 +157,7 @@ class TestConverter(Base):
         u"<page:part page:alt=\"&lt;&lt;MonthCalendar(,,12)&gt;&gt;\" page:content-type=\"x-moin/macro;name=MonthCalendar\"><page:arguments>,,12</page:arguments></page:part>",
         "<<MonthCalendar(,,12)>>\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_macros(self, input, output):
         self.do(input, output)
@@ -167,6 +173,7 @@ class TestConverter(Base):
         u"<page:page><page:body><page:part page:content-type=\"x-moin/format;name=creole\"><page:arguments><page:argument page:name=\"style\">st: er</page:argument><page:argument page:name=\"class\">par: arg para: arga</page:argument></page:arguments><page:body>... **bold** ...</page:body></page:part></page:body></page:page>",
         "{{{#!creole(style=\"st: er\" class=\"par: arg para: arga\")\n... **bold** ...\n}}}\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_parser(self, input, output):
         self.do(input, output)
@@ -187,6 +194,7 @@ class TestConverter(Base):
         u"<page:list page:item-label-generate=\"unordered\"><page:list-item><page:list-item-body>A<page:line-break></page:line-break>A</page:list-item-body></page:list-item><page:list-item><page:list-item-body>A<page:line-break></page:line-break>A<page:line-break></page:line-break>A</page:list-item-body></page:list-item><page:list-item><page:list-item-body><page:p>A</page:p></page:list-item-body></page:list-item></page:list>",
         " * A<<BR>>A\n * A<<BR>>A<<BR>>A\n * A\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_br(self, input, output):
         self.do(input, output)
@@ -200,6 +208,7 @@ class TestConverter(Base):
         (u"<page:page><page:body><page:p>A</page:p><page:separator page:class=\"moin-hr6\"/></page:body></page:page>",
          "A\n---------\n"),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_separator(self, input, output):
         self.do(input, output)

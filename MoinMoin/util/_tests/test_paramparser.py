@@ -212,6 +212,7 @@ class TestParamParsing(object):
 
     P = paramparser.ParserPrefix('+')
     M = paramparser.ParserPrefix('-')
+
     @pytest.mark.parametrize('args,sep,kwsep,expected', [
         (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
         (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
@@ -254,6 +255,7 @@ class TestParamParsing(object):
 
     UCE = paramparser.BracketUnexpectedCloseError
     MCE = paramparser.BracketMissingCloseError
+
     @pytest.mark.parametrize('args,sep,kwsep,err', [
         (u'("a", "b", "c"', u',', None, MCE),
         (u'("a"("b", "c")', u',', None, MCE),

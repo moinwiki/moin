@@ -58,6 +58,7 @@ class Converter(object):
         self.recurse(tree)
         return tree
 
+
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

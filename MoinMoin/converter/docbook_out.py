@@ -529,6 +529,7 @@ class Converter(object):
         tag_to_return = self.simple_tags[element.tag.name]
         return self.new_copy(tag_to_return, element, attrib={})
 
+
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, Type('application/docbook+xml'))

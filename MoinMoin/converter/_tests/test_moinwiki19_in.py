@@ -44,6 +44,7 @@ class TestConverter(object):
         (u'foo@bar',  # 1.9 requires domain
          '<page><body><p>foo@bar</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_freelink(self, input, output):
         self.do(input, output)

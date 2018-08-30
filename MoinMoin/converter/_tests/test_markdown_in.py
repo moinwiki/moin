@@ -46,6 +46,7 @@ class TestConverter(object):
         (u'----',
          '<separator class="moin-hr3" />'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -62,6 +63,7 @@ class TestConverter(object):
         (u'**_Both_**',
          '<p><strong><emphasis>Both</emphasis></strong></p>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_emphasis(self, input, output):
         self.do(input, output)
@@ -74,6 +76,7 @@ class TestConverter(object):
         (u'\*yo\*',
          '<p>*yo*</p>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_escape(self, input, output):
         self.do(input, output)
@@ -110,6 +113,7 @@ class TestConverter(object):
         (u'Heading\n=======\n\nxxxx',
          '<h outline-level="1" xml:id="heading">Heading</h><p>xxxx</p>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_heading(self, input, output):
         self.do(input, output)
@@ -128,6 +132,7 @@ class TestConverter(object):
         (u'8. Item',
          '<list item-label-generate="ordered"><list-item><list-item-body>Item</list-item-body></list-item></list>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -144,6 +149,7 @@ class TestConverter(object):
         (u'![transclude local wiki item](someitem)',
          '<p><xinclude:include html:alt="transclude local wiki item" xinclude:href="wiki.local:someitem" /></p>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_image(self, input, output):
         self.do(input, output)

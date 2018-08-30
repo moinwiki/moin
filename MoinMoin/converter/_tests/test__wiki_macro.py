@@ -36,6 +36,7 @@ class TestConverter(object):
          '<part alt="text" content-type="x-moin/macro;name=Macro"><arguments>arg1</arguments></part>',
          '<inline-part alt="text" content-type="x-moin/macro;name=Macro"><arguments>arg1</arguments></inline-part>'),
     ]
+
     @pytest.mark.parametrize('name,args,text,output_block,output_inline', data)
     def test_macro(self, name, args, text, output_block, output_inline):
         self._do(name, args, text, True, output_block)
@@ -51,6 +52,7 @@ class TestConverter(object):
         ('Macro', u'arg1,arg2,key=value', 'text',
          '<inline-part alt="text" content-type="x-moin/macro;name=Macro"><arguments>arg1,arg2,key=value</arguments></inline-part>'),
     ]
+
     @pytest.mark.parametrize('name,args,text,output', data)
     def test_macro_arguments(self, name, args, text, output):
         self._do(name, args, text, False, output)
@@ -85,6 +87,7 @@ class TestConverter(object):
          '<div class="moin-p"><xi:include xi:xpointer="page:include(pages(^^page) skipitems(5))" /></div>',
          '<xi:include xi:xpointer="page:include(pages(^^page) skipitems(5))" />'),
     ]
+
     @pytest.mark.parametrize('name,args,text,output_block,output_inline', data)
     def test_pseudomacro(self, name, args, text, output_block, output_inline):
         self._do(name, args, text, True, output_block)
@@ -97,6 +100,7 @@ class TestConverter(object):
         ('test', Arguments([u'arg1']), ('text',),
          '<part content-type="x-moin/format;name=test"><arguments><argument>arg1</argument></arguments><body>text</body></part>'),
     ]
+
     @pytest.mark.parametrize('name,args,text,output', data)
     def test_parser(self, name, args, text, output):
         self._do_parser(name, args, text, output)

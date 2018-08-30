@@ -25,6 +25,7 @@ HTML/
 .settings
 .DS_Store
 .cache/
+.eggs/
 .pytest_cache/
 .tox/
 .idea/

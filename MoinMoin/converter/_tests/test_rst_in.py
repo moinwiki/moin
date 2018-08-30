@@ -47,6 +47,7 @@ class TestConverter(object):
         (u'.. comment', '<page><body><div class="comment dashed">comment</div></body></page>'),
         (u'..\n comment', '<page><body><div class="comment dashed">comment</div></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -68,6 +69,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
          '<admonition type="error"><p>Enumerated list start value not ordinal-1: "3" (ordinal 3)</p></admonition>'
          '</blockquote></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -78,6 +80,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u'term 2 : classifier 1 : classifier 2\n definition 2',
          '<page><body><list><list-item><list-item-label>term 2<span>:classifier 1</span><span>:classifier 2</span></list-item-label>classifier 1classifier 2<list-item-body><p>definition 2</p></list-item-body></list-item></list></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_definition_list(self, input, output):
         self.do(input, output)
@@ -94,6 +97,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u'abc |test| cba\n\n.. |test| image:: test.png',
          '<page><body><p>abc <xinclude:include xhtml:alt="test" xinclude:href="wiki.local:test.png" /> cba</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_image(self, input, output):
         self.do(input, output)
@@ -117,6 +121,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u'Paragraph\n\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\n',
          '<page><body><p>Paragraph</p><h outline-level="2">H1</h><h outline-level="3">H2</h><h outline-level="4">H3</h><h outline-level="5">H4</h><h outline-level="6">H5</h></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_headers(self, input, output):
         """
@@ -142,6 +147,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u'Abra [#]_\n\n.. [#] arba',
          '<page><body><p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_footnote(self, input, output):
         self.do(input, output)
@@ -150,6 +156,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u':Date: 2001-08-16\n:Version: 1\n:Authors: Joe Doe',
          '<page><body><table><table-body>2001-08-16<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1</table-cell></table-row><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_field_list(self, input, output):
         self.do(input, output)
@@ -168,6 +175,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u'http:Home', '<page><body><p><a xlink:href="http:Home">http:Home</a></p></body></page>'),
         (u'`Home <http:Home>`_', '<page><body><p><a xlink:href="http:Home">Home</a></p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_link(self, input, output):
         self.do(input, output)
@@ -185,6 +193,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u'.. include:: RecentChanges',
          '<page><body><xinclude:include alt="&lt;&lt;Include(RecentChanges)&gt;&gt;" content-type="x-moin/macro;name=Include" xinclude:href="wiki.local:RecentChanges" /></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_directive(self, input, output):
         self.do(input, output)
@@ -223,6 +232,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 """,
          '<page><body><table><table-header><table-row><table-cell><p>AAAAAAAAAAAAAAAAAA</p></table-cell><table-cell><p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</p></table-cell></table-row></table-header><table-body><table-row><table-cell number-rows-spanned=\"2\"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned=\"2\"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned=\"2\"><p>test</p></table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -231,6 +241,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (u':Author: Test\n:Version:  $Revision: 1.17 $\n:Copyright: c\n:Test: t',
          '<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_docutils_feature(self, input, output):
         self.do(input, output)

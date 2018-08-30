@@ -68,6 +68,7 @@ class TestConverter(object):
         (u'----',
          '<page><body><separator class="moin-hr3" /></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_base(self, input, output):
         self.do(input, output)
@@ -77,6 +78,7 @@ class TestConverter(object):
          '<page><body style="background-color: red"><p>Text</p></body></page>',
          {'arguments': Arguments(keyword={'style': 'background-color: red'})}),
     ]
+
     @pytest.mark.parametrize('args', data)
     def test_args(self, args):
         self.do(*args)
@@ -95,6 +97,7 @@ class TestConverter(object):
         (u'Text //Emphasis\n\nText',
          '<page><body><p>Text <emphasis>Emphasis</emphasis></p><p>Text</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_emphasis(self, input, output):
         self.do(input, output)
@@ -109,6 +112,7 @@ class TestConverter(object):
         (u'~{~{{escape}}}',
          '<page><body><p>{{{escape}}}</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_escape(self, input, output):
         self.do(input, output)
@@ -145,6 +149,7 @@ class TestConverter(object):
         (u'=== Heading 3 ==',
          '<page><body><h outline-level="3">Heading 3</h></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_heading(self, input, output):
         self.do(input, output)
@@ -169,6 +174,7 @@ class TestConverter(object):
         (u'* List 1\n# List 2',
          '<page><body><list item-label-generate="unordered"><list-item><list-item-body>List 1</list-item-body></list-item></list><list item-label-generate="ordered"><list-item><list-item-body>List 2</list-item-body></list-item></list></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_list(self, input, output):
         self.do(input, output)
@@ -197,6 +203,7 @@ class TestConverter(object):
         (u'Text\n\n<<Macro>>',
          '<page><body><p>Text</p><part alt="&lt;&lt;Macro&gt;&gt;" content-type="x-moin/macro;name=Macro" /></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_macro(self, input, output):
         self.do(input, output)
@@ -217,6 +224,7 @@ class TestConverter(object):
         (u'|Cell 1.1|Cell 1.2|\n|Cell 2.1|Cell 2.2|\n',
          '<page><body><table><table-body><table-row><table-cell>Cell 1.1</table-cell><table-cell>Cell 1.2</table-cell></table-row><table-row><table-cell>Cell 2.1</table-cell><table-cell>Cell 2.2</table-cell></table-row></table-body></table></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_table(self, input, output):
         self.do(input, output)
@@ -246,6 +254,7 @@ class TestConverter(object):
         (u'{{{\n#!text/plain\ntext\n}}}',
          u'<page><body><part content-type="text/plain"><body>text</body></part></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_nowiki(self, input, output):
         self.do(input, output)
@@ -262,6 +271,7 @@ class TestConverter(object):
         (u'Text\n|Item\nText',
          '<page><body><p>Text</p><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
     ]
+
     @pytest.mark.parametrize('input,output', data)
     def test_composite(self, input, output):
         self.do(input, output)

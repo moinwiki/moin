@@ -33,6 +33,7 @@ class Converter(object):
         body = moin_page.body(children=(a, ))
         return moin_page.page(children=(body, ))
 
+
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type(CONTENTTYPE_NONEXISTENT), type_moin_document)

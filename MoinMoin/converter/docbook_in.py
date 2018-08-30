@@ -1209,6 +1209,7 @@ class Converter(object):
         body = self.new(moin_page.body, attrib={}, children=children)
         return self.new(moin_page.page, attrib=attrib, children=[body])
 
+
 from . import default_registry
 from MoinMoin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('application/docbook+xml'), type_moin_document)

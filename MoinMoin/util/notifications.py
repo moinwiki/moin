@@ -57,6 +57,7 @@ def msgs():
     }
     return messages
 
+
 MESSAGES = msgs()
 
 

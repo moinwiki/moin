@@ -182,6 +182,7 @@ class ValidJSON(Validator):
                 return self.note_error(element, state, 'invalid_itemid_msg')
         return True
 
+
 JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(ValidJSON())
 
 URL = String.with_properties(widget=WIDGET_TEXT).validated_by(URLValidator())
@@ -326,6 +327,7 @@ class DateTimeUNIX(_DateTime):
             # TODO: Add support for timezones
             dt = utctimestamp(dt)
         return dt
+
 
 DateTime = (DateTimeUNIX.with_properties(widget=WIDGET_DATETIME,
                                          placeholder=_("YYYY-MM-DD HH:MM:SS (example: 2013-12-31 23:59:59)"))

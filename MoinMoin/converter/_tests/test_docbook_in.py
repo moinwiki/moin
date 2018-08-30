@@ -104,6 +104,7 @@ class TestConverter(Base):
          # <page><body><div html:class="db-book"><p>Test</p></div></body></page>
          '/page/body/div[@html:class="db-book"][p="Test"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_base(self, input, xpath):
         self.do(input, xpath)
@@ -124,6 +125,7 @@ class TestConverter(Base):
         # <page><body><table-of-content /><div html:class="article"><h outline-level="1">Heading 1 A</h><p>First</p><h outline-level="2">Heading 2 A</h><p>Second</p><h outline-level="3">Heading 3 A</h><p>Third</p><h outline-level="1">Heading 1 B</h><p>Fourth</p></div></body></page>
         '/page/body[table-of-content]/div[h[1][@outline-level="1"][text()="Heading 1 A"]][p[1][text()="First"]][h[2][@outline-level="2"][text()="Heading 2 A"]][p[2][text()="Second"]][h[3][@outline-level="3"][text()="Heading 3 A"]][p[3][text()="Third"]][h[4][@outline-level="1"][text()="Heading 1 B"]][p[4][text()="Fourth"]]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_title(self, input, xpath):
         self.do(input, xpath)
@@ -202,6 +204,7 @@ class TestConverter(Base):
         # <page><body><div html:class="article"><list><list-item><list-item-label>Q: </list-item-label><list-item-body>Question 1</list-item-body></list-item><list-item><list-item-label>A: </list-item-label><list-item-body>Answer 1</list-item-body></list-item><list-item><list-item-label>Q: </list-item-label><list-item-body>Question 2</list-item-body></list-item><list-item><list-item-label>A: </list-item-label><list-item-body>Answer 2</list-item-body></list-item>
         '/page/body/div/list[list-item[1][list-item-label="Q:"][list-item-body="Question 1"]][list-item[2][list-item-label="A:"][list-item-body="Answer 1"]][list-item[3][list-item-label="Q:"][list-item-body="Question 2"]][list-item[4][list-item-label="A:"][list-item-body="Answer 2"]]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_list(self, input, xpath):
         self.do(input, xpath)
@@ -228,6 +231,7 @@ class TestConverter(Base):
         # <page><body><div html:class="article"><table><table-header><table-row><table-cell>a1</table-cell></table-row></table-header><table-footer><table-row><table-cell>f1</table-cell></table-row></table-footer><table-body><table-row><table-cell><table><table-body><table-row><table-cell>s1</table-cell></table-row></table-body></table></table-row></table-cell></table></div></body></page>
         '/page/body/div/table[./table-header/table-row[table-cell="a1"]][./table-footer/table-row[table-cell="f1"]][./table-body/table-row[table-cell/table/table-body/table-row[table-cell="s1"]]]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_table(self, input, xpath):
         self.do(input, xpath)
@@ -268,6 +272,7 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><p><span class="db-tag">TAG</span></p></div></article>
          '/page/body/div/p/span[@html:class="db-tag"][text()="TAG"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_misc(self, input, xpath):
         self.do(input, xpath)
@@ -296,6 +301,7 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><p><a xlink:href="None">link</a></p></div></body></page>
          '/page/body/div/p/a[@xlink:href="None"][text()="link"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_link(self, input, xpath):
         self.do(input, xpath)
@@ -336,6 +342,7 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><blockcode html:class="db-literallayout">Text</blockcode></div></body></page>
          '/page/body/div/blockcode[text()="Text"][@html:class="db-literallayout"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_code(self, input, xpath):
         self.do(input, xpath)
@@ -362,6 +369,7 @@ class TestConverter(Base):
         # <page><body><div html:class="db-article"><div html:class="db-mediaobject"><span><object type="image/png" html:alt="figures/eiffeltower.png" html:class="moin-transclusion" html:data-href="figures/eiffeltower.png" xlink:href="+get/figures/eiffeltower.png" /><span class="db-caption"><p>Designed by Gustave Eiffel in 1889, The Eiffel Tower is one of the most widely recognized buildings in the world.</p></span></span></div></div></body></page>
         '/page/body/div/div[@html:class="db-mediaobject"]/span/object[@xlink:href="+get/figures/eiffeltower.png"][@type="image/png"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_object(self, input, xpath):
         self.do(input, xpath)
@@ -388,6 +396,7 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><p><span>text</span></p></div></body></page>
          '/page/body/div/p[span="text"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_style_element(self, input, xpath):
         self.do(input, xpath)
@@ -414,6 +423,7 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><admonition type='warning'><p>text<p></admonition></div></body></page>
          '/page/body/div/admonition[@type="warning"][p="text"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_admonition(self, input, xpath):
         self.do(input, xpath)
@@ -435,6 +445,7 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><p><span class="db-trademark">MoinMoin</span></p></div></body></page>
          '/page/body/div/p/span[@html:class="db-trademark"][text()="MoinMoin"]'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_trademark(self, input, xpath):
         self.do(input, xpath)
@@ -447,6 +458,7 @@ class TestConverter(Base):
         ('<link xlink:href="uri">link</link>',
          '/page/body/part/error'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_error(self, input, xpath):
         self.do(input, xpath)
@@ -456,6 +468,7 @@ class TestConverter(Base):
         ('<article><para>Text</para></article>',
          '/page/body/part/error'),
     ]
+
     @pytest.mark.parametrize('input,xpath', data)
     def test_namespace(self, input, xpath):
         self.do_nonamespace(input, xpath)
