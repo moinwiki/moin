@@ -16,20 +16,20 @@ from flask import request, url_for, flash, redirect
 from flask import current_app as app
 from flask import g as flaskg
 from whoosh.query import Term, And
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template, get_editor_info
-from MoinMoin.apps.admin import admin
-from MoinMoin import user
-from MoinMoin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
-from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
-from MoinMoin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
-from MoinMoin.security import require_permission, ACLStringIterator
-from MoinMoin.util.interwiki import CompositeName
-from MoinMoin.datastruct.backends.wiki_groups import WikiGroup
-from MoinMoin.datastruct.backends import GroupDoesNotExistError
-from MoinMoin.items import Item, acl_validate
-from MoinMoin.util.interwiki import split_fqname
-from MoinMoin.config import default as defaultconfig
+from moin.i18n import _, L_, N_
+from moin.themes import render_template, get_editor_info
+from moin.apps.admin import admin
+from moin import user
+from moin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
+from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
+from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
+from moin.security import require_permission, ACLStringIterator
+from moin.util.interwiki import CompositeName
+from moin.datastruct.backends.wiki_groups import WikiGroup
+from moin.datastruct.backends import GroupDoesNotExistError
+from moin.items import Item, acl_validate
+from moin.util.interwiki import split_fqname
+from moin.config import default as defaultconfig
 
 
 @admin.route('/superuser')

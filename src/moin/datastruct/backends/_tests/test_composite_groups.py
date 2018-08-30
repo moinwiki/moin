@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin.datastruct.backends.composite_groups test
+moin.datastruct.backends.composite_groups test
 """
 
 
@@ -10,9 +10,9 @@ from pytest import raises
 
 from flask import g as flaskg
 
-from MoinMoin.datastruct.backends._tests import GroupsBackendTest
-from MoinMoin.datastruct import ConfigGroups, CompositeGroups, GroupDoesNotExistError
-from MoinMoin._tests import wikiconfig
+from moin.datastruct.backends._tests import GroupsBackendTest
+from moin.datastruct import ConfigGroups, CompositeGroups, GroupDoesNotExistError
+from moin._tests import wikiconfig
 
 import pytest
 
@@ -93,4 +93,4 @@ class TestCompositeGroup(object):
         assert u'not existing group' not in flaskg.groups
 
 
-coverage_modules = ['MoinMoin.datastruct.backends.composite_groups']
+coverage_modules = ['moin.datastruct.backends.composite_groups']

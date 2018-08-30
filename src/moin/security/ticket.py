@@ -16,7 +16,7 @@ import hashlib
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

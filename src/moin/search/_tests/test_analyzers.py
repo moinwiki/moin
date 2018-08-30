@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
- MoinMoin - MoinMoin.search.analyzers Tests
+ MoinMoin - moin.search.analyzers Tests
 """
 
 
 import py
 from flask import current_app as app
 
-from MoinMoin.search.analyzers import *
+from moin.search.analyzers import *
 
 
 class TokenizerTestBase(object):

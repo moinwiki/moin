@@ -12,7 +12,7 @@ from functools import wraps, partial
 
 from flask import g as flaskg
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

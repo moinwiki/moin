@@ -13,11 +13,11 @@ from __future__ import absolute_import, division
 
 from flask import g as flaskg
 
-from MoinMoin.util.interwiki import is_known_wiki, url_for_item
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page, xlink, xinclude, html
-from MoinMoin.wikiutil import AbsItemName
+from moin.util.interwiki import is_known_wiki, url_for_item
+from moin.util.iri import Iri
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.wikiutil import AbsItemName
 
 
 class ConverterBase(object):

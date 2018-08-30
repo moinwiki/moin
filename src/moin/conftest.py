@@ -21,11 +21,11 @@ from __future__ import absolute_import, division
 import pytest
 import py
 
-import MoinMoin.log
-import MoinMoin
-from MoinMoin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
-from MoinMoin._tests import wikiconfig
-from MoinMoin.storage import create_simple_mapping
+import moin.log
+import moin
+from moin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
+from moin._tests import wikiconfig
+from moin.storage import create_simple_mapping
 
 
 # exclude some directories from py.test test discovery, pathes relative to this file
@@ -36,9 +36,9 @@ collect_ignore = [
 ]
 
 # Logging for tests to avoid useless output like timing information on stderr on test failures
-Moindir = py.path.local(MoinMoin.__file__).dirname
+Moindir = py.path.local(moin.__file__).dirname
 config_file = Moindir + '/_tests/test_logging.conf'
-MoinMoin.log.load_config(config_file)
+moin.log.load_config(config_file)
 
 
 @pytest.fixture

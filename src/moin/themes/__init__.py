@@ -18,20 +18,20 @@ from flask import g as flaskg
 from flask import url_for, request
 from flask_theme import get_theme, render_theme_template
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin import wikiutil, user
-from MoinMoin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
-from MoinMoin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
-from MoinMoin.constants.rights import SUPERUSER
-from MoinMoin.search import SearchForm
-from MoinMoin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
-from MoinMoin.util.crypto import cache_key
-from MoinMoin.util.forms import make_generator
-from MoinMoin.util.clock import timed
-from MoinMoin.util.mime import Type
+from moin.i18n import _, L_, N_
+from moin import wikiutil, user
+from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
+from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
+from moin.constants.rights import SUPERUSER
+from moin.search import SearchForm
+from moin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
+from moin.util.crypto import cache_key
+from moin.util.forms import make_generator
+from moin.util.clock import timed
+from moin.util.mime import Type
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -186,7 +186,7 @@ class ThemeSupport(object):
                                     label = _('Remove Link')
                                 user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
-                                from MoinMoin.items import Item
+                                from moin.items import Item
                                 if flaskg.user.is_subscribed_to(item.item):
                                     label = _('Unsubscribe')
                                 else:
@@ -305,7 +305,7 @@ class ThemeSupport(object):
         :rtype: list
         :returns: list of item tuples (item_name, item_title, item_mime_type, has_children)
         """
-        from MoinMoin.items import Item
+        from moin.items import Item
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
         item = Item.create(fqname.fullname)
@@ -461,7 +461,7 @@ class ThemeSupport(object):
         if item_name and parent_item_name:
             return parent_item_name
 
-    # TODO: reimplement on-wiki-page sidebar definition with MoinMoin.converter
+    # TODO: reimplement on-wiki-page sidebar definition with moin.converter
 
     # Properties ##############################################################
 

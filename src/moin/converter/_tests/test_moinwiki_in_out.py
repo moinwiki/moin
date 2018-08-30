@@ -16,10 +16,10 @@ import re
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util.tree import moin_page, xlink, xinclude, html
-# from MoinMoin.converter.moinwiki_in import Converter as conv_in
-from MoinMoin.converter.moinwiki19_in import ConverterFormat19 as conv_in
-from MoinMoin.converter.moinwiki_out import Converter as conv_out
+from moin.util.tree import moin_page, xlink, xinclude, html
+# from moin.converter.moinwiki_in import Converter as conv_in
+from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
+from moin.converter.moinwiki_out import Converter as conv_out
 
 
 class TestConverter(object):

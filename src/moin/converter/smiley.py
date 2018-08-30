@@ -16,7 +16,7 @@ import re
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util.tree import moin_page
+from moin.util.tree import moin_page
 
 
 class Converter(object):
@@ -138,5 +138,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import type_moin_document
+from moin.util.mime import type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

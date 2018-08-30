@@ -8,7 +8,7 @@ MoinMoin storage errors
 """
 
 
-from MoinMoin.error import CompositeError
+from moin.error import CompositeError
 
 
 class StorageError(CompositeError):

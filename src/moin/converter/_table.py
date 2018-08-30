@@ -8,7 +8,7 @@ MoinMoin - table data to DOM conversion support
 
 from __future__ import absolute_import, division
 
-from MoinMoin.util.tree import moin_page
+from moin.util.tree import moin_page
 from emeraldtree import ElementTree as ET
 
 WORDBREAK_LEN = 30

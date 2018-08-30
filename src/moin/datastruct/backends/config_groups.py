@@ -9,7 +9,7 @@ members in a configuration file.
 """
 
 
-from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
+from moin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
 
 
 class ConfigGroup(GreedyGroup):

@@ -8,9 +8,9 @@ Test for macro.GetVal
 import pytest
 from flask import g as flaskg
 
-from MoinMoin.macro.GetVal import *
-from MoinMoin.constants.keys import SOMEDICT
-from MoinMoin._tests import become_trusted, update_item
+from moin.macro.GetVal import *
+from moin.constants.keys import SOMEDICT
+from moin._tests import become_trusted, update_item
 
 
 class TestMacro(object):

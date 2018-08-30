@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.config.default Tests
+    MoinMoin - moin.config.default Tests
 """
 
 
@@ -39,4 +39,4 @@ class TestPasswordChecker(object):
                 assert result == (pw_error is None)
 
 
-coverage_modules = ['MoinMoin.config.default']
+coverage_modules = ['moin.config.default']

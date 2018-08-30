@@ -6,10 +6,10 @@ MoinMoin - Macro base class
 """
 
 
-from MoinMoin.util import iri
-from MoinMoin.util.tree import moin_page, xlink
-from MoinMoin.items import Item
-from MoinMoin.storage.middleware.protecting import AccessDenied
+from moin.util import iri
+from moin.util.tree import moin_page, xlink
+from moin.items import Item
+from moin.storage.middleware.protecting import AccessDenied
 
 
 class MacroBase(object):

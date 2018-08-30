@@ -19,8 +19,8 @@ from flask_script import Command, Option
 
 from whoosh.query import Every
 
-from MoinMoin.constants.keys import NAME, NAME_EXACT
-from MoinMoin.script import fatal
+from moin.constants.keys import NAME, NAME_EXACT
+from moin.script import fatal
 
 
 class Set_Meta(Command):

@@ -3,13 +3,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin.datastruct.backends.composite_dicts test
+moin.datastruct.backends.composite_dicts test
 """
 
 
-from MoinMoin.datastruct.backends._tests import DictsBackendTest
-from MoinMoin.datastruct import ConfigDicts, CompositeDicts
-from MoinMoin._tests import wikiconfig
+from moin.datastruct.backends._tests import DictsBackendTest
+from moin.datastruct import ConfigDicts, CompositeDicts
+from moin._tests import wikiconfig
 
 import pytest
 
@@ -35,4 +35,4 @@ class TestCompositeDict(DictsBackendTest):
         return Config
 
 
-coverage_modules = ['MoinMoin.datastruct.backends.composite_dicts']
+coverage_modules = ['moin.datastruct.backends.composite_dicts']

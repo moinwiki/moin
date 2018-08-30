@@ -3,13 +3,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.util.iri
+MoinMoin - Tests for moin.util.iri
 """
 
 
 import pytest
 
-from MoinMoin.util.iri import *
+from moin.util.iri import *
 
 
 def test_Iri_init_1():

@@ -3,17 +3,17 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.auth.ldap Tests
+    MoinMoin - moin.auth.ldap Tests
 """
 
 
 import pytest
 
 
-from MoinMoin._tests.ldap_testbase import LDAPTstBase, LdapEnvironment, check_environ, SLAPD_EXECUTABLE
-from MoinMoin._tests.ldap_testdata import *
-from MoinMoin._tests import wikiconfig
-from MoinMoin.auth import handle_login
+from moin._tests.ldap_testbase import LDAPTstBase, LdapEnvironment, check_environ, SLAPD_EXECUTABLE
+from moin._tests.ldap_testdata import *
+from moin._tests import wikiconfig
+from moin.auth import handle_login
 
 msg = check_environ()
 if msg:
@@ -51,7 +51,7 @@ class TestMoinLDAPLogin(LDAPTstBase):
     ldif_content = LDIF_CONTENT
 
     class Config(wikiconfig.Config):
-        from MoinMoin.auth.ldap_login import LDAPAuth
+        from moin.auth.ldap_login import LDAPAuth
         # ToDo get these vars from the test environment
         server_uri = 'ldap://127.0.0.1:3890'
         base_dn = 'ou=testing,dc=example,dc=org'
@@ -93,8 +93,8 @@ class TestBugDefaultPasswd(LDAPTstBase):
     ldif_content = LDIF_CONTENT
 
     class Config(wikiconfig.Config):
-        from MoinMoin.auth.ldap_login import LDAPAuth
-        from MoinMoin.auth import MoinAuth
+        from moin.auth.ldap_login import LDAPAuth
+        from moin.auth import MoinAuth
         # ToDo get these vars from the test environment
         server_uri = 'ldap://127.0.0.1:3890'
         base_dn = 'ou=testing,dc=example,dc=org'
@@ -195,7 +195,7 @@ class TestLdapFailover(object):
             self.ldap_envs.append(ldap_env)
 
     class Config(wikiconfig.Config):
-        from MoinMoin.auth.ldap_login import LDAPAuth
+        from moin.auth.ldap_login import LDAPAuth
         # ToDo get these vars from the test environment
         server_uri = 'ldap://127.0.0.1:3891'
         base_dn = 'ou=testing,dc=example,dc=org'

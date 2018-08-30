@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.security Tests
+    MoinMoin - moin.security Tests
 """
 
 
@@ -12,13 +12,13 @@ import pytest
 
 from flask import current_app as app
 
-from MoinMoin.security import AccessControlList, ACLStringIterator
+from moin.security import AccessControlList, ACLStringIterator
 
-from MoinMoin.user import User
-from MoinMoin.constants.keys import NAME, ACL
-from MoinMoin.datastruct import ConfigGroups
+from moin.user import User
+from moin.constants.keys import NAME, ACL
+from moin.datastruct import ConfigGroups
 
-from MoinMoin._tests import update_item, become_trusted, wikiconfig
+from moin._tests import update_item, become_trusted, wikiconfig
 
 
 def acliter(acl):
@@ -545,4 +545,4 @@ class TestItemHierachicalAclsMultiItemNames(object):
 
 # XXX TODO add tests for a user having multiple usernames (one resulting in more permissions than other)
 
-coverage_modules = ['MoinMoin.security']
+coverage_modules = ['moin.security']

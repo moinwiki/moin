@@ -20,7 +20,7 @@
 """
 from werkzeug import get_current_url
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

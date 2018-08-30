@@ -3,22 +3,22 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.items Tests
+    MoinMoin - moin.items Tests
 """
 
 import pytest
 
 from werkzeug import escape
 
-from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from MoinMoin.util.interwiki import CompositeName
-from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
-                                     ADDRESS, TRASH, ITEMID, NAME_EXACT,
-                                     ACTION, ACTION_REVERT)
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
-from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
-from MoinMoin.constants.itemtypes import ITEMTYPE_NONEXISTENT
+from moin._tests import become_trusted, update_item
+from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
+from moin.util.interwiki import CompositeName
+from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
+                                 ADDRESS, TRASH, ITEMID, NAME_EXACT,
+                                 ACTION, ACTION_REVERT)
+from moin.constants.namespaces import NAMESPACE_DEFAULT
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
 
 def build_index(basename, relnames):
@@ -409,4 +409,4 @@ class TestItem(object):
         assert item.meta[TRASH]
 
 
-coverage_modules = ['MoinMoin.items']
+coverage_modules = ['moin.items']

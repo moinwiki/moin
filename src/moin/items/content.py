@@ -49,30 +49,30 @@ try:
 except ImportError:
     PIL = PILImage = PILdiff = None
 
-from MoinMoin import wikiutil
-from MoinMoin.i18n import _, L_
-from MoinMoin.themes import render_template
-from MoinMoin.storage.error import StorageError
-from MoinMoin.util.send_file import send_file
-from MoinMoin.util.registry import RegistryBase
-from MoinMoin.util.mimetype import MimeType
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page, html, xlink, docbook
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.diff_text import diff as text_diff
-from MoinMoin.util.diff_html import diff as html_diff
-from MoinMoin.util.crypto import cache_key
-from MoinMoin.util.clock import timed
-from MoinMoin.util.interwiki import get_download_file_name
-from MoinMoin.forms import File
-from MoinMoin.constants.contenttypes import (
+from moin import wikiutil
+from moin.i18n import _, L_
+from moin.themes import render_template
+from moin.storage.error import StorageError
+from moin.util.send_file import send_file
+from moin.util.registry import RegistryBase
+from moin.util.mimetype import MimeType
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import moin_page, html, xlink, docbook
+from moin.util.iri import Iri
+from moin.util.diff_text import diff as text_diff
+from moin.util.diff_html import diff as html_diff
+from moin.util.crypto import cache_key
+from moin.util.clock import timed
+from moin.util.interwiki import get_download_file_name
+from moin.forms import File
+from moin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
 )
-from MoinMoin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, TEMPLATE,
-                                     HASH_ALGORITHM, ACTION_SAVE)
+from moin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, TEMPLATE,
+                                 HASH_ALGORITHM, ACTION_SAVE)
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -201,7 +201,7 @@ class Content(object):
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
             # if so we perform the transformation, otherwise we don't
-            from MoinMoin.converter import default_registry as reg
+            from moin.converter import default_registry as reg
             input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
@@ -222,7 +222,7 @@ class Content(object):
         return doc
 
     def _expand_document(self, doc):
-        from MoinMoin.converter import default_registry as reg
+        from moin.converter import default_registry as reg
         flaskg.add_lineno_attr = False  # do not add data-lineno attr for transclusions, footnotes, etc.
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
@@ -249,7 +249,7 @@ class Content(object):
 
     def _render_data(self):
         try:
-            from MoinMoin.converter import default_registry as reg
+            from moin.converter import default_registry as reg
             # TODO: Real output format
             doc = self.internal_representation()
             doc = self._expand_document(doc)
@@ -866,7 +866,7 @@ class Text(Binary):
         :param template: name of the template to be rendered
         :return: HTML data with meta and content diff
         """
-        from MoinMoin.items import Item  # XXX causes import error if placed near top
+        from moin.items import Item  # XXX causes import error if placed near top
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
         item = Item.create(newrev.meta['name'][0], rev_id=newrev.meta['revid'])
         rendered = Markup(item.content._render_data())
@@ -922,10 +922,10 @@ class Text(Binary):
     _render_data_diff_raw = _render_data_diff
 
     def _render_data_highlight(self):
-        from MoinMoin.converter import default_registry as reg
+        from moin.converter import default_registry as reg
         data_text = self.data_storage_to_internal(self.data)
         # TODO: use registry as soon as it is in there
-        from MoinMoin.converter.pygments_in import Converter as PygmentsConverter
+        from moin.converter.pygments_in import Converter as PygmentsConverter
         pygments_conv = PygmentsConverter(contenttype=self.contenttype)
         doc = pygments_conv(data_text)
         # TODO: Real output format
@@ -1003,7 +1003,7 @@ class DocBook(MarkupItem):
 
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
-        from MoinMoin.converter import default_registry as reg
+        from moin.converter import default_registry as reg
 
         doc = self._expand_document(doc)
 

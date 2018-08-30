@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.text_csv_in
+MoinMoin - Tests for moin.converter.text_csv_in
 """
 
 
@@ -10,7 +10,7 @@ import re
 
 import pytest
 
-from MoinMoin.util.tree import moin_page, xlink, html, xinclude
+from moin.util.tree import moin_page, xlink, html, xinclude
 
 from ..text_csv_in import Converter
 

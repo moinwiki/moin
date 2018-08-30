@@ -12,7 +12,7 @@ import os
 import codecs
 import errno
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 CHARSET = 'utf-8'

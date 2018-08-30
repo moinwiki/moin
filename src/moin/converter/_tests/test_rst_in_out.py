@@ -21,10 +21,10 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from MoinMoin import config
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink, xinclude, html
-from MoinMoin.constants.contenttypes import CHARSET
+from moin import config
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.constants.contenttypes import CHARSET
 
 # ### TODO: try block (do not crash if we don't have docutils)
 pytest.importorskip('docutils')
@@ -34,8 +34,8 @@ from docutils.nodes import reference, literal_block
 from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 
-from MoinMoin.converter.rst_in import Converter as conv_in
-from MoinMoin.converter.rst_out import Converter as conv_out
+from moin.converter.rst_in import Converter as conv_in
+from moin.converter.rst_out import Converter as conv_out
 
 
 class TestConverter(object):

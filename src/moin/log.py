@@ -13,7 +13,7 @@
        of a logging configuration file - this method overrides all following
        methods (except if it can't read or use that configuration, then it
        will use c))
-    b) by an explicit call to MoinMoin.log.load_config('logging.conf') -
+    b) by an explicit call to moin.log.load_config('logging.conf') -
        you need to do this very early or a) or c) will happen before
     c) by using a builtin fallback logging conf
 
@@ -28,7 +28,7 @@
 
     Or, modify your server adaptor script (e.g. moin.cgi) to do this::
 
-        from MoinMoin import log
+        from moin import log
         log.load_config('wiki/config/logging/logfile') # XXX please fix this path!
 
     You have to fix that path to use a logging configuration matching your
@@ -42,10 +42,10 @@
     ----------------------
     If you write code for moin, do this at top of your module::
 
-       from MoinMoin import log
+       from moin import log
        logging = log.getLogger(__name__)
 
-    This will create a logger with 'MoinMoin.your.module' as name.
+    This will create a logger with 'moin.your.module' as name.
     The logger can optionally get configured in the logging configuration.
     If you don't configure it, some upperlevel logger (e.g. the root logger)
     will do the logging.
@@ -85,7 +85,7 @@ formatter=default
 args=(sys.stderr, )
 
 [handler_email]
-class=MoinMoin.log.EmailHandler
+class=moin.log.EmailHandler
 level=ERROR
 formatter=default
 args=()
@@ -154,12 +154,12 @@ def load_config(conf_fname=None):
         l = getLogger(__name__)
         if err_msg:
             l.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
-        l.info('using logging configuration read from built-in fallback in MoinMoin.log module!')
+        l.info('using logging configuration read from built-in fallback in moin.log module!')
         warnings.showwarning = _log_warning
 
-    import MoinMoin
-    code_path = os.path.dirname(MoinMoin.__file__)
-    l.info('Running %s %s code from %s' % (MoinMoin.project, MoinMoin.version, code_path))
+    import moin
+    code_path = os.path.dirname(moin.__file__)
+    l.info('Running %s %s code from %s' % (moin.project, moin.version, code_path))
 
 
 def getLogger(name):
@@ -222,7 +222,7 @@ class EmailHandler(logging.Handler):
             subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
                 app.cfg.sitename, log_level)
             msg = self.format(record)
-            from MoinMoin.mail.sendmail import sendmail
+            from moin.mail.sendmail import sendmail
             sendmail(subject, msg, to=toaddrs)
         finally:
             self.in_email_handler = False

@@ -14,10 +14,10 @@ from email.header import Header
 
 from flask import current_app as app
 
-from MoinMoin.constants.contenttypes import CHARSET
-from MoinMoin.i18n import _, L_, N_
+from moin.constants.contenttypes import CHARSET
+from moin.i18n import _, L_, N_
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

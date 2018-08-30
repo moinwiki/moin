@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.macro._base
+MoinMoin - Tests for moin.macro._base
 """
 
 import pytest
-from MoinMoin.macro._base import *
+from moin.macro._base import *
 
 
 class TestMacroBase(object):

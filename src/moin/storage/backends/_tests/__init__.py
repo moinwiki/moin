@@ -12,7 +12,7 @@ from StringIO import StringIO
 
 import pytest
 
-from MoinMoin.constants.keys import SIZE, HASH_ALGORITHM
+from moin.constants.keys import SIZE, HASH_ALGORITHM
 
 
 class BackendTestBase(object):

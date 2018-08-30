@@ -12,18 +12,18 @@
     Moin will request HTTP Basic Auth and use the HTTP Basic Auth header it
     receives to authenticate username/password against the moin user profiles.
 
-    from MoinMoin.auth.http import HTTPAuthMoin
+    from moin.auth.http import HTTPAuthMoin
     auth = [HTTPAuthMoin()]
 """
 
 
 from flask import request
 
-from MoinMoin import user
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.auth import BaseAuth, GivenAuth
+from moin import user
+from moin.i18n import _, L_, N_
+from moin.auth import BaseAuth, GivenAuth
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

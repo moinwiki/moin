@@ -9,7 +9,7 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask import request
 from whoosh.query import Term, And
-from MoinMoin.constants.keys import *
+from moin.constants.keys import *
 
 
 def prior_next_revs(revid, fqname):

@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.backends.config_lazy_groups tests
+    MoinMoin - moin.backends.config_lazy_groups tests
 """
 
 
-from MoinMoin.datastruct.backends._tests import GroupsBackendTest
-from MoinMoin.datastruct.backends.config_lazy_groups import ConfigLazyGroups
-from MoinMoin.datastruct import ConfigGroups, CompositeGroups
-from MoinMoin._tests import wikiconfig
+from moin.datastruct.backends._tests import GroupsBackendTest
+from moin.datastruct.backends.config_lazy_groups import ConfigLazyGroups
+from moin.datastruct import ConfigGroups, CompositeGroups
+from moin._tests import wikiconfig
 
 import pytest
 
@@ -63,4 +63,4 @@ class TestCompositeAndLazyConfigGroups(GroupsBackendTest):
         return Config
 
 
-coverage_modules = ['MoinMoin.datastruct.backends.config_lazy_groups']
+coverage_modules = ['moin.datastruct.backends.config_lazy_groups']

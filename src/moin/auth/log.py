@@ -9,9 +9,9 @@
 """
 
 
-from MoinMoin.auth import BaseAuth, ContinueLogin
+from moin.auth import BaseAuth, ContinueLogin
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

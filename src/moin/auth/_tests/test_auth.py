@@ -7,10 +7,10 @@ Test for auth.__init__
 
 from flask import g as flaskg
 
-from MoinMoin._tests import wikiconfig
-from MoinMoin.constants.misc import ANON
-from MoinMoin.auth import GivenAuth, handle_login, get_multistage_continuation_url
-from MoinMoin.user import create_user
+from moin._tests import wikiconfig
+from moin.constants.misc import ANON
+from moin.auth import GivenAuth, handle_login, get_multistage_continuation_url
+from moin.user import create_user
 
 import pytest
 

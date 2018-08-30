@@ -8,10 +8,10 @@ Test for auth.log
 
 from flask import g as flaskg
 
-from MoinMoin.auth.log import AuthLog
-from MoinMoin.constants.misc import ANON
+from moin.auth.log import AuthLog
+from moin.constants.misc import ANON
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

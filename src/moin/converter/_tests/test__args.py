@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter._args
+MoinMoin - Tests for moin.converter._args
 """
 
 
 import pytest
 
-from MoinMoin.converter._args import *
+from moin.converter._args import *
 
 
 def test_Arguments___init__():

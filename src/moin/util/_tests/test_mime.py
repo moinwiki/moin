@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.util.mime
+MoinMoin - Tests for moin.util.mime
 """
 
 
-from MoinMoin.util.mime import *
+from moin.util.mime import *
 
 
 def test_Type_init_1():

@@ -101,17 +101,17 @@ from flask import g as flaskg
 
 from whoosh.query import Term, And, Wildcard, Regex
 
-from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME
-from MoinMoin.items import Item
-from MoinMoin.util.mime import type_moin_document
-from MoinMoin.util.iri import Iri, IriPath
-from MoinMoin.util.tree import html, moin_page, xinclude, xlink
-from MoinMoin.converter.html_out import mark_item_as_transclusion, Attributes
-from MoinMoin.i18n import _, L_, N_
+from moin.constants.keys import NAME, NAME_EXACT, WIKINAME
+from moin.items import Item
+from moin.util.mime import type_moin_document
+from moin.util.iri import Iri, IriPath
+from moin.util.tree import html, moin_page, xinclude, xlink
+from moin.converter.html_out import mark_item_as_transclusion, Attributes
+from moin.i18n import _, L_, N_
 
 from ._args import Arguments
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -482,5 +482,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

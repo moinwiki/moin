@@ -15,10 +15,10 @@ from os.path import isfile, join
 
 from flask import url_for
 
-from MoinMoin.util.tree import html
-from MoinMoin.macro._base import MacroBlockBase
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.converter._table import TableMixin
+from moin.util.tree import html
+from moin.macro._base import MacroBlockBase
+from moin.i18n import _, L_, N_
+from moin.converter._table import TableMixin
 
 
 class Macro(MacroBlockBase):

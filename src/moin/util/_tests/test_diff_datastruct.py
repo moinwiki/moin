@@ -2,12 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util.diff_datastruct Tests
+    MoinMoin - moin.util.diff_datastruct Tests
 """
 
 import pytest
 
-from MoinMoin.util.diff_datastruct import diff, make_text_diff, Undefined, INSERT, DELETE
+from moin.util.diff_datastruct import diff, make_text_diff, Undefined, INSERT, DELETE
 
 
 class TestDiffDatastruct(object):

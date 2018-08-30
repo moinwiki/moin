@@ -32,19 +32,19 @@ from flask import g as flaskg
 from flask import session, request, url_for, render_template
 from jinja2.runtime import Undefined
 
-from MoinMoin import wikiutil
-from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
-from MoinMoin.constants.namespaces import NAMESPACE_USERPROFILES
-from MoinMoin.constants.keys import *
-from MoinMoin.constants.misc import ANON
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.mail import sendmail
-from MoinMoin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
-from MoinMoin.util.crypto import generate_token, valid_token, make_uuid
-from MoinMoin.util.subscriptions import get_matched_subscription_patterns
-from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
+from moin import wikiutil
+from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
+from moin.constants.keys import *
+from moin.constants.misc import ANON
+from moin.i18n import _, L_, N_
+from moin.mail import sendmail
+from moin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
+from moin.util.crypto import generate_token, valid_token, make_uuid
+from moin.util.subscriptions import get_matched_subscription_patterns
+from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -394,7 +394,7 @@ class User(object):
         if not app.cfg.user_use_gravatar:
             return None
 
-        from MoinMoin.themes import get_current_theme
+        from moin.themes import get_current_theme
         from flask_theme import static_file_url
 
         theme = get_current_theme()
@@ -581,7 +581,7 @@ class User(object):
         :rtype: bool
         :returns: if user is subscribed to the item
         """
-        from MoinMoin.items import NonExistent
+        from moin.items import NonExistent
         if not self.valid or isinstance(item, (NonExistent, Undefined)):
             return False
 

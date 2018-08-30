@@ -9,11 +9,11 @@ or the obfuscated display passed as the first macro argument).
 
 from flask import g as flaskg
 
-from MoinMoin.util.tree import moin_page, xlink
-from MoinMoin.macro._base import MacroInlineBase
-from MoinMoin.mail.sendmail import decodeSpamSafeEmail
-from MoinMoin.converter._args_wiki import parse as parse_arguments
-from MoinMoin.i18n import _, L_, N_
+from moin.util.tree import moin_page, xlink
+from moin.macro._base import MacroInlineBase
+from moin.mail.sendmail import decodeSpamSafeEmail
+from moin.converter._args_wiki import parse as parse_arguments
+from moin.i18n import _, L_, N_
 
 
 class Macro(MacroInlineBase):

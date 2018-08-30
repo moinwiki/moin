@@ -10,7 +10,7 @@ Typical usage:
 
  1. Create a profiler:
 
-    from MoinMoin.util.profile import Profiler
+    from moin.util.profile import Profiler
     profiler = Profiler('my log')
 
  2. In the request handler, add each request to the profiler:

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.util.send_file Tests
+MoinMoin - moin.util.send_file Tests
 """
 
 import os
@@ -12,7 +12,7 @@ import shutil
 
 import pytest
 
-from MoinMoin.util import send_file
+from moin.util import send_file
 
 
 class TestFuid(object):

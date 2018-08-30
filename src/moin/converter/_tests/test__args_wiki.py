@@ -2,12 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter._args_wiki
+MoinMoin - Tests for moin.converter._args_wiki
 """
 
 import pytest
 
-from MoinMoin.converter._args_wiki import *
+from moin.converter._args_wiki import *
 
 
 @pytest.mark.parametrize('wiki,positional,keyword', [

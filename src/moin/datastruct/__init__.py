@@ -6,13 +6,13 @@ MoinMoin - datastruct (groups and dicts) support.
 """
 
 
-from MoinMoin.datastruct.backends.wiki_dicts import WikiDicts
-from MoinMoin.datastruct.backends.config_dicts import ConfigDicts
-from MoinMoin.datastruct.backends.composite_dicts import CompositeDicts
+from moin.datastruct.backends.wiki_dicts import WikiDicts
+from moin.datastruct.backends.config_dicts import ConfigDicts
+from moin.datastruct.backends.composite_dicts import CompositeDicts
 
-from MoinMoin.datastruct.backends.wiki_groups import WikiGroups
-from MoinMoin.datastruct.backends.config_groups import ConfigGroups
-from MoinMoin.datastruct.backends.composite_groups import CompositeGroups
+from moin.datastruct.backends.wiki_groups import WikiGroups
+from moin.datastruct.backends.config_groups import ConfigGroups
+from moin.datastruct.backends.composite_groups import CompositeGroups
 
-from MoinMoin.datastruct.backends import GroupDoesNotExistError
-from MoinMoin.datastruct.backends import DictDoesNotExistError
+from moin.datastruct.backends import GroupDoesNotExistError
+from moin.datastruct.backends import DictDoesNotExistError

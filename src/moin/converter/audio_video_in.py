@@ -12,8 +12,8 @@ Note: currently this is quite same as image_in.
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink
 
 
 class Converter(object):
@@ -40,7 +40,7 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('video/mp4'), type_moin_document)
 default_registry.register(Converter._factory, Type('video/ogg'), type_moin_document)
 default_registry.register(Converter._factory, Type('video/webm'), type_moin_document)

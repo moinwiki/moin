@@ -10,10 +10,10 @@ MoinMoin - kyoto tycoon store tests
 from __future__ import absolute_import, division
 
 import pytest
-pytest.importorskip('MoinMoin.storage.stores.kt')
+pytest.importorskip('moin.storage.stores.kt')
 
 
-from MoinMoin._tests import check_connection
+from moin._tests import check_connection
 try:
     check_connection(1978)
 except Exception as err:

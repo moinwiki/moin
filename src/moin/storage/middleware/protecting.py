@@ -18,15 +18,15 @@ import time
 
 from whoosh.util.cache import lru_cache
 
-from MoinMoin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
-from MoinMoin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
-from MoinMoin.constants.namespaces import NAMESPACE_ALL
+from moin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
+from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
+from moin.constants.namespaces import NAMESPACE_ALL
 
-from MoinMoin.security import AccessControlList
+from moin.security import AccessControlList
 
-from MoinMoin.util.interwiki import split_fqname
+from moin.util.interwiki import split_fqname
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

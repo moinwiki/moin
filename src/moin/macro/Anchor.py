@@ -6,8 +6,8 @@ MoinMoin - Anchor Macro to put an anchor at the place where it is used.
 """
 
 
-from MoinMoin.util.tree import moin_page
-from MoinMoin.macro._base import MacroInlineBase
+from moin.util.tree import moin_page
+from moin.macro._base import MacroInlineBase
 
 
 class Macro(MacroInlineBase):

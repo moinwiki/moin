@@ -19,13 +19,13 @@ from flask import flash
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
-from MoinMoin.util.tree import html, moin_page, xlink, xml
-from MoinMoin.i18n import _
+from moin.util.tree import html, moin_page, xlink, xml
+from moin.i18n import _
 
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -599,5 +599,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('text/html'), type_moin_document)

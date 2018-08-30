@@ -11,4 +11,4 @@
 
 from flask import Blueprint
 frontend = Blueprint('frontend', __name__)
-import MoinMoin.apps.frontend.views
+import moin.apps.frontend.views

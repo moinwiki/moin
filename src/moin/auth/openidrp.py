@@ -15,13 +15,13 @@ from openid.fetchers import HTTPFetchingError
 
 from flask import session, request, url_for, flash
 from flask import current_app as app
-from MoinMoin.auth import BaseAuth, get_multistage_continuation_url
-from MoinMoin.auth import ContinueLogin, CancelLogin, MultistageFormLogin, MultistageRedirectLogin
-from MoinMoin.constants.keys import ITEMID
-from MoinMoin import user
-from MoinMoin.i18n import _, L_, N_
+from moin.auth import BaseAuth, get_multistage_continuation_url
+from moin.auth import ContinueLogin, CancelLogin, MultistageFormLogin, MultistageRedirectLogin
+from moin.constants.keys import ITEMID
+from moin import user
+from moin.i18n import _, L_, N_
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

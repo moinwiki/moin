@@ -15,7 +15,7 @@ for the input mimetype.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.util.tree import moin_page
+from moin.util.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
 
@@ -41,7 +41,7 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 # Assign a lower priority (= bigger number) so that it is tried after pygments_in
 default_registry.register(Converter._factory, Type(type='text'), type_moin_document,
                           default_registry.PRIORITY_MIDDLE + 1)

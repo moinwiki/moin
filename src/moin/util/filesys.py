@@ -14,7 +14,7 @@ import time
 import errno
 from stat import S_ISDIR, ST_MODE, S_IMODE
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

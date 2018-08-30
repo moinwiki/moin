@@ -12,7 +12,7 @@ import os
 
 from werkzeug.test import Client
 
-from MoinMoin.wsgiapp import application
+from moin.wsgiapp import application
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'tests'))
 

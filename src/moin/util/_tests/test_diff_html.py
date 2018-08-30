@@ -3,11 +3,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.util.diff_html Tests
+MoinMoin - moin.util.diff_html Tests
 """
 
 
-from MoinMoin.util import diff_html
+from moin.util import diff_html
 
 
 def test_indent():

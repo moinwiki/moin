@@ -11,7 +11,7 @@ from __future__ import absolute_import, division
 import os
 import tempfile
 
-from MoinMoin.constants.keys import NAME, MTIME, REVID, ITEMID, HASH_ALGORITHM
+from moin.constants.keys import NAME, MTIME, REVID, ITEMID, HASH_ALGORITHM
 from ..fileserver import Backend
 from . import BackendTestBase
 

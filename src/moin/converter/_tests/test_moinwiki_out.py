@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.moinwiki_out
+MoinMoin - Tests for moin.converter.moinwiki_out
 """
 
 
@@ -11,7 +11,7 @@ import re
 
 import pytest
 
-from MoinMoin.converter.moinwiki_out import *
+from moin.converter.moinwiki_out import *
 
 
 class Base(object):
@@ -214,4 +214,4 @@ class TestConverter(Base):
         self.do(input, output)
 
 
-coverage_modules = ['MoinMoin.converter.moinwiki_out']
+coverage_modules = ['moin.converter.moinwiki_out']

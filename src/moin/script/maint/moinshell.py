@@ -6,7 +6,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask_script import Command, Option
 
-from MoinMoin.app import before_wiki
+from moin.app import before_wiki
 
 
 class MoinShell(Command):

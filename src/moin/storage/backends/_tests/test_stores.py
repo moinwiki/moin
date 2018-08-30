@@ -17,10 +17,10 @@ import tempfile
 from ..stores import MutableBackend
 from . import MutableBackendTestBase
 
-from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
-from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
-from MoinMoin.storage.stores.fs import BytesStore as FSBytesStore
-from MoinMoin.storage.stores.fs import FileStore as FSFileStore
+from moin.storage.stores.memory import BytesStore as MemoryBytesStore
+from moin.storage.stores.memory import FileStore as MemoryFileStore
+from moin.storage.stores.fs import BytesStore as FSBytesStore
+from moin.storage.stores.fs import FileStore as FSFileStore
 
 
 class TestMemoryBackend(MutableBackendTestBase):

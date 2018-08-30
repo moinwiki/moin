@@ -4,14 +4,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.module_tested Tests
+    MoinMoin - moin.module_tested Tests
 
     Module names must start with 'test_' to be included in the tests.
 """
 
 
 # include here the module that you want to test:
-from MoinMoin import module_tested
+from moin import module_tested
 
 
 class TestSimpleStuff(object):
@@ -44,7 +44,7 @@ class TestComplexStuff(object):
         ('Line break', '<<BR>>', '<br>'),
     )
 
-    from MoinMoin._tests import wikiconfig
+    from moin._tests import wikiconfig
 
     class Config(wikiconfig.Config):
         foo = 'bar'  # we want to have this non-default setting

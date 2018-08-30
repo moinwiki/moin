@@ -12,7 +12,7 @@
 """
 
 
-from MoinMoin.datastruct.backends import LazyGroup, LazyGroupsBackend
+from moin.datastruct.backends import LazyGroup, LazyGroupsBackend
 
 
 class ConfigLazyGroup(LazyGroup):

@@ -2,16 +2,16 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.include
+MoinMoin - Tests for moin.converter.include
 
 Note: Tests will fail if caching is turned on in wikiconfig.
 """
 
 
-from MoinMoin.converter.include import *
-from MoinMoin.items import Item
-from MoinMoin.constants.keys import CONTENTTYPE, ACL
-from MoinMoin._tests import wikiconfig, update_item
+from moin.converter.include import *
+from moin.items import Item
+from moin.constants.keys import CONTENTTYPE, ACL
+from moin._tests import wikiconfig, update_item
 
 
 class TestInclude(object):

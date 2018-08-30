@@ -36,9 +36,9 @@ from time import time
 from flatland import Form, String
 from flatland.validation import Validator
 
-from MoinMoin.i18n import _, L_, N_
+from moin.i18n import _, L_, N_
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

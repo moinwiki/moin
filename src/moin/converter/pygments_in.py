@@ -17,11 +17,11 @@ try:
 except ImportError:
     pygments = None
 
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -121,7 +121,7 @@ if pygments:
             return moin_page.page(children=(body, ))
 
     from . import default_registry
-    from MoinMoin.util.mime import Type, type_moin_document
+    from moin.util.mime import Type, type_moin_document
     default_registry.register(Converter._factory, Type(type='text'), type_moin_document)
     default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document)
 

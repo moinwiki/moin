@@ -16,10 +16,10 @@ from flask import url_for
 import os.path
 from collections import namedtuple
 
-from MoinMoin.constants.keys import CURRENT, FIELDS, NAME_EXACT, NAMESPACE
-from MoinMoin.constants.contenttypes import CHARSET
+from moin.constants.keys import CURRENT, FIELDS, NAME_EXACT, NAMESPACE
+from moin.constants.contenttypes import CHARSET
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

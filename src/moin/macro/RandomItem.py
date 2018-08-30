@@ -14,11 +14,11 @@ random.seed()
 
 from flask import g as flaskg
 
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink
-from MoinMoin.items import Item
-from MoinMoin.macro._base import MacroPageLinkListBase
-from MoinMoin.storage.middleware.protecting import AccessDenied
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink
+from moin.items import Item
+from moin.macro._base import MacroPageLinkListBase
+from moin.storage.middleware.protecting import AccessDenied
 
 
 class Macro(MacroPageLinkListBase):

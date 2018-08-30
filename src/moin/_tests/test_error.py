@@ -4,11 +4,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.error Tests
+    MoinMoin - moin.error Tests
 """
 
 
-from MoinMoin import error
+from moin import error
 
 
 class TestEncoding(object):
@@ -74,4 +74,4 @@ class TestCompositeError(object):
         assert result == expected
 
 
-coverage_modules = ['MoinMoin.error']
+coverage_modules = ['moin.error']

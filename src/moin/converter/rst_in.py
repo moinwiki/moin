@@ -29,10 +29,10 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from MoinMoin import config
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import html, moin_page, xlink, xinclude
-from MoinMoin.constants.contenttypes import CHARSET
+from moin import config
+from moin.util.iri import Iri
+from moin.util.tree import html, moin_page, xlink, xinclude
+from moin.constants.contenttypes import CHARSET
 
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
@@ -45,7 +45,7 @@ from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 # ####
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -960,7 +960,7 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory,
                           Type('text/x-rst'), type_moin_document)
 default_registry.register(Converter.factory,

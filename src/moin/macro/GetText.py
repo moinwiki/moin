@@ -12,8 +12,8 @@ get very confusing).
 """
 
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.macro._base import MacroInlineBase
+from moin.i18n import _, L_, N_
+from moin.macro._base import MacroInlineBase
 
 
 class Macro(MacroInlineBase):

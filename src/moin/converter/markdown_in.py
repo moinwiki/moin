@@ -15,10 +15,10 @@ import re
 import htmlentitydefs
 from collections import deque
 
-from MoinMoin.util.tree import moin_page, xml, html, xlink, xinclude
+from moin.util.tree import moin_page, xml, html, xlink, xinclude
 from ._util import allowed_uri_scheme, decode_data
-from MoinMoin.util.iri import Iri
-from MoinMoin.converter.html_in import Converter as HTML_IN_Converter
+from moin.util.iri import Iri
+from moin.converter.html_in import Converter as HTML_IN_Converter
 
 from emeraldtree import ElementTree as ET
 try:
@@ -30,7 +30,7 @@ except ImportError:
 from markdown import Markdown
 import markdown.util as md_util
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -599,6 +599,6 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type("text/x-markdown"), type_moin_document)
 default_registry.register(Converter._factory, Type('x-moin/format;name=markdown'), type_moin_document)

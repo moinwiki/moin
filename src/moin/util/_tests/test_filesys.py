@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util.filesys Tests
+    MoinMoin - moin.util.filesys Tests
 """
 
 import sys
@@ -13,7 +13,7 @@ import tempfile
 
 import pytest
 
-from MoinMoin.util import filesys
+from moin.util import filesys
 
 win32_only = pytest.mark.skipif("sys.platform != 'win32'")
 win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
@@ -172,4 +172,4 @@ class TestCopy(object):
             filesys.copytree(self.test_dir, self.test_dest_dir)
 
 
-coverage_modules = ['MoinMoin.util.filesys']
+coverage_modules = ['moin.util.filesys']

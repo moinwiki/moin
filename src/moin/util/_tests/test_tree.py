@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.util.tree
+MoinMoin - Tests for moin.util.tree
 """
 
 
-from MoinMoin.util.tree import *
+from moin.util.tree import *
 
 
 def test_Name():

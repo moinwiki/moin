@@ -8,8 +8,8 @@ MoinMoin - Misc. tokenizers and analyzers for whoosh indexing
 from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
 from whoosh.analysis import Tokenizer, Token, RegexTokenizer
 
-from MoinMoin.util.mime import Type
-from MoinMoin.security import AccessControlList
+from moin.util.mime import Type
+from moin.security import AccessControlList
 
 
 class MimeTokenizer(Tokenizer):

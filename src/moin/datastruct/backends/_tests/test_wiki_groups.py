@@ -6,7 +6,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.backends.wiki_group tests
+MoinMoin - moin.backends.wiki_group tests
 """
 
 
@@ -15,11 +15,11 @@ import pytest
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.datastruct.backends._tests import GroupsBackendTest
-from MoinMoin.datastruct import GroupDoesNotExistError
-from MoinMoin.constants.keys import NAME, USERGROUP
-from MoinMoin.security import AccessControlList
-from MoinMoin._tests import become_trusted, create_random_string_list, update_item
+from moin.datastruct.backends._tests import GroupsBackendTest
+from moin.datastruct import GroupDoesNotExistError
+from moin.constants.keys import NAME, USERGROUP
+from moin.security import AccessControlList
+from moin._tests import become_trusted, create_random_string_list, update_item
 
 import pytest
 
@@ -110,4 +110,4 @@ class TestWikiGroupBackend(GroupsBackendTest):
         assert has_rights_after, 'AnotherUser must have read rights because after appenditem he is member of NewGroup'
 
 
-coverage_modules = ['MoinMoin.datastruct.backends.wiki_groups']
+coverage_modules = ['moin.datastruct.backends.wiki_groups']

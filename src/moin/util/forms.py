@@ -11,7 +11,7 @@ from jinja2 import Markup
 from flatland.out.markup import Generator
 from flatland.schema.util import find_i18n_function
 
-from MoinMoin.i18n import _, L_, N_
+from moin.i18n import _, L_, N_
 
 
 def label_filter(tagname, attributes, contents, context, bind):

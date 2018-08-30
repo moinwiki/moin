@@ -11,8 +11,8 @@
 
 from flask import g as flaskg
 
-from MoinMoin.constants.keys import CURRENT, SOMEDICT
-from MoinMoin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
+from moin.constants.keys import CURRENT, SOMEDICT
+from moin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 
 class WikiDict(BaseDict):

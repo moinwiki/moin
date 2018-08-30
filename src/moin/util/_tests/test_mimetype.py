@@ -3,11 +3,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.util.mimetype Tests
+MoinMoin - moin.util.mimetype Tests
 """
 
 
-from MoinMoin.util import mimetype
+from moin.util import mimetype
 
 
 class TestMimeType(object):

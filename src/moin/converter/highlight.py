@@ -12,7 +12,7 @@ import re
 
 from flask import request
 
-from MoinMoin.util.tree import html, moin_page
+from moin.util.tree import html, moin_page
 
 
 class Converter(object):
@@ -60,5 +60,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

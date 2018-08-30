@@ -17,14 +17,14 @@ import pygments
 from . pygments_in import TreeFormatter
 from pygments.util import ClassNotFound
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.tree import moin_page
+from moin.i18n import _, L_, N_
+from moin.util.tree import moin_page
 from ._args_wiki import parse as parse_arguments
 
 from ._table import TableMixin
 from ._util import normalize_split_text, _Iter
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -188,5 +188,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

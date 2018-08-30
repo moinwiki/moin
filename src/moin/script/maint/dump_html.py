@@ -53,14 +53,14 @@ from werkzeug.exceptions import Forbidden
 
 from xstatic.main import XStatic
 
-from MoinMoin.apps.frontend.views import show_item
-from MoinMoin.app import before_wiki
-from MoinMoin.constants.keys import CURRENT, THEME_NAME, NAME_EXACT, WIKINAME
-from MoinMoin.constants.contenttypes import CONTENTTYPE_MEDIA, CONTENTTYPE_MEDIA_SUFFIX
+from moin.apps.frontend.views import show_item
+from moin.app import before_wiki
+from moin.constants.keys import CURRENT, THEME_NAME, NAME_EXACT, WIKINAME
+from moin.constants.contenttypes import CONTENTTYPE_MEDIA, CONTENTTYPE_MEDIA_SUFFIX
 
 from wikiconfig import Config
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 SLASH = '(2f)'
@@ -96,7 +96,7 @@ class Dump(Command):
         else:
             html_root = norm(join(app.cfg.wikiconfig_dir, directory))
         repo_root = norm(join(app.cfg.wikiconfig_dir))
-        moinmoin = norm(join(app.cfg.wikiconfig_dir, 'MoinMoin'))
+        moinmoin = norm(join(app.cfg.wikiconfig_dir, 'moin'))
 
         # override ACLs with permission to read all items
         for namespace, acls in app.cfg.acl_mapping:

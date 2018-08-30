@@ -13,13 +13,13 @@ from flask import g as flaskg
 
 from whoosh.query import Term, Or
 
-from MoinMoin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
-                                     LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
-                                     NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
+from moin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
+                                 LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
+                                 NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
 
-from MoinMoin.util.interwiki import CompositeName
+from moin.util.interwiki import CompositeName
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -57,7 +57,7 @@ def get_subscribers(**meta):
         for user in chain.from_iterable(result_iterators):
             email = user.get(EMAIL)
             if email:
-                from MoinMoin.user import User
+                from moin.user import User
                 u = User(uid=user.get(ITEMID))
                 if u.may.read(fqname):
                     locale = user.get(LOCALE, DEFAULT_LOCALE)

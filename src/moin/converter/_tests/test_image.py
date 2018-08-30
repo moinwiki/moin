@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter for different imagetypes
+MoinMoin - Tests for moin.converter for different imagetypes
 """
 
 import pytest
 
 from emeraldtree import tree as ET
 
-from MoinMoin.converter.html_out import ConverterPage
+from moin.converter.html_out import ConverterPage
 
 
 class TestImg(object):

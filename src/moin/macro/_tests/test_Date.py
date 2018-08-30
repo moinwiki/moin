@@ -11,7 +11,7 @@ from datetime import datetime
 import pytest
 from flask_babel import format_date, format_datetime
 
-from MoinMoin.macro.Date import MacroDateTimeBase, Macro
+from moin.macro.Date import MacroDateTimeBase, Macro
 
 
 class TestMacroDateTimeBase(object):

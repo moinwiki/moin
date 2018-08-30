@@ -9,7 +9,7 @@
 from .signals import *
 from flask import got_request_exception
 
-from MoinMoin import log
+from .. import log
 logging = log.getLogger(__name__)
 
 

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.wikiutil Tests
+    MoinMoin - moin.wikiutil Tests
 """
 
 
@@ -11,8 +11,8 @@ import pytest
 
 from flask import current_app as app
 
-from MoinMoin.constants.chartypes import CHARS_SPACES
-from MoinMoin import wikiutil
+from moin.constants.chartypes import CHARS_SPACES
+from moin import wikiutil
 
 from werkzeug import MultiDict
 
@@ -243,4 +243,4 @@ def testfile_headers():
     assert result == expected
 
 
-coverage_modules = ['MoinMoin.wikiutil']
+coverage_modules = ['moin.wikiutil']

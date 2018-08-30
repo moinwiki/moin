@@ -13,10 +13,10 @@ from __future__ import absolute_import, division
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util.tree import html, moin_page, xlink, docbook, xml
-from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.util.tree import html, moin_page, xlink, docbook, xml
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -531,5 +531,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, Type('application/docbook+xml'))

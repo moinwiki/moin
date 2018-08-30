@@ -33,9 +33,9 @@ DEBUG = True
 
 import os
 
-from MoinMoin.config.default import DefaultConfig, _default_password_checker
-from MoinMoin.storage import create_simple_mapping
-from MoinMoin.util.interwiki import InterWikiMap
+from moin.config.default import DefaultConfig, _default_password_checker
+from moin.storage import create_simple_mapping
+from moin.util.interwiki import InterWikiMap
 
 
 class Config(DefaultConfig):

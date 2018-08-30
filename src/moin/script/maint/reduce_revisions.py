@@ -16,9 +16,9 @@ from flask_script import Command, Option
 
 from whoosh.query import Every, Term, And, Regex
 
-from MoinMoin.constants.keys import NAME, NAME_EXACT, REVID, WIKINAME, PARENTID, REV_NUMBER
+from moin.constants.keys import NAME, NAME_EXACT, REVID, WIKINAME, PARENTID, REV_NUMBER
 
-from MoinMoin.app import before_wiki
+from moin.app import before_wiki
 
 
 class Reduce_Revisions(Command):

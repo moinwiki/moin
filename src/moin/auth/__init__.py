@@ -43,12 +43,12 @@
 
       * None, to throw away any previous user_obj from previous auth methods
       * the passed in user_obj for no changes
-      * a newly created MoinMoin.user.User instance
+      * a newly created moin.user.User instance
 
     and 'continue' is a boolean to indicate whether the next authentication
     method should be tried.
 
-    The 'login' method must return an instance of MoinMoin.auth.LoginReturn
+    The 'login' method must return an instance of moin.auth.LoginReturn
     which contains the members:
 
       * user_obj
@@ -78,7 +78,7 @@
     callable, this indicates that the authentication method requires a second
     login stage. In that case, the multistage item will be called and should
     return an instance of
-    MoinMoin.widget.html.FORM and the generic code will append some required
+    moin.widget.html.FORM and the generic code will append some required
     hidden fields to it. It is also permissible to return some valid HTML,
     but that feature has very limited use since it breaks the authentication
     method chain.
@@ -118,7 +118,7 @@
              user object's auth_method keyword parameter.
 
     To simplify creating new authentication methods you can inherit from
-    MoinMoin.auth.BaseAuth that does nothing for all three methods, but
+    moin.auth.BaseAuth that does nothing for all three methods, but
     allows you to override only some methods.
 
     cfg.auth is a list of authentication object instances whose methods
@@ -126,7 +126,7 @@
     for every request, when logging in or out these are called before the
     session method.
 
-    When creating a new MoinMoin.user.User object, you can give a keyword
+    When creating a new moin.user.User object, you can give a keyword
     argument "auth_attribs" to User.__init__ containing a list of user
     attributes that are determined and fixed by this auth method and may
     not be changed by the user in their preferences.
@@ -135,7 +135,7 @@
 """
 
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 from werkzeug import redirect, abort, url_quote, url_quote_plus
@@ -144,8 +144,8 @@ from flask import g as flaskg
 from flask import current_app as app
 from jinja2 import Markup
 
-from MoinMoin import user
-from MoinMoin.i18n import _, L_, N_
+from moin import user
+from moin.i18n import _, L_, N_
 
 
 def get_multistage_continuation_url(auth_name, extra_fields={}):

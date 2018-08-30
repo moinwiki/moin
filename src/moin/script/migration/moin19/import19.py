@@ -28,18 +28,18 @@ from flask_script import Command, Option
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
-from MoinMoin.constants.keys import *
-from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
-from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
-from MoinMoin.storage.error import NoSuchRevisionError
-from MoinMoin.util.mimetype import MimeType
-from MoinMoin.util.crypto import make_uuid
-from MoinMoin import security
-from MoinMoin.converter.moinwiki19_in import ConverterFormat19 as conv_in
-from MoinMoin.converter.moinwiki_out import Converter as conv_out
+from moin.constants.keys import *
+from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+from moin.storage.error import NoSuchRevisionError
+from moin.util.mimetype import MimeType
+from moin.util.crypto import make_uuid
+from moin import security
+from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
+from moin.converter.moinwiki_out import Converter as conv_out
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

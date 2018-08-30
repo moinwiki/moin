@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.items.blog Tests
+    MoinMoin - moin.items.blog Tests
 """
 
 import re
@@ -10,13 +10,13 @@ import re
 from datetime import datetime
 from flask import url_for
 
-from MoinMoin._tests import update_item
-from MoinMoin.items import Item
-from MoinMoin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
-from MoinMoin.constants.misc import ANON
-from MoinMoin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
-from MoinMoin.items.blog import Blog, BlogEntry
-from MoinMoin.themes import utctimestamp
+from moin._tests import update_item
+from moin.items import Item
+from moin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
+from moin.constants.misc import ANON
+from moin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
+from moin.items.blog import Blog, BlogEntry
+from moin.themes import utctimestamp
 
 import pytest
 

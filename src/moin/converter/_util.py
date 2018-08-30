@@ -15,10 +15,10 @@ except ImportError:
     flaskg = None
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.constants.misc import URI_SCHEMES
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.mime import Type
-from MoinMoin.util.tree import html, moin_page
+from moin.constants.misc import URI_SCHEMES
+from moin.util.iri import Iri
+from moin.util.mime import Type
+from moin.util.tree import html, moin_page
 
 
 def allowed_uri_scheme(uri):

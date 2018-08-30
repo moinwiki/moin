@@ -5,7 +5,7 @@
 Test for macro.Verbatim
 """
 
-from MoinMoin.macro.Verbatim import *
+from moin.macro.Verbatim import *
 
 
 def test_Macro():

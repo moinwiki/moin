@@ -9,9 +9,9 @@
 
 from flask import current_app as app
 
-from MoinMoin._tests import wikiconfig
-from MoinMoin.themes import ThemeSupport
-from MoinMoin import themes
+from moin._tests import wikiconfig
+from moin.themes import ThemeSupport
+from moin import themes
 
 import pytest
 

@@ -68,23 +68,23 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
-from MoinMoin.constants.keys import *
-from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
+from moin.constants.keys import *
+from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.namespaces import NAMESPACE_DEFAULT
 
-from MoinMoin import user
-from MoinMoin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
-from MoinMoin.themes import utctimestamp
-from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
-from MoinMoin.storage.error import NoSuchItemError, ItemAlreadyExistsError
-from MoinMoin.util.interwiki import split_fqname, CompositeName
+from moin import user
+from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
+from moin.themes import utctimestamp
+from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
+from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
+from moin.util.interwiki import split_fqname, CompositeName
 
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import moin_page
-from MoinMoin.converter import default_registry
-from MoinMoin.util.iri import Iri
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import moin_page
+from moin.converter import default_registry
+from moin.util.iri import Iri
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

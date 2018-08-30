@@ -15,14 +15,14 @@ import pytest
 
 from flask import g as flaskg
 
-from MoinMoin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
-                                     LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
-from MoinMoin.constants.namespaces import NAMESPACE_USERS
+from moin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
+                                 LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
+from moin.constants.namespaces import NAMESPACE_USERS
 
-from MoinMoin.util.interwiki import split_fqname
+from moin.util.interwiki import split_fqname
 
-from MoinMoin.auth import GivenAuth
-from MoinMoin._tests import wikiconfig
+from moin.auth import GivenAuth
+from moin._tests import wikiconfig
 
 
 def dumper(indexer, idx_name):

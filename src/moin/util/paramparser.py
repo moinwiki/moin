@@ -6,7 +6,7 @@
 """
 
 
-from MoinMoin.i18n import _, L_, N_
+from moin.i18n import _, L_, N_
 
 
 class BracketError(Exception):

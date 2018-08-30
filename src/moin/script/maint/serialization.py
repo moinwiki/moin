@@ -10,9 +10,9 @@ import sys
 from flask import current_app as app
 from flask_script import Command, Option
 
-from MoinMoin.storage.middleware.serialization import serialize, deserialize
+from moin.storage.middleware.serialization import serialize, deserialize
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

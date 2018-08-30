@@ -52,20 +52,20 @@ setup_args = dict(
     package_dir={'': 'src'},
 
     package_data={
-        'MoinMoin.translations': ['MoinMoin.pot', '*.po', ],
-        'MoinMoin.static': ['*', ],
-        'MoinMoin.themes.modernized': ['*', ],
-        'MoinMoin.themes.basic': ['*', ],
-        'MoinMoin.themes.topside': ['*', ],
-        'MoinMoin.themes.topside_cms': ['*', ],
-        'MoinMoin.templates': ['*.html', '*.xml', ],
-        'MoinMoin.apps.admin.templates': ['*.html', ],
-        'MoinMoin.apps.misc.templates': ['*.html', '*.txt', ],
+        'moin.translations': ['MoinMoin.pot', '*.po', ],
+        'moin.static': ['*', ],
+        'moin.themes.modernized': ['*', ],
+        'moin.themes.basic': ['*', ],
+        'moin.themes.topside': ['*', ],
+        'moin.themes.topside_cms': ['*', ],
+        'moin.templates': ['*.html', '*.xml', ],
+        'moin.apps.admin.templates': ['*.html', ],
+        'moin.apps.misc.templates': ['*.html', '*.txt', ],
     },
     include_package_data=True,
     zip_safe=False,
     use_scm_version={
-        'write_to': os.path.join(basedir, 'src', 'MoinMoin', '_version.py'),
+        'write_to': os.path.join(basedir, 'src', 'moin', '_version.py'),
     },
     setup_requires=[
         'setuptools_scm',  # magically cares for version and packaged files
@@ -115,19 +115,19 @@ setup_args = dict(
         'mongodb': ["pymongo"],  # used by mongodb store
     },
     entry_points=dict(
-        console_scripts=['moin = MoinMoin.script:main'],
+        console_scripts=['moin = moin.script:main'],
     ),
 
     # stuff for babel:
     message_extractors={
         '': [
-            ('MoinMoin/templates/**.html', 'jinja2', None),
-            ('MoinMoin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be defined here for jQuery i18n plugin
-            ('MoinMoin/apps/**/templates/**.html', 'jinja2', None),
-            ('MoinMoin/themes/**/templates/**.html', 'jinja2', None),
-            ('MoinMoin/**/_tests/**', 'ignore', None),
-            ('MoinMoin/static/**', 'ignore', None),
-            ('MoinMoin/**.py', 'python', None),
+            ('moin/templates/**.html', 'jinja2', None),
+            ('moin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be defined here for jQuery i18n plugin
+            ('moin/apps/**/templates/**.html', 'jinja2', None),
+            ('moin/themes/**/templates/**.html', 'jinja2', None),
+            ('moin/**/_tests/**', 'ignore', None),
+            ('moin/static/**', 'ignore', None),
+            ('moin/**.py', 'python', None),
         ],
     },
 )

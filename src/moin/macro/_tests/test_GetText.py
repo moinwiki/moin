@@ -5,8 +5,8 @@
 Test for macro.GetText
 """
 
-from MoinMoin.converter._args import Arguments
-from MoinMoin.macro.GetText import *
+from moin.converter._args import Arguments
+from moin.macro.GetText import *
 
 
 def test_Macro():

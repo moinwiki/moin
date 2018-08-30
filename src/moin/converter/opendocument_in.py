@@ -14,7 +14,7 @@ import zipfile
 
 from .xml_in import strip_xml
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -35,7 +35,7 @@ class OpenDocumentIndexingConverter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_text_plain
+from moin.util.mime import Type, type_text_plain
 
 opendocument_types = """\
 application/vnd.oasis.opendocument.chart

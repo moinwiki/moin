@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.security.ticket Tests
+    MoinMoin - moin.security.ticket Tests
 """
 
 
-from MoinMoin.security.ticket import createTicket, checkTicket
+from moin.security.ticket import createTicket, checkTicket
 
 
 class TestTickets(object):
@@ -24,4 +24,4 @@ class TestTickets(object):
         assert ticket1 != ticket2 != ticket3
 
 
-coverage_modules = ['MoinMoin.security.ticket']
+coverage_modules = ['moin.security.ticket']

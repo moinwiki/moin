@@ -16,9 +16,9 @@ import sys
 import imp
 import hashlib
 
-from MoinMoin import error
-from MoinMoin.util import pysupport
-from MoinMoin.util.mimetype import MimeType
+from moin import error
+from moin.util import pysupport
+from moin.util.mimetype import MimeType
 
 
 class PluginError(Exception):
@@ -82,7 +82,7 @@ def importBuiltinPlugin(kind, name, function="execute"):
     """
     if name not in builtinPlugins(kind):
         raise PluginMissingError()
-    moduleName = 'MoinMoin.{0}.{1}'.format(kind, name)
+    moduleName = 'moin.{0}.{1}'.format(kind, name)
     return importNameFromPlugin(moduleName, function)
 
 
@@ -112,13 +112,13 @@ def importNameFromPlugin(moduleName, name):
 
 
 def builtinPlugins(kind):
-    """ Gets a list of modules in MoinMoin.'kind'
+    """ Gets a list of modules in moin.'kind'
 
     :param kind: what kind of modules we look for
     :rtype: list
     :returns: module names
     """
-    modulename = "MoinMoin." + kind
+    modulename = "moin." + kind
     return pysupport.importName(modulename, "modules")
 
 

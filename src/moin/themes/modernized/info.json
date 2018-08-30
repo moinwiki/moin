@@ -1,6 +1,6 @@
 {
     "identifier":   "modernized",
-    "application":  "MoinMoin",
+    "application":  "moin",
     "name":         "Modernized Theme",
     "description":  "moin2's builtin theme",
     "author":       "Thomas Waldmann",

@@ -16,11 +16,11 @@ from ..indexing import IndexingMiddleware, WHOOSH_FILESTORAGE
 from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
-from MoinMoin.constants.keys import NAME, CONTENTTYPE
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT
+from moin.constants.keys import NAME, CONTENTTYPE
+from moin.constants.namespaces import NAMESPACE_DEFAULT
 
-from MoinMoin.storage.backends.stores import MutableBackend
-from MoinMoin.storage.stores.memory import BytesStore, FileStore
+from moin.storage.backends.stores import MutableBackend
+from moin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.moinwiki_in
+MoinMoin - Tests for moin.converter.moinwiki_in
 """
 
 
@@ -10,10 +10,10 @@ import pytest
 
 import re
 
-from MoinMoin.util.tree import moin_page, xlink, html, xinclude
+from moin.util.tree import moin_page, xlink, html, xinclude
 
-from MoinMoin.converter.moinwiki_in import Converter
-from MoinMoin.converter._args import Arguments
+from moin.converter.moinwiki_in import Converter
+from moin.converter._args import Arguments
 
 
 class TestConverter(object):

@@ -8,14 +8,14 @@ MoinMoin - validation tests
 
 from __future__ import absolute_import, division
 
-from MoinMoin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
+from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
-from MoinMoin.constants import keys
-from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants import keys
+from moin.constants.contenttypes import CONTENTTYPE_USER
 
-from MoinMoin.util.crypto import make_uuid
+from moin.util.crypto import make_uuid
 
-from MoinMoin.util.interwiki import CompositeName
+from moin.util.interwiki import CompositeName
 
 
 class TestValidation(object):

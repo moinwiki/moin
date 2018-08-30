@@ -16,9 +16,9 @@ Where:
 """
 
 
-from MoinMoin.util.tree import html
-from MoinMoin.macro._base import MacroInlineBase
-from MoinMoin.i18n import _, L_, N_
+from moin.util.tree import html
+from moin.macro._base import MacroInlineBase
+from moin.i18n import _, L_, N_
 
 
 class Macro(MacroInlineBase):

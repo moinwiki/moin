@@ -11,7 +11,7 @@ import re
 
 from ._util import decode_data
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -40,5 +40,5 @@ class XMLIndexingConverter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_text_plain
+from moin.util.mime import Type, type_text_plain
 default_registry.register(XMLIndexingConverter._factory, Type('text/xml'), type_text_plain)

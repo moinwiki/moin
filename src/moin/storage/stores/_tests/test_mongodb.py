@@ -8,10 +8,10 @@ MoinMoin - mongodb store tests
 """
 
 import pytest
-pytest.importorskip('MoinMoin.storage.stores.mongodb')
+pytest.importorskip('moin.storage.stores.mongodb')
 from ..mongodb import BytesStore, FileStore
 
-from MoinMoin._tests import check_connection
+from moin._tests import check_connection
 try:
     check_connection(27017)
 except Exception as err:

@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.version Tests
+    MoinMoin - moin.version Tests
 """
 
 
 import pytest
 
-from MoinMoin.util.version import Version
+from moin.util.version import Version
 
 
 class TestVersion(object):
@@ -60,4 +60,4 @@ class TestVersion(object):
             assert str(Version(version='wrong_value'))
 
 
-coverage_modules = ['MoinMoin.util.version']
+coverage_modules = ['moin.util.version']

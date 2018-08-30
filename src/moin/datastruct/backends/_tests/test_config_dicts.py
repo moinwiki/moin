@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.backends.config_dicts tests
+    MoinMoin - moin.backends.config_dicts tests
 """
 
 
-from MoinMoin.datastruct.backends._tests import DictsBackendTest
-from MoinMoin.datastruct import ConfigDicts
-from MoinMoin._tests import wikiconfig
+from moin.datastruct.backends._tests import DictsBackendTest
+from moin.datastruct import ConfigDicts
+from moin._tests import wikiconfig
 
 import pytest
 
@@ -34,4 +34,4 @@ class TestConfigDictsBackend(DictsBackendTest):
             assert result in expected
 
 
-coverage_modules = ['MoinMoin.datastruct.backends.config_dicts']
+coverage_modules = ['moin.datastruct.backends.config_dicts']

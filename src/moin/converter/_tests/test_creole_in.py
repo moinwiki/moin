@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.creole_in
+MoinMoin - Tests for moin.converter.creole_in
 """
 
 
@@ -10,8 +10,8 @@ import re
 
 import pytest
 
-from MoinMoin.util.tree import moin_page, xlink, html, xinclude
-from MoinMoin.converter._args import Arguments
+from moin.util.tree import moin_page, xlink, html, xinclude
+from moin.converter._args import Arguments
 
 from ..creole_in import Converter
 

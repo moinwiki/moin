@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util Tests
+    MoinMoin - moin.util Tests
 """
 
 
-from MoinMoin import util
+from moin import util
 
 
 class TestUtil(object):
@@ -42,4 +42,4 @@ class TestUtil(object):
         assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
 
 
-coverage_modules = ['MoinMoin.util']
+coverage_modules = ['moin.util']

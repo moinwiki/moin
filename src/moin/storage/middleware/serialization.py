@@ -24,8 +24,8 @@ from io import BytesIO
 
 from werkzeug.wsgi import LimitedStream
 
-from MoinMoin.constants.keys import NAME, ITEMTYPE, SIZE
-from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.keys import NAME, ITEMTYPE, SIZE
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 def serialize(backend, dst):

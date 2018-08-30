@@ -8,9 +8,9 @@ MoinMoin GetVal macro - gets a value for a specified key from a dict.
 
 from flask import g as flaskg
 
-from MoinMoin.macro._base import MacroInlineBase
-from MoinMoin.datastruct.backends import DictDoesNotExistError
-from MoinMoin.i18n import _, L_, N_
+from moin.macro._base import MacroInlineBase
+from moin.datastruct.backends import DictDoesNotExistError
+from moin.i18n import _, L_, N_
 
 
 class Macro(MacroInlineBase):

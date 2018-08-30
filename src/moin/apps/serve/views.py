@@ -11,9 +11,9 @@ from flask import send_from_directory
 
 from flask import current_app as app
 
-from MoinMoin.apps.serve import serve
+from moin.apps.serve import serve
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

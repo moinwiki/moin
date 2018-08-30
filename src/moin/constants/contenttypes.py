@@ -6,7 +6,7 @@ MoinMoin - contenttype related constants
 """
 
 from collections import defaultdict
-from MoinMoin.i18n import _, L_, N_
+from moin.i18n import _, L_, N_
 
 
 # Charset - we support only 'utf-8'. While older encodings might work,

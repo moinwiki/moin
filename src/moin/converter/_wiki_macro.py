@@ -10,14 +10,14 @@ Base class for wiki parser with macro support.
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util import iri
-from MoinMoin.util.mime import Type
-from MoinMoin.util.tree import moin_page, xinclude
+from moin.util import iri
+from moin.util.mime import Type
+from moin.util.tree import moin_page, xinclude
 from ._args_wiki import parse as parse_arguments
 from ._args_wiki import include_re
-from MoinMoin.i18n import _, L_, N_
+from moin.i18n import _, L_, N_
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

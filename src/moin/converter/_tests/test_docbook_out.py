@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.docbook_out
+MoinMoin - Tests for moin.converter.docbook_out
 """
 
 
@@ -15,9 +15,9 @@ etree = pytest.importorskip('lxml.etree')
 
 from emeraldtree.tree import *
 
-from MoinMoin.converter.docbook_out import *
+from moin.converter.docbook_out import *
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

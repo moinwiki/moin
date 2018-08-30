@@ -16,16 +16,16 @@ import os
 
 from babel import parse_locale
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin import error
-from MoinMoin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
-from MoinMoin.constants.keys import *
-from MoinMoin import datastruct
-from MoinMoin.auth import MoinAuth
-from MoinMoin.util import plugins
-from MoinMoin.security import AccessControlList, DefaultSecurityPolicy
+from moin.i18n import _, L_, N_
+from moin import error
+from moin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
+from moin.constants.keys import *
+from moin import datastruct
+from moin.auth import MoinAuth
+from moin.util import plugins
+from moin.security import AccessControlList, DefaultSecurityPolicy
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

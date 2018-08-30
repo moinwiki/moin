@@ -10,7 +10,7 @@ from __future__ import absolute_import, division
 
 import mimetypes
 
-from MoinMoin.constants.contenttypes import PARSER_TEXT_MIMETYPE
+from moin.constants.contenttypes import PARSER_TEXT_MIMETYPE
 
 # prevents unexpected results on Windows
 # see http://bugs.python.org/issue10551

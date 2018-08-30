@@ -284,11 +284,11 @@ class Commands(object):
     def cmd_extras(self, *args):
         """install optional packages: OpenID, Pillow, pymongo, sqlalchemy, ldap; and upload.py"""
         sp_dir = get_sitepackages_location()
-        upload = '{0} src/MoinMoin/script/win/wget.py https://codereview.appspot.com/static/upload.py upload.py'.format(sys.executable)
+        upload = '{0} src/moin/script/win/wget.py https://codereview.appspot.com/static/upload.py upload.py'.format(sys.executable)
         # TODO oldsessions is short term fix for obsolete OpenID 2.0, see #515
         # http://pythonhosted.org//Flask-OldSessions/ docs are broken see https://github.com/mitsuhiko/flask-oldsessions/issues/1
         # we do wget of flask_oldsessions.py to site-packages as another workaround
-        oldsessions = '{0} src/MoinMoin/script/win/wget.py https://raw.githubusercontent.com/mitsuhiko/flask-oldsessions/master/flask_oldsessions.py {1}/flask_oldsessions.py'.format(sys.executable, sp_dir)
+        oldsessions = '{0} src/moin/script/win/wget.py https://raw.githubusercontent.com/mitsuhiko/flask-oldsessions/master/flask_oldsessions.py {1}/flask_oldsessions.py'.format(sys.executable, sp_dir)
         packages = ['python-openid', 'pillow', 'pymongo', 'sqlalchemy', ]
         if WINDOWS_OS:
             installer = 'easy_install --upgrade '
@@ -309,7 +309,7 @@ class Commands(object):
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
         print 'Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt'))
-        command = '{0} src/MoinMoin/script/win/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
+        command = '{0} src/moin/script/win/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
         subprocess.call(command, shell=True)
 
     def cmd_log(self, *args):
@@ -469,8 +469,8 @@ class Commands(object):
         # Note: we use / below within file paths; this works in Windows XP, 2000, 7, 8, 10
         bootstrap_loc = get_bootstrap_data_location().strip() + '/less'
         pygments_loc = get_pygments_data_location().strip() + '/css'
-        modernized_loc = 'src/MoinMoin/themes/modernized/static/css/stylus'
-        basic_loc = 'src/MoinMoin/themes/basic/static/custom-less'
+        modernized_loc = 'src/moin/themes/modernized/static/css/stylus'
+        basic_loc = 'src/moin/themes/basic/static/custom-less'
 
         print 'Running Stylus to update Modernized theme CSS files...'
         command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format(modernized_loc, SEP, pygments_loc)
@@ -480,7 +480,7 @@ class Commands(object):
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
         # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
-        command = 'python contrib/pep8/coding_std.py src/MoinMoin/themes/modernized/static/css'
+        command = 'python contrib/pep8/coding_std.py src/moin/themes/modernized/static/css'
         result = subprocess.call(command, shell=True)
         if result != 0:
             print 'Error: failure running coding_std.py against modernized css files'
@@ -517,9 +517,9 @@ class Commands(object):
         print 'Refreshing api docs...'
         if WINDOWS_OS:
             # after update, convert DOS line endings to unix
-            command = '{0}sphinx-apidoc -f -o docs/devel/api src/MoinMoin & {1} src/MoinMoin/script/win/dos2unix.py docs/devel/api'.format(ACTIVATE, sys.executable)
+            command = '{0}sphinx-apidoc -f -o docs/devel/api src/moin & {1} src/moin/script/win/dos2unix.py docs/devel/api'.format(ACTIVATE, sys.executable)
         else:
-            command = '{0}sphinx-apidoc -f -o docs/devel/api src/MoinMoin'.format(ACTIVATE)
+            command = '{0}sphinx-apidoc -f -o docs/devel/api src/moin'.format(ACTIVATE)
         result = subprocess.call(command, shell=True)
 
     # not on menu, rarely used, similar code was in moin 1.9

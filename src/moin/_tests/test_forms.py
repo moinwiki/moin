@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.forms Tests
+    MoinMoin - moin.forms Tests
 """
 
 import datetime
@@ -12,11 +12,11 @@ from calendar import timegm
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.forms import DateTimeUNIX, JSON, Names
-from MoinMoin.util.interwiki import CompositeName
-from MoinMoin.items import Item
-from MoinMoin._tests import become_trusted
-from MoinMoin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE, FQNAME
+from moin.forms import DateTimeUNIX, JSON, Names
+from moin.util.interwiki import CompositeName
+from moin.items import Item
+from moin._tests import become_trusted
+from moin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE, FQNAME
 
 
 def test_datetimeunix():

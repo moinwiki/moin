@@ -12,11 +12,11 @@ import csv
 
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
-from MoinMoin.util.tree import moin_page
-from MoinMoin.i18n import _, L_, N_
+from moin.util.tree import moin_page
+from moin.i18n import _, L_, N_
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 
 
 class Converter(TableMixin):

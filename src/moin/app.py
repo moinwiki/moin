@@ -12,9 +12,9 @@ Use create_app(config) to create the WSGI application (using Flask).
 
 from __future__ import absolute_import, division
 
-# do this early, but not in MoinMoin/__init__.py because we need to be able to
-# "import MoinMoin" from setup.py even before flask, werkzeug, ... is installed.
-from MoinMoin.util import monkeypatch
+# do this early, but not in moin/__init__.py because we need to be able to
+# "import moin" from setup.py even before flask, werkzeug, ... is installed.
+from moin.util import monkeypatch
 
 from flask import Flask, request, session
 from flask import current_app as app
@@ -31,15 +31,15 @@ from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from MoinMoin.constants.misc import ANON
-from MoinMoin.i18n import i18n_init
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import setup_jinja_env, themed_error
-from MoinMoin.util.clock import Clock
-from MoinMoin.storage.middleware import protecting, indexing, routing
-from MoinMoin import auth, config, user
+from moin.constants.misc import ANON
+from moin.i18n import i18n_init
+from moin.i18n import _, L_, N_
+from moin.themes import setup_jinja_env, themed_error
+from moin.util.clock import Clock
+from moin.storage.middleware import protecting, indexing, routing
+from moin import auth, config, user
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -73,7 +73,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     """
     clock = Clock()
     clock.start('create_app total')
-    app = Flask('MoinMoin')
+    app = Flask('moin')
 
     if OldSecureCookieSessionInterface:
         app.session_interface = OldSecureCookieSessionInterface()
@@ -100,7 +100,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     if not Config:
         if warn_default:
             logging.warning("using builtin default configuration")
-        from MoinMoin.config.default import DefaultConfig as Config
+        from moin.config.default import DefaultConfig as Config
     for key, value in kwargs.iteritems():
         setattr(Config, key, value)
     if Config.secrets is None:
@@ -125,23 +125,23 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
     app.url_map.converters['itemname'] = ItemNameConverter
     # register modules, before/after request functions
-    from MoinMoin.apps.frontend import frontend
+    from moin.apps.frontend import frontend
     frontend.before_request(before_wiki)
     frontend.teardown_request(teardown_wiki)
     app.register_blueprint(frontend)
-    from MoinMoin.apps.admin import admin
+    from moin.apps.admin import admin
     admin.before_request(before_wiki)
     admin.teardown_request(teardown_wiki)
     app.register_blueprint(admin, url_prefix='/+admin')
-    from MoinMoin.apps.feed import feed
+    from moin.apps.feed import feed
     feed.before_request(before_wiki)
     feed.teardown_request(teardown_wiki)
     app.register_blueprint(feed, url_prefix='/+feed')
-    from MoinMoin.apps.misc import misc
+    from moin.apps.misc import misc
     misc.before_request(before_wiki)
     misc.teardown_request(teardown_wiki)
     app.register_blueprint(misc, url_prefix='/+misc')
-    from MoinMoin.apps.serve import serve
+    from moin.apps.serve import serve
     app.register_blueprint(serve, url_prefix='/+serve')
     clock.stop('create_app register')
     clock.start('create_app flask-cache')

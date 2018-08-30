@@ -7,7 +7,7 @@ Test for macro.Anchor
 
 import pytest
 
-from MoinMoin.macro.Anchor import *
+from moin.macro.Anchor import *
 
 
 def test_Macro():

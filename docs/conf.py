@@ -89,7 +89,7 @@ exclude_patterns = ['_build']
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-modindex_common_prefix = ['MoinMoin.', ]
+modindex_common_prefix = ['moin.', ]
 
 
 # -- Options for HTML output ---------------------------------------------------
@@ -253,7 +253,7 @@ todo_include_todos = True
 
 # Inheritance diagrams, use it like:
 # .. inheritance-diagram::
-#    MoinMoin.items.MoinWiki
+#    moin.items.MoinWiki
 
 inheritance_graph_attrs = dict(rankdir="LR", size='"12.0, 16.0"',
                                fontsize=20, ratio='compress')

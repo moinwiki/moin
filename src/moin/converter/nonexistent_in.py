@@ -10,10 +10,10 @@ Convert a non-existent item to the DOM Tree.
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink
-from MoinMoin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.i18n import _, L_, N_
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 
 
 class Converter(object):
@@ -35,5 +35,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type(CONTENTTYPE_NONEXISTENT), type_moin_document)

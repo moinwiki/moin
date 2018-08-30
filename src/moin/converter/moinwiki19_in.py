@@ -13,16 +13,16 @@ from __future__ import absolute_import, division
 
 import re
 
-from MoinMoin import wikiutil
-from MoinMoin.constants.misc import URI_SCHEMES
-from MoinMoin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
-from MoinMoin.util.interwiki import is_known_wiki
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink
+from moin import wikiutil
+from moin.constants.misc import URI_SCHEMES
+from moin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
+from moin.util.interwiki import is_known_wiki
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink
 
 from .moinwiki_in import Converter
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -161,6 +161,6 @@ class ConverterFormat19(Converter):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(ConverterFormat19.factory, Type('text/x.moin.wiki;format=1.9'), type_moin_document)
 default_registry.register(ConverterFormat19.factory, Type('x-moin/format;name=wiki;format=1.9'), type_moin_document)

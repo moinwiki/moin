@@ -6,7 +6,7 @@ MoinMoin - i18n (internationalization) and l10n (localization) support
 
 To use this, please use exactly this line (no less, no more)::
 
-    from MoinMoin.i18n import _, L_, N_
+    from moin.i18n import _, L_, N_
 
     # _ == gettext
     # N_ == ngettext
@@ -25,7 +25,7 @@ _ = gettext
 N_ = ngettext
 L_ = lazy_gettext
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

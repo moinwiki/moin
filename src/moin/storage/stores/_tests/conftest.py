@@ -11,9 +11,9 @@ from __future__ import absolute_import, division
 import pytest
 from ..wrappers import ByteToStreamWrappingStore
 
-from MoinMoin._tests import check_connection
+from moin._tests import check_connection
 
-STORES_PACKAGE = 'MoinMoin.storage.stores'
+STORES_PACKAGE = 'moin.storage.stores'
 
 STORES = 'fs kc memory sqlite sqlite:compressed sqla'.split()
 try:

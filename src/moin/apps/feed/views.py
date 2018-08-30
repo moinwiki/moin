@@ -20,15 +20,15 @@ from jinja2 import Markup
 
 from whoosh.query import Term, And
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.apps.feed import feed
-from MoinMoin.constants.keys import NAME, NAME_EXACT, WIKINAME, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
-from MoinMoin.themes import get_editor_info, render_template
-from MoinMoin.items import Item
-from MoinMoin.util.crypto import cache_key
-from MoinMoin.util.interwiki import url_for_item
+from moin.i18n import _, L_, N_
+from moin.apps.feed import feed
+from moin.constants.keys import NAME, NAME_EXACT, WIKINAME, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
+from moin.themes import get_editor_info, render_template
+from moin.items import Item
+from moin.util.crypto import cache_key
+from moin.util.interwiki import url_for_item
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

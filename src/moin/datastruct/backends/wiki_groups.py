@@ -16,8 +16,8 @@ HelpOnConfiguration.
 
 from flask import g as flaskg
 
-from MoinMoin.constants.keys import CURRENT, USERGROUP
-from MoinMoin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
+from moin.constants.keys import CURRENT, USERGROUP
+from moin.datastruct.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
 
 
 class WikiGroup(GreedyGroup):

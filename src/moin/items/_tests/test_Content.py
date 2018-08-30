@@ -4,7 +4,7 @@
 # split
 
 """
-    MoinMoin - MoinMoin.items.content Tests
+    MoinMoin - moin.items.content Tests
 """
 
 import pytest
@@ -14,13 +14,13 @@ from flask import Markup
 
 from werkzeug import escape
 
-from MoinMoin.util import diff_html
+from moin.util import diff_html
 
-from MoinMoin._tests import become_trusted, update_item
-from MoinMoin.items import Item
-from MoinMoin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
-from MoinMoin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
-from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin._tests import become_trusted, update_item
+from moin.items import Item
+from moin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
+from moin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
 class TestContent(object):
@@ -295,4 +295,4 @@ class TestText(object):
         assert difflines == [(1, Markup(u''), 1, Markup(u'<span>x</span>'))]
 
 
-coverage_modules = ['MoinMoin.items.content']
+coverage_modules = ['moin.items.content']

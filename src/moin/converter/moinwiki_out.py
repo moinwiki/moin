@@ -13,8 +13,8 @@ from __future__ import absolute_import, division
 
 import urllib
 
-from MoinMoin.util.tree import moin_page, xlink, xinclude, html
-from MoinMoin.util.iri import Iri
+from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
 
@@ -662,6 +662,6 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_document, type_moin_wiki)
 default_registry.register(Converter.factory, type_moin_document, Type('x-moin/format;name=wiki'))

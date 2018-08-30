@@ -2,17 +2,17 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util.subscriptions Tests
+    MoinMoin - moin.util.subscriptions Tests
 """
 
 import pytest
 
-from MoinMoin import user
-from MoinMoin.items import Item
-from MoinMoin.constants.keys import (ACL, ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
-                                     SUBSCRIPTIONS, TAGS)
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
-from MoinMoin.util.subscriptions import get_subscribers, get_matched_subscription_patterns
+from moin import user
+from moin.items import Item
+from moin.constants.keys import (ACL, ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
+                                 SUBSCRIPTIONS, TAGS)
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+from moin.util.subscriptions import get_subscribers, get_matched_subscription_patterns
 
 
 class TestSubscriptions(object):

@@ -5,15 +5,15 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.user Tests
+    MoinMoin - moin.user Tests
 """
 
 
 from flask import g as flaskg
 
-from MoinMoin import user
-from MoinMoin.items import Item
-from MoinMoin.constants.keys import (ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TAGS)
+from moin import user
+from moin.items import Item
+from moin.constants.keys import (ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TAGS)
 
 import pytest
 
@@ -309,4 +309,4 @@ class TestIsValidName(object):
             assert user.isValidName(test)
 
 
-coverage_modules = ['MoinMoin.user']
+coverage_modules = ['moin.user']

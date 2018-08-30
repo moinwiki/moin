@@ -10,9 +10,9 @@ from StringIO import StringIO
 from flask import current_app as app
 from flask import g as flaskg
 
-from MoinMoin.constants.keys import NAME, CONTENTTYPE
+from moin.constants.keys import NAME, CONTENTTYPE
 
-from MoinMoin._tests import wikiconfig
+from moin._tests import wikiconfig
 
 import pytest
 

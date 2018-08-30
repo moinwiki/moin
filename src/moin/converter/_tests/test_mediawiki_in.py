@@ -3,14 +3,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.mediawiki_in
+MoinMoin - Tests for moin.converter.mediawiki_in
 """
 
 import re
 
 import pytest
 
-from MoinMoin.converter.mediawiki_in import *
+from moin.converter.mediawiki_in import *
 
 
 class TestConverter(object):
@@ -198,4 +198,4 @@ Apple
         assert self.serialize(out) == output
 
 
-coverage_modules = ['MoinMoin.converter.mediawiki_in']
+coverage_modules = ['moin.converter.mediawiki_in']

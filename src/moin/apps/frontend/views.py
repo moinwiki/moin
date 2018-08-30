@@ -46,37 +46,37 @@ from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
 from whoosh import sorting
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template, contenttype_to_class
-from MoinMoin.apps.frontend import frontend
-from MoinMoin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
-                            RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
-                            Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
-                            validate_name, NameNotValidError)
-from MoinMoin.items import (BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError,
-                            FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
-from MoinMoin.items.content import content_registry, conv_serialize
-from MoinMoin.items.ticket import AdvancedSearchForm, render_comment_data
-from MoinMoin import user, util
-from MoinMoin.constants.keys import *
-from MoinMoin.constants.namespaces import *
-from MoinMoin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
-from MoinMoin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
-from MoinMoin.constants.contenttypes import *
-from MoinMoin.util import crypto, rev_navigation
-from MoinMoin.util.crypto import make_uuid
-from MoinMoin.util.interwiki import url_for_item, split_fqname, CompositeName
-from MoinMoin.util.mime import Type, type_moin_document
-from MoinMoin.util.tree import html, docbook
-from MoinMoin.search import SearchForm
-from MoinMoin.search.analyzers import item_name_analyzer
-from MoinMoin.security.textcha import TextCha, TextChaizedForm
-from MoinMoin.signalling import item_displayed, item_modified
-from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.converter import default_registry as reg
-from MoinMoin.script.migration.moin19.import19 import hash_hexdigest
+from moin.i18n import _, L_, N_
+from moin.themes import render_template, contenttype_to_class
+from moin.apps.frontend import frontend
+from moin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
+                        RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
+                        Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
+                        validate_name, NameNotValidError)
+from moin.items import (BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError,
+                        FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
+from moin.items.content import content_registry, conv_serialize
+from moin.items.ticket import AdvancedSearchForm, render_comment_data
+from moin import user, util
+from moin.constants.keys import *
+from moin.constants.namespaces import *
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
+from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
+from moin.constants.contenttypes import *
+from moin.util import crypto, rev_navigation
+from moin.util.crypto import make_uuid
+from moin.util.interwiki import url_for_item, split_fqname, CompositeName
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import html, docbook
+from moin.search import SearchForm
+from moin.search.analyzers import item_name_analyzer
+from moin.security.textcha import TextCha, TextChaizedForm
+from moin.signalling import item_displayed, item_modified
+from moin.storage.middleware.protecting import AccessDenied
+from moin.converter import default_registry as reg
+from moin.script.migration.moin19.import19 import hash_hexdigest
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -537,7 +537,7 @@ def show_dom(item):
 @frontend.route('/+indexable/+<rev>/<itemname:item_name>')
 @frontend.route('/+indexable/<itemname:item_name>', defaults=dict(rev=CURRENT))
 def indexable(item_name, rev):
-    from MoinMoin.storage.middleware.indexing import convert_to_indexable
+    from moin.storage.middleware.indexing import convert_to_indexable
     try:
         item = flaskg.storage[item_name]
         rev = item[rev]
@@ -1505,7 +1505,7 @@ def _using_moin_auth():
 
     Only then users can register with moin or change their password via moin.
     """
-    from MoinMoin.auth import MoinAuth
+    from moin.auth import MoinAuth
     for auth in app.cfg.auth:
         if isinstance(auth, MoinAuth):
             return True
@@ -1517,7 +1517,7 @@ def _using_openid_auth():
 
     Only then users can register with openid or change their password via openid.
     """
-    from MoinMoin.auth.openidrp import OpenIDAuth
+    from moin.auth.openidrp import OpenIDAuth
     for auth in app.cfg.auth:
         if isinstance(auth, OpenIDAuth):
             return True

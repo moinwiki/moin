@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util.interwiki Tests
+    MoinMoin - moin.util.interwiki Tests
 """
 
 
@@ -16,10 +16,10 @@ import shutil
 import pytest
 from flask import current_app as app
 
-from MoinMoin.util.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace, split_fqname
-from MoinMoin._tests import wikiconfig
-from MoinMoin.constants.keys import CURRENT
-from MoinMoin.app import before_wiki
+from moin.util.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace, split_fqname
+from moin._tests import wikiconfig
+from moin.constants.keys import CURRENT
+from moin.app import before_wiki
 
 
 class TestInterWiki(object):
@@ -222,4 +222,4 @@ class TestInterWikiMapBackend(object):
         assert testiwm.iwmap['MoinMoin'] == 'https://moinmo.in/'
 
 
-coverage_modules = ['MoinMoin.util.interwiki']
+coverage_modules = ['moin.util.interwiki']

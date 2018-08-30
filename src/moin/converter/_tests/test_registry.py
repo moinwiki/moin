@@ -2,26 +2,26 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.default_registry
+MoinMoin - Tests for moin.converter.default_registry
 """
 
 
-from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
-from MoinMoin.converter import default_registry
-from MoinMoin.converter.text_in import Converter as TextInConverter
-from MoinMoin.converter.moinwiki_in import Converter as MoinwikiInConverter
-from MoinMoin.converter.html_in import Converter as HtmlInConverter
-from MoinMoin.converter.pygments_in import Converter as PygmentsInConverter
-from MoinMoin.converter.everything import Converter as EverythingConverter
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.converter import default_registry
+from moin.converter.text_in import Converter as TextInConverter
+from moin.converter.moinwiki_in import Converter as MoinwikiInConverter
+from moin.converter.html_in import Converter as HtmlInConverter
+from moin.converter.pygments_in import Converter as PygmentsInConverter
+from moin.converter.everything import Converter as EverythingConverter
 
-from MoinMoin.converter.html_out import ConverterPage as HtmlOutConverterPage
-from MoinMoin.converter.moinwiki_out import Converter as MoinwikiOutConverter
+from moin.converter.html_out import ConverterPage as HtmlOutConverterPage
+from moin.converter.moinwiki_out import Converter as MoinwikiOutConverter
 
-from MoinMoin.converter.highlight import Converter as HighlightConverter
-from MoinMoin.converter.macro import Converter as MacroConverter
-from MoinMoin.converter.include import Converter as IncludeConverter
-from MoinMoin.converter.link import ConverterExternOutput as LinkConverterExternOutput
-from MoinMoin.converter.link import ConverterItemRefs as LinkConverterItemRefs
+from moin.converter.highlight import Converter as HighlightConverter
+from moin.converter.macro import Converter as MacroConverter
+from moin.converter.include import Converter as IncludeConverter
+from moin.converter.link import ConverterExternOutput as LinkConverterExternOutput
+from moin.converter.link import ConverterItemRefs as LinkConverterItemRefs
 
 
 class TestRegistry(object):
@@ -58,4 +58,4 @@ class TestRegistry(object):
             assert isinstance(conv, ExpectedClass)
 
 
-coverage_modules = ['MoinMoin.converter']
+coverage_modules = ['moin.converter']

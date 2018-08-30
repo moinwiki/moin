@@ -7,7 +7,7 @@ MoinMoin - MIME helpers
 
 
 from collections import namedtuple
-from MoinMoin.util.pysupport import AutoNe
+from moin.util.pysupport import AutoNe
 
 
 class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):

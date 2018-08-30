@@ -22,10 +22,10 @@ import stat
 from StringIO import StringIO
 from werkzeug import url_quote, url_unquote
 
-from MoinMoin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
+from moin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
 from . import BackendBase
 
-from MoinMoin.util.mimetype import MimeType
+from moin.util.mimetype import MimeType
 
 NAME_SEP = '/'
 

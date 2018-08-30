@@ -21,16 +21,16 @@ from flask import request
 
 import werkzeug
 
-from MoinMoin.constants.contenttypes import CHARSET
-from MoinMoin.constants.keys import CURRENT
-from MoinMoin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
-from MoinMoin.constants.contenttypes import DRAWING_EXTENSIONS
+from moin.constants.contenttypes import CHARSET
+from moin.constants.keys import CURRENT
+from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
+from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.mimetype import MimeType
-from MoinMoin.storage.error import NoSuchItemError, NoSuchRevisionError
+from moin.i18n import _, L_, N_
+from moin.util.mimetype import MimeType
+from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

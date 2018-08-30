@@ -8,9 +8,9 @@ Test for auth.http
 from flask import g as flaskg
 from flask import request as flask_request
 
-from MoinMoin.user import create_user
-from MoinMoin.auth.http import HTTPAuthMoin
-from MoinMoin.constants.misc import ANON
+from moin.user import create_user
+from moin.auth.http import HTTPAuthMoin
+from moin.constants.misc import ANON
 
 import pytest
 

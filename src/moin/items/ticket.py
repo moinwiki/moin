@@ -49,20 +49,20 @@ from jinja2 import Markup
 
 from whoosh.query import Term, And
 
-from MoinMoin.i18n import L_
-from MoinMoin.themes import render_template
-from MoinMoin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
-                            Reference, BackReference, SelectSubmit, Text, Search, File)
-from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
-                                     SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, MTIME, TAGS,
-                                     NAME, SUMMARY, ELEMENT, NAMESPACE, WIKINAME, REFERS_TO, CONTENT, ACTION_TRASH)
-from MoinMoin.constants.contenttypes import CONTENTTYPE_USER
-from MoinMoin.constants.itemtypes import ITEMTYPE_TICKET
-from MoinMoin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
-from MoinMoin.items.content import NonExistentContent
-from MoinMoin.util.interwiki import CompositeName
-from MoinMoin.constants.forms import *
+from moin.i18n import L_
+from moin.themes import render_template
+from moin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
+                        Reference, BackReference, SelectSubmit, Text, Search, File)
+from moin.storage.middleware.protecting import AccessDenied
+from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
+                                 SUPERSEDED_BY, SUBSCRIPTIONS, DEPENDS_ON, MTIME, TAGS,
+                                 NAME, SUMMARY, ELEMENT, NAMESPACE, WIKINAME, REFERS_TO, CONTENT, ACTION_TRASH)
+from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.itemtypes import ITEMTYPE_TICKET
+from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
+from moin.items.content import NonExistentContent
+from moin.util.interwiki import CompositeName
+from moin.constants.forms import *
 
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)

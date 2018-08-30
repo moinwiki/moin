@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.backends.config_groups tests
+    MoinMoin - moin.backends.config_groups tests
 """
 
 
-from MoinMoin.datastruct.backends._tests import GroupsBackendTest
-from MoinMoin.datastruct import ConfigGroups
-from MoinMoin._tests import wikiconfig
+from moin.datastruct.backends._tests import GroupsBackendTest
+from moin.datastruct import ConfigGroups
+from moin._tests import wikiconfig
 
 import pytest
 
@@ -25,4 +25,4 @@ class TestConfigGroupsBackend(GroupsBackendTest):
         return Config
 
 
-coverage_modules = ['MoinMoin.datastruct.backends.config_groups']
+coverage_modules = ['moin.datastruct.backends.config_groups']

@@ -22,9 +22,9 @@ We use a layered approach like this::
 """
 
 
-BACKENDS_PACKAGE = 'MoinMoin.storage.backends'
+BACKENDS_PACKAGE = 'moin.storage.backends'
 
-from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
 BACKEND_DEFAULT = u'default'
 BACKEND_USERPROFILES = u'userprofiles'

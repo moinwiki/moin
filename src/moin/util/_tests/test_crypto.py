@@ -3,11 +3,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MoinMoin.util.crypto Tests
+MoinMoin - moin.util.crypto Tests
 """
 
 
-from MoinMoin.util import crypto
+from moin.util import crypto
 
 
 class TestRandom(object):
@@ -65,4 +65,4 @@ class TestCacheKey(object):
         assert result1 != result2, "Expected different keys for different <kw> but got the same"
 
 
-coverage_modules = ['MoinMoin.util.crypto']
+coverage_modules = ['moin.util.crypto']

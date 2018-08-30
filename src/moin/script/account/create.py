@@ -9,8 +9,8 @@ MoinMoin - create a user account
 
 from flask_script import Command, Option
 
-from MoinMoin import user
-from MoinMoin.app import before_wiki
+from moin import user
+from moin.app import before_wiki
 
 
 class Create_User(Command):

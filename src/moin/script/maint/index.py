@@ -10,9 +10,9 @@ from flask import current_app as app
 from flask_script import Command, Option
 from flask import g as flaskg
 
-from MoinMoin.constants.keys import LATEST_REVS, ALL_REVS
+from moin.constants.keys import LATEST_REVS, ALL_REVS
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

@@ -16,13 +16,13 @@ from flask import current_app as app
 from whoosh.query import Term, And, Prefix, DateRange
 from whoosh.sorting import FunctionFacet
 
-from MoinMoin.i18n import L_
-from MoinMoin.themes import render_template
-from MoinMoin.forms import Text, Tags, DateTime
-from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
-from MoinMoin.items import Item, Default, register, BaseMetaForm
-from MoinMoin.util.interwiki import split_fqname
+from moin.i18n import L_
+from moin.themes import render_template
+from moin.forms import Text, Tags, DateTime
+from moin.storage.middleware.protecting import AccessDenied
+from moin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
+from moin.items import Item, Default, register, BaseMetaForm
+from moin.util.interwiki import split_fqname
 
 
 ITEMTYPE_BLOG = u'blog'

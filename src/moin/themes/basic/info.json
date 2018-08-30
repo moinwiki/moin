@@ -1,6 +1,6 @@
 {
     "identifier":   "basic",
-    "application":  "MoinMoin",
+    "application":  "moin",
     "name":         "Basic Theme",
     "description":  "moin2's builtin basic theme",
     "author":       "MoinMoin developers",

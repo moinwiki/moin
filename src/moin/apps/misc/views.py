@@ -15,10 +15,10 @@ from flask import g as flaskg
 
 from whoosh.query import Term, Or, And
 
-from MoinMoin.apps.misc import misc
+from moin.apps.misc import misc
 
-from MoinMoin.constants.keys import MTIME, NAME_EXACT, NAMESPACE
-from MoinMoin.themes import render_template
+from moin.constants.keys import MTIME, NAME_EXACT, NAMESPACE
+from moin.themes import render_template
 
 
 @misc.route('/sitemap')

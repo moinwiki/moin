@@ -13,11 +13,11 @@ import sys
 from flask import current_app as app
 from flask_script import Command, Option
 
-from MoinMoin.constants.keys import (
+from moin.constants.keys import (
     ITEMID, NAME, NAME_EXACT, EMAIL, EMAIL_UNVALIDATED,
 )
-from MoinMoin import user
-from MoinMoin.app import before_wiki
+from moin import user
+from moin.app import before_wiki
 
 
 class Fault(Exception):

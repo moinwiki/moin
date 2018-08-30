@@ -3,15 +3,15 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.mail.sendmail Tests
+    MoinMoin - moin.mail.sendmail Tests
 """
 
 
 from email.charset import Charset, QP
 from email.header import Header
 
-from MoinMoin.mail import sendmail
-from MoinMoin.constants.contenttypes import CHARSET
+from moin.mail import sendmail
+from moin.constants.contenttypes import CHARSET
 
 
 class TestdecodeSpamSafeEmail(object):
@@ -131,4 +131,4 @@ class TestEncodeAddress(object):
         assert sendmail.encodeAddress(address, self.charset) == expected
 
 
-coverage_modules = ['MoinMoin.mail.sendmail']
+coverage_modules = ['moin.mail.sendmail']

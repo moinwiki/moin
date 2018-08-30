@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - MoinMoin.util.paramparser Tests
+    MoinMoin - moin.util.paramparser Tests
 """
 
 
 import pytest
 
-from MoinMoin.util import paramparser
+from moin.util import paramparser
 
 
 class TestParamParsing(object):

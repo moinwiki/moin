@@ -12,8 +12,8 @@ from flask import url_for
 from flask import g as flaskg
 from werkzeug import ImmutableMultiDict, FileStorage
 
-from MoinMoin.apps.frontend import views
-from MoinMoin import user
+from moin.apps.frontend import views
+from moin import user
 
 import pytest
 

@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.smiley
+MoinMoin - Tests for moin.converter.smiley
 """
 
 
 import re
 import pytest
 
-from MoinMoin.converter.smiley import Converter, moin_page, ET
+from moin.converter.smiley import Converter, moin_page, ET
 
 
 def pytest_generate_tests(metafunc):

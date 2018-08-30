@@ -10,8 +10,8 @@ Convert any item to a DOM Tree (we just create a link to download it).
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink
 
 
 class Converter(object):
@@ -34,6 +34,6 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('application/octet-stream'), type_moin_document)
 default_registry.register(Converter._factory, Type(type=None, subtype=None), type_moin_document)

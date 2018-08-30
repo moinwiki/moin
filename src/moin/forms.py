@@ -26,12 +26,12 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask import flash
 
-from MoinMoin.constants.forms import *
-from MoinMoin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
-from MoinMoin.constants.namespaces import NAMESPACES_IDENTIFIER
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.forms import FileStorage
-from MoinMoin.storage.middleware.validation import uuid_validator
+from moin.constants.forms import *
+from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
+from moin.constants.namespaces import NAMESPACES_IDENTIFIER
+from moin.i18n import _, L_, N_
+from moin.util.forms import FileStorage
+from moin.storage.middleware.validation import uuid_validator
 
 COLS = 60
 ROWS = 10
@@ -323,7 +323,7 @@ class DateTimeUNIX(_DateTime):
         dt = super(DateTimeUNIX, self).adapt(value)
         if isinstance(dt, datetime.datetime):
             # XXX forces circular dependency when it is in the head import block
-            from MoinMoin.themes import utctimestamp
+            from moin.themes import utctimestamp
             # TODO: Add support for timezones
             dt = utctimestamp(dt)
         return dt

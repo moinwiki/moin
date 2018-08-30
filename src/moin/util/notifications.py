@@ -14,20 +14,20 @@ from whoosh.query import Term, And
 from flask import url_for, g as flaskg
 from flask import abort
 
-from MoinMoin.constants.keys import (ACTION_COPY, ACTION_RENAME, ACTION_REVERT,
-                                     ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
-                                     MTIME, NAME_EXACT, WIKINAME)
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.i18n import force_locale
-from MoinMoin.items.content import Content
-from MoinMoin.mail.sendmail import sendmail
-from MoinMoin.themes import render_template
-from MoinMoin.signalling.signals import item_modified
-from MoinMoin.util.subscriptions import get_subscribers
-from MoinMoin.util.diff_datastruct import make_text_diff, diff as dict_diff
-from MoinMoin.util.interwiki import url_for_item
+from moin.constants.keys import (ACTION_COPY, ACTION_RENAME, ACTION_REVERT,
+                                 ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
+                                 MTIME, NAME_EXACT, WIKINAME)
+from moin.i18n import _, L_, N_
+from moin.i18n import force_locale
+from moin.items.content import Content
+from moin.mail.sendmail import sendmail
+from moin.themes import render_template
+from moin.signalling.signals import item_modified
+from moin.util.subscriptions import get_subscribers
+from moin.util.diff_datastruct import make_text_diff, diff as dict_diff
+from moin.util.interwiki import url_for_item
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 # additional action values
@@ -107,7 +107,7 @@ class Notification(object):
                     contenttype = self.revs[0].meta[CONTENTTYPE]
                     oldfile = BytesIO("")
                 else:
-                    from MoinMoin.apps.frontend.views import _common_type
+                    from moin.apps.frontend.views import _common_type
                     contenttype = _common_type(self.revs[0].meta[CONTENTTYPE], self.revs[1].meta[CONTENTTYPE])
                     oldfile = self.revs[1].data
             else:

@@ -10,7 +10,7 @@
 """
     MoinMoin - high-level (frontend) items
 
-    While MoinMoin.storage cares for backend storage of items,
+    While moin.storage cares for backend storage of items,
     this module cares for more high-level, frontend items,
     e.g. showing, editing, etc. of wiki items.
 
@@ -35,19 +35,19 @@ from jinja2 import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
 
-from MoinMoin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-from MoinMoin.security.textcha import TextCha, TextChaizedForm
-from MoinMoin.signalling import item_modified
-from MoinMoin.storage.middleware.protecting import AccessDenied
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.themes import render_template
-from MoinMoin.util import rev_navigation
-from MoinMoin.util.mime import Type
-from MoinMoin.util.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
-from MoinMoin.util.registry import RegistryBase
-from MoinMoin.util.clock import timed
-from MoinMoin.forms import RequiredText, OptionalText, JSON, Tags, Names
-from MoinMoin.constants.keys import (
+from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
+from moin.security.textcha import TextCha, TextChaizedForm
+from moin.signalling import item_modified
+from moin.storage.middleware.protecting import AccessDenied
+from moin.i18n import _, L_, N_
+from moin.themes import render_template
+from moin.util import rev_navigation
+from moin.util.mime import Type
+from moin.util.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
+from moin.util.registry import RegistryBase
+from moin.util.clock import timed
+from moin.forms import RequiredText, OptionalText, JSON, Tags, Names
+from moin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
@@ -55,18 +55,18 @@ from MoinMoin.constants.keys import (
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
     LATEST_REVS, EDIT_ROWS, TEMPLATE
 )
-from MoinMoin.constants.namespaces import NAMESPACE_ALL
-from MoinMoin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
-from MoinMoin.constants.itemtypes import (
+from moin.constants.namespaces import NAMESPACE_ALL
+from moin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
+from moin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 )
-from MoinMoin.util.notifications import DESTROY_REV, DESTROY_ALL
-from MoinMoin.mail.sendmail import encodeSpamSafeEmail
+from moin.util.notifications import DESTROY_REV, DESTROY_ALL
+from moin.mail.sendmail import encodeSpamSafeEmail
 
 from .content import content_registry, Content, NonExistentContent, Draw
 from ..util.pysupport import load_package_modules
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

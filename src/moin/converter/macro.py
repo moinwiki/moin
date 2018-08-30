@@ -14,15 +14,15 @@ from flask import current_app as app
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
-from MoinMoin.util import plugins
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util import iri
-from MoinMoin.util.mime import type_moin_document, Type
-from MoinMoin.util.tree import moin_page
-from MoinMoin.util.plugins import PluginMissingError
+from moin.util import plugins
+from moin.i18n import _, L_, N_
+from moin.util import iri
+from moin.util.mime import type_moin_document, Type
+from moin.util.tree import moin_page
+from moin.util.plugins import PluginMissingError
 
 
 class Converter(object):
@@ -93,5 +93,5 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

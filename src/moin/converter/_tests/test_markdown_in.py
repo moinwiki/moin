@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.markdown_in
+MoinMoin - Tests for moin.converter.markdown_in
 """
 
 
@@ -11,7 +11,7 @@ import re
 
 import pytest
 
-from MoinMoin.util.tree import moin_page, xlink, xml, xinclude, html
+from moin.util.tree import moin_page, xlink, xml, xinclude, html
 
 from ..markdown_in import Converter
 

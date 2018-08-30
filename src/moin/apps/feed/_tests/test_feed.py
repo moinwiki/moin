@@ -7,8 +7,8 @@ MoinMoin - basic tests for feeds
 
 from flask import url_for
 
-from MoinMoin.constants.keys import COMMENT
-from MoinMoin._tests import update_item
+from moin.constants.keys import COMMENT
+from moin._tests import update_item
 
 
 class TestFeeds(object):

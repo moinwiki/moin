@@ -42,7 +42,7 @@ def load_package_modules(package_name, package_pathes):
                     try:
                         imp.load_module(module_complete, *info)
                     except Exception as e:
-                        import MoinMoin.log as logging
+                        import moin.log as logging
                         logger = logging.getLogger(package_name)
                         logger.exception("Failed to import {0} package module {1}: {2}".format(package_name, module, e))
                 finally:
@@ -80,7 +80,7 @@ def getPackageModules(packagefile):
 
     in_plugin_dir = lambda dir, ops=os.path.split: ops(ops(dir)[0])[1] == "plugin"
 
-    moinmodule = __import__('MoinMoin')
+    moinmodule = __import__('moin')
 
     # Is it in a .zip file?
     if not in_plugin_dir(packagedir) and hasattr(moinmodule, '__loader__'):

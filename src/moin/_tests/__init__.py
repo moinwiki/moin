@@ -13,10 +13,10 @@ from StringIO import StringIO
 
 from flask import g as flaskg
 
-from MoinMoin.constants.contenttypes import CHARSET
-from MoinMoin.constants.keys import NAME, CONTENTTYPE
-from MoinMoin.items import Item
-from MoinMoin.util.crypto import random_string
+from moin.constants.contenttypes import CHARSET
+from moin.constants.keys import NAME, CONTENTTYPE
+from moin.items import Item
+from moin.util.crypto import random_string
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you

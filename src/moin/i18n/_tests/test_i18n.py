@@ -10,8 +10,8 @@ import pytest
 from flask import Flask
 import flask_babel as babel
 
-from MoinMoin.i18n import get_locale, get_timezone, force_locale
-from MoinMoin.i18n import _, L_, N_
+from moin.i18n import get_locale, get_timezone, force_locale
+from moin.i18n import _, L_, N_
 
 
 def test_user_attributes():

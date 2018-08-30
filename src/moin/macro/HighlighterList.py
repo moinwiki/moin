@@ -9,9 +9,9 @@ Usage: <<HighlighterList>>
 
 import pygments
 
-from MoinMoin.macro._base import MacroBlockBase
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.converter._table import TableMixin
+from moin.macro._base import MacroBlockBase
+from moin.i18n import _, L_, N_
+from moin.converter._table import TableMixin
 
 
 class Macro(MacroBlockBase):

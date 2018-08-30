@@ -54,7 +54,7 @@ def directories_to_ignore(starting_dir):
     level2_dirs = ".eggs .git .hg .tox contrib dlc env moin.egg-info wiki HTML".split()
     for dir in level2_dirs:
         ignore_dirs.append((starting_dir, dir))
-    ignore_dirs.append((starting_dir + os.sep + "MoinMoin", "translations"))
+    ignore_dirs.append((starting_dir + os.sep + "moin", "translations"))
     ignore_dirs.append((starting_dir + os.sep + "docs", "_build"))
     return ignore_dirs
 

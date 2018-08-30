@@ -16,12 +16,12 @@ import re
 from flask import request
 from werkzeug import url_encode
 
-from MoinMoin.constants.contenttypes import CHARSET
-from MoinMoin.constants.misc import URI_SCHEMES
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink, xinclude, html
-from MoinMoin.util.interwiki import is_known_wiki
-from MoinMoin.i18n import _
+from moin.constants.contenttypes import CHARSET
+from moin.constants.misc import URI_SCHEMES
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.util.interwiki import is_known_wiki
+from moin.i18n import _
 
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments
@@ -29,7 +29,7 @@ from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
 from ._table import TableMixin
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 
@@ -1074,6 +1074,6 @@ class Converter(ConverterMacro):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_wiki, type_moin_document)
 default_registry.register(Converter.factory, Type('x-moin/format;name=wiki'), type_moin_document)

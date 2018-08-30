@@ -13,8 +13,8 @@ This converter based on ReStructuredText 2006-09-22.
 
 from __future__ import absolute_import, division
 
-from MoinMoin.util.tree import html, moin_page, xlink, xinclude
-from MoinMoin.util.iri import Iri
+from moin.util.tree import html, moin_page, xlink, xinclude
+from moin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
 
@@ -786,7 +786,7 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory,
                           type_moin_document,
                           Type('text/x-rst'))

@@ -3,14 +3,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.rst_in
+MoinMoin - Tests for moin.converter.rst_in
 """
 
 import re
 
 import pytest
 
-from MoinMoin.converter.rst_in import *
+from moin.converter.rst_in import *
 
 
 class TestConverter(object):
@@ -257,4 +257,4 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         assert self.serialize(out) == output
 
 
-coverage_modules = ['MoinMoin.converter.rst_in']
+coverage_modules = ['moin.converter.rst_in']

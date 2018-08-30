@@ -16,11 +16,11 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import abort
 
-from MoinMoin.constants import rights
-from MoinMoin.constants.keys import NAME_EXACT
-from MoinMoin import user
-from MoinMoin.i18n import _, L_, N_
-from MoinMoin.util.pysupport import AutoNe
+from moin.constants import rights
+from moin.constants.keys import NAME_EXACT
+from moin import user
+from moin.i18n import _, L_, N_
+from moin.util.pysupport import AutoNe
 
 
 def require_permission(permission):

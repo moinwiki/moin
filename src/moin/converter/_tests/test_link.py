@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.link
+MoinMoin - Tests for moin.converter.link
 """
 
 from emeraldtree import tree as ET
 
-from MoinMoin.converter.link import ConverterExternOutput, xlink, ConverterItemRefs
-from MoinMoin.util.iri import Iri
+from moin.converter.link import ConverterExternOutput, xlink, ConverterItemRefs
+from moin.util.iri import Iri
 
 import pytest
 

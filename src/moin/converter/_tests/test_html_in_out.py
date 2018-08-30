@@ -2,8 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for MoinMoin.converter.html_in and
-           MoinMoin.converter.html_out.
+MoinMoin - Tests for moin.converter.html_in and moin.converter.html_out.
 
            It will check that roundtrip conversion is working well.
 """
@@ -16,11 +15,11 @@ import pytest
 
 etree = pytest.importorskip('lxml.etree')
 
-from MoinMoin.converter.html_in import Converter as HTML_IN
-from MoinMoin.converter.html_out import Converter as HTML_OUT
-from MoinMoin.util.tree import html, moin_page, xlink
+from moin.converter.html_in import Converter as HTML_IN
+from moin.converter.html_out import Converter as HTML_OUT
+from moin.util.tree import html, moin_page, xlink
 
-from MoinMoin import log
+from moin import log
 logging = log.getLogger(__name__)
 
 

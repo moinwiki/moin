@@ -12,13 +12,13 @@ from StringIO import StringIO
 
 import pytest
 
-from MoinMoin.constants.keys import NAME, NAMESPACE
+from moin.constants.keys import NAME, NAMESPACE
 
 from ..routing import Backend as RoutingBackend
 
-from MoinMoin.storage.backends.stores import MutableBackend as StoreBackend, Backend as ROBackend
-from MoinMoin.storage.stores.memory import BytesStore as MemoryBytesStore
-from MoinMoin.storage.stores.memory import FileStore as MemoryFileStore
+from moin.storage.backends.stores import MutableBackend as StoreBackend, Backend as ROBackend
+from moin.storage.stores.memory import BytesStore as MemoryBytesStore
+from moin.storage.stores.memory import FileStore as MemoryFileStore
 
 
 def make_ro_backend():

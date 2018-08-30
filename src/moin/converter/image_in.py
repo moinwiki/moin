@@ -10,11 +10,11 @@ Convert image to <object> tag for the DOM Tree.
 
 from emeraldtree import ElementTree as ET
 
-from MoinMoin.util.iri import Iri
-from MoinMoin.util.tree import moin_page, xlink, xinclude, html
+from moin.util.iri import Iri
+from moin.util.tree import moin_page, xlink, xinclude, html
 from werkzeug import url_encode, url_decode
 
-from MoinMoin.constants.contenttypes import CHARSET
+from moin.constants.contenttypes import CHARSET
 
 
 class Converter(object):
@@ -53,7 +53,7 @@ class Converter(object):
 
 
 from . import default_registry
-from MoinMoin.util.mime import Type, type_moin_document
+from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('image/svg+xml'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/png'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/jpeg'), type_moin_document)
