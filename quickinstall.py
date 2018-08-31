@@ -9,7 +9,7 @@ needs: virtualenv, pip
 """
 
 
-import MoinMoin  # validate python version
+import moin  # validate python version
 import argparse
 import logging
 import os
@@ -111,7 +111,7 @@ Successfully created or updated venv at {0}
             os.path.join(self.dir_source, 'setup.py'),
             'compile_catalog', '--statistics',
             # needed in case user runs quickinstall.py with a cwd other than the repo root
-            '--directory', os.path.join(os.path.dirname(__file__), 'src', 'MoinMoin', 'translations'),
+            '--directory', os.path.join(os.path.dirname(__file__), 'src', 'moin', 'translations'),
         ))
 
     def create_wrapper(self, filename, target):

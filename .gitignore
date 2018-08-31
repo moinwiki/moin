@@ -13,11 +13,11 @@ wiki/
 wiki_local/
 instance/
 wikiconfig_*.py
-src/MoinMoin/_version.py
-src/MoinMoin/translations/.*/LC_MESSAGES/messages.mo
-src/MoinMoin/_tests/wiki/data/cache/
-src/MoinMoin/_tests/wiki/index/
-src/MoinMoin/themes/modernized/static/css/stylus/normalize.css
+src/moin/_version.py
+src/moin/translations/.*/LC_MESSAGES/messages.mo
+src/moin/_tests/wiki/data/cache/
+src/moin/_tests/wiki/index/
+src/moin/themes/modernized/static/css/stylus/normalize.css
 HTML/
 .coverage
 .project

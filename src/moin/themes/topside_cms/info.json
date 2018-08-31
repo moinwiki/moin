@@ -1,0 +1,10 @@
+{
+    "identifier":   "topside_cms",
+    "application":  "moin",
+    "name":         "Topside CMS Theme",
+    "description":  "Topside CMS theme for viewing wiki content has topbar for small displays and left sidebar for wide displays.",
+    "author":       "Roger Haase",
+    "website":      "http://moinmo.in/",
+    "license":      "see MoinMoin license",
+    "doctype":      "html5"
+}
