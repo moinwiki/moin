@@ -25,6 +25,10 @@ from ..util.registry import RegistryBase
 from ..util.pysupport import load_package_modules
 
 
+class ElementException(RuntimeError):
+    pass
+
+
 class RegistryConverter(RegistryBase):
     class Entry(namedtuple('Entry', 'factory type_input type_output priority')):
         def __call__(self, type_input, type_output, **kw):

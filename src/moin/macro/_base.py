@@ -5,6 +5,7 @@
 MoinMoin - Macro base class
 """
 
+from werkzeug.exceptions import abort
 
 from moin.util import iri
 from moin.util.tree import moin_page, xlink

@@ -25,7 +25,7 @@ from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.util.iri import Iri
 from moin.util.mime import Type, type_moin_document
 
-from . import default_registry
+from . import default_registry, ElementException
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -80,10 +80,6 @@ def mark_item_as_transclusion(elem, href):
     classes.append('moin-transclusion')
     elem.attrib[html.class_] = ' '.join(classes)
     return elem
-
-
-class ElementException(RuntimeError):
-    pass
 
 
 class Attribute(object):

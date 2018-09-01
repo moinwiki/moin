@@ -4,6 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import os
+import platform
 import sys
 from setuptools import setup, find_packages
 
