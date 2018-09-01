@@ -13,6 +13,8 @@ from __future__ import absolute_import, division
 
 import urllib
 
+from . import ElementException
+
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.util.iri import Iri
 

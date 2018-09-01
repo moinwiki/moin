@@ -666,8 +666,8 @@ class Converter(ConverterMacro):
                     target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
                     text = object_item
                 else:
-                    target = Iri(scheme='wiki.local', path=object_url)
-                    text = object_url
+                    target = Iri(scheme='wiki.local', path=link_url)
+                    text = link_url
 
                 if not link_text:
                     link_text = text
