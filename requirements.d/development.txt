@@ -1,3 +1,5 @@
 tox
 pytest
 pytest-pep8
+# we use lxml.etree for xpath-based testing
+lxml
