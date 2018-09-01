@@ -1,4 +1,4 @@
-from moin.util.StringIOClosing import StringIO
+from io import StringIO
 
 
 def serialize(elem, **options):
