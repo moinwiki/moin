@@ -9,14 +9,9 @@ import pytest
 
 from emeraldtree import tree as ET
 
+from . import serialize
+
 from moin.converter.html_out import ConverterPage
-
-
-def serialize(elem, **options):
-    from StringIO import StringIO
-    buffer = StringIO()
-    elem.write(buffer.write, **options)
-    return buffer.getvalue()
 
 
 def run_test(tree_xml, output):

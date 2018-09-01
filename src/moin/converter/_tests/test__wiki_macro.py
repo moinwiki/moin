@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from . import serialize
+
 from moin.converter._args import Arguments
 from moin.util.tree import xlink
 
@@ -105,21 +107,19 @@ class TestConverter(object):
     def test_parser(self, name, args, text, output):
         self._do_parser(name, args, text, output)
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def _do(self, name, args, text, context_block, output):
         result = self.conv.macro(name, args, text, context_block)
         if output is not None or result is not None:
-            if isinstance(result, basestring):
-                assert result == output
-            else:
-                assert self.serialize(result) == output
+            if not isinstance(result, basestring):
+                result = self.serialize_strip(result)
+            assert result == output
 
     def _do_parser(self, name, args, text, output):
         result = self.conv.parser(name, args, text)
         if output is not None or result is not None:
-            assert self.serialize(result) == output
+            result = self.serialize_strip(result)
+            assert result == output

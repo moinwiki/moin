@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from . import serialize
+
 from moin.converter.mediawiki_in import *
 
 
@@ -186,16 +188,15 @@ Apple
     def test_links(self, input, output):
         self.do(input, output)
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}, skip=None):
         out = self.conv(input, 'text/x-mediawiki;charset=utf-8', **args)
-        print self.serialize(out)
-        assert self.serialize(out) == output
+        result = self.serialize_strip(out)
+        print result
+        assert result == output
 
 
 coverage_modules = ['moin.converter.mediawiki_in']

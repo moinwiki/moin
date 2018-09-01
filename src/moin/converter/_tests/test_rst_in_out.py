@@ -21,6 +21,8 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from . import serialize
+
 from moin import config
 from moin.util.iri import Iri
 from moin.util.tree import moin_page, xlink, xinclude, html
@@ -194,16 +196,14 @@ class TestConverter(object):
     def handle_output(self, elem, **options):
         return elem
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:
             pytest.skip(skip)
         out = self.conv_in(input, 'text/x.moin.wiki;charset=utf-8', **args)
-        out = self.conv_out(self.handle_input(self.serialize(out)), **args)
+        out = self.conv_out(self.handle_input(self.serialize_strip(out)), **args)
         assert self.handle_output(out) == output
         # ~ assert self.handle_output(out).strip() == output.strip()  # TODO: revert to above when number of \n between blocks in moinwiki_out.py is stable

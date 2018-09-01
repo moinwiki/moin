@@ -10,6 +10,8 @@ import pytest
 
 import re
 
+from . import serialize
+
 from moin.converter.moinwiki19_in import ConverterFormat19
 from moin.util.tree import moin_page, xlink, html, xinclude
 
@@ -49,14 +51,12 @@ class TestConverter(object):
     def test_freelink(self, input, output):
         self.do(input, output)
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:
             pytest.skip(skip)
         out = self.conv(input, 'text/x.moin.wiki;charset=utf-8', **args)
-        assert self.serialize(out) == output
+        assert self.serialize_strip(out) == output

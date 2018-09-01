@@ -15,6 +15,8 @@ import pytest
 
 etree = pytest.importorskip('lxml.etree')
 
+from . import serialize
+
 from moin.converter.html_in import Converter as HTML_IN
 from moin.converter.html_out import Converter as HTML_OUT
 from moin.util.tree import html, moin_page, xlink
@@ -34,14 +36,12 @@ class Base(object):
     output_re = re.compile(r'\s+xmlns="[^"]+"')
 
     def handle_input(self, input, args):
-        f = StringIO.StringIO()
         out = self.conv_html_dom(input, **args)
-        out.write(f.write, namespaces=self.namespaces, )
-        logging.debug("After the HTML_IN conversion : {0}".format(self.output_re.sub(u'', f.getvalue())))
+        output = serialize(out, namespaces=self.namespaces)
+        logging.debug("After the HTML_IN conversion : {0}".format(self.output_re.sub(u'', output)))
         out = self.conv_dom_html(out, **args)
-        f = StringIO.StringIO()
-        out.write(f.write, namespaces=self.namespaces, )
-        return self.output_re.sub(u'', f.getvalue())
+        output = serialize(out, namespaces=self.namespaces)
+        return self.output_re.sub(u'', output)
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})

@@ -16,6 +16,8 @@ import re
 
 from emeraldtree import ElementTree as ET
 
+from . import serialize
+
 from moin.util.tree import moin_page, xlink, xinclude, html
 # from moin.converter.moinwiki_in import Converter as conv_in
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
@@ -567,16 +569,14 @@ Its visibility gets toggled the same way.
     def handle_output(self, elem, **options):
         return elem
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:
             pytest.skip(skip)
         out = self.conv_in(input, 'text/x.moin.wiki;charset=utf-8', **args)
-        out = self.conv_out(self.handle_input(self.serialize(out)), **args)
+        out = self.conv_out(self.handle_input(self.serialize_strip(out)), **args)
         # assert self.handle_output(out) == output
         assert self.handle_output(out).strip() == output.strip()  # TODO: revert to above when number of \n between blocks in moinwiki_out.py is stable
