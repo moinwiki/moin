@@ -58,8 +58,6 @@ from moin.app import before_wiki
 from moin.constants.keys import CURRENT, THEME_NAME, NAME_EXACT, WIKINAME
 from moin.constants.contenttypes import CONTENTTYPE_MEDIA, CONTENTTYPE_MEDIA_SUFFIX
 
-from wikiconfig import Config
-
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -96,7 +94,7 @@ class Dump(Command):
         else:
             html_root = norm(join(app.cfg.wikiconfig_dir, directory))
         repo_root = norm(join(app.cfg.wikiconfig_dir))
-        moinmoin = norm(join(app.cfg.wikiconfig_dir, 'moin'))
+        moinmoin = norm(join(app.cfg.wikiconfig_dir, 'src', 'moin'))
 
         # override ACLs with permission to read all items
         for namespace, acls in app.cfg.acl_mapping:
@@ -114,7 +112,7 @@ class Dump(Command):
         shutil.copytree(norm(join(repo_root, 'wiki_local')), norm(join(html_root, '+serve/wiki_local')))
 
         # copy files from xstatic packaging into "+serve" subdirectory
-        pkg = Config.pkg
+        pkg = app.cfg.pkg
         xstatic_dirs = ['font_awesome', 'jquery', 'jquery_tablesorter', 'autosize']
         if theme in ['basic', ]:
             xstatic_dirs.append('bootstrap')
