@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from . import serialize
+
 from moin.converter.rst_in import *
 
 
@@ -246,15 +248,13 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     def test_docutils_feature(self, input, output):
         self.do(input, output)
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}, skip=None):
         out = self.conv(input, 'text/x-rst;charset=utf-8', **args)
-        assert self.serialize(out) == output
+        assert self.serialize_strip(out) == output
 
 
 coverage_modules = ['moin.converter.rst_in']

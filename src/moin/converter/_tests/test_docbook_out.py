@@ -15,6 +15,8 @@ etree = pytest.importorskip('lxml.etree')
 
 from emeraldtree.tree import *
 
+from . import serialize
+
 from moin.converter.docbook_out import *
 
 from moin import log
@@ -42,10 +44,8 @@ class Base(object):
         return ET.XML(i)
 
     def handle_output(self, elem, **options):
-        file = StringIO.StringIO()
-        tree = ET.ElementTree(elem)
-        tree.write(file, namespaces=self.output_namespaces, **options)
-        return self.output_re.sub(u'', file.getvalue())
+        output = serialize(elem, namespaces=self.output_namespaces, **options)
+        return self.output_re.sub(u'', output)
 
     def do(self, input, xpath, args={}):
         out = self.conv(self.handle_input(input), **args)

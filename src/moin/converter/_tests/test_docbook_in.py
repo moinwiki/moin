@@ -16,6 +16,8 @@ etree = pytest.importorskip('lxml.etree')
 
 from emeraldtree.tree import *
 
+from . import serialize
+
 from moin.converter.docbook_in import *
 
 from moin import log
@@ -48,9 +50,8 @@ class Base(object):
         elif args['nonamespace']:
             to_conv = input
         out = self.conv(to_conv, 'application/docbook+xml;charset=utf-8')
-        f = StringIO.StringIO()
-        out.write(f.write, namespaces=self.output_namespaces, )
-        return self.output_re.sub(u'', f.getvalue())
+        output = serialize(out, namespaces=self.output_namespaces)
+        return self.output_re.sub(u'', output)
 
     def do(self, input, xpath_query):
         string_to_parse = self.handle_output(input)

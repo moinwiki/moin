@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from . import serialize
+
 from moin.util.tree import moin_page, xlink, html, xinclude
 from moin.converter._args import Arguments
 
@@ -276,12 +278,10 @@ class TestConverter(object):
     def test_composite(self, input, output):
         self.do(input, output)
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}):
         out = self.conv(input, 'text/x.moin.creole;charset=utf-8', **args)
-        assert self.serialize(out) == output
+        assert self.serialize_strip(out) == output

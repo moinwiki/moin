@@ -11,6 +11,8 @@ import re
 
 import pytest
 
+from . import serialize
+
 from moin.util.tree import moin_page, xlink, xml, xinclude, html
 
 from ..markdown_in import Converter
@@ -154,15 +156,13 @@ class TestConverter(object):
     def test_image(self, input, output):
         self.do(input, output)
 
-    def serialize(self, elem, **options):
-        from StringIO import StringIO
-        buffer = StringIO()
-        elem.write(buffer.write, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', buffer.getvalue())
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}):
         out = self.conv(input, 'text/x-markdown;charset=utf-8', **args)
-        got_output = self.serialize(out)
+        got_output = self.serialize_strip(out)
         desired_output = "<page><body>%s</body></page>" % output
         print '------------------------------------'
         print "WANTED:"
