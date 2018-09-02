@@ -9,12 +9,12 @@ needs: virtualenv, pip
 """
 
 
-import moin  # validate python version
 import argparse
 import logging
 import os
 import subprocess
 import sys
+import platform
 try:
     import virtualenv
 except ImportError:
@@ -24,6 +24,10 @@ or the virtual environment must be deactivated before rerunning quickinstall.py
 """)
 
 from make import Commands, WINDOWS_OS, M, ACTIVATE
+
+
+if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
+    sys.exit("Error: MoinMoin requires Python 2.7.x., current version is %s\n" % (platform.python_version(), ))
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
