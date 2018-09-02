@@ -3,7 +3,7 @@
 MoinMoin Wiki Configuration - see https://moin-20.readthedocs.org/en/latest/admin/configure.html
 
 This configuration is designed to run moin from a workdir using
-the built-in server. Wiki admins who install moin via a mercurial repository rather
+the built-in server. Wiki admins who install moin via a git repository rather
 than a release package may opt to follow the developer instructions below to
 reduce merge issues when pulling updates.
 
@@ -40,7 +40,7 @@ from moin.util.interwiki import InterWikiMap
 
 class Config(DefaultConfig):
 
-    # We assume this structure for a mercurial clone or simple "unpack and run" scenario:
+    # We assume this structure for a git clone or simple "unpack and run" scenario:
     # moin-2.0/                     # wikiconfig_dir points here: clone root or unpack directory, contains this file.
     #     wikiconfig.py             # the file you are reading now.
     #     wiki/                     # instance_dir variable points here: created by running "./m sample" or "./m new-wiki" commands.

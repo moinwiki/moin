@@ -51,7 +51,7 @@ def directories_to_ignore(starting_dir):
     """Return a list of directories that will not be processed."""
     # list format: [(fully qualified directory name, sub-directory name), ... ]
     ignore_dirs = []
-    level2_dirs = ".eggs .git .hg .tox contrib dlc env moin.egg-info wiki HTML".split()
+    level2_dirs = ".eggs .git .tox contrib dlc env moin.egg-info wiki HTML".split()
     for dir in level2_dirs:
         ignore_dirs.append((starting_dir, dir))
     ignore_dirs.append((starting_dir + os.sep + "moin", "translations"))
