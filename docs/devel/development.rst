@@ -239,7 +239,7 @@ moin2 is a WSGI application and uses:
 * EmeraldTree for xml and tree processing
 * blinker for signalling
 * pygments for syntax highlighting
-* for stores: filesystem, sqlite3, sqlalchemy, kyoto cabinet/tycoon, mongodb, memory
+* for stores: filesystem, sqlite3, sqlalchemy, memory
 * jquery javascript lib, a simple jQuery i18n plugin `Plugin <https://github.com/recurser/jquery-i18n>`_
 * CKeditor, the GUI editor for (x)html
 * TWikiDraw, AnyWikiDraw, svgdraw drawing tools

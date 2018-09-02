@@ -16,19 +16,13 @@ from moin._tests import check_connection
 STORES_PACKAGE = 'moin.storage.stores'
 
 STORES = 'fs memory sqlite sqlite:compressed sqla'.split()
-try:
-    # check if we can connect to the mongodb server
-    check_connection(27017)
-    STORES.append('mongodb')
-except Exception:
-    pass
+
 
 constructors = {
     'memory': lambda store, _: store(),
     'fs': lambda store, tmpdir: store(str(tmpdir.join('store'))),
     'sqlite': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=0),
     'sqlite:compressed': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=1),
-    'mongodb': lambda store, _: store(),
     'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')), 'test_table'),
 }
 
