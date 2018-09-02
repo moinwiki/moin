@@ -74,9 +74,8 @@ Item Types
 Storage Backend Types
 ---------------------
 * file system
-* sql database, such as sqlite3 or everything supported by SQLalchemy
-* Kyoto Tycoon / Kyoto Cabinet
-* mongodb
+* sqlite3
+* everything supported by SQLalchemy
 * you can easily add your own backend with little code
 
 Serialization

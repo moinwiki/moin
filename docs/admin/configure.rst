@@ -1388,17 +1388,6 @@ It uses "::" as separator to support windows pathes which may have ":" after
 the drive letter.
 
 
-mongodb store
--------------
-Features:
-
-* uses mongodb for storage
-
-.. todo:
-
-   add mongodb store configuration example
-
-
 memory store
 --------------
 Features:
