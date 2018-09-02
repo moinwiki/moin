@@ -1388,38 +1388,6 @@ It uses "::" as separator to support windows pathes which may have ":" after
 the drive letter.
 
 
-kc store
---------
-Features:
-
-* uses a Kyoto Cabinet file for storage
-* very fast
-* single-process only, local only
-
-`uri` for `create_simple_mapping` looks like e.g.::
-
-    stores:kc:/srv/mywiki/data/%(nsname)s_%(kind)s.kch
-
-Please see the kyoto cabinet docs about the part after `kc:`.
-
-If you use kc with the builtin server of moin, you cannot use the reloader.
-Disable it with the commandline option::
-
-  moin moin -r
-
-
-kt store
---------
-Features:
-
-* uses a Kyoto Tycoon server for storage
-* fast
-* multi-process, local or remote.
-
-.. todo:
-
-   add kt store configuration example
-
 mongodb store
 -------------
 Features:
@@ -1429,6 +1397,7 @@ Features:
 .. todo:
 
    add mongodb store configuration example
+
 
 memory store
 --------------
