@@ -8,7 +8,7 @@ MoinMoin - Tests for moin.converter._args
 
 import pytest
 
-from moin.converter._args import *
+from moin.converter._args import Arguments
 
 
 def test_Arguments___init__():

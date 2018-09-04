@@ -7,7 +7,7 @@ MoinMoin - Tests for moin.converter._args_wiki
 
 import pytest
 
-from moin.converter._args_wiki import *
+from moin.converter._args_wiki import Arguments, parse, unparse
 
 
 @pytest.mark.parametrize('wiki,positional,keyword', [

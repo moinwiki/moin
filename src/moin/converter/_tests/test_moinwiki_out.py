@@ -11,7 +11,10 @@ import re
 
 import pytest
 
-from moin.converter.moinwiki_out import *
+from emeraldtree import ElementTree as ET
+
+from moin.util.tree import html, moin_page, xlink
+from moin.converter.moinwiki_out import Converter
 
 
 class Base(object):

@@ -13,11 +13,10 @@ import pytest
 
 etree = pytest.importorskip('lxml.etree')
 
-from emeraldtree.tree import *
-
 from . import serialize
 
-from moin.converter.html_in import *
+from moin.util.tree import html, moin_page, xlink, xml
+from moin.converter.html_in import Converter
 
 from moin import log
 logging = log.getLogger(__name__)

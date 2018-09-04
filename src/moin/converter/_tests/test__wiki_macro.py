@@ -12,10 +12,9 @@ import pytest
 
 from . import serialize
 
+from moin.util.tree import moin_page, xlink, xinclude
+from moin.converter._wiki_macro import ConverterMacro
 from moin.converter._args import Arguments
-from moin.util.tree import xlink
-
-from moin.converter._wiki_macro import *
 
 
 class TestConverter(object):

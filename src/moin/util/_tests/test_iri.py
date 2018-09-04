@@ -9,7 +9,7 @@ MoinMoin - Tests for moin.util.iri
 
 import pytest
 
-from moin.util.iri import *
+from moin.util.iri import Iri, IriAuthority, IriPath
 
 
 def test_Iri_init_1():
