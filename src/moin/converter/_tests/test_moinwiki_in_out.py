@@ -195,10 +195,8 @@ class TestConverter(object):
     def test_object(self, input, output):
         self.do(input, output)
 
-    def test_page(self):
-        pytest.skip("please help fixing moin wiki round trip tests")  # XXX TODO
-        data = [
-            (u"""
+    data = [
+        (u"""
 This page aims to introduce the most important elements of MoinMoin``'s syntax at a glance, showing first the markup verbatim and then how it is rendered by the wiki engine. Additionally, you'll find links to the relative help pages. Please note that some of the features depend on your configuration.
 
 <<TableOfContents()>>
@@ -558,9 +556,12 @@ This is a wiki parser section with class "comment dotted" (see HelpOnParsers).
 
 Its visibility gets toggled the same way.
 }}}""", """ """),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+    ]
+
+    @pytest.mark.parametrize('input,output', data)
+    def test_page(self, input, output):
+        pytest.skip("broken, triggers exception, needs refactoring")  # XXX TODO
+        self.do(input, output)
 
     def handle_input(self, input):
         i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)

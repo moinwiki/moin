@@ -61,9 +61,9 @@ class TestConverter(object):
         (u'{{http://moinmo.in/|test|width=10, height=10}}',
          '<page><body><p><object xhtml:alt="test" xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'{{http://moinmo.in/}}',
-         '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>', None, 'unknown'),
+         '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'{{http://moinmo.in/|MoinMoin}}',
-         '<page><body><p><object alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>', None, 'unknown'),
+         '<page><body><p><object alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>', None, 'namespace issue'),
         (u'----',
          '<page><body><separator class="moin-hr1" /></body></page>'),
     ]
