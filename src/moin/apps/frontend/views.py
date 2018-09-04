@@ -58,11 +58,11 @@ from moin.items import (BaseChangeForm, TextChaizedForm, Item, NonExistent, Name
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
 from moin import user, util
-from moin.constants.keys import *
-from moin.constants.namespaces import *
+from moin.constants.keys import *  # noqa
+from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
-from moin.constants.contenttypes import *
+from moin.constants.contenttypes import *  # noqa
 from moin.util import crypto, rev_navigation
 from moin.util.crypto import make_uuid
 from moin.util.interwiki import url_for_item, split_fqname, CompositeName

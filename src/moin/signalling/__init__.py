@@ -10,7 +10,7 @@
 
 
 # import all signals so they can be imported from here:
-from .signals import *
+from .signals import *  # noqa
 
 # import all signal handler modules so they install their handlers:
 from . import log

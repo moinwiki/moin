@@ -26,7 +26,7 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask import flash
 
-from moin.constants.forms import *
+from moin.constants.forms import *  # noqa
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
 from moin.i18n import _, L_, N_

@@ -35,7 +35,7 @@ from jinja2.runtime import Undefined
 from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from moin.constants.keys import *
+from moin.constants.keys import *  # noqa
 from moin.constants.misc import ANON
 from moin.i18n import _, L_, N_
 from moin.mail import sendmail

@@ -32,7 +32,7 @@ def chmod(name, mode, catchexception=True):
             raise
 
 
-from werkzeug.posixemulation import *
+from werkzeug.posixemulation import rename
 
 rename_overwrite = rename
 

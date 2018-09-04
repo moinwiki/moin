@@ -15,7 +15,7 @@ Optionally, you can use zlib/"gzip" compression.
 from __future__ import absolute_import, division
 
 import zlib
-from sqlite3 import *
+from sqlite3 import connect, Row
 
 from . import (BytesMutableStoreBase, FileMutableStoreBase,
                BytesMutableStoreMixin, FileMutableStoreMixin)

@@ -6,7 +6,7 @@
 """
 
 
-from .signals import *
+from .signals import *  # noqa
 from flask import got_request_exception
 
 from .. import log

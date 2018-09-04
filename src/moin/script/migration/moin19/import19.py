@@ -28,7 +28,7 @@ from flask_script import Command, Option
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
-from moin.constants.keys import *
+from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
