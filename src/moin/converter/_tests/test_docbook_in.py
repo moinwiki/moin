@@ -14,8 +14,6 @@ import pytest
 
 etree = pytest.importorskip('lxml.etree')
 
-from emeraldtree.tree import *
-
 from . import serialize
 
 from moin.converter.docbook_in import *
