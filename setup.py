@@ -120,7 +120,7 @@ setup_args = dict(
 
     # stuff for babel:
     message_extractors={
-        '': [
+        'src': [
             ('moin/templates/**.html', 'jinja2', None),
             ('moin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be defined here for jQuery i18n plugin
             ('moin/apps/**/templates/**.html', 'jinja2', None),
