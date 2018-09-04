@@ -41,7 +41,6 @@
             {% if not form['content_form'].is_draw %}
                 {{ forms.render_submit(form, id='moin-save-text-button') }}
                 <dl>
-                    {{ forms.render_textcha(gen, form) }}
                     {{ forms.render(form['comment']) }}
                 </dl>
             {% endif %}

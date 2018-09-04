@@ -338,7 +338,7 @@ class TestItemAcls(object):
     def cfg(self):
         class Config(wikiconfig.Config):
             default_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
-            acl_functions = u"SuperUser:superuser NoTextchaUser:notextcha"
+            acl_functions = u"SuperUser:superuser"
 
         return Config
 
@@ -387,11 +387,8 @@ class TestItemAcls(object):
         # check function rights
         u = User(auth_username='SuperUser')
         assert u.may.superuser()
-        u = User(auth_username='NoTextchaUser')
-        assert u.may.notextcha()
         u = User(auth_username='SomeGuy')
         assert not u.may.superuser()
-        assert not u.may.notextcha()
 
 
 class TestItemHierachicalAcls(object):

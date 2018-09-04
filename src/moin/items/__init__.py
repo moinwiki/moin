@@ -36,7 +36,6 @@ from jinja2 import Markup
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-from moin.security.textcha import TextCha, TextChaizedForm
 from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_, N_
@@ -205,7 +204,7 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
     return rev
 
 
-class BaseChangeForm(TextChaizedForm):
+class BaseChangeForm(Form):
     # autofocus=True causes javascript autoscroll in textarea to fail when using Chrome, Opera, or Maxthon browsers
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
     submit_label = L_('OK')
@@ -279,7 +278,6 @@ class BaseModifyForm(BaseChangeForm):
         overrride the _load method instead.
         """
         form = cls.from_defaults()
-        TextCha(form).amend_form()
         form._load(item)
         return form
 
@@ -293,7 +291,6 @@ class BaseModifyForm(BaseChangeForm):
         override this class method.
         """
         form = cls.from_flat(request.form.items() + request.files.items())
-        TextCha(form).amend_form()
         return form
 
 
@@ -1078,7 +1075,6 @@ class NonExistent(Item):
         except MissingParentError as e:
             flash(str(e), "error")
             form = CreateItemForm().from_defaults()
-            TextCha(form).amend_form()
             form['target'] = self.fqname.fullname
             return render_template('create_new_item.html',
                                    fqname=self.fqname,
