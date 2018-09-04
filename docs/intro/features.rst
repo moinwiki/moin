@@ -60,7 +60,6 @@ Authorization
 
 Anti-Spam
 =========
-* TextChas (text captchas)
 * Form Ticketing
 
 Storage

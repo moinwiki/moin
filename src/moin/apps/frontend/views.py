@@ -53,7 +53,7 @@ from moin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                         Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                         validate_name, NameNotValidError)
-from moin.items import (BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError,
+from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
@@ -70,7 +70,6 @@ from moin.util.mime import Type, type_moin_document
 from moin.util.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
-from moin.security.textcha import TextCha, TextChaizedForm
 from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.converter import default_registry as reg
@@ -612,7 +611,7 @@ def download_item(item):
     return item.content.do_get(force_attachment=True, mimetype=mimetype)
 
 
-class ConvertForm(TextChaizedForm):
+class ConvertForm(Form):
     new_type = Select.using(label=L_('New Content Type')).out_of((('text/x.moin.wiki;charset=utf-8', 'MoinWiki'),
                                                                   ('text/x-rst;charset=utf-8', 'ReST'),
                                                                   ('application/x-xhtml-moin-page', 'HTML'),
@@ -788,10 +787,8 @@ def revert_item(item_name, rev):
         abort(404, item_name)
     if request.method in ['GET', 'HEAD']:
         form = RevertItemForm.from_defaults()
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
@@ -822,11 +819,9 @@ def rename_item(item_name):
         abort(404, item_name)
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
-        TextCha(form).amend_form()
         form['target'] = item.name
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         if form.validate():
             target = form['target'].value
             comment = form['comment'].value
@@ -867,10 +862,8 @@ def delete_item(item_name):
         abort(404, item_name)
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
             try:
@@ -969,10 +962,8 @@ def destroy_item(item_name, rev):
         abort(404, fqname.fullname)
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
             try:
@@ -1470,14 +1461,14 @@ class ValidRegistration(Validator):
     def validate(self, element, state):
         if not (element['username'].valid and
                 element['password1'].valid and element['password2'].valid and
-                element['email'].valid and element['textcha'].valid):
+                element['email'].valid):
             return False
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
         return True
 
 
-class RegistrationForm(TextChaizedForm):
+class RegistrationForm(Form):
     """a simple user registration form"""
     name = 'register'
 
@@ -1548,11 +1539,8 @@ def register():
             oid = request.values.get('openid_openid')
             if oid:
                 form['openid'] = oid
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
-        TextCha(form).amend_form()
-
         if form.validate():
             user_kwargs = {
                 'username': form['username'].value,

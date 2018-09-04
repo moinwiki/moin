@@ -11,11 +11,8 @@ MoinMoin - ACL related constants
 # it is not related to CONTENT rights.
 SUPERUSER = 'superuser'
 
-# notextcha means not having to to solve textchas
-NOTEXTCHA = 'notextcha'
-
 # rights that control access to specific functionality
-ACL_RIGHTS_FUNCTIONS = [SUPERUSER, NOTEXTCHA, ]
+ACL_RIGHTS_FUNCTIONS = [SUPERUSER, ]
 
 
 # admin means to be able to change, add, remove ACLs (change meta[ACL])

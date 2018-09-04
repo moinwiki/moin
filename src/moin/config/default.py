@@ -133,8 +133,6 @@ class ConfigFunctionality(object):
                 "You need to set interwikiname = u'YourUniqueStableInterwikiName' in your wiki config.")
 
         secret_key_names = ['security/ticket', ]
-        if self.textchas:
-            secret_key_names.append('security/textcha')
 
         secret_min_length = 10
         if isinstance(self.secrets, str):
@@ -343,11 +341,6 @@ options_no_group_name = {
             # all__vary_rounds=0.1,
         ), "passlib CryptContext arguments, see passlib docs"),
         ('allow_style_attributes', False, 'trust editors to not abuse style attribute security holes within HTML (CKEditor) or Markdown items'),
-    )),
-    # ==========================================================================
-    'spam_leech_dos': ('Anti-Spam / Leech / DOS', 'These settings help limiting resource usage and avoiding abuse.', (
-        ('textchas', None, "Spam protection setup using site-specific questions/answers."),
-        ('textchas_expiry_time', 600, "Expiration time in seconds for a TextCha response."),
     )),
     # ==========================================================================
     'style': ('Style / Theme / UI', 'These settings control how the wiki user interface will look like.', (

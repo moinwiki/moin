@@ -91,7 +91,6 @@
             #}
             {% if not form['content_form'].is_draw %}
                 <div class="form-group">
-                    {{ forms.render_textcha(gen, form) }}
                     {{ gen.input(form['comment'], type="text", class="form-control") }}
                 </div>
                 <div class="form-group">
