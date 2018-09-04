@@ -16,7 +16,8 @@ etree = pytest.importorskip('lxml.etree')
 
 from . import serialize
 
-from moin.converter.docbook_in import *
+from moin.util.tree import html, moin_page, xlink, xml, docbook
+from moin.converter.docbook_in import Converter
 
 from moin import log
 logging = log.getLogger(__name__)

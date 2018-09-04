@@ -5,8 +5,9 @@
 MoinMoin - Tests for moin.util.tree
 """
 
+from emeraldtree import ElementTree as ET
 
-from moin.util.tree import *
+from moin.util.tree import Name, Namespace, html, moin_page
 
 
 def test_Name():

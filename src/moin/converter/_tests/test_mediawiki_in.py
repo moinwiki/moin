@@ -12,7 +12,8 @@ import pytest
 
 from . import serialize
 
-from moin.converter.mediawiki_in import *
+from moin.util.tree import moin_page, xlink
+from moin.converter.mediawiki_in import Converter
 
 
 class TestConverter(object):

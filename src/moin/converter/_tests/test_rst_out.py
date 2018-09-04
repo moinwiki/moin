@@ -10,7 +10,10 @@ import re
 
 import pytest
 
-from moin.converter.rst_out import *
+from emeraldtree import ElementTree as ET
+
+from moin.util.tree import moin_page, xlink
+from moin.converter.rst_out import Converter
 
 
 class Base(object):

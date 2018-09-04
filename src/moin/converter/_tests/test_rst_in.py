@@ -12,7 +12,8 @@ import pytest
 
 from . import serialize
 
-from moin.converter.rst_in import *
+from moin.util.tree import html, moin_page, xlink, xinclude
+from moin.converter.rst_in import Converter
 
 
 class TestConverter(object):
