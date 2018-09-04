@@ -55,7 +55,7 @@ create your development environment
 add more tools, exercise tools
 ------------------------------
 
-* install additional software that developers may require, including upload.py::
+* install additional software that developers may require::
 
     ./m extras  # Windows: m extras
 
@@ -181,20 +181,6 @@ review your working solution
 * check for trailing spaces, line endings, template indentation "./m coding-std"
 * if Javascript files were changed, run http://jslint.com/
 
-get feedback from other developers
-----------------------------------
-
-* add changes to codereview: run "python upload.py --oauth2" in your local repo
-
-  - to update a codereview, "python upload.py --oauth2 -i <issue_ID>"
-* carefully review your changes again on codereview
-
-  - if you find errors, delete the patchset, fix and upload again
-* if you have questions or want to explain something, add comments and click
-  "Publish+Mail Comments"
-* post the codereview URL to #moin-dev IRC channel asking for review
-* repeat until everybody is happy with your changes
-
 publish your change
 -------------------
 
@@ -208,7 +194,7 @@ publish your change
         <concise description of your change>, fixes #123
 
 * push the changeset to your public github repo
-* create a pull request so your changes will get pulled into the
+* create a pull request so your changes will get reviewed and pulled into the
   main repository
 * if you fixed an issue from the issue tracker, be sure the issue gets
   closed after your fix has been pulled into main repo.
