@@ -68,7 +68,7 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
-from moin.constants.keys import *
+from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 

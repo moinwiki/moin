@@ -10,7 +10,7 @@ from datetime import datetime
 
 import pytest
 
-from moin.macro.DateTime import *
+from moin.macro.DateTime import Macro, format_datetime
 
 
 def test_Macro():
