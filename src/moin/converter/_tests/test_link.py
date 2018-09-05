@@ -47,6 +47,8 @@ def test_wiki(app, conv, input_, output):
         ('wiki.local:/Test', 'wiki:///Root/Sub', '/Root/Sub/Test'),
         ('wiki.local:../Test', 'wiki:///Root', '/Test'),
         ('wiki.local:../Test', 'wiki:///Root/Sub', '/Root/Test'),
+        # this is a local wiki item with a name happening to have a ":' inside:
+        ('wiki.local:NoInterWiki:Item', 'wiki:///Root', '/NoInterWiki:Item'),
     )
 )
 def test_wikilocal(conv, input_, page, output):

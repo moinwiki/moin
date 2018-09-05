@@ -99,7 +99,7 @@ class ConverterBase(object):
         quoted_current_page_path = current_page_path[1:].quoted
 
         abs_path = AbsItemName(quoted_current_page_path, quoted_path)
-        abs_path = Iri(abs_path).path
+        abs_path = Iri(path=abs_path).path
         return abs_path
 
 
