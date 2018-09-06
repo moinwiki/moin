@@ -17,7 +17,7 @@ import sys
 import threading
 import traceback
 from time import sleep
-from StringIO import StringIO
+from io import BytesIO
 
 
 class Monitor(object):
@@ -38,7 +38,7 @@ class Monitor(object):
         dumpfile = dumpfile or sys.stderr
         cur_frames = sys._current_frames()
         for i in cur_frames:
-            s = StringIO()
+            s = BytesIO()
             print >>s, "\nDumping thread (id {0}):".format(i, )
             traceback.print_stack(cur_frames[i], file=s)
             dumpfile.write(s.getvalue())

@@ -41,7 +41,7 @@ import shutil
 import tempfile
 import time
 import base64
-from StringIO import StringIO
+from io import StringIO
 import signal
 import subprocess
 import hashlib

@@ -23,7 +23,7 @@ import re
 import copy
 import hashlib
 import werkzeug
-from StringIO import StringIO
+from io import BytesIO
 
 from babel import parse_locale
 
@@ -293,7 +293,7 @@ class UserProfile(object):
             q = {ITEMID: self[ITEMID]}
             q = update_user_query(**q)
             item = get_user_backend().get_item(**q)
-            item.store_revision(self._meta, StringIO(''), overwrite=True)
+            item.store_revision(self._meta, BytesIO(b''), overwrite=True)
             self._stored = True
             self._changed = False
 

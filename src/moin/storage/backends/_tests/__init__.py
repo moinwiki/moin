@@ -8,7 +8,7 @@ MoinMoin - backend tests
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
+from io import BytesIO
 
 import pytest
 
@@ -56,8 +56,8 @@ class MutableBackendTestBase(BackendTestBase):
 
     def test_store_get_del(self):
         meta = dict(foo='bar')
-        data = 'baz'
-        metaid = self.be.store(meta, StringIO(data))
+        data = b'baz'
+        metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert m == meta
         assert d.read() == data
@@ -69,57 +69,57 @@ class MutableBackendTestBase(BackendTestBase):
     def test_store_check_size(self):
         # no size
         meta = dict(name='foo')
-        data = 'barbaz'
-        metaid = self.be.store(meta, StringIO(data))
+        data = b'barbaz'
+        metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[SIZE] == 6
         # correct size
         meta = dict(name='foo', size=6)
-        data = 'barbaz'
-        metaid = self.be.store(meta, StringIO(data))
+        data = b'barbaz'
+        metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[SIZE] == 6
         # wrong size (less data than size declared in meta)
         meta = dict(name='foo', size=42)
-        data = 'barbaz'
+        data = b'barbaz'
         with pytest.raises(ValueError):
-            metaid = self.be.store(meta, StringIO(data))
+            metaid = self.be.store(meta, BytesIO(data))
         # wrong size (more data than size declared in meta)
         meta = dict(name='foo', size=3)
-        data = 'barbaz'
+        data = b'barbaz'
         with pytest.raises(ValueError):
-            metaid = self.be.store(meta, StringIO(data))
+            metaid = self.be.store(meta, BytesIO(data))
 
     def test_store_check_hash(self):
         # no hash
         meta = dict(name='foo')
-        data = 'barbaz'
-        metaid = self.be.store(meta, StringIO(data))
+        data = b'barbaz'
+        metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         hashcode = meta[HASH_ALGORITHM]
         # correct hash
         meta = dict(name='foo')
         meta[HASH_ALGORITHM] = hashcode
-        data = 'barbaz'
-        metaid = self.be.store(meta, StringIO(data))
+        data = b'barbaz'
+        metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[HASH_ALGORITHM] == hashcode
         # wrong data -> hash mismatch
         meta = dict(name='foo')
         meta[HASH_ALGORITHM] = hashcode
-        data = 'brrbrr'
+        data = b'brrbrr'
         with pytest.raises(ValueError):
-            metaid = self.be.store(meta, StringIO(data))
+            metaid = self.be.store(meta, BytesIO(data))
 
     def test_iter(self):
         mds = [  # (metadata items, data str)
-            (dict(name='one'), 'ONE'),
-            (dict(name='two'), 'TWO'),
-            (dict(name='three'), 'THREE'),
+            (dict(name='one'), b'ONE'),
+            (dict(name='two'), b'TWO'),
+            (dict(name='three'), b'THREE'),
         ]
         expected_result = set()
         for m, d in mds:
-            k = self.be.store(m, StringIO(d))
+            k = self.be.store(m, BytesIO(d))
             # note: store_revision injects some new keys (like dataid, metaid, size, hash key) into m
             m = tuple(sorted(m.items()))
             expected_result.add((k, m, d))

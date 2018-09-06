@@ -19,7 +19,7 @@ from __future__ import absolute_import, division
 import os
 import errno
 import stat
-from StringIO import StringIO
+from io import BytesIO
 from werkzeug import url_quote, url_unquote
 
 from moin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
@@ -153,11 +153,11 @@ class Backend(BackendBase):
             st = os.stat(path)
             if stat.S_ISDIR(st.st_mode):
                 data = self._make_directory_page(path)
-                return StringIO(data.encode('utf-8'))
+                return BytesIO(data.encode('utf-8'))
             elif stat.S_ISREG(st.st_mode):
                 return open(path, 'rb')
             else:
-                return StringIO('')
+                return BytesIO(b'')
         except (OSError, IOError) as e:
             if e.errno == errno.ENOENT:
                 raise KeyError(itemname)

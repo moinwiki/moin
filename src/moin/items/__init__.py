@@ -19,7 +19,7 @@
 
 from time import time, gmtime, strftime
 import json
-from StringIO import StringIO
+from io import BytesIO
 from collections import namedtuple
 from operator import attrgetter
 import re
@@ -131,7 +131,7 @@ class DummyRev(dict):
             ITEMTYPE: itemtype or ITEMTYPE_NONEXISTENT,
             CONTENTTYPE: contenttype or CONTENTTYPE_NONEXISTENT
         }
-        self.data = StringIO('')
+        self.data = BytesIO(b'')
         self.revid = None
         if item:
             self.meta[NAMESPACE] = fqname.namespace
@@ -690,8 +690,8 @@ class Item(object):
         if isinstance(data, unicode):
             data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
-        if isinstance(data, str):
-            data = StringIO(data)
+        if isinstance(data, bytes):
+            data = BytesIO(data)
         newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
                                              action=unicode(action),
                                              contenttype_current=contenttype_current,

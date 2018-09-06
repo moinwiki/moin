@@ -8,7 +8,7 @@ MoinMoin - serializer / deserializer tests
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
+from io import BytesIO
 
 import pytest
 
@@ -82,10 +82,10 @@ def test_serialize_deserialize(source, target):
     i = 0
     for name, meta, data in contents:
         item = source[name]
-        item.store_revision(dict(meta, mtime=i), StringIO(data))
+        item.store_revision(dict(meta, mtime=i), BytesIO(data))
         i += 1
 
-    io = StringIO()
+    io = BytesIO()
     serialize(source.backend, io)
     io.seek(0)
     deserialize(io, target.backend)

@@ -19,7 +19,7 @@ import time
 import re
 import codecs
 import hashlib
-from StringIO import StringIO
+from io import BytesIO
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -135,7 +135,7 @@ class ImportMoin19(Command):
             out = self.conv_out(dom)
             out = out.encode(CHARSET)
             size, hash_name, hash_digest = hash_hexdigest(out)
-            out = StringIO(out)
+            out = BytesIO(out)
             meta[hash_name] = hash_digest
             meta[SIZE] = size
             meta[REVID] = make_uuid()
@@ -337,7 +337,7 @@ class PageRevision(object):
             if isinstance(v, list):
                 v = tuple(v)
             self.meta[k] = v
-        self.data = StringIO(data)
+        self.data = BytesIO(data)
 
         acl_line = self.meta.get(ACL)
         if acl_line is not None:
@@ -554,7 +554,7 @@ class UserRevision(object):
         meta[SIZE] = 0
         meta[ACTION] = ACTION_SAVE
         self.meta = meta
-        self.data = StringIO('')
+        self.data = BytesIO(b'')
 
     def _parse_userprofile(self):
         with codecs.open(os.path.join(self.path, self.uid), "r", CHARSET) as meta_file:

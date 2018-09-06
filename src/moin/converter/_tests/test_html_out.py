@@ -8,7 +8,7 @@ MoinMoin - Tests for moin.converter.html_out
 
 
 import re
-import StringIO
+from io import StringIO
 
 import pytest
 
@@ -48,7 +48,7 @@ class Base(object):
         out = self.conv(self.handle_input(input), **args)
         string_to_parse = self.handle_output(out)
         logging.debug("After the HTML_OUT conversion : {0}".format(string_to_parse))
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(xpath))
 
 

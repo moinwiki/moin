@@ -25,7 +25,7 @@ import base64
 import tarfile
 import zipfile
 import tempfile
-from StringIO import StringIO
+from io import BytesIO
 from array import array
 from collections import namedtuple
 from operator import attrgetter
@@ -470,10 +470,10 @@ class TarMixin(object):
                                   cache_key(usage='TarContainer', name=self.name))
         tf = tarfile.TarFile(temp_fname, mode='a')
         ti = tarfile.TarInfo(name)
-        if isinstance(content, str):
+        if isinstance(content, bytes):
             if content_length is None:
                 content_length = len(content)
-            content = StringIO(content)  # we need a file obj
+            content = BytesIO(content)  # we need a file obj
         elif not hasattr(content, 'read'):
             logging.error("unsupported content object: {0!r}".format(content))
             raise StorageError("unsupported content object: {0!r}".format(content))
@@ -684,7 +684,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         }
         image = transpose_func[transpose_op](image)
 
-        outfile = StringIO()
+        outfile = BytesIO()
         image.save(outfile, output_type)
         data = outfile.getvalue()
         outfile.close()
@@ -772,7 +772,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 oldimage.load()
                 newimage.load()
                 diffimage = PILdiff(newimage, oldimage)
-                outfile = StringIO()
+                outfile = BytesIO()
                 diffimage.save(outfile, output_type)
                 data = outfile.getvalue()
                 outfile.close()
@@ -1019,11 +1019,11 @@ class DocBook(MarkupItem):
             xlink.namespace: 'xlink',
         }
 
-        # We convert the result into a StringIO object
+        # We convert the result into a BytesIO object
         # With the appropriate namespace
         # TODO: Some other operation should probably be done here too
         # like adding a doctype
-        file_to_send = StringIO()
+        file_to_send = BytesIO()
         tree = ET.ElementTree(doc)
         tree.write(file_to_send, namespaces=output_namespaces)
 
@@ -1031,7 +1031,7 @@ class DocBook(MarkupItem):
         mt = MimeType(mimestr='application/docbook+xml;charset=utf-8')
         content_type = mt.content_type()
         as_attachment = mt.as_attachment(app.cfg)
-        # After creation of the StringIO, we are at the end of the file
+        # After creation of the BytesIO, we are at the end of the file
         # so position is the size the file.
         # and then we should move it back at the beginning of the file
         content_length = file_to_send.tell()

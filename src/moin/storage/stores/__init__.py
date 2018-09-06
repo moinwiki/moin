@@ -12,11 +12,9 @@ you can likely implement it adding very little and rather easy code.
 
 from __future__ import absolute_import, division
 
-import io
 from abc import abstractmethod
 from collections import Mapping, MutableMapping
-
-from moin.util.StringIOClosing import StringIO
+from io import BytesIO
 
 
 class StoreBase(Mapping):
@@ -128,7 +126,7 @@ class BytesMutableStoreMixin(object):
             return stream.read()
 
     def __setitem__(self, key, value):
-        with StringIO(value) as stream:
+        with BytesIO(value) as stream:
             super(BytesMutableStoreMixin, self).__setitem__(key, stream)
 
 
@@ -153,7 +151,7 @@ class FileMutableStoreMixin(object):
     """
     def __getitem__(self, key):
         value = super(FileMutableStoreMixin, self).__getitem__(key)
-        return StringIO(value)
+        return BytesIO(value)
 
     def __setitem__(self, key, stream):
         value = stream.read()

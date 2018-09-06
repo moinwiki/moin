@@ -60,7 +60,7 @@ from __future__ import absolute_import, division
 # See http://docs.python.org/library/logging.html#configuring-logging
 # We just use stderr output by default, if you want anything else,
 # you will have to configure logging.
-logging_config = """\
+logging_config = b"""\
 [DEFAULT]
 # Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
 loglevel=INFO
@@ -96,6 +96,7 @@ datefmt=
 class=logging.Formatter
 """
 
+from io import BytesIO
 import os
 import logging
 import logging.config
@@ -144,12 +145,8 @@ def load_config(conf_fname=None):
             err_msg = str(err)
     if not configured:
         # load builtin fallback logging config
-        from StringIO import StringIO
-        f = StringIO(logging_config)
-        try:
+        with BytesIO(logging_config) as f:
             logging.config.fileConfig(f)
-        finally:
-            f.close()
         configured = True
         l = getLogger(__name__)
         if err_msg:
