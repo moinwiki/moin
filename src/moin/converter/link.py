@@ -228,7 +228,7 @@ class ConverterItemRefs(ConverterBase):
         :param page: the iri of the page where the link is
         """
         path = input.path
-        if not path or ':' in path:
+        if not path or ':' in path:  # XXX sense of 2nd term? does it even work?
             return
 
         path = self.absolute_path(path, page.path)
@@ -242,7 +242,7 @@ class ConverterItemRefs(ConverterBase):
         :param page: the iri of the page where the transclusion is
         """
         path = input.path
-        if not path or ':' in path:
+        if not path or ':' in path:  # XXX sense of 2nd term? does it even work?
             return
 
         path = self.absolute_path(path, page.path)

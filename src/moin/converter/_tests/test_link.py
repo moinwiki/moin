@@ -115,6 +115,22 @@ def test_wikiexternal(conv, input_, output):
             (u"http://example.org/", u"mailto:foo.bar@example.org"),
 
         ),
+        (
+            u"""
+            <ns0:page ns0:page-href="wiki:///Home" xmlns:ns0="http://moinmo.in/namespaces/page" xmlns:ns1="http://www.w3.org/2001/XInclude" xmlns:ns2="http://www.w3.org/1999/xlink">
+            <ns0:body>
+            <ns0:p>
+            <ns0:a ns2:href="wiki.local:NoInterWiki:Link">this is a local item not interwiki</ns0:a>
+            </ns0:p>
+            <ns0:p>
+            <ns1:include ns1:href="wiki.local:AlsoNoInterWiki:Transclusion" />
+            </ns0:p>
+            </ns0:body></ns0:page>
+            """,
+            (u"NoInterWiki:Link", ),
+            (u"AlsoNoInterWiki:Transclusion", ),
+            [],
+        ),
 
     ),
 )
