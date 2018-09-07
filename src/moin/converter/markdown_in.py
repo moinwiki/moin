@@ -525,7 +525,11 @@ class Converter(object):
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
-        self.markdown = Markdown(extensions=['extra', 'toc', 'codehilite(guess_lang=False)'])
+        self.markdown = Markdown(extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.toc',
+            'markdown.extensions.codehilite(guess_lang=False)',
+        ])
 
     @classmethod
     def _factory(cls, input, output, **kw):
