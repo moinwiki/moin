@@ -1,7 +1,7 @@
 build/
 dist/
 docs/_build/
-docs/devel/api/modules.rst
+docs/devel/api/
 instance/
 MANIFEST
 src/moin/_version.py
