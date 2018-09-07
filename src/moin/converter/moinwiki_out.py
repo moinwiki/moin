@@ -527,10 +527,11 @@ class Converter(object):
         if hr_class:
             try:
                 height = int(hr_class.split(hr_class_prefix)[1]) - 1
+            except (ValueError, IndexError, TypeError):
+                raise ElementException('page:separator has invalid class {0}'.format(hr_class))
+            else:
                 if 0 <= height <= 5:
                     hr_ending = (u'-' * height) + hr_ending
-            except:
-                raise ElementException('page:separator has invalid class {0}'.format(hr_class))
         return Moinwiki.separator + hr_ending
 
     def open_moinpage_span(self, elem):

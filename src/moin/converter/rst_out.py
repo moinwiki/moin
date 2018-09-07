@@ -492,12 +492,12 @@ class Converter(object):
            :align: center
         """
         whitelist = {html.width: 'width', html.height: 'height', html.class_: 'align', html.alt: 'alt'}
+        href = elem.attrib[xinclude.href]
         try:
-            ret = [u'\n.. image:: {0}'.format(elem.attrib[xinclude.href].path)]
-        except:
-            href = elem.attrib[xinclude.href]
+            href = href.path
+        except Exception:
             href = href.split(u'wiki.local:')[-1]
-            ret = [u'\n.. image:: {0}'.format(href)]
+        ret = [u'\n.. image:: {0}'.format(href), ]
         for key, val in sorted(whitelist.items()):
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))

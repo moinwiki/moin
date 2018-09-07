@@ -436,7 +436,7 @@ class ThemeSupport(object):
                             try:
                                 item_url, item_name = line.split(' ', 1)
                                 sisteritems[item_name.decode('utf-8')] = item_url
-                            except:
+                            except Exception:
                                 pass  # ignore invalid lines
                         f.close()
                         app.cache.set(cid, sisteritems)

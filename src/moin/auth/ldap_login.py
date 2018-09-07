@@ -268,6 +268,6 @@ class LDAPAuth(BaseAuth):
                           "Trying to authenticate with next auth list entry.".format(server, err))
             return ContinueLogin(user_obj, _("LDAP server %(server)s failed.", server=server))
 
-        except:
+        except:  # noqa
             logging.exception("caught an exception, traceback follows...")
             return ContinueLogin(user_obj)

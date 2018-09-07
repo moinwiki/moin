@@ -215,7 +215,7 @@ class TestLdapFailover(object):
         for ldap_env in self.ldap_envs:
             try:
                 ldap_env.stop_slapd()
-            except:
+            except:  # noqa
                 pass  # one will fail, because it is already stopped
             ldap_env.destroy_env()
 
