@@ -44,7 +44,6 @@ from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
-from whoosh import sorting
 
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, contenttype_to_class

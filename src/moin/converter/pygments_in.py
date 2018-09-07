@@ -17,7 +17,6 @@ try:
 except ImportError:
     pygments = None
 
-from moin.util.mime import Type, type_moin_document
 from moin.util.tree import moin_page
 from ._util import decode_data, normalize_split_text
 

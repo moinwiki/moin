@@ -20,7 +20,6 @@ logging = log.getLogger(__name__)
 from moin.util import plugins
 from moin.i18n import _, L_, N_
 from moin.util import iri
-from moin.util.mime import type_moin_document, Type
 from moin.util.tree import moin_page
 from moin.util.plugins import PluginMissingError
 
