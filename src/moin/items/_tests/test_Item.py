@@ -8,8 +8,6 @@
 
 import pytest
 
-from werkzeug import escape
-
 from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
 from moin.util.interwiki import CompositeName

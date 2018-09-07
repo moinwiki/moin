@@ -5,7 +5,6 @@
     MoinMoin - moin.util.filesys Tests
 """
 
-import sys
 import os
 import time
 import shutil

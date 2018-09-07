@@ -20,7 +20,6 @@ from __future__ import absolute_import, division
 import re
 import docutils
 
-from werkzeug import url_encode, url_decode
 
 try:
     from flask import g as flaskg
@@ -28,7 +27,6 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin import config
 from moin.util.iri import Iri
 from moin.util.tree import html, moin_page, xlink, xinclude
 from moin.constants.contenttypes import CHARSET

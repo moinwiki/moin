@@ -17,7 +17,7 @@
     Each class in this module corresponds to an itemtype.
 """
 
-from time import time, gmtime, strftime
+from time import time, strftime
 import json
 from io import BytesIO
 from collections import namedtuple
@@ -26,7 +26,7 @@ import re
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import request, Response, redirect, abort, escape, url_for, flash
+from flask import request, Response, redirect, abort, url_for, flash
 
 from flatland import Form
 from flatland.validation import Validator

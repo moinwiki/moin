@@ -38,7 +38,6 @@ tested view HTML formatted pages with names ending in common media suffixes as c
 The raw data of all items are stored in the +get subdirectory.
 """
 
-import sys
 import os
 import shutil
 import re

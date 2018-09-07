@@ -13,16 +13,14 @@ This converter based on ReStructuredText 2006-09-22.
 
 from __future__ import absolute_import, division
 
+import re
+
 from . import ElementException
 
 from moin.util.tree import html, moin_page, xlink, xinclude
 from moin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
-
-import re
-
-from werkzeug.utils import unescape
 
 
 class Cell(object):

@@ -10,10 +10,8 @@ TODO: Failing tests are commented out and need to be fixed.
 import re
 
 import pytest
-import docutils
 
 from emeraldtree import ElementTree as ET
-from werkzeug.utils import unescape
 
 try:
     from flask import g as flaskg
@@ -23,7 +21,6 @@ except ImportError:
 
 from . import serialize
 
-from moin import config
 from moin.util.iri import Iri
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.constants.contenttypes import CHARSET

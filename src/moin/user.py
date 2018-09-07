@@ -19,7 +19,6 @@
 
 from __future__ import absolute_import, division
 
-import re
 import copy
 import hashlib
 import werkzeug
@@ -39,7 +38,7 @@ from moin.constants.keys import *  # noqa
 from moin.constants.misc import ANON
 from moin.i18n import _, L_, N_
 from moin.mail import sendmail
-from moin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
+from moin.util.interwiki import getInterwikiHome, getInterwikiName
 from moin.util.crypto import generate_token, valid_token, make_uuid
 from moin.util.subscriptions import get_matched_subscription_patterns
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
