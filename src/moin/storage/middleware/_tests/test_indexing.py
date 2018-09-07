@@ -58,7 +58,7 @@ class TestIndexingMiddleware(object):
         rev = item.get_revision(revid)
         assert rev.name == item_name
         assert rev.data.read() == data
-        revids = [rev.revid for rev in item.iter_revs()]
+        revids = [_rev.revid for _rev in item.iter_revs()]
         assert revids == [revid]
 
     def test_overwrite_revision(self):
@@ -77,7 +77,7 @@ class TestIndexingMiddleware(object):
         assert rev.name == item_name
         assert rev.meta[COMMENT] == u'no spam'
         assert rev.data.read() == newdata
-        revids = [rev.revid for rev in item.iter_revs()]
+        revids = [_rev.revid for _rev in item.iter_revs()]
         assert len(revids) == 1  # we still have the revision, cleared
         assert revid in revids  # it is still same revid
 
@@ -100,7 +100,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         with pytest.raises(KeyError):
             item.get_revision(revid0)
-        revids = [rev.revid for rev in item.iter_revs()]
+        revids = [_rev.revid for _rev in item.iter_revs()]
         print "after destroy revid0", revids
         assert sorted(revids) == sorted([revid1, revid2])
         # destroy a current revision:
@@ -109,7 +109,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         with pytest.raises(KeyError):
             item.get_revision(revid2)
-        revids = [rev.revid for rev in item.iter_revs()]
+        revids = [_rev.revid for _rev in item.iter_revs()]
         print "after destroy revid2", revids
         assert sorted(revids) == sorted([revid1])
         # destroy the last revision left:
@@ -118,7 +118,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         with pytest.raises(KeyError):
             item.get_revision(revid1)
-        revids = [rev.revid for rev in item.iter_revs()]
+        revids = [_rev.revid for _rev in item.iter_revs()]
         print "after destroy revid1", revids
         assert sorted(revids) == sorted([])
 

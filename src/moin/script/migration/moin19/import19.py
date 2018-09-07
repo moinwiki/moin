@@ -383,7 +383,7 @@ def process_categories(meta, data, item_category_regex):
             matches = list(item_category_regex.finditer(categories))
             if matches:
                 data = data[:-end]  # remove the ---- line from the content
-                tags = [m.group('all') for m in matches]
+                tags = [_m.group('all') for _m in matches]
                 meta.setdefault(TAGS, []).extend(tags)
                 # remove everything between first and last category from the content
                 # unexpected text before and after categories survives, any text between categories is deleted

@@ -186,10 +186,10 @@ class LDAPAuth(BaseAuth):
                 lusers = conn.search_st(self.base_dn, self.scope, filterstr.encode(coding),
                                      attrlist=attrs, timeout=self.timeout)
                 # we remove entries with dn == None to get the real result list:
-                lusers = [(dn, ldap_dict) for dn, ldap_dict in lusers if dn is not None]
-                for dn, ldap_dict in lusers:
-                    logging.debug("dn:{0!r}".format(dn))
-                    for key, val in ldap_dict.items():
+                lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
+                for _dn, _ldap_dict in lusers:
+                    logging.debug("dn:{0!r}".format(_dn))
+                    for key, val in _ldap_dict.items():
                         logging.debug("    {0!r}: {1!r}".format(key, val))
 
                 result_length = len(lusers)
