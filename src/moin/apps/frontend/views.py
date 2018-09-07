@@ -1674,7 +1674,7 @@ class ValidPasswordRecovery(Validator):
 
         password = element['password1'].value
         try:
-            app.cfg.cache.pwd_context.encrypt(password)
+            app.cfg.cache.pwd_context.hash(password)
         except (ValueError, TypeError) as err:
             return self.note_error(element, state, 'password_problem_msg')
 
@@ -1843,7 +1843,7 @@ class ValidChangePass(Validator):
             if pw_error:
                 return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
-            app.cfg.cache.pwd_context.encrypt(password)
+            app.cfg.cache.pwd_context.hash(password)
         except (ValueError, TypeError) as err:
             return self.note_error(element, state, 'password_problem_msg')
         return True
