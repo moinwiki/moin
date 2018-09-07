@@ -31,3 +31,5 @@ activate
 moin
 m
 m-*.txt
+# default destination for "m dump-html" output
+HTML/
