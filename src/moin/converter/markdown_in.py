@@ -577,7 +577,7 @@ class Converter(object):
         # Run the tree-processors
         for treeprocessor in self.markdown.treeprocessors.values():
             new_md_root = treeprocessor.run(md_root)
-            if new_md_root:
+            if new_md_root is not None:
                 md_root = new_md_root
 
         # }}} end stolen from Markdown.convert
