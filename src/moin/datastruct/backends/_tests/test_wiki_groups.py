@@ -21,8 +21,6 @@ from moin.constants.keys import NAME, USERGROUP
 from moin.security import AccessControlList
 from moin._tests import become_trusted, create_random_string_list, update_item
 
-import pytest
-
 
 DATA = "This is a group item"
 

@@ -29,7 +29,7 @@ class TestFileServerBackend(BackendTestBase):
             dn = os.path.dirname(fn)
             try:
                 os.makedirs(dn)
-            except:
+            except:  # noqa
                 pass
             with open(fn, 'wb') as f:
                 f.write(data)

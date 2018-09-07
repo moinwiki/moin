@@ -19,7 +19,7 @@ def diff(oldlines, newlines, **kw):
     :rtype: list
     :returns: lines like diff tool does output.
     """
-    false = lambda s: None
+    false = lambda s: None  # noqa
     if kw.get('ignorews', 0):
         d = difflib.Differ(false)
     else:

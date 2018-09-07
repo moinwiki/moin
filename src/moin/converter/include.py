@@ -103,7 +103,6 @@ from whoosh.query import Term, And, Wildcard, Regex
 
 from moin.constants.keys import NAME, NAME_EXACT, WIKINAME
 from moin.items import Item
-from moin.util.mime import type_moin_document
 from moin.util.iri import Iri, IriPath
 from moin.util.tree import html, moin_page, xinclude, xlink
 from moin.converter.html_out import mark_item_as_transclusion, Attributes

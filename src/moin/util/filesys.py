@@ -51,7 +51,7 @@ def rename_no_overwrite(oldname, newname, delete_old=False):
             try:
                 os.rename(oldname, newname)
                 success = True
-            except:
+            except Exception:
                 success = False
                 raise
         finally:
@@ -62,7 +62,7 @@ def rename_no_overwrite(oldname, newname, delete_old=False):
             try:
                 os.link(oldname, newname)
                 success = True
-            except:
+            except Exception:
                 success = False
                 raise
         finally:

@@ -583,8 +583,8 @@ class IriPath(AutoNe):
             elif isinstance(iri_path, (tuple, list)):
                 self._list = [IriPathSegment(i, False) for i in iri_path]
             else:
-                l = [IriPathSegment(i, _quoted) for i in iri_path.split(u'/')]
-                self._list = self._remove_dots(l)
+                _list = [IriPathSegment(i, _quoted) for i in iri_path.split(u'/')]
+                self._list = self._remove_dots(_list)
 
     def __eq__(self, other):
         if isinstance(other, basestring):

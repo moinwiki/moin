@@ -6,7 +6,6 @@
 """
 
 
-import py
 from flask import current_app as app
 
 from moin.search.analyzers import MimeTokenizer, AclTokenizer, item_name_analyzer

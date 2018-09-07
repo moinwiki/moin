@@ -270,10 +270,10 @@ def parse_quoted_separated(args, separator=',', name_value=True, seplimit=0):
     else:
         name_value_separator = None
 
-    l = parse_quoted_separated_ext(args, separator=separator,
-                                   name_value_separator=name_value_separator,
-                                   seplimit=seplimit)
-    for item in l:
+    items = parse_quoted_separated_ext(args, separator=separator,
+                                       name_value_separator=name_value_separator,
+                                       seplimit=seplimit)
+    for item in items:
         if isinstance(item, tuple):
             key, value = item
             if key is None:

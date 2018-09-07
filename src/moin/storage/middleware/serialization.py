@@ -20,7 +20,6 @@ from __future__ import absolute_import, division
 
 import struct
 import json
-from io import BytesIO
 
 from werkzeug.wsgi import LimitedStream
 

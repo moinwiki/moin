@@ -169,7 +169,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
                             server.starttls()
                             server.ehlo()
                             logging.debug("tls connection to smtp server established")
-                    except:
+                    except Exception:
                         logging.debug("could not establish a tls connection to smtp server, continuing without tls")
                     logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
                     server.login(cfg.mail_username, cfg.mail_password)
@@ -199,7 +199,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             if sendmail_status:
                 logging.error("sendmail failed with status: {0!s}".format(sendmail_status))
                 return 0, str(sendmail_status)
-        except:
+        except Exception:
             logging.exception("sendmail failed with an exception.")
             return 0, _("Mail not sent")
 

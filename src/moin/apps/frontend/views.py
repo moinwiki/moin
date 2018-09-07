@@ -44,7 +44,6 @@ from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
-from whoosh import sorting
 
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, contenttype_to_class
@@ -386,7 +385,7 @@ def search(item_name):
                         transclusions = _compute_item_transclusions(name)
                         transcluded_names.update(transclusions)
                 # XXX Will whoosh cope with such a large filter query?
-                terms.extend([Term(NAME_EXACT, name) for name in transcluded_names])
+                terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
 
             _filter = Or(terms)
 
@@ -2536,7 +2535,7 @@ def global_tags(namespace):
     tags_counts = sorted(tags_counts.items())
     if tags_counts:
         # this is a simple linear scaling
-        counts = [count for tags, count in tags_counts]
+        counts = [count for _tags, count in tags_counts]
         count_min = min(counts)
         count_max = max(counts)
         weight_max = 9.99

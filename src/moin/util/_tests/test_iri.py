@@ -7,8 +7,6 @@ MoinMoin - Tests for moin.util.iri
 """
 
 
-import pytest
-
 from moin.util.iri import Iri, IriAuthority, IriPath
 
 

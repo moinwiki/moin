@@ -13,16 +13,14 @@ This converter based on ReStructuredText 2006-09-22.
 
 from __future__ import absolute_import, division
 
+import re
+
 from . import ElementException
 
 from moin.util.tree import html, moin_page, xlink, xinclude
 from moin.util.iri import Iri
 
 from emeraldtree import ElementTree as ET
-
-import re
-
-from werkzeug.utils import unescape
 
 
 class Cell(object):
@@ -492,12 +490,12 @@ class Converter(object):
            :align: center
         """
         whitelist = {html.width: 'width', html.height: 'height', html.class_: 'align', html.alt: 'alt'}
+        href = elem.attrib[xinclude.href]
         try:
-            ret = [u'\n.. image:: {0}'.format(elem.attrib[xinclude.href].path)]
-        except:
-            href = elem.attrib[xinclude.href]
+            href = href.path
+        except Exception:
             href = href.split(u'wiki.local:')[-1]
-            ret = [u'\n.. image:: {0}'.format(href)]
+        ret = [u'\n.. image:: {0}'.format(href), ]
         for key, val in sorted(whitelist.items()):
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))

@@ -37,7 +37,7 @@ from moin.i18n import _, L_, N_
 from moin.themes import setup_jinja_env, themed_error
 from moin.util.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
-from moin import auth, config, user
+from moin import auth, user
 
 from moin import log
 logging = log.getLogger(__name__)

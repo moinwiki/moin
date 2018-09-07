@@ -75,7 +75,7 @@ class Backend(MutableBackendBase):
         fq_name = fq_names[0]
         for namespace, backend_name in self.namespaces:
             if fq_name.startswith(namespace):
-                item_names = [fq_name[len(namespace):] for fq_name in fq_names]
+                item_names = [_fq_name[len(namespace):] for _fq_name in fq_names]
                 return backend_name, item_names, namespace.rstrip(':')
         raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(fq_name, self.namespaces))
 

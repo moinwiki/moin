@@ -138,8 +138,8 @@ def load_config(conf_fname=None):
             finally:
                 f.close()
             configured = True
-            l = getLogger(__name__)
-            l.info('using logging configuration read from "{0}"'.format(conf_fname))
+            logger = getLogger(__name__)
+            logger.info('using logging configuration read from "{0}"'.format(conf_fname))
             warnings.showwarning = _log_warning
         except Exception as err:  # XXX be more precise
             err_msg = str(err)
@@ -148,15 +148,15 @@ def load_config(conf_fname=None):
         with BytesIO(logging_config) as f:
             logging.config.fileConfig(f)
         configured = True
-        l = getLogger(__name__)
+        logger = getLogger(__name__)
         if err_msg:
-            l.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
-        l.info('using logging configuration read from built-in fallback in moin.log module!')
+            logger.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
+        logger.info('using logging configuration read from built-in fallback in moin.log module!')
         warnings.showwarning = _log_warning
 
     import moin
     code_path = os.path.dirname(moin.__file__)
-    l.info('Running %s %s code from %s' % (moin.project, moin.version, code_path))
+    logger.info('Running %s %s code from %s' % (moin.project, moin.version, code_path))
 
 
 def getLogger(name):

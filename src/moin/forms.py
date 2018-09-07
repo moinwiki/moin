@@ -173,7 +173,7 @@ class ValidJSON(Validator):
     def validate(self, element, state):
         try:
             meta = json.loads(element.value)
-        except:  # catch ANY exception that happens due to unserializing
+        except:  # noqa - catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
         if not self.validnamespace(meta.get(NAMESPACE)):
             return self.note_error(element, state, 'invalid_namespace_msg')

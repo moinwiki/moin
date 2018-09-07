@@ -19,11 +19,15 @@ import time
 
 from uuid import uuid4
 
-make_uuid = lambda: unicode(uuid4().hex)
-UUID_LEN = len(make_uuid())
-
 from passlib.utils import rng, getrandstr, getrandbytes, consteq
 from passlib.pwd import genword
+
+
+def make_uuid():
+    return unicode(uuid4().hex)
+
+
+UUID_LEN = len(make_uuid())
 
 
 def random_string(length, allowed_chars=None):
