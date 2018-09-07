@@ -116,7 +116,6 @@ index           delete and rebuild indexes
 css             run Stylus and lessc to update theme CSS files
 tests *         run tests, log output (-v -k my_test)
 coding-std      correct scripts that taint the repository with trailing spaces..
-api             update moin api docs (files are under version control)
 
 del-all         same as running the 4 del-* commands below
 del-orig        delete all files matching *.orig
@@ -270,7 +269,7 @@ class Commands(object):
 
     def cmd_docs(self, *args):
         """create local Sphinx html documentation"""
-        command = '{0}cd docs{1} make html'.format(ACTIVATE, SEP)
+        command = '{0}sphinx-apidoc -f -o docs/devel/api src/moin {1}cd docs{1} make html'.format(ACTIVATE, SEP)
         print 'Creating HTML docs... output messages written to {0}.'.format(DOCS)
         with open(DOCS, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
@@ -510,16 +509,6 @@ class Commands(object):
         print 'Checking for trailing blanks, DOS line endings, Unix line endings, empty lines at eof...'
         command = '%s contrib/pep8/coding_std.py' % sys.executable
         subprocess.call(command, shell=True)
-
-    def cmd_api(self, *args):
-        """update Sphinx API docs, these docs are under version control"""
-        print 'Refreshing api docs...'
-        if WINDOWS_OS:
-            # after update, convert DOS line endings to unix
-            command = '{0}sphinx-apidoc -f -o docs/devel/api src/moin & {1} src/moin/script/win/dos2unix.py docs/devel/api'.format(ACTIVATE, sys.executable)
-        else:
-            command = '{0}sphinx-apidoc -f -o docs/devel/api src/moin'.format(ACTIVATE)
-        result = subprocess.call(command, shell=True)
 
     # not on menu, rarely used, similar code was in moin 1.9
     def cmd_dist(self, *args):
