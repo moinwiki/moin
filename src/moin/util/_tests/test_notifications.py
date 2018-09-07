@@ -5,7 +5,7 @@
     MoinMoin - moin.util.notifications Tests
 """
 
-from io import StringIO
+from io import BytesIO
 
 from flask import g as flaskg
 from flask import current_app as app
@@ -33,25 +33,25 @@ class TestNotifications(object):
         assert get_item_last_revisions(app, self.fqname) == []
         item = self.imw[self.item_name]
         rev1 = item.store_revision(dict(name=[self.item_name, ]),
-                                   StringIO(u'x'), trusted=True, return_rev=True)
+                                   BytesIO(b'x'), trusted=True, return_rev=True)
         assert get_item_last_revisions(app, self.fqname) == [rev1]
         rev2 = item.store_revision(dict(name=[self.item_name, ]),
-                                   StringIO(u'xx'), trusted=True, return_rev=True)
+                                   BytesIO(b'xx'), trusted=True, return_rev=True)
         assert get_item_last_revisions(app, self.fqname) == [rev2, rev1]
         rev3 = item.store_revision(dict(name=[self.item_name, ]),
-                                   StringIO(u'xxx'), trusted=True, return_rev=True)
+                                   BytesIO(b'xxx'), trusted=True, return_rev=True)
         assert get_item_last_revisions(app, self.fqname) == [rev3, rev2]
 
     def test_get_content_diff(self):
         item = self.imw[self.item_name]
         rev1 = item.store_revision(dict(name=[self.item_name, ], contenttype='text/plain'),
-                                   StringIO(u'x'), trusted=True, return_rev=True)
+                                   BytesIO(b'x'), trusted=True, return_rev=True)
         notification = Notification(app, self.fqname, [rev1], action=ACTION_SAVE)
         assert notification.get_content_diff() == ["+ x"]
         rev1.data.seek(0, 0)
 
         rev2 = item.store_revision(dict(name=[self.item_name, ], contenttype='text/plain'),
-                                   StringIO(u'xx'), trusted=True, return_rev=True)
+                                   BytesIO(b'xx'), trusted=True, return_rev=True)
         notification = Notification(app, self.fqname, [rev2, rev1], action=ACTION_SAVE)
         assert notification.get_content_diff() == ['- x', '+ xx']
         rev2.data.seek(0, 0)
@@ -73,12 +73,12 @@ class TestNotifications(object):
 
     def test_get_meta_diff(self):
         item = self.imw[self.item_name]
-        rev1 = item.store_revision(dict(name=[self.item_name, ]), StringIO(u'x'),
+        rev1 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'x'),
                                    trusted=True, return_rev=True)
         notification = Notification(app, self.fqname, [rev1], action=ACTION_SAVE)
         assert notification.get_meta_diff() == dict_diff(dict(), rev1.meta._meta)
 
-        rev2 = item.store_revision(dict(name=[self.item_name, ]), StringIO(u'xx'),
+        rev2 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'xx'),
                                    trusted=True, return_rev=True)
         notification = Notification(app, self.fqname, [rev2, rev1], action=ACTION_SAVE)
         assert notification.get_meta_diff() == dict_diff(rev1.meta._meta, rev2.meta._meta)
@@ -94,12 +94,12 @@ class TestNotifications(object):
         assert notification.generate_diff_url(domain) == u""
 
         item = self.imw[self.item_name]
-        rev1 = item.store_revision(dict(name=[self.item_name, ]), StringIO(u'x'),
+        rev1 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'x'),
                                    trusted=True, return_rev=True)
         notification.revs = [rev1]
         assert notification.generate_diff_url(domain) == u""
 
-        rev2 = item.store_revision(dict(name=[self.item_name, ]), StringIO(u'xx'),
+        rev2 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'xx'),
                                    trusted=True, return_rev=True)
         notification.revs = [rev2, rev1]
         assert notification.generate_diff_url(domain) == u"{0}{1}".format(

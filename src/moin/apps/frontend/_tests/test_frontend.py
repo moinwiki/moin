@@ -6,7 +6,7 @@
     MoinMoin - basic tests for frontend
 """
 
-from StringIO import StringIO
+from io import BytesIO
 
 from flask import url_for
 from flask import g as flaskg
@@ -84,7 +84,7 @@ class TestFrontend(object):
 
     def test_jfu_server(self):
         self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
-            data_file=FileStorage(StringIO("Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
+            data_file=FileStorage(BytesIO(b"Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
         ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
 
     def test_show_item(self):

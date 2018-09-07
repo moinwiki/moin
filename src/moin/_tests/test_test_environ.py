@@ -5,7 +5,7 @@
     MoinMoin - Tests for our test environment
 """
 
-from StringIO import StringIO
+from io import BytesIO
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -32,7 +32,7 @@ class TestStorageEnvironWithoutConfig(object):
         itemname = u"this item shouldn't exist yet"
         assert not storage.has_item(itemname)
         item = storage[itemname]
-        new_rev = item.store_revision({NAME: [itemname, ], CONTENTTYPE: u'text/plain;charset=utf-8'}, StringIO(''))
+        new_rev = item.store_revision({NAME: [itemname, ], CONTENTTYPE: u'text/plain;charset=utf-8'}, BytesIO(b''))
         assert storage.has_item(itemname)
 
 

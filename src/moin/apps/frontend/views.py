@@ -21,7 +21,7 @@ import time
 import uuid
 import mimetypes
 import json
-from StringIO import StringIO
+from io import BytesIO
 from datetime import datetime
 from collections import namedtuple
 from functools import wraps, partial
@@ -672,7 +672,7 @@ def convert_item(item_name):
         meta[CONTENTTYPE] = form['new_type'].value
     out = out.encode(CHARSET)
     size, hash_name, hash_digest = hash_hexdigest(out)
-    out = StringIO(out)
+    out = BytesIO(out)
     meta[hash_name] = hash_digest
     meta[SIZE] = size
     meta[REVID] = make_uuid()

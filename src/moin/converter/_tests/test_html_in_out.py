@@ -8,7 +8,7 @@ MoinMoin - Tests for moin.converter.html_in and moin.converter.html_out.
 """
 
 
-import StringIO
+from io import StringIO
 import re
 
 import pytest
@@ -47,7 +47,7 @@ class Base(object):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the roundtrip : {0}".format(string_to_parse))
         print 'string_to_parse = %s' % string_to_parse
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(path))
 
 

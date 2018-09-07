@@ -9,7 +9,7 @@
 
 
 import socket
-from StringIO import StringIO
+from io import BytesIO
 
 from flask import g as flaskg
 
@@ -55,7 +55,7 @@ def update_item(name, meta, data):
         meta[NAME] = [name, ]
     if CONTENTTYPE not in meta:
         meta[CONTENTTYPE] = u'application/octet-stream'
-    rev = item.store_revision(meta, StringIO(data), return_rev=True)
+    rev = item.store_revision(meta, BytesIO(data), return_rev=True)
     return rev
 
 

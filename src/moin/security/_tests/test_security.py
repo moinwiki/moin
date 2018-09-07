@@ -476,13 +476,14 @@ class TestItemHierachicalAclsMultiItemNames(object):
     p2 = [u'p2', ]
     c2 = [u'p2/c2', ]
     c12 = [u'p1/c12', u'p2/c12', ]
+    content = b''
     items = [
         # itemnames, acl, content
-        (p1, u'Editor:', p1),  # deny access (due to hierarchic acl mode also effective for children)
-        (c1, None, c1),  # no own acl -> inherit from parent
-        (p2, None, p2),  # default acl effective (also for children)
-        (c2, None, c2),  # no own acl -> inherit from parent
-        (c12, None, c12),  # no own acl -> inherit from parents
+        (p1, u'Editor:', content),  # deny access (due to hierarchic acl mode also effective for children)
+        (c1, None, content),  # no own acl -> inherit from parent
+        (p2, None, content),  # default acl effective (also for children)
+        (c2, None, content),  # no own acl -> inherit from parent
+        (c12, None, content),  # no own acl -> inherit from parents
     ]
 
     @pytest.fixture
