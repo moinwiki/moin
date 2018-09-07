@@ -192,7 +192,8 @@ class Content(object):
         if hash_hexdigest:
             cid = cache_key(usage="internal_representation",
                             hash_name=hash_name,
-                            hash_hexdigest=hash_hexdigest)
+                            hash_hexdigest=hash_hexdigest,
+                            attrs=repr(attributes))
             doc = app.cache.get(cid)
         else:
             # likely a non-existing item
