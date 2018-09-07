@@ -66,13 +66,13 @@ def test_Arguments_items():
 
     a = Arguments(positional, keyword)
 
-    l = list(a.items())
+    args = list(a.items())
 
-    assert len(l) == 4
-    assert l[0] == (None, 'positional')
-    assert l[1] == (None, 'both')
-    assert ('keyword', True) in l
-    assert ('both', False) in l
+    assert len(args) == 4
+    assert args[0] == (None, 'positional')
+    assert args[1] == (None, 'both')
+    assert ('keyword', True) in args
+    assert ('both', False) in args
 
 
 def test_Arguments_keys():
@@ -81,11 +81,11 @@ def test_Arguments_keys():
 
     a = Arguments(positional, keyword)
 
-    l = list(a.keys())
+    args = list(a.keys())
 
-    assert len(l) == 2
-    assert 'keyword' in l
-    assert 'both' in l
+    assert len(args) == 2
+    assert 'keyword' in args
+    assert 'both' in args
 
 
 def test_Arguments_values():
@@ -94,10 +94,10 @@ def test_Arguments_values():
 
     a = Arguments(positional, keyword)
 
-    l = list(a.values())
+    args = list(a.values())
 
-    assert len(l) == 4
-    assert l[0] == 'positional'
-    assert l[1] == 'both'
-    assert True in l
-    assert False in l
+    assert len(args) == 4
+    assert args[0] == 'positional'
+    assert args[1] == 'both'
+    assert True in args
+    assert False in args

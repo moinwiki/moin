@@ -156,13 +156,13 @@ class LDAPAuth(BaseAuth):
                             ldap.set_option(option, value)
 
                 logging.debug("Trying to initialize {0!r}.".format(server))
-                l = ldap.initialize(server)
+                conn = ldap.initialize(server)
                 logging.debug("Connected to LDAP server {0!r}.".format(server))
 
                 if self.start_tls and server.startswith('ldap:'):
                     logging.debug("Trying to start TLS to {0!r}.".format(server))
                     try:
-                        l.start_tls_s()
+                        conn.start_tls_s()
                         logging.debug("Using TLS to {0!r}.".format(server))
                     except (ldap.SERVER_DOWN, ldap.CONNECT_ERROR) as err:
                         logging.warning("Couldn't establish TLS to {0!r} (err: {1!s}).".format(server, err))
@@ -171,7 +171,7 @@ class LDAPAuth(BaseAuth):
                 # you can use %(username)s and %(password)s here to get the stuff entered in the form:
                 binddn = self.bind_dn % locals()
                 bindpw = self.bind_pw % locals()
-                l.simple_bind_s(binddn.encode(coding), bindpw.encode(coding))
+                conn.simple_bind_s(binddn.encode(coding), bindpw.encode(coding))
                 logging.debug("Bound with binddn {0!r}".format(binddn))
 
                 # you can use %(username)s here to get the stuff entered in the form:
@@ -183,7 +183,7 @@ class LDAPAuth(BaseAuth):
                     'surname_attribute',
                     'givenname_attribute',
                 ] if getattr(self, attr) is not None]
-                lusers = l.search_st(self.base_dn, self.scope, filterstr.encode(coding),
+                lusers = conn.search_st(self.base_dn, self.scope, filterstr.encode(coding),
                                      attrlist=attrs, timeout=self.timeout)
                 # we remove entries with dn == None to get the real result list:
                 lusers = [(dn, ldap_dict) for dn, ldap_dict in lusers if dn is not None]
@@ -207,7 +207,7 @@ class LDAPAuth(BaseAuth):
                 dn, ldap_dict = lusers[0]
                 if not self.bind_once:
                     logging.debug("DN found is {0!r}, trying to bind with pw".format(dn))
-                    l.simple_bind_s(dn, password.encode(coding))
+                    conn.simple_bind_s(dn, password.encode(coding))
                     logging.debug("Bound with dn {0!r} (username: {1!r})".format(dn, username))
 
                 if self.email_callback is None:

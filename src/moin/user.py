@@ -380,14 +380,14 @@ class User(object):
 
     @property
     def language(self):
-        l = self._cfg.language_default
+        lang = self._cfg.language_default
         locale = self.locale  # is either None or something like 'en_US'
         if locale is not None:
             try:
-                l = parse_locale(locale)[0]
+                lang = parse_locale(locale)[0]
             except ValueError:
                 pass
-        return l
+        return lang
 
     def avatar(self, size=30):
         if not app.cfg.user_use_gravatar:
