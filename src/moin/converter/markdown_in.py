@@ -29,6 +29,9 @@ except ImportError:
 
 from markdown import Markdown
 import markdown.util as md_util
+from markdown.extensions.extra import ExtraExtension
+from markdown.extensions.toc import TocExtension
+from markdown.extensions.codehilite import CodeHiliteExtension
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -526,9 +529,9 @@ class Converter(object):
 
     def __init__(self):
         self.markdown = Markdown(extensions=[
-            'markdown.extensions.extra',
-            'markdown.extensions.toc',
-            'markdown.extensions.codehilite(guess_lang=False)',
+            ExtraExtension(),
+            TocExtension(),
+            CodeHiliteExtension(guess_lang=False),
         ])
 
     @classmethod
