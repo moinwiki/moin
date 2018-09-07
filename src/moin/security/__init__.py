@@ -213,7 +213,7 @@ class AccessControlList(AutoNe):
 
         # Iterate over entries and rights, parsed by acl string iterator
         acliter = ACLStringIterator(self.acl_rights_valid, aclstring)
-        for modifier, entries, rights in acliter:
+        for modifier, entries, _rights in acliter:
             if entries == ['Default']:
                 self._addLine(self.default, remember=0)
             else:
@@ -223,14 +223,14 @@ class AccessControlList(AutoNe):
                         # Only user rights are added to the right dict.
                         # + add right with value of 1
                         # - add right with value of 0
-                        for right in rights:
+                        for right in _rights:
                             rightsdict[right] = (modifier == '+')
                     else:
                         # All rights from acl_rights_valid are added to the
                         # dict, user rights with value of 1, and other with
                         # value of 0
                         for right in self.acl_rights_valid:
-                            rightsdict[right] = (right in rights)
+                            rightsdict[right] = (right in _rights)
                     self.acl.append((entry, rightsdict))
 
     def may(self, name, dowhat):

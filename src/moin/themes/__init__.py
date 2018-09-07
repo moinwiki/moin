@@ -498,7 +498,7 @@ class ThemeSupport(object):
         if ns is not None and ns.value == '~':
             ns = u''
         namespace_root_mapping = []
-        for namespace, _ in app.cfg.namespace_mapping:
+        for namespace, _unused in app.cfg.namespace_mapping:
             namespace = namespace.rstrip('/')
             if ns is None or namespace != ns:
                 fq_namespace = CompositeName(namespace, NAME_EXACT, u'')
