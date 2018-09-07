@@ -22,7 +22,8 @@ from uuid import uuid4
 make_uuid = lambda: unicode(uuid4().hex)
 UUID_LEN = len(make_uuid())
 
-from passlib.utils import rng, getrandstr, getrandbytes, consteq, generate_password
+from passlib.utils import rng, getrandstr, getrandbytes, consteq
+from passlib.pwd import genword
 
 
 def random_string(length, allowed_chars=None):
@@ -66,7 +67,7 @@ def generate_token(key=None, stamp=None):
     :returns: key, token (both unicode)
     """
     if key is None:
-        key = generate_password(size=32)
+        key = genword(length=32)
     if stamp is None:
         stamp = int(time.time())
     h = hmac.new(str(key), str(stamp), digestmod=hashlib.sha256).hexdigest()

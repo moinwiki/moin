@@ -64,8 +64,7 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('Store', argvalues, ids=ids)
 
 
-def make_store(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
+def make_store(request, tmpdir):
     storename, kind = request.param
     storemodule = pytest.importorskip(STORES_PACKAGE + '.' + storename.split(':')[0])
     klass = getattr(storemodule, kind)
@@ -93,8 +92,8 @@ def fst(request):
 
 
 @pytest.fixture
-def store(request):
-    store = make_store(request)
+def store(request, tmpdir):
+    store = make_store(request, tmpdir)
     storename, kind = request.param
     if kind == 'FileStore':
         store = ByteToStreamWrappingStore(store)

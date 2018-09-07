@@ -43,21 +43,19 @@ def pytest_generate_tests(metafunc):
 
 
 @pytest.fixture
-def source(request):
+def source(request, tmpdir):
     # scenario
-    return make_middleware(request)
+    return make_middleware(request, tmpdir)
 
 
 @pytest.fixture
-def target(request):
+def target(request, tmpdir):
     # scenario
-    return make_middleware(request)
+    return make_middleware(request, tmpdir)
 
 
-def make_middleware(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
+def make_middleware(request, tmpdir):
     # scenario
-
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)

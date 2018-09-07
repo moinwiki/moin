@@ -510,7 +510,7 @@ class User(object):
             # invalidate the pw hash
             password = ''
         elif not is_encrypted:
-            password = self._cfg.cache.pwd_context.encrypt(password, salt=salt)
+            password = self._cfg.cache.pwd_context.hash(password, salt=salt)
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
         session['user.session_token'] = self.generate_session_token(False)

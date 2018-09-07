@@ -29,6 +29,9 @@ except ImportError:
 
 from markdown import Markdown
 import markdown.util as md_util
+from markdown.extensions.extra import ExtraExtension
+from markdown.extensions.toc import TocExtension
+from markdown.extensions.codehilite import CodeHiliteExtension
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -525,7 +528,11 @@ class Converter(object):
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
-        self.markdown = Markdown(extensions=['extra', 'toc', 'codehilite(guess_lang=False)'])
+        self.markdown = Markdown(extensions=[
+            ExtraExtension(),
+            TocExtension(),
+            CodeHiliteExtension(guess_lang=False),
+        ])
 
     @classmethod
     def _factory(cls, input, output, **kw):
@@ -577,7 +584,7 @@ class Converter(object):
         # Run the tree-processors
         for treeprocessor in self.markdown.treeprocessors.values():
             new_md_root = treeprocessor.run(md_root)
-            if new_md_root:
+            if new_md_root is not None:
                 md_root = new_md_root
 
         # }}} end stolen from Markdown.convert
