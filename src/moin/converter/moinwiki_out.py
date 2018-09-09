@@ -340,10 +340,14 @@ class Converter(object):
     def open_moinpage_nowiki(self, elem):
         """{{{#!wiki ... or {{{#!highlight ... etc."""
         nowiki_marker_len, all_nowiki_args, content = elem._children
-        nowiki_args = all_nowiki_args[0]
+        try:
+            nowiki_args = all_nowiki_args[0]
+        except:
+            # this happens only with pytest, why wasn't open_moinpage_blockcode called?
+            nowiki_args = ''
         nowiki_marker_len = int(nowiki_marker_len)
-        return u'\n' + u'{' * nowiki_marker_len + u'{0}\n{1}\n'.format(nowiki_args, content) + \
-               u'}' * nowiki_marker_len + u'\n'
+        return u'\n' + Moinwiki.verbatim_open * nowiki_marker_len + u'{0}\n{1}\n'.format(nowiki_args, content) + \
+               Moinwiki.verbatim_close * nowiki_marker_len + u'\n'
 
     def include_object(self, xpointer, href):
         """
