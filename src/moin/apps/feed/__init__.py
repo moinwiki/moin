@@ -11,4 +11,4 @@
 
 from flask import Blueprint
 feed = Blueprint('feed', __name__)
-import moin.apps.feed.views
+import moin.apps.feed.views  # noqa

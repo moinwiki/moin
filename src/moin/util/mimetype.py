@@ -10,6 +10,8 @@ from __future__ import absolute_import, division
 
 import mimetypes
 
+import pygments.lexers
+
 from moin.constants.contenttypes import PARSER_TEXT_MIMETYPE
 
 # prevents unexpected results on Windows
@@ -57,8 +59,6 @@ MIMETYPES_MORE = {
 }
 
 # add all mimetype patterns of pygments
-import pygments.lexers
-
 for name, short, patterns, mime in pygments.lexers.get_all_lexers():
     for pattern in patterns:
         if pattern.startswith('*.') and mime:

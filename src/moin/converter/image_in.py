@@ -7,14 +7,16 @@ MoinMoin - Image converter
 Convert image to <object> tag for the DOM Tree.
 """
 
-
 from emeraldtree import ElementTree as ET
 
-from moin.util.iri import Iri
-from moin.util.tree import moin_page, xlink, xinclude, html
 from werkzeug import url_encode, url_decode
 
 from moin.constants.contenttypes import CHARSET
+from moin.util.iri import Iri
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import moin_page, xlink, xinclude, html
+
+from . import default_registry
 
 
 class Converter(object):
@@ -52,8 +54,6 @@ class Converter(object):
         return moin_page.page(children=(body, ))
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('image/svg+xml'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/png'), type_moin_document)
 default_registry.register(Converter._factory, Type('image/jpeg'), type_moin_document)

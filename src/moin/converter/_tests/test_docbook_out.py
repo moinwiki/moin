@@ -11,7 +11,7 @@ from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')
+etree = pytest.importorskip('lxml.etree')  # noqa
 
 from emeraldtree import ElementTree as ET
 

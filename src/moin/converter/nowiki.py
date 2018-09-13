@@ -19,8 +19,10 @@ from pygments.util import ClassNotFound
 
 from moin.i18n import _, L_, N_
 from moin.util.tree import moin_page
-from ._args_wiki import parse as parse_arguments
+from moin.util.mime import Type, type_moin_document
 
+from . import default_registry
+from ._args_wiki import parse as parse_arguments
 from ._table import TableMixin
 from ._util import normalize_split_text, _Iter
 
@@ -187,6 +189,4 @@ class Converter(object):
         return tree
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

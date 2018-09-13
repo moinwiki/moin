@@ -33,6 +33,9 @@ from markdown.extensions.extra import ExtraExtension
 from markdown.extensions.toc import TocExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
+from . import default_registry
+from moin.util.mime import Type, type_moin_document
+
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -605,7 +608,5 @@ class Converter(object):
         return root
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type("text/x-markdown"), type_moin_document)
 default_registry.register(Converter._factory, Type('x-moin/format;name=markdown'), type_moin_document)

@@ -18,6 +18,10 @@
 """
 
 
+from moin import user
+from moin.i18n import _, L_, N_
+from moin.auth import BaseAuth, CancelLogin, ContinueLogin
+
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -26,10 +30,6 @@ try:
 except ImportError as err:
     logging.error("You need to have python-ldap installed ({0!s}).".format(err))
     raise
-
-from moin import user
-from moin.i18n import _, L_, N_
-from moin.auth import BaseAuth, CancelLogin, ContinueLogin
 
 
 class LDAPAuth(BaseAuth):

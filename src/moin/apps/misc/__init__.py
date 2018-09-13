@@ -10,4 +10,4 @@
 
 from flask import Blueprint
 misc = Blueprint('misc', __name__, template_folder='templates')
-import moin.apps.misc.views
+import moin.apps.misc.views  # noqa

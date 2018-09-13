@@ -21,12 +21,13 @@ from flask import current_app, request, _request_ctx_stack
 from flask import g as flaskg
 from flask_babel import Babel, gettext, ngettext, lazy_gettext
 
+from moin import log
+logging = log.getLogger(__name__)
+
+
 _ = gettext
 N_ = ngettext
 L_ = lazy_gettext
-
-from moin import log
-logging = log.getLogger(__name__)
 
 
 def i18n_init(app):

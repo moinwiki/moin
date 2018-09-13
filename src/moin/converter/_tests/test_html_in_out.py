@@ -13,7 +13,7 @@ import re
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')
+etree = pytest.importorskip('lxml.etree')  # noqa
 
 from . import serialize
 

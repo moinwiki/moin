@@ -21,10 +21,9 @@ We use a layered approach like this::
                                    over key/value pairs
 """
 
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
 BACKENDS_PACKAGE = 'moin.storage.backends'
-
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
 BACKEND_DEFAULT = u'default'
 BACKEND_USERPROFILES = u'userprofiles'

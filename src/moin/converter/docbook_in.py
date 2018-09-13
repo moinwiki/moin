@@ -25,11 +25,14 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin.util.mime import Type, type_moin_document
 from moin.util.tree import moin_page, xlink, docbook, xml, html
 from moin.converter.html_out import mark_item_as_transclusion
 
+from . import default_registry
 from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -1210,6 +1213,4 @@ class Converter(object):
         return self.new(moin_page.page, attrib=attrib, children=[body])
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type('application/docbook+xml'), type_moin_document)

@@ -12,17 +12,17 @@ Converts an internal document tree into moinwiki markup.
 from __future__ import absolute_import, division
 
 import urllib
+from re import findall, sub
 
-from . import ElementException
+from emeraldtree import ElementTree as ET
+from werkzeug.utils import unescape
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.util.iri import Iri
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
 
-from emeraldtree import ElementTree as ET
-
-from re import findall, sub
-
-from werkzeug.utils import unescape
+from . import ElementException
+from . import default_registry
 
 
 class Moinwiki(object):
@@ -664,7 +664,5 @@ class Converter(object):
         return self.open_moinpage_object(elem)
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_document, type_moin_wiki)
 default_registry.register(Converter.factory, type_moin_document, Type('x-moin/format;name=wiki'))

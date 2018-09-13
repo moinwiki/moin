@@ -8,9 +8,7 @@ MoinMoin - RandomItem Macro displays one or multiple random item links.
 TODO: add mimetype param and only show items matching this mimetype
 """
 
-
 import random
-random.seed()
 
 from flask import g as flaskg
 
@@ -19,6 +17,8 @@ from moin.util.tree import moin_page, xlink
 from moin.items import Item
 from moin.macro._base import MacroPageLinkListBase
 from moin.storage.middleware.protecting import AccessDenied
+
+random.seed()
 
 
 class Macro(MacroPageLinkListBase):

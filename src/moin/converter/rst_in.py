@@ -18,8 +18,13 @@ Works with docutils version 0.5 (2008-06-25) or higher.
 from __future__ import absolute_import, division
 
 import re
-import docutils
 
+import docutils
+from docutils import nodes, utils, writers, core
+from docutils.parsers.rst import Parser
+from docutils.nodes import reference, literal_block
+from docutils.parsers import rst
+from docutils.parsers.rst import directives, roles
 
 try:
     from flask import g as flaskg
@@ -27,17 +32,13 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin.constants.contenttypes import CHARSET
 from moin.util.iri import Iri
 from moin.util.tree import html, moin_page, xlink, xinclude
-from moin.constants.contenttypes import CHARSET
+from moin.util.mime import Type, type_moin_document
 
+from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
-
-from docutils import nodes, utils, writers, core
-from docutils.parsers.rst import Parser
-from docutils.nodes import reference, literal_block
-from docutils.parsers import rst
-from docutils.parsers.rst import directives, roles
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -953,8 +954,6 @@ class Converter(object):
         return ret
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory,
                           Type('text/x-rst'), type_moin_document)
 default_registry.register(Converter.factory,
