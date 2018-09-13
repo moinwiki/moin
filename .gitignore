@@ -5,7 +5,7 @@ docs/devel/api/
 instance/
 MANIFEST
 src/moin/_version.py
-src/moin/translations/.*/LC_MESSAGES/messages.mo
+src/moin/translations/*/LC_MESSAGES/messages.mo
 src/moin/_tests/wiki/data/cache/
 src/moin/_tests/wiki/index/
 src/moin.egg-info/
@@ -23,13 +23,14 @@ wikiconfig_*.py
 *.pyo
 *.orig
 *.rej
+# files created by quickinstall.py
 activate.bat
 deactivate.bat
 moin.bat
 m.bat
 activate
-moin
 m
+# files created by make.py
 m-*.txt
 # default destination for "m dump-html" output
 HTML/
