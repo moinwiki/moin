@@ -15,6 +15,9 @@ from emeraldtree import ElementTree as ET
 
 from moin.util.tree import html, moin_page, xlink, docbook, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.util.mime import Type, type_moin_document
+
+from . import default_registry
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -530,6 +533,4 @@ class Converter(object):
         return self.new_copy(tag_to_return, element, attrib={})
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, type_moin_document, Type('application/docbook+xml'))

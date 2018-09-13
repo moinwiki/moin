@@ -17,6 +17,9 @@ from pdfminer.converter import TextConverter
 from pdfminer.cmapdb import CMapDB
 from pdfminer.layout import LAParams
 
+from . import default_registry
+from moin.util.mime import Type, type_text_plain
+
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -69,6 +72,4 @@ class PDFIndexingConverter(object):
             device.close()
 
 
-from . import default_registry
-from moin.util.mime import Type, type_text_plain
 default_registry.register(PDFIndexingConverter._factory, Type('application/pdf'), type_text_plain)

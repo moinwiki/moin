@@ -21,7 +21,9 @@ from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.util.iri import Iri
 from moin.util.tree import html, moin_page, xlink
+from moin.util.mime import Type, type_moin_document
 
+from . import default_registry
 from ._args import Arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
@@ -1011,7 +1013,5 @@ class Converter(ConverterMacro):
         stack.top_append_ifnotempty(text[pos:])
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory, Type('x-moin/format;name=mediawiki'), type_moin_document)
 default_registry.register(Converter.factory, Type('text/x-mediawiki'), type_moin_document)

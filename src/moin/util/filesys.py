@@ -14,6 +14,8 @@ import time
 import errno
 from stat import S_ISDIR, ST_MODE, S_IMODE
 
+from werkzeug.posixemulation import rename
+
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -31,8 +33,6 @@ def chmod(name, mode, catchexception=True):
         if not catchexception:
             raise
 
-
-from werkzeug.posixemulation import rename
 
 rename_overwrite = rename
 

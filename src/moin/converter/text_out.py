@@ -14,6 +14,9 @@ way, so we get indexable plain text for our search index.
 
 from __future__ import absolute_import, division
 
+from . import default_registry
+from moin.util.mime import Type, type_moin_document, type_text_plain
+
 
 class Converter(object):
     """
@@ -27,6 +30,4 @@ class Converter(object):
         return u'\n'.join(root.itertext())
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document, type_text_plain
 default_registry.register(Converter.factory, type_moin_document, type_text_plain)

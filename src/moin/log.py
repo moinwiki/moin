@@ -54,6 +54,13 @@
 
 from __future__ import absolute_import, division
 
+from io import BytesIO
+import os
+import logging
+import logging.config
+import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
+import warnings
+
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or with a non-working
 # logging configuration.
@@ -96,16 +103,8 @@ datefmt=
 class=logging.Formatter
 """
 
-from io import BytesIO
-import os
-import logging
-import logging.config
-import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
-
 configured = False
 fallback_config = False
-
-import warnings
 
 # use something like this to ignore warnings:
 # warnings.filterwarnings('ignore', r'... regex for warning message to ignore ...')

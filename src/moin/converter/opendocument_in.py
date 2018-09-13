@@ -12,6 +12,9 @@ from __future__ import absolute_import, division
 
 import zipfile
 
+from moin.util.mime import Type, type_text_plain
+
+from . import default_registry
 from .xml_in import strip_xml
 
 from moin import log
@@ -33,9 +36,6 @@ class OpenDocumentIndexingConverter(object):
         finally:
             zf.close()
 
-
-from . import default_registry
-from moin.util.mime import Type, type_text_plain
 
 opendocument_types = """\
 application/vnd.oasis.opendocument.chart

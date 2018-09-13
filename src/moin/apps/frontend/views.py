@@ -21,6 +21,7 @@ import time
 import uuid
 import mimetypes
 import json
+import threading
 from io import BytesIO
 from datetime import datetime
 from collections import namedtuple
@@ -76,6 +77,9 @@ from moin.script.migration.moin19.import19 import hash_hexdigest
 
 from moin import log
 logging = log.getLogger(__name__)
+
+
+jfu_server_lock = threading.Lock()
 
 
 @frontend.route('/+dispatch', methods=['GET', ])
@@ -982,10 +986,6 @@ def destroy_item(item_name, rev):
     if isinstance(item.rev.data, file):
         item.rev.data.close()
     return ret
-
-
-import threading
-jfu_server_lock = threading.Lock()
 
 
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])

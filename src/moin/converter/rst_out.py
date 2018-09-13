@@ -15,12 +15,15 @@ from __future__ import absolute_import, division
 
 import re
 
+from emeraldtree import ElementTree as ET
+
 from . import ElementException
 
+from moin.util.mime import Type, type_moin_document
 from moin.util.tree import html, moin_page, xlink, xinclude
 from moin.util.iri import Iri
 
-from emeraldtree import ElementTree as ET
+from . import default_registry
 
 
 class Cell(object):
@@ -785,8 +788,6 @@ class Converter(object):
         return ret
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory,
                           type_moin_document,
                           Type('text/x-rst'))

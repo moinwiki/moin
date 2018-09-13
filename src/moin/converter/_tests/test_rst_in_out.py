@@ -26,7 +26,7 @@ from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.constants.contenttypes import CHARSET
 
 # ### TODO: try block (do not crash if we don't have docutils)
-pytest.importorskip('docutils')
+pytest.importorskip('docutils')  # noqa
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block

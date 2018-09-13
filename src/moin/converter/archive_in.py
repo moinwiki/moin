@@ -12,11 +12,13 @@ from datetime import datetime
 import tarfile
 import zipfile
 
+from . import default_registry
 from ._table import TableMixin
 
 from moin.i18n import _, L_, N_
 from moin.util.iri import Iri
 from moin.util.tree import moin_page, xlink
+from moin.util.mime import Type, type_moin_document
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -126,8 +128,6 @@ class ZipConverter(ArchiveConverter):
             raise ArchiveException(str(err))
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(TarConverter._factory, Type('application/x-tar'), type_moin_document)
 default_registry.register(TarConverter._factory, Type('application/x-gtar'), type_moin_document)
 default_registry.register(ZipConverter._factory, Type('application/zip'), type_moin_document)
