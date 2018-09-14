@@ -616,6 +616,7 @@ def download_item(item):
 
 class ConvertForm(Form):
     new_type = Select.using(label=L_('New Content Type')).out_of((('text/x.moin.wiki;charset=utf-8', 'MoinWiki'),
+                                                                  ('text/x-markdown;charset=utf-8', 'Markdown'),
                                                                   ('text/x-rst;charset=utf-8', 'ReST'),
                                                                   ('application/x-xhtml-moin-page', 'HTML'),
                                                                   ('application/docbook+xml;charset=utf-8', 'DocBook')))
