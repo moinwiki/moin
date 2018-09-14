@@ -1,18 +1,18 @@
 # German translations for MoinMoin.
 # Copyright: 2010 Gerhard J. <gerhard.jungwirth3@gmail.com>
 # Copyright: 2011 Julian Brost <julian.brost@googlemail.com>
-# Copyright: 2011-2012 MoinMoin:ThomasWaldmann
+# Copyright: 2011-2018 MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: MoinMoin 2.0\n"
-"Report-Msgid-Bugs-To: German <moin-user@lists.sourceforge.net>\n"
+"Report-Msgid-Bugs-To: German <moin-user@python.org>\n"
 "POT-Creation-Date: 2018-09-05 01:13+0200\n"
-"PO-Revision-Date: 2011-03-20 23:37+0100\n"
-"Last-Translator: Julian Brost <julian.brost@googlemail.com>\n"
+"PO-Revision-Date: 2018-09-15 23:37+0100\n"
+"Last-Translator: Thomas Waldmann <tw@waldmann-edv.de>\n"
 "Language: de\n"
-"Language-Team: German <moin-user@lists.sourceforge.net>\n"
+"Language-Team: German <moin-user@python.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -30,17 +30,17 @@ msgstr ""
 #: src/moin/forms.py:103
 #, python-format
 msgid "Item names (%(invalid_names)s) must not start with '@' or '+'"
-msgstr ""
+msgstr "Item-Namen (%(invalid_names)s) dürfen nicht mit '@' oder '+' anfangen"
 
 #: src/moin/forms.py:111
 #, python-format
 msgid "Item names (%(invalid_names)s) must not match with existing namespaces."
-msgstr ""
+msgstr "Item-Namen (%(invalid_names)s) dürfen nicht mit Namespaces übereinstimmen"
 
 #: src/moin/forms.py:122
-#, fuzzy, python-format
+#, python-format
 msgid "Item(s) named %(duplicate_names)s already exist."
-msgstr "Der Benutzername %(name)r wird bereits verwendet."
+msgstr "Items mit Namen %(duplicate_names)s existieren bereits."
 
 #: src/moin/forms.py:153
 msgid "Invalid JSON."
@@ -48,16 +48,16 @@ msgstr "Ungültiges JSON"
 
 #: src/moin/forms.py:154
 msgid "Itemid not a proper UUID"
-msgstr ""
+msgstr "Itemid ist keine richtige UUID"
 
 #: src/moin/forms.py:159
 msgid "No ITEMID field"
-msgstr ""
+msgstr "Kein ITEMID-Feld"
 
 #: src/moin/forms.py:169
 #, python-format
 msgid "%(_namespace)s is not a valid namespace."
-msgstr ""
+msgstr "%(_namespace)s ist kein gültiger Namespace."
 
 #: src/moin/forms.py:190
 msgid "OpenID"
@@ -88,9 +88,9 @@ msgid "Password"
 msgstr "Passwort"
 
 #: src/moin/forms.py:260
-#, fuzzy, python-format
+#, python-format
 msgid "This item doesn't exist."
-msgstr "Das Item '%(item_name)s' existiert nicht."
+msgstr "Dieses Item existiert nicht."
 
 #: src/moin/forms.py:262
 msgid "This item name is corrupt, delete and recreate."
@@ -107,9 +107,8 @@ msgid "Names"
 msgstr "Namen"
 
 #: src/moin/forms.py:279 src/moin/templates/usersettings_forms.html:141
-#, fuzzy
 msgid "Subscriptions"
-msgstr "Beschreibung"
+msgstr "Abonnements"
 
 #: src/moin/forms.py:283 src/moin/templates/usersettings_forms.html:125
 #: src/moin/themes/basic/templates/layout.html:105
@@ -199,9 +198,9 @@ msgid "Users"
 msgstr "Benutzer"
 
 #: src/moin/apps/admin/views.py:83
-#, fuzzy, python-format
+#, python-format
 msgid "User profile of %(username)s: %(email)s %(disabled)s"
-msgstr "Profil von %(username)s: %(email)r"
+msgstr "Benutzer-Profil von %(username)s: %(email)s %(disabled)s"
 
 #: src/moin/apps/admin/views.py:124
 msgid "{0} has been sent a password recovery email."
@@ -276,74 +275,68 @@ msgid "Item Sizes"
 msgstr "Item-Größen"
 
 #: src/moin/apps/admin/views.py:286 src/moin/apps/admin/views.py:287
-#, fuzzy
 msgid "Trashed Items"
-msgstr "Verwaiste Items"
+msgstr "Gelöschte Items"
 
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:4
 #: src/moin/apps/admin/views.py:321
 msgid "User ACL Report"
-msgstr ""
+msgstr "Benutzer-ACL-Report"
 
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:4
 #: src/moin/apps/admin/templates/admin/index.html:6
 #: src/moin/apps/admin/views.py:345
 msgid "Groups"
-msgstr ""
+msgstr "Gruppen"
 
 #: src/moin/apps/admin/views.py:382
 msgid "Item ACL Report"
-msgstr ""
+msgstr "Item-ACL-Report"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:4
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:11
 #: src/moin/apps/admin/views.py:415
 msgid "Group ACL Report"
-msgstr ""
+msgstr "Gruppen-ACL-Report"
 
 #: src/moin/apps/admin/views.py:436
 #, python-format
 msgid "Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s"
-msgstr ""
+msgstr "Erfolg! ACL gespeichert.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s"
 
 #: src/moin/apps/admin/views.py:438
 #, python-format
 msgid "Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s"
-msgstr ""
+msgstr "Keine Änderung, ungültige ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:5
-#, fuzzy
 msgid "Group Name"
-msgstr "Benutzername"
+msgstr "Gruppen-Name"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:9
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:15
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:9
-#, fuzzy
 msgid "Item Names"
-msgstr "Item-Name"
+msgstr "Item-Namen"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:10
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:21
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:10
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:21
-#, fuzzy
 msgid "read"
-msgstr "Erzeugen"
+msgstr "Lesen"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:11
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:22
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:11
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:22
-#, fuzzy
 msgid "write"
-msgstr "Neues Item"
+msgstr "Schreiben"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:12
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:23
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:12
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:23
-#, fuzzy
 msgid "create"
 msgstr "Erzeugen"
 
@@ -358,33 +351,29 @@ msgstr "Vernichten"
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:25
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:14
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:25
-#, fuzzy
 msgid "admin"
-msgstr "Admin"
+msgstr "Administrieren"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:20
 #: src/moin/templates/history.html:27
 msgid "Item Id"
-msgstr ""
+msgstr "Item-Id"
 
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:8
-#, fuzzy
 msgid "Group Names"
-msgstr "Lexer-Namen"
+msgstr "Gruppen-Namen"
 
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:9
-#, fuzzy
 msgid "Member Users"
-msgstr "aktivieren"
+msgstr "Mitglieder-Benutzer"
 
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:10
-#, fuzzy
 msgid "Member Groups"
-msgstr "Mitglied der Gruppen"
+msgstr "Mitgleder-Gruppen"
 
 #: src/moin/apps/admin/templates/admin/groupbrowser.html:28
 msgid "ACL Report"
-msgstr ""
+msgstr "ACL-Report"
 
 #: src/moin/apps/admin/templates/admin/index.html:3
 msgid "Admin Menu"
@@ -393,21 +382,20 @@ msgstr "Admin-Menü"
 #: src/moin/apps/admin/templates/admin/index.html:7
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:10
 msgid "Item ACLs"
-msgstr ""
+msgstr "Item-ACLs"
 
 #: src/moin/apps/admin/templates/admin/index.html:8
 msgid "Trash"
-msgstr ""
+msgstr "Abfall"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:11
 msgid "Show/Hide items with default ACLs"
-msgstr ""
+msgstr "Items mit Default-ACLs anzeigen/verstecken"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:16
 #: src/moin/items/__init__.py:261
-#, fuzzy
 msgid "ACL"
-msgstr "Abbrechen"
+msgstr "ACL"
 
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:29
 #: src/moin/apps/frontend/views.py:1868 src/moin/apps/frontend/views.py:1877
@@ -417,9 +405,8 @@ msgid "Save"
 msgstr "Speichern"
 
 #: src/moin/apps/admin/templates/admin/trash.html:12
-#, fuzzy
 msgid "Old Name"
-msgstr "älter"
+msgstr "Alter Name"
 
 #: src/moin/apps/admin/templates/admin/trash.html:13
 #: src/moin/templates/history.html:57 src/moin/templates/mychanges.html:36
@@ -468,9 +455,8 @@ msgid "Destroy"
 msgstr "Vernichten"
 
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:5
-#, fuzzy
 msgid "User Names"
-msgstr "Benutzername"
+msgstr "Benutzer-Namen"
 
 #: src/moin/apps/admin/templates/admin/userbrowser.html:7
 msgid "User name"
@@ -502,7 +488,7 @@ msgstr "Account-Daten zusenden"
 
 #: src/moin/apps/admin/templates/admin/userbrowser.html:38
 msgid "User ACL Info"
-msgstr ""
+msgstr "Benutzer-ACL-Info"
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:7
 #: src/moin/apps/admin/templates/admin/wikiconfighelp.html:13
@@ -510,9 +496,8 @@ msgid "Variable Name"
 msgstr "Variablenname"
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:51
-#, fuzzy
 msgid "Customized Configuration Settings"
-msgstr "Benachrichtigungseinstellungen"
+msgstr "Angepasste Konfigurations-Einstellungen"
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:53
 msgid ""
@@ -531,9 +516,8 @@ msgid "Setting"
 msgstr "Einstellung"
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:62
-#, fuzzy
 msgid "Default configuration Settings"
-msgstr "Navigationseinstellungen"
+msgstr "Default Konfigurations-Einstellungen"
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:64
 msgid ""
@@ -568,9 +552,8 @@ msgid "Documentation (local)"
 msgstr "Dokumentation (lokal)"
 
 #: src/moin/apps/admin/templates/user/index_user.html:8
-#, fuzzy
 msgid "Reports"
-msgstr "Wiederherstellen"
+msgstr "Berichte"
 
 #: src/moin/apps/admin/templates/user/index_user.html:11
 #: src/moin/apps/admin/templates/user/index_user.html:13
@@ -605,18 +588,16 @@ msgstr ""
 
 #: src/moin/apps/admin/templates/user/index_user.html:23
 #: src/moin/templates/index.html:106
-#, fuzzy
 msgid "all"
-msgstr "Alle"
+msgstr "alle"
 
 #: src/moin/apps/feed/views.py:84
 msgid "MoinMoin feels unhappy."
 msgstr "MoinMoin ist unglücklich."
 
 #: src/moin/apps/frontend/views.py:154
-#, fuzzy
 msgid "Global Views"
-msgstr "Globale Historie"
+msgstr "Globale Ansichten"
 
 #: src/moin/apps/frontend/views.py:170
 msgid "search also in non-current revisions"
@@ -638,9 +619,8 @@ msgid "Items with %(field)s %(value)s"
 msgstr ""
 
 #: src/moin/apps/frontend/views.py:615
-#, fuzzy
 msgid "New Content Type"
-msgstr "Content-Type"
+msgstr "Neuer Content-Type"
 
 #: src/moin/apps/frontend/views.py:619 src/moin/items/__init__.py:209
 msgid "Comment about your change"
@@ -676,14 +656,14 @@ msgid "Global Index of All Namespaces"
 msgstr ""
 
 #: src/moin/apps/frontend/views.py:1095
-#, fuzzy, python-format
+#, python-format
 msgid "Namespace '%(name)s' "
-msgstr "'%(item_name)s' umbenennen"
+msgstr "Namespace '%(name)s' "
 
 #: src/moin/apps/frontend/views.py:1098
-#, fuzzy, python-format
+#, python-format
 msgid "subitems '%(item_name)s'"
-msgstr "Liste der Subitems von '%(item_name)s'"
+msgstr "Subitems '%(item_name)s'"
 
 #: src/moin/apps/frontend/views.py:1099
 #, python-format
@@ -691,9 +671,9 @@ msgid "Index of %(what)s"
 msgstr ""
 
 #: src/moin/apps/frontend/views.py:1101
-#, fuzzy, python-format
+#, python-format
 msgid "Index of subitems '%(item_name)s'"
-msgstr "Liste der Subitems von '%(item_name)s'"
+msgstr "Index der Subitems '%(item_name)s'"
 
 #: src/moin/apps/frontend/views.py:1103 src/moin/config/default.py:354
 #: src/moin/templates/index.html:135
@@ -701,9 +681,9 @@ msgid "Global Index"
 msgstr "Globaler Index"
 
 #: src/moin/apps/frontend/views.py:1188
-#, fuzzy, python-format
+#, python-format
 msgid "Items that are referred by '%(item_name)s'"
-msgstr "Items, die auf '%(item_name)s' verweisen"
+msgstr "Items, auf die von '%(item_name)s' verweisen wird"
 
 #: src/moin/apps/frontend/views.py:1230
 #, python-format
@@ -748,11 +728,9 @@ msgid ""
 msgstr ""
 
 #: src/moin/apps/frontend/views.py:1445
-#, fuzzy
 msgid "Please edit the subscription in your settings."
 msgstr ""
-"Bitte bearbeiten Sie die zu den Abonnements gehörenden regulären "
-"Ausdrücke in Ihren Einstellungen."
+"Bitte bearbeiten Sie das Abonnements in Ihren Einstellungen."
 
 #: src/moin/apps/frontend/views.py:1450
 msgid "You could not get subscribed to this item."
@@ -764,12 +742,10 @@ msgid "The passwords do not match."
 msgstr "Die Passwörter stimmen nicht überein."
 
 #: src/moin/apps/frontend/views.py:1475 src/moin/apps/frontend/views.py:1758
-#, fuzzy
 msgid "Username"
 msgstr "Benutzername"
 
 #: src/moin/apps/frontend/views.py:1475
-#, fuzzy
 msgid "The login username you want to use"
 msgstr "Der Anmelde-Name, den Sie benutzen wollen"
 
@@ -811,7 +787,6 @@ msgid "Account created, please log in now."
 msgstr "Das Benutzerkonto wurde erstellt. Bitte melden Sie sich an."
 
 #: src/moin/apps/frontend/views.py:1587
-#, fuzzy
 msgid "This email is already in use."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 
@@ -820,9 +795,8 @@ msgid "Your account has been activated, you can log in now."
 msgstr "Ihr Account wurde aktiviert, Sie können sich jetzt anmelden."
 
 #: src/moin/apps/frontend/views.py:1593
-#, fuzzy
 msgid "Your new email address has been confirmed."
-msgstr "Bitte geben Sie Ihren Benutzernamen oder Ihre E-Mail-Adresse an."
+msgstr "Ihre neue E-Mail-Adresse wurde bestätigt."
 
 #: src/moin/apps/frontend/views.py:1599
 msgid "Your username and/or token is invalid!"
@@ -904,9 +878,8 @@ msgid "Log in"
 msgstr "Anmelden"
 
 #: src/moin/apps/frontend/views.py:1773
-#, fuzzy
 msgid "You are logged in."
-msgstr "Sie sind jetzt abgemeldet."
+msgstr "Sie sind jetzt angemeldet."
 
 #: src/moin/apps/frontend/views.py:1777 src/moin/templates/utils.html:458
 #: src/moin/themes/basic/templates/layout.html:172
@@ -914,7 +887,6 @@ msgid "Login"
 msgstr "Anmelden"
 
 #: src/moin/apps/frontend/views.py:1812
-#, fuzzy
 msgid "You are logged out."
 msgstr "Sie sind jetzt abgemeldet."
 
@@ -923,9 +895,9 @@ msgid "The current password was wrong."
 msgstr "Das aktuelle Passwort war nicht korrekt."
 
 #: src/moin/apps/frontend/views.py:1828
-#, fuzzy, python-format
+#, python-format
 msgid "New password not acceptable: "
-msgstr "Dieses Passwort ist nicht ausreichend: %(msg)s"
+msgstr "Neues Passwort ist nicht akzeptabel: "
 
 #: src/moin/apps/frontend/views.py:1856
 msgid "Current Password"
@@ -974,12 +946,10 @@ msgid "User Settings"
 msgstr "Benutzer-Einstellungen"
 
 #: src/moin/apps/frontend/views.py:1943
-#, fuzzy
 msgid "Usernames"
-msgstr "Benutzername"
+msgstr "Benutzernamen"
 
 #: src/moin/apps/frontend/views.py:1943
-#, fuzzy
 msgid "The login usernames you want to use"
 msgstr "Die Anmelde-Namen, die Sie benutzen wollen"
 
@@ -1036,9 +1006,9 @@ msgid "This openid is already in use."
 msgstr "Diese OpenID wird bereits verwendet."
 
 #: src/moin/apps/frontend/views.py:2021
-#, fuzzy, python-format
+#, python-format
 msgid "The username '%(name)s' is already in use."
-msgstr "Der Benutzername %(name)r wird bereits verwendet."
+msgstr "Der Benutzername %(name)s wird bereits verwendet."
 
 #: src/moin/apps/frontend/views.py:2028
 msgid "This email is already in use"
@@ -1058,9 +1028,8 @@ msgstr ""
 "erneut."
 
 #: src/moin/apps/frontend/views.py:2057
-#, fuzzy
 msgid "Nothing saved."
-msgstr "Es wurde nichts selektiert."
+msgstr "Nichts gespeichert."
 
 #: src/moin/apps/frontend/views.py:2060
 msgid "Your changes have been saved."
@@ -1076,18 +1045,17 @@ msgid "Items with similar names to '%(item_name)s'"
 msgstr "Items mit ähnlichen Namen wie '%(item_name)s'"
 
 #: src/moin/apps/frontend/views.py:2517 src/moin/apps/frontend/views.py:2524
-#, fuzzy
 msgid "Global Tags"
-msgstr "Globaler Schlagwort-Index"
+msgstr "Globale Tags"
 
 #: src/moin/apps/frontend/views.py:2526
 msgid "Global Tags in All Namespaces"
-msgstr ""
+msgstr "Globale Tags in allen Namespaces"
 
 #: src/moin/apps/frontend/views.py:2528
 #, python-format
 msgid "Tags in Namespace '%(namespace)s'"
-msgstr ""
+msgstr "Tags im Namespace '%(namespace)s'"
 
 #: src/moin/apps/frontend/views.py:2575
 #, python-format
@@ -1229,9 +1197,8 @@ msgid "Subitems"
 msgstr "Untergeordnete Items"
 
 #: src/moin/config/default.py:391
-#, fuzzy
 msgid "Subitems Index"
-msgstr "Untergeordnete Items"
+msgstr "Index der untergeordneten Items"
 
 #: src/moin/config/default.py:392 src/moin/templates/ticket/modify.html:23
 msgid "Comments"
@@ -1282,14 +1249,12 @@ msgid "Rename this item"
 msgstr "Dieses Item umbenennen"
 
 #: src/moin/config/default.py:399
-#, fuzzy
 msgid "Convert"
-msgstr "Wiederherstellen"
+msgstr "Konvertieren"
 
 #: src/moin/config/default.py:399
-#, fuzzy
 msgid "Convert this item"
-msgstr "Dieses Item löschen"
+msgstr "Dieses Item konvertieren"
 
 #: src/moin/config/default.py:400 src/moin/templates/index.html:72
 msgid "Delete"
@@ -1490,13 +1455,12 @@ msgid "Wiki item"
 msgstr "Wiki-Item"
 
 #: src/moin/items/__init__.py:938
-#, fuzzy
 msgid "You do not have permission to create the item named \"{name}\"."
-msgstr "Sie haben keine Lese-Berechtigung für dieses Item."
+msgstr "Sie haben nicht die Berechtigung, das Item \"{name}\" zu erzeugen."
 
 #: src/moin/items/__init__.py:1022
 msgid "User profile"
-msgstr ""
+msgstr "Benutzer-Profil"
 
 #: src/moin/items/__init__.py:1023
 msgid "User profile item (not implemented yet!)"
@@ -1576,9 +1540,8 @@ msgid "Clickable drawing: %(filename)s"
 msgstr "Anklickbare Zeichnung: %(filename)s"
 
 #: src/moin/items/ticket.py:100
-#, fuzzy
 msgid "Find Tickets"
-msgstr "Ticket aktualisieren"
+msgstr "Tickets finden"
 
 #: src/moin/items/ticket.py:101 src/moin/items/ticket.py:112
 #: src/moin/templates/ticket/advanced.html:24
@@ -1613,9 +1576,8 @@ msgid "Author"
 msgstr ""
 
 #: src/moin/items/ticket.py:111
-#, fuzzy
 msgid "One-line summary"
-msgstr "Einzeilige Zusammenfassung dieses Items"
+msgstr "Einzeilige Zusammenfassung"
 
 #: src/moin/items/ticket.py:118
 msgid "Superseded By"
@@ -1686,19 +1648,16 @@ msgid "GetVal: dict not found: "
 msgstr ""
 
 #: src/moin/macro/HighlighterList.py:19
-#, fuzzy
 msgid "Lexer Name"
-msgstr "Lexer-Namen"
+msgstr "Lexer-Name"
 
 #: src/moin/macro/HighlighterList.py:20
-#, fuzzy
 msgid "Lexer Aliases"
-msgstr "Lexer-Namen"
+msgstr "Lexer-Alias-Namen"
 
 #: src/moin/macro/HighlighterList.py:21
-#, fuzzy
 msgid "File Patterns"
-msgstr "Dateitypen"
+msgstr "Datei-Muster"
 
 #: src/moin/macro/Icon.py:27 src/moin/macro/ShowIcons.py:35
 msgid "Icon not rendered, verify name is valid"
@@ -1713,9 +1672,8 @@ msgid "Markup"
 msgstr ""
 
 #: src/moin/macro/ShowIcons.py:29
-#, fuzzy
 msgid "Result"
-msgstr "Keine Ergebnisse"
+msgstr "Ergebnis"
 
 #: src/moin/mail/sendmail.py:96
 msgid ""
@@ -1750,9 +1708,8 @@ msgid "Search"
 msgstr "Suche"
 
 #: src/moin/templates/404.html:12
-#, fuzzy
 msgid "Not Found"
-msgstr "Item nicht gefunden"
+msgstr "Nicht gefunden"
 
 #: src/moin/templates/404.html:16
 #, python-format
@@ -1768,9 +1725,9 @@ msgid "Please check these tickets if they cover your issue:"
 msgstr ""
 
 #: src/moin/templates/ajaxsearch.html:14
-#, fuzzy, python-format
+#, python-format
 msgid "%(summary)s"
-msgstr "Zusammenfassung: %(summary)s"
+msgstr "%(summary)s"
 
 #: src/moin/templates/ajaxsearch.html:24
 #, python-format
@@ -1788,14 +1745,14 @@ msgid " %(termlist)s"
 msgstr ""
 
 #: src/moin/templates/ajaxsearch.html:31
-#, fuzzy, python-format
+#, python-format
 msgid "Name term suggestions : "
-msgstr "Vorschläge für Namens-Terme: %(termlist)s"
+msgstr "Vorschläge für Namens-Terme : "
 
 #: src/moin/templates/ajaxsearch.html:32
-#, fuzzy, python-format
+#, python-format
 msgid "Content term suggestions : "
-msgstr "Vorschläge für Inhalts-Terme: %(termlist)s"
+msgstr "Vorschläge für Inhalts-Terme : "
 
 #: src/moin/templates/ajaxsearch.html:36
 #, python-format
@@ -1814,9 +1771,9 @@ msgid "Summary: %(summary)s"
 msgstr "Zusammenfassung: %(summary)s"
 
 #: src/moin/templates/ajaxsearch.html:71
-#, fuzzy, python-format
+#, python-format
 msgid "Revision: %(revid)s - %(size)s - %(mtime)s - %(type)s"
-msgstr "Revision: %(revid)s Letzte Änderung: %(mtime)s"
+msgstr "Revision: %(revid)s - %(size)s - %(mtime)s - %(type)s"
 
 #: src/moin/templates/ajaxsearch.html:79
 msgid "You don't have read permission for this item."
@@ -1827,13 +1784,13 @@ msgid "Global Views of All Namespaces"
 msgstr ""
 
 #: src/moin/templates/convert.html:9
-#, fuzzy, python-format
+#, python-format
 msgid "Convert '%(item_name)s'"
-msgstr "Ticket: '%(item_name)s'"
+msgstr "Konvertiere '%(item_name)s'"
 
 #: src/moin/templates/crash.html:1
 msgid "Oops!"
-msgstr ""
+msgstr "Hoppla!"
 
 #: src/moin/templates/crash.html:3
 msgid "An error happened while processing your request."
@@ -1854,14 +1811,12 @@ msgid "Server time"
 msgstr "Server-Zeit"
 
 #: src/moin/templates/crash.html:16
-#, fuzzy
 msgid "Old Revision"
-msgstr "keine älteren Revisionen"
+msgstr "Alte Revision"
 
 #: src/moin/templates/crash.html:18
-#, fuzzy
 msgid "New Revision"
-msgstr "keine neueren Revisionen"
+msgstr "Neue Revision"
 
 #: src/moin/templates/crash.html:23
 msgid ""
@@ -1913,17 +1868,14 @@ msgid ""
 msgstr ""
 
 #: src/moin/templates/crash.html:48
-#, fuzzy
 msgid "Delete the item."
-msgstr "Dieses Item löschen"
+msgstr "Das Item löschen."
 
 #: src/moin/templates/crash.html:49
-#, fuzzy
 msgid "Recreate the item."
-msgstr "Neues Item erstellen"
+msgstr "Das Item wieder herstellen."
 
 #: src/moin/templates/create_new_item.html:11
-#, fuzzy
 msgid "Create New Item"
 msgstr "Neues Item erstellen"
 
@@ -2003,12 +1955,11 @@ msgid "Syntax highlighting of '%(name)s'"
 msgstr "Syntax-Hervorhebung von '%(name)s'"
 
 #: src/moin/templates/history.html:12
-#, fuzzy, python-format
+#, python-format
 msgid "History of '%(fqname)s'"
-msgstr "Historie von '%(item_name)s'"
+msgstr "Historie von '%(fqname)s'"
 
 #: src/moin/templates/history.html:22
-#, fuzzy
 msgid "Item Name"
 msgstr "Item-Name"
 
@@ -2021,12 +1972,10 @@ msgid "Next"
 msgstr "Nachfolgende"
 
 #: src/moin/templates/history.html:54
-#, fuzzy
 msgid "ID or Name"
-msgstr "Benutzername"
+msgstr "ID oder Name"
 
 #: src/moin/templates/history.html:62
-#, fuzzy
 msgid "Content Type"
 msgstr "Content-Type"
 
@@ -2043,23 +1992,20 @@ msgid "download"
 msgstr "Herunterladen"
 
 #: src/moin/templates/history.html:124
-#, fuzzy
 msgid "delete item"
-msgstr "Dieses Item löschen"
+msgstr "Item löschen"
 
 #: src/moin/templates/history.html:132
 msgid "revert"
 msgstr "Wiederherstellen"
 
 #: src/moin/templates/history.html:144
-#, fuzzy
 msgid "destroy all revisions"
-msgstr "alle Revisionen durchsuchen"
+msgstr "alle Revisionen zerstören"
 
 #: src/moin/templates/history.html:150
-#, fuzzy
 msgid "destroy this revision"
-msgstr "keine älteren Revisionen"
+msgstr "zerstöre diese Revision"
 
 #: src/moin/templates/index.html:28
 msgid "This item has subitems that match your filter."
@@ -2096,7 +2042,6 @@ msgid "Namespace"
 msgstr ""
 
 #: src/moin/templates/index.html:98
-#, fuzzy
 msgid "New Item"
 msgstr "Neues Item"
 
@@ -2119,9 +2064,8 @@ msgid "Recently uploaded items"
 msgstr "Kürzlich hochgeladene Items"
 
 #: src/moin/templates/index.html:162 src/moin/templates/index.html:167
-#, fuzzy
 msgid "Show All"
-msgstr "Anzeigen"
+msgstr "Alle anzeigen"
 
 #: src/moin/templates/index.html:190 src/moin/templates/index.html:203
 msgid "X"
@@ -2163,9 +2107,8 @@ msgstr ""
 
 #: src/moin/templates/itemviews.html:20
 #: src/moin/templates/ticket/ticket_macros.html:97
-#, fuzzy
 msgid "Item Views"
-msgstr "Item-Größen"
+msgstr "Item-Ansichten"
 
 #: src/moin/templates/itemviews.html:73 src/moin/templates/ticket/base.html:26
 #: src/moin/templates/ticket/ticket_macros.html:101
@@ -2197,9 +2140,8 @@ msgstr ""
 
 #: src/moin/templates/layout.html:41
 #: src/moin/themes/topside/templates/layout.html:38
-#, fuzzy
 msgid "Navigation"
-msgstr "Navigationseinstellungen"
+msgstr "Navigation"
 
 #: src/moin/templates/login.html:9
 msgid "Moin login"
@@ -2233,9 +2175,8 @@ msgid "Modifying '%(item_name)s'"
 msgstr "'%(item_name)s' bearbeiten"
 
 #: src/moin/templates/modify.html:26
-#, fuzzy
 msgid "Insert Name"
-msgstr "Benutzername"
+msgstr "Name einfügen"
 
 #: src/moin/templates/modify_anywikidraw.html:17
 #: src/moin/templates/modify_twikidraw.html:12
@@ -2262,13 +2203,13 @@ msgid "Item not found, create it now?"
 msgstr "Item nicht gefunden, jetzt neu erzeugen?"
 
 #: src/moin/templates/modify_select_itemtype.html:5
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Item '%(fqname)s' does not exist (yet), but you can try creating it now. "
 "Please select the type of the item you want to create."
 msgstr ""
-"Item '%(name)s' existiert (noch) nicht, aber Sie können es jetzt "
-"erstellen. Bitte wählen Sie die Art des Items, das Sie erstellen wollen, "
+"Item '%(fqname)s' existiert (noch) nicht, aber Sie können versuchen, es jetzt "
+"zu erstellen. Bitte wählen Sie die Art des Items, das Sie erstellen wollen, "
 "aus."
 
 #: src/moin/templates/modify_select_template.html:5
@@ -2291,9 +2232,8 @@ msgstr ""
 
 #: src/moin/templates/mychanges.html:32 src/moin/templates/utils.html:473
 #: src/moin/templates/utils.html:477
-#, fuzzy
 msgid "Diff"
-msgstr "Bearbeiten"
+msgstr "Diff"
 
 #: src/moin/templates/mychanges.html:33
 msgid "Name or ID ~ Old Name"
@@ -2313,9 +2253,9 @@ msgid "Rename '%(item_name)s'"
 msgstr "'%(item_name)s' umbenennen"
 
 #: src/moin/templates/revert.html:5
-#, fuzzy, python-format
+#, python-format
 msgid "Revert '%(new_names)s'"
-msgstr "'%(item_name)s' löschen"
+msgstr "'%(new_name)s' wieder herstellen"
 
 #: src/moin/templates/revert.html:15
 msgid "Meta data of item to be reverted:"
@@ -2340,13 +2280,12 @@ msgid "SiteMap of '%(item_name)s'"
 msgstr "Sitemap von '%(item_name)s'"
 
 #: src/moin/templates/sitemap.html:34
-#, fuzzy
 msgid "Outgoing"
-msgstr "Anmelden"
+msgstr "Ausgehend"
 
 #: src/moin/templates/sitemap.html:36
 msgid "Incoming"
-msgstr ""
+msgstr "Eingehend"
 
 #: src/moin/templates/snippets.html:80
 msgid "modified"
@@ -2357,19 +2296,16 @@ msgid "by"
 msgstr "von"
 
 #: src/moin/templates/snippets.html:83
-#, fuzzy
 msgid "tags:"
 msgstr "Tags:"
 
 #: src/moin/templates/tickets.html:5 src/moin/templates/tickets.html:8
-#, fuzzy
 msgid "Tickets"
-msgstr "Ticket"
+msgstr "Tickets"
 
 #: src/moin/templates/tickets.html:11
-#, fuzzy
 msgid "Filter:"
-msgstr "Filter"
+msgstr "Filter:"
 
 #: src/moin/templates/tickets.html:16
 #, python-format
@@ -2386,37 +2322,34 @@ msgid "Advanced Search"
 msgstr ""
 
 #: src/moin/templates/tickets.html:26
-#, fuzzy
 msgid "Find tickets"
-msgstr "Ticket aktualisieren"
+msgstr "Tickets finden"
 
 #: src/moin/templates/tickets.html:31
-#, fuzzy
 msgid "Create ticket"
-msgstr "Ticket aktualisieren"
+msgstr "Ticket erzeugen"
 
 #: src/moin/templates/blog/utils.html:29 src/moin/templates/tickets.html:36
 msgid "Tags:"
 msgstr "Tags:"
 
 #: src/moin/templates/tickets.html:50
-#, fuzzy, python-format
+#, python-format
 msgid "%(result_len)d Tickets found."
-msgstr "%(result_len)d Ergebnisse gefunden (%(runtime).3f Sekunden)."
+msgstr "%(result_len)d Tickets gefunden."
 
 #: src/moin/templates/ticket/advanced.html:21
 #: src/moin/templates/tickets.html:55
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/moin/templates/ticket/advanced.html:22
 #: src/moin/templates/tickets.html:56
 msgid "Updated"
-msgstr ""
+msgstr "Aktualisiert"
 
 #: src/moin/templates/ticket/advanced.html:23
 #: src/moin/templates/tickets.html:57
-#, fuzzy
 msgid "Assignee"
 msgstr "Zugewiesen an"
 
@@ -2429,15 +2362,13 @@ msgstr ""
 
 #: src/moin/templates/ticket/advanced.html:45
 #: src/moin/templates/tickets.html:74
-#, fuzzy
 msgid "Closed"
-msgstr "Schliessen"
+msgstr "Geschlossen"
 
 #: src/moin/templates/ticket/advanced.html:45
 #: src/moin/templates/tickets.html:74
-#, fuzzy
 msgid "Open"
-msgstr "OpenID"
+msgstr "Offen"
 
 #: src/moin/templates/tickets.html:107
 msgid ""
@@ -2485,25 +2416,24 @@ msgid "Other types of links, such as mailto: may be added"
 msgstr ""
 
 #: src/moin/templates/usersettings_forms.html:89
-#, fuzzy
 msgid "MyItemName"
-msgstr "Item-Name"
+msgstr "MeinItemName"
 
 #: src/moin/templates/usersettings_forms.html:90
 msgid "MyTagName"
-msgstr ""
+msgstr "MeinTagName"
 
 #: src/moin/templates/usersettings_forms.html:91
 msgid "MyNameSpace"
-msgstr ""
+msgstr "MeinNameSpace"
 
 #: src/moin/templates/usersettings_forms.html:92
 msgid "My"
-msgstr ""
+msgstr "Mein"
 
 #: src/moin/templates/usersettings_forms.html:93
 msgid "item id"
-msgstr ""
+msgstr "Item-ID"
 
 #: src/moin/templates/usersettings_forms.html:100
 msgid "Formats for entering subscriptions:"
@@ -2522,9 +2452,8 @@ msgid "Change Password"
 msgstr "Passwort ändern"
 
 #: src/moin/templates/usersettings_forms.html:129
-#, fuzzy
 msgid "Notifications"
-msgstr "Benachrichtigungseinstellungen"
+msgstr "Benachrichtigungen"
 
 #: src/moin/templates/usersettings_forms.html:133
 msgid "Options"
@@ -2544,9 +2473,8 @@ msgid "no older revision"
 msgstr "keine älteren Revisionen"
 
 #: src/moin/templates/utils.html:19
-#, fuzzy
 msgid "Revision "
-msgstr "Revision"
+msgstr "Revision "
 
 #: src/moin/templates/utils.html:26 src/moin/templates/utils.html:334
 #: src/moin/templates/utils.html:366
@@ -2566,14 +2494,12 @@ msgid "Page Trail"
 msgstr ""
 
 #: src/moin/templates/utils.html:339
-#, fuzzy
 msgid "newest"
-msgstr "neuer"
+msgstr "neueste"
 
 #: src/moin/templates/utils.html:350
-#, fuzzy
 msgid "oldest"
-msgstr "älter"
+msgstr "älteste"
 
 #: src/moin/templates/utils.html:403
 msgid "Time"
@@ -2592,18 +2518,16 @@ msgid "Logout"
 msgstr "Abmelden"
 
 #: src/moin/templates/utils.html:469 src/moin/templates/utils.html:485
-#, fuzzy
 msgid "Deleted item"
-msgstr "Dieses Item löschen"
+msgstr "Gelöschtes Item"
 
 #: src/moin/templates/utils.html:481
 msgid "New item"
 msgstr "Neues Item"
 
 #: src/moin/templates/blog/layout.html:37
-#, fuzzy
 msgid "Create Blog entry"
-msgstr "Blog-Eintrag"
+msgstr "Blog-Eintrag erzeugen"
 
 #: src/moin/templates/blog/main.html:4
 msgid "There are no entries in this blog."
@@ -2643,14 +2567,12 @@ msgid "Item link:"
 msgstr ""
 
 #: src/moin/templates/mail/notification_main.html:30
-#, fuzzy
 msgid "Content"
-msgstr "Inhaltsverzeichnis"
+msgstr "Inhalt"
 
 #: src/moin/templates/mail/notification_main.html:34
 #: src/moin/templates/ticket/modify.html:48
 #: src/moin/templates/ticket/submit.html:32
-#, fuzzy
 msgid "Metadata"
 msgstr "Metadaten"
 
@@ -2673,19 +2595,16 @@ msgstr ""
 
 #: src/moin/templates/ticket/base.html:17
 #: src/moin/themes/basic/templates/show.html:80
-#, fuzzy
 msgid "User Actions"
-msgstr "Benutzer-Einstellungen"
+msgstr "Benutzer-Aktionen"
 
 #: src/moin/templates/ticket/base.html:44
-#, fuzzy
 msgid "Closed:"
-msgstr "Schliessen"
+msgstr "Geschlossen:"
 
 #: src/moin/templates/ticket/modify.html:29
-#, fuzzy
 msgid "Add Comment"
-msgstr "Kommentare verstecken"
+msgstr "Kommentar hinzufügen"
 
 #: src/moin/templates/ticket/modify.html:63
 #: src/moin/templates/ticket/submit.html:39
@@ -2693,24 +2612,20 @@ msgid "Suggested Tags: "
 msgstr ""
 
 #: src/moin/templates/ticket/modify.html:76
-#, fuzzy
 msgid "Back references"
-msgstr "Ungültige Referenz."
+msgstr "Rückwärts-Referenzen"
 
 #: src/moin/templates/ticket/modify.html:84
-#, fuzzy
 msgid "Files"
-msgstr "Titel"
+msgstr "Dateien"
 
 #: src/moin/templates/ticket/submit.html:9
-#, fuzzy
 msgid "Create new ticket"
-msgstr "Neues Item erstellen"
+msgstr "Neues Ticket erstellen"
 
 #: src/moin/templates/ticket/submit.html:23
-#, fuzzy
 msgid "Describe the ticket"
-msgstr "Ticket aktualisieren"
+msgstr "Ticket beschreiben"
 
 #: src/moin/themes/__init__.py:61
 msgid "Access Denied"
@@ -2729,14 +2644,12 @@ msgid "Site Navigation"
 msgstr ""
 
 #: src/moin/themes/basic/templates/show.html:54
-#, fuzzy
 msgid "View Options"
-msgstr "Optionen"
+msgstr "Anzeige-Optionenen"
 
 #: src/moin/themes/basic/templates/show.html:92
-#, fuzzy
 msgid "Item Actions"
-msgstr "Aktionen"
+msgstr "Item-Aktionen"
 
 #: src/moin/util/notifications.py:49
 #, python-format
