@@ -5,8 +5,6 @@
 
 """
 MoinMoin - Tests for markdown->DOM->markdown using markdown_in and markdown_out converters
-
-TODO: Failing tests are commented out and need to be fixed.
 """
 
 import pytest
@@ -15,7 +13,7 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.util.tree import moin_page, xlink, xinclude, html, xml
 from moin.converter.markdown_in import Converter as conv_in
 from moin.converter.markdown_out import Converter as conv_out
 
@@ -30,7 +28,9 @@ class TestConverter(object):
         xlink.namespace: 'xlink',
         xinclude.namespace: 'xinclude',
         html.namespace: 'html',
+        xml.namespace: 'xml',
     }
+
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
@@ -60,12 +60,11 @@ class TestConverter(object):
     def test_base(self, input, output):
         self.do(input, output)
 
-    # TODO: these tests cause: ParseError: unbound prefix: line 1, column 263
     data = [
-        # (u"level 1\n=======\n", '# level 1 #\n'),
-        # (u"# level 1 #\n", '# level 1 #\n'),
-        # (u"## level 2 ##\n", '## level 2 ##\n'),
-        # (u"## level 2\n", '## level 2 ##\n'),
+        (u"level 1\n=======\n", '# level 1 #\n'),
+        (u"# level 1 #\n", '# level 1 #\n'),
+        (u"## level 2 ##\n", '## level 2 ##\n'),
+        (u"## level 2\n", '## level 2 ##\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
