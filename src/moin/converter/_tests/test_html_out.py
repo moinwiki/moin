@@ -6,8 +6,6 @@
 MoinMoin - Tests for moin.converter.html_out
 """
 
-
-import re
 from io import StringIO
 
 import pytest
@@ -16,7 +14,7 @@ etree = pytest.importorskip('lxml.etree')  # noqa
 
 from emeraldtree import ElementTree as ET
 
-from . import serialize, XMLNS_RE
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
 from moin.util.tree import html, moin_page, xml, xlink
 from moin.converter.html_out import Converter, ConverterPage, ElementException
@@ -33,7 +31,7 @@ class Base(object):
         xml.namespace: 'xml',
     }
 
-    input_re = re.compile(r'^(<[a-z:]+)')
+    input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
     def handle_input(self, input):

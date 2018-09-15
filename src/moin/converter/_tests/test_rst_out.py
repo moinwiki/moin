@@ -5,14 +5,11 @@
 MoinMoin - Tests for moin.converter.rst_out
 """
 
-
-import re
-
 import pytest
 
 from emeraldtree import ElementTree as ET
 
-from . import XMLNS_RE
+from . import XMLNS_RE, TAGSTART_RE
 
 from moin.util.tree import moin_page, xlink
 from moin.converter.rst_out import Converter
@@ -24,7 +21,7 @@ class Base(object):
         moin_page.namespace: 'page'
     }
 
-    input_re = re.compile(r'^(<[a-z:]+)')
+    input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
     def handle_input(self, input):

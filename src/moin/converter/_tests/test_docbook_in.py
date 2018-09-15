@@ -6,15 +6,13 @@
 MoinMoin - Tests for moin.converter.docbook_in
 """
 
-
-import re
 from io import StringIO
 
 import pytest
 
 etree = pytest.importorskip('lxml.etree')  # noqa
 
-from . import serialize, XMLNS_RE3
+from . import serialize, XMLNS_RE3, TAGSTART_RE
 
 from moin.util.tree import html, moin_page, xlink, xml, docbook
 from moin.converter.docbook_in import Converter
@@ -37,7 +35,7 @@ class Base(object):
                         'html': html.namespace
                        }
 
-    input_re = re.compile(r'^(<[a-z:]+)')
+    input_re = TAGSTART_RE
     output_re = XMLNS_RE3
 
     def handle_input(self, input):

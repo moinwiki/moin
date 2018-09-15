@@ -12,13 +12,11 @@ matter so long as moinwiki19_in is limited to CamelCase linking conversions.
 TODO: Merge this back into test_moinwiki_in_out.py.
 """
 
-
 import pytest
-import re
 
 from emeraldtree import ElementTree as ET
 
-from . import serialize, XMLNS_RE
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
@@ -36,7 +34,7 @@ class TestConverter(object):
         xinclude.namespace: 'xinclude',
         html.namespace: 'html',
     }
-    input_re = re.compile(r'^(<[a-z:]+)')
+    input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
     def setup_class(self):

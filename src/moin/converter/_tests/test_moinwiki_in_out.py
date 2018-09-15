@@ -10,13 +10,11 @@ It is merge of test_moinwiki_in and test_moinwiki_out, looks bad but works.
 TODO: Failing tests are commented out and need to be fixed.
 """
 
-
 import pytest
-import re
 
 from emeraldtree import ElementTree as ET
 
-from . import serialize, XMLNS_RE
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.converter.moinwiki_in import Converter as conv_in
@@ -34,7 +32,7 @@ class TestConverter(object):
         xinclude.namespace: 'xinclude',
         html.namespace: 'html',
     }
-    input_re = re.compile(r'^(<[a-z:]+)')
+    input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
     def setup_class(self):

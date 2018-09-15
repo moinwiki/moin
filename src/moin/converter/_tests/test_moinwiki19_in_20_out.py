@@ -12,15 +12,12 @@ This same conversion is used in the "moin import19 ..." command to convert depre
 Moin 1.9 markup to Moin 2.0 markup.
 """
 
-
 import pytest
 # TODO: failing tests are commented out and need to be fixed
 
-import re
-
 from emeraldtree import ElementTree as ET
 
-from . import serialize, XMLNS_RE
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
@@ -38,7 +35,7 @@ class TestConverter(object):
         xinclude.namespace: 'xinclude',
         html.namespace: 'html',
     }
-    input_re = re.compile(r'^(<[a-z:]+)')
+    input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
     def setup_class(self):

@@ -5,21 +5,19 @@
 MoinMoin - Tests for moin.converter.smiley
 """
 
-import re
-
 import pytest
 
 etree = pytest.importorskip('lxml.etree')  # noqa
 
 from moin.converter.smiley import Converter, moin_page, ET
-from . import serialize, XMLNS_RE3
+from . import serialize, XMLNS_RE3, TAGSTART_RE
 
 
 output_namespaces = {
     moin_page.namespace: '',
 }
 
-input_re = re.compile(r'^(<[a-z:]+)')
+input_re = TAGSTART_RE
 output_re = XMLNS_RE3
 
 
