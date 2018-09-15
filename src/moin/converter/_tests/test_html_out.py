@@ -276,15 +276,16 @@ class TestConverterPage(Base):
     def setup_class(self):
         self.conv = ConverterPage()
 
-    def test_note(self):
+    data = [
+        ('<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
+         # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">
+         '/div[p[text()="Text"]/sup[@id="note-1-ref"]/a[@href="#note-1"][text()="1"]][p[@id="note-1"][text()="Note"]/sup/a[@href="#note-1-ref"][text()="1"]]'),
+    ]
+
+    @pytest.mark.parametrize('input,xpath', data)
+    def test_note(self, input, xpath):
         pytest.skip("this test requires footnote plugin")  # XXX TODO
-        data = [
-            ('<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
-                # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">
-                '/div[p[text()="Text"]/sup[@id="note-1-ref"]/a[@href="#note-1"][text()="1"]][p[@id="note-1"][text()="Note"]/sup/a[@href="#note-1-ref"][text()="1"]]'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+        self.do(input, xpath)
 
     @pytest.mark.xfail
     def test_unknown(self):
