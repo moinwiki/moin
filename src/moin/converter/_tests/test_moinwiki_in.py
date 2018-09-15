@@ -61,7 +61,7 @@ class TestConverter(object):
         (u'{{http://moinmo.in/}}',
          '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'{{http://moinmo.in/|MoinMoin}}',
-         '<page><body><p><object alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>', None, 'namespace issue'),
+         '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'----',
          '<page><body><separator class="moin-hr1" /></body></page>'),
     ]
