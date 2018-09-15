@@ -289,8 +289,6 @@ continuation of no bullet list"""),
     def test_transclusions(self, input, output):
         self.do(input, output)
 
-
-
     data_input = u"""
 ||Markup||Display||Emotion   ||
 =====
