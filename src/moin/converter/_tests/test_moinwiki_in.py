@@ -8,9 +8,7 @@ MoinMoin - Tests for moin.converter.moinwiki_in
 
 import pytest
 
-import re
-
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.util.tree import moin_page, xlink, html, xinclude
 
@@ -26,7 +24,7 @@ class TestConverter(object):
         xinclude: 'xinclude',
     }
 
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = Converter()
@@ -63,7 +61,7 @@ class TestConverter(object):
         (u'{{http://moinmo.in/}}',
          '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'{{http://moinmo.in/|MoinMoin}}',
-         '<page><body><p><object alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>', None, 'namespace issue'),
+         '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'----',
          '<page><body><separator class="moin-hr1" /></body></page>'),
     ]

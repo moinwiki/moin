@@ -342,7 +342,7 @@ class Converter(object):
         nowiki_marker_len, all_nowiki_args, content = elem._children
         try:
             nowiki_args = all_nowiki_args[0]
-        except:
+        except IndexError:
             # this happens only with pytest, why wasn't open_moinpage_blockcode called?
             nowiki_args = ''
         nowiki_marker_len = int(nowiki_marker_len)

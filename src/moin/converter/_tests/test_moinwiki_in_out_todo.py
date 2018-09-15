@@ -9,29 +9,14 @@ MoinMoin - Tests for moinwiki->DOM->moinwiki using moinwiki19_in and moinwiki_ou
 The use of moinwiki19_in converter rather than moinwiki_in converter does not
 matter so long as moinwiki19_in is limited to CamelCase linking conversions.
 
-TODO: Merge this back into test_moinwiki_in_out.py after fixing re.sub problem.
-
-There are 10+ other test scripts that use:
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
-But this fails here because of embedded " characters in the test content.
-
-So:
-    <page:page xmlns:page="http://moinmo.in/namespaces/page"><page:body><page:nowiki>wiki@@style="color: green" @@This is wiki markup in a div with `style="color: green"`.</page:nowiki></page:body></page:page>
-Is converted to:
-    <page:page @@This is wiki markup in a div with `style="color: green"`.</page:nowiki></page:body></page:page>
-Resulting in:
-    ParseError: not well-formed (invalid token): line 1, column 232
-
-See commented-out code below for workaround.
+TODO: Merge this back into test_moinwiki_in_out.py.
 """
 
-
 import pytest
-import re
 
 from emeraldtree import ElementTree as ET
 
-from . import serialize
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
@@ -49,9 +34,8 @@ class TestConverter(object):
         xinclude.namespace: 'xinclude',
         html.namespace: 'html',
     }
-    input_re = re.compile(r'^(<[a-z:]+)')
-    # output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+">')
+    input_re = TAGSTART_RE
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv_in = conv_in()
@@ -91,8 +75,7 @@ class TestConverter(object):
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        # return self.output_re.sub(u'', result)
-        return self.output_re.sub(u'>', result)
+        return self.output_re.sub(u'', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:
