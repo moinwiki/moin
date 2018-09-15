@@ -12,6 +12,8 @@ import pytest
 
 from emeraldtree import ElementTree as ET
 
+from . import XMLNS_RE
+
 from moin.util.tree import moin_page, xlink
 from moin.converter.rst_out import Converter
 
@@ -23,7 +25,7 @@ class Base(object):
     }
 
     input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def handle_input(self, input):
         i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)

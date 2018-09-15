@@ -8,9 +8,7 @@ MoinMoin - Tests for moin.converter.moinwiki19_in
 
 import pytest
 
-import re
-
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.converter.moinwiki19_in import ConverterFormat19
 from moin.util.tree import moin_page, xlink, html, xinclude
@@ -24,7 +22,7 @@ class TestConverter(object):
         xinclude: 'xinclude',
     }
 
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = ConverterFormat19()

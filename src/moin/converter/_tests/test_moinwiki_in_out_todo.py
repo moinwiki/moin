@@ -18,7 +18,7 @@ import re
 
 from emeraldtree import ElementTree as ET
 
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
@@ -37,7 +37,7 @@ class TestConverter(object):
         html.namespace: 'html',
     }
     input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+?"')  # use non-greedy match for "..." part!
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv_in = conv_in()

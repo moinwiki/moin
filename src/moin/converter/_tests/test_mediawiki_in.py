@@ -6,11 +6,9 @@
 MoinMoin - Tests for moin.converter.mediawiki_in
 """
 
-import re
-
 import pytest
 
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.util.tree import moin_page, xlink
 from moin.converter.mediawiki_in import Converter
@@ -22,7 +20,7 @@ class TestConverter(object):
         xlink.namespace: 'xlink',
     }
 
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = Converter()

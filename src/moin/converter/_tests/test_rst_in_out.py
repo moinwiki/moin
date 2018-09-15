@@ -19,7 +19,7 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.util.iri import Iri
 from moin.util.tree import moin_page, xlink, xinclude, html
@@ -49,7 +49,7 @@ class TestConverter(object):
         html.namespace: 'html',
     }
     input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv_in = conv_in()

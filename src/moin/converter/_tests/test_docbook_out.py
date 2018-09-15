@@ -15,7 +15,7 @@ etree = pytest.importorskip('lxml.etree')  # noqa
 
 from emeraldtree import ElementTree as ET
 
-from . import serialize
+from . import serialize, XMLNS_RE3
 
 from moin.util.tree import html, moin_page, xlink, xml, docbook
 from moin.converter.docbook_out import Converter
@@ -38,7 +38,7 @@ class Base(object):
     }
 
     input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns="[^"]+"')
+    output_re = XMLNS_RE3
 
     def handle_input(self, input):
         i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)

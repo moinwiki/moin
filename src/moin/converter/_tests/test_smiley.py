@@ -12,7 +12,7 @@ import pytest
 etree = pytest.importorskip('lxml.etree')  # noqa
 
 from moin.converter.smiley import Converter, moin_page, ET
-from . import serialize
+from . import serialize, XMLNS_RE3
 
 
 output_namespaces = {
@@ -20,7 +20,7 @@ output_namespaces = {
 }
 
 input_re = re.compile(r'^(<[a-z:]+)')
-output_re = re.compile(r'\s+xmlns="[^"]+"')
+output_re = XMLNS_RE3
 
 
 def serialize_strip(elem, **options):

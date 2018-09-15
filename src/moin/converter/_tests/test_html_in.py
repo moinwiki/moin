@@ -13,7 +13,7 @@ import pytest
 
 etree = pytest.importorskip('lxml.etree')  # noqa
 
-from . import serialize
+from . import serialize, XMLNS_RE3
 
 from moin.util.tree import html, moin_page, xlink, xml
 from moin.converter.html_in import Converter
@@ -36,7 +36,7 @@ class Base(object):
         'xml': xml.namespace,
     }
 
-    output_re = re.compile(r'\s+xmlns="[^"]+"')
+    output_re = XMLNS_RE3
 
     def handle_input(self, input, args):
         out = self.conv(input, **args)
