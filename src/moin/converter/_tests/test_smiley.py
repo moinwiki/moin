@@ -9,7 +9,10 @@ import re
 
 import pytest
 
+etree = pytest.importorskip('lxml.etree')  # noqa
+
 from moin.converter.smiley import Converter, moin_page, ET
+from . import serialize
 
 
 output_namespaces = {
@@ -20,10 +23,9 @@ input_re = re.compile(r'^(<[a-z:]+)')
 output_re = re.compile(r'\s+xmlns="[^"]+"')
 
 
-def ET_to_string(elem, **options):
-    data = []
-    elem.write(data.append, namespaces=output_namespaces)
-    return output_re.sub(u'', ''.join(data))
+def serialize_strip(elem, **options):
+    result = serialize(elem, namespaces=output_namespaces, **options)
+    return output_re.sub(u'', result)
 
 
 @pytest.mark.parametrize('input,query', [
@@ -55,11 +57,10 @@ def ET_to_string(elem, **options):
      '/page/body/blockcode[text()=":-)"][strong=":-("]'),
 ])
 def test_smiley_convert(input, query):
-    etree = pytest.importorskip('lxml.etree')
     conv = Converter()
     print 'input:', input
     out_elem = conv(ET.XML(input))
-    after_conversion = ET_to_string(out_elem)
+    after_conversion = serialize_strip(out_elem)
     print 'output:', after_conversion
     print 'query:', query
     tree = etree.fromstring(after_conversion)
