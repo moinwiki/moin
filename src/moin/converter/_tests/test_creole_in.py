@@ -269,6 +269,9 @@ class TestConverter(object):
          '<page><body><p>Text</p><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table></body></page>'),
         (u'Text\n|Item\nText',
          '<page><body><p>Text</p><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
+        # TODO broken creole table parsing, see issue #386 - this is 1 table cell with some text and a link
+        # (u'| text [[http://localhost | link]] |',
+        #  '<page><body><table><table-body><table-row><table-cell>text <a xlink:href="http://localhost">link</a></table-cell></table-row></table-body></table></body></page>'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
