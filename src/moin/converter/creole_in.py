@@ -545,7 +545,8 @@ class Converter(ConverterMacro):
             \|
             \s*
             (?P<cell_head> [=] )?
-            (?P<cell_text> [^|]+ )
+            # a table cells may contain links (which may contain |) or characters that are not |
+            (?P<cell_text> (\[\[.*?\]\]|[^|])+ )
             \s*
         )
     """
