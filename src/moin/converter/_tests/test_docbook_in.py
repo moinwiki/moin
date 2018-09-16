@@ -230,7 +230,6 @@ class TestConverter(Base):
         '/page/body/div/table[./table-header/table-row[table-cell="a1"]][./table-footer/table-row[table-cell="f1"]][./table-body/table-row[table-cell/table/table-body/table-row[table-cell="s1"]]]'),
     ]
 
-    @pytest.mark.skip('broken, please fix')
     @pytest.mark.parametrize('input,xpath', data)
     def test_table(self, input, xpath):
         self.do(input, xpath)

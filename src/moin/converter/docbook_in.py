@@ -1008,7 +1008,7 @@ class Converter(object):
 
     def visit_docbook_entry(self, element, depth):
         """
-        <td> --> <table-cell>
+        <entry> --> <table-cell>
         """
         attrib = {}
         rowspan = element.get('morerows')
@@ -1020,6 +1020,20 @@ class Converter(object):
                 attrib[moin_page.number_columns_spanned] = unicode(1 + int(colspan))
         except ValueError:
             pass
+        return self.new_copy(moin_page.table_cell,
+                             element, depth, attrib=attrib)
+
+    def visit_docbook_td(self, element, depth):
+        """
+        <td> --> <table-cell>
+        """
+        attrib = {}
+        rowspan = element.get('rowspan')
+        colspan = element.get('colspan')
+        if rowspan:
+            attrib[moin_page.number_rows_spanned] = rowspan
+        if colspan:
+            attrib[moin_page.number_columns_spanned] = colspan
         return self.new_copy(moin_page.table_cell,
                              element, depth, attrib=attrib)
 
