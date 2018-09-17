@@ -93,12 +93,10 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"""{{{\ndef hello():\n    print "Hello World!"\n}}}""",
-         u"""{{{\ndef hello():\n    print "Hello World!"\n}}}"""),
-        (u"""{{{{\ndef hello():\n    print "Hello World!"\n}}}}""",
-         u"""{{{{\ndef hello():\n    print "Hello World!"\n}}}}"""),
-        (u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}""",
-         u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}"""),
+        (u'{{{\ndef hello():\n    print "Hello World!"\n}}}',
+         u'{{{\ndef hello():\n    print "Hello World!"\n}}}'),
+        (u'{{{{\ndef hello():\n    print "Hello World!"\n}}}}',
+         u'{{{{\ndef hello():\n    print "Hello World!"\n}}}}'),
         (u'{{{#!highlight python\ndef hello():\n    print "Hello World!"\n}}}',
          u'{{{#!highlight python\ndef hello():\n    print "Hello World!"\n}}}'),
         (u"{{{#!python\nimport sys\n}}}",
@@ -114,8 +112,8 @@ class TestConverter(object):
          u"{{{#!wiki caution\n '''Don't overuse admonitions'''\n}}}"),
         (u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}",
          u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}"),
-        (u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}',
-         u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}'),
+        (u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}""",
+         u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}"""),
         # new style arguments
         (u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}',
          u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}'),
