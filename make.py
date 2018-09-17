@@ -129,16 +129,18 @@ def search_for_phrase(filename):
     """Search a text file for key phrases and print the lines of interest or print a count by phrase."""
     files = {
         # filename: (list of phrases)
+        # Note: phrases must be lower-case
         QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', ),
         NEWWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         BACKUPWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'success', 'already satisfied', 'active version', 'installed', 'finished', ),
-        TOX: ('seconds =', 'INTERNALERROR', 'traceback', ),
+        # ': e' matches lines similar to: src/moin/converter\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
+        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
-        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'Exception occurred', )
+        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', )
     }
     # for these file names, display a count of occurrances rather than each found line
     print_counts = (CODING_STD, DIST, )
