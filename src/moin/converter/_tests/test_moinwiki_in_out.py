@@ -151,9 +151,9 @@ class TestConverter(object):
 
     # TODO: Both of the following tests should fail; the 5th and 7th lines of the output have
     # been dedented 3 spaces to create a passing test.
-    # If the input is copied to a moinwiki document and a Convert to moinwiki is performed
-    # the output will be equal to the input.
+    # This is possibly due to a defect in the serialize_strip method
     data = [
+        # moinwiki_in converter changes indented text to no-bullet lists
         (u"""
     indented text
         text indented to the 2nd level
@@ -161,7 +161,8 @@ class TestConverter(object):
         second level
         second level again, will be combined with line above
         . second level as no bullet list
-        continuation of no bullet list""", """
+        continuation of no bullet list""",
+         u"""
  . indented text
    . text indented to the 2nd level
  . first level
@@ -169,6 +170,7 @@ class TestConverter(object):
 second level again, will be combined with line above
    . second level as no bullet list
 continuation of no bullet list"""),
+        # output should equal input, but note todo above
         (u"""
  . indented text
    . text indented to the 2nd level
@@ -176,7 +178,8 @@ continuation of no bullet list"""),
    . second level
    second level again, will be combined with line above
    . second level as no bullet list
-   continuation of no bullet list""", """
+   continuation of no bullet list""",
+         u"""
  . indented text
    . text indented to the 2nd level
  . first level
