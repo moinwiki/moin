@@ -40,12 +40,12 @@ class TestConverter(object):
         self.conv_out = conv_out()
 
     data = [
-        (u'Text',
-         u'Text\n'),
+        (u"Text",
+         u"Text\n"),
         (u"Text\n\nText\n",
-         u'Text\n\nText\n'),
+         u"Text\n\nText\n"),
         (u"----\n-----\n------\n",
-         u'----\n-----\n------\n'),
+         u"----\n-----\n------\n"),
         (u"'''strong or bold'''\n",
          u"'''strong or bold'''\n"),
         (u"''emphasis or italic''\n",
@@ -54,19 +54,19 @@ class TestConverter(object):
         (u"{{{{{x\nblockcode\n}}}}}\n",
          u"{{{{{x\nblockcode\n}}}}}\n"),
         (u"`monospace`\n",
-         u'`monospace`\n'),
+         u"`monospace`\n"),
         (u"--(stroke)--\n",
-         u'--(stroke)--\n'),
+         u"--(stroke)--\n"),
         (u"__underline__\n",
-         u'__underline__\n'),
+         u"__underline__\n"),
         (u"~+larger+~\n",
-         u'~+larger+~\n'),
+         u"~+larger+~\n"),
         (u"~-smaller-~\n",
-         u'~-smaller-~\n'),
+         u"~-smaller-~\n"),
         (u"^super^script\n",
-         u'^super^script\n'),
+         u"^super^script\n"),
         (u",,sub,,script\n",
-         u',,sub,,script\n'),
+         u",,sub,,script\n"),
         (u"#ANY any",
          u"#ANY any\n"),
     ]
@@ -93,29 +93,27 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"""{{{\ndef hello():\n    print "Hello World!"\n}}}""",
-         u"""{{{\ndef hello():\n    print "Hello World!"\n}}}"""),
-        (u"""{{{{\ndef hello():\n    print "Hello World!"\n}}}}""",
-         u"""{{{{\ndef hello():\n    print "Hello World!"\n}}}}"""),
+        (u'{{{\ndef hello():\n    print "Hello World!"\n}}}',
+         u'{{{\ndef hello():\n    print "Hello World!"\n}}}'),
+        (u'{{{{\ndef hello():\n    print "Hello World!"\n}}}}',
+         u'{{{{\ndef hello():\n    print "Hello World!"\n}}}}'),
         (u'{{{#!highlight python\ndef hello():\n    print "Hello World!"\n}}}',
          u'{{{#!highlight python\ndef hello():\n    print "Hello World!"\n}}}'),
-        (u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}""",
-         u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}"""),
-        (u'{{{#!python\nimport sys\n}}}',
-         u'{{{#!python\nimport sys\n}}}'),
-        (u'{{{#!creole\n... **bold** ...\n}}}',
-         u'{{{#!creole\n... **bold** ...\n}}}'),
-        (u'{{{#!creole\n|=X|1\n|=Y|123\n|=Z|12345\n}}}',
-         u'{{{#!creole\n|=X|1\n|=Y|123\n|=Z|12345\n}}}'),
-        (u'{{{#!csv ,\nFruit,Color,Quantity\napple,red,5\nbanana,yellow,23\ngrape,purple,126\n}}}',
-         u'{{{#!csv ,\nFruit,Color,Quantity\napple,red,5\nbanana,yellow,23\ngrape,purple,126\n}}}'),
+        (u"{{{#!python\nimport sys\n}}}",
+         u"{{{#!python\nimport sys\n}}}"),
+        (u"{{{#!creole\n... **bold** ...\n}}}",
+         u"{{{#!creole\n... **bold** ...\n}}}"),
+        (u"{{{#!creole\n|=X|1\n|=Y|123\n|=Z|12345\n}}}",
+         u"{{{#!creole\n|=X|1\n|=Y|123\n|=Z|12345\n}}}"),
+        (u"{{{#!csv ,\nFruit,Color,Quantity\napple,red,5\nbanana,yellow,23\ngrape,purple,126\n}}}",
+         u"{{{#!csv ,\nFruit,Color,Quantity\napple,red,5\nbanana,yellow,23\ngrape,purple,126\n}}}"),
         # old style arguments
         (u"{{{#!wiki caution\n '''Don't overuse admonitions'''\n}}}",
          u"{{{#!wiki caution\n '''Don't overuse admonitions'''\n}}}"),
-        (u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}',
-         u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}'),
-        (u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}',
-         u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}'),
+        (u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}",
+         u"{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}"),
+        (u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}""",
+         u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}"""),
         # new style arguments
         (u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}',
          u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}'),
@@ -124,8 +122,8 @@ class TestConverter(object):
         (u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}',
          u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}'),
         # multi-level
-        (u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}',
-         u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}'),
+        (u"{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}",
+         u"{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}"),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -134,7 +132,7 @@ class TestConverter(object):
 
     data = [
         (u"<<Anchor(anchorname)>>",
-         u'<<Anchor(anchorname)>>\n'),
+         u"<<Anchor(anchorname)>>\n"),
         (u"<<FootNote(test)>>",
          u"<<FootNote(test)>>\n"),
         (u"<<TableOfContents(2)>>",
@@ -151,9 +149,9 @@ class TestConverter(object):
 
     # TODO: Both of the following tests should fail; the 5th and 7th lines of the output have
     # been dedented 3 spaces to create a passing test.
-    # If the input is copied to a moinwiki document and a Convert to moinwiki is performed
-    # the output will be equal to the input.
+    # This is possibly due to a defect in the serialize_strip method
     data = [
+        # moinwiki_in converter changes indented text to no-bullet lists
         (u"""
     indented text
         text indented to the 2nd level
@@ -161,7 +159,8 @@ class TestConverter(object):
         second level
         second level again, will be combined with line above
         . second level as no bullet list
-        continuation of no bullet list""", """
+        continuation of no bullet list""",
+         u"""
  . indented text
    . text indented to the 2nd level
  . first level
@@ -169,6 +168,7 @@ class TestConverter(object):
 second level again, will be combined with line above
    . second level as no bullet list
 continuation of no bullet list"""),
+        # output should equal input, but note todo above
         (u"""
  . indented text
    . text indented to the 2nd level
@@ -176,7 +176,8 @@ continuation of no bullet list"""),
    . second level
    second level again, will be combined with line above
    . second level as no bullet list
-   continuation of no bullet list""", """
+   continuation of no bullet list""",
+         u"""
  . indented text
    . text indented to the 2nd level
  . first level
@@ -191,41 +192,41 @@ continuation of no bullet list"""),
         self.do(input, output)
 
     data = [
-        (u'[[Home]]',
-         u'[[Home]]'),
-        (u'[[Home/subitem]]',
-         u'[[Home/subitem]]'),
-        (u'[[/Subitem]]',
-         u'[[/Subitem]]'),
-        (u'[[../Home]]',
-         u'[[../Home]]'),
-        (u'[[SomePage#subsection|subsection of Some Page]]',
-         u'[[SomePage#subsection|subsection of Some Page]]\n'),
+        (u"[[Home]]",
+         u"[[Home]]"),
+        (u"[[Home/subitem]]",
+         u"[[Home/subitem]]"),
+        (u"[[/Subitem]]",
+         u"[[/Subitem]]"),
+        (u"[[../Home]]",
+         u"[[../Home]]"),
+        (u"[[SomePage#subsection|subsection of Some Page]]",
+         u"[[SomePage#subsection|subsection of Some Page]]\n"),
         (u'[[SomePage|{{attachment:samplegraphic.png}}|target=_blank]]',
-         '[[SomePage|{{/samplegraphic.png}}|target="_blank"]]\n'),
-        (u'[[../SisterPage|link text]]',
-         u'[[../SisterPage|link text]]\n'),
-        (u'[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]',
+         u'[[SomePage|{{/samplegraphic.png}}|target="_blank"]]\n'),
+        (u"[[../SisterPage|link text]]",
+         u"[[../SisterPage|link text]]\n"),
+        (u"[[http://static.moinmo.in/logos/moinmoin.png|{{attachment:samplegraphic.png}}|target=_blank]]",
          u'[[http://static.moinmo.in/logos/moinmoin.png|{{/samplegraphic.png}}|target="_blank"]]\n'),
         (u'[[https://moinmo.in/|MoinMoin Wiki|class="green dotted", accesskey=1]]',
          u'[[https://moinmo.in/|MoinMoin Wiki|accesskey="1",class="green dotted"]]\n'),
         (u'[[https://moinmo.in/| |title="go there!"]]',
          u'[[https://moinmo.in/||title="go there!"]]'),
-        (u'[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]',
-         u'[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]'),
+        (u"[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]",
+         u"[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]"),
         # interwiki
         # TODO: should this obsolete (1.9.x) form be made to work?
         # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
-        (u'[[MeatBall:InterWiki]]',
-         u'[[MeatBall:InterWiki]]'),
-        (u'[[MeatBall:InterWiki|InterWiki page on MeatBall]]',
-         u'[[MeatBall:InterWiki|InterWiki page on MeatBall]]'),
+        (u"[[MeatBall:InterWiki]]",
+         u"[[MeatBall:InterWiki]]"),
+        (u"[[MeatBall:InterWiki|InterWiki page on MeatBall]]",
+         u"[[MeatBall:InterWiki|InterWiki page on MeatBall]]"),
         # TODO: attachments should be converted within import19.py and support removed from moin2
         # Note: old style attachments are converted to new style sub-item syntax; "&do-get" is appended to link and ignored
-        (u'[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]',
-         u'[[/HelpOnImages/pineapple.jpg?do=get|a pineapple]]\n'),
-        (u'[[attachment:filename.txt]]',
-         u'[[/filename.txt]]\n'),
+        (u"[[attachment:HelpOnImages/pineapple.jpg|a pineapple|&do=get]]",
+         u"[[/HelpOnImages/pineapple.jpg?do=get|a pineapple]]\n"),
+        (u"[[attachment:filename.txt]]",
+         u"[[/filename.txt]]\n"),
         # test parameters
         (u'[[SomePage|Some Page|target=_blank]]',
          u'[[SomePage|Some Page|target="_blank"]]\n'),
@@ -245,13 +246,13 @@ continuation of no bullet list"""),
 
     data = [
         (u" * A\n * B\n  1. C\n  1. D\n   I. E\n   I. F\n",
-         u' * A\n * B\n   1. C\n   1. D\n      I. E\n      I. F\n'),
+         u" * A\n * B\n   1. C\n   1. D\n      I. E\n      I. F\n"),
         (u" * A\n  1. C\n   I. E\n",
-         u' * A\n   1. C\n      I. E\n'),
+         u" * A\n   1. C\n      I. E\n"),
         (u" * A\n  1. C\n  1. D\n",
-         u' * A\n   1. C\n   1. D\n'),
+         u" * A\n   1. C\n   1. D\n"),
         (u" . A\n  . C\n  . D\n",
-         u' . A\n   . C\n   . D\n'),
+         u" . A\n   . C\n   . D\n"),
         (u" i. E\n i. F\n",
          u" i. E\n i. F\n"),
         (u" i.#11 K\n i. L\n",
@@ -259,9 +260,9 @@ continuation of no bullet list"""),
         (u" 1.#11 eleven\n 1. twelve\n",
          u" 1.#11 eleven\n 1. twelve\n"),
         (u" A:: B\n :: C\n :: D\n",
-         u' A::\n :: B\n :: C\n :: D\n'),
+         u" A::\n :: B\n :: C\n :: D\n"),
         (u" A::\n :: B\n :: C\n :: D\n",
-         u' A::\n :: B\n :: C\n :: D\n'),
+         u" A::\n :: B\n :: C\n :: D\n"),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -269,11 +270,11 @@ continuation of no bullet list"""),
         self.do(input, output)
 
     data = [
-        (u"||A||B||<|2>D||\n||||C||\n",
+        (u'||A||B||<|2>D||\n||||C||\n',
          u'||A||B||<rowspan="2">D||\n||<colspan="2">C||\n'),
         (u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n",
          u"||'''A'''||'''B'''||'''C'''||\n||1      ||2      ||3     ||\n"),
-        (u"||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<-2>test||\n||||test||",
+        (u'||<|2> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<-2>test||\n||||test||',
          u'||<rowspan="2"> cell spanning 2 rows ||cell in the 2nd column ||\n||cell in the 2nd column of the 2nd row ||\n||<colspan="2">test||\n||<colspan="2">test||\n'),
         (u'|| narrow ||<99%> wide ||',
          u'|| narrow ||<style="width: 99%;"> wide ||\n'),
@@ -319,9 +320,9 @@ continuation of no bullet list"""),
          u'{{png|my png|&w=100}}\n'),
         (u'{{png||width="100"}}',
          u'{{png||width="100"}}\n'),
-        (u"{{drawing:anywikitest.adraw}}",
+        (u'{{drawing:anywikitest.adraw}}',
          u'{{drawing:anywikitest.adraw}}\n'),
-        (u"{{http://static.moinmo.in/logos/moinmoin.png}}\n",
+        (u'{{http://static.moinmo.in/logos/moinmoin.png}}\n',
          u'{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
         (u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n',
          u'{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n'),
@@ -364,8 +365,8 @@ continuation of no bullet list"""),
         self.do(input, output)
 
     data = [
-        (u'smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}',
-         u'smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}'),
+        (u"smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}",
+         u"smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}"),
     ]
 
     @pytest.mark.parametrize('input,output', data)
