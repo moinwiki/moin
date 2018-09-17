@@ -39,21 +39,35 @@ class TestConverter(object):
         self.conv_out = conv_out()
 
     data = [
-        (u'Text', 'Text\n'),
-        (u"Text\n\nText\n", 'Text\n\nText\n'),
-        (u"xxx\n\n------\n\n------\n\n------\n", 'xxx\n\n----\n\n----\n\n----\n'),
-        (u"----\n\n------\n\n--------\n", '----\n\n----\n\n----\n'),
-        (u"**strong**\n", "**strong**\n"),
-        (u"*emphasis*\n", "*emphasis*\n"),
-        (u"    blockcode\n", "    blockcode\n"),
-        (u"`monospace`\n", '`monospace`\n'),
-        (u"<strike>stroke</strike>\n", '<strike>stroke</strike>\n'),
+        (u'Text',
+         u'Text\n'),
+        (u'Text\n\nText\n',
+         u'Text\n\nText\n'),
+        (u'xxx\n\n------\n\n------\n\n------\n',
+         u'xxx\n\n----\n\n----\n\n----\n'),
+        (u'----\n\n------\n\n--------\n',
+         u'----\n\n----\n\n----\n'),
+        (u'**strong**\n',
+         u'**strong**\n'),
+        (u'*emphasis*\n',
+         u'*emphasis*\n'),
+        (u'    blockcode\n',
+         u'    blockcode\n'),
+        (u'`monospace`\n',
+         u'`monospace`\n'),
+        (u'<strike>stroke</strike>\n',
+         u'<strike>stroke</strike>\n'),
         # <ins> is changed to <u>
-        (u"<ins>underline</ins>\n", '<u>underline</u>\n'),
-        (u"<big>larger</big>\n", '<big>larger</big>\n'),
-        (u"<small>smaller</small>\n", '<small>smaller</small>\n'),
-        (u"<sup>super</sup>script\n", '<sup>super</sup>script\n'),
-        (u"<sub>sub</sub>script\n", '<sub>sub</sub>script\n'),
+        (u'<ins>underline</ins>\n',
+         u'<u>underline</u>\n'),
+        (u'<big>larger</big>\n',
+         u'<big>larger</big>\n'),
+        (u'<small>smaller</small>\n',
+         u'<small>smaller</small>\n'),
+        (u'<sup>super</sup>script\n',
+         u'<sup>super</sup>script\n'),
+        (u'<sub>sub</sub>script\n',
+         u'<sub>sub</sub>script\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -61,10 +75,14 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"level 1\n=======\n", '# level 1 #\n'),
-        (u"# level 1 #\n", '# level 1 #\n'),
-        (u"## level 2 ##\n", '## level 2 ##\n'),
-        (u"## level 2\n", '## level 2 ##\n'),
+        (u'level 1\n=======\n',
+         u'# level 1 #\n'),
+        (u'# level 1 #\n',
+         u'# level 1 #\n'),
+        (u'## level 2 ##\n',
+         u'## level 2 ##\n'),
+        (u'## level 2\n',
+         u'## level 2 ##\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -72,8 +90,10 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"[TOC]\n", '[TOC]\n'),
-        (u"Footnotes[^1] have a label[^label] and a definition[^!DEF].\n", 'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
+        (u'[TOC]\n',
+         u'[TOC]\n'),
+        (u'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n',
+         u'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -81,9 +101,12 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'[MoinMoin](http://moinmo.in)\n', '[MoinMoin](http://moinmo.in)\n'),
-        (u'[PNG](png)\n', '[PNG](png)\n'),
-        (u'[MoinMoin][moin]\n[moin]: http://moinmo.in\n', '[MoinMoin](http://moinmo.in)\n'),
+        (u'[MoinMoin](http://moinmo.in)\n',
+         u'[MoinMoin](http://moinmo.in)\n'),
+        (u'[PNG](png)\n',
+         u'[PNG](png)\n'),
+        (u'[MoinMoin][moin]\n[moin]: http://moinmo.in\n',
+         u'[MoinMoin](http://moinmo.in)\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -91,12 +114,18 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n", '* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n'),
-        (u"  * A\n      1. C\n          - E\n", '  * A\n    1. C\n        * E\n'),
-        (u" * A\n     1. C\n     1. D\n", ' * A\n    1. C\n    1. D\n'),
-        (u"1. E\n1. F\n", "1. E\n1. F\n"),
-        (u"    1. E\n    1. F\n", "    1. E\n    1. F\n"),
-        (u"Apple\n:   B\n:   C\n:   D\n", 'Apple\n:   B\n:   C\n:   D\n'),
+        (u'* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n',
+         u'* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n'),
+        (u'  * A\n      1. C\n          - E\n',
+         u'  * A\n    1. C\n        * E\n'),
+        (u' * A\n     1. C\n     1. D\n',
+         u' * A\n    1. C\n    1. D\n'),
+        (u'1. E\n1. F\n',
+         u'1. E\n1. F\n'),
+        (u'    1. E\n    1. F\n',
+         u'    1. E\n    1. F\n'),
+        (u'Apple\n:   B\n:   C\n:   D\n',
+         u'Apple\n:   B\n:   C\n:   D\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -104,13 +133,13 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"|A|B|C|\n|-|-|-|\n|1|2|3|\n",
+        (u'|A|B|C|\n|-|-|-|\n|1|2|3|\n',
          u'|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
-        (u"|A|B|C|\n|:-|:-:|-:|\n|1|2|3|\n",
+        (u'|A|B|C|\n|:-|:-:|-:|\n|1|2|3|\n',
          u'|A|B|C|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
-        (u"A|B|C\n-|-|-\n1|2|3\n",
+        (u'A|B|C\n-|-|-\n1|2|3\n',
          u'|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
-        (u"`A`|*B*|_C_\n:-|:-:|-:\n1|2|3\n",
+        (u'`A`|*B*|_C_\n:-|:-:|-:\n1|2|3\n',
          u'|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
     ]
 
@@ -119,11 +148,16 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'\n![Alt text](png "Optional title"\n)', '\n![Alt text](png "Optional title")\n'),
-        (u'![Alt text](png)', '![Alt text](png)\n'),
-        (u'![Alt text][logo]\n[logo]: png "Optional title attribute"', '![Alt text](png "Optional title attribute")\n'),
-        (u'![remote image](http://static.moinmo.in/logos/moinmoin.png)', '![remote image](http://static.moinmo.in/logos/moinmoin.png)\n'),
-        (u'![Alt text](http://test.moinmo.in/png)', '![Alt text](http://test.moinmo.in/png)\n'),
+        (u'\n![Alt text](png "Optional title")',
+         u'\n![Alt text](png "Optional title")\n'),
+        (u'![Alt text](png)',
+         u'![Alt text](png)\n'),
+        (u'![Alt text][logo]\n[logo]: png "Optional title attribute"',
+         u'![Alt text](png "Optional title attribute")\n'),
+        (u'![remote image](http://static.moinmo.in/logos/moinmoin.png)',
+         u'![remote image](http://static.moinmo.in/logos/moinmoin.png)\n'),
+        (u'![Alt text](http://test.moinmo.in/png)',
+         u'![Alt text](http://test.moinmo.in/png)\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
