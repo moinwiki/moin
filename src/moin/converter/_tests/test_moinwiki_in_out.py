@@ -79,10 +79,26 @@ class TestConverter(object):
         (u"""{{{{\ndef hello():\n    print "Hello World!"\n}}}}""", u"""{{{{\ndef hello():\n    print "Hello World!"\n}}}}"""),
         (u'{{{#!highlight python\ndef hello():\n    print "Hello World!"\n}}}', u'{{{#!highlight python\ndef hello():\n    print "Hello World!"\n}}}'),
         (u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}""", u"""{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class="red solid"`.\n}}}"""),
+        (u'{{{#!python\nimport sys\n}}}', u'{{{#!python\nimport sys\n}}}'),
+        (u'{{{#!creole\n... **bold** ...\n}}}', u'{{{#!creole\n... **bold** ...\n}}}'),
         (u'{{{#!creole\n|=X|1\n|=Y|123\n|=Z|12345\n}}}', '{{{#!creole\n|=X|1\n|=Y|123\n|=Z|12345\n}}}'),
         (u'{{{#!csv ,\nFruit,Color,Quantity\napple,red,5\nbanana,yellow,23\ngrape,purple,126\n}}}',
          u'{{{#!csv ,\nFruit,Color,Quantity\napple,red,5\nbanana,yellow,23\ngrape,purple,126\n}}}'),
+        # old style arguments
         (u"{{{#!wiki caution\n '''Don't overuse admonitions'''\n}}}", "{{{#!wiki caution\n '''Don't overuse admonitions'''\n}}}"),
+        (u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}',
+         u'{{{#!wiki comment/dotted\nThis is a wiki parser.\n\nIts visibility gets toggled the same way.\n}}}'),
+        (u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}',
+         u'{{{#!wiki red/solid\nThis is wiki markup in a """div""" with __css__ `class="red solid"`.\n}}}'),
+        # new style arguments
+        (u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}',
+         u'{{{#!wiki (style="color: green")\nThis is wiki markup in a """div""" with `style="color: green"`.\n}}}'),
+        (u'{{{#!wiki (style="color: green")\ngreen\n}}}', u'{{{#!wiki (style="color: green")\ngreen\n}}}'),
+        (u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}',
+         u'{{{#!wiki (style="color: green" class="dotted")\ngreen\n}}}'),
+        # multi-level
+        (u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}',
+         u'{{{#!wiki green\ngreen\n{{{{#!wiki orange\norange\n}}}}\ngreen\n}}}'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
