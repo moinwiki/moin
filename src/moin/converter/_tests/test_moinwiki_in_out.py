@@ -289,38 +289,10 @@ continuation of no bullet list"""),
     def test_transclusions(self, input, output):
         self.do(input, output)
 
-    data_input = u"""
-||Markup||Display||Emotion   ||
-=====
-||`X-(` || X-(   ||angry     ||
-||`:D`  || :D    ||biggrin   ||
-||`>:>` || >:>   ||devil     ||
-||`<:(` || <:(   ||frown     ||
-||`:\`  || :\    ||ohwell    ||
-||`:o`  || :o    ||redface   ||
-||`:-(` || :-(   ||sad       ||
-||`:(`  || :(    ||sad       ||
-||`:)`  || :)    ||smile     ||
-||`B)`  || B)    ||smile2    ||
-||`:))` || :))   ||smile3    ||
-||`;)`  || ;)    ||smile4    ||
-||`|)`  || |)    ||tired     ||
-||`|-)` || |-)   ||tired     ||
-||`:-?` || :-?   ||tongue    ||
-||`/!\` || /!\   ||alert     ||
-||`<!>` || <!>   ||attention ||
-||`(./)`|| (./)  ||checkmark ||
-||`{X}` || {X}   ||icon-error||
-||`{i}` || {i}   ||icon-info ||
-||`(!)` || (!)   ||idea      ||
-||`{1}` || {1}   ||prio1     ||
-||`{2}` || {2}   ||prio2     ||
-||`{3}` || {3}   ||prio3     ||
-||`{*}` || {*}   ||star_on   ||
-||`{o}` || {o}   ||star_off  ||
-||`{OK}`|| {OK}  ||thumbs-up ||
-"""
-    data = [(data_input, data_input)]
+    data = [
+        (u'smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}',
+         u'smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}'),
+    ]
 
     @pytest.mark.parametrize('input,output', data)
     def test_smileys(self, input, output):
