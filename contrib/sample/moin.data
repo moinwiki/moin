@@ -173,7 +173,7 @@ In the example below, the second to last line has a leading bulletless list char
    . item 4.2.2 (bulletless)
 
 === Ordered Lists ===
-==== with Numbers ====
+==== With Numbers ====
 
 '''Markup:'''
 
@@ -191,7 +191,7 @@ In the example below, the second to last line has a leading bulletless list char
    1. item 1.2
  1. item 2
 
-==== with Roman Numbers ====
+==== With Roman Numbers ====
 
 '''Markup:'''
 
@@ -209,7 +209,7 @@ In the example below, the second to last line has a leading bulletless list char
    i. item 1.2
  I. item 2
 
-==== with Letters ====
+==== With Letters ====
 
 '''Markup:'''
 
@@ -226,6 +226,32 @@ In the example below, the second to last line has a leading bulletless list char
    a. item A. a)
    a. item A. b)
  A. item B
+
+==== Specify a Starting Point ====
+
+When there is a need to start an ordered list at a specific number, use the format below. This works for ordered lists using letters and roman numerals.
+
+'''Markup:'''
+
+{{{
+ 1.#11 eleven
+ 1. twelve
+    i.#11 roman numeral xi
+ 1. thirteen
+ 
+ A.#11 letter K
+ A. letter J
+}}}
+
+'''Result:'''
+
+ 1.#11 eleven
+ 1. twelve
+    i.#11 roman numeral xi
+ 1. thirteen
+ 
+ A.#11 letter K
+ A. letter J
 
 === Definition Lists ===
 
@@ -632,23 +658,31 @@ space character before and after the smiley text, or add the smiley text at the 
 
 == Comments ==
 
-Logged in users may set User Preferences to display or hide comments, overriding the default set in the wiki configuration.
+There are three ways to add comments to a page. Lines starting with ## can be seen only by page editors. Phrases enclosed in `/*` and `*/` and wiki parser blocks of text with a class of “comment” may be hidden or visible depending upon user settings or actions.
+
+Logged in users may set User Preferences to display or hide comments, overriding the default setting in the wiki configuration.
 
 '''Markup:'''
 
 {{{{
- Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
+## Lines starting with "##" may be used to give instructions
+## to future page editors.
 
- {{{#!wiki comment/dashed
- This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
+Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
 
- Its visibility gets toggled the same way.
- }}}
+{{{#!wiki comment/dashed
+This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
+
+Its visibility gets toggled the same way.
+}}}
 }}}}
 
 '''Result:'''
 
-Click on "Comments" within Item Views to toggle the /* comments */ visibility.
+## Lines starting with "##" may be used to give instructions
+## to future page editors.
+
+Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
 
 {{{#!wiki comment/dashed
 This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
