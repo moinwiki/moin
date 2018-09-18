@@ -11,11 +11,14 @@
 Moin Wiki markup overview
 ==========================
 
-The report follows the moin 1.9 help page and reports syntaxes that do not match 1.9 help syntax documentation.
-The structure and order has been matched with other markup rst files namely creoleWiki.rst and mediaWiki.rst at
-http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
+This document describes the features of the moinwiki markup language.
+Because this document was created using  Restructured Text, which
+does not support some of the features available in moinwiki, the
+examples below may show both the markup and result as block or
+predefined code.
 
-Features currently not working with moin's Wiki parser are marked with **MOINTODO**.
+Features currently not working with moin's Wiki parser are marked
+with **MOINTODO**.
 
 Table Of Contents
 =================
@@ -292,7 +295,7 @@ With Roman Numbers
    i. item 1.2
  I. item 2
 
-**Result**:
+**Result**: ::
 
  I. item 1
 
@@ -321,6 +324,35 @@ With Letters
    b. item 1.2
 
  B. item 2
+
+Specify a Starting Point
+**********************
+
+When there is a need to start an ordered list at a specific number,
+use the format below. This works for ordered lists using letters and
+roman numerals.
+
+**Markup**: ::
+
+
+ 1.#11 eleven
+ 1. twelve
+    i.#11 roman numeral xi
+ 1. thirteen
+
+ A.#11 letter K
+ A. letter J
+
+
+**Result**: ::
+
+ 11. eleven
+ 12. twelve
+    xi.roman numeral xi
+ 13. thirteen
+
+ K. letter K
+ J. letter J
 
 Definition Lists
 ================
@@ -691,22 +723,30 @@ This table shows moin smiley markup, the rendering of smiley icons cannot be sho
 Comments
 --------
 
+There are three ways to add comments to a page. Lines starting with ##
+can be seen only by page editors. Phrases enclosed in `/*` and `*/`
+and wiki parser section blocks of text with a class of "comment" may
+be hidden or visible depending upon user settings or actions.
+
 **Markup**: ::
 
- {{{#!wiki comment/dotted
- This is a wiki parser section with class "comment dotted" (see HelpOnParsers).
+ ## Lines starting with "##" may be used to give instructions
+ ## to future page editors.
 
- Its visibility gets toggled the same way.
+ Click on the "Comments" button within Item Views to toggle the /* comments */ visibility.
+
+ {{{#!wiki comment/dashed
+ This is a wiki parser section with class "comment dashed".
+
+ Its visibility gets toggled by clicking on the comments button.
  }}}
+
+
 
 **Result**:
 
-+--------------------------------------------------------------------------------+
-| This is a wiki parser section with class "comment dotted" (see HelpOnParsers). |
-|                                                                                |
-| Its visibility gets toggled the same way.                                      |
-+--------------------------------------------------------------------------------+
+Click on the "Comments" button within Item Views to toggle the visibility.
 
 **Notes**:
- - reStructuredText has no support for dotted borders, so a table cell is used to illustrate the border which will be produced. This markup will actually produce a dotted border in MoinMoin.
- - The toggle display feature does not work yet
+ - The toggle display feature does not work on ReST documents, so there is
+   no way to see the hidden comments.
