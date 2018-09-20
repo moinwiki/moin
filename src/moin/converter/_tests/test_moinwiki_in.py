@@ -44,6 +44,10 @@ class TestConverter(object):
          '<page><body><p><a xlink:href="http://moinmo.in/">MoinMoin</a></p></body></page>'),
         (u'[[MoinMoin]]',
          '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
+        (u'[[MoinMoin#Heading]]',
+         '<page><body><p><a xlink:href="wiki.local:MoinMoin#Heading">MoinMoin</a></p></body></page>'),
+        (u'[[#Heading]]',
+         '<page><body><p><a xlink:href="wiki.local:#Heading"></a></p></body></page>'),
         (u'{{somelocalimage|my alt text|width=10, height=10}}',
          '<page><body><p><xinclude:include xhtml:alt="my alt text" xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>'),
         # html5 requires img tags to have an alt attribute, html_out.py will add any required attributes that are missing

@@ -221,6 +221,9 @@ class Converter(object):
         href = elem.get(_tag_xlink_href)
         if href:
             attrib[_tag_html_href] = href
+        if len(elem) == 1 and isinstance(elem[0], unicode) and elem[0] == u'':
+            # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
+            elem[0] = href.path[1:]
         # html attibutes are copied by default (html.target, html.class, html.download...
         return self.new_copy(_tag_html_a, elem, attrib)
 
