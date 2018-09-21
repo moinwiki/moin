@@ -509,7 +509,7 @@ class Converter(object):
                     node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
             else:
                 # do not convert markup within a <pre> tag
-                if not child.tag == moin_page.blockcode:
+                if not child.tag == moin_page.blockcode and not child.tag == moin_page.code:
                     self.convert_embedded_markup(child)
 
     def convert_invalid_p_nodes(self, node):

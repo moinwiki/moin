@@ -1,18 +1,16 @@
 Markdown Syntax
 ===============
 
-Features currently not working with moin's Markdown parser are marked with **MDTODO**.
-
-This page introduces you to the most important elements of the Markdown syntax.
-
-For details on the Python implementation of Markdown see <https://pythonhosted.org/Markdown/>. 
+This page introduces you to the most important elements of the Markdown syntax. For details on the Python implementation of Markdown see <https://python-markdown.github.io/>. 
 
 In addition to being supported by moin2, the Markdown markup language is used by issue trackers
-such as those found in Bitbucket and Github. So what you learn here can be used to create or 
-edit issues on the 
-[moin issue tracker](https://bitbucket.org/thomaswaldmann/moin-2.0/issues?status=new&status=open).
+such as those found in Github and Bitbucket. So what you learn here can be used to create or 
+edit issues on the [moin issue tracker](https://github.com/moinwiki/moin/issues).
 
+If there are error messages on the top of this page they are the result of [examples showing unsupported HTML tags](markdown#unsupported-html-tags). The error messages will not be present if this item has been served from cache; to see the messages click Modify and Save.
+{: #para3 }
 
+Features currently not working with moin's Markdown parser are marked with **MDTODO**.
 
 Table of Contents
 -----------------
@@ -28,7 +26,7 @@ The table of contents is a supported extension that is distributed with Python M
 [TOC]
 
 Headings
---------
+-
 
 Level 1 and 2 headings may be created by underlining with = and - characters, respectively.
 
@@ -43,7 +41,7 @@ Heading levels 3 through 6 must be defined by prefixing the heading with a varia
     =======
     # Level 1
     Level 2
-    -------
+    -
     ## Level 2
     --- Levels 1 and 2 are not shown below, see top of page and this section heading.
     ### Level 3
@@ -76,7 +74,7 @@ To show a preformatted block of code, indent all the lines by 4 or more spaces.
         Second line
             Third line
 
-    End of preformatted code
+    End preformatted code
 
 
 **Result:**
@@ -87,7 +85,7 @@ Begin preformatted code
     Second line
         Third line
 
-End of preformatted code
+End preformatted code
 
 ## Simple text editing
 
@@ -96,51 +94,81 @@ End of preformatted code
     Paragraphs are separated
     by a blank line.
 
-    To create a line break, end a line  
+    To force a line break, end a line  
     with 2 spaces.
-
-    Use asterisk characters to create text attributes: *italic*, **bold**, ***bold italics***. 
-    Or, do the same with underscores: _Italics_, __bold__, ___bold italics___.
-    Use backticks to create `monospace`.
-
 
 **Result:**
 
 Paragraphs are separated
 by a blank line.
 
-To create a line break, end a line  
+To force a line break, end a line  
 with 2 spaces.
 
-Use asterisk characters to create text attributes: *italic*, **bold**, ***bold italics***.   
-Or, do the same with underscores: _Italics_, __bold__, ___bold italics___.  
-Use backticks to create `monospace`.
+----
 
+Markdown provides markup for only a few common text augmentations. Less common 
+augmentations may be obtained by using HTML tags. See 
+[support for inline HTML](markdown#inline-html). Note support for HTML tags
+on other implementations of Markdown such as GitHub and BitBucket is both limited 
+and variable.
 
+|**Markup**|**Result**|
+|----------|----------|
+|`*italic*`|*italic*  |
+|`**bold**`|**bold**  |
+|`***bold italics***`|***bold italics***|
+|`_italic_`|_italic_  |
+|`__bold__`|__bold__  |
+|`___bold italics___`|___bold italics___|
+|`<ins>underlined</ins>`|<ins>underlined</ins>|
+|`2<sup>2</sup>`|2<sup>2</sup>|
+|`H<sub>2</sub>O`|H<sub>2</sub>O|
+|`<small>smaller</small>`|<small>smaller</small>|
+|`<del>strike</del>`|<del>strike</del>|
 
 ## Linking
 
-**Markup:**
+Markdown supports two style of links: inline and reference. Inline links use the form:
 
-    A simple way to write a link: [MoinMoin](http://moinmo.in) or [PNG](png)  
-    Another way to write a link is to use a reference: [MoinMoin][moin]
+    [link text](url "optionl title")
 
-    References can be defined anywhere in the document, but it will not be visible in the rendered HTML:
-    [moin]: http://moinmo.in
+Reference links have two parts. Somewhere in the document the link label is defined using a unique id; this has no visible output. Then the reference link uses a form with square brackets rather than parens:
 
-    Naked URLs like http://moinmo.in are not supported. URLs and email addresses may be enclosed in angle brackets: <http://moinmo.in> and <me@example.com>.
+    [id]: url "optional title"
 
+    [link text] [id]
 
-**Result:**
+|**Markup**|**Result**|
+|----------|----------|
+|`[home page](Home)`|[home page](Home)|
+|`[home page](Home "my home page")`|[home page](Home "my home page")|
+|`[a sub item](Home/subitem)`|[a sub item](Home/subitem)|
+|`[missing page](MissingPage)`|[missing page](MissingPage)|
+|`[toc](markdown#table-of-contents)`|[toc](markdown#table-of-contents)|
+|`[toc](#table-of-contents)`|[toc](#table-of-contents)|
+|`[moinmoin](https://moinmo.in "Go there")`|[moinmoin](https://moinmo.in "Go there")|
+|`[![Image name](png)](Home "click me")`|[![Image name](png)](Home "click me")|
+|`[apple]: https://www.apple.com/`||
+|`[MoinMoin]: https://momo.in/`||
+|`[see Apple stuff][apple]`|[see Apple stuff] [apple]|
+|`[go to MoinMoin][MoinMoin]`|[go to MoinMoin] [MoinMoin]|
 
-A simple way to write a link: [MoinMoin](http://moinmo.in) or [PNG](png)  
-Another way to write a link is to use a reference: [MoinMoin][moin]
+[apple]: https://www.apple.com/
+[MoinMoin]: https://moinmo.in/
 
-References can be defined anywhere in the document, but it will not be visible in the rendered HTML:
-[moin]: http://moinmo.in
+## Images
 
-Naked URLs like http://moinmo.in are not supported. URLs and email addresses may be enclosed in angle brackets: <http://moinmo.in> and <me@example.com>.
+Images are similar to links with both an inline and a reference style, but they start with an exclamation point. There are no options to change the default sizes or positions (float left) of images:
 
+|**Markup**|**Result**|
+|----------|----------|
+|`![Alt text](png "Optional title")`|![Alt text](png "Optional title")|
+|`![remote image](http://static.moinmo.in/logos/moinmoin.png)`|![remote image](http://static.moinmo.in/logos/moinmoin.png)|
+|`[logo]: png  "Optional title attribute"`||
+|`![Alt text][logo]`|![Alt text][logo]|
+
+[logo]: png  "Optional title attribute"
 
 ## Lists
 
@@ -294,48 +322,6 @@ Advanced blockquotes with nesting are created by starting a line with a > charac
 > > A nested blockquote is indented more
 > > > > You can nest to any depth.
 
-## Images
-
-Images are similar to links with both an inline and a reference style, but they start with an exclamation point. Within Markdown, there is no syntax to change the default sizes or positions of transclusions:
-
-**Markup:**
-
-    To transclude image from local wiki:
-    ![Alt text](png "Optional title")
-
-    Reference-style, where "logo" is a name defined anywhere within this item: 
-    ![Alt text][logo]
-
-    Image references are defined using syntax identical to link references and 
-    do not appear in the rendered HTML:
-    [logo]: png  "Optional title attribute"
-
-    To transclude image from remote site:
-    ![remote image](http://static.moinmo.in/logos/moinmoin.png)
-
-    Transcluding a page from a remote site works, but there is no way to change the browser's default size:
-
-    ![Alt text](http://test.moinmo.in/png)
-
-**Result:**
-
-To transclude image from local wiki:
-![Alt text](png "Optional title")
-
-Reference-style, where "logo" is a name defined anywhere within this item: 
-![Alt text][logo]
-
-Image references are defined using syntax identical to link references and 
-do not appear in the rendered HTML:
-[logo]: png  "Optional title attribute"
-
-To transclude image from remote site:
-![remote image](http://static.moinmo.in/logos/moinmoin.png)
-
-Transcluding a page from a remote site works, but there is no way to change the browser's default size:
-
-![Alt text](http://test.moinmo.in/png)
-
 ## Inline HTML
 
 You may embed a subset of HTML tags directly into your markdown documents. 
@@ -399,14 +385,16 @@ This word is <strong style="color:red;background-color:yellow">bold</strong>; co
 
 **Markup:**
 
-    Unsupported tags within paragraphs are ignored and create no output.
+    Unsupported tags within paragraphs are ignored and create no output other than 
+    error messages at the top of the page.
     <script>alert(1);</script>
     <center>Center</center>
     End of paragraph.
 
 **Result:**
 
-Unsupported tags within paragraphs are ignored and create no output.
+Unsupported tags within paragraphs are ignored and create no output other than 
+error messages at the top of the page.
 <script>alert(1);</script>
 <center>Center</center>
 End of paragraph.
@@ -415,17 +403,17 @@ End of paragraph.
 
 **Markup:**
 
-    Malformed tags within paragraphs are escaped. 
-    <script>alert(1);</script>
-    <center>Center</center> 
+    Malformed tags within paragraphs are escaped. The `<b>` below has no closing tag.
+    <strong>Hello</strong>
+    <strike>Hello</strike>
     <b>
     End of paragraph.
 
 **Result:**
 
-Malformed tags within paragraphs are escaped. 
-<script>alert(1);</script>
-<center>Center</center> 
+Malformed tags within paragraphs are escaped. The `<b>` below has no closing tag. 
+<strong>Hello</strong>
+<strike>Hello</strike>
 <b>
 End of paragraph.
 
@@ -550,17 +538,40 @@ __this__works__too__.
 
 ### Attribute Lists
 
+Attribute lists can be used to define various attributes onto the HTML elements created when a Markdown document is rendered. The general form of an attribute list:
+
+    {: #someid .someclass somekey='some value' }
+
+Prepend a **#** character to a name that defines an ID that can be used in a link. Prepend a **.** character to a name that will define a class used to style the element. Or, use the somekey='some value' form to define any attribute. The two lines below do the same thing:
+
+* `{: .orange .green }`
+* `{: class='orange green" }`
+
+Attribute lists may be either inline or block. Inline attribute lists are defined immediately after the target element. Block attribute lists are defined on a separate line below the block element. Heading lines are an exception in that they are treated as inline elements.
+
+
 **Markup:**
 
-    A class of green (that will create a green background per a CSS rule) is
+    #### orange heading #### {: .orange }
+
+    A class of green is
     added to this paragraph.
     {: class="green"}
 
+    A `{: #para3 }` id was added to the 3rd paragraph on this page, 
+    so [click to see 3rd paragraph](#para3).
+
 **Result:**
 
-A class of green (that will create a green background per a CSS rule) is
+
+### orange heading #### {: .orange }
+
+A class of green is
 added to this paragraph.
 {: class="green"}
+
+A `{: #para3 }` id was added to the 3rd paragraph on this page, 
+so [click to see 3rd paragraph](#para3).
 
 
 ### Definition Lists
