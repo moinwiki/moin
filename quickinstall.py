@@ -104,9 +104,9 @@ Successfully created or updated venv at {0}
         if pip_version < [6, 0]:
             args += ['--download-cache', self.download_cache, ]
         if pip_version >= [1, 5]:
-            args += [
-                '--process-dependency-links',
-            ]
+            args += ['--process-dependency-links', ]
+        if pip_version >= [9, 0]:
+            args += ['--upgrade-strategy=eager', ]
         subprocess.check_call(args)
 
     def do_catalog(self):
