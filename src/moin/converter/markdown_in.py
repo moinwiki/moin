@@ -29,6 +29,12 @@ except ImportError:
 
 from markdown import Markdown
 import markdown.util as md_util
+from markdown.extensions.extra import ExtraExtension
+from markdown.extensions.toc import TocExtension
+from markdown.extensions.codehilite import CodeHiliteExtension
+
+from . import default_registry
+from moin.util.mime import Type, type_moin_document
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -503,7 +509,7 @@ class Converter(object):
                     node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
             else:
                 # do not convert markup within a <pre> tag
-                if not child.tag == moin_page.blockcode:
+                if not child.tag == moin_page.blockcode and not child.tag == moin_page.code:
                     self.convert_embedded_markup(child)
 
     def convert_invalid_p_nodes(self, node):
@@ -525,7 +531,11 @@ class Converter(object):
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
-        self.markdown = Markdown(extensions=['extra', 'toc', 'codehilite(guess_lang=False)'])
+        self.markdown = Markdown(extensions=[
+            ExtraExtension(),
+            TocExtension(),
+            CodeHiliteExtension(guess_lang=False),
+        ])
 
     @classmethod
     def _factory(cls, input, output, **kw):
@@ -577,7 +587,7 @@ class Converter(object):
         # Run the tree-processors
         for treeprocessor in self.markdown.treeprocessors.values():
             new_md_root = treeprocessor.run(md_root)
-            if new_md_root:
+            if new_md_root is not None:
                 md_root = new_md_root
 
         # }}} end stolen from Markdown.convert
@@ -598,7 +608,5 @@ class Converter(object):
         return root
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter._factory, Type("text/x-markdown"), type_moin_document)
 default_registry.register(Converter._factory, Type('x-moin/format;name=markdown'), type_moin_document)

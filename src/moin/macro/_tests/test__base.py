@@ -6,7 +6,7 @@ MoinMoin - Tests for moin.macro._base
 """
 
 import pytest
-from moin.macro._base import *
+from moin.macro._base import MacroBase, MacroBlockBase, MacroInlineBase, MacroInlineOnlyBase
 
 
 class TestMacroBase(object):

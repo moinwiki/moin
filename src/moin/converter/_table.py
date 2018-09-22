@@ -24,9 +24,10 @@ class TableMixin(object):
         """
         try:
             float(cell)
-            table_cell.attrib[moin_page('class')] = 'moin-integer'
-        except:
+        except ValueError:
             pass
+        else:
+            table_cell.attrib[moin_page('class')] = 'moin-integer'
 
     def build_dom_table(self, rows, head=None, cls=None):
         """

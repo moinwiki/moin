@@ -3,12 +3,10 @@
 
 """
 MoinMoin - Tests for moin.converter.include
-
-Note: Tests will fail if caching is turned on in wikiconfig.
 """
 
 
-from moin.converter.include import *
+from moin.converter.include import XPointer
 from moin.items import Item
 from moin.constants.keys import CONTENTTYPE, ACL
 from moin._tests import wikiconfig, update_item

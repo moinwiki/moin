@@ -21,7 +21,8 @@ import time
 import uuid
 import mimetypes
 import json
-from StringIO import StringIO
+import threading
+from io import BytesIO
 from datetime import datetime
 from collections import namedtuple
 from functools import wraps, partial
@@ -44,7 +45,6 @@ from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, DateRange, Every
 from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
-from whoosh import sorting
 
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, contenttype_to_class
@@ -53,16 +53,16 @@ from moin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                         Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                         validate_name, NameNotValidError)
-from moin.items import (BaseChangeForm, TextChaizedForm, Item, NonExistent, NameNotUniqueError,
+from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
 from moin import user, util
-from moin.constants.keys import *
-from moin.constants.namespaces import *
+from moin.constants.keys import *  # noqa
+from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
-from moin.constants.contenttypes import *
+from moin.constants.contenttypes import *  # noqa
 from moin.util import crypto, rev_navigation
 from moin.util.crypto import make_uuid
 from moin.util.interwiki import url_for_item, split_fqname, CompositeName
@@ -70,7 +70,6 @@ from moin.util.mime import Type, type_moin_document
 from moin.util.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
-from moin.security.textcha import TextCha, TextChaizedForm
 from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.converter import default_registry as reg
@@ -78,6 +77,9 @@ from moin.script.migration.moin19.import19 import hash_hexdigest
 
 from moin import log
 logging = log.getLogger(__name__)
+
+
+jfu_server_lock = threading.Lock()
 
 
 @frontend.route('/+dispatch', methods=['GET', ])
@@ -387,7 +389,7 @@ def search(item_name):
                         transclusions = _compute_item_transclusions(name)
                         transcluded_names.update(transclusions)
                 # XXX Will whoosh cope with such a large filter query?
-                terms.extend([Term(NAME_EXACT, name) for name in transcluded_names])
+                terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
 
             _filter = Or(terms)
 
@@ -612,8 +614,9 @@ def download_item(item):
     return item.content.do_get(force_attachment=True, mimetype=mimetype)
 
 
-class ConvertForm(TextChaizedForm):
+class ConvertForm(Form):
     new_type = Select.using(label=L_('New Content Type')).out_of((('text/x.moin.wiki;charset=utf-8', 'MoinWiki'),
+                                                                  ('text/x-markdown;charset=utf-8', 'Markdown'),
                                                                   ('text/x-rst;charset=utf-8', 'ReST'),
                                                                   ('application/x-xhtml-moin-page', 'HTML'),
                                                                   ('application/docbook+xml;charset=utf-8', 'DocBook')))
@@ -673,7 +676,7 @@ def convert_item(item_name):
         meta[CONTENTTYPE] = form['new_type'].value
     out = out.encode(CHARSET)
     size, hash_name, hash_digest = hash_hexdigest(out)
-    out = StringIO(out)
+    out = BytesIO(out)
     meta[hash_name] = hash_digest
     meta[SIZE] = size
     meta[REVID] = make_uuid()
@@ -788,10 +791,8 @@ def revert_item(item_name, rev):
         abort(404, item_name)
     if request.method in ['GET', 'HEAD']:
         form = RevertItemForm.from_defaults()
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = RevertItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
@@ -822,11 +823,9 @@ def rename_item(item_name):
         abort(404, item_name)
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
-        TextCha(form).amend_form()
         form['target'] = item.name
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         if form.validate():
             target = form['target'].value
             comment = form['comment'].value
@@ -867,10 +866,8 @@ def delete_item(item_name):
         abort(404, item_name)
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
             try:
@@ -969,10 +966,8 @@ def destroy_item(item_name, rev):
         abort(404, fqname.fullname)
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
-        TextCha(form).amend_form()
         if form.validate():
             comment = form['comment'].value
             try:
@@ -992,10 +987,6 @@ def destroy_item(item_name, rev):
     if isinstance(item.rev.data, file):
         item.rev.data.close()
     return ret
-
-
-import threading
-jfu_server_lock = threading.Lock()
 
 
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
@@ -1470,14 +1461,14 @@ class ValidRegistration(Validator):
     def validate(self, element, state):
         if not (element['username'].valid and
                 element['password1'].valid and element['password2'].valid and
-                element['email'].valid and element['textcha'].valid):
+                element['email'].valid):
             return False
         if element['password1'].value != element['password2'].value:
             return self.note_error(element, state, 'passwords_mismatch_msg')
         return True
 
 
-class RegistrationForm(TextChaizedForm):
+class RegistrationForm(Form):
     """a simple user registration form"""
     name = 'register'
 
@@ -1548,11 +1539,8 @@ def register():
             oid = request.values.get('openid_openid')
             if oid:
                 form['openid'] = oid
-        TextCha(form).amend_form()
     elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
-        TextCha(form).amend_form()
-
         if form.validate():
             user_kwargs = {
                 'username': form['username'].value,
@@ -1686,7 +1674,7 @@ class ValidPasswordRecovery(Validator):
 
         password = element['password1'].value
         try:
-            app.cfg.cache.pwd_context.encrypt(password)
+            app.cfg.cache.pwd_context.hash(password)
         except (ValueError, TypeError) as err:
             return self.note_error(element, state, 'password_problem_msg')
 
@@ -1855,7 +1843,7 @@ class ValidChangePass(Validator):
             if pw_error:
                 return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
-            app.cfg.cache.pwd_context.encrypt(password)
+            app.cfg.cache.pwd_context.hash(password)
         except (ValueError, TypeError) as err:
             return self.note_error(element, state, 'password_problem_msg')
         return True
@@ -2548,7 +2536,7 @@ def global_tags(namespace):
     tags_counts = sorted(tags_counts.items())
     if tags_counts:
         # this is a simple linear scaling
-        counts = [count for tags, count in tags_counts]
+        counts = [count for _tags, count in tags_counts]
         count_min = min(counts)
         count_max = max(counts)
         weight_max = 9.99

@@ -7,7 +7,9 @@
 
 
 from jinja2 import Markup
+import werkzeug
 
+from flatland import AdaptationError, Scalar
 from flatland.out.markup import Generator
 from flatland.schema.util import find_i18n_function
 
@@ -99,12 +101,6 @@ def make_generator():
                      filters=[label_filter, button_filter,
                               error_filter,
                               required_filter, placeholder_filter, autofocus_filter])
-
-
-# other flatland stuff
-
-from flatland import AdaptationError, Scalar
-import werkzeug
 
 
 class FileStorage(Scalar):

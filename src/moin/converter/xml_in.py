@@ -9,7 +9,10 @@ from __future__ import absolute_import, division
 
 import re
 
+from . import default_registry
 from ._util import decode_data
+
+from moin.util.mime import Type, type_text_plain
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -39,6 +42,4 @@ class XMLIndexingConverter(object):
         return text
 
 
-from . import default_registry
-from moin.util.mime import Type, type_text_plain
 default_registry.register(XMLIndexingConverter._factory, Type('text/xml'), type_text_plain)

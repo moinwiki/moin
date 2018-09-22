@@ -127,9 +127,9 @@ class Config(DefaultConfig):
 
     # create a super user who will have access to administrative functions
     # acl_functions = u'+YourName:superuser'
-    # OR, create several WikiGroups and create several superusers and turn off textchas for selected users
+    # OR, create several WikiGroups and create several superusers
     # SuperGroup and TrustedEditorGroup reference WikiGroups you must create
-    # acl_functions = u'+YourName:superuser SuperGroup:superuser YourName:notextcha TrustedEditorGroup:notextcha'
+    # acl_functions = u'+YourName:superuser SuperGroup:superuser'
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
@@ -152,24 +152,8 @@ class Config(DefaultConfig):
                               hierarchic=False, ),
     )
 
-    # uncomment and improve block below to enable textchas
     """
-    textchas = {
-    'en': { # silly english example textchas (do not use them!)
-            u"Enter the first 9 digits of Pi.": ur"3\.14159265",
-            u"What is the opposite of 'day'?": ur"(night|nite)",
-            # ...
-    },
-    'de': { # some german textchas
-            u"Gib die ersten 9 Stellen von Pi ein.": ur"3\.14159265",
-            u"Was ist das Gegenteil von 'Tag'?": ur"nacht",
-            # ...
-    },
-    # you can add more languages if you like
-    }
-    #
     secrets = {
-        'security/textcha': 'EnterSecretStringHere',
         'security/ticket': 'EnterDifferentSceretStringHere',
     }
     """

@@ -8,14 +8,13 @@ MoinMoin - Tests for moin.converter.html_in and moin.converter.html_out.
 """
 
 
-import StringIO
-import re
+from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')
+etree = pytest.importorskip('lxml.etree')  # noqa
 
-from . import serialize
+from . import serialize, XMLNS_RE3
 
 from moin.converter.html_in import Converter as HTML_IN
 from moin.converter.html_out import Converter as HTML_OUT
@@ -33,7 +32,7 @@ class Base(object):
         xlink.namespace: 'xlink',
     }
 
-    output_re = re.compile(r'\s+xmlns="[^"]+"')
+    output_re = XMLNS_RE3
 
     def handle_input(self, input, args):
         out = self.conv_html_dom(input, **args)
@@ -47,7 +46,7 @@ class Base(object):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the roundtrip : {0}".format(string_to_parse))
         print 'string_to_parse = %s' % string_to_parse
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(path))
 
 

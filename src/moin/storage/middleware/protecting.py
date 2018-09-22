@@ -220,10 +220,6 @@ class ProtectedItem(object):
         return self.item.itemid
 
     @property
-    def fqname(self):
-        return self.item.fqname
-
-    @property
     def parentids(self):
         return self.item.parentids
 

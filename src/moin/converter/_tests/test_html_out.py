@@ -6,19 +6,18 @@
 MoinMoin - Tests for moin.converter.html_out
 """
 
-
-import re
-import StringIO
+from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')
+etree = pytest.importorskip('lxml.etree')  # noqa
 
-from emeraldtree.tree import *
+from emeraldtree import ElementTree as ET
 
-from . import serialize
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.converter.html_out import *
+from moin.util.tree import html, moin_page, xml, xlink
+from moin.converter.html_out import Converter, ConverterPage, ElementException
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -32,8 +31,8 @@ class Base(object):
         xml.namespace: 'xml',
     }
 
-    input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    input_re = TAGSTART_RE
+    output_re = XMLNS_RE
 
     def handle_input(self, input):
         i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)
@@ -47,7 +46,7 @@ class Base(object):
         out = self.conv(self.handle_input(input), **args)
         string_to_parse = self.handle_output(out)
         logging.debug("After the HTML_OUT conversion : {0}".format(string_to_parse))
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(xpath))
 
 
@@ -275,15 +274,16 @@ class TestConverterPage(Base):
     def setup_class(self):
         self.conv = ConverterPage()
 
-    def test_note(self):
+    data = [
+        ('<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
+         # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">
+         '/div[p[text()="Text"]/sup[@id="note-1-ref"]/a[@href="#note-1"][text()="1"]][p[@id="note-1"][text()="Note"]/sup/a[@href="#note-1-ref"][text()="1"]]'),
+    ]
+
+    @pytest.mark.parametrize('input,xpath', data)
+    def test_note(self, input, xpath):
         pytest.skip("this test requires footnote plugin")  # XXX TODO
-        data = [
-            ('<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
-                # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">
-                '/div[p[text()="Text"]/sup[@id="note-1-ref"]/a[@href="#note-1"][text()="1"]][p[@id="note-1"][text()="Note"]/sup/a[@href="#note-1-ref"][text()="1"]]'),
-        ]
-        for i in data:
-            yield (self.do, ) + i
+        self.do(input, xpath)
 
     @pytest.mark.xfail
     def test_unknown(self):

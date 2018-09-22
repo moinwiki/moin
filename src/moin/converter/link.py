@@ -19,6 +19,8 @@ from moin.util.mime import Type, type_moin_document
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.wikiutil import AbsItemName
 
+from . import default_registry
+
 
 class ConverterBase(object):
     _tag_xlink_href = xlink.href
@@ -275,6 +277,5 @@ class ConverterItemRefs(ConverterBase):
         return list(self.external_links)
 
 
-from . import default_registry
 default_registry.register(ConverterExternOutput._factory, type_moin_document, type_moin_document)
 default_registry.register(ConverterItemRefs._factory, type_moin_document, type_moin_document)

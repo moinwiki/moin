@@ -834,17 +834,14 @@ discussed below under the headings `ACLs - special groups` and `Groups`.
 
 ACL for functions
 -----------------
-Moin has two built in functions that are protected by ACLs: superuser and notextcha:
+Moin has some built in functions that are protected by ACLs:
 
 * superuser - used for miscellaneous administrative functions. Give this only to
   highly trusted people
-* notextcha - if you have TextChas enabled, users with the notextcha capability
-  won't get questions to answer. Give this to known and trusted users who
-  regularly edit in your wiki.
 
 Example::
 
-    acl_functions = u'YourName:superuser TrustedEditorGroup:notextcha'
+    acl_functions = u'YourName:superuser'
 
 ACLs for contents
 -----------------
@@ -1013,65 +1010,10 @@ This will behave as usual, except that "NotThisGuy" will never be given write
 permission.
 
 
-Anti-Spam
-=========
-TextChas
---------
-
-A TextCHA is a pure text alternative to ''CAPTCHAs''. MoinMoin uses it to
-prevent wiki spamming and it has proven to be very effective.
-
-Features:
-
-* when registering a user or saving an item, it can ask a random question
-* moin matches the given answer against a regular expression
-* questions and answers can be configured in the wiki config
-* multi language support: a user gets a textcha in his language or in the
-  language_default or in English, depending on availability of questions and
-  answers for the language
-
-TextCha Configuration
-~~~~~~~~~~~~~~~~~~~~~
-
-Tips for configuration:
-
-* have 1 word / 1 number answers
-* ask questions that normal users of your site are likely to be able to answer
-* do not ask overly complex questions
-* do not ask "computable" questions, like "1+1" or "2*3"
-* do not ask overly obvious questions
-* do not share your questions with other sites / copy questions from other
-  sites (or spammers might try to adapt to this)
-* you should at least give textchas for 'en' or for your language_default, if
-  that is not 'en', as this will be used as fallback if MoinMoin does not find
-  a textcha in the user's language
-* if a determined bot learns the answers, create new textchas
-
-In your wiki config, do something like this::
-
-    textchas = {
-        'en': { # silly english example textchas (do not use them!)
-                u"Enter the first 9 digits of Pi.": ur"3\.14159265",
-                u"What is the opposite of 'day'?": ur"(night|nite)",
-                # ...
-        },
-        'de': { # some german textchas
-                u"Gib die ersten 9 Stellen von Pi ein.": ur"3\.14159265",
-                u"Was ist das Gegenteil von 'Tag'?": ur"nacht",
-                # ...
-        },
-        # you can add more languages if you like
-    }
-
-
-Note that users with 'notextcha' ACL capability won't get TextChas to answer.
-
-
 Secrets
 =======
 Moin uses secrets to encrypt or cryptographically sign something like:
 
-* textchas
 * tickets
 
 Secrets are long random strings and *not* a reuse of any of your passwords.
@@ -1079,7 +1021,6 @@ Don't use the strings shown below, they are NOT secret as they are part of the
 moin documentation. Make up your own secrets::
 
     secrets = {
-        'security/textcha': 'kjenrfiefbeiaosx5ianxouanamYrnfeorf',
         'security/ticket': 'asdasdvarebtZertbaoihnownbrrergfqe3r',
     }
 
@@ -1387,48 +1328,6 @@ The uri part after "sqlite:" is like::
 It uses "::" as separator to support windows pathes which may have ":" after
 the drive letter.
 
-
-kc store
---------
-Features:
-
-* uses a Kyoto Cabinet file for storage
-* very fast
-* single-process only, local only
-
-`uri` for `create_simple_mapping` looks like e.g.::
-
-    stores:kc:/srv/mywiki/data/%(nsname)s_%(kind)s.kch
-
-Please see the kyoto cabinet docs about the part after `kc:`.
-
-If you use kc with the builtin server of moin, you cannot use the reloader.
-Disable it with the commandline option::
-
-  moin moin -r
-
-
-kt store
---------
-Features:
-
-* uses a Kyoto Tycoon server for storage
-* fast
-* multi-process, local or remote.
-
-.. todo:
-
-   add kt store configuration example
-
-mongodb store
--------------
-Features:
-
-* uses mongodb for storage
-
-.. todo:
-
-   add mongodb store configuration example
 
 memory store
 --------------

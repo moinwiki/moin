@@ -8,7 +8,7 @@ MoinMoin - Tests for moin.util.registry
 
 import pytest
 
-from moin.util.registry import *
+from moin.util.registry import Registry
 
 
 def factory_all(arg):

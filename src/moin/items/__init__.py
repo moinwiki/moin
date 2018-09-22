@@ -17,16 +17,16 @@
     Each class in this module corresponds to an itemtype.
 """
 
-from time import time, gmtime, strftime
+from time import time, strftime
 import json
-from StringIO import StringIO
+from io import BytesIO
 from collections import namedtuple
 from operator import attrgetter
 import re
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import request, Response, redirect, abort, escape, url_for, flash
+from flask import request, Response, redirect, abort, url_for, flash
 
 from flatland import Form
 from flatland.validation import Validator
@@ -36,7 +36,6 @@ from jinja2 import Markup
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-from moin.security.textcha import TextCha, TextChaizedForm
 from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_, N_
@@ -53,7 +52,7 @@ from moin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS, TEMPLATE
+    LATEST_REVS, EDIT_ROWS
 )
 from moin.constants.namespaces import NAMESPACE_ALL
 from moin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
@@ -132,7 +131,7 @@ class DummyRev(dict):
             ITEMTYPE: itemtype or ITEMTYPE_NONEXISTENT,
             CONTENTTYPE: contenttype or CONTENTTYPE_NONEXISTENT
         }
-        self.data = StringIO('')
+        self.data = BytesIO(b'')
         self.revid = None
         if item:
             self.meta[NAMESPACE] = fqname.namespace
@@ -205,7 +204,7 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
     return rev
 
 
-class BaseChangeForm(TextChaizedForm):
+class BaseChangeForm(Form):
     # autofocus=True causes javascript autoscroll in textarea to fail when using Chrome, Opera, or Maxthon browsers
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
     submit_label = L_('OK')
@@ -279,7 +278,6 @@ class BaseModifyForm(BaseChangeForm):
         overrride the _load method instead.
         """
         form = cls.from_defaults()
-        TextCha(form).amend_form()
         form._load(item)
         return form
 
@@ -293,7 +291,6 @@ class BaseModifyForm(BaseChangeForm):
         override this class method.
         """
         form = cls.from_flat(request.form.items() + request.files.items())
-        TextCha(form).amend_form()
         return form
 
 
@@ -693,8 +690,8 @@ class Item(object):
         if isinstance(data, unicode):
             data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
-        if isinstance(data, str):
-            data = StringIO(data)
+        if isinstance(data, bytes):
+            data = BytesIO(data)
         newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
                                              action=unicode(action),
                                              contenttype_current=contenttype_current,
@@ -1078,7 +1075,6 @@ class NonExistent(Item):
         except MissingParentError as e:
             flash(str(e), "error")
             form = CreateItemForm().from_defaults()
-            TextCha(form).amend_form()
             form['target'] = self.fqname.fullname
             return render_template('create_new_item.html',
                                    fqname=self.fqname,

@@ -8,9 +8,7 @@ MoinMoin - Tests for moin.converter.moinwiki_in
 
 import pytest
 
-import re
-
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.util.tree import moin_page, xlink, html, xinclude
 
@@ -26,7 +24,7 @@ class TestConverter(object):
         xinclude: 'xinclude',
     }
 
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = Converter()
@@ -46,6 +44,10 @@ class TestConverter(object):
          '<page><body><p><a xlink:href="http://moinmo.in/">MoinMoin</a></p></body></page>'),
         (u'[[MoinMoin]]',
          '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
+        (u'[[MoinMoin#Heading]]',
+         '<page><body><p><a xlink:href="wiki.local:MoinMoin#Heading">MoinMoin</a></p></body></page>'),
+        (u'[[#Heading]]',
+         '<page><body><p><a xlink:href="wiki.local:#Heading"></a></p></body></page>'),
         (u'{{somelocalimage|my alt text|width=10, height=10}}',
          '<page><body><p><xinclude:include xhtml:alt="my alt text" xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>'),
         # html5 requires img tags to have an alt attribute, html_out.py will add any required attributes that are missing
@@ -61,9 +63,9 @@ class TestConverter(object):
         (u'{{http://moinmo.in/|test|width=10, height=10}}',
          '<page><body><p><object xhtml:alt="test" xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'{{http://moinmo.in/}}',
-         '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>', None, 'unknown'),
+         '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'{{http://moinmo.in/|MoinMoin}}',
-         '<page><body><p><object alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>', None, 'unknown'),
+         '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>'),
         (u'----',
          '<page><body><separator class="moin-hr1" /></body></page>'),
     ]

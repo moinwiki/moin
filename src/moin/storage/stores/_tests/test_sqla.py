@@ -8,7 +8,8 @@ MoinMoin - sqla store tests
 
 
 import pytest
-pytest.importorskip('moin.storage.stores.sqla')
+
+pytest.importorskip('moin.storage.stores.sqla')  # noqa
 from ..sqla import BytesStore, FileStore
 
 

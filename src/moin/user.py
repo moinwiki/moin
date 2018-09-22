@@ -19,11 +19,10 @@
 
 from __future__ import absolute_import, division
 
-import re
 import copy
 import hashlib
 import werkzeug
-from StringIO import StringIO
+from io import BytesIO
 
 from babel import parse_locale
 
@@ -35,11 +34,11 @@ from jinja2.runtime import Undefined
 from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from moin.constants.keys import *
+from moin.constants.keys import *  # noqa
 from moin.constants.misc import ANON
 from moin.i18n import _, L_, N_
 from moin.mail import sendmail
-from moin.util.interwiki import getInterwikiHome, getInterwikiName, is_local_wiki
+from moin.util.interwiki import getInterwikiHome, getInterwikiName
 from moin.util.crypto import generate_token, valid_token, make_uuid
 from moin.util.subscriptions import get_matched_subscription_patterns
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
@@ -293,7 +292,7 @@ class UserProfile(object):
             q = {ITEMID: self[ITEMID]}
             q = update_user_query(**q)
             item = get_user_backend().get_item(**q)
-            item.store_revision(self._meta, StringIO(''), overwrite=True)
+            item.store_revision(self._meta, BytesIO(b''), overwrite=True)
             self._stored = True
             self._changed = False
 
@@ -381,14 +380,14 @@ class User(object):
 
     @property
     def language(self):
-        l = self._cfg.language_default
+        lang = self._cfg.language_default
         locale = self.locale  # is either None or something like 'en_US'
         if locale is not None:
             try:
-                l = parse_locale(locale)[0]
+                lang = parse_locale(locale)[0]
             except ValueError:
                 pass
-        return l
+        return lang
 
     def avatar(self, size=30):
         if not app.cfg.user_use_gravatar:
@@ -492,7 +491,7 @@ class User(object):
                 data[ENC_PASSWORD] = recomputed_hash
         return password_correct, bool(recomputed_hash)
 
-    def set_password(self, password, is_encrypted=False, salt=None):
+    def set_password(self, password, is_encrypted=False):
         """
         Set or update the password (hash) stored for this user.
 
@@ -503,14 +502,12 @@ class User(object):
                              "encrypted" (hashed) before getting stored.
                              if True, the already "encrypted" password hash is given in param
                              password and will be stored "as is" - this is mainly useful for tests.
-        :param salt: if None (default), passlib will generate and use a random salt.
-                     Otherwise, the given salt will be used - this is mainly useful for tests.
         """
         if not password:
             # invalidate the pw hash
             password = ''
         elif not is_encrypted:
-            password = self._cfg.cache.pwd_context.encrypt(password, salt=salt)
+            password = self._cfg.cache.pwd_context.hash(password)
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
         session['user.session_token'] = self.generate_session_token(False)

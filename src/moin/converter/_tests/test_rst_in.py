@@ -6,13 +6,12 @@
 MoinMoin - Tests for moin.converter.rst_in
 """
 
-import re
-
 import pytest
 
-from . import serialize
+from . import serialize, XMLNS_RE
 
-from moin.converter.rst_in import *
+from moin.util.tree import html, moin_page, xlink, xinclude
+from moin.converter.rst_in import Converter
 
 
 class TestConverter(object):
@@ -23,7 +22,7 @@ class TestConverter(object):
         xinclude: 'xinclude',
     }
 
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = Converter()

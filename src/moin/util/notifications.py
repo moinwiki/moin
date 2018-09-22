@@ -44,7 +44,7 @@ def msgs():
 
     :return: a dictionary of notification messages
     """
-    _ = lambda x: x
+    _ = lambda x: x  # noqa
     messages = {
         ACTION_CREATE: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been created by %(user_name)s:"),
         ACTION_MODIFY: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been modified by %(user_name)s:"),

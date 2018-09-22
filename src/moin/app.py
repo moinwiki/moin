@@ -37,7 +37,7 @@ from moin.i18n import _, L_, N_
 from moin.themes import setup_jinja_env, themed_error
 from moin.util.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
-from moin import auth, config, user
+from moin import auth, user
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -145,7 +145,8 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     app.register_blueprint(serve, url_prefix='/+serve')
     clock.stop('create_app register')
     clock.start('create_app flask-cache')
-    cache = Cache()
+    # the 'simple' caching uses a dict and is not thread safe according to the docs.
+    cache = Cache(config={'CACHE_TYPE': 'simple'})
     cache.init_app(app)
     app.cache = cache
     clock.stop('create_app flask-cache')

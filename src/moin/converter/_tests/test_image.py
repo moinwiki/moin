@@ -7,7 +7,7 @@ MoinMoin - Tests for moin.converter for different imagetypes
 
 import pytest
 
-from emeraldtree import tree as ET
+from emeraldtree import ElementTree as ET
 
 from . import serialize
 

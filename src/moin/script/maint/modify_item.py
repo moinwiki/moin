@@ -5,7 +5,6 @@
 MoinMoin - get an item revision from the wiki, put it back into the wiki.
 """
 
-import shutil
 import json
 
 from flask import current_app as app

@@ -54,13 +54,20 @@
 
 from __future__ import absolute_import, division
 
+from io import BytesIO
+import os
+import logging
+import logging.config
+import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
+import warnings
+
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or with a non-working
 # logging configuration.
 # See http://docs.python.org/library/logging.html#configuring-logging
 # We just use stderr output by default, if you want anything else,
 # you will have to configure logging.
-logging_config = """\
+logging_config = b"""\
 [DEFAULT]
 # Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
 loglevel=INFO
@@ -96,15 +103,8 @@ datefmt=
 class=logging.Formatter
 """
 
-import os
-import logging
-import logging.config
-import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
-
 configured = False
 fallback_config = False
-
-import warnings
 
 # use something like this to ignore warnings:
 # warnings.filterwarnings('ignore', r'... regex for warning message to ignore ...')
@@ -137,29 +137,25 @@ def load_config(conf_fname=None):
             finally:
                 f.close()
             configured = True
-            l = getLogger(__name__)
-            l.info('using logging configuration read from "{0}"'.format(conf_fname))
+            logger = getLogger(__name__)
+            logger.info('using logging configuration read from "{0}"'.format(conf_fname))
             warnings.showwarning = _log_warning
         except Exception as err:  # XXX be more precise
             err_msg = str(err)
     if not configured:
         # load builtin fallback logging config
-        from StringIO import StringIO
-        f = StringIO(logging_config)
-        try:
+        with BytesIO(logging_config) as f:
             logging.config.fileConfig(f)
-        finally:
-            f.close()
         configured = True
-        l = getLogger(__name__)
+        logger = getLogger(__name__)
         if err_msg:
-            l.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
-        l.info('using logging configuration read from built-in fallback in moin.log module!')
+            logger.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
+        logger.info('using logging configuration read from built-in fallback in moin.log module!')
         warnings.showwarning = _log_warning
 
     import moin
     code_path = os.path.dirname(moin.__file__)
-    l.info('Running %s %s code from %s' % (moin.project, moin.version, code_path))
+    logger.info('Running %s %s code from %s' % (moin.project, moin.version, code_path))
 
 
 def getLogger(name):

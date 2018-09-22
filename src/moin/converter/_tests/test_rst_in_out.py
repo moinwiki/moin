@@ -7,13 +7,9 @@ MoinMoin - Tests for rst -> DOM -> rst using rst in and out converters
 TODO: Failing tests are commented out and need to be fixed.
 """
 
-import re
-
 import pytest
-import docutils
 
 from emeraldtree import ElementTree as ET
-from werkzeug.utils import unescape
 
 try:
     from flask import g as flaskg
@@ -21,15 +17,14 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from . import serialize
+from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin import config
 from moin.util.iri import Iri
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.constants.contenttypes import CHARSET
 
 # ### TODO: try block (do not crash if we don't have docutils)
-pytest.importorskip('docutils')
+pytest.importorskip('docutils')  # noqa
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block
@@ -51,8 +46,8 @@ class TestConverter(object):
         xinclude.namespace: 'xinclude',
         html.namespace: 'html',
     }
-    input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    input_re = TAGSTART_RE
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv_in = conv_in()

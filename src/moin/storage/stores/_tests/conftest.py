@@ -15,29 +15,14 @@ from moin._tests import check_connection
 
 STORES_PACKAGE = 'moin.storage.stores'
 
-STORES = 'fs kc memory sqlite sqlite:compressed sqla'.split()
-try:
-    # check if we can connect to the kt server
-    check_connection(1978)
-    STORES.append('kt')
-except Exception:
-    pass
+STORES = 'fs memory sqlite sqlite:compressed sqla'.split()
 
-try:
-    # check if we can connect to the mongodb server
-    check_connection(27017)
-    STORES.append('mongodb')
-except Exception:
-    pass
 
 constructors = {
     'memory': lambda store, _: store(),
     'fs': lambda store, tmpdir: store(str(tmpdir.join('store'))),
     'sqlite': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=0),
     'sqlite:compressed': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=1),
-    'kc': lambda store, tmpdir: store(str(tmpdir.join('store.kch'))),
-    'kt': lambda store, _: store(),
-    'mongodb': lambda store, _: store(),
     'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')), 'test_table'),
 }
 
@@ -79,8 +64,7 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('Store', argvalues, ids=ids)
 
 
-def make_store(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
+def make_store(request, tmpdir):
     storename, kind = request.param
     storemodule = pytest.importorskip(STORES_PACKAGE + '.' + storename.split(':')[0])
     klass = getattr(storemodule, kind)
@@ -108,8 +92,8 @@ def fst(request):
 
 
 @pytest.fixture
-def store(request):
-    store = make_store(request)
+def store(request, tmpdir):
+    store = make_store(request, tmpdir)
     storename, kind = request.param
     if kind == 'FileStore':
         store = ByteToStreamWrappingStore(store)

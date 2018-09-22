@@ -113,7 +113,6 @@ setup_args = dict(
                                          # windows binaries available from 3rd parties
         'openid': ["python-openid>=2.2.4"],  # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
-        'mongodb': ["pymongo"],  # used by mongodb store
     },
     entry_points=dict(
         console_scripts=['moin = moin.script:main'],
@@ -121,7 +120,7 @@ setup_args = dict(
 
     # stuff for babel:
     message_extractors={
-        '': [
+        'src': [
             ('moin/templates/**.html', 'jinja2', None),
             ('moin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be defined here for jQuery i18n plugin
             ('moin/apps/**/templates/**.html', 'jinja2', None),

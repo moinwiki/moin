@@ -6,19 +6,16 @@
 MoinMoin - Tests for moin.converter.docbook_in
 """
 
-
-import re
-import StringIO
+from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')
+etree = pytest.importorskip('lxml.etree')  # noqa
 
-from emeraldtree.tree import *
+from . import serialize, XMLNS_RE3, TAGSTART_RE
 
-from . import serialize
-
-from moin.converter.docbook_in import *
+from moin.util.tree import html, moin_page, xlink, xml, docbook
+from moin.converter.docbook_in import Converter
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -38,8 +35,8 @@ class Base(object):
                         'html': html.namespace
                        }
 
-    input_re = re.compile(r'^(<[a-z:]+)')
-    output_re = re.compile(r'\s+xmlns="[^"]+"')
+    input_re = TAGSTART_RE
+    output_re = XMLNS_RE3
 
     def handle_input(self, input):
         return self.input_re.sub(r'\1 ' + self.input_namespaces, input)
@@ -56,14 +53,14 @@ class Base(object):
     def do(self, input, xpath_query):
         string_to_parse = self.handle_output(input)
         logging.debug(u"After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         print 'string_to_parse = %s' % string_to_parse  # provide a clue for failing tests
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 
     def do_nonamespace(self, input, xpath_query):
         string_to_parse = self.handle_output(input, nonamespace=True)
         logging.debug(u"After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 
 
@@ -233,7 +230,6 @@ class TestConverter(Base):
         '/page/body/div/table[./table-header/table-row[table-cell="a1"]][./table-footer/table-row[table-cell="f1"]][./table-body/table-row[table-cell/table/table-body/table-row[table-cell="s1"]]]'),
     ]
 
-    @pytest.mark.skip('broken, please fix')
     @pytest.mark.parametrize('input,xpath', data)
     def test_table(self, input, xpath):
         self.do(input, xpath)

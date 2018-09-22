@@ -18,8 +18,10 @@ from moin.constants.misc import URI_SCHEMES
 from moin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
 from moin.util.interwiki import is_known_wiki
 from moin.util.iri import Iri
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
 from moin.util.tree import moin_page, xlink
 
+from . import default_registry
 from .moinwiki_in import Converter
 
 from moin import log
@@ -160,7 +162,5 @@ class ConverterFormat19(Converter):
     inline_re = re.compile('|'.join(inline), re.X | re.U)
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(ConverterFormat19.factory, Type('text/x.moin.wiki;format=1.9'), type_moin_document)
 default_registry.register(ConverterFormat19.factory, Type('x-moin/format;name=wiki;format=1.9'), type_moin_document)

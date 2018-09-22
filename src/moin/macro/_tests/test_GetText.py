@@ -6,7 +6,7 @@ Test for macro.GetText
 """
 
 from moin.converter._args import Arguments
-from moin.macro.GetText import *
+from moin.macro.GetText import Macro
 
 
 def test_Macro():

@@ -11,11 +11,14 @@
 Moin Wiki markup overview
 ==========================
 
-The report follows the moin 1.9 help page and reports syntaxes that do not match 1.9 help syntax documentation.
-The structure and order has been matched with other markup rst files namely creoleWiki.rst and mediaWiki.rst at
-http://hg.moinmo.in/moin/2.0-dev/file/42d8cde592fb/docs/user
+This document describes the features of the moinwiki markup language.
+Because this document was created using  Restructured Text, which
+does not support some of the features available in moinwiki, the
+examples below may show both the markup and result as block or
+predefined code.
 
-Features currently not working with moin's Wiki parser are marked with **MOINTODO**.
+Features currently not working with moin's Wiki parser are marked
+with **MOINTODO**.
 
 Table Of Contents
 =================
@@ -64,12 +67,15 @@ Level 6
 
 **Notes**:
  - Closing equals signs are compulsory.
- - Also, whitespace between the first word of the heading and the opening equals sign will not be shown in the output (ie. leading whitespace is stripped).
+ - Also, whitespace between the first word of the heading and the
+   opening equals sign will not be shown in the output (ie. leading
+   whitespace is stripped).
 
 Text formatting
 ===============
 
-The following is a table of inline markup that can be used to control text formatting in Moin.
+The following is a table of inline markup that can be used to control text
+formatting in Moin.
 
 +-------------------------------------+---------------------------------------+
 | Markup                              | Result                                |
@@ -188,14 +194,21 @@ Images and Transclusions
 
 **Extra Info**:
 
-Markup like ``{{ example.jpg || &w=20 }}``, simply adds ``&w`` to the ``src`` URL of the image, the Python Imaging Library (PIL)
-understands that it has to compress the image on the server side and render as shrinked to size ``20``.
+Markup like ``{{ example.jpg || &w=20 }}``, simply adds ``&w`` to the
+``src`` URL of the image, the Python Imaging Library (PIL)
+understands that it has to compress the image on the server side and
+render as shrinked to size ``20``.
 
-For markup like ``{{ example.jpg || width=20, height=100 }}`` we currently allow only the ``width`` and ``height`` (anything
-else is ignored) to be added as attributes in the HTML, however one can, add anything to the query URL using ``&``, like ``&w`` in the example above.
+For markup like ``{{ example.jpg || width=20, height=100 }}`` we
+currently allow only the ``width`` and ``height`` (anything
+else is ignored) to be added as attributes in the HTML, however
+one can, add anything to the query URL using ``&``, like ``&w``
+in the example above.
 
-Most browsers will display a large blank space when a web page using an https protocol is transcluded into a page using http protocol.
-Transcluding a png image using an https protocol into an http protocol page displays OK in all browsers.
+Most browsers will display a large blank space when a web page using
+an https protocol is transcluded into a page using http protocol.
+Transcluding a png image using an https protocol into an http protocol
+page displays OK in all browsers.
 
 
 Blockquotes and Indentations
@@ -216,10 +229,15 @@ Lists
 =====
 
 .. warning::
-   All Moin Wiki list syntax (including that for unordered lists, ordered lists and definition lists) requires a leading space before each item in the list.
-   Unfortunately, reStructuredText does not allow leading whitespace in code samples, so the example markup here will not work if copied verbatim, and requires
-   that each line of the list be indented by one space in order to be valid Moin Wiki markup.
-   This is also an **RSTTODO**
+ * All Moin Wiki list syntax (including that for unordered lists,
+   ordered lists and definition lists) requires a leading space before
+   each item in the list.
+ * Unfortunately, reStructuredText does not allow leading whitespace
+   in code samples, so the example markup here will not work if copied
+   verbatim, and requires
+   that each line of the list be indented by one space in order to
+   be valid Moin Wiki markup.
+ * This is also an **RSTTODO**
 
 Unordered Lists
 ---------------
@@ -257,7 +275,8 @@ Unordered Lists
    - item 4.1.1 (bulletless)
 
 **Note**:
- - moin markup allows a square, white and a bulletless item for unordered lists, these cannot be chosen in rst
+ - Moin markup allows a square, white and a bulletless item for
+   unordered lists, these cannot be shown in ReST documents.
 
 Ordered Lists
 ---------------
@@ -292,7 +311,7 @@ With Roman Numbers
    i. item 1.2
  I. item 2
 
-**Result**:
+**Result**: ::
 
  I. item 1
 
@@ -322,6 +341,35 @@ With Letters
 
  B. item 2
 
+Specify a Starting Point
+************************
+
+When there is a need to start an ordered list at a specific number,
+use the format below. This works for ordered lists using letters and
+roman numerals.
+
+**Markup**: ::
+
+
+ 1.#11 eleven
+ 1. twelve
+    i.#11 roman numeral xi
+ 1. thirteen
+
+ A.#11 letter K
+ A. letter J
+
+
+**Result**: ::
+
+ 11. eleven
+ 12. twelve
+    xi.roman numeral xi
+ 13. thirteen
+
+ K. letter K
+ J. letter J
+
 Definition Lists
 ================
 
@@ -341,13 +389,19 @@ Definition Lists
   | description 2
 
 **Notes**:
- - reStructuredText does not support multiple definitions for a single term, so a line break has been forced to illustrate the appearance of several definitions.
-   Using the prescribed Moin Wiki markup will, in fact, produce two separate definitions in MoinMoin (using separate ``<dd>`` tags).
+ - reStructuredText does not support multiple definitions for a
+   single term, so a line break has been forced to illustrate the
+   appearance of several definitions.
+ - Using the prescribed Moin Wiki markup will, in fact, produce two
+   separate definitions in MoinMoin (using separate ``<dd>`` tags).
 
 Tables
 ======
 
-Moin wiki markup supports table headers and footers. To indicate the first row(s) of a table is a header, insert a line of 3 or more = characters. To indicate a footer, include a second line of = characters after the body of the table.
+Moin wiki markup supports table headers and footers. To indicate the
+first row(s) of a table is a header, insert a line of 3 or more =
+characters. To indicate a footer, include a second line of =
+characters after the body of the table.
 
 **Markup**: ::
 
@@ -438,7 +492,8 @@ Table Styling Example
 Verbatim Display
 ----------------
 
-To show plain text preformatted code, just enclose the text in three or more curly braces.
+To show plain text preformatted code, just enclose the text in
+three or more curly braces.
 
 **Markup**: ::
 
@@ -483,7 +538,11 @@ Syntax Highlighting
 creole, rst, markdown, docbook, and mediawiki
 ---------------------------------------------
 
-To add a small section of markup using another parser, follow the example below replacing "creole" with the target parser name. The moinwiki parser does not have the facility to place table headings in the first column, but the creole parser can be used to create the desired table.
+To add a small section of markup using another parser, follow
+the example below replacing "creole" with the target parser
+name. The moinwiki parser does not have the facility to place
+table headings in the first column, but the creole parser can
+be used to create the desired table.
 
 **Markup**: ::
 
@@ -504,7 +563,8 @@ To add a small section of markup using another parser, follow the example below 
 csv
 ---
 
-The default separator for CSV cells is a semi-colon (;). The example below specifies a comma (,) is to be used as the separator.
+The default separator for CSV cells is a semi-colon (;). The
+example below specifies a comma (,) is to be used as the separator.
 
 **Markup**: ::
 
@@ -528,7 +588,9 @@ The default separator for CSV cells is a semi-colon (;). The example below speci
 wiki
 ----
 
-The wiki parser is the moinwiki parser. If there is a need to emphasize a section, pass some predefined classes to the wiki parser.
+The wiki parser is the moinwiki parser. If there is a need to
+emphasize a section, pass some predefined classes to the wiki
+parser.
 
 **Markup**: ::
 
@@ -549,7 +611,9 @@ The wiki parser is the moinwiki parser. If there is a need to emphasize a sectio
 Admonitions
 -----------
 
-Admonitions are used to draw the reader's attention to an important paragraph. There are nine admonition types: attention, caution, danger, error, hint, important, note, tip, and warning.
+Admonitions are used to draw the reader's attention to an important
+paragraph. There are nine admonition types: attention, caution,
+danger, error, hint, important, note, tip, and warning.
 
 
 **Markup**: ::
@@ -557,7 +621,9 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
  {{{#!wiki caution
  '''Don't overuse admonitions'''
 
- Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
+ Admonitions should be used with care. A page riddled with admonitions
+ will look restless and will be harder to follow than a page where
+ admonitions are used sparingly.
  }}}
 
 **Result**:
@@ -565,7 +631,9 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
 .. caution::
  '''Don't overuse admonitions'''
 
- Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
+ Admonitions should be used with care. A page riddled with admonitions
+ will look restless and will be harder to follow than a page where
+ admonitions are used sparingly.
 
 CSS classes for use with the wiki parser
 ----------------------------------------
@@ -579,11 +647,20 @@ CSS classes for use with the wiki parser
 Variables
 =========
 
-Variables within the content of a moin wiki item are transformed when the item is saved. An exception is if the item has a tag of '''template''', then no variables are processed. This makes variables particularly useful within template items. Another frequent use is to add signatures (@SIG@) to a comment within a discussion item.
+Variables within the content of a moin wiki item are transformed
+when the item is saved. An exception is if the item has a tag of
+'''template''', then no variables are processed. This makes variables
+particularly useful within template items. Another frequent use is to
+add signatures (@SIG@) to a comment within a discussion item.
 
-Variable expansion is global and happens everywhere within an item, including code displays, comments, tables, headings, inline parsers, etc.. Variables within transclusions are not expanded because they are not part of the including item's content.
+Variable expansion is global and happens everywhere within an
+item, including code displays, comments, tables, headings, inline
+parsers, etc.. Variables within transclusions are not expanded
+because they are not part of the including item's content.
 
-**TODO:** Allow wiki admins and users to add custom variables. There is no difference between system date format and user date format in Moin 2, fix code or docs.
+**TODO:** Allow wiki admins and users to add custom variables.
+There is no difference between system date format and user date
+format in Moin 2, fix code or docs.
 
 Predefined Variables
 --------------------
@@ -616,14 +693,19 @@ Predefined Variables
 
 **Notes:**
 
- - @PAGE@ and @ITEM@ results are identical, item being a moin 2 term and page a moin 1.x term.
+ - @PAGE@ and @ITEM@ results are identical, item being a moin 2
+   term and page a moin 1.x term.
 
- - If an editor is not logged in, then any @EMAIL@ or @MAILTO@ variables in the content are made harmless by inserting a space character. This prevents a subsequent logged in editor from adding his email address to the item accidentally.
+ - If an editor is not logged in, then any @EMAIL@ or @MAILTO@
+   variables in the content are made harmless by inserting a space
+   character. This prevents a subsequent logged in editor from adding
+   his email address to the item accidentally.
 
 Macros
 ======
 
-Macros are extensions to standard markup that allow developers to add extra features. The following is a table of MoinMoin's macros.
+Macros are extensions to standard markup that allow developers to add
+extra features. The following is a table of MoinMoin's macros.
 
 +-------------------------------------------+------------------------------------------------------------+
 | Markup                                    | Comment                                                    |
@@ -691,22 +773,30 @@ This table shows moin smiley markup, the rendering of smiley icons cannot be sho
 Comments
 --------
 
+There are three ways to add comments to a page. Lines starting with ##
+can be seen only by page editors. Phrases enclosed in `/*` and `*/`
+and wiki parser section blocks of text with a class of "comment" may
+be hidden or visible depending upon user settings or actions.
+
 **Markup**: ::
 
- {{{#!wiki comment/dotted
- This is a wiki parser section with class "comment dotted" (see HelpOnParsers).
+ ## Lines starting with "##" may be used to give instructions
+ ## to future page editors.
 
- Its visibility gets toggled the same way.
+ Click on the "Comments" button within Item Views to toggle the /* comments */ visibility.
+
+ {{{#!wiki comment/dashed
+ This is a wiki parser section with class "comment dashed".
+
+ Its visibility gets toggled by clicking on the comments button.
  }}}
+
+
 
 **Result**:
 
-+--------------------------------------------------------------------------------+
-| This is a wiki parser section with class "comment dotted" (see HelpOnParsers). |
-|                                                                                |
-| Its visibility gets toggled the same way.                                      |
-+--------------------------------------------------------------------------------+
+Click on the "Comments" button within Item Views to toggle the visibility.
 
 **Notes**:
- - reStructuredText has no support for dotted borders, so a table cell is used to illustrate the border which will be produced. This markup will actually produce a dotted border in MoinMoin.
- - The toggle display feature does not work yet
+ - The toggle display feature does not work on ReST documents, so there is
+   no way to see the hidden comments.

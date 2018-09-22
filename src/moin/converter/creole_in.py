@@ -31,7 +31,9 @@ from moin.constants.misc import URI_SCHEMES
 from moin.util.iri import Iri
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.util.interwiki import is_known_wiki
+from moin.util.mime import Type, type_moin_document, type_moin_creole
 
+from . import default_registry
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
@@ -543,7 +545,8 @@ class Converter(ConverterMacro):
             \|
             \s*
             (?P<cell_head> [=] )?
-            (?P<cell_text> [^|]+ )
+            # a table cells may contain links (which may contain |) or characters that are not |
+            (?P<cell_text> (\[\[.*?\]\]|[^|])+ )
             \s*
         )
     """
@@ -676,7 +679,5 @@ class Converter(ConverterMacro):
         return p
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document, type_moin_creole
 default_registry.register(Converter.factory, type_moin_creole, type_moin_document)
 default_registry.register(Converter.factory, Type('x-moin/format;name=creole'), type_moin_document)

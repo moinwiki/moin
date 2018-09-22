@@ -12,17 +12,17 @@ Converts an internal document tree into moinwiki markup.
 from __future__ import absolute_import, division
 
 import urllib
+from re import findall, sub
 
-from . import ElementException
+from emeraldtree import ElementTree as ET
+from werkzeug.utils import unescape
 
 from moin.util.tree import moin_page, xlink, xinclude, html
 from moin.util.iri import Iri
+from moin.util.mime import Type, type_moin_document, type_moin_wiki
 
-from emeraldtree import ElementTree as ET
-
-from re import findall, sub
-
-from werkzeug.utils import unescape
+from . import ElementException
+from . import default_registry
 
 
 class Moinwiki(object):
@@ -340,10 +340,14 @@ class Converter(object):
     def open_moinpage_nowiki(self, elem):
         """{{{#!wiki ... or {{{#!highlight ... etc."""
         nowiki_marker_len, all_nowiki_args, content = elem._children
-        nowiki_args = all_nowiki_args[0]
+        try:
+            nowiki_args = all_nowiki_args[0]
+        except IndexError:
+            # this happens only with pytest, why wasn't open_moinpage_blockcode called?
+            nowiki_args = ''
         nowiki_marker_len = int(nowiki_marker_len)
-        return u'\n' + u'{' * nowiki_marker_len + u'{0}\n{1}\n'.format(nowiki_args, content) + \
-               u'}' * nowiki_marker_len + u'\n'
+        return u'\n' + Moinwiki.verbatim_open * nowiki_marker_len + u'{0}\n{1}\n'.format(nowiki_args, content) + \
+               Moinwiki.verbatim_close * nowiki_marker_len + u'\n'
 
     def include_object(self, xpointer, href):
         """
@@ -527,10 +531,11 @@ class Converter(object):
         if hr_class:
             try:
                 height = int(hr_class.split(hr_class_prefix)[1]) - 1
+            except (ValueError, IndexError, TypeError):
+                raise ElementException('page:separator has invalid class {0}'.format(hr_class))
+            else:
                 if 0 <= height <= 5:
                     hr_ending = (u'-' * height) + hr_ending
-            except:
-                raise ElementException('page:separator has invalid class {0}'.format(hr_class))
         return Moinwiki.separator + hr_ending
 
     def open_moinpage_span(self, elem):
@@ -663,7 +668,5 @@ class Converter(object):
         return self.open_moinpage_object(elem)
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
 default_registry.register(Converter.factory, type_moin_document, type_moin_wiki)
 default_registry.register(Converter.factory, type_moin_document, Type('x-moin/format;name=wiki'))

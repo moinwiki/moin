@@ -134,10 +134,6 @@
     name of the authentication method.
 """
 
-
-from moin import log
-logging = log.getLogger(__name__)
-
 from werkzeug import redirect, abort, url_quote, url_quote_plus
 from flask import url_for, session, request
 from flask import g as flaskg
@@ -146,6 +142,9 @@ from jinja2 import Markup
 
 from moin import user
 from moin.i18n import _, L_, N_
+
+from moin import log
+logging = log.getLogger(__name__)
 
 
 def get_multistage_continuation_url(auth_name, extra_fields={}):

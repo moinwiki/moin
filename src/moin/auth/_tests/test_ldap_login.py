@@ -11,7 +11,7 @@ import pytest
 
 
 from moin._tests.ldap_testbase import LDAPTstBase, LdapEnvironment, check_environ, SLAPD_EXECUTABLE
-from moin._tests.ldap_testdata import *
+from moin._tests.ldap_testdata import *  # noqa
 from moin._tests import wikiconfig
 from moin.auth import handle_login
 
@@ -215,7 +215,7 @@ class TestLdapFailover(object):
         for ldap_env in self.ldap_envs:
             try:
                 ldap_env.stop_slapd()
-            except:
+            except:  # noqa
                 pass  # one will fail, because it is already stopped
             ldap_env.destroy_env()
 

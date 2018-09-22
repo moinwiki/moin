@@ -8,7 +8,7 @@ MoinMoin - serializer / deserializer tests
 
 from __future__ import absolute_import, division
 
-from StringIO import StringIO
+from io import BytesIO
 
 import pytest
 
@@ -43,21 +43,19 @@ def pytest_generate_tests(metafunc):
 
 
 @pytest.fixture
-def source(request):
+def source(request, tmpdir):
     # scenario
-    return make_middleware(request)
+    return make_middleware(request, tmpdir)
 
 
 @pytest.fixture
-def target(request):
+def target(request, tmpdir):
     # scenario
-    return make_middleware(request)
+    return make_middleware(request, tmpdir)
 
 
-def make_middleware(request):
-    tmpdir = request.getfuncargvalue('tmpdir')
+def make_middleware(request, tmpdir):
     # scenario
-
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)
@@ -82,10 +80,10 @@ def test_serialize_deserialize(source, target):
     i = 0
     for name, meta, data in contents:
         item = source[name]
-        item.store_revision(dict(meta, mtime=i), StringIO(data))
+        item.store_revision(dict(meta, mtime=i), BytesIO(data))
         i += 1
 
-    io = StringIO()
+    io = BytesIO()
     serialize(source.backend, io)
     io.seek(0)
     deserialize(io, target.backend)

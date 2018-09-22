@@ -26,7 +26,7 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask import flash
 
-from moin.constants.forms import *
+from moin.constants.forms import *  # noqa
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
 from moin.i18n import _, L_, N_
@@ -173,7 +173,7 @@ class ValidJSON(Validator):
     def validate(self, element, state):
         try:
             meta = json.loads(element.value)
-        except:  # catch ANY exception that happens due to unserializing
+        except:  # noqa - catch ANY exception that happens due to unserializing
             return self.note_error(element, state, 'invalid_json_msg')
         if not self.validnamespace(meta.get(NAMESPACE)):
             return self.note_error(element, state, 'invalid_namespace_msg')

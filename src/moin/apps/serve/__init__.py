@@ -12,4 +12,4 @@
 
 from flask import Blueprint
 serve = Blueprint('serve', __name__)
-import moin.apps.serve.views
+import moin.apps.serve.views  # noqa

@@ -13,16 +13,17 @@ This converter based on ReStructuredText 2006-09-22.
 
 from __future__ import absolute_import, division
 
-from . import ElementException
-
-from moin.util.tree import html, moin_page, xlink, xinclude
-from moin.util.iri import Iri
+import re
 
 from emeraldtree import ElementTree as ET
 
-import re
+from . import ElementException
 
-from werkzeug.utils import unescape
+from moin.util.mime import Type, type_moin_document
+from moin.util.tree import html, moin_page, xlink, xinclude
+from moin.util.iri import Iri
+
+from . import default_registry
 
 
 class Cell(object):
@@ -492,12 +493,12 @@ class Converter(object):
            :align: center
         """
         whitelist = {html.width: 'width', html.height: 'height', html.class_: 'align', html.alt: 'alt'}
+        href = elem.attrib[xinclude.href]
         try:
-            ret = [u'\n.. image:: {0}'.format(elem.attrib[xinclude.href].path)]
-        except:
-            href = elem.attrib[xinclude.href]
+            href = href.path
+        except Exception:
             href = href.split(u'wiki.local:')[-1]
-            ret = [u'\n.. image:: {0}'.format(href)]
+        ret = [u'\n.. image:: {0}'.format(href), ]
         for key, val in sorted(whitelist.items()):
             if key in elem.attrib:
                 ret.append(u'   :{0}: {1}'.format(val, elem.attrib[key]))
@@ -787,8 +788,6 @@ class Converter(object):
         return ret
 
 
-from . import default_registry
-from moin.util.mime import Type, type_moin_document
 default_registry.register(Converter.factory,
                           type_moin_document,
                           Type('text/x-rst'))

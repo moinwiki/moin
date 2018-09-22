@@ -12,7 +12,6 @@ work without setting them (like data_dir).
 """
 
 
-import os
 from os.path import abspath, dirname, join
 
 from moin.config.default import DefaultConfig

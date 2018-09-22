@@ -68,7 +68,7 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Term
 from whoosh.sorting import FieldFacet
 
-from moin.constants.keys import *
+from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 
@@ -438,7 +438,7 @@ class IndexingMiddleware(object):
                 index_dir = params[0]
                 try:
                     os.mkdir(index_dir)
-                except:
+                except:  # noqa
                     # ignore exception, we'll get another exception below
                     # in case there are problems with the index_dir
                     pass
@@ -1078,13 +1078,13 @@ class Item(PropertiesMixin):
             try:
                 # if we get here outside a request, this won't work:
                 remote_addr = unicode(request.remote_addr)
-            except:
+            except:  # noqa
                 pass
         if userid is None:
             try:
                 # if we get here outside a request, this won't work:
                 userid = flaskg.user.valid and flaskg.user.itemid or None
-            except:
+            except:  # noqa
                 pass
         if wikiname is None:
             wikiname = app.cfg.interwikiname

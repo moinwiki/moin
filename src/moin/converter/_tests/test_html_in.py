@@ -7,17 +7,16 @@ MoinMoin - Tests for moin.converter.html_in
 
 
 import re
-import StringIO
+from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')
+etree = pytest.importorskip('lxml.etree')  # noqa
 
-from emeraldtree.tree import *
+from . import serialize, XMLNS_RE3
 
-from . import serialize
-
-from moin.converter.html_in import *
+from moin.util.tree import html, moin_page, xlink, xml
+from moin.converter.html_in import Converter
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -37,7 +36,7 @@ class Base(object):
         'xml': xml.namespace,
     }
 
-    output_re = re.compile(r'\s+xmlns="[^"]+"')
+    output_re = XMLNS_RE3
 
     def handle_input(self, input, args):
         out = self.conv(input, **args)
@@ -47,7 +46,7 @@ class Base(object):
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the HTML_IN conversion : {0}".format(string_to_parse))
-        tree = etree.parse(StringIO.StringIO(string_to_parse))
+        tree = etree.parse(StringIO(string_to_parse))
         print 'string_to_parse = %s' % string_to_parse
         assert (tree.xpath(path, namespaces=self.namespaces_xpath))
 

@@ -5,12 +5,9 @@
 MoinMoin - Tests for moin.converter.creole_in
 """
 
-
-import re
-
 import pytest
 
-from . import serialize
+from . import serialize, XMLNS_RE
 
 from moin.util.tree import moin_page, xlink, html, xinclude
 from moin.converter._args import Arguments
@@ -26,7 +23,7 @@ class TestConverter(object):
         xinclude: 'xinclude',
     }
 
-    output_re = re.compile(r'\s+xmlns(:\S+)?="[^"]+"')
+    output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = Converter()
@@ -272,6 +269,8 @@ class TestConverter(object):
          '<page><body><p>Text</p><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table></body></page>'),
         (u'Text\n|Item\nText',
          '<page><body><p>Text</p><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
+        (u'| text [[http://localhost | link]] |',
+         '<page><body><table><table-body><table-row><table-cell>text <a xlink:href="http://localhost">link</a> </table-cell></table-row></table-body></table></body></page>'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

@@ -78,7 +78,8 @@ def getPackageModules(packagefile):
     """
     packagedir = os.path.dirname(packagefile)
 
-    in_plugin_dir = lambda dir, ops=os.path.split: ops(ops(dir)[0])[1] == "plugin"
+    def in_plugin_dir(dir):
+        return os.path.split(os.path.split(dir)[0])[1] == "plugin"
 
     moinmodule = __import__('moin')
 

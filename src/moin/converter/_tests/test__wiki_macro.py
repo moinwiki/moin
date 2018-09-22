@@ -5,17 +5,13 @@
 MoinMoin - Tests for moin.converter._wiki_macro
 """
 
-
-import re
-
 import pytest
 
-from . import serialize
+from . import serialize, XMLNS_RE2
 
+from moin.util.tree import moin_page, xlink, xinclude
+from moin.converter._wiki_macro import ConverterMacro
 from moin.converter._args import Arguments
-from moin.util.tree import xlink
-
-from moin.converter._wiki_macro import *
 
 
 class TestConverter(object):
@@ -25,7 +21,7 @@ class TestConverter(object):
         xlink.namespace: 'xlink',
     }
 
-    output_re = re.compile(r'(\s+xmlns(:\w+)?="[^"]+"|xmlns\(\w+=[^)]+\)\s+)')
+    output_re = XMLNS_RE2
 
     def setup_class(self):
         self.conv = ConverterMacro()
