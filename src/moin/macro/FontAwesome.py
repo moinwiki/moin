@@ -16,7 +16,7 @@ Where:
 """
 
 
-from moin.util.tree import html
+from moin.util.tree import moin_page
 from moin.macro._base import MacroInlineBase
 from moin.i18n import _, L_, N_
 
@@ -26,10 +26,8 @@ class Macro(MacroInlineBase):
         args = arguments[0] if arguments else ""
         if not args:
             raise ValueError("Missing font name")
-
         args = args.split(',')
         fonts = args[0].split()
-
         color = args[1].strip() if len(args) > 1 else ""
         size = args[2].strip() if len(args) > 2 else ""
 
@@ -51,7 +49,6 @@ class Macro(MacroInlineBase):
                 size = ""
 
         style = color + size
-
         classes = []
         for font in fonts:
             f = font if font.startswith('fa-') or font == 'fa' else 'fa-' + font
@@ -60,7 +57,7 @@ class Macro(MacroInlineBase):
             classes.insert(0, 'fa')
         classes = ' '.join(classes)
 
-        attrib = {html.class_: classes}
+        attrib = {moin_page.class_: classes}
         if style:
-            attrib[html.style] = style
-        return html.span(attrib={html.class_: classes, html.style: style})
+            attrib[moin_page.style] = style
+        return moin_page.span(attrib=attrib)

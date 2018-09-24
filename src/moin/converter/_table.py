@@ -24,7 +24,7 @@ class TableMixin(object):
         """
         try:
             float(cell)
-        except ValueError:
+        except (ValueError, TypeError):
             pass
         else:
             table_cell.attrib[moin_page('class')] = 'moin-integer'
