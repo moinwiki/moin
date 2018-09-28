@@ -12,6 +12,9 @@ Use create_app(config) to create the WSGI application (using Flask).
 
 from __future__ import absolute_import, division
 
+import os
+import sys
+
 # do this early, but not in moin/__init__.py because we need to be able to
 # "import moin" from setup.py even before flask, werkzeug, ... is installed.
 from moin.util import monkeypatch
@@ -41,6 +44,10 @@ from moin import auth, user
 
 from moin import log
 logging = log.getLogger(__name__)
+
+
+if os.getcwd() not in sys.path:
+    sys.path.append(os.getcwd())
 
 
 def create_app(config=None, create_index=False, create_storage=False):
