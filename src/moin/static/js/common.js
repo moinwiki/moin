@@ -814,7 +814,7 @@ $(document).ready(function () {
 
     moinFontChangeOnReady();
 
-    $('textarea[rows="1"]').autosize();
+    $('textarea.moin-autosize').autosize();
 
     showAllOptions();
 

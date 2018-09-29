@@ -1,9 +1,21 @@
+{#
+    This template defines a textarea used to edit all text-like item types with the exception of html items.
+
+    If the number of textarea rows is 0 (as defined by user settings or site default),
+    then the textarea number of rows will be automatically increased/decreased to fit the
+    current item contents by a JS autosize function subject to CSS min-height rules.
+
+    If the number of textarea rows in greater than 0, then the textarea rows attribute is set to that
+    value and textarea scroll bars will be used as needed.
+#}
+
 {% from "modify_binary.html" import data_editor as base_editor %}
 
 {% macro data_editor(form, item_name) %}
     {% set textarea_rows = '1' if edit_rows == '0' else edit_rows %}
+    {% set cls = 'moin-edit-content moin-autosize' if edit_rows == '0' else 'moin-edit-content' %}
     <input type="button" onclick="moinFontChange()" value="{{ _('Toggle font width') }}" class="moin-button moin-textarea-font" >
-    {{ gen.textarea(form['data_text'], rows=textarea_rows|string, cols=form.cols|string, class="moin-edit-content", **kwargs) }}
+    {{ gen.textarea(form['data_text'], rows=textarea_rows|string, class=cls, **kwargs) }}
     {{ base_editor(form) }}
     <br />
 {% endmacro %}
