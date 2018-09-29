@@ -590,7 +590,7 @@ figcaption { font-weight: bold; }
 .moin-edit-no-help { float: right; border: 1px solid #00417F; border-radius: 6px; cursor: pointer;
     font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
 .moin-edit-no-help:before { content: url("../img/smileys/alert.png"); padding-right: 1em; }
-
+.moin-autosize { min-height: 10em; }
 
 .moin-edit-help { float: right; }
 .moin-edit-help a { color: black; }
