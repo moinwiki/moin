@@ -23,6 +23,7 @@ Using MoinMoin
 
    user/accounts
    user/markups
+   user/templates_metadata
    user/search
    user/namespaces
    user/subscriptions
