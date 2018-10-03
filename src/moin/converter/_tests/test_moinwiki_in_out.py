@@ -214,8 +214,6 @@ continuation of no bullet list"""),
          u'[[https://moinmo.in/|MoinMoin Wiki|accesskey="1",class="green dotted"]]\n'),
         (u'[[https://moinmo.in/| |title="go there!"]]',
          u'[[https://moinmo.in/||title="go there!"]]'),
-        (u"[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]",
-         u"[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]"),
         # interwiki
         # TODO: should this obsolete (1.9.x) form be made to work?
         # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
@@ -238,6 +236,8 @@ continuation of no bullet list"""),
          u'[[SomePage|Some Page|download="MyItem",title="Download"]]\n'),
         (u'[[SomePage|Some Page|class=orange,accesskey=1]]',
          u'[[SomePage|Some Page|accesskey="1",class="orange"]]\n'),
+        (u'[[/inner2.png|{{/inner2.png||width=500}}]]',
+         u'[[/inner2.png|{{/inner2.png||width="500"}}]]\n'),
         (u'[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]',
          u'[[file://///server/share/filename%20with%20spaces.txt|link to filename.txt]]'),
     ]
