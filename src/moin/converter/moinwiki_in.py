@@ -685,13 +685,13 @@ class Converter(ConverterMacro):
             (
                 [|]
                 \s*
-                (?P<link_text> [^|]*? )
+                (?P<link_text> [^|]*?|([^|]*?\{\{.*?\}\}[^|]*?) )
                 \s*
             )?
             (
                 [|]
                 \s*
-                (?P<link_args> .*? )
+                (?P<link_args> [^|]*? )
                 \s*
             )?
             \]\]
