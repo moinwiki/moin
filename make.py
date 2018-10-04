@@ -260,12 +260,11 @@ class Commands(object):
 
     def cmd_quickinstall(self, *args):
         """create or update a virtual environment with the required packages"""
-        command = '{0} quickinstall.py {1}'.format(sys.executable, ' '.join(args))
-        print 'Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL)
+        # keep tox test virtualenvs in sync with moin-env-python (names may vary)
+        command = '{0} quickinstall.py {1}{2}tox --recreate --notest'.format(sys.executable, ' '.join(args), SEP)
+        print 'Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {0}'.format(QUICKINSTALL)
         with open(QUICKINSTALL, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-        if result != 0:
-            open(QUICKINSTALL, 'a').write('Error: quickinstall passed non-zero return code: {0}'.format(result))
         print 'Searching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M)
         search_for_phrase(QUICKINSTALL)
 
