@@ -58,10 +58,12 @@ def postproc_text(markdown, text):
     if text is None:
         return None
 
-    for pp in markdown.postprocessors.values():
+    for pp in markdown.postprocessors:
         text = pp.run(text)
 
     if text.startswith('<pre>') or text.startswith('<div class="codehilite"><pre>'):
+        # with markdown 3.0.0 indented code is somehow escaped twice
+        text = text.replace('&amp;lt;', '&lt;').replace('&amp;gt;', '&gt;').replace('&amp;amp;', '&amp;')
         return text
 
     def fixup(m):
@@ -574,28 +576,28 @@ class Converter(object):
         # save line counts for start of each block, used later for edit autoscroll
         self.count_lines(text)
 
-        # {{{ stolen from Markdown.convert
+        # {{{ similar to parts of Markdown 3.0.0 core.py convert method
 
         # Split into lines and run the line preprocessors.
         lines = text.split("\n")
-        for prep in self.markdown.preprocessors.values():
+        for prep in self.markdown.preprocessors:
             lines = prep.run(lines)
 
-        # Parse the high-level elements, md_root is an ElementTree object
-        md_root = self.markdown.parser.parseDocument(lines).getroot()
+        # Parse the high-level elements.
+        root = self.markdown.parser.parseDocument(lines).getroot()
 
         # Run the tree-processors
-        for treeprocessor in self.markdown.treeprocessors.values():
-            new_md_root = treeprocessor.run(md_root)
-            if new_md_root is not None:
-                md_root = new_md_root
+        for treeprocessor in self.markdown.treeprocessors:
+            newRoot = treeprocessor.run(root)
+            if newRoot is not None:
+                root = newRoot
 
-        # }}} end stolen from Markdown.convert
+        # }}} end Markdown 3.0.0 core.py convert method
 
         add_lineno = bool(flaskg and flaskg.add_lineno_attr)
 
         # run markdown post processors and convert from ElementTree to an EmeraldTree object
-        converted = self.do_children(md_root, add_lineno=add_lineno)
+        converted = self.do_children(root, add_lineno=add_lineno)
 
         # convert html embedded in text strings to EmeraldTree nodes
         self.convert_embedded_markup(converted)
