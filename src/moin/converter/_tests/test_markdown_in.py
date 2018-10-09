@@ -39,7 +39,7 @@ class TestConverter(object):
         (u'<http://moinmo.in/>',
          '<p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p>'),
         (u'[yo](javascript:alert("xss"))',
-         '<p>javascript:alert("xss")</p>'),
+         '<p>javascript:alert()</p>'),
         (u'[MoinMoin](http://moinmo.in/)',
          '<p><a xlink:href="http://moinmo.in/">MoinMoin</a></p>'),
         (u'----',
