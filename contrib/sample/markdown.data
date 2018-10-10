@@ -39,14 +39,20 @@ Heading levels 3 through 6 must be defined by prefixing the heading with a varia
 
     Level 1
     =======
+
     # Level 1
+
     Level 2
     -
+
     ## Level 2
-    --- Levels 1 and 2 are not shown below, see top of page and this section heading.
+
     ### Level 3
+
     #### Level 4
+
     ##### Level 5
+
     ###### Level 6 ######
 
 
@@ -60,6 +66,10 @@ Heading levels 3 through 6 must be defined by prefixing the heading with a varia
 
 ###### Level 6 ######
 
+**NOTE**: Levels 1 and 2 are not shown above to avoid adding
+unwanted entries to the table of contents. See the top of this page
+for an approximate view of a level 1 heading and next section heading
+below for level 2.
 
 Preformatted Code
 -----------------
@@ -129,15 +139,13 @@ and variable.
 
 ## Linking
 
-Markdown supports two style of links: inline and reference. Inline links use the form:
+Markdown supports two style of links: inline and reference. 
 
-    [link text](url "optionl title")
+### Inline Links
 
-Reference links have two parts. Somewhere in the document the link label is defined using a unique id; this has no visible output. Then the reference link uses a form with square brackets rather than parens:
+Inline links use the form:
 
-    [id]: url "optional title"
-
-    [link text] [id]
+    [link text](url "optional title")
 
 |**Markup**|**Result**|
 |----------|----------|
@@ -149,13 +157,23 @@ Reference links have two parts. Somewhere in the document the link label is defi
 |`[toc](#table-of-contents)`|[toc](#table-of-contents)|
 |`[moinmoin](https://moinmo.in "Go there")`|[moinmoin](https://moinmo.in "Go there")|
 |`[![Image name](png)](Home "click me")`|[![Image name](png)](Home "click me")|
+
+### Reference Links
+Reference links have two parts. Somewhere in the document the link label is defined using a unique id; this has no visible output. Then the reference link uses a form with square brackets rather than parens:
+
+    [id]: url "optional title"
+
+    [link text] [id]
+
+|**Markup**|**Result**|
+|----------|----------|
 |`[apple]: https://www.apple.com/`||
-|`[MoinMoin]: https://momo.in/`||
+|`[MoinMoin]: https://moinmo.in/ "go there!"`||
 |`[see Apple stuff][apple]`|[see Apple stuff] [apple]|
 |`[go to MoinMoin][MoinMoin]`|[go to MoinMoin] [MoinMoin]|
 
 [apple]: https://www.apple.com/
-[MoinMoin]: https://moinmo.in/
+[MoinMoin]: https://moinmo.in/ "go there!"
 
 ## Images
 
@@ -183,6 +201,8 @@ Unordered lists may use *, +, or - characters as bullets.  The character used as
         - beet
             + man
             + woman
+        - turnip
+    * cherries
 
 
 **Result:**
@@ -194,6 +214,8 @@ Unordered lists may use *, +, or - characters as bullets.  The character used as
     - beet
         + man
         + woman
+    - turnip
+* cherries
 
 
 Ordered lists use numbers and are incremented in regular order. Neither alpha characters nor roman numerals are supported. Although you may use numbers other than 1 with no adverse effect (as shown below), it is a best practice to always start a list with 1.
@@ -207,6 +229,8 @@ Ordered lists use numbers and are incremented in regular order. Neither alpha ch
         1. beet
             1. man
             1. woman
+        1. turnip
+    1. cherries
 
 
 **Result:**
@@ -218,6 +242,8 @@ Ordered lists use numbers and are incremented in regular order. Neither alpha ch
     1. beet
         1. man
         1. woman
+    1. turnip
+1. cherries
 
 Lists composed of long paragraphs are easier to read in raw text if the lines are manually wrapped with **optional** hanging indents. If multiple paragraphs are required, separate the paragraphs with blank lines and indent. 
 
@@ -313,14 +339,14 @@ Advanced blockquotes with nesting are created by starting a line with a > charac
 
     > A standard blockquote is indented
     > > A nested blockquote is indented more
-    > > > > You can nest to any depth.
+    > > > You can nest to any depth.
 
 
 **Result:**
 
 > A standard blockquote is indented
 > > A nested blockquote is indented more
-> > > > You can nest to any depth.
+> > > You can nest to any depth.
 
 ## Inline HTML
 
@@ -432,14 +458,14 @@ As shown in the second table below, use of outside borders and neat alignment of
 
     |Tables            |Are            |Very  |Cool    |
     |------------------|:-------------:|-----:|:-------|
-    |col three is      |right-aligned  |$1600 |Necklace|
     |col 2 is          |centered       |$12   |Gloves  |
+    |col 3 is          |right-aligned  |$1600 |Necklace|
     |col 4 is          |left-aligned   |$100  |Hat     |
 
     `Tables`            |*Are*            |Very  |Cool    
     ------------|:-------------:|-----:|:-------
-    `col three is`|*right-aligned*|$1600|Necklace
     `col 2 is`|*centered*|$12|Gloves  
+    `col 3 is`|*right-aligned*|$1600|Necklace
     `col 4 is`|*left-aligned*|$100|Hat     
 
 
@@ -447,14 +473,14 @@ As shown in the second table below, use of outside borders and neat alignment of
 
 |Tables            |Are            |Very  |Cool    |
 |------------------|:-------------:|-----:|:-------|
-|col three is      |right-aligned  |$1600 |Necklace|
 |col 2 is          |centered       |$12   |Gloves  |
+|col 3 is          |right-aligned  |$1600 |Necklace|
 |col 4 is          |left-aligned   |$100  |Hat     |
 
 `Tables`            |*Are*            |Very  |Cool    
 ------------|:-------------:|-----:|:-------
-`col three is`|*right-aligned*|$1600|Necklace
 `col 2 is`|*centered*|$12|Gloves  
+`col 3 is`|*right-aligned*|$1600|Necklace
 `col 4 is`|*left-aligned*|$100|Hat   
 
 ### Fenced Code
@@ -598,9 +624,7 @@ Orange
 
 ### Footnotes
 
-The syntax for footnotes in Markdown is rather unique.[^unique] Place any unique label after the characters "[^"  and close the label with a "]". The footnote text may be placed after the reference on a new line using the label, followed by a ":", followed by the footnote text. All footnotes are placed at the bottom of the document under a horizontal rule in the order defined.
-
-[^unique]: Markdown footnotes are unique.
+The syntax for footnotes in Markdown is rather unique. Place any unique label after the characters "[^"  and close the label with a "]". The footnote text may be placed after the reference on a new line using the label, followed by a ":", followed by the footnote text. All footnotes are placed at the bottom of the document under a horizontal rule in the order defined.
 
 **Markup:**
 

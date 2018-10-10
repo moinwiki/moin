@@ -10,11 +10,13 @@ For details on the Python implementation of Markdown see https://pythonhosted.or
 In addition to being supported by moin2, the Markdown markup language is used by issue trackers
 such as those found in Bitbucket and Github. So what you learn here can be used there also.
 
+.. _para3:
+
 Features currently not working with moin's Markdown parser are marked with **MDTODO**.
 
-This page, describing the Markdown syntax, is written in RST. Instances where RST cannot
-duplicate the same rendering produced by Markdown are flagged with **RST NOTE**.
-The RST parser used by Moin and the parser used by Sphinx are different. As noted below there
+This page, describing the Markdown syntax, is written in reST. Instances where reST cannot
+duplicate the same rendering produced by Markdown are flagged with **reST NOTE**.
+The reST parser used by Moin and the parser used by Sphinx are different. As noted below there
 are several instances where one works and the other fails.
 
 Table of Contents
@@ -44,14 +46,20 @@ Heading levels 3 through 6 must be defined by prefixing the heading with a varia
 
     Level 1
     =======
+
     # Level 1
+
     Level 2
     -------
+
     ## Level 2
-    --- Levels 1 and 2 are not shown below, see top of page and this section heading.
+
     ### Level 3
+
     #### Level 4
+
     ##### Level 5
+
     ###### Level 6 ######
 
 
@@ -68,6 +76,11 @@ Level 5
 
 Level 6
 +++++++
+
+**NOTE**: Levels 1 and 2 are not shown above to avoid adding
+unwanted entries to the table of contents. See the top of this page
+for an approximate view of a level 1 heading and next section heading
+below for level 2.
 
 Preformatted Code
 =================
@@ -116,40 +129,63 @@ Simple text editing
 Paragraphs are separated
 by a blank line.
 
-To create a line break, end a line
-with 2 spaces.
+| To create a line break, end a line
+| with 2 spaces.
 
 Use asterisk characters to create text attributes: *italic*, **bold**, :bolditalic:`bold italics`.
 Or, do the same with underscores: *Italics*, **bold**, :bolditalic:`bold italics`.
 Use backticks to create ``monospace``.
 
-**RST NOTE**:
-
-RST has no means of forcing a line break, so the above example showing a line ending with 2 spaces fails. RST does not support bold-italics so the above example fails.
+**reST Note**: The moin reST parser will indent the second paragraph above.
 
 Linking
 =======
 
-**Markup**: ::
+Markdown supports two style of links: inline and reference.
 
-    A simple way to write a link: [MoinMoin](http://moinmo.in) or [PNG](png)
-    Another way to write a link is to use a reference: [favorite comic][xkcd]
+Inline Links
+------------
 
-    References can be defined anywhere in the document, but it will not be visible in the rendered HTML:
-    [xkcd]: http://xkcd.com
+Inline links use the form: ::
 
-    Naked URLs like http://moinmo.in are not supported. URLs and email addresses may be enclosed in angle brackets: <http://moinmo.in> and <me@example.com>.
+    [link text](url "optional title")
 
+===========================================   ===============================================
+ **Markup**                                    **Result**
+===========================================   ===============================================
+ [home page](Home)                             `home page <http:Home>`_
+ [home item](Home "my home page")              `home item <http:Home>`_
+ [a sub item](Home/subitem)                    `a sub item <http:Home/subitem>`_
+ [toc1](markdown#table-of-contents)            `toc1 <http:markdown#table-of-contents>`_
+ [toc2](#table-of-contents)                    `toc2 <http:#table-of-contents>`_
+ [moinmoin](https://moinmo.in "Go there")      `moinmoin <https://moinmo.in>`_
+ [![Image name](png)](Home "click me")         `png image <http:Home>`_
+===========================================   ===============================================
 
-**Result**:
+**reST NOTE**: Links with title attributes and images as links are not supported in reST.
+The internal links above are broken.
 
-A simple way to write a link: `MoinMoin <http://moinmo.in>`_ or `PNG <png>`_
-Another way to write a link is to use a reference: `favorite comic <xkcd>`_
+Reference Links
+---------------
 
-References can be defined anywhere in the document, but it will not be visible in the rendered HTML:
+Reference links have two parts. Somewhere in the document the link label
+is defined using a unique id; this has no visible output. Then the
+reference link uses a form with square brackets rather than parens: ::
 
-Naked URLs like `http://moinmo.in` are not supported. URLs and email addresses may be enclosed in angle brackets: http://moinmo.in and me@example.com.
+    [id]: url "optional title"
 
+    [link text] [id]
+
+===========================================   ==========================================
+ **Markup**                                    **Result**
+===========================================   ==========================================
+ [apple]: https://www.apple.com/
+ [MoinMoin]: https://moinmo.in/ "go!"
+ [see apples][apple]                           `see apples <https://www.apple.com>`_
+ [go to MoinMoin][MoinMoin]                    `go to MoinMoin <https://MoinMo.in>`_
+===========================================   ==========================================
+
+**reST NOTE**: Links with title attributes are not supported in reST.
 
 Lists
 =====
@@ -165,22 +201,32 @@ Unordered lists may use `*`, +, or - characters as bullets.  The character used 
         - beet
             + man
             + woman
-
+        - turnip
+    * cherries
 
 **Result**:
 
 * apples
 * oranges
 * pears
+
     - carrot
     - beet
+
         + man
         + woman
 
-**RST NOTE**: While Sphinx renders the above correctly, the Moin RST parser shows pears and beet in bold text.
+    - turnip
 
+* cherries
 
-Ordered lists use numbers and are incremented in regular order. Neither alpha characters nor roman numerals are supported. Although you may use numbers other than 1 with no adverse effect (as shown below), it is a best practice to always start a list with 1.
+**reST NOTE**: As shown above and below, the Sphinx rendering of ordered
+and unordered lists shows excessive spacing between levels.
+
+Ordered lists use numbers and are incremented in regular order. Neither
+alpha characters nor roman numerals are supported. Although you may use
+numbers other than 1 with no adverse effect (as shown below), it is a
+best practice to always start a list with 1.
 
 **Markup**: ::
 
@@ -191,6 +237,8 @@ Ordered lists use numbers and are incremented in regular order. Neither alpha ch
         1. beet
             1. man
             1. woman
+        1. turnip
+    1. cherries
 
 
 **Result**:
@@ -205,7 +253,13 @@ Ordered lists use numbers and are incremented in regular order. Neither alpha ch
         1. man
         #. woman
 
-Lists composed of long paragraphs are easier to read in raw text if the lines are manually wrapped with **optional** hanging indents. If multiple paragraphs are required, separate the paragraphs with blank lines and indent.
+    #. turnip
+
+ #. cherries
+
+Lists composed of long paragraphs are easier to read in raw text if the
+lines are manually wrapped with **optional** hanging indents. If multiple
+paragraphs are required, separate the paragraphs with blank lines and indent.
 
 **Markup**: ::
 
@@ -243,7 +297,9 @@ Lists composed of long paragraphs are easier to read in raw text if the lines ar
 Horizontal Rules
 ================
 
-To create horizontal rules, use 3 or more -, `*`, or _ on a line. Neither changing the character nor increasing the number of characters will change the width of the rule.
+To create horizontal rules, use 3 or more -, `*`, or _ on a line.
+Neither changing the character nor increasing the number of characters
+will change the width of the rule.
 Putting spaces between the characters also works.
 
 **Markup**: ::
@@ -306,7 +362,7 @@ Sometimes there is a need to use special characters as literal characters, but M
 
 333\. is a float, 333 is an integer.
 
-**RST NOTE**: The Moin RST parser flags the use of 333 as a bullet number.
+**reST NOTE**: The Moin reST parser flags the use of 333 as a bullet number.
 
 
 Nested Blockquotes
@@ -318,7 +374,7 @@ Advanced blockquotes with nesting are created by starting a line with a > charac
 
     > A standard blockquote is indented
     > > A nested blockquote is indented more
-    > > > > You can nest to any depth.
+    > > > You can nest to any depth.
 
 
 **Result**:
@@ -327,20 +383,20 @@ Advanced blockquotes with nesting are created by starting a line with a > charac
         A nested blockquote is indented more
             You can nest to any depth.
 
-**RST NOTE**: Moin's RST parser markup confuses nested blockquotes rendering with term: definition syntax. Sphinx renders it correctly.
-
 Images
 ======
 
-Images are similar to links with both an inline and a reference style, but they start with an exclamation point. Within Markdown, there is no syntax to change the default sizes or positions of transclusions:
+Images are similar to links with both an inline and a reference style,
+but they start with an exclamation point. Within Markdown, there is no
+syntax to change the default sizes or positions of transclusions:
 
 **Markup**: ::
 
     To transclude image from local wiki:
-    ![Alt text](png "Optional title")
+    ![Alt text 1](png "Optional title")
 
     Reference-style, where "logo" is a name defined anywhere within this item:
-    ![Alt text][logo]
+    ![Alt text 2][logo]
 
     Image references are defined using syntax identical to link references and
     do not appear in the rendered HTML:
@@ -349,22 +405,18 @@ Images are similar to links with both an inline and a reference style, but they 
     To transclude image from remote site:
     ![remote image](http://static.moinmo.in/logos/moinmoin.png)
 
-    Transcluding a page from a remote site works, but there is no way to change the browser's default size:
-
-    ![Alt text](http://test.moinmo.in/png)
-
 **Result**:
 
 To transclude image from local wiki:
 
 .. image:: png
-   :alt: Alt text
+   :alt: Alt text 1
    :align: right
 
 Reference-style, where "logo" is a name defined anywhere within this item:
 
 .. image:: png
-   :alt: Alt text
+   :alt: Alt text 2
    :align: right
 
 Image references are defined using syntax identical to link references and
@@ -376,18 +428,18 @@ To transclude image from remote site:
    :alt: remote image
    :align: right
 
-Transcluding a page from a remote site works, but there is no way to change the browser's default size:
-
-.. image:: http://test.moinmo.in/png
-   :alt: Alt text
-   :align: center
-
-**RST NOTE**: The Moin RST parser renders all four images above. The Sphinx parser renders only the external png image from http://static.moinmo.in/logos/moinmoin.png. RST syntax does allow the rendering of inline images, nor the use of a title attribute. The logos above are floated right, in Markdown the logos would appear as inline images.
+**reST NOTE**: The Moin reST parser renders all three images above. The
+Sphinx parser renders only the external png image from
+http://static.moinmo.in/logos/moinmoin.png. reST syntax does not allow the
+rendering of inline images, nor the use of a title attribute. The logos
+above are floated right, in Markdown the logos would appear as inline images.
 
 Inline HTML
 ===========
 
-**Note:** This feature is dependent upon configuration settings. See configuration docs for information on allow_style_attributes.
+**Note:** Use of the style attribute within HTML tags is dependent
+upon configuration settings. See configuration docs for information on
+`allow_style_attributes`.
 
 You may embed a small subset of HTML tags directly into your markdown documents. ::
 
@@ -427,21 +479,28 @@ You may embed a small subset of HTML tags directly into your markdown documents.
 
     This word is <strong>bold</strong>.
 
-    This word is <strong style="color:red;background-color:yellow">bold</strong>; colors depend upon configuration settings.
+    This word is <strong style="color:red;background-color:yellow">bold</strong>;
+    colors depend upon configuration settings.
 
 **Result**:
 
-E = MC<sup>2</sup>
+|inlinehtml|
 
-This word is <b>bold</b>.
+.. |inlinehtml| raw:: html
 
-This word is <em>italic</em>.
+    E = MC<sup>2</sup><br><br>
 
-This word is <strong>bold</strong>.
+    This word is <b>bold</b>.<br><br>
 
-This word is <strong style="color:red;background-color:yellow">bold</strong>; colors depend upon configuration settings.
+    This word is <em>italic</em>.<br><br>
 
-**RST NOTE**: The RST parser does not allow inline HTML markup so none of the above examples are rendered as they would be in Moin's Markdown.
+    This word is <strong>bold</strong>.<br><br>
+
+    This word is <strong style="color:red;background-color:yellow">bold</strong>;
+    colors depend upon configuration settings.
+
+reST NOTE: The moin reST parser will flag the above as an error because it
+does not support the `raw` directive.
 
 Extensions
 ==========
@@ -460,28 +519,46 @@ As shown in the second table below, use of outside borders and neat alignment of
 
     |Tables            |Are            |Very  |Cool    |
     |------------------|:-------------:|-----:|:-------|
-    |col three is      |right-aligned  |$1600 |Necklace|
     |col 2 is          |centered       |$12   |Gloves  |
+    |col 3 is          |right-aligned  |$1600 |Necklace|
     |col 4 is          |left-aligned   |$100  |Hat     |
 
     `Tables`            |*Are*            |Very  |Cool
     ------------|:-------------:|-----:|:-------
-    `col three is`|*right-aligned*|$1600|Necklace
     `col 2 is`|*centered*|$12|Gloves
+    `col 3 is`|*right-aligned*|$1600|Necklace
     `col 4 is`|*left-aligned*|$100|Hat
 
 
 **Result**:
 
-**RST NOTE**: RST tables are broken on the Moin RST parser. Although table rendering on Sphinx is correct, there is no means of specifying cell alignment; therefore, none of the examples are shown.
+================== =============== ======== ==========
+ Tables             Are             Very     Cool
+================== =============== ======== ==========
+ col 2 is           centered        $12      Gloves
+ col 3 is           right-aligned   $1600    Necklace
+ col 4 is           left-aligned    $100     Hat
+================== =============== ======== ==========
 
+================== ================= ======== ==========
+ `Tables`           *Are*             Very     Cool
+================== ================= ======== ==========
+ `col 2 is`         *centered*        $12      Gloves
+ `col 3 is`         *right-aligned*   $1600    Necklace
+ `col 4 is`         *left-aligned*    $100     Hat
+================== ================= ======== ==========
+
+
+**reST NOTE**: reST does not support cell alignment.
 
 Syntax Highlighting of Preformatted Code
 ----------------------------------------
 
-A second way to create a block of preformatted code without indenting every line is to wrap the block in triple backticks.
+A second way to create a block of preformatted code without indenting
+every line is to wrap the block in triple backticks.
 
-To highlight code syntax, wrap the code in triple backtick characters and specify the language on the first line.  Many languages are supported.
+To highlight code syntax, wrap the code in triple backtick characters
+and specify the language on the first line.  Many languages are supported.
 
 **Markup**: ::
 
@@ -490,13 +567,21 @@ To highlight code syntax, wrap the code in triple backtick characters and specif
     alert(s);
     ```
 
+    ~~~ {python}
+    def hello():
+       print "Hello World!"
+    ~~~
+
 **Result**: ::
 
     var s = "JavaScript syntax highlighting";
     alert(s);
 
-**MDTODO**: Syntax highlighting is not working. [#169](https://github.com/moinwiki/moin/issues/169) documents a similar issue for the moinwiki converter.
+    def hello():
+       print "Hello World!"
 
+**reST NOTE**: reST supports some generic highlighting of indented blocks. The
+Moin Markdown highlighting is more colorful and varies per language.
 
 Fenced Code
 -----------
@@ -546,16 +631,28 @@ Attribute Lists
 
 **Markup**: ::
 
-    A class of green (that will create a green background per a CSS rule) is
+    A class of LawnGreen  (that will create a greenish background per a CSS rule) is
     added to this paragraph.
-    {: class="green"}
+    {: class="LawnGreen "}
+
+    A `{: #para3 }` id was added to the 3rd paragraph on this page,
+    so [click to see 3rd paragraph](#para3).
 
 **Result**:
 
-A class of green (that will create a green background per a CSS rule) is
-added to this paragraph.
+|bgcolor|
 
-**RST NOTE**: The background of the above paragraph is not green because there is no option in RST syntax to assign a class.
+.. |bgcolor| raw:: html
+
+    <span style="background-color:lawnGreen ">
+    A class of lawnGreen  (that will create a greenish background per a CSS rule) is
+    added to this paragraph.</span>
+
+A `{: #para3 }` id was added to the 3rd paragraph on this page,
+so `click to see 3rd paragraph <http:#para3>`_.
+
+reST NOTE: The moin reST parser will flag the first example above as an error because it
+does not support the `raw` directive.
 
 Definition Lists
 ----------------
@@ -574,12 +671,11 @@ Definition Lists
 
 Apple
     Pomaceous fruit of plants of the genus Malus in the family Rosaceae.
+
     An american computer company.
 
 Orange
     The fruit of an evergreen tree of the genus Citrus.
-
-**RST NOTE**: Two line definition lists do not render as two line definitions in RST.
 
 Footnotes
 ---------
