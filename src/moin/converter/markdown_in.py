@@ -62,7 +62,7 @@ def postproc_text(markdown, text):
         text = pp.run(text)
 
     if text.startswith('<pre>') or text.startswith('<div class="codehilite"><pre>'):
-        # with markdown 3.0.0 indented code is somehow escaped twice
+        # TODO: with markdown 3.0.0 indented code is somehow escaped twice - see issue #707
         text = text.replace('&amp;lt;', '&lt;').replace('&amp;gt;', '&gt;').replace('&amp;amp;', '&amp;')
         return text
 
