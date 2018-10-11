@@ -151,9 +151,8 @@ def search_for_phrase(filename):
     phrases = files[name]
     counts = Counter()
     for idx, line in enumerate(lines):
-        line = line.lower()
         for phrase in phrases:
-            if phrase in line:
+            if phrase in line.lower():
                 if filename in print_counts:
                     counts[phrase] += 1
                 else:
