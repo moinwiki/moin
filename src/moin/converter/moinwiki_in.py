@@ -734,7 +734,7 @@ class Converter(ConverterMacro):
                 link_item = '/' + link_item[len(att):]  # now we have a subitem
             if '#' in link_item:
                 if link_item.startswith('#') and '/+convert/' in request.url:
-                    # avoid traceback in link.py when converting moinwiki item to ReST | HTML | Docbook
+                    # avoid traceback in link.py when converting moinwiki item to reST | HTML | Docbook
                     link_item = request.url.split('+convert/')[-1] + link_item
                 link_item, fragment = link_item.rsplit('#', 1)
             else:

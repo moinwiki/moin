@@ -8,7 +8,7 @@ Mediawiki markup overview
 
 Features currently not working with moin's mediawiki parser are marked with **MWTODO**.
 
-Features currently not working with moin's rst parser are marked with **RSTTODO**.
+Features currently not working with moin's rst parser are marked with **reSTTODO**.
 
 Headings
 ========
@@ -74,7 +74,7 @@ These markups can be used within text to apply character style.
 | | ``without '''markups'''</pre>``  | | ``without '''markups'''``        |
 +------------------------------------+------------------------------------+
 
-**RSTTODO**
+**reSTTODO**
 table headers are not formatted as headers
 (see "Tables" section for corresponding MWTODO)
 
@@ -84,7 +84,7 @@ Hyperlinks
 Internal links
 --------------
 
-**RSTTODO**
+**reSTTODO**
 These link targets are not interpreted.
 (The examples shown here result in empty links)
 
@@ -92,7 +92,7 @@ These link targets are not interpreted.
 .. __:
 .. __:
 
-**RSTTODO**
+**reSTTODO**
 Comments (lines starting with ``..``) are printed
 
 +---------------------------------------+--------------------------+-------------------------------------+
@@ -252,7 +252,7 @@ A horizontal rule can be added by typing four dashes.
 
 This text will be displayed below the rule.
 
-**RSTTODO**
+**reSTTODO**
 Horizontal rule is not interpreted.
 
 Preformatted text
@@ -275,7 +275,7 @@ Preformatted text
 **MWTODO**
 Preformatted text is not interpreted.
 
-**RSTTODO**
+**reSTTODO**
 Line blocks (lines starting with ``|``) are not interpreted.
 
 Comments
@@ -623,5 +623,5 @@ It is allowed to use XHTML attributes
 **MWTODO**
 attributes ``border`` and ``align`` are not interpreted
 
-**RSTTODO**
+**reSTTODO**
 colspan is not interpreted

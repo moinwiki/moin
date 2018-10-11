@@ -77,7 +77,7 @@ class ConverterBase(object):
                 self.handle_wiki_transclusions(elem, xinclude_href)
 
         elif xlink_href == u'':
-            # ReST link to page fragment
+            # reST link to page fragment
             elem.set(self._tag_xlink_href, u'#' + elem.text.replace(' ', '_'))
 
         for child in elem.iter_elements():

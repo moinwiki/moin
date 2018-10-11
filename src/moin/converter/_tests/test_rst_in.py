@@ -126,7 +126,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     @pytest.mark.parametrize('input,output', data)
     def test_headers(self, input, output):
         """
-        ReST has a unique method of defining heading levels.
+        reST has a unique method of defining heading levels.
 
         Depending on sequence of headings and reuse of heading underlining, then the docutils parser returns
         nodes to the moin2 rst_in parser as either a:

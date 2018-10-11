@@ -441,7 +441,7 @@ class Converter(object):
         return u'\n' + ret + u'\n'
 
     def open_moinpage_table_header(self, elem):
-        # used for ReST to moinwiki conversion, maybe others that generate table head
+        # used for reST to moinwiki conversion, maybe others that generate table head
         separator = []
         for th in elem[0]:
             if th.attrib.get(moin_page.class_, None) == 'center':

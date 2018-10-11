@@ -214,9 +214,9 @@ class Table(object):
 
 class ReST(object):
     """
-    ReST syntax elements
+    reST syntax elements
     """
-    # moin2 ReST standard headings, uses = above and below h1, = below h2, - below h3... + below h6
+    # moin2 reST standard headings, uses = above and below h1, = below h2, - below h3... + below h6
     # these heading styles are used in all .rst files under /docs/
     # does not agree with: http://documentation-style-guide-sphinx.readthedocs.io/en/latest/style-guide.html#headings
     h_top = u" =     "
@@ -426,7 +426,7 @@ class Converter(object):
         """Only expected use of div is for a comment coming from rst_in:
 
         ..
-          ReST has unique block comment, similar moinwiki comments /* are inline */
+          reST has unique block comment, similar moinwiki comments /* are inline */
         """
         if moin_page.class_ in elem.attrib:
             classes = elem.attrib[moin_page.class_].split()
@@ -441,7 +441,7 @@ class Converter(object):
 
     def open_moinpage_figure(self, elem):
         """
-        Rework children to create an ReST figure. Children are:
+        Rework children to create an reST figure. Children are:
             * an image (.. image:: myimage)
             * a caption, figures have captions, images do not
             * optional text (may be several)
@@ -484,7 +484,7 @@ class Converter(object):
 
     def open_xinclude_include(self, elem):
         """
-        Return markup for a ReST included item, something similar to:
+        Return markup for a reST included item, something similar to:
 
         .. image:: png
            :height: 100
