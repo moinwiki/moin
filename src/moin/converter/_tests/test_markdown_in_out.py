@@ -92,8 +92,37 @@ class TestConverter(object):
     data = [
         (u'[TOC]\n',
          u'[TOC]\n'),
+        (u'|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n',
+         u'|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n'),
+        # TODO: wrong output
+        (u'``` javascript\nvar s = "JavaScript syntax highlighting";\nalert(s);\n```\n',
+         u'    var s = "JavaScript syntax highlighting";\n    alert(s);\n'),
+        # TODO: wrong output
+        (u'~~~ {python}\ndef hello():\n    print "Hello World!"\n~~~\n',
+         u'    def hello():\n        print "Hello World!"\n'),
+        (u'~~~\nddd\neee\nfff\n~~~\n',
+         u'    ddd\n    eee\n    fff\n'),
+        # TODO: maybe wrong output
+        (u'Text with double__underscore__words.\n\n__Strong__ still works.\n\n__this__works__too__.\n',
+         u'Text with double__underscore__words.\n\n**Strong** still works.\n\n**this__works__too**.\n'),
+        # TODO: missing class
+        (u'### orange heading #### {: .orange }\n',
+         u'### orange heading ###\n'),
+        # TODO: missing class
+        (u'A class of LawnGreen is added to this paragraph.\n{: class="LawnGreen "}\n',
+         u'A class of LawnGreen is added to this paragraph.\n'),
+        (u'{: #para3 }\n',
+         u'{: #para3 }\n'),
+        (u'so [click to see 3rd paragraph](#para3).\n',
+         u'so [click to see 3rd paragraph](#para3).\n'),
+        (u'Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n',
+         u'Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n'),
+        # footnotes test is incomplete, footnotes are positioned but not defined
         (u'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n',
          u'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
+        # TODO: spectacular failure, causes 19 UnicodeEncodeErrors, claims \xA0 characters
+        # (u'Footnotes[^a\n\n[^a]: This is a footnote\n',
+        #  u'Footnotes[^a\n\n[^a]: This is a footnote\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

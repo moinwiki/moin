@@ -7,7 +7,7 @@ WikiCreole markup overview
 
 Features currently not working with moin's WikiCreole parser are marked with **CREOLETODO**.
 
-Features currently not working with moin's rst parser are marked with **RSTTODO**.
+Features currently not working with moin's rst parser are marked with **reSTTODO**.
 
 Headings
 ========
@@ -70,7 +70,7 @@ The following is a table of inline markup that can be used to format text in Cre
 |                                     | | Second line                         |
 +-------------------------------------+---------------------------------------+
 
-**RSTTODO**: Restructured Text line blocks are not working in Moin2
+**reSTTODO**: Restructured Text line blocks are not working in Moin2
 
 Hyperlinks
 ==========
@@ -169,7 +169,7 @@ You can leave an empty line to start a new paragraph.
 | or
 | .
 
-**RSTTODO**: reStructuredText line blocks are not working in Moin2
+**reSTTODO**: reStructuredText line blocks are not working in Moin2
 
 Horizontal rules
 ================

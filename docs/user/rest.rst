@@ -1,5 +1,5 @@
 ===============================
-ReST (ReStructured Text) Markup
+reST (ReStructured Text) Markup
 ===============================
 
 ..
@@ -7,12 +7,12 @@ ReST (ReStructured Text) Markup
  `contrib/sample/rst.data`. Please update both.
 
 Depending upon your source, this document may have been created by
-the Moin2 ReST parser (Docutils) or the Sphinx ReST parser. These parsers
-have slight differences in the rendering of ReST markup, some of those differences
+the Moin2 reST parser (Docutils) or the Sphinx reST parser. These parsers
+have slight differences in the rendering of reST markup, some of those differences
 are noted below.
 
-The purpose of this document is to define the features of the Moin2 ReST (Docutils)
-parser. The Sphinx extensions to ReST markup that are not supported
+The purpose of this document is to define the features of the Moin2 reST (Docutils)
+parser. The Sphinx extensions to reST markup that are not supported
 by the Docutils parser are not included here.
 
 See the the Docutils Restructured Text documentation for more information.
@@ -435,7 +435,7 @@ Backslash Escapes
 =================
 
 Sometimes there is a need to use special characters as literal characters,
-but ReST's syntax gets in the way. Use the backslash character as an escape.
+but reST's syntax gets in the way. Use the backslash character as an escape.
 
 **Markup**::
 
@@ -458,8 +458,8 @@ but ReST's syntax gets in the way. Use the backslash character as an escape.
 333\. is a float, 333 is an integer.
 
 **Notes**:
- - The Moin2 ReST parser changes the 333. to a 1. and inserts an error message into the document.
- - The Sphinx ReST parser begins an ordered list with 333. The visual effect is a dedented line.
+ - The Moin2 reST parser changes the 333. to a 1. and inserts an error message into the document.
+ - The Sphinx reST parser begins an ordered list with 333. The visual effect is a dedented line.
 
 Tables
 ======
@@ -531,7 +531,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  | C                              |
  +--------------------------------+
 
-One difference between the Sphinx and Moin ReST parsers is demonstrated below.
+One difference between the Sphinx and Moin reST parsers is demonstrated below.
 With the Spinx parser, grid table column widths can be expanded by adding spaces.
 
 **Markup**::
@@ -547,7 +547,7 @@ With the Spinx parser, grid table column widths can be expanded by adding spaces
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 **Notes:**
- - The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
+ - The Moin2 reST parser does not add the <colgroup><col width="9%"><col width="91%">
    HTML markup added by the Sphinx parser (the width attribute generates an HTML
    validation error), nor does it use Javascript to adjust the width of tables.
  - Under Moin2, tables and table cells will be of minimal width
@@ -560,7 +560,7 @@ Admonitions are used to draw the reader's attention to an important paragraph.
 There are nine admonition types: attention, caution, danger, error, hint,
 important, note, tip, and warning.
 
-The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
+The reST parser uses "error" admonitions to highlight some reST syntax errors.
 
 **Markup**::
 

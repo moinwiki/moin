@@ -594,7 +594,7 @@ class Converter(object):
         return u''
 
     def open_moinpage_table_header(self, elem):
-        # used for ReST to moinwiki conversion, maybe others that generate table head
+        # used for reST to moinwiki conversion, maybe others that generate table head
         ret = self.open_children(elem)
         return ret + u'=====\n'
 

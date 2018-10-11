@@ -24,6 +24,6 @@ Currently Moin2 supports `MoinWiki`_, `WikiCreole`_, `reStructuredText`_, `Docbo
 `MediaWiki`_ and `Markdown`_ markups.
 
 Moin2 currently provides output converters for MoinWiki, Markdown,
-ReST, HTML, and Docbook.
+reST, HTML, and Docbook.
 When viewing any markup item, the item may be converted to a different markup
 language by clicking the Convert link.

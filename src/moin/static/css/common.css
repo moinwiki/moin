@@ -37,7 +37,7 @@
 
 /* admonitions  - no moin- prefix added  here, these classes are used within wiki markup:
       Moin wiki: {{{#!wiki caution
-      ReST: .. caution:: some text
+      reST: .. caution:: some text
       Docbook: <caution><para>some text</para></caution>
 
       TODO: create icons for attention, danger, error, and hint.
@@ -353,7 +353,7 @@ li > p { margin-top: 0; margin-bottom: 0; }
 .moin-rst-attribution { font-style: italic; }
 .moin-rst-attribution:before { content: "--"; }
 
-/* ReST line-blocks */
+/* reST line-blocks */
 .moin-line-block { margin-left: 2em; }
 .moin-line-blk:empty { min-height: 1em; }
 
@@ -565,7 +565,7 @@ form.upload_file button { display: none; }
 .moin-wikiconfighelp i.fa:hover { cursor: pointer; }
 .moin-wikiconfighelp table { width: 100%; }
 
-/* ReST figures */
+/* reST figures */
 
 .moin-figure { text-align: center; }
 figcaption { font-weight: bold; }
@@ -605,7 +605,7 @@ ul#moin-rev-navigation { text-align: center; background-color: #eee; }
     ul#moin-rev-navigation li { display: block; text-align: center; }
 }
 
-/* ReST field lists and option lists*/
+/* reST field lists and option lists*/
 
 .moin-rst-optionlist,
 .moin-rst-fieldlist { margin-left: 2em; }

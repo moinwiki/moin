@@ -114,7 +114,7 @@ fields separated by "|" characters: ::
   3. Parameters: target, title, download, class, and accesskey are supported
 
 Examples with parameters are not shown below because the effect cannot be
-duplicated with ReST markup. To open a link in a new tab or window with a
+duplicated with reST markup. To open a link in a new tab or window with a
 mouseover title, do: ::
 
   * [[ItemName|my favorite item|target=_blank,title="Go There!"]]
@@ -237,7 +237,7 @@ Lists
    verbatim, and requires
    that each line of the list be indented by one space in order to
    be valid Moin Wiki markup.
- * This is also an **RSTTODO**
+ * This is also an **reSTTODO**
 
 Unordered Lists
 ---------------
@@ -276,7 +276,7 @@ Unordered Lists
 
 **Note**:
  - Moin markup allows a square, white and a bulletless item for
-   unordered lists, these cannot be shown in ReST documents.
+   unordered lists, these cannot be shown in reST documents.
 
 Ordered Lists
 ---------------
@@ -798,5 +798,5 @@ be hidden or visible depending upon user settings or actions.
 Click on the "Comments" button within Item Views to toggle the visibility.
 
 **Notes**:
- - The toggle display feature does not work on ReST documents, so there is
+ - The toggle display feature does not work on reST documents, so there is
    no way to see the hidden comments.

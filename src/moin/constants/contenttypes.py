@@ -162,7 +162,7 @@ CONTENTTYPES_HELP_DOCS = {
     u'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
     u'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
     u'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),
-    u'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on ReST Wiki markup."))),
+    u'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on reST Wiki markup."))),
     u'application/docbook+xml;charset=utf-8': (('user/docbook.html', _("Click for help on Docbook Wiki markup."))),
     # content type: help string
     u'text/html;charset=utf-8': ext_link('http://ckeditor.com/'),

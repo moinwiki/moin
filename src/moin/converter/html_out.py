@@ -228,7 +228,7 @@ class Converter(object):
         return self.new_copy(_tag_html_a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):
-        """Used by ReST and docbook."""
+        """Used by reST and docbook."""
         attrib = {}
         valid_classes = set(["attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"])
         cls = elem.get(moin_page.type)
@@ -322,7 +322,7 @@ class Converter(object):
 
     def visit_moinpage_line_block(self, elem):
         """
-        Used for ReST similar to:
+        Used for reST similar to:
 
         | roses are red,
         | violets are blue,
@@ -384,8 +384,8 @@ class Converter(object):
         """
         Used for markdown definition lists.
 
-        Compared to moinwiki and ReST parsers, the markdown parser creates definition lists using only one
-        list-item tag.name for entire list where moinwiki and ReST have one list-item tag.name for
+        Compared to moinwiki and reST parsers, the markdown parser creates definition lists using only one
+        list-item tag.name for entire list where moinwiki and reST have one list-item tag.name for
         each entry in list.
         """
         attrib = Attributes(elem)
