@@ -210,8 +210,12 @@ class TestConverter(object):
     data = [
         (u'|Cell',
          '<page><body><table><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+        (u'|    Cell     ',
+         '<page><body><table><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
         (u'|Cell|',
          '<page><body><table><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>'),
+        (u'|=Heading|',
+         '<page><body><table><table-body><table-row><table-cell class="moin-thead">Heading</table-cell></table-row></table-body></table></body></page>'),
         (u'|Cell 1|Cell 2',
          '<page><body><table><table-body><table-row><table-cell>Cell 1</table-cell><table-cell>Cell 2</table-cell></table-row></table-body></table></body></page>'),
         (u'|Cell 1|Cell 2|',
@@ -270,7 +274,7 @@ class TestConverter(object):
         (u'Text\n|Item\nText',
          '<page><body><p>Text</p><table><table-body><table-row><table-cell>Item</table-cell></table-row></table-body></table><p>Text</p></body></page>'),
         (u'| text [[http://localhost | link]] |',
-         '<page><body><table><table-body><table-row><table-cell>text <a xlink:href="http://localhost">link</a> </table-cell></table-row></table-body></table></body></page>'),
+         '<page><body><table><table-body><table-row><table-cell>text <a xlink:href="http://localhost">link</a></table-cell></table-row></table-body></table></body></page>'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
