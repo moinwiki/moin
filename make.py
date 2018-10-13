@@ -471,7 +471,7 @@ class Commands(object):
         else:
             print 'Error: stylus failed to update css files, see error messages above.'
         # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
-        command = 'python contrib/pep8/coding_std.py src/moin/themes/modernized/static/css'
+        command = 'python scripts/coding_std.py src/moin/themes/modernized/static/css'
         result = subprocess.call(command, shell=True)
         if result != 0:
             print 'Error: failure running coding_std.py against modernized css files'
@@ -500,7 +500,7 @@ class Commands(object):
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
         print 'Checking for trailing blanks, DOS line endings, Unix line endings, empty lines at eof...'
-        command = '%s contrib/pep8/coding_std.py' % sys.executable
+        command = '%s scripts/coding_std.py' % sys.executable
         subprocess.call(command, shell=True)
 
     # not on menu, rarely used, similar code was in moin 1.9
