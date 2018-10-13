@@ -300,7 +300,7 @@ class Commands(object):
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
         print 'Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt'))
-        command = '{0} src/moin/scripts/win/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
+        command = '{0} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
         subprocess.call(command, shell=True)
 
     def cmd_log(self, *args):
