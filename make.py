@@ -281,9 +281,9 @@ class Commands(object):
             print 'Error: creation of HTML docs failed with return code "{0}". Do "{1} log docs" to see complete log.'.format(result, M)
 
     def cmd_extras(self, *args):
-        """install optional packages: OpenID, Pillow, sqlalchemy, ldap, requirements.d"""
+        """install optional packages: Pillow, sqlalchemy, ldap, requirements.d"""
         sp_dir = get_sitepackages_location()
-        packages = ['python-openid', 'pillow', 'sqlalchemy', ]
+        packages = ['pillow', 'sqlalchemy', ]
         if not WINDOWS_OS:
             packages.append('python-ldap')
         installer = 'pip install --upgrade '

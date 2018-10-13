@@ -22,18 +22,15 @@ class Create_User(Command):
                help="Set the wiki user's display name to DISPLAY_NAME (e.g. in case the NAME is cryptic)."),
         Option('--email', '-e', required=True, dest='email', type=unicode,
                help="Set the user's email address to EMAIL."),
-        Option('--openid', '-o', required=False, dest='openid', type=unicode,
-               help="Set the user's openid address."),
         Option('--password', '-p', required=True, dest="password", type=unicode,
                help="Set the user's password to PASSWORD."),
     )
 
-    def run(self, name, display_name, email, openid, password):
+    def run(self, name, display_name, email, password):
         before_wiki()
         msg = user.create_user(username=name,
                                password=password,
-                               email=email,
-                               openid=openid)
+                               email=email)
 
         if msg:
             print msg

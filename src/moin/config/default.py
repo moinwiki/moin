@@ -468,7 +468,6 @@ options_no_group_name = {
             NAME: [],
             DISPLAY_NAME: None,
             EMAIL: None,
-            OPENID: None,
             CSS_URL: None,
             MAILTO_AUTHOR: False,
             EDIT_ON_DOUBLECLICK: True,

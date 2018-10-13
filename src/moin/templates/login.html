@@ -22,18 +22,5 @@
             {{ gen.form.close() }}
         {% endif %}
 
-        {% if 'openid' in login_inputs %}
-            <br>
-            <h2>{{ _('OpenID login') }}</h2>
-
-            {{ gen.form.open(form, method="post", action=url_for('frontend.login')) }}
-                <dl>
-                    {{ forms.render(form['openid']) }}
-                </dl>
-                {{ forms.render(form['submit'], id='openid_login_submit') }}
-                {{ forms.render_submit(form) }}
-            {{ gen.form.close() }}
-        {% endif %}
-
     </div>
 {% endblock %}

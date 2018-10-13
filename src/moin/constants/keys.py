@@ -83,7 +83,6 @@ CURRENT = u"current"
 
 # stuff from user profiles / for whoosh index
 EMAIL = u"email"
-OPENID = u"openid"
 DISPLAY_NAME = u"display_name"
 THEME_NAME = u"theme_name"
 LOCALE = u"locale"
@@ -116,7 +115,7 @@ BACKENDNAME = u"backendname"
 
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
-    NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL, OPENID,
+    NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL,
     MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
     EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIPTIONS, QUICKLINKS, CSS_URL,
 ]

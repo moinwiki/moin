@@ -72,7 +72,7 @@
     Note, however, that when no username is entered or the username is not
     found in the database, it may be appropriate to return with a message
     and the continue flag set to true (ContinueLogin) because a subsequent auth
-    plugin might work even without the username (e.g. an openid auth plugin).
+    plugin might work even without the username.
 
     The multistage member must evaluate to false or be callable. If it is
     callable, this indicates that the authentication method requires a second
@@ -109,7 +109,6 @@
                       - 'password': password entry field
                       - 'special_no_input': manual login is required
                             but no form fields need to be filled in
-                            (e.g. openid with forced provider)
                             in this case the theme may provide a short-
                             cut omitting the login form
      * logout_possible: boolean indicating whether this auth methods
@@ -377,7 +376,6 @@ def handle_login(userobj, **kw):
     stage = kw.get('stage')
     params = {'username': kw.get('login_username'),
               'password': kw.get('login_password'),
-              'openid': kw.get('login_openid'),
               'multistage': (stage and True) or None,
               'attended': True
     }
