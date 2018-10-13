@@ -33,7 +33,6 @@ Authentication
 ==============
 * Builtin - username / password login form of moin, MoinAuth
 * Builtin HTTP Basic Auth - browser login form, HTTPAuthMoin
-* OpenID - relying party, OpenIDAuth
 * Auth against LDAP / Active Directory (LDAPAuth)
 * Any authentication your web server supports via GivenAuth
 

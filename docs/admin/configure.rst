@@ -540,25 +540,6 @@ crash (log a Unicode Error), you have likely found the correct coding.
 For users configuring GivenAuth on Apache, an example virtual host configuration
 file is included with MoinMoin in `docs/examples/deployment/moin-http-basic-auth.conf`.
 
-OpenID
-------
-With OpenID moin can re-use the authentication done by some OpenID provider
-(like Google, Yahoo, Microsoft or others)::
-
-    from MoinMoin.auth.openidrp import OpenIDAuth
-    auth = [OpenIDAuth()]
-
-By default OpenID authentication accepts all OpenID providers. If you
-like, you can configure what providers to allow (which ones you want to trust)
-by adding their URLs to the trusted_providers keyword of OpenIDAuth. If left
-empty, moin will allow all providers::
-
-    # Allow google profile OpenIDs only:
-    auth = [OpenIDAuth(trusted_providers=['https://www.google.com/accounts/o8/ud?source=profiles'])]
-
-To be able to log in with OpenID, the user needs to have his OpenID stored
-in his user profile.
-
 LDAPAuth
 --------
 With LDAPAuth you can authenticate users against a LDAP directory or MS Active Directory service.
@@ -654,7 +635,7 @@ authentication debugging::
 
 Example logging output::
 
- 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<MoinMoin.user.User at 0x90a0f0c name:u'ThomasWaldmann' valid:1> kw={'username': u'ThomasWaldmann', 'openid': None, 'attended': True, 'multistage': None, 'login_password': u'secret', 'login_username': u'ThomasWaldmann', 'password': u'secret', 'login_submit': u''}
+ 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<MoinMoin.user.User at 0x90a0f0c name:u'ThomasWaldmann' valid:1> kw={'username': u'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': u'secret', 'login_username': u'ThomasWaldmann', 'password': u'secret', 'login_submit': u''}
  2011-02-05 16:35:04,716 INFO MoinMoin.auth.log:22 session: user_obj=<MoinMoin.user.User at 0x90a0f6c name:u'ThomasWaldmann' valid:1> kw={}
  2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:u'ThomasWaldmann' valid:False> kw={}
  2011-02-05 16:35:06,328 INFO MoinMoin.auth.log:22 session: user_obj=None kw={}
@@ -711,7 +692,6 @@ like usernames and password, in unencrypted form:
   (but NOT encrypted) form with EVERY request; it uses http basic auth.
 * GivenAuth: check the potential security issues of the authentication
   method used by your web server; for http basic auth please see HTTPAuthMoin.
-* OpenID: please check yourself.
 
 Contents
 --------
