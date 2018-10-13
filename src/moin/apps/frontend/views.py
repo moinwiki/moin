@@ -72,7 +72,7 @@ from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.protecting import AccessDenied
-from moin.converter import default_registry as reg
+from moin.converters import default_registry as reg
 from moin.scripts.migration.moin19.import19 import hash_hexdigest
 
 from moin import log

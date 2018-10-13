@@ -36,8 +36,8 @@ from moin.storage.error import NoSuchRevisionError
 from moin.utils.mimetype import MimeType
 from moin.utils.crypto import make_uuid
 from moin import security
-from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
-from moin.converter.moinwiki_out import Converter as conv_out
+from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
+from moin.converters.moinwiki_out import Converter as conv_out
 
 from moin import log
 logging = log.getLogger(__name__)

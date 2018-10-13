@@ -11,7 +11,7 @@ import pygments
 
 from moin.macros._base import MacroBlockBase
 from moin.i18n import _, L_, N_
-from moin.converter._table import TableMixin
+from moin.converters._table import TableMixin
 
 
 class Macro(MacroBlockBase):

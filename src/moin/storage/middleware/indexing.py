@@ -81,7 +81,7 @@ from moin.utils.interwiki import split_fqname, CompositeName
 
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
-from moin.converter import default_registry
+from moin.converters import default_registry
 from moin.utils.iri import Iri
 
 from moin import log

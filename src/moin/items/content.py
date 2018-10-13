@@ -202,7 +202,7 @@ class Content(object):
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
             # if so we perform the transformation, otherwise we don't
-            from moin.converter import default_registry as reg
+            from moin.converters import default_registry as reg
             input_conv = reg.get(Type(self.contenttype), type_moin_document)
             if not input_conv:
                 raise TypeError("We cannot handle the conversion from {0} to the DOM tree".format(self.contenttype))
@@ -223,7 +223,7 @@ class Content(object):
         return doc
 
     def _expand_document(self, doc):
-        from moin.converter import default_registry as reg
+        from moin.converters import default_registry as reg
         flaskg.add_lineno_attr = False  # do not add data-lineno attr for transclusions, footnotes, etc.
         include_conv = reg.get(type_moin_document, type_moin_document, includes='expandall')
         macro_conv = reg.get(type_moin_document, type_moin_document, macros='expandall')
@@ -250,7 +250,7 @@ class Content(object):
 
     def _render_data(self):
         try:
-            from moin.converter import default_registry as reg
+            from moin.converters import default_registry as reg
             # TODO: Real output format
             doc = self.internal_representation()
             doc = self._expand_document(doc)
@@ -923,10 +923,10 @@ class Text(Binary):
     _render_data_diff_raw = _render_data_diff
 
     def _render_data_highlight(self):
-        from moin.converter import default_registry as reg
+        from moin.converters import default_registry as reg
         data_text = self.data_storage_to_internal(self.data)
         # TODO: use registry as soon as it is in there
-        from moin.converter.pygments_in import Converter as PygmentsConverter
+        from moin.converters.pygments_in import Converter as PygmentsConverter
         pygments_conv = PygmentsConverter(contenttype=self.contenttype)
         doc = pygments_conv(data_text)
         # TODO: Real output format
@@ -1004,7 +1004,7 @@ class DocBook(MarkupItem):
 
     def _convert(self, doc):
         from emeraldtree import ElementTree as ET
-        from moin.converter import default_registry as reg
+        from moin.converters import default_registry as reg
 
         doc = self._expand_document(doc)
 

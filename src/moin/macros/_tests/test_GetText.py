@@ -5,7 +5,7 @@
 Test for macros.GetText
 """
 
-from moin.converter._args import Arguments
+from moin.converters._args import Arguments
 from moin.macros.GetText import Macro
 
 
