@@ -6,7 +6,7 @@ Output the input text as is: <<Verbatim(return `same` __text__ '''as''' entered)
 """
 
 
-from moin.macro._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase
 
 
 class Macro(MacroInlineBase):

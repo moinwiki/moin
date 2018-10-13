@@ -12,7 +12,7 @@ import re
 
 from flask import g as flaskg
 
-from moin.macro._base import MacroPageLinkListBase
+from moin.macros._base import MacroPageLinkListBase
 
 
 class Macro(MacroPageLinkListBase):

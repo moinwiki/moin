@@ -2,17 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macro.GetText
+Test for macros.Verbatim
 """
 
-from moin.converter._args import Arguments
-from moin.macro.GetText import Macro
+from moin.macros.Verbatim import Macro
 
 
 def test_Macro():
-    """ test for Macro.macro """
+    arguments = ['test text']
     macro_obj = Macro()
-    arguments = Arguments(['test_argument1 test_argument2'])
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    expected = u'test_argument1 test_argument2'
-    assert result == expected
+    assert result == u'test text'

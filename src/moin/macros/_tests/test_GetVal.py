@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macro.GetVal
+Test for macros.GetVal
 """
 
 import pytest
 from flask import g as flaskg
 
-from moin.macro.GetVal import Macro
+from moin.macros.GetVal import Macro
 from moin.constants.keys import SOMEDICT
 from moin._tests import become_trusted, update_item
 

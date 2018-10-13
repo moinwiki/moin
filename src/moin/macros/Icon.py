@@ -14,7 +14,7 @@ and relies on client browser to render image based on its size.
 from flask import url_for
 
 from moin.util.tree import html
-from moin.macro._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase
 from moin.i18n import _, L_, N_
 
 

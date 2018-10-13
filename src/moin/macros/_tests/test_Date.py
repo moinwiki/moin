@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macro.Date
+Test for macros.Date
 """
 
 import time
@@ -11,7 +11,7 @@ from datetime import datetime
 import pytest
 from flask_babel import format_date, format_datetime
 
-from moin.macro.Date import MacroDateTimeBase, Macro
+from moin.macros.Date import MacroDateTimeBase, Macro
 
 
 class TestMacroDateTimeBase(object):

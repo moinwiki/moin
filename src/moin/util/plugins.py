@@ -42,7 +42,7 @@ def importPlugin(cfg, kind, name, function="execute"):
 
     If <name> plugin can not be imported, raise PluginMissingError.
 
-    kind may be one of 'action', 'macro' or any other
+    kind may be one of 'action', 'macros' or any other
     directory that exist in MoinMoin or data/plugin.
 
     Wiki plugins will always override builtin plugins. If you want

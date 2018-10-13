@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macro.DateTime
+Test for macros.DateTime
 """
 
 import time
@@ -10,7 +10,7 @@ from datetime import datetime
 
 import pytest
 
-from moin.macro.DateTime import Macro, format_datetime
+from moin.macros.DateTime import Macro, format_datetime
 
 
 def test_Macro():

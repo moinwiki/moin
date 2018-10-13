@@ -12,7 +12,7 @@ from datetime import datetime
 
 from flask_babel import format_date
 
-from moin.macro._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase
 
 
 class MacroDateTimeBase(MacroInlineBase):

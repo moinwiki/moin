@@ -17,7 +17,7 @@ Where:
 
 
 from moin.util.tree import moin_page
-from moin.macro._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase
 from moin.i18n import _, L_, N_
 
 

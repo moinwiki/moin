@@ -52,7 +52,7 @@ class Converter(object):
         elem_error = moin_page.error()
 
         try:
-            cls = plugins.importPlugin(app.cfg, 'macro', name, function='Macro')
+            cls = plugins.importPlugin(app.cfg, 'macros', name, function='Macro')
             macro = cls()
             ret = macro((), args, page, alt, context_block)
             elem_body.append(ret)

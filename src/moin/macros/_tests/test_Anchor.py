@@ -2,12 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macro.Anchor
+Test for macros.Anchor
 """
 
 import pytest
 
-from moin.macro.Anchor import Macro
+from moin.macros.Anchor import Macro
 
 
 def test_Macro():
