@@ -16,7 +16,7 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.util.tree import html, moin_page, xml, xlink
+from moin.utils.tree import html, moin_page, xml, xlink
 from moin.converter.html_out import Converter, ConverterPage, ElementException
 
 from moin import log

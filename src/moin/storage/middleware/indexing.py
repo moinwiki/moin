@@ -77,12 +77,12 @@ from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenize
 from moin.themes import utctimestamp
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
-from moin.util.interwiki import split_fqname, CompositeName
+from moin.utils.interwiki import split_fqname, CompositeName
 
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page
 from moin.converter import default_registry
-from moin.util.iri import Iri
+from moin.utils.iri import Iri
 
 from moin import log
 logging = log.getLogger(__name__)

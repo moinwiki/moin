@@ -53,17 +53,17 @@ from moin import wikiutil
 from moin.i18n import _, L_
 from moin.themes import render_template
 from moin.storage.error import StorageError
-from moin.util.send_file import send_file
-from moin.util.registry import RegistryBase
-from moin.util.mimetype import MimeType
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page, html, xlink, docbook
-from moin.util.iri import Iri
-from moin.util.diff_text import diff as text_diff
-from moin.util.diff_html import diff as html_diff
-from moin.util.crypto import cache_key
-from moin.util.clock import timed
-from moin.util.interwiki import get_download_file_name
+from moin.utils.send_file import send_file
+from moin.utils.registry import RegistryBase
+from moin.utils.mimetype import MimeType
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page, html, xlink, docbook
+from moin.utils.iri import Iri
+from moin.utils.diff_text import diff as text_diff
+from moin.utils.diff_html import diff as html_diff
+from moin.utils.crypto import cache_key
+from moin.utils.clock import timed
+from moin.utils.interwiki import get_download_file_name
 from moin.forms import File
 from moin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,

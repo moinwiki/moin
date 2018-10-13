@@ -57,17 +57,17 @@ from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
-from moin import user, util
+from moin import user, utils
 from moin.constants.keys import *  # noqa
 from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import *  # noqa
-from moin.util import crypto, rev_navigation
-from moin.util.crypto import make_uuid
-from moin.util.interwiki import url_for_item, split_fqname, CompositeName
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import html, docbook
+from moin.utils import crypto, rev_navigation
+from moin.utils.crypto import make_uuid
+from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
@@ -1133,7 +1133,7 @@ def mychanges():
     else:
         results_per_page = app.cfg.results_per_page
     my_changes = _mychanges(flaskg.user.itemid)
-    my_changes_page = util.getPageContent(my_changes, offset, results_per_page)
+    my_changes_page = utils.getPageContent(my_changes, offset, results_per_page)
 
     return render_template('mychanges.html',
                            title_name=_(u'My Changes'),
@@ -1280,7 +1280,7 @@ def history(item_name):
         history.append(entry)
         if isinstance(rev.data, file):
             rev.data.close()
-    history_page = util.getPageContent(history, offset, results_per_page)
+    history_page = utils.getPageContent(history, offset, results_per_page)
     if isinstance(item.rev.data, file):
         item.rev.data.close()
     trash = item.meta['trash'] if 'trash' in item.meta else False

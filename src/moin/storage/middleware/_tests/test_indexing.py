@@ -19,7 +19,7 @@ from moin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORIT
                                  LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
 from moin.constants.namespaces import NAMESPACE_USERS
 
-from moin.util.interwiki import split_fqname
+from moin.utils.interwiki import split_fqname
 
 from moin.auth import GivenAuth
 from moin._tests import wikiconfig

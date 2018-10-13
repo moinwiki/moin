@@ -16,10 +16,10 @@ import re
 from moin import wikiutil
 from moin.constants.misc import URI_SCHEMES
 from moin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
-from moin.util.interwiki import is_known_wiki
-from moin.util.iri import Iri
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
-from moin.util.tree import moin_page, xlink
+from moin.utils.interwiki import is_known_wiki
+from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document, type_moin_wiki
+from moin.utils.tree import moin_page, xlink
 
 from . import default_registry
 from .moinwiki_in import Converter

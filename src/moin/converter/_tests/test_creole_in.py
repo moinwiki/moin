@@ -9,7 +9,7 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.util.tree import moin_page, xlink, html, xinclude
+from moin.utils.tree import moin_page, xlink, html, xinclude
 from moin.converter._args import Arguments
 
 from ..creole_in import Converter

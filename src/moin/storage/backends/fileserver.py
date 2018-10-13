@@ -25,7 +25,7 @@ from werkzeug import url_quote, url_unquote
 from moin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
 from . import BackendBase
 
-from moin.util.mimetype import MimeType
+from moin.utils.mimetype import MimeType
 
 NAME_SEP = '/'
 

@@ -11,7 +11,7 @@ import pytest
 from . import serialize, XMLNS_RE
 
 from moin.converter.moinwiki19_in import ConverterFormat19
-from moin.util.tree import moin_page, xlink, html, xinclude
+from moin.utils.tree import moin_page, xlink, html, xinclude
 
 
 class TestConverter(object):

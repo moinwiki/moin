@@ -19,7 +19,7 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
 from moin.converter.moinwiki_out import Converter as conv_out
 

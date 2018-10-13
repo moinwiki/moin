@@ -10,7 +10,7 @@ Implements the generic IRI form as defined in RFC 3987.
 
 import codecs
 import re
-from moin.util.pysupport import AutoNe
+from moin.utils.pysupport import AutoNe
 
 
 def _iriquote_replace(exc):

@@ -17,7 +17,7 @@ from moin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMI
                                  LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
                                  NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
 
-from moin.util.interwiki import CompositeName
+from moin.utils.interwiki import CompositeName
 
 from moin import log
 logging = log.getLogger(__name__)

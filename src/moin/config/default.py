@@ -22,7 +22,7 @@ from moin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
 from moin.constants.keys import *
 from moin import datastructures
 from moin.auth import MoinAuth
-from moin.util import plugins
+from moin.utils import plugins
 from moin.security import AccessControlList, DefaultSecurityPolicy
 
 from moin import log

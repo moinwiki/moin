@@ -3,15 +3,15 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.util.mimetype Tests
+MoinMoin - moin.utils.mimetype Tests
 """
 
 
-from moin.util import mimetype
+from moin.utils import mimetype
 
 
 class TestMimeType(object):
-    """ Test: util.mimetype """
+    """ Test: utils.mimetype """
 
     def test_parse_format(self):
         MimeType_obj = mimetype.MimeType(filename='test_file.jpg')

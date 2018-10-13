@@ -13,9 +13,9 @@ Note: currently this is quite same as image_in.
 from emeraldtree import ElementTree as ET
 
 from . import default_registry
-from moin.util.iri import Iri
-from moin.util.tree import moin_page, xlink
-from moin.util.mime import Type, type_moin_document
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page, xlink
+from moin.utils.mime import Type, type_moin_document
 
 
 class Converter(object):

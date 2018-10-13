@@ -15,7 +15,7 @@ etree = pytest.importorskip('lxml.etree')  # noqa
 
 from . import serialize, XMLNS_RE3
 
-from moin.util.tree import html, moin_page, xlink, xml
+from moin.utils.tree import html, moin_page, xlink, xml
 from moin.converter.html_in import Converter
 
 from moin import log

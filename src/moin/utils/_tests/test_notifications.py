@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.util.notifications Tests
+    MoinMoin - moin.utils.notifications Tests
 """
 
 from io import BytesIO
@@ -13,9 +13,9 @@ from flask import url_for
 
 from moin.constants.keys import ACTION_SAVE, ACTION_TRASH
 from moin.items import Item
-from moin.util.diff_datastruct import diff as dict_diff
-from moin.util.notifications import Notification, get_item_last_revisions, DESTROY_REV, DESTROY_ALL
-from moin.util.interwiki import split_fqname
+from moin.utils.diff_datastruct import diff as dict_diff
+from moin.utils.notifications import Notification, get_item_last_revisions, DESTROY_REV, DESTROY_ALL
+from moin.utils.interwiki import split_fqname
 
 import pytest
 

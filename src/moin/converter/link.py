@@ -13,10 +13,10 @@ from __future__ import absolute_import, division
 
 from flask import g as flaskg
 
-from moin.util.interwiki import is_known_wiki, url_for_item
-from moin.util.iri import Iri
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.utils.interwiki import is_known_wiki, url_for_item
+from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.wikiutil import AbsItemName
 
 from . import default_registry

@@ -23,9 +23,9 @@ from moin.items.content import Content
 from moin.mail.sendmail import sendmail
 from moin.themes import render_template
 from moin.signalling.signals import item_modified
-from moin.util.subscriptions import get_subscribers
-from moin.util.diff_datastruct import make_text_diff, diff as dict_diff
-from moin.util.interwiki import url_for_item
+from moin.utils.subscriptions import get_subscribers
+from moin.utils.diff_datastruct import make_text_diff, diff as dict_diff
+from moin.utils.interwiki import url_for_item
 
 from moin import log
 logging = log.getLogger(__name__)

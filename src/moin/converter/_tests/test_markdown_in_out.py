@@ -13,7 +13,7 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.util.tree import moin_page, xlink, xinclude, html, xml
+from moin.utils.tree import moin_page, xlink, xinclude, html, xml
 from moin.converter.markdown_in import Converter as conv_in
 from moin.converter.markdown_out import Converter as conv_out
 

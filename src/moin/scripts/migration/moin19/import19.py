@@ -33,8 +33,8 @@ from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
-from moin.util.mimetype import MimeType
-from moin.util.crypto import make_uuid
+from moin.utils.mimetype import MimeType
+from moin.utils.crypto import make_uuid
 from moin import security
 from moin.converter.moinwiki19_in import ConverterFormat19 as conv_in
 from moin.converter.moinwiki_out import Converter as conv_out

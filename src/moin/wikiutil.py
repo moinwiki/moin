@@ -27,7 +27,7 @@ from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_I
 from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
 from moin.i18n import _, L_, N_
-from moin.util.mimetype import MimeType
+from moin.utils.mimetype import MimeType
 from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 
 from moin import log

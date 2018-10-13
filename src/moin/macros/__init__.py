@@ -13,6 +13,6 @@ TODO: Merge with converters
 """
 
 
-from moin.util import pysupport
+from moin.utils import pysupport
 
 modules = pysupport.getPackageModules(__file__)

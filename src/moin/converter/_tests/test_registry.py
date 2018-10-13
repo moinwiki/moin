@@ -7,7 +7,7 @@ MoinMoin - Tests for moin.converter.default_registry
 
 import pytest
 
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 from moin.converter import default_registry
 from moin.converter.text_in import Converter as TextInConverter
 from moin.converter.moinwiki_in import Converter as MoinwikiInConverter

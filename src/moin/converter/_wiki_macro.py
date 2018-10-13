@@ -10,9 +10,9 @@ Base class for wiki parser with macro support.
 
 from emeraldtree import ElementTree as ET
 
-from moin.util import iri
-from moin.util.mime import Type
-from moin.util.tree import moin_page, xinclude
+from moin.utils import iri
+from moin.utils.mime import Type
+from moin.utils.tree import moin_page, xinclude
 from ._args_wiki import parse as parse_arguments
 from ._args_wiki import include_re
 from moin.i18n import _, L_, N_

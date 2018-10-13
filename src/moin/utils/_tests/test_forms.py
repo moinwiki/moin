@@ -3,10 +3,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.util.forms Tests
+MoinMoin - moin.utils.forms Tests
 """
 
-from moin.util import forms
+from moin.utils import forms
 
 
 class Bind(object):

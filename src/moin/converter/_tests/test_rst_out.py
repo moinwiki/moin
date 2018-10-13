@@ -11,7 +11,7 @@ from emeraldtree import ElementTree as ET
 
 from . import XMLNS_RE, TAGSTART_RE
 
-from moin.util.tree import moin_page, xlink
+from moin.utils.tree import moin_page, xlink
 from moin.converter.rst_out import Converter
 
 

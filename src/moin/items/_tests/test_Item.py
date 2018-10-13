@@ -10,7 +10,7 @@ import pytest
 
 from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from moin.util.interwiki import CompositeName
+from moin.utils.interwiki import CompositeName
 from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
                                  ADDRESS, TRASH, ITEMID, NAME_EXACT,
                                  ACTION, ACTION_REVERT)

@@ -3,14 +3,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.util.thread_monitor Tests
+MoinMoin - moin.utils.thread_monitor Tests
 """
 
 import shutil
 import tempfile
 import os
 
-from moin.util.thread_monitor import Monitor
+from moin.utils.thread_monitor import Monitor
 
 
 class TestMonitor(object):

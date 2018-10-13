@@ -8,7 +8,7 @@
 
 import pytest
 
-from moin.util.version import Version
+from moin.utils.version import Version
 
 
 class TestVersion(object):
@@ -60,4 +60,4 @@ class TestVersion(object):
             assert str(Version(version='wrong_value'))
 
 
-coverage_modules = ['moin.util.version']
+coverage_modules = ['moin.utils.version']

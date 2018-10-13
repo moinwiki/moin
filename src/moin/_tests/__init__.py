@@ -16,7 +16,7 @@ from flask import g as flaskg
 from moin.constants.contenttypes import CHARSET
 from moin.constants.keys import NAME, CONTENTTYPE
 from moin.items import Item
-from moin.util.crypto import random_string
+from moin.utils.crypto import random_string
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you

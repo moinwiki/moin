@@ -15,7 +15,7 @@ from os.path import isfile, join
 
 from flask import url_for
 
-from moin.util.tree import html
+from moin.utils.tree import html
 from moin.macros._base import MacroBlockBase
 from moin.i18n import _, L_, N_
 from moin.converter._table import TableMixin

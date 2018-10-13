@@ -12,8 +12,8 @@ import random
 
 from flask import g as flaskg
 
-from moin.util.iri import Iri
-from moin.util.tree import moin_page, xlink
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page, xlink
 from moin.items import Item
 from moin.macros._base import MacroPageLinkListBase
 from moin.storage.middleware.protecting import AccessDenied

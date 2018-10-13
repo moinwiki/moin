@@ -13,12 +13,12 @@ from flask import current_app as app
 
 from emeraldtree import ElementTree as ET
 
-from moin.util import plugins
+from moin.utils import plugins
 from moin.i18n import _, L_, N_
-from moin.util import iri
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page
-from moin.util.plugins import PluginMissingError
+from moin.utils import iri
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page
+from moin.utils.plugins import PluginMissingError
 
 from . import default_registry
 

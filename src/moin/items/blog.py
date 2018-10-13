@@ -22,7 +22,7 @@ from moin.forms import Text, Tags, DateTime
 from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
 from moin.items import Item, Default, register, BaseMetaForm
-from moin.util.interwiki import split_fqname
+from moin.utils.interwiki import split_fqname
 
 
 ITEMTYPE_BLOG = u'blog'

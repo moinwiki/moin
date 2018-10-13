@@ -16,9 +16,9 @@ except ImportError:
 from emeraldtree import ElementTree as ET
 
 from moin.constants.misc import URI_SCHEMES
-from moin.util.iri import Iri
-from moin.util.mime import Type
-from moin.util.tree import html, moin_page
+from moin.utils.iri import Iri
+from moin.utils.mime import Type
+from moin.utils.tree import html, moin_page
 
 
 def allowed_uri_scheme(uri):

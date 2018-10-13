@@ -35,7 +35,7 @@ import os
 
 from moin.config.default import DefaultConfig, _default_password_checker
 from moin.storage import create_simple_mapping
-from moin.util.interwiki import InterWikiMap
+from moin.utils.interwiki import InterWikiMap
 
 
 class Config(DefaultConfig):

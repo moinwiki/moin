@@ -15,8 +15,8 @@ for the input mimetype.
 
 from __future__ import absolute_import, division
 
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page
 
 from . import default_registry
 from ._util import decode_data, normalize_split_text

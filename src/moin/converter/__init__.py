@@ -21,8 +21,8 @@ TODO: Merge with new-style macros.
 
 from collections import namedtuple
 
-from ..util.registry import RegistryBase
-from ..util.pysupport import load_package_modules
+from ..utils.registry import RegistryBase
+from ..utils.pysupport import load_package_modules
 
 
 class ElementException(RuntimeError):

@@ -2,17 +2,17 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.util.diff_text Tests
+    MoinMoin - moin.utils.diff_text Tests
 """
 
 
-from moin.util import diff_text
+from moin.utils import diff_text
 
 
 class TestDiffText(object):
 
     def testDiff(self):
-        """ util.diff_text.diff: test correct diff calculation """
+        """ utils.diff_text.diff: test correct diff calculation """
         in1 = """AAA 001
 AAA 002
 AAA 003
@@ -67,4 +67,4 @@ BBB 003
         assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
 
 
-coverage_modules = ['moin.util.diff_text']
+coverage_modules = ['moin.utils.diff_text']

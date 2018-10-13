@@ -2,12 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.util.tree
+MoinMoin - Tests for moin.utils.tree
 """
 
 from emeraldtree import ElementTree as ET
 
-from moin.util.tree import Name, Namespace, html, moin_page
+from moin.utils.tree import Name, Namespace, html, moin_page
 
 
 def test_Name():

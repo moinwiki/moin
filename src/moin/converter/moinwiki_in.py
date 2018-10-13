@@ -18,10 +18,10 @@ from werkzeug import url_encode
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
-from moin.util.iri import Iri
-from moin.util.tree import moin_page, xlink, xinclude, html
-from moin.util.interwiki import is_known_wiki
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.utils.interwiki import is_known_wiki
+from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 from moin.i18n import _
 
 from ._args import Arguments

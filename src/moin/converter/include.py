@@ -103,9 +103,9 @@ from whoosh.query import Term, And, Wildcard, Regex
 
 from moin.constants.keys import NAME, NAME_EXACT, WIKINAME
 from moin.items import Item
-from moin.util.iri import Iri, IriPath
-from moin.util.tree import html, moin_page, xinclude, xlink
-from moin.util.mime import Type, type_moin_document
+from moin.utils.iri import Iri, IriPath
+from moin.utils.tree import html, moin_page, xinclude, xlink
+from moin.utils.mime import Type, type_moin_document
 from moin.converter.html_out import mark_item_as_transclusion, Attributes
 from moin.i18n import _, L_, N_
 

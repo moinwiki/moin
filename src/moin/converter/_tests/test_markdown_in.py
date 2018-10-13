@@ -10,7 +10,7 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.util.tree import moin_page, xlink, xml, xinclude, html
+from moin.utils.tree import moin_page, xlink, xml, xinclude, html
 
 from ..markdown_in import Converter
 

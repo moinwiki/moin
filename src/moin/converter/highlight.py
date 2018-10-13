@@ -12,8 +12,8 @@ import re
 
 from flask import request
 
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import html, moin_page
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import html, moin_page
 
 from . import default_registry
 

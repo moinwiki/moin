@@ -3,18 +3,18 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.util.crypto Tests
+MoinMoin - moin.utils.crypto Tests
 """
 
 
-from moin.util import crypto
+from moin.utils import crypto
 
 
 class TestRandom(object):
     """ crypto: random tests """
 
     def testRandomString(self):
-        """ util.random_string: test randomness and length """
+        """ utils.random_string: test randomness and length """
         length = 8
         result1 = crypto.random_string(length)
         result2 = crypto.random_string(length)
@@ -65,4 +65,4 @@ class TestCacheKey(object):
         assert result1 != result2, "Expected different keys for different <kw> but got the same"
 
 
-coverage_modules = ['moin.util.crypto']
+coverage_modules = ['moin.utils.crypto']

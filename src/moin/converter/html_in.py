@@ -20,8 +20,8 @@ from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
 from moin.i18n import _
-from moin.util.tree import html, moin_page, xlink, xml
-from moin.util.mime import Type, type_moin_document
+from moin.utils.tree import html, moin_page, xlink, xml
+from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
 from ._wiki_macro import ConverterMacro

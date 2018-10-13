@@ -32,8 +32,8 @@ from flatland import Dict, List, Unset, Boolean, Integer, String
 from moin.constants import keys
 from moin.constants.contenttypes import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
 
-from moin.util.crypto import make_uuid, UUID_LEN
-from moin.util.mime import Type
+from moin.utils.crypto import make_uuid, UUID_LEN
+from moin.utils.mime import Type
 
 
 class DuckDict(Dict):

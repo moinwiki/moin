@@ -19,9 +19,9 @@ from emeraldtree import ElementTree as ET
 
 from . import ElementException
 
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import html, moin_page, xlink, xinclude
-from moin.util.iri import Iri
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.iri import Iri
 
 from . import default_registry
 

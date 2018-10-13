@@ -15,9 +15,9 @@ import re
 import htmlentitydefs
 from collections import deque
 
-from moin.util.tree import moin_page, xml, html, xlink, xinclude
+from moin.utils.tree import moin_page, xml, html, xlink, xinclude
 from ._util import allowed_uri_scheme, decode_data
-from moin.util.iri import Iri
+from moin.utils.iri import Iri
 from moin.converter.html_in import Converter as HTML_IN_Converter
 
 from emeraldtree import ElementTree as ET
@@ -34,7 +34,7 @@ from markdown.extensions.toc import TocExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
 from . import default_registry
-from moin.util.mime import Type, type_moin_document
+from moin.utils.mime import Type, type_moin_document
 
 from moin import log
 logging = log.getLogger(__name__)

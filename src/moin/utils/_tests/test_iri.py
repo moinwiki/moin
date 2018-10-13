@@ -3,11 +3,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.util.iri
+MoinMoin - Tests for moin.utils.iri
 """
 
 
-from moin.util.iri import Iri, IriAuthority, IriPath
+from moin.utils.iri import Iri, IriAuthority, IriPath
 
 
 def test_Iri_init_1():

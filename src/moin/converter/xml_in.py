@@ -12,7 +12,7 @@ import re
 from . import default_registry
 from ._util import decode_data
 
-from moin.util.mime import Type, type_text_plain
+from moin.utils.mime import Type, type_text_plain
 
 from moin import log
 logging = log.getLogger(__name__)

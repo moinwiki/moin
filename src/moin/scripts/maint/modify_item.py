@@ -12,7 +12,7 @@ from flask_script import Command, Option
 from flask import g as flaskg
 
 from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM
-from moin.util.interwiki import split_fqname
+from moin.utils.interwiki import split_fqname
 
 
 class GetItem(Command):

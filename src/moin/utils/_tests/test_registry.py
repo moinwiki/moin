@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.util.registry
+MoinMoin - Tests for moin.utils.registry
 """
 
 
 import pytest
 
-from moin.util.registry import Registry
+from moin.utils.registry import Registry
 
 
 def factory_all(arg):

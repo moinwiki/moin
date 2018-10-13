@@ -19,8 +19,8 @@ except ImportError:
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.util.iri import Iri
-from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.constants.contenttypes import CHARSET
 
 # ### TODO: try block (do not crash if we don't have docutils)

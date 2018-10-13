@@ -12,7 +12,7 @@ from emeraldtree import ElementTree as ET
 
 from . import XMLNS_RE, TAGSTART_RE
 
-from moin.util.tree import html, moin_page, xlink
+from moin.utils.tree import html, moin_page, xlink
 from moin.converter.moinwiki_out import Converter
 
 

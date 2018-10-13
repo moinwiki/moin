@@ -12,7 +12,7 @@ from __future__ import absolute_import, division
 
 import zipfile
 
-from moin.util.mime import Type, type_text_plain
+from moin.utils.mime import Type, type_text_plain
 
 from . import default_registry
 from .xml_in import strip_xml

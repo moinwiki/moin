@@ -25,8 +25,8 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page, xlink, docbook, xml, html
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page, xlink, docbook, xml, html
 from moin.converter.html_out import mark_item_as_transclusion
 
 from . import default_registry

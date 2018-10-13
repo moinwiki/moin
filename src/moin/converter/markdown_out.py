@@ -16,8 +16,8 @@ import urllib
 
 from . import ElementException
 
-from moin.util.tree import moin_page, xlink, xinclude, html
-from moin.util.iri import Iri
+from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.utils.iri import Iri
 
 from emeraldtree import ElementTree as ET
 
@@ -26,7 +26,7 @@ from re import findall, sub
 from werkzeug.utils import unescape
 
 from . import default_registry
-from moin.util.mime import Type, type_moin_document
+from moin.utils.mime import Type, type_moin_document
 
 
 class Markdown(object):

@@ -9,7 +9,7 @@ import pytest
 
 from . import serialize, XMLNS_RE2
 
-from moin.util.tree import moin_page, xlink, xinclude
+from moin.utils.tree import moin_page, xlink, xinclude
 from moin.converter._wiki_macro import ConverterMacro
 from moin.converter._args import Arguments
 

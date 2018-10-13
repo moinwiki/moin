@@ -17,9 +17,9 @@ from re import findall, sub
 from emeraldtree import ElementTree as ET
 from werkzeug.utils import unescape
 
-from moin.util.tree import moin_page, xlink, xinclude, html
-from moin.util.iri import Iri
-from moin.util.mime import Type, type_moin_document, type_moin_wiki
+from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 
 from . import ElementException
 from . import default_registry

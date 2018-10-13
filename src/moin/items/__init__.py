@@ -40,11 +40,11 @@ from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_, N_
 from moin.themes import render_template
-from moin.util import rev_navigation
-from moin.util.mime import Type
-from moin.util.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
-from moin.util.registry import RegistryBase
-from moin.util.clock import timed
+from moin.utils import rev_navigation
+from moin.utils.mime import Type
+from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
+from moin.utils.registry import RegistryBase
+from moin.utils.clock import timed
 from moin.forms import RequiredText, OptionalText, JSON, Tags, Names
 from moin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
@@ -59,11 +59,11 @@ from moin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTEN
 from moin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 )
-from moin.util.notifications import DESTROY_REV, DESTROY_ALL
+from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
 from moin.mail.sendmail import encodeSpamSafeEmail
 
 from .content import content_registry, Content, NonExistentContent, Draw
-from ..util.pysupport import load_package_modules
+from ..utils.pysupport import load_package_modules
 
 from moin import log
 logging = log.getLogger(__name__)

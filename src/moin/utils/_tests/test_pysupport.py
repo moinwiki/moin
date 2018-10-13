@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.util.pysupport Tests
+    MoinMoin - moin.utils.pysupport Tests
 """
 
 
@@ -14,8 +14,8 @@ import pytest
 
 from flask import current_app as app
 
-from moin.util import pysupport, crypto
-from moin.util import plugins
+from moin.utils import pysupport, crypto
+from moin.utils import plugins
 
 
 class TestImportNameFromMoin(object):
@@ -27,16 +27,16 @@ class TestImportNameFromMoin(object):
 
     def testNonExistingModule(self):
         """ pysupport: import nonexistent module raises ImportError """
-        pytest.raises(ImportError, pysupport.importName, 'moin.util.nonexistent', 'importName')
+        pytest.raises(ImportError, pysupport.importName, 'moin.utils.nonexistent', 'importName')
 
     def testNonExistingAttribute(self):
         """ pysupport: import nonexistent attritbue raises AttributeError """
-        pytest.raises(AttributeError, pysupport.importName, 'moin.util.pysupport', 'nonexistent')
+        pytest.raises(AttributeError, pysupport.importName, 'moin.utils.pysupport', 'nonexistent')
 
     def testExisting(self):
         """ pysupport: import name from existing module """
-        from moin.util.pysupport import importName
-        t = pysupport.importName('moin.util.pysupport', 'importName')
+        from moin.utils.pysupport import importName
+        t = pysupport.importName('moin.utils.pysupport', 'importName')
         assert importName is t
 
 
@@ -130,4 +130,4 @@ class Parser:
                     raise
 
 
-coverage_modules = ['moin.util.pysupport']
+coverage_modules = ['moin.utils.pysupport']

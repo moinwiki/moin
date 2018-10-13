@@ -18,7 +18,7 @@ from . import serialize, XMLNS_RE3
 
 from moin.converter.html_in import Converter as HTML_IN
 from moin.converter.html_out import Converter as HTML_OUT
-from moin.util.tree import html, moin_page, xlink
+from moin.utils.tree import html, moin_page, xlink
 
 from moin import log
 logging = log.getLogger(__name__)

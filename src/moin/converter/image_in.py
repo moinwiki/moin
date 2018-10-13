@@ -12,9 +12,9 @@ from emeraldtree import ElementTree as ET
 from werkzeug import url_encode, url_decode
 
 from moin.constants.contenttypes import CHARSET
-from moin.util.iri import Iri
-from moin.util.mime import Type, type_moin_document
-from moin.util.tree import moin_page, xlink, xinclude, html
+from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page, xlink, xinclude, html
 
 from . import default_registry
 

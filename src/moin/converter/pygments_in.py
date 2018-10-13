@@ -17,7 +17,7 @@ try:
 except ImportError:
     pygments = None
 
-from moin.util.tree import moin_page
+from moin.utils.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
 from moin import log
@@ -120,7 +120,7 @@ if pygments:
             return moin_page.page(children=(body, ))
 
     from . import default_registry
-    from moin.util.mime import Type, type_moin_document
+    from moin.utils.mime import Type, type_moin_document
     default_registry.register(Converter._factory, Type(type='text'), type_moin_document)
     default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document)
 

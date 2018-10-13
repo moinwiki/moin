@@ -17,8 +17,8 @@ import imp
 import hashlib
 
 from moin import error
-from moin.util import pysupport
-from moin.util.mimetype import MimeType
+from moin.utils import pysupport
+from moin.utils.mimetype import MimeType
 
 
 class PluginError(Exception):

@@ -7,8 +7,8 @@ MoinMoin - Macro base class
 
 from werkzeug.exceptions import abort
 
-from moin.util import iri
-from moin.util.tree import moin_page, xlink
+from moin.utils import iri
+from moin.utils.tree import moin_page, xlink
 from moin.items import Item
 from moin.storage.middleware.protecting import AccessDenied
 

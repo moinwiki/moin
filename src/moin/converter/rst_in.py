@@ -33,9 +33,9 @@ except ImportError:
     flaskg = None
 
 from moin.constants.contenttypes import CHARSET
-from moin.util.iri import Iri
-from moin.util.tree import html, moin_page, xlink, xinclude
-from moin.util.mime import Type, type_moin_document
+from moin.utils.iri import Iri
+from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text

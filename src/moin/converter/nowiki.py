@@ -18,8 +18,8 @@ from . pygments_in import TreeFormatter
 from pygments.util import ClassNotFound
 
 from moin.i18n import _, L_, N_
-from moin.util.tree import moin_page
-from moin.util.mime import Type, type_moin_document
+from moin.utils.tree import moin_page
+from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
 from ._args_wiki import parse as parse_arguments

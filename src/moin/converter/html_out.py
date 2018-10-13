@@ -20,10 +20,10 @@ from emeraldtree import ElementTree as ET
 
 from moin import wikiutil
 from moin.i18n import _, L_, N_
-from moin.util.tree import html, moin_page, xlink, xml, Name, xinclude
+from moin.utils.tree import html, moin_page, xlink, xml, Name, xinclude
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
-from moin.util.iri import Iri
-from moin.util.mime import Type, type_moin_document
+from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry, ElementException
 

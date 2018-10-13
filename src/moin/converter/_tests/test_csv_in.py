@@ -9,7 +9,7 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.util.tree import moin_page, xlink, html, xinclude
+from moin.utils.tree import moin_page, xlink, html, xinclude
 
 from ..text_csv_in import Converter
 

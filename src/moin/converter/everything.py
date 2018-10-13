@@ -10,9 +10,9 @@ Convert any item to a DOM Tree (we just create a link to download it).
 
 from emeraldtree import ElementTree as ET
 
-from moin.util.iri import Iri
-from moin.util.tree import moin_page, xlink
-from moin.util.mime import Type, type_moin_document
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page, xlink
+from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
 

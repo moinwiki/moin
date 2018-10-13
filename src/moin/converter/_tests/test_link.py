@@ -8,7 +8,7 @@ MoinMoin - Tests for moin.converter.link
 from emeraldtree import ElementTree as ET
 
 from moin.converter.link import ConverterExternOutput, xlink, ConverterItemRefs
-from moin.util.iri import Iri
+from moin.utils.iri import Iri
 
 import pytest
 
