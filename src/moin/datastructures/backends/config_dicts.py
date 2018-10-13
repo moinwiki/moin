@@ -8,7 +8,7 @@ The config group backend enables you to define dicts in a configuration file.
 """
 
 
-from moin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
+from moin.datastructures.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 
 class ConfigDict(BaseDict):

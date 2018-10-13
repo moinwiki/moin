@@ -5,12 +5,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.datastruct.backends.wiki_dicts tests
+    MoinMoin - moin.datastructures.backends.wiki_dicts tests
 """
 
 
-from moin.datastruct.backends._tests import DictsBackendTest
-from moin.datastruct.backends import wiki_dicts
+from moin.datastructures.backends._tests import DictsBackendTest
+from moin.datastructures.backends import wiki_dicts
 from moin.constants.keys import SOMEDICT
 from moin._tests import become_trusted, update_item
 
@@ -46,4 +46,4 @@ class TestWikiDictsBackend(DictsBackendTest):
         assert result == expected
 
 
-coverage_modules = ['moin.datastruct.backends.wiki_dicts']
+coverage_modules = ['moin.datastructures.backends.wiki_dicts']

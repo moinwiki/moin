@@ -6,9 +6,9 @@
 """
 
 
-from moin.datastruct.backends._tests import GroupsBackendTest
-from moin.datastruct.backends.config_lazy_groups import ConfigLazyGroups
-from moin.datastruct import ConfigGroups, CompositeGroups
+from moin.datastructures.backends._tests import GroupsBackendTest
+from moin.datastructures.backends.config_lazy_groups import ConfigLazyGroups
+from moin.datastructures import ConfigGroups, CompositeGroups
 from moin._tests import wikiconfig
 
 import pytest
@@ -63,4 +63,4 @@ class TestCompositeAndLazyConfigGroups(GroupsBackendTest):
         return Config
 
 
-coverage_modules = ['moin.datastruct.backends.config_lazy_groups']
+coverage_modules = ['moin.datastructures.backends.config_lazy_groups']

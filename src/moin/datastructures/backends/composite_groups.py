@@ -11,7 +11,7 @@ backends.
 """
 
 
-from moin.datastruct.backends import BaseGroupsBackend, GroupDoesNotExistError
+from moin.datastructures.backends import BaseGroupsBackend, GroupDoesNotExistError
 
 
 class CompositeGroups(BaseGroupsBackend):

@@ -5,7 +5,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.datastruct.backends base test classes.
+    MoinMoin - moin.datastructures.backends base test classes.
 """
 
 
@@ -15,7 +15,7 @@ from flask import current_app as app
 from flask import g as flaskg
 
 from moin.security import AccessControlList
-from moin.datastruct import GroupDoesNotExistError
+from moin.datastructures import GroupDoesNotExistError
 
 
 class GroupsBackendTest(object):

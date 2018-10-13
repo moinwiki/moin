@@ -15,8 +15,8 @@ import pytest
 from flask import current_app as app
 from flask import g as flaskg
 
-from moin.datastruct.backends._tests import GroupsBackendTest
-from moin.datastruct import GroupDoesNotExistError
+from moin.datastructures.backends._tests import GroupsBackendTest
+from moin.datastructures import GroupDoesNotExistError
 from moin.constants.keys import NAME, USERGROUP
 from moin.security import AccessControlList
 from moin._tests import become_trusted, create_random_string_list, update_item
@@ -108,4 +108,4 @@ class TestWikiGroupBackend(GroupsBackendTest):
         assert has_rights_after, 'AnotherUser must have read rights because after appenditem he is member of NewGroup'
 
 
-coverage_modules = ['moin.datastruct.backends.wiki_groups']
+coverage_modules = ['moin.datastructures.backends.wiki_groups']

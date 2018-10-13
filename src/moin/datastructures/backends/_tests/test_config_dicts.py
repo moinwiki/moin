@@ -6,8 +6,8 @@
 """
 
 
-from moin.datastruct.backends._tests import DictsBackendTest
-from moin.datastruct import ConfigDicts
+from moin.datastructures.backends._tests import DictsBackendTest
+from moin.datastructures import ConfigDicts
 from moin._tests import wikiconfig
 
 import pytest
@@ -34,4 +34,4 @@ class TestConfigDictsBackend(DictsBackendTest):
             assert result in expected
 
 
-coverage_modules = ['moin.datastruct.backends.config_dicts']
+coverage_modules = ['moin.datastructures.backends.config_dicts']

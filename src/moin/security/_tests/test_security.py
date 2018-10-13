@@ -16,7 +16,7 @@ from moin.security import AccessControlList, ACLStringIterator
 
 from moin.user import User
 from moin.constants.keys import NAME, ACL
-from moin.datastruct import ConfigGroups
+from moin.datastructures import ConfigGroups
 
 from moin._tests import update_item, become_trusted, wikiconfig
 

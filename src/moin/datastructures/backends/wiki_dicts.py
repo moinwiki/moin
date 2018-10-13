@@ -12,7 +12,7 @@
 from flask import g as flaskg
 
 from moin.constants.keys import CURRENT, SOMEDICT
-from moin.datastruct.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
+from moin.datastructures.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 
 class WikiDict(BaseDict):

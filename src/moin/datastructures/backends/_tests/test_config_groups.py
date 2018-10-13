@@ -6,8 +6,8 @@
 """
 
 
-from moin.datastruct.backends._tests import GroupsBackendTest
-from moin.datastruct import ConfigGroups
+from moin.datastructures.backends._tests import GroupsBackendTest
+from moin.datastructures import ConfigGroups
 from moin._tests import wikiconfig
 
 import pytest
@@ -25,4 +25,4 @@ class TestConfigGroupsBackend(GroupsBackendTest):
         return Config
 
 
-coverage_modules = ['moin.datastruct.backends.config_groups']
+coverage_modules = ['moin.datastructures.backends.config_groups']

@@ -6,7 +6,7 @@ MoinMoin - dict access via various backends.
 """
 
 
-from moin.datastruct.backends import BaseDictsBackend, DictDoesNotExistError
+from moin.datastructures.backends import BaseDictsBackend, DictDoesNotExistError
 
 
 class CompositeDicts(BaseDictsBackend):
