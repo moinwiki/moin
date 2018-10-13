@@ -30,7 +30,7 @@ from moin.constants.forms import *  # noqa
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
 from moin.i18n import _, L_, N_
-from moin.util.forms import FileStorage
+from moin.utils.forms import FileStorage
 from moin.storage.middleware.validation import uuid_validator
 
 COLS = 60

@@ -24,7 +24,7 @@ from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
 
-from moin.util.interwiki import split_fqname
+from moin.utils.interwiki import split_fqname
 
 from moin import log
 logging = log.getLogger(__name__)

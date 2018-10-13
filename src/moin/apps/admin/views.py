@@ -24,11 +24,11 @@ from moin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT,
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
 from moin.security import require_permission, ACLStringIterator
-from moin.util.interwiki import CompositeName
-from moin.datastruct.backends.wiki_groups import WikiGroup
-from moin.datastruct.backends import GroupDoesNotExistError
+from moin.utils.interwiki import CompositeName
+from moin.datastructures.backends.wiki_groups import WikiGroup
+from moin.datastructures.backends import GroupDoesNotExistError
 from moin.items import Item, acl_validate
-from moin.util.interwiki import split_fqname
+from moin.utils.interwiki import split_fqname
 from moin.config import default as defaultconfig
 
 

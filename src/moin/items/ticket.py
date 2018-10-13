@@ -61,7 +61,7 @@ from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.itemtypes import ITEMTYPE_TICKET
 from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from moin.items.content import NonExistentContent
-from moin.util.interwiki import CompositeName
+from moin.utils.interwiki import CompositeName
 from moin.constants.forms import *  # noqa
 
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)

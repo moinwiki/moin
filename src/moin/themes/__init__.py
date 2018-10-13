@@ -25,11 +25,11 @@ from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CO
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
-from moin.util.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
-from moin.util.crypto import cache_key
-from moin.util.forms import make_generator
-from moin.util.clock import timed
-from moin.util.mime import Type
+from moin.utils.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
+from moin.utils.crypto import cache_key
+from moin.utils.forms import make_generator
+from moin.utils.clock import timed
+from moin.utils.mime import Type
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -461,7 +461,7 @@ class ThemeSupport(object):
         if item_name and parent_item_name:
             return parent_item_name
 
-    # TODO: reimplement on-wiki-page sidebar definition with moin.converter
+    # TODO: reimplement on-wiki-page sidebar definition with moin.converters
 
     # Properties ##############################################################
 

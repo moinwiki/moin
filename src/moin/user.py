@@ -38,9 +38,9 @@ from moin.constants.keys import *  # noqa
 from moin.constants.misc import ANON
 from moin.i18n import _, L_, N_
 from moin.mail import sendmail
-from moin.util.interwiki import getInterwikiHome, getInterwikiName
-from moin.util.crypto import generate_token, valid_token, make_uuid
-from moin.util.subscriptions import get_matched_subscription_patterns
+from moin.utils.interwiki import getInterwikiHome, getInterwikiName
+from moin.utils.crypto import generate_token, valid_token, make_uuid
+from moin.utils.subscriptions import get_matched_subscription_patterns
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
 
 from moin import log
@@ -91,7 +91,7 @@ space between words. Group page name is not allowed.""", name=username)
         return _("Please provide your email address. If you lose your"
                  " login information, you can get it by email.")
 
-    # Email should be unique - see also MoinMoin/script/accounts/moin_usercheck.py
+    # Email should be unique - see also MoinMoin/scripts/accounts/moin_usercheck.py
     if validate and email and app.cfg.user_email_unique:
         if search_users(email=email):
             return _("This email already belongs to somebody else.")

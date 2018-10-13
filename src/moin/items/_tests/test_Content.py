@@ -14,7 +14,7 @@ from flask import Markup
 
 from werkzeug import escape
 
-from moin.util import diff_html
+from moin.utils import diff_html
 
 from moin._tests import become_trusted, update_item
 from moin.items import Item

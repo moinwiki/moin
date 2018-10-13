@@ -24,7 +24,7 @@ from __future__ import absolute_import, division
 import json
 
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
-from moin.util.crypto import make_uuid
+from moin.utils.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper

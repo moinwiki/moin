@@ -136,7 +136,7 @@ def search_for_phrase(filename):
         DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version', 'successfully installed', 'finished', ),
-        # ': e' matches lines similar to: src/moin/converter\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
+        # ': e' matches lines similar to: src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
         TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
@@ -300,7 +300,7 @@ class Commands(object):
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
         print 'Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt'))
-        command = '{0} src/moin/script/win/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
+        command = '{0} src/moin/scripts/win/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
         subprocess.call(command, shell=True)
 
     def cmd_log(self, *args):

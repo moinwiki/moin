@@ -17,7 +17,7 @@ import sys
 
 # do this early, but not in moin/__init__.py because we need to be able to
 # "import moin" from setup.py even before flask, werkzeug, ... is installed.
-from moin.util import monkeypatch
+from moin.utils import monkeypatch
 
 from flask import Flask, request, session
 from flask import current_app as app
@@ -38,7 +38,7 @@ from moin.constants.misc import ANON
 from moin.i18n import i18n_init
 from moin.i18n import _, L_, N_
 from moin.themes import setup_jinja_env, themed_error
-from moin.util.clock import Clock
+from moin.utils.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
 from moin import auth, user
 
