@@ -852,7 +852,7 @@ class Converter(ConverterMacro):
         if object_item is not None:
             # img tag
             query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
-            # TODO: moin 1.9 needed this for an attached file; move functionality to script/migration/moin/import19.py
+            # TODO: moin 1.9 needed this for an attached file; move functionality to scripts/migration/moin/import19.py
             att = 'attachment:'
             if object_item.startswith(att):
                 object_item = '/' + object_item[len(att):]  # now we have a subitem

@@ -115,7 +115,7 @@ setup_args = dict(
         'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
     },
     entry_points=dict(
-        console_scripts=['moin = moin.script:main'],
+        console_scripts=['moin = moin.scripts:main'],
     ),
 
     # stuff for babel:

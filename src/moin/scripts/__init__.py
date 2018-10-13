@@ -24,7 +24,7 @@ def main(default_command='moin', wiki_config=None):
                        required=False, default=False)
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
 
-    from moin.script.maint import index
+    from moin.scripts.maint import index
     manager.add_command("index-create", index.IndexCreate())
     manager.add_command("index-build", index.IndexBuild())
     manager.add_command("index-update", index.IndexUpdate())
@@ -32,28 +32,28 @@ def main(default_command='moin', wiki_config=None):
     manager.add_command("index-move", index.IndexMove())
     manager.add_command("index-optimize", index.IndexOptimize())
     manager.add_command("index-dump", index.IndexDump())
-    from moin.script.maint import serialization
+    from moin.scripts.maint import serialization
     manager.add_command("save", serialization.Serialize())
     manager.add_command("load", serialization.Deserialize())
-    from moin.script.maint.dump_html import Dump
+    from moin.scripts.maint.dump_html import Dump
     manager.add_command("dump-html", Dump())
-    from moin.script.account.create import Create_User
+    from moin.scripts.account.create import Create_User
     manager.add_command("account-create", Create_User())
-    from moin.script.account.disable import Disable_User
+    from moin.scripts.account.disable import Disable_User
     manager.add_command("account-disable", Disable_User())
-    from moin.script.account.resetpw import Set_Password
+    from moin.scripts.account.resetpw import Set_Password
     manager.add_command("account-password", Set_Password())
-    from moin.script.maint.reduce_revisions import Reduce_Revisions
+    from moin.scripts.maint.reduce_revisions import Reduce_Revisions
     manager.add_command("maint-reduce-revisions", Reduce_Revisions())
-    from moin.script.maint.set_meta import Set_Meta
+    from moin.scripts.maint.set_meta import Set_Meta
     manager.add_command("maint-set-meta", Set_Meta())
-    from moin.script.maint import modify_item
+    from moin.scripts.maint import modify_item
     manager.add_command("item-get", modify_item.GetItem())
     manager.add_command("item-put", modify_item.PutItem())
-    from moin.script.migration.moin19.import19 import ImportMoin19
+    from moin.scripts.migration.moin19.import19 import ImportMoin19
     manager.add_command("import19", ImportMoin19())
 
-    from moin.script.maint.moinshell import MoinShell
+    from moin.scripts.maint.moinshell import MoinShell
     manager.add_command("shell", MoinShell())
 
     return manager.run(default_command=default_command)

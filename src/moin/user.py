@@ -91,7 +91,7 @@ space between words. Group page name is not allowed.""", name=username)
         return _("Please provide your email address. If you lose your"
                  " login information, you can get it by email.")
 
-    # Email should be unique - see also MoinMoin/script/accounts/moin_usercheck.py
+    # Email should be unique - see also MoinMoin/scripts/accounts/moin_usercheck.py
     if validate and email and app.cfg.user_email_unique:
         if search_users(email=email):
             return _("This email already belongs to somebody else.")
