@@ -187,10 +187,6 @@ JSON = OptionalMultilineText.with_properties(lang='en', dir='ltr').validated_by(
 
 URL = String.with_properties(widget=WIDGET_TEXT).validated_by(URLValidator())
 
-OpenID = URL.using(label=L_('OpenID')).with_properties(placeholder=L_("OpenID address"))
-
-YourOpenID = OpenID.with_properties(placeholder=L_("Your OpenID address"))
-
 Email = String.using(label=L_('E-Mail')).with_properties(widget=WIDGET_EMAIL,
                                                          placeholder=L_("E-Mail address")).validated_by(IsEmail())
 

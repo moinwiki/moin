@@ -49,7 +49,7 @@ from whoosh.analysis import StandardAnalyzer
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, contenttype_to_class
 from moin.apps.frontend import frontend
-from moin.forms import (OptionalText, RequiredText, URL, YourOpenID, YourEmail,
+from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                         Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
                         validate_name, NameNotValidError)
@@ -1476,19 +1476,9 @@ class RegistrationForm(Form):
     password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
-    openid = YourOpenID.using(optional=True)
     submit_label = L_('Register')
 
     validators = [ValidRegistration()]
-
-
-class OpenIDForm(RegistrationForm):
-    """
-    OpenID registration form, inherited from the simple registration form.
-    """
-    name = 'openid'
-
-    openid = YourOpenID
 
 
 def _using_moin_auth():
@@ -1503,42 +1493,17 @@ def _using_moin_auth():
     return False
 
 
-def _using_openid_auth():
-    """Check if OpenIDAuth is being used for authentication.
-
-    Only then users can register with openid or change their password via openid.
-    """
-    from moin.auth.openidrp import OpenIDAuth
-    for auth in app.cfg.auth:
-        if isinstance(auth, OpenIDAuth):
-            return True
-    return False
-
-
 @frontend.route('/+register', methods=['GET', 'POST'])
 def register():
-    title_name = _(u'Register')
-    isOpenID = 'openid_submit' in request.values
+    if not _using_moin_auth():
+        return Response('No MoinAuth in auth list', 403)
 
-    if isOpenID:
-        # this is an openid continuation
-        if not _using_openid_auth():
-            return Response('No OpenIDAuth in auth list', 403)
-        template = 'openid_register.html'
-        FormClass = OpenIDForm
-    else:
-        # not openid registration and no MoinAuth
-        if not _using_moin_auth():
-            return Response('No MoinAuth in auth list', 403)
-        template = 'register.html'
-        FormClass = RegistrationForm
+    title_name = _(u'Register')
+    template = 'register.html'
+    FormClass = RegistrationForm
 
     if request.method in ['GET', 'HEAD']:
         form = FormClass.from_defaults()
-        if isOpenID:
-            oid = request.values.get('openid_openid')
-            if oid:
-                form['openid'] = oid
     elif request.method == 'POST':
         form = FormClass.from_flat(request.form)
         if form.validate():
@@ -1546,7 +1511,6 @@ def register():
                 'username': form['username'].value,
                 'password': form['password1'].value,
                 'email': form['email'].value,
-                'openid': form['openid'].value,
             }
             if app.cfg.user_email_verification:
                 user_kwargs['is_disabled'] = True
@@ -1728,24 +1692,20 @@ class ValidLogin(Validator):
     Login validator
     """
     moin_fail_msg = L_('Either your username or password was invalid.')
-    openid_fail_msg = L_('Failed to authenticate with this OpenID.')
 
     def validate(self, element, state):
         # get the result from the other validators
         moin_valid = element['username'].valid and element['password'].valid
-        openid_valid = element['openid'].valid
 
         # none of them was valid
-        if not (openid_valid or moin_valid):
+        if not moin_valid:
             return False
         # got our user!
         if flaskg.user.valid:
             return True
         # no valid user -> show appropriate message
         else:
-            if not openid_valid:
-                return self.note_error(element, state, 'openid_fail_msg')
-            elif not moin_valid:
+            if not moin_valid:
                 return self.note_error(element, state, 'moin_fail_msg')
 
 
@@ -1757,7 +1717,6 @@ class LoginForm(Form):
 
     username = RequiredText.using(label=L_('Username'), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
-    openid = YourOpenID.using(optional=True)
     nexturl = Hidden.using(default='')
     # This field results in a login_submit field in the POST form, which is in
     # turn looked for by setup_user() in app.py as marker for login requests.
@@ -1775,10 +1734,6 @@ def login():
         nexturl = form['nexturl']
         return redirect(nexturl)
     title_name = _(u'Login')
-
-    # multistage return
-    if flaskg._login_multistage_name == 'openid':
-        return Response(flaskg._login_multistage, mimetype='text/html')
 
     if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
@@ -1943,7 +1898,6 @@ def usersettings():
         name = Names.using(label=L_('Usernames')).with_properties(placeholder=L_("The login usernames you want to use"))
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
-        openid = YourOpenID.using(optional=True)
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
         _timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
@@ -2008,11 +1962,6 @@ def usersettings():
                     response['flash'].append((_("Your password has been changed."), "info"))
                 else:
                     if part == 'personal':
-                        if (form['openid'].value and form['openid'].value != flaskg.user.openid and
-                                user.search_users(openid=form['openid'].value)):
-                            # duplicate openid
-                            response['flash'].append((_("This openid is already in use."), "error"))
-                            success = False
                         if set(form['name'].value) != set(flaskg.user.name):
                             new_names = set(form['name'].value) - set(flaskg.user.name)
                             for name in new_names:

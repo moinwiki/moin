@@ -404,7 +404,6 @@ ContentMetaSchema = DuckDict.named('ContentMetaSchema').of(
 UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     String.named(keys.CONTENTTYPE).validated_by(user_contenttype_validator),
     String.named(keys.EMAIL).using(optional=True),
-    String.named(keys.OPENID).using(optional=True),
     String.named(keys.ENC_PASSWORD).using(optional=True),
     String.named(keys.RECOVERPASS_KEY).using(optional=True),
     String.named(keys.THEME_NAME).using(optional=True),

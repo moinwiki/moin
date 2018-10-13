@@ -30,11 +30,6 @@ E-Mail
  administrators to contact you or to verify your account if email verification is enabled on
  the wiki. This is a required field.
 
-OpenID
- This is an optional field where you may enter an OpenID to be associated with your account. OpenID
- provides a common mechanism for websites to authenticate users and store data about them like
- username and real name. If you have an OpenID, you may want to enter it here.
-
 .. note::
  Some wikis require email verification, in which case you will have click an activation link which
  will be sent to the email address you provide. You must complete this step before you start using
@@ -53,7 +48,7 @@ wiki experience, each of these sub-pages are listed below:
 Personal Settings
 -----------------
 
-Personal settings include wiki language and locale, username, alias and OpenID.
+Personal settings include wiki language and locale, username and alias.
 
 Name
  Your username, as it will appear on the wiki and in the history pages of wiki items which you edit.
@@ -61,9 +56,6 @@ Name
 Display-Name
  The display name can be used to override your username, so you will still log in using your username
  but your display name will be displayed to other users and in your history page.
-
-OpenID
- If you have an OpenID which you would like to associate with your account, enter it here.
 
 Timezone
  Setting this value will allow you to see edit times as they would appear in your time zone. For

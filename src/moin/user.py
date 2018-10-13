@@ -102,11 +102,6 @@ space between words. Group page name is not allowed.""", name=username)
     elif email:
         theuser.profile[EMAIL] = email
 
-    # Openid should be unique
-    openid = meta.get(OPENID)
-    if validate and openid and search_users(openid=openid):
-        return _('This OpenID already belongs to somebody else.')
-
     theuser.profile[DISABLED] = meta.get("is_disabled", False)
 
     # TODO requires validation (preferably using flatland)

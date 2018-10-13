@@ -111,7 +111,6 @@ setup_args = dict(
         'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
                                          # requires special libs/header to be installed before it can be compiled successfully
                                          # windows binaries available from 3rd parties
-        'openid': ["python-openid>=2.2.4"],  # used by openid rp auth
         'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
     },
     entry_points=dict(
