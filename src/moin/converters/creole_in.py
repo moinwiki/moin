@@ -562,7 +562,7 @@ class Converter(ConverterMacro):
             attrib[moin_page.class_] = 'moin-thead'
         element = moin_page.table_cell(attrib=attrib)
         stack.push(element)
-        self.parse_inline(cell_text.strip(' '), stack)
+        self.parse_inline(cell_text.strip(), stack)
         stack.pop_name('table-cell')
 
     # Block elements
