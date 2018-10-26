@@ -899,9 +899,8 @@ def ajaxdelete(item_name):
         for itemname in itemnames:
             response["itemnames"].append(itemname)
             itemname = subitem_prefix + itemname
-            if '%' in itemname:
-                # itemname is url quoted string coming across as unicode, must encode, unquote, decode
-                itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
+            # itemname is url quoted string coming across as unicode, must encode, unquote, decode
+            itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
             try:
                 item = Item.create(itemname)
                 if isinstance(item, NonExistent):
@@ -932,9 +931,8 @@ def ajaxdestroy(item_name):
         for itemname in itemnames:
             response["itemnames"].append(itemname)
             itemname = subitem_prefix + itemname
-            if '%' in itemname:
-                # itemname is url quoted string coming across as unicode, must encode, unquote, decode
-                itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
+            # itemname is url quoted string coming across as unicode, must encode, unquote, decode
+            itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
             try:
                 item = Item.create(itemname)
                 if isinstance(item, NonExistent):
