@@ -1094,7 +1094,6 @@ def index(item_name):
     # detect orphan subitems and make a list of their missing parents
     used_dirs = set()
     for file_ in files:
-        # if file_ in dirs:  # XXX if true the file is opened twice, windows servers will not be able to destroy file until after python garbage collection
         if file_.fullname in dirs_fullname:
             used_dirs.add(file_[0])
     all_dirs = set(x[0] for x in dirs)
