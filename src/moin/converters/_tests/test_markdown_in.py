@@ -70,9 +70,9 @@ class TestConverter(object):
     data = [
         (u'http://moinmo.in/',
          '<p>http://moinmo.in/</p>'),
-        (u'\[escape](yo)',
+        (u'\\[escape](yo)',
          '<p>[escape](yo)</p>'),
-        (u'\*yo\*',
+        (u'\\*yo\\*',
          '<p>*yo*</p>'),
     ]
 
