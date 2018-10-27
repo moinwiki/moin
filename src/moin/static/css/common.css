@@ -432,7 +432,6 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-select-all { padding: .5em; color: #00008b; background: #eef1f6; border: 1px solid #4e7da9; text-align: left; }
 .moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
 .moin-index-message span { padding: 4px; background-color: #eee; color: red; }
-.moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; }
 .moin-contenttype-selection div { cursor: pointer; margin: .1em; padding: .5em 1.2em .5em .5em; height: 1em; }
 div.moin-ct-shown { background: #d8dfe9 url("../img/moin-movedown.png") no-repeat center right; color: #000; }
