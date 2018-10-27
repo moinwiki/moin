@@ -490,40 +490,40 @@ class IndexingMiddleware(object):
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async=False):  # True
+    def index_revision(self, meta, content, backend_name, async_=False):  # True
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
         :param meta: metadata dict
         :param content: preprocessed (filtered) indexable content
-        :param async: if True, use the AsyncWriter, otherwise use normal writer
+        :param async_: if True, use the AsyncWriter, otherwise use normal writer
         """
         doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname, backend_name)
-        if async:
+        if async_:
             writer = AsyncWriter(self.ix[ALL_REVS])
         else:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.update_document(**doc)  # update, because store_revision() may give us an existing revid
         doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
-        if async:
+        if async_:
             writer = AsyncWriter(self.ix[LATEST_REVS])
         else:
             writer = self.ix[LATEST_REVS].writer()
         with writer as writer:
             writer.update_document(**doc)
 
-    def remove_revision(self, revid, async=True):
+    def remove_revision(self, revid, async_=True):
         """
         Remove a single revision from indexes.
         """
-        if async:
+        if async_:
             writer = AsyncWriter(self.ix[ALL_REVS])
         else:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.delete_by_term(REVID, revid)
-        if async:
+        if async_:
             writer = AsyncWriter(self.ix[LATEST_REVS])
         else:
             writer = self.ix[LATEST_REVS].writer()
