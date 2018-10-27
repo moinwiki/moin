@@ -34,7 +34,7 @@ class TestConverter(object):
          '<page><body><p>Text\nTest</p></body></page>'),
         (u'Text\n\nTest',
          '<page><body><p>Text</p><p>Test</p></body></page>'),
-        (u'H\ :sub:`2`\ O\n\nE = mc\ :sup:`2`',
+        (u'H\\ :sub:`2`\\ O\n\nE = mc\\ :sup:`2`',
          '<page><body><p>H<span baseline-shift="sub">2</span>O</p><p>E = mc<span baseline-shift="super">2</span></p></body></page>'),
         (u'| Lend us a couple of bob till Thursday.',
          '<page><body><line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block></body></page>'),
