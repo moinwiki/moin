@@ -22,6 +22,7 @@ import uuid
 import mimetypes
 import json
 import threading
+import urllib
 from io import BytesIO
 from datetime import datetime
 from collections import namedtuple
@@ -898,8 +899,14 @@ def ajaxdelete(item_name):
         for itemname in itemnames:
             response["itemnames"].append(itemname)
             itemname = subitem_prefix + itemname
+            # itemname is url quoted string coming across as unicode, must encode, unquote, decode
+            itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
             try:
                 item = Item.create(itemname)
+                if isinstance(item, NonExistent):
+                    # if we get here there is a bug, we should not try to delete a nonexistent item
+                    response["status"].append(False)
+                    continue
                 item.delete(comment)
                 response["status"].append(True)
             except AccessDenied:
@@ -924,8 +931,14 @@ def ajaxdestroy(item_name):
         for itemname in itemnames:
             response["itemnames"].append(itemname)
             itemname = subitem_prefix + itemname
+            # itemname is url quoted string coming across as unicode, must encode, unquote, decode
+            itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
             try:
                 item = Item.create(itemname)
+                if isinstance(item, NonExistent):
+                    # if we get here there is a bug, we should not try to destroy a nonexistent item
+                    response["status"].append(False)
+                    continue
                 item.destroy(comment=comment, destroy_item=True)
                 response["status"].append(True)
             except AccessDenied:
