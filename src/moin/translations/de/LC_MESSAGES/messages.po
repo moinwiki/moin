@@ -2041,7 +2041,7 @@ msgstr "Erzeugen"
 #: src/moin/templates/index.html:226
 msgid "(Drag and drop multiple files to this white area to upload them.)"
 msgstr ""
-"(Auf diese weisse Fläche hier mehrere Dateien draufwerfen, um sie "
+"(Auf diese weiße Fläche hier mehrere Dateien draufwerfen, um sie "
 "hochzuladen.)"
 
 #: src/moin/templates/itemviews.html:20
@@ -2190,7 +2190,7 @@ msgstr "'%(item_name)s' umbenennen"
 #: src/moin/templates/revert.html:5
 #, python-format
 msgid "Revert '%(new_names)s'"
-msgstr "'%(new_name)s' wieder herstellen"
+msgstr "'%(new_names)s' wieder herstellen"
 
 #: src/moin/templates/revert.html:15
 msgid "Meta data of item to be reverted:"
