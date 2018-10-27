@@ -85,7 +85,7 @@ def postproc_text(markdown, text):
                 pass
         return text  # leave as is
 
-    return re.sub("&#?\w+;", fixup, text)
+    return re.sub(r"&#?\w+;", fixup, text)
 
 
 class Converter(object):
