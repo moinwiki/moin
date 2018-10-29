@@ -436,7 +436,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-contenttype-selection div { cursor: pointer; margin: .1em; padding: .5em 1.2em .5em .5em; height: 1em; }
 div.moin-ct-shown { background: #d8dfe9 url("../img/moin-movedown.png") no-repeat center right; color: #000; }
 div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
-a.moin-conflict { color: red; }
+a.moin-auth-failed { color: red; }
 
 .moin-contenttype-selection form { z-index: 2; background-color: #fff; border: 1px solid #4e7da9; padding: .2em; }
 .moin-contenttype-selection ul li { list-style-type: none; }
