@@ -18,7 +18,7 @@ $("document").ready(function () {
         // delete and destroy process started and completed messages
         ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
         ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
-        ACTION_FAILED = {'delete': _(", Items not deleted: "), 'destroy': _(", Items not destroyed: ")};
+        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")};
 
     // called by click handlers New Item, Delete item, and Destroy item within Actions dropdown menu
     function showpop(action) {
@@ -62,9 +62,11 @@ $("document").ready(function () {
 
     // called by do_action when item cannot be deleted or destroyed
     function show_conflict(item_link) {
-        // mark an item as having failed a delete or destroy operation
-        item_link.removeClass().addClass("moin-conflict");
-        item_link.parent().removeClass();
+        // highlight item that failed a delete or destroy operation
+        item_link.addClass("moin-auth-failed");
+        // cleanup display by unchecking checkbox and removing selected class
+        item_link.prev().children().prop("checked", false);
+        item_link.parent().removeClass("selected-item");
     }
 
     // executed via the "provide comment" popup triggered by an Actions Delete or Destroy selection
@@ -131,6 +133,7 @@ $("document").ready(function () {
             $(".moin-select-item > input[type='checkbox']").each(function () {
                 $(this).prop('checked', true);
             });
+            $(".moin-auth-failed").removeClass("moin-auth-failed");
         } else {
             $(this).removeClass("allitem-selected").addClass("allitem-toselect");
             $(".moin-item-index div").removeClass();
@@ -286,6 +289,7 @@ $("document").ready(function () {
             }
         } else {
             $(this).parent().addClass("selected-item");
+            $(this).next().removeClass("moin-auth-failed");
         }
     });
 });
