@@ -14,7 +14,6 @@ $("document").ready(function () {
     var POPUP_FADE_TIME = 200, // fade in, fade out times for selected popups
         IFRAME_CREATE_DELAY = 200, // delay between start of multiple downloads
         IFRAME_REMOVE_DELAY = 3000, // life expectancy of iframe used for file downloads
-        MESSAGE_VIEW_TIME = 4000, // life expectancy of delete/destroy status messages
         // delete and destroy process started and completed messages
         ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
         ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
