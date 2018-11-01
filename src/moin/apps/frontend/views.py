@@ -22,6 +22,7 @@ import uuid
 import mimetypes
 import json
 import threading
+import urllib
 from io import BytesIO
 from datetime import datetime
 from collections import namedtuple
@@ -885,52 +886,39 @@ def delete_item(item_name):
 @frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+ajaxdelete', defaults=dict(item_name=''), methods=['POST'])
 def ajaxdelete(item_name):
-    if request.method == 'POST':
-        args = request.values.to_dict()
-        comment = args.get("comment")
-        itemnames = args.get("itemnames")
-        itemnames = json.loads(itemnames)
-        if item_name:
-            subitem_prefix = item_name + u'/'
-        else:
-            subitem_prefix = u''
-        response = {"itemnames": [], "status": []}
-        for itemname in itemnames:
-            response["itemnames"].append(itemname)
-            itemname = subitem_prefix + itemname
-            try:
-                item = Item.create(itemname)
-                item.delete(comment)
-                response["status"].append(True)
-            except AccessDenied:
-                response["status"].append(False)
-
-    return jsonify(response)
+    return ajaxdestroy(item_name, req='delete')
 
 
 @frontend.route('/+ajaxdestroy/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+ajaxdestroy', defaults=dict(item_name=''), methods=['POST'])
-def ajaxdestroy(item_name):
-    if request.method == 'POST':
-        args = request.values.to_dict()
-        comment = args.get("comment")
-        itemnames = args.get("itemnames")
-        itemnames = json.loads(itemnames)
-        if item_name:
-            subitem_prefix = item_name + u'/'
-        else:
-            subitem_prefix = u''
-        response = {"itemnames": [], "status": []}
-        for itemname in itemnames:
-            response["itemnames"].append(itemname)
-            itemname = subitem_prefix + itemname
-            try:
-                item = Item.create(itemname)
-                item.destroy(comment=comment, destroy_item=True)
-                response["status"].append(True)
-            except AccessDenied:
-                response["status"].append(False)
+def ajaxdestroy(item_name, req='destroy'):
+    """
+    Handles both ajax delete and ajax destroy.
 
+    item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+    """
+    args = request.values.to_dict()
+    comment = args.get("comment")
+    itemnames = args.get("itemnames")
+    itemnames = json.loads(itemnames)
+    response = {"itemnames": [], "status": []}
+    for itemname in itemnames:
+        response["itemnames"].append(itemname)
+        # itemname is url quoted string coming across as unicode, must encode, unquote, decode
+        itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
+        try:
+            item = Item.create(itemname)
+            if isinstance(item, NonExistent):
+                # if we get here there is a bug (or a test?), we should not try to destroy a nonexistent item
+                response["status"].append(False)
+                continue
+            if req == 'destroy':
+                item.destroy(comment=comment, destroy_item=True)
+            else:
+                item.delete(comment)
+            response["status"].append(True)
+        except AccessDenied:
+            response["status"].append(False)
     return jsonify(response)
 
 
@@ -1081,7 +1069,6 @@ def index(item_name):
     # detect orphan subitems and make a list of their missing parents
     used_dirs = set()
     for file_ in files:
-        # if file_ in dirs:  # XXX if true the file is opened twice, windows servers will not be able to destroy file until after python garbage collection
         if file_.fullname in dirs_fullname:
             used_dirs.add(file_[0])
     all_dirs = set(x[0] for x in dirs)

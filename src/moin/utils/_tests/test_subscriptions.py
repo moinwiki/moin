@@ -91,16 +91,16 @@ class TestSubscriptions(object):
         patterns = get_matched_subscription_patterns([], **meta)
         assert patterns == []
         non_matching_patterns = [
-            "{0}:{1}:{2}".format(NAMERE, NAMESPACE_USERPROFILES, ".*"),
-            "{0}:{1}:{2}".format(NAMERE, namespace, "\d+"),
-            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, "bar"),
+            "{0}:{1}:{2}".format(NAMERE, NAMESPACE_USERPROFILES, r".*"),
+            "{0}:{1}:{2}".format(NAMERE, namespace, r"\d+"),
+            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, r"bar"),
         ]
         patterns = get_matched_subscription_patterns(non_matching_patterns, **meta)
         assert patterns == []
 
         matching_patterns = [
-            "{0}:{1}:{2}".format(NAMERE, namespace, "fo+"),
-            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, "fo"),
+            "{0}:{1}:{2}".format(NAMERE, namespace, r"fo+"),
+            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, r"fo"),
         ]
         patterns = get_matched_subscription_patterns(non_matching_patterns + matching_patterns, **meta)
         assert patterns == matching_patterns

@@ -447,7 +447,7 @@ class Converter(object):
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
         alt = convert_getlink_to_showlink(unicode(href))
-        alt = re.sub('^\/', '', alt)
+        alt = re.sub(r'^/', '', alt)
 
         if obj_type == "img":
             # Images must have alt attribute in html5, but if user did not specify then default to url

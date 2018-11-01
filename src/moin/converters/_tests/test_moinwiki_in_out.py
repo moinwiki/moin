@@ -367,8 +367,8 @@ continuation of no bullet list"""),
         self.do(input, output)
 
     data = [
-        (u"smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}",
-         u"smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}"),
+        (ur"smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}",
+         ur"smileys: X-( :D >:> <:( :\ :o :-( :( :) B) :)) ;) |) |-) :-? /!\ <!> (./) {X} {i} (!) {1} {2} {3} {*} {o} {OK}"),
     ]
 
     @pytest.mark.parametrize('input,output', data)
