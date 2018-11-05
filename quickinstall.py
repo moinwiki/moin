@@ -721,4 +721,4 @@ if __name__ == '__main__':
                     choice(*args[2:])
                 else:
                     print help
-                    print 'Error: unknown menu selection "%s"' % args[2]
+                    print 'Error: unknown menu selection "%s"' % args[1]
