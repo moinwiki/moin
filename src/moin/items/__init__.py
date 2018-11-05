@@ -747,7 +747,10 @@ class Item(object):
             variables['EMAIL'] = "@ MAILTO@"
 
         for name in variables:
-            data = data.replace(u'@{0}@'.format(name), variables[name])
+            try:
+                data = data.replace(u'@{0}@'.format(name), variables[name])
+            except UnicodeError:
+                logging.warning("handle_variables: UnicodeError! name: %r value: %r" % (name, variables[name]))
         return data
 
     @property
