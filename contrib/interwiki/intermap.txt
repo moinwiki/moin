@@ -22,7 +22,7 @@ ESW http://esw.w3.org/topic/
 OSPedia http://ospedia.osdir.com/
 MsgID http://groups.google.com/groups?as_umsgid=
 BcWireless http://www.bcwireless.net/moin.cgi/
-Debian http://wiki.debian.org/
+Debian https://wiki.debian.org/
 DebianBug http://bugs.debian.org/
 DebianPackage http://packages.debian.org/
 DocBook http://wiki.docbook.org/  
@@ -45,7 +45,7 @@ MBWiki http://wiki.musicbrainz.org/
 SquidWiki http://wiki.squid-cache.org/
 AltLinux http://altlinux.org/
 AltLinuxEn http://en.altlinux.org/
-hg http://mercurial.selenic.com/wiki/
+hg https://www.mercurial-scm.org/wiki/
 
 ## Updated 2004-11-19 from http://www.usemod.com/cgi-bin/mb.pl?InterMapTxt
 ## Please modify the upper part of this page only
@@ -78,20 +78,20 @@ IAWiki http://www.IAwiki.net/
 IMDB http://www.imdb.com/title/tt$PAGE/
 JargonFile http://www.google.com/search?btnI=Im+Feeling+Lucky&q=$PAGE+site:http://catb.org/jargon/html/ 
 JspWiki http://www.ecyrd.com/JSPWiki/Wiki.jsp?page=
-JuraWiki http://jurawiki.de/
-LinuxWiki http://linuxwiki.org/
+JuraWiki https://jurawiki.de/
+LinuxWiki https://linuxwiki.org/
 LiveJournal http://www.livejournal.com/users/$PAGE/
 LyricWiki http://lyricwiki.org/
 MeatBall http://www.usemod.com/cgi-bin/mb.pl?
 MetaWiki http://sunir.org/apps/meta.pl?
 MetaWikiPedia http://meta.wikipedia.org/wiki/
-MoinMaster http://master.moinmo.in/
-MoinMoin http://moinmo.in/
+MoinMaster https://master.moinmo.in/
+MoinMoin https://moinmo.in/
 OddMuse http://www.oddmuse.org/
 OpenWiki http://openwiki.com/ow.asp?
 Parawiki http://www.parawiki.org/index.php/ 
 PersonalTelco http://www.personaltelco.net/index.cgi/
-PythonInfo http://wiki.python.org/moin/ 
+PythonInfo https://wiki.python.org/moin/ 
 PythonWiki http://wiki.python.de/
 ReformSociety http://www.reformsociety.com/
 SeattleWireless http://seattlewireless.net/?
@@ -106,9 +106,9 @@ Unreal http://wiki.beyondunreal.com/wiki/
 UseMod http://www.usemod.com/cgi-bin/wiki.pl?
 WebSeitzWiki http://webseitz.fluxent.com/wiki/
 Wiki http://c2.com/cgi/wiki?
-WikiPedia http://en.wikipedia.org/wiki/
-DeWikiPedia http://de.wikipedia.org/wiki/
-FrWikiPedia http://fr.wikipedia.org/wiki/
+WikiPedia https://en.wikipedia.org/wiki/
+DeWikiPedia https://de.wikipedia.org/wiki/
+FrWikiPedia https://fr.wikipedia.org/wiki/
 WcsWiki http://www.myelin.co.nz/wcswiki/w/
 WikiTravel http://www.wikitravel.org/article/
 WikiWorld http://WikiWorld.com/wiki/index.php/
