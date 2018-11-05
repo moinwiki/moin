@@ -558,6 +558,10 @@ form.upload_file button { display: none; }
 
 .moin-mychanges > table { width: 100%; }
 
+/* +admin/user */
+
+.moin-namespaces > li { color: gray; }
+
 /* show wikiconfig and wikiconfighelp */
 
 .moin-show-wikiconfig td { vertical-align: top; }
