@@ -181,7 +181,7 @@ msgstr ""
 #: src/moin/apps/admin/views.py:83
 #, fuzzy, python-format
 msgid "User profile of %(username)s: %(email)s %(disabled)s"
-msgstr "Профиль пользователя %(username)s: %(email)r"
+msgstr "Профиль пользователя %(username)s: %(email)s"
 
 #: src/moin/apps/admin/views.py:124
 msgid "{0} has been sent a password recovery email."
@@ -660,7 +660,7 @@ msgstr ""
 #: src/moin/apps/frontend/views.py:1095
 #, fuzzy, python-format
 msgid "Namespace '%(name)s' "
-msgstr "Переименовать «%(item_name)s»"
+msgstr "Переименовать «%(name)s»"
 
 #: src/moin/apps/frontend/views.py:1098
 #, fuzzy, python-format
@@ -1946,7 +1946,7 @@ msgstr "Подсветка синтаксиса для объекта %(name)s"
 #: src/moin/templates/history.html:12
 #, fuzzy, python-format
 msgid "History of '%(fqname)s'"
-msgstr "История «%(item_name)s»"
+msgstr "История «%(fqname)s»"
 
 #: src/moin/templates/history.html:22
 #, fuzzy
@@ -2254,7 +2254,7 @@ msgstr "Переименовать «%(item_name)s»"
 #: src/moin/templates/revert.html:5
 #, fuzzy, python-format
 msgid "Revert '%(new_names)s'"
-msgstr "Удалить «%(item_name)s»"
+msgstr "Удалить «%(new_names)s»"
 
 #: src/moin/templates/revert.html:15
 msgid "Meta data of item to be reverted:"
