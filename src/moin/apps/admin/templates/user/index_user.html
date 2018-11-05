@@ -22,7 +22,13 @@
     <ul class="moin-namespaces">
         <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
         {% for namespace, root in theme_supp.get_namespaces()|sort -%}
-            <li><a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a></li>
+            <li>
+                {% if namespace == NAMESPACE_USERPROFILES %}
+                    {{ namespace }}
+                {% else %}
+                    <a href="{{ url_for('frontend.show_item', item_name=root) }}">{{ namespace }}</a>
+                {% endif %}
+            </li>
         {%- endfor %}
     </ul>
 {% endblock %}
