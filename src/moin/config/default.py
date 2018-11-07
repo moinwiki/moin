@@ -349,6 +349,7 @@ options_no_group_name = {
         ('interwikiname', None, "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]"),
         ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of 'sitename') [Unicode]"),
         ('navi_bar', [
+            # cls, endpoint, args, link_text, title
             ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
             ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
             ('wikilink', 'frontend.index', dict(), L_('Index'), L_('Global Index')),

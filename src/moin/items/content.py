@@ -70,7 +70,7 @@ from moin.constants.contenttypes import (
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
 )
 from moin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, TEMPLATE,
-                                 HASH_ALGORITHM, ACTION_SAVE)
+                                 HASH_ALGORITHM, ACTION_SAVE, NAMESPACE)
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -295,7 +295,7 @@ class Content(object):
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE)]
+        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE), Term(NAMESPACE, self.item.fqname.namespace)]
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
