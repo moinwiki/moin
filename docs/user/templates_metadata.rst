@@ -11,12 +11,14 @@ Templates
 Templates make it easier for users to add new items that repeat a
 heading structure or phrases that are similar to many other items.
 Instead of starting from scratch or using a copy, paste, delete, type
-new or changed data; templates can be created that have the common
-text and structure already completed. When creating a new item, users
-can save time and possibly eliminate errors by choosing a template.
+new data; templates can be created that have the common
+text and structure already completed. A template page must have a
+tag of "template".
 
-A template page must have a tag of "template" and be of the same content
-type as the new item.
+When creating a new item, users can save time and possibly eliminate
+errors by choosing a template from a list of applicable templates.
+Only templates having the same content type and namespace as the new item
+will be shown as choices.
 
 For templates with the MoinWiki markup, Predefined Variables can be used to insert
 date, time, creator, pagename, and the like.
