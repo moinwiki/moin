@@ -407,8 +407,12 @@ class ThemeSupport(object):
                 link_text = args['item_name']
             elif endpoint in ["frontend.global_history", "frontend.global_tags"]:
                 args['namespace'] = fqname.namespace
+                if fqname and fqname.namespace:
+                    link_text = '{0}/{1}'.format(fqname.namespace, link_text)
             elif endpoint == "frontend.index":
                 args['item_name'] = fqname.namespace
+                if fqname and fqname.namespace:
+                    link_text = '{0}/{1}'.format(fqname.namespace, link_text)
             elif endpoint == "admin.index" and not getattr(flaskg.user.may, SUPERUSER)():
                 continue
             items.append((cls, url_for(endpoint, **args), link_text, title))
