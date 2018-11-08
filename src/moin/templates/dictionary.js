@@ -32,7 +32,7 @@ $(document).ready(function () {
         ", Not authorized, items not destroyed: ": "{{ _(", Items not destroyed: ") }}",
         "Nothing was selected.": "{{ _("Nothing was selected.") }}",
         "All changes will be discarded!": "{{ _("All changes will be discarded!") }}",
-        "Toggle font width": "{{ _("Toggle font width") }}"
+        "Toggle font width": "{{ _("Toggle font width") }}",
         "Download failed, no items were selected.": "{{ _("Download failed, no items were selected.") }}"
     };
 
