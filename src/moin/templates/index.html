@@ -73,7 +73,12 @@ places a content type icon before the link), and a link to display subitems
     {% endif %}
 
     <div class="moin-index-menu">
-        {% if dirs or files %}
+        {% if not (dirs or files) %}
+            <p>
+                <i class="fa fa-minus-circle fa-lg" style="color: red;"></i>
+                {{ _("There are no items or read permission is denied for all.") }}
+            </p>
+        {% else %}
             {# display the row of action buttons #}
             <a href="#" class="moin-select-allitem allitem-toselect moin-button">
                <i class="fa fa-square-o fa-lg"></i>
@@ -94,19 +99,14 @@ places a content type icon before the link), and a link to display subitems
                <i class="fa fa-times-circle fa-lg"></i>
                {{ _("Destroy") }}
             </a>
-        {% else %}
-            <p>
-                <i class="fa fa-minus-circle fa-lg" style="color: red;"></i>
-                {{ _("There are no items or read permission is denied for all.") }}
-            </p>
         {% endif %}
-        {# TODO: misplaced, filter button should be above the else no-items message
-        if there are no items then there is nothing to filter. #}
-        <a class="moin-ct-toggle moin-button" title="{{ _('Filter by content type') }}">
-            <i class="fa fa-filter"></i>
-            {{ _("Filter") }}
-        </a>
-
+        {% if dirs or files or form.contenttype %}
+            {# prior filter action on contenttype may have resulted in no dirs or files #}
+            <a class="moin-ct-toggle moin-button" title="{{ _('Filter by content type') }}">
+                <i class="fa fa-filter"></i>
+                {{ _("Filter") }}
+            </a>
+        {% endif %}
         {# these action buttons have a purpose even when there are no items. #}
         <a class="moin-ns-toggle moin-button" title="{{ _('Change namespace') }}">
             <i class="fa fa-list-alt"></i>
