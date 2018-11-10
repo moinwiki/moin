@@ -122,12 +122,16 @@ places a content type icon before the link), and a link to display subitems
     <div class="moin-namespace-selection" style="display: none;">
         <p> {{ _("Click home icon to view namespace home page or click name to view namespace index.") }} </p>
         <ul class="moin-namespaces">
-            <li><a href="{{ url_for('frontend.global_views') }}">{{ _("all") }}</a></li>
+            <li><i class="fa fa-home"></i> <a href="{{ url_for('frontend.index', item_name='all') }}">{{ _("all") }}</a></li>
             {% for namespace, root in theme_supp.get_namespaces()|sort -%}
                 {% set index = '%s/%s' % ('+index', root.namespace) %}
                 <li>
-                    <a href="{{ url_for('frontend.show_item', item_name=root) }}"><i class="fa fa-home"></i></a>
-                    <a href="{{ url_for('frontend.show_item', item_name=index) }}">{{ namespace }}</a>
+                    {% if namespace == NAMESPACE_USERPROFILES %}
+                        <i class="fa fa-home"></i> {{ namespace }}
+                    {% else %}
+                        <a href="{{ url_for('frontend.show_item', item_name=root) }}"><i class="fa fa-home"></i></a>
+                        <a href="{{ url_for('frontend.show_item', item_name=index) }}">{{ namespace }}</a>
+                    {% endif %}
                 </li>
             {%- endfor %}
         </ul>

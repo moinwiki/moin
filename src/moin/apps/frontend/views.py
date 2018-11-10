@@ -1103,6 +1103,7 @@ def index(item_name):
                            form=form,
                            item=item,
                            title=title,
+                           NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
     )
 
 
