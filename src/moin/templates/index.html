@@ -175,19 +175,7 @@ places a content type icon before the link), and a link to display subitems
 
     <div class='moin-clr'></div>
 
-    {# initially hidden, used by jfu.js (jquery file upload) to display
-    list of recently uploaded items near top of page. TODO: This is poorly
-    placed for large wikis because upload process controls are at bottom
-    of page. The user must somehow know to scroll up to see this. #}
-    <div id="moin-new-index" class="moin-item-index">
-        <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
-        <div class="file_download_template" style="display: none;">
-            <a></a>
-        </div>
-    </div>
-    <div class="moin-index-separator"></div>
-
-     {% if files or dirs %}
+    {% if files or dirs %}
         {# display row of buttons, first is Show All remainder is first letter of items. #}
         <div id="moin-initials">
             {# one button will be highlighted via the selected class, either Show All or some letter. #}
@@ -257,6 +245,15 @@ places a content type icon before the link), and a link to display subitems
             </div>
         </div>
     </div>
+
+    {# initially hidden, used by jfu.js (jquery file upload) to display list of recently uploaded items. #}
+    <div id="moin-new-index" class="moin-item-index">
+        <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
+        <div class="file_download_template" style="display: none;">
+            <a></a>
+        </div>
+    </div>
+    <div class="moin-index-separator"></div>
 
     {# The span.moin-drag below is visible on load, the divs below are initially an empty space
     or hidden. The file upload controls will appear if users drags files to .moin-drag below. #}
