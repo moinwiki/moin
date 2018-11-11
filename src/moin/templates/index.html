@@ -152,19 +152,22 @@ places a content type icon before the link), and a link to display subitems
         {{ gen.form.close() }}
     </div>
 
-    {# If this is an index of subitems, display links to Global Index and any parent subitems.
-    TODO: The last link in the list is an unhelpful link to this same view. Should be plain text. #}
+    {# If this is an index of subitems, display links to Global Index and any parent subitems. #}
     <div>
         {% if item_name: %}
             <div class="moin-index-path">
                 <i class="fa fa-folder-o"></i>
-                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">{{ ("..") }}</a>
+                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}" class="moin-bigger">..</a>
                 <span class="moin-path-separator">{{ ("/") }}</span>
                 {% for i in range(0, item_names|count) %}
                     {% set fullname = item_names[:i+1]|join('/') %}
                     {% set relname = item_names[i] %}
-                    <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
-                    <span class="moin-path-separator">{{ ("/") }}</span>
+                    {% if loop.last %}
+                        {{ relname }}
+                    {% else %}
+                        <a href="{{ url_for('frontend.index', item_name=fullname) }}" title="{{ relname }}">{{ relname }}</a>
+                        <span class="moin-path-separator">{{ ("/") }}</span>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
