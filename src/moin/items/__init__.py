@@ -674,7 +674,8 @@ class Item(object):
             meta[REV_NUMBER] = 1
 
         if not overwrite and REVID in meta:
-            # we usually want to create a new revision, thus we must remove the existing REVID
+            # we usually want to create a new revision, thus we update parentid and remove the existing REVID
+            meta[PARENTID] = currentrev.meta[REVID] if currentrev else meta[REVID]
             del meta[REVID]
 
         if data is None:

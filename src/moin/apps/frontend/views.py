@@ -680,6 +680,7 @@ def convert_item(item_name):
     out = BytesIO(out)
     meta[hash_name] = hash_digest
     meta[SIZE] = size
+    meta[PARENTID] = meta[REVID]
     meta[REVID] = make_uuid()
     meta[MTIME] = int(time.time())
     meta[REV_NUMBER] = meta.get(REV_NUMBER, 0) + 1
