@@ -54,7 +54,6 @@ def pytest_generate_tests(metafunc):
 
     multi_mark = metafunc.definition.get_closest_marker('multi')
     if multi_mark is not None:
-        # XXX: hack
         ids = []
         argvalues = []
         stores = multi_mark.kwargs['Store']
