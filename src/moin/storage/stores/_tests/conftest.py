@@ -28,7 +28,7 @@ constructors = {
 
 
 def pytest_generate_tests(metafunc):
-    argnames = metafunc.funcargnames
+    argnames = metafunc.fixturenames
 
     if 'store' in argnames:
         klasses = 'BytesStore', 'FileStore'
