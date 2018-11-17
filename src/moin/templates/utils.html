@@ -31,6 +31,13 @@
                 {%- endif %}
             </li>
         </ul>
+        {%- if next_mtime and not ('trash' in item.meta and item.meta.trash) %}
+            <div class="moin-revert">
+                <a class="moin-button" href="{{ url_for('frontend.revert_item', item_name=fqname, rev=current_rev) }}">
+                    {{ _("Revert to this revision") }}
+                </a>
+            </div>
+        {%- endif %}
     {% endif %}
 {% endmacro %}
 
@@ -464,6 +471,7 @@
 
 {# create an icon with a link to diff, or other icon indicating state of item #}
 {% macro item_status_icon(fqname, meta, bookmark_time) %}
+
     {% if theme_supp.is_markup_or_text(meta.contenttype) %}
         {% if meta.trash %}
             <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>

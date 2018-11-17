@@ -602,6 +602,7 @@ figcaption { font-weight: bold; }
 .moin-edit-help a { color: black; }
 
 /* revision navigation on show, highlight, and meta views */
+.moin-revert { text-align: center; }
 .moin-rev-navigation-current { font-size: 1.25em; font-weight: bold; }
 .moin-rev-navigation-older,
 .moin-rev-navigation-newer {padding: 0 20px 0 20px; }
