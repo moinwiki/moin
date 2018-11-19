@@ -486,6 +486,12 @@ def presenter(view, add_trail=False, abort404=True):
     return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
+def flash_if_deleted(item):
+    """Show flash info message when user views a deleted revision."""
+    if TRASH in item.meta and item.meta[TRASH]:
+        flash(_('This item or item revision is deleted.'), "info")
+
+
 # The first form accepts POST to allow modifying behavior like modify_item.
 # The second form only accepts GET since modifying a historical revision is not allowed.
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
@@ -500,6 +506,7 @@ def show_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
+        flash_if_deleted(item)
         result = item.do_show(rev)
     except AccessDenied:
         abort(403)
@@ -553,6 +560,7 @@ def indexable(item_name, rev):
 @presenter('highlight')
 def highlight_item(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
+    flash_if_deleted(item)
     try:
         ret = render_template('highlight.html',
                               item=item, item_name=item.name,
@@ -572,6 +580,7 @@ def highlight_item(item):
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
+    flash_if_deleted(item)
     ret = render_template('meta.html',
                           item=item,
                           item_name=item.name,

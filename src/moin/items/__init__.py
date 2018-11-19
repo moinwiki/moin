@@ -653,6 +653,9 @@ class Item(object):
                     meta[NAME] = oldname
             elif not meta.get(ITEMID):
                 meta[NAME] = [name]
+        elif self.fqname.field == ITEMID and delete:
+            # delete by itemid will display deleted item with flash message
+            meta[NAME] = []
 
         if meta.get(NAMESPACE) is None:
             meta[NAMESPACE] = self.fqname.namespace
