@@ -57,7 +57,11 @@
                             <th>{{ _("Rev.") }}</th>
                             <th>{{ _("Timestamp") }}</th>
                             <th class="moin-integer">{{ _("Size") }}</th>
-                            <th class="moin-button-diff"><input class="moin-button" type="submit" value="Diff" /></th>
+                            {% if history[0].trash %}
+                                <th class="moin-button-diff"><span class="moin-button moin-button-disabled">Diff</span></th>
+                            {% else %}
+                                <th class="moin-button-diff"><input class="moin-button" type="submit" value="Diff" /></th>
+                            {% endif %}
                             <th>{{ _("Editor") }}</th>
                             <th>{{ _("Content Type") }}</th>
                             <th>{{ _("Comment") }}</th>
@@ -85,8 +89,15 @@
                                                     {% set check1 = 'checked' %}
                                                 {% endif %}
                                             {% endif %}
-                                            <input type="radio" name="rev1" value="{{ doc.revid }}" {{ check1 }} />
-                                            <input type="radio" name="rev2" value="{{ doc.revid }}" {{ check2 }} />
+                                            {% if len(history) > 1 and not history[0].trash and not doc.trash %}
+                                                <input type="radio" name="rev1" value="{{ doc.revid }}" {{ check1 }} />
+                                                <input type="radio" name="rev2" value="{{ doc.revid }}" {{ check2 }} />
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        {# a diff not possible #}
+                                        <div class="moin-hist-rev" title="{{ _("Item was deleted and later created as new with same name") }}">
+                                            <span>{{ _("Item Id Changed") }}</span>
                                         </div>
                                     {% endif %}
                                 </td>
