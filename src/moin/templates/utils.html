@@ -469,31 +469,25 @@
 {% endmacro %}
 
 
-{# create an icon with a link to diff, or other icon indicating state of item #}
+{# create an icon with a link to revert or diff, or an icon based on contenttype of item #}
 {% macro item_status_icon(fqname, meta, bookmark_time) %}
-
-    {% if theme_supp.is_markup_or_text(meta.contenttype) %}
-        {% if meta.trash %}
-            <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
-        {% elif meta.parentid or 'rev_number' in meta and meta.rev_number > 1 %}
-            {% if bookmark_time -%}
-                <a href="{{ url_for('frontend.diff', item_name=fqname, bookmark=bookmark_time) }}">
-                    <span class="fa fa-copy" title="{{ _('Diff') }}"></span>
-                </a>
-            {% else %}
-                <a href="{{ url_for('frontend.diff', item_name=fqname, rev1=meta.parentid, rev2=meta.revid) }}">
-                    <span class="fa fa-copy" title="{{ _('Diff') }} - {{ meta.contenttype|shorten_ctype }}"></span>
-                </a>
-            {%- endif %}
+    {% if meta.trash %}
+        {% set trash_class = "fa fa-undo fa-lg" if meta.parentid else "fa fa-trash-o" %}
+        <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=meta.parentid) }}" title="{{ _('revert') }}">
+            <span class="{{ trash_class }}" title="{{ _('Revert deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
+        </a>
+    {% elif meta.rev_number > 1 %}
+        {% if bookmark_time -%}
+            <a href="{{ url_for('frontend.diff', item_name=fqname, bookmark=bookmark_time) }}">
+                <span class="fa fa-copy fa-lg" title="{{ _('show diff based on bookmark') }}"></span>
+            </a>
         {% else %}
-            <span class="fa fa-file-o" title="{{ _('New item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
-        {% endif %}
+            <a href="{{ url_for('frontend.diff', item_name=fqname, rev1=meta.parentid, rev2=meta.revid) }}">
+                <span class="fa fa-copy fa-lg" title="{{ _('show diff with prior revision') }} - {{ meta.contenttype|shorten_ctype }}"></span>
+            </a>
+        {%- endif %}
     {% else %}
-        {% if meta.trash %}
-            <span class="fa fa-trash-o" title="{{ _('Deleted item') }} - {{ meta.contenttype|shorten_ctype }}"></span>
-        {% else %}
-            <span class="{{ meta.contenttype|contenttype_to_class }}" title="{{ meta.contenttype|shorten_ctype }}"></span>
-        {% endif %}
+        <span class="{{ meta.contenttype|contenttype_to_class }}" title="{{ meta.contenttype|shorten_ctype }}"></span>
     {% endif %}
 {% endmacro %}
 
