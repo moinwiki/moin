@@ -393,6 +393,7 @@ a.moin-button:hover,
 a.moin-button:active { color: #000; text-decoration: none; }
 .moin-button { background: #aed4fa; border: 1px solid #00417F; border-radius: 6px; cursor: pointer;
     font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
+.moin-button.moin-button-disabled { background: #ccc; }
 .moin-button:hover,
 .moin-button:focus { box-shadow: 2px 2px 1px #000; outline: none; }
 .moin-button.active {background: #00417f; color: #fff; }
@@ -550,6 +551,8 @@ form.upload_file button { display: none; }
 #moin-page-history > table > body { font-size: .87em; }
 .moin-button-diff { text-align: center; }
 .moin-hist-rev { text-align: center; vertical-align: middle; }
+.moin-hist-rev > input,
+.moin-hist-rev > span { cursor: pointer; }
 .moin-offset-links { width: 100%; }
 .moin-next-page { float: right; }
 .moin-prior-page { float: left; }
