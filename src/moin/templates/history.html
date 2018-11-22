@@ -69,6 +69,8 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {#- we use jinja2 dict trick to modify variables within a loop #}
+                        {%- set checker = {'check1': '', 'check2': 'checked'} %}
                         {% for doc in history %}
                             <tr>
                                 <td class="moin-wordbreak">
@@ -81,18 +83,16 @@
                                     {# do not create radio buttons if item was deleted and recreated with same name, different itemid #}
                                     {% if doc.itemid == first_itemid %}
                                         <div class="moin-hist-rev">
-                                            {% set check1, check2 = '', '' %}
-                                            {% if len and len(history) > 1 %}
-                                                {% if loop.index == 1 %}
-                                                    {% set check2 = 'checked' %}
-                                                {% elif loop.index == 2 %}
-                                                    {% set check1 = 'checked' %}
-                                                {% endif %}
-                                            {% endif %}
-                                            {% if len(history) > 1 and not history[0].trash and not doc.trash %}
-                                                <input type="radio" name="rev1" value="{{ doc.revid }}" {{ check1 }} />
-                                                <input type="radio" name="rev2" value="{{ doc.revid }}" {{ check2 }} />
-                                            {% endif %}
+                                            {%- if len(history) > 1 and not history[0].trash and not doc.trash %}
+                                                <input type="radio" name="rev1" value="{{ doc.revid }}" {{ checker['check1'] }} />
+                                                <input type="radio" name="rev2" value="{{ doc.revid }}" {{ checker['check2'] }} />
+                                                {%- if checker['check1'] %}
+                                                    {%- if checker.update({'check1': ''}) %}{% endif %}
+                                                {%- elif checker['check2'] %}
+                                                    {%- if checker.update({'check1': 'checked'}) %}{% endif %}
+                                                    {%- if checker.update({'check2': ''}) %}{% endif %}
+                                                {%- endif %}
+                                            {%- endif %}
                                         </div>
                                     {% else %}
                                         {# a diff not possible #}
