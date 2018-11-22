@@ -71,17 +71,15 @@
                     <tbody>
                         {#- we use jinja2 dict trick to modify variables within a loop #}
                         {%- set checker = {'check1': '', 'check2': 'checked'} %}
-                        {% for doc in history %}
+                        {%- for doc in history %}
                             <tr>
-                                <td class="moin-wordbreak">
-                                    {{ utils.item_moniker(doc, doc.fqnames) }}
-                                </td>
+                                <td class="moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
                                 <td class="moin-integer">{{ doc.rev_number or doc.revid|shorten_id }}</td>
                                 <td>{{ doc.mtime|datetimeformat }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
                                 <td>
-                                    {# do not create radio buttons if item was deleted and recreated with same name, different itemid #}
-                                    {% if doc.itemid == first_itemid %}
+                                    {#- do not create radio buttons if item was deleted and recreated with same name, different itemid #}
+                                    {%- if doc.itemid == first_itemid %}
                                         <div class="moin-hist-rev">
                                             {%- if len(history) > 1 and not history[0].trash and not doc.trash %}
                                                 <input type="radio" name="rev1" value="{{ doc.revid }}" {{ checker['check1'] }} />
@@ -94,21 +92,21 @@
                                                 {%- endif %}
                                             {%- endif %}
                                         </div>
-                                    {% else %}
-                                        {# a diff not possible #}
+                                    {%- else %}
+                                        {#- a diff not possible #}
                                         <div class="moin-hist-rev" title="{{ _("Item was deleted and later created as new with same name") }}">
                                             <span>{{ _("Item Id Changed") }}</span>
                                         </div>
-                                    {% endif %}
+                                    {%- endif %}
                                 </td>
                                 <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
                                 <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
                                 <td class="moin-wordbreak">{{ doc.comment }}</td>
-                                {% if loop.first %}
-                                    {% set revid = None %}
-                                {% else %}
-                                    {% set revid = doc.revid %}
-                                {% endif %}
+                                {%- if loop.first %}
+                                    {%- set revid = None %}
+                                {%- else %}
+                                    {%- set revid = doc.revid %}
+                                {%- endif %}
                                 <td>
                                     <a href="{{ url_for('frontend.show_item', item_name=fqname, rev=revid) }}" title="{{ _('show') }}">
                                         <span class="fa fa-eye"></span>
@@ -129,7 +127,7 @@
                                         <span class="fa fa-download"></span>
                                     </a>
                                 </td>
-                                {% if user.may.write(fqname) and not doc.trash -%}
+                                {%- if user.may.write(fqname) and not doc.trash -%}
                                     {%- if loop.first %}
                                         <td>
                                             <a href="{{ url_for('frontend.delete_item', item_name=fqname) }}" title="{{ _('delete item') }}">
@@ -138,38 +136,38 @@
                                         </td>
                                     {%- else %}
                                         <td>
-                                            {# do not create invalid revert link if item was deleted and recreated with same name, different itemid #}
-                                            {% if doc.itemid == first_itemid %}
+                                            {#- do not create invalid revert link if item was deleted and recreated with same name, different itemid #}
+                                            {%- if doc.itemid == first_itemid %}
                                                 <a href="{{ url_for('frontend.revert_item', item_name=fqname, rev=revid) }}" title="{{ _('revert') }}">
                                                     <span class="fa fa-reply"></span>
                                                 </a>
-                                            {% endif %}
+                                            {%- endif %}
                                         </td>
-                                    {% endif %}
-                                {% else %}
+                                    {%- endif %}
+                                {%- else %}
                                     <td></td>
                                 {%- endif %}
-                                {% if user.may.destroy(fqname) -%}
+                                {%- if user.may.destroy(fqname) -%}
                                     {%- if loop.first %}
                                         <td>
                                             <a href="{{ url_for('frontend.destroy_item', item_name=fqname) }}" title="{{ _('destroy all revisions') }}">
                                                 <span class="fa fa-fire"></span>
                                             </a>
                                         </td>
-                                    {% else %}
+                                    {%- else %}
                                         <td>
                                             <a href="{{ url_for('frontend.destroy_item', item_name=fqname, rev=revid) }}" title="{{ _('destroy this revision') }}">
                                                 <span class="fa fa-fire"></span>
                                             </a>
                                         </td>
-                                    {% endif %}
-                                {% else %}
+                                    {%- endif %}
+                                {%- else %}
                                     <td></td>
                                 {%- endif %}
                             </tr>
-                        {% endfor %}
+                        {%- endfor %}
                     </tbody>
-                    {% if bookmark_time %}
+                    {%- if bookmark_time %}
                         <tfoot>
                             <tr>
                                 <td colspan="2">Bookmark is set to</td>
@@ -177,9 +175,9 @@
                                 <td colspan="11"></td>
                             </tr>
                         </tfoot>
-                    {% endif %}
+                    {%- endif %}
                 </table>
             </div>
         </form>
-    {% endif %}
-{% endblock %}
+    {%- endif %}
+{%- endblock %}
