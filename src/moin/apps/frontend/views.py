@@ -832,9 +832,13 @@ def rename_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
         form['target'] = item.name
+        subitems = item.get_subitem_revs()
+        for subitem in subitems:
+            subitem_names.append(subitem.meta[NAME])
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         if form.validate():
@@ -856,7 +860,9 @@ def rename_item(item_name):
                 except NameNotUniqueError as e:
                     flash(str(e), "error")
     ret = render_template('rename.html',
-                          item=item, item_name=item_name,
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
                           fqname=item.fqname,
                           form=form,
     )
@@ -875,8 +881,12 @@ def delete_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
+        subitems = item.get_subitem_revs()
+        for subitem in subitems:
+            subitem_names.append(subitem.meta[NAME])
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -887,7 +897,9 @@ def delete_item(item_name):
                 abort(403)
             return redirect(url_for_item(item_name))
     return render_template('delete.html',
-                           item=item, item_name=item_name,
+                           item=item,
+                           item_name=item_name,
+                           subitem_names=subitem_names,
                            fqname=split_fqname(item_name),
                            form=form,
     )

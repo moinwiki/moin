@@ -233,3 +233,17 @@ Helpers for using flatland with jinja2 to create html forms.
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
 {% endmacro %}
+
+{# Used to list subitem names that will be affected by a recursive action. #}
+{%- macro list_subitems(subitem_names, action) %}
+    {%- if subitem_names %}
+        <div class="moin-subitem-list">{{ action }}</div>
+        <ul>
+            {%- for name in subitem_names %}
+                <li>
+                    {{ ', '.join(name) }}
+                </li>
+            {%- endfor %}
+        </ul>
+    {%- endif %}
+{% endmacro %}

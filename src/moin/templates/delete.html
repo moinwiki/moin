@@ -5,6 +5,7 @@
 
 {% block content %}
     <h1>{{ title }}</h1>
+    {{ forms.list_subitems(subitem_names, _("The following subitems will be deleted:")) }}
     <div class="moin-form">
         {{ gen.form.open(form, method="post", action=url_for('frontend.delete_item', item_name=fqname)) }}
             {{ forms.render_errors(form) }}
