@@ -974,6 +974,11 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+    subitem_names = []
+    if rev is None:
+        subitems = item.get_subitem_revs()
+        for subitem in subitems:
+            subitem_names.append(subitem.meta[NAME])
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
     elif request.method == 'POST':
@@ -981,7 +986,7 @@ def destroy_item(item_name, rev):
         if form.validate():
             comment = form['comment'].value
             try:
-                item.destroy(comment=comment, destroy_item=destroy_item)
+                item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
             except AccessDenied:
                 abort(403)
             # show user item is deleted by showing "item does not exist, create it?" page
@@ -989,7 +994,9 @@ def destroy_item(item_name, rev):
     if isinstance(item.meta.revision.data, file):
         item.meta.revision.data.close()
     ret = render_template('destroy.html',
-                          item=item, item_name=item_name,
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
                           fqname=fqname,
                           rev_id=rev,
                           form=form,

@@ -529,7 +529,7 @@ class Item(object):
     def revert(self, comment=u''):
         return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
-    def destroy(self, comment=u'', destroy_item=False):
+    def destroy(self, comment=u'', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
@@ -539,6 +539,12 @@ class Item(object):
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
+            # destroy all subitems
+            for subitem_name in subitem_names:
+                item = Item.create(subitem_name[0], rev_id=CURRENT)
+                if isinstance(item.rev.data, file):
+                    item.rev.data.close()
+                item.rev.item.destroy_all_revisions()
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
