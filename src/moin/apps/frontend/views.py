@@ -1117,6 +1117,8 @@ def index(item_name):
             title = _("Index of subitems '%(item_name)s'", item_name=item_name)
     else:
         title = _("Global Index")
+    if isinstance(item.rev.data, file):
+        item.rev.data.close()
 
     return render_template('index.html',
                            title_name='Global Index',
