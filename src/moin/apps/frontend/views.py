@@ -832,9 +832,13 @@ def rename_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
         form['target'] = item.name
+        subitems = item.get_subitem_revs()
+        for subitem in subitems:
+            subitem_names.append(subitem.meta[NAME])
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         if form.validate():
@@ -856,7 +860,9 @@ def rename_item(item_name):
                 except NameNotUniqueError as e:
                     flash(str(e), "error")
     ret = render_template('rename.html',
-                          item=item, item_name=item_name,
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
                           fqname=item.fqname,
                           form=form,
     )
@@ -875,8 +881,12 @@ def delete_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
+        subitems = item.get_subitem_revs()
+        for subitem in subitems:
+            subitem_names.append(subitem.meta[NAME])
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -887,7 +897,9 @@ def delete_item(item_name):
                 abort(403)
             return redirect(url_for_item(item_name))
     return render_template('delete.html',
-                           item=item, item_name=item_name,
+                           item=item,
+                           item_name=item_name,
+                           subitem_names=subitem_names,
                            fqname=split_fqname(item_name),
                            form=form,
     )
@@ -962,6 +974,11 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+    subitem_names = []
+    if rev is None:
+        subitems = item.get_subitem_revs()
+        for subitem in subitems:
+            subitem_names.append(subitem.meta[NAME])
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
     elif request.method == 'POST':
@@ -969,7 +986,7 @@ def destroy_item(item_name, rev):
         if form.validate():
             comment = form['comment'].value
             try:
-                item.destroy(comment=comment, destroy_item=destroy_item)
+                item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
             except AccessDenied:
                 abort(403)
             # show user item is deleted by showing "item does not exist, create it?" page
@@ -977,7 +994,9 @@ def destroy_item(item_name, rev):
     if isinstance(item.meta.revision.data, file):
         item.meta.revision.data.close()
     ret = render_template('destroy.html',
-                          item=item, item_name=item_name,
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
                           fqname=fqname,
                           rev_id=rev,
                           form=form,
@@ -1098,6 +1117,8 @@ def index(item_name):
             title = _("Index of subitems '%(item_name)s'", item_name=item_name)
     else:
         title = _("Global Index")
+    if isinstance(item.rev.data, file):
+        item.rev.data.close()
 
     return render_template('index.html',
                            title_name='Global Index',

@@ -512,6 +512,7 @@ form.upload_file button { display: none; }
 .moin-tab-titles .moin-change-indicator { font-weight: bold; color: #1f9ae0; }
 .moin-current-form h2 { display: none; }
 .moin-settings-head a { color: #000; text-decoration: none; }
+.moin-subitem-list { font-size: 1.25em; }
 
 .moin-form dd { float: left; width: 70%; margin: .3em 0 .3em 0; }
 .moin-form dd input { width: 75%; }
