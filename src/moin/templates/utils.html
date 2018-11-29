@@ -196,18 +196,16 @@
         <li class="list-group-item">Modified Time: {{ meta['mtime']|datetimeformat }}</li>
         <li class="list-group-item">Name:
             {% if meta['name'] %}
-                {% for name in meta['name'] %}
-                    {{ name }}
-                {% endfor %}
+                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) %}
+                {{ names|safe }}
             {% else %}
                 (None)
             {% endif %}
         </li>
         <li class="list-group-item">Old Name:
             {% if meta['name_old'] %}
-                {% for name in meta['name_old'] %}
-                    {{ name }}
-                {% endfor %}
+                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) %}
+                {{ names|safe }}
             {% else %}
                 (None)
             {% endif %}
@@ -496,9 +494,12 @@
 {%- macro item_moniker(meta, fqnames) %}
     {%- if meta.name %}
         {#- if there are alias names, create a link to each alias #}
-        {%- for name in fqnames %}
+        {%- for name in fqnames -%}
+            {%- if not loop.first %}
+                <i class="fa fa-circle moin-tiny"></i>
+            {% endif -%}
             <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a>
-        {%- endfor %}
+        {%- endfor -%}
     {%- elif meta.summary %}
         <a href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ meta.summary }}</a>
     {%- else %}
