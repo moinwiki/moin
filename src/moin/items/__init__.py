@@ -529,7 +529,7 @@ class Item(object):
             flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
         else:
             # the item has several names, we deleted only one name
-            name_list = u', '.join([x for x in self.names if not x == self.name])
+            name_list = [x for x in self.names if not x == self.name]
             msg = L_('The item name "%(name)s" was deleted, the item persists with alias names: "%(name_list)s"', name=self.name, name_list=name_list)
             flash(msg, 'info')
         return ret
@@ -549,7 +549,7 @@ class Item(object):
             self.rev.item.destroy_all_revisions()
             # destroy all subitems
             for subitem_name in subitem_names:
-                item = Item.create(subitem_name[0], rev_id=CURRENT)
+                item = Item.create(subitem_name, rev_id=CURRENT)
                 if isinstance(item.rev.data, file):
                     item.rev.data.close()
                 item.rev.item.destroy_all_revisions()

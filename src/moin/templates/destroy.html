@@ -6,6 +6,7 @@
 {% block content %}
     {% if rev_id == None %}
         <h1>{{ title }}</h1>
+        {{ forms.list_subitems(alias_names, _("This item has alias names that will be destroyed:")) }}
         {{ forms.list_subitems(subitem_names, _("The following subitems will be destroyed:")) }}
         <div class="moin-form">
             {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=fqname.fullname)) }}

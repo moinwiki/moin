@@ -837,8 +837,7 @@ def rename_item(item_name):
         form = RenameItemForm.from_defaults()
         form['target'] = item.name
         subitems = item.get_subitem_revs()
-        for subitem in subitems:
-            subitem_names.append(subitem.meta[NAME])
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         if form.validate():
@@ -885,8 +884,7 @@ def delete_item(item_name):
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
         subitems = item.get_subitem_revs()
-        for subitem in subitems:
-            subitem_names.append(subitem.meta[NAME])
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -975,10 +973,14 @@ def destroy_item(item_name, rev):
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
     subitem_names = []
+    alias_names = []
     if rev is None:
         subitems = item.get_subitem_revs()
-        for subitem in subitems:
-            subitem_names.append(subitem.meta[NAME])
+        # XXX this matches what destroy does, but can leave orphans when alias names have subitems
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        if not [item.name] == item.names:
+            alias_names = [x for x in item.names if not x == item.name]
+
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
     elif request.method == 'POST':
@@ -997,6 +999,7 @@ def destroy_item(item_name, rev):
                           item=item,
                           item_name=item_name,
                           subitem_names=subitem_names,
+                          alias_names=alias_names,
                           fqname=fqname,
                           rev_id=rev,
                           form=form,
