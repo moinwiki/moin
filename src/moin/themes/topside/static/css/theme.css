@@ -95,7 +95,7 @@ a:hover { text-decoration: underline; }
     /* styling for left sidebar */
     #moin-header { background-image: url("../../../static/img/white-clouds-r.jpg"); text-align: center;
         position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; overflow-x: hidden;
-        border-right: 1px solid #D7E9FD; font-size: .92em; }
+        border-right: 1px solid #D7E9FD; font-size: .92em; z-index: 10; }
     #moin-logo { padding: 10px 0; }
     .moin-sitename { font-size: 1.5rem; display: block; }
 
@@ -114,6 +114,7 @@ a:hover { text-decoration: underline; }
     .moin-custom-panel,
     #moin-navibar { padding-left: 0; text-align: left; clear: both; margin-top: 1em; }
     .moin-panel-heading { font-size: 1.125em; display: inherit; }
+    .moin-subitem-discuss:before { content: "\2514\2500" }
 
     #moin-content { padding-left: 250px; margin: 0 2%; }
 
