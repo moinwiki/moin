@@ -114,6 +114,7 @@ a:hover { text-decoration: underline; }
     .moin-custom-panel,
     #moin-navibar { padding-left: 0; text-align: left; clear: both; margin-top: 1em; }
     .moin-panel-heading { font-size: 1.125em; display: inherit; }
+    .moin-subitem-discuss:before { content: "\2514\2500" }
 
     #moin-content { padding-left: 250px; margin: 0 2%; }
 
