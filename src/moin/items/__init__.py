@@ -524,7 +524,15 @@ class Item(object):
         """
         delete this item (remove current name from NAME list)
         """
-        return self._rename(None, comment, action=ACTION_TRASH, delete=True)
+        ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
+        if [self.name] == self.names:
+            flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
+        else:
+            # the item has several names, we deleted only one name
+            name_list = [x for x in self.names if not x == self.name]
+            msg = L_('The item name "%(name)s" was deleted, the item persists with alias names: "%(name_list)s"', name=self.name, name_list=name_list)
+            flash(msg, 'info')
+        return ret
 
     def revert(self, comment=u''):
         return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
@@ -541,7 +549,7 @@ class Item(object):
             self.rev.item.destroy_all_revisions()
             # destroy all subitems
             for subitem_name in subitem_names:
-                item = Item.create(subitem_name[0], rev_id=CURRENT)
+                item = Item.create(subitem_name, rev_id=CURRENT)
                 if isinstance(item.rev.data, file):
                     item.rev.data.close()
                 item.rev.item.destroy_all_revisions()
