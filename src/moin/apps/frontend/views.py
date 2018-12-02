@@ -64,7 +64,7 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import *  # noqa
-from moin.utils import crypto, rev_navigation
+from moin.utils import crypto, rev_navigation, close_file
 from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.mime import Type, type_moin_document
@@ -520,8 +520,7 @@ def show_item(item_name, rev):
                                fqname=fqname,
                                fq_names=fq_names,
                                )
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     return result
 
 
@@ -572,8 +571,7 @@ def highlight_item(item):
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -590,8 +588,7 @@ def show_item_meta(item):
                           rev_navigation_ids_dates=rev_navigation_ids_dates,
                           meta=item._meta_info(),
     )
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -734,8 +731,7 @@ def modify_item(item_name):
         flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
         return redirect(url_for_item(item_name))
     try:
-        if isinstance(item.meta.revision.data, file):
-            item.meta.revision.data.close()
+        close_file(item.meta.revision.data)
     except AttributeError:
         pass
     return ret
@@ -807,8 +803,7 @@ def revert_item(item_name, rev):
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
-            if isinstance(item.meta.revision.data, file):
-                item.meta.revision.data.close()
+            close_file(item.meta.revision.data)
             return redirect(url_for_item(item_name))
     ret = render_template('revert.html',
                           item=item,
@@ -817,8 +812,7 @@ def revert_item(item_name, rev):
                           form=form,
                           data_rendered=Markup(item.content._render_data()),
     )
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -852,8 +846,7 @@ def rename_item(item_name):
                 try:
                     fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
                     item.rename(target, comment)
-                    if isinstance(item.meta.revision.data, file):
-                        item.meta.revision.data.close()
+                    close_file(item.meta.revision.data)
                     # the item was successfully renamed, show it with new name
                     return redirect(url_for_item(fqname))
                 except NameNotUniqueError as e:
@@ -865,8 +858,7 @@ def rename_item(item_name):
                           fqname=item.fqname,
                           form=form,
     )
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -993,8 +985,7 @@ def destroy_item(item_name, rev):
                 abort(403)
             # show user item is deleted by showing "item does not exist, create it?" page
             return redirect(url_for_item(fqname.fullname))
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     ret = render_template('destroy.html',
                           item=item,
                           item_name=item_name,
@@ -1004,8 +995,7 @@ def destroy_item(item_name, rev):
                           rev_id=rev,
                           form=form,
     )
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     return ret
 
 
@@ -1066,8 +1056,7 @@ def index(item_name):
         """
         initials = set()
         for item in files:
-            if isinstance(item.meta.revision.data, file):
-                item.meta.revision.data.close()
+            close_file(item.meta.revision.data)
             initial = item.relname[0]
             if uppercase:
                 initial = initial.upper()
@@ -1120,8 +1109,7 @@ def index(item_name):
             title = _("Index of subitems '%(item_name)s'", item_name=item_name)
     else:
         title = _("Global Index")
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
 
     return render_template('index.html',
                            title_name='Global Index',
@@ -1300,11 +1288,9 @@ def history(item_name):
         entry[FQNAME] = rev.fqname
         entry[FQNAMES] = rev.fqnames
         history.append(entry)
-        if isinstance(rev.data, file):
-            rev.data.close()
+        close_file(rev.data)
     history_page = utils.getPageContent(history, offset, results_per_page)
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     trash = item.meta['trash'] if 'trash' in item.meta else False
     ret = render_template('history.html',
                           fqname=fqname,
@@ -1316,8 +1302,7 @@ def history(item_name):
                           len=len,
                           trash=trash,
     )
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     return ret
 
 
