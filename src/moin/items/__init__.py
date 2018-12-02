@@ -551,9 +551,11 @@ class Item(object):
                 item = Item.create(subitem_name, rev_id=CURRENT)
                 close_file(item.rev.data)
                 item.rev.item.destroy_all_revisions()
+            flash(L_('The item "%(name)s" was destroyed.', name=self.name), 'info')
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
+            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.', rev_number=self.meta['rev_number'], name=self.name), 'info')
 
     def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
