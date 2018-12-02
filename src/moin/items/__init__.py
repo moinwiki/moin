@@ -40,7 +40,7 @@ from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_, N_
 from moin.themes import render_template
-from moin.utils import rev_navigation
+from moin.utils import rev_navigation, close_file
 from moin.utils.mime import Type
 from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from moin.utils.registry import RegistryBase
@@ -542,20 +542,20 @@ class Item(object):
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
                            content=self.rev.data, comment=comment)
-        if isinstance(self.rev.data, file):
-            self.rev.data.close()
+        close_file(self.rev.data)
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
             # destroy all subitems
             for subitem_name in subitem_names:
                 item = Item.create(subitem_name, rev_id=CURRENT)
-                if isinstance(item.rev.data, file):
-                    item.rev.data.close()
+                close_file(item.rev.data)
                 item.rev.item.destroy_all_revisions()
+            flash(L_('The item "%(name)s" was destroyed.', name=self.name), 'info')
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
+            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.', rev_number=self.meta['rev_number'], name=self.name), 'info')
 
     def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
@@ -1008,8 +1008,7 @@ class Default(Contentful):
                 except AccessDenied:
                     abort(403)
                 else:
-                    if isinstance(self.rev.data, file):
-                        self.rev.data.close()
+                    close_file(self.rev.data)
                     return redirect(url_for_item(**self.fqname.split))
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
@@ -1018,8 +1017,7 @@ class Default(Contentful):
             edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
         else:
             edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
-        if isinstance(self.rev.data, file):
-            self.rev.data.close()
+        close_file(self.rev.data)
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,

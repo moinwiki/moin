@@ -103,6 +103,7 @@ from whoosh.query import Term, And, Wildcard, Regex
 
 from moin.constants.keys import NAME, NAME_EXACT, WIKINAME
 from moin.items import Item
+from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
 from moin.utils.tree import html, moin_page, xinclude, xlink
 from moin.utils.mime import Type, type_moin_document
@@ -350,8 +351,7 @@ class Converter(object):
                         included_elements.append(elem_h)
 
                     page_doc = page.content.internal_representation(attributes=Arguments(keyword=elem.attrib))
-                    if isinstance(page.rev.data, file):
-                        page.rev.data.close()
+                    close_file(page.rev.data)
 
                     self.recurse(page_doc, page_href)
 
