@@ -138,6 +138,7 @@ class ImportMoin19(Command):
             out = BytesIO(out)
             meta[hash_name] = hash_digest
             meta[SIZE] = size
+            meta[PARENTID] = meta[REVID]
             meta[REVID] = make_uuid()
             meta[REV_NUMBER] = meta[REV_NUMBER] + 1
             meta[MTIME] = int(time.time())
@@ -235,10 +236,15 @@ class PageItem(object):
             fnames = os.listdir(revisionspath)
         except OSError:
             fnames = []
+        parent_id = u''
         for fname in fnames:
             try:
                 revno = int(fname)
-                yield PageRevision(self, revno, os.path.join(revisionspath, fname))
+                page_rev = PageRevision(self, revno, os.path.join(revisionspath, fname))
+                page_rev.meta[PARENTID] = parent_id
+                parent_id = page_rev.meta[REVID]
+                yield page_rev
+
             except Exception as err:
                 logging.exception("PageRevision {0!r} {1!r} raised exception:".format(self.name, fname))
 
