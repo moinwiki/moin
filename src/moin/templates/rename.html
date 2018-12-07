@@ -1,3 +1,9 @@
+{#
+    This template is displayed after user clicks the rename link on an Item Views.
+    User may add a comment for change log.
+    The item's meta data and rendered content is displayed for user review.
+#}
+
 {% import "forms.html" as forms %}
 {% extends theme("show.html") %}
 
@@ -15,4 +21,13 @@
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
     </div>
+
+    <h2> {{ _("Meta data of item to be renamed:") }} </h2>
+    {{ utils.meta_info(item.meta) }}
+    {% if data_rendered %}
+        <h2> {{ _("Content of item to be renamed:") }} </h2>
+        <div id="moin-content-data">
+            {{ data_rendered | safe }}
+        </div>
+    {% endif %}
 {% endblock %}

@@ -1,8 +1,15 @@
+{#
+    This template is displayed after user clicks a revert link on an item history view.
+    User may add a comment for change log.
+    The revision's meta data and rendered content is displayed for user review.
+#}
+
 {% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
 {% extends theme("layout.html") %}
+
 {% block content %}
-    <h1> {{ _("Revert '%(new_names)s'", new_names=item.meta['name'] | join('|')) }} </h1>
+    <h1> {{ _("Revert '%(item_name)s'to Revision Number '%(rev_number)s'",item_name=item.meta['name'] | join('|'), rev_number=item.meta.rev_number) }} </h1>
     <div class="moin-form">
         {{ gen.form.open(form, method="post", action=url_for('frontend.revert_item', item_name=item.fqname, rev=rev_id)) }}
             {{ forms.render_errors(form) }}
@@ -12,10 +19,11 @@
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
     </div>
-    <h2> {{ _("Meta data of item to be reverted:") }} </h2>
+
+    <h2> {{ _("Meta data of item revision to be reverted:") }} </h2>
     {{ utils.meta_info(item.meta) }}
     {% if data_rendered %}
-        <h2> {{ _("Content of item to be reverted:") }} </h2>
+        <h2> {{ _("Content of item revision to be reverted:") }} </h2>
         <div id="moin-content-data">
             {{ data_rendered | safe }}
         </div>

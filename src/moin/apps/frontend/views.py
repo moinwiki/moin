@@ -857,6 +857,7 @@ def rename_item(item_name):
                           subitem_names=subitem_names,
                           fqname=item.fqname,
                           form=form,
+                          data_rendered=Markup(item.content._render_data())
     )
     close_file(item.meta.revision.data)
     return ret
@@ -892,6 +893,7 @@ def delete_item(item_name):
                            subitem_names=subitem_names,
                            fqname=split_fqname(item_name),
                            form=form,
+                           data_rendered=Markup(item.content._render_data()),
     )
 
 
@@ -985,7 +987,6 @@ def destroy_item(item_name, rev):
                 abort(403)
             # show user item is deleted by showing "item does not exist, create it?" page
             return redirect(url_for_item(fqname.fullname))
-    close_file(item.meta.revision.data)
     ret = render_template('destroy.html',
                           item=item,
                           item_name=item_name,
@@ -994,7 +995,9 @@ def destroy_item(item_name, rev):
                           fqname=fqname,
                           rev_id=rev,
                           form=form,
+                          data_rendered=Markup(item.content._render_data())
     )
+    close_file(item.meta.revision.data)
     close_file(item.rev.data)
     return ret
 
