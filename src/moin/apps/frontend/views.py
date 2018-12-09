@@ -31,7 +31,7 @@ from functools import wraps, partial
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
-from flask_babel import format_date
+from flask_babel import format_date, format_datetime
 from flask_theme import get_themes_list
 
 from flatland import Form, List
@@ -928,6 +928,7 @@ def ajaxdestroy(item_name, req='destroy'):
                 continue
             if req == 'destroy':
                 item.destroy(comment=comment, destroy_item=True)
+                log_destroy_action(item, 'XXX', comment)  # XXX see #781
             else:
                 item.delete(comment)
             response["status"].append(True)
@@ -945,6 +946,28 @@ def ajaxmodify(item_name):
     if item_name:
         newitem = item_name + u'/' + newitem
     return redirect(url_for_item(newitem))
+
+
+def log_destroy_action(item, subitem_names, comment, revision=None):
+    """Document the destruction of an item or item revision."""
+    destroy_info = [('An item has been destroyed', ''),
+                    ('  Names', item.names),
+                    ('  Old Name', item.meta[NAME_OLD]),
+                    ('  Subitem Names', subitem_names),
+                    ('  Namespace', item.meta[NAMESPACE]),
+                    ('  Last Modified Time', format_datetime(datetime.utcfromtimestamp(item.meta[MTIME]))),
+                    ('  Last Modified By', item.meta[ADDRESS]),
+                    ('  Destroyed Time', format_datetime(datetime.utcfromtimestamp(time.time()))),
+                    ('  Destroyed By', flaskg.user.name),
+                    ('  Content Type', item.meta[CONTENTTYPE]),
+                    ('  Revision Number', item.meta[REV_NUMBER]),
+                    ('  Item Size', item.meta[SIZE]),
+                    ('  Comment', comment),
+    ]
+    if revision:
+        destroy_info[0] = ('An item revision has been destroyed', item.meta[REV_NUMBER])
+    for name, val in destroy_info:
+        logging.info('{0}: {1}'.format(name, val))
 
 
 @frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -985,6 +1008,7 @@ def destroy_item(item_name, rev):
                 item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
             except AccessDenied:
                 abort(403)
+            log_destroy_action(item, subitem_names, comment, revision=rev)
             # show user item is deleted by showing "item does not exist, create it?" page
             return redirect(url_for_item(fqname.fullname))
     ret = render_template('destroy.html',
