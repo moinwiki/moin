@@ -927,8 +927,11 @@ def ajaxdestroy(item_name, req='destroy'):
                 response["status"].append(False)
                 continue
             if req == 'destroy':
-                item.destroy(comment=comment, destroy_item=True)
-                log_destroy_action(item, 'XXX', comment)  # XXX see #781
+                subitems = item.get_subitem_revs()
+                # XXX this matches what destroy does, but can leave orphans when alias names have subitems
+                subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(itemname + '/')]
+                item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names)
+                log_destroy_action(item, subitem_names, comment)
             else:
                 item.delete(comment)
             response["status"].append(True)
@@ -966,6 +969,8 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
     ]
     if revision:
         destroy_info[0] = ('An item revision has been destroyed', item.meta[REV_NUMBER])
+    elif subitem_names:
+        destroy_info[0] = ('An item and all item subitems have been destroyed', '')
     for name, val in destroy_info:
         logging.info('{0}: {1}'.format(name, val))
 
