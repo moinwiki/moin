@@ -99,10 +99,11 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
     {# <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script> #}
 {%- endmacro %}
 
-{# Header for topside_cms theme (and maybe custom themes) - see docs for tips on customization #}
+{# Header/Sidebar for topside_cms theme - see docs for tips on customization #}
 {% macro cms_header() %}
     <header id="moin-header">
         {% block header %}
+
             {% if logo() %}
                 <div id="moin-logo">
                     <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
@@ -110,26 +111,33 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
                     </a>
                 </div>
             {%- endif %}
+
             {% if cfg.sitename %}
                 <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
                     {{ cfg.sitename }}
                 </a>
                 <br>
             {%- endif %}
-            {% if search_form %}
+
+            {% if request.user_agent and search_form %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
                 {{ utils.header_search(search_form) }}
             {% endif %}
-            {% if request.user_agent %} {# true if browser, false if run as ./m dump-html #}
+
+            {% if request.user_agent %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
                 <ul id="moin-username" class="moin-header-links">
                     {{ utils.user_login_logoff() }}
                 </ul>
             {%- endif %}
+
             <ul id="moin-navibar" class="moin-header-links panel">
                 {# wiki admins should add links and headings for key items within the local wiki below #}
                 <li class="moin-panel-heading">Navigation</li>
                 <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
                 <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
             </ul>
+
+            {{ custom_panels() }}
+
         {% endblock %}
     </header>
     <br>
@@ -137,11 +145,11 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# Custom panel for wiki's that want links to key pages in header or sidebar; not all themes support this #}
 {% macro custom_panels() %}
-    {# add somethig similar to the following:
+    {# remove start-comment, end-comment marker lines; then customize the following:
         <ul class="moin-custom-panel">
-            <li class="moin-panel-heading">Reports</li>
-            <li><a href="link to favorite page">Favorite Page</a></li>
-            <li><a href="link to another favorite page">Another Favorite Page</a></li>
+            <li class="moin-panel-heading">Important Reports</li>
+            <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Home Page</a></li>
+            <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Global Index Page</a></li>
         </ul>
     #}
 {% endmacro %}
