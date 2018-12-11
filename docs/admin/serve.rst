@@ -93,3 +93,41 @@ proceed with the MoinMoin app and its configuration.
 Otherwise, read your web server error log files to troubleshoot the issue from there.
 
 .. tip:: Check contents of /contrib/wsgi/ for sample wsgi files for your server.
+
+Create and Serve a Static Wiki Image
+====================================
+
+"dump-html" is a utility used to create static html dumps of MoinMoin wiki content.
+You may find it useful to create a static dump for a software release,
+a high volume read-only copy for a busy web site, or a
+thumb drive version to carry on trips when you do not have internet access.
+
+To execute dump-html, use the command line interface.
+The following three commands are equivalent as the
+specified options are the defaults. ::
+
+    ./m dump-html
+    ./m dump-html --directoy HTML --theme topside_cms --exclude-ns userprofiles --query .*
+    ./m dump-html -d HTML -t topside_cms -e userprofiles -q .*
+
+The --directory option may be a relative or absolute path. The default directory,
+HTML, will be placed under the wiki root.
+
+The --theme option specifies the theme. See "Customize the CMS Theme" within
+the "Introduction into MoinMoin Configuration" section for alternatives.
+
+The --exclude-ns option specifies a comma separated list of namespaces that
+will be excluded from the dump. The "userprofiles" namespace should always
+be excluded. To exclude user home pages from the static dump, use
+**userprofiles,users** with no embedded spaces.
+
+The --query option may be a single page name or a regex selecting the items
+to be included in the dump. The default of ".*" selects all items.
+
+Once created, the HTML directory may be moved anywhere as all the internal links are
+relative. The pages may be served using your favorite web server or directly from
+the file system.
+
+.. warning::
+ Some browsers (Chrome, IE11, Opera) serve files loaded from the OS
+ file system as plain text. https://github.com/moinwiki/moin/issues/641
