@@ -26,7 +26,7 @@ a.moin-nonexistent:visited img,a.moin-nonexistent img,a.moin-nonexistent:visited
 table.navigation{background:#fff;float:right;margin:2px}
 .moin-disabled{color:#737373}
 #moin-create-table{width:95%;margin-left:auto;margin-right:auto;border:none;}
-#moin-create-table tbody tr th{text-align:center;background:#00417f;margin:2px}
+#moin-create-table tbody tr th{text-align:center;background:#00417f;color:#fff;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#fff;}
 #moin-create-table tbody tr td a{color:#00008b}
 label{display:block;font-weight:bold}
