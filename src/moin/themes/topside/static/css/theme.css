@@ -75,7 +75,8 @@ a:hover { text-decoration: underline; }
     ul.moin-breadcrumb li { position: relative; display: inline-block; }
     ul.moin-breadcrumb li ul.moin-alias { display: none; position: absolute; right: 0; bottom: .9em; }
     ul.moin-breadcrumb li:hover ul.moin-alias { display: block; overflow: visible; }
-    ul.moin-breadcrumb li i { color: #1409b9;; }
+    ul.moin-breadcrumb li i { color: #1409b9; }
+    ul.moin-breadcrumb li i.moin-tiny { font-size: .5em; }
 }
 
 @media screen and (max-width: 950px) {
@@ -105,6 +106,7 @@ a:hover { text-decoration: underline; }
     #moin-username i,
     .moin-itemviews i,
     .moin-breadcrumb i { display: none; }
+    .moin-breadcrumb i.moin-tiny { display: inline; }
     .moin-breadcrumb li { margin-left: .5em; text-indent: -.5em; }
     #moin-header .moin-breadcrumb .moin-alias { padding-left: .5em; margin-top: 0; margin-bottom: 0; }
     #moin-header .moin-breadcrumb .moin-alias li { margin-left: 0; padding-left: 0; }
