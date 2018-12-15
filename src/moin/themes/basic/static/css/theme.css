@@ -6247,11 +6247,12 @@ ul.moin-breadcrumb ul.moin-alias {
   display: inline-block;
 }
 ul.moin-breadcrumb li ul.moin-alias li {
+  padding: 2px 10px;
+  color: #ffffff;
   list-style-type: none;
   display: block;
 }
 ul.moin-breadcrumb li ul.moin-alias li a {
-  padding: 2px 10px;
   display: inline-block;
   color: #ffffff;
 }
