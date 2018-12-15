@@ -29,6 +29,16 @@ a:hover { text-decoration: underline; }
 #popup { border: 2px solid #000; }
 .popup-header { background-color: #c9e2f8; color: #000; }
 
+/* style page trail alias names on top bar and side bar */
+ul.moin-breadcrumb li { position: relative; display: inline-block; }
+ul.moin-breadcrumb li:hover ul.moin-alias { display: block; }
+ul.moin-breadcrumb li i { color: #1409b9; }
+ul.moin-breadcrumb li i.moin-tiny { font-size: .5em; }
+ul.moin-breadcrumb li ul.moin-alias { display: none; padding: 0; margin: 0; margin-bottom: 4px; }
+ul.moin-breadcrumb li ul.moin-alias { background-color: #e6f2fe; border: 1px solid #00417f; border-radius: 6px; }
+ul.moin-breadcrumb li ul.moin-alias { position: absolute; left: 1.5em; bottom: .8em; z-index: 20; }
+ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
+
 /* styling for topbar */
 @media (max-width: 1024px) {
     #moin-header { background-image: url("../../../static/img/white-clouds.jpg");
@@ -66,17 +76,6 @@ a:hover { text-decoration: underline; }
     #moin-timings { margin-left: 5%; color: #444; float: none; clear: left; }
     #moin-footer .moin-itemviews  { margin: 5px 5%; padding: 0; }
     #moin-creditlogos { margin-right: 5%; padding: 0; }
-
-    /* style page trail alias names on top bar */
-    #moin-header ul.moin-breadcrumb ul.moin-alias { padding: 0; margin: 0; margin-bottom: 4px; }
-    ul.moin-breadcrumb ul.moin-alias { background-color: #e6f2fe; border: 1px solid #00417f; border-radius :6px; }
-    ul.moin-breadcrumb li ul.moin-alias li { list-style-type: none; display:block; }
-    ul.moin-breadcrumb li ul.moin-alias li a { padding: 2px 10px; display: inline-block; }
-    ul.moin-breadcrumb li { position: relative; display: inline-block; }
-    ul.moin-breadcrumb li ul.moin-alias { display: none; position: absolute; right: 0; bottom: .9em; }
-    ul.moin-breadcrumb li:hover ul.moin-alias { display: block; overflow: visible; }
-    ul.moin-breadcrumb li i { color: #1409b9; }
-    ul.moin-breadcrumb li i.moin-tiny { font-size: .5em; }
 }
 
 @media screen and (max-width: 950px) {
@@ -102,14 +101,13 @@ a:hover { text-decoration: underline; }
 
     #moin-searchform {  margin: 1em auto 0 auto; }
 
-    #moin-header ul li { display: block; padding-left: 30px; text-align: left; }
+    #moin-header > ul > li { display: block; padding-left: 20px; text-align: left; }
     #moin-username i,
     .moin-itemviews i,
     .moin-breadcrumb i { display: none; }
     .moin-breadcrumb i.moin-tiny { display: inline; }
     .moin-breadcrumb li { margin-left: .5em; text-indent: -.5em; }
-    #moin-header .moin-breadcrumb .moin-alias { padding-left: .5em; margin-top: 0; margin-bottom: 0; }
-    #moin-header .moin-breadcrumb .moin-alias li { margin-left: 0; padding-left: 0; }
+
     #moin-username,
     .moin-breadcrumb,
     .moin-itemviews,

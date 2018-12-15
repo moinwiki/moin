@@ -236,6 +236,7 @@
     {%- if alias %}
         <i class="fa fa-circle moin-tiny"> </i>
         <ul class="moin-alias">
+            <li> {{ _('Alias Names') }} </li>
             {%- for fq_name in alias -%}
                 <li>
                     <a href="{{ url_for('frontend.show_item', item_name=fq_name) }}">
@@ -289,7 +290,7 @@
                                     </a>
                                 {%- else %}
                                     <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                        {{ segment_name }}
+                                        {{ segment_name|shorten_fqname }}
                                     </a>
                                 {%- endif %}
                             {%- endfor %}
