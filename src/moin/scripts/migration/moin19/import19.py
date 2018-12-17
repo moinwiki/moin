@@ -236,12 +236,13 @@ class PageItem(object):
             fnames = os.listdir(revisionspath)
         except OSError:
             fnames = []
-        parent_id = u''
+        parent_id = None
         for fname in fnames:
             try:
                 revno = int(fname)
                 page_rev = PageRevision(self, revno, os.path.join(revisionspath, fname))
-                page_rev.meta[PARENTID] = parent_id
+                if parent_id:
+                    page_rev.meta[PARENTID] = parent_id
                 parent_id = page_rev.meta[REVID]
                 yield page_rev
 
