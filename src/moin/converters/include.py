@@ -307,7 +307,7 @@ class Converter(object):
                     else:
                         # ACLs prevent user from viewing a transclusion - show message
                         message = moin_page.p(children=(_('Access Denied, transcluded content suppressed.')))
-                        attrib = {html.class_: 'warning'}
+                        attrib = {html.class_: 'warning moin-read-denied'}
                         div = ET.Element(moin_page.div, attrib, children=(message, ))
                         container = ET.Element(moin_page.body, children=(div, ))
                         return [container, 0]  # replace transclusion with container's child

@@ -80,7 +80,7 @@ class TestInclude(object):
         page2 = Item.create(u'page2')
         rendered = page2.content._render_data()
         # an error message will follow p tag, similar to: Access Denied, transcluded content suppressed.
-        assert '<div class="warning"><p>' in rendered
+        assert '<div class="warning moin-read-denied"><p>' in rendered
 
     def test_ExternalInclude(self):
         # external include
