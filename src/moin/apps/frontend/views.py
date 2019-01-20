@@ -878,6 +878,7 @@ def delete_item(item_name):
         form = DeleteItemForm.from_defaults()
         subitems = item.get_subitem_revs()
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        close_file(item.rev.data)
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -1005,6 +1006,7 @@ def destroy_item(item_name, rev):
 
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
+        close_file(item.rev.data)
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
         if form.validate():
