@@ -1483,7 +1483,7 @@ def subscribe_item(item_name):
         # Try to unsubscribe
         if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
             msg = _(
-                "Can't remove the subscription! You are subscribed to this page in some other way.") + u' ' + _(
+                "Can't remove the subscription! You are subscribed to this page, but not by itemid.") + u' ' + _(
                 "Please edit the subscription in your settings."), "error"
     else:
         # Try to subscribe
