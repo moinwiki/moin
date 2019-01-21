@@ -192,8 +192,6 @@ def get_item_last_revisions(app, fqname):
     :param fqname: the fqname of the item
     :return: a list of revisions
     """
-    # TODO: Implement AccessDenied or similar error in case the user does not have access to item
-    # and to also to handle the case where the item has no revisions
     terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
     query = And(terms)
     return list(flaskg.storage.search_bypass_ACL(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=2))
