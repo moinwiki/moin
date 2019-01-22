@@ -192,13 +192,9 @@ def get_item_last_revisions(app, fqname):
     :param fqname: the fqname of the item
     :return: a list of revisions
     """
-    # TODO: Implement AccessDenied or similar error in case the user does not have access to item
-    # and to also to handle the case where the item has no revisions
     terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
     query = And(terms)
-    return list(
-        flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME],
-                              reverse=True, limit=2))
+    return list(flaskg.storage.search_bypass_ACL(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=2))
 
 
 @item_modified.connect_via(ANY)
@@ -218,6 +214,7 @@ def send_notifications(app, fqname, **kwargs):
         content_diff = notification.get_content_diff()
     except Exception:
         # current user has likely corrupted an item or fixed a corrupted item
+        # or changed ACL and removed read access for himself
         # if current item is corrupt, another exception will occur in a downstream script
         content_diff = [u'- ' + _('An error has occurred, the current or prior revision of this item may be corrupt.')]
     meta_diff = notification.get_meta_diff()
