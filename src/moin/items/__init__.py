@@ -524,6 +524,8 @@ class Item(object):
         """
         delete this item (remove current name from NAME list)
         """
+        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, meta=self.meta,
+                           content=self.rev.data, comment=comment)
         ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
         if [self.name] == self.names:
             flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
