@@ -716,7 +716,7 @@ class Item(object):
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
                                              )
-        item_modified.send(app, fqname=self.fqname, action=action)
+        item_modified.send(app, fqname=newrev.fqname, action=action)
         return newrev.revid, newrev.meta[SIZE]
 
     def handle_variables(self, data, meta):
