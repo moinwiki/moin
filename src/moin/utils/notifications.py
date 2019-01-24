@@ -46,14 +46,14 @@ def msgs():
     """
     _ = lambda x: x  # noqa
     messages = {
-        ACTION_CREATE: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been created by %(user_name)s:"),
-        ACTION_MODIFY: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been modified by %(user_name)s:"),
-        ACTION_RENAME: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
-        ACTION_COPY: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been copied by %(user_name)s:"),
-        ACTION_REVERT: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
-        ACTION_TRASH: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
-        DESTROY_REV: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
-        DESTROY_ALL: _("The '%(fqname)s' ('%(item_url)s') item on '%(wiki_name)s' has been destroyed by %(user_name)s:"),
+        ACTION_CREATE: _("The '%(fqname)s' item on '%(wiki_name)s' has been created by %(user_name)s:"),
+        ACTION_MODIFY: _("The '%(fqname)s' item on '%(wiki_name)s' has been modified by %(user_name)s:"),
+        ACTION_RENAME: _("The '%(fqname)s' item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
+        ACTION_COPY: _("The '%(fqname)s' item on '%(wiki_name)s' has been copied by %(user_name)s:"),
+        ACTION_REVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
+        ACTION_TRASH: _("The '%(fqname)s' item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
+        DESTROY_REV: _("The '%(fqname)s' item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
+        DESTROY_ALL: _("The '%(fqname)s' item on '%(wiki_name)s' has been destroyed by %(user_name)s:"),
     }
     return messages
 
