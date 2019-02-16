@@ -40,7 +40,7 @@ from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_, N_
 from moin.themes import render_template
-from moin.utils import rev_navigation
+from moin.utils import rev_navigation, close_file
 from moin.utils.mime import Type
 from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from moin.utils.registry import RegistryBase
@@ -524,24 +524,40 @@ class Item(object):
         """
         delete this item (remove current name from NAME list)
         """
-        return self._rename(None, comment, action=ACTION_TRASH, delete=True)
+        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, meta=self.meta,
+                           content=self.rev.data, comment=comment)
+        ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
+        if [self.name] == self.names:
+            flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
+        else:
+            # the item has several names, we deleted only one name
+            name_list = [x for x in self.names if not x == self.name]
+            msg = L_('The item name "%(name)s" was deleted, the item persists with alias names: "%(name_list)s"', name=self.name, name_list=name_list)
+            flash(msg, 'info')
+        return ret
 
     def revert(self, comment=u''):
         return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
-    def destroy(self, comment=u'', destroy_item=False):
+    def destroy(self, comment=u'', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
                            content=self.rev.data, comment=comment)
-        if isinstance(self.rev.data, file):
-            self.rev.data.close()
+        close_file(self.rev.data)
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
+            # destroy all subitems
+            for subitem_name in subitem_names:
+                item = Item.create(subitem_name, rev_id=CURRENT)
+                close_file(item.rev.data)
+                item.rev.item.destroy_all_revisions()
+            flash(L_('The item "%(name)s" was destroyed.', name=self.name), 'info')
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
+            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.', rev_number=self.meta['rev_number'], name=self.name), 'info')
 
     def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
@@ -653,6 +669,9 @@ class Item(object):
                     meta[NAME] = oldname
             elif not meta.get(ITEMID):
                 meta[NAME] = [name]
+        elif self.fqname.field == ITEMID and delete:
+            # delete by itemid will display deleted item with flash message
+            meta[NAME] = []
 
         if meta.get(NAMESPACE) is None:
             meta[NAMESPACE] = self.fqname.namespace
@@ -674,7 +693,8 @@ class Item(object):
             meta[REV_NUMBER] = 1
 
         if not overwrite and REVID in meta:
-            # we usually want to create a new revision, thus we must remove the existing REVID
+            # we usually want to create a new revision, thus we update parentid and remove the existing REVID
+            meta[PARENTID] = currentrev.meta[REVID] if currentrev else meta[REVID]
             del meta[REVID]
 
         if data is None:
@@ -698,7 +718,7 @@ class Item(object):
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
                                              )
-        item_modified.send(app, fqname=self.fqname, action=action)
+        item_modified.send(app, fqname=newrev.fqname, action=action)
         return newrev.revid, newrev.meta[SIZE]
 
     def handle_variables(self, data, meta):
@@ -747,7 +767,10 @@ class Item(object):
             variables['EMAIL'] = "@ MAILTO@"
 
         for name in variables:
-            data = data.replace(u'@{0}@'.format(name), variables[name])
+            try:
+                data = data.replace(u'@{0}@'.format(name), variables[name])
+            except UnicodeError:
+                logging.warning("handle_variables: UnicodeError! name: %r value: %r" % (name, variables[name]))
         return data
 
     @property
@@ -987,8 +1010,7 @@ class Default(Contentful):
                 except AccessDenied:
                     abort(403)
                 else:
-                    if isinstance(self.rev.data, file):
-                        self.rev.data.close()
+                    close_file(self.rev.data)
                     return redirect(url_for_item(**self.fqname.split))
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
@@ -997,8 +1019,7 @@ class Default(Contentful):
             edit_rows = str(flaskg.user.profile._meta[EDIT_ROWS])
         else:
             edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
-        if isinstance(self.rev.data, file):
-            self.rev.data.close()
+        close_file(self.rev.data)
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,

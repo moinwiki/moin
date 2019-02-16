@@ -28,7 +28,7 @@ constructors = {
 
 
 def pytest_generate_tests(metafunc):
-    argnames = metafunc.funcargnames
+    argnames = metafunc.fixturenames
 
     if 'store' in argnames:
         klasses = 'BytesStore', 'FileStore'
@@ -52,9 +52,8 @@ def pytest_generate_tests(metafunc):
                 argvalues.append((storename, klass))
         metafunc.parametrize(argname, argvalues, ids=ids, indirect=True)
 
-    multi_mark = getattr(metafunc.function, 'multi', None)
+    multi_mark = metafunc.definition.get_closest_marker('multi')
     if multi_mark is not None:
-        # XXX: hack
         ids = []
         argvalues = []
         stores = multi_mark.kwargs['Store']

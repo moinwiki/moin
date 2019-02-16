@@ -244,8 +244,10 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
 .hidden { display: none; visibility: hidden; }
 .moin-integer { text-align: right; padding-right: 1em; }
-.moin-big {font-size: 1.17em; }
+.moin-big { font-size: 1.17em; }
+.moin-bigger { font-size: 1.5em; }
 .moin-small { font-size: .83em; }
+.moin-tiny { font-size: .5em; vertical-align: middle; }
 .moin-inline-label { display: inline; }
 .moin-link-list li { padding: 2px 0 2px 0; }
 
@@ -392,6 +394,7 @@ a.moin-button:hover,
 a.moin-button:active { color: #000; text-decoration: none; }
 .moin-button { background: #aed4fa; border: 1px solid #00417F; border-radius: 6px; cursor: pointer;
     font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
+.moin-button.moin-button-disabled { background: #ccc; }
 .moin-button:hover,
 .moin-button:focus { box-shadow: 2px 2px 1px #000; outline: none; }
 .moin-button.active {background: #00417f; color: #fff; }
@@ -432,6 +435,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-select-all { padding: .5em; color: #00008b; background: #eef1f6; border: 1px solid #4e7da9; text-align: left; }
 .moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
 .moin-index-message span { padding: 4px; background-color: #eee; color: red; }
+.moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; }
 .moin-contenttype-selection div { cursor: pointer; margin: .1em; padding: .5em 1.2em .5em .5em; height: 1em; }
 div.moin-ct-shown { background: #d8dfe9 url("../img/moin-movedown.png") no-repeat center right; color: #000; }
@@ -509,6 +513,7 @@ form.upload_file button { display: none; }
 .moin-tab-titles .moin-change-indicator { font-weight: bold; color: #1f9ae0; }
 .moin-current-form h2 { display: none; }
 .moin-settings-head a { color: #000; text-decoration: none; }
+.moin-subitem-list { font-size: 1.25em; }
 
 .moin-form dd { float: left; width: 70%; margin: .3em 0 .3em 0; }
 .moin-form dd input { width: 75%; }
@@ -548,6 +553,8 @@ form.upload_file button { display: none; }
 #moin-page-history > table > body { font-size: .87em; }
 .moin-button-diff { text-align: center; }
 .moin-hist-rev { text-align: center; vertical-align: middle; }
+.moin-hist-rev > input,
+.moin-hist-rev > span { cursor: pointer; }
 .moin-offset-links { width: 100%; }
 .moin-next-page { float: right; }
 .moin-prior-page { float: left; }
@@ -557,6 +564,10 @@ form.upload_file button { display: none; }
 /* mychanges */
 
 .moin-mychanges > table { width: 100%; }
+
+/* +admin/user */
+
+.moin-namespaces > li { color: gray; }
 
 /* show wikiconfig and wikiconfighelp */
 
@@ -596,6 +607,7 @@ figcaption { font-weight: bold; }
 .moin-edit-help a { color: black; }
 
 /* revision navigation on show, highlight, and meta views */
+.moin-revert { text-align: center; }
 .moin-rev-navigation-current { font-size: 1.25em; font-weight: bold; }
 .moin-rev-navigation-older,
 .moin-rev-navigation-newer {padding: 0 20px 0 20px; }

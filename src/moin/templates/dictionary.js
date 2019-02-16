@@ -1,5 +1,7 @@
 //
 // All translatable strings defined in other Javascript files must also be defined within i18n_dict below.
+// The strange format will be mangled to normal by jinja before being passed to a browser.
+//
 // To jslint this jinja template file, copy and paste from a browser tool that displays js code.
 //
 /*jslint browser: true, nomen: true, todo: true*/
@@ -28,11 +30,12 @@ $(document).ready(function () {
         "Destroying..": "{{ _("Destroying..") }}",
         "Items deleted: ": "{{ _("Items deleted: ") }}",
         "Items destroyed: ": "{{ _("Items destroyed: ") }}",
-        ", Items not deleted: ": "{{ _(", Items not deleted: ") }}",
-        ", Items not destroyed: ": "{{ _(", Items not destroyed: ") }}",
+        ", Not authorized, items not deleted: ": "{{ _(", Not authorized, items not deleted: ") }}",
+        ", Not authorized, items not destroyed: ": "{{ _(", Not authorized, items not destroyed: ") }}",
         "Nothing was selected.": "{{ _("Nothing was selected.") }}",
         "All changes will be discarded!": "{{ _("All changes will be discarded!") }}",
-        "Toggle font width": "{{ _("Toggle font width") }}"
+        "Toggle font width": "{{ _("Toggle font width") }}",
+        "Download failed, no items were selected.": "{{ _("Download failed, no items were selected.") }}"
     };
 
     $.i18n.setDictionary(i18n_dict);

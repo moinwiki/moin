@@ -38,6 +38,10 @@ from moin.utils.crypto import make_uuid
 from moin import security
 from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
 from moin.converters.moinwiki_out import Converter as conv_out
+from moin.converters import default_registry
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -125,6 +129,8 @@ class ImportMoin19(Command):
         print "\nConverting last revision of Moin 1.9 items to Moin 2.0"
         self.conv_in = conv_in()
         self.conv_out = conv_out()
+        reg = default_registry
+        refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
         for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
             print '    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno)
             if namespace == u'':
@@ -134,10 +140,17 @@ class ImportMoin19(Command):
             dom = self.conv_in(data_in, 'text/x.moin.wiki;format=1.9;charset=utf-8')
             out = self.conv_out(dom)
             out = out.encode(CHARSET)
+            iri = Iri(scheme='wiki', authority='', path='/' + item_name)
+            dom.set(moin_page.page_href, unicode(iri))
+            refs_conv(dom)
+            meta[ITEMLINKS] = refs_conv.get_links()
+            meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+            meta[EXTERNALLINKS] = refs_conv.get_external_links()
             size, hash_name, hash_digest = hash_hexdigest(out)
             out = BytesIO(out)
             meta[hash_name] = hash_digest
             meta[SIZE] = size
+            meta[PARENTID] = meta[REVID]
             meta[REVID] = make_uuid()
             meta[REV_NUMBER] = meta[REV_NUMBER] + 1
             meta[MTIME] = int(time.time())
@@ -235,10 +248,16 @@ class PageItem(object):
             fnames = os.listdir(revisionspath)
         except OSError:
             fnames = []
+        parent_id = None
         for fname in fnames:
             try:
                 revno = int(fname)
-                yield PageRevision(self, revno, os.path.join(revisionspath, fname))
+                page_rev = PageRevision(self, revno, os.path.join(revisionspath, fname))
+                if parent_id:
+                    page_rev.meta[PARENTID] = parent_id
+                parent_id = page_rev.meta[REVID]
+                yield page_rev
+
             except Exception as err:
                 logging.exception("PageRevision {0!r} {1!r} raised exception:".format(self.name, fname))
 
@@ -348,6 +367,17 @@ class PageRevision(object):
                 meta['namespace'] = u'users'
                 break
 
+        # match item create process that adds some keys with none-like values
+        # NOTE: ITEMLINKS, ITEMTRANSCLUSIONS, EXTERNALLINKS are not created in metadata of old revisions
+        # but will be created when last 1.9 revision of a moinwiki item is converted to a 2.0 revision.
+        for k in (NAME_OLD, TAGS):
+            if k not in self.meta:
+                self.meta[k] = []
+        for k in (COMMENT, SUMMARY):
+            if k not in self.meta:
+                self.meta[k] = ''
+        self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
+
         print (u"    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
                item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8')
 
@@ -438,6 +468,7 @@ class EditLog(LogFile):
         keys = (MTIME, '__rev', ACTION, NAME, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT)
         result = dict(zip(keys, fields))
         # do some conversions/cleanups/fallbacks:
+        del result[HOSTNAME]  # HOSTNAME not used in moin 2.0
         result[MTIME] = int(long(result[MTIME] or 0) / 1000000)  # convert usecs to secs
         result['__rev'] = int(result['__rev'])
         result[NAME] = [unquoteWikiname(result[NAME])]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright: 2012-2014 by MoinMoin:RogerHaase
+# Copyright: 2012-2018 by MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -11,10 +11,12 @@ Detect and correct violations of the moin2 coding standards:
 Detect and write informative message:
     - improper indentation of template files ending with .html suffix
 
-Execute this script from the root directory of the moin2 repository or
-from anywhere within the contrib path to process all files in the repo.
+Execute this script from the root directory of the moin repository
+to process all files in the <root>/src directory.
 
 Or, pass a directory path on the command line.
+
+    python scripts/coding_std.py <starting-directory>
 """
 
 import sys
@@ -55,9 +57,12 @@ def directories_to_ignore(starting_dir):
     for dir in level2_dirs:
         ignore_dirs.append((starting_dir, dir))
     ignore_dirs.append((starting_dir + os.sep + "moin", "translations"))
-    ignore_dirs.append((starting_dir + os.sep + "docs", "_build"))
     return ignore_dirs
 
+
+def files_to_ignore():
+    """Return a list of files that will not be processed."""
+    return os.path.join('moin', '_version.py')
 
 def calc_indentation(line):
     """
@@ -214,6 +219,7 @@ def check_files(filename, suffix):
 def file_picker(starting_dir):
     """Select target files and pass each to file checker."""
     ignore_dirs = directories_to_ignore(starting_dir)
+    ignore_files = files_to_ignore()
 
     for root, dirs, files in os.walk(starting_dir):
         # delete directories in ignore list
@@ -224,8 +230,9 @@ def file_picker(starting_dir):
         for file in files:
             suffix = file.split(".")[-1]
             if suffix in SELECTED_SUFFIXES:
-                filename = os.path.join(root, file)
-                check_files(filename, suffix)
+                if not file in ignore_files:
+                    filename = os.path.join(root, file)
+                    check_files(filename, suffix)
 
 
 if __name__ == "__main__":
@@ -233,6 +240,6 @@ if __name__ == "__main__":
         starting_dir = os.path.abspath(sys.argv[1])
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
-        starting_dir = starting_dir.split(os.sep + 'contrib')[0]
+        starting_dir = os.path.join(starting_dir.split(os.sep + 'scripts')[0], 'src')
     NoDupsLogger().log(u"Starting directory is %s" % starting_dir, None)
     file_picker(starting_dir)

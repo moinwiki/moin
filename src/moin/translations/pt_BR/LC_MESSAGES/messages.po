@@ -631,7 +631,7 @@ msgstr "Nome do item alvo"
 #, fuzzy, python-format
 msgid "Item name segment (%(invalid_name)s) must not match existing namespaces."
 msgstr ""
-"Os nomes de itens (%(invalid_names)s) não podem corresponder a espaços de"
+"Os nomes de itens (%(invalid_name)s) não podem corresponder a espaços de"
 " nome existente."
 
 #: src/moin/apps/frontend/views.py:1035 src/moin/templates/index.html:89
@@ -645,7 +645,7 @@ msgstr ""
 #: src/moin/apps/frontend/views.py:1095
 #, fuzzy, python-format
 msgid "Namespace '%(name)s' "
-msgstr "Renomear '%(item_name)s'"
+msgstr "Renomear '%(name)s'"
 
 #: src/moin/apps/frontend/views.py:1098
 #, fuzzy, python-format
@@ -2230,7 +2230,7 @@ msgstr "Renomear '%(item_name)s'"
 #: src/moin/templates/revert.html:5
 #, fuzzy, python-format
 msgid "Revert '%(new_names)s'"
-msgstr "Excluir '%(item_name)s'"
+msgstr "Excluir '%(new_names)s'"
 
 #: src/moin/templates/revert.html:15
 msgid "Meta data of item to be reverted:"

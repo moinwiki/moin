@@ -819,6 +819,8 @@ class IndexingMiddleware(object):
         """
         Return item with <name> (may be a new or existing item).
         """
+        if name.startswith('@itemid/'):
+            return Item(self, **{ITEMID: name[8:]})
         return Item(self, **{NAME_EXACT: name})
 
     def get_item(self, **query):

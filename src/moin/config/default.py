@@ -349,6 +349,7 @@ options_no_group_name = {
         ('interwikiname', None, "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]"),
         ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of 'sitename') [Unicode]"),
         ('navi_bar', [
+            # cls, endpoint, args, link_text, title
             ('wikilink', 'frontend.show_root', dict(), L_('Home'), L_('Home Page')),
             ('wikilink', 'frontend.global_history', dict(), L_('History'), L_('Global History')),
             ('wikilink', 'frontend.index', dict(), L_('Index'), L_('Global Index')),
@@ -379,28 +380,23 @@ options_no_group_name = {
         ('item_views', [
             # (endpointname, label, title, check_item_exists
             ('frontend.show_item', L_('Show'), L_('Show'), False, ),
-            ('frontend.download_item', L_('Download'), L_('Download'), True, ),
-            ('frontend.history', L_('History'), L_('Revision History'), True, ),
-            # note: when rendering a non-existing item, you'll be offered to
-            # create it (in the content area), so we do not offer "Modify":
-            # not offering modify while creating an item, leads to bad interface design, since
-            # we lose the consistency of the layout, it becomes difficult to identify where he is.
-            # so we no longer check, if item_exists for the modify item_view.
             ('frontend.modify_item', L_('Modify'), L_('Edit or Upload'), False, ),
-            ('special.supplementation', None, None, False, ),
-            ('frontend.index', L_('Subitems'), L_('Subitems Index'), False, ),
-            ('special.comments', L_('Comments'), L_('Hide comments'), True, ),
-            ('special.transclusions', L_('Transclusions'), L_('Show transclusions'), True, ),
-            ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
-            ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
+            ('frontend.history', L_('History'), L_('Revision History'), True, ),
+            ('frontend.download_item', L_('Download'), L_('Download'), True, ),
+            ('frontend.delete_item', L_('Delete'), L_('Delete this item'), True, ),
             ('frontend.quicklink_item', None, L_('Create or remove a navigation link to this item'), False, ),
             ('frontend.subscribe_item', None, L_('Switch notifications about item changes on or off'), False, ),
+            ('frontend.index', L_('Subitems'), L_('Subitems Index'), False, ),
+            ('special.supplementation', None, None, False, ),
             ('frontend.rename_item', L_('Rename'), L_('Rename this item'), True, ),
-            ('frontend.convert_item', L_('Convert'), L_('Convert this item'), True, ),
-            ('frontend.delete_item', L_('Delete'), L_('Delete this item'), True, ),
-            ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
+            ('frontend.highlight_item', L_('Highlight'), L_('Show with Syntax-Highlighting'), True, ),
+            ('frontend.show_item_meta', L_('Meta'), L_('Display Metadata'), True, ),
             ('frontend.sitemap', L_('Site Map'), L_('Local Site Map of this item'), True, ),
             ('frontend.similar_names', L_('Similar'), L_('Items with similar names'), False, ),
+            ('frontend.convert_item', L_('Convert'), L_('Convert this item'), True, ),
+            ('frontend.destroy_item', L_('Destroy'), L_('Completely destroy this item'), True, ),
+            ('special.comments', L_('Comments'), L_('Hide comments'), True, ),
+            ('special.transclusions', L_('Transclusions'), L_('Show transclusions'), True, ),
         ], 'list of edit bar entries (list of tuples (endpoint, label, title, exists))'),
 
         ('show_hosts', True,

@@ -205,7 +205,9 @@ Helpers for using flatland with jinja2 to create html forms.
                 <div class="file_upload_label moin-button">{{ _("Upload files") }}</div>
             </form>
         </div>
-        <div class="file_upload_overall_progress"><div style="display:none;"></div></div>
+        <div class="file_upload_overall_progress">
+            <div style="display:none;"></div>
+        </div>
         <div class="file_upload_buttons">
             <button class="moin-button file_upload_start" type="button" style="display:none;">{{ _("Start All") }}</button>
             <button class="moin-button file_upload_cancel" type="button" style="display:none;">{{ _("Cancel All") }}</button>
@@ -215,7 +217,9 @@ Helpers for using flatland with jinja2 to create html forms.
                 <td class="file_upload_start"><button class="moin-button" type="button">{{ _("Start") }}</button></td>
                 <td class="file_upload_cancel"><button class="moin-button" type="button">{{ _("Cancel") }}</button></td>
                 <td class="file_name"></td>
-                <td class="file_upload_progress"><div></div></td>
+                <td class="file_upload_progress">
+                    <div></div>
+                </td>
             </tr>
         </table>
     </div>
@@ -228,4 +232,18 @@ Helpers for using flatland with jinja2 to create html forms.
 {% macro file_uploader_scripts() %}
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
     <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
+{% endmacro %}
+
+{# Show a list of names that will be affected by a recursive action; delete, destroy, rename #}
+{%- macro list_subitems(subitem_names, action) %}
+    {%- if subitem_names %}
+        <div class="moin-subitem-list">{{ action }}</div>
+        <ul>
+            {%- for name in subitem_names %}
+                <li>
+                    {{ name }}
+                </li>
+            {%- endfor %}
+        </ul>
+    {%- endif %}
 {% endmacro %}

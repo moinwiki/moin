@@ -2,25 +2,23 @@
 
 ## This is a template for a user's home page, modify it as desired, including removal of these comments.
 
-## All user home pages should begin with "users/", e.g. users/<MyName>.
+## All user home pages should be in the "users" namespace, e.g. users/<MyName>.
 
 ## If you are logged in, any @ME@ variables will be converted to your user name when this page is saved.
 
-## Add ACLs as desired or use the site defaults.
-
-##  * To obfuscate your email address
+##  * To obfuscate your email address use the MailTo macro
 ##    * enter your email address using only lowercase letters
 ##    * convert "@" and "." characters to " AT " and " DOT "
-##    * obfuscate more by inserting one or more words of uppercase letters with leading and trailing blanks
-##  * logged in users will see the example address below as: you@example.com
-##  * bots and anonymous users will see the address below as: you AT SPAMFREE example DOT com
+##    * obfuscate by inserting blanks and words with uppercase letters
+##  * logged in users will see the MailTo example below as: you@example.com
+##  * bots and anonymous users will see the MailTo example as: y o u AT SPAMFREE example DOT com
 
-Email: <<MailTo(you AT SPAMFREE example DOT com)>>
+Email: <<MailTo(y o u AT SPAMFREE example DOT com)>>
 
 == Work ==
 
-about my work...
+About my work ...
 
 == Play ==
 
-about my hobbies ...
+About my hobbies ...

@@ -1,11 +1,19 @@
+{#
+    This template is displayed after user clicks the destroy link on Item Views
+    to delete all revisions of an item, or a destroy link on item history to delete an item revision.
+    User may add a comment for change log. (XXX comment and item are deleted by destroy! see #45)
+    The revision's meta data and rendered content is displayed for user review.
+#}
+
 {% import "forms.html" as forms %}
 {% extends theme("show.html") %}
 
-{% set title = _("DESTROY COMPLETE ITEM '%(item_name)s'", item_name=fqname|shorten_fqname) %}
-
 {% block content %}
     {% if rev_id == None %}
+        {% set title = _("DESTROY COMPLETE ITEM '%(item_name)s'", item_name=fqname|shorten_fqname) %}
         <h1>{{ title }}</h1>
+        {{ forms.list_subitems(alias_names, _("This item has alias names that will be destroyed:")) }}
+        {{ forms.list_subitems(subitem_names, _("The following subitems will be destroyed:")) }}
         <div class="moin-form">
             {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=fqname.fullname)) }}
                 {{ forms.render_errors(form) }}
@@ -16,7 +24,7 @@
             {{ gen.form.close() }}
         </div>
     {% else %}
-        <h1>{{ _("DESTROY REVISION '%(item_name)s' (rev %(rev_id)s)", item_name=fqname.value, rev_id=rev_id | shorten_id) }}</h1>
+        <h1>{{ _("DESTROY '%(item_name)s' REVISION NUMBER '%(rev_number)s'", item_name=fqname.value, rev_number=item.meta.rev_number) }}</h1>
         <div class="moin-form">
             {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=fqname.fullname, rev=rev_id)) }}
                 {{ forms.render_errors(form) }}
@@ -25,6 +33,23 @@
                 </dl>
                 {{ forms.render_submit(form) }}
             {{ gen.form.close() }}
+        </div>
+    {% endif %}
+
+    {% if rev_id %}
+        <h2> {{ _("Meta data of item revision to be destroyed:",) }} </h2>
+    {% else %}
+        <h2> {{ _("Meta data of item to be destroyed:",) }} </h2>
+    {% endif %}
+    {{ utils.meta_info(item.meta) }}
+    {% if data_rendered %}
+        {% if rev_id %}
+            <h2> {{ _("Content of item revision to be destroyed:") }} </h2>
+        {% else %}
+            <h2> {{ _("Content of item to be destroyed:") }} </h2>
+        {% endif %}
+        <div id="moin-content-data">
+            {{ data_rendered | safe }}
         </div>
     {% endif %}
 {% endblock %}

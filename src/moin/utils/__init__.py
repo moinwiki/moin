@@ -120,3 +120,15 @@ def getPageContent(results, offset, results_per_page):
         previous_offset = -1
     next_offset = count
     return selected_result, next_offset, previous_offset
+
+
+def close_file(f):
+    """
+    Close a file so a Windows based server can destroy a recently viewed item's file.
+
+    If not closed, attempts to destroy an open file (before garbage collection removes it)
+    will result an error:
+        The process cannot access the file because it is being used by another process.
+    """
+    if hasattr(f, 'close') and not f.closed:
+        f.close()

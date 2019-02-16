@@ -26,7 +26,7 @@ a.moin-nonexistent:visited img,a.moin-nonexistent img,a.moin-nonexistent:visited
 table.navigation{background:#fff;float:right;margin:2px}
 .moin-disabled{color:#737373}
 #moin-create-table{width:95%;margin-left:auto;margin-right:auto;border:none;}
-#moin-create-table tbody tr th{text-align:center;background:#00417f;margin:2px}
+#moin-create-table tbody tr th{text-align:center;background:#00417f;color:#fff;margin:2px}
 #moin-create-table tbody tr td{text-align:center;background:#fff;}
 #moin-create-table tbody tr td a{color:#00008b}
 label{display:block;font-weight:bold}
@@ -84,9 +84,9 @@ a.moin-sitename{font-size:1.5em;font-weight:bold;color:#fff;line-height:1.5em}
 #moin-username input:hover{color:#1f9ae0}
 #moin-interwiki a{color:#fff}
 ul.moin-breadcrumb,ul.moin-breadcrumb ul.moin-alias{padding:0;margin:0;margin-bottom:4px}
-ul.moin-breadcrumb ul.moin-alias{background-color:#e6f2fe;border:1px solid #00417f;border-radius:6px}
-ul.moin-breadcrumb li ul.moin-alias li{list-style-type:none;display:block}
-ul.moin-breadcrumb li ul.moin-alias li a{padding:2px 10px;display:inline-block;color:#1f9ae0}
+ul.moin-breadcrumb ul.moin-alias{background-color:#e6f2fe;border:1px solid #00417f;border-radius:6px;z-index:10}
+ul.moin-breadcrumb li ul.moin-alias li{list-style-type:none;display:block;color:#000;padding:2px 10px}
+ul.moin-breadcrumb li ul.moin-alias li a{color:#1f9ae0}
 ul.moin-breadcrumb li{position:relative}
 .moin-breadcrumb a{color:#fff}
 ul.moin-breadcrumb li ul.moin-alias{display:none;position:absolute}

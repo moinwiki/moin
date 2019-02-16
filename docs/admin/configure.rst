@@ -275,67 +275,74 @@ force all users to use the same theme, so that your CSS displays correctly.
 
 Customize the CMS Theme
 ~~~~~~~~~~~~~~~~~~~~~~~
+Moin provides one CMS theme: the Topside CMS Theme.
+
 The CMS theme replaces the wiki navigation links used by editors and
 administrators with a few links to the most important items within your wiki. Wiki
 admins may want to make the CMS theme the default theme when:
 
- - casual visitors are interested in viewing the wiki content, but confused by the wiki navigation links
- - contributors do not mind logging in to edit
- - errant bots are overloading your server by following the wiki navigation links on every page.
+ - Casual visitors are interested in viewing the wiki content, but confused by the wiki navigation links.
+ - Errant bots are overloading your server by following the wiki navigation links on every page.
+ - Contributors do not mind logging in before editing.
 
 Customizing the CMS header may be done as follows. Several restarts of the server may be required:
 
- - Replace the Home, moin, creole, and markdown links in snippets.html with links to the key pages
-   within your wiki (see moin-header-links below).
- - If an index to all wiki items is wanted, leave the index link as is, else remove.
+ - Copy /templates/snippets.html to the wiki_local directory and find the `macro cms_header`.
+ - Usually the logo, sitename, and search form sections are not changed.
  - If a link to login is wanted, leave the "request.user_agent" section as is, else remove the entire block.
- - Test by logging in and setting "cms" as your preferred theme.
- - After testing, make the "cms" theme the default theme by adding ``theme_default = u"cms"`` to wikiconfig.
+ - Add or remove links in the navibar section as required, defaults links include Home page
+   and Global Index.
+ - If many links are desired, consider using `macro custom_panels`.
+ - Test by logging in and setting "Topside CMS Theme" as your preferred theme.
+ - After testing, make the cms theme the default theme by adding ``theme_default = u"topside_cms"`` to wikiconfig.
  - Inform your editors to login and set another theme as their preferred theme.
  - If the login link was removed, the login page is available by keying ``+login`` as the page name in the browser URL.
 
 Here is the source code segment from snippets.html::
 
-    {# Header for CMS theme - see configuration docs for tips on customizing cms theme #}
+    {# Header/Sidebar for topside_cms theme - see docs for tips on customization #}
     {% macro cms_header() %}
-        <div id="moin-header">
+        <header id="moin-header">
             {% block header %}
-                <div id="moin-logo">
-                    <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
-                        {{ logo() }}
+
+                {% if logo() %}
+                    <div id="moin-logo">
+                        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                            {{ logo() }}
+                        </a>
+                    </div>
+                {%- endif %}
+
+                {% if cfg.sitename %}
+                    <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
+                        {{ cfg.sitename }}
                     </a>
-                </div>
-                <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
-                    {{ cfg.sitename }}
-                </a>
-                <br>
-                <ul class="moin-header-links">
+                    <br>
+                {%- endif %}
 
-                    {# wiki admins will want to replace these links with key item names present in local wiki #}
-                    <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
-                    <li><a href="{{ url_for('frontend.show_item', item_name='moin') }}">Moin Wiki Syntax</a></li>
-                    <li><a href="{{ url_for('frontend.show_item', item_name='creole') }}">Creole Wiki Syntax</a></li>
-                    <li><a href="{{ url_for('frontend.show_item', item_name='markdown') }}">Markdown Wiki Syntax</a></li>
-                    <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
+                {% if request.user_agent and search_form %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
+                    {{ utils.header_search(search_form) }}
+                {% endif %}
 
-                    {% if request.user_agent %} {# true if browser, false if run as ./m dump-html script #}
-                        {% if user.valid -%}
-                            {% if user.auth_method in cfg.auth_can_logout %}
-                                <li><a href="{{ url_for('frontend.show_item', item_name='+logout') }}">Logout</a></li>
-                            {% endif %}
-                            <li><a href="{{ url_for('frontend.show_item', item_name='+usersettings') }}">Settings</a></li>
-                        {% else %}
-                            <li><a href="{{ url_for('frontend.show_item', item_name='+login') }}">Login</a></li>
-                        {%- endif %}
-                    {%- endif %}
+                {% if request.user_agent %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
+                    <ul id="moin-username" class="moin-header-links">
+                        {{ utils.user_login_logoff() }}
+                    </ul>
+                {%- endif %}
 
+                <ul id="moin-navibar" class="moin-header-links panel">
+                    {# wiki admins should add links and headings for key items within the local wiki below #}
+                    <li class="moin-panel-heading">Navigation</li>
+                    <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Start</a></li>
+                    <li class="wikilink"><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Index</a></li>
                 </ul>
+
+                {{ custom_panels() }}
+
             {% endblock %}
-        </div>
+        </header>
         <br>
     {% endmacro %}
-
-
 
 Displaying user avatars
 -----------------------

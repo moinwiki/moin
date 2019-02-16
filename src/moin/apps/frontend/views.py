@@ -31,7 +31,7 @@ from functools import wraps, partial
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
-from flask_babel import format_date
+from flask_babel import format_date, format_datetime
 from flask_theme import get_themes_list
 
 from flatland import Form, List
@@ -64,7 +64,7 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import *  # noqa
-from moin.utils import crypto, rev_navigation
+from moin.utils import crypto, rev_navigation, close_file
 from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.mime import Type, type_moin_document
@@ -486,6 +486,12 @@ def presenter(view, add_trail=False, abort404=True):
     return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
+def flash_if_deleted(item):
+    """Show flash info message when user views a deleted revision."""
+    if TRASH in item.meta and item.meta[TRASH]:
+        flash(_('This item or item revision is deleted.'), "info")
+
+
 # The first form accepts POST to allow modifying behavior like modify_item.
 # The second form only accepts GET since modifying a historical revision is not allowed.
 @frontend.route('/<itemname:item_name>', defaults=dict(rev=CURRENT), methods=['GET', 'POST'])
@@ -500,6 +506,7 @@ def show_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
+        flash_if_deleted(item)
         result = item.do_show(rev)
     except AccessDenied:
         abort(403)
@@ -513,8 +520,7 @@ def show_item(item_name, rev):
                                fqname=fqname,
                                fq_names=fq_names,
                                )
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     return result
 
 
@@ -553,6 +559,7 @@ def indexable(item_name, rev):
 @presenter('highlight')
 def highlight_item(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
+    flash_if_deleted(item)
     try:
         ret = render_template('highlight.html',
                               item=item, item_name=item.name,
@@ -564,14 +571,14 @@ def highlight_item(item):
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
+    flash_if_deleted(item)
     ret = render_template('meta.html',
                           item=item,
                           item_name=item.name,
@@ -581,8 +588,7 @@ def show_item_meta(item):
                           rev_navigation_ids_dates=rev_navigation_ids_dates,
                           meta=item._meta_info(),
     )
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -680,6 +686,7 @@ def convert_item(item_name):
     out = BytesIO(out)
     meta[hash_name] = hash_digest
     meta[SIZE] = size
+    meta[PARENTID] = meta[REVID]
     meta[REVID] = make_uuid()
     meta[MTIME] = int(time.time())
     meta[REV_NUMBER] = meta.get(REV_NUMBER, 0) + 1
@@ -724,8 +731,7 @@ def modify_item(item_name):
         flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
         return redirect(url_for_item(item_name))
     try:
-        if isinstance(item.meta.revision.data, file):
-            item.meta.revision.data.close()
+        close_file(item.meta.revision.data)
     except AttributeError:
         pass
     return ret
@@ -797,8 +803,7 @@ def revert_item(item_name, rev):
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
-            if isinstance(item.meta.revision.data, file):
-                item.meta.revision.data.close()
+            close_file(item.meta.revision.data)
             return redirect(url_for_item(item_name))
     ret = render_template('revert.html',
                           item=item,
@@ -807,8 +812,7 @@ def revert_item(item_name, rev):
                           form=form,
                           data_rendered=Markup(item.content._render_data()),
     )
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -822,9 +826,12 @@ def rename_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
         form['target'] = item.name
+        subitems = item.get_subitem_revs()
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         if form.validate():
@@ -839,19 +846,20 @@ def rename_item(item_name):
                 try:
                     fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
                     item.rename(target, comment)
-                    if isinstance(item.meta.revision.data, file):
-                        item.meta.revision.data.close()
+                    close_file(item.meta.revision.data)
                     # the item was successfully renamed, show it with new name
                     return redirect(url_for_item(fqname))
                 except NameNotUniqueError as e:
                     flash(str(e), "error")
     ret = render_template('rename.html',
-                          item=item, item_name=item_name,
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
                           fqname=item.fqname,
                           form=form,
+                          data_rendered=Markup(item.content._render_data())
     )
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
+    close_file(item.meta.revision.data)
     return ret
 
 
@@ -865,8 +873,12 @@ def delete_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
+        subitems = item.get_subitem_revs()
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        close_file(item.rev.data)
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -877,9 +889,12 @@ def delete_item(item_name):
                 abort(403)
             return redirect(url_for_item(item_name))
     return render_template('delete.html',
-                           item=item, item_name=item_name,
+                           item=item,
+                           item_name=item_name,
+                           subitem_names=subitem_names,
                            fqname=split_fqname(item_name),
                            form=form,
+                           data_rendered=Markup(item.content._render_data()),
     )
 
 
@@ -913,7 +928,11 @@ def ajaxdestroy(item_name, req='destroy'):
                 response["status"].append(False)
                 continue
             if req == 'destroy':
-                item.destroy(comment=comment, destroy_item=True)
+                subitems = item.get_subitem_revs()
+                # XXX this matches what destroy does, but can leave orphans when alias names have subitems
+                subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(itemname + '/')]
+                item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names)
+                log_destroy_action(item, subitem_names, comment)
             else:
                 item.delete(comment)
             response["status"].append(True)
@@ -931,6 +950,30 @@ def ajaxmodify(item_name):
     if item_name:
         newitem = item_name + u'/' + newitem
     return redirect(url_for_item(newitem))
+
+
+def log_destroy_action(item, subitem_names, comment, revision=None):
+    """Document the destruction of an item or item revision."""
+    destroy_info = [('An item has been destroyed', ''),
+                    ('  Names', item.names),
+                    ('  Old Name', item.meta[NAME_OLD]),
+                    ('  Subitem Names', subitem_names),
+                    ('  Namespace', item.meta[NAMESPACE]),
+                    ('  Last Modified Time', format_datetime(datetime.utcfromtimestamp(item.meta[MTIME]))),
+                    ('  Last Modified By', item.meta[ADDRESS]),
+                    ('  Destroyed Time', format_datetime(datetime.utcfromtimestamp(time.time()))),
+                    ('  Destroyed By', flaskg.user.name),
+                    ('  Content Type', item.meta[CONTENTTYPE]),
+                    ('  Revision Number', item.meta[REV_NUMBER]),
+                    ('  Item Size', item.meta[SIZE]),
+                    ('  Comment', comment),
+    ]
+    if revision:
+        destroy_info[0] = ('An item revision has been destroyed', item.meta[REV_NUMBER])
+    elif subitem_names:
+        destroy_info[0] = ('An item and all item subitems have been destroyed', '')
+    for name, val in destroy_info:
+        logging.info('{0}: {1}'.format(name, val))
 
 
 @frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -952,28 +995,41 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+    subitem_names = []
+    alias_names = []
+    if rev is None:
+        subitems = item.get_subitem_revs()
+        # XXX this matches what destroy does, but can leave orphans when alias names have subitems
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        if not [item.name] == item.names:
+            alias_names = [x for x in item.names if not x == item.name]
+
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
+        close_file(item.rev.data)
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
         if form.validate():
             comment = form['comment'].value
             try:
-                item.destroy(comment=comment, destroy_item=destroy_item)
+                item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
             except AccessDenied:
                 abort(403)
+            log_destroy_action(item, subitem_names, comment, revision=rev)
             # show user item is deleted by showing "item does not exist, create it?" page
             return redirect(url_for_item(fqname.fullname))
-    if isinstance(item.meta.revision.data, file):
-        item.meta.revision.data.close()
     ret = render_template('destroy.html',
-                          item=item, item_name=item_name,
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
+                          alias_names=alias_names,
                           fqname=fqname,
                           rev_id=rev,
                           form=form,
+                          data_rendered=Markup(item.content._render_data())
     )
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.meta.revision.data)
+    close_file(item.rev.data)
     return ret
 
 
@@ -1034,8 +1090,7 @@ def index(item_name):
         """
         initials = set()
         for item in files:
-            if isinstance(item.meta.revision.data, file):
-                item.meta.revision.data.close()
+            close_file(item.meta.revision.data)
             initial = item.relname[0]
             if uppercase:
                 initial = initial.upper()
@@ -1088,6 +1143,7 @@ def index(item_name):
             title = _("Index of subitems '%(item_name)s'", item_name=item_name)
     else:
         title = _("Global Index")
+    close_file(item.rev.data)
 
     return render_template('index.html',
                            title_name='Global Index',
@@ -1103,6 +1159,7 @@ def index(item_name):
                            form=form,
                            item=item,
                            title=title,
+                           NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
     )
 
 
@@ -1265,11 +1322,9 @@ def history(item_name):
         entry[FQNAME] = rev.fqname
         entry[FQNAMES] = rev.fqnames
         history.append(entry)
-        if isinstance(rev.data, file):
-            rev.data.close()
+        close_file(rev.data)
     history_page = utils.getPageContent(history, offset, results_per_page)
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     trash = item.meta['trash'] if 'trash' in item.meta else False
     ret = render_template('history.html',
                           fqname=fqname,
@@ -1281,8 +1336,7 @@ def history(item_name):
                           len=len,
                           trash=trash,
     )
-    if isinstance(item.rev.data, file):
-        item.rev.data.close()
+    close_file(item.rev.data)
     return ret
 
 
@@ -1429,7 +1483,7 @@ def subscribe_item(item_name):
         # Try to unsubscribe
         if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
             msg = _(
-                "Can't remove the subscription! You are subscribed to this page in some other way.") + u' ' + _(
+                "Can't remove the subscription! You are subscribed to this page, but not by itemid.") + u' ' + _(
                 "Please edit the subscription in your settings."), "error"
     else:
         # Try to subscribe
@@ -2081,18 +2135,18 @@ def diffraw(item_name):
 @frontend.route('/+diff/<itemname:item_name>')
 def diff(item_name):
     """
-    Find 2 revisions suitable for a diff and return a formatted diff view.
+    Find 2 revisions suitable (e.g. not trash) for a diff and return a formatted diff view.
 
-    Workaround the issues noted in #579 where the url generated by Global History
-    may point to non-existent revisions.
+    If the url generated by Global History one-click diff points to a deleted revision,
+    we will substitute a different revision. Or, if the Global History url has a bookmark time,
+    we will choose the last revision before the bookmark time and the current revision.
     """
     item = flaskg.storage[item_name]
-    revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs()], reverse=True)
+    revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs() if not rev.meta.get(TRASH, None)], reverse=True)
     if not revs:
         abort(404)
     bookmark_time = request.values.get('bookmark')
     if bookmark_time is not None:
-        # when called from Global History or "recent changes" there may be a bookmark time
         # try to find the latest rev1 before bookmark <date>
         for mtime, revid in revs:
             if mtime <= int(bookmark_time):
@@ -2100,16 +2154,20 @@ def diff(item_name):
                 break
         else:
             rev1 = revs[-1][1]  # if we didn't find a rev, we just take oldest rev we have
-        rev2 = revs[0][1]  # and compare it with latest we have
+        rev2 = revs[0][1]  # and compare it with the current revision
     else:
         # otherwise we try get the 2 revids directly
         rev1 = request.values.get('rev1')
         rev2 = request.values.get('rev2')
         rev_ids = [x[1] for x in revs]
         if rev1 not in rev_ids:
-            rev1 = revs[-1][1]  # take oldest rev we have - there may only one rev
+            if len(revs) > 1:
+                rev1 = revs[1][1]  # take second newest rev
+            else:
+                rev1 = revs[0][1]  # we will compare rev to itself
+                flash(_('There is only one revision eligible for diff.'), "info")
         if rev2 not in rev_ids:
-            rev2 = revs[0][1]  # the latest rev we have
+            rev2 = revs[0][1]  # the newest rev we have
     return _diff(item, rev1, rev2)
 
 
