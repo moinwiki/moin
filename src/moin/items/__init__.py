@@ -941,6 +941,12 @@ class Default(Contentful):
         prefaced with links to the next-rev and prior-rev.
         """
         rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.fqname)
+        # create extra meta tags for use by web crawlers
+        html_head_meta = {}
+        if 'tags' in self.meta and self.meta['tags']:
+            html_head_meta['keywords'] = ', '.join(self.meta['tags'])
+        if 'summary' in self.meta and self.meta['summary']:
+            html_head_meta['description'] = self.meta['summary']
         return render_template('show.html',
                                item=self,
                                item_name=self.name,
@@ -949,6 +955,7 @@ class Default(Contentful):
                                contenttype=self.contenttype,
                                rev_navigation_ids_dates=rev_navigation_ids_dates,
                                data_rendered=Markup(self.content._render_data()),
+                               html_head_meta=html_head_meta,
                               )
 
     def doc_link(self, filename, link_text):

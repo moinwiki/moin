@@ -84,7 +84,6 @@ class ThemeSupport(object):
         self.ui_dir = 'ltr'  # XXX
         self.content_lang = flaskg.content_lang  # XXX
         self.content_dir = 'ltr'  # XXX
-        self.meta_items = []  # list of (name, content) for html head <meta>
         if request.url_root[len(request.host_url):-1]:
             self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
         else:

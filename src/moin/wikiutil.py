@@ -305,29 +305,29 @@ def get_hostname(addr):
 
 
 def file_headers(filename=None, content_type=None, content_length=None):
-        """
-        Compute http headers for sending a file
+    """
+    Compute http headers for sending a file
 
-        :param filename: filename for autodetecting content_type (unicode, default: None)
-        :param content_type: content-type header value (str, default: autodetect from filename)
-        :param content_length: for content-length header (int, default:None)
-        """
-        if filename:
-            # make sure we just have a simple filename (without path)
-            filename = os.path.basename(filename)
-            mt = MimeType(filename=filename)
+    :param filename: filename for autodetecting content_type (unicode, default: None)
+    :param content_type: content-type header value (str, default: autodetect from filename)
+    :param content_length: for content-length header (int, default:None)
+    """
+    if filename:
+        # make sure we just have a simple filename (without path)
+        filename = os.path.basename(filename)
+        mt = MimeType(filename=filename)
+    else:
+        mt = None
+
+    if content_type is None:
+        if mt is not None:
+            content_type = mt.content_type()
         else:
-            mt = None
+            content_type = 'application/octet-stream'
+    else:
+        mt = MimeType(mimestr=content_type)
 
-        if content_type is None:
-            if mt is not None:
-                content_type = mt.content_type()
-            else:
-                content_type = 'application/octet-stream'
-        else:
-            mt = MimeType(mimestr=content_type)
-
-        headers = [('Content-Type', content_type)]
-        if content_length is not None:
-            headers.append(('Content-Length', str(content_length)))
-        return headers
+    headers = [('Content-Type', content_type)]
+    if content_length is not None:
+        headers.append(('Content-Length', str(content_length)))
+    return headers
