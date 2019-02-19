@@ -19,9 +19,11 @@
                 {%- if pi_refresh -%}
                     {{ '<meta http-equiv="refresh" content="%d;URL=%s" />' % pi_refresh }}
                 {%- endif %}
-                {%- for name, content in theme_supp.meta_items -%}
-                    <meta name="{{ name }}" content="{{ content }}" />
-                {%- endfor %}
+                {%- if html_head_meta %}
+                    {%- for name, content in html_head_meta.items() %}
+                        <meta name="{{ name }}" content="{{ content }}" />
+                    {%- endfor %}
+                {%- endif %}
             {%- endblock -%}
 
             {{ head }}
