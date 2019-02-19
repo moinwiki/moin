@@ -124,10 +124,10 @@ class _Stack(object):
         Add a custom attribute (data-lineno=nn) that will be used by Javascript to scroll edit textarea.
         """
         if flaskg and flaskg.add_lineno_attr:
-                if self.last_lineno != self.iter_content.lineno:
-                    # avoid adding same lineno to parent and multiple children or grand-children
-                    elem.attrib[html.data_lineno] = self.iter_content.lineno
-                    self.last_lineno = self.iter_content.lineno
+            if self.last_lineno != self.iter_content.lineno:
+                # avoid adding same lineno to parent and multiple children or grand-children
+                elem.attrib[html.data_lineno] = self.iter_content.lineno
+                self.last_lineno = self.iter_content.lineno
 
     def clear(self):
         del self._list[1:]

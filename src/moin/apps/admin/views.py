@@ -386,7 +386,7 @@ def item_acl_report():
 def search_group(group_name):
     groups = flaskg.groups
     if groups[group_name]:
-            return groups[group_name]
+        return groups[group_name]
     else:
         raise GroupDoesNotExistError(group_name)
 
