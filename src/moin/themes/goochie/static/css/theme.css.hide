@@ -1,0 +1,150 @@
+/* Topside and topside_cms themes have topbar for small displays and left sidebar for wide displays. */
+/* This CSS is imported by topside_cms theme. */
+
+body { font-size: 1em; margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+/* position footer on bottom of window when content is a few lines. */
+html { font-size: 1em; min-height: 100%; position: relative; }
+#moin-footer { position: absolute; bottom: 0; }
+#moin-content { padding-bottom: 8em; }
+h1 { text-align: center; }
+
+a { text-decoration: none; color: #1409B9; }
+a:hover { text-decoration: underline; }
+.current-link { text-decoration: underline; }
+
+#moin-searchform,
+#moin-long-searchform > p > input { width: 200px; display: inline-block; font-size: 1em;
+    border: 1px solid #4e7da9; border-radius: 3px; background-color: #fff; }
+.moin-search-query { float: left; margin-right: 0; height: 1.5em; vertical-align: middle; color: #000;
+    border: 0; width: 150px; margin-left: 5px; }
+#moin-searchform .moin-float-fix { float: right; clear: none; padding: 0; }
+#moin-search-submit { width: 30px; text-indent: -9000px; border: 0; height: 1.5em;
+    background: url("../../../static/img/moin-search.png") center center no-repeat; padding: 0;
+    cursor: pointer; margin: 0; box-shadow: none; display: inline-block;  }
+
+.wikilink,
+.moin-panel-heading { font-weight: bold; display: inherit; }
+
+/* global index */
+#popup { border: 2px solid #000; }
+.popup-header { background-color: #c9e2f8; color: #000; }
+
+/* style page trail alias names on top bar and side bar */
+ul.moin-breadcrumb li { position: relative; display: inline-block; }
+ul.moin-breadcrumb li:hover ul.moin-alias { display: block; }
+ul.moin-breadcrumb li i { color: #1409b9; }
+ul.moin-breadcrumb li i.moin-tiny { font-size: .5em; }
+ul.moin-breadcrumb li ul.moin-alias { display: none; padding: 0; margin: 0; margin-bottom: 4px; }
+ul.moin-breadcrumb li ul.moin-alias { background-color: #e6f2fe; border: 1px solid #00417f; border-radius: 6px; }
+ul.moin-breadcrumb li ul.moin-alias { position: absolute; left: 1.5em; bottom: .8em; z-index: 20; }
+ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
+
+/* styling for topbar */
+@media (max-width: 1024px) {
+    #moin-header { background-color: #FBFAF9;
+        text-align: left; min-height: 74px; overflow: hidden; border-bottom: 1px solid #D7E9FD;
+        font-size: 1em; }
+    /* logo size of 64x64 px determines min-height of 74px above */
+
+    #moin-logo { float: left; padding: 5px 10px 10px 5px; }
+    .moin-sitename { font-size: 2em; z-index: 1; position: relative; float: left; padding-top: .5em; }
+
+    #moin-searchform { float: right; margin: 4px 12px 0 0; }
+
+    #moin-header ul { margin: .1em 5% .4em 5%; padding: 0; }
+    #moin-username { float: right; padding: .3em 0; font-size: .94em; }
+    #moin-username li { display: inline-block; padding: 8px; }
+    #moin-navibar { clear: both; }
+
+    .moin-breadcrumb i { font-size: .94em; }
+    .moin-breadcrumb li,
+    .moin-custom-panel li,
+    #moin-navibar li,
+    .moin-itemviews li { display: inline; padding-right: 10px; white-space: nowrap; font-size: .875em; }
+    .moin-breadcrumb li { padding-right: 0; }
+    .moin-breadcrumb li:first-child { padding-right: 10px; }
+
+    #moin-navibar li { font-size: 1em; }
+
+    #moin-content { margin: 0 5%; width: auto; }
+
+    #moin-footer { background-color: #FBFAF9; border-top: 1px solid #D7E9FD; }
+    #moin-pageinfo,
+    #moin-wiki-license,
+    #moin-credits,
+    #moin-version,
+    #moin-timings { margin-left: 5%; color: #444; float: none; clear: left; }
+    #moin-footer .moin-itemviews  { margin: 5px 5%; padding: 0; }
+    #moin-creditlogos { margin-right: 5%; padding: 0; }
+}
+
+@media screen and (max-width: 950px) {
+    /* no room for text, show only icons for username and itemviews */
+    ul#moin-username span { display: none; }
+    ul.moin-itemviews span { display: none; }
+}
+
+@media screen and (max-width: 800px) {
+    #moin-content { margin: 0 2%; padding-bottom: 16em; }
+    #moin-header ul { margin: .1em 2% .4em 2%; }
+    #moin-footer .moin-itemviews  { margin: 5px 2%; }
+}
+
+
+@media (min-width: 1025px) {
+    /* styling for left sidebar */
+    #moin-header { background-color: #FBFAF9; text-align: center;
+        position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; overflow-x: hidden;
+        border-right: 1px solid #D7E9FD; font-size: .92em; z-index: 10; }
+    #moin-logo { padding: 10px 0; }
+    .moin-sitename { font-size: 1.5rem; display: block; }
+
+    #moin-searchform {  margin: 1em auto 0 auto; }
+
+    #moin-header > ul > li { display: block; padding-left: 20px; text-align: left; }
+    #moin-username i,
+    .moin-itemviews i,
+    .moin-breadcrumb i { display: none; }
+    .moin-breadcrumb i.moin-tiny { display: inline; }
+    .moin-breadcrumb li { margin-left: .5em; text-indent: -.5em; }
+
+    #moin-username,
+    .moin-breadcrumb,
+    .moin-itemviews,
+    .moin-custom-panel,
+    #moin-navibar { padding-left: 0; text-align: left; clear: both; margin-top: 1em; }
+    .moin-panel-heading { font-size: 1.125em; display: inherit; }
+    .moin-subitem-discuss:before { content: "\2514\2500" }
+
+    #moin-content { padding-left: 250px; margin: 0 2%; }
+
+    #moin-footer { padding-left: 295px; max-width: 680px; }
+    #moin-footer .moin-itemviews { display: none; }
+    /* TODO: if these are all P tags, why float left in common.css? */
+    #moin-pageinfo,
+    #moin-wiki-license,
+    #moin-credits,
+    #moin-version,
+    #moin-timings { color: #444; float: none; clear: left; }
+}
+
+@media (min-width: 1281px) {
+    #moin-content { margin: 0 7%; }
+}
+
+@media print {
+    html { font-family: serif; font-size: 12pt; width: 100%; }
+    #moin-header,
+    #moin-footer > ul,
+    #moin-creditlogos,
+    #moin-credits,
+    .moin-permalink { display: none; }
+    #moin-footer { position: static; }
+    #moin-pageinfo { color: #737373; font-size: .67em; float: right; }
+    #moin-content { padding-left: 0; margin: 0; }
+    a.moin-interwiki:before {content: attr(title) ":" }
+    a.moin-interwiki img { display: none }
+    pre { font-size: 10pt }
+    div.moin-table-of-contents { box-shadow: none }
+    a[href]:after { content: none; }  /* Firefox prints urls after anchor text by default */
+}

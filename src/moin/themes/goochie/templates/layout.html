@@ -1,0 +1,108 @@
+{# Goochie Layout #}
+
+{#
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </body>
+</html>
+#}
+
+
+{% extends "base.html" %}
+
+{% import "snippets.html" as snippets with context %}
+{% import "utils.html" as utils with context %}
+
+{% block layout %}
+
+    <div id="moin-main-wrapper">
+        {{ snippets.before_header() }}
+        <header id="moin-header">
+            {%- block header %}
+                {%- if snippets.logo() %}
+                    <div id="moin-logo">
+                        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ snippets.logo() }}</a>
+                    </div>
+                {%- endif %}
+                {%- if cfg.sitename %}
+                    <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                        {{ cfg.sitename }}
+                    </a>
+                {%- endif %}
+                {%- if search_form %}
+                    {{ header_search(search_form) }}
+                {%- endif %}
+                <ul id="moin-username">
+                    {{ utils.user_login_logoff() }}
+                </ul>
+                {% set navibar_items = theme_supp.navibar(fqname) %}
+                {% if navibar_items %}
+                    <ul id="moin-navibar" class="panel">
+                        <li class="moin-panel-heading">{{ _('Navigation') }}</li>
+                        {% for cls, url, text, title in navibar_items %}
+                            <li class="{{ cls }}">
+                                <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}"{{ url|safe }}"{% endif %}>{{ text }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}
+                <div id="moin-pageline">
+                    <hr style="display:none;" />
+                </div>
+                {% block header_itemviews %}{% endblock %}
+                {{ snippets.custom_panels() }}
+            {% endblock %}
+        </header>
+        {{ snippets.after_header() }}
+
+        <div id="moin-page" role="main" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+            {% block item -%}
+                <div id="moin-content">
+                    <div id="moin-flash">  
+                        {% for category, msg in get_flashed_messages(with_categories=true) %}
+                            <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+                        {% endfor %}
+                    </div>
+                    {% block content %}
+                        
+                    {% endblock %}
+                </div>
+            {%- endblock %}
+        </div>
+
+        {{ snippets.before_footer() }}
+        <footer id="moin-footer">
+            {% block footer %}
+                {% block footer_hr %}<hr/>{% endblock %}
+                {% block footer_itemviews %}{% endblock %}
+                {{ snippets.creditlogos() }}
+                {% block footer_meta %}{% endblock %}
+                {{ snippets.credits() }}
+                {{ snippets.license_info() }}
+            {% endblock %}
+        </footer>
+        {{ snippets.after_footer() }}
+    </div>
+{% endblock %}
