@@ -70,9 +70,4 @@ class TestMacroBase(object):
         result = macropagelinklistbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
         assert result == 'test_macro'
 
-        item_names = macropagelinklistbase_obj.get_item_names('/WooWoo')
-        print "TEST type(item_names) = " + str(type(item_names))
-        print "TEST item_names = " + str(item_names)
-        assert False
-
 
