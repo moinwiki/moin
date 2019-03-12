@@ -115,8 +115,8 @@ class MacroPageLinkListBase(MacroBlockBase):
                 linkname = pagename[index+1:]
             elif display == "UnCameled":
                 index = pagename.rfind('/')
-                tempname = re.sub("([a-z0-9])([A-Z])", "\g<1> \g<2>", pagename[index+1:])  # space before a cap char
-                linkname = re.sub("([a-zA-Z])([0-9])", "\g<1>%s\g<2>" % numsep, tempname)
+                tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[index+1:])  # space before a cap char
+                linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1>%s\g<2>" % numsep, tempname)
             elif display == "PageTitle":
                 raise Exception("PageTitle isn't implemented yet.")
             else:
