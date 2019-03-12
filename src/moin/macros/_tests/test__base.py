@@ -58,7 +58,6 @@ class TestMacroBase(object):
         result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
         assert result == 'test_macro'
 
-
     def test_MacroPageLinkListBase(self):
         """ test for MacroPageLinkListBase class """
         class Test_MacroPageLinkListBase(MacroPageLinkListBase):
@@ -69,5 +68,3 @@ class TestMacroBase(object):
         macropagelinklistbase_obj = Test_MacroPageLinkListBase()
         result = macropagelinklistbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
         assert result == 'test_macro'
-
-

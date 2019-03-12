@@ -13,6 +13,7 @@ from moin.items import Item
 from moin.storage.middleware.protecting import AccessDenied
 import re
 
+
 class MacroBase(object):
     """
     Macro base class.
@@ -89,7 +90,7 @@ class MacroPageLinkListBase(MacroBlockBase):
                       FullPath  : The full page path (default)
                       ChildPath : The last component of the FullPath, including the '/'
                       ChildName : ChildPath, but minus the leading '/'
-                      UnCameled : ChildName, but with a space ' ' character between 
+                      UnCameled : ChildName, but with a space ' ' character between
                                   blocks of lowercase characters or numbers and an
                                   uppercase character.
                       PageTitle : Use the title from the first header in the linked page
@@ -107,15 +108,15 @@ class MacroPageLinkListBase(MacroBlockBase):
             if display == "FullPath":
                 linkname = pagename
             elif display == "ChildPath":
-                index=pagename.rfind('/')
+                index = pagename.rfind('/')
                 linkname = pagename[index:]
             elif display == "ChildName":
-                index=pagename.rfind('/')
+                index = pagename.rfind('/')
                 linkname = pagename[index+1:]
             elif display == "UnCameled":
-                index=pagename.rfind('/')
-                tempname = re.sub("([a-z0-9])([A-Z])","\g<1> \g<2>", pagename[index+1:]) # space before a cap char
-                linkname = re.sub("([a-zA-Z])([0-9])","\g<1>%s\g<2>" % numsep, tempname)
+                index = pagename.rfind('/')
+                tempname = re.sub("([a-z0-9])([A-Z])", "\g<1> \g<2>", pagename[index+1:])  # space before a cap char
+                linkname = re.sub("([a-zA-Z])([0-9])", "\g<1>%s\g<2>" % numsep, tempname)
             elif display == "PageTitle":
                 raise Exception("PageTitle isn't implemented yet.")
             else:
@@ -127,40 +128,42 @@ class MacroPageLinkListBase(MacroBlockBase):
             page_list.append(item)
         return page_list
 
-    def get_item_names(self, name='', startswith='', select='files'):
-        # input:
-        #
-        #   name: the name of the item to get.  If '' is passed,
-        #         then the top-level item is used.
-        #
-        #   startwith: a substring the matching pages must begin with.
-        #              It no value is specified, then all pages are
-        #              returned.
-        #
-        #   select: the kind of page to return.  Valid values incude:
-        #             - files: decendents that do not contain decendents (default)
-        #             - dirs: decendents that contain decendents
-        #             - both: both 'files' and 'dirs', with duplicates removed.
-        #
-        # output:
-        #
-        #   A List of descendent items using their "fullname" value
-        #
+    def get_item_names(self, name='', startswith='', kind='files'):
+        """
+        For the specified item, return the fullname of natching descndents.
+
+        Input:
+
+           name: the name of the item to get.  If '' is passed, then the
+                 top-level item is used.
+
+           startwith: a substring the matching pages must begin with.  If no
+                      value is specified, then all pages are returned.
+
+           kind: the kind of page to return.  Valid values include:
+
+                 files: decendents that do not contain decendents. (default)
+                 dirs:  decendents that contain decendents.
+                 both:  both 'files' and 'dirs', with duplicates removed.
+
+        Output:
+
+           A List of descendent items using their "fullname" value
+        """
         try:
             item = Item.create(name)
         except AccessDenied:
             abort(403)
-
         dirs, files = item.get_index(startswith)
         item_names = []
-        if not select or select == "files" or select == "both":
-          for item in files:
-            item_names.append(item.fullname.value)
-        if select == "dirs" or select == "both":
-          for item in dirs:
-            item_names.append(item.fullname.value)
-        if select == "both":
-          item_names = list(set(item_names)) # remove duplicates
+        if not kind or kind == "files" or kind == "both":
+            for item in files:
+                item_names.append(item.fullname.value)
+        if kind == "dirs" or kind == "both":
+            for item in dirs:
+                item_names.append(item.fullname.value)
+        if kind == "both":
+            item_names = list(set(item_names))  # remove duplicates
         return item_names
 
 

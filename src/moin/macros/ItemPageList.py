@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-ItemPageList - return a list of child pages to the specified page.
+ItemPageList - Replaced by a list of links to a specified page's descendents.
 
   Only child pages the user has access to are returned.  If there are no
   child pages to return, then it displays "This page has no children.".
@@ -14,7 +14,8 @@ Parameters:
 
 
     startswith: the substring the item's descendents must begin with.
-                If no value is specified, then no name-filtering is applied.
+                If no value is specified, then no startswith-filtering
+                is applied.
 
     regex: a regular expresssion the item's descendents must match.
            If no value is specified, then no regex-filtering is applied.
@@ -45,8 +46,14 @@ Parameters:
             of numbers.  The default is the empty string.  Other likely
             choices are space (' ') and dash ('-').
 
-    Note: All parameter values must be bracketed by matching quotes!
-          Singlequote or doublequotes are okay.
+Notes:
+
+    All parameter values must be bracketed by matching quotes.  Singlequote
+    or doublequotes are okay.
+
+    The "startswith" and "regex" filters may be used together.  The "startswith"
+    filter is more efficient, since it's passed into the underlyng database query,
+    whereas the "regex" filter applied on the results returned from the database.
 
 Example:
 
@@ -56,6 +63,7 @@ Example:
 import re
 from flask import request
 from moin.macros._base import MacroPageLinkListBase
+
 
 class Macro(MacroPageLinkListBase):
     def macro(self, content, arguments, page_url, alternative):
@@ -71,14 +79,14 @@ class Macro(MacroPageLinkListBase):
         # process input
         args = []
         if arguments:
-          args = arguments[0].split(',')
+            args = arguments[0].split(',')
         for arg in args:
             try:
-                key,val = [x.strip() for x in arg.split('=')]
+                key, val = [x.strip() for x in arg.split('=')]
             except ValueError:
                 raise ValueError('argument "%s" does not follow <key>=<val> format.' % arg)
 
-            if len(val)<2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
+            if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
                 raise ValueError('item value must be bracketed by matching quotes.')
             val = val[1:-1]  # strip out the doublequote characters
 
@@ -104,14 +112,14 @@ class Macro(MacroPageLinkListBase):
 
         # use curr page if not specified
         if item is None:
-          item = request.path[1:]
+            item = request.path[1:]
 
         # process child pages
-        children=self.get_item_names(item, startswith)
+        children = self.get_item_names(item, startswith)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
-            except:
+            except re.error as err:
                 raise ValueError("Error in regex {0!r}: {1}".format(regex, err))
             newlist = []
             for child in children:
