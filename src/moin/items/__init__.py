@@ -857,6 +857,18 @@ class Item(object):
         return dirs, files
 
     def build_index_query(self, startswith=None, selected_groups=None, isglobalindex=False):
+        """
+        Builds a query string that can be passed to the storage search engine.
+
+        Input:
+           startswith: build query to select items that begin with the specified substring,
+                       or None if unconstrained.
+           selected_groups: ???
+           isglobalindex: ???
+
+        Output:
+          Returns a whoosh.query.Prefix object for the input parameters
+        """
         prefix = u'' if isglobalindex else self.subitem_prefixes[0]
         if startswith:
             query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
@@ -876,6 +888,19 @@ class Item(object):
         return query
 
     def get_index(self, startswith=None, selected_groups=None):
+        """
+        Get index enties for descendents of the matching items
+
+        Input:
+           startswith: select items whose names begin with the specifiedi
+                       substring, or None if unconstrained
+           selected_groups: ???
+
+        Output:
+           Returns two IndexEntry (i.e., collections.namedtuple) arrays:
+             - one for "files" (direct descendents that do not contain any descendents)
+             - one for "dirs" (direct descendents that also contain descendents)
+        """
         fqname = self.fqname
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
         query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)

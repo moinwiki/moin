@@ -43,6 +43,7 @@
     "GetVal",
     "MailTo",
     "PagenameList",
+    "ItemPageList",
     "RandomItem",
     "Verbatim"
   ],
