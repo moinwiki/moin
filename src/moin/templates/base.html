@@ -3,6 +3,7 @@
 {%- set head = snippets.head() %}
 {%- set scripts = snippets.scripts() %}
 {%- set stylesheets = snippets.stylesheets() %}
+{%- set favicon = snippets.favicon() %}
 
 {#- This allows child templates passing their header_search macro to the common layout (eg blog).
    If there is no header_search macro defined in child templates use the default one. #}
@@ -48,7 +49,7 @@
                 {%- block bootstrap_stylesheet -%}
                 {%- endblock -%}
 
-                <link rel="shortcut icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
+                {{ favicon }}
 
                 {%- block theme_stylesheets %}
                     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
