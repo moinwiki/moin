@@ -209,10 +209,6 @@ class TestFrontend(object):
         # TODO another test with valid rev1 and rev2 url args and an existing item is needed
         self._test_view('frontend.diffraw', status='404 NOT FOUND', data=[], viewopts=dict(item_name='DoesntExist'))
 
-    def test_favicon(self):
-        rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon', ], data=[])
-        assert rv.data.startswith('\x00\x00')  # "reserved word, should always be 0"
-
     def test_global_tags(self):
         self._test_view('frontend.global_tags')
 
