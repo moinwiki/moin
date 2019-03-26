@@ -153,17 +153,6 @@ class ProtectingMiddleware(object):
             if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
-    def search_bypass_ACL(self, q, idx_name=LATEST_REVS, **kw):
-        """
-        For use by notifications to produce diff, prevents traceback when editor changes ACLs
-        removing read permission for self.
-        """
-        for rev in self.indexer.search(q, idx_name, **kw):
-            rev = ProtectedRevision(self, rev)
-            if not (rev.allows(READ) or rev.allows(PUBREAD)):
-                logging.warning('User {0} updated {1} ACL removing read permission for self'.format(self.user.name[0], rev.fqname.value))
-            yield rev
-
     def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
         for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
             rev = ProtectedRevision(self, rev)
