@@ -32,7 +32,9 @@ To load test Moin2:
 
 
 import sys
-import urllib, urllib2
+import argparse
+import urllib
+import urllib2
 
 from locust import HttpLocust, Locust, TaskSet, TaskSequence, task, seq_task
 
@@ -268,29 +270,37 @@ class WebsiteUser(HttpLocust):
 
     def setup(self):
         """create Home and users/Home items"""
-        print '==== creating Home and users/Home items ===='
-        url = u"http://localhost:8080/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template=/"
-        data = urllib.urlencode({"content_form_data_text":"= users/Home =\n * created by Locust",
-                                 "comment":"",
-                                 "submit":"OK",
-                                 u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
-                                 "meta_form_itemtype":"default",
-                                 "meta_form_acl":"None",
-                                 "meta_form_tags":"None",
-                                 "meta_form_name":"Home",
-                                 "extra_meta_text":'{"namespace":"users","rev_number":1}',
-                                 })
-        content = urllib2.urlopen(url=url, data=data).read()
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--host', '-H')
+        args, unknown = parser.parse_known_args()
+        host = args.host
+        if host:
+            if host.endswith('/'):
+                host = host[:-1]
 
-        url = u"http://localhost:8080/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template=/"
-        data = urllib.urlencode({"content_form_data_text":"= Home =\n * created by Locust",
-                                 "comment":"",
-                                 "submit":"OK",
-                                 u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
-                                 "meta_form_itemtype":"default",
-                                 "meta_form_acl":"None",
-                                 "meta_form_tags":"None",
-                                 "meta_form_name":"Home",
-                                 "extra_meta_text":'{"namespace": "","rev_number": 1}',
-                                 })
-        content = urllib2.urlopen(url=url, data=data).read()
+            print '==== creating Home and users/Home ===='
+            url = host + u"/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template=/"
+            data = urllib.urlencode({"content_form_data_text":"= users/Home =\n * created by Locust",
+                                     "comment":"",
+                                     "submit":"OK",
+                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     "meta_form_itemtype":"default",
+                                     "meta_form_acl":"None",
+                                     "meta_form_tags":"None",
+                                     "meta_form_name":"Home",
+                                     "extra_meta_text":'{"namespace":"users","rev_number":1}',
+                                     })
+            content = urllib2.urlopen(url=url, data=data).read()
+
+            url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template=/"
+            data = urllib.urlencode({"content_form_data_text":"= Home =\n * created by Locust",
+                                     "comment":"",
+                                     "submit":"OK",
+                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     "meta_form_itemtype":"default",
+                                     "meta_form_acl":"None",
+                                     "meta_form_tags":"None",
+                                     "meta_form_name":"Home",
+                                     "extra_meta_text":'{"namespace": "","rev_number": 1}',
+                                     })
+            content = urllib2.urlopen(url=url, data=data).read()
