@@ -143,8 +143,10 @@ class UserSequence(TaskSequence):
     @seq_task(6)
     def create_home_page(self):
         # click link to users home page (home page has not been created: 404 expected)
-        response = self.client.get(self.user_home_page)
-        if not response.status_code == 404:
+        response = self.client.get(self.user_home_page, catch_response=True)
+        if response.status_code == 404:
+            response.success()
+        else:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
         # click MoinMoin markup link
         home_page_get = '/+modify/users/' + self.user_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default'
@@ -200,8 +202,10 @@ class UserSequence(TaskSequence):
     def create_new_page(self):
         # first get yields 404 status code
         new_item_name = 'Locust-' + self.user_name
-        response = self.client.get('/' + new_item_name)
-        if not response.status_code == 404:
+        response = self.client.get('/' + new_item_name, catch_response=True)
+        if response.status_code == 404:
+            response.success()
+        else:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
         # click MoinMoin markup link
         page_get = '/+modify/' + new_item_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default'
