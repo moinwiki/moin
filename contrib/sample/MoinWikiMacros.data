@@ -301,47 +301,138 @@ Pages starting with "ma":
 
 <<PagenameList(ma)>>
 
+
+
 === ItemPageList ===
+
+All of the examples below search for descendents under the top-level "OtherTextItems"
+item, the only sample item that contains descendents.
+
+The only parameter variation not illustrated is the the "UnCameled" display option to
+use a separator character between blocks of letters and blocks of numbers.  This
+variation is not illustrated because none of the sample descendents contain that
+pattern.
+
+
+===== The "ordered" parameter =====
+
 
 '''Markup:'''
 
 {{{
-An unordered list of links for all descendents of the top-level item, using
-the full name of each decendents:
+All items as an unordered list (the default):
 
-<<ItemPageList()>>
+<<ItemPageList(item="OtherTextItems")>>
 
-An ordered list of links for all descendents of the "Foo/Bar" item begining
-with the letter 'A' and containing the substring "abc", using the full name
-of each decendents:
+All items as an ordered list:
 
-<<ItemPageList(item="Foo/Bar", startswith="A", regex="abc", ordered='True')>>
-
-An unordered list links for all descendents of the "Foo/Bar" item, using
-the un-cameled text of each decendent's name, using a '-' character between
-blocks of letters and blocks of numbers.
-
-<<ItemPageList(item="Foo/Bar", display="UnCameled", numsep='-')>>
+<<ItemPageList(item="OtherTextItems" ordered="True")>>
 }}}
 
 '''Result:'''
 
-An unordered list of links for all descendents of the top-level item, using
-the full name of each decendents:
+All items as an unordered list (the default):
 
-<<ItemPageList()>>
+<<ItemPageList(item="OtherTextItems")>>
 
-An ordered list of links for all descendents of the "Foo/Bar" item begining
-with the letter 'A' and containing the substring "abc", using the full name
-of each decendents:
+All items as an ordered list:
 
-<<ItemPageList(item="Foo/Bar", startswith="A", regex="abc", ordered='True')>>
+<<ItemPageList(item="OtherTextItems", ordered="True")>>
 
-An unordered list links for all descendents of the "Foo/Bar" item, using
-the un-cameled text of each decendent's name, using a '-' character between
-blocks of letters and blocks of numbers.
 
-<<ItemPageList(item="Foo/Bar", display="UnCameled", numsep='-')>>
+===== The "startswith" parameter =====
+
+Search for when the descendent's name begins with the letter 'P'.  Note that using
+the "startswith" parameter is more efficient than the equivalent "regex" expression:
+
+'''Markup:'''
+
+{{{
+<<ItemPageList(item="OtherTextItems", startswith="P")>>
+}}}
+
+'''Result:'''
+
+<<ItemPageList(item="OtherTextItems", startswith="P")>>
+
+
+===== The "regex" parameter =====
+
+'''Markup:'''
+
+{{{
+Those items containing the string "Text" anywhere in the full path name:
+
+<<ItemPageList(item="OtherTextItems", regex="Text")>>
+
+Those items containing the string "Text" only in the descendent's name:
+
+<<ItemPageList(item="OtherTextItems", regex="^.*/.*Text")>>
+
+Those items containing a vowel as the 3rd-to-last character:
+
+<<ItemPageList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
+}}}
+
+'''Result:'''
+
+Those items containing the string "Text" anywhere in the full path name:
+
+<<ItemPageList(item="OtherTextItems", regex="Text")>>
+
+Those items containing the string "Text" only in the descendent's name:
+
+<<ItemPageList(item="OtherTextItems", regex="^.*/.*Text")>>
+
+Those items containing a vowel as the 3rd-to-last character:
+
+<<ItemPageList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
+
+
+===== The "display" parameter =====
+
+All of the following examples display just the "PlainText" item.
+
+'''Markup:'''
+
+{{{
+Displayed using "FullPath" (the default, see examples above):
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
+
+Displayed using "FullPath":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
+
+Displayed using "ChildName":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
+
+Displayed using "UnCameled":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+}}}
+
+'''Result:'''
+
+Displayed using "FullPath":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
+
+Displayed using "FullPath":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
+
+Displayed using "ChildName":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
+
+Displayed using "UnCameled":
+
+<<ItemPageList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+
+
+
 
 === RandomItem ===
 
