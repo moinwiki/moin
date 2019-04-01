@@ -126,7 +126,7 @@ class MacroPageLinkListBase(MacroBlockBase):
 
     def get_item_names(self, name='', startswith='', kind='files'):
         """
-        For the specified item, return the fullname of natching descndents.
+        For the specified item, return the fullname of matching descndents.
 
         Input:
 
