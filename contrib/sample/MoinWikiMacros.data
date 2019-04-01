@@ -308,11 +308,6 @@ Pages starting with "ma":
 All of the examples below search for descendents under the top-level "OtherTextItems"
 item, the only sample item that contains descendents.
 
-The only parameter variation not illustrated is the the "UnCameled" display option to
-use a separator character between blocks of letters and blocks of numbers.  This
-variation is not illustrated because none of the sample descendents contain that
-pattern.
-
 
 ===== The "ordered" parameter =====
 

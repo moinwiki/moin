@@ -71,7 +71,7 @@ class MacroInlineOnlyBase(MacroBase):
 
 
 class MacroPageLinkListBase(MacroBlockBase):
-    def create_pagelink_list(self, pagenames, ordered=False, display="FullPath", numsep=""):
+    def create_pagelink_list(self, pagenames, ordered=False, display="FullPath"):
         """ Creates an ET with a list of pagelinks from a list of pagenames.
 
             Parameters:
@@ -94,10 +94,6 @@ class MacroPageLinkListBase(MacroBlockBase):
                                   blocks of lowercase characters or numbers and an
                                   uppercase character.
                       PageTitle : Use the title from the first header in the linked page
-
-              numsep: if display is UnCameled, what separator string to use
-                      between a block of letters (upper or lower) preceding
-                      a block of numbers.  Default is the empty string.
             """
 
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
@@ -116,7 +112,7 @@ class MacroPageLinkListBase(MacroBlockBase):
             elif display == "UnCameled":
                 index = pagename.rfind('/')
                 tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[index+1:])  # space before a cap char
-                linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1>%s\g<2>" % numsep, tempname)
+                linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
             elif display == "PageTitle":
                 raise Exception("PageTitle isn't implemented yet.")
             else:

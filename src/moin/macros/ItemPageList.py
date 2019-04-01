@@ -41,11 +41,6 @@ Parameters:
             PageTitle : Use the title from the first header in the linked
                         page [*** NOT IMPLEMENTED YET ***]
 
-    numsep: Only if "display" is UnCameled, what separator string to use
-            between a block of letters (upper or lower) preceding a block
-            of numbers.  The default is the empty string.  Other likely
-            choices are space (' ') and dash ('-').
-
 Notes:
 
     All parameter values must be bracketed by matching quotes.  Singlequote
@@ -57,7 +52,7 @@ Notes:
 
 Example:
 
-    <<ItemPageList(item="Foo/Bar", ordered='True', display="UnCameled", numsep='')>>
+    <<ItemPageList(item="Foo/Bar", ordered='True', display="UnCameled")>>
 """
 
 import re
@@ -74,7 +69,6 @@ class Macro(MacroPageLinkListBase):
         regex = None
         ordered = False
         display = "FullPath"
-        numsep = ""
 
         # process input
         args = []
@@ -105,8 +99,6 @@ class Macro(MacroPageLinkListBase):
                     raise ValueError('value "ordered" must be "True" or "False".')
             elif key == "display":
                 display = val  # let 'create_pagelink_list' throw an exception if needed
-            elif key == "numsep":
-                numsep = val
             else:
                 raise ValueError('unrecognized key "%s".' % key)
 
@@ -128,4 +120,4 @@ class Macro(MacroPageLinkListBase):
             children = newlist
         if not children:
             return "This page has no children."
-        return self.create_pagelink_list(children, ordered, display, numsep)
+        return self.create_pagelink_list(children, ordered, display)
