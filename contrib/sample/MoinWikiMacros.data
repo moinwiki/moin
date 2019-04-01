@@ -321,7 +321,7 @@ An unordered list links for all descendents of the "Foo/Bar" item, using
 the un-cameled text of each decendent's name, using a '-' character between
 blocks of letters and blocks of numbers.
 
-<<ItemPageList("Foo/Bar", display="UnCameled", numsep='-')>>
+<<ItemPageList(item="Foo/Bar", display="UnCameled", numsep='-')>>
 }}}
 
 '''Result:'''
@@ -341,7 +341,7 @@ An unordered list links for all descendents of the "Foo/Bar" item, using
 the un-cameled text of each decendent's name, using a '-' character between
 blocks of letters and blocks of numbers.
 
-<<ItemPageList("Foo/Bar", display="UnCameled", numsep='-')>>
+<<ItemPageList(item="Foo/Bar", display="UnCameled", numsep='-')>>
 
 === RandomItem ===
 
