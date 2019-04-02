@@ -305,32 +305,70 @@ Pages starting with "ma":
 
 === ItemPageList ===
 
-All of the examples below search for descendents under the top-level "OtherTextItems"
-item, the only sample item that contains descendents.
+This section is partitioned into subsections, one for each ItemPageList parameter.
+
+Most of the examples below search for descendents under the top-level "OtherTextItems"
+item, the only sample-wiki item that contains a significant number of descendents.
 
 
-===== The "ordered" parameter =====
+===== The "item" parameter =====
 
 
 '''Markup:'''
 
 {{{
-All items as an unordered list (the default):
+The default is the current page:
 
-<<ItemPageList(item="OtherTextItems")>>
+<<ItemPageList()>>
 
-All items as an ordered list:
+An empty string gives the wiki root:
+
+<<ItemPageList(item="")>>
+
+An item that does not exist (potentially due to ACLs) produces a warning:
+
+<<ItemPageList(item="DoesNotExist")>>
+
+An item that has no children (potentially due to ACLs) produces a message stating so:
+
+<<ItemPageList(item="Home/subitem")>>
+}}}
+
+'''Result:'''
+
+The default is the current page:
+
+<<ItemPageList()>>
+
+An empty string gives the wiki root:
+
+<<ItemPageList(item="")>>
+
+An item that does not exist (potentially due to ACLs) produces a warning:
+
+<<ItemPageList(item="DoesNotExist")>>
+
+An item that has no children (potentially due to ACLs) produces a message stating so:
+
+<<ItemPageList(item="Home/subitem")>>
+
+
+===== The "ordered" parameter =====
+
+Lists are unordered (ordered="False") by default (see above for examples).
+
+'''Markup:'''
+
+{{{
+
+An ordered list:
 
 <<ItemPageList(item="OtherTextItems" ordered="True")>>
 }}}
 
 '''Result:'''
 
-All items as an unordered list (the default):
-
-<<ItemPageList(item="OtherTextItems")>>
-
-All items as an ordered list:
+An ordered list:
 
 <<ItemPageList(item="OtherTextItems", ordered="True")>>
 

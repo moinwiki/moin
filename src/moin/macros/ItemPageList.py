@@ -4,14 +4,16 @@
 """
 ItemPageList - Replaced by a list of links to a specified page's descendents.
 
+  Only items the user has access to are queryable.  If the specified item
+  does not exist, then it displays "Specified item does not exist.".
+
   Only child pages the user has access to are returned.  If there are no
-  child pages to return, then it displays "This page has no children.".
+  child pages to return, then it displays "Specified item has no children.".
 
 Parameters:
 
     item: the wiki item to select.  If no item is specified, then the
-          current page is used.
-
+          current page is used. 
 
     startswith: the substring the item's descendents must begin with.
                 If no value is specified, then no startswith-filtering
@@ -48,7 +50,7 @@ Notes:
 
     The "startswith" and "regex" filters may be used together.  The "startswith"
     filter is more efficient, since it's passed into the underlyng database query,
-    whereas the "regex" filter applied on the results returned from the database.
+    whereas the "regex" filter is applied on the results returned from the database.
 
 Example:
 
@@ -57,6 +59,8 @@ Example:
 
 import re
 from flask import request
+from flask import g as flaskg
+from moin.utils.interwiki import split_fqname
 from moin.macros._base import MacroPageLinkListBase
 
 
@@ -78,7 +82,7 @@ class Macro(MacroPageLinkListBase):
             try:
                 key, val = [x.strip() for x in arg.split('=')]
             except ValueError:
-                raise ValueError('argument "%s" does not follow <key>=<val> format.' % arg)
+                raise ValueError('argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg)
 
             if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
                 raise ValueError('item value must be bracketed by matching quotes.')
@@ -106,6 +110,11 @@ class Macro(MacroPageLinkListBase):
         if item is None:
             item = request.path[1:]
 
+        # test if item doesn't exist (potentially due to user's ACL, but that doesn't matter)
+        if item != "": # why are we retaining this behavior from PagenameList?
+          if not flaskg.storage.get_item(**(split_fqname(item).query)):
+              return "Specified item does not exist."
+
         # process child pages
         children = self.get_item_names(item, startswith)
         if regex:
@@ -119,5 +128,6 @@ class Macro(MacroPageLinkListBase):
                     newlist.append(child)
             children = newlist
         if not children:
-            return "This page has no children."
+            return "Specified item has no children."
         return self.create_pagelink_list(children, ordered, display)
+
