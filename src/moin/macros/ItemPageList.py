@@ -60,6 +60,7 @@ Example:
 import re
 from flask import request
 from flask import g as flaskg
+from moin.i18n import _, L_, N_
 from moin.utils.interwiki import split_fqname
 from moin.macros._base import MacroPageLinkListBase
 
@@ -82,10 +83,10 @@ class Macro(MacroPageLinkListBase):
             try:
                 key, val = [x.strip() for x in arg.split('=')]
             except ValueError:
-                raise ValueError('argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg)
+                raise ValueError(_('Argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg))
 
             if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
-                raise ValueError('item value must be bracketed by matching quotes.')
+                raise ValueError(_("The key's value must be bracketed by matching quotes."))
             val = val[1:-1]  # strip out the doublequote characters
 
             if key == "item":
@@ -100,11 +101,11 @@ class Macro(MacroPageLinkListBase):
                 elif val == "True":
                     ordered = True
                 else:
-                    raise ValueError('value "ordered" must be "True" or "False".')
+                    raise ValueError(_('The value must be "True" or "False". (got "%s")' % val))
             elif key == "display":
                 display = val  # let 'create_pagelink_list' throw an exception if needed
             else:
-                raise ValueError('unrecognized key "%s".' % key)
+                raise KeyError(_('Unrecognized key "%s".' % key))
 
         # use curr page if not specified
         if item is None:
@@ -113,7 +114,7 @@ class Macro(MacroPageLinkListBase):
         # test if item doesn't exist (potentially due to user's ACL, but that doesn't matter)
         if item != "": # why are we retaining this behavior from PagenameList?
           if not flaskg.storage.get_item(**(split_fqname(item).query)):
-              return "Specified item does not exist."
+              raise LookupError(_('The specified item "%s" does not exist.' % item))
 
         # process child pages
         children = self.get_item_names(item, startswith)
@@ -121,13 +122,13 @@ class Macro(MacroPageLinkListBase):
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
             except re.error as err:
-                raise ValueError("Error in regex {0!r}: {1}".format(regex, err))
+                raise ValueError(_("Error in regex {0!r}: {1}".format(regex, err)))
             newlist = []
             for child in children:
                 if regex_re.search(child):
                     newlist.append(child)
             children = newlist
         if not children:
-            return "Specified item has no children."
+            return _("This item has no accessible child pages.")
         return self.create_pagelink_list(children, ordered, display)
 

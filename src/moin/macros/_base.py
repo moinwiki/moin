@@ -5,13 +5,13 @@
 MoinMoin - Macro base class
 """
 
-from werkzeug.exceptions import abort
-
-from moin.utils import iri
-from moin.utils.tree import moin_page, xlink
-from moin.items import Item
-from moin.storage.middleware.protecting import AccessDenied
 import re
+from moin.utils import iri
+from moin.items import Item
+from moin.i18n import _, L_, N_
+from werkzeug.exceptions import abort
+from moin.utils.tree import moin_page, xlink
+from moin.storage.middleware.protecting import AccessDenied
 
 
 class MacroBase(object):
@@ -114,9 +114,9 @@ class MacroPageLinkListBase(MacroBlockBase):
                 tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[index+1:])  # space before a cap char
                 linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
             elif display == "PageTitle":
-                raise Exception("PageTitle isn't implemented yet.")
+                raise NotImplementedError(_('"PageTitle" is not implemented yet.'))
             else:
-                raise ValueError('unrecognized display value "%s".' % display)
+                raise KeyError(_('Unrecognized display value "%s".' % display))
 
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])
             item_body = moin_page.list_item_body(children=[pagelink])
