@@ -61,6 +61,7 @@ import re
 from flask import request
 from flask import g as flaskg
 from moin.i18n import _, L_, N_
+from moin.utils.tree import moin_page
 from moin.utils.interwiki import split_fqname
 from moin.macros._base import MacroPageLinkListBase
 
@@ -113,8 +114,8 @@ class Macro(MacroPageLinkListBase):
 
         # test if item doesn't exist (potentially due to user's ACL, but that doesn't matter)
         if item != "": # why are we retaining this behavior from PagenameList?
-          if not flaskg.storage.get_item(**(split_fqname(item).query)):
-              raise LookupError(_('The specified item "%s" does not exist.' % item))
+            if not flaskg.storage.get_item(**(split_fqname(item).query)):
+                raise LookupError(_('The specified item "%s" does not exist.' % item))
 
         # process child pages
         children = self.get_item_names(item, startswith)
@@ -129,6 +130,10 @@ class Macro(MacroPageLinkListBase):
                     newlist.append(child)
             children = newlist
         if not children:
-            return _("This item has no accessible child pages.")
+            empty_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
+            item_body = moin_page.list_item_body(children=[_("<No matching pages were found>")])
+            item = moin_page.list_item(children=[item_body])
+            empty_list.append(item)
+            return empty_list
         return self.create_pagelink_list(children, ordered, display)
 
