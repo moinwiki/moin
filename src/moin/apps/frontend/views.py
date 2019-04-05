@@ -142,13 +142,6 @@ Allow: /
 """, mimetype='text/plain')
 
 
-@frontend.route('/favicon.ico')
-def favicon():
-    # although we tell that favicon.ico is at /static/logos/favicon.ico,
-    # some browsers still request it from /favicon.ico...
-    return app.send_static_file('logos/favicon.ico')
-
-
 @frontend.route('/all')
 def global_views():
     """

@@ -301,6 +301,48 @@ Pages starting with "ma":
 
 <<PagenameList(ma)>>
 
+=== ItemPageList ===
+
+'''Markup:'''
+
+{{{
+An unordered list of links for all descendents of the top-level item, using
+the full name of each decendents:
+
+<<ItemPageList()>>
+
+An ordered list of links for all descendents of the "Foo/Bar" item begining
+with the letter 'A' and containing the substring "abc", using the full name
+of each decendents:
+
+<<ItemPageList(item="Foo/Bar", startswith="A", regex="abc", ordered='True')>>
+
+An unordered list links for all descendents of the "Foo/Bar" item, using
+the un-cameled text of each decendent's name, using a '-' character between
+blocks of letters and blocks of numbers.
+
+<<ItemPageList("Foo/Bar", display="UnCameled", numsep='-')>>
+}}}
+
+'''Result:'''
+
+An unordered list of links for all descendents of the top-level item, using
+the full name of each decendents:
+
+<<ItemPageList()>>
+
+An ordered list of links for all descendents of the "Foo/Bar" item begining
+with the letter 'A' and containing the substring "abc", using the full name
+of each decendents:
+
+<<ItemPageList(item="Foo/Bar", startswith="A", regex="abc", ordered='True')>>
+
+An unordered list links for all descendents of the "Foo/Bar" item, using
+the un-cameled text of each decendent's name, using a '-' character between
+blocks of letters and blocks of numbers.
+
+<<ItemPageList("Foo/Bar", display="UnCameled", numsep='-')>>
+
 === RandomItem ===
 
 '''Markup:'''

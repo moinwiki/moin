@@ -738,6 +738,8 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<ItemPageList()>>``                    | Inserts names for matching descendents of specified item.  |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowIcons()>>``                       | displays all icons in /static/img/icons directory          |
