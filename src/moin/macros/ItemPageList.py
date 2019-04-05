@@ -5,10 +5,9 @@
 ItemPageList - Replaced by a list of links to a specified page's descendents.
 
   Only items the user has access to are queryable.  If the specified item
-  does not exist, then it displays "Specified item does not exist.".
-
-  Only child pages the user has access to are returned.  If there are no
-  child pages to return, then it displays "Specified item has no children.".
+  has no children pages matching the filter, which may be due to filters or
+  access controls, the macro displays a list (to match context) containing a
+  single item having the string "<No matching pages were found>".
 
 Parameters:
 
