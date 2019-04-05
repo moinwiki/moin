@@ -13,7 +13,7 @@ ItemPageList - Replaced by a list of links to a specified page's descendents.
 Parameters:
 
     item: the wiki item to select.  If no item is specified, then the
-          current page is used. 
+          current page is used.
 
     startswith: the substring the item's descendents must begin with.
                 If no value is specified, then no startswith-filtering
@@ -113,7 +113,7 @@ class Macro(MacroPageLinkListBase):
             item = request.path[1:]
 
         # test if item doesn't exist (potentially due to user's ACL, but that doesn't matter)
-        if item != "": # why are we retaining this behavior from PagenameList?
+        if item != "":  # why are we retaining this behavior from PagenameList?
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
                 raise LookupError(_('The specified item "%s" does not exist.' % item))
 
@@ -136,4 +136,3 @@ class Macro(MacroPageLinkListBase):
             empty_list.append(item)
             return empty_list
         return self.create_pagelink_list(children, ordered, display)
-
