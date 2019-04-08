@@ -54,6 +54,7 @@ from __future__ import absolute_import, division
 import os
 import shutil
 import datetime
+import time
 
 from collections import Mapping
 
@@ -490,7 +491,7 @@ class IndexingMiddleware(object):
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async_=False):  # True
+    def index_revision(self, meta, content, backend_name, async_=True):
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -1144,6 +1145,14 @@ class Item(PropertiesMixin):
         self.indexer.index_revision(meta, content, backend_name)
         if not overwrite:
             self._current = self.indexer._document(revid=revid)
+            if self._current is None:
+                # under heavy loads, whoosh async writer may be delayed in writing indexes to storage
+                until = time.time() + 20.0
+                while time.time() < until and self._current is None:
+                    time.sleep(2)
+                    self._current = self.indexer._document(revid=revid)
+                if self._current is None:
+                    raise KeyError(revid + '- server overload or corrupt index')
         if return_rev:
             return Revision(self, revid)
 
@@ -1186,7 +1195,14 @@ class Revision(PropertiesMixin):
             else:
                 doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
                 if doc is None:
-                    raise KeyError
+                    # under heavy loads, whoosh async writer may be delayed in writing indexes to storage
+                    until = time.time() + 20.0
+                    while time.time() < until and doc is None:
+                        time.sleep(2)
+                        doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
+                    if doc is None:
+                        raise KeyError(revid + '- server overload or corrupt index')
+
         if is_current:
             revid = doc.get(REVID)
             if revid is None:
