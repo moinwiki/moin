@@ -54,6 +54,7 @@ from __future__ import absolute_import, division
 import os
 import shutil
 import datetime
+import time
 
 from collections import Mapping
 
@@ -94,6 +95,29 @@ INDEXES = [LATEST_REVS, ALL_REVS, ]
 VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
 VALIDATION_HANDLING = VALIDATION_HANDLING_WARN
+
+INDEXER_TIMEOUT = 20.0
+
+
+def get_indexer(fn, **kw):
+    """
+    Return a valid indexer or raise a KeyError.
+
+    Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
+    indexes to storage. Try several times before failing.
+
+    :param fn: the indexer function
+    :param **kw: "revid" is required, index name optional
+    """
+    until = time.time() + INDEXER_TIMEOUT
+    while True:
+        indexer = fn(**kw)
+        if indexer is not None:
+            break
+        time.sleep(2)
+        if time.time() > until:
+            raise KeyError(kw.get('revid', '') + ' - server overload or corrupt index')
+    return indexer
 
 
 def get_names(meta):
@@ -490,7 +514,7 @@ class IndexingMiddleware(object):
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async_=False):  # True
+    def index_revision(self, meta, content, backend_name, async_=True):
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -1143,7 +1167,7 @@ class Item(PropertiesMixin):
         meta[REVID] = revid
         self.indexer.index_revision(meta, content, backend_name)
         if not overwrite:
-            self._current = self.indexer._document(revid=revid)
+            self._current = get_indexer(self.indexer._document, revid=revid)
         if return_rev:
             return Revision(self, revid)
 
@@ -1184,9 +1208,8 @@ class Revision(PropertiesMixin):
             if is_current:
                 doc = item._current
             else:
-                doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
-                if doc is None:
-                    raise KeyError
+                doc = get_indexer(item.indexer._document, idx_name=ALL_REVS, revid=revid)
+
         if is_current:
             revid = doc.get(REVID)
             if revid is None:
