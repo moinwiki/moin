@@ -96,6 +96,29 @@ VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
 VALIDATION_HANDLING = VALIDATION_HANDLING_WARN
 
+INDEXER_TIMEOUT = 20.0
+
+
+def get_indexer(fn, **kw):
+    """
+    Return a valid indexer or raise a KeyError.
+
+    Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
+    indexes to storage. Try several times before failing.
+
+    :param fn: the indexer function
+    :param **kw: "revid" is required, index name optional
+    """
+    until = time.time() + INDEXER_TIMEOUT
+    while True:
+        indexer = fn(**kw)
+        if indexer is not None:
+            break
+        time.sleep(2)
+        if time.time() > until:
+            raise KeyError(kw.get('revid', '') + ' - server overload or corrupt index')
+    return indexer
+
 
 def get_names(meta):
     """
@@ -1144,15 +1167,7 @@ class Item(PropertiesMixin):
         meta[REVID] = revid
         self.indexer.index_revision(meta, content, backend_name)
         if not overwrite:
-            self._current = self.indexer._document(revid=revid)
-            if self._current is None:
-                # under heavy loads, whoosh async writer may be delayed in writing indexes to storage
-                until = time.time() + 20.0
-                while time.time() < until and self._current is None:
-                    time.sleep(2)
-                    self._current = self.indexer._document(revid=revid)
-                if self._current is None:
-                    raise KeyError(revid + '- server overload or corrupt index')
+            self._current = get_indexer(self.indexer._document, revid=revid)
         if return_rev:
             return Revision(self, revid)
 
@@ -1193,15 +1208,7 @@ class Revision(PropertiesMixin):
             if is_current:
                 doc = item._current
             else:
-                doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
-                if doc is None:
-                    # under heavy loads, whoosh async writer may be delayed in writing indexes to storage
-                    until = time.time() + 20.0
-                    while time.time() < until and doc is None:
-                        time.sleep(2)
-                        doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
-                    if doc is None:
-                        raise KeyError(revid + '- server overload or corrupt index')
+                doc = get_indexer(item.indexer._document, idx_name=ALL_REVS, revid=revid)
 
         if is_current:
             revid = doc.get(REVID)
