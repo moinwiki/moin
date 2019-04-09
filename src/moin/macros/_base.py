@@ -5,13 +5,13 @@
 MoinMoin - Macro base class
 """
 
-from werkzeug.exceptions import abort
-
-from moin.utils import iri
-from moin.utils.tree import moin_page, xlink
-from moin.items import Item
-from moin.storage.middleware.protecting import AccessDenied
 import re
+from moin.utils import iri
+from moin.items import Item
+from moin.i18n import _, L_, N_
+from werkzeug.exceptions import abort
+from moin.utils.tree import moin_page, xlink
+from moin.storage.middleware.protecting import AccessDenied
 
 
 class MacroBase(object):
@@ -71,7 +71,7 @@ class MacroInlineOnlyBase(MacroBase):
 
 
 class MacroPageLinkListBase(MacroBlockBase):
-    def create_pagelink_list(self, pagenames, ordered=False, display="FullPath", numsep=""):
+    def create_pagelink_list(self, pagenames, ordered=False, display="FullPath"):
         """ Creates an ET with a list of pagelinks from a list of pagenames.
 
             Parameters:
@@ -94,10 +94,6 @@ class MacroPageLinkListBase(MacroBlockBase):
                                   blocks of lowercase characters or numbers and an
                                   uppercase character.
                       PageTitle : Use the title from the first header in the linked page
-
-              numsep: if display is UnCameled, what separator string to use
-                      between a block of letters (upper or lower) preceding
-                      a block of numbers.  Default is the empty string.
             """
 
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
@@ -116,11 +112,11 @@ class MacroPageLinkListBase(MacroBlockBase):
             elif display == "UnCameled":
                 index = pagename.rfind('/')
                 tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[index+1:])  # space before a cap char
-                linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1>%s\g<2>" % numsep, tempname)
+                linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
             elif display == "PageTitle":
-                raise Exception("PageTitle isn't implemented yet.")
+                raise NotImplementedError(_('"PageTitle" is not implemented yet.'))
             else:
-                raise ValueError('unrecognized display value "%s".' % display)
+                raise KeyError(_('Unrecognized display value "%s".' % display))
 
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])
             item_body = moin_page.list_item_body(children=[pagelink])
@@ -130,7 +126,7 @@ class MacroPageLinkListBase(MacroBlockBase):
 
     def get_item_names(self, name='', startswith='', kind='files'):
         """
-        For the specified item, return the fullname of natching descndents.
+        For the specified item, return the fullname of matching descndents.
 
         Input:
 
