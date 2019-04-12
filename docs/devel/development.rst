@@ -85,10 +85,6 @@ add more tools, exercise tools
 
     ./m coding-std  # Windows: m coding-std
     git diff  # verify nothing changed
-* check for uncommitted API doc changes::
-
-    ./m api  # Windows m api
-    git diff  # verify nothing changed
 * revert any changes from above::
 
     git reset --hard
