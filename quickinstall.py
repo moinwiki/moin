@@ -150,7 +150,7 @@ def search_for_phrase(filename):
     files = {
         # filename: (list of phrases)
         # Note: phrases must be lower-case
-        QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', ),
+        QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', 'no such option', ),
         NEWWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         BACKUPWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
@@ -624,8 +624,6 @@ class QuickInstall(object):
             '--editable',
             self.dir_source,
         ]
-        if pip_version >= [1, 5]:
-            args += ['--process-dependency-links', ]
         if pip_version >= [9, 0]:
             args += ['--upgrade-strategy=eager', ]
         subprocess.check_call(args)
