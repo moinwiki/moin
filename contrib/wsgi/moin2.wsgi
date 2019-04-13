@@ -43,7 +43,7 @@ if not os.path.exists(wiki_config):
 print '== wiki_config path =', wiki_config, '=='
 
 # application is the Flask application
-from MoinMoin.app import create_app
+from moin.app import create_app
 application = create_app(wiki_config)
 
 # please note: if you want to do some wsgi app wrapping, do it like shown below:
