@@ -1,8 +1,8 @@
 {
-    "identifier":   "goochie",
+    "identifier":   "dokuized",
     "application":  "moin",
-    "name":         "Goochie Theme",
-    "description":  "An ultra clean/minimal theme.  The idea is to not need to have different views for screen-widths or user.",
+    "name":         "Dokunized Theme",
+    "description":  "An ultra clean/minimal theme, inspired by the Doku wiki theme.",
     "author":       "Kent Watsen",
     "website":      "http://moinmo.in/",
     "license":      "see MoinMoin license",
