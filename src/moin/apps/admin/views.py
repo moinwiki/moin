@@ -14,6 +14,7 @@ This shows the user interface for wiki admins.
 from collections import namedtuple
 
 from flask import request, url_for, flash, redirect
+from flask import Response
 from flask import current_app as app
 from flask import g as flaskg
 
