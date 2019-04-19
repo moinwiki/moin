@@ -105,6 +105,10 @@ class Config(DefaultConfig):
     # send tracebacks to admins
     email_tracebacks = False
 
+    # options for new user registration
+    # registration_only_by_superuser = True  # disables self-registration, recommended for public wikis on internet
+    # registration_hint = u'To request an account, see bottom of <a href="/Home">Home</a> page.'
+
     # add or remove packages - see https://bitbucket.org/thomaswaldmann/xstatic for info about xstatic
     # it is uncommon to change these because of local customizations
     from xstatic.main import XStatic

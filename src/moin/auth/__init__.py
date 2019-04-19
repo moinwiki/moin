@@ -260,7 +260,10 @@ class MoinAuth(BaseAuth):
             return ContinueLogin(user_obj, _("Invalid username or password."))
 
     def login_hint(self):
-        msg = _('If you do not have an account, <a href="%(register_url)s">you can create one now</a>. ',
+        if app.cfg.registration_only_by_superuser:
+            msg = app.cfg.registration_hint + ' '
+        else:
+            msg = _('If you do not have an account, <a href="%(register_url)s">you can create one now</a>. ',
                 register_url=url_for('frontend.register'))
         msg += _('<a href="%(recover_url)s">Forgot your password?</a>',
                  recover_url=url_for('frontend.lostpass'))

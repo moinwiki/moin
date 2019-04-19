@@ -2,6 +2,7 @@
 {% block content %}
     <h1>{{ _("Admin Menu") }}</h1>
     <ul>
+        <li><a href="{{ url_for('admin.register_new_user') }}">{{ _("Register New User") }}</a></li>
         <li><a href="{{ url_for('admin.userbrowser') }}">{{ _("Users") }}</a></li>
         <li><a href="{{ url_for('admin.groupbrowser') }}">{{ _("Groups") }}</a></li>
         <li><a href="{{ url_for('admin.item_acl_report') }}">{{ _("Item ACLs") }}</a></li>
