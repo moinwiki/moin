@@ -395,6 +395,25 @@ Definition Lists
  - Using the prescribed Moin Wiki markup will, in fact, produce two
    separate definitions in MoinMoin (using separate ``<dd>`` tags).
 
+Horizontal Rules
+================
+
+To create a horizontal rule, start a line with 4 or more hyphen (-) characters. Nine (or more) characters creates a line of maximum height.
+
+**Markup**: ::
+
+ Text
+ ----
+ Text
+
+**Result**:
+
+Text
+
+----
+
+Text
+
 Tables
 ======
 
