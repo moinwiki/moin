@@ -14,6 +14,11 @@ import pytest
     'url_for_args,status,data',
     (
         (
+            {'endpoint': 'admin.register_new_user'},
+            '403 FORBIDDEN',
+            ('<html>', '</html>'),
+        ),
+        (
             {'endpoint': 'admin.index'},
             '403 FORBIDDEN',
             ('<html>', '</html>'),

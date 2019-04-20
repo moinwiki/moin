@@ -64,6 +64,7 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import *  # noqa
+from moin.constants.rights import SUPERUSER
 from moin.utils import crypto, rev_navigation, close_file
 from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
@@ -1529,6 +1530,10 @@ def _using_moin_auth():
 
 @frontend.route('/+register', methods=['GET', 'POST'])
 def register():
+    if app.cfg.registration_only_by_superuser and not getattr(flaskg.user.may, SUPERUSER)():
+        # deny registration to bots
+        abort(404)
+
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 

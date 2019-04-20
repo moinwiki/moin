@@ -12,24 +12,36 @@ MoinMoin - admin views
 This shows the user interface for wiki admins.
 """
 from collections import namedtuple
+
 from flask import request, url_for, flash, redirect
+from flask import Response
 from flask import current_app as app
 from flask import g as flaskg
+
+from flatland.validation import Validator
+from flatland import Form
+
 from whoosh.query import Term, And
+
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
+from moin.apps.frontend.views import _using_moin_auth
 from moin import user
-from moin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
+from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
+                                 NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
+                                 ACTION_SAVE)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
 from moin.security import require_permission, ACLStringIterator
 from moin.utils.interwiki import CompositeName
+from moin.utils.crypto import make_uuid
 from moin.datastructures.backends.wiki_groups import WikiGroup
 from moin.datastructures.backends import GroupDoesNotExistError
 from moin.items import Item, acl_validate
 from moin.utils.interwiki import split_fqname
 from moin.config import default as defaultconfig
+from moin.forms import RequiredText, YourEmail
 
 
 @admin.route('/superuser')
@@ -40,7 +52,87 @@ def index():
 
 @admin.route('/user')
 def index_user():
-    return render_template('user/index_user.html', title_name=_(u"User"), flaskg=flaskg, NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES)
+    return render_template('user/index_user.html',
+                           title_name=_(u"User"),
+                           flaskg=flaskg,
+                           NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           )
+
+
+class ValidRegisterNewUser(Validator):
+    """
+    Validator for RegisterNewUserForm.
+    """
+    def validate(self, element, state):
+        if not (element['username'].valid and element['email'].valid):
+            return False
+        return True
+
+
+class RegisterNewUserForm(Form):
+    """
+    Simple user registration form for use by SuperUsers to create new accounts.
+    """
+    name = 'register_new_user'
+    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("User Name"), autofocus=True)
+    email = YourEmail
+    submit_label = L_('Register')
+    validators = [ValidRegisterNewUser()]
+
+
+@admin.route('/register_new_user', methods=['GET', 'POST', ])
+@require_permission(SUPERUSER)
+def register_new_user():
+    """
+    Create a new account and send email with link to create password.
+    """
+    if not _using_moin_auth():
+        return Response('No MoinAuth in auth list', 403)
+
+    title_name = _(u'Register New User')
+    FormClass = RegisterNewUserForm
+
+    if request.method in ['GET', 'HEAD']:
+        form = FormClass.from_defaults()
+    elif request.method == 'POST':
+        form = FormClass.from_flat(request.form)
+        if form.validate():
+            username = form['username'].value
+            email = form['email'].value
+            user_profile = user.UserProfile()
+            user_profile[ITEMID] = make_uuid()
+            user_profile[NAME] = [username, ]
+            user_profile[EMAIL] = email
+            user_profile[DISABLED] = False
+            user_profile[ACTION] = ACTION_SAVE
+
+            users = user.search_users(**{NAME_EXACT: username})
+            if users:
+                flash(_('User already exists'), 'error')
+            emails = None
+            if app.cfg.user_email_unique:
+                emails = user.search_users(email=email)
+                if emails:
+                    flash(_("This email already belongs to somebody else."), 'error')
+            if not(users or emails):
+                user_profile.save()
+                flash(_("Account for %(username)s created", username=username), "info")
+                form = FormClass.from_defaults()
+
+                u = user.User(auth_username=username)
+                if u.valid:
+                    is_ok, msg = u.mail_password_recovery()
+                    if not is_ok:
+                        flash(msg, "error")
+                    else:
+                        flash(L_("%(username)s has been sent a password recovery email.", username=username), "info")
+                else:
+                    flash(_("%(username)s is an invalid user, no email has been sent.", username=username), "error")
+
+    return render_template('admin/register_new_user.html',
+                           title_name=title_name,
+                           form=form,
+                           )
 
 
 @admin.route('/userbrowser')

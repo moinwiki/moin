@@ -273,18 +273,25 @@ When there is a need to start an ordered list at a specific number, use the form
 
 == Horizontal Rules ==
 
+To create a horizontal rule, start a line with 4 or more hyphen (-) characters. Nine (or more) 
+characters creates a line of maximum height.
+
 '''Markup:'''
 
 {{{
 ----
+text
 ------
+text
 ---------
 }}}
 
 '''Result:'''
 
 ----
+text
 ------
+text
 ---------
 
 == Tables ==
