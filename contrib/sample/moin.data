@@ -78,21 +78,38 @@
 
 == Transclusions ==
 
-Transcluded images can be positioned by using any of the classes left, center, right, top, middle, or bottom. 
+Transclusion syntax is defined as follows:
 
-  * Images can be resized on the client side by specifying an option of width=nn or height=nn where nn is the desired size in pixels. 
-  * If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of &w=nn or &h=nn where nn is the desired size in pixels.
+{{{
+{{<target>|<optional alternate text>|<optional parameters>}}
+
+{{bird.jpg|rare yellow bird|class=center}}
+}}}
+
+ * `<target>` is a relative or absolute URL pointing to an image, video, audio, or web page. 
+ * `<optional alternate text>` has several potential uses:
+   * Screen readers used by visually impaired users will speak the text.
+   * The alternate text may be displayed by the browser if the URL is broken.
+   * Search engine crawlers may use the text to index the page or image.
+ * `optional parameters` may be used to resize or position the target.
+   * Images or other targets can be resized on the client side by specifying an option of `width=nn` or `height=nn` where nn is the desired size in pixels.
+   * If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of `&w=nn` or `&h=nn` where nn is the desired size in pixels.
+   * Images embedded within text can be positioned relative to a line of text by using `class=bottom`, `class=top` or `class="middle"`. 
+   * Images displayed as block elements my be floated left or right by using `class="left"` or `class=right` respectively, or centered by using `class=center`.
 
 {{{#!wiki caution
-Most browsers will suppress transcluded content having a different protocol (HTTP/HTTPS) than the parent page. Some browsers may provide a warning icon or message.
+When transcluding content from a different web site,
+most browsers will suppress transcluded content having a protocol different 
+(HTTP/HTTPS) than the parent page. Some browsers may provide a warning 
+icon or message.
 }}}
 
 '''Markup:'''
 
 {{{
  1. Images are aligned to bottom {{png}} of text by default. 
- 1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
- 1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
+ 1. This image is the big logo floated to the right: {{svg|my svg|class=right}}
+ 1. Image aligned to top of text. {{jpeg||&w=75 class=top}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
@@ -101,8 +118,8 @@ Most browsers will suppress transcluded content having a different protocol (HTT
 '''Result:'''
 
  1. Images are aligned to bottom {{png}} of text by default. 
- 1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
- 1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
+ 1. This image is the big logo floated to the right: {{svg|my svg|class=right}}
+ 1. Image aligned to top of text. {{jpeg||&w=75 class=top}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
