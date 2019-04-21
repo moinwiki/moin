@@ -167,17 +167,48 @@ External Links
 Images and Transclusions
 ========================
 
+Transclusion syntax is defined as follows: ::
+
+  {{<target>|<optional alternate text>|<optional parameters>}}
+
+  {{bird.jpg|rare yellow bird|class=center}}
+
+
+- `<target>` is a relative or absolute URL pointing to an image, video, audio, or web page.
+- `<optional alternate text>` has several potential uses:
+
+   - Screen readers used by visually impaired users will speak the text.
+   - The alternate text may be displayed by the browser if the URL is broken.
+   - Search engine crawlers may use the text to index the page or image.
+- `optional parameters` may be used to resize or position the target.
+
+   - Images or other targets can be resized on the client side by specifying
+     an option of `width=nn` or `height=nn` where nn is the desired size in pixels.
+   - If Pillow is installed on the server, JPEG (or JPG) images can be resized
+     on the server by specifying an option of `&w=nn` or `&h=nn` where nn is the
+     desired size in pixels.
+   - Images embedded within text can be positioned relative to a line of text by
+     using `class=bottom`, `class=top` or `class="middle"`.
+   - Images displayed as block elements my be floated left or right by using
+     `class="left"` or `class=right` respectively, or centered by using `class=center`.
+
 +----------------------------------------------------+---------------------------------------+
 | Markup                                             | Comment                               |
 +====================================================+=======================================+
-| ``{{example.png}}``                                | Embed example.png inline              |
+| ``text {{example.png}} text``                      | Embed example.png inline              |
 +----------------------------------------------------+---------------------------------------+
-| ``{{https://static.moinmo.in/logos/moinmoin.png}}``| Embed example.png inline              |
+| ``text {{example.png||class=top height=96}} text`` | Embed example.png inline              |
++----------------------------------------------------+---------------------------------------+
+|                                                    |                                       |
+| ``{{example.png||class=center}}``                  | example.png as centered image         |
+|                                                    |                                       |
++----------------------------------------------------+---------------------------------------+
+| ``{{https://static.moinmo.in/logos/moinmoin.png}}``| example.png aligned left, not float   |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ItemName}}``                                   | Transclude (embed the contents of)    |
-|                                                    | ItemName inline.                      |
+|                                                    | ItemName                              |
 +----------------------------------------------------+---------------------------------------+
-| ``{{/SubItem}}``                                   | Transclude SubItem inline.            |
+| ``{{/SubItem}}``                                   | Transclude SubItem                    |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ example.jpg || width=20, height=100 }}``      | Resizes example.png by using HTML     |
 |                                                    | tag attributes                        |
@@ -187,9 +218,8 @@ Images and Transclusions
 |                                                    | installed.                            |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ https://moinmo.in/ || width=800 }}``          | Resizes the ``object`` which is       |
-|                                                    | embedded using HTML tags. Also markup |
-|                                                    | involving '&' parameters like ``&w``  |
-|                                                    | doesn't make much sense.              |
+|                                                    | embedded using HTML tags. Here markup |
+|                                                    | like ``&w=800`` will not work.        |
 +----------------------------------------------------+---------------------------------------+
 
 **Extra Info**:
