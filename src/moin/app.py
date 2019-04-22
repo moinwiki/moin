@@ -40,7 +40,8 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-if os.getcwd() not in sys.path:
+if os.getcwd() not in sys.path and '' not in sys.path:
+    # required in cases where wikiconfig_local.py imports wikiconfig_editme.py, see #698
     sys.path.append(os.getcwd())
 
 
