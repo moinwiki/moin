@@ -1,5 +1,8 @@
 {#
-    This template defines a textarea used to edit all text-like item types with the exception of html items.
+    This template defines a data_editor macro that is selected within content.py based on the item's content type.
+    It will be passed to the modify.html template.
+
+    A textarea is used to edit all text-like item types with the exception of html items.
 
     If the number of textarea rows is 0 (as defined by user settings or site default),
     then the textarea number of rows will be automatically increased/decreased to fit the

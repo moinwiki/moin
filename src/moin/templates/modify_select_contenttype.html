@@ -1,3 +1,11 @@
+{#
+    Renders a web page filled with content type choices. Thses include:
+        * Markup items ( MoinMoin, Creole, Markdown, ...)
+        * Other text (plain, diff, ...)
+        * Images (SVG, PNG, ...)
+        * etc
+#}
+
 {% extends theme("show.html") %}
 {% block content %}
     <h1>{{ _("Create new item named '%(name)s'", name=item_name) }}</h1>
