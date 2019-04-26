@@ -1,3 +1,10 @@
+{#
+    This template defines a data_editor macro that is selected within content.py based on the item's content type.
+    It will be passed to the modify.html template.
+
+    A specialized applet is used to edit anywikidraw items.
+#}
+
 {% macro data_editor(form, item_name) %}
     <p>
         <applet code="org.anywikidraw.moinmoin.MoinMoinDrawingApplet.class" codebase="."

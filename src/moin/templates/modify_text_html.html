@@ -1,4 +1,12 @@
-{% from 'modify_text.html' import data_editor as base_editor %}
+{#
+    This template defines extra_head and data_editor macros that are selected
+    within content.py based on the item's content type.
+    Both will be passed to the modify.html template.
+
+    The extra_head macro loads javascript and css files required by the CKEditor.
+
+    The data_editor macro defines the textarea used by the CKEditor to edit HTML items.
+#}
 
 {% macro extra_head() %}
     <script type="text/javascript" src="{{ url_for('serve.files', name='ckeditor', filename='ckeditor.js') }}"></script>
