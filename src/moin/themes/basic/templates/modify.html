@@ -94,7 +94,8 @@
                     {{ gen.input(form['comment'], type="text", class="form-control") }}
                 </div>
                 <div class="form-group">
-                    {{ forms.render_submit(form, value='Save', class='btn btn-primary', id='moin-save-text-button') }}
+                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label, class='moin-button moin-modify-submit') }}
+                    <button class="moin-button moin-cancel" type="button">{{ _("Cancel") }}</button>
                 </div>
             {% endif %}
 
@@ -106,4 +107,5 @@
     {%- if user.scroll_page_after_edit -%}
         <br id="moin-scroll-page-after-edit" />
     {%- endif %}
+    <input id="moin-item-name" value="{{ fqname }}" >
 {% endblock %}
