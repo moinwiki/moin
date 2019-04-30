@@ -12,6 +12,7 @@
 $(document).ready(function () {
     'use strict';
     var i18n_dict = {
+        "Cancel": "{{ _("Cancel") }}",
         "Hide comments": "{{ _("Hide comments") }}",
         "Show comments": "{{ _("Show comments") }}",
         "Hide transclusions": "{{ _("Hide transclusions") }}",

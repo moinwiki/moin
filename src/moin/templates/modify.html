@@ -52,7 +52,10 @@
                POSTs originate from their respective applets.
             #}
             {% if not form['content_form'].is_draw %}
-                {{ forms.render_submit(form, id='moin-save-text-button') }}
+                <div>
+                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label, class='moin-button moin-modify-submit') }}
+                    <button class="moin-button moin-cancel" type="button">{{ _("Cancel") }}</button>
+                </div>
                 <dl>
                     {{ forms.render(form['comment']) }}
                 </dl>
@@ -72,4 +75,5 @@
     {%- if user.scroll_page_after_edit -%}
         <br id="moin-scroll-page-after-edit" />
     {%- endif %}
+    <input id="moin-item-name" value="{{ fqname }}" >
 {% endblock %}

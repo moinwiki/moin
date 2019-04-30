@@ -69,6 +69,17 @@ function moinFontChangeOnReady() {
 }
 
 
+// executed on page ready, if this is a modify view add action to Cancel button
+function cancelEdit() {
+    "use strict";
+    $('.moin-cancel').click(function () {
+        // do not ask to leave page; any edits will be lost, but browser back button may restore edits
+        $('#moin-modify').removeClass('moin-changed-input');
+        window.location = '/' + $('#moin-item-name').val();
+    });
+}
+
+
 // Highlight currently selected link in side panel. Executed on page load
 MoinMoin.prototype.selected_link = function () {
     "use strict";
@@ -819,6 +830,8 @@ $(document).ready(function () {
     showAllOptions();
 
     aclSaveButtons();
+
+    cancelEdit();
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
