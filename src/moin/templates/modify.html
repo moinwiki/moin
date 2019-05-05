@@ -1,8 +1,10 @@
 {#
-    This template renders the web page used to modify an existing item or
-    create a new wiki item. Based upon content type, a data_editor macro is
-    passed that will generate a file upload option and/or a text editor
-    or specialized drawing tools to create/modify twikidraw, anywikidraw, svgdraw items.
+    This template renders the web page used to modify an existing item, preview
+    changes to a text item, or create a new wiki item.
+
+    Based upon content type, the data_editor macro that is passed will generate a
+    file upload option and/or a text editor, or specialized drawing tools to
+    create/modify twikidraw, anywikidraw, svgdraw items.
 
     If a new item, this page is displayed after the user navigates through a series of web pages to:
         * select item type (modify_select_itemtype.html), user may select default, ticket, blog
@@ -54,6 +56,8 @@
             {% if not form['content_form'].is_draw %}
                 <div>
                     {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label, class='moin-button moin-modify-submit') }}
+                    {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')") }}
                     <button class="moin-button moin-cancel" type="button">{{ _("Cancel") }}</button>
                 </div>
                 <dl>
@@ -69,6 +73,15 @@
             </dl>
         {{ gen.form.close() }}
     </div>
+
+    {% if preview_rendered %}
+        {# user clicked Preview button, show diff and modified item as draft #}
+        {{ utils.diff_table(preview_diffs) }}
+        <div class="moin-watermark">
+            {{ preview_rendered | safe }}
+        </div>
+    {% endif %}
+
 {% endblock %}
 
 {% block options_for_javascript %}

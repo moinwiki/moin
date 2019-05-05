@@ -1,37 +1,25 @@
-{% import "utils.html" as utils %}
+{#
+    Create the diff view when the user clicks the Item History diff button.
+    This template is used only if the item has a text content type.
 
-<table class="moin-diff">
-    <tr>
-        <td class="moin-diff-header">
-            {{ utils.show_older_rev_links(item_name, oldrev, rev_links) }}
-            {{ utils.show_meta(oldrev, do_rev=False) }}
-        </td>
-        <td class="moin-diff-header">
-            {{ utils.show_newer_rev_links(item_name, newrev, rev_links) }}
-            {{ utils.show_meta(newrev, do_rev=False) }}
-        </td>
-    </tr>
-    <tr>
-        <td class="moin-diff-removed"><span>{{ _('Deletions are marked like this.') }}</span></td>
-        <td class="moin-diff-added"><span>{{ _('Additions are marked like this.') }}</span></td>
-    </tr>
-    {% for llineno, lcontent, rlineno, rcontent in diffs %}
-        <tr class="moin-diff-line-number">
-            {# these links are to non-existant anchors, see diffScroll in common.js #}
-            <td><a href="#{{ llineno }}">{{ _('Line') }} {{ llineno }}:</a></td>
-            <td><a href="#{{ rlineno }}">{{ _('Line') }} {{ rlineno }}:</a></td>
-        </tr>
-        <tr>
-            <td class="moin-diff-removed">{{ lcontent }}</td>
-            <td class="moin-diff-added">{{ rcontent }}</td>
-        </tr>
-    {% endfor %}
-</table>
-{% if rev_links['r2_newer'] %}
-    <div>
+    For text documents, the display begins with a table showing revision info,
+    links to new/older revisions, and highlighted text differences.
+    The display ends with a rendered view of the newer revision.
+#}
+
+
+{% import "utils.html" as utils with context %}
+
+{{ utils.diff_table(diffs) }}
+
+{% if rev_links and rev_links['r2_newer'] %}
+    {# The rendered revision is not the current revision, show revision info again as the diff table may be long. #}
+    <div class="moin-diff-rev-info">
         {{ _('Revision') }}:
         {{ newrev.meta['rev_number'] or newrev.revid|shorten_id }} -
         {{ newrev.meta.mtime|datetimeformat }}
     </div>
 {% endif %}
+
+{# show rendered item #}
 {{ rendered | safe }}

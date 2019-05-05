@@ -214,7 +214,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 /* end transclusion wrapper overlays */
 
 /* diffs */
-.moin-diff { width: 99%; table-layout: fixed; }
+.moin-diff { width: 100%; table-layout: fixed; }
 .moin-diff-header { vertical-align: top; font-size: 92%; }
 .moin-diff-info { margin: .33em .25em; }
 .moin-diff-info-value { white-space: normal;: }
@@ -229,6 +229,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
     white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
 .moin-diff-removed span { background-color: #ffff80; }
 .moin-diff-highlight { background-color: #ffffc0; }
+.moin-diff-rev-info { background-color: #ffffc0; margin-top: 2em; }
 /* end diffs */
 
 /* misc moin css keywords */
@@ -526,6 +527,7 @@ form.upload_file button { display: none; }
 .moin-float-fix { clear: both; padding-top: .75em; }
 .moin-form  input[type="submit"].moin-modify-submit,
 .moin-form .moin-cancel { display: inline; clear: none; float: left; margin-right: 3em; margin-bottom: 1em; }
+.moin-watermark { background-image: url("../../../static/img/draft.png"); border: 1px solid #4e7da9; }
 
 #options dd { width: 10%; }
 #options dt { width: 60%; max-width: 40em; }

@@ -183,21 +183,20 @@ class Content(object):
     data = property(fget=get_data)
 
     @timed('conv_in_dom')
-    def internal_representation(self, attributes=None):
+    def internal_representation(self, attributes=None, preview=None):
         """
         Return the internal representation of a document using a DOM Tree
         """
-        hash_name = HASH_ALGORITHM
-        hash_hexdigest = self.rev.meta.get(hash_name)
-        if hash_hexdigest:
-            cid = cache_key(usage="internal_representation",
-                            hash_name=hash_name,
-                            hash_hexdigest=hash_hexdigest,
-                            attrs=repr(attributes))
-            doc = app.cache.get(cid)
-        else:
-            # likely a non-existing item
-            doc = cid = None
+        doc = cid = None
+        if preview is None:
+            hash_name = HASH_ALGORITHM
+            hash_hexdigest = self.rev.meta.get(hash_name)
+            if hash_hexdigest:
+                cid = cache_key(usage="internal_representation",
+                                hash_name=hash_name,
+                                hash_hexdigest=hash_hexdigest,
+                                attrs=repr(attributes))
+                doc = app.cache.get(cid)
         if doc is None:
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
@@ -210,7 +209,7 @@ class Content(object):
 
             # We can process the conversion
             links = Iri(scheme='wiki', authority='', path='/' + self.name)
-            doc = input_conv(self.rev, self.contenttype, arguments=attributes)
+            doc = input_conv(preview or self.rev, self.contenttype, arguments=attributes)
             # XXX is the following assuming that the top element of the doc tree
             # is a moin_page.page element? if yes, this is the wrong place to do that
             # as not every doc will have that element (e.g. for images, we just get
@@ -248,11 +247,11 @@ class Content(object):
             flaskg.clock.stop('highlight')
         return doc
 
-    def _render_data(self):
+    def _render_data(self, preview=None):
         try:
             from moin.converters import default_registry as reg
             # TODO: Real output format
-            doc = self.internal_representation()
+            doc = self.internal_representation(preview=preview)
             doc = self._expand_document(doc)
             flaskg.clock.start('conv_dom_html')
             html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))

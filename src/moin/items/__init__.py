@@ -45,6 +45,7 @@ from moin.utils.mime import Type
 from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from moin.utils.registry import RegistryBase
 from moin.utils.clock import timed
+from moin.utils.diff_html import diff as html_diff
 from moin.forms import RequiredText, OptionalText, JSON, Tags, Names
 from moin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
@@ -62,7 +63,7 @@ from moin.constants.itemtypes import (
 from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
 from moin.mail.sendmail import encodeSpamSafeEmail
 
-from .content import content_registry, Content, NonExistentContent, Draw
+from .content import content_registry, Content, NonExistentContent, Draw, Text
 from ..utils.pysupport import load_package_modules
 
 from moin import log
@@ -208,6 +209,7 @@ class BaseChangeForm(Form):
     # autofocus=True causes javascript autoscroll in textarea to fail when using Chrome, Opera, or Maxthon browsers
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
     submit_label = L_('OK')
+    preview_label = L_('Preview')
 
 
 class CreateItemForm(BaseChangeForm):
@@ -992,6 +994,8 @@ class Default(Contentful):
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
             abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
         method = request.method
+        preview_diffs = ''
+        preview_rendered = ''
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
@@ -1036,14 +1040,23 @@ class Default(Contentful):
                     data = unicode(data, m.group(1))
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
-                contenttype_qs = request.values.get('contenttype')
-                try:
-                    self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
-                except AccessDenied:
-                    abort(403)
+                if request.values.get('preview'):
+                    # user has clicked Preview button, add diff and rendered item
+                    item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
+                    old_text = item.content.data
+                    old_text = Text(self.contenttype, item=item).data_storage_to_internal(old_text)
+                    preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
+                    preview_rendered = item.content._render_data(preview=data)
                 else:
-                    close_file(self.rev.data)
-                    return redirect(url_for_item(**self.fqname.split))
+                    # user clicked OK/Save button
+                    contenttype_qs = request.values.get('contenttype')
+                    try:
+                        self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
+                    except AccessDenied:
+                        abort(403)
+                    else:
+                        close_file(self.rev.data)
+                        return redirect(url_for_item(**self.fqname.split))
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
             help = self.doc_link(*help)
@@ -1061,6 +1074,8 @@ class Default(Contentful):
                                form=form,
                                search_form=None,
                                help=help,
+                               preview_diffs=preview_diffs,
+                               preview_rendered=preview_rendered,
                                edit_rows=edit_rows,
                               )
 
