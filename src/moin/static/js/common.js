@@ -815,7 +815,19 @@ $(document).ready(function () {
 
     $('#moin-save-text-button').on('click', function () {
         $('#moin-modify').removeClass('moin-changed-input');
+        location.hash = '';
     });
+
+    // if this is preview: scroll to diff and mark textarea changed
+    if ($('#moin-preview-diff').length && $('#moin-modify').length) {
+        window.location = window.location.href.split('#')[0] + '#moin-preview-diff';
+        $('#moin-modify').addClass('moin-changed-input');
+    }
+
+    // hide preview button if this page does not contain a edit textarea
+    if (!$('.moin-edit-content').length) {
+        $('#moin-preview-text-button').hide();
+    }
 
     $(window).on('beforeunload', function () {
         if ($('.moin-changed-input').length) {
