@@ -20,7 +20,7 @@ Documentation (installation, configuration, user docs, api reference):
 
 Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
 
-* https://gitub.com/moinwiki/moin
+* https://github.com/moinwiki/moin
 
 Pastebin (temporary storage - do not use for code review or any long-term need):
 
