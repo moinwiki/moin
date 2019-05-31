@@ -17,8 +17,3 @@ wikiconfig.py in it).
 Reload your web app, and point your browser to your web site.
 
 Help wanted, fix this if there are errors or better ways.
-
-Bugs:
-
-1. http://MoinMoin2.pythonanywhere.com crashes when a non-ascii
-page name is accessed.
