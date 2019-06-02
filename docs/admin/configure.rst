@@ -58,17 +58,18 @@ Shown below are parts of the directory structure after cloning moin or unpacking
 The default uses the OS file system for storage of wiki data and indexes.
 The directories and files shown are referenced in this section of documentation related to configuration::
 
-    moin-2.0/                     # clone root or unpack directory
+    moin/                     # clone root or unpack directory
         contrib/
             interwiki/
                 intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
         docs/
             _build/
                 html/             # local copy of moin documentation, created by running "./m docs" command
-        MoinMoin/                 # large directory containing moin application code
+        src/
+            moin/                 # large directory containing moin application code
         wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
-            data/                 # wiki data is stored here
-            index/                # wiki indexes are stored here
+            data/                 # wiki data and metadata
+            index/                # wiki indexes
         wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
         wikiconfig.py             # main configuration file, modify this to add or change features
 
