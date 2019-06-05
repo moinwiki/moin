@@ -161,7 +161,7 @@ class Config(DefaultConfig):
 
     """
     secrets = {
-        'security/ticket': 'EnterDifferentSceretStringHere',
+        'security/ticket': 'EnterDifferentSecretStringHere',
     }
     """
 
