@@ -75,7 +75,7 @@ function cancelEdit() {
     $('.moin-cancel').click(function () {
         // do not ask to leave page; any edits will be lost, but browser back button may restore edits
         $('#moin-modify').removeClass('moin-changed-input');
-        window.location = '/' + $('#moin-item-name').val();
+        window.location = $('#moin-wiki-root').val() + '/' + $('#moin-item-name').val();
     });
 }
 
