@@ -576,6 +576,10 @@ class Commands(object):
         if os.path.isdir('wiki/data') or os.path.isdir('wiki/index'):
             shutil.rmtree('wiki/data')
             shutil.rmtree('wiki/index')
+            if os.path.isdir('wiki/preview'):
+                shutil.rmtree('wiki/preview')
+            if os.path.isdir('wiki/sql'):
+                shutil.rmtree('wiki/sql')
             print 'Wiki data successfully deleted.'
         else:
             print 'Wiki data not deleted because it does not exist.'
