@@ -58,7 +58,11 @@
                     {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label, class='moin-button moin-modify-submit') }}
                     {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
                         class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')") }}
-                    <button class="moin-button moin-cancel" type="button">{{ _("Cancel") }}</button>
+                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')") }}
+                    {% if draft_data %}
+                        <button class="moin-button moin-load-draft" type="button" >{{ _("Load Draft") }}</button>
+                    {% endif %}
                 </div>
                 <dl>
                     {{ forms.render(form['comment']) }}
@@ -88,5 +92,11 @@
     {%- if user.scroll_page_after_edit -%}
         <br id="moin-scroll-page-after-edit" />
     {%- endif %}
-    <input id="moin-item-name" value="{{ fqname }}" >
+    {%- if draft_data -%}
+        <textarea id="moin-draft-data">{{ draft_data }}</textarea>
+    {%- endif %}
+    {%- if lock_duration -%}
+        <input id="moin-lock_duration" value="{{ lock_duration }}" />
+    {%- endif %}
+    <input id="moin-item-name" value="{{ fqname }}" />
 {% endblock %}
