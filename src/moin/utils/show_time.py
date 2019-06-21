@@ -57,13 +57,12 @@ def format_date_time(utc_dt=None):
     if utc_dt is None:
         utc_dt = datetime.datetime.utcnow()
     user_tz = i18n.get_timezone()
+    fmt = '%Y-%m-%d %H:%M'
     if user_tz:
         tz = pytz.timezone(user_tz)
-        fmt = '%Y-%m-%d %H:%M'
     else:
         tz = pytz.utc
-        fmt = '%Y-%m-%d %H:%MZ'
+        fmt = fmt + 'Z'
     loc_dt = tz.localize(utc_dt)
     dt = loc_dt.strftime(fmt)
-    print '%s' % dt
     return dt
