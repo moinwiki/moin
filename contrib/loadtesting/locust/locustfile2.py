@@ -66,7 +66,6 @@ def format_date_time(dt=None):
         dt = datetime.datetime.now()
     fmt = '%Y-%m-%d %H:%M:%S'
     dt = dt.strftime(fmt)
-    print '%s' % dt
     return dt
 
 
@@ -81,7 +80,7 @@ class UserSequence(TaskSequence):
         self.message = ''
         # Home and users/Home have been created by setup, see below
         response = self.client.get("/Home")
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(1)
@@ -93,41 +92,41 @@ class UserSequence(TaskSequence):
         self.user_home_page = '/users/' + self.user_name
         print '==== starting user = %s ====' % self.user_name
         response = self.client.get("/+login")
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(2)
     def click_register(self):
         response = self.client.get("/+register")
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(3)
     def click_post_register(self):
         response = self.client.post("/+register",
-                                    {"register_username":self.user_name,
-                                     "register_password1":"locust123",
-                                     "register_password2":"locust123",
-                                     "register_email":self.user_email,
+                                    {"register_username": self.user_name,
+                                     "register_password1": "locust123",
+                                     "register_password2": "locust123",
+                                     "register_email": self.user_email,
                                     })
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(4)
     def click_login_again(self):
         response = self.client.get("/+login")
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(5)
     def click_post_login(self):
         response = self.client.post("/+login",
-                                    {"login_username":self.user_name,
-                                     "login_password":"locust123",
-                                     "login_submit":"1",
-                                     "login_nexturl":"/Home",
+                                    {"login_username": self.user_name,
+                                     "login_password": "locust123",
+                                     "login_submit": "1",
+                                     "login_nexturl": "/Home",
                                     })
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(6)
@@ -137,12 +136,12 @@ class UserSequence(TaskSequence):
         # click link to Home
         new_item_name = 'Home'
         response = self.client.get('/' + new_item_name)
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
         # click modify link
         page_get = '/+modify/' + new_item_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default'
         response = self.client.get(page_get)
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
         if 'is locked by' in response.content:
             # someone else has item locked for editing
@@ -156,23 +155,23 @@ class UserSequence(TaskSequence):
         new_page_post = '/+modify/' + new_item_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template='
 
         response = self.client.post(new_page_post,
-                                    {"content_form_data_text":new_content,
-                                     "comment":"my comment",
-                                     "submit":"OK",
+                                    {"content_form_data_text": new_content,
+                                     "comment": "my comment",
+                                     "submit": "OK",
                                      'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
-                                     "meta_form_itemtype":"default",
-                                     "meta_form_acl":"None",
-                                     "meta_form_tags":"lime, orange",
-                                     "meta_form_name":new_item_name,
-                                     "extra_meta_text":'{"namespace": ""}',
+                                     "meta_form_itemtype": "default",
+                                     "meta_form_acl": "None",
+                                     "meta_form_tags": "lime, orange",
+                                     "meta_form_name": new_item_name,
+                                     "extra_meta_text": '{"namespace": ""}',
                                      })
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
     @seq_task(7)
     def logout(self):
         response = self.client.get(u"/+logout?logout_submit=1")
-        if not response.status_code == 200:
+        if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
 
 
@@ -194,14 +193,14 @@ class WebsiteUser(HttpLocust):
 
             print '==== creating Home ===='
             url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-            data = urllib.urlencode({"content_form_data_text":"= Home =\n * created by Locust",
-                                     "comment":"",
-                                     "submit":"OK",
+            data = urllib.urlencode({"content_form_data_text": "= Home =\n * created by Locust",
+                                     "comment": "",
+                                     "submit": "OK",
                                      u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
-                                     "meta_form_itemtype":"default",
-                                     "meta_form_acl":"None",
-                                     "meta_form_tags":"None",
-                                     "meta_form_name":"Home",
-                                     "extra_meta_text":'{"namespace": "","rev_number": 1}',
+                                     "meta_form_itemtype": "default",
+                                     "meta_form_acl": "None",
+                                     "meta_form_tags": "None",
+                                     "meta_form_name": "Home",
+                                     "extra_meta_text": '{"namespace": "","rev_number": 1}',
                                      })
             content = urllib2.urlopen(url=url, data=data).read()
