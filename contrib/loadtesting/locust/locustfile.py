@@ -5,6 +5,12 @@ License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 This Locust test script may be used to identify bugs that may occur
 when multiple items are created or updated in rapid succession.
 
+This test requires user self-registration, set wikiconfig configuration to:
+    registration_only_by_superuser = False
+    user_email_verification = False
+    edit_locking_policy = 'lock'
+    edit_lock_time = 2  # or any number of minutes
+
 Running this script will register users, create user home pages,
 and create wiki items as part of the test. It is best to start with
 an empty wiki (./m new-wiki).
@@ -158,7 +164,7 @@ class UserSequence(TaskSequence):
         home_page_post = '/+modify/users/' + self.user_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template='
         response = self.client.post(home_page_post,
                                     {"content_form_data_text":new_content,
-                                     "comment":"yes",
+                                     "comment":"my comment",
                                      "submit":"OK",
                                      'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype":"default",
@@ -186,7 +192,7 @@ class UserSequence(TaskSequence):
         # update the page
         response = self.client.post(home_page,
                                     {"content_form_data_text":extra_content % self.user_name,
-                                     "comment":"yes",
+                                     "comment":"my homepage comment",
                                      "submit":"OK",
                                      u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype":"default",
@@ -283,7 +289,7 @@ class WebsiteUser(HttpLocust):
                 host = host[:-1]
 
             print '==== creating Home and users/Home ===='
-            url = host + u"/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template=/"
+            url = host + u"/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
             data = urllib.urlencode({"content_form_data_text":"= users/Home =\n * created by Locust",
                                      "comment":"",
                                      "submit":"OK",
@@ -296,7 +302,7 @@ class WebsiteUser(HttpLocust):
                                      })
             content = urllib2.urlopen(url=url, data=data).read()
 
-            url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template=/"
+            url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
             data = urllib.urlencode({"content_form_data_text":"= Home =\n * created by Locust",
                                      "comment":"",
                                      "submit":"OK",
