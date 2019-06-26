@@ -145,6 +145,10 @@ class Edit_Utils:
         con.commit()
         return con
 
+    def cursor_close(self):
+        """Call this to release cursor and avoid OperationalError: database is locked"""
+        self.cursor.close()
+
     def make_draft_name(self, rev_id):
         """Return a file name consisting of rev_id + user_name."""
         keepchars = ('-', '.', '_')

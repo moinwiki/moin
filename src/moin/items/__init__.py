@@ -1020,6 +1020,7 @@ class Default(Contentful):
             edit_utils.delete_draft()
             if app.cfg.edit_locking_policy == LOCK:
                 edit_utils.unlock_item(cancel=True)
+            edit_utils.cursor.close()
             return redirect(url_for_item(**self.fqname.split))
 
         if app.cfg.edit_locking_policy == LOCK:
@@ -1028,6 +1029,7 @@ class Default(Contentful):
                 flash(msg, "info")
             if not locked == LOCKED:
                 # edit locking policy is True and someone else has file locked
+                edit_utils.cursor.close()
                 return redirect(url_for_item(self.name))
         elif method in ['GET', 'HEAD']:
             # if there is not a draft row, create one to aid in conflict detection
@@ -1036,6 +1038,7 @@ class Default(Contentful):
         if isinstance(self.rev, DummyRev):
             template_name = request.values.get(TEMPLATE)
             if template_name is None:
+                edit_utils.cursor.close()
                 return self._do_modify_show_templates()
             # template_name == u'' when user chooses "create item from scratch"
             elif template_name:
@@ -1055,10 +1058,12 @@ class Default(Contentful):
                 try:
                     self.content.handle_post()
                 except AccessDenied:
+                    edit_utils.cursor.close()
                     abort(403)
                 else:
                     # *Draw Applets POSTs more than once, redirecting would
                     # break them
+                    edit_utils.cursor.close()
                     return "OK"
 
             form = self.ModifyForm.from_request(request)
@@ -1092,6 +1097,7 @@ class Default(Contentful):
                             edit_utils.delete_draft()
                             if app.cfg.edit_locking_policy == LOCK:
                                 edit_utils.unlock_item(cancel=True)
+                            edit_utils.cursor.close()
                             return redirect(url_for_item(**self.fqname.split))
 
                         if rev_number < self.meta.get('rev_number', 0):
@@ -1108,6 +1114,7 @@ class Default(Contentful):
                     try:
                         self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
                     except AccessDenied:
+                        edit_utils.cursor.close()
                         abort(403)
                     else:
                         close_file(self.rev.data)
@@ -1117,6 +1124,7 @@ class Default(Contentful):
                             if locked_msg:
                                 logging.error("Item saved but locked by someone else: {0!r}".format(self.fqname))
                                 flash(locked_msg, "info")
+                        edit_utils.cursor.close()
                         return redirect(url_for_item(**self.fqname.split))
 
         # prepare to show modify.html form, request is either +Modify GET or Preview (Save and Cancel processing complete)
@@ -1149,6 +1157,7 @@ class Default(Contentful):
         else:
             lock_duration = None
         # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
+        edit_utils.cursor.close()
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,
