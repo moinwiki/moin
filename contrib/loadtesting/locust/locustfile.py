@@ -175,7 +175,6 @@ class UserSequence(TaskSequence):
                                      })
         if response.status_code != 200:
             print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
-            # print response.text.split('<h1')[1][:200]
 
     @seq_task(7)
     @task(4)
