@@ -412,11 +412,12 @@ options_no_group_name = {
         ('template_dirs', [], "list of directories with templates that will override theme and base templates."),
     )),
     # ==========================================================================
-    # 'editor': ('Editor', None, (
-    #     ('item_license', u'', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
-    #     # ('edit_locking', 'warn 10', "Editor locking policy: 'None', 'warn <timeout in minutes>', or 'lock <timeout in minutes>'"),
-    #     ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
-    # )),
+    'editor': ('Editor', None, (
+        ('edit_locking_policy', 'lock', "Editor locking policy: None or 'lock'"),  # 'warn' as in 1.9.x is not supported
+        ('edit_lock_time', 10, "Time, in minutes, to hold or renew edit lock at start of edit or preview"),
+        # ('item_license', u'', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
+        # ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
+    )),
     # ==========================================================================
     'paging': ('Paging', None, (
         ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
