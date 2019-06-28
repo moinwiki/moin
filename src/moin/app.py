@@ -286,4 +286,9 @@ def teardown_wiki(response):
     except AttributeError:
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass
+    if hasattr(flaskg, 'edit_utils'):
+        try:
+            flaskg.edit_utils.db.close()
+        except AttributeError:
+            pass
     return response

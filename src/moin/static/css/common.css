@@ -526,6 +526,7 @@ form.upload_file button { display: none; }
 .moin-form dl  { margin-bottom: 2em; }
 .moin-float-fix { clear: both; padding-top: .75em; }
 .moin-form  input[type="submit"].moin-modify-submit,
+.moin-form .moin-load-draft,
 .moin-form .moin-cancel { display: inline; clear: none; float: left; margin-right: 3em; margin-bottom: 1em; }
 .moin-watermark { background-image: url("../../../static/img/draft.png"); border: 1px solid #4e7da9; }
 

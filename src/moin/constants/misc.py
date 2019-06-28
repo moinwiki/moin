@@ -46,3 +46,8 @@ URI_SCHEMES = [
     'notes',
     'rtp', 'rtsp', 'rtcp',
 ]
+
+# "ok" constants returned by /utils/edit_locking as in: ok, message = edit_utils.xxx()
+NO_LOCK = 0  # false, someone else holds lock for current item
+LOCKED = 1  # true, current user has obtained or renewed lock
+LOCK = 'lock'

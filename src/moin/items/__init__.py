@@ -36,16 +36,19 @@ from jinja2 import Markup
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
+from moin.constants.misc import NO_LOCK, LOCKED, LOCK
 from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_, N_
 from moin.themes import render_template
-from moin.utils import rev_navigation, close_file
+from moin.utils import rev_navigation, close_file, show_time
+from moin.utils.edit_locking import Edit_Utils
 from moin.utils.mime import Type
 from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
 from moin.utils.registry import RegistryBase
 from moin.utils.clock import timed
 from moin.utils.diff_html import diff as html_diff
+from moin.utils import diff3
 from moin.forms import RequiredText, OptionalText, JSON, Tags, Names
 from moin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
@@ -210,6 +213,7 @@ class BaseChangeForm(Form):
     comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
     submit_label = L_('OK')
     preview_label = L_('Preview')
+    cancel_label = L_('Cancel')
 
 
 class CreateItemForm(BaseChangeForm):
@@ -993,9 +997,8 @@ class Default(Contentful):
     def do_modify(self):
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
             abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
+
         method = request.method
-        preview_diffs = ''
-        preview_rendered = ''
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
                 return render_template('modify_select_contenttype.html',
@@ -1005,33 +1008,64 @@ class Default(Contentful):
                                        group_names=content_registry.group_names,
                                        groups=content_registry.groups,
                                       )
-            item = self
-            if isinstance(self.rev, DummyRev):
-                template_name = request.values.get(TEMPLATE)
-                if template_name is None:
-                    return self._do_modify_show_templates()
-                elif template_name:
-                    item = Item.create(template_name)
-                    form = self.ModifyForm.from_item(item)
-                    # replace template name with new item name and remove TEMPLATE tag
-                    form['meta_form']['name'] = self.names[0]
-                    form['meta_form']['tags'].remove(TEMPLATE)
-                else:
-                    # template_name == u'' when user chooses "create item from scratch"
-                    form = self.ModifyForm.from_item(item)
+
+        item = self
+        flaskg.edit_utils = edit_utils = Edit_Utils(self)
+
+        # these will be updated if user has clicked Preview
+        preview_diffs = ''
+        preview_rendered = ''
+
+        if request.values.get('cancel'):
+            edit_utils.delete_draft()
+            if app.cfg.edit_locking_policy == LOCK:
+                edit_utils.unlock_item(cancel=True)
+            edit_utils.cursor.close()
+            return redirect(url_for_item(**self.fqname.split))
+
+        if app.cfg.edit_locking_policy == LOCK:
+            locked, msg = edit_utils.lock_item()
+            if msg:
+                flash(msg, "info")
+            if not locked == LOCKED:
+                # edit locking policy is True and someone else has file locked
+                edit_utils.cursor.close()
+                return redirect(url_for_item(self.name))
+        elif method in ['GET', 'HEAD']:
+            # if there is not a draft row, create one to aid in conflict detection
+            edit_utils.put_draft(None, overwrite=False)
+
+        if isinstance(self.rev, DummyRev):
+            template_name = request.values.get(TEMPLATE)
+            if template_name is None:
+                edit_utils.cursor.close()
+                return self._do_modify_show_templates()
+            # template_name == u'' when user chooses "create item from scratch"
+            elif template_name:
+                item = Item.create(template_name)
+                form = self.ModifyForm.from_item(item)
+                # replace template name with new item name and remove TEMPLATE tag
+                form['meta_form']['name'] = self.names[0]
+                form['meta_form']['tags'].remove(TEMPLATE)
             else:
                 form = self.ModifyForm.from_item(item)
-        elif method == 'POST':
+        else:
+            form = self.ModifyForm.from_item(item)
+
+        if method == 'POST':
             # XXX workaround for *Draw items
             if isinstance(self.content, Draw):
                 try:
                     self.content.handle_post()
                 except AccessDenied:
+                    edit_utils.cursor.close()
                     abort(403)
                 else:
                     # *Draw Applets POSTs more than once, redirecting would
                     # break them
+                    edit_utils.cursor.close()
                     return "OK"
+
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
             if contenttype_guessed:
@@ -1041,22 +1075,59 @@ class Default(Contentful):
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
                 if request.values.get('preview'):
-                    # user has clicked Preview button, add diff and rendered item
-                    item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
-                    old_text = item.content.data
+                    # user has clicked Preview button, create diff and rendered item
+                    edit_utils.put_draft(data)
+                    old_item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
+                    old_text = old_item.content.data
                     old_text = Text(self.contenttype, item=item).data_storage_to_internal(old_text)
                     preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
                     preview_rendered = item.content._render_data(preview=data)
                 else:
-                    # user clicked OK/Save button
+                    # user clicked OK/Save button, check for conflicts,
+                    draft, draft_data = edit_utils.get_draft()
+                    if draft:
+                        u_name, i_id, i_name, rev_number, save_time, rev_id = draft
+                        if not rev_id == 'new-item':
+                            original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
+                            original_text = original_item.content.data
+                        else:
+                            original_text = u''
+                        if original_text == data:
+                            flash(_("Nothing changed, nothing saved."), "info")
+                            edit_utils.delete_draft()
+                            if app.cfg.edit_locking_policy == LOCK:
+                                edit_utils.unlock_item(cancel=True)
+                            edit_utils.cursor.close()
+                            return redirect(url_for_item(**self.fqname.split))
+
+                        if rev_number < self.meta.get('rev_number', 0):
+                            # we have conflict - someone else has saved item, create and save 3-way diff, give user error message to fix it
+                            saved_item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
+                            saved_text = saved_item.content.data
+                            data3 = diff3.text_merge(original_text, saved_text, data)
+                            data = data3
+                            comment = _("CONFLICT ") + comment or ''
+                            flash(_("An edit conflict has occurred, edit this item again to resolve conflicts."), "error")
+
+                    # save the new revision, unlock, delete draft
                     contenttype_qs = request.values.get('contenttype')
                     try:
                         self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
                     except AccessDenied:
+                        edit_utils.cursor.close()
                         abort(403)
                     else:
                         close_file(self.rev.data)
+                        edit_utils.delete_draft()
+                        if app.cfg.edit_locking_policy == LOCK:
+                            locked_msg = edit_utils.unlock_item()
+                            if locked_msg:
+                                logging.error("Item saved but locked by someone else: {0!r}".format(self.fqname))
+                                flash(locked_msg, "info")
+                        edit_utils.cursor.close()
                         return redirect(url_for_item(**self.fqname.split))
+
+        # prepare to show modify.html form, request is either +Modify GET or Preview (Save and Cancel processing complete)
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
             help = self.doc_link(*help)
@@ -1065,6 +1136,28 @@ class Default(Contentful):
         else:
             edit_rows = str(flaskg.user.profile._defaults[EDIT_ROWS])
         close_file(self.rev.data)
+        draft_data = None
+        if not request.values.get('preview'):
+            # request is +Modify GET, check for abandoned draft
+            draft, draft_data = edit_utils.get_draft()
+            if draft:
+                u_name, i_id, i_name, rev_number, save_time, rev_id = draft
+                if save_time:
+                    # if revno = current: you may recover a saved draft by clicking load draft button
+                    # if revno < current: a old draft is available, loading it will create a conflict that  must be merged manually
+                    interval, number = show_time.duration(time() - save_time)
+                    if self.rev.meta.get(REV_NUMBER, 0) == rev_number:
+                        flash(L_("You may recover your draft saved %(number)s %(interval)s ago by clicking the 'Load Draft' button.", number=number, interval=interval, ), 'info')
+                    else:
+                        flash(L_("Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to merge conflicting updates.", number=number, interval=interval, ), 'error')
+
+        if app.cfg.edit_locking_policy == LOCK:
+            # we pass lock_duration so javascript can show alert before timer expires
+            lock_duration = app.cfg.edit_lock_time * 60
+        else:
+            lock_duration = None
+        # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
+        edit_utils.cursor.close()
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,
@@ -1077,6 +1170,8 @@ class Default(Contentful):
                                preview_diffs=preview_diffs,
                                preview_rendered=preview_rendered,
                                edit_rows=edit_rows,
+                               draft_data=draft_data,
+                               lock_duration=lock_duration,
                               )
 
 

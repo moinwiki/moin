@@ -75,7 +75,7 @@ function cancelEdit() {
     $('.moin-cancel').click(function () {
         // do not ask to leave page; any edits will be lost, but browser back button may restore edits
         $('#moin-modify').removeClass('moin-changed-input');
-        window.location = '/' + $('#moin-item-name').val();
+        window.location = $('#moin-wiki-root').val() + '/' + $('#moin-item-name').val();
     });
 }
 
@@ -818,6 +818,15 @@ $(document).ready(function () {
         location.hash = '';
     });
 
+    // add function to be executed when user clicks Load Draft button on +modify page
+    $('.moin-load-draft').on('click', function () {
+        $('.moin-edit-content').val($('#moin-draft-data').val());
+        $('#moin-modify').addClass('moin-changed-input');
+        $('.moin-load-draft').hide();
+        $('#moin-flash .moin-flash').remove();
+        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Your saved draft has been loaded."));
+    });
+
     // if this is preview: scroll to diff and mark textarea changed
     if ($('#moin-preview-diff').length && $('#moin-modify').length) {
         window.location = window.location.href.split('#')[0] + '#moin-preview-diff';
@@ -829,11 +838,18 @@ $(document).ready(function () {
         $('#moin-preview-text-button').hide();
     }
 
+    // warn user about unsaved changes; if user leaves page with unsaved edits, edit lock remains until timeout
     $(window).on('beforeunload', function () {
         if ($('.moin-changed-input').length) {
             return _("All changes will be discarded!");
         }
     });
+
+    // give user 1 minute warning before edit lock expires
+    if ($("#moin-lock_duration").length) {
+        setTimeout(function() {
+            alert(_("Your edit lock will expire in 1 minute: ") + $('#moin-item-name').val())}, (($("#moin-lock_duration").val() - 60) * 1000));
+    }
 
     moinFontChangeOnReady();
 
@@ -847,4 +863,5 @@ $(document).ready(function () {
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
+
 });

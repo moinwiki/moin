@@ -39,21 +39,24 @@ from moin.utils.interwiki import InterWikiMap
 
 
 class Config(DefaultConfig):
-
-    # We assume this structure for a git clone or simple "unpack and run" scenario:
-    # moin-2.0/                     # wikiconfig_dir points here: clone root or unpack directory, contains this file.
-    #     wikiconfig.py             # the file you are reading now.
-    #     wiki/                     # instance_dir variable points here: created by running "./m sample" or "./m new-wiki" commands.
-    #         data/                 # data_dir variable points here.
-    #         index/                # index_storage variable points here.
-    #     contrib/
-    #         interwiki/
-    #             intermap.txt      # interwiki_map variable points here.
-    #     docs/
-    #         _build/
-    #             html/             # serve_files['docs']: html docs made by sphinx, create by running "./m docs" command.
-    #     wiki_local/               # serve_files['wiki_local']: store custom logos, CSS, templates, etc. here
-    # If that's not true, adjust these paths
+    """
+    We assume this structure for a git clone or simple "unpack and run" scenario:
+    moin/                     # clone root or unpack directory
+        contrib/
+            interwiki/
+                intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
+        docs/
+            _build/
+                html/             # local copy of moin documentation, created by running "./m docs" command
+        src/
+            moin/                 # large directory containing moin application code
+        wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
+            data/                 # wiki data and metadata
+            index/                # wiki indexes
+        wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
+        wikiconfig.py             # main configuration file, modify this to add or change features
+    If that's not true, adjust these paths
+    """
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data')
@@ -158,7 +161,7 @@ class Config(DefaultConfig):
 
     """
     secrets = {
-        'security/ticket': 'EnterDifferentSceretStringHere',
+        'security/ticket': 'EnterDifferentSecretStringHere',
     }
     """
 
