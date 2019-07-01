@@ -858,7 +858,7 @@ class Text(Binary):
         """ convert data from storage format to memory format """
         return data.decode(CHARSET).replace(u'\r\n', u'\n')
 
-    def _render_data_diff_html(self, oldrev, newrev, template, rev_links={}):
+    def _render_data_diff_html(self, oldrev, newrev, template, rev_links={}, fqname=None):
         """ Render HTML formatted meta and content diff of 2 revisions
 
         :param oldrev: old revision object
@@ -868,10 +868,10 @@ class Text(Binary):
         """
         from moin.items import Item  # XXX causes import error if placed near top
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
-        item = Item.create(newrev.meta['name'][0], rev_id=newrev.meta['revid'])
+        item = Item.create(fqname.fullname, rev_id=newrev.meta['revid'])
         rendered = Markup(item.content._render_data())
         return render_template(template,
-                               item_name=self.name,
+                               item_name=fqname.fullname,
                                oldrev=oldrev,
                                newrev=newrev,
                                diffs=diffs,
@@ -906,8 +906,8 @@ class Text(Binary):
         """ renders diff in HTML for atom feed """
         return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}):
-        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html', rev_links=rev_links)
+    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html', rev_links=rev_links, fqname=fqname)
 
     def _render_data_diff_text(self, oldrev, newrev):
         """ Render text diff of 2 revisions' contents
