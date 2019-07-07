@@ -23,8 +23,13 @@
                     Click to show history spanning item delete and recreate.
                 </p>
             {% else %}
+                {% if fqname.namespace %}
+                    {% set namespace = fqname.namespace + "/" %}
+                {% else %}
+                    {% set namespace = "" %}
+                {% endif %}
                 <p class="moin-no-print">
-                    <a class="moin-button" href="{{ url_for('frontend.history', item_name='@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
+                    <a class="moin-button" href="{{ url_for('frontend.history', item_name=namespace + '@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
                     Click to show history spanning item renames.
                 </p>
             {% endif %}

@@ -1,7 +1,13 @@
+{#
+    Diff for non-text items. May show simple text message indicating revisions are the same or
+    different or may show image diff for some types of images.
+#}
+
 {% extends theme("show.html") %}
+
 {% block content %}
     {% block headline %}
-        <h1>{{ _("Diff for '%(item_name)s'", item_name=newrev.item.name) }}</h1>
+        <h1>{{ _("Diff for '%(item_name)s'", item_name=fqname|shorten_fqname) }}</h1>
     {% endblock %}
     {{ diff_html }}
 {% endblock %}

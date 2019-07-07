@@ -21,6 +21,7 @@ from moin.items import Item
 from moin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
 from moin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.utils.interwiki import split_fqname
 
 
 class TestContent(object):
@@ -203,6 +204,7 @@ class TestText(object):
 
     def test__render_data_diff(self):
         item_name = u'Html_Item'
+        fqname = split_fqname(item_name)
         empty_html = u'<span></span>'
         html = u'<span>\ud55c</span>'
         meta = {CONTENTTYPE: u'text/html;charset=utf-8'}
@@ -212,17 +214,17 @@ class TestText(object):
         # Unicode test, html escaping
         rev1 = update_item(item_name, meta, html)
         rev2 = update_item(item_name, {}, u'     ')
-        result = Text._render_data_diff(item.content, rev1, rev2)
+        result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert escape(html) in result
         # Unicode test, whitespace
         rev1 = update_item(item_name, {}, u'\n\n')
         rev2 = update_item(item_name, {}, u'\n     \n')
-        result = Text._render_data_diff(item.content, rev1, rev2)
+        result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' in result
         # If fairly similar diffs are correctly spanned or not, also check indent
         rev1 = update_item(item_name, {}, u'One Two Three Four\nSix\n\ud55c')
         rev2 = update_item(item_name, {}, u'Two Three Seven Four\nSix\n\ud55c')
-        result = Text._render_data_diff(item.content, rev1, rev2)
+        result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert '<span>One </span>Two Three Four' in result
         assert 'Two Three <span>Seven </span>Four' in result
         # Check for diff_html.diff return types

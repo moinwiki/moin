@@ -845,7 +845,8 @@ class IndexingMiddleware(object):
         """
         if name.startswith('@itemid/'):
             return Item(self, **{ITEMID: name[8:]})
-        return Item(self, **{NAME_EXACT: name})
+        fqname = split_fqname(name)
+        return Item(self, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
 
     def get_item(self, **query):
         """

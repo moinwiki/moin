@@ -593,8 +593,6 @@ def get_assigned_to_info(meta):
 
 def shorten_fqname(fqname, length=25):
     """
-    Shorten fqname
-
     Shorten a given long fqname so that it looks good depending upon whether
     the field is a UUID or not.
 
@@ -603,6 +601,9 @@ def shorten_fqname(fqname, length=25):
     :rtype: unicode
     :returns: shortened fqname.
     """
+    if fqname.namespace and fqname.field in (REVID, ITEMID):
+        # users/@itemid12345678901234567890...12 > users/1234567
+        return fqname.namespace + '/' + shorten_id(fqname.value)
     name = fqname.fullname
     if len(name) > length:
         if fqname.field in [REVID, ITEMID]:
