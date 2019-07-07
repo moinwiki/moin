@@ -10,16 +10,27 @@
 
 {% import "utils.html" as utils with context %}
 
+
+{% macro revert_button() %}
+    {%- if rev_links and rev_links['r2_newer'] -%}
+        {# The rendered revision is not the current revision #}
+        <div class="moin-diff-revert">
+            <a class="moin-button" href="{{ url_for('frontend.revert_item', item_name=item_name, rev=newrev.meta.revid) }}" title="{{ _('revert') }}">
+                {{ _('Revert to Revision') }}
+                {{ newrev.meta['rev_number'] or newrev.revid|shorten_id }} -
+                {{ newrev.meta.mtime|datetimeformat }}
+            </a>
+        </div>
+        <div class="moin-float-fix"></div>
+    {%- endif -%}
+{% endmacro %}
+
+
+{{ revert_button() }}
+
 {{ utils.diff_table(diffs) }}
 
-{% if rev_links and rev_links['r2_newer'] %}
-    {# The rendered revision is not the current revision, show revision info again as the diff table may be long. #}
-    <div class="moin-diff-rev-info">
-        {{ _('Revision') }}:
-        {{ newrev.meta['rev_number'] or newrev.revid|shorten_id }} -
-        {{ newrev.meta.mtime|datetimeformat }}
-    </div>
-{% endif %}
+{{ revert_button() }}
 
 {# show rendered item #}
 {{ rendered | safe }}

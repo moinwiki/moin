@@ -229,7 +229,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
     white-space: pre-wrap; word-wrap: break-word; font-family: monospace; }
 .moin-diff-removed span { background-color: #ffff80; }
 .moin-diff-highlight { background-color: #ffffc0; }
-.moin-diff-rev-info { background-color: #ffffc0; margin-top: 2em; }
+.moin-diff-revert { clear: both; float: right; margin: 1em 0; }
 /* end diffs */
 
 /* misc moin css keywords */
