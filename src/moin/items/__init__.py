@@ -994,6 +994,27 @@ class Default(Contentful):
         filename = url_for('serve.files', name='docs', filename=filename)
         return u'<a href="%s">%s</a>' % (filename, link_text)
 
+    def meta_changed(self, meta):
+        """
+        Return true if user changed any of the following meta data:
+            comment, ACL, summary, tags, names
+        """
+        if request.values.get(COMMENT):
+            return True
+        if request.values.get('meta_form_acl') != meta.get('acl', 'None'):
+            return True
+        if request.values.get('meta_form_summary') != meta.get('summary', None):
+            return True
+        new_tags = request.values.get('meta_form_tags').replace(" ", "").split(',')
+        if new_tags == [u""]:
+            new_tags = []
+        if new_tags != meta.get('tags', None):
+            return True
+        new_name = request.values.get('meta_form_name').replace(" ", "").split(',')
+        if new_name != meta.get('name', None):
+            return True
+        return False
+
     def do_modify(self):
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
             abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
@@ -1092,7 +1113,7 @@ class Default(Contentful):
                             original_text = original_item.content.data
                         else:
                             original_text = u''
-                        if original_text == data:
+                        if original_text == data and not self.meta_changed(item.meta):
                             flash(_("Nothing changed, nothing saved."), "info")
                             edit_utils.delete_draft()
                             if app.cfg.edit_locking_policy == LOCK:
