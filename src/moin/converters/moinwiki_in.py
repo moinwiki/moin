@@ -585,7 +585,7 @@ class Converter(ConverterMacro):
                 c = int(entity[2:-1], 10)
             c = unichr(c)
         else:
-            from htmlentitydefs import name2codepoint
+            from html.entities import name2codepoint
             c = unichr(name2codepoint.get(entity[1:-1], 0xfffe))
         stack.top_append(c)
 

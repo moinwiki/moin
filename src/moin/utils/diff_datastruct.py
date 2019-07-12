@@ -3,7 +3,7 @@
 
 import difflib
 from types import NoneType
-from collections import Hashable
+from collections.abc import Hashable
 
 INSERT = u"insert"
 DELETE = u"delete"

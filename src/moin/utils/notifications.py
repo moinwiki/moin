@@ -8,7 +8,7 @@
 from io import BytesIO
 
 from blinker import ANY
-from urlparse import urljoin
+from urllib.parse import urljoin
 from whoosh.query import Term, And
 
 from flask import url_for, g as flaskg

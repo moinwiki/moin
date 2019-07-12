@@ -8,14 +8,7 @@
 
 
 import re
-
-# do the pickle magic once here, so we can just import from here:
-# cPickle can encode normal and Unicode strings
-# see http://docs.python.org/lib/node66.html
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+import pickle
 
 # Set pickle protocol, see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL

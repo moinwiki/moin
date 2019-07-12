@@ -67,7 +67,7 @@ from moin.i18n import _, L_, N_
 from moin.utils.mime import Type
 from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
 from moin.constants.keys import ITEMID, REVID, REV_NUMBER, NAME
-import show_time
+from moin.utils import show_time
 
 from moin import log
 logging = log.getLogger(__name__)
