@@ -37,7 +37,7 @@ def test_setitem_getitem_delitem_binary(store):
 
 
 def test_iter(store):
-    kvs = set([('1', 'one'), ('2', 'two'), ('3', 'three'), ])
+    kvs = {('1', 'one'), ('2', 'two'), ('3', 'three'), }
     for k, v in kvs:
         store[k] = v
     result = set()

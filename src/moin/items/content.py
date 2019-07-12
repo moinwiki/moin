@@ -1155,7 +1155,7 @@ class TWikiDraw(DrawAWDTWDBase):
     """
     contenttype = 'application/x-twikidraw'
     display_name = 'TDRAW'
-    _expected_members = set(['drawing.draw', 'drawing.map', 'drawing.png'])
+    _expected_members = {'drawing.draw', 'drawing.map', 'drawing.png'}
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_twikidraw.html"
@@ -1178,7 +1178,7 @@ class AnyWikiDraw(DrawAWDTWDBase):
     """
     contenttype = 'application/x-anywikidraw'
     display_name = 'ADRAW'
-    _expected_members = set(['drawing.svg', 'drawing.map', 'drawing.png'])
+    _expected_members = {'drawing.svg', 'drawing.map', 'drawing.png'}
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
@@ -1219,9 +1219,9 @@ class SvgDraw(Draw):
         svg_content = svg_upload.decode('base_64')
         content_length = None
         self.put_member("drawing.svg", svg_content, content_length,
-                        expected_members=set(['drawing.svg', 'drawing.png']))
+                        expected_members={'drawing.svg', 'drawing.png'})
         self.put_member("drawing.png", png_content, content_length,
-                        expected_members=set(['drawing.svg', 'drawing.png']))
+                        expected_members={'drawing.svg', 'drawing.png'})
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind

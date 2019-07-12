@@ -77,7 +77,7 @@ class Converter(object):
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
-    ignored_tags = set([  # Info elements
+    ignored_tags = {  # Info elements
                        'abstract', 'artpagenums', 'annotation',
                        'artpagenums', 'author', 'authorgroup',
                        'authorinitials', 'bibliocoverage', 'biblioid',
@@ -138,11 +138,11 @@ class Converter(object):
                        # Other elements
                        'info', 'bridgehead', 'arc', 'titleabbrev',
                        'spanspec', 'xref',
-                       ])
+                       }
 
     # DocBook inline elements which does not have equivalence in the DOM
     # tree, but we keep the information using <span element='tag.name'>
-    inline_tags = set(['abbrev', 'address', 'accel', 'acronym', 'alt',
+    inline_tags = {'abbrev', 'address', 'accel', 'acronym', 'alt',
                        'affiliation', 'city', 'command', 'constant',
                        'country', 'database', 'date', 'errorcode',
                        'errorname', 'errortext', 'errortype',
@@ -157,11 +157,11 @@ class Converter(object):
                        'street', 'surname', 'symbol', 'systemitem',
                        'termdef', 'type', 'uri', 'userinput',
                        'wordasword', 'varname', 'anchor',
-                       ])
+                       }
 
     # DocBook block element which does not have equivalence in the DOM
     # tree, but we keep the information using <div html:class='tag.name'>
-    block_tags = set(['acknowledgements', 'appendix', 'article', 'book',
+    block_tags = {'acknowledgements', 'appendix', 'article', 'book',
                       'caption', 'chapter', 'cmdsynopsis', 'colophon',
                       'dedication', 'epigraph', 'example', 'figure',
                       'equation', 'part', 'partintro',
@@ -169,12 +169,12 @@ class Converter(object):
                       'simplesect', 'subtitle', 'synopsis',
                       'synopfragment', 'task', 'taskprerequisites',
                       'taskrelated', 'tasksummary', 'title',
-    ])
+    }
 
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
     # admonitions in this list, into the admonition element of the DOM Tree.
-    admonition_tags = set(['attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'])
+    admonition_tags = {'attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'}
 
     # DocBook can handle three kinds of media: audio, image, video.
     # TODO: a media format attribute is optional, e.g.: <imagedata format="jpeg" fileref="jpeg.jpg"/>
@@ -225,13 +225,13 @@ class Converter(object):
     }
 
     # Other block elements which can be root element.
-    root_tags = set(['blockquote', 'formalpara', 'informalequation',
+    root_tags = {'blockquote', 'formalpara', 'informalequation',
                      'informalexample', 'informalfigure',
                      'informalfigure', 'orderedlist', 'sect1', 'sect2',
                      'sect3', 'sect4', 'sect5', 'section',
                      'segmentedlist', 'simplelist', 'procedure',
                      'qandaset',
-    ])
+    }
 
     # Regular expression to find section tag.
     sect_re = re.compile('sect[1-5]')
@@ -480,7 +480,7 @@ class Converter(object):
         else:
             attrib[moin_page('type')] = mimetype
         align = object_to_show.get('align')
-        if align and align in set(['left', 'center', 'right', 'top', 'middle', 'bottom']):
+        if align and align in {'left', 'center', 'right', 'top', 'middle', 'bottom'}:
             attrib[html.class_] = align
 
         # return object tag, html_out.py will convert to img, audio, or video based on type attr
@@ -1177,7 +1177,7 @@ class Converter(object):
 
         Here we handle the conversion of such of list.
         """
-        list_item_tags = set(['listitem', 'step', 'stepalternatives', 'member'])
+        list_item_tags = {'listitem', 'step', 'stepalternatives', 'member'}
         items = []
         for child in element:
             if isinstance(child, ET.Element):

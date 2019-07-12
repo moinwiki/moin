@@ -94,8 +94,8 @@ def test_destroy_create_dont_touch_ro(router):
 
 
 def test_iter(router):
-    existing_before = set([revid for be_name, revid in router])
+    existing_before = {revid for be_name, revid in router}
     default_be_name, default_revid = router.store(dict(name=[u'foo', ]), BytesIO(b''))
     other_be_name, other_revid = router.store(dict(name=[u'other:bar', ]), BytesIO(b''))
-    existing_now = set([revid for be_name, revid in router])
-    assert existing_now == set([default_revid, other_revid]) | existing_before
+    existing_now = {revid for be_name, revid in router}
+    assert existing_now == {default_revid, other_revid} | existing_before

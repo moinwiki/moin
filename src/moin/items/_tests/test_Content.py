@@ -81,7 +81,7 @@ class TestTarItems(object):
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
-        members = set(['example1.txt', 'example2.txt'])
+        members = {'example1.txt', 'example2.txt'}
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
         item.content.put_member('example2.txt', filecontent, content_length, expected_members=members)
 
@@ -98,7 +98,7 @@ class TestTarItems(object):
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype=u'application/x-tar')
         filecontent = 'abcdefghij'
         content_length = len(filecontent)
-        members = set(['example1.txt'])
+        members = {'example1.txt'}
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
         filecontent = 'AAAABBBB'
         content_length = len(filecontent)
@@ -116,7 +116,7 @@ class TestZipMixin(object):
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/zip')
         filecontent = 'test_contents'
         content_length = len(filecontent)
-        members = set(['example1.txt', 'example2.txt'])
+        members = {'example1.txt', 'example2.txt'}
         with pytest.raises(NotImplementedError):
             item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
 

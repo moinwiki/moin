@@ -227,7 +227,7 @@ def acl_validate(acl_string):
     In later processes, None means no item ACLs, so the configured default ACLs will be used.
     Empty is same as "". If there are no configured 'after' ACLs, then Empty and "" are equivalent to "All:".
     """
-    all_rights = set(('read', 'write', 'create', 'destroy', 'admin'))
+    all_rights = {'read', 'write', 'create', 'destroy', 'admin'}
     acls = unicode(acl_string)
     if acls in (u'None', u'Empty', u''):  # u'' is not possible if field is required on form
         return True

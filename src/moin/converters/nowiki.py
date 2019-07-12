@@ -65,7 +65,7 @@ class Converter(object):
             nowiki_name = optional_args = None
 
         lexer = None
-        if nowiki_name in set(('diff', 'cplusplus', 'python', 'java', 'pascal', 'irc')):
+        if nowiki_name in {'diff', 'cplusplus', 'python', 'java', 'pascal', 'irc'}:
             # make old style markup similar to {{{#!python like new style {{{#!highlight python
             optional_args = nowiki_name if not optional_args else nowiki_name + ' ' + optional_args
             nowiki_name = 'highlight'

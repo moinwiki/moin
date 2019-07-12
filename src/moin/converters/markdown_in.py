@@ -92,10 +92,10 @@ class Converter(object):
     # {{{ html conversion
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote'])
+    symmetric_tags = {'div', 'p', 'strong', 'code', 'quote', 'blockquote'}
 
     # HTML tags to define a list, except dl which is a little bit different
-    list_tags = set(['ul', 'ol'])
+    list_tags = {'ul', 'ol'}
 
     # HTML tags which can be convert without attributes in a different DOM tag
     simple_tags = {  # Emphasis
@@ -121,20 +121,20 @@ class Converter(object):
 
     # HTML Tag which does not have equivalence in the DOM Tree
     # But we keep the information using <span element>
-    inline_tags = set(['abbr', 'acronym', 'address', 'dfn', 'kbd'])
+    inline_tags = {'abbr', 'acronym', 'address', 'dfn', 'kbd'}
 
     # HTML tags which are completely ignored by our converter.
     # We even do not process children of these elements.
-    ignored_tags = set(['applet', 'area', 'button', 'caption', 'center', 'fieldset',
+    ignored_tags = {'applet', 'area', 'button', 'caption', 'center', 'fieldset',
                         'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
                         'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
                         'optgroup', 'option', 'param', 'script', 'select', 'style',
                         'textarea', 'title', 'var',
-    ])
+    }
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion
-    standard_attributes = set(['title', 'class', 'style'])
+    standard_attributes = {'title', 'class', 'style'}
 
     # Regular expression to detect an html heading tag
     heading_re = re.compile('h[1-6]')

@@ -32,7 +32,7 @@ logging = log.getLogger(__name__)
 
 
 # strings not allowed in style attributes
-SUSPECT = set(('/*', '/>', '\\', '`', 'script', '&#', 'http', 'expression', 'behavior', ))
+SUSPECT = {'/*', '/>', '\\', '`', 'script', '&#', 'http', 'expression', 'behavior', }
 
 
 def style_attr_filter(style):
@@ -170,7 +170,7 @@ class Converter(object):
     }
 
     # Inline tags which can be directly converted into an HTML element
-    direct_inline_tags = set(['abbr', 'address', 'dfn', 'kbd'])
+    direct_inline_tags = {'abbr', 'address', 'dfn', 'kbd'}
 
     def __call__(self, element):
         return self.visit(element)
@@ -230,7 +230,7 @@ class Converter(object):
     def visit_moinpage_admonition(self, elem):
         """Used by reST and docbook."""
         attrib = {}
-        valid_classes = set(["attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"])
+        valid_classes = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
         cls = elem.get(moin_page.type)
         if cls in valid_classes:
             attrib[html.class_] = cls

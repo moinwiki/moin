@@ -149,7 +149,7 @@ class TestIndexingMiddleware(object):
         item = self.imw[item_name]
         revs = [rev.data.read() for rev in item.iter_revs()]
         assert len(revs) == 2
-        assert set(revs) == set([b'1st', b'2nd'])
+        assert set(revs) == {b'1st', b'2nd'}
 
     def test_latest_revision(self):
         item_name = u'foo'

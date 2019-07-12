@@ -31,10 +31,10 @@ class Converter(object):
         moin_page: 'moinpage'
     }
 
-    unsupported_tags = set(['separator', ])
+    unsupported_tags = {'separator'}
 
     # Only these admonitions are supported by DocBook 5
-    admonition_tags = set(['caution', 'important', 'note', 'tip', 'warning'])
+    admonition_tags = {'caution', 'important', 'note', 'tip', 'warning'}
 
     # DOM Tree element which can easily be converted into a DocBook
     # element, without attributes.
