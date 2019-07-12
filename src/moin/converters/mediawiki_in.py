@@ -254,7 +254,7 @@ class Converter(ConverterMacro):
         yield line
 
         while True:
-            line = iter_content.next()
+            line = next(iter_content)
 
             match = self.indent_re.match(line)
 

@@ -316,7 +316,7 @@ class ACLStringIterator(object):
         """ Required by the Iterator protocol """
         return self
 
-    def next(self):
+    def __next__(self):
         """ Return the next values from the acl string
 
         When the iterator is finished and you try to call next, it
