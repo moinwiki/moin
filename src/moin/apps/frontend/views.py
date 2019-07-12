@@ -2092,7 +2092,7 @@ def bookmark():
             else:
                 try:
                     tm = int(timestamp)
-                except StandardError:
+                except ValueError:
                     tm = int(time.time())
         else:
             tm = int(time.time())
