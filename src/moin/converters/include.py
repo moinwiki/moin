@@ -430,7 +430,7 @@ class Converter(object):
                                 classes += ret.attrib.get(html.class_, '').split()
                                 ret.attrib[html.class_] = ' '.join(classes)
                                 elem[i] = ret
-                        elif isinstance(ret, types.ListType):
+                        elif isinstance(ret, list):
                             # a container has been returned.
                             # Note: there are multiple places where a container may be constructed
                             ret_container, trans_ptr = ret
