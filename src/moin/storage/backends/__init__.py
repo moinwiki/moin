@@ -12,11 +12,10 @@ from __future__ import absolute_import, division
 from abc import abstractmethod, ABCMeta
 
 
-class BackendBase(object):
+class BackendBase(object, metaclass=ABCMeta):
     """
     ties together a store for metadata and a store for data, readonly
     """
-    __metaclass__ = ABCMeta
 
     @classmethod
     @abstractmethod
