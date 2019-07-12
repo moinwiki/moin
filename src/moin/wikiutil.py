@@ -137,7 +137,7 @@ def AbsItemName(context, itemname):
         while context and itemname.startswith(PARENT_PREFIX):
             context = '/'.join(context.split('/')[:-1])
             itemname = itemname[PARENT_PREFIX_LEN:]
-        itemname = '/'.join(filter(None, [context, itemname, ]))
+        itemname = '/'.join([e for e in [context, itemname, ] if e])
     elif itemname.startswith(CHILD_PREFIX):
         if context:
             itemname = context + '/' + itemname[CHILD_PREFIX_LEN:]
