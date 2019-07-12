@@ -645,7 +645,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
         argnames, varargs, varkw, defaultlist = getargspec(function)
     elif isclass(function):
         (argnames, varargs,
-         varkw, defaultlist) = getargspec(function.__init__.im_func)
+         varkw, defaultlist) = getargspec(function.__init__.__func__)
     else:
         raise TypeError('function must be a function, method or class')
 
