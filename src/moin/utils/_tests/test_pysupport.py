@@ -114,7 +114,7 @@ class Parser:
     key = '{0}'
 '''.format(self.key)
         try:
-            file(self.pluginFilePath('.py'), 'w').write(data)
+            open(self.pluginFilePath('.py'), 'w').write(data)
         except Exception as err:
             pytest.skip("Can't create test plugin: {0!s}".format(err))
 
