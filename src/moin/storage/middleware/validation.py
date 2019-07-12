@@ -198,7 +198,7 @@ def mtime_validator(element, state):
         now = int(time.time())
         element.set(now)
     v = element.value
-    if not isinstance(v, (int, long)):
+    if not isinstance(v, int):
         return False
     # if v < 31 * 24 * 3600:
     #    # we don't have negative values nor timestamps from Jan 1970,

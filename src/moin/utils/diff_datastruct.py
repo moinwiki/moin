@@ -61,7 +61,7 @@ def diff(d1, d2, basekeys=None):
                     changes.append((INSERT, basekeys, d2[d2_start:d2_end]))
         else:
             changes.extend(diff(unicode(d1), unicode(d2), basekeys))
-    elif any(isinstance(d, (NoneType, bool, int, long, float, unicode, )) for d in (d1, d2)):
+    elif any(isinstance(d, (NoneType, bool, int, float, unicode, )) for d in (d1, d2)):
         if isinstance(d1, UndefinedType):
             changes.append((INSERT, basekeys, d2))
         elif isinstance(d2, UndefinedType):

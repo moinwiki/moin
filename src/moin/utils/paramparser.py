@@ -334,7 +334,7 @@ def get_int(arg, name=None, default=None):
     :rtype: int or None
     :returns: the integer value of the string (or default value)
     """
-    assert default is None or isinstance(default, (int, long))
+    assert default is None or isinstance(default, int)
     if arg is None:
         return default
     elif not isinstance(arg, unicode):
@@ -362,7 +362,7 @@ def get_float(arg, name=None, default=None):
     :rtype: float or None
     :returns: the float value of the string (or default value)
     """
-    assert default is None or isinstance(default, (int, long, float))
+    assert default is None or isinstance(default, (int, float))
     if arg is None:
         return default
     elif not isinstance(arg, unicode):
@@ -390,7 +390,7 @@ def get_complex(arg, name=None, default=None):
     :rtype: complex or None
     :returns: the complex value of the string (or default value)
     """
-    assert default is None or isinstance(default, (int, long, float, complex))
+    assert default is None or isinstance(default, (int, float, complex))
     if arg is None:
         return default
     elif not isinstance(arg, unicode):
@@ -551,7 +551,7 @@ class required_arg:
         Initialise a required_arg
         :param argtype: the type the argument should have
         """
-        if not (argtype in (bool, int, long, float, complex, unicode) or
+        if not (argtype in (bool, int, float, complex, unicode) or
                 isinstance(argtype, (IEFArgument, tuple, list))):
             raise TypeError("argtype must be a valid type")
         self.argtype = argtype
@@ -563,7 +563,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
     function with the arguments.
 
     If the macro function has a default value that is a bool,
-    int, long, float or unicode object, then the given value
+    int, float or unicode object, then the given value
     is converted to the type of that default value before passing
     it to the macro function. That way, macros need not call the
     get_* functions for any arguments that have a default.
@@ -578,7 +578,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
     def _convert_arg(value, default, name=None):
         """
         Using the get_* functions, convert argument to the type of the default
-        if that is any of bool, int, long, float or unicode; if the default
+        if that is any of bool, int, float or unicode; if the default
         is the type itself then convert to that type (keeps None) or if the
         default is a list require one of the list items.
 
@@ -587,7 +587,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
         # if extending this, extend required_arg as well!
         if isinstance(default, bool):
             return get_bool(value, name, default)
-        elif isinstance(default, (int, long)):
+        elif isinstance(default, int):
             return get_int(value, name, default)
         elif isinstance(default, float):
             return get_float(value, name, default)
@@ -599,7 +599,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             return get_choice(value, name, default)
         elif default is bool:
             return get_bool(value, name)
-        elif default is int or default is long:
+        elif default is int:
             return get_int(value, name)
         elif default is float:
             return get_float(value, name)
