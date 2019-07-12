@@ -469,7 +469,7 @@ class EditLog(LogFile):
         result = dict(zip(keys, fields))
         # do some conversions/cleanups/fallbacks:
         del result[HOSTNAME]  # HOSTNAME not used in moin 2.0
-        result[MTIME] = int(int(result[MTIME] or 0) / 1000000)  # convert usecs to secs
+        result[MTIME] = int(result[MTIME] or 0) // 1000000  # convert usecs to secs
         result['__rev'] = int(result['__rev'])
         result[NAME] = [unquoteWikiname(result[NAME])]
         action = result[ACTION]
@@ -642,7 +642,7 @@ class UserRevision(object):
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
 
         # convert bookmarks from usecs (and str) to secs (int)
-        metadata[BOOKMARKS] = [(interwiki, int(int(bookmark) / 1000000))
+        metadata[BOOKMARKS] = [(interwiki, int(bookmark) // 1000000)
                                for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
 
         # stuff we want to get rid of:

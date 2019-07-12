@@ -173,7 +173,7 @@ def fuid(filename, max_staleness=3600):
             now = int(time.time())
             if now >= st.st_mtime + max_staleness:
                 # keep same fake_mtime for each max_staleness interval
-                fake_mtime = int(now / max_staleness) * max_staleness
+                fake_mtime = (now // max_staleness) * max_staleness
         uid = (st.st_mtime,  # might have a rather rough granularity, e.g. 2s
                              # on FAT, 1s on ext3 and might not change on fast
                              # updates
