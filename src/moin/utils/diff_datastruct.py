@@ -66,7 +66,7 @@ def diff(d1, d2, basekeys=None):
             changes.append((INSERT, basekeys, d2))
         elif isinstance(d2, UndefinedType):
             changes.append((DELETE, basekeys, d1))
-        elif type(d1) == type(d2):
+        elif isinstance(d1, type(d2)):
             if d1 != d2:
                 changes.extend([(DELETE, basekeys, d1), (INSERT, basekeys, d2)])
         else:
