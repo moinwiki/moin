@@ -298,6 +298,8 @@ class LogFile:
                 result = None
         return result
 
+    __next__ = next  # py3
+
     def __previous(self):
         """get previous line already parsed"""
         if self.peek(-1):

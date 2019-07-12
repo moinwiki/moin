@@ -177,7 +177,7 @@ class Converter(ConverterMacro):
         stack.clear()
 
         try:
-            firstline = iter_content.next()
+            firstline = next(iter_content)
         except StopIteration:
             stack.push(moin_page.blockcode())
             return

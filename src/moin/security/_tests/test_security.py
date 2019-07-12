@@ -50,79 +50,79 @@ class TestACLStringIterator(object):
     def testEmptyRights(self):
         """ security: empty rights """
         acl_iter = acliter('WikiName:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['WikiName']
         assert rights == []
 
     def testSingleWikiNameSingleRight(self):
         """ security: single wiki name, single right """
         acl_iter = acliter('WikiName:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['WikiName']
         assert rights == ['read']
 
     def testMultipleWikiNameAndRights(self):
         """ security: multiple wiki names and rights """
         acl_iter = acliter('UserOne,UserTwo:read,write')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne', 'UserTwo']
         assert rights == ['read', 'write']
 
     def testMultipleWikiNameAndRightsSpaces(self):
         """ security: multiple names with spaces """
         acl_iter = acliter('user one,user two:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user one', 'user two']
         assert rights == ['read']
 
     def testMultipleEntries(self):
         """ security: multiple entries """
         acl_iter = acliter('UserOne:read,write UserTwo:read All:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserTwo']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['All']
         assert rights == []
 
     def testNameWithSpaces(self):
         """ security: single name with spaces """
         acl_iter = acliter('user one:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user one']
         assert rights == ['read']
 
     def testMultipleEntriesWithSpaces(self):
         """ security: multiple entries with spaces """
         acl_iter = acliter('user one:read,write user two:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user one']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user two']
         assert rights == ['read']
 
     def testMixedNames(self):
         """ security: mixed wiki names and names with spaces """
         acl_iter = acliter('UserOne,user two:read,write user three,UserFour:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user three', 'UserFour']
         assert rights == ['read']
 
     def testModifier(self):
         """ security: acl modifiers """
         acl_iter = acliter('+UserOne:read -UserTwo:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert mod == '+'
         assert entries == ['UserOne']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert mod == '-'
         assert entries == ['UserTwo']
         assert rights == []
@@ -134,7 +134,7 @@ class TestACLStringIterator(object):
         then it will be parsed as one name with spaces.
         """
         acl_iter = acliter('UserOne:read user two is ignored')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read']
         pytest.raises(StopIteration, acl_iter.next)
@@ -146,13 +146,13 @@ class TestACLStringIterator(object):
         the rights because there is no entry.
         """
         acl_iter = acliter('UserOne:read :read All:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == []
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['All']
         assert rights == []
 
@@ -163,7 +163,7 @@ class TestACLStringIterator(object):
               regeneration test for storage.backends.fs19).
         """
         acl_iter = acliter('UserOne:read,sing,write,drink,sleep')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert rights == ['read', 'write']
 
         # we use strange usernames that include invalid rights as substrings
@@ -178,21 +178,21 @@ class TestACLStringIterator(object):
         This test was failing on the apply acl rights test.
         """
         acl_iter = acliter('UserOne:read,write BadGuy: All:read')
-        mod, entries, rights = acl_iter.next()
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
+        mod, entries, rights = next(acl_iter)
         assert entries == ['BadGuy']
         assert rights == []
 
     def testAllowExtraWhitespace(self):
         """ security: allow extra white space between entries """
         acl_iter = acliter('UserOne,user two:read,write   user three,UserFour:read  All:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user three', 'UserFour']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['All']
         assert rights == []
 
