@@ -17,8 +17,8 @@ from moin.wsgiapp import application
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'tests'))
 
 RUNS = 100
-RUNS_MARKER = RUNS / 10
-DOTS_MARKER = RUNS_MARKER / 5
+RUNS_MARKER = RUNS // 10
+DOTS_MARKER = RUNS_MARKER // 5
 
 PAGES = ('FrontPage', 'HelpOnMoinWikiSyntax', 'RecentChanges')
 
