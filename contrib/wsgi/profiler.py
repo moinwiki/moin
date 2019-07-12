@@ -44,7 +44,7 @@ class ProfilerMiddleware(object):
         logging.debug("Profiling call for '%s %s'", method, url)
         try:
             res = self.run_profile(self.app, (environ, start_response))
-        except Exception, e:
+        except Exception as e:
             logging.exception("Exception while profiling '%s %s'", method, url)
             raise
         return res
