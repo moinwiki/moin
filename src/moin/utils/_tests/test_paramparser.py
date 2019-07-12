@@ -402,8 +402,8 @@ class TestArgGetters(object):
             (u'23.42E-3+3.04i', None, None, 23.42E-3 + 3.04j),
             (u'3.04i', None, None, 3.04j),
             (u'-3.04i', None, None, -3.04j),
-            (u'-3', None, None, -3L),
-            (u'-300000000000000000000', None, None, -300000000000000000000L),
+            (u'-3', None, None, -3),
+            (u'-300000000000000000000', None, None, -300000000000000000000),
         ]
         for arg, name, default, expected in tests:
             assert paramparser.get_complex(arg, name, default) == expected
