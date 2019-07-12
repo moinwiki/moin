@@ -22,6 +22,7 @@ from moin.items.content import Content, ApplicationXTar, Binary, Text, Image, Tr
 from moin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.utils.interwiki import split_fqname
+from functools import reduce
 
 
 class TestContent(object):
