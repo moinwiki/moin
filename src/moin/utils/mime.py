@@ -48,7 +48,7 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
         return super(Type, cls).__new__(cls, new_type, new_subtype, new_parameters)
 
     def __eq__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return self.__eq__(self.__class__(other))
 
         if isinstance(other, Type):

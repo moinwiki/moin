@@ -143,7 +143,7 @@ class Iri(AutoNe):
             self._fragment = _fragment
 
     def __eq__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return unicode(self) == other
 
         if isinstance(other, Iri):
@@ -218,7 +218,7 @@ class Iri(AutoNe):
 
             return Iri(scheme=new_scheme, authority=new_authority, path=new_path, query=new_query, fragment=other.fragment)
 
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return self + Iri(other)
 
         return NotImplemented
@@ -447,7 +447,7 @@ class IriAuthority(AutoNe):
             self.port = port
 
     def __eq__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return unicode(self) == other
         if isinstance(other, IriAuthority):
             return self._userinfo == other._userinfo and \
@@ -587,7 +587,7 @@ class IriPath(AutoNe):
                 self._list = self._remove_dots(_list)
 
     def __eq__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return unicode(self) == other
         if isinstance(other, IriPath):
             return self._list == other._list
@@ -606,7 +606,7 @@ class IriPath(AutoNe):
         return bool(self._list)
 
     def __add__(self, other):
-        if isinstance(other, (basestring, list, tuple)):
+        if isinstance(other, (str, list, tuple)):
             return self + IriPath(other, False)
 
         if isinstance(other, IriPath):

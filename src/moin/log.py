@@ -185,7 +185,7 @@ class EmailHandler(logging.Handler):
         :param subject: unicode email's subject
         """
         logging.Handler.__init__(self)
-        if isinstance(toaddrs, basestring):
+        if isinstance(toaddrs, str):
             toaddrs = [toaddrs]
         self.toaddrs = toaddrs
         self.subject = subject
