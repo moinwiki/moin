@@ -54,7 +54,7 @@
 
 from __future__ import absolute_import, division
 
-from io import BytesIO
+from io import StringIO
 import os
 import logging
 import logging.config
@@ -67,7 +67,7 @@ import warnings
 # See http://docs.python.org/library/logging.html#configuring-logging
 # We just use stderr output by default, if you want anything else,
 # you will have to configure logging.
-logging_config = b"""\
+logging_config = """\
 [DEFAULT]
 # Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
 loglevel=INFO
@@ -144,7 +144,7 @@ def load_config(conf_fname=None):
             err_msg = str(err)
     if not configured:
         # load builtin fallback logging config
-        with BytesIO(logging_config) as f:
+        with StringIO(logging_config) as f:
             logging.config.fileConfig(f)
         configured = True
         logger = getLogger(__name__)
@@ -168,9 +168,8 @@ def getLogger(name):
     if not configured:
         load_config()
     logger = logging.getLogger(name)
-    for levelnumber, levelname in logging._levelNames.items():
-        if isinstance(levelnumber, int):  # that list has also the reverse mapping...
-            setattr(logger, levelname, levelnumber)
+    for levelnumber, levelname in logging._levelToName.items():
+        setattr(logger, levelname, levelnumber)
     return logger
 
 
