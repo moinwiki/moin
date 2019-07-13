@@ -1257,8 +1257,11 @@ class Revision(PropertiesMixin):
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.close()
 
-    def __cmp__(self, other):
-        return cmp(self.meta, other.meta)
+    def __eq__(self, other):
+        return self.meta == other.meta
+
+    def __lt__(self, other):
+        return self.meta < other.meta
 
 
 class Meta(Mapping):
@@ -1296,10 +1299,11 @@ class Meta(Mapping):
             self._meta, _ = self.revision._load()
             return self._meta[key]
 
-    def __cmp__(self, other):
-        if self[REVID] == other[REVID]:
-            return 0
-        return cmp(self[MTIME], other[MTIME])
+    def __eq__(self, other):
+        return self[REVID] == other[REVID]
+
+    def __lt__(self, other):
+        return self[MTIME] < other[MTIME]
 
     def __len__(self):
         return 0  # XXX
