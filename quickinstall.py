@@ -279,7 +279,7 @@ def create_m():
             f.write(':: {0}\n\n@{1} quickinstall.py %* --help\n'.format(WIN_INFO, sys.executable))
     else:
         with open('m', 'w') as f:
-            f.write('# {0}\n\n{1} quickinstall.py $* --help\n'.format(NIX_INFO, sys.executable))
+            f.write('#!/bin/sh\n# {0}\n\n{1} quickinstall.py $* --help\n'.format(NIX_INFO, sys.executable))
             os.fchmod(f.fileno(), 0775)
 
 
