@@ -108,8 +108,8 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
                 return False
             if self.subtype and self.subtype != other.subtype:
                 return False
-            self_params = set(self.parameters.iteritems())
-            other_params = set(other.parameters.iteritems())
+            self_params = set(self.parameters.items())
+            other_params = set(other.parameters.items())
             return self_params <= other_params
 
         raise ValueError

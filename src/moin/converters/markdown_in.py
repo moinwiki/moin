@@ -169,7 +169,7 @@ class Converter(object):
 
     def convert_attributes(self, element):
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key in self.standard_attributes:
                 result[html(key)] = value
             if key == 'id':

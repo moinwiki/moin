@@ -30,7 +30,7 @@ class ConfigLazyGroups(LazyGroupsBackend):
         return group_name in self._groups
 
     def __iter__(self):
-        return self._groups.iterkeys()
+        return iter(self._groups.keys())
 
     def __getitem__(self, group_name):
         return ConfigLazyGroup(group_name, self)

@@ -33,7 +33,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
     @pytest.fixture(autouse=True)
     def custom_setup(self):
         become_trusted()
-        for group, members in self.test_groups.iteritems():
+        for group, members in self.test_groups.items():
             update_item(group, {USERGROUP: members}, DATA)
 
     def test_rename_group_item(self):

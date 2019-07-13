@@ -100,7 +100,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
         if warn_default:
             logging.warning("using builtin default configuration")
         from moin.config.default import DefaultConfig as Config
-    for key, value in kwargs.iteritems():
+    for key, value in kwargs.items():
         setattr(Config, key, value)
     if Config.secrets is None:
         # reuse the secret configured for flask (which is required for sessions)

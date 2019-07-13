@@ -46,7 +46,7 @@ def split_body(body):
             verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
             pi.setdefault(verb.lower(), []).append(args.strip())
 
-    for key, value in pi.iteritems():
+    for key, value in pi.items():
         if key in ['acl', ]:
             # join the list of values to a single value
             pi[key] = u' '.join(value)
@@ -67,7 +67,7 @@ def add_metadata_to_body(metadata, data):
     meta_keys = [NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE, ]
 
     metadata_data = ""
-    for key, value in metadata.iteritems():
+    for key, value in metadata.items():
         if key not in meta_keys:
             continue
         # special handling for list metadata
