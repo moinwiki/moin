@@ -91,7 +91,7 @@ setup_args = dict(
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.11.2',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
-        'pdfminer',  # pdf -> text/plain conversion
+        'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
