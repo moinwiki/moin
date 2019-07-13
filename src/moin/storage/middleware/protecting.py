@@ -243,7 +243,7 @@ class ProtectedItem(object):
     def acl(self):
         return self.item.acl
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.item)
 
     def full_acls(self):
