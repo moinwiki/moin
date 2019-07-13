@@ -13,7 +13,7 @@ MoinMoin - Media Wiki input converter
 from __future__ import absolute_import, division
 
 import re
-from htmlentitydefs import name2codepoint
+from html.entities import name2codepoint
 
 from werkzeug import url_encode
 
