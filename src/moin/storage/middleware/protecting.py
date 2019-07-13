@@ -391,6 +391,3 @@ class ProtectedRevision(object):
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.close()
-
-    def __cmp__(self, other):
-        return cmp(self.meta, other.meta)
