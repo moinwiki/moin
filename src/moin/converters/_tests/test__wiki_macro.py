@@ -110,7 +110,7 @@ class TestConverter(object):
     def _do(self, name, args, text, context_block, output):
         result = self.conv.macro(name, args, text, context_block)
         if output is not None or result is not None:
-            if not isinstance(result, basestring):
+            if not isinstance(result, str):
                 result = self.serialize_strip(result)
             assert result == output
 
