@@ -100,5 +100,5 @@ def force_locale(locale):
         yield
     finally:
         babel.locale_selector_func = orig_locale_selector_func
-        for key, value in orig_attrs.iteritems():
+        for key, value in orig_attrs.items():
             setattr(ctx, key, value)

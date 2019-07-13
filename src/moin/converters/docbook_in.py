@@ -328,7 +328,7 @@ class Converter(object):
         We save the result in our standard attribute.
         """
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xml and key.name in ['id', 'base', 'lang'] or key.name == 'data-lineno':
                 result[key] = value
         if result:
@@ -550,7 +550,7 @@ class Converter(object):
 
         However, it is still semantic, so we call it emphasis and strong.
         """
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.name == 'role' and value == 'bold':
                 return self.new_copy(moin_page.strong, element,
                                      depth, attrib={})
@@ -685,7 +685,7 @@ class Converter(object):
         the anchors.
         """
         attrib = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xlink and allowed_uri_scheme(value):
                 attrib[key] = value
         linkend = element.get('linkend')
@@ -1048,7 +1048,7 @@ class Converter(object):
         # Since it is an element of DocBook v.4,
         # The namespace does not always work, so we will try to retrive the attribute whatever
         if not href:
-            for key, value in element.attrib.iteritems():
+            for key, value in element.attrib.items():
                 if key.name == 'url' and allowed_uri_scheme(value):
                     href = value
         key = xlink.href

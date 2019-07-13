@@ -95,7 +95,7 @@ def unparse(args):
             value = u'"' + value.encode('unicode-escape') + u'"'
         ret.append(value)
 
-    keywords = args.keyword.items()
+    keywords = list(args.keyword.items())
     keywords.sort(key=lambda a: a[0])
     for key, value in keywords:
         if not _unparse_re.match(key):

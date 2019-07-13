@@ -178,7 +178,7 @@ class TicketUpdateForm(TicketForm):
 
         # create an "Update" comment if metadata changes
         meta_changes = []
-        for key, value in self['meta'].value.iteritems():
+        for key, value in self['meta'].value.items():
             if not meta.get(key) == value:
                 if key == TAGS:
                     original = ', '.join(meta.get(key))

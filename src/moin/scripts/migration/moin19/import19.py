@@ -352,7 +352,7 @@ class PageRevision(object):
             else:
                 meta[TAGS] = [TEMPLATE]
         self.meta = {}
-        for k, v in meta.iteritems():
+        for k, v in meta.items():
             if isinstance(v, list):
                 v = tuple(v)
             self.meta[k] = v

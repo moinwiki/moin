@@ -296,7 +296,7 @@ class BaseModifyForm(BaseChangeForm):
         Flatland Form is straightforward, there should be rarely any need to
         override this class method.
         """
-        form = cls.from_flat(request.form.items() + request.files.items())
+        form = cls.from_flat(list(request.form.items()) + list(request.files.items()))
         return form
 
 
@@ -599,7 +599,7 @@ class Item(object):
                 meta['acl'] = "None"
 
             self['meta_form'].set(meta, policy='duck')
-            for k in self['meta_form'].field_schema_mapping.keys() + IMMUTABLE_KEYS:
+            for k in list(self['meta_form'].field_schema_mapping.keys()) + IMMUTABLE_KEYS:
                 meta.pop(k, None)
             self['extra_meta_text'].set(item.meta_dict_to_text(meta))
             self['content_form']._load(item.content)

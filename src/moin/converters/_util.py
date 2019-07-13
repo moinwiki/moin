@@ -164,4 +164,4 @@ class _Stack(object):
         Check if the top of the stack name and attrib matches the parameters.
         """
         attrib = kwargs.get('attrib', {})
-        return self._list[-1].name in names and set(attrib.items()).issubset(self._list[-1].elem.attrib.items())
+        return self._list[-1].name in names and set(attrib.items()).issubset(set(self._list[-1].elem.attrib.items()))

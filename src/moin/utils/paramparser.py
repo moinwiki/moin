@@ -699,7 +699,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
 
     # type-convert all keyword arguments to the type
     # that the default value indicates
-    for argname in kwargs.keys()[:]:
+    for argname in list(kwargs.keys()):  # new list object with keys for iteration as we modify kwargs
         if argname in defaults:
             # the value of 'argname' from kwargs will be put into the
             # macro's 'argname' argument, so convert that giving the

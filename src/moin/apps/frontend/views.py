@@ -1302,7 +1302,7 @@ def history(item_name):
     else:
         results_per_page = app.cfg.results_per_page
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
+    terms.extend(Term(term, value) for term, value in fqname.query.items())
     if bookmark_time:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
@@ -2071,7 +2071,7 @@ def usersettings():
             forms[part] = form
 
     # initialize all remaining forms
-    for p, FormClass in form_classes.iteritems():
+    for p, FormClass in form_classes.items():
         if p not in forms:
             forms[p] = FormClass.from_object(flaskg.user)
 
@@ -2165,7 +2165,7 @@ def diff(item_name):
     else:
         results_per_page = app.cfg.results_per_page
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
+    terms.extend(Term(term, value) for term, value in fqname.query.items())
     query = And(terms)
     revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     close_file(item.rev.data)
@@ -2250,7 +2250,7 @@ def _diff(item, revid1, revid2, fqname):
 
     # create dict containing older and newer revids to be used in formatting links
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in item.fqname.query.iteritems())
+    terms.extend(Term(term, value) for term, value in item.fqname.query.items())
     query = And(terms)
     rev_ids = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=False, limit=None)
     rev_ids = [x.meta for x in rev_ids]
@@ -2446,7 +2446,7 @@ def closeMatches(fq_name, fq_names):
             lower[key] = [fqname]
     # Get all close matches
     item_name = fq_name.value
-    all_matches = difflib.get_close_matches(item_name.lower(), lower.keys(),
+    all_matches = difflib.get_close_matches(item_name.lower(), list(lower.keys()),
                                             n=len(lower), cutoff=0.6)
 
     # Replace lower names with original names

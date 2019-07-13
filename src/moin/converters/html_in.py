@@ -202,7 +202,7 @@ class Converter(object):
 
     def convert_attributes(self, element):
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == html and \
                 key.name in self.standard_attributes:
                 result[key] = value

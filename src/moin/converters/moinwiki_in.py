@@ -129,7 +129,7 @@ class _TableArguments(object):
         args = Arguments()
 
         for match in self._re.finditer(input):
-            data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+            data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
             getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
 
         return args
@@ -842,7 +842,7 @@ class Converter(ConverterMacro):
         query_keys = {}
         attrib = {}
         whitelist = ['width', 'height', 'class']
-        for attr, value in args.iteritems():
+        for attr, value in args.items():
             if attr.startswith('&'):
                 query_keys[attr[1:]] = value
             elif attr in whitelist:
@@ -1029,7 +1029,7 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+        data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
         func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
         # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
@@ -1037,7 +1037,7 @@ class Converter(ConverterMacro):
     def parse_block(self, iter_content, arguments):
         attrib = {}
         if arguments:
-            for key, value in arguments.keyword.iteritems():
+            for key, value in arguments.keyword.items():
                 if key in ('style', 'class', ):
                     attrib[moin_page(key)] = value
 
@@ -1045,7 +1045,7 @@ class Converter(ConverterMacro):
         stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
-            data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().iteritems() if v is not None))
+            data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().items() if v is not None))
             self.indent_repl(iter_content, stack, line, **data)
 
         return body

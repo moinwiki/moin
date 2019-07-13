@@ -118,7 +118,7 @@ class Converter(object):
         We save the result in standard_attribute.
         """
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xml:
                 result[key] = value
         if result:
@@ -185,7 +185,7 @@ class Converter(object):
         into an <link> tag.
         """
         attrib = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xlink:
                 attrib[key] = value
         return self.new_copy(docbook.link, element, attrib=attrib)
@@ -509,7 +509,7 @@ class Converter(object):
         TODO: Add support for font-size attribute
         """
         # Check for the attributes of span
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.name == 'baseline-shift':
                 if value == 'super':
                     return self.new_copy(docbook.superscript,

@@ -80,7 +80,7 @@ class _TableArguments(object):
         args = Arguments()
 
         for match in self._re.finditer(input):
-            data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+            data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
             getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
 
         return args
@@ -168,7 +168,7 @@ class Converter(ConverterMacro):
         stack.push(elem)
         if table_args:
             table_args = _TableArguments()(table_args)
-            for key, value in table_args.keyword.iteritems():
+            for key, value in table_args.keyword.items():
                 attrib = elem.attrib
                 if key in ('class', 'style', 'number-columns-spanned', 'number-rows-spanned'):
                     attrib[moin_page(key)] = value
@@ -198,7 +198,7 @@ class Converter(ConverterMacro):
                     element = moin_page.table_cell()
                     if len(cell) > 1:
                         cell_args = _TableArguments()(cell[0])
-                        for key, value in cell_args.keyword.iteritems():
+                        for key, value in cell_args.keyword.items():
                             attrib = element.attrib
                             if key in ('class', 'style', 'number-columns-spanned', 'number-rows-spanned'):
                                 attrib[moin_page(key)] = value
@@ -966,7 +966,7 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+        data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
         func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
         # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
@@ -974,7 +974,7 @@ class Converter(ConverterMacro):
     def parse_block(self, iter_content, arguments):
         attrib = {}
         if arguments:
-            for key, value in arguments.keyword.iteritems():
+            for key, value in arguments.keyword.items():
                 if key in ('style', ):
                     attrib[moin_page(key)] = value
                 elif key == '_old':
@@ -987,7 +987,7 @@ class Converter(ConverterMacro):
         for line in iter_content:
             match = self.indent_re.match(line)
             if match:
-                data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+                data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
                 self.indent_repl(iter_content, stack, line, **data)
             else:
                 self.indent_repl(iter_content, stack, line, '', line)

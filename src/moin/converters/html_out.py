@@ -128,7 +128,7 @@ class Attributes(object):
         new = {}
         new_default = {}
 
-        for key, value in self.element.attrib.iteritems():
+        for key, value in self.element.attrib.items():
             if key == html.style:
                 value = style_attr_filter(value)
             if key.uri == moin_page:
