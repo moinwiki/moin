@@ -8,7 +8,7 @@
 """
 
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import datetime
 
 from json import dumps
@@ -430,7 +430,7 @@ class ThemeSupport(object):
                 cid = cache_key(usage="SisterSites", sistername=sistername)
                 sisteritems = app.cache.get(cid)
                 if sisteritems is None:
-                    uo = urllib.URLopener()
+                    uo = urllib.request.URLopener()
                     uo.version = 'MoinMoin SisterItem list fetcher 1.0'
                     try:
                         sisteritems = {}

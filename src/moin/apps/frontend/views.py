@@ -22,7 +22,7 @@ import uuid
 import mimetypes
 import json
 import threading
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from io import BytesIO
 from datetime import datetime
 from collections import namedtuple
@@ -914,7 +914,7 @@ def ajaxdestroy(item_name, req='destroy'):
     for itemname in itemnames:
         response["itemnames"].append(itemname)
         # itemname is url quoted string coming across as unicode, must encode, unquote, decode
-        itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
+        itemname = urllib.parse.unquote(itemname.encode('ascii')).decode('utf-8')
         try:
             item = Item.create(itemname)
             if isinstance(item, NonExistent):

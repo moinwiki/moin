@@ -11,7 +11,7 @@ Converts an internal document tree into moinwiki markup.
 
 from __future__ import absolute_import, division
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from re import findall, sub
 
 from emeraldtree import ElementTree as ET
@@ -387,7 +387,7 @@ class Converter(object):
         href = elem.get(xlink.href, elem.get(xinclude.href, u''))
         if isinstance(href, Iri):
             href = unicode(href)
-            href = urllib.unquote(href)
+            href = urllib.parse.unquote(href)
 
         try:
             return self.include_object(elem.attrib[xinclude.xpointer], href)
