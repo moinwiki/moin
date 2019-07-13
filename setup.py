@@ -9,8 +9,8 @@ import sys
 from setuptools import setup, find_packages
 
 
-if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
-    sys.exit("Error: MoinMoin requires Python 2.7.x., current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3050000:
+    sys.exit("Error: MoinMoin requires Python 3.5+., current version is %s\n" % (platform.python_version(), ))
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -41,7 +41,10 @@ setup_args = dict(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
