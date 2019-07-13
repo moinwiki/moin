@@ -16,9 +16,9 @@ from moin.app import before_wiki
 class Disable_User(Command):
     description = 'This command allows you to disable user accounts.'
     option_list = (
-        Option('--name', '-n', required=False, dest='name', type=unicode,
+        Option('--name', '-n', required=False, dest='name', type=str,
                help='Disable the user with user name NAME.'),
-        Option('--uid', '-u', required=False, dest='uid', type=unicode,
+        Option('--uid', '-u', required=False, dest='uid', type=str,
                help='Disable the user with user id UID.'),
     )
 
