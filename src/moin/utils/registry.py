@@ -50,7 +50,7 @@ class RegistryBase(object):
     def _register(self, entry):
         if entry not in self._entries:
             entries = self._entries[:]
-            for i in xrange(len(entries)):
+            for i in range(len(entries)):
                 if entry < entries[i]:
                     entries.insert(i, entry)
                     break

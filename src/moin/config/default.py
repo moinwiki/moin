@@ -229,7 +229,7 @@ file. It should match the actual charset of the configuration file.
                                                        {'name': name})
                 # Look into lists and try to decode strings inside them
                 elif isinstance(attr, list):
-                    for i in xrange(len(attr)):
+                    for i in range(len(attr)):
                         item = attr[i]
                         if isinstance(item, str):
                             try:

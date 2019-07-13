@@ -461,7 +461,7 @@ class TestProtectedIndexingMiddleware(object):
         # for the memory backend we use, this is likely mostly building the indexes
         item_name = u'foo'
         item = self.imw[item_name]
-        for i in xrange(100):
+        for i in range(100):
             item.store_revision(dict(name=[item_name, ], acl=u'joe:create joe:read'), BytesIO(b'some content'))
 
     def test_perf_create_read(self):
@@ -471,7 +471,7 @@ class TestProtectedIndexingMiddleware(object):
         # doing index lookups name -> itemid, itemid -> revids list
         item_name = u'foo'
         item = self.imw[item_name]
-        for i in xrange(100):
+        for i in range(100):
             item.store_revision(dict(name=[item_name, ], acl=u'joe:create joe:read'), BytesIO(b'rev number {0}'.format(i)))
         for r in item.iter_revs():
             # print r.meta

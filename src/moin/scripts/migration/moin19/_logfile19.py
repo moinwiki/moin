@@ -74,7 +74,7 @@ class LineBuffer:
 
         lengthpreviousline = 0
         offset = begin
-        for i in xrange(linecount+1):
+        for i in range(linecount+1):
             offset += lengthpreviousline
             lengthpreviousline = offsets[i]
             offsets[i] = offset
