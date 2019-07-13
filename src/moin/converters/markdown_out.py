@@ -12,7 +12,7 @@ Converts an internal document tree into markdown markup.
 
 from __future__ import absolute_import, division
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from . import ElementException
 
@@ -313,7 +313,7 @@ class Converter(object):
         href = elem.get(xlink.href, elem.get(xinclude.href, u''))
         if isinstance(href, Iri):
             href = unicode(href)
-            href = urllib.unquote(href)
+            href = urllib.parse.unquote(href)
             if href.startswith('/+get/+'):
                 href = href.split('/')[-1]
         href = href.split(u'wiki.local:')[-1]

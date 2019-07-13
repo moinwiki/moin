@@ -5,7 +5,7 @@
 """Functions to facilitate functional testing"""
 
 import random
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import pytest
 
@@ -15,7 +15,7 @@ webdriver = selenium.webdriver
 import config
 
 try:
-    f = urllib.urlopen(config.BASE_URL)
+    f = urllib.request.urlopen(config.BASE_URL)
 except IOError:
     pytestmark = pytest.mark.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
 
