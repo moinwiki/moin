@@ -75,7 +75,7 @@ def test_store_readonly_fails(router):
 
 def test_del_readonly_fails(router):
     ro_be_name, ro_id = next(iter(router))  # we have only readonly items
-    print ro_be_name, ro_id
+    print(ro_be_name, ro_id)
     with pytest.raises(TypeError):
         router.remove(ro_be_name, ro_id)
 

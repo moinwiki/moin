@@ -47,7 +47,7 @@ class Base(object):
         string_to_parse = self.handle_input(input, args={})
         logging.debug("After the HTML_IN conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO(string_to_parse))
-        print 'string_to_parse = %s' % string_to_parse
+        print('string_to_parse = %s' % string_to_parse)
         assert (tree.xpath(path, namespaces=self.namespaces_xpath))
 
 

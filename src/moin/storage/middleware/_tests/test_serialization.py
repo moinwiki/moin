@@ -89,6 +89,6 @@ def test_serialize_deserialize(source, target):
     deserialize(io, target.backend)
     target.rebuild()
 
-    print sorted(source.backend)
-    print sorted(target.backend)
+    print(sorted(source.backend))
+    print(sorted(target.backend))
     assert sorted(source.backend) == sorted(target.backend)

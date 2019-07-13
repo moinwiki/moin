@@ -194,7 +194,7 @@ Apple
     def do(self, input, output, args={}, skip=None):
         out = self.conv(input, 'text/x-mediawiki;charset=utf-8', **args)
         result = self.serialize_strip(out)
-        print result
+        print(result)
         assert result == output
 
 

@@ -131,8 +131,8 @@ class TestSubscriptions(object):
 
         import time
         for users_, expected_names_ in tests:
-            print "\nTesting {0} subscribers from a total of {1} users".format(
-                len(users_), len(users))
+            print("\nTesting {0} subscribers from a total of {1} users".format(
+                len(users_), len(users)))
             for subscription in subscriptions:
                 for user_ in users_:
                     user_.profile._meta[SUBSCRIPTIONS] = [subscription]
@@ -140,6 +140,6 @@ class TestSubscriptions(object):
                 t = time.time()
                 subscribers = get_subscribers(**self.item.meta)
                 elapsed_time = time.time() - t
-                print "{0}: {1} s".format(subscription.split(':', 1)[0], elapsed_time)
+                print("{0}: {1} s".format(subscription.split(':', 1)[0], elapsed_time))
                 subscribers_names = {subscriber.name for subscriber in subscribers}
                 assert subscribers_names == expected_names_

@@ -202,5 +202,5 @@ def exec_cmd(cmd, input=None, timeout=None):
 
 
 if __name__ == '__main__':
-    print exec_cmd("python", "import time ; time.sleep(20) ; print 'never!' ;", timeout=10)
-    print exec_cmd("python", "import time ; time.sleep(20) ; print '20s gone' ;")
+    print(exec_cmd("python", "import time ; time.sleep(20) ; print 'never!' ;", timeout=10))
+    print(exec_cmd("python", "import time ; time.sleep(20) ; print '20s gone' ;"))

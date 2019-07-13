@@ -137,7 +137,7 @@ class Converter(object):
         """
         uri = element.tag.uri
         name = self.namespaces_visit.get(uri, None)
-        print '==== uri = %s, name = %s' % (uri, name)  # @@@@@@@@@@@@@
+        print('==== uri = %s, name = %s' % (uri, name))  # @@@@@@@@@@@@@
         if name is not None:
             method_name = 'visit_' + name
             method = getattr(self, method_name, None)
@@ -418,7 +418,7 @@ class Converter(object):
         attrib = {}
         rowspan = element.get(moin_page('number-rows-spanned'))
         colspan = element.get(moin_page('number-columns-spanned'))
-        print "rowspan : {0}".format(rowspan)
+        print("rowspan : {0}".format(rowspan))
         if rowspan:
             attrib[docbook.rowspan] = rowspan
         if colspan:
@@ -490,7 +490,7 @@ class Converter(object):
         """
         title_attr = element.get(html('title'))
         if title_attr:
-            print title_attr
+            print(title_attr)
             children = []
             title_elem = self.new(docbook('title'), attrib={},
                                   children=[title_attr])

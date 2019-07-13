@@ -26,11 +26,11 @@ from moin._tests import wikiconfig
 
 
 def dumper(indexer, idx_name):
-    print "*** %s ***" % idx_name
+    print("*** %s ***" % idx_name)
     for kvs in indexer.dump(idx_name=idx_name):
         for k, v in kvs:
-            print k, repr(v)[:70]
-        print
+            print(k, repr(v)[:70])
+        print()
 
 
 class TestIndexingMiddleware(object):
@@ -93,7 +93,7 @@ class TestIndexingMiddleware(object):
         rev = item.store_revision(dict(name=[item_name, ], mtime=3),
                                   BytesIO(b'...'), trusted=True, return_rev=True)
         revid2 = rev.revid
-        print "revids:", revid0, revid1, revid2
+        print("revids:", revid0, revid1, revid2)
         # destroy a non-current revision:
         item.destroy_revision(revid0)
         # check if the revision was destroyed:
@@ -101,7 +101,7 @@ class TestIndexingMiddleware(object):
         with pytest.raises(KeyError):
             item.get_revision(revid0)
         revids = [_rev.revid for _rev in item.iter_revs()]
-        print "after destroy revid0", revids
+        print("after destroy revid0", revids)
         assert sorted(revids) == sorted([revid1, revid2])
         # destroy a current revision:
         item.destroy_revision(revid2)
@@ -110,7 +110,7 @@ class TestIndexingMiddleware(object):
         with pytest.raises(KeyError):
             item.get_revision(revid2)
         revids = [_rev.revid for _rev in item.iter_revs()]
-        print "after destroy revid2", revids
+        print("after destroy revid2", revids)
         assert sorted(revids) == sorted([revid1])
         # destroy the last revision left:
         item.destroy_revision(revid1)
@@ -119,7 +119,7 @@ class TestIndexingMiddleware(object):
         with pytest.raises(KeyError):
             item.get_revision(revid1)
         revids = [_rev.revid for _rev in item.iter_revs()]
-        print "after destroy revid1", revids
+        print("after destroy revid1", revids)
         assert sorted(revids) == sorted([])
 
     def test_destroy_item(self):
@@ -169,7 +169,7 @@ class TestIndexingMiddleware(object):
         data = b'bar'
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=[item_name, ]), BytesIO(data), return_rev=True)
-        print repr(rev.meta)
+        print(repr(rev.meta))
         assert rev.name == item_name
         assert rev.meta[SIZE] == len(data)
         assert rev.meta[HASH_ALGORITHM] == hashlib.new(HASH_ALGORITHM, data).hexdigest()
@@ -219,9 +219,9 @@ class TestIndexingMiddleware(object):
         expected_latest_revs = list(self.imw.documents())
         expected_all_revs = list(self.imw.documents(idx_name=ALL_REVS))
 
-        print "*** all on-the-fly:"
+        print("*** all on-the-fly:")
         self.imw.dump(idx_name=ALL_REVS)
-        print "*** latest on-the-fly:"
+        print("*** latest on-the-fly:")
         self.imw.dump(idx_name=LATEST_REVS)
 
         # now kill the index and do a full rebuild
@@ -236,9 +236,9 @@ class TestIndexingMiddleware(object):
         latest_revs = list(self.imw.documents())
         latest_revids = [rev.revid for rev in latest_revs]
 
-        print "*** all rebuilt:"
+        print("*** all rebuilt:")
         self.imw.dump(idx_name=ALL_REVS)
-        print "*** latest rebuilt:"
+        print("*** latest rebuilt:")
         self.imw.dump(idx_name=LATEST_REVS)
 
         # should be all the same, order does not matter:

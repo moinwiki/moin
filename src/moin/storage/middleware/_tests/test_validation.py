@@ -59,8 +59,8 @@ class TestValidation(object):
         assert m[keys.CONTENTTYPE].value == u'text/x.moin.wiki;charset=utf-8'
         if not valid:
             for e in m.children:
-                print e.valid, e
-            print m.valid, m
+                print(e.valid, e)
+            print(m.valid, m)
         assert valid
 
     def test_user(self):
@@ -100,8 +100,8 @@ class TestValidation(object):
         assert m[keys.CONTENTTYPE].value == CONTENTTYPE_USER
         if not valid:
             for e in m.children:
-                print e.valid, e
-            print m.valid, m
+                print(e.valid, e)
+            print(m.valid, m)
         assert valid
 
         m = UserMetaSchema(invalid_meta)

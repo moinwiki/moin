@@ -161,9 +161,9 @@ class TestConverter(object):
         out = self.conv(input, 'text/x-markdown;charset=utf-8', **args)
         got_output = self.serialize_strip(out)
         desired_output = "<page><body>%s</body></page>" % output
-        print '------------------------------------'
-        print "WANTED:"
-        print desired_output
-        print "GOT:"
-        print got_output
+        print('------------------------------------')
+        print("WANTED:")
+        print(desired_output)
+        print("GOT:")
+        print(got_output)
         assert got_output == desired_output

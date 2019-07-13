@@ -94,14 +94,14 @@ class ImportMoin19(Command):
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
 
-        print "\nConverting Users...\n"
+        print("\nConverting Users...\n")
         for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
             global user_names
             user_names.append(rev.meta['name'][0])
             userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
             backend.store(rev.meta, rev.data)
 
-        print "\nConverting Pages/Attachments...\n"
+        print("\nConverting Pages/Attachments...\n")
         for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
             for user_name in user_names:
                 if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
@@ -111,7 +111,7 @@ class ImportMoin19(Command):
             # item_name to itemid xref required for migrating user subscriptions
             flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-        print "\nConverting Revision Editors...\n"
+        print("\nConverting Revision Editors...\n")
         for mountpoint, revid in backend:
             meta, data = backend.retrieve(mountpoint, revid)
             if USERID in meta:
@@ -119,20 +119,20 @@ class ImportMoin19(Command):
                     meta[USERID] = userid_old2new[meta[USERID]]
                 except KeyError:
                     # user profile lost, but userid referred by revision
-                    print (u"Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)).encode('utf-8')
+                    print((u"Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)).encode('utf-8'))
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
                 meta.pop(UID_OLD, None)  # not needed any more
                 backend.store(meta, data)
 
-        print "\nConverting last revision of Moin 1.9 items to Moin 2.0"
+        print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
         self.conv_in = conv_in()
         self.conv_out = conv_out()
         reg = default_registry
         refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
         for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
-            print '    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno)
+            print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
             if namespace == u'':
                 namespace = u'default'
             meta, data = backend.retrieve(namespace, revno)
@@ -160,14 +160,14 @@ class ImportMoin19(Command):
             out.seek(0)
             backend.store(meta, out)
 
-        print "\nRebuilding the index..."
+        print("\nRebuilding the index...")
         indexer.close()
         indexer.destroy()
         indexer.create()
         indexer.rebuild()
         indexer.open()
 
-        print "Finished conversion!"
+        print("Finished conversion!")
 
 
 class KillRequested(Exception):
@@ -209,7 +209,7 @@ class PageBackend(object):
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
-                print (u"    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))).encode('utf-8')
+                print((u"    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))).encode('utf-8'))
             except Exception as err:
                 logging.exception((u"PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
@@ -227,7 +227,7 @@ class PageItem(object):
         self.backend = backend
         self.name = itemname
         self.path = path
-        print (u"Processing item {0}".format(itemname)).encode('utf-8')
+        print((u"Processing item {0}".format(itemname)).encode('utf-8'))
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -238,7 +238,7 @@ class PageItem(object):
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
             if not os.path.exists(revpath):
-                print (u"    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)).encode('utf-8')
+                print((u"    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)).encode('utf-8'))
                 raise KillRequested('deleted_mode wants killing/ignoring')
 
     def iter_revisions(self):
@@ -313,7 +313,7 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print (u"    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)).encode('utf-8')
+                print((u"    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)).encode('utf-8'))
                 if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
                         ACTION: u'SAVE/DELETE',
@@ -325,7 +325,7 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print (u"    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)).encode('utf-8')
+                print((u"    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)).encode('utf-8'))
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -378,8 +378,8 @@ class PageRevision(object):
                 self.meta[k] = ''
         self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
 
-        print (u"    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
-               item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8')
+        print((u"    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+               item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8'))
 
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
@@ -419,7 +419,7 @@ def process_categories(meta, data, item_category_regex):
                 # unexpected text before and after categories survives, any text between categories is deleted
                 start = matches[0].start()
                 end = matches[-1].end()
-                print '    Converted Categories to Tags: {0}'.format(tags)
+                print('    Converted Categories to Tags: {0}'.format(tags))
                 rest = categories[:start] + categories[end:]
                 data += u'\r\n' + rest.lstrip()
         data = data.rstrip() + u'\r\n'
@@ -636,7 +636,7 @@ class UserRevision(object):
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
 
-        print (u"    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8')
+        print((u"    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8'))
 
         # transfer subscribed_pages to subscription_patterns
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
@@ -711,7 +711,7 @@ class UserRevision(object):
         RECHARS = ur'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            print (u"        User is subscribed to {0}".format(subscribed_item)).encode('utf-8')
+            print((u"        User is subscribed to {0}".format(subscribed_item)).encode('utf-8'))
             if flaskg.item_name2id.get(subscribed_item):
                 subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
             else:

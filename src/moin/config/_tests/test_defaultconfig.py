@@ -35,7 +35,7 @@ class TestPasswordChecker(object):
         else:
             for pw, result in self.tests_builtin:
                 pw_error = pw_checker(self.username, pw)
-                print "{0!r}: {1}".format(pw, pw_error)
+                print("{0!r}: {1}".format(pw, pw_error))
                 assert result == (pw_error is None)
 
 
