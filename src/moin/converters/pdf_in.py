@@ -8,14 +8,14 @@ MoinMoin - PDF input converter
 
 from __future__ import absolute_import, division
 
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfparser import PDFParser
-from pdfminer.pdfdocument import PDFDocument
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.pdfdevice import PDFDevice
-from pdfminer.converter import TextConverter
-from pdfminer.cmapdb import CMapDB
-from pdfminer.layout import LAParams
+from pdfminer3.pdfpage import PDFPage
+from pdfminer3.pdfparser import PDFParser
+from pdfminer3.pdfdocument import PDFDocument
+from pdfminer3.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer3.pdfdevice import PDFDevice
+from pdfminer3.converter import TextConverter
+from pdfminer3.cmapdb import CMapDB
+from pdfminer3.layout import LAParams
 
 from . import default_registry
 from moin.utils.mime import Type, type_text_plain
