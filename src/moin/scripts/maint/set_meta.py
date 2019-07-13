@@ -58,8 +58,8 @@ class Set_Meta(Command):
             newmeta = dict(current_rev.meta)
             if remove:
                 newmeta.pop(key)
-                print "Processing {0!r}, removing {1}.".format(name, key)
+                print("Processing {0!r}, removing {1}.".format(name, key))
             else:
                 newmeta[key] = value
-                print "Processing {0!r}, setting {1}={2!r}.".format(name, key, value)
+                print("Processing {0!r}, setting {1}={2!r}.".format(name, key, value))
             current_rev.item.store_revision(newmeta, current_rev.data)

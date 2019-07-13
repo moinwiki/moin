@@ -33,7 +33,7 @@ class Create_User(Command):
                                email=email)
 
         if msg:
-            print msg
+            print(msg)
         else:
             u = user.User(auth_username=name)
-            print " %-20s %-25s %-35s - created." % (u.itemid, u.name, u.email),
+            print(" %-20s %-25s %-35s - created." % (u.itemid, u.name, u.email), end=' ')

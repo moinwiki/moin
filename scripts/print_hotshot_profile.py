@@ -24,7 +24,7 @@ def run():
     from hotshot import stats
 
     if len(sys.argv) != 2:
-        print __doc__
+        print(__doc__)
         sys.exit()
 
     # Load and print stats

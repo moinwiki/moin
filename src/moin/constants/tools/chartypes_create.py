@@ -29,7 +29,7 @@ def main():
     chars_digits = u''.join(digits)
     chars_spaces = u''.join(space)
 
-    print """
+    print("""
 CHARS_UPPER = u"%(chars_upper)s"
 
 CHARS_LOWER = u"%(chars_lower)s"
@@ -39,7 +39,7 @@ CHARS_DIGITS = u"%(chars_digits)s"
 CHARS_SPACES = u"%(chars_spaces)s"
 
 
-""" % locals()
+""" % locals())
 
 
 if __name__ == '__main__':

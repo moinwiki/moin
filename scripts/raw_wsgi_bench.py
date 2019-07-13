@@ -25,8 +25,8 @@ PAGES = ('FrontPage', 'HelpOnMoinWikiSyntax', 'RecentChanges')
 client = Client(application)
 
 for page in PAGES:
-    print '=== Run with page "%s" ===' % page
-    print 'Running %i WSGI-requests:' % RUNS
+    print('=== Run with page "%s" ===' % page)
+    print('Running %i WSGI-requests:' % RUNS)
     timing = time.time()
     for run in range(RUNS):
         appiter, status, headers = client.get('/%s' % page)
@@ -37,7 +37,7 @@ for page in PAGES:
             sys.stdout.write('.')
     timing = time.time() - timing
 
-    print
-    print 'Finished %i WSGI-requests in %.2f seconds' % (RUNS, timing)
-    print 'Time per request: %.4f seconds' % (timing / RUNS)
-    print 'Requests per second: %.2f' % (RUNS / timing)
+    print()
+    print('Finished %i WSGI-requests in %.2f seconds' % (RUNS, timing))
+    print('Time per request: %.4f seconds' % (timing / RUNS))
+    print('Requests per second: %.2f' % (RUNS / timing))

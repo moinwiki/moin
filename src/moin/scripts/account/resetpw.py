@@ -81,11 +81,11 @@ class Set_Password(Command):
     def run(self, name, uid, password, all_users, notify, verbose, subject, text, text_file, skip_invalid):
         flags_given = name or uid or all_users
         if not flags_given:
-            print 'incorrect number of arguments'
+            print('incorrect number of arguments')
             sys.exit(1)
 
         if notify and not app.cfg.mail_enabled:
-            print "This wiki is not enabled for mail processing. The --notify option requires this. Aborting..."
+            print("This wiki is not enabled for mail processing. The --notify option requires this. Aborting...")
             sys.exit(1)
 
         if text_file:
@@ -120,4 +120,4 @@ class Set_Password(Command):
             else:
                 status = "SUCCESS"
             if verbose:
-                print "uid %s, name %s, email %s (%05d / %05d) %s" % (uid, name, email, nr, total, status)
+                print("uid %s, name %s, email %s (%05d / %05d) %s" % (uid, name, email, nr, total, status))

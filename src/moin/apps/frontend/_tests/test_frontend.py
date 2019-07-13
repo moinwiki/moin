@@ -32,7 +32,7 @@ class TestFrontend(object):
 
         with self.app.test_client() as c:
             for method in ['HEAD', 'GET']:
-                print '%s %s' % (method, url_for(viewname, **viewopts))
+                print('%s %s' % (method, url_for(viewname, **viewopts)))
                 rv = c.open(url_for(viewname, **viewopts), method=method, data=params)
                 assert rv.status == status
                 assert rv.headers['Content-Type'] in content_types
@@ -46,7 +46,7 @@ class TestFrontend(object):
             viewopts = {}
         if form is None:
             form = {}
-        print 'POST %s' % url_for(viewname, **viewopts)
+        print('POST %s' % url_for(viewname, **viewopts))
         with self.app.test_client() as c:
             rv = c.post(url_for(viewname, **viewopts), data=form)
             assert rv.status == status

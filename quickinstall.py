@@ -176,10 +176,10 @@ def search_for_phrase(filename):
                 if filename in print_counts:
                     counts[phrase] += 1
                 else:
-                    print idx + 1, line.rstrip()
+                    print(idx + 1, line.rstrip())
                     break
     for key in counts:
-        print 'The phrase "%s" was found %s times.' % (key, counts[key])
+        print('The phrase "%s" was found %s times.' % (key, counts[key]))
 
 
 def wiki_exists():
@@ -190,18 +190,18 @@ def wiki_exists():
 def make_wiki(command, mode='w', msg='\nSuccess: a new wiki has been created.'):
     """Process command to create a new wiki."""
     if wiki_exists() and mode == 'w':
-        print 'Error: a wiki exists, delete it and try again.'
+        print('Error: a wiki exists, delete it and try again.')
     else:
-        print 'Output messages redirected to {0}.'.format(NEWWIKI)
+        print('Output messages redirected to {0}.'.format(NEWWIKI))
         with open(NEWWIKI, mode) as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         if result == 0:
-            print msg
+            print(msg)
             return True
         else:
-            print 'Important messages from %s are shown below:' % NEWWIKI
+            print('Important messages from %s are shown below:' % NEWWIKI)
             search_for_phrase(NEWWIKI)
-            print '\nError: attempt to create wiki failed. Do "%s log new-wiki" to see complete log.' % M
+            print('\nError: attempt to create wiki failed. Do "%s log new-wiki" to see complete log.' % M)
             return False
 
 
@@ -219,7 +219,7 @@ def put_items(dir='contrib/sample/'):
         if file.endswith('.data'):
             datas.append(file)
     if not len(datas) == len(metas):
-        print 'Error: the number of .data and .meta files should be equal'
+        print('Error: the number of .data and .meta files should be equal')
         return False
     commands = []
     command = 'moin item-put --meta {0} --data {1}'
@@ -228,19 +228,19 @@ def put_items(dir='contrib/sample/'):
         if data in datas:
             commands.append(command.format(dir + meta, dir + data))
         else:
-            print u'Error: file "{0} is missing'.format(data)
+            print(u'Error: file "{0} is missing'.format(data))
             return False
     commands = ACTIVATE + SEP.join(commands)
 
     with open(NEWWIKI, 'a') as messages:
         result = subprocess.call(commands, shell=True, stderr=messages, stdout=messages)
     if result == 0:
-        print '{0} items were added to wiki'.format(len(metas))
+        print('{0} items were added to wiki'.format(len(metas)))
         return True
     else:
-        print 'Important messages from %s are shown below:' % NEWWIKI
+        print('Important messages from %s are shown below:' % NEWWIKI)
         search_for_phrase(NEWWIKI)
-        print '\nError: attempt to add items to wiki failed. Do "%s log new-wiki" to see complete log.' % M
+        print('\nError: attempt to add items to wiki failed. Do "%s log new-wiki" to see complete log.' % M)
         return False
 
 
@@ -251,7 +251,7 @@ def delete_files(pattern):
         for filename in fnmatch.filter(filenames, pattern):
             os.remove(os.path.join(root, filename))
             matches += 1
-    print 'Deleted %s files matching "%s".' % (matches, pattern)
+    print('Deleted %s files matching "%s".' % (matches, pattern))
 
 
 def get_bootstrap_data_location():
@@ -293,28 +293,28 @@ class Commands(object):
         if os.path.isdir('.tox'):
             # keep tox test virtualenvs in sync with moin-env-python
             command = '{0} quickinstall.py --FirstCall {1}{2}tox --recreate --notest'.format(sys.executable, ' '.join(args), SEP)
-            print 'Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {0}'.format(QUICKINSTALL)
+            print('Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {0}'.format(QUICKINSTALL))
         else:
             command = '{0} quickinstall.py --FirstCall'.format(sys.executable, ' '.join(args), )
-            print 'Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL)
+            print('Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL))
         with open(QUICKINSTALL, 'w') as messages:
             # we run ourself as a subprocess so we can capture output in a log file
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-        print '\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M)
+        print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
 
     def cmd_docs(self, *args):
         """create local Sphinx html documentation"""
         command = '{0}sphinx-apidoc -f -o docs/devel/api src/moin {1}cd docs{1} make html'.format(ACTIVATE, SEP)
-        print 'Creating HTML docs... output messages written to {0}.'.format(DOCS)
+        print('Creating HTML docs... output messages written to {0}.'.format(DOCS))
         with open(DOCS, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-        print '\nSearching {0}, important messages are shown below...\n'.format(DOCS)
+        print('\nSearching {0}, important messages are shown below...\n'.format(DOCS))
         search_for_phrase(DOCS)
         if result == 0:
-            print 'HTML docs successfully created in {0}.'.format(os.path.normpath('docs/_build/html'))
+            print('HTML docs successfully created in {0}.'.format(os.path.normpath('docs/_build/html')))
         else:
-            print 'Error: creation of HTML docs failed with return code "{0}". Do "{1} log docs" to see complete log.'.format(result, M)
+            print('Error: creation of HTML docs failed with return code "{0}". Do "{1} log docs" to see complete log.'.format(result, M))
 
     def cmd_extras(self, *args):
         """install optional packages: Pillow, sqlalchemy, ldap, requirements.d"""
@@ -326,16 +326,16 @@ class Commands(object):
         reqs = ['requirements.d/development.txt', 'requirements.d/docs.txt', ]
         reqs_installer = 'pip install -r '
         command = ACTIVATE + SEP.join(list(installer + x for x in packages) + list(reqs_installer + x for x in reqs))
-        print 'Installing {0}.'.format(', '.join(packages + reqs))
-        print 'Output messages written to {0}.'.format(EXTRAS)
+        print('Installing {0}.'.format(', '.join(packages + reqs)))
+        print('Output messages written to {0}.'.format(EXTRAS))
         with open(EXTRAS, 'w') as messages:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-        print '\nImportant messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(EXTRAS, M)
+        print('\nImportant messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(EXTRAS, M))
         search_for_phrase(EXTRAS)
 
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
-        print 'Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt'))
+        print('Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt')))
         command = '{0} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
         subprocess.call(command, shell=True)
 
@@ -344,13 +344,13 @@ class Commands(object):
 
         def log_help(logs):
             """Print list of available logs to view."""
-            print "usage: {0} log <target> where <target> is:\n\n".format(M)
+            print("usage: {0} log <target> where <target> is:\n\n".format(M))
             choices = '{0: <16}- {1}'
             for log in sorted(logs):
                 if os.path.isfile(CMD_LOGS[log]):
-                    print choices.format(log, CMD_LOGS[log])
+                    print(choices.format(log, CMD_LOGS[log]))
                 else:
-                    print choices.format(log, '* file does not exist')
+                    print(choices.format(log, '* file does not exist'))
 
         logs = set(CMD_LOGS.keys())
         if args and args[0] in logs and os.path.isfile(CMD_LOGS[args[0]]):
@@ -366,14 +366,14 @@ class Commands(object):
     def cmd_new_wiki(self, *args):
         """create empty wiki"""
         command = '{0}moin index-create -s -i'.format(ACTIVATE)
-        print 'Creating a new empty wiki...'
+        print('Creating a new empty wiki...')
         make_wiki(command)  # share code with loading sample data and restoring backups
 
     def cmd_sample(self, *args):
         """create wiki and load sample data"""
         # load items with non-ASCII names from a serialized backup
         command = '{0}moin index-create -s -i{1} moin load --file contrib/sample/unicode.moin'.format(ACTIVATE, SEP)
-        print 'Creating a new wiki populated with sample data...'
+        print('Creating a new wiki populated with sample data...')
         success = make_wiki(command, msg='\nSuccess: a new wiki has been created... working...')
         # build the index
         if success:
@@ -391,10 +391,10 @@ class Commands(object):
             filename = args[0]
         if os.path.isfile(filename):
             command = command % filename
-            print u'Creating a new wiki and loading it with data from {0}...'.format(filename)
+            print(u'Creating a new wiki and loading it with data from {0}...'.format(filename))
             make_wiki(command)
         else:
-            print u'Error: cannot create wiki because {0} does not exist.'.format(filename)
+            print(u'Error: cannot create wiki because {0} does not exist.'.format(filename))
 
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki directory named dir"""
@@ -402,24 +402,24 @@ class Commands(object):
             dirname = args[0]
             if os.path.isdir(dirname):
                 command = '{0}moin import19 -s -i --data_dir {1}'.format(ACTIVATE, dirname)
-                print u'Creating a new wiki populated with data from {0}...'.format(dirname)
+                print(u'Creating a new wiki populated with data from {0}...'.format(dirname))
                 make_wiki(command)
             else:
-                print u'Error: cannot create wiki because {0} does not exist.'.format(dirname)
+                print(u'Error: cannot create wiki because {0} does not exist.'.format(dirname))
         else:
-            print 'Error: a path to the Moin 1.9 wiki/data data directory is required.'
+            print('Error: a path to the Moin 1.9 wiki/data data directory is required.')
 
     def cmd_index(self, *args):
         """delete and rebuild index"""
         if wiki_exists():
             command = '{0}moin index-create -i{1} moin index-build'.format(ACTIVATE, SEP)
-            print 'Rebuilding indexes...(ignore log messages from rst parser)...'
+            print('Rebuilding indexes...(ignore log messages from rst parser)...')
             try:
                 subprocess.call(command, shell=True)
             except KeyboardInterrupt:
                 pass  # eliminates traceback on windows
         else:
-            print 'Error: a wiki must be created before rebuilding the indexes.'
+            print('Error: a wiki must be created before rebuilding the indexes.')
 
     def cmd_run(self, *args):
         """run built-in wiki server"""
@@ -432,7 +432,7 @@ class Commands(object):
             except KeyboardInterrupt:
                 pass  # eliminates traceback on windows
         else:
-            print 'Error: a wiki must be created before running the built-in server.'
+            print('Error: a wiki must be created before running the built-in server.')
 
     def cmd_backup(self, *args):
         """roll 3 prior backups and create new wiki/backup.moin or backup to user specified file"""
@@ -440,9 +440,9 @@ class Commands(object):
             filename = BACKUP_FILENAME
             if args:
                 filename = args[0]
-                print u'Creating a wiki backup to {0}...'.format(filename)
+                print(u'Creating a wiki backup to {0}...'.format(filename))
             else:
-                print u'Creating a wiki backup to {0} after rolling 3 prior backups...'.format(filename)
+                print(u'Creating a wiki backup to {0} after rolling 3 prior backups...'.format(filename))
                 b3 = BACKUP_FILENAME.replace('.', '3.')
                 b2 = BACKUP_FILENAME.replace('.', '2.')
                 b1 = BACKUP_FILENAME.replace('.', '1.')
@@ -456,30 +456,30 @@ class Commands(object):
             with open(BACKUPWIKI, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
-                print u'Success: wiki was backed up to {0}'.format(filename)
+                print(u'Success: wiki was backed up to {0}'.format(filename))
             else:
-                print 'Important messages from {0} are shown below. Do "{1} log backup" to see complete log.'.format(BACKUPWIKI, M)
+                print('Important messages from {0} are shown below. Do "{1} log backup" to see complete log.'.format(BACKUPWIKI, M))
                 search_for_phrase(BACKUPWIKI)
-                print '\nError: attempt to backup wiki failed.'
+                print('\nError: attempt to backup wiki failed.')
         else:
-            print 'Error: cannot backup wiki because it has not been created.'
+            print('Error: cannot backup wiki because it has not been created.')
 
     def cmd_dump_html(self, *args):
         """create a static html dump of this wiki"""
         if wiki_exists():
-            print u'Creating static HTML image of wiki...'
+            print(u'Creating static HTML image of wiki...')
             command = '{0}moin dump-html {1}'.format(ACTIVATE, ' '.join(args))
             with open(DUMPHTML, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
-                print u'Success: wiki was dumped to html files'
+                print(u'Success: wiki was dumped to html files')
             else:
-                print '\nError: attempt to dump wiki to html files failed.'
+                print('\nError: attempt to dump wiki to html files failed.')
             # always show errors because individual items may fail
-            print 'Important messages from {0} are shown below. Do "{1} log dump-html" to see complete log.'.format(DUMPHTML, M)
+            print('Important messages from {0} are shown below. Do "{1} log dump-html" to see complete log.'.format(DUMPHTML, M))
             search_for_phrase(DUMPHTML)
         else:
-            print 'Error: cannot dump wiki because it has not been created.'
+            print('Error: cannot dump wiki because it has not been created.')
 
     def cmd_css(self, *args):
         """run Stylus and lessc to update CSS files"""
@@ -489,20 +489,20 @@ class Commands(object):
         modernized_loc = 'src/moin/themes/modernized/static/css/stylus'
         basic_loc = 'src/moin/themes/basic/static/custom-less'
 
-        print 'Running Stylus to update Modernized theme CSS files...'
+        print('Running Stylus to update Modernized theme CSS files...')
         command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format(modernized_loc, SEP, pygments_loc)
         result = subprocess.call(command, shell=True)
         if result == 0:
-            print 'Success: Modernized CSS files updated.'
+            print('Success: Modernized CSS files updated.')
         else:
-            print 'Error: stylus failed to update css files, see error messages above.'
+            print('Error: stylus failed to update css files, see error messages above.')
         # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
         command = 'python scripts/coding_std.py src/moin/themes/modernized/static/css'
         result = subprocess.call(command, shell=True)
         if result != 0:
-            print 'Error: failure running coding_std.py against modernized css files'
+            print('Error: failure running coding_std.py against modernized css files')
 
-        print 'Running lessc to update Basic theme CSS files...'
+        print('Running lessc to update Basic theme CSS files...')
         if WINDOWS_OS:
             data_loc = '{0};{1}'.format(bootstrap_loc, pygments_loc)
         else:
@@ -511,38 +511,38 @@ class Commands(object):
         command = 'cd {0}{1}lessc {2} theme.less ../css/theme.css'.format(basic_loc, SEP, include)
         result = subprocess.call(command, shell=True)
         if result == 0:
-            print 'Success: Basic theme CSS files updated.'
+            print('Success: Basic theme CSS files updated.')
         else:
-            print 'Error: Basic theme CSS files update failed, see error messages above.'
+            print('Error: Basic theme CSS files update failed, see error messages above.')
 
     def cmd_tests(self, *args):
         """run tests, output goes to m-tox.txt"""
-        print 'Running tests... output written to {0}.'.format(TOX)
+        print('Running tests... output written to {0}.'.format(TOX))
         command = '{0}tox -- {2} > {1} 2>&1'.format(ACTIVATE, TOX, ' '.join(args))
         result = subprocess.call(command, shell=True)
-        print 'Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(TOX, M)
+        print('Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(TOX, M))
         search_for_phrase(TOX)
 
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
-        print 'Checking for trailing blanks, DOS line endings, Unix line endings, empty lines at eof...'
+        print('Checking for trailing blanks, DOS line endings, Unix line endings, empty lines at eof...')
         command = '%s scripts/coding_std.py' % sys.executable
         subprocess.call(command, shell=True)
 
     # not on menu, rarely used, similar code was in moin 1.9
     def cmd_dist(self, *args):
         """create distribution archive in dist/"""
-        print 'Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(DIST)
+        print('Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(DIST))
         self.cmd_del_wiki(*args)
         command = '{0} setup.py sdist'.format(sys.executable)
         with open(DIST, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-        print 'Summary message from {0} is shown below:'.format(DIST)
+        print('Summary message from {0} is shown below:'.format(DIST))
         search_for_phrase(DIST)
         if result == 0:
-            print 'Success: a distribution archive was created in {0}.'.format(os.path.normpath('/dist'))
+            print('Success: a distribution archive was created in {0}.'.format(os.path.normpath('/dist')))
         else:
-            print 'Error: create dist failed with return code = {0}. Do "{1} log dist" to see complete log.'.format(result, M)
+            print('Error: create dist failed with return code = {0}. Do "{1} log dist" to see complete log.'.format(result, M))
 
     def cmd_del_all(self, *args):
         """same as running the 4 del-* commands below"""
@@ -567,11 +567,11 @@ class Commands(object):
         """create a just-in-case backup, then delete all wiki data"""
         command = '{0}moin save --all-backends --file {1}'.format(ACTIVATE, JUST_IN_CASE_BACKUP)
         if wiki_exists():
-            print 'Creating a backup named {0}; then deleting all wiki data and indexes...'.format(JUST_IN_CASE_BACKUP)
+            print('Creating a backup named {0}; then deleting all wiki data and indexes...'.format(JUST_IN_CASE_BACKUP))
             with open(DELWIKI, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result != 0:
-                print 'Error: backup failed with return code = {0}. Complete log is in {1}.'.format(result, DELWIKI)
+                print('Error: backup failed with return code = {0}. Complete log is in {1}.'.format(result, DELWIKI))
         # destroy wiki even if backup fails
         if os.path.isdir('wiki/data') or os.path.isdir('wiki/index'):
             shutil.rmtree('wiki/data')
@@ -580,9 +580,9 @@ class Commands(object):
                 shutil.rmtree('wiki/preview')
             if os.path.isdir('wiki/sql'):
                 shutil.rmtree('wiki/sql')
-            print 'Wiki data successfully deleted.'
+            print('Wiki data successfully deleted.')
         else:
-            print 'Wiki data not deleted because it does not exist.'
+            print('Wiki data not deleted because it does not exist.')
 
 
 class QuickInstall(object):
@@ -678,7 +678,7 @@ if __name__ == '__main__':
 
     if (os.path.isfile('activate') or os.path.isfile('activate.bat')) and (len(args) == 2 and args[1] in ('-h', '--help')):
         # user keyed "./m", "./m -h", or "./m --help"
-        print help
+        print(help)
 
     else:
         if not (os.path.isfile('m') or os.path.isfile('m.bat')):
@@ -688,7 +688,7 @@ if __name__ == '__main__':
             # run this same script (quickinstall.py) again in a subprocess to create the virtual env
             command()
             # a few success/failure messages will have printed on users terminal, suggest next step
-            print '\n> > > Type "%s" for menu < < <' % M
+            print('\n> > > Type "%s" for menu < < <' % M)
 
         elif args == ['quickinstall.py', 'quickinstall']:
             # user keyed "./m quickinstall" to update virtualenv
@@ -722,5 +722,5 @@ if __name__ == '__main__':
                     choice = getattr(commands, choice)
                     choice(*args[2:])
                 else:
-                    print help
-                    print 'Error: unknown menu selection "%s"' % args[1]
+                    print(help)
+                    print('Error: unknown menu selection "%s"' % args[1])

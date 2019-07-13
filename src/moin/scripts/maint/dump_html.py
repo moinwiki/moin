@@ -100,7 +100,7 @@ class Dump(Command):
             acls['before'] = 'All:read'
 
         # create an empty output directory after deleting any existing directory
-        print u'Creating output directory {0}, starting to copy supporting files'.format(html_root)
+        print(u'Creating output directory {0}, starting to copy supporting files'.format(html_root))
         if os.path.exists(html_root):
             shutil.rmtree(html_root, ignore_errors=False)
         else:
@@ -145,7 +145,7 @@ class Dump(Command):
         else:
             q = Every()
 
-        print 'Starting to dump items'
+        print('Starting to dump items')
         for current_rev in app.storage.search(q, limit=None, sortedby="name"):
             if current_rev.namespace in exclude_ns:
                 # we usually do not copy userprofiles, no one can login to a static wiki
@@ -162,14 +162,14 @@ class Dump(Command):
                 filename = norm(join(html_root, file_name))
                 names.append(file_name)
             except Forbidden:
-                print u'Failed to dump {0}: Forbidden'.format(current_rev.name)
+                print(u'Failed to dump {0}: Forbidden'.format(current_rev.name))
                 continue
             except KeyError:
-                print u'Failed to dump {0}: KeyError'.format(current_rev.name)
+                print(u'Failed to dump {0}: KeyError'.format(current_rev.name))
                 continue
 
             if not isinstance(rendered, unicode):
-                print u'Rendering failed for {0} with response {1}'.format(file_name, rendered)
+                print(u'Rendering failed for {0} with response {1}'.format(file_name, rendered))
                 continue
             # make hrefs relative to current folder
             rendered = rendered.replace('href="/', 'href="')
@@ -194,11 +194,11 @@ class Dump(Command):
                 with open(filename, 'wb') as f:
                     rev.data.seek(0)
                     shutil.copyfileobj(rev.data, f)
-                    print u'Saved file named {0} as raw data'.format(filename).encode('utf-8')
+                    print(u'Saved file named {0} as raw data'.format(filename).encode('utf-8'))
             else:
                 with open(filename, 'wb') as f:
                     f.write(rendered.encode('utf8'))
-                    print u'Saved file named {0}'.format(filename).encode('utf-8')
+                    print(u'Saved file named {0}'.format(filename).encode('utf-8'))
 
             if current_rev.name == app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click
@@ -233,12 +233,12 @@ class Dump(Command):
                 page = part1 + start + name_links + div_end + end + part2
             except IndexError:
                 page = home_page
-                print u'Error: failed to find {0} in item named {1}'.format(end, app.cfg.default_root)
+                print(u'Error: failed to find {0} in item named {1}'.format(end, app.cfg.default_root))
             for target in ['+index', '_+index.html']:
                 with open(norm(join(html_root, target)), 'wb') as f:
                     f.write(page.encode('utf8'))
         else:
-            print 'Error: no item matching name in app.cfg.default_root was found'
+            print('Error: no item matching name in app.cfg.default_root was found')
 
     def subitems(self, s, target='href="'):
         """

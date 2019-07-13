@@ -69,9 +69,9 @@ class Serialize(Command):
                         backend = app.cfg.backend_mapping.get(backend_name)
                         serialize(backend, f)
                 else:
-                    print "Error: Wrong backend name given."
-                    print "Given Backends: %r" % backends
-                    print "Configured Backends: %r" % existing_backends
+                    print("Error: Wrong backend name given.")
+                    print("Given Backends: %r" % backends)
+                    print("Configured Backends: %r" % existing_backends)
 
 
 class Deserialize(Command):

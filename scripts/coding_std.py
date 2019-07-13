@@ -41,11 +41,11 @@ class NoDupsLogger(object):
 
     def log(self, heading, message):
         if heading and heading not in self.headings:
-            print u"\n%s" % heading
+            print(u"\n%s" % heading)
             self.headings.add(heading)
 
         if message and message not in self.messages:
-            print u"   ", message
+            print(u"   ", message)
             self.messages.add(message)
 
 
