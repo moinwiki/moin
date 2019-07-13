@@ -13,7 +13,7 @@ def main():
     digits = []
     space = []
     for code in range(1, 65535):
-        c = unichr(code)
+        c = chr(code)
         str = "\\u{0:04x}".format(code)
         if c.isupper():
             uppercase.append(str)

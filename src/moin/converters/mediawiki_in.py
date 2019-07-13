@@ -438,9 +438,9 @@ class Converter(ConverterMacro):
                 c = int(entity[3:-1], 16)
             else:
                 c = int(entity[2:-1], 10)
-            c = unichr(c)
+            c = chr(c)
         else:
-            c = unichr(name2codepoint.get(entity[1:-1], 0xfffe))
+            c = chr(name2codepoint.get(entity[1:-1], 0xfffe))
         stack.top_append(c)
 
     inline_blockquote = r"""

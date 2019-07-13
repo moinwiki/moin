@@ -219,7 +219,7 @@ def getUnicodeIndexGroup(name):
     """
     c = name[0]
     if u'\uAC00' <= c <= u'\uD7AF':  # Hangul Syllables
-        return unichr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
+        return chr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
     else:
         return c.upper()  # we put lower and upper case words into the same index group
 
