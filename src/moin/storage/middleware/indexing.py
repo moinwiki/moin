@@ -1040,7 +1040,7 @@ class Item(PropertiesMixin):
             return item
         raise NoSuchItemError(repr(query))
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Item exists (== has at least one revision)?
         """

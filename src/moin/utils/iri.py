@@ -455,7 +455,7 @@ class IriAuthority(AutoNe):
                 self.port == other.port
         return NotImplemented
 
-    def __nonzero__(self):
+    def __bool__(self):
         if self._userinfo or self._host or self.port:
             return True
         return False
@@ -602,7 +602,7 @@ class IriPath(AutoNe):
     def __len__(self):
         return len(self._list)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._list)
 
     def __add__(self, other):
