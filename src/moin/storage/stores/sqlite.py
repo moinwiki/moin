@@ -109,7 +109,7 @@ class BytesStore(BytesMutableStoreBase):
     def __setitem__(self, key, value):
         value = self._compress(value)
         with self.conn:
-            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
+            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, value))
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
