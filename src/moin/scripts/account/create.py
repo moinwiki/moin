@@ -16,13 +16,13 @@ from moin.app import before_wiki
 class Create_User(Command):
     description = 'This command allows you to create a user account'
     option_list = (
-        Option('--name', '-n', required=True, dest='name', type=unicode,
+        Option('--name', '-n', required=True, dest='name', type=str,
                help="Set the wiki user name to NAME."),
-        Option('--display_name', '-d', required=False, dest="display_name", type=unicode,
+        Option('--display_name', '-d', required=False, dest="display_name", type=str,
                help="Set the wiki user's display name to DISPLAY_NAME (e.g. in case the NAME is cryptic)."),
-        Option('--email', '-e', required=True, dest='email', type=unicode,
+        Option('--email', '-e', required=True, dest='email', type=str,
                help="Set the user's email address to EMAIL."),
-        Option('--password', '-p', required=True, dest="password", type=unicode,
+        Option('--password', '-p', required=True, dest="password", type=str,
                help="Set the user's password to PASSWORD."),
     )
 
