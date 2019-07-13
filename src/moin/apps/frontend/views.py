@@ -1873,6 +1873,7 @@ class UserSettingsQuicklinksForm(Form):
 
 class UserSettingsOptionsForm(Form):
     name = 'usersettings_options'
+    iso_8601 = Checkbox.using(label=L_('Always use ISO 8601 date-time format'))
     mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
     edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))
     scroll_page_after_edit = Checkbox.using(label=L_('Scroll page after edit'))

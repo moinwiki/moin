@@ -466,6 +466,7 @@ options_no_group_name = {
             DISPLAY_NAME: None,
             EMAIL: None,
             CSS_URL: None,
+            ISO_8601: False,
             MAILTO_AUTHOR: False,
             EDIT_ON_DOUBLECLICK: True,
             SCROLL_PAGE_AFTER_EDIT: True,

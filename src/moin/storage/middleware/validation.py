@@ -418,6 +418,7 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named(keys.EDIT_ON_DOUBLECLICK).using(optional=True),
     Boolean.named(keys.SCROLL_PAGE_AFTER_EDIT).using(optional=True),
     Boolean.named(keys.MAILTO_AUTHOR).using(optional=True),
+    Boolean.named(keys.ISO_8601).using(optional=True),
     List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
     List.named(keys.SUBSCRIPTIONS).of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
