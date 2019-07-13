@@ -117,7 +117,7 @@ class TestSubscriptions(object):
         ]
         users = set()
         expected_names = set()
-        for i in xrange(10000):
+        for i in range(10000):
             i = unicode(i)
             user.create_user(username=i, password=password, email="{0}@example.org".format(i),
                              validate=False, locale=u'en')
