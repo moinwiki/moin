@@ -82,16 +82,14 @@ setup_args = dict(
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Script>=2.0.5',  # scripting support
-        # TODO: Flask-Theme 0.2.0 does not have python 3 support
-        # fix Flask-Theme or add new package to pypi based upon: https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0
-        'Flask-Theme>=0.2.0',  # theme support
+        'Flask-Theme>=0.3.3',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'flatland>=0.8',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug>=0.11.2',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
-        'pdfminer',  # pdf -> text/plain conversion
+        'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
