@@ -13,9 +13,9 @@ from moin.utils.pysupport import AutoNe
 class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
     """
     :ivar type: Type part
-    :type type: unicode
+    :type type: str
     :ivar subtype: Subtype part
-    :type subtype: unicode
+    :type subtype: str
     :ivar parameters: Parameters part
     :type parameters: dict
     """
@@ -56,7 +56,7 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
 
         return NotImplemented
 
-    def __unicode__(self):
+    def __str__(self):
         ret = ['{0}/{1}'.format(self.type or '*', self.subtype or '*')]
 
         parameters = sorted(self.parameters.items())
