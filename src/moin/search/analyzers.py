@@ -31,7 +31,7 @@ class MimeTokenizer(Tokenizer):
             instead of 0,1,2,...
         :param positions: Whether to record token positions in the token.
         """
-        assert isinstance(value, str), "{0!r} is not unicode".format(value)
+        assert isinstance(value, str), "{0!r} is not str".format(value)
         if '/' not in value:  # Add '/' if user forgot do this
             value += '/'
         pos = start_pos
@@ -40,7 +40,7 @@ class MimeTokenizer(Tokenizer):
         # we need to yield the complete contenttype in one piece,
         # so we can find it with Term(CONTENTTYPE, contenttype):
         if tp.type is not None and tp.subtype is not None:
-            # note: we do not use "value" directly, so Type.__unicode__ can normalize it:
+            # note: we do not use "value" directly, so Type.__str__ can normalize it:
             tk.text = str(tp)
             if positions:
                 tk.pos = pos
@@ -94,7 +94,7 @@ class AclTokenizer(Tokenizer):
 
             Output: u"JoeDoe:+write"
 
-        :param value: unicode string
+        :param value: str
         :param positions: Whether to record token positions in the token.
         :param start_pos: The position number of the first token. For example,
             if you set start_pos=2, the tokens will be numbered 2,3,4,...

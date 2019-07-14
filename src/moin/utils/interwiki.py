@@ -163,7 +163,7 @@ class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
     def fullname(self):
         return get_fqname(self.value, self.field, self.namespace)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.fullname
 
     @property
@@ -284,8 +284,8 @@ def getInterwikiName(item_name):
     """
     Get the (fully qualified) interwiki name of a local item name.
 
-    :param item_name: item name (unicode)
-    :rtype: unicode
+    :param item_name: item name (str)
+    :rtype: str
     :returns: wiki_name:item_name
     """
     return "{0}/{1}".format(app.cfg.interwikiname, item_name)
@@ -345,7 +345,7 @@ class InterWikiMap(object):
     @staticmethod
     def from_string(ustring):
         """
-        Load and parse a valid interwiki map "unicode" object.
+        Load and parse a valid interwiki map "str" object.
         """
         return InterWikiMap(ustring)
 

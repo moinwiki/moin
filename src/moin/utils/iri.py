@@ -65,7 +65,7 @@ class Iri(AutoNe):
 
     def __init__(self, _iri=None, _quoted=True, scheme=None, authority=None, path=None, query=None, fragment=None):
         """
-        :param _iri: A full IRI in unicode
+        :param _iri: A full IRI as a str
         :param scheme: Scheme part of the IRI, overrides the same part of the IRI.
         :param authority: Authority part of the IRI, overrides the same part of the IRI.
         :param path: Path part of the IRI, overrides the same part of the IRI.
@@ -171,7 +171,7 @@ class Iri(AutoNe):
             self._fragment,
         )
 
-    def __unicode__(self):
+    def __str__(self):
         ret = []
 
         if self.scheme:
@@ -468,7 +468,7 @@ class IriAuthority(AutoNe):
             self.port,
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.__get(self._userinfo, self._host)
 
     def __get(self, userinfo, host):
@@ -618,7 +618,7 @@ class IriPath(AutoNe):
 
         return NotImplemented
 
-    def __unicode__(self):
+    def __str__(self):
         return '/'.join(self._list)
 
     def __repr__(self):
