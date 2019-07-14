@@ -21,7 +21,7 @@ class TestEncoding(object):
 
     def testCreateWithEncodedString(self):
         """ error: create with encoded string """
-        err = error.Error(b'טעות')
+        err = error.Error('טעות'.encode())
         assert str(err) == 'טעות'
 
     def testCreateWithObject(self):
