@@ -18,26 +18,20 @@ class TestEncoding(object):
         """ error: create with unicode """
         err = error.Error('טעות')
         assert str(err) == 'טעות'
-        assert str(err) == 'טעות'
 
     def testCreateWithEncodedString(self):
         """ error: create with encoded string """
-        err = error.Error('טעות')
-        assert str(err) == 'טעות'
+        err = error.Error('טעות'.encode())
         assert str(err) == 'טעות'
 
     def testCreateWithObject(self):
         """ error: create with any object """
 
         class Foo(object):
-            def __unicode__(self):
-                return 'טעות'
-
             def __str__(self):
                 return 'טעות'
 
         err = error.Error(Foo())
-        assert str(err) == 'טעות'
         assert str(err) == 'טעות'
 
     def testAccessLikeDict(self):
