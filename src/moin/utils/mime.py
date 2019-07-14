@@ -81,8 +81,8 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
 
         type, subtype = parts[0].strip().lower().split('/', 1)
 
-        type = type != '*' and type or None
-        subtype = subtype != '*' and subtype or None
+        type = type != '*' and type or ''
+        subtype = subtype != '*' and subtype or ''
         parameters = {}
 
         for param in parts[1:]:
