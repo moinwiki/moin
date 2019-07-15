@@ -3,13 +3,9 @@
 
 """
 MoinMoin - base classes for datastructs.
-
-TODO: Per https://docs.python.org/2/library/userdict.html
-Starting with Python version 2.6, it is recommended to use collections.MutableMapping instead of DictMixin.
 """
 
-
-from UserDict import DictMixin
+from collections import UserDict
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -258,7 +254,7 @@ class GreedyGroup(BaseGroup):
             self.__class__, self.name, self.members, self.member_groups)
 
 
-class BaseDict(object, DictMixin):
+class BaseDict(UserDict):
 
     def __init__(self, name, backend):
         """
@@ -270,27 +266,7 @@ class BaseDict(object, DictMixin):
         """
         self.name = name
         self._backend = backend
-        self._dict = self._load_dict()
-
-    def __iter__(self):
-        return self._dict.__iter__()
-
-    def keys(self):
-        return list(self)
-
-    def __len__(self):
-        return self._dict.__len__()
-
-    def __getitem__(self, key):
-        return self._dict[key]
-
-    def get(self, key, default=None):
-        """
-        Return the value if key is in the dictionary, else default. If
-        default is not given, it defaults to None, so that this method
-        never raises a KeyError.
-        """
-        return self._dict.get(key, default)
+        self.data = self._load_dict()
 
     def _load_dict(self):
         """
@@ -299,7 +275,7 @@ class BaseDict(object, DictMixin):
         return self._backend._retrieve_items(self.name)
 
     def __repr__(self):
-        return "<{0!r} name={1!r} items={2!r}>".format(self.__class__, self.name, list(self._dict.items()))
+        return "<{0!r} name={1!r} items={2!r}>".format(self.__class__, self.name, list(self.data.items()))
 
 
 class BaseDictsBackend:
