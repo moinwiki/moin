@@ -2,7 +2,6 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import difflib
-from types import NoneType
 from collections import Hashable
 
 INSERT = "insert"
@@ -61,7 +60,7 @@ def diff(d1, d2, basekeys=None):
                     changes.append((INSERT, basekeys, d2[d2_start:d2_end]))
         else:
             changes.extend(diff(str(d1), str(d2), basekeys))
-    elif any(isinstance(d, (NoneType, bool, int, float, str, )) for d in (d1, d2)):
+    elif any(isinstance(d, (type(None), bool, int, float, str, )) for d in (d1, d2)):
         if isinstance(d1, UndefinedType):
             changes.append((INSERT, basekeys, d2))
         elif isinstance(d2, UndefinedType):
