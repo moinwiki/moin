@@ -35,15 +35,15 @@ def test_Type_init_3():
 def test_Type_text():
     i = '*/*'
     t = Type(i)
-    assert t.type is None
-    assert t.subtype is None
+    assert t.type == ''
+    assert t.subtype == ''
     assert t.parameters == {}
     assert str(t) == i
 
     i = 'text/*'
     t = Type(i)
     assert t.type == 'text'
-    assert t.subtype is None
+    assert t.subtype == ''
     assert t.parameters == {}
     assert str(t) == i
 
