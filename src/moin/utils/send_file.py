@@ -179,10 +179,11 @@ def send_file(filename=None, file=None,
 
     if add_etags:
         if etag is None and filename:
+            filename_encoded = filename if isinstance(filename, bytes) else filename.encode()
             etag = 'flask-{0}-{1}-{2}'.format(
                 mtime or os.path.getmtime(filename),
                 os.path.getsize(filename),
-                adler32(filename) & 0xffffffff
+                adler32(filename_encoded) & 0xffffffff
             )
         if etag is None:
             raise TypeError("can't determine etag - please give etag or filename")
