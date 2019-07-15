@@ -94,10 +94,10 @@ class Notification:
         """
         if self.action in [DESTROY_REV, DESTROY_ALL, ]:
             contenttype = self.meta[CONTENTTYPE]
-            oldfile, newfile = self.content, BytesIO("")
+            oldfile, newfile = self.content, BytesIO(b"")
         elif self.action == ACTION_TRASH:
             contenttype = self.meta[CONTENTTYPE]
-            oldfile, newfile = self.revs[0].data, BytesIO("")
+            oldfile, newfile = self.revs[0].data, BytesIO(b"")
         else:
             # if user does not have permission to read object,
             # get_item_last_revisions() returns an empty list to self.revs
@@ -105,7 +105,7 @@ class Notification:
                 newfile = self.revs[0].data
                 if len(self.revs) == 1:
                     contenttype = self.revs[0].meta[CONTENTTYPE]
-                    oldfile = BytesIO("")
+                    oldfile = BytesIO(b"")
                 else:
                     from moin.apps.frontend.views import _common_type
                     contenttype = _common_type(self.revs[0].meta[CONTENTTYPE], self.revs[1].meta[CONTENTTYPE])
