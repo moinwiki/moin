@@ -79,11 +79,11 @@ class Converter(object):
     # HTML tags which are completely ignored by our converter.
     # We even do not process children of these elements.
     ignored_tags = {'applet', 'area', 'button', 'caption', 'center', 'fieldset',
-                        'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
-                        'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
-                        'optgroup', 'option', 'param', 'script', 'select', 'style',
-                        'textarea', 'title', 'var',
-    }
+                    'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
+                    'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
+                    'optgroup', 'option', 'param', 'script', 'select', 'style',
+                    'textarea', 'title', 'var',
+                    }
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion

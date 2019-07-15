@@ -8,7 +8,9 @@
 """
 
 
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 import datetime
 
 from json import dumps

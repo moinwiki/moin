@@ -11,7 +11,9 @@ Converts an internal document tree into moinwiki markup.
 
 from __future__ import absolute_import, division
 
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 from re import findall, sub
 
 from emeraldtree import ElementTree as ET
@@ -316,7 +318,7 @@ class Converter(object):
             self.list_item_labels[-1] = Moinwiki.definition_list_marker
             self.list_item_label = self.list_item_labels[-1] + ' '
             ret = ' ' * (len(''.join(self.list_item_labels[:-1])) +
-                          len(self.list_item_labels[:-1]))  # self.list_level
+                         len(self.list_item_labels[:-1]))  # self.list_level
             if self.last_closed:
                 ret = '\n{0}'.format(ret)
         childrens_output = self.open_children(elem)
@@ -327,7 +329,7 @@ class Converter(object):
         if self.last_closed:
             ret = '\n'
         ret += ' ' * (len(''.join(self.list_item_labels[:-1])) +
-                       len(self.list_item_labels[:-1])) + self.list_item_label
+                      len(self.list_item_labels[:-1])) + self.list_item_label
         return ret + self.open_children(elem)
 
     def open_moinpage_note(self, elem):
