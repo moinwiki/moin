@@ -311,7 +311,7 @@ def getInterwikiHome(username):
     return homewiki, username
 
 
-class InterWikiMap(object):
+class InterWikiMap:
     """
     Parse a valid interwiki map file/string, transforming into a simple python dict
     object.

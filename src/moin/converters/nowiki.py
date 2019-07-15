@@ -30,7 +30,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Converter(object):
+class Converter:
     @classmethod
     def _factory(cls, input, output, nowiki=None, **kw):
         if nowiki == 'expandall':

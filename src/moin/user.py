@@ -219,7 +219,7 @@ def assemble_subscription(keyword, value, namespace=None):
     return subscription
 
 
-class UserProfile(object):
+class UserProfile:
     """ A User Profile"""
 
     def __init__(self, **q):
@@ -292,7 +292,7 @@ class UserProfile(object):
             self._changed = False
 
 
-class User(object):
+class User:
     """ A MoinMoin User """
 
     def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):

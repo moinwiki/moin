@@ -15,12 +15,12 @@ from moin.constants.misc import ANON
 import pytest
 
 
-class TestHTTPAuthMoin(object):
+class TestHTTPAuthMoin:
     """ Test: HTTPAuthMoin """
 
     @pytest.yield_fixture(autouse=True)
     def custom_setup(self):
-        class Auth(object):
+        class Auth:
             def __init__(self):
                 self.username = 'ValidUser'
                 self.password = 'test_pass'

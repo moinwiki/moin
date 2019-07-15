@@ -13,7 +13,7 @@ from moin.constants.keys import SOMEDICT
 from moin._tests import become_trusted, update_item
 
 
-class TestMacro(object):
+class TestMacro:
     @pytest.fixture
     def test_dict(self):
         become_trusted()

@@ -10,7 +10,7 @@ import pytest
 from moin.utils.diff_datastruct import diff, make_text_diff, Undefined, INSERT, DELETE
 
 
-class TestDiffDatastruct(object):
+class TestDiffDatastruct:
 
     def _test_make_text_diff(self, tests):
         for changes, expected in tests:

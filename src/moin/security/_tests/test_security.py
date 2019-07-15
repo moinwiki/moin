@@ -28,7 +28,7 @@ def acliter(acl):
     return ACLStringIterator(app.cfg.acl_rights_contents, acl)
 
 
-class TestACLStringIterator(object):
+class TestACLStringIterator:
 
     def testEmpty(self):
         """ security: empty acl string raise StopIteration """
@@ -197,7 +197,7 @@ class TestACLStringIterator(object):
         assert rights == []
 
 
-class TestAcl(object):
+class TestAcl:
     """ security: testing access control list
 
     TO DO: test unknown user?
@@ -263,7 +263,7 @@ class TestAcl(object):
                 assert not acl.may(user, right)
 
 
-class TestGroupACL(object):
+class TestGroupACL:
 
     @pytest.fixture
     def cfg(self):
@@ -311,7 +311,7 @@ class TestGroupACL(object):
                 assert not acl.may(user, right)
 
 
-class TestItemAcls(object):
+class TestItemAcls:
     """ security: real-life access control list on items testing
     """
     mainitem_name = 'AclTestMainItem'
@@ -391,7 +391,7 @@ class TestItemAcls(object):
         assert not u.may.superuser()
 
 
-class TestItemHierachicalAcls(object):
+class TestItemHierachicalAcls:
     """ security: real-life access control list on items testing
     """
     mainitem_name = 'AclTestMainItem'
@@ -467,7 +467,7 @@ class TestItemHierachicalAcls(object):
                 assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
 
-class TestItemHierachicalAclsMultiItemNames(object):
+class TestItemHierachicalAclsMultiItemNames:
     """ security: real-life access control list on items testing
     """
     # parent / child item names

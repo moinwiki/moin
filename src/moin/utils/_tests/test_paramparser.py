@@ -11,7 +11,7 @@ import pytest
 from moin.utils import paramparser
 
 
-class TestParamParsing(object):
+class TestParamParsing:
     def testMacroArgs(self):
         abcd = ['a', 'b', 'c', 'd']
         abcd_dict = {'a': '1', 'b': '2', 'c': '3', 'd': '4'}
@@ -272,7 +272,7 @@ class TestParamParsing(object):
                       brackets=('<>', '()'))
 
 
-class TestArgGetters(object):
+class TestArgGetters:
     def testGetBoolean(self):
         tests = [
             # default testing for None value
@@ -459,7 +459,7 @@ class TestArgGetters(object):
         pytest.raises(TypeError, paramparser.get_unicode, {})
 
 
-class TestExtensionInvoking(object):
+class TestExtensionInvoking:
     def _test_invoke_bool(self, b=bool):
         assert b is False
 
@@ -574,7 +574,7 @@ class TestExtensionInvoking(object):
         ief = paramparser.invoke_extension_function
 
         # new style class
-        class TEST1(object):
+        class TEST1:
             def __init__(self, a=int):
                 self.constructed = True
                 assert a == 7

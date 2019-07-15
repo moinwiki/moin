@@ -28,7 +28,7 @@ acl_mapping = [
 ]
 
 
-class FakeUser(object):
+class FakeUser:
     """
     fake user object, just to give user.name
     """

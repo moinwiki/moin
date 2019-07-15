@@ -18,7 +18,7 @@ from moin.utils.tree import html, moin_page
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     @classmethod
     def _factory(cls, input, output, highlight='', regex='', **kw):
         if highlight == 'highlight':

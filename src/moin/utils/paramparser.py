@@ -25,7 +25,7 @@ class BracketMissingCloseError(BracketError):
         BracketError.__init__(self, "Missing closing bracket {0}".format(bracket))
 
 
-class ParserPrefix(object):
+class ParserPrefix:
     """
     Trivial container-class holding a single character for
     the possible prefixes for parse_quoted_separated_ext

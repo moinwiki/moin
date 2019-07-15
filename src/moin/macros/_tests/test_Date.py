@@ -14,7 +14,7 @@ from flask_babel import format_date, format_datetime
 from moin.macros.Date import MacroDateTimeBase, Macro
 
 
-class TestMacroDateTimeBase(object):
+class TestMacroDateTimeBase:
     def test_parse_time(self):
         MacroDateTimeBase_obj = MacroDateTimeBase()
         test_time_args = '2011-08-07T11:11:11+0533'
@@ -29,7 +29,7 @@ class TestMacroDateTimeBase(object):
             MacroDateTimeBase_obj.parse_time('12011-08-07T11:11:11')
 
 
-class TestMacro(object):
+class TestMacro:
     def test_macro(self):
         macro_obj = Macro()
         # when arguments is None

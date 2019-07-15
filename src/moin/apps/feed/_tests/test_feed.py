@@ -11,7 +11,7 @@ from moin.constants.keys import COMMENT
 from moin._tests import update_item
 
 
-class TestFeeds(object):
+class TestFeeds:
     def test_global_atom(self, app):
         with app.test_client() as c:
             rv = c.get(url_for('feed.atom'))

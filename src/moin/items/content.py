@@ -138,7 +138,7 @@ def conv_serialize(doc, namespaces, method='polyglot'):
     return out
 
 
-class Content(object):
+class Content:
     """
     Base for content classes defining some helpers, agnostic about content
     data.
@@ -428,7 +428,7 @@ class Application(Binary):
     """ Base class for application/* """
 
 
-class TarMixin(object):
+class TarMixin:
     """
     TarMixin offers additional functionality for tar-like items to list and
     access member files and to create new revisions by multiple posts.
@@ -514,7 +514,7 @@ class ApplicationXGTar(ApplicationXTar):
     display_name = 'TGZ'
 
 
-class ZipMixin(object):
+class ZipMixin:
     """
     ZipMixin offers additional functionality for zip-like items to list and
     access member files.

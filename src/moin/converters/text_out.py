@@ -18,7 +18,7 @@ from . import default_registry
 from moin.utils.mime import Type, type_moin_document, type_text_plain
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> text/plain
     """

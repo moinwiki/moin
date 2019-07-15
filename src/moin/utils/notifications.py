@@ -61,7 +61,7 @@ def msgs():
 MESSAGES = msgs()
 
 
-class Notification(object):
+class Notification:
     """
     Represents a mail notification about an item change
     """

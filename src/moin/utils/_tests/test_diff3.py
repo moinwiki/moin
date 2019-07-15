@@ -9,7 +9,7 @@
 from moin.utils import diff3
 
 
-class TestDiff3(object):
+class TestDiff3:
 
     def testTextMerge(self):
         """ utils.diff3.text_merge: test correct merging """

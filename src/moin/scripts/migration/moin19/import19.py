@@ -174,7 +174,7 @@ class KillRequested(Exception):
     """raised if item killing is requested by DELETED_MODE"""
 
 
-class PageBackend(object):
+class PageBackend:
     """
     moin 1.9 page directory
     """
@@ -219,7 +219,7 @@ class PageBackend(object):
                     yield rev
 
 
-class PageItem(object):
+class PageItem:
     """
     moin 1.9 page
     """
@@ -276,7 +276,7 @@ class PageItem(object):
                 logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
 
 
-class PageRevision(object):
+class PageRevision:
     """
     moin 1.9 page revision
     """
@@ -426,7 +426,7 @@ def process_categories(meta, data, item_category_regex):
     return data
 
 
-class AttachmentRevision(object):
+class AttachmentRevision:
     """
     moin 1.9 attachment (there is no revisioning, just 1 revision per attachment)
     """
@@ -570,7 +570,7 @@ def _decode_dict(line):
     return dict(items)
 
 
-class UserRevision(object):
+class UserRevision:
     """
     moin 1.9 user
     """
@@ -727,7 +727,7 @@ class UserRevision(object):
         return subscriptions
 
 
-class UserBackend(object):
+class UserBackend:
     """
     moin 1.9 user directory
     """

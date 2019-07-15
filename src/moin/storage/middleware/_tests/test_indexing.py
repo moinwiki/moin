@@ -33,7 +33,7 @@ def dumper(indexer, idx_name):
         print()
 
 
-class TestIndexingMiddleware(object):
+class TestIndexingMiddleware:
     reinit_storage = True  # cleanup after each test method
 
     @pytest.fixture(autouse=True)
@@ -420,7 +420,7 @@ class TestIndexingMiddleware(object):
         assert item.parentnames == ['p1', 'p2', 'p3/p4', ]  # one p2 duplicate removed
 
 
-class TestProtectedIndexingMiddleware(object):
+class TestProtectedIndexingMiddleware:
     reinit_storage = True  # cleanup after each test method
 
     @pytest.fixture

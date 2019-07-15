@@ -9,7 +9,7 @@
 from moin.utils import show_time
 
 
-class TestShowTime(object):
+class TestShowTime:
 
     def test_showTime(self):
         """ test somewhat arbitrary duration results """

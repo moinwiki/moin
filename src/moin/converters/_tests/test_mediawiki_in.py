@@ -14,7 +14,7 @@ from moin.utils.tree import moin_page, xlink
 from moin.converters.mediawiki_in import Converter
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page.namespace: '',
         xlink.namespace: 'xlink',

@@ -26,7 +26,7 @@ from moin.utils.iri import Iri
 from . import default_registry
 
 
-class Cell(object):
+class Cell:
 
     def __init__(self, text):
         self.text = text
@@ -45,7 +45,7 @@ class Cell(object):
         return max
 
 
-class Table(object):
+class Table:
     """
     An object of this class collects the structure of a table
     and represent it in ReStructuredText syntax.
@@ -212,7 +212,7 @@ class Table(object):
         return '\n'.join(ret)
 
 
-class ReST(object):
+class ReST:
     """
     reST syntax elements
     """
@@ -242,7 +242,7 @@ class ReST(object):
     }
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> text/x.moin.rst
     """

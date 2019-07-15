@@ -13,7 +13,7 @@ import os
 from moin.utils.thread_monitor import Monitor
 
 
-class TestMonitor(object):
+class TestMonitor:
     """ Tests: Monitor """
 
     def setup_method(self, method):

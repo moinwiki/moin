@@ -14,7 +14,7 @@ from moin.utils.tree import moin_page, xlink, html, xinclude
 from ..text_csv_in import Converter
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page: '',
         xlink: 'xlink',

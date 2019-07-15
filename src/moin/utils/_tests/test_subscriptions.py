@@ -15,7 +15,7 @@ from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.utils.subscriptions import get_subscribers, get_matched_subscription_patterns
 
 
-class TestSubscriptions(object):
+class TestSubscriptions:
     reinit_storage = True
 
     @pytest.fixture

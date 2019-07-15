@@ -22,7 +22,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Base(object):
+class Base:
     namespaces = {
         moin_page.namespace: '',
         xlink.namespace: 'xlink',

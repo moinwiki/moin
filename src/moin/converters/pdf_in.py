@@ -55,7 +55,7 @@ class UnicodeConverter(TextConverter):
         return ''.join(self.__text)
 
 
-class PDFIndexingConverter(object):
+class PDFIndexingConverter:
     @classmethod
     def _factory(cls, input, output, **kw):
         return cls()

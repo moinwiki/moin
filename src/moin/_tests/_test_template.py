@@ -14,7 +14,7 @@
 from moin import module_tested
 
 
-class TestSimpleStuff(object):
+class TestSimpleStuff:
     """ The simplest MoinMoin test class
 
     Class name must start with 'Test' to be included in
@@ -33,7 +33,7 @@ class TestSimpleStuff(object):
         assert result == expected
 
 
-class TestComplexStuff(object):
+class TestComplexStuff:
     """ Describe these tests here...
 
     Some tests may have a list of tests related to this test case. You

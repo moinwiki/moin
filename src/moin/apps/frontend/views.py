@@ -2485,7 +2485,7 @@ def sitemap(item_name):
     )
 
 
-class NestedItemListBuilder(object):
+class NestedItemListBuilder:
     def __init__(self):
         self.children = set()
         self.numnodes = 0

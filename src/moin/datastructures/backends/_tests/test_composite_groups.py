@@ -31,7 +31,7 @@ class TestCompositeGroupsBackend(GroupsBackendTest):
         return Config
 
 
-class TestCompositeGroup(object):
+class TestCompositeGroup:
 
     @pytest.fixture
     def cfg(self):

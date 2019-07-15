@@ -12,7 +12,7 @@ from moin.constants.keys import CONTENTTYPE, ACL
 from moin._tests import wikiconfig, update_item
 
 
-class TestInclude(object):
+class TestInclude:
     class Config(wikiconfig.Config):
         """
         we just have this so the test framework creates a new app with empty backends for us.

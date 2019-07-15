@@ -18,7 +18,7 @@ from moin.constants.keys import (ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TA
 import pytest
 
 
-class TestSimple(object):
+class TestSimple:
     def test_create_retrieve(self):
         name = "foo"
         password = "barbaz4711"
@@ -39,7 +39,7 @@ class TestSimple(object):
         assert u.exists()
 
 
-class TestUser(object):
+class TestUser:
 
     @pytest.yield_fixture(autouse=True)
     def saved_user(self):
@@ -266,7 +266,7 @@ class TestUser(object):
         assert ret is None, "create_user returned: {0}".format(ret)
 
 
-class TestGroupName(object):
+class TestGroupName:
 
     def testGroupNames(self):
         """ user: isValidName: reject group names """
@@ -274,7 +274,7 @@ class TestGroupName(object):
         assert not user.isValidName(test)
 
 
-class TestIsValidName(object):
+class TestIsValidName:
 
     def testNonAlnumCharacters(self):
         """ user: isValidName: reject unicode non alpha numeric characters

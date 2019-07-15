@@ -61,7 +61,7 @@ def normalize_split_text(text):
     return lines
 
 
-class _Iter(object):
+class _Iter:
     """
     Iterator with push back support
 
@@ -100,8 +100,8 @@ class _Iter(object):
         self.lineno -= 1
 
 
-class _Stack(object):
-    class Item(object):
+class _Stack:
+    class Item:
         def __init__(self, elem):
             self.elem = elem
             if elem.tag.uri == moin_page:

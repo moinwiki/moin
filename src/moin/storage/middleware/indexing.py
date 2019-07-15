@@ -214,13 +214,13 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     fqname = split_fqname(item_name)
 
-    class PseudoRev(object):
+    class PseudoRev:
         def __init__(self, meta, data):
             self.meta = meta
             self.data = data
             self.revid = meta.get(REVID)
 
-            class PseudoItem(object):
+            class PseudoItem:
                 def __init__(self, fqname):
                     self.fqname = fqname
                     self.name = fqname.value
@@ -293,7 +293,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         return doc
 
 
-class IndexingMiddleware(object):
+class IndexingMiddleware:
     def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
@@ -876,7 +876,7 @@ class IndexingMiddleware(object):
         return Item.existing(self, **query)
 
 
-class PropertiesMixin(object):
+class PropertiesMixin:
     """
     PropertiesMixin offers methods to find out some additional information from meta.
     """

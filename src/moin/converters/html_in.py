@@ -31,7 +31,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class NoDupsFlash(object):
+class NoDupsFlash:
     """
     Issue flash messages for unsupported HTML tags; but do not create duplicate messages.
     """
@@ -44,7 +44,7 @@ class NoDupsFlash(object):
             flash(message, category)
 
 
-class Converter(object):
+class Converter:
     """
     Converter html -> .x.moin.document
     """

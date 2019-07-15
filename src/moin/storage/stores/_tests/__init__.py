@@ -6,9 +6,9 @@ MoinMoin - store tests
 """
 
 
-class FileStoreTestBase(object):
+class FileStoreTestBase:
     pass
 
 
-class BytesStoreTestBase(object):
+class BytesStoreTestBase:
     pass

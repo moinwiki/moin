@@ -143,7 +143,7 @@ def makeThreadSafe(function, lock=None):
     return decorated
 
 
-class AutoNe(object):
+class AutoNe:
     """
     Implement __ne__ in terms of __eq__. This is a mixin class.
     """
