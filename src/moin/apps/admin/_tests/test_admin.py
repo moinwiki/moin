@@ -61,4 +61,4 @@ def test_admin(app, url_for_args, status, data):
         assert rv.status == status
         assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
         for item in data:
-            assert item in rv.data
+            assert item.encode() in rv.data

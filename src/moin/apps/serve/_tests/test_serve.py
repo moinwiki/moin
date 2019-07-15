@@ -20,4 +20,4 @@ class TestServe:
             rv = c.get(url_for('serve.files', name="DoesntExist"))
             assert rv.status == '404 NOT FOUND'
             assert rv.headers['Content-Type'] == 'text/html'
-            assert '<!DOCTYPE HTML' in rv.data
+            assert b'<!DOCTYPE HTML' in rv.data
