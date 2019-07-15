@@ -77,99 +77,100 @@ class Converter(object):
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
-    ignored_tags = {  # Info elements
-                       'abstract', 'artpagenums', 'annotation',
-                       'artpagenums', 'author', 'authorgroup',
-                       'authorinitials', 'bibliocoverage', 'biblioid',
-                       'bibliomisc', 'bibliomset', 'bibliorelation',
-                       'biblioset', 'bibliosource', 'collab', 'confdates',
-                       'confgroup', 'confnum', 'confsponsor', 'conftitle',
-                       'contractnum', 'contractsponsor', 'copyright',
-                       'contrib', 'cover', 'edition', 'editor',
-                       'extendedlink', 'issuenum', 'itermset', 'keyword',
-                       'keywordset', 'legalnotice', 'org', 'orgname',
-                       'orgdiv', 'otheraddr', 'othercredit', 'pagenums',
-                       'personblurb', 'printhistory', 'productname',
-                       'productnumber', 'pubdate', 'publisher',
-                       'publishername', 'releaseinfo', 'revdescription',
-                       'revhistory', 'revision', 'revnumber', 'revremark',
-                       'seriesvolnums', 'subjectset', 'volumenum',
-                       # Other bibliography elements
-                       'bibliodiv', 'biblioentry', 'bibliography',
-                       'bibliolist', 'bibliomixed', 'biblioref',
-                       'bibliorelation', 'citation', 'citerefentry',
-                       'citetitle',
-                       # Callout elements
-                       'callout', 'calloutlist', 'area', 'areaset',
-                       'areaspec', 'co', 'imageobjectco',
-                       # Class information
-                       'classname', 'classsynopsis', 'classsynopsisinfo',
-                       'constructorsynopsis', 'destructorsynopsis',
-                       'fieldsynopsis', 'funcdef', 'funcparams',
-                       'funcprototype', 'funcsynopsis',
-                       'funcsynopsisinfo', 'function', 'group',
-                       'initializer', 'interfacename',
-                       'methodname', 'methodparam', 'methodsynopsis',
-                       'ooclass', 'ooexception', 'oointerface', 'varargs',
-                       'void',
-                       # GUI elements
-                       'guibutton', 'guiicon', 'guilabel',
-                       'guimenu', 'guimenuitem', 'guisubmenu',
-                       # EBNF Elements
-                       'constraint', 'constraintdef', 'lhs', 'rhs',
-                       'nonterminal',
-                       # msg elements
-                       'msg', 'msgaud', 'msgentry', 'msgexplan',
-                       'msginfo', 'msglevel', 'msgmain', 'msgorig',
-                       'msgrel', 'msgset', 'msgsub', 'msgtext',
-                       # REF entry
-                       'refclass', 'refdescriptor', 'refentry',
-                       'refentrytitle', 'reference', 'refmeta',
-                       'refmiscinfo', 'refname', 'refnamediv',
-                       'refpurpose', 'refsect1', 'refsect2', 'refsect3',
-                       'refsection', 'refsynopsisdiv'
-                       # TOC
-                       'toc', 'tocdiv', 'tocentry',
-                       # Index elements
-                       'index', 'indexdiv', 'indexentry', 'indexterm',
-                       'primary', 'primaryie', 'secondary',
-                       'secondaryie', 'see', 'seealso',
-                       'tertiary', 'tertiaryie',
-                       # Other elements
-                       'info', 'bridgehead', 'arc', 'titleabbrev',
-                       'spanspec', 'xref',
-                       }
+    ignored_tags = {
+        # Info elements
+        'abstract', 'artpagenums', 'annotation',
+        'artpagenums', 'author', 'authorgroup',
+        'authorinitials', 'bibliocoverage', 'biblioid',
+        'bibliomisc', 'bibliomset', 'bibliorelation',
+        'biblioset', 'bibliosource', 'collab', 'confdates',
+        'confgroup', 'confnum', 'confsponsor', 'conftitle',
+        'contractnum', 'contractsponsor', 'copyright',
+        'contrib', 'cover', 'edition', 'editor',
+        'extendedlink', 'issuenum', 'itermset', 'keyword',
+        'keywordset', 'legalnotice', 'org', 'orgname',
+        'orgdiv', 'otheraddr', 'othercredit', 'pagenums',
+        'personblurb', 'printhistory', 'productname',
+        'productnumber', 'pubdate', 'publisher',
+        'publishername', 'releaseinfo', 'revdescription',
+        'revhistory', 'revision', 'revnumber', 'revremark',
+        'seriesvolnums', 'subjectset', 'volumenum',
+        # Other bibliography elements
+        'bibliodiv', 'biblioentry', 'bibliography',
+        'bibliolist', 'bibliomixed', 'biblioref',
+        'bibliorelation', 'citation', 'citerefentry',
+        'citetitle',
+        # Callout elements
+        'callout', 'calloutlist', 'area', 'areaset',
+        'areaspec', 'co', 'imageobjectco',
+        # Class information
+        'classname', 'classsynopsis', 'classsynopsisinfo',
+        'constructorsynopsis', 'destructorsynopsis',
+        'fieldsynopsis', 'funcdef', 'funcparams',
+        'funcprototype', 'funcsynopsis',
+        'funcsynopsisinfo', 'function', 'group',
+        'initializer', 'interfacename',
+        'methodname', 'methodparam', 'methodsynopsis',
+        'ooclass', 'ooexception', 'oointerface', 'varargs',
+        'void',
+        # GUI elements
+        'guibutton', 'guiicon', 'guilabel',
+        'guimenu', 'guimenuitem', 'guisubmenu',
+        # EBNF Elements
+        'constraint', 'constraintdef', 'lhs', 'rhs',
+        'nonterminal',
+        # msg elements
+        'msg', 'msgaud', 'msgentry', 'msgexplan',
+        'msginfo', 'msglevel', 'msgmain', 'msgorig',
+        'msgrel', 'msgset', 'msgsub', 'msgtext',
+        # REF entry
+        'refclass', 'refdescriptor', 'refentry',
+        'refentrytitle', 'reference', 'refmeta',
+        'refmiscinfo', 'refname', 'refnamediv',
+        'refpurpose', 'refsect1', 'refsect2', 'refsect3',
+        'refsection', 'refsynopsisdiv',
+        # TOC
+        'toc', 'tocdiv', 'tocentry',
+        # Index elements
+        'index', 'indexdiv', 'indexentry', 'indexterm',
+        'primary', 'primaryie', 'secondary',
+        'secondaryie', 'see', 'seealso',
+        'tertiary', 'tertiaryie',
+        # Other elements
+        'info', 'bridgehead', 'arc', 'titleabbrev',
+        'spanspec', 'xref',
+    }
 
     # DocBook inline elements which does not have equivalence in the DOM
     # tree, but we keep the information using <span element='tag.name'>
     inline_tags = {'abbrev', 'address', 'accel', 'acronym', 'alt',
-                       'affiliation', 'city', 'command', 'constant',
-                       'country', 'database', 'date', 'errorcode',
-                       'errorname', 'errortext', 'errortype',
-                       'exceptionname', 'fax', 'filename', 'firstname',
-                       'firstterm', 'foreignphrase', 'hardware', 'holder',
-                       'honorific', 'jobtitle', 'keycap', 'keycode',
-                       'keycombo', 'keysym', 'lineannotation',
-                       'manvolnum', 'mousebutton', 'option', 'optional',
-                       'package', 'person', 'personname', 'phone', 'pob',
-                       'postcode', 'prompt', 'remark', 'replaceable',
-                       'returnvalue', 'shortaffil', 'shortcut', 'state',
-                       'street', 'surname', 'symbol', 'systemitem',
-                       'termdef', 'type', 'uri', 'userinput',
-                       'wordasword', 'varname', 'anchor',
-                       }
+                   'affiliation', 'city', 'command', 'constant',
+                   'country', 'database', 'date', 'errorcode',
+                   'errorname', 'errortext', 'errortype',
+                   'exceptionname', 'fax', 'filename', 'firstname',
+                   'firstterm', 'foreignphrase', 'hardware', 'holder',
+                   'honorific', 'jobtitle', 'keycap', 'keycode',
+                   'keycombo', 'keysym', 'lineannotation',
+                   'manvolnum', 'mousebutton', 'option', 'optional',
+                   'package', 'person', 'personname', 'phone', 'pob',
+                   'postcode', 'prompt', 'remark', 'replaceable',
+                   'returnvalue', 'shortaffil', 'shortcut', 'state',
+                   'street', 'surname', 'symbol', 'systemitem',
+                   'termdef', 'type', 'uri', 'userinput',
+                   'wordasword', 'varname', 'anchor',
+                   }
 
     # DocBook block element which does not have equivalence in the DOM
     # tree, but we keep the information using <div html:class='tag.name'>
     block_tags = {'acknowledgements', 'appendix', 'article', 'book',
-                      'caption', 'chapter', 'cmdsynopsis', 'colophon',
-                      'dedication', 'epigraph', 'example', 'figure',
-                      'equation', 'part', 'partintro',
-                      'screenshoot', 'set', 'setindex', 'sidebar',
-                      'simplesect', 'subtitle', 'synopsis',
-                      'synopfragment', 'task', 'taskprerequisites',
-                      'taskrelated', 'tasksummary', 'title',
-    }
+                  'caption', 'chapter', 'cmdsynopsis', 'colophon',
+                  'dedication', 'epigraph', 'example', 'figure',
+                  'equation', 'part', 'partintro',
+                  'screenshoot', 'set', 'setindex', 'sidebar',
+                  'simplesect', 'subtitle', 'synopsis',
+                  'synopfragment', 'task', 'taskprerequisites',
+                  'taskrelated', 'tasksummary', 'title',
+                  }
 
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
@@ -222,16 +223,16 @@ class Converter(object):
                    'tr': moin_page('table-row'),
                    'variablelist': moin_page('list'),
                    'varlistentry': moin_page('list-item'),
-    }
+                   }
 
     # Other block elements which can be root element.
     root_tags = {'blockquote', 'formalpara', 'informalequation',
-                     'informalexample', 'informalfigure',
-                     'informalfigure', 'orderedlist', 'sect1', 'sect2',
-                     'sect3', 'sect4', 'sect5', 'section',
-                     'segmentedlist', 'simplelist', 'procedure',
-                     'qandaset',
-    }
+                 'informalexample', 'informalfigure',
+                 'informalfigure', 'orderedlist', 'sect1', 'sect2',
+                 'sect3', 'sect4', 'sect5', 'section',
+                 'segmentedlist', 'simplelist', 'procedure',
+                 'qandaset',
+                 }
 
     # Regular expression to find section tag.
     sect_re = re.compile('sect[1-5]')

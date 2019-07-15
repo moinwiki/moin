@@ -578,7 +578,7 @@ options = {
         ('sendmail', None, "sendmail command to use for sending mail (None = don't use sendmail)"),
     )),
 
-    'registration':('Registration', 'These settings control registration options', (
+    'registration': ('Registration', 'These settings control registration options', (
         ('only_by_superuser', False, 'True is recommended value for public wikis on the internet.'),
         ('hint', _('To request an account, see bottom of Home page.'), 'message on login page when only_by_superuser is True'),
     )),

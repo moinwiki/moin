@@ -21,12 +21,12 @@ class TestCompositeDict(DictsBackendTest):
         class Config(wikiconfig.Config):
 
             one_dict = {'SomeTestDict': {'First': 'first item',
-                                          'text with spaces': 'second item',
-                                          'Empty string': '',
-                                          'Last': 'last item'}}
+                                         'text with spaces': 'second item',
+                                         'Empty string': '',
+                                         'Last': 'last item'}}
 
             other_dict = {'SomeOtherTestDict': {'One': '1',
-                                                 'Two': '2'}}
+                                                'Two': '2'}}
 
             def dicts(self):
                 return CompositeDicts(ConfigDicts(self.one_dict),

@@ -30,7 +30,7 @@ class GroupsBackendTest(object):
                    'CheckNotExistingGroup': ['NotExistingGroup']}
 
     expanded_groups = {'EditorGroup': ['Admin1', 'Admin2', 'John',
-                                        'JoeDoe', 'Editor1'],
+                                       'JoeDoe', 'Editor1'],
                        'AdminGroup': ['Admin1', 'Admin2', 'John'],
                        'OtherGroup': ['SomethingOther'],
                        'RecursiveGroup': ['Anything', 'Something', 'NotExistingGroup'],
@@ -135,11 +135,11 @@ class GroupsBackendTest(object):
 class DictsBackendTest(object):
 
     dicts = {'SomeTestDict': {'First': 'first item',
-                               'text with spaces': 'second item',
-                               'Empty string': '',
-                               'Last': 'last item'},
+                              'text with spaces': 'second item',
+                              'Empty string': '',
+                              'Last': 'last item'},
              'SomeOtherTestDict': {'One': '1',
-                                    'Two': '2'}}
+                                   'Two': '2'}}
 
     def test_getitem(self):
         expected_dicts = self.dicts
