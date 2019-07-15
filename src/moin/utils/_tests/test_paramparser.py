@@ -299,11 +299,11 @@ class TestArgGetters:
         # wrong default type
         pytest.raises(AssertionError, paramparser.get_bool, None, None, 42)
 
-        # anything except None or unicode raises TypeError
+        # anything except None or str raises TypeError
         pytest.raises(TypeError, paramparser.get_bool, True)
         pytest.raises(TypeError, paramparser.get_bool, 42)
         pytest.raises(TypeError, paramparser.get_bool, 42.0)
-        pytest.raises(TypeError, paramparser.get_bool, '')
+        pytest.raises(TypeError, paramparser.get_bool, b'')
         pytest.raises(TypeError, paramparser.get_bool, tuple())
         pytest.raises(TypeError, paramparser.get_bool, [])
         pytest.raises(TypeError, paramparser.get_bool, {})
@@ -333,11 +333,11 @@ class TestArgGetters:
         # wrong default type
         pytest.raises(AssertionError, paramparser.get_int, None, None, 42.23)
 
-        # anything except None or unicode raises TypeError
+        # anything except None or str raises TypeError
         pytest.raises(TypeError, paramparser.get_int, True)
         pytest.raises(TypeError, paramparser.get_int, 42)
         pytest.raises(TypeError, paramparser.get_int, 42.0)
-        pytest.raises(TypeError, paramparser.get_int, '')
+        pytest.raises(TypeError, paramparser.get_int, b'')
         pytest.raises(TypeError, paramparser.get_int, tuple())
         pytest.raises(TypeError, paramparser.get_int, [])
         pytest.raises(TypeError, paramparser.get_int, {})
@@ -369,11 +369,11 @@ class TestArgGetters:
         # wrong default type
         pytest.raises(AssertionError, paramparser.get_float, None, None, '42')
 
-        # anything except None or unicode raises TypeError
+        # anything except None or str raises TypeError
         pytest.raises(TypeError, paramparser.get_float, True)
         pytest.raises(TypeError, paramparser.get_float, 42)
         pytest.raises(TypeError, paramparser.get_float, 42.0)
-        pytest.raises(TypeError, paramparser.get_float, '')
+        pytest.raises(TypeError, paramparser.get_float, b'')
         pytest.raises(TypeError, paramparser.get_float, tuple())
         pytest.raises(TypeError, paramparser.get_float, [])
         pytest.raises(TypeError, paramparser.get_float, {})
@@ -412,12 +412,12 @@ class TestArgGetters:
         # wrong default type
         pytest.raises(AssertionError, paramparser.get_complex, None, None, '42')
 
-        # anything except None or unicode raises TypeError
+        # anything except None or str raises TypeError
         pytest.raises(TypeError, paramparser.get_complex, True)
         pytest.raises(TypeError, paramparser.get_complex, 42)
         pytest.raises(TypeError, paramparser.get_complex, 42.0)
         pytest.raises(TypeError, paramparser.get_complex, 3j)
-        pytest.raises(TypeError, paramparser.get_complex, '')
+        pytest.raises(TypeError, paramparser.get_complex, b'')
         pytest.raises(TypeError, paramparser.get_complex, tuple())
         pytest.raises(TypeError, paramparser.get_complex, [])
         pytest.raises(TypeError, paramparser.get_complex, {})
@@ -443,20 +443,20 @@ class TestArgGetters:
             ('"abc"', None, None, '"abc"'),
         ]
         for arg, name, default, expected in tests:
-            assert paramparser.get_unicode(arg, name, default) == expected
+            assert paramparser.get_str(arg, name, default) == expected
 
-    def testGetUnicodeRaising(self):
+    def testGetStrRaising(self):
         # wrong default type
-        pytest.raises(AssertionError, paramparser.get_unicode, None, None, 42)
+        pytest.raises(AssertionError, paramparser.get_str, None, None, 42)
 
-        # anything except None or unicode raises TypeError
-        pytest.raises(TypeError, paramparser.get_unicode, True)
-        pytest.raises(TypeError, paramparser.get_unicode, 42)
-        pytest.raises(TypeError, paramparser.get_unicode, 42.0)
-        pytest.raises(TypeError, paramparser.get_unicode, '')
-        pytest.raises(TypeError, paramparser.get_unicode, tuple())
-        pytest.raises(TypeError, paramparser.get_unicode, [])
-        pytest.raises(TypeError, paramparser.get_unicode, {})
+        # anything except None or str raises TypeError
+        pytest.raises(TypeError, paramparser.get_str, True)
+        pytest.raises(TypeError, paramparser.get_str, 42)
+        pytest.raises(TypeError, paramparser.get_str, 42.0)
+        pytest.raises(TypeError, paramparser.get_str, b'')
+        pytest.raises(TypeError, paramparser.get_str, tuple())
+        pytest.raises(TypeError, paramparser.get_str, [])
+        pytest.raises(TypeError, paramparser.get_str, {})
 
 
 class TestExtensionInvoking:
