@@ -12,7 +12,9 @@ Converts an internal document tree into markdown markup.
 
 from __future__ import absolute_import, division
 
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 
 from . import ElementException
 

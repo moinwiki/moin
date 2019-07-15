@@ -564,7 +564,7 @@ class Converter(object):
         if not self.last_closed == 'list_item':
             ret = '\n'
         ret += (' ' * (len(''.join(self.list_item_labels[:-1])) +
-                        len(self.list_item_labels[:-1])) + self.list_item_label)
+                       len(self.list_item_labels[:-1])) + self.list_item_label)
         if self.list_item_labels[-1] in ['1.', 'i.', 'I.', 'a.', 'A.']:
             self.list_item_labels[-1] = '#.'
 
@@ -638,11 +638,11 @@ class Converter(object):
                 and self.last_closed != 'list_item_footer' \
                 and self.last_closed != 'p':
                 ret = (ReST.linebreak + ' ' * (len(''.join(self.list_item_labels)) +
-                                                len(self.list_item_labels)) + self.open_children(elem))
+                                               len(self.list_item_labels)) + self.open_children(elem))
             elif self.last_closed and self.last_closed == 'p':
                 # return ReST.p +\
                 ret = ("\n" + ' ' * (len(''.join(self.list_item_labels)) +
-                                       len(self.list_item_labels)) + self.open_children(elem))
+                                     len(self.list_item_labels)) + self.open_children(elem))
             else:
                 ret = self.open_children(elem)
             if not self.delete_newlines:

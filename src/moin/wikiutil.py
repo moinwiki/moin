@@ -96,7 +96,7 @@ def normalize_pagename(name, cfg):
         # Strip non alpha numeric characters, keep white space
         if isGroupItem(page):
             page = ''.join([c for c in page
-                             if c.isalnum() or c.isspace()])
+                            if c.isalnum() or c.isspace()])
 
         # Normalize white space. Each name can contain multiple
         # words separated with only one space. Split handle all
