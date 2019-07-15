@@ -14,9 +14,9 @@ class TestMisc:
             rv = c.get(url_for('misc.sitemap'))
             assert rv.status == '200 OK'
             assert rv.headers['Content-Type'] == 'text/xml; charset=utf-8'
-            assert rv.data.startswith('<?xml')
-            assert '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' in rv.data
-            assert '</urlset>' in rv.data
+            assert rv.data.startswith(b'<?xml')
+            assert b'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' in rv.data
+            assert b'</urlset>' in rv.data
 
     def test_urls_names(self, app):
         with app.test_client() as c:
