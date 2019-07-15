@@ -18,7 +18,7 @@ def test_getitem_raises(store):
 
 
 def test_setitem_getitem_delitem(store):
-    k, v = 'key', 'value'
+    k, v = 'key', b'value'
     store[k] = v
     assert v == store[k]
     del store[k]
@@ -27,7 +27,7 @@ def test_setitem_getitem_delitem(store):
 
 
 def test_setitem_getitem_delitem_binary(store):
-    k, v = 'key', '\000\001\002'
+    k, v = 'key', b'\000\001\002'
     store[k] = v
     assert v == store[k]
     assert len(v) == 3
@@ -37,7 +37,7 @@ def test_setitem_getitem_delitem_binary(store):
 
 
 def test_iter(store):
-    kvs = {('1', 'one'), ('2', 'two'), ('3', 'three'), }
+    kvs = {('1', b'one'), ('2', b'two'), ('3', b'three'), }
     for k, v in kvs:
         store[k] = v
     result = set()
@@ -48,7 +48,7 @@ def test_iter(store):
 
 def test_len(store):
     assert len(store) == 0
-    store['foo'] = 'bar'
+    store['foo'] = b'bar'
     assert len(store) == 1
     del store['foo']
     assert len(store) == 0
@@ -59,10 +59,10 @@ def test_perf(store):
     pytest.skip("usually we do no performance tests")
     for i in range(1000):
         key = value = str(i)
-        store[key] = value
+        store[key] = value.encode()
     for i in range(1000):
         key = expected_value = str(i)
-        assert store[key] == expected_value
+        assert store[key] == expected_value.encode()
     for i in range(1000):
         key = str(i)
         del store[key]
