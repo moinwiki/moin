@@ -18,7 +18,7 @@ from moin import user
 import pytest
 
 
-class TestFrontend(object):
+class TestFrontend:
 
     @pytest.fixture(autouse=True)
     def custom_setup(self, app):
@@ -213,7 +213,7 @@ class TestFrontend(object):
         self._test_view('frontend.global_tags')
 
 
-class TestUsersettings(object):
+class TestUsersettings:
     reinit_storage = True  # avoid username / email collisions
 
     @pytest.yield_fixture(autouse=True)

@@ -15,7 +15,7 @@ import pytest
 from moin.utils import send_file
 
 
-class TestFuid(object):
+class TestFuid:
     """ test for send_file """
 
     def setup_method(self, method):

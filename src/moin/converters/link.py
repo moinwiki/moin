@@ -22,7 +22,7 @@ from moin.wikiutil import AbsItemName
 from . import default_registry
 
 
-class ConverterBase(object):
+class ConverterBase:
     _tag_xlink_href = xlink.href
     _tag_xinclude_href = xinclude.href
 

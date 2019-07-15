@@ -13,7 +13,7 @@ can return a callable to consider itself as a match.
 from collections import namedtuple
 
 
-class RegistryBase(object):
+class RegistryBase:
     PRIORITY_REALLY_FIRST = -20
     PRIORITY_FIRST = -10
     PRIORITY_MIDDLE = 0

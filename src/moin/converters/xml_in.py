@@ -27,7 +27,7 @@ def strip_xml(text):
     return text
 
 
-class XMLIndexingConverter(object):
+class XMLIndexingConverter:
     """
     We try to generically extract contents from XML documents by just throwing
     away all XML tags. This is for indexing, so this might be good enough.

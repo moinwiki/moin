@@ -19,7 +19,7 @@ from moin.utils.tree import moin_page, xlink, xinclude, html
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     """
     Convert an image to the corresponding <object> in the DOM Tree
     """

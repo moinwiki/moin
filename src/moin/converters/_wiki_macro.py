@@ -21,7 +21,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class ConverterMacro(object):
+class ConverterMacro:
     def _BR_repl(self, args, text, context_block):
         if context_block:
             return

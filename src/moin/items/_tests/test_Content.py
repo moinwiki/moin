@@ -25,7 +25,7 @@ from moin.utils.interwiki import split_fqname
 from functools import reduce
 
 
-class TestContent(object):
+class TestContent:
     """ Test for arbitrary content """
 
     def testClassFinder(self):
@@ -68,7 +68,7 @@ class TestContent(object):
         assert result2 == [item_name3]
 
 
-class TestTarItems(object):
+class TestTarItems:
     """
     tests for the container items
     """
@@ -108,7 +108,7 @@ class TestTarItems(object):
         assert item.content.get_member('example1.txt').read() == filecontent
 
 
-class TestZipMixin(object):
+class TestZipMixin:
     """ Test for zip-like items """
 
     def test_put_member(self):
@@ -121,7 +121,7 @@ class TestZipMixin(object):
             item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
 
 
-class TestTransformableBitmapImage(object):
+class TestTransformableBitmapImage:
 
     def test__transform(self):
         item_name = 'image_Item'
@@ -178,7 +178,7 @@ class TestTransformableBitmapImage(object):
             pass
 
 
-class TestText(object):
+class TestText:
 
     def test_data_conversion(self):
         item_name = 'Text_Item'

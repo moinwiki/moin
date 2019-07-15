@@ -15,7 +15,7 @@ from moin.user import create_user
 import pytest
 
 
-class TestConfiguredGivenAuth(object):
+class TestConfiguredGivenAuth:
     """ Test: configured GivenAuth """
     @pytest.fixture
     def cfg(self):
@@ -28,7 +28,7 @@ class TestConfiguredGivenAuth(object):
         assert flaskg.user.name == ['JoeDoe', ]
 
 
-class TestGivenAuth(object):
+class TestGivenAuth:
     """ Test: GivenAuth """
     def test_decode_username(self):
         givenauth_obj = GivenAuth()

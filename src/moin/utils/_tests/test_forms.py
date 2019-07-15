@@ -9,7 +9,7 @@ MoinMoin - moin.utils.forms Tests
 from moin.utils import forms
 
 
-class Bind(object):
+class Bind:
     """ class for self defined test_bind attributes """
     def __init__(self):
         self.label = 'test_content'

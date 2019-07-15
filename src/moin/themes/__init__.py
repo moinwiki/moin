@@ -75,7 +75,7 @@ def themed_error(e):
     return content, e.code
 
 
-class ThemeSupport(object):
+class ThemeSupport:
     """
     Support code for template feeding.
     """

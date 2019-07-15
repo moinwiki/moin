@@ -10,7 +10,7 @@ MoinMoin - moin.utils.mimetype Tests
 from moin.utils import mimetype
 
 
-class TestMimeType(object):
+class TestMimeType:
     """ Test: utils.mimetype """
 
     def test_parse_format(self):

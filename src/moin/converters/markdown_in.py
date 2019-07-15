@@ -88,7 +88,7 @@ def postproc_text(markdown, text):
     return re.sub(r"&#?\w+;", fixup, text)
 
 
-class Converter(object):
+class Converter:
     # {{{ html conversion
 
     # HTML tags which can be converted directly to the moin_page namespace

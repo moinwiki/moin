@@ -18,7 +18,7 @@ from moin.converters.markdown_in import Converter as conv_in
 from moin.converters.markdown_out import Converter as conv_out
 
 
-class TestConverter(object):
+class TestConverter:
 
     input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:xinclude="{3}" xmlns:html="{4}"'.format(
         moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)

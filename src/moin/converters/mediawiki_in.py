@@ -32,7 +32,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class _TableArguments(object):
+class _TableArguments:
     rules = r'''
     (?:
         (?P<arg>
@@ -821,9 +821,9 @@ class Converter(ConverterMacro):
     # Table row
     tablerow_re = re.compile(tablerow, re.X | re.U)
 
-    class Mediawiki_preprocessor(object):
+    class Mediawiki_preprocessor:
 
-        class Preprocessor_tag(object):
+        class Preprocessor_tag:
             def __init__(self, name='', text='', tag='', status=True):
                 self.tag_name = name
                 self.tag = tag

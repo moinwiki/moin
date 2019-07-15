@@ -7,7 +7,7 @@ import config
 import utils
 
 
-class TestSubitems(object):
+class TestSubitems:
     """Functional test: create subitem"""
 
     def setup_class(self):

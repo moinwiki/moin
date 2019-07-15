@@ -11,7 +11,7 @@
 from moin import error
 
 
-class TestEncoding(object):
+class TestEncoding:
     """ MoinMoin errors do work with unicode transparently """
 
     def testCreateWithUnicode(self):
@@ -27,7 +27,7 @@ class TestEncoding(object):
     def testCreateWithObject(self):
         """ error: create with any object """
 
-        class Foo(object):
+        class Foo:
             def __str__(self):
                 return 'טעות'
 
@@ -41,7 +41,7 @@ class TestEncoding(object):
         assert '%(message)s' % dict(message=err) == test
 
 
-class TestCompositeError(object):
+class TestCompositeError:
 
     def setup_method(self, method):
         self.CompositeError_obj = error.CompositeError(error.InternalError)

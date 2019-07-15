@@ -20,7 +20,7 @@ from time import sleep
 from io import BytesIO
 
 
-class Monitor(object):
+class Monitor:
     def __init__(self):
         self.enabled = False
         assert hasattr(sys, "_current_frames")  # make sure we have py >= 2.5

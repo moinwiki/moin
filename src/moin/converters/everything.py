@@ -17,7 +17,7 @@ from moin.utils.mime import Type, type_moin_document
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     """
     Convert a unsupported item to DOM Tree.
     """

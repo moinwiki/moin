@@ -22,7 +22,7 @@ from moin.constants.keys import CURRENT
 from moin.app import before_wiki
 
 
-class TestInterWiki(object):
+class TestInterWiki:
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
@@ -148,7 +148,7 @@ class TestInterWiki(object):
             assert split_fqname(url) == (namespace, field, pagename)
 
 
-class TestInterWikiMapBackend(object):
+class TestInterWikiMapBackend:
     """
     tests for interwiki map
     """

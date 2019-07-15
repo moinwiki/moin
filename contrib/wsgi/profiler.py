@@ -24,7 +24,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class ProfilerMiddleware(object):
+class ProfilerMiddleware:
     """ Abstract base class for profiling middlewares.
 
     Concrete implementations of this class should provide implementations

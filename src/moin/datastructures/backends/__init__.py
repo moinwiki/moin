@@ -27,7 +27,7 @@ class DictDoesNotExistError(Exception):
     """
 
 
-class BaseGroup(object):
+class BaseGroup:
     """
     Group is something which stores members. Groups are immutable. A
     member is some arbitrary entity name (Unicode object).
@@ -50,7 +50,7 @@ class BaseGroup(object):
         raise NotImplementedError()
 
 
-class BaseGroupsBackend(object):
+class BaseGroupsBackend:
     """
     Backend provides access to the group definitions for the other
     MoinMoin code.
@@ -302,7 +302,7 @@ class BaseDict(object, DictMixin):
         return "<{0!r} name={1!r} items={2!r}>".format(self.__class__, self.name, list(self._dict.items()))
 
 
-class BaseDictsBackend(object):
+class BaseDictsBackend:
 
     def __init__(self):
         self.item_dict_regex = app.cfg.cache.item_dict_regexact

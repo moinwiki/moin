@@ -24,7 +24,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Base(object):
+class Base:
 
     namespaces = {
         html.namespace: '',

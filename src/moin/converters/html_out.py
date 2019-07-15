@@ -82,7 +82,7 @@ def mark_item_as_transclusion(elem, href):
     return elem
 
 
-class Attribute(object):
+class Attribute:
     """ Adds the attribute with the HTML namespace to the output. """
     __slots__ = 'key'
 
@@ -93,7 +93,7 @@ class Attribute(object):
         out[self.key] = value
 
 
-class Attributes(object):
+class Attributes:
     namespaces_valid_output = frozenset([
         html,
     ])
@@ -160,7 +160,7 @@ class Attributes(object):
         return new_default
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> application/x.moin.document
     """
@@ -625,7 +625,7 @@ class Converter(object):
         return self.new_copy(html.u, elem)
 
 
-class SpecialId(object):
+class SpecialId:
     def __init__(self):
         self._ids = {}
 
@@ -647,7 +647,7 @@ class SpecialId(object):
         return id + '-{0}'.format(nr)
 
 
-class SpecialPage(object):
+class SpecialPage:
     def __init__(self):
         self._footnotes = []
         self._headings = []

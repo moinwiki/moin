@@ -114,7 +114,7 @@ class BytesMutableStoreBase(MutableStoreBase):
         """
 
 
-class BytesMutableStoreMixin(object):
+class BytesMutableStoreMixin:
     """
     mix this into a FileMutableStore to get a BytesMutableStore, like shown here:
 
@@ -142,7 +142,7 @@ class FileMutableStoreBase(MutableStoreBase):
         """
 
 
-class FileMutableStoreMixin(object):
+class FileMutableStoreMixin:
     """
     mix this into a BytesMutableStore to get a FileMutableStore, like shown here:
 

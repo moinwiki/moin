@@ -16,7 +16,7 @@ from moin import themes
 import pytest
 
 
-class TestNaviBar(object):
+class TestNaviBar:
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):

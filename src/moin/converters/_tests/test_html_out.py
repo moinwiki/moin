@@ -23,7 +23,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Base(object):
+class Base:
     input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:html="{2}" xmlns:xlink="{3}" xmlns:xml="{4}"'.format(moin_page.namespace, moin_page.namespace, html.namespace, xlink.namespace, xml.namespace)
     output_namespaces = {
         html.namespace: '',

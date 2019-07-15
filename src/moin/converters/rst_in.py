@@ -44,7 +44,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class NodeVisitor(object):
+class NodeVisitor:
     """
     Part of docutils which converts docutils DOM tree to Moin DOM tree
     """
@@ -798,7 +798,7 @@ class Writer(writers.Writer):
         self.output = visitor.tree()
 
 
-class MoinDirectives(object):
+class MoinDirectives:
     """
     Class to handle all custom directive handling. This code is called as
     part of the parsing stage.
@@ -914,7 +914,7 @@ class MoinDirectives(object):
     parser.optional_arguments = 0
 
 
-class Converter(object):
+class Converter:
     @classmethod
     def factory(cls, input, output, **kw):
         return cls()

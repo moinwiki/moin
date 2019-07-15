@@ -18,7 +18,7 @@ from moin.security import AccessControlList
 from moin.datastructures import GroupDoesNotExistError
 
 
-class GroupsBackendTest(object):
+class GroupsBackendTest:
 
     test_groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1', 'John'],
                    'AdminGroup': ['Admin1', 'Admin2', 'John'],
@@ -132,7 +132,7 @@ class GroupsBackendTest(object):
         assert not acl.may("Someone", "write")
 
 
-class DictsBackendTest(object):
+class DictsBackendTest:
 
     dicts = {'SomeTestDict': {'First': 'first item',
                               'text with spaces': 'second item',

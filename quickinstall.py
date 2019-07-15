@@ -283,7 +283,7 @@ def create_m():
             os.fchmod(f.fileno(), 0o775)
 
 
-class Commands(object):
+class Commands:
     """Each cmd_ method processes a choice on the menu."""
     def __init__(self):
         pass
@@ -585,7 +585,7 @@ class Commands(object):
             print('Wiki data not deleted because it does not exist.')
 
 
-class QuickInstall(object):
+class QuickInstall:
 
     def __init__(self, source):
         self.dir_source = source

@@ -31,7 +31,7 @@ from . import default_registry
 from moin.utils.mime import Type, type_moin_document
 
 
-class Markdown(object):
+class Markdown:
     """
     Markdown syntax elements
     It's dummy
@@ -82,7 +82,7 @@ class Markdown(object):
         pass
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> text/x.moin.wiki
     """

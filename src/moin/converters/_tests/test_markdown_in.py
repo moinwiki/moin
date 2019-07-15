@@ -15,7 +15,7 @@ from moin.utils.tree import moin_page, xlink, xml, xinclude, html
 from ..markdown_in import Converter
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page: '',
         xlink: 'xlink',

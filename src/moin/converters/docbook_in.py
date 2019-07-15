@@ -66,7 +66,7 @@ class XMLParser(ET.XMLParser):
         return elem
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/docbook+xml -> x.moin.document
     """

@@ -9,7 +9,7 @@
 from moin.utils import diff_text
 
 
-class TestDiffText(object):
+class TestDiffText:
 
     def testDiff(self):
         """ utils.diff_text.diff: test correct diff calculation """

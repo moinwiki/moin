@@ -18,7 +18,7 @@ win32_only = pytest.mark.skipif("sys.platform != 'win32'")
 win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
 
 
-class TestFuid(object):
+class TestFuid:
     """ test filesys.fuid (a better mtime() alternative for up-to-date checking) """
 
     def setup_method(self, method):
@@ -83,7 +83,7 @@ class TestFuid(object):
         assert uid2 != uid1  # should be considered stale if platform has no inode support
 
 
-class TestRename(object):
+class TestRename:
     """ test filesys.rename* """
 
     def setup_method(self, method):
@@ -139,7 +139,7 @@ class TestRename(object):
         assert not os.path.exists(self.src)
 
 
-class TestCopy(object):
+class TestCopy:
     """test filesys.copytree"""
 
     def setup_method(self, method):

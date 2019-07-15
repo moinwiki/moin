@@ -14,7 +14,7 @@ from moin.utils.tree import moin_page, xlink
 from moin.storage.middleware.protecting import AccessDenied
 
 
-class MacroBase(object):
+class MacroBase:
     """
     Macro base class.
     """

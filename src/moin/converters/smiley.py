@@ -22,7 +22,7 @@ from moin.utils.tree import moin_page
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     """
     Replace each smiley by the corresponding element in the DOM Tree
     """
