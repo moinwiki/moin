@@ -221,7 +221,7 @@ file. It should match the actual charset of the configuration file.
             attr = getattr(self, name, None)
             if attr is not None:
                 # Try to decode strings
-                if isinstance(attr, str):
+                if isinstance(attr, bytes):
                     try:
                         setattr(self, name, str(attr, charset))
                     except UnicodeError:
@@ -231,7 +231,7 @@ file. It should match the actual charset of the configuration file.
                 elif isinstance(attr, list):
                     for i in range(len(attr)):
                         item = attr[i]
-                        if isinstance(item, str):
+                        if isinstance(item, bytes):
                             try:
                                 attr[i] = str(item, charset)
                             except UnicodeError:
