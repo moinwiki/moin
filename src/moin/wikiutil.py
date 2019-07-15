@@ -60,9 +60,9 @@ def clean_input(text, max_len=201):
     if length == 0 or length > max_len:
         return ''
     else:
-        if isinstance(text, str):
+        if isinstance(text, bytes):
             # the translate() below can ONLY process unicode, thus, if we get
-            # str, we try to decode it using the usual coding:
+            # bytes, we try to decode it using the usual coding:
             text = text.decode(CHARSET)
         return text.translate(CLEAN_INPUT_TRANSLATION_MAP)
 
