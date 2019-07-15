@@ -33,12 +33,12 @@ class TestACLStringIterator:
     def testEmpty(self):
         """ security: empty acl string raise StopIteration """
         acl_iter = acliter('')
-        pytest.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.__next__)
 
     def testWhiteSpace(self):
         """ security: white space acl string raise StopIteration """
         acl_iter = acliter('       ')
-        pytest.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.__next__)
 
     def testDefault(self):
         """ security: default meta acl """
@@ -137,7 +137,7 @@ class TestACLStringIterator:
         mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read']
-        pytest.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.__next__)
 
     def testEmptyNamesWithRight(self):
         """ security: empty names with rights
