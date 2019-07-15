@@ -55,6 +55,13 @@ class Backend(MutableBackendBase):
             assert isinstance(namespace, str)
             assert backend_name in backends
 
+    @classmethod
+    def from_uri(cls, uri):
+        """
+        create an instance using the data given in uri
+        """
+        raise NotImplemented
+
     def open(self):
         for backend in self.backends.values():
             backend.open()
