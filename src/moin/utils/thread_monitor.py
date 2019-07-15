@@ -17,7 +17,7 @@ import sys
 import threading
 import traceback
 from time import sleep
-from io import BytesIO
+from io import StringIO
 
 
 class Monitor:
@@ -38,10 +38,10 @@ class Monitor:
         dumpfile = dumpfile or sys.stderr
         cur_frames = sys._current_frames()
         for i in cur_frames:
-            s = BytesIO()
-            print("\nDumping thread (id {0}):".format(i, ), file=s)
-            traceback.print_stack(cur_frames[i], file=s)
-            dumpfile.write(s.getvalue())
+            f = StringIO()
+            print("\nDumping thread (id {0}):".format(i, ), file=f)
+            traceback.print_stack(cur_frames[i], file=f)
+            dumpfile.write(f.getvalue())
 
     def hook_enabled(self):
         """ Returns true if the thread_monitor hook is enabled. """
