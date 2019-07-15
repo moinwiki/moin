@@ -21,7 +21,7 @@ from moin.themes import utctimestamp
 import pytest
 
 
-class TestView(object):
+class TestView:
     @pytest.fixture(autouse=True)
     def set_self_app(self, app):
         self.app = app

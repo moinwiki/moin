@@ -134,7 +134,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
         assert u2 is None
 
 
-class TestTwoLdapServers(object):
+class TestTwoLdapServers:
     basedn = BASEDN
     rootdn = ROOTDN
     rootpw = ROOTPW
@@ -174,7 +174,7 @@ class TestTwoLdapServers(object):
             assert 'userb' in uids
 
 
-class TestLdapFailover(object):
+class TestLdapFailover:
     basedn = BASEDN
     rootdn = ROOTDN
     rootpw = ROOTPW

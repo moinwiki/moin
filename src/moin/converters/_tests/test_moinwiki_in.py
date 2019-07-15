@@ -16,7 +16,7 @@ from moin.converters.moinwiki_in import Converter
 from moin.converters._args import Arguments
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page: '',
         xlink: 'xlink',

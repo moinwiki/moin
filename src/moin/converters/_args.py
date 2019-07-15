@@ -6,7 +6,7 @@ MoinMoin - Arguments wrapper
 """
 
 
-class Arguments(object):
+class Arguments:
     """
     Represent an argument list that may contain positional or keyword args.
     """

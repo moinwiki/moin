@@ -21,7 +21,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Base(object):
+class Base:
     input_namespaces = ns_all = 'xmlns="{0}" xmlns:xlink="{1}"'.format(docbook.namespace, xlink.namespace)
     output_namespaces = {
         moin_page.namespace: '',

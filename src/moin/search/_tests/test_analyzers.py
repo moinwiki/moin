@@ -11,7 +11,7 @@ from flask import current_app as app
 from moin.search.analyzers import MimeTokenizer, AclTokenizer, item_name_analyzer
 
 
-class TokenizerTestBase(object):
+class TokenizerTestBase:
 
     def testTokenizer(self):
         """ analyzers: check what obtained tokens matched given """

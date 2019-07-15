@@ -55,7 +55,7 @@ def pchecker(right, allowed, item):
     return allowed
 
 
-class ProtectingMiddleware(object):
+class ProtectingMiddleware:
     def __init__(self, indexer, user, acl_mapping):
         """
         :param indexer: indexing middleware instance
@@ -206,7 +206,7 @@ class ProtectingMiddleware(object):
         return allowed
 
 
-class ProtectedItem(object):
+class ProtectedItem:
     def __init__(self, protector, item):
         """
         :param protector: protector middleware
@@ -332,7 +332,7 @@ class ProtectedItem(object):
             self.destroy_revision(rev.revid)
 
 
-class ProtectedRevision(object):
+class ProtectedRevision:
     def __init__(self, protector, rev, p_item=None):
         """
         :param protector: Protector middleware

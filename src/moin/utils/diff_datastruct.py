@@ -10,7 +10,7 @@ DELETE = "delete"
 REPLACE = "replace"
 
 
-class UndefinedType(object):
+class UndefinedType:
     """ Represents a non-existing value """
 
 

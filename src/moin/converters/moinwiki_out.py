@@ -27,7 +27,7 @@ from . import ElementException
 from . import default_registry
 
 
-class Moinwiki(object):
+class Moinwiki:
     """
     Moinwiki syntax elements
     It's dummy
@@ -74,7 +74,7 @@ class Moinwiki(object):
         pass
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> text/x.moin.wiki
     """

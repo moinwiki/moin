@@ -148,7 +148,7 @@ class DummyRev(dict):
                 self.meta[fqname.field] = fqname.value
 
 
-class DummyItem(object):
+class DummyItem:
     """ if we have no stored Item, we use this dummy """
     def __init__(self, fqname):
         self.fqname = fqname
@@ -352,7 +352,7 @@ class FieldNotUniqueError(ValueError):
     """
 
 
-class Item(object):
+class Item:
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     # placeholder values for registry entry properties
     itemtype = ''

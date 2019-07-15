@@ -14,7 +14,7 @@ from moin.converters._wiki_macro import ConverterMacro
 from moin.converters._args import Arguments
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page.namespace: '',
         xinclude.namespace: 'xi',

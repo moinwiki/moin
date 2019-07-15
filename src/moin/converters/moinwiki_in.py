@@ -35,7 +35,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class _TableArguments(object):
+class _TableArguments:
     rules = r'''
     (?:
         - (?P<number_columns_spanned> \d+)

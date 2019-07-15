@@ -20,7 +20,7 @@ from moin.utils.interwiki import split_fqname
 import pytest
 
 
-class TestNotifications(object):
+class TestNotifications:
     reinit_storage = True
 
     @pytest.fixture(autouse=True)

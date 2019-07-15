@@ -17,7 +17,7 @@ from moin._tests import wikiconfig
 import pytest
 
 
-class TestStorageEnvironWithoutConfig(object):
+class TestStorageEnvironWithoutConfig:
     def setup_method(self, method):
         self.class_level_value = 123
 
@@ -44,7 +44,7 @@ DEFAULT_ACL = dict(
 )
 
 
-class TestStorageEnvironWithConfig(object):
+class TestStorageEnvironWithConfig:
 
     @pytest.fixture
     def cfg(self):

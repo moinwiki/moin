@@ -17,7 +17,7 @@ from moin import wikiutil
 from werkzeug import MultiDict
 
 
-class TestCleanInput(object):
+class TestCleanInput:
     def testCleanInput(self):
         tests = [
             ("", ""),  # empty
@@ -29,7 +29,7 @@ class TestCleanInput(object):
             assert wikiutil.clean_input(instr) == outstr
 
 
-class TestAnchorNames(object):
+class TestAnchorNames:
     @pytest.mark.parametrize('text,expected', [
         # text, expected output
         # note: recent werkzeug encodes a "+" to %2B, giving .2B in the end
@@ -47,7 +47,7 @@ class TestAnchorNames(object):
         assert expected == encoded
 
 
-class TestRelativeTools(object):
+class TestRelativeTools:
     tests = [
         # test                      expected output
         # CHILD_PREFIX
@@ -71,7 +71,7 @@ class TestRelativeTools(object):
         assert relative_page == wikiutil.RelItemName(current_page, absolute_page)
 
 
-class TestNormalizePagename(object):
+class TestNormalizePagename:
 
     def testPageInvalidChars(self):
         """ request: normalize pagename: remove invalid unicode chars
@@ -129,7 +129,7 @@ class TestNormalizePagename(object):
             assert result == expected
 
 
-class TestGroupItems(object):
+class TestGroupItems:
 
     def testNormalizeGroupName(self):
         """ request: normalize itemname: restrict groups to alpha numeric Unicode

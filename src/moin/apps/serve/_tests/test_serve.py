@@ -8,7 +8,7 @@
 from flask import url_for
 
 
-class TestServe(object):
+class TestServe:
     def test_index(self, app):
         with app.test_client() as c:
             rv = c.get(url_for('serve.index'))

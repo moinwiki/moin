@@ -153,7 +153,7 @@ class XPointer(list):
     """
     tokenizer_re = re.compile(tokenizer_rules, re.X)
 
-    class Entry(object):
+    class Entry:
         __slots__ = 'name', 'data'
 
         def __init__(self, name, data):
@@ -198,7 +198,7 @@ class XPointer(list):
             self.append(self.Entry(''.join(name), None))
 
 
-class Converter(object):
+class Converter:
 
     @classmethod
     def _factory(cls, input, output, includes=None, **kw):

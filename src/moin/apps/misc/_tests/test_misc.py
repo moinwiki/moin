@@ -8,7 +8,7 @@ MoinMoin - basic tests for misc views
 from flask import url_for
 
 
-class TestMisc(object):
+class TestMisc:
     def test_global_sitemap(self, app):
         with app.test_client() as c:
             rv = c.get(url_for('misc.sitemap'))

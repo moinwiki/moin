@@ -22,7 +22,7 @@ from . import default_registry
 from ._util import decode_data, normalize_split_text
 
 
-class Converter(object):
+class Converter:
     """
     Parse the raw text and create a document object
     that can be converted into output using Emitter.

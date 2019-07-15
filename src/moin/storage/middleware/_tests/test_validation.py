@@ -18,7 +18,7 @@ from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import CompositeName
 
 
-class TestValidation(object):
+class TestValidation:
     def test_content(self):
         class REV(dict):
             """ fake rev """

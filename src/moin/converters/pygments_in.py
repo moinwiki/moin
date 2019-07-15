@@ -50,7 +50,7 @@ if pygments:
             if lastval:
                 self._append(lasttype, lastval, element)
 
-    class Converter(object):
+    class Converter:
         @classmethod
         def _factory(cls, type_input, type_output, **kw):
             pygments_name = None
@@ -126,7 +126,7 @@ if pygments:
 
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
-    class Converter(object):
+    class Converter:
         def __init__(self, lexer=None, contenttype=None):
             pass
 

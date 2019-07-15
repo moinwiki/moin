@@ -14,7 +14,7 @@ from moin.converters.moinwiki19_in import ConverterFormat19
 from moin.utils.tree import moin_page, xlink, html, xinclude
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page: '',
         xlink: 'xlink',

@@ -37,7 +37,7 @@ def build_mixed_index(basename, spec):
             for relname, hassubitem in spec]
 
 
-class TestItem(object):
+class TestItem:
 
     def _testNonExistent(self):
         item = Item.create('DoesNotExist')

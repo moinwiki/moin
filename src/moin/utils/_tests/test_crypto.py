@@ -10,7 +10,7 @@ MoinMoin - moin.utils.crypto Tests
 from moin.utils import crypto
 
 
-class TestRandom(object):
+class TestRandom:
     """ crypto: random tests """
 
     def testRandomString(self):
@@ -28,7 +28,7 @@ class TestRandom(object):
         assert result == expected, 'Expected length "%(expected)s" but got "%(result)s"' % locals()
 
 
-class TestToken(object):
+class TestToken:
     """ tests for the generated tokens """
 
     def test_validtoken(self):
@@ -53,7 +53,7 @@ class TestToken(object):
         assert not result
 
 
-class TestCacheKey(object):
+class TestCacheKey:
     """ tests for cache key generation """
 
     def test_cache_key(self):

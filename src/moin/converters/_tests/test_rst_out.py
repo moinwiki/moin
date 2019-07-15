@@ -15,7 +15,7 @@ from moin.utils.tree import moin_page, xlink
 from moin.converters.rst_out import Converter
 
 
-class Base(object):
+class Base:
     input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}"'.format(moin_page.namespace, moin_page.namespace, xlink.namespace)
     output_namespaces = {
         moin_page.namespace: 'page'

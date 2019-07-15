@@ -21,7 +21,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class OpenDocumentIndexingConverter(object):
+class OpenDocumentIndexingConverter:
     @classmethod
     def _factory(cls, input, output, **kw):
         return cls()

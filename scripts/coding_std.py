@@ -31,7 +31,7 @@ SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
 WIN_SUFFIXES = set("bat cmd".split())
 
 
-class NoDupsLogger(object):
+class NoDupsLogger:
     """
     A simple report logger that suppresses duplicate headings and messages.
     """

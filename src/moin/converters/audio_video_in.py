@@ -18,7 +18,7 @@ from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
 
 
-class Converter(object):
+class Converter:
     """
     Convert audio/video to the corresponding <object> in the DOM Tree
     """
