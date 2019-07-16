@@ -58,7 +58,7 @@ def format_date_time(utc_dt=None, fmt='yyyy-MM-dd hh:mm:ss', interval='datetime'
 
     if not flaskg.user.valid:
         # users who are not logged-in get moin version of ISO 8601: 2019-07-15 07:08:09z
-        return flask_babel.format_datetime(utc_dt, fmt) +'z'
+        return flask_babel.format_datetime(utc_dt, fmt) + 'z'
 
     if flaskg.user.iso_8601:
         suffix = ''
