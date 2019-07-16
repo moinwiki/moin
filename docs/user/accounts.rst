@@ -58,12 +58,13 @@ Display-Name
  but your display name will be displayed to other users and in your history page.
 
 Timezone
- Setting this value will allow you to see edit times as they would appear in your time zone. For
+ Setting this value will display edit times converted to your local time zone. For
  example, an edit time of 10AM UTC would appear as 8PM AEST if you changed your time zone to
  GMT +10/Australian Eastern Standard Time.
 
 Locale
- Your preferred language for interacting with MoinMoin.
+ Your preferred language for interacting with MoinMoin. Edit dates and times are formatted based
+ upon the locale unless the ISO 8601 option is selected under Options.
 
 Change Password
 ---------------
@@ -126,6 +127,11 @@ Options
 -------
 
 The "Options" section allows you to control privacy and advanced features of MoinMoin.
+
+Always use ISO 8601 date-time format
+ Display dates and times in ISO 8601 format rather than the usual Babel formats
+ based upon the user's locale. If the UTC time zone is selected, dates and times
+ will have a "z" suffix indicating the date or time is a UTC Zulu time.
 
 Publish my email (not my wiki homepage) in author info
  Control whether or not other wiki users may see your email address.

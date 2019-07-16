@@ -30,6 +30,7 @@ from moin.utils.crypto import cache_key
 from moin.utils.forms import make_generator
 from moin.utils.clock import timed
 from moin.utils.mime import Type
+from moin.utils import show_time
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -707,7 +708,15 @@ def time_hh_mm(dt):
     Convert a datetime object into a short string of the form HH:MM
     where HH varies from 0 to 23.
     """
-    return datetime.datetime.fromtimestamp(dt).strftime('%H:%M')
+    return show_time.format_time(datetime.datetime.utcfromtimestamp(dt), fmt='HH:mm')
+
+
+def time_datetime(dt):
+    """
+    Alternative to babel datetimeformat, allows user to choose ISO 8601 format
+    by checking box in usersettings Options.
+    """
+    return show_time.format_date_time(datetime.datetime.utcfromtimestamp(dt))
 
 
 def setup_jinja_env():
@@ -718,6 +727,7 @@ def setup_jinja_env():
     app.jinja_env.filters['json_dumps'] = dumps
     app.jinja_env.filters['shorten_ctype'] = shorten_ctype
     app.jinja_env.filters['time_hh_mm'] = time_hh_mm
+    app.jinja_env.filters['time_datetime'] = time_datetime
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 

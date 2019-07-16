@@ -99,6 +99,7 @@ RECOVERPASS_KEY = u"recoverpass_key"  # TODO: this is used for email confirmatio
 EDIT_ON_DOUBLECLICK = u"edit_on_doubleclick"
 SCROLL_PAGE_AFTER_EDIT = u"scroll_page_after_edit"
 SHOW_COMMENTS = u"show_comments"
+ISO_8601 = u"iso_8601"
 MAILTO_AUTHOR = u"mailto_author"
 CSS_URL = u"css_url"
 EDIT_ROWS = u"edit_rows"
@@ -116,7 +117,8 @@ BACKENDNAME = u"backendname"
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
     NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL,
-    MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE, EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
+    ISO_8601, MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE,
+    EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
     EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIPTIONS, QUICKLINKS, CSS_URL,
 ]
 

@@ -1,3 +1,11 @@
+{#
+    This template contains macros used to format the usersettings view. As shown below, the usersettings have
+    several HTML forms. Most themes will display the form names as a series of tabs. Javascript will display the
+    current selection and hide the other parts.
+
+    Updates to the forms will be processed as XHR requests.
+#}
+
 {% import "forms.html" as forms %}
 
 {% macro personal(form) %}
@@ -74,6 +82,7 @@
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
         {{ forms.render_errors(form) }}
         <dl>
+            {{ forms.render(form['iso_8601']) }}
             {{ forms.render(form['mailto_author']) }}
             {{ forms.render(form['edit_on_doubleclick']) }}
             {{ forms.render(form['scroll_page_after_edit']) }}
