@@ -1,30 +1,12 @@
 # Copyright: 2019 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-"""
-Provide a consistent way of formatting times and durations.
-
-For formatted times, all date-times passed into this module should be GMT Zulu times
-    * if logged-in user or wikiconfig has specified a time zone,
-        use it to convert GMT times to local times.
-    * if logged-in user or wikiconfig has a default/preferred time format,
-        use it to format output strings.
-    * default output will use GMT ISO 8601 time formats, without the T and ignoring
-        seconds to save space.
-    * formatted Zulu times will have a trailing Z, local times will not
-    * in most cases, logged-in users will see local times, casual visitors will see Zulu times
-
-For duration times, seconds will be converted into approximate, minutes, days, weeks, months, years.
-
-TODO: complete the code and convert other modules to use this module.
-"""
-
-
 import time
 import datetime
 import pytz
 
 from flask import g as flaskg
+import flask_babel
 
 from moin.constants.keys import TIMEZONE
 from moin.i18n import _, L_, N_
@@ -33,8 +15,10 @@ from moin import i18n
 
 def duration(seconds):
     """
-    Convert seconds into a multiple of an interval (seconds, 10; minutes, 5; ), return as a tuple
-    suitable for inserting into a translated phrase.
+    Return a duration tuple (interval, number) suitable for inserting into a translated phrase.
+
+        * (_('seconds'), 10)
+        * (_('minutes'), 5)
     """
     seconds = int(abs(seconds))
     if seconds < 90:
@@ -52,17 +36,48 @@ def duration(seconds):
     return _("years"), (seconds+15768000)//31536000
 
 
-def format_date_time(utc_dt=None):
-    """Return current or passed (dt) time in user's preferred format or default to moin-style ISO 8601."""
+def format_date_time(utc_dt=None, fmt='yyyy-MM-dd hh:mm:ss', interval='datetime'):
+    """
+    Add an ISO 8601 alternative to babel's date/time formatting.
+
+    Visitors who are not logged-in see ISO 8601 formatted dates and times with
+    a "z" suffix indicating the date/time is a UTC Zulu time.
+
+    Logged in users who have selected the ISO 8601 option in usersettings and
+    have set their time zone to UTC in usersettings see date/times with a "z" suffix.
+    Users with a time zone other than UTC see local date/times in ISO 8601 format
+    without the "z" suffix.
+
+    All other logged-in users will see the usual babel date/time formats based upon
+    their time zone and locale.
+
+    See http://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
+    """
     if utc_dt is None:
         utc_dt = datetime.datetime.utcnow()
-    user_tz = i18n.get_timezone()
-    fmt = '%Y-%m-%d %H:%M'
-    if user_tz:
-        tz = pytz.timezone(user_tz)
-    else:
-        tz = pytz.utc
-        fmt = fmt + 'Z'
-    loc_dt = tz.localize(utc_dt)
-    dt = loc_dt.strftime(fmt)
-    return dt
+
+    if not flaskg.user.valid:
+        # users who are not logged-in get moin version of ISO 8601: 2019-07-15 07:08:09z
+        return flask_babel.format_datetime(utc_dt, fmt) +'z'
+
+    if flaskg.user.iso_8601:
+        suffix = ''
+        user_tz = i18n.get_timezone()
+        if user_tz:
+            if pytz.timezone(user_tz) == pytz.utc:
+                suffix = 'z'
+        return flask_babel.format_datetime(utc_dt, fmt) + suffix
+
+    if interval == 'date':
+        return flask_babel.format_date(utc_dt)
+    elif interval == 'time':
+        return flask_babel.format_time(utc_dt)
+    return flask_babel.format_datetime(utc_dt)
+
+
+def format_date(utc_dt=None, fmt='yyyy-MM-dd', interval='date'):
+    return format_date_time(utc_dt=utc_dt, fmt=fmt, interval=interval)
+
+
+def format_time(utc_dt=None, fmt='HH:mm:ss', interval='time'):
+    return format_date_time(utc_dt=utc_dt, fmt=fmt, interval=interval)

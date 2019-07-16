@@ -45,7 +45,7 @@
                             <td class="moin-history-links">{{ utils.item_status_icon(doc.fqname, doc, None) }}</td>
                             {# show item name or item id and old name if the item is nameless (deleted) #}
                             <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
-                            <td>{{ doc.mtime|datetimeformat }}</td>
+                            <td>{{ doc.mtime|time_datetime }}</td>
                             <td class="moin-integer">{{ doc.size }}</td>
                             <td class="moin-integer">{{ doc.rev_number  or doc.revid|shorten_id }}</td>
                             <td class="moin-wordbreak">{{ doc.comment }}</td>

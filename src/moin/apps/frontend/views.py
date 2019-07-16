@@ -65,7 +65,7 @@ from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
-from moin.utils import crypto, rev_navigation, close_file
+from moin.utils import crypto, rev_navigation, close_file, show_time
 from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.mime import Type, type_moin_document
@@ -1355,7 +1355,7 @@ def global_history(namespace):
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
     for rev in revs:
-        rev_date = format_date(datetime.utcfromtimestamp(rev.meta[MTIME]))
+        rev_date = show_time.format_date(datetime.utcfromtimestamp(rev.meta[MTIME]))
         if rev_date == prev_date:
             dh.entries.append(rev)
         else:

@@ -80,7 +80,7 @@
                             <tr>
                                 <td class="moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
                                 <td class="moin-integer">{{ doc.rev_number or doc.revid|shorten_id }}</td>
-                                <td>{{ doc.mtime|datetimeformat }}</td>
+                                <td>{{ doc.mtime|time_datetime }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
                                 <td>
                                     {#- do not create radio buttons if item was deleted and recreated with same name, different itemid #}

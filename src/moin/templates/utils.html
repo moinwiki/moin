@@ -193,7 +193,7 @@
             {% endif %}
         </li>
         <li class="list-group-item">Item Type: {{ meta['itemtype'] }}</li>
-        <li class="list-group-item">Modified Time: {{ meta['mtime']|datetimeformat }}</li>
+        <li class="list-group-item">Modified Time: {{ meta['mtime']|time_datetime }}</li>
         <li class="list-group-item">Name:
             {% if meta['name'] %}
                 {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) %}
