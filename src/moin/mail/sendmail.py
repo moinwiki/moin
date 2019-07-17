@@ -10,7 +10,10 @@
 
 import os
 import re
-from email.header import Header
+import smtplib
+import socket
+from email.message import EmailMessage
+from email.utils import formatdate, make_msgid
 
 from flask import current_app as app
 
@@ -24,73 +27,29 @@ logging = log.getLogger(__name__)
 _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
 
 
-def encodeAddress(address, charset):
-    """
-    Encode email address to enable non ascii names
-
-    E.g. '"Jürgen Hermann" <jh@web.de>'. According to the RFC, the name
-    part should be encoded, the address should not.
-
-    :param address: email address, possibly using '"name" <address>' format
-    :type address: unicode
-    :param charset: specifying both the charset and the encoding, e.g
-                    quoted printable or base64.
-    :type charset: email.Charset.Charset instance
-    :rtype: string
-    :returns: encoded address
-    """
-    assert isinstance(address, str)
-    composite = re.compile(r'(?P<phrase>.*?)(?P<blanks>\s*)<(?P<addr>.*)>', re.UNICODE)
-    match = composite.match(address)
-    if match:
-        phrase = match.group('phrase')
-        try:
-            str(phrase)  # is it pure ascii?
-        except UnicodeEncodeError:
-            phrase = phrase.encode(CHARSET)
-            phrase = Header(phrase, charset)
-        blanks = match.group('blanks')
-        addr = match.group('addr')
-        if phrase:
-            return "{0!s}{1!s}<{2!s}>".format(phrase, blanks, addr)
-        else:
-            return str(addr)
-    else:
-        # a pure email address, should encode to ascii without problem
-        return str(address)
-
-
 def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=None):
     """ Create and send a text/plain message
 
     Return a tuple of success or error indicator and message.
 
     :param subject: subject of email
-    :type subject: unicode
+    :type subject: str
     :param text: email body text
-    :type text: unicode
+    :type text: str
     :param to: recipients
-    :type to: list
+    :type to: list of str
     :param cc: recipients (CC)
-    :type cc: list
+    :type cc: list of str
     :param bcc: recipients (BCC)
-    :type bcc: list
+    :type bcc: list of str
     :param mail_from: override default mail_from
-    :type mail_from: unicode
+    :type mail_from: str
     :param html: html email body text
-    :type html: unicode
+    :type html: str
 
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
-    import smtplib
-    import socket
-    from email.message import Message
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
-    from email.charset import Charset, QP
-    from email.utils import formatdate, make_msgid
-
     cfg = app.cfg
     if not cfg.mail_enabled:
         return (0, _("Contact administrator: cannot send password recovery e-mail "
@@ -103,56 +62,28 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     if not to and not cc and not bcc:
         return 1, _("No recipients, nothing to do")
 
-    subject = subject.encode(CHARSET)
+    msg = EmailMessage()
 
-    # Create a text/plain body using CRLF (see RFC2822)
-    text = text.replace('\n', '\r\n')
-    text = text.encode(CHARSET)
-
-    # Create a message using CHARSET and quoted printable
-    # encoding, which should be supported better by mail clients.
-    # TODO: check if its really works better for major mail clients
-    text_msg = Message()
-    charset = Charset(CHARSET)
-    charset.header_encoding = QP
-    charset.body_encoding = QP
-    text_msg.set_charset(charset)
-
-    # work around a bug in python 2.4.3 and above:
-    text_msg.set_payload('=')
-    if text_msg.as_string().endswith('='):
-        text = charset.body_encode(text)
-
-    text_msg.set_payload(text)
-
+    msg.set_content(text)
     if html:
-        msg = MIMEMultipart('alternative')
-        msg.attach(text_msg)
-        html = html.encode(CHARSET)
-        html_msg = MIMEText(html, 'html')
-        html_msg.set_charset(charset)
-        msg.attach(html_msg)
-    else:
-        msg = text_msg
+        msg.add_alternative(html, subtype='html')
 
-    address = encodeAddress(mail_from, charset)
-    msg['From'] = address
+    msg['From'] = mail_from
     if to:
-        msg['To'] = ','.join(to)
+        msg['To'] = to
     if cc:
-        msg['CC'] = ','.join(cc)
+        msg['CC'] = cc
+    msg['Subject'] = subject
     msg['Date'] = formatdate()
     msg['Message-ID'] = make_msgid()
-    msg['Subject'] = Header(subject, charset)
-    # See RFC 3834 section 5:
-    msg['Auto-Submitted'] = 'auto-generated'
+    msg['Auto-Submitted'] = 'auto-generated'  # RFC 3834 section 5
 
     if cfg.mail_sendmail:
         if bcc:
             # Set the BCC.  This will be stripped later by sendmail.
-            msg['BCC'] = ','.join(bcc)
+            msg['BCC'] = bcc
         # Set Return-Path so that it isn't set (generally incorrectly) for us.
-        msg['Return-Path'] = address
+        msg['Return-Path'] = mail_from
 
     # Send the message
     if not cfg.mail_sendmail:
@@ -161,19 +92,19 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
             server = smtplib.SMTP(host, int(port))
             try:
+                server.ehlo()
+                try:  # try to do TLS
+                    if server.has_extn('starttls'):
+                        server.starttls()
+                        server.ehlo()
+                        logging.debug("tls connection to smtp server established")
+                except Exception:
+                    logging.debug("could not establish a tls connection to smtp server, continuing without tls")
                 # server.set_debuglevel(1)
                 if cfg.mail_username is not None and cfg.mail_password is not None:
-                    try:  # try to do TLS
-                        server.ehlo()
-                        if server.has_extn('starttls'):
-                            server.starttls()
-                            server.ehlo()
-                            logging.debug("tls connection to smtp server established")
-                    except Exception:
-                        logging.debug("could not establish a tls connection to smtp server, continuing without tls")
                     logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
                     server.login(cfg.mail_username, cfg.mail_password)
-                server.sendmail(mail_from, (to or []) + (cc or []) + (bcc or []), msg.as_string())
+                server.send_message(msg)
             finally:
                 try:
                     server.quit()
@@ -190,18 +121,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
                     reason=str(e)
             ))
     else:
-        try:
-            logging.debug("trying to send mail (sendmail)")
-            sendmailp = os.popen(cfg.mail_sendmail, "w")
-            # msg contains everything we need, so this is a simple write
-            sendmailp.write(msg.as_string())
-            sendmail_status = sendmailp.close()
-            if sendmail_status:
-                logging.error("sendmail failed with status: {0!s}".format(sendmail_status))
-                return 0, str(sendmail_status)
-        except Exception:
-            logging.exception("sendmail failed with an exception.")
-            return 0, _("Mail not sent")
+        raise NotImplemented  # TODO cli sendmail support
 
     logging.debug("Mail sent successfully")
     return 1, _("Mail sent successfully")

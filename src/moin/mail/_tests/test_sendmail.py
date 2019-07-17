@@ -7,11 +7,7 @@
 """
 
 
-from email.charset import Charset, QP
-from email.header import Header
-
 from moin.mail import sendmail
-from moin.constants.contenttypes import CHARSET
 
 
 class TestdecodeSpamSafeEmail:
@@ -68,67 +64,6 @@ class TestencodeSpamSafeEmail:
         for coded, expected in self._tests:
             expected = expected.replace(' AT ', ' AT SYCTE ')
             assert sendmail.encodeSpamSafeEmail(coded, 'SYCTE') == expected
-
-
-class TestEncodeAddress:
-    """ Address encoding tests
-
-    See http://www.faqs.org/rfcs/rfc2822.html section 3.4.
-    Address Specification.
-
-    mailbox     =   name-addr / addr-spec
-    name-addr   =   [display-name] angle-addr
-    angle-addr  =   [CFWS] "<" addr-spec ">" [CFWS] / obs-angle-addr
-    """
-    charset = Charset(CHARSET)
-    charset.header_encoding = QP
-    charset.body_encoding = QP
-
-    def testSimpleAddress(self):
-        """ mail.sendmail: encode simple address: local@domain """
-        address = 'local@domain'
-        expected = address.encode(CHARSET)
-        assert sendmail.encodeAddress(address, self.charset) == expected
-
-    def testComposite(self):
-        """ mail.sendmail: encode address: 'Phrase <local@domain>' """
-        address = 'Phrase <local@domain>'
-        expected = str(address)
-        assert sendmail.encodeAddress(address, self.charset) == expected
-
-    def testCompositeUnicode(self):
-        """ mail.sendmail: encode Uncode address: 'ויקי <local@domain>' """
-        address = 'ויקי <local@domain>'
-        phrase = str(Header('ויקי'.encode('utf-8'), self.charset))
-        expected = phrase + ' ' + '<local@domain>'
-        assert sendmail.encodeAddress(address, self.charset) == expected
-
-    def testEmptyPhrase(self):
-        """ mail.sendmail: encode address with empty phrase: '<local@domain>' """
-        address = '<local@domain>'
-        expected = 'local@domain'
-        assert sendmail.encodeAddress(address, self.charset) == expected
-
-    def testEmptyAddress(self):
-        """ mail.sendmail: encode address with empty address: 'Phrase <>'
-
-        Let the smtp server handle this. We may raise error in such
-        case, but we don't do error checking for mail addresses.
-        """
-        address = 'Phrase <>'
-        expected = str(address)
-        assert sendmail.encodeAddress(address, self.charset) == expected
-
-    def testInvalidAddress(self):
-        """ mail.sendmail: encode invalid address 'Phrase <blah'
-
-        Assume that this is a simple address. This address will
-        probably cause an error when trying to send mail. Junk in, junk
-        out.
-        """
-        address = 'Phrase <blah'
-        expected = str(address)
-        assert sendmail.encodeAddress(address, self.charset) == expected
 
 
 coverage_modules = ['moin.mail.sendmail']
