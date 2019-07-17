@@ -32,15 +32,16 @@ class TestCleanInput:
 class TestAnchorNames:
     @pytest.mark.parametrize('text,expected', [
         # text, expected output
-        # note: recent werkzeug encodes a "+" to %2B, giving .2B in the end
-        ('\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
+        # note: recent werkzeug encodes a "+" to "%2B", giving ".2B" in the end,
+        #       also "-" to "%2D", giving ".2D".
+        ('\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g.2Dll.2BAN8A3w.2D'),
         ('level 2', 'level_2'),
         ('level_2', 'level_2'),
         ('', 'A'),
         ('123', 'A123'),
         # make sure that a valid anchor is not modified:
-        ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-',
-         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-')
+        ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.',
+         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.')
     ])
     def test_anchor_name_encoding(self, text, expected):
         encoded = wikiutil.anchor_name_from_text(text)
