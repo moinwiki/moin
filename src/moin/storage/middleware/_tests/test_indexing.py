@@ -374,7 +374,7 @@ class TestIndexingMiddleware:
         doc = self.imw._document(content='test')
         assert doc is not None
         assert expected_revid == doc[REVID]
-        assert str(data) == doc[CONTENT]
+        assert doc[CONTENT] == data.decode()
 
     def test_indexing_subscriptions(self):
         item_name = "foo"

@@ -19,8 +19,8 @@ from .test_indexing import TestIndexingMiddleware
 UNPROTECTED = 'unprotected'
 PROTECTED = 'protected'
 
-UNPROTECTED_CONTENT = 'unprotected content'
-PROTECTED_CONTENT = 'protected content'
+UNPROTECTED_CONTENT = b'unprotected content'
+PROTECTED_CONTENT = b'protected content'
 
 acl_mapping = [
     ('', dict(before='', default='joe:read,write,create,admin All:read,write,create', after='', hierarchic=False)),
@@ -94,7 +94,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         # now testing:
         item_name = 'newitem'
         item = self.imw[item_name]
-        item.store_revision(dict(name=[item_name, ], contenttype='text/plain;charset=utf-8'), BytesIO('new content'))
+        item.store_revision(dict(name=[item_name, ], contenttype='text/plain;charset=utf-8'), BytesIO(b'new content'))
 
     def test_overwrite_revision(self):
         revid_unprotected, revid_protected = self.make_items('joe:write,destroy', 'boss:write,destroy')

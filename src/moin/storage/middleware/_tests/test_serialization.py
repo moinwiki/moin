@@ -24,11 +24,11 @@ from moin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
-    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, '2nd'),
-    ('Subdir', {NAME: ['Subdir', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
-    ('Subdir/Foo', {NAME: ['Subdir/Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
-    ('Subdir/Bar', {NAME: ['Subdir/Bar', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
+    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
+    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b'2nd'),
+    ('Subdir', {NAME: ['Subdir', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
+    ('Subdir/Foo', {NAME: ['Subdir/Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
+    ('Subdir/Bar', {NAME: ['Subdir/Bar', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
 ]
 
 
