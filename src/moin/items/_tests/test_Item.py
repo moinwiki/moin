@@ -53,7 +53,7 @@ class TestItem:
     def testCRUD(self):
         name = 'NewItem'
         contenttype = 'text/plain;charset=utf-8'
-        data = 'foobar'
+        data = b'foobar'
         meta = {'foo': 'bar', CONTENTTYPE: contenttype}
         comment = 'saved it'
         become_trusted()
@@ -87,7 +87,7 @@ class TestItem:
         saved_meta, saved_data = dict(item.meta), item.content.data
         assert saved_meta[CONTENTTYPE] == contenttype
         assert saved_meta[COMMENT] == comment
-        assert saved_data == data
+        assert saved_data == b''
 
     def testIndex(self):
         # create a toplevel and some sub-items
@@ -156,7 +156,7 @@ class TestItem:
         assert result == expected
 
     def test_item_can_have_several_names(self):
-        content = "This is page content"
+        content = b"This is page content"
 
         update_item('Page',
                     {NAME: ['Page',
@@ -200,7 +200,7 @@ class TestItem:
         assert item.name == 'Test_new_Item'
         assert item.meta[NAME_OLD] == ['Test_Item']
         assert item.meta[COMMENT] == 'renamed'
-        assert item.content.data == 'test_data'
+        assert item.content.data == b'test_data'
 
     def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
         content = "This is page content"
@@ -218,17 +218,17 @@ class TestItem:
         item1 = Item.create('First')
         assert item1.name == 'First'
         assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
-        assert item1.content.data == content
+        assert item1.content.data == content.encode()
 
         item2 = Item.create('New name')
         assert item2.name == 'New name'
         assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
-        assert item2.content.data == content
+        assert item2.content.data == content.encode()
 
         item3 = Item.create('Third')
         assert item3.name == 'Third'
         assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
-        assert item3.content.data == content
+        assert item3.content.data == content.encode()
 
         assert item1.rev.revid == item2.rev.revid == item3.rev.revid
 
@@ -259,19 +259,19 @@ class TestItem:
         assert item.name == 'Renamed_Page'
         assert item.meta[NAME_OLD] == ['Page']
         assert item.meta[COMMENT] == 'renamed'
-        assert item.content.data == 'Page 1'
+        assert item.content.data == b'Page 1'
 
         item = Item.create('Renamed_Page/Child')
         assert item.name == 'Renamed_Page/Child'
         assert item.meta[NAME_OLD] == ['Page/Child']
         assert item.meta[COMMENT] == 'renamed'
-        assert item.content.data == 'this is child'
+        assert item.content.data == b'this is child'
 
         item = Item.create('Renamed_Page/Child/Another')
         assert item.name == 'Renamed_Page/Child/Another'
         assert item.meta[NAME_OLD] == ['Page/Child/Another']
         assert item.meta[COMMENT] == 'renamed'
-        assert item.content.data == 'another child'
+        assert item.content.data == b'another child'
 
     def test_rename_recursion_with_multiple_names_and_children(self):
         update_item('Foo', {
@@ -292,14 +292,14 @@ class TestItem:
         item.rename('Renamed', comment='renamed')
 
         assert Item.create('Page/Child').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
-        assert Item.create('Renamed/Child').content.data == 'Child of Page'
+        assert Item.create('Renamed/Child').content.data == b'Child of Page'
         assert Item.create('Page/Second').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
-        assert Item.create('Renamed/Second').content.data == 'Both'
-        assert Item.create('Another').content.data == 'Both'
+        assert Item.create('Renamed/Second').content.data == b'Both'
+        assert Item.create('Another').content.data == b'Both'
         assert Item.create('Page/Second/Child').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
-        assert Item.create('Renamed/Second/Child').content.data == 'Child of Second'
-        assert Item.create('Other/Child2').content.data == 'Child of Other'
-        assert Item.create('Another/Child').content.data == 'Child of Another'
+        assert Item.create('Renamed/Second/Child').content.data == b'Child of Second'
+        assert Item.create('Other/Child2').content.data == b'Child of Other'
+        assert Item.create('Another/Child').content.data == b'Child of Another'
 
     def test_delete(self):
         name = 'Test_Item2'
@@ -353,7 +353,7 @@ class TestItem:
         with pytest.raises(KeyError):
             item.meta['test_key']
         assert item.meta['another_test_key'] == another_meta['another_test_key']
-        assert item.content.data == another_data
+        assert item.content.data == another_data.encode()
         # add/update meta
         another_meta = {
             'test_key': 'test_value',

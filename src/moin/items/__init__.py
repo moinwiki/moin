@@ -709,9 +709,13 @@ class Item:
                 # a valid usecase of this is to just edit metadata.
                 data = currentrev.data
             else:
-                data = ''
+                data = b''
 
-        data = self.handle_variables(data, meta)
+        # TODO XXX broken: data can be all sorts of stuff there and handle_variables can't deal with it yet:
+        # - non-text binary as bytes
+        # - text as bytes? as str? as BytesIO?
+        #
+        # data = self.handle_variables(data, meta)
 
         if isinstance(data, str):
             data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
@@ -737,6 +741,7 @@ class Item:
         @rtype: string
         @return: new text of wikipage, variables replaced
         """
+        assert isinstance(data, str)
         logging.debug("handle_variable data: %r" % data)
         if self.contenttype not in CONTENTTYPE_VARIABLES:
             return data
