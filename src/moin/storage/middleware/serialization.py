@@ -64,7 +64,7 @@ def serialize_iter(backend):
 def deserialize(src, backend):
     while True:
         meta_size_bytes = src.read(4)
-        if meta_size_bytes == '':
+        if not len(meta_size_bytes):
             return  # end of file
         meta_size = struct.unpack('!i', meta_size_bytes)[0]
         if not meta_size:
