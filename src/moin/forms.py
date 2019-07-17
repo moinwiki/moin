@@ -314,7 +314,7 @@ class DateTimeUNIX(_DateTime):
                 # check if a value is a correct timestamp
                 dt = datetime.datetime.utcfromtimestamp(value)
                 return value
-            except ValueError:
+            except (ValueError, OSError):  # OSError errno 75 "Value too large for defined data type"
                 raise AdaptationError()
         dt = super(DateTimeUNIX, self).adapt(value)
         if isinstance(dt, datetime.datetime):
