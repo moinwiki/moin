@@ -20,7 +20,7 @@ def _iriquote_replace(exc):
     if not isinstance(exc, UnicodeDecodeError):
         raise exc
 
-    text = ''.join(('%%%02X' % ord(a) for a in exc.object[exc.start:exc.end]))
+    text = ''.join(('%%%02X' % code for code in exc.object[exc.start:exc.end]))
     return text, exc.end
 
 
@@ -332,7 +332,8 @@ class _Value(str):
                     t_quoted = t_quoted.replace('%', '%25')
                 return t_quoted
 
-            return ''.join(a in quote_filter and a or '%%%02X' % ord(a) for a in t_plain.encode('utf-8'))
+            return ''.join(char if char in quote_filter else ''.join('%%%02X' % b for b in char.encode('utf-8'))
+                           for char in t_plain)
 
         re = url and cls._quote_re_uri or cls._quote_re_iri
         return re.sub(subrepl, input)
@@ -358,9 +359,10 @@ class _Value(str):
 
             part = []
             for item in match.group().split('%')[1:]:
-                part.append(chr(int(item, 16)))
-            ret1.append(''.join(part).decode('utf-8', 'replace'))
-            ret2.append(''.join(part).replace('%', '%25').decode('utf-8', 'iriquote'))
+                part.append(int(item, 16))
+            part = bytes(part)
+            ret1.append(part.decode('utf-8', 'replace'))
+            ret2.append(part.replace(b'%', b'%25').decode('utf-8', 'iriquote'))
 
         # Handle trailing text
         t = s[pos:]
