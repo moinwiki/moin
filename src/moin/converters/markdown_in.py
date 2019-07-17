@@ -525,7 +525,7 @@ class Converter:
         """
         for child in node:
             # TODO: bug in codehilite? <, > are returned as string (not unicode) given ~~~{html}\n<html>\n~~~
-            if not isinstance(child, (str, str)):
+            if not isinstance(child, (bytes, str)):
                 if child.tag == moin_page.p and len(child):
                     for grandchild in child:
                         if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:

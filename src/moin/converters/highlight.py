@@ -29,7 +29,7 @@ class Converter:
         new_childs = []
 
         for child in elem:
-            if isinstance(child, (str, str)):
+            if isinstance(child, (bytes, str)):
                 pos = 0
 
                 # Restrict it to our own namespace for now

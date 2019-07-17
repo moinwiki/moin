@@ -192,9 +192,9 @@ class ProtectingMiddleware:
         return ProtectedItem(self, item)
 
     def may(self, fqname, capability, usernames=None):
-        if usernames is not None and isinstance(usernames, (str, str)):
-            # we got a single username (maybe str), make a list of unicode:
-            if isinstance(usernames, str):
+        if usernames is not None and isinstance(usernames, (bytes, str)):
+            # we got a single username (maybe bytes), make a list of str:
+            if isinstance(usernames, bytes):
                 usernames = usernames.decode('utf-8')
             usernames = [usernames, ]
         # TODO Make sure that fqname must be a CompositeName class instance, not unicode or list.
