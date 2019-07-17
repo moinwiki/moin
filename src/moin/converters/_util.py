@@ -32,22 +32,22 @@ def decode_data(data, contenttype=None):
 
     supported types for data:
     - rev object
+    - bytes
     - str
-    - unicode
 
-    file-like objects and str need to be either utf-8 (or ascii, which is a subset of utf-8)
+    file-like objects and bytes need to be either utf-8 (or ascii, which is a subset of utf-8)
     encoded or contenttype (including a charset parameter) needs to be given.
     """
-    if not isinstance(data, (str, str)):
+    if not isinstance(data, (bytes, str)):
         data = data.data.read()
-    if isinstance(data, str):
+    if isinstance(data, bytes):
         coding = 'utf-8'
         if contenttype is not None:
             ct = Type(contenttype)
             coding = ct.parameters.get('charset', coding)
         data = data.decode(coding)
     if not isinstance(data, str):
-        raise TypeError("data must be rev or str (requires contenttype with charset) or unicode, "
+        raise TypeError("data must be rev or bytes (requires contenttype with charset) or str, "
                         "but we got {0!r}".format(data))
     return data
 
