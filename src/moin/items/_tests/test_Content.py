@@ -79,7 +79,7 @@ class TestTarItems:
         """
         item_name = 'ContainerItem1'
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/x-tar')
-        filecontent = 'abcdefghij'
+        filecontent = b'abcdefghij'
         content_length = len(filecontent)
         members = {'example1.txt', 'example2.txt'}
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
@@ -96,11 +96,11 @@ class TestTarItems:
         """
         item_name = 'ContainerItem2'
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/x-tar')
-        filecontent = 'abcdefghij'
+        filecontent = b'abcdefghij'
         content_length = len(filecontent)
         members = {'example1.txt'}
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
-        filecontent = 'AAAABBBB'
+        filecontent = b'AAAABBBB'
         content_length = len(filecontent)
         item.content.put_member('example1.txt', filecontent, content_length, expected_members=members)
 
@@ -136,7 +136,7 @@ class TestTransformableBitmapImage:
                 result = TransformableBitmapImage._transform(item.content, 'text/plain')
         except ImportError:
             result = TransformableBitmapImage._transform(item.content, contenttype)
-            assert result == ('image/jpeg', '')
+            assert result == ('image/jpeg', b'')
 
     def test__render_data_diff(self):
         item_name = 'image_Item'
@@ -195,10 +195,10 @@ class TestText:
         assert result == expected
         # test for data_internal_to_storage
         result = Text.data_internal_to_storage(item.content, test_text)
-        expected = 'This \r\n is \r\n a \r\n Test'
+        expected = b'This \r\n is \r\n a \r\n Test'
         assert result == expected
         # test for data_storage_to_internal
-        data_storage = 'This \r\n is \r\n a \r\n Test'
+        data_storage = b'This \r\n is \r\n a \r\n Test'
         result = Text.data_storage_to_internal(item.content, data_storage)
         expected = test_text
         assert result == expected
@@ -246,7 +246,7 @@ class TestText:
         result = Text._render_data_diff_text(item1.content, item1.rev, item2.rev)
         expected = '- old_data\n+ new_data'
         assert result == expected
-        assert item2.content.data == ''
+        assert item2.content.data == b''
 
     def test__render_data_highlight(self):
         item_name = 'Text_Item'
@@ -261,7 +261,7 @@ class TestText:
         item2 = Item.create(item_name)
         result = Text._render_data_highlight(item2.content)
         assert '<pre class="highlight">test_data\n' in result
-        assert item2.content.data == ''
+        assert item2.content.data == b''
 
     def test__get_data_diff_text(self):
         item_name = 'Text_Item'
@@ -277,8 +277,8 @@ class TestText:
                 meta = {CONTENTTYPE: contenttype}
                 item._save(meta)
                 item_ = Item.create(item_name)
-                oldfile = BytesIO("x")
-                newfile = BytesIO("xx")
+                oldfile = BytesIO(b"x")
+                newfile = BytesIO(b"xx")
                 difflines = item_.content._get_data_diff_text(oldfile, newfile)
                 if key == 'texttypes':
                     assert difflines == ['- x', '+ xx']
@@ -292,8 +292,8 @@ class TestText:
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item_ = Item.create(item_name)
-        oldfile = BytesIO("")
-        newfile = BytesIO("x")
+        oldfile = BytesIO(b"")
+        newfile = BytesIO(b"x")
         difflines = item_.content._get_data_diff_html(oldfile, newfile)
         assert difflines == [(1, Markup(''), 1, Markup('<span>x</span>'))]
 
