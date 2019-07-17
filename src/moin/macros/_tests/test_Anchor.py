@@ -17,6 +17,6 @@ def test_Macro():
 
     arguments = [('test_argument1', 'test_argument2'), 'test_argument3']
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    test_anchor = result.attrib.values()
+    test_anchor = list(result.attrib.values())
     # test_anchor[0] since it returns a list
     assert test_anchor[0] == arguments[0]
