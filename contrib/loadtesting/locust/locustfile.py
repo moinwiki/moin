@@ -46,7 +46,7 @@ from locust import HttpLocust, Locust, TaskSet, TaskSequence, task, seq_task
 
 user_number = 0
 # test content to put load on indexer
-extra_content = u"""
+extra_content = """
 = %s Home Page =
 
 == Writing a locustfile ==
@@ -192,7 +192,7 @@ class UserSequence(TaskSequence):
                                     {"content_form_data_text": extra_content % self.user_name,
                                      "comment": "my homepage comment",
                                      "submit": "OK",
-                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype": "default",
                                      "meta_form_acl": "None",
                                      "meta_form_tags": "apple, pear",
@@ -265,7 +265,7 @@ class UserSequence(TaskSequence):
 
     @seq_task(10)
     def logout(self):
-        response = self.client.get(u"/+logout?logout_submit=1")
+        response = self.client.get("/+logout?logout_submit=1")
         if response.status_code != 200:
             print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
@@ -287,11 +287,11 @@ class WebsiteUser(HttpLocust):
                 host = host[:-1]
 
             print('==== creating Home and users/Home ====')
-            url = host + u"/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+            url = host + "/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
             data = urllib.parse.urlencode({"content_form_data_text": "= users/Home =\n * created by Locust",
                                      "comment": "",
                                      "submit": "OK",
-                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype": "default",
                                      "meta_form_acl": "None",
                                      "meta_form_tags": "None",
@@ -300,11 +300,11 @@ class WebsiteUser(HttpLocust):
                                      })
             content = urllib.request.urlopen(url=url, data=data).read()
 
-            url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+            url = host + "/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
             data = urllib.parse.urlencode({"content_form_data_text": "= Home =\n * created by Locust",
                                      "comment": "",
                                      "submit": "OK",
-                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype": "default",
                                      "meta_form_acl": "None",
                                      "meta_form_tags": "None",

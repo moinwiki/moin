@@ -121,7 +121,7 @@ class Converter(object):
         # We create an element tree from the HTML content
         # The content is a list of string, line per line
         # We can concatenate all in one string
-        html_str = u'\n'.join(content)
+        html_str = '\n'.join(content)
         try:
             html_tree = HTML(html_str)
         except AssertionError as reason:
@@ -369,7 +369,7 @@ class Converter(object):
         """
         return self.new_copy(moin_page.s, element, {})
 
-    def visit_xhtml_hr(self, element, min_class=u'moin-hr1', max_class=u'moin-hr6', default_class=u'moin-hr3'):
+    def visit_xhtml_hr(self, element, min_class='moin-hr1', max_class='moin-hr6', default_class='moin-hr3'):
         """
         <hr /> --> <separator />
         """
@@ -421,7 +421,7 @@ class Converter(object):
             attrib[key] = element.get(html.data)
 
         # Convert the href attribute into unicode
-        attrib[key] = unicode(attrib[key])
+        attrib[key] = str(attrib[key])
         return moin_page.object(attrib)
 
     def visit_xhtml_inline(self, element):

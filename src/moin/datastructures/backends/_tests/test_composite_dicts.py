@@ -20,13 +20,13 @@ class TestCompositeDict(DictsBackendTest):
     def cfg(self):
         class Config(wikiconfig.Config):
 
-            one_dict = {u'SomeTestDict': {u'First': u'first item',
-                                          u'text with spaces': u'second item',
-                                          u'Empty string': u'',
-                                          u'Last': u'last item'}}
+            one_dict = {'SomeTestDict': {'First': 'first item',
+                                          'text with spaces': 'second item',
+                                          'Empty string': '',
+                                          'Last': 'last item'}}
 
-            other_dict = {u'SomeOtherTestDict': {u'One': '1',
-                                                 u'Two': '2'}}
+            other_dict = {'SomeOtherTestDict': {'One': '1',
+                                                 'Two': '2'}}
 
             def dicts(self):
                 return CompositeDicts(ConfigDicts(self.one_dict),

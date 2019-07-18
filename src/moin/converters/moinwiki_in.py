@@ -214,7 +214,7 @@ class Converter(ConverterMacro):
         $
     """
 
-    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=u''):
+    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=''):
         """Handles macros using the placeholder syntax.
 
         Arguments are passed as a single positional parameter, each macro must parse as required.
@@ -274,7 +274,7 @@ class Converter(ConverterMacro):
                           optional_args=None):
         stack.clear()
         lines = _Iter(self.block_nowiki_lines(iter_content, len(nowiki_marker)), startno=iter_content.lineno)
-        content = u'\n'.join(lines)
+        content = '\n'.join(lines)
         # the arguments for wiki, csv, and highlight are diverse, one parser does not fit all
         # we push everything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
         all_nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
@@ -284,7 +284,7 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class=u'moin-hr{0}'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class='moin-hr{0}'):
         stack.clear()
         hr_height = min((len(separator) - 3), 6)
         hr_height = max(hr_height, 1)
@@ -317,7 +317,7 @@ class Converter(ConverterMacro):
     def block_table_repl(self, iter_content, stack, table):
         stack.clear()
 
-        element = moin_page.table(attrib={moin_page('class'): u'moin-wiki-table'})
+        element = moin_page.table(attrib={moin_page('class'): 'moin-wiki-table'})
         stack.push(element)
         stack.push(moin_page.table_body())
 
@@ -432,7 +432,7 @@ class Converter(ConverterMacro):
                 list_type = 'ordered', 'upper-roman'
             elif list_roman:
                 list_type = 'ordered', 'lower-roman'
-            elif list_bullet == u'*':
+            elif list_bullet == '*':
                 list_type = 'unordered', None
 
         element_use = None
@@ -776,7 +776,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_macro_repl(self, stack, macro, macro_name, macro_args=u''):
+    def inline_macro_repl(self, stack, macro, macro_name, macro_args=''):
         """Handles macros using the placeholder syntax."""
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
@@ -926,7 +926,7 @@ class Converter(ConverterMacro):
                 elif key == 'caption':
                     table.insert(0, moin_page.caption(children=[value, ]))
                 elif key == 'tableclass':
-                    table.attrib[moin_page('class')] = value + u' moin-wiki-table'
+                    table.attrib[moin_page('class')] = value + ' moin-wiki-table'
                 elif key == 'rowclass':
                     row.attrib[moin_page('class')] = value
                 elif key == 'class':

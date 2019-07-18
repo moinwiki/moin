@@ -44,7 +44,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://moinmo.in/StartSeite?action=raw'
     u = Iri(i)
@@ -53,7 +53,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://moinmo.in/StartSeite'
     u = Iri(i)
@@ -62,7 +62,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query is None
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://moinmo.in'
     u = Iri(i)
@@ -71,7 +71,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query is None
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:///StartSeite?action=raw#body'
     u = Iri(i)
@@ -80,7 +80,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:///StartSeite?action=raw'
     u = Iri(i)
@@ -89,7 +89,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:///StartSeite'
     u = Iri(i)
@@ -98,7 +98,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query is None
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:///'
     u = Iri(i)
@@ -107,7 +107,7 @@ def test_Iri_parser():
     assert u.path == '/'
     assert u.query is None
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://'
     u = Iri(i)
@@ -116,7 +116,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query is None
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:'
     u = Iri(i)
@@ -125,7 +125,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query is None
     assert u.fragment is None
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://moinmo.in/StartSeite#body'
     u = Iri(i)
@@ -134,7 +134,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query is None
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://moinmo.in#body'
     u = Iri(i)
@@ -143,7 +143,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query is None
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:#body'
     u = Iri(i)
@@ -152,7 +152,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query is None
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http://moinmo.in?action=raw#body'
     u = Iri(i)
@@ -161,7 +161,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:?action=raw#body'
     u = Iri(i)
@@ -170,7 +170,7 @@ def test_Iri_parser():
     assert u.path is None
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'http:/StartSeite?action=raw#body'
     u = Iri(i)
@@ -179,7 +179,7 @@ def test_Iri_parser():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_Iri_2():
@@ -190,7 +190,7 @@ def test_Iri_2():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = 'wiki:///StartSeite?action=raw#body'
     u = Iri(i)
@@ -199,7 +199,7 @@ def test_Iri_2():
     assert u.path == '/StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_Iri_3():
@@ -210,7 +210,7 @@ def test_Iri_3():
     assert u.path == 'StartSeite'
     assert u.query == 'action=raw'
     assert u.fragment == 'body'
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_Iri_add_1():
@@ -281,48 +281,48 @@ def test_Iri_add_1():
 
 
 def test_Iri_quote_1():
-    u = Iri(scheme=u'wiki', authority=u'authority_ä%?#',
-            path=u'/path_ä%?#', query=u'query_ä%?#', fragment=u'fragment_ä%?#')
-    assert u.scheme == u'wiki'
-    assert u.authority == u'authority_ä%?#'
-    authority = u'authority_ä%25%3F%23'
+    u = Iri(scheme='wiki', authority='authority_ä%?#',
+            path='/path_ä%?#', query='query_ä%?#', fragment='fragment_ä%?#')
+    assert u.scheme == 'wiki'
+    assert u.authority == 'authority_ä%?#'
+    authority = 'authority_ä%25%3F%23'
     assert u.authority.fullquoted == authority
-    assert u.authority.quoted == u'authority_ä%25?#'
-    assert u.authority.urlquoted == u'authority_%C3%A4%25%3F%23'
-    assert u.path == u'/path_ä%?#'
-    path = u'/path_ä%25%3F%23'
+    assert u.authority.quoted == 'authority_ä%25?#'
+    assert u.authority.urlquoted == 'authority_%C3%A4%25%3F%23'
+    assert u.path == '/path_ä%?#'
+    path = '/path_ä%25%3F%23'
     assert u.path.fullquoted == path
-    assert u.path.quoted == u'/path_ä%25?#'
-    assert u.path.urlquoted == u'/path_%C3%A4%25%3F%23'
-    assert u.query == u'query_ä%?#'
-    query = u'query_ä%25?%23'
+    assert u.path.quoted == '/path_ä%25?#'
+    assert u.path.urlquoted == '/path_%C3%A4%25%3F%23'
+    assert u.query == 'query_ä%?#'
+    query = 'query_ä%25?%23'
     assert u.query.fullquoted == query
-    assert u.query.quoted == u'query_ä%25?#'
-    assert u.query.urlquoted == u'query_%C3%A4%25?%23'
-    assert u.fragment == u'fragment_ä%?#'
-    fragment = u'fragment_ä%25?%23'
+    assert u.query.quoted == 'query_ä%25?#'
+    assert u.query.urlquoted == 'query_%C3%A4%25?%23'
+    assert u.fragment == 'fragment_ä%?#'
+    fragment = 'fragment_ä%25?%23'
     assert u.fragment.fullquoted == fragment
-    assert u.fragment.quoted == u'fragment_ä%25?#'
-    assert u.fragment.urlquoted == u'fragment_%C3%A4%25?%23'
-    assert unicode(u) == u'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
+    assert u.fragment.quoted == 'fragment_ä%25?#'
+    assert u.fragment.urlquoted == 'fragment_%C3%A4%25?%23'
+    assert str(u) == 'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
 
 
 def test_Iri_quote_2():
-    authority = u'authority_ä%25%3F%23'
-    path = u'/path_ä%25%3F%23'
-    query = u'query_ä%25?%23'
-    fragment = u'fragment_ä%25?%23'
-    i = u'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
+    authority = 'authority_ä%25%3F%23'
+    path = '/path_ä%25%3F%23'
+    query = 'query_ä%25?%23'
+    fragment = 'fragment_ä%25?%23'
+    i = 'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
     u = Iri(i)
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_Iri_quote_3():
-    i = u'wiki:///path_%92%92'
+    i = 'wiki:///path_%92%92'
     u = Iri(i)
-    assert u.path.fullquoted == u'/path_%92%92'
-    assert u.path.quoted == u'/path_%92%92'
-    assert unicode(u) == i
+    assert u.path.fullquoted == '/path_%92%92'
+    assert u.path.quoted == '/path_%92%92'
+    assert str(u) == i
 
 
 def test_IriAuthority_parser_1():
@@ -331,7 +331,7 @@ def test_IriAuthority_parser_1():
     assert u.userinfo is None
     assert u.host == 'moinmo.in'
     assert u.port is None
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_IriAuthority_parser_2():
@@ -340,7 +340,7 @@ def test_IriAuthority_parser_2():
     assert u.userinfo == ''
     assert u.host == 'moinmo.in'
     assert u.port == 0
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_IriAuthority_parser_3():
@@ -349,7 +349,7 @@ def test_IriAuthority_parser_3():
     assert u.userinfo == 'test:test'
     assert u.host == 'moinmo.in'
     assert u.port == 1234
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_IriPath_1():
@@ -358,7 +358,7 @@ def test_IriPath_1():
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == i
+    assert str(u) == i
 
 
 def test_IriPath_2():
@@ -367,14 +367,14 @@ def test_IriPath_2():
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == '/'
+    assert str(u) == '/'
 
     i = '/./'
     u = IriPath(i)
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == '/'
+    assert str(u) == '/'
 
 
 def test_IriPath_3():
@@ -383,14 +383,14 @@ def test_IriPath_3():
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == '/'
+    assert str(u) == '/'
 
     i = '/../'
     u = IriPath(i)
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == '/'
+    assert str(u) == '/'
 
 
 def test_IriPath_4():
@@ -399,7 +399,7 @@ def test_IriPath_4():
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == 'test'
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = '/test/'
     u = IriPath(i)
@@ -407,21 +407,21 @@ def test_IriPath_4():
     assert u[0] == ''
     assert u[1] == 'test'
     assert u[2] == ''
-    assert unicode(u) == i
+    assert str(u) == i
 
     i = '/test/..'
     u = IriPath(i)
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == '/'
+    assert str(u) == '/'
 
     i = '/test/../'
     u = IriPath(i)
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == ''
-    assert unicode(u) == '/'
+    assert str(u) == '/'
 
 
 def test_IriPath_5():
@@ -430,4 +430,4 @@ def test_IriPath_5():
     assert len(u) == 2
     assert u[0] == ''
     assert u[1] == 'test2'
-    assert unicode(u) == '/test2'
+    assert str(u) == '/test2'

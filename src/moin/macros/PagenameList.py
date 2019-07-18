@@ -22,7 +22,7 @@ class Macro(MacroPageLinkListBase):
             arguments = arguments[0].split(',')
         else:
             # default is to list all items
-            arguments = (u'^.*', u'True')
+            arguments = ('^.*', 'True')
 
         needle = arguments[0]
         try:
@@ -36,7 +36,7 @@ class Macro(MacroPageLinkListBase):
             except re.error as err:
                 raise ValueError("Error in regex {0!r}: {1}".format(needle, err))
         else:
-            needle_re = re.compile(u'^' + re.escape(needle), re_flags)
+            needle_re = re.compile('^' + re.escape(needle), re_flags)
 
         item_names = []
         for item in self.get_item_names():

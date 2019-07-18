@@ -27,7 +27,7 @@ class Converter(object):
         return cls()
 
     def __call__(self, root):
-        return u'\n'.join(root.itertext())
+        return '\n'.join(root.itertext())
 
 
 default_registry.register(Converter.factory, type_moin_document, type_text_plain)

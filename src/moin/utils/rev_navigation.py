@@ -30,7 +30,7 @@ def prior_next_revs(revid, fqname):
         rev_ids = []
         mtimes = []
         for rev in revs:
-            mtimes.append(dict(rev.meta)[u'mtime'])
+            mtimes.append(dict(rev.meta)['mtime'])
             rev_ids.append(rev.revid)
         prior_rev = next_rev = prior_mtime = next_mtime = None
         current_idx = rev_ids.index(revid)

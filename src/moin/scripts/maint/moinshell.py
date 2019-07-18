@@ -22,7 +22,7 @@ class MoinShell(Command):
                         line by passing the **--no-ipython** flag.
     """
 
-    banner = u'"flaskg" and "app" objects are in globals now.'
+    banner = '"flaskg" and "app" objects are in globals now.'
 
     description = 'Runs a Python shell inside Flask application context.'
 

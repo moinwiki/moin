@@ -44,7 +44,7 @@ class Converter(object):
         query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
 
         attrib.update({
-            moin_page.type_: unicode(self.input_type),
+            moin_page.type_: str(self.input_type),
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
                             query=query),
         })

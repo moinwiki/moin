@@ -228,8 +228,8 @@ def acl_validate(acl_string):
     Empty is same as "". If there are no configured 'after' ACLs, then Empty and "" are equivalent to "All:".
     """
     all_rights = {'read', 'write', 'create', 'destroy', 'admin'}
-    acls = unicode(acl_string)
-    if acls in (u'None', u'Empty', u''):  # u'' is not possible if field is required on form
+    acls = str(acl_string)
+    if acls in ('None', 'Empty', ''):  # u'' is not possible if field is required on form
         return True
     acls = acls.split()
     for acl in acls:
@@ -310,9 +310,9 @@ def _build_contenttype_query(groups):
     queries = []
     for g in groups:
         for e in content_registry.groups[g]:
-            ct_unicode = unicode(e.content_type)
+            ct_unicode = str(e.content_type)
             queries.append(Term(CONTENTTYPE, ct_unicode))
-            queries.append(Prefix(CONTENTTYPE, ct_unicode + u';'))
+            queries.append(Prefix(CONTENTTYPE, ct_unicode + ';'))
     return Or(queries)
 
 
@@ -356,8 +356,8 @@ class Item(object):
     """ Highlevel (not storage) Item, wraps around a storage Revision"""
     # placeholder values for registry entry properties
     itemtype = ''
-    display_name = u''
-    description = u''
+    display_name = ''
+    description = ''
     shown = True
     order = 0
 
@@ -366,7 +366,7 @@ class Item(object):
         return cls(*args, **kw)
 
     @classmethod
-    def create(cls, name=u'', itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+    def create(cls, name='', itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
         """
         Create a highlevel Item by looking up :name or directly wrapping
         :item and extract the Revision designated by :rev_id revision.
@@ -423,7 +423,7 @@ class Item(object):
         try:
             return self.names[0]
         except IndexError:
-            return u''
+            return ''
 
     @property
     def names(self):
@@ -515,7 +515,7 @@ class Item(object):
                     item._save(item.meta, item.content.data,
                                name=child_newname, action=action, comment=comment, delete=delete)
 
-    def rename(self, name, comment=u''):
+    def rename(self, name, comment=''):
         """
         rename this item to item <name> (replace current name by another name in the NAME list)
         """
@@ -526,7 +526,7 @@ class Item(object):
         _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
         return self._rename(name, comment, action=ACTION_RENAME)
 
-    def delete(self, comment=u''):
+    def delete(self, comment=''):
         """
         delete this item (remove current name from NAME list)
         """
@@ -542,10 +542,10 @@ class Item(object):
             flash(msg, 'info')
         return ret
 
-    def revert(self, comment=u''):
+    def revert(self, comment=''):
         return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
 
-    def destroy(self, comment=u'', destroy_item=False, subitem_names=[]):
+    def destroy(self, comment='', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
@@ -565,7 +565,7 @@ class Item(object):
             self.rev.item.destroy_revision(self.rev.revid)
             flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.', rev_number=self.meta['rev_number'], name=self.name), 'info')
 
-    def modify(self, meta, data, comment=u'', contenttype_guessed=None, **update_meta):
+    def modify(self, meta, data, comment='', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
         # get rid of None values
         update_meta = {key: value for key, value in update_meta.items() if value is not None}
@@ -683,7 +683,7 @@ class Item(object):
             meta[NAMESPACE] = self.fqname.namespace
 
         if comment is not None:
-            meta[COMMENT] = unicode(comment)
+            meta[COMMENT] = str(comment)
 
         if currentrev:
             current_names = currentrev.meta.get(NAME, [])
@@ -713,13 +713,13 @@ class Item(object):
 
         data = self.handle_variables(data, meta)
 
-        if isinstance(data, unicode):
+        if isinstance(data, str):
             data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
 
         if isinstance(data, bytes):
             data = BytesIO(data)
         newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
-                                             action=unicode(action),
+                                             action=str(action),
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
                                              return_rev=True,
@@ -774,7 +774,7 @@ class Item(object):
 
         for name in variables:
             try:
-                data = data.replace(u'@{0}@'.format(name), variables[name])
+                data = data.replace('@{0}@'.format(name), variables[name])
             except UnicodeError:
                 logging.warning("handle_variables: UnicodeError! name: %r value: %r" % (name, variables[name]))
         return data
@@ -785,7 +785,7 @@ class Item(object):
         Return the possible prefixes for subitems.
         """
         names = self.names[0:1] if self.fqname.field == NAME_EXACT else self.names
-        return [name + u'/' if name else u'' for name in names]
+        return [name + '/' if name else '' for name in names]
 
     def get_prefix_match(self, name, prefixes):
         """
@@ -827,7 +827,7 @@ class Item(object):
 
         :param isglobalindex: True if the query is for global indexes.
         """
-        prefixes = [u''] if isglobalindex else self.subitem_prefixes
+        prefixes = [''] if isglobalindex else self.subitem_prefixes
         # IndexEntry instances of "file" subitems
         files = []
         # IndexEntry instances of "directory" subitems
@@ -875,7 +875,7 @@ class Item(object):
         Output:
           Returns a whoosh.query.Prefix object for the input parameters
         """
-        prefix = u'' if isglobalindex else self.subitem_prefixes[0]
+        prefix = '' if isglobalindex else self.subitem_prefixes[0]
         if startswith:
             query = Prefix(NAME_EXACT, prefix + startswith) | Prefix(NAME_EXACT, prefix + startswith.swapcase())
         else:
@@ -992,7 +992,7 @@ class Default(Contentful):
     def doc_link(self, filename, link_text):
         """create a link to serve local doc files as help for wiki editors"""
         filename = url_for('serve.files', name='docs', filename=filename)
-        return u'<a href="%s">%s</a>' % (filename, link_text)
+        return '<a href="%s">%s</a>' % (filename, link_text)
 
     def meta_changed(self, meta):
         """
@@ -1006,7 +1006,7 @@ class Default(Contentful):
         if request.values.get('meta_form_summary') != meta.get('summary', None):
             return True
         new_tags = request.values.get('meta_form_tags').replace(" ", "").split(',')
-        if new_tags == [u""]:
+        if new_tags == [""]:
             new_tags = []
         if new_tags != meta.get('tags', None):
             return True
@@ -1092,7 +1092,7 @@ class Default(Contentful):
             if contenttype_guessed:
                 m = re.search('charset=(.+?)($|;)', contenttype_guessed)
                 if m:
-                    data = unicode(data, m.group(1))
+                    data = str(data, m.group(1))
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
                 if request.values.get('preview'):
@@ -1112,7 +1112,7 @@ class Default(Contentful):
                             original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
                             original_text = original_item.content.data
                         else:
-                            original_text = u''
+                            original_text = ''
                         if original_text == data and not self.meta_changed(item.meta):
                             flash(_("Nothing changed, nothing saved."), "info")
                             edit_utils.delete_draft()
@@ -1280,19 +1280,19 @@ class NonExistent(Item):
                                itemtypes=item_registry.shown_entries,
                               )
 
-    def rename(self, name, comment=u''):
+    def rename(self, name, comment=''):
         # pointless for non-existing items
         pass
 
-    def delete(self, comment=u''):
+    def delete(self, comment=''):
         # pointless for non-existing items
         pass
 
-    def revert(self, comment=u''):
+    def revert(self, comment=''):
         # pointless for non-existing items
         pass
 
-    def destroy(self, comment=u'', destroy_item=False):
+    def destroy(self, comment='', destroy_item=False):
         # pointless for non-existing items
         pass
 

@@ -29,7 +29,7 @@ def test_text():
 
     # test for lazy_gettext
     result = L_('test_lazy_text')
-    assert result == u'test_lazy_text'
+    assert result == 'test_lazy_text'
 
     # test for ngettext
     result1 = N_('text1', 'text2', 1)

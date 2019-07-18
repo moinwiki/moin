@@ -73,7 +73,7 @@ def test_wikiexternal(conv, input_, output):
     'tree_xml,links_expected,transclusions_expected,external_expected',
     (
         (
-            u"""
+            """
             <ns0:page ns0:page-href="wiki:///Home" xmlns:ns0="http://moinmo.in/namespaces/page" xmlns:ns1="http://www.w3.org/2001/XInclude" xmlns:ns2="http://www.w3.org/1999/xlink">
             <ns0:body><ns0:p><ns1:include ns1:href="wiki.local:moin_transcluded?" />
             <ns1:include ns1:href="wiki.local:moin2_transcluded?" />
@@ -85,24 +85,24 @@ def test_wikiexternal(conv, input_, output):
             <ns0:a ns2:href="wiki.local:moin_linked">moin_linked</ns0:a>
             <ns0:a ns2:href="wiki.local:moin2_linked">moin2_linked</ns0:a></ns0:p></ns0:body></ns0:page>
             """,
-            (u"moin_linked", u"moin2_linked"),
-            (u"moin_transcluded", u"moin2_transcluded"),
+            ("moin_linked", "moin2_linked"),
+            ("moin_transcluded", "moin2_transcluded"),
             [],
         ),
         (
-            u"""
+            """
             <ns0:page ns0:page-href="wiki:///Home/Subpage" xmlns:ns0="http://moinmo.in/namespaces/page" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns2="http://www.w3.org/2001/XInclude">
             <ns0:body><ns0:p><ns0:a ns1:href="wiki.local:../../moin_linked">../../moin_linked</ns0:a>
             <ns0:a ns1:href="wiki.local:/moin2_linked">/moin2_linked</ns0:a>
             <ns2:include ns2:href="wiki.local:../../moin_transcluded?" />
             <ns2:include ns2:href="wiki.local:/moin2_transcluded?" /></ns0:p></ns0:body></ns0:page>
             """,
-            (u"moin_linked", u"Home/Subpage/moin2_linked"),
-            (u"Home/Subpage/moin2_transcluded", u"moin_transcluded"),
+            ("moin_linked", "Home/Subpage/moin2_linked"),
+            ("Home/Subpage/moin2_transcluded", "moin_transcluded"),
             [],
         ),
         (
-            u"""
+            """
             <ns0:page ns0:page-href="wiki:///Home/Subpage" xmlns:ns0="http://moinmo.in/namespaces/page" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns2="http://www.w3.org/2001/XInclude">
             <ns0:body><ns0:p><ns0:a ns1:href="http://example.org/">test</ns0:a>
             <ns0:a ns1:href="mailto:foo.bar@example.org">test</ns0:a>
@@ -110,7 +110,7 @@ def test_wikiexternal(conv, input_, output):
             """,
             [],
             [],
-            (u"http://example.org/", u"mailto:foo.bar@example.org"),
+            ("http://example.org/", "mailto:foo.bar@example.org"),
 
         ),
 

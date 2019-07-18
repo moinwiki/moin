@@ -20,7 +20,7 @@ def _iriquote_replace(exc):
     if not isinstance(exc, UnicodeDecodeError):
         raise exc
 
-    text = ''.join((u'%%%02X' % ord(a) for a in exc.object[exc.start:exc.end]))
+    text = ''.join(('%%%02X' % ord(a) for a in exc.object[exc.start:exc.end]))
     return text, exc.end
 
 
@@ -90,13 +90,13 @@ class Iri(AutoNe):
             _fragment = _iri._fragment
 
         elif _iri:
-            match = self._overall_re.match(unicode(_iri))
+            match = self._overall_re.match(str(_iri))
             if not match:
                 raise ValueError('Input does not look like an IRI')
 
             _scheme = match.group('scheme')
             if _scheme is not None:
-                _scheme = unicode(_scheme).lower()
+                _scheme = str(_scheme).lower()
 
             _authority = match.group('authority')
             if _authority is not None:
@@ -144,7 +144,7 @@ class Iri(AutoNe):
 
     def __eq__(self, other):
         if isinstance(other, str):
-            return unicode(self) == other
+            return str(self) == other
 
         if isinstance(other, Iri):
             if self._scheme != other._scheme:
@@ -175,11 +175,11 @@ class Iri(AutoNe):
         ret = []
 
         if self.scheme:
-            ret.extend((self.scheme, u':'))
+            ret.extend((self.scheme, ':'))
 
         authority = self._authority
         if authority is not None:
-            ret.extend((u'//', authority.fullquoted))
+            ret.extend(('//', authority.fullquoted))
 
         path = self._path
         if path is not None:
@@ -187,13 +187,13 @@ class Iri(AutoNe):
 
         query = self._query
         if query is not None:
-            ret.extend((u'?', query.fullquoted))
+            ret.extend(('?', query.fullquoted))
 
         fragment = self._fragment
         if fragment is not None:
-            ret.extend((u'#', fragment.fullquoted))
+            ret.extend(('#', fragment.fullquoted))
 
-        return u''.join(ret)
+        return ''.join(ret)
 
     def __add__(self, other):
         if isinstance(other, Iri):
@@ -230,7 +230,7 @@ class Iri(AutoNe):
         return self._scheme
 
     def __set_scheme(self, value):
-        self._scheme = unicode(value).lower()
+        self._scheme = str(value).lower()
     scheme = property(__get_scheme, __set_scheme, __del_scheme, """Scheme part of the IRI.""")
 
     def __del_authority(self):
@@ -278,16 +278,16 @@ class Iri(AutoNe):
     fragment = property(__get_fragment, __set_fragment, __del_fragment, """Fragment part of the IRI.""")
 
 
-class _Value(unicode):
+class _Value(str):
     __slots__ = '_quoted'
 
     # Rules for quoting parts of the IRI.
-    quote_rules_iri = (u"""((?:%[0-9a-fA-F]{2})+)|"""
-                       u"""([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
-                       u"""\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)""")
-    quote_rules_uri = (u"""((?:%[0-9a-fA-F]{2})+)|"""
-                       u"""([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
-                       u"""]+)""")
+    quote_rules_iri = ("""((?:%[0-9a-fA-F]{2})+)|"""
+                       """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
+                       """\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)""")
+    quote_rules_uri = ("""((?:%[0-9a-fA-F]{2})+)|"""
+                       """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
+                       """]+)""")
     quote_filter = frozenset()
 
     _quote_re_iri = re.compile(quote_rules_iri)
@@ -307,7 +307,7 @@ class _Value(unicode):
         else:
             input_quoted = None
 
-        ret = unicode.__new__(cls, input)
+        ret = str.__new__(cls, input)
         ret._quoted = input_quoted
         return ret
 
@@ -332,7 +332,7 @@ class _Value(unicode):
                     t_quoted = t_quoted.replace('%', '%25')
                 return t_quoted
 
-            return u''.join(a in quote_filter and a or u'%%%02X' % ord(a) for a in t_plain.encode('utf-8'))
+            return ''.join(a in quote_filter and a or '%%%02X' % ord(a) for a in t_plain.encode('utf-8'))
 
         re = url and cls._quote_re_uri or cls._quote_re_iri
         return re.sub(subrepl, input)
@@ -357,7 +357,7 @@ class _Value(unicode):
             pos = match.end()
 
             part = []
-            for item in match.group().split(u'%')[1:]:
+            for item in match.group().split('%')[1:]:
                 part.append(chr(int(item, 16)))
             ret1.append(''.join(part).decode('utf-8', 'replace'))
             ret2.append(''.join(part).replace('%', '%25').decode('utf-8', 'iriquote'))
@@ -366,7 +366,7 @@ class _Value(unicode):
         t = s[pos:]
         ret1.append(t)
         ret2.append(t)
-        return u''.join(ret1), u''.join(ret2)
+        return ''.join(ret1), ''.join(ret2)
 
     @property
     def fullquoted(self):
@@ -390,7 +390,7 @@ class _Value(unicode):
         """
         if self._quoted is not None:
             return self._quoted
-        return self.replace(u'%', u'%25')
+        return self.replace('%', '%25')
 
     @property
     def urlquoted(self):
@@ -448,7 +448,7 @@ class IriAuthority(AutoNe):
 
     def __eq__(self, other):
         if isinstance(other, str):
-            return unicode(self) == other
+            return str(self) == other
         if isinstance(other, IriAuthority):
             return self._userinfo == other._userinfo and \
                 self._host == other._host and \
@@ -475,15 +475,15 @@ class IriAuthority(AutoNe):
         ret = []
 
         if userinfo is not None:
-            ret.extend((userinfo, u'@'))
+            ret.extend((userinfo, '@'))
         if host is not None:
             ret.append(host)
         if self.port is not None:
-            ret.append(u':')
+            ret.append(':')
             if self.port:
-                ret.append(unicode(self.port))
+                ret.append(str(self.port))
 
-        return u''.join(ret)
+        return ''.join(ret)
 
     def _parse(self, iri_authority, quoted):
         match = self._authority_re.match(iri_authority)
@@ -583,12 +583,12 @@ class IriPath(AutoNe):
             elif isinstance(iri_path, (tuple, list)):
                 self._list = [IriPathSegment(i, False) for i in iri_path]
             else:
-                _list = [IriPathSegment(i, _quoted) for i in iri_path.split(u'/')]
+                _list = [IriPathSegment(i, _quoted) for i in iri_path.split('/')]
                 self._list = self._remove_dots(_list)
 
     def __eq__(self, other):
         if isinstance(other, str):
-            return unicode(self) == other
+            return str(self) == other
         if isinstance(other, IriPath):
             return self._list == other._list
         return NotImplemented
@@ -619,12 +619,12 @@ class IriPath(AutoNe):
         return NotImplemented
 
     def __unicode__(self):
-        return u'/'.join(self._list)
+        return '/'.join(self._list)
 
     def __repr__(self):
         return '{0}({1!r})'.format(
             self.__class__.__name__,
-            unicode(self),
+            str(self),
         )
 
     def _remove_dots(self, segments):
@@ -665,7 +665,7 @@ class IriPath(AutoNe):
         All characters which are illegal in the path part are encoded.
         Used to generate the full IRI.
         """
-        return u'/'.join((i.fullquoted for i in self._list))
+        return '/'.join((i.fullquoted for i in self._list))
 
     @property
     def quoted(self):
@@ -675,7 +675,7 @@ class IriPath(AutoNe):
         Only '%' and illegal UTF-8 sequences are encoded. Primarily used to
         have a one-to-one mapping with non-UTF-8 URIs.
         """
-        return u'/'.join((i.quoted for i in self._list))
+        return '/'.join((i.quoted for i in self._list))
 
     @property
     def urlquoted(self):
@@ -685,7 +685,7 @@ class IriPath(AutoNe):
         All characters which are illegal in the path part are encoded.
         Used to generate the full URI.
         """
-        return u'/'.join((i.urlquoted for i in self._list))
+        return '/'.join((i.urlquoted for i in self._list))
 
 
 class IriPathSegment(_Value):

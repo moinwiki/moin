@@ -110,7 +110,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     idx = 0
     assert name_value_separator is None or name_value_separator != separator
     assert name_value_separator is None or len(name_value_separator) == 1
-    if not isinstance(args, unicode):
+    if not isinstance(args, str):
         raise TypeError('args must be unicode')
     max = len(args)
     result = []         # result list
@@ -200,7 +200,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
         elif not quoted and not noquote and char in quotes:
             if len(cur) and cur[-1] is None:
                 del cur[-1]
-            cur.append(u'')
+            cur.append('')
             quoted = char
         elif char == quoted and not skipquote:
             if next == quoted:
@@ -277,7 +277,7 @@ def parse_quoted_separated(args, separator=',', name_value=True, seplimit=0):
         if isinstance(item, tuple):
             key, value = item
             if key is None:
-                key = u''
+                key = ''
             keywords[key] = value
             positional = trailing
         else:
@@ -305,12 +305,12 @@ def get_bool(arg, name=None, default=None):
     assert default is None or isinstance(default, bool)
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
+    elif not isinstance(arg, str):
         raise TypeError('Argument must be None or unicode')
     arg = arg.lower()
-    if arg in [u'0', u'false', u'no']:
+    if arg in ['0', 'false', 'no']:
         return False
-    elif arg in [u'1', u'true', u'yes']:
+    elif arg in ['1', 'true', 'yes']:
         return True
     else:
         if name:
@@ -337,7 +337,7 @@ def get_int(arg, name=None, default=None):
     assert default is None or isinstance(default, int)
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
+    elif not isinstance(arg, str):
         raise TypeError('Argument must be None or unicode')
     try:
         return int(arg)
@@ -365,7 +365,7 @@ def get_float(arg, name=None, default=None):
     assert default is None or isinstance(default, (int, float))
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
+    elif not isinstance(arg, str):
         raise TypeError('Argument must be None or unicode')
     try:
         return float(arg)
@@ -393,7 +393,7 @@ def get_complex(arg, name=None, default=None):
     assert default is None or isinstance(default, (int, float, complex))
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
+    elif not isinstance(arg, str):
         raise TypeError('Argument must be None or unicode')
     try:
         # allow writing 'i' instead of 'j'
@@ -420,10 +420,10 @@ def get_unicode(arg, name=None, default=None):
     :rtype: unicode or None
     :returns: the unicode string (or default value)
     """
-    assert default is None or isinstance(default, unicode)
+    assert default is None or isinstance(default, str)
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
+    elif not isinstance(arg, str):
         raise TypeError('Argument must be None or unicode')
 
     return arg
@@ -452,7 +452,7 @@ def get_choice(arg, name=None, choices=[None], default_none=False):
             return None
         else:
             return choices[0]
-    elif not isinstance(arg, unicode):
+    elif not isinstance(arg, str):
         raise TypeError('Argument must be None or unicode')
     elif arg not in choices:
         if name:
@@ -551,7 +551,7 @@ class required_arg:
         Initialise a required_arg
         :param argtype: the type the argument should have
         """
-        if not (argtype in (bool, int, float, complex, unicode) or
+        if not (argtype in (bool, int, float, complex, str) or
                 isinstance(argtype, (IEFArgument, tuple, list))):
             raise TypeError("argtype must be a valid type")
         self.argtype = argtype
@@ -593,7 +593,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             return get_float(value, name, default)
         elif isinstance(default, complex):
             return get_complex(value, name, default)
-        elif isinstance(default, unicode):
+        elif isinstance(default, str):
             return get_unicode(value, name, default)
         elif isinstance(default, (tuple, list)):
             return get_choice(value, name, default)
@@ -626,7 +626,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
     trailing_args = []
 
     if args:
-        assert isinstance(args, unicode)
+        assert isinstance(args, str)
 
         positional, keyword, trailing = parse_quoted_separated(args)
 
@@ -721,6 +721,6 @@ def invoke_extension_function(function, args, fixed_args=[]):
     if kwargs_to_pass:
         kwargs['_kwargs'] = kwargs_to_pass
         if not allow_kwargs:
-            raise ValueError(_(u'No argument named "%(name)s"', name=kwargs_to_pass.keys()[0]))
+            raise ValueError(_('No argument named "%(name)s"', name=kwargs_to_pass.keys()[0]))
 
     return function(*fixed_args, **kwargs)

@@ -70,7 +70,7 @@ class Config(DefaultConfig):
     template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
 
     # it is required that you set this to a unique, stable and non-empty name:
-    interwikiname = u'MyMoinMoin'
+    interwikiname = 'MyMoinMoin'
     # load the interwiki map from intermap.txt:
     interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'contrib', 'interwiki', 'intermap.txt')).iwmap
     # we must add entries for 'Self' and our interwikiname, change these if you are not running the built-in desktop server:
@@ -78,7 +78,7 @@ class Config(DefaultConfig):
     interwiki_map['Self'] = 'http://127.0.0.1:8080/'
 
     # sitename is displayed in heading of all wiki pages
-    sitename = u'My MoinMoin'
+    sitename = 'My MoinMoin'
 
     # default theme is topside
     # theme_default = u"modernized"  # or basic or topside_cms
@@ -144,18 +144,18 @@ class Config(DefaultConfig):
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
         # XXX we use rather relaxed ACLs for the development wiki:
-        default_acl=dict(before=u'',
-                         default=u'All:read,write,create,destroy,admin',
-                         after=u'',
+        default_acl=dict(before='',
+                         default='All:read,write,create,destroy,admin',
+                         after='',
                          hierarchic=False, ),
-        users_acl=dict(before=u'',
-                       default=u'All:read,write,create,destroy,admin',
-                       after=u'',
+        users_acl=dict(before='',
+                       default='All:read,write,create,destroy,admin',
+                       after='',
                        hierarchic=False, ),
         # userprofiles contain only metadata, no content will be created
-        userprofiles_acl=dict(before=u'All:',
-                              default=u'',
-                              after=u'',
+        userprofiles_acl=dict(before='All:',
+                              default='',
+                              after='',
                               hierarchic=False, ),
     )
 

@@ -217,7 +217,7 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* ---- \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class=u'moin-hr3'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class='moin-hr3'):
         stack.clear()
         stack.top_append(moin_page.separator(attrib={moin_page.class_: hr_class}))
 

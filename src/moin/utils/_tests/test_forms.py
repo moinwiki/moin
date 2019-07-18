@@ -21,7 +21,7 @@ class Bind(object):
 
 test_bind = Bind()
 
-test_attributes = {'type': 'submit', u'required': 'test_required', 'autofocus': None, 'placeholder': None}
+test_attributes = {'type': 'submit', 'required': 'test_required', 'autofocus': None, 'placeholder': None}
 
 
 def test_label_filter():
@@ -57,7 +57,7 @@ def test_button_filter():
 
 def test_required_filter():
     test_bind.optional = False
-    test_attributes[u'class'] = 'test_class'
+    test_attributes['class'] = 'test_class'
     content_result = forms.required_filter('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     expected = 'new_content'
     assert content_result == expected
@@ -70,8 +70,8 @@ def test_required_filter():
     content_result = forms.required_filter('input', test_attributes, 'new_content', 'test_context', test_bind)
     expected = 'new_content'
     assert content_result == expected
-    attribute_result = test_attributes[u'required']
-    expected = u'required'
+    attribute_result = test_attributes['required']
+    expected = 'required'
     assert attribute_result == expected
 
 
@@ -79,8 +79,8 @@ def test_autofocus_filter():
     test_bind.properties = {'autofocus': True}
     content_result = forms.autofocus_filter('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     assert content_result == 'new_content'
-    attribute_result = test_attributes[u'autofocus']
-    assert attribute_result == u'autofocus'
+    attribute_result = test_attributes['autofocus']
+    assert attribute_result == 'autofocus'
 
 
 def test_placeholder_filter():
@@ -94,7 +94,7 @@ def test_placeholder_filter():
 def test_error_filter_factory():
     # when 'class' not in test_attributes
     test_bind.errors = 'test_errors'
-    test_attributes.pop(u'class')
+    test_attributes.pop('class')
     test_fun_returned = forms.error_filter_factory('test_moin_error')
     content_result = test_fun_returned('test_tagname', test_attributes, 'new_content', 'test_context', test_bind)
     assert content_result == 'new_content'

@@ -26,7 +26,7 @@ class TestNotifications(object):
     @pytest.fixture(autouse=True)
     def custom_setup(self):
         self.imw = flaskg.unprotected_storage
-        self.item_name = u"foo"
+        self.item_name = "foo"
         self.fqname = split_fqname(self.item_name)
 
     def test_get_last_item_revisions(self):
@@ -91,17 +91,17 @@ class TestNotifications(object):
     def test_generate_diff_url(self):
         domain = "http://test.com"
         notification = Notification(app, self.fqname, [], action=DESTROY_REV)
-        assert notification.generate_diff_url(domain) == u""
+        assert notification.generate_diff_url(domain) == ""
 
         item = self.imw[self.item_name]
         rev1 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'x'),
                                    trusted=True, return_rev=True)
         notification.revs = [rev1]
-        assert notification.generate_diff_url(domain) == u""
+        assert notification.generate_diff_url(domain) == ""
 
         rev2 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'xx'),
                                    trusted=True, return_rev=True)
         notification.revs = [rev2, rev1]
-        assert notification.generate_diff_url(domain) == u"{0}{1}".format(
+        assert notification.generate_diff_url(domain) == "{0}{1}".format(
             domain, url_for('frontend.diff', item_name=self.item_name,
                             rev1=rev1.revid, rev2=rev2.revid))

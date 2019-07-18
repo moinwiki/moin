@@ -10,7 +10,7 @@ BASEDN = "ou=testing,dc=example,dc=org"
 ROOTDN = "cn=root,{0}".format(BASEDN)
 ROOTPW = "secret"
 
-SLAPD_CONFIG = u"""\
+SLAPD_CONFIG = """\
 # See slapd.conf(5) for details on configuration options.
 
 include %(schema_dir)s/core.schema
@@ -56,7 +56,7 @@ idlcachesize 50
 sizelimit -1
 """
 
-LDIF_CONTENT = u"""\
+LDIF_CONTENT = """\
 ########################################################################
 # regression testing
 ########################################################################

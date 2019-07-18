@@ -301,8 +301,8 @@ class Converter(object):
 
                     link.path = path
 
-                    if flaskg.user.may.read(unicode(path)):
-                        page = Item.create(unicode(path))
+                    if flaskg.user.may.read(str(path)):
+                        page = Item.create(str(path))
                         pages = ((page, link), )
                     else:
                         # ACLs prevent user from viewing a transclusion - show message
@@ -335,8 +335,8 @@ class Converter(object):
                     if p_href in self.stack:
                         # we have a transclusion loop, create an error message showing list of pages forming loop
                         loop = self.stack[self.stack.index(p_href):]
-                        loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
-                        msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
+                        loop = ['{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
+                        msg = 'Error: Transclusion loop via: ' + ', '.join(loop)
                         attrib = {html.class_: 'moin-error'}
                         strong = ET.Element(moin_page.strong, attrib, (msg, ))
                         included_elements.append(strong)
@@ -459,7 +459,7 @@ class Converter(object):
                             else:
                                 # elem is a block element
                                 for grandchild in child:
-                                    if isinstance(grandchild, ET.Node) and grandchild.tag.name == u'include':
+                                    if isinstance(grandchild, ET.Node) and grandchild.tag.name == 'include':
                                         # the include may have classes that must be added to transcluded element
                                         classes = grandchild.attrib.get(html.class_, '').split()
                                         classes += ret_container[trans_ptr].attrib.get(html.class_, '').split()

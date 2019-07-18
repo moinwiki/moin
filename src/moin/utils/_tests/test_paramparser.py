@@ -13,198 +13,198 @@ from moin.utils import paramparser
 
 class TestParamParsing(object):
     def testMacroArgs(self):
-        abcd = [u'a', u'b', u'c', u'd']
-        abcd_dict = {u'a': u'1', u'b': u'2', u'c': u'3', u'd': u'4'}
+        abcd = ['a', 'b', 'c', 'd']
+        abcd_dict = {'a': '1', 'b': '2', 'c': '3', 'd': '4'}
         tests = [
             # regular and quoting tests
-            (u'd = 4,c=3,b=2,a= 1 ', ([], abcd_dict, [])),
-            (u'a,b,c,d', (abcd, {}, [])),
-            (u' a , b , c , d ', (abcd, {}, [])),
-            (u'   a   ', ([u'a'], {}, [])),
-            (u'"  a  "', ([u'  a  '], {}, [])),
-            (u'a,b,c,d, "a,b,c,d"', (abcd + [u'a,b,c,d'], {}, [])),
-            (u'quote " :), b', ([u'quote " :)', u'b'], {}, [])),
-            (u'"quote "" :)", b', ([u'quote " :)', u'b'], {}, [])),
-            (u'=7', ([], {u'': u'7'}, [])),
-            (u',,', ([None, None, None], {}, [])),
-            (u',"",', ([None, u'', None], {}, [])),
-            (u',"", ""', ([None, u'', u''], {}, [])),
-            (u'  ""  ,"", ""', ([u'', u'', u''], {}, [])),
+            ('d = 4,c=3,b=2,a= 1 ', ([], abcd_dict, [])),
+            ('a,b,c,d', (abcd, {}, [])),
+            (' a , b , c , d ', (abcd, {}, [])),
+            ('   a   ', (['a'], {}, [])),
+            ('"  a  "', (['  a  '], {}, [])),
+            ('a,b,c,d, "a,b,c,d"', (abcd + ['a,b,c,d'], {}, [])),
+            ('quote " :), b', (['quote " :)', 'b'], {}, [])),
+            ('"quote "" :)", b', (['quote " :)', 'b'], {}, [])),
+            ('=7', ([], {'': '7'}, [])),
+            (',,', ([None, None, None], {}, [])),
+            (',"",', ([None, '', None], {}, [])),
+            (',"", ""', ([None, '', ''], {}, [])),
+            ('  ""  ,"", ""', (['', '', ''], {}, [])),
             # some name=value test
-            (u'd = 4,c=3,b=2,a= 1 ', ([], abcd_dict, [])),
-            (u'd=d,e="a,b,c,d"', ([], {u'd': u'd', u'e': u'a,b,c,d'}, [])),
-            (u'd = d,e = "a,b,c,d"', ([], {u'd': u'd', u'e': u'a,b,c,d'}, [])),
-            (u'd = d, e = "a,b,c,d"', ([], {u'd': u'd', u'e': u'a,b,c,d'}, [])),
-            (u'd = , e = "a,b,c,d"', ([], {u'd': None, u'e': u'a,b,c,d'}, [])),
-            (u'd = "", e = "a,b,c,d"', ([], {u'd': u'', u'e': u'a,b,c,d'}, [])),
-            (u'd = "", e = ', ([], {u'd': u'', u'e': None}, [])),
-            (u'd=""', ([], {u'd': u''}, [])),
-            (u'd = "", e = ""', ([], {u'd': u'', u'e': u''}, [])),
+            ('d = 4,c=3,b=2,a= 1 ', ([], abcd_dict, [])),
+            ('d=d,e="a,b,c,d"', ([], {'d': 'd', 'e': 'a,b,c,d'}, [])),
+            ('d = d,e = "a,b,c,d"', ([], {'d': 'd', 'e': 'a,b,c,d'}, [])),
+            ('d = d, e = "a,b,c,d"', ([], {'d': 'd', 'e': 'a,b,c,d'}, [])),
+            ('d = , e = "a,b,c,d"', ([], {'d': None, 'e': 'a,b,c,d'}, [])),
+            ('d = "", e = "a,b,c,d"', ([], {'d': '', 'e': 'a,b,c,d'}, [])),
+            ('d = "", e = ', ([], {'d': '', 'e': None}, [])),
+            ('d=""', ([], {'d': ''}, [])),
+            ('d = "", e = ""', ([], {'d': '', 'e': ''}, [])),
             # no, None as key isn't accepted
-            (u' = "",  e = ""', ([], {u'': u'', u'e': u''}, [])),
+            (' = "",  e = ""', ([], {'': '', 'e': ''}, [])),
             # can quote both name and value:
-            (u'd = d," e "= "a,b,c,d"', ([], {u'd': u'd', u' e ': u'a,b,c,d'}, [])),
+            ('d = d," e "= "a,b,c,d"', ([], {'d': 'd', ' e ': 'a,b,c,d'}, [])),
             # trailing args
-            (u'1,2,a=b,3,4', ([u'1', u'2'], {u'a': u'b'}, [u'3', u'4'])),
+            ('1,2,a=b,3,4', (['1', '2'], {'a': 'b'}, ['3', '4'])),
             # can quote quotes:
-            (u'd = """d"', ([], {u'd': u'"d'}, [])),
-            (u'd = """d"""', ([], {u'd': u'"d"'}, [])),
-            (u'd = "d"" ", e=7', ([], {u'd': u'd" ', u'e': u'7'}, [])),
-            (u'd = "d""", e=8', ([], {u'd': u'd"', u'e': u'8'}, [])),
+            ('d = """d"', ([], {'d': '"d'}, [])),
+            ('d = """d"""', ([], {'d': '"d"'}, [])),
+            ('d = "d"" ", e=7', ([], {'d': 'd" ', 'e': '7'}, [])),
+            ('d = "d""", e=8', ([], {'d': 'd"', 'e': '8'}, [])),
         ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args)
             assert expected == result
             for val in result[0]:
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
             for val in result[1].keys():
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
             for val in result[1].values():
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
             for val in result[2]:
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
 
     def testLimited(self):
         tests = [
             # regular and quoting tests
-            (u'd = 4,c=3,b=2,a= 1 ', ([], {u'd': u'4', u'c': u'3,b=2,a= 1'}, [])),
-            (u'a,b,c,d', ([u'a', u'b,c,d'], {}, [])),
-            (u'a=b,b,c,d', ([], {u'a': u'b'}, [u'b,c,d'])),
+            ('d = 4,c=3,b=2,a= 1 ', ([], {'d': '4', 'c': '3,b=2,a= 1'}, [])),
+            ('a,b,c,d', (['a', 'b,c,d'], {}, [])),
+            ('a=b,b,c,d', ([], {'a': 'b'}, ['b,c,d'])),
         ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args, seplimit=1)
             assert expected == result
             for val in result[0]:
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
             for val in result[1].keys():
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
             for val in result[1].values():
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
             for val in result[2]:
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
 
     @pytest.mark.parametrize('args,expected', [
         # regular and quoting tests
-        (u'd==4,=3 ', ([], {u'd': u'=4', u'': u'3'}, [])),
-        (u'===a,b,c,d', ([], {u'': u'==a'}, [u'b', u'c', u'd'])),
-        (u'a,b,===,c,d', ([u'a', u'b'], {u'': u'=='}, [u'c', u'd'])),
+        ('d==4,=3 ', ([], {'d': '=4', '': '3'}, [])),
+        ('===a,b,c,d', ([], {'': '==a'}, ['b', 'c', 'd'])),
+        ('a,b,===,c,d', (['a', 'b'], {'': '=='}, ['c', 'd'])),
     ])
     def testDoubleNameValueSeparator(self, args, expected):
         result = paramparser.parse_quoted_separated(args)
         assert result == expected
 
     def testNoNameValue(self):
-        abcd = [u'a', u'b', u'c', u'd']
+        abcd = ['a', 'b', 'c', 'd']
         tests = [
             # regular and quoting tests
-            (u'd = 4,c=3,b=2,a= 1 ', [u'd = 4', u'c=3', u'b=2', u'a= 1']),
-            (u'a,b,c,d', abcd),
-            (u' a , b , c , d ', abcd),
-            (u'   a   ', [u'a']),
-            (u'"  a  "', [u'  a  ']),
-            (u'a,b,c,d, "a,b,c,d"', abcd + [u'a,b,c,d']),
-            (u'quote " :), b', [u'quote " :)', u'b']),
-            (u'"quote "" :)", b', [u'quote " :)', u'b']),
-            (u'"unended quote', [u'"unended quote']),
-            (u'"', [u'"']),
-            (u'd=d,e="a,b,c,d"', [u'd=d', u'e="a', u'b', u'c', u'd"']),
+            ('d = 4,c=3,b=2,a= 1 ', ['d = 4', 'c=3', 'b=2', 'a= 1']),
+            ('a,b,c,d', abcd),
+            (' a , b , c , d ', abcd),
+            ('   a   ', ['a']),
+            ('"  a  "', ['  a  ']),
+            ('a,b,c,d, "a,b,c,d"', abcd + ['a,b,c,d']),
+            ('quote " :), b', ['quote " :)', 'b']),
+            ('"quote "" :)", b', ['quote " :)', 'b']),
+            ('"unended quote', ['"unended quote']),
+            ('"', ['"']),
+            ('d=d,e="a,b,c,d"', ['d=d', 'e="a', 'b', 'c', 'd"']),
         ]
         for args, expected in tests:
             result = paramparser.parse_quoted_separated(args, name_value=False)
             assert expected == result
             for val in result:
-                assert val is None or isinstance(val, unicode)
+                assert val is None or isinstance(val, str)
 
     def testUnitArgument(self):
         result = paramparser.UnitArgument('7mm', float, ['%', 'mm'])
         assert result.get_default() == (7.0, 'mm')
         assert result.parse_argument('8%') == (8.0, '%')
-        pytest.raises(ValueError, result.parse_argument, u'7m')
-        pytest.raises(ValueError, result.parse_argument, u'7')
-        pytest.raises(ValueError, result.parse_argument, u'mm')
+        pytest.raises(ValueError, result.parse_argument, '7m')
+        pytest.raises(ValueError, result.parse_argument, '7')
+        pytest.raises(ValueError, result.parse_argument, 'mm')
 
     @pytest.mark.parametrize('args,sep,kwsep,expected', [
-        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-        (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
-        (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
-        (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
-        (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
-        (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
-        (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
-        (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
-        (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
-        (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
-        (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
-        (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
-        (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
-        (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
-        (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
-        (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
-        (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
-        (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
-        (u'a:b:c d:e:f', None, u':', [(u'a', u'b:c'), (u'd', 'e:f')]),
-        (u'a:b:c:d', None, u':', [(u'a', u'b:c:d')]),
+        ('"a", "b", "c"', ',', None, ['a', 'b', 'c']),
+        ('a:b, b:c, c:d', ',', ':', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('a:b, b:c, c:d', ',', None, ['a:b', 'b:c', 'c:d']),
+        ('a=b, b=c, c=d', ',', None, ['a=b', 'b=c', 'c=d']),
+        ('a=b, b=c, c=d', ',', '=', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('"a"; "b"; "c"', ';', None, ['a', 'b', 'c']),
+        ('a:b; b:c; c:d', ';', ':', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('a:b; b:c; c:d', ';', None, ['a:b', 'b:c', 'c:d']),
+        ('a=b; b=c; c=d', ';', None, ['a=b', 'b=c', 'c=d']),
+        ('a=b; b=c; c=d', ';', '=', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('"a" "b" "c"', None, None, ['a', 'b', 'c']),
+        ('" a " "b" "c"', None, None, [' a ', 'b', 'c']),
+        ('"a  " "b" "c"', None, None, ['a  ', 'b', 'c']),
+        ('"  a" "b" "c"', None, None, ['  a', 'b', 'c']),
+        ('"  a" "b" "c"', None, ':', ['  a', 'b', 'c']),
+        ('"a:a" "b:b" "c:b"', None, ':', ['a:a', 'b:b', 'c:b']),
+        ('   a:a  ', None, ':', [None, None, None, ('a', 'a'), None, None]),
+        ('a a: a', None, ':', ['a', ('a', None), 'a']),
+        ('a a:"b c d" a', None, ':', ['a', ('a', 'b c d'), 'a']),
+        ('a a:"b "" d" a', None, ':', ['a', ('a', 'b " d'), 'a']),
+        ('title:Help* dog cat', None, ':', [('title', 'Help*'), 'dog', 'cat']),
+        ('title:Help* "dog cat"', None, ':', [('title', 'Help*'), 'dog cat']),
+        ('a:b:c d:e:f', None, ':', [('a', 'b:c'), ('d', 'e:f')]),
+        ('a:b:c:d', None, ':', [('a', 'b:c:d')]),
     ])
     def testExtendedParser(self, args, sep, kwsep, expected):
         res = paramparser.parse_quoted_separated_ext(args, sep, kwsep)
         assert res == expected
 
     @pytest.mark.parametrize('args,sep,kwsep,expected', [
-        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-        (u'("a", "b", "c")', u',', None, [[u'(', u'a', u'b', u'c']]),
-        (u'("a"("b", "c"))', u',', None, [[u'(', u'a', [u'(', u'b', u'c']]]),
-        (u'("a"("b)))", "c"))', u',', None, [[u'(', u'a', [u'(', u'b)))', u'c']]]),
-        (u'("a"("b>>> ( ab )>", "c"))', u',', None, [[u'(', u'a', [u'(', u'b>>> ( ab )>', u'c']]]),
-        (u'("a" ("b" "c"))', None, None, [[u'(', u'a', [u'(', u'b', u'c']]]),
-        (u'("a"("b", "c") ) ', u',', None, [[u'(', u'a', [u'(', u'b', u'c']]]),
-        (u'("a", <"b", ("c")>)', u',', None, [[u'(', u'a', [u'<', u'b', [u'(', u'c']]]]),
-        (u',,,(a, b, c)', u',', None, [None, None, None, [u'(', u'a', u'b', u'c']]),
+        ('"a", "b", "c"', ',', None, ['a', 'b', 'c']),
+        ('("a", "b", "c")', ',', None, [['(', 'a', 'b', 'c']]),
+        ('("a"("b", "c"))', ',', None, [['(', 'a', ['(', 'b', 'c']]]),
+        ('("a"("b)))", "c"))', ',', None, [['(', 'a', ['(', 'b)))', 'c']]]),
+        ('("a"("b>>> ( ab )>", "c"))', ',', None, [['(', 'a', ['(', 'b>>> ( ab )>', 'c']]]),
+        ('("a" ("b" "c"))', None, None, [['(', 'a', ['(', 'b', 'c']]]),
+        ('("a"("b", "c") ) ', ',', None, [['(', 'a', ['(', 'b', 'c']]]),
+        ('("a", <"b", ("c")>)', ',', None, [['(', 'a', ['<', 'b', ['(', 'c']]]]),
+        (',,,(a, b, c)', ',', None, [None, None, None, ['(', 'a', 'b', 'c']]),
     ])
     def testExtendedParserBracketing(self, args, sep, kwsep, expected):
-        res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, brackets=(u'<>', u'()'))
+        res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, brackets=('<>', '()'))
         assert res == expected
 
     @pytest.mark.parametrize('args,quotes,expected', [
-        (u'"a b" -a b-', u'"', [u'a b', u'-a', u'b-']),
-        (u'"a b" -a b-', u"-", [u'"a', u'b"', u'a b']),
-        (u'"a b" -a b-', u'"-', [u'a b', u'a b']),
-        (u'"a- b" -a b-', u'"-', [u'a- b', u'a b']),
-        (u'"a- b" -a" b-', u'"-', [u'a- b', u'a" b']),
+        ('"a b" -a b-', '"', ['a b', '-a', 'b-']),
+        ('"a b" -a b-', "-", ['"a', 'b"', 'a b']),
+        ('"a b" -a b-', '"-', ['a b', 'a b']),
+        ('"a- b" -a b-', '"-', ['a- b', 'a b']),
+        ('"a- b" -a" b-', '"-', ['a- b', 'a" b']),
     ])
     def testExtendedParserQuoting(self, args, quotes, expected):
         res = paramparser.parse_quoted_separated_ext(args, quotes=quotes)
         assert res == expected
 
     @pytest.mark.parametrize('args,sep,kwsep,expected', [
-        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-        (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
-        (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
-        (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
-        (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
-        (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
-        (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
-        (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
-        (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
-        (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
-        (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
-        (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
-        (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
-        (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
-        (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
-        (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
-        (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
-        (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
-        (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
-        (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
-        (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
+        ('"a", "b", "c"', ',', None, ['a', 'b', 'c']),
+        ('a:b, b:c, c:d', ',', ':', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('a:b, b:c, c:d', ',', None, ['a:b', 'b:c', 'c:d']),
+        ('a=b, b=c, c=d', ',', None, ['a=b', 'b=c', 'c=d']),
+        ('a=b, b=c, c=d', ',', '=', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('"a"; "b"; "c"', ';', None, ['a', 'b', 'c']),
+        ('a:b; b:c; c:d', ';', ':', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('a:b; b:c; c:d', ';', None, ['a:b', 'b:c', 'c:d']),
+        ('a=b; b=c; c=d', ';', None, ['a=b', 'b=c', 'c=d']),
+        ('a=b; b=c; c=d', ';', '=', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('"a" "b" "c"', None, None, ['a', 'b', 'c']),
+        ('" a " "b" "c"', None, None, [' a ', 'b', 'c']),
+        ('"a  " "b" "c"', None, None, ['a  ', 'b', 'c']),
+        ('"  a" "b" "c"', None, None, ['  a', 'b', 'c']),
+        ('"  a" "b" "c"', None, ':', ['  a', 'b', 'c']),
+        ('"a:a" "b:b" "c:b"', None, ':', ['a:a', 'b:b', 'c:b']),
+        ('   a:a  ', None, ':', [None, None, None, ('a', 'a'), None, None]),
+        ('a a: a', None, ':', ['a', ('a', None), 'a']),
+        ('a a:"b c d" a', None, ':', ['a', ('a', 'b c d'), 'a']),
+        ('a a:"b "" d" a', None, ':', ['a', ('a', 'b " d'), 'a']),
+        ('title:Help* dog cat', None, ':', [('title', 'Help*'), 'dog', 'cat']),
+        ('title:Help* "dog cat"', None, ':', [('title', 'Help*'), 'dog cat']),
+        ('a:b:c d:e:f', None, ':', [('a', 'b', 'c'), ('d', 'e', 'f')]),
+        ('a:b:c:d', None, ':', [('a', 'b', 'c', 'd')]),
+        ('a:"b:c":d', None, ':', [('a', 'b:c', 'd')]),
     ])
     def testExtendedParserMultikey(self, args, sep, kwsep, expected):
         res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, multikey=True)
@@ -214,40 +214,40 @@ class TestParamParsing(object):
     M = paramparser.ParserPrefix('-')
 
     @pytest.mark.parametrize('args,sep,kwsep,expected', [
-        (u'"a", "b", "c"', u',', None, [u'a', u'b', u'c']),
-        (u'a:b, b:c, c:d', u',', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'a:b, b:c, c:d', u',', None, [u'a:b', u'b:c', u'c:d']),
-        (u'a=b, b=c, c=d', u',', None, [u'a=b', u'b=c', u'c=d']),
-        (u'a=b, b=c, c=d', u',', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'"a"; "b"; "c"', u';', None, [u'a', u'b', u'c']),
-        (u'a:b; b:c; c:d', u';', u':', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'a:b; b:c; c:d', u';', None, [u'a:b', u'b:c', u'c:d']),
-        (u'a=b; b=c; c=d', u';', None, [u'a=b', u'b=c', u'c=d']),
-        (u'a=b; b=c; c=d', u';', u'=', [(u'a', u'b'), (u'b', u'c'), (u'c', u'd')]),
-        (u'"a" "b" "c"', None, None, [u'a', u'b', u'c']),
-        (u'" a " "b" "c"', None, None, [u' a ', u'b', u'c']),
-        (u'"a  " "b" "c"', None, None, [u'a  ', u'b', u'c']),
-        (u'"  a" "b" "c"', None, None, [u'  a', u'b', u'c']),
-        (u'"  a" "b" "c"', None, u':', [u'  a', u'b', u'c']),
-        (u'"a:a" "b:b" "c:b"', None, u':', [u'a:a', u'b:b', u'c:b']),
-        (u'   a:a  ', None, u':', [None, None, None, (u'a', u'a'), None, None]),
-        (u'a a: a', None, u':', [u'a', (u'a', None), u'a']),
-        (u'a a:"b c d" a', None, u':', [u'a', (u'a', u'b c d'), u'a']),
-        (u'a a:"b "" d" a', None, u':', [u'a', (u'a', u'b " d'), u'a']),
-        (u'title:Help* dog cat', None, u':', [(u'title', u'Help*'), u'dog', u'cat']),
-        (u'title:Help* "dog cat"', None, u':', [(u'title', u'Help*'), u'dog cat']),
-        (u'a:b:c d:e:f', None, u':', [(u'a', u'b', u'c'), (u'd', 'e', u'f')]),
-        (u'a:b:c:d', None, u':', [(u'a', u'b', u'c', u'd')]),
-        (u'a:"b:c":d', None, u':', [(u'a', u'b:c', u'd')]),
-        (u'-a:b:d', None, u':', [(M, u'a', u'b', u'd')]),
-        (u'"-a:b:d"', None, u':', [(u'-a:b:d')]),
-        (u'-"a:b:d"', None, u':', [(M, u'a:b:d')]),
-        (u'-a:"b:c":"d e f g"', None, u':', [(M, u'a', u'b:c', u'd e f g')]),
-        (u'+-a:b:d', None, u':', [(P, u'-a', u'b', u'd')]),
-        (u'-"+a:b:d"', None, u':', [(M, u'+a:b:d')]),
+        ('"a", "b", "c"', ',', None, ['a', 'b', 'c']),
+        ('a:b, b:c, c:d', ',', ':', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('a:b, b:c, c:d', ',', None, ['a:b', 'b:c', 'c:d']),
+        ('a=b, b=c, c=d', ',', None, ['a=b', 'b=c', 'c=d']),
+        ('a=b, b=c, c=d', ',', '=', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('"a"; "b"; "c"', ';', None, ['a', 'b', 'c']),
+        ('a:b; b:c; c:d', ';', ':', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('a:b; b:c; c:d', ';', None, ['a:b', 'b:c', 'c:d']),
+        ('a=b; b=c; c=d', ';', None, ['a=b', 'b=c', 'c=d']),
+        ('a=b; b=c; c=d', ';', '=', [('a', 'b'), ('b', 'c'), ('c', 'd')]),
+        ('"a" "b" "c"', None, None, ['a', 'b', 'c']),
+        ('" a " "b" "c"', None, None, [' a ', 'b', 'c']),
+        ('"a  " "b" "c"', None, None, ['a  ', 'b', 'c']),
+        ('"  a" "b" "c"', None, None, ['  a', 'b', 'c']),
+        ('"  a" "b" "c"', None, ':', ['  a', 'b', 'c']),
+        ('"a:a" "b:b" "c:b"', None, ':', ['a:a', 'b:b', 'c:b']),
+        ('   a:a  ', None, ':', [None, None, None, ('a', 'a'), None, None]),
+        ('a a: a', None, ':', ['a', ('a', None), 'a']),
+        ('a a:"b c d" a', None, ':', ['a', ('a', 'b c d'), 'a']),
+        ('a a:"b "" d" a', None, ':', ['a', ('a', 'b " d'), 'a']),
+        ('title:Help* dog cat', None, ':', [('title', 'Help*'), 'dog', 'cat']),
+        ('title:Help* "dog cat"', None, ':', [('title', 'Help*'), 'dog cat']),
+        ('a:b:c d:e:f', None, ':', [('a', 'b', 'c'), ('d', 'e', 'f')]),
+        ('a:b:c:d', None, ':', [('a', 'b', 'c', 'd')]),
+        ('a:"b:c":d', None, ':', [('a', 'b:c', 'd')]),
+        ('-a:b:d', None, ':', [(M, 'a', 'b', 'd')]),
+        ('"-a:b:d"', None, ':', [('-a:b:d')]),
+        ('-"a:b:d"', None, ':', [(M, 'a:b:d')]),
+        ('-a:"b:c":"d e f g"', None, ':', [(M, 'a', 'b:c', 'd e f g')]),
+        ('+-a:b:d', None, ':', [(P, '-a', 'b', 'd')]),
+        ('-"+a:b:d"', None, ':', [(M, '+a:b:d')]),
         # bit of a weird case...
-        (u'-+"a:b:d"', None, u':', [(M, u'+"a', u'b', u'd"')]),
-        (u'-a:"b:c" a +b', None, u':', [(M, u'a', u'b:c'), u'a', (P, u'b')]),
+        ('-+"a:b:d"', None, ':', [(M, '+"a', 'b', 'd"')]),
+        ('-a:"b:c" a +b', None, ':', [(M, 'a', 'b:c'), 'a', (P, 'b')]),
     ])
     def testExtendedParserPrefix(self, args, sep, kwsep, expected):
         res = paramparser.parse_quoted_separated_ext(args, sep, kwsep, multikey=True, prefixes='-+')
@@ -257,19 +257,19 @@ class TestParamParsing(object):
     MCE = paramparser.BracketMissingCloseError
 
     @pytest.mark.parametrize('args,sep,kwsep,err', [
-        (u'("a", "b", "c"', u',', None, MCE),
-        (u'("a"("b", "c")', u',', None, MCE),
-        (u'("a"<"b", "c")>', u',', None, UCE),
-        (u')("a" ("b" "c"))', None, None, UCE),
-        (u'("a", ("b", "c">))', u',', None, UCE),
-        (u'("a", ("b", <"c">>))', u',', None, UCE),
-        (u'(<(<)>)>', u',', None, UCE),
+        ('("a", "b", "c"', ',', None, MCE),
+        ('("a"("b", "c")', ',', None, MCE),
+        ('("a"<"b", "c")>', ',', None, UCE),
+        (')("a" ("b" "c"))', None, None, UCE),
+        ('("a", ("b", "c">))', ',', None, UCE),
+        ('("a", ("b", <"c">>))', ',', None, UCE),
+        ('(<(<)>)>', ',', None, UCE),
     ])
     def testExtendedParserBracketingErrors(self, args, sep, kwsep, err):
         pytest.raises(err,
                       paramparser.parse_quoted_separated_ext,
                       args, sep, kwsep,
-                      brackets=(u'<>', u'()'))
+                      brackets=('<>', '()'))
 
 
 class TestArgGetters(object):
@@ -281,16 +281,16 @@ class TestArgGetters(object):
             (None, None, True, True),
 
             # some real values
-            (u'0', None, None, False),
-            (u'1', None, None, True),
-            (u'false', None, None, False),
-            (u'true', None, None, True),
-            (u'FALSE', None, None, False),
-            (u'TRUE', None, None, True),
-            (u'no', None, None, False),
-            (u'yes', None, None, True),
-            (u'NO', None, None, False),
-            (u'YES', None, None, True),
+            ('0', None, None, False),
+            ('1', None, None, True),
+            ('false', None, None, False),
+            ('true', None, None, True),
+            ('FALSE', None, None, False),
+            ('TRUE', None, None, True),
+            ('no', None, None, False),
+            ('yes', None, None, True),
+            ('NO', None, None, False),
+            ('YES', None, None, True),
         ]
         for arg, name, default, expected in tests:
             assert paramparser.get_bool(arg, name, default) == expected
@@ -309,10 +309,10 @@ class TestArgGetters(object):
         pytest.raises(TypeError, paramparser.get_bool, {})
 
         # any value not convertable to boolean raises ValueError
-        pytest.raises(ValueError, paramparser.get_bool, u'')
-        pytest.raises(ValueError, paramparser.get_bool, u'42')
-        pytest.raises(ValueError, paramparser.get_bool, u'wrong')
-        pytest.raises(ValueError, paramparser.get_bool, u'"True"')  # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_bool, '')
+        pytest.raises(ValueError, paramparser.get_bool, '42')
+        pytest.raises(ValueError, paramparser.get_bool, 'wrong')
+        pytest.raises(ValueError, paramparser.get_bool, '"True"')  # must not be quoted!
 
     def testGetInt(self):
         tests = [
@@ -322,9 +322,9 @@ class TestArgGetters(object):
             (None, None, 42, 42),
 
             # some real values
-            (u'0', None, None, 0),
-            (u'42', None, None, 42),
-            (u'-23', None, None, -23),
+            ('0', None, None, 0),
+            ('42', None, None, 42),
+            ('-23', None, None, -23),
         ]
         for arg, name, default, expected in tests:
             assert paramparser.get_int(arg, name, default) == expected
@@ -343,10 +343,10 @@ class TestArgGetters(object):
         pytest.raises(TypeError, paramparser.get_int, {})
 
         # any value not convertable to int raises ValueError
-        pytest.raises(ValueError, paramparser.get_int, u'')
-        pytest.raises(ValueError, paramparser.get_int, u'23.42')
-        pytest.raises(ValueError, paramparser.get_int, u'wrong')
-        pytest.raises(ValueError, paramparser.get_int, u'"4711"')  # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_int, '')
+        pytest.raises(ValueError, paramparser.get_int, '23.42')
+        pytest.raises(ValueError, paramparser.get_int, 'wrong')
+        pytest.raises(ValueError, paramparser.get_int, '"4711"')  # must not be quoted!
 
     def testGetFloat(self):
         tests = [
@@ -356,18 +356,18 @@ class TestArgGetters(object):
             (None, None, 42.23, 42.23),
 
             # some real values
-            (u'0', None, None, 0),
-            (u'42.23', None, None, 42.23),
-            (u'-23.42', None, None, -23.42),
-            (u'-23.42E3', None, None, -23.42E3),
-            (u'23.42E-3', None, None, 23.42E-3),
+            ('0', None, None, 0),
+            ('42.23', None, None, 42.23),
+            ('-23.42', None, None, -23.42),
+            ('-23.42E3', None, None, -23.42E3),
+            ('23.42E-3', None, None, 23.42E-3),
         ]
         for arg, name, default, expected in tests:
             assert paramparser.get_float(arg, name, default) == expected
 
     def testGetFloatRaising(self):
         # wrong default type
-        pytest.raises(AssertionError, paramparser.get_float, None, None, u'42')
+        pytest.raises(AssertionError, paramparser.get_float, None, None, '42')
 
         # anything except None or unicode raises TypeError
         pytest.raises(TypeError, paramparser.get_float, True)
@@ -379,9 +379,9 @@ class TestArgGetters(object):
         pytest.raises(TypeError, paramparser.get_float, {})
 
         # any value not convertable to int raises ValueError
-        pytest.raises(ValueError, paramparser.get_float, u'')
-        pytest.raises(ValueError, paramparser.get_float, u'wrong')
-        pytest.raises(ValueError, paramparser.get_float, u'"47.11"')  # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_float, '')
+        pytest.raises(ValueError, paramparser.get_float, 'wrong')
+        pytest.raises(ValueError, paramparser.get_float, '"47.11"')  # must not be quoted!
 
     def testGetComplex(self):
         tests = [
@@ -391,26 +391,26 @@ class TestArgGetters(object):
             (None, None, 42.23, 42.23),
 
             # some real values
-            (u'0', None, None, 0),
-            (u'42.23', None, None, 42.23),
-            (u'-23.42', None, None, -23.42),
-            (u'-23.42E3', None, None, -23.42E3),
-            (u'23.42E-3', None, None, 23.42E-3),
-            (u'23.42E-3+3.04j', None, None, 23.42E-3 + 3.04j),
-            (u'3.04j', None, None, 3.04j),
-            (u'-3.04j', None, None, -3.04j),
-            (u'23.42E-3+3.04i', None, None, 23.42E-3 + 3.04j),
-            (u'3.04i', None, None, 3.04j),
-            (u'-3.04i', None, None, -3.04j),
-            (u'-3', None, None, -3),
-            (u'-300000000000000000000', None, None, -300000000000000000000),
+            ('0', None, None, 0),
+            ('42.23', None, None, 42.23),
+            ('-23.42', None, None, -23.42),
+            ('-23.42E3', None, None, -23.42E3),
+            ('23.42E-3', None, None, 23.42E-3),
+            ('23.42E-3+3.04j', None, None, 23.42E-3 + 3.04j),
+            ('3.04j', None, None, 3.04j),
+            ('-3.04j', None, None, -3.04j),
+            ('23.42E-3+3.04i', None, None, 23.42E-3 + 3.04j),
+            ('3.04i', None, None, 3.04j),
+            ('-3.04i', None, None, -3.04j),
+            ('-3', None, None, -3),
+            ('-300000000000000000000', None, None, -300000000000000000000),
         ]
         for arg, name, default, expected in tests:
             assert paramparser.get_complex(arg, name, default) == expected
 
     def testGetComplexRaising(self):
         # wrong default type
-        pytest.raises(AssertionError, paramparser.get_complex, None, None, u'42')
+        pytest.raises(AssertionError, paramparser.get_complex, None, None, '42')
 
         # anything except None or unicode raises TypeError
         pytest.raises(TypeError, paramparser.get_complex, True)
@@ -423,24 +423,24 @@ class TestArgGetters(object):
         pytest.raises(TypeError, paramparser.get_complex, {})
 
         # any value not convertable to int raises ValueError
-        pytest.raises(ValueError, paramparser.get_complex, u'')
-        pytest.raises(ValueError, paramparser.get_complex, u'3jj')
-        pytest.raises(ValueError, paramparser.get_complex, u'3Ij')
-        pytest.raises(ValueError, paramparser.get_complex, u'3i-3i')
-        pytest.raises(ValueError, paramparser.get_complex, u'wrong')
-        pytest.raises(ValueError, paramparser.get_complex, u'"47.11"')  # must not be quoted!
+        pytest.raises(ValueError, paramparser.get_complex, '')
+        pytest.raises(ValueError, paramparser.get_complex, '3jj')
+        pytest.raises(ValueError, paramparser.get_complex, '3Ij')
+        pytest.raises(ValueError, paramparser.get_complex, '3i-3i')
+        pytest.raises(ValueError, paramparser.get_complex, 'wrong')
+        pytest.raises(ValueError, paramparser.get_complex, '"47.11"')  # must not be quoted!
 
     def testGetUnicode(self):
         tests = [
             # default testing for None value
             (None, None, None, None),
-            (None, None, u'', u''),
-            (None, None, u'abc', u'abc'),
+            (None, None, '', ''),
+            (None, None, 'abc', 'abc'),
 
             # some real values
-            (u'', None, None, u''),
-            (u'abc', None, None, u'abc'),
-            (u'"abc"', None, None, u'"abc"'),
+            ('', None, None, ''),
+            ('abc', None, None, 'abc'),
+            ('"abc"', None, None, '"abc"'),
         ]
         for arg, name, default, expected in tests:
             assert paramparser.get_unicode(arg, name, default) == expected
@@ -477,19 +477,19 @@ class TestExtensionInvoking(object):
     def _test_invoke_float_required(self, i=paramparser.required_arg(float)):
         assert i == 1.4
 
-    def _test_invoke_choice(self, a, choice=[u'a', u'b', u'c']):
+    def _test_invoke_choice(self, a, choice=['a', 'b', 'c']):
         assert a == 7
-        assert choice == u'a'
+        assert choice == 'a'
 
-    def _test_invoke_choicet(self, a, choice=(u'a', u'b', u'c')):
+    def _test_invoke_choicet(self, a, choice=('a', 'b', 'c')):
         assert a == 7
-        assert choice == u'a'
+        assert choice == 'a'
 
-    def _test_invoke_choice_required(self, i=paramparser.required_arg((u'b', u'a'))):
-        assert i == u'a'
+    def _test_invoke_choice_required(self, i=paramparser.required_arg(('b', 'a'))):
+        assert i == 'a'
 
     def _test_trailing(self, a, _trailing_args=[]):
-        assert _trailing_args == [u'a']
+        assert _trailing_args == ['a']
 
     def _test_arbitrary_kw(self, expect, _kwargs={}):
         assert _kwargs == expect
@@ -504,71 +504,71 @@ class TestExtensionInvoking(object):
             assert i == 1 or i is None
 
         ief = paramparser.invoke_extension_function
-        ief(self._test_invoke_bool, u'False')
-        ief(self._test_invoke_bool, u'b=False')
-        ief(_test_invoke_int, u'1')
-        ief(_test_invoke_int, u'i=1')
-        ief(self._test_invoke_bool_def, u'False, False')
-        ief(self._test_invoke_bool_def, u'b=False, v=False')
-        ief(self._test_invoke_bool_def, u'False')
-        ief(self._test_invoke_int_None, u'i=1')
-        ief(self._test_invoke_int_None, u'i=')
-        ief(self._test_invoke_int_None, u'')
+        ief(self._test_invoke_bool, 'False')
+        ief(self._test_invoke_bool, 'b=False')
+        ief(_test_invoke_int, '1')
+        ief(_test_invoke_int, 'i=1')
+        ief(self._test_invoke_bool_def, 'False, False')
+        ief(self._test_invoke_bool_def, 'b=False, v=False')
+        ief(self._test_invoke_bool_def, 'False')
+        ief(self._test_invoke_int_None, 'i=1')
+        ief(self._test_invoke_int_None, 'i=')
+        ief(self._test_invoke_int_None, '')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_int_None, u'x')
+                      self._test_invoke_int_None, 'x')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_int_None, u'""')
+                      self._test_invoke_int_None, '""')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_int_None, u'i=""')
+                      self._test_invoke_int_None, 'i=""')
         pytest.raises(ValueError, ief,
-                      _test_invoke_int_fixed, u'a=7', [7, 8])
-        ief(_test_invoke_int_fixed, u'i=1', [7, 8])
+                      _test_invoke_int_fixed, 'a=7', [7, 8])
+        ief(_test_invoke_int_fixed, 'i=1', [7, 8])
         pytest.raises(ValueError, ief,
-                      _test_invoke_int_fixed, u'i=""', [7, 8])
-        ief(_test_invoke_int_fixed, u'i=', [7, 8])
+                      _test_invoke_int_fixed, 'i=""', [7, 8])
+        ief(_test_invoke_int_fixed, 'i=', [7, 8])
 
         for choicefn in (self._test_invoke_choice, self._test_invoke_choicet):
-            ief(choicefn, u'', [7])
-            ief(choicefn, u'choice=a', [7])
-            ief(choicefn, u'choice=', [7])
-            ief(choicefn, u'choice="a"', [7])
+            ief(choicefn, '', [7])
+            ief(choicefn, 'choice=a', [7])
+            ief(choicefn, 'choice=', [7])
+            ief(choicefn, 'choice="a"', [7])
             pytest.raises(ValueError, ief,
-                          choicefn, u'x', [7])
+                          choicefn, 'x', [7])
             pytest.raises(ValueError, ief,
-                          choicefn, u'choice=x', [7])
+                          choicefn, 'choice=x', [7])
 
-        ief(self._test_invoke_float_None, u'i=1.4')
-        ief(self._test_invoke_float_None, u'i=')
-        ief(self._test_invoke_float_None, u'')
-        ief(self._test_invoke_float_None, u'1.4')
+        ief(self._test_invoke_float_None, 'i=1.4')
+        ief(self._test_invoke_float_None, 'i=')
+        ief(self._test_invoke_float_None, '')
+        ief(self._test_invoke_float_None, '1.4')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_float_None, u'x')
+                      self._test_invoke_float_None, 'x')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_float_None, u'""')
+                      self._test_invoke_float_None, '""')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_float_None, u'i=""')
-        ief(self._test_trailing, u'a=7, a')
-        ief(self._test_trailing, u'7, a')
-        ief(self._test_arbitrary_kw, u'test=x, \xc3=test',
-            [{u'\xc3': 'test', 'test': u'x'}])
-        ief(self._test_arbitrary_kw, u'test=x, "\xc3"=test',
-            [{u'\xc3': 'test', 'test': u'x'}])
-        ief(self._test_arbitrary_kw, u'test=x, "7 \xc3"=test',
-            [{u'7 \xc3': 'test', 'test': u'x'}])
-        ief(self._test_arbitrary_kw, u'test=x, 7 \xc3=test',
-            [{u'7 \xc3': 'test', 'test': u'x'}])
-        ief(self._test_arbitrary_kw, u'7 \xc3=test, test= x ',
-            [{u'7 \xc3': 'test', 'test': u'x'}])
+                      self._test_invoke_float_None, 'i=""')
+        ief(self._test_trailing, 'a=7, a')
+        ief(self._test_trailing, '7, a')
+        ief(self._test_arbitrary_kw, 'test=x, \xc3=test',
+            [{'\xc3': 'test', 'test': 'x'}])
+        ief(self._test_arbitrary_kw, 'test=x, "\xc3"=test',
+            [{'\xc3': 'test', 'test': 'x'}])
+        ief(self._test_arbitrary_kw, 'test=x, "7 \xc3"=test',
+            [{'7 \xc3': 'test', 'test': 'x'}])
+        ief(self._test_arbitrary_kw, 'test=x, 7 \xc3=test',
+            [{'7 \xc3': 'test', 'test': 'x'}])
+        ief(self._test_arbitrary_kw, '7 \xc3=test, test= x ',
+            [{'7 \xc3': 'test', 'test': 'x'}])
         pytest.raises(ValueError, ief,
-                      self._test_invoke_float_required, u'')
-        ief(self._test_invoke_float_required, u'1.4')
-        ief(self._test_invoke_float_required, u'i=1.4')
+                      self._test_invoke_float_required, '')
+        ief(self._test_invoke_float_required, '1.4')
+        ief(self._test_invoke_float_required, 'i=1.4')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_choice_required, u'')
-        ief(self._test_invoke_choice_required, u'a')
-        ief(self._test_invoke_choice_required, u'i=a')
+                      self._test_invoke_choice_required, '')
+        ief(self._test_invoke_choice_required, 'a')
+        ief(self._test_invoke_choice_required, 'i=a')
         pytest.raises(ValueError, ief,
-                      self._test_invoke_float_required, u',')
+                      self._test_invoke_float_required, ',')
 
     def testConstructors(self):
         ief = paramparser.invoke_extension_function
@@ -582,16 +582,16 @@ class TestExtensionInvoking(object):
         class TEST2(TEST1):
             pass
 
-        obj = ief(TEST1, u'a=7')
+        obj = ief(TEST1, 'a=7')
         assert isinstance(obj, TEST1)
         assert obj.constructed
-        pytest.raises(ValueError, ief, TEST1, u'b')
+        pytest.raises(ValueError, ief, TEST1, 'b')
 
-        obj = ief(TEST2, u'a=7')
+        obj = ief(TEST2, 'a=7')
         assert isinstance(obj, TEST1)
         assert isinstance(obj, TEST2)
         assert obj.constructed
-        pytest.raises(ValueError, ief, TEST2, u'b')
+        pytest.raises(ValueError, ief, TEST2, 'b')
 
         # old style class
         class TEST3:
@@ -602,22 +602,22 @@ class TestExtensionInvoking(object):
         class TEST4(TEST3):
             pass
 
-        obj = ief(TEST3, u'a=7')
+        obj = ief(TEST3, 'a=7')
         assert isinstance(obj, TEST3)
         assert obj.constructed
-        pytest.raises(ValueError, ief, TEST3, u'b')
+        pytest.raises(ValueError, ief, TEST3, 'b')
 
-        obj = ief(TEST4, u'a=7')
+        obj = ief(TEST4, 'a=7')
         assert isinstance(obj, TEST3)
         assert isinstance(obj, TEST4)
         assert obj.constructed
-        pytest.raises(ValueError, ief, TEST4, u'b')
+        pytest.raises(ValueError, ief, TEST4, 'b')
 
     def testFailing(self):
         ief = paramparser.invoke_extension_function
 
-        pytest.raises(TypeError, ief, hex, u'15')
-        pytest.raises(TypeError, ief, cmp, u'15')
+        pytest.raises(TypeError, ief, hex, '15')
+        pytest.raises(TypeError, ief, cmp, '15')
 
     def testAllDefault(self):
         ief = paramparser.invoke_extension_function
@@ -629,15 +629,15 @@ class TestExtensionInvoking(object):
             assert d == 4
             return True
 
-        assert ief(has_many_defaults, u'1, 2, 3, 4')
-        assert ief(has_many_defaults, u'2, 3, 4', [1])
-        assert ief(has_many_defaults, u'3, 4', [1, 2])
-        assert ief(has_many_defaults, u'4', [1, 2, 3])
-        assert ief(has_many_defaults, u'', [1, 2, 3, 4])
-        assert ief(has_many_defaults, u'd=4,c=3,b=2,a=1')
-        assert ief(has_many_defaults, u'd=4,c=3,b=2', [1])
-        assert ief(has_many_defaults, u'd=4,c=3', [1, 2])
-        assert ief(has_many_defaults, u'd=4', [1, 2, 3])
+        assert ief(has_many_defaults, '1, 2, 3, 4')
+        assert ief(has_many_defaults, '2, 3, 4', [1])
+        assert ief(has_many_defaults, '3, 4', [1, 2])
+        assert ief(has_many_defaults, '4', [1, 2, 3])
+        assert ief(has_many_defaults, '', [1, 2, 3, 4])
+        assert ief(has_many_defaults, 'd=4,c=3,b=2,a=1')
+        assert ief(has_many_defaults, 'd=4,c=3,b=2', [1])
+        assert ief(has_many_defaults, 'd=4,c=3', [1, 2])
+        assert ief(has_many_defaults, 'd=4', [1, 2, 3])
 
     def testInvokeComplex(self):
         ief = paramparser.invoke_extension_function
@@ -646,9 +646,9 @@ class TestExtensionInvoking(object):
             assert a == b
             return True
 
-        assert ief(has_complex, u'3-3i, 3-3j')
-        assert ief(has_complex, u'2i, 2j')
-        assert ief(has_complex, u'b=2i, a=2j')
-        assert ief(has_complex, u'2.007, 2.007')
-        assert ief(has_complex, u'2.007', [2.007])
-        assert ief(has_complex, u'b=2.007', [2.007])
+        assert ief(has_complex, '3-3i, 3-3j')
+        assert ief(has_complex, '2i, 2j')
+        assert ief(has_complex, 'b=2i, a=2j')
+        assert ief(has_complex, '2.007, 2.007')
+        assert ief(has_complex, '2.007', [2.007])
+        assert ief(has_complex, 'b=2.007', [2.007])

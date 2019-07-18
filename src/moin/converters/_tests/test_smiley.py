@@ -23,7 +23,7 @@ output_re = XMLNS_RE3
 
 def serialize_strip(elem, **options):
     result = serialize(elem, namespaces=output_namespaces, **options)
-    return output_re.sub(u'', result)
+    return output_re.sub('', result)
 
 
 @pytest.mark.parametrize('input,query', [
