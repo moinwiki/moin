@@ -637,7 +637,7 @@ class Converter(ConverterMacro):
         return ret
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
-                         link_args=u'', external_link_url=None, alt_text=u''):
+                         link_args='', external_link_url=None, alt_text=''):
         """Handle all kinds of links."""
         link_text = ''
         link_args_list = []

@@ -25,9 +25,9 @@ from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES,
 
 BACKENDS_PACKAGE = 'moin.storage.backends'
 
-BACKEND_DEFAULT = u'default'
-BACKEND_USERPROFILES = u'userprofiles'
-BACKEND_USERS = u'users'
+BACKEND_DEFAULT = 'default'
+BACKEND_USERPROFILES = 'userprofiles'
+BACKEND_USERS = 'users'
 
 
 def backend_from_uri(uri):
@@ -81,11 +81,11 @@ def create_simple_mapping(uri='stores:fs:instance',
     """
     # if no acls are given, use something mostly harmless:
     if not default_acl:
-        default_acl = dict(before=u'', default=u'All:read,write,create,admin', after=u'', hierarchic=False)
+        default_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
     if not userprofiles_acl:
-        userprofiles_acl = dict(before=u'All:', default=u'', after=u'', hierarchic=False)
+        userprofiles_acl = dict(before='All:', default='', after='', hierarchic=False)
     if not users_acl:
-        users_acl = dict(before=u'', default=u'All:read,write,create,admin', after=u'', hierarchic=False)
+        users_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
         NAMESPACE_USERPROFILES: BACKEND_USERPROFILES,

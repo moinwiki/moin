@@ -73,7 +73,7 @@ def deserialize(src, backend):
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
         name = meta.get(NAME)
-        if isinstance(name, unicode):
+        if isinstance(name, str):
             # if we encounter single names, make a list of names:
             meta[NAME] = [name, ]
         if ITEMTYPE not in meta:

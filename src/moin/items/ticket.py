@@ -190,7 +190,7 @@ class TicketUpdateForm(TicketForm):
                     original = meta.get(key)
                     new = value
                 msg = L_('{key} changed from {original} to {new}'.format(key=key, original=original, new=new))
-                meta_changes.append(u' * ' + msg)
+                meta_changes.append(' * ' + msg)
         if meta_changes:
             meta_changes = 'Meta updates:\n' + '\n'.join(meta_changes)
             create_comment(meta, meta_changes)
@@ -215,8 +215,8 @@ def message_markup(message):
     """
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     heading = L_('{author} wrote on {timestamp}:').format(author=flaskg.user.name[0], timestamp=timestamp)
-    message = u'{heading}\n\n{message}'.format(heading=heading, message=message)
-    return u"""{{{{{{#!wiki moin-ticket
+    message = '{heading}\n\n{message}'.format(heading=heading, message=message)
+    return """{{{{{{#!wiki moin-ticket
 %(message)s
 }}}}}}""" % dict(message=message)
 
@@ -234,7 +234,7 @@ def check_itemid(self):
                 try:
                     new_name = self.meta[ITEMID] + '/' + file_name
                     item = Item.create(new_name)
-                    item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID], element=u'file')
+                    item.modify({}, rev.meta[CONTENT], refers_to=self.meta[ITEMID], element='file')
                     item = Item.create(old_name)
                     item._save(item.meta, name=old_name, action=ACTION_TRASH)  # delete
                 except AccessDenied:
@@ -253,7 +253,7 @@ def file_upload(self, data_file):
         refers_to = self.fqname.value
     try:
         item = Item.create(item_name)
-        item.modify({}, data, contenttype_guessed=contenttype, refers_to=refers_to, element=u'file')
+        item.modify({}, data, contenttype_guessed=contenttype, refers_to=refers_to, element='file')
     except AccessDenied:
         abort(403)
 
@@ -266,7 +266,7 @@ def get_files(self):
     else:
         refers_to = self.fqname.value
         prefix = self.fqname.value + '/'
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, u'file')])
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, 'file')])
     revs = flaskg.storage.search(query, limit=None)
     files = []
     for rev in revs:
@@ -283,7 +283,7 @@ def get_comments(self):
     Return a list of roots (comments to original ticket) and a dict of comments (comments to comments).
     """
     refers_to = self.meta[ITEMID]
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, u'comment')])
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, 'comment')])
     revs = flaskg.storage.search(query, sortedby=[MTIME], limit=None)
     comments = dict()  # {rev: [],...} comments to a comment
     lookup = dict()  # {itemid: rev,...}
@@ -335,10 +335,10 @@ def create_comment(meta, message):
     Create a new item comment against original description, refers_to links to original.
     """
     current_timestamp = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-    item_name = meta[ITEMID] + u'/' + u'comment_' + unicode(current_timestamp)
+    item_name = meta[ITEMID] + '/' + 'comment_' + str(current_timestamp)
     item = Item.create(item_name)
-    item.modify({}, data=message, element=u'comment', contenttype_guessed=u'text/x.moin.wiki;charset=utf-8',
-                refers_to=meta[ITEMID], reply_to=u'', author=flaskg.user.name[0], timestamp=time.ctime())
+    item.modify({}, data=message, element='comment', contenttype_guessed='text/x.moin.wiki;charset=utf-8',
+                refers_to=meta[ITEMID], reply_to='', author=flaskg.user.name[0], timestamp=time.ctime())
 
 
 @register

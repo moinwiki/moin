@@ -86,26 +86,26 @@ class TestEncodeAddress(object):
 
     def testSimpleAddress(self):
         """ mail.sendmail: encode simple address: local@domain """
-        address = u'local@domain'
+        address = 'local@domain'
         expected = address.encode(CHARSET)
         assert sendmail.encodeAddress(address, self.charset) == expected
 
     def testComposite(self):
         """ mail.sendmail: encode address: 'Phrase <local@domain>' """
-        address = u'Phrase <local@domain>'
+        address = 'Phrase <local@domain>'
         expected = str(address)
         assert sendmail.encodeAddress(address, self.charset) == expected
 
     def testCompositeUnicode(self):
         """ mail.sendmail: encode Uncode address: 'ויקי <local@domain>' """
-        address = u'ויקי <local@domain>'
-        phrase = str(Header(u'ויקי'.encode('utf-8'), self.charset))
+        address = 'ויקי <local@domain>'
+        phrase = str(Header('ויקי'.encode('utf-8'), self.charset))
         expected = phrase + ' ' + '<local@domain>'
         assert sendmail.encodeAddress(address, self.charset) == expected
 
     def testEmptyPhrase(self):
         """ mail.sendmail: encode address with empty phrase: '<local@domain>' """
-        address = u'<local@domain>'
+        address = '<local@domain>'
         expected = 'local@domain'
         assert sendmail.encodeAddress(address, self.charset) == expected
 
@@ -115,7 +115,7 @@ class TestEncodeAddress(object):
         Let the smtp server handle this. We may raise error in such
         case, but we don't do error checking for mail addresses.
         """
-        address = u'Phrase <>'
+        address = 'Phrase <>'
         expected = str(address)
         assert sendmail.encodeAddress(address, self.charset) == expected
 
@@ -126,7 +126,7 @@ class TestEncodeAddress(object):
         probably cause an error when trying to send mail. Junk in, junk
         out.
         """
-        address = u'Phrase <blah'
+        address = 'Phrase <blah'
         expected = str(address)
         assert sendmail.encodeAddress(address, self.charset) == expected
 

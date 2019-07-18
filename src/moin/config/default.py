@@ -70,8 +70,8 @@ class ConfigFunctionality(object):
         self.cache.item_group_regex = re.compile(self.item_group_regex, re.UNICODE)
 
         # the ..._regexact versions only match if nothing is left (exact match)
-        self.cache.item_dict_regexact = re.compile(u'^{0}$'.format(self.item_dict_regex), re.UNICODE)
-        self.cache.item_group_regexact = re.compile(u'^{0}$'.format(self.item_group_regex), re.UNICODE)
+        self.cache.item_dict_regexact = re.compile('^{0}$'.format(self.item_dict_regex), re.UNICODE)
+        self.cache.item_group_regexact = re.compile('^{0}$'.format(self.item_group_regex), re.UNICODE)
 
         # compiled functions ACL
         self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
@@ -200,7 +200,7 @@ configuration for typos before requesting support or reporting a bug.
         config files.
         """
         charset = 'utf-8'
-        message = u"""
+        message = """
 "%(name)s" configuration variable is a string, but should be
 unicode. Use %(name)s = u"value" syntax for unicode variables.
 
@@ -223,7 +223,7 @@ file. It should match the actual charset of the configuration file.
                 # Try to decode strings
                 if isinstance(attr, str):
                     try:
-                        setattr(self, name, unicode(attr, charset))
+                        setattr(self, name, str(attr, charset))
                     except UnicodeError:
                         raise error.ConfigurationError(message %
                                                        {'name': name})
@@ -233,7 +233,7 @@ file. It should match the actual charset of the configuration file.
                         item = attr[i]
                         if isinstance(item, str):
                             try:
-                                attr[i] = unicode(item, charset)
+                                attr[i] = str(item, charset)
                             except UnicodeError:
                                 raise error.ConfigurationError(message %
                                                                {'name': name})
@@ -280,8 +280,8 @@ def _default_password_checker(cfg, username, password,
        username_lower in password_lower or password_lower in username_lower:
         return _("Password is too easy to guess (password contains name or name contains password).")
 
-    keyboards = (ur"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./",  # US kbd
-                 ur"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-",  # german kbd
+    keyboards = (r"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./",  # US kbd
+                 r"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-",  # german kbd
     )  # TODO add more keyboards!
     for kbd in keyboards:
         rev_kbd = kbd[::-1]
@@ -344,7 +344,7 @@ options_no_group_name = {
     )),
     # ==========================================================================
     'style': ('Style / Theme / UI', 'These settings control how the wiki user interface will look like.', (
-        ('sitename', u'Untitled Wiki',
+        ('sitename', 'Untitled Wiki',
          "Short description of your wiki site, displayed below the logo on each page, and used in RSS documents as the channel title [Unicode]"),
         ('interwikiname', None, "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]"),
         ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of 'sitename') [Unicode]"),
@@ -360,7 +360,7 @@ options_no_group_name = {
             # ('wikilink', 'frontend.tickets', dict(), L_('Tickets'), L_('List of Tickets')),
         ], 'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
 
-        ('theme_default', u'topside', "Default theme."),
+        ('theme_default', 'topside', "Default theme."),
 
         ('serve_files', {},
          """
@@ -368,7 +368,7 @@ options_no_group_name = {
          from the filesystem as url .../+serve/<name>/...
          """),
 
-        ('supplementation_item_names', [u'Discussion', ],
+        ('supplementation_item_names', ['Discussion', ],
          "List of names of the supplementation (sub)items [Unicode]"),
 
         ('interwiki_preferred', [], "In dialogues, show those wikis at the top of the list [list of Unicode]."),
@@ -447,16 +447,16 @@ options_no_group_name = {
     )),
     # ==========================================================================
     'items': ('Special Item Names', None, (
-        ('default_root', u'Home', "Default root, use this value in case no match is found in root_mapping. [Unicode]"),
+        ('default_root', 'Home', "Default root, use this value in case no match is found in root_mapping. [Unicode]"),
         ('root_mapping', {}, "mapping of namespaces to item_roots."),
 
         # the following regexes should match the complete name when used in free text
         # the group 'all' shall match all, while the group 'key' shall match the key only
         # e.g. FooGroup -> group 'all' ==  FooGroup, group 'key' == Foo
         # moin's code will add ^ / $ at beginning / end when needed
-        ('item_dict_regex', ur'(?P<all>(?P<key>\S+)Dict)',
+        ('item_dict_regex', r'(?P<all>(?P<key>\S+)Dict)',
          'Item names exactly matching this regex are regarded as items containing variable dictionary definitions [Unicode]'),
-        ('item_group_regex', ur'(?P<all>(?P<key>\S+)Group)',
+        ('item_group_regex', r'(?P<all>(?P<key>\S+)Group)',
          'Item names exactly matching this regex are regarded as items containing group definitions [Unicode]'),
     )),
     # ==========================================================================
@@ -472,9 +472,9 @@ options_no_group_name = {
             SCROLL_PAGE_AFTER_EDIT: True,
             SHOW_COMMENTS: False,
             WANT_TRIVIAL: False,
-            ENC_PASSWORD: u'',  # empty value == invalid hash
-            RECOVERPASS_KEY: u'',  # empty value == invalid key
-            SESSION_KEY: u'',  # empty value == invalid key
+            ENC_PASSWORD: '',  # empty value == invalid hash
+            RECOVERPASS_KEY: '',  # empty value == invalid key
+            SESSION_KEY: '',  # empty value == invalid key
             DISABLED: False,
             BOOKMARKS: {},
             QUICKLINKS: [],
@@ -500,8 +500,8 @@ options_no_group_name = {
 
         ('config_check_enabled', False, "if True, check configuration for unknown settings."),
 
-        ('timezone_default', u'UTC', "Default time zone."),
-        ('locale_default', u'en_US', "Default locale for user interface and content."),
+        ('timezone_default', 'UTC', "Default time zone."),
+        ('locale_default', 'en_US', "Default locale for user interface and content."),
 
         # ('log_remote_addr', True, "if True, log the remote IP address (and maybe hostname)."),
         ('log_reverse_dns_lookups', True,
@@ -545,7 +545,7 @@ options_no_group_name = {
 #
 options = {
     'acl': ('Access Control Lists', 'ACLs control who may do what.', (
-        ('functions', u'', 'Access Control List for functions.'),
+        ('functions', '', 'Access Control List for functions.'),
         ('rights_contents', ACL_RIGHTS_CONTENTS, 'Valid tokens for right sides of content ACL entries.'),
         ('rights_functions', ACL_RIGHTS_FUNCTIONS, 'Valid tokens for right sides of function ACL entries.'),
     )),
@@ -565,7 +565,7 @@ options = {
         ('email_verification', False,
          "if True, require a new user to verify his or her email address before the first login."),
 
-        ('homewiki', u'Self',
+        ('homewiki', 'Self',
          "interwiki name of the wiki where the user home pages are located [Unicode] - useful if you have ''many'' users. You could even link to nonwiki \"user pages\" if the wiki username is in the target URL."),
         ('use_gravatar', False, "if True, gravatar.com will be used to find User's avatar")
     )),

@@ -149,8 +149,8 @@ def global_views():
     Provides a link to all the global views.
     """
     return render_template('all.html',
-                           title_name=_(u"Global Views"),
-                           fqname=CompositeName(u'all', NAME_EXACT, u'')
+                           title_name=_("Global Views"),
+                           fqname=CompositeName('all', NAME_EXACT, '')
                           )
 
 
@@ -220,7 +220,7 @@ def lookup():
         if terms:
             LookupEntry = namedtuple('LookupEntry', 'name revid wikiname')
             name = lookup_form[NAME].value
-            name_exact = lookup_form[NAME_EXACT].value or u''
+            name_exact = lookup_form[NAME_EXACT].value or ''
             terms.append(Term(WIKINAME, app.cfg.interwikiname))
             q = And(terms)
             with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
@@ -331,7 +331,7 @@ def add_facets(facets, time_sorting):
 
 
 @frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
-@frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
+@frontend.route('/+search', defaults=dict(item_name=''), methods=['GET', 'POST'])
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
@@ -362,7 +362,7 @@ def search(item_name):
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
-            prefix_name = item_name + u'/'
+            prefix_name = item_name + '/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
 
             show_transclusions = True
@@ -417,22 +417,22 @@ def search(item_name):
             if ajax:
                 html = render_template('ajaxsearch.html',
                                        results=results,
-                                       word_suggestions=u', '.join(word_suggestions),
-                                       name_suggestions=u', '.join(name_suggestions),
-                                       content_suggestions=u', '.join(content_suggestions),
-                                       omitted_words=u', '.join(omitted_words),
+                                       word_suggestions=', '.join(word_suggestions),
+                                       name_suggestions=', '.join(name_suggestions),
+                                       content_suggestions=', '.join(content_suggestions),
+                                       omitted_words=', '.join(omitted_words),
                                        history=history,
                                        is_ticket=is_ticket,
                 )
             else:
                 html = render_template('search.html',
                                        results=results,
-                                       name_suggestions=u', '.join(name_suggestions),
-                                       content_suggestions=u', '.join(content_suggestions),
+                                       name_suggestions=', '.join(name_suggestions),
+                                       content_suggestions=', '.join(content_suggestions),
                                        query=query,
                                        medium_search_form=search_form,
                                        item_name=item_name,
-                                       omitted_words=u', '.join(omitted_words),
+                                       omitted_words=', '.join(omitted_words),
                                        history=history,
                 )
             flaskg.clock.stop('search render')
@@ -690,7 +690,7 @@ def convert_item(item_name):
     backend = flaskg.storage
     storage_item = backend.get_item(**item.fqname.query)
     newrev = storage_item.store_revision(meta, out, overwrite=False,
-                                         action=unicode(ACTION_SAVE),
+                                         action=str(ACTION_SAVE),
                                          contenttype_current=Type(form['new_type'].value),
                                          contenttype_guessed=Type(form['new_type'].value),
                                          return_rev=True,
@@ -942,7 +942,7 @@ def ajaxmodify(item_name):
     if not newitem:
         abort(404, item_name)
     if item_name:
-        newitem = item_name + u'/' + newitem
+        newitem = item_name + '/' + newitem
     return redirect(url_for_item(newitem))
 
 
@@ -1037,9 +1037,9 @@ def jfu_server(item_name):
     contenttype = data_file.content_type  # guess by browser, based on file name
     data = data_file.stream
     if item_name:
-        subitem_prefix = item_name + u'/'
+        subitem_prefix = item_name + '/'
     else:
-        subitem_prefix = u''
+        subitem_prefix = ''
     item_name = subitem_prefix + subitem_name
     jfu_server_lock.acquire()
     try:
@@ -1060,9 +1060,9 @@ def jfu_server(item_name):
 
 def contenttype_selects_gen():
     for g in content_registry.group_names:
-        description = u', '.join([e.display_name for e in content_registry.groups[g]])
+        description = ', '.join([e.display_name for e in content_registry.groups[g]])
         yield g, None, description
-    yield u'Unknown Items', None, u'Items of contenttype unknown to MoinMoin'
+    yield 'Unknown Items', None, 'Items of contenttype unknown to MoinMoin'
 
 
 ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
@@ -1111,8 +1111,8 @@ def index(item_name):
     initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
-        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
-    item_names = item_name.split(u'/')
+        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
+    item_names = item_name.split('/')
     ns_len = len(item.meta['namespace']) + 1 if item.meta['namespace'] else 0
 
     # detect orphan subitems and make a list of their missing parents
@@ -1174,8 +1174,8 @@ def mychanges():
     my_changes_page = utils.getPageContent(my_changes, offset, results_per_page)
 
     return render_template('mychanges.html',
-                           title_name=_(u'My Changes'),
-                           headline=_(u'My Changes'),
+                           title_name=_('My Changes'),
+                           headline=_('My Changes'),
                            my_changes_page=my_changes_page,
     )
 
@@ -1223,7 +1223,7 @@ def forwardrefs(item_name):
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_(u"Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=split_fqname_list(refs),
     )
 
@@ -1265,7 +1265,7 @@ def backrefs(item_name):
                            item=item,
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_(u"Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=refs_here,
     )
 
@@ -1340,7 +1340,7 @@ def global_history(namespace):
     all_revs = bool(request.values.get('all'))
     idx_name = ALL_REVS if all_revs else LATEST_REVS
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
-    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
         terms.append(Term(NAMESPACE, namespace))
         fqname = split_fqname(namespace)
@@ -1366,7 +1366,7 @@ def global_history(namespace):
         history.append(dh)
     del history[0]  # kill the dummy
 
-    title_name = _(u'Global History')
+    title_name = _('Global History')
     if namespace == NAMESPACE_ALL:
         title = _("Global History of All Namespaces")
     elif namespace:
@@ -1416,9 +1416,9 @@ def wanted_items():
     existing, linked, transcluded = _compute_item_sets()
     referred = linked | transcluded
     wanteds = referred - existing
-    title_name = _(u'Wanted Items')
+    title_name = _('Wanted Items')
     return render_template('link_list_no_item_panel.html',
-                           headline=_(u'Wanted Items'),
+                           headline=_('Wanted Items'),
                            title_name=title_name,
                            fq_names=wanteds)
 
@@ -1435,7 +1435,7 @@ def orphaned_items():
     title_name = _('Orphaned Items')
     return render_template('link_list_no_item_panel.html',
                            title_name=title_name,
-                           headline=_(u'Orphaned Items'),
+                           headline=_('Orphaned Items'),
                            fq_names=orphans)
 
 
@@ -1477,7 +1477,7 @@ def subscribe_item(item_name):
         # Try to unsubscribe
         if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
             msg = _(
-                "Can't remove the subscription! You are subscribed to this page, but not by itemid.") + u' ' + _(
+                "Can't remove the subscription! You are subscribed to this page, but not by itemid.") + ' ' + _(
                 "Please edit the subscription in your settings."), "error"
     else:
         # Try to subscribe
@@ -1537,7 +1537,7 @@ def register():
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    title_name = _(u'Register')
+    title_name = _('Register')
     template = 'register.html'
     FormClass = RegistrationForm
 
@@ -1635,7 +1635,7 @@ class PasswordLostForm(Form):
 @frontend.route('/+lostpass', methods=['GET', 'POST'])
 def lostpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    title_name = _(u'Lost Password')
+    title_name = _('Lost Password')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1703,7 +1703,7 @@ class PasswordRecoveryForm(Form):
 @frontend.route('/+recoverpass', methods=['GET', 'POST'])
 def recoverpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    title_name = _(u'Recover Password')
+    title_name = _('Recover Password')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1772,7 +1772,7 @@ def login():
         form = LoginForm.from_flat(request.form)
         nexturl = form['nexturl']
         return redirect(nexturl)
-    title_name = _(u'Login')
+    title_name = _('Login')
 
     if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
@@ -1939,17 +1939,17 @@ def usersettings():
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
-        _timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
+        _timezones_keys = [str(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
         _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
         locale = Select.using(label=L_('Locale')).out_of(
-            ((unicode(l), l.display_name) for l in _supported_locales), sort_by=1)
+            ((str(l), l.display_name) for l in _supported_locales), sort_by=1)
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
         name = 'usersettings_ui'
         theme_name = Select.using(label=L_('Theme name')).out_of(
-            ((unicode(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
+            ((str(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)"))
         edit_rows = Natural.using(label=L_('Number rows in edit textarea')).with_properties(
@@ -2385,9 +2385,9 @@ def wikiMatches(fq_name, fq_names, start_re=None, end_re=None):
     :returns: start, end, matches dict
     """
     if start_re is None:
-        start_re = re.compile(u'([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
+        start_re = re.compile('([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
     if end_re is None:
-        end_re = re.compile(u'([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
+        end_re = re.compile('([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
 
     # If we don't get results with wiki words matching, fall back to
     # simple first word and last word, using spaces.
@@ -2535,9 +2535,9 @@ def global_tags(namespace):
     If namespace == '' tags from the default namespace are shown.
     If namespace == '<namespace>' tags from that namespace are shown.
     """
-    title_name = _(u'Global Tags')
+    title_name = _('Global Tags')
     query = {WIKINAME: app.cfg.interwikiname}
-    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
         query[NAMESPACE] = namespace
         fqname = split_fqname(namespace)
@@ -2638,7 +2638,7 @@ def tickets():
         status = request.form['status']
     else:
         query = None
-        status = u'open'
+        status = 'open'
 
     current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     idx_name = ALL_REVS
@@ -2648,12 +2648,12 @@ def tickets():
     if query:
         term2.append(qp.parse(query))
 
-    if status == u'open':
+    if status == 'open':
         term1.append(Term(CLOSED, False))
-    elif status == u'closed':
+    elif status == 'closed':
         term1.append(Term(CLOSED, True))
 
-    selected_tags = set(request.args.getlist(u'selected_tags'))
+    selected_tags = set(request.args.getlist('selected_tags'))
     term1.extend(Term(TAGS, tag) for tag in selected_tags)
     assigned_username = request.args.get(ASSIGNED_TO) or query
     user = [Term(NAME, assigned_username)]
@@ -2745,7 +2745,7 @@ def ticket_search():
                                )
 
 
-@frontend.route('/+comment', defaults=dict(item_name=u''), methods=['POST'])
+@frontend.route('/+comment', defaults=dict(item_name=''), methods=['POST'])
 def comment(item_name):
     """
     Initiated by tickets.js when user clicks Save button adding a reply to a prior comment.
@@ -2757,9 +2757,9 @@ def comment(item_name):
     data = request.form.get('data')
     if data:
         current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-        item_name = unicode(itemid) + u'/' + u'comment_' + unicode(current_timestamp)
+        item_name = str(itemid) + '/' + 'comment_' + str(current_timestamp)
         item = Item.create(item_name)
-        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x.moin.wiki;charset=utf-8',
+        item.modify({}, data=data, element='comment', contenttype_guessed='text/x.moin.wiki;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
         item = Item.create(item.name, rev_id=CURRENT)
         html = render_template('ticket/comment.html',

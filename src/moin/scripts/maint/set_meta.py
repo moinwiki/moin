@@ -26,13 +26,13 @@ from moin.scripts import fatal
 class Set_Meta(Command):
     description = "This command can be used to set meta data of a new revision."
     option_list = (
-        Option('--key', '-k', required=False, dest='key', type=unicode,
+        Option('--key', '-k', required=False, dest='key', type=str,
                help="The key you want to set/change in the new revision"),
-        Option('--value', '-v', dest="value", type=unicode,
+        Option('--value', '-v', dest="value", type=str,
                help='The value to set for the given key.'),
         Option('--remove', '-r', dest="remove", action='store_true', default=False,
                help='If you want to delete the key given, add this flag.'),
-        Option('--query', '-q', dest="query", type=unicode, default='',
+        Option('--query', '-q', dest="query", type=str, default='',
                help='Only perform the operation on items found by the given query.')
     )
 

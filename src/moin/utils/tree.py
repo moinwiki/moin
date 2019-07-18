@@ -17,7 +17,7 @@ class Name(ET.QName):
         return ET.Element(self, attrib=attrib, children=children, **extra)
 
 
-class Namespace(unicode):
+class Namespace(str):
     """
     Represents a namespace and factory for Names within this namespace
     """

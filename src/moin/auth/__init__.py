@@ -313,14 +313,14 @@ class GivenAuth(BaseAuth):
             Note: if you need something more special, you could create your own
                   auth class, inherit from this class and overwrite this function.
         """
-        assert isinstance(name, unicode)
+        assert isinstance(name, str)
         if self.strip_maildomain:
             # split off mail domain, e.g. "user@example.org" -> "user"
-            name = name.split(u'@')[0]
+            name = name.split('@')[0]
 
         if self.strip_windomain:
             # split off window domain, e.g. "DOMAIN\user" -> "user"
-            name = name.split(u'\\')[-1]
+            name = name.split('\\')[-1]
 
         if self.titlecase:
             # this "normalizes" the login name, e.g. meier, Meier, MEIER -> Meier
@@ -328,7 +328,7 @@ class GivenAuth(BaseAuth):
 
         if self.remove_blanks:
             # remove blanks e.g. "Joe Doe" -> "JoeDoe"
-            name = u''.join(name.split())
+            name = ''.join(name.split())
 
         return name
 

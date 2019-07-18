@@ -29,7 +29,7 @@ class Converter(object):
         new_childs = []
 
         for child in elem:
-            if isinstance(child, (unicode, str)):
+            if isinstance(child, (str, str)):
                 pos = 0
 
                 # Restrict it to our own namespace for now

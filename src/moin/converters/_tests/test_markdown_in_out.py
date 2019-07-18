@@ -39,35 +39,35 @@ class TestConverter(object):
         self.conv_out = conv_out()
 
     data = [
-        (u'Text',
-         u'Text\n'),
-        (u'Text\n\nText\n',
-         u'Text\n\nText\n'),
-        (u'xxx\n\n------\n\n------\n\n------\n',
-         u'xxx\n\n----\n\n----\n\n----\n'),
-        (u'----\n\n------\n\n--------\n',
-         u'----\n\n----\n\n----\n'),
-        (u'**strong**\n',
-         u'**strong**\n'),
-        (u'*emphasis*\n',
-         u'*emphasis*\n'),
-        (u'    blockcode\n',
-         u'    blockcode\n'),
-        (u'`monospace`\n',
-         u'`monospace`\n'),
-        (u'<strike>stroke</strike>\n',
-         u'<strike>stroke</strike>\n'),
+        ('Text',
+         'Text\n'),
+        ('Text\n\nText\n',
+         'Text\n\nText\n'),
+        ('xxx\n\n------\n\n------\n\n------\n',
+         'xxx\n\n----\n\n----\n\n----\n'),
+        ('----\n\n------\n\n--------\n',
+         '----\n\n----\n\n----\n'),
+        ('**strong**\n',
+         '**strong**\n'),
+        ('*emphasis*\n',
+         '*emphasis*\n'),
+        ('    blockcode\n',
+         '    blockcode\n'),
+        ('`monospace`\n',
+         '`monospace`\n'),
+        ('<strike>stroke</strike>\n',
+         '<strike>stroke</strike>\n'),
         # <ins> is changed to <u>
-        (u'<ins>underline</ins>\n',
-         u'<u>underline</u>\n'),
-        (u'<big>larger</big>\n',
-         u'<big>larger</big>\n'),
-        (u'<small>smaller</small>\n',
-         u'<small>smaller</small>\n'),
-        (u'<sup>super</sup>script\n',
-         u'<sup>super</sup>script\n'),
-        (u'<sub>sub</sub>script\n',
-         u'<sub>sub</sub>script\n'),
+        ('<ins>underline</ins>\n',
+         '<u>underline</u>\n'),
+        ('<big>larger</big>\n',
+         '<big>larger</big>\n'),
+        ('<small>smaller</small>\n',
+         '<small>smaller</small>\n'),
+        ('<sup>super</sup>script\n',
+         '<sup>super</sup>script\n'),
+        ('<sub>sub</sub>script\n',
+         '<sub>sub</sub>script\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -75,14 +75,14 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'level 1\n=======\n',
-         u'# level 1 #\n'),
-        (u'# level 1 #\n',
-         u'# level 1 #\n'),
-        (u'## level 2 ##\n',
-         u'## level 2 ##\n'),
-        (u'## level 2\n',
-         u'## level 2 ##\n'),
+        ('level 1\n=======\n',
+         '# level 1 #\n'),
+        ('# level 1 #\n',
+         '# level 1 #\n'),
+        ('## level 2 ##\n',
+         '## level 2 ##\n'),
+        ('## level 2\n',
+         '## level 2 ##\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -90,36 +90,36 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'[TOC]\n',
-         u'[TOC]\n'),
-        (u'|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n',
-         u'|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n'),
+        ('[TOC]\n',
+         '[TOC]\n'),
+        ('|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n',
+         '|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n'),
         # TODO: wrong output
-        (u'``` javascript\nvar s = "JavaScript syntax highlighting";\nalert(s);\n```\n',
-         u'    var s = "JavaScript syntax highlighting";\n    alert(s);\n'),
+        ('``` javascript\nvar s = "JavaScript syntax highlighting";\nalert(s);\n```\n',
+         '    var s = "JavaScript syntax highlighting";\n    alert(s);\n'),
         # TODO: wrong output
-        (u'~~~ {python}\ndef hello():\n    print "Hello World!"\n~~~\n',
-         u'    def hello():\n        print "Hello World!"\n'),
-        (u'~~~\nddd\neee\nfff\n~~~\n',
-         u'    ddd\n    eee\n    fff\n'),
+        ('~~~ {python}\ndef hello():\n    print "Hello World!"\n~~~\n',
+         '    def hello():\n        print "Hello World!"\n'),
+        ('~~~\nddd\neee\nfff\n~~~\n',
+         '    ddd\n    eee\n    fff\n'),
         # TODO: maybe wrong output
-        (u'Text with double__underscore__words.\n\n__Strong__ still works.\n\n__this__works__too__.\n',
-         u'Text with double__underscore__words.\n\n**Strong** still works.\n\n**this__works__too**.\n'),
+        ('Text with double__underscore__words.\n\n__Strong__ still works.\n\n__this__works__too__.\n',
+         'Text with double__underscore__words.\n\n**Strong** still works.\n\n**this__works__too**.\n'),
         # TODO: missing class
-        (u'### orange heading #### {: .orange }\n',
-         u'### orange heading ###\n'),
+        ('### orange heading #### {: .orange }\n',
+         '### orange heading ###\n'),
         # TODO: missing class
-        (u'A class of LawnGreen is added to this paragraph.\n{: class="LawnGreen "}\n',
-         u'A class of LawnGreen is added to this paragraph.\n'),
-        (u'{: #para3 }\n',
-         u'{: #para3 }\n'),
-        (u'so [click to see 3rd paragraph](#para3).\n',
-         u'so [click to see 3rd paragraph](#para3).\n'),
-        (u'Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n',
-         u'Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n'),
+        ('A class of LawnGreen is added to this paragraph.\n{: class="LawnGreen "}\n',
+         'A class of LawnGreen is added to this paragraph.\n'),
+        ('{: #para3 }\n',
+         '{: #para3 }\n'),
+        ('so [click to see 3rd paragraph](#para3).\n',
+         'so [click to see 3rd paragraph](#para3).\n'),
+        ('Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n',
+         'Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n'),
         # footnotes test is incomplete, footnotes are positioned but not defined
-        (u'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n',
-         u'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
+        ('Footnotes[^1] have a label[^label] and a definition[^!DEF].\n',
+         'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
         # TODO: spectacular failure, causes 19 UnicodeEncodeErrors, claims \xA0 characters
         # (u'Footnotes[^a\n\n[^a]: This is a footnote\n',
         #  u'Footnotes[^a\n\n[^a]: This is a footnote\n'),
@@ -130,12 +130,12 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'[MoinMoin](http://moinmo.in)\n',
-         u'[MoinMoin](http://moinmo.in)\n'),
-        (u'[PNG](png)\n',
-         u'[PNG](png)\n'),
-        (u'[MoinMoin][moin]\n[moin]: http://moinmo.in\n',
-         u'[MoinMoin](http://moinmo.in)\n'),
+        ('[MoinMoin](http://moinmo.in)\n',
+         '[MoinMoin](http://moinmo.in)\n'),
+        ('[PNG](png)\n',
+         '[PNG](png)\n'),
+        ('[MoinMoin][moin]\n[moin]: http://moinmo.in\n',
+         '[MoinMoin](http://moinmo.in)\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -143,18 +143,18 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n',
-         u'* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n'),
-        (u'  * A\n      1. C\n          - E\n',
-         u'  * A\n    1. C\n        * E\n'),
-        (u' * A\n     1. C\n     1. D\n',
-         u' * A\n    1. C\n    1. D\n'),
-        (u'1. E\n1. F\n',
-         u'1. E\n1. F\n'),
-        (u'    1. E\n    1. F\n',
-         u'    1. E\n    1. F\n'),
-        (u'Apple\n:   B\n:   C\n:   D\n',
-         u'Apple\n:   B\n:   C\n:   D\n'),
+        ('* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n',
+         '* A\n* B\n    1. C\n    1. D\n        1. E\n        1. F\n'),
+        ('  * A\n      1. C\n          - E\n',
+         '  * A\n    1. C\n        * E\n'),
+        (' * A\n     1. C\n     1. D\n',
+         ' * A\n    1. C\n    1. D\n'),
+        ('1. E\n1. F\n',
+         '1. E\n1. F\n'),
+        ('    1. E\n    1. F\n',
+         '    1. E\n    1. F\n'),
+        ('Apple\n:   B\n:   C\n:   D\n',
+         'Apple\n:   B\n:   C\n:   D\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -162,14 +162,14 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'|A|B|C|\n|-|-|-|\n|1|2|3|\n',
-         u'|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
-        (u'|A|B|C|\n|:-|:-:|-:|\n|1|2|3|\n',
-         u'|A|B|C|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
-        (u'A|B|C\n-|-|-\n1|2|3\n',
-         u'|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
-        (u'`A`|*B*|_C_\n:-|:-:|-:\n1|2|3\n',
-         u'|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
+        ('|A|B|C|\n|-|-|-|\n|1|2|3|\n',
+         '|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
+        ('|A|B|C|\n|:-|:-:|-:|\n|1|2|3|\n',
+         '|A|B|C|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
+        ('A|B|C\n-|-|-\n1|2|3\n',
+         '|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
+        ('`A`|*B*|_C_\n:-|:-:|-:\n1|2|3\n',
+         '|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -177,16 +177,16 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'\n![Alt text](png "Optional title")',
-         u'\n![Alt text](png "Optional title")\n'),
-        (u'![Alt text](png)',
-         u'![Alt text](png)\n'),
-        (u'![Alt text][logo]\n[logo]: png "Optional title attribute"',
-         u'![Alt text](png "Optional title attribute")\n'),
-        (u'![remote image](http://static.moinmo.in/logos/moinmoin.png)',
-         u'![remote image](http://static.moinmo.in/logos/moinmoin.png)\n'),
-        (u'![Alt text](http://test.moinmo.in/png)',
-         u'![Alt text](http://test.moinmo.in/png)\n'),
+        ('\n![Alt text](png "Optional title")',
+         '\n![Alt text](png "Optional title")\n'),
+        ('![Alt text](png)',
+         '![Alt text](png)\n'),
+        ('![Alt text][logo]\n[logo]: png "Optional title attribute"',
+         '![Alt text](png "Optional title attribute")\n'),
+        ('![remote image](http://static.moinmo.in/logos/moinmoin.png)',
+         '![remote image](http://static.moinmo.in/logos/moinmoin.png)\n'),
+        ('![Alt text](http://test.moinmo.in/png)',
+         '![Alt text](http://test.moinmo.in/png)\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -202,7 +202,7 @@ class TestConverter(object):
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', result)
+        return self.output_re.sub('', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:

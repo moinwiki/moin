@@ -6,60 +6,60 @@ MoinMoin - meta data key / index field name related constants
 """
 
 # metadata keys
-NAME = u"name"
-NAME_OLD = u"name_old"
-NAMESPACE = u"namespace"
+NAME = "name"
+NAME_OLD = "name_old"
+NAMESPACE = "namespace"
 
 # if an item is reverted, we store the revision number we used for reverting there:
-REVERTED_TO = u"reverted_to"
+REVERTED_TO = "reverted_to"
 
 # some metadata key constants:
-ACL = u"acl"
+ACL = "acl"
 
 # keys for storing group and dict information
 # group of user names, e.g. for ACLs:
-USERGROUP = u"usergroup"
+USERGROUP = "usergroup"
 # needs more precise name / use case:
-SOMEDICT = u"somedict"
+SOMEDICT = "somedict"
 
 # TODO review plural constants
-CONTENTTYPE = u"contenttype"
-ITEMTYPE = u"itemtype"
-SIZE = u"size"
-LANGUAGE = u"language"
-EXTERNALLINKS = u"externallinks"
-ITEMLINKS = u"itemlinks"
-ITEMTRANSCLUSIONS = u"itemtransclusions"
-TAGS = u"tags"
-TEMPLATE = u'template'  # a TAGS value identifying an item as a template
-CONTENTNGRAM = u"contentngram"
+CONTENTTYPE = "contenttype"
+ITEMTYPE = "itemtype"
+SIZE = "size"
+LANGUAGE = "language"
+EXTERNALLINKS = "externallinks"
+ITEMLINKS = "itemlinks"
+ITEMTRANSCLUSIONS = "itemtransclusions"
+TAGS = "tags"
+TEMPLATE = 'template'  # a TAGS value identifying an item as a template
+CONTENTNGRAM = "contentngram"
 
-ACTION = u"action"
-ADDRESS = u"address"
-HOSTNAME = u"hostname"
-USERID = u"userid"
-MTIME = u"mtime"
-EXTRA = u"extra"
-COMMENT = u"comment"
-SUMMARY = u"summary"
-TRASH = u"trash"
+ACTION = "action"
+ADDRESS = "address"
+HOSTNAME = "hostname"
+USERID = "userid"
+MTIME = "mtime"
+EXTRA = "extra"
+COMMENT = "comment"
+SUMMARY = "summary"
+TRASH = "trash"
 
 # we need a specific hash algorithm to store hashes of revision data into meta
 # data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
 # some backends may use this also for other purposes.
-HASH_ALGORITHM = u"sha1"
+HASH_ALGORITHM = "sha1"
 HASH_LEN = 40  # length of hex str representation of hash value
 
 # some field names for whoosh index schema / documents in index:
-NAME_EXACT = u"name_exact"
-ITEMID = u"itemid"
-REVID = u"revid"
-REV_NUMBER = u"rev_number"
-PARENTID = u"parentid"
-DATAID = u"dataid"
-WIKINAME = u"wikiname"
-CONTENT = u"content"
-REFERS_TO = u"refers_to"
+NAME_EXACT = "name_exact"
+ITEMID = "itemid"
+REVID = "revid"
+REV_NUMBER = "rev_number"
+PARENTID = "parentid"
+DATAID = "dataid"
+WIKINAME = "wikiname"
+CONTENT = "content"
+REFERS_TO = "refers_to"
 IMMUTABLE_KEYS = [
     ACTION,
     ADDRESS,
@@ -79,40 +79,40 @@ IMMUTABLE_KEYS = [
 ]
 
 # magic REVID for current revision:
-CURRENT = u"current"
+CURRENT = "current"
 
 # stuff from user profiles / for whoosh index
-EMAIL = u"email"
-DISPLAY_NAME = u"display_name"
-THEME_NAME = u"theme_name"
-LOCALE = u"locale"
-TIMEZONE = u"timezone"
-ENC_PASSWORD = u"enc_password"
-SUBSCRIPTIONS = u"subscriptions"
-SUBSCRIPTION_IDS = u"subscription_ids"
-SUBSCRIPTION_PATTERNS = u"subscription_patterns"
-BOOKMARKS = u"bookmarks"
-QUICKLINKS = u"quicklinks"
-SESSION_KEY = u"session_key"
-SESSION_TOKEN = u"session_token"
-RECOVERPASS_KEY = u"recoverpass_key"  # TODO: this is used for email confirmation as well, maybe it needs better name
-EDIT_ON_DOUBLECLICK = u"edit_on_doubleclick"
-SCROLL_PAGE_AFTER_EDIT = u"scroll_page_after_edit"
-SHOW_COMMENTS = u"show_comments"
-ISO_8601 = u"iso_8601"
-MAILTO_AUTHOR = u"mailto_author"
-CSS_URL = u"css_url"
-EDIT_ROWS = u"edit_rows"
-RESULTS_PER_PAGE = u"results_per_page"
-WANT_TRIVIAL = u"want_trivial"
-EMAIL_SUBSCRIBED_EVENTS = u"email_subscribed_events"
-DISABLED = u"disabled"
-EMAIL_UNVALIDATED = u"email_unvalidated"
-NAMERE = u"namere"
-NAMEPREFIX = u"nameprefix"
+EMAIL = "email"
+DISPLAY_NAME = "display_name"
+THEME_NAME = "theme_name"
+LOCALE = "locale"
+TIMEZONE = "timezone"
+ENC_PASSWORD = "enc_password"
+SUBSCRIPTIONS = "subscriptions"
+SUBSCRIPTION_IDS = "subscription_ids"
+SUBSCRIPTION_PATTERNS = "subscription_patterns"
+BOOKMARKS = "bookmarks"
+QUICKLINKS = "quicklinks"
+SESSION_KEY = "session_key"
+SESSION_TOKEN = "session_token"
+RECOVERPASS_KEY = "recoverpass_key"  # TODO: this is used for email confirmation as well, maybe it needs better name
+EDIT_ON_DOUBLECLICK = "edit_on_doubleclick"
+SCROLL_PAGE_AFTER_EDIT = "scroll_page_after_edit"
+SHOW_COMMENTS = "show_comments"
+ISO_8601 = "iso_8601"
+MAILTO_AUTHOR = "mailto_author"
+CSS_URL = "css_url"
+EDIT_ROWS = "edit_rows"
+RESULTS_PER_PAGE = "results_per_page"
+WANT_TRIVIAL = "want_trivial"
+EMAIL_SUBSCRIBED_EVENTS = "email_subscribed_events"
+DISABLED = "disabled"
+EMAIL_UNVALIDATED = "email_unvalidated"
+NAMERE = "namere"
+NAMEPREFIX = "nameprefix"
 
 # in which backend is some revision stored?
-BACKENDNAME = u"backendname"
+BACKENDNAME = "backendname"
 
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
@@ -123,40 +123,40 @@ USEROBJ_ATTRS = [
 ]
 
 # keys for blog homepages
-LOGO = u"logo"
-SUPERTAGS = u"supertags"
+LOGO = "logo"
+SUPERTAGS = "supertags"
 # keys for blog entries
-PTIME = u"ptime"
+PTIME = "ptime"
 
 # keys for tickets
-EFFORT = u"effort"
-DIFFICULTY = u"difficulty"
-SEVERITY = u"severity"
-PRIORITY = u"priority"
-ASSIGNED_TO = u"assigned_to"
-SUPERSEDED_BY = u"superseded_by"
-DEPENDS_ON = u"depends_on"
-CLOSED = u"closed"
-ELEMENT = u"element"
-REPLY_TO = u"reply_to"
+EFFORT = "effort"
+DIFFICULTY = "difficulty"
+SEVERITY = "severity"
+PRIORITY = "priority"
+ASSIGNED_TO = "assigned_to"
+SUPERSEDED_BY = "superseded_by"
+DEPENDS_ON = "depends_on"
+CLOSED = "closed"
+ELEMENT = "element"
+REPLY_TO = "reply_to"
 
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
 
 # values for ACTION key
-ACTION_SAVE = u"SAVE"
-ACTION_REVERT = u"REVERT"
-ACTION_TRASH = u"TRASH"
-ACTION_COPY = u"COPY"
-ACTION_RENAME = u"RENAME"
+ACTION_SAVE = "SAVE"
+ACTION_REVERT = "REVERT"
+ACTION_TRASH = "TRASH"
+ACTION_COPY = "COPY"
+ACTION_RENAME = "RENAME"
 
 # defaul LOCALE key value
-DEFAULT_LOCALE = u"en"
+DEFAULT_LOCALE = "en"
 
 # key for composite name
-FQNAME = u'fqname'
-FQNAMES = u'fqnames'
+FQNAME = 'fqname'
+FQNAMES = 'fqnames'
 # Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
 FIELDS = [
     NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS

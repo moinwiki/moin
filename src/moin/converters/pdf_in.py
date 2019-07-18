@@ -52,7 +52,7 @@ class UnicodeConverter(TextConverter):
         self.__text.append(text)
 
     def read_result(self):
-        return u''.join(self.__text)
+        return ''.join(self.__text)
 
 
 class PDFIndexingConverter(object):

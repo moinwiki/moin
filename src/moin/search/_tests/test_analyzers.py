@@ -26,81 +26,81 @@ class TestAclTokenizer(TokenizerTestBase):
 
     test_cases_query = [
         # (query, tokens)
-        (u'-MinusGuy:read', [u'MinusGuy:-read']),
-        (u'+PlusGuy:read', [u'PlusGuy:+read']),
-        (u'Admin3:read,write,admin', [
-            u'Admin3:+read',
-            u'Admin3:-pubread',
-            u'Admin3:+write',
-            u'Admin3:-create',
-            u'Admin3:+admin',
-            u'Admin3:-destroy',
+        ('-MinusGuy:read', ['MinusGuy:-read']),
+        ('+PlusGuy:read', ['PlusGuy:+read']),
+        ('Admin3:read,write,admin', [
+            'Admin3:+read',
+            'Admin3:-pubread',
+            'Admin3:+write',
+            'Admin3:-create',
+            'Admin3:+admin',
+            'Admin3:-destroy',
         ]),
-        (u'Admin1,Admin2:read,write,admin', [
-            u'Admin1:+read',
-            u'Admin1:-pubread',
-            u'Admin1:+write',
-            u'Admin1:-create',
-            u'Admin1:+admin',
-            u'Admin1:-destroy',
-            u'Admin2:+read',
-            u'Admin2:-pubread',
-            u'Admin2:+write',
-            u'Admin2:-create',
-            u'Admin2:+admin',
-            u'Admin2:-destroy',
+        ('Admin1,Admin2:read,write,admin', [
+            'Admin1:+read',
+            'Admin1:-pubread',
+            'Admin1:+write',
+            'Admin1:-create',
+            'Admin1:+admin',
+            'Admin1:-destroy',
+            'Admin2:+read',
+            'Admin2:-pubread',
+            'Admin2:+write',
+            'Admin2:-create',
+            'Admin2:+admin',
+            'Admin2:-destroy',
         ]),
-        (u'JoeDoe:pubread,write', [
-            u'JoeDoe:-read',
-            u'JoeDoe:+pubread',
-            u'JoeDoe:+write',
-            u'JoeDoe:-create',
-            u'JoeDoe:-admin',
-            u'JoeDoe:-destroy',
+        ('JoeDoe:pubread,write', [
+            'JoeDoe:-read',
+            'JoeDoe:+pubread',
+            'JoeDoe:+write',
+            'JoeDoe:-create',
+            'JoeDoe:-admin',
+            'JoeDoe:-destroy',
         ]),
-        (u'name with spaces,another one:read,write', [
-            u'name with spaces:+read',
-            u'name with spaces:-pubread',
-            u'name with spaces:+write',
-            u'name with spaces:-create',
-            u'name with spaces:-admin',
-            u'name with spaces:-destroy',
-            u'another one:+read',
-            u'another one:-pubread',
-            u'another one:+write',
-            u'another one:-create',
-            u'another one:-admin',
-            u'another one:-destroy',
+        ('name with spaces,another one:read,write', [
+            'name with spaces:+read',
+            'name with spaces:-pubread',
+            'name with spaces:+write',
+            'name with spaces:-create',
+            'name with spaces:-admin',
+            'name with spaces:-destroy',
+            'another one:+read',
+            'another one:-pubread',
+            'another one:+write',
+            'another one:-create',
+            'another one:-admin',
+            'another one:-destroy',
         ]),
-        (u'CamelCase,extended name:read,write', [
-            u'CamelCase:+read',
-            u'CamelCase:-pubread',
-            u'CamelCase:+write',
-            u'CamelCase:-create',
-            u'CamelCase:-admin',
-            u'CamelCase:-destroy',
-            u'extended name:+read',
-            u'extended name:-pubread',
-            u'extended name:+write',
-            u'extended name:-create',
-            u'extended name:-admin',
-            u'extended name:-destroy',
+        ('CamelCase,extended name:read,write', [
+            'CamelCase:+read',
+            'CamelCase:-pubread',
+            'CamelCase:+write',
+            'CamelCase:-create',
+            'CamelCase:-admin',
+            'CamelCase:-destroy',
+            'extended name:+read',
+            'extended name:-pubread',
+            'extended name:+write',
+            'extended name:-create',
+            'extended name:-admin',
+            'extended name:-destroy',
         ]),
-        (u'BadGuy:', [
-            u'BadGuy:-read',
-            u'BadGuy:-pubread',
-            u'BadGuy:-write',
-            u'BadGuy:-create',
-            u'BadGuy:-admin',
-            u'BadGuy:-destroy',
+        ('BadGuy:', [
+            'BadGuy:-read',
+            'BadGuy:-pubread',
+            'BadGuy:-write',
+            'BadGuy:-create',
+            'BadGuy:-admin',
+            'BadGuy:-destroy',
         ]),
-        (u'All:read', [
-            u'All:+read',
-            u'All:-pubread',
-            u'All:-write',
-            u'All:-create',
-            u'All:-admin',
-            u'All:-destroy',
+        ('All:read', [
+            'All:+read',
+            'All:-pubread',
+            'All:-write',
+            'All:-create',
+            'All:-admin',
+            'All:-destroy',
         ])
     ]
 
@@ -113,18 +113,18 @@ class TestMimeTokenizer(TokenizerTestBase):
 
     test_cases_query = [
         # (query, tokens)
-        (u'text/plain',
-         [u'text/plain', u'text', u'plain']),
-        (u'text/plain;charset=utf-8',
-         [u'text/plain;charset=utf-8', u'text', u'plain', u'charset=utf-8']),
-        (u'text/html;value1=foo;value2=bar',
-         [u'text/html;value1=foo;value2=bar', u'text', u'html', u'value1=foo', u'value2=bar']),
+        ('text/plain',
+         ['text/plain', 'text', 'plain']),
+        ('text/plain;charset=utf-8',
+         ['text/plain;charset=utf-8', 'text', 'plain', 'charset=utf-8']),
+        ('text/html;value1=foo;value2=bar',
+         ['text/html;value1=foo;value2=bar', 'text', 'html', 'value1=foo', 'value2=bar']),
         # we normalize, sort the params:
-        (u'text/html;value2=bar;value1=foo',
-         [u'text/html;value1=foo;value2=bar', u'text', u'html', u'value1=foo', u'value2=bar']),
+        ('text/html;value2=bar;value1=foo',
+         ['text/html;value1=foo;value2=bar', 'text', 'html', 'value1=foo', 'value2=bar']),
         # later values for same key overwrite earlier ones:
-        (u'text/html;value1=foo;value1=bar',
-         [u'text/html;value1=bar', u'text', u'html', u'value1=bar'])
+        ('text/html;value1=foo;value1=bar',
+         ['text/html;value1=bar', 'text', 'html', 'value1=bar'])
     ]
 
     def make_tokenizer(self):
@@ -136,18 +136,18 @@ class TestItemNameAnalyzer(TokenizerTestBase):
 
     test_cases_query = [
         # (query, tokens)
-        (u'wifi', [u'wifi']),
-        (u'WiFi', [u'wi', u'fi']),
-        (u'Wi-Fi', [u'wi', u'fi']),
-        (u'some item name', [u'some', u'item', u'name']),
-        (u'SomeItem/SubItem', [u'some', u'item', u'sub', u'item']),
-        (u'GSOC2011', [u'gsoc', u'2011'])
+        ('wifi', ['wifi']),
+        ('WiFi', ['wi', 'fi']),
+        ('Wi-Fi', ['wi', 'fi']),
+        ('some item name', ['some', 'item', 'name']),
+        ('SomeItem/SubItem', ['some', 'item', 'sub', 'item']),
+        ('GSOC2011', ['gsoc', '2011'])
     ]
 
     test_cases_index = [
-        (u'some item name', [u'some', u'item', u'name']),
-        (u'SomeItem/SubItem', [u'some', u'item', u'sub', u'item', u'someitemsubitem']),
-        (u'GSOC2011', [u'gsoc', u'2011'])
+        ('some item name', ['some', 'item', 'name']),
+        ('SomeItem/SubItem', ['some', 'item', 'sub', 'item', 'someitemsubitem']),
+        ('GSOC2011', ['gsoc', '2011'])
     ]
 
     def make_tokenizer(self):

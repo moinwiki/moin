@@ -243,7 +243,7 @@ class Converter(object):
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
-        docbook_str = u'\n'.join(content)
+        docbook_str = '\n'.join(content)
         logging.debug(docbook_str)
 
         # Initalize our attributes
@@ -527,7 +527,7 @@ class Converter(object):
           --> <blockquote source="Unknow">Text</blockquote>
         """
         # TODO: Translate
-        source = u"Unknow"
+        source = "Unknow"
         children = []
         for child in element:
             if isinstance(child, ET.Element):
@@ -986,9 +986,9 @@ class Converter(object):
         Docbook supports 4 types of trademark: copyright, registered, trade (mark), and service (mark).
         <trademark> --> <span class="db-trademark">
         """
-        trademark_entities = {'copyright': u'\xa9 ',  # '&copy; ',
-                              'registered': u'\xae',  # u'&reg;',
-                              'trade': u'\u2122',  # no entity name defined for superscript TM
+        trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
+                              'registered': '\xae',  # u'&reg;',
+                              'trade': '\u2122',  # no entity name defined for superscript TM
         }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
@@ -1015,9 +1015,9 @@ class Converter(object):
         colspan = element.get('morecols')
         try:
             if rowspan:
-                attrib[moin_page.number_rows_spanned] = unicode(1 + int(rowspan))
+                attrib[moin_page.number_rows_spanned] = str(1 + int(rowspan))
             if colspan:
-                attrib[moin_page.number_columns_spanned] = unicode(1 + int(colspan))
+                attrib[moin_page.number_columns_spanned] = str(1 + int(colspan))
         except ValueError:
             pass
         return self.new_copy(moin_page.table_cell,

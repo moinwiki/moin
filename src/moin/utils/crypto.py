@@ -24,7 +24,7 @@ from passlib.pwd import genword
 
 
 def make_uuid():
-    return unicode(uuid4().hex)
+    return str(uuid4().hex)
 
 
 UUID_LEN = len(make_uuid())
@@ -75,8 +75,8 @@ def generate_token(key=None, stamp=None):
     if stamp is None:
         stamp = int(time.time())
     h = hmac.new(str(key), str(stamp), digestmod=hashlib.sha256).hexdigest()
-    token = u"{0}-{1}".format(stamp, h)
-    return unicode(key), token
+    token = "{0}-{1}".format(stamp, h)
+    return str(key), token
 
 
 def valid_token(key, token, timeout=2 * 60 * 60):

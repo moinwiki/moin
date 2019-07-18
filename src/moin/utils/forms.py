@@ -45,7 +45,7 @@ button_filter.tags = {'input', 'button'}
 def required_filter(tagname, attributes, contents, context, bind):
     if bind is not None and not bind.optional:
         if tagname == 'input':
-            attributes[u'required'] = u'required'
+            attributes['required'] = 'required'
     return contents
 
 
@@ -56,7 +56,7 @@ def autofocus_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
         autofocus = bind.properties.get('autofocus')
         if autofocus:
-            attributes[u'autofocus'] = u'autofocus'
+            attributes['autofocus'] = 'autofocus'
     return contents
 
 
@@ -67,7 +67,7 @@ def placeholder_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
         placeholder = bind.properties.get('placeholder')
         if placeholder:
-            attributes[u'placeholder'] = placeholder
+            attributes['placeholder'] = placeholder
     return contents
 
 

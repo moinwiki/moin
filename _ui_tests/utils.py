@@ -41,7 +41,7 @@ def generate_random_word(length):
     """
     generates a random string containing numbers, of length 'length'
     """
-    word = unicode(random.randint(10 ** (length - 1), 10 ** length))
+    word = str(random.randint(10 ** (length - 1), 10 ** length))
     return word
 
 

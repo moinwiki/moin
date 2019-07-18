@@ -28,14 +28,14 @@ class LocalConfig(Config):
     data_dir = os.path.join(instance_dir, 'data')
 
     # sitename is displayed in heading of all wiki pages
-    sitename = u'My MoinMoin'
+    sitename = 'My MoinMoin'
 
     # default root, use this to change the name of the default page
     # default_root = u'Home'  # FrontPage, Main, etc
 
     # options for new user registration
     registration_only_by_superuser = True  # if email configured, superuser can do > Admin > Register New User
-    registration_hint = u'To request an account, see bottom of <a href="/Home">Home</a> page.'
+    registration_hint = 'To request an account, see bottom of <a href="/Home">Home</a> page.'
     # to create a new user without configuring email, use the terminal/command/bash window
     # . activate  # windows: activate
     # moin account-create -n JaneDoe  -e j@jane.doe -p secretpasssword
@@ -62,18 +62,18 @@ class LocalConfig(Config):
 
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
-        default_acl=dict(before=u'JaneDoe,JoeDoe:read,write,create,destroy,admin',
-                         default=u'Known:read,write,create,destroy,admin All:read',
-                         after=u'',
+        default_acl=dict(before='JaneDoe,JoeDoe:read,write,create,destroy,admin',
+                         default='Known:read,write,create,destroy,admin All:read',
+                         after='',
                          hierarchic=False, ),
-        users_acl=dict(before=u'JaneDoe,JoeDoe:read,write,create,destroy,admin',
-                       default=u'Known:read,write,create,destroy,admin All:read',
-                       after=u'',
+        users_acl=dict(before='JaneDoe,JoeDoe:read,write,create,destroy,admin',
+                       default='Known:read,write,create,destroy,admin All:read',
+                       after='',
                        hierarchic=False, ),
         # userprofiles contain only metadata, no content will be created
-        userprofiles_acl=dict(before=u'All:',
-                              default=u'',
-                              after=u'',
+        userprofiles_acl=dict(before='All:',
+                              default='',
+                              after='',
                               hierarchic=False, ),
     )
 

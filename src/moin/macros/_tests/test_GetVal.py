@@ -17,11 +17,11 @@ class TestMacro(object):
     @pytest.fixture
     def test_dict(self):
         become_trusted()
-        somedict = {u"One": u"1",
-                    u"Two": u"2"}
-        update_item(u'TestDict', {SOMEDICT: somedict}, "This is a dict item.")
+        somedict = {"One": "1",
+                    "Two": "2"}
+        update_item('TestDict', {SOMEDICT: somedict}, "This is a dict item.")
 
-        return u"TestDict"
+        return "TestDict"
 
     def test_Macro(self, test_dict):
         macro_obj = Macro()
@@ -33,11 +33,11 @@ class TestMacro(object):
             with pytest.raises(ValueError):
                 macro_obj.macro('content', arguments, 'page_url', 'alternative')
 
-        arguments = [u'TestDict, One']
+        arguments = ['TestDict, One']
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-        assert result == u'1'
+        assert result == '1'
 
         # change the value of second element
-        arguments = [u'TestDict, Two']
+        arguments = ['TestDict, Two']
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-        assert result == u'2'
+        assert result == '2'
