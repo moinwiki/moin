@@ -458,30 +458,30 @@ class TarMixin:
         to a new item revision.
 
         :param name: name of the data in the container file
-        :param content: the data to store into the tar file (str or file-like)
-        :param content_length: byte-length of content (for str, None can be given)
+        :param content: the data to store into the tar file (bytes or file-like)
+        :param content_length: byte-length of content (for bytes, None can be given)
         :param expected_members: set of expected member file names
         """
         if name not in expected_members:
             raise StorageError("tried to add unexpected member {0!r} to container item {1!r}".format(name, self.name))
-        if isinstance(name, str):
-            name = name.encode('utf-8')
+        assert isinstance(name, str)
         temp_fname = os.path.join(tempfile.gettempdir(), 'TarContainer_' +
                                   cache_key(usage='TarContainer', name=self.name))
-        tf = tarfile.TarFile(temp_fname, mode='a')
-        ti = tarfile.TarInfo(name)
-        if isinstance(content, bytes):
-            if content_length is None:
-                content_length = len(content)
-            content = BytesIO(content)  # we need a file obj
-        elif not hasattr(content, 'read'):
-            logging.error("unsupported content object: {0!r}".format(content))
-            raise StorageError("unsupported content object: {0!r}".format(content))
-        assert content_length >= 0  # we don't want -1 interpreted as 4G-1
-        ti.size = content_length
-        tf.addfile(ti, content)
-        tf_members = set(tf.getnames())
-        tf.close()
+        with tarfile.open(temp_fname, mode='a') as tf:
+            ti = tarfile.TarInfo(name)
+            if isinstance(content, bytes):
+                if content_length is None:
+                    content_length = len(content)
+                content = BytesIO(content)  # we need a file obj
+            elif not hasattr(content, 'read'):
+                logging.error("unsupported content object: {0!r}".format(content))
+                raise StorageError("unsupported content object: {0!r}".format(content))
+            else:
+                raise NotImplemented
+            assert content_length >= 0  # we don't want -1 interpreted as 4G-1
+            ti.size = content_length
+            tf.addfile(ti, content)
+            tf_members = set(tf.getnames())
         if tf_members - expected_members:
             msg = "found unexpected members in container item {0!r}".format(self.name)
             logging.error(msg)
@@ -490,9 +490,8 @@ class TarMixin:
         if tf_members == expected_members:
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
-            data = open(temp_fname, 'rb')
-            self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
-            data.close()
+            with open(temp_fname, 'rb') as data:
+                self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
             os.remove(temp_fname)
 
 
