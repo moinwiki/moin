@@ -113,7 +113,7 @@ if pygments:
         def __call__(self, data, contenttype=None, arguments=None):
             text = decode_data(data, contenttype)
             content = normalize_split_text(text)
-            content = u'\n'.join(content)
+            content = '\n'.join(content)
             blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
             pygments.highlight(content, self.lexer, TreeFormatter(), blockcode)
             body = moin_page.body(children=(blockcode, ))

@@ -202,7 +202,7 @@ class LdapEnvironment(object):
             'rootdn': self.rootdn,
             'rootpw': rootpw,
         }
-        if isinstance(slapd_config, unicode):
+        if isinstance(slapd_config, str):
             slapd_config = slapd_config.encode(self.coding)
         self.slapd_conf = os.path.join(self.ldap_dir, "slapd.conf")
         f = open(self.slapd_conf, 'w')

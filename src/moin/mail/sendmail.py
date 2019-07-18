@@ -39,7 +39,7 @@ def encodeAddress(address, charset):
     :rtype: string
     :returns: encoded address
     """
-    assert isinstance(address, unicode)
+    assert isinstance(address, str)
     composite = re.compile(r'(?P<phrase>.*?)(?P<blanks>\s*)<(?P<addr>.*)>', re.UNICODE)
     match = composite.match(address)
     if match:
@@ -106,7 +106,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     subject = subject.encode(CHARSET)
 
     # Create a text/plain body using CRLF (see RFC2822)
-    text = text.replace(u'\n', u'\r\n')
+    text = text.replace('\n', '\r\n')
     text = text.encode(CHARSET)
 
     # Create a message using CHARSET and quoted printable

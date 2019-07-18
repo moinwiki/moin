@@ -12,4 +12,4 @@ def test_Macro():
     arguments = ['test text']
     macro_obj = Macro()
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    assert result == u'test text'
+    assert result == 'test text'

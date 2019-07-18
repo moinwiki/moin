@@ -49,7 +49,7 @@ def split_body(body):
     for key, value in pi.items():
         if key in ['acl', ]:
             # join the list of values to a single value
-            pi[key] = u' '.join(value)
+            pi[key] = ' '.join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
             pi[key] = value[-1] # use the last value to copy 1.9 parsing behaviour
@@ -127,7 +127,7 @@ def unquoteWikiname(filename, charset=CHARSET):
     :returns: WikiName
     """
     # From some places we get called with Unicode strings
-    if isinstance(filename, unicode):
+    if isinstance(filename, str):
         filename = filename.encode(CHARSET)
 
     parts = []

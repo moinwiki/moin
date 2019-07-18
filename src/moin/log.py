@@ -178,7 +178,7 @@ class EmailHandler(logging.Handler):
     """ A custom handler class which sends email for each logging event using
     wiki mail configuration
     """
-    def __init__(self, toaddrs=[], subject=u''):
+    def __init__(self, toaddrs=[], subject=''):
         """ Initialize the handler
 
         :param toaddrs: address or a list of email addresses whom to send email
@@ -215,7 +215,7 @@ class EmailHandler(logging.Handler):
         try:
             toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
             log_level = logging.getLevelName(self.level)
-            subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
+            subject = self.subject if self.subject else '[{0}][{1}] Log message'.format(
                 app.cfg.sitename, log_level)
             msg = self.format(record)
             from moin.mail.sendmail import sendmail

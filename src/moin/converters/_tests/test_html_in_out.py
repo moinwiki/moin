@@ -37,10 +37,10 @@ class Base(object):
     def handle_input(self, input, args):
         out = self.conv_html_dom(input, **args)
         output = serialize(out, namespaces=self.namespaces)
-        logging.debug("After the HTML_IN conversion : {0}".format(self.output_re.sub(u'', output)))
+        logging.debug("After the HTML_IN conversion : {0}".format(self.output_re.sub('', output)))
         out = self.conv_dom_html(out, **args)
         output = serialize(out, namespaces=self.namespaces)
-        return self.output_re.sub(u'', output)
+        return self.output_re.sub('', output)
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})

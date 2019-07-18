@@ -41,7 +41,7 @@ class Base(object):
     def handle_input(self, input, args):
         out = self.conv(input, **args)
         output = serialize(out, namespaces=self.namespaces)
-        return self.output_re.sub(u'', output)
+        return self.output_re.sub('', output)
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})

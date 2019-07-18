@@ -22,8 +22,8 @@ class TestFeeds(object):
             assert '</feed>' in rv.data
 
     def test_global_atom_with_an_item(self, app):
-        basename = u'Foo'
-        update_item(basename, {COMMENT: u"foo data for feed item"}, '')
+        basename = 'Foo'
+        update_item(basename, {COMMENT: "foo data for feed item"}, '')
         with app.test_client() as c:
             rv = c.get(url_for('feed.atom'))
             assert rv.status == '200 OK'
@@ -32,7 +32,7 @@ class TestFeeds(object):
             assert "foo data for feed item" in rv.data
 
         # tests the cache invalidation
-        update_item(basename, {COMMENT: u"checking if the cache invalidation works"}, '')
+        update_item(basename, {COMMENT: "checking if the cache invalidation works"}, '')
         with app.test_client() as c:
             rv = c.get(url_for('feed.atom'))
             assert rv.status == '200 OK'

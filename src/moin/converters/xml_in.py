@@ -18,12 +18,12 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-RX_STRIPXML = re.compile(u"<[^>]*?>", re.U | re.DOTALL | re.MULTILINE)
+RX_STRIPXML = re.compile("<[^>]*?>", re.U | re.DOTALL | re.MULTILINE)
 
 
 def strip_xml(text):
-    text = RX_STRIPXML.sub(u" ", text)
-    text = u' '.join(text.split())
+    text = RX_STRIPXML.sub(" ", text)
+    text = ' '.join(text.split())
     return text
 
 

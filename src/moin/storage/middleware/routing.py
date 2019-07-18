@@ -52,7 +52,7 @@ class Backend(MutableBackendBase):
         self.namespaces = namespaces
         self.backends = backends
         for namespace, backend_name in namespaces:
-            assert isinstance(namespace, unicode)
+            assert isinstance(namespace, str)
             assert backend_name in backends
 
     def open(self):
@@ -118,7 +118,7 @@ class Backend(MutableBackendBase):
                 raise ValueError('can not determine namespace: empty NAME list, no NAMESPACE metadata present')
         else:
             if namespace:
-                namespace += u':'  # needed for _get_backend
+                namespace += ':'  # needed for _get_backend
             backend_name, _, _ = self._get_backend([namespace])
         backend = self.backends[backend_name]
 

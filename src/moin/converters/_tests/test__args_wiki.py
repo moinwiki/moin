@@ -11,17 +11,17 @@ from moin.converters._args_wiki import Arguments, parse, unparse
 
 
 @pytest.mark.parametrize('wiki,positional,keyword', [
-    (ur'both positional both=foo keyword=bar',
-     [u'both', u'positional'],
-     {u'both': u'foo', u'keyword': u'bar'}),
+    (r'both positional both=foo keyword=bar',
+     ['both', 'positional'],
+     {'both': 'foo', 'keyword': 'bar'}),
 
-    (ur'a-b a_b a-c=foo a_c=bar',
-     [u'a-b', u'a_b'],
-     {u'a-c': u'foo', u'a_c': u'bar'}),
+    (r'a-b a_b a-c=foo a_c=bar',
+     ['a-b', 'a_b'],
+     {'a-c': 'foo', 'a_c': 'bar'}),
 
-    (ur'''"a b\tc\nd" k="a b\tc\nd"''',
-     [u'a b\tc\nd'],
-     {u'k': u'a b\tc\nd'}),
+    (r'''"a b\tc\nd" k="a b\tc\nd"''',
+     ['a b\tc\nd'],
+     {'k': 'a b\tc\nd'}),
 ])
 def test(wiki, positional, keyword):
     a = parse(wiki)
@@ -33,6 +33,6 @@ def test(wiki, positional, keyword):
 
 
 def test_parse():
-    a = parse(ur''''a b\tc\nd',k="a b\tc\nd"''')
-    assert a.positional == [u'a b\tc\nd']
-    assert a.keyword == {u'k': u'a b\tc\nd'}
+    a = parse(r''''a b\tc\nd',k="a b\tc\nd"''')
+    assert a.positional == ['a b\tc\nd']
+    assert a.keyword == {'k': 'a b\tc\nd'}

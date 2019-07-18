@@ -244,7 +244,7 @@ class Converter(object):
         attrib[key] = 'line-through'
         return self.new_copy(moin_page.span, element, attrib)
 
-    def visit_hr(self, element, default_class=u'moin-hr3'):
+    def visit_hr(self, element, default_class='moin-hr3'):
         return self.new_copy(moin_page.separator, element, {moin_page.class_: default_class})
 
     def visit_img(self, element):
@@ -280,7 +280,7 @@ class Converter(object):
             attrib[key] = element.get(html.data)
 
         # Convert the href attribute into unicode
-        attrib[key] = unicode(attrib[key])
+        attrib[key] = str(attrib[key])
         return moin_page.object(attrib)
 
     def visit_inline(self, element):
@@ -352,7 +352,7 @@ class Converter(object):
     def convert_align_to_class(self, attrib):
         attr = {}
         alignment = attrib.get('align')
-        if alignment in (u'right', u'center', u'left'):
+        if alignment in ('right', 'center', 'left'):
             attr[moin_page.class_] = alignment
         return attr
 
@@ -413,7 +413,7 @@ class Converter(object):
         """
         new = []
         # copy anything but '\n'
-        if hasattr(element, "text") and element.text is not None and element.text != u'\n':
+        if hasattr(element, "text") and element.text is not None and element.text != '\n':
             new.append(postproc_text(self.markdown, element.text))
 
         for child in element:
@@ -427,7 +427,7 @@ class Converter(object):
                 r = (r, )
             new.extend(r)
             # copy anything but '\n'
-            if hasattr(child, "tail") and child.tail is not None and child.tail != u'\n':
+            if hasattr(child, "tail") and child.tail is not None and child.tail != '\n':
                 new.append(postproc_text(self.markdown, child.tail))
         return new
 
@@ -453,16 +453,16 @@ class Converter(object):
         line_numbers = deque()
         lineno = 1
         in_blockquote = False
-        blocks = text.split(u'\n\n')
+        blocks = text.split('\n\n')
         for block in blocks:
             if not block:
                 # bump count because empty blocks will be discarded
                 lineno += 2
                 continue
-            line_count = block.count(u'\n')
+            line_count = block.count('\n')
 
             # detect and fix the problem of interspersed blank lines within blockquotes
-            if block.startswith(u'    ') or block.startswith(u'\n    '):
+            if block.startswith('    ') or block.startswith('\n    '):
                 if in_blockquote:
                     lineno += line_count + 2
                     continue
@@ -470,7 +470,7 @@ class Converter(object):
             else:
                 in_blockquote = False
 
-            if block.startswith(u'\n'):
+            if block.startswith('\n'):
                 lineno += 1
                 line_numbers.append(lineno)
                 lineno += line_count + 2 - 1  # -1 is already in count
@@ -492,7 +492,7 @@ class Converter(object):
         """
         try:
             # we enclose plain text and block tags with DIV-tags
-            p_text = html_in_converter(u'<div>%s</div>' % text)
+            p_text = html_in_converter('<div>%s</div>' % text)
             # discard page and body tags
             return p_text[0][0]
         except AssertionError:
@@ -506,8 +506,8 @@ class Converter(object):
         :param node: a tree node
         """
         for idx, child in enumerate(node):
-            if isinstance(child, unicode):
-                if u'<' in child:
+            if isinstance(child, str):
+                if '<' in child:
                     node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
             else:
                 # do not convert markup within a <pre> tag
@@ -525,10 +525,10 @@ class Converter(object):
         """
         for child in node:
             # TODO: bug in codehilite? <, > are returned as string (not unicode) given ~~~{html}\n<html>\n~~~
-            if not isinstance(child, (unicode, str)):
+            if not isinstance(child, (str, str)):
                 if child.tag == moin_page.p and len(child):
                     for grandchild in child:
-                        if not isinstance(grandchild, unicode) and grandchild.tag in BLOCK_ELEMENTS:
+                        if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
 

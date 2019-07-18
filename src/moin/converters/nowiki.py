@@ -70,7 +70,7 @@ class Converter(object):
             optional_args = nowiki_name if not optional_args else nowiki_name + ' ' + optional_args
             nowiki_name = 'highlight'
 
-        if nowiki_name == u'highlight':
+        if nowiki_name == 'highlight':
             # TODO: support moin 1.9 options like numbers=on start=222 step=10
             optional_args = optional_args.split()[0]  # ignore all parameters except lexer name
             try:
@@ -98,7 +98,7 @@ class Converter(object):
                     delim = optional_args.split()[0]  # ignore all parameters except a delimiter in first position
                     if len(delim) > 1:
                         delim = None
-            sep = delim or u';'
+            sep = delim or ';'
             content = content.split('\n')
             head = content[0].split(sep)
             rows = [x.split(sep) for x in content[1:]]
@@ -115,7 +115,7 @@ class Converter(object):
             # reparse arguments from original: {{{#!wiki solid/orange (style="color: red;")
             wiki_args = parse_arguments(all_nowiki_args[0][2:])
             if len(wiki_args.positional) > 1:
-                wiki_args.keyword['class'] = u' '.join(wiki_args.positional[1:])
+                wiki_args.keyword['class'] = ' '.join(wiki_args.positional[1:])
             del wiki_args.positional[:]
             body = moinwiki.parse_block(lines, wiki_args)
             page = moin_page.page(children=(body, ))
@@ -135,21 +135,21 @@ class Converter(object):
         if nowiki_name in ('rst', 'text/x-rst'):
             from .rst_in import Converter as rst_converter
             rst = rst_converter()
-            page = rst(content, contenttype=u'text/x-rst;charset=utf-8')
+            page = rst(content, contenttype='text/x-rst;charset=utf-8')
             elem.append(page)
             return
 
         if nowiki_name in ('docbook', 'application/docbook+xml'):
             from .docbook_in import Converter as docbook_converter
             docbook = docbook_converter()
-            page = docbook(content, contenttype=u'application/docbook+xml;charset=utf-8')
+            page = docbook(content, contenttype='application/docbook+xml;charset=utf-8')
             elem.append(page)
             return
 
         if nowiki_name in ('markdown', 'text/x-markdown'):
             from .markdown_in import Converter as markdown_converter
             markdown = markdown_converter()
-            page = markdown(content, contenttype=u'text/x-markdown;charset=utf-8')
+            page = markdown(content, contenttype='text/x-markdown;charset=utf-8')
             elem.append(page)
             return
 

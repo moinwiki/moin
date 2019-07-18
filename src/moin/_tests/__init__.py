@@ -23,7 +23,7 @@ from moin.utils.crypto import random_string
 # need more privs...
 
 
-def become_valid(username=u"ValidUser"):
+def become_valid(username="ValidUser"):
     """ modify flaskg.user to make the user valid.
         Note that a valid user will only be in ACL special group "Known", if
         we have a user profile for this user as the ACL system will check if
@@ -36,7 +36,7 @@ def become_valid(username=u"ValidUser"):
     flaskg.user.valid = 1
 
 
-def become_trusted(username=u"TrustedUser"):
+def become_trusted(username="TrustedUser"):
     """ modify flaskg.user to make the user valid and trusted, so it is in acl group Trusted """
     become_valid(username)
     flaskg.user.trusted = True
@@ -46,7 +46,7 @@ def become_trusted(username=u"TrustedUser"):
 
 def update_item(name, meta, data):
     """ creates or updates an item  """
-    if isinstance(data, unicode):
+    if isinstance(data, str):
         data = data.encode(CHARSET)
     item = flaskg.storage[name]
 
@@ -54,7 +54,7 @@ def update_item(name, meta, data):
     if NAME not in meta:
         meta[NAME] = [name, ]
     if CONTENTTYPE not in meta:
-        meta[CONTENTTYPE] = u'application/octet-stream'
+        meta[CONTENTTYPE] = 'application/octet-stream'
     rev = item.store_revision(meta, BytesIO(data), return_rev=True)
     return rev
 
@@ -62,7 +62,7 @@ def update_item(name, meta, data):
 def create_random_string_list(length=14, count=10):
     """ creates a list of random strings """
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    return [u"{0}".format(random_string(length, chars)) for counter in range(count)]
+    return ["{0}".format(random_string(length, chars)) for counter in range(count)]
 
 
 def nuke_item(name):

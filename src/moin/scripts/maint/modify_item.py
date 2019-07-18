@@ -18,13 +18,13 @@ from moin.utils.interwiki import split_fqname
 class GetItem(Command):
     description = 'Get an item revision from the wiki.'
     option_list = (
-        Option('--name', '-n', dest='name', type=unicode, required=True,
+        Option('--name', '-n', dest='name', type=str, required=True,
                help='Name of the item to get.'),
-        Option('--revid', '-r', dest='revid', type=unicode, required=False, default=CURRENT,
+        Option('--revid', '-r', dest='revid', type=str, required=False, default=CURRENT,
                help='Revision ID of the revision to get (default: current rev).'),
-        Option('--meta', '-m', dest='meta_file', type=unicode, required=True,
+        Option('--meta', '-m', dest='meta_file', type=str, required=True,
                help='Filename of file to create for the metadata.'),
-        Option('--data', '-d', dest='data_file', type=unicode, required=True,
+        Option('--data', '-d', dest='data_file', type=str, required=True,
                help='Filename of file to create for the data.'),
     )
 
@@ -47,9 +47,9 @@ class GetItem(Command):
 class PutItem(Command):
     description = 'Put an item revision into the wiki.'
     option_list = (
-        Option('--meta', '-m', dest='meta_file', type=unicode, required=True,
+        Option('--meta', '-m', dest='meta_file', type=str, required=True,
                help='Filename of file to read as metadata.'),
-        Option('--data', '-d', dest='data_file', type=unicode, required=True,
+        Option('--data', '-d', dest='data_file', type=str, required=True,
                help='Filename of file to read as data.'),
         Option('--overwrite', '-o', action='store_true', dest='overwrite', default=False,
                help='If given, overwrite existing revisions, if requested.'),

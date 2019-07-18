@@ -24,10 +24,10 @@ def main():
         elif c.isspace():
             space.append(str)
 
-    chars_upper = u''.join(uppercase)
-    chars_lower = u''.join(lowercase + digits)
-    chars_digits = u''.join(digits)
-    chars_spaces = u''.join(space)
+    chars_upper = ''.join(uppercase)
+    chars_lower = ''.join(lowercase + digits)
+    chars_digits = ''.join(digits)
+    chars_spaces = ''.join(space)
 
     print("""
 CHARS_UPPER = u"%(chars_upper)s"

@@ -54,9 +54,9 @@ def atom(item_name):
         cid = None
     if content is None:
         if not item_name:
-            title = u"{0}".format(app.cfg.sitename)
+            title = "{0}".format(app.cfg.sitename)
         else:
-            title = u"{0} - {1}".format(app.cfg.sitename, item_name)
+            title = "{0} - {1}".format(app.cfg.sitename, item_name)
         feed = AtomFeed(title=title, feed_url=request.url, url=request.host_url)
         query = Term(WIKINAME, app.cfg.interwikiname)
         if item_name:
@@ -81,7 +81,7 @@ def atom(item_name):
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
-                content = _(u'MoinMoin feels unhappy.')
+                content = _('MoinMoin feels unhappy.')
                 content_type = 'text'
             author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, '')
@@ -90,12 +90,12 @@ def atom(item_name):
                 if len(rev_comment) > 80:
                     content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:],
                                               content=Markup(content))
-                    rev_comment = u"{0}...".format(rev_comment[:79])
-                feed_title = u"{0} - {1}".format(author.get(NAME, ''), rev_comment)
+                    rev_comment = "{0}...".format(rev_comment[:79])
+                feed_title = "{0} - {1}".format(author.get(NAME, ''), rev_comment)
             else:
-                feed_title = u"{0}".format(author.get(NAME, ''))
+                feed_title = "{0}".format(author.get(NAME, ''))
             if not item_name:
-                feed_title = u"{0} - {1}".format(name, feed_title)
+                feed_title = "{0} - {1}".format(name, feed_title)
             feed.add(title=feed_title, title_type='text',
                      summary=content, summary_type=content_type,
                      author=author,

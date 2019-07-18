@@ -24,11 +24,11 @@ from moin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    (u'Foo', {NAME: [u'Foo', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
-    (u'Foo', {NAME: [u'Foo', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, '2nd'),
-    (u'Subdir', {NAME: [u'Subdir', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
-    (u'Subdir/Foo', {NAME: [u'Subdir/Foo', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
-    (u'Subdir/Bar', {NAME: [u'Subdir/Bar', ], CONTENTTYPE: u'text/plain;charset=utf-8'}, ''),
+    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
+    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, '2nd'),
+    ('Subdir', {NAME: ['Subdir', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
+    ('Subdir/Foo', {NAME: ['Subdir/Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
+    ('Subdir/Bar', {NAME: ['Subdir/Bar', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, ''),
 ]
 
 
@@ -59,8 +59,8 @@ def make_middleware(request, tmpdir):
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)
-    namespaces = [(NAMESPACE_DEFAULT, u'backend')]
-    backends = {u'backend': _backend}
+    namespaces = [(NAMESPACE_DEFAULT, 'backend')]
+    backends = {'backend': _backend}
     backend = RoutingBackend(namespaces, backends)
     backend.create()
     backend.open()

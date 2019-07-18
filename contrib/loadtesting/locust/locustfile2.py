@@ -211,7 +211,7 @@ class UserSequence(TaskSequence):
 
     @seq_task(8)
     def logout(self):
-        response = self.client.get(u"/+logout?logout_submit=1")
+        response = self.client.get("/+logout?logout_submit=1")
         if response.status_code != 200:
             print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
@@ -233,11 +233,11 @@ class WebsiteUser(HttpLocust):
                 host = host[:-1]
 
             print('==== creating Home ====')
-            url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+            url = host + "/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
             data = urllib.parse.urlencode({"content_form_data_text": "= Home =\n * created by Locust",
                                      "comment": "",
                                      "submit": "OK",
-                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype": "default",
                                      "meta_form_acl": "None",
                                      "meta_form_tags": "None",

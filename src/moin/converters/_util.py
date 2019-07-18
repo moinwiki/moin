@@ -38,7 +38,7 @@ def decode_data(data, contenttype=None):
     file-like objects and str need to be either utf-8 (or ascii, which is a subset of utf-8)
     encoded or contenttype (including a charset parameter) needs to be given.
     """
-    if not isinstance(data, (str, unicode)):
+    if not isinstance(data, (str, str)):
         data = data.data.read()
     if isinstance(data, str):
         coding = 'utf-8'
@@ -46,7 +46,7 @@ def decode_data(data, contenttype=None):
             ct = Type(contenttype)
             coding = ct.parameters.get('charset', coding)
         data = data.decode(coding)
-    if not isinstance(data, unicode):
+    if not isinstance(data, str):
         raise TypeError("data must be rev or str (requires contenttype with charset) or unicode, "
                         "but we got {0!r}".format(data))
     return data
@@ -56,8 +56,8 @@ def normalize_split_text(text):
     """
     normalize line endings, split text into a list of lines
     """
-    text = text.replace(u'\r\n', u'\n')
-    lines = text.split(u'\n')
+    text = text.replace('\r\n', '\n')
+    lines = text.split('\n')
     return lines
 
 

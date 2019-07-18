@@ -61,10 +61,10 @@ class SMBMount(BaseAuth):
 
         mountpoint = self.mountpoint_fn(username)
         if login:
-            cmd = (u"sudo mount -t cifs -o user=%(user)s,domain=%(domain)s,uid=%(uid)d,dir_mode=%(dir_mode)s,file_mode="
-                   u"%(file_mode)s,iocharset=%(iocharset)s //%(server)s/%(share)s %(mountpoint)s >>%(log)s 2>&1")
+            cmd = ("sudo mount -t cifs -o user=%(user)s,domain=%(domain)s,uid=%(uid)d,dir_mode=%(dir_mode)s,file_mode="
+                   "%(file_mode)s,iocharset=%(iocharset)s //%(server)s/%(share)s %(mountpoint)s >>%(log)s 2>&1")
         else:
-            cmd = u"sudo umount %(mountpoint)s >>%(log)s 2>&1"
+            cmd = "sudo umount %(mountpoint)s >>%(log)s 2>&1"
 
         cmd = cmd % {
             'user': username,

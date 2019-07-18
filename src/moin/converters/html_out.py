@@ -64,7 +64,7 @@ def mark_item_as_transclusion(elem, href):
     On the client side, a Javascript function will wrap the element (or a parent element)
     in a span or div and 2 overlay siblings will be created.
     """
-    href = unicode(href)
+    href = str(href)
     # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
     # or "http://Some.Org/SomeThing" for external link
     if elem.tag.name not in ('object', 'img'):
@@ -221,7 +221,7 @@ class Converter(object):
         href = elem.get(_tag_xlink_href)
         if href:
             attrib[_tag_html_href] = href
-        if len(elem) == 1 and isinstance(elem[0], unicode) and elem[0] == u'':
+        if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == '':
             # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
             elem[0] = href.path[1:]
         # html attibutes are copied by default (html.target, html.class, html.download...
@@ -446,7 +446,7 @@ class Converter(object):
         if href is not None:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
-        alt = convert_getlink_to_showlink(unicode(href))
+        alt = convert_getlink_to_showlink(str(href))
         alt = re.sub(r'^/', '', alt)
 
         if obj_type == "img":
@@ -589,7 +589,7 @@ class Converter(object):
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if len(elem) > 1 + caption and html('class') in attrib and u'moin-wiki-table' in attrib[html('class')]:
+                if len(elem) > 1 + caption and html('class') in attrib and 'moin-wiki-table' in attrib[html('class')]:
                     # moinwiki tables require special handling because
                     # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
                     if idx == 0 + caption:
@@ -644,7 +644,7 @@ class SpecialId(object):
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         if nr == 1:
             return id
-        return id + u'-{0}'.format(nr)
+        return id + '-{0}'.format(nr)
 
 
 class SpecialPage(object):
@@ -792,7 +792,7 @@ class ConverterPage(Converter):
             elem.set(_tag_html_id, id)
         try:
             # do not create duplicate anchors to this heading when converting from one markup to another
-            if not elem[-1].attrib[html.class_] == u'moin-permalink':
+            if not elem[-1].attrib[html.class_] == 'moin-permalink':
                 self._special_stack[-1].add_heading(elem, elem.level, id)
         except (AttributeError, KeyError):
             self._special_stack[-1].add_heading(elem, elem.level, id)

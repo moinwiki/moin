@@ -138,7 +138,7 @@ def get_names(meta):
     elif isinstance(names, str):
         logging.warning(msg % names)
         names = [names.decode('utf-8'), ]
-    elif isinstance(names, unicode):
+    elif isinstance(names, str):
         logging.warning(msg % names)
         names = [names, ]
     elif isinstance(names, tuple):
@@ -237,13 +237,13 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
         logging.debug("not indexing content of {0!r} as requested by configuration".format(meta[NAME]))
-        return u''
+        return ''
 
     if not item_name:
         try:
             item_name = get_names(meta)[0]
         except IndexError:
-            item_name = u'DoesNotExist'
+            item_name = 'DoesNotExist'
 
     rev = PseudoRev(meta, data)
     try:
@@ -276,7 +276,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             if is_new:
                 # we only can modify new, uncommitted revisions, not stored revs
                 i = Iri(scheme='wiki', authority='', path='/' + item_name)
-                doc.set(moin_page.page_href, unicode(i))
+                doc.set(moin_page.page_href, str(i))
                 refs_conv(doc)
                 # side effect: we update some metadata:
                 meta[ITEMLINKS] = refs_conv.get_links()
@@ -289,7 +289,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
         logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(
                           item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
-        doc = u'ERROR [{0!s}]'.format(e)
+        doc = 'ERROR [{0!s}]'.format(e)
         return doc
 
 
@@ -729,8 +729,8 @@ class IndexingMiddleware(object):
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
-                    name = doc.pop(NAME, u"")
-                    content = doc.pop(CONTENT, u"")
+                    name = doc.pop(NAME, "")
+                    content = doc.pop(CONTENT, "")
                     yield [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]
         finally:
             ix.close()
@@ -890,12 +890,12 @@ class PropertiesMixin(object):
             except IndexError:
                 # empty name list, no name:
                 name = None
-        assert isinstance(name, unicode) or not name
+        assert isinstance(name, str) or not name
         return name
 
     @property
     def namespace(self):
-        return self.meta.get(NAMESPACE, u'')
+        return self.meta.get(NAMESPACE, '')
 
     def _fqname(self, name=None):
         """
@@ -1103,7 +1103,7 @@ class Item(PropertiesMixin):
         if remote_addr is None:
             try:
                 # if we get here outside a request, this won't work:
-                remote_addr = unicode(request.remote_addr)
+                remote_addr = str(request.remote_addr)
             except:  # noqa
                 pass
         if userid is None:

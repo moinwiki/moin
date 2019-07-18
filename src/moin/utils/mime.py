@@ -57,16 +57,16 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
         return NotImplemented
 
     def __unicode__(self):
-        ret = [u'{0}/{1}'.format(self.type or '*', self.subtype or '*')]
+        ret = ['{0}/{1}'.format(self.type or '*', self.subtype or '*')]
 
         parameters = sorted(self.parameters.items())
         for key, value in parameters:
             if self.__token_check(value):
-                ret.append(u'{0}={1}'.format(key, value))
+                ret.append('{0}={1}'.format(key, value))
             else:
-                ret.append(u'{0}="{1}"'.format(key, value))
+                ret.append('{0}="{1}"'.format(key, value))
 
-        return u';'.join(ret)
+        return ';'.join(ret)
 
     def __token_check(self, value):
         token_allowed = self.__token_allowed

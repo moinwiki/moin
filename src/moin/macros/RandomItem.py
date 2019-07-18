@@ -54,7 +54,7 @@ class Macro(MacroPageLinkListBase):
 
         result = moin_page.span()
         for name in random_item_names:
-            link = unicode(Iri(scheme=u'wiki', authority=u'', path=u'/' + name))
+            link = str(Iri(scheme='wiki', authority='', path='/' + name))
             result.append(moin_page.a(attrib={xlink.href: link}, children=[name]))
             result.append(", ")
 
