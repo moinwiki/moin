@@ -61,9 +61,8 @@ Error: import virtualenv failed, either virtualenv is not installed (see install
 or the virtual environment must be deactivated before rerunning quickinstall.py
 """)
 
-
-if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
-    sys.exit("Error: MoinMoin requires Python 2.7.x., current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3050000:
+    sys.exit("Error: MoinMoin requires Python 3.5+, current version is %s\n" % (platform.python_version(), ))
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
@@ -256,20 +255,20 @@ def delete_files(pattern):
 
 def get_bootstrap_data_location():
     """Return the virtualenv site-packages/xstatic/pkg/bootstrap/data location."""
-    command = ACTIVATE + 'python -c "from xstatic.pkg.bootstrap import BASE_DIR; print BASE_DIR"'
-    return subprocess.check_output(command, shell=True)
+    command = ACTIVATE + 'python -c "from xstatic.pkg.bootstrap import BASE_DIR; print(BASE_DIR)"'
+    return subprocess.check_output(command, shell=True).decode()
 
 
 def get_pygments_data_location():
     """Return the virtualenv site-packages/xstatic/pkg/pygments/data location."""
-    command = ACTIVATE + 'python -c "from xstatic.pkg.pygments import BASE_DIR; print BASE_DIR"'
-    return subprocess.check_output(command, shell=True)
+    command = ACTIVATE + 'python -c "from xstatic.pkg.pygments import BASE_DIR; print(BASE_DIR)"'
+    return subprocess.check_output(command, shell=True).decode()
 
 
 def get_sitepackages_location():
     """Return the location of the virtualenv site-packages directory."""
-    command = ACTIVATE + 'python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"'
-    return subprocess.check_output(command, shell=True).strip()
+    command = ACTIVATE + 'python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"'
+    return subprocess.check_output(command, shell=True).decode().strip()
 
 
 def create_m():
@@ -612,7 +611,7 @@ class QuickInstall:
         command = ACTIVATE + 'pip --version'
         pip_txt = subprocess.check_output(command, shell=True)
         # expecting pip_txt similar to "pip 1.4.1 from /bitbucket/moin-2.0..."
-        pip_txt = pip_txt.split()
+        pip_txt = pip_txt.decode().split()
         if pip_txt[0] == 'pip':
             pip_version = [int(x) for x in pip_txt[1].split('.')]
             return pip_version
