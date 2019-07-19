@@ -16,14 +16,15 @@ class TestRandom:
     def testRandomString(self):
         """ utils.random_string: test randomness and length """
         length = 8
-        result1 = crypto.random_string(length)
-        result2 = crypto.random_string(length)
+        chars = "abcdefghijklmnopqrstuvwxyz"
+        result1 = crypto.random_string(length, chars)
+        result2 = crypto.random_string(length, chars)
         assert result1 != result2, 'Expected different random strings, but got "%(result1)s" and "%(result2)s"' % locals()
 
-        result_string = crypto.random_string(length)
-        assert isinstance(result_string, str), ('Expected an string value, but got ' + str(type(result_string)))
+        result_string = crypto.random_string(length, chars)
+        assert isinstance(result_string, str), ('Expected a string value, but got ' + str(type(result_string)))
 
-        result = len(crypto.random_string(length))
+        result = len(crypto.random_string(length, chars))
         expected = length
         assert result == expected, 'Expected length "%(expected)s" but got "%(result)s"' % locals()
 
