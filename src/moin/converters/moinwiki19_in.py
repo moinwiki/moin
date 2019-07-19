@@ -94,11 +94,10 @@ class ConverterFormat19(Converter):
         attrib = {}
 
         if freelink_page:
-            page = freelink_page.encode('utf-8')
-            if '#' in page:
-                path, fragment = page.rsplit('#', 1)
+            if '#' in freelink_page:
+                path, fragment = freelink_page.rsplit('#', 1)
             else:
-                path, fragment = page, None
+                path, fragment = freelink_page, None
             link = Iri(scheme='wiki.local', path=path, fragment=fragment)
             text = freelink_page
 
