@@ -58,7 +58,7 @@ On the pop up labeled "Your web app's domain name", click the Next button in the
 
 On the popup labeled "Select a Python Web framework" click "Manual configuration".
 
-On the popup labeled "Select a Python version" select "Python 2.7".
+On the popup labeled "Select a Python version" select "Python 3.5".
 
 On the "Manual Configuration" popup, click Next near lower right. That should bring you here:
 
@@ -86,7 +86,7 @@ The code and Virtual env sections should look similar to:
 
     WSGI configuration file:      /var/www/moinmoin2_pythonanywhere_com_wsgi.py
 
-    Python version:               2.7
+    Python version:               3.5
 
 
     Virtualenv:
