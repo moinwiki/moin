@@ -7,9 +7,9 @@ Create a virtual environment and install moin2 and all requirements in developme
 
 Usage for installation:
 
-    <python> quickinstall.py (where <python> is any Python 2.7 executable)
+    <python> quickinstall.py (where <python> is any Python 3.5+ executable)
 
-Requires: Python 2.7, virtualenv, pip
+Requires: Python 3.5+, virtualenv, pip
 
 After initial installation, a menu of frequently used commands is provided for
 moin2 developers and desktop wiki users.

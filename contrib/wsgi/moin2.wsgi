@@ -26,7 +26,7 @@ moin_dir = '/path/to/moin/dir/where/wikiconfig.py/is/located'
 if sys.platform == 'win32':
     site.addsitedir(moin_dir + '-venv-python/Lib/site-packages')
 else:
-    site.addsitedir(moin_dir + '-venv-python/lib/python2.7/site-packages')
+    site.addsitedir(moin_dir + '-venv-python/lib/python3.5/site-packages')
 
 # make sure this directory is in sys.path (.lower() avoids duplicate entries on Windows)
 if not (moin_dir in sys.path or moin_dir.lower() in sys.path):
