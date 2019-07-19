@@ -10,9 +10,6 @@ Converts an internal document tree into reStructuredText markup.
 This converter based on ReStructuredText 2006-09-22.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from emeraldtree import ElementTree as ET

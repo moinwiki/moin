@@ -7,9 +7,6 @@ MoinMoin - OpenDocument Format (ODF) input converter
 ODF documents can be created with OpenOffice.org, Libre Office and other software.
 """
 
-
-from __future__ import absolute_import, division
-
 import zipfile
 
 from moin.utils.mime import Type, type_text_plain

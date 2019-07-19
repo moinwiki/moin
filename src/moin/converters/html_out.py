@@ -9,9 +9,6 @@ MoinMoin - HTML output converter
 Converts an internal document tree into a HTML tree.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from flask import request

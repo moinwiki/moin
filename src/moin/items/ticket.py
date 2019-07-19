@@ -35,9 +35,6 @@ the name is never removed. Comments and comments to comments are linked to the o
 ticket through a refers_to field preserved in meta data.
 """
 
-
-from __future__ import absolute_import, division
-
 import time
 import datetime
 

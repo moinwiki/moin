@@ -22,9 +22,6 @@ Notes:
   for the rest of the paragraph.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from moin.constants.misc import URI_SCHEMES

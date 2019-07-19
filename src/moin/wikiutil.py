@@ -10,9 +10,6 @@
     MoinMoin - Wiki Utility Functions
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 
 from flask import current_app as app

@@ -12,9 +12,6 @@ it is a fallback for the case we have no pygments or pygments has no support
 for the input mimetype.
 """
 
-
-from __future__ import absolute_import, division
-
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 

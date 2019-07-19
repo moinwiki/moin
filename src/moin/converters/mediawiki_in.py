@@ -9,9 +9,6 @@
 MoinMoin - Media Wiki input converter
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 from html.entities import name2codepoint
 

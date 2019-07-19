@@ -6,8 +6,6 @@
     MoinMoin - interwiki support code
 """
 
-from __future__ import absolute_import, division
-
 from werkzeug import url_quote
 
 from flask import current_app as app
