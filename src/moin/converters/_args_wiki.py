@@ -88,11 +88,14 @@ def unparse(args):
     :param args: Argument instance
     :returns: argument unicode object
     """
+    def quote(s):
+        return '"%s"' % s.encode('unicode-escape').decode('ascii')
+
     ret = []
 
     for value in args.positional:
         if not _unparse_re.match(value):
-            value = '"' + value.encode('unicode-escape') + '"'
+            value = quote(value)
         ret.append(value)
 
     keywords = list(args.keyword.items())
@@ -101,7 +104,7 @@ def unparse(args):
         if not _unparse_re.match(key):
             raise ValueError("Invalid keyword string")
         if not _unparse_re.match(value):
-            value = '"' + value.encode('unicode-escape') + '"'
+            value = quote(value)
         ret.append(key + '=' + value)
 
     return ' '.join(ret)
