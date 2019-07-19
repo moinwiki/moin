@@ -86,7 +86,7 @@ class _TableArguments:
 
     def arg_repl(self, args, arg, key=None, value_u=None, value_q1=None, value_q2=None):
         key = self.map_keys.get(key, key)
-        value = (value_u or value_q1 or value_q2).decode('unicode-escape')
+        value = (value_u or value_q1 or value_q2).encode('ascii', errors='backslashreplace').decode('unicode-escape')
         if key:
             args.keyword[key] = value
         else:
@@ -891,7 +891,7 @@ class Converter(ConverterMacro):
     def tablerow_cell_repl(self, stack, table, row, cell, cell_marker, cell_text, cell_args=None):
 
         def add_attr_to_style(attrib, attr):
-            attr = attr.strip().decode('unicode-escape')
+            attr = attr.strip().encode('ascii', errors='backslashreplace').decode('unicode-escape')
             if not attr.endswith(';'):
                 attr += ';'
             if attrib.get(moin_page('style'), ""):
