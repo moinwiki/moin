@@ -9,9 +9,6 @@ Converts an XHTML document into an internal document tree.
 TODO : Add support for style
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from flask import flash

@@ -5,9 +5,6 @@
 MoinMoin - protecting middleware tests
 """
 
-
-from __future__ import absolute_import, division
-
 from io import BytesIO
 
 import pytest

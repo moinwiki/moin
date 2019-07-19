@@ -9,9 +9,6 @@ MoinMoin - Markdown markup output converter
 Converts an internal document tree into markdown markup.
 """
 
-
-from __future__ import absolute_import, division
-
 import urllib.request
 import urllib.parse
 import urllib.error

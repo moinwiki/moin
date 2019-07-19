@@ -18,9 +18,6 @@ A data store (a FileStore):
 See the stores package for already implemented key/value stores.
 """
 
-
-from __future__ import absolute_import, division
-
 import json
 
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM

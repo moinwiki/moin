@@ -13,9 +13,6 @@ Directories create a virtual directory item, listing the files in that
 directory.
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 import errno
 import stat

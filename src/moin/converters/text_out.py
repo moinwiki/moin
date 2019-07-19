@@ -11,9 +11,6 @@ markup -> dom -> text and get rid of the (wiki, rst, docbook, ...) markup that
 way, so we get indexable plain text for our search index.
 """
 
-
-from __future__ import absolute_import, division
-
 from . import default_registry
 from moin.utils.mime import Type, type_moin_document, type_text_plain
 

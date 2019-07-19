@@ -1,4 +1,4 @@
-# Copyright: 2013 MoinMoin:YourNameHere
+# Copyright: 2019 MoinMoin:YourNameHere
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -13,6 +13,3 @@ explaining what the module / package does.
 Of course you'll have to edit/fix the Copyright line and also the docstring
 needs to be replaced with something making sense, but keep the structure.
 """
-
-
-from __future__ import absolute_import, division

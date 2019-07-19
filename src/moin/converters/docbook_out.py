@@ -8,9 +8,6 @@ MoinMoin - DocBook output converter
 Converts an internal document tree into a DocBook v5 document.
 """
 
-
-from __future__ import absolute_import, division
-
 from emeraldtree import ElementTree as ET
 
 from moin.utils.tree import html, moin_page, xlink, docbook, xml

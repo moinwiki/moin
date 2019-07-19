@@ -15,9 +15,6 @@ Tests that require a certain configuration, like section_numbers = 1, must
 use a Config class to define the required configuration within the test class.
 """
 
-
-from __future__ import absolute_import, division
-
 import pytest
 import py
 

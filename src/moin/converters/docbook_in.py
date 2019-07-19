@@ -13,9 +13,6 @@ for backward compatibility:
 - ulink
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from emeraldtree import ElementTree as ET

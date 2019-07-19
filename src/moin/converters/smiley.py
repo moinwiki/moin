@@ -9,9 +9,6 @@ Replace all the text corresponding to a smiley, by the corresponding
 element for the DOM Tree.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from emeraldtree import ElementTree as ET

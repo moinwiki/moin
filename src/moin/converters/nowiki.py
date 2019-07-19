@@ -7,8 +7,6 @@ MoinMoin - NoWiki handling: {{{#!....}}}
 Expands nowiki elements in an internal Moin document.
 """
 
-from __future__ import absolute_import, division
-
 import re
 
 from emeraldtree import ElementTree as ET

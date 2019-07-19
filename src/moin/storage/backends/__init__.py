@@ -6,9 +6,6 @@
 MoinMoin - backend base classes
 """
 
-
-from __future__ import absolute_import, division
-
 from abc import abstractmethod, ABCMeta
 
 

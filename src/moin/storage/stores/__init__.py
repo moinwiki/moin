@@ -9,9 +9,6 @@ If some kvstore implementation you'ld like to use is missing from this package,
 you can likely implement it adding very little and rather easy code.
 """
 
-
-from __future__ import absolute_import, division
-
 from abc import abstractmethod
 from collections import Mapping, MutableMapping
 from io import BytesIO

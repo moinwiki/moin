@@ -8,9 +8,6 @@ MoinMoin - namespaces middleware
 Routes requests to different backends depending on the namespace.
 """
 
-
-from __future__ import absolute_import, division
-
 from moin.constants.keys import NAME, BACKENDNAME, NAMESPACE
 
 from moin.storage.backends import BackendBase, MutableBackendBase

@@ -5,9 +5,6 @@
 MoinMoin - store test magic
 """
 
-
-from __future__ import absolute_import, division
-
 import pytest
 from ..wrappers import ByteToStreamWrappingStore
 

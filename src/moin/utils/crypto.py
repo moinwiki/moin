@@ -11,8 +11,6 @@ Features:
 - generate random strings of given length (for salting)
 """
 
-from __future__ import absolute_import, division
-
 import hashlib
 import hmac
 import time

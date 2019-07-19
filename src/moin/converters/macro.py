@@ -7,8 +7,6 @@ MoinMoin - Macro handling
 Expands all macro elements in an internal Moin document.
 """
 
-from __future__ import absolute_import, division
-
 from flask import current_app as app
 
 from emeraldtree import ElementTree as ET

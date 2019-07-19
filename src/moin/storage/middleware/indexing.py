@@ -48,9 +48,6 @@ will not access the layers below (like the backend), but just the index files,
 usually it is even just the small and thus quick latest-revs index.
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 import shutil
 import datetime

@@ -11,9 +11,6 @@ Note: for method / attribute docs, please see the same methods / attributes in
       IndexingMiddleware class.
 """
 
-
-from __future__ import absolute_import, division
-
 import time
 
 from whoosh.util.cache import lru_cache

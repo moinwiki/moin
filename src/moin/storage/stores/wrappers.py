@@ -5,9 +5,6 @@
 MoinMoin - store wrappers
 """
 
-
-from __future__ import absolute_import, division
-
 from io import BytesIO
 from collections import MutableMapping
 

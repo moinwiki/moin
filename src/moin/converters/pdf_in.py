@@ -5,9 +5,6 @@
 MoinMoin - PDF input converter
 """
 
-
-from __future__ import absolute_import, division
-
 from pdfminer3.pdfpage import PDFPage
 from pdfminer3.pdfparser import PDFParser
 from pdfminer3.pdfdocument import PDFDocument

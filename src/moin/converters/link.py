@@ -8,9 +8,6 @@ Expands all links in an internal Moin document, including interwiki and
 special wiki links.
 """
 
-
-from __future__ import absolute_import, division
-
 from flask import g as flaskg
 
 from moin.utils.interwiki import is_known_wiki, url_for_item
