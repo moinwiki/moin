@@ -66,7 +66,7 @@ def test_wikiexternal(conv, input_, output):
     elem = ET.Element(None)
     conv.handle_external_links(elem, Iri(input_))
     href = elem.get(xlink.href)
-    assert href == output
+    assert str(href) == output
 
 
 @pytest.mark.parametrize(
