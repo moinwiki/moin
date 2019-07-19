@@ -51,6 +51,9 @@ def get_subscribers(**meta):
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         result_iterators = [searcher.search(query, limit=None), ]
         subscription_patterns = searcher.lexicon(SUBSCRIPTION_PATTERNS)
+        # looks like whoosh gives us bytes (not str), decode them:
+        subscription_patterns = [p if isinstance(p, str) else p.decode()
+                                 for p in subscription_patterns]
         patterns = get_matched_subscription_patterns(subscription_patterns, **meta)
         result_iterators.extend(searcher.documents(subscription_patterns=pattern) for pattern in patterns)
         subscribers = set()
