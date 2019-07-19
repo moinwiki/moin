@@ -374,7 +374,7 @@ class Converter:
         <hr /> --> <separator />
         """
         hr_class = element.attrib.get(html('class'))
-        if not (min_class <= hr_class <= max_class):
+        if hr_class is None or not (min_class <= hr_class <= max_class):
             element.attrib[html('class')] = default_class
         return self.new_copy(moin_page.separator, element, {})
 
