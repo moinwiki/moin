@@ -390,7 +390,10 @@ class Converter(ConverterMacro):
         yield line
 
         while True:
-            line = next(iter_content)
+            try:
+                line = next(iter_content)
+            except StopIteration:
+                return
 
             match = self.indent_re.match(line)
 
