@@ -17,7 +17,7 @@ from moin.utils.tree import html, moin_page, xlink, docbook, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.utils.mime import Type, type_moin_document
 
-from . import default_registry
+from . import default_registry, ElementException
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -258,7 +258,11 @@ class Converter:
         A section is closed when we have a new heading with an equal or
         higher level.
         """
-        depth = element.get(moin_page('outline-level'))
+        depth = element.get(moin_page('outline-level'), 1)
+        try:
+            depth = int(depth)
+        except ValueError:
+            raise ElementException('page:outline-level needs to be an integer')
         # We will have a new section
         # under another section
         if depth > self.current_section:
