@@ -27,7 +27,7 @@ import re
 # file types to be processed
 SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
 
-# stuff considered DOS/WIN
+# stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())
 
 
@@ -181,7 +181,8 @@ def check_files(filename, suffix):
         line_end = "\n"
     logger = NoDupsLogger()
 
-    with open(filename, "rb") as f:
+    # newline="" does not change incoming line endings
+    with open(filename, "r", encoding="utf-8", newline="") as f:
         lines = f.readlines()
 
     if filename.endswith('.html'):
@@ -196,7 +197,7 @@ def check_files(filename, suffix):
         else:
             break
 
-    with open(filename, "wb") as f:
+    with open(filename, "w", encoding="utf-8", newline="") as f:
         for idx, line in enumerate(lines):
             line_length = len(line)
             line = line.replace('\t', '    ')
