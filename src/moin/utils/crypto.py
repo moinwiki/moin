@@ -36,15 +36,12 @@ def random_string(length, allowed_chars=None):
 
     Note: this is now just a little wrapper around passlib's randomness code.
 
-    :param length: length of the string
-    :param allowed_chars: string with allowed characters or None
-                          to indicate all 256 byte values should be used
+    :param length: length of the str
+    :param allowed_chars: str with allowed characters
     :returns: random string
     """
-    if allowed_chars is None:
-        s = getrandbytes(rng, length)
-    else:
-        s = getrandstr(rng, allowed_chars, length)
+    assert allowed_chars is not None
+    s = getrandstr(rng, allowed_chars, length)
     return s
 
 
@@ -74,7 +71,9 @@ def generate_token(key=None, stamp=None):
         key = genword(length=32)
     if stamp is None:
         stamp = int(time.time())
-    h = hmac.new(str(key), str(stamp), digestmod=hashlib.sha256).hexdigest()
+    key_encoded = key if isinstance(key, bytes) else key.encode()
+    stamp_encoded = str(stamp).encode()
+    h = hmac.new(key_encoded, stamp_encoded, digestmod=hashlib.sha256).hexdigest()
     token = "{0}-{1}".format(stamp, h)
     return str(key), token
 
@@ -116,4 +115,4 @@ def cache_key(**kw):
 
     :param kw: keys/values to compute cache key from
     """
-    return hashlib.md5(repr(kw)).hexdigest()
+    return hashlib.md5(repr(kw).encode()).hexdigest()
