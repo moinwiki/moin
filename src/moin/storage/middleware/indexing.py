@@ -1037,6 +1037,9 @@ class Item(PropertiesMixin):
             return item
         raise NoSuchItemError(repr(query))
 
+    def __repr__(self):
+        return '<Item %s>' % (self.name, )
+
     def __bool__(self):
         """
         Item exists (== has at least one revision)?
@@ -1254,11 +1257,17 @@ class Revision(PropertiesMixin):
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.close()
 
+    def __hash__(self):
+        return hash(self.meta)
+
     def __eq__(self, other):
         return self.meta == other.meta
 
     def __lt__(self, other):
         return self.meta < other.meta
+
+    def __repr__(self):
+        return '<Revision %s of Item %s>' % (self.revid[:6], self.name)
 
 
 class Meta(Mapping):
@@ -1295,6 +1304,9 @@ class Meta(Mapping):
         else:
             self._meta, _ = self.revision._load()
             return self._meta[key]
+
+    def __hash__(self):
+        return hash(self[REVID])
 
     def __eq__(self, other):
         return self[REVID] == other[REVID]
