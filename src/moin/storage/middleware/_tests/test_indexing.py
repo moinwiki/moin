@@ -206,9 +206,9 @@ class TestIndexingMiddleware:
         expected_latest_revids.append(r.revid)
         item_name = 'bar'
         item = self.imw[item_name]
-        item.store_revision(dict(name=[item_name, ], mtime=1),
+        item.store_revision(dict(name=[item_name, ], mtime=2),
                             BytesIO(b'1st'), trusted=True)
-        r = item.store_revision(dict(name=[item_name, ], mtime=2),
+        r = item.store_revision(dict(name=[item_name, ], mtime=3),
                                 BytesIO(b'2nd'), trusted=True, return_rev=True)
         expected_latest_revids.append(r.revid)
 
