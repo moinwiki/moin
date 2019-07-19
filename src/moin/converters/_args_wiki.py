@@ -5,9 +5,6 @@
 MoinMoin - Arguments support for wiki formats
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from ._args import Arguments

@@ -5,9 +5,6 @@
 MoinMoin - converter utilities
 """
 
-
-from __future__ import absolute_import, division
-
 try:
     from flask import g as flaskg
 except ImportError:

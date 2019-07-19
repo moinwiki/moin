@@ -88,9 +88,6 @@ effects are implemented through specialized tags rather than CSS classes.
 In the example above, only class="comment" will be applied to detail.csv.
 """
 
-
-from __future__ import absolute_import, division
-
 from emeraldtree import ElementTree as ET
 import re
 import types

@@ -5,9 +5,6 @@
 MoinMoin - validation tests
 """
 
-
-from __future__ import absolute_import, division
-
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from moin.constants import keys

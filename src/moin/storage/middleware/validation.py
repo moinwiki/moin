@@ -21,9 +21,6 @@ defaults, the validators may implant the defaults into the metadata or reject
 the data.
 """
 
-
-from __future__ import absolute_import, division
-
 import time
 import re
 

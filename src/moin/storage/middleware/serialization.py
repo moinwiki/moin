@@ -15,9 +15,6 @@ We use a simple custom format here::
     4 bytes 00 (== length of next meta -> there is none, this is the end)
 """
 
-
-from __future__ import absolute_import, division
-
 import struct
 import json
 

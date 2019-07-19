@@ -8,9 +8,6 @@ MoinMoin - Markdown input converter
 http://daringfireball.net/projects/markdown/
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 import html.entities
 from collections import deque

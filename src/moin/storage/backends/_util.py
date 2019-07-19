@@ -6,9 +6,6 @@
 MoinMoin - backend utilities
 """
 
-
-from __future__ import absolute_import, division
-
 import hashlib
 
 

@@ -5,9 +5,6 @@
 MoinMoin - CSV text data to DOM converter
 """
 
-
-from __future__ import absolute_import, division
-
 import csv
 
 from ._table import TableMixin

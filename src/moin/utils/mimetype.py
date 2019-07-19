@@ -5,9 +5,6 @@
 MoinMoin - mimetype support
 """
 
-
-from __future__ import absolute_import, division
-
 import mimetypes
 
 import pygments.lexers
