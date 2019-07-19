@@ -239,6 +239,8 @@ class TestIndexingMiddleware:
         self.imw.dump(idx_name=LATEST_REVS)
 
         # should be all the same, order does not matter:
+        print(len(expected_all_revs), sorted(expected_all_revs))
+        print(len(all_revs), sorted(all_revs))
         assert sorted(expected_all_revs) == sorted(all_revs)
         assert sorted(expected_latest_revs) == sorted(latest_revs)
         assert sorted(latest_revids) == sorted(expected_latest_revids)
