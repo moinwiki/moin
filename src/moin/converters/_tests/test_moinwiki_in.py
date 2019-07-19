@@ -254,7 +254,7 @@ class TestConverter:
         ('||<tablestyle="table" rowstyle="row" style="cell">Cell||\n',
          '<page><body><table class="moin-wiki-table" style="table;"><table-body><table-row style="row;"><table-cell style="cell;">Cell</table-cell></table-row></table-body></table></body></page>'),
         ('||<tablestyle="background-color: yellow" rowstyle="background-color: red" tablewidth="99%" #0000FF>Cell||\n',
-         '<page><body><table class="moin-wiki-table" style="background-color: yellow; width: 99%;"><table-body><table-row style="background-color: red;"><table-cell style="background-color: #0000FF;">Cell</table-cell></table-row></table-body></table></body></page>'),
+         '<page><body><table class="moin-wiki-table" style="width: 99%; background-color: yellow;"><table-body><table-row style="background-color: red;"><table-cell style="background-color: #0000FF;">Cell</table-cell></table-row></table-body></table></body></page>'),
         ('||<width="20em">Cell||\n',
          '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="width: 20em;">Cell</table-cell></table-row></table-body></table></body></page>'),
         ('||<tablebgcolor="red">Cell||\n',
