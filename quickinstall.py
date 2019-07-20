@@ -496,7 +496,7 @@ class Commands:
         else:
             print('Error: stylus failed to update css files, see error messages above.')
         # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
-        command = 'python scripts/coding_std.py src/moin/themes/modernized/static/css'
+        command = '{0}python scripts/coding_std.py src/moin/themes/modernized/static/css'.format(ACTIVATE)
         result = subprocess.call(command, shell=True)
         if result != 0:
             print('Error: failure running coding_std.py against modernized css files')
