@@ -34,11 +34,12 @@ class TestFrontend:
             for method in ['HEAD', 'GET']:
                 print('%s %s' % (method, url_for(viewname, **viewopts)))
                 rv = c.open(url_for(viewname, **viewopts), method=method, data=params)
+                rv_data = rv.data.decode()
                 assert rv.status == status
                 assert rv.headers['Content-Type'] in content_types
                 if method == 'GET':
                     for item in data:
-                        assert item in rv.data
+                        assert item in rv_data
         return rv
 
     def _test_view_post(self, viewname, status='302 FOUND', content_types=('text/html; charset=utf-8', ), data=('<html>', '</html>'), form=None, viewopts=None):
@@ -49,10 +50,11 @@ class TestFrontend:
         print('POST %s' % url_for(viewname, **viewopts))
         with self.app.test_client() as c:
             rv = c.post(url_for(viewname, **viewopts), data=form)
+            rv_data = rv.data.decode()
             assert rv.status == status
             assert rv.headers['Content-Type'] in content_types
             for item in data:
-                assert item in rv.data
+                assert item in rv_data
             return rv
 
     def test_ajaxdelete_item_name_route(self):
