@@ -915,8 +915,7 @@ def ajaxdestroy(item_name, req='destroy'):
     response = {"itemnames": [], "status": []}
     for itemname in itemnames:
         response["itemnames"].append(itemname)
-        # itemname is url quoted string coming across as unicode, must encode, unquote, decode
-        itemname = urllib.parse.unquote(itemname.encode('ascii')).decode('utf-8')
+        itemname = urllib.parse.unquote(itemname)  # itemname is url quoted str
         try:
             item = Item.create(itemname)
             if isinstance(item, NonExistent):
