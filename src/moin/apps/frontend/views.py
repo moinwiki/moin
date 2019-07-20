@@ -751,7 +751,7 @@ class ValidRevert(Validator):
             validate_name(state['meta'], state['meta'].get(ITEMID))
             return True
         except NameNotValidError as e:
-            self.invalid_name_msg = _(e)
+            self.invalid_name_msg = _(str(e))
             return self.note_error(element, state, 'invalid_name_msg')
 
 

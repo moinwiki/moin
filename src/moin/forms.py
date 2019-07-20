@@ -142,7 +142,7 @@ class ValidName(Validator):
         try:
             validate_name(state['meta'], state[ITEMID])
         except NameNotValidError as e:
-            self.invalid_name_msg = _(e)
+            self.invalid_name_msg = _(str(e))
             return self.note_error(element, state, 'invalid_name_msg')
         return True
 
