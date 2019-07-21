@@ -40,12 +40,11 @@ class ArchiveConverter(TableMixin):
         return cls()
 
     def process_name(self, member_name):
-        name = str(member_name, 'utf-8')
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/' + self.item_name,
-                            query='do=get&member={0}'.format(name)),
+                            query='do=get&member={0}'.format(member_name)),
         }
-        return moin_page.a(attrib=attrib, children=[name, ])
+        return moin_page.a(attrib=attrib, children=[member_name, ])
 
     def process_datetime(self, dt):
         return str(dt.isoformat(' '))
