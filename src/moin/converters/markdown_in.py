@@ -9,7 +9,7 @@ http://daringfireball.net/projects/markdown/
 """
 
 import re
-import html.entities
+from html.entities import name2codepoint
 from collections import deque
 
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
@@ -77,7 +77,7 @@ def postproc_text(markdown, text):
         else:
             # named entity
             try:
-                text = chr(html.entities.name2codepoint[text[1:-1]])
+                text = chr(name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text  # leave as is
