@@ -64,7 +64,8 @@ class NodeVisitor:
         """
         node_name = node.__class__.__name__
         method = getattr(self, 'visit_' + node_name, self.unknown_visit)
-        self.current_lineno = node.line
+        if isinstance(node.line, int):
+            self.current_lineno = node.line
         return method(node)
 
     def dispatch_departure(self, node):
