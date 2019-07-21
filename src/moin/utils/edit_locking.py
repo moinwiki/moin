@@ -188,8 +188,8 @@ class Edit_Utils:
                 self.draft_name = self.make_draft_name(rev_id)
             self.cursor.execute('''DELETE FROM editdraft WHERE user_name = ? ''', (self.user_name, ))
         if data_in:
-            with open(self.draft_name, 'w') as f:
-                f.write(data_in.encode(self.coding))
+            with open(self.draft_name, 'w', encoding=self.coding) as f:
+                f.write(data_in)
             save_time = int(time.time())
         else:
             save_time = 0  # indicates user is editing item but has not done a preview, no draft has been saved
@@ -211,8 +211,8 @@ class Edit_Utils:
                 if save_time:
                     self.draft_name = self.make_draft_name(rev_id)
                     try:
-                        with open(self.draft_name, 'r') as f:
-                            data = f.read().decode(self.coding)
+                        with open(self.draft_name, 'r', encoding=self.coding) as f:
+                            data = f.read()
                         return draft, data
                     except IOError:
                         logging.error("User {0} failed to load draft for: {1}".format(u_name, i_name))
