@@ -77,28 +77,10 @@ def getPackageModules(packagefile):
         starting with an underscore.
     """
     packagedir = os.path.dirname(packagefile)
-
-    def in_plugin_dir(dir):
-        return os.path.split(os.path.split(dir)[0])[1] == "plugin"
-
-    moinmodule = __import__('moin')
-
-    # Is it in a .zip file?
-    if not in_plugin_dir(packagedir) and hasattr(moinmodule, '__loader__'):
-        pyre = re.compile(r"^([^_].*)\.py(?:c|o)$")
-        zipfiles = {}
-        # XXX TODO XXX this used to be:
-        # zipfiles = moinmodule.__loader__._files
-        # this is way too deep in __import__ internals and does not work for py3(.5)!
-        dirlist = [entry[0].replace(r'/', '\\').split('\\')[-1]
-                   for entry in zipfiles.values() if packagedir in entry[0]]
-    else:
-        pyre = re.compile(r"^([^_].*)\.py$")
-        dirlist = os.listdir(packagedir)
-
+    dirlist = os.listdir(packagedir)
+    pyre = re.compile(r"^([^_].*)\.py$")
     matches = [pyre.match(fn) for fn in dirlist]
     modules = sorted([match.group(1) for match in matches if match])
-
     return modules
 
 
