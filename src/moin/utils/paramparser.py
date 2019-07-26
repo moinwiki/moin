@@ -573,7 +573,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
     :param fixed_args: fixed arguments to pass as the first arguments
     :returns: the return value from the function called
     """
-    from inspect import getargspec, isfunction, isclass, ismethod
+    from inspect import getfullargspec, isfunction, isclass, ismethod
 
     def _convert_arg(value, default, name=None):
         """
@@ -631,10 +631,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
         positional, keyword, trailing = parse_quoted_separated(args)
 
         for kw in keyword:
-            try:
-                kwargs[str(kw)] = keyword[kw]
-            except UnicodeEncodeError:
-                kwargs_to_pass[kw] = keyword[kw]
+            kwargs[kw] = keyword[kw]
 
         trailing_args.extend(trailing)
 
@@ -642,12 +639,12 @@ def invoke_extension_function(function, args, fixed_args=[]):
         positional = []
 
     if isfunction(function) or ismethod(function):
-        argnames, varargs, varkw, defaultlist = getargspec(function)
+        f = function
     elif isclass(function):
-        (argnames, varargs,
-         varkw, defaultlist) = getargspec(function.__init__)
+        f = function.__init__
     else:
         raise TypeError('function must be a function, method or class')
+    argnames, varargs, varkw, defaultlist, kwonlyargs, kwonlydefaults, annotations = getfullargspec(f)
 
     # self is implicit!
     if ismethod(function) or isclass(function):
