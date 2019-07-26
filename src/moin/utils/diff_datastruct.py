@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import difflib
-from collections import Hashable
+from collections.abc import Hashable
 
 INSERT = "insert"
 DELETE = "delete"
