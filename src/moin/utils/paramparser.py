@@ -644,7 +644,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
         f = function.__init__
     else:
         raise TypeError('function must be a function, method or class')
-    argnames, varargs, varkw, defaultlist, kwonlyargs, kwonlydefaults, annotations  = getfullargspec(f)
+    argnames, varargs, varkw, defaultlist, kwonlyargs, kwonlydefaults, annotations = getfullargspec(f)
 
     # self is implicit!
     if ismethod(function) or isclass(function):
