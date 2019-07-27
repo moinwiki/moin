@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 A simple WSGI test application.
 
@@ -31,7 +31,7 @@ Apache's VirtualHost definition:
     # use the daemons we defined above to process requests!
     WSGIProcessGroup test-wsgi
 
-@copyright: 2008 by MoinMoin:ThomasWaldmann
+@copyright: 2008,2019 by MoinMoin:ThomasWaldmann
 @license: Python License, see LICENSE.Python for details.
 """
 import os.path
@@ -83,7 +83,7 @@ def application(environ, start_response):
         'python_path': repr(sys.path),
         'wsgi_env': '\n'.join([row_template % item for item in environ.items()]),
     }
-    return [content]
+    return [content.encode()]
 
 
 if __name__ == '__main__':
@@ -91,12 +91,11 @@ if __name__ == '__main__':
     try:
         # create a simple WSGI server and run the application
         from wsgiref import simple_server
-        print "Running test application - point your browser at http://localhost:8080/ ..."
+        print("Running test application - point your browser at http://localhost:8080/ ...")
         httpd = simple_server.WSGIServer(('', 8080), simple_server.WSGIRequestHandler)
         httpd.set_app(application)
         httpd.serve_forever()
     except ImportError:
         # wsgiref not installed, just output html to stdout
         for content in application({}, lambda status, headers: None):
-            print content
-
+            print(content.decode())
