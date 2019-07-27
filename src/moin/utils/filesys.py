@@ -127,67 +127,6 @@ mkdir = access_denied_decorator(os.mkdir)
 rmdir = access_denied_decorator(os.rmdir)
 
 
-def fuid(filename, max_staleness=3600):
-    """ return a unique id for a file
-
-        Using just the file's mtime to determine if the file has changed is
-        not reliable - if file updates happen faster than the file system's
-        mtime granularity, then the modification is not detectable because
-        the mtime is still the same.
-
-        This function tries to improve by using not only the mtime, but also
-        other metadata values like file size and inode to improve reliability.
-
-        For the calculation of this value, we of course only want to use data
-        that we can get rather fast, thus we use file metadata, not file data
-        (file content).
-
-        Note: depending on the operating system capabilities and the way the
-              file update is done, this function might return the same value
-              even if the file has changed. It should be better than just
-              using file's mtime though.
-              max_staleness tries to avoid the worst for these cases.
-
-        :param filename: file name of the file to look at
-        :param max_staleness: if a file is older than that, we may consider
-                              it stale and return a different uid - this is a
-                              dirty trick to work around changes never being
-                              detected. Default is 3600 seconds, use None to
-                              disable this trickery. See below for more details.
-        :returns: an object that changes value if the file changed,
-                 None is returned if there were problems accessing the file
-    """
-    try:
-        st = os.stat(filename)
-    except (IOError, OSError):
-        # for permanent errors on stat() this does not change, but
-        # having a changing value would be pointless because if we
-        # can't even stat the file, it is unlikely we can read it.
-        uid = None
-    else:
-        fake_mtime = int(st.st_mtime)
-        if not st.st_ino and max_staleness:
-            # st_ino being 0 likely means that we run on a platform not
-            # supporting it (e.g. win32) - thus we likely need this dirty
-            # trick
-            now = int(time.time())
-            if now >= st.st_mtime + max_staleness:
-                # keep same fake_mtime for each max_staleness interval
-                fake_mtime = (now // max_staleness) * max_staleness
-        uid = (st.st_mtime,  # might have a rather rough granularity, e.g. 2s
-                             # on FAT, 1s on ext3 and might not change on fast
-                             # updates
-               st.st_ino,  # inode number (will change if the update is done
-                           # by e.g. renaming a temp file to the real file).
-                           # not supported on win32 (0 ever)
-               st.st_size,  # likely to change on many updates, but not
-                            # sufficient alone
-               fake_mtime,  # trick to workaround file system / platform
-                            # limitations causing permanent trouble
-              )
-    return uid
-
-
 def copystat(src, dst):
     """Copy stat bits from src to dst
 
