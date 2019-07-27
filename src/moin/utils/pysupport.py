@@ -9,7 +9,7 @@ MoinMoin - Supporting functions for Python magic
 import os
 import sys
 import re
-import imp
+import importlib
 
 
 #############################################################################
@@ -27,26 +27,13 @@ def load_package_modules(package_name, package_pathes):
 
         load_package_modules(__name__, __path__)
     """
+    assert isinstance(package_pathes, (list, tuple))
     for path in package_pathes:
-        for root, dirs, files in os.walk(path):
-            del dirs[:]
-            for fname in files:
-                if fname.startswith('_') or not fname.endswith('.py'):
-                    continue
-                module = fname[:-3]
-                module_complete = package_name + '.' + module
-                if module_complete in sys.modules:
-                    continue
-                info = imp.find_module(module, [root])
-                try:
-                    try:
-                        imp.load_module(module_complete, *info)
-                    except Exception as e:
-                        import moin.log as logging
-                        logger = logging.getLogger(package_name)
-                        logger.exception("Failed to import {0} package module {1}: {2}".format(package_name, module, e))
-                finally:
-                    info[0].close()
+        for fname in os.listdir(path):
+            if fname.endswith('.py') and not fname.startswith('_'):
+                module = package_name + '.' + fname[:-3]
+                if module not in sys.modules:
+                    importlib.import_module(module)
 
 
 def isImportable(module):
