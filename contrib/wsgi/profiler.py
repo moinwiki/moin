@@ -77,18 +77,6 @@ class CProfileMiddleware(ProfilerMiddleware):
         self._profile.dump_stats(self._filename)
 
 
-class HotshotMiddleware(ProfilerMiddleware):
-    """ A profiler based on the more recent hotshot module from the stdlib. """
-    def __init__(self, app, *args, **kwargs):
-        super(HotshotMiddleware, self).__init__(app)
-        import hotshot
-        self._profile = hotshot.Profile(*args, **kwargs)
-        self.run_profile = self._profile.runcall
-
-    def shutdown(self):
-        self._profile.close()
-
-
 class PycallgraphMiddleware(ProfilerMiddleware):
     """ A call graphing middleware utilizing the pycallgraph 3rd party
     module (available at http://pycallgraph.slowchop.com/). """
