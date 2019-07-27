@@ -122,7 +122,7 @@ def get_names(meta):
     Get the (list of) names from meta data and deal with misc. bad things that
     can happen then (while not all code is fixed to do it correctly).
 
-    TODO make sure meta[NAME] is always a list of unicode
+    TODO make sure meta[NAME] is always a list of str
 
     :param meta: a metadata dictionary that might have a NAME key
     :return: list of names
@@ -132,7 +132,7 @@ def get_names(meta):
     if names is None:
         logging.warning(msg % names)
         names = []
-    elif isinstance(names, str):
+    elif isinstance(names, bytes):
         logging.warning(msg % names)
         names = [names.decode('utf-8'), ]
     elif isinstance(names, str):
