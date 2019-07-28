@@ -182,7 +182,7 @@ class Dump(Command):
             rendered = self.subitems(rendered)
 
             # copy raw data for all items to output /+get directory; images are required, text items are of marginal/no benefit
-            item = app.storage[current_rev.name]
+            item = app.storage[current_rev.fqname.fullname]
             rev = item[CURRENT]
             with open(get_dir + '/' + file_name, 'wb') as f:
                 shutil.copyfileobj(rev.data, f)
