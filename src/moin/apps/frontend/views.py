@@ -1845,7 +1845,7 @@ class ValidChangePass(Validator):
 
 
 class UserSettingsPasswordForm(Form):
-    name = 'usersettings_password'
+    form_name = 'usersettings_password'
     validators = [ValidChangePass()]
 
     password_current = RequiredPassword.using(label=L_('Current Password')).with_properties(
@@ -1858,7 +1858,7 @@ class UserSettingsPasswordForm(Form):
 
 
 class UserSettingsNotificationForm(Form):
-    name = 'usersettings_notification'
+    form_name = 'usersettings_notification'
     email = YourEmail
     submit_label = L_('Save')
 
@@ -1867,13 +1867,13 @@ class UserSettingsQuicklinksForm(Form):
     """
     No validation is performed as lots of things are valid, existing items, non-existing items, external links, mailto, external wiki links...
     """
-    name = 'usersettings_quicklinks'
+    form_name = 'usersettings_quicklinks'
     quicklinks = Quicklinks
     submit_label = L_('Save')
 
 
 class UserSettingsOptionsForm(Form):
-    name = 'usersettings_options'
+    form_name = 'usersettings_options'
     iso_8601 = Checkbox.using(label=L_('Always use ISO 8601 date-time format'))
     mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
     edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))
@@ -1921,7 +1921,7 @@ class ValidSubscriptions(Validator):
 
 
 class UserSettingsSubscriptionsForm(Form):
-    name = 'usersettings_subscriptions'
+    form_name = 'usersettings_subscriptions'
     subscriptions = Subscriptions
     submit_label = L_('Save')
 
@@ -1935,7 +1935,7 @@ def usersettings():
 
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
-        name = 'usersettings_personal'  # "name" is duplicate
+        form_name = 'usersettings_personal'
         name = Names.using(label=L_('Usernames')).with_properties(placeholder=L_("The login usernames you want to use"))
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
@@ -1948,7 +1948,7 @@ def usersettings():
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
-        name = 'usersettings_ui'
+        form_name = 'usersettings_ui'
         theme_name = Select.using(label=L_('Theme name')).out_of(
             ((str(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
