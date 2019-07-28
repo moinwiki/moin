@@ -1,6 +1,15 @@
 {#
     This template is a simple start to the complex display and update of the user settings forms.
     Javascript is used to enhance the display and process the updates using ajax.
+
+    See:
+        * frontend/views.py - defines forms, validators, renders this template
+        * config/default.py - sets default values for user settings
+            * wikiconfig may override these
+        * constants/keys.py - defines constants used for keys in user settings
+        * storage/middleware/validation.py - validators and schema
+        * templates/usersettings_forms.html - jinja2 macros to create forms
+        * static/js/common.js - click handlers to show/hide forms; ajax submission of updates, reload page on theme or language change
 #}
 
 {% extends theme("layout.html") %}
