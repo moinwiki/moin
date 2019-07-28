@@ -275,12 +275,12 @@ class TestUsersettings:
         """ helper to fill UserSettingsPasswordForm form
         """
         FormClass = views.UserSettingsPasswordForm
-        request_form = ImmutableMultiDict([
-            ('usersettings_password_password_current', current_password),
-            ('usersettings_password_password1', password1),
-            ('usersettings_password_password2', password2),
-            ('usersettings_password_submit', 'Save')
-        ])
+        request_form = (
+            ('password_current', current_password),
+            ('password1', password1),
+            ('password2', password2),
+            ('submit', 'Save')
+        )
         form = FormClass.from_flat(request_form)
         return form
 
