@@ -15,6 +15,13 @@ Running this script will register users,
 and each user will update the Home item multiple times. It is best to start with
 an empty wiki (./m new-wiki).
 
+Each locust will attempt to update the Home item 10 times. If the Home item is
+locked by another user, a fail message is created and saved for the next update
+attempt. If the Home item is available for update, all fail messages and a success
+message is added to the Home item. If the update for a locust fails on the 10th
+attempt, then a new <username> item is created and all accumulated fail
+messages are written to the file.
+
 To load test Moin2:
  * read about Locust at https://docs.locust.io/en/stable/index.html
  * install Locust per the docs
@@ -143,12 +150,13 @@ class UserSequence(TaskSequence):
         response = self.client.get(page_get)
         if response.status_code != 200:
             print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
-        if 'is locked by' in response.content:
+        if b'is locked by' in response.content:
             # someone else has item locked for editing
             self.message += '\n\n%s Item %s is locked, Locust user %s cannot do change number %s' % (dt, item_name, self.user_name, self.count)
             return
 
-        textarea_data = get_textarea(response.content) + self.message
+        content = response.content.decode('utf-8')
+        textarea_data = get_textarea(content) + self.message
         self.message = ''
         # complete form and post
         new_content = '%s\n\n%s Item %s updated by Locust user %s change number = %s' % (textarea_data, dt, item_name, self.user_name, self.count)
@@ -168,7 +176,7 @@ class UserSequence(TaskSequence):
                                      })
         if response.status_code != 200:
             print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
-        assert 'Deletions are marked like this.' in response.content
+        assert b'Deletions are marked like this.' in response.content
 
         # do save
         response = self.client.post(new_page_post,
@@ -244,4 +252,5 @@ class WebsiteUser(HttpLocust):
                                      "meta_form_name": "Home",
                                      "extra_meta_text": '{"namespace": "","rev_number": 1}',
                                      })
+            data = data.encode('utf-8')
             content = urllib.request.urlopen(url=url, data=data).read()
