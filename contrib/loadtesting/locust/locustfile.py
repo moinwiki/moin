@@ -15,6 +15,11 @@ Running this script will register users, create user home pages,
 and create wiki items as part of the test. It is best to start with
 an empty wiki (./m new-wiki).
 
+Each locust registers a new id, creates and updates a home page in the user namespace,
+creates and updates a <username> item in the default namespace, and logs-out. Because
+each locust is working on unique items, it does not test edit locking. Use locustfile2.py
+for stress testing edit locking.
+
 To load test Moin2:
  * read about Locust at https://docs.locust.io/en/stable/index.html
  * install Locust per the docs
@@ -298,6 +303,7 @@ class WebsiteUser(HttpLocust):
                                      "meta_form_name": "Home",
                                      "extra_meta_text": '{"namespace": "users","rev_number": 1}',
                                      })
+            data = data.encode('utf-8')
             content = urllib.request.urlopen(url=url, data=data).read()
 
             url = host + "/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
@@ -311,4 +317,5 @@ class WebsiteUser(HttpLocust):
                                      "meta_form_name": "Home",
                                      "extra_meta_text": '{"namespace": "","rev_number": 1}',
                                      })
+            data = data.encode('utf-8')
             content = urllib.request.urlopen(url=url, data=data).read()
