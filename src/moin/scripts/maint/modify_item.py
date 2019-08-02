@@ -33,9 +33,6 @@ class GetItem(Command):
         item = app.storage.get_item(**fqname.query)
         rev = item[revid]
         meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
-        meta_lines = meta.split('\n')
-        meta_lines = [x.rstrip() for x in meta_lines]
-        meta = '\n'.join(meta_lines)
         with open(meta_file, 'w', encoding='utf-8') as mf:
             mf.write(meta)
         data = rev.data.read()
