@@ -1105,17 +1105,19 @@ class Default(Contentful):
                     edit_utils.put_draft(data)
                     old_item = Item.create(self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype)
                     old_text = old_item.content.data
-                    old_text = Text(self.contenttype, item=item).data_storage_to_internal(old_text)
+                    old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
                     preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
                     preview_rendered = item.content._render_data(preview=data)
                 else:
                     # user clicked OK/Save button, check for conflicts,
-                    draft, draft_data = edit_utils.get_draft()
-                    if draft:
+                    if 'charset' in self.contenttype:
+                        draft, draft_data = edit_utils.get_draft()
                         u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                         if not rev_id == 'new-item':
                             original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
-                            original_text = original_item.content.data
+                            original_rev = get_storage_revision(self.fqname, itemtype=self.itemtype, contenttype=original_item.contenttype, rev_id=rev_id)
+                            charset = original_item.contenttype.split('charset=')[1]
+                            original_text = original_rev.data.read().decode(charset)
                         else:
                             original_text = ''
                         if original_text == data and not self.meta_changed(item.meta):
@@ -1129,7 +1131,8 @@ class Default(Contentful):
                         if rev_number < self.meta.get('rev_number', 0):
                             # we have conflict - someone else has saved item, create and save 3-way diff, give user error message to fix it
                             saved_item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
-                            saved_text = saved_item.content.data
+                            charset = saved_item.contenttype.split('charset=')[1]
+                            saved_text = saved_item.content.data.decode(charset)
                             data3 = diff3.text_merge(original_text, saved_text, data)
                             data = data3
                             comment = _("CONFLICT ") + comment or ''
