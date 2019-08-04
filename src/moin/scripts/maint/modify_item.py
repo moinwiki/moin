@@ -6,6 +6,7 @@ MoinMoin - get an item revision from the wiki, put it back into the wiki.
 """
 
 import json
+import io
 
 from flask import current_app as app
 from flask_script import Command, Option
@@ -35,6 +36,17 @@ class GetItem(Command):
         meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
         with open(meta_file, 'w', encoding='utf-8') as mf:
             mf.write(meta)
+
+        if 'charset' in rev.meta['contenttype']:
+            # input data will have \r\n line endings, output will have platform dependent line endings
+            charset = rev.meta['contenttype'].split('charset=')[1]
+            data = rev.data.read().decode(charset)
+            lines = data.splitlines()
+            lines = '\n'.join(lines)
+            with open(data_file, 'w', encoding=charset) as df:
+                df.write(lines)
+            return
+
         data = rev.data.read()
         with open(data_file, 'wb') as df:
             df.write(data)
@@ -67,5 +79,21 @@ class PutItem(Command):
             meta.pop(REVID, None)
         query = {ITEMID: meta[ITEMID]}
         item = app.storage.get_item(**query)
+
+        # we want \r\n line endings in data out because \r\n is required in form textareas
+        if 'charset' in meta['contenttype']:
+            charset = meta['contenttype'].split('charset=')[1]
+            with open(data_file, 'rb') as df:
+                data = df.read().decode(charset)
+            if '\r\n' not in data and '\n' in data:
+                data = data.replace('\n', '\r\n')
+                data = data.encode(charset)
+                buffer = io.BytesIO()
+                buffer.write(data)
+                buffer.seek(0)
+                item.store_revision(meta, buffer, overwrite=overwrite)
+                buffer.close()
+                return
+
         with open(data_file, 'rb') as df:
             item.store_revision(meta, df, overwrite=overwrite)
