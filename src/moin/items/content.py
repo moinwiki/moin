@@ -208,7 +208,8 @@ class Content:
             smiley_conv = reg.get(type_moin_document, type_moin_document, icon='smiley')
 
             # We can process the conversion
-            links = Iri(scheme='wiki', authority='', path='/' + self.name)
+            name = self.rev.fqname.fullname if self.rev else self.name
+            links = Iri(scheme='wiki', authority='', path='/' + name)
             doc = input_conv(preview or self.rev, self.contenttype, arguments=attributes)
             # XXX is the following assuming that the top element of the doc tree
             # is a moin_page.page element? if yes, this is the wrong place to do that
@@ -349,7 +350,7 @@ class Binary(Content):
             else:
                 return None, None
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}):
+    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         hash_name = HASH_ALGORITHM
         if oldrev.meta[hash_name] == newrev.meta[hash_name]:
             return _("The items have the same data hash code (that means they very likely have the same data).")
@@ -737,7 +738,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                                oldrev=oldrev, newrev=newrev, get='binary',
                                content=Markup('<img src="{0}" />'.format(escape(url))))
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}):
+    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
