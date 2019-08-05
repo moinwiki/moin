@@ -12,9 +12,6 @@ it is a fallback for the case we have no pygments or pygments has no support
 for the input mimetype.
 """
 
-
-from __future__ import absolute_import, division
-
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 
@@ -22,7 +19,7 @@ from . import default_registry
 from ._util import decode_data, normalize_split_text
 
 
-class Converter(object):
+class Converter:
     """
     Parse the raw text and create a document object
     that can be converted into output using Emitter.

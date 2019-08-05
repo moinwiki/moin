@@ -5,9 +5,6 @@
 MoinMoin - routing middleware tests
 """
 
-
-from __future__ import absolute_import, division
-
 from io import BytesIO
 
 import pytest
@@ -35,7 +32,7 @@ def router(request):
     default_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     other_be = StoreBackend(MemoryBytesStore(), MemoryFileStore())
     ro_be = make_ro_backend()
-    namespaces = [(u'other:', 'other'), (u'ro:', 'ro'), (u'', 'default')]
+    namespaces = [('other:', 'other'), ('ro:', 'ro'), ('', 'default')]
     backends = {'other': other_be, 'ro': ro_be, 'default': default_be, }
     router = RoutingBackend(namespaces, backends)
     router.create()
@@ -50,15 +47,15 @@ def router(request):
 
 
 def test_store_get_del(router):
-    default_name = u'foo'
+    default_name = 'foo'
     default_backend_name, default_revid = router.store(dict(name=[default_name, ]), BytesIO(b''))
-    other_name = u'other:bar'
+    other_name = 'other:bar'
     other_backend_name, other_revid = router.store(dict(name=[other_name, ]), BytesIO(b''))
 
     # check if store() updates the to-store metadata with correct NAMESPACE and NAME
     default_meta, _ = router.retrieve(default_backend_name, default_revid)
     other_meta, _ = router.retrieve(other_backend_name, other_revid)
-    assert u'' == default_meta[NAMESPACE]
+    assert '' == default_meta[NAMESPACE]
     assert [default_name, ] == default_meta[NAME]
     assert other_name.split(':')[0] == other_meta[NAMESPACE]
     assert other_name.split(':')[1] == other_meta[NAME][0]
@@ -70,20 +67,20 @@ def test_store_get_del(router):
 
 def test_store_readonly_fails(router):
     with pytest.raises(TypeError):
-        router.store(dict(name=[u'ro:testing', ]), BytesIO(b''))
+        router.store(dict(name=['ro:testing', ]), BytesIO(b''))
 
 
 def test_del_readonly_fails(router):
     ro_be_name, ro_id = next(iter(router))  # we have only readonly items
-    print ro_be_name, ro_id
+    print(ro_be_name, ro_id)
     with pytest.raises(TypeError):
         router.remove(ro_be_name, ro_id)
 
 
 def test_destroy_create_dont_touch_ro(router):
     existing = set(router)
-    default_be_name, default_revid = router.store(dict(name=[u'foo', ]), BytesIO(b''))
-    other_be_name, other_revid = router.store(dict(name=[u'other:bar', ]), BytesIO(b''))
+    default_be_name, default_revid = router.store(dict(name=['foo', ]), BytesIO(b''))
+    other_be_name, other_revid = router.store(dict(name=['other:bar', ]), BytesIO(b''))
 
     router.close()
     router.destroy()
@@ -94,8 +91,8 @@ def test_destroy_create_dont_touch_ro(router):
 
 
 def test_iter(router):
-    existing_before = set([revid for be_name, revid in router])
-    default_be_name, default_revid = router.store(dict(name=[u'foo', ]), BytesIO(b''))
-    other_be_name, other_revid = router.store(dict(name=[u'other:bar', ]), BytesIO(b''))
-    existing_now = set([revid for be_name, revid in router])
-    assert existing_now == set([default_revid, other_revid]) | existing_before
+    existing_before = {revid for be_name, revid in router}
+    default_be_name, default_revid = router.store(dict(name=['foo', ]), BytesIO(b''))
+    other_be_name, other_revid = router.store(dict(name=['other:bar', ]), BytesIO(b''))
+    existing_now = {revid for be_name, revid in router}
+    assert existing_now == {default_revid, other_revid} | existing_before

@@ -84,7 +84,7 @@ def check_environ():
     return None
 
 
-class Slapd(object):
+class Slapd:
     """ Manage a slapd process for testing purposes """
     def __init__(
         self,
@@ -139,7 +139,7 @@ class Slapd(object):
         os.waitpid(pid, 0)
 
 
-class LdapEnvironment(object):
+class LdapEnvironment:
     """ Manage a (temporary) environment for running a slapd in it """
 
     # default DB_CONFIG bdb configuration file contents
@@ -202,7 +202,7 @@ class LdapEnvironment(object):
             'rootdn': self.rootdn,
             'rootpw': rootpw,
         }
-        if isinstance(slapd_config, unicode):
+        if isinstance(slapd_config, str):
             slapd_config = slapd_config.encode(self.coding)
         self.slapd_conf = os.path.join(self.ldap_dir, "slapd.conf")
         f = open(self.slapd_conf, 'w')
@@ -240,7 +240,7 @@ class LdapEnvironment(object):
 try:
     import pytest
 
-    class LDAPTstBase(object):
+    class LDAPTstBase:
         """ Test base class for pytest based tests which need a LDAP server to talk to.
 
             Inherit your test class from this base class to test LDAP stuff.

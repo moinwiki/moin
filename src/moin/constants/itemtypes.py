@@ -5,9 +5,9 @@
 MoinMoin - itemtype related constants
 """
 
-ITEMTYPE_NONEXISTENT = u'nonexistent'
-ITEMTYPE_USERPROFILE = u'userprofile'
-ITEMTYPE_DEFAULT = u'default'  # == wiki-like
-ITEMTYPE_TICKET = u'ticket'
-ITEMTYPE_BLOG = u'blog'
-ITEMTYPE_BLOGENTRY = u'blogentry'
+ITEMTYPE_NONEXISTENT = 'nonexistent'
+ITEMTYPE_USERPROFILE = 'userprofile'
+ITEMTYPE_DEFAULT = 'default'  # == wiki-like
+ITEMTYPE_TICKET = 'ticket'
+ITEMTYPE_BLOG = 'blog'
+ITEMTYPE_BLOGENTRY = 'blogentry'

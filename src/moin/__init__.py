@@ -7,8 +7,6 @@ MoinMoin - a wiki engine in Python.
 """
 
 
-from __future__ import absolute_import, division
-
 import sys
 import platform
 
@@ -17,5 +15,5 @@ from ._version import version
 project = "MoinMoin"
 
 
-if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
-    sys.exit("Error: %s requires Python 2.7.x., current version is %s\n" % (project, platform.python_version()))
+if sys.hexversion < 0x3050000:
+    sys.exit("Error: %s requires Python 3.5+, current version is %s\n" % (project, platform.python_version()))

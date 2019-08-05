@@ -7,9 +7,6 @@ MoinMoin - sqlalchemy store
 Stores k/v pairs into any database supported by sqlalchemy.
 """
 
-
-from __future__ import absolute_import, division
-
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, Binary
 from sqlalchemy.pool import StaticPool
 

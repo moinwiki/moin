@@ -17,10 +17,10 @@ import sys
 import threading
 import traceback
 from time import sleep
-from io import BytesIO
+from io import StringIO
 
 
-class Monitor(object):
+class Monitor:
     def __init__(self):
         self.enabled = False
         assert hasattr(sys, "_current_frames")  # make sure we have py >= 2.5
@@ -38,10 +38,10 @@ class Monitor(object):
         dumpfile = dumpfile or sys.stderr
         cur_frames = sys._current_frames()
         for i in cur_frames:
-            s = BytesIO()
-            print >>s, "\nDumping thread (id {0}):".format(i, )
-            traceback.print_stack(cur_frames[i], file=s)
-            dumpfile.write(s.getvalue())
+            f = StringIO()
+            print("\nDumping thread (id {0}):".format(i, ), file=f)
+            traceback.print_stack(cur_frames[i], file=f)
+            dumpfile.write(f.getvalue())
 
     def hook_enabled(self):
         """ Returns true if the thread_monitor hook is enabled. """

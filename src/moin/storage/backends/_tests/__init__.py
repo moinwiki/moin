@@ -5,9 +5,6 @@
 MoinMoin - backend tests
 """
 
-
-from __future__ import absolute_import, division
-
 from io import BytesIO
 
 import pytest
@@ -15,7 +12,7 @@ import pytest
 from moin.constants.keys import SIZE, HASH_ALGORITHM
 
 
-class BackendTestBase(object):
+class BackendTestBase:
     def setup_method(self, method):
         """
         self.be needs to be an opened backend

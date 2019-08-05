@@ -11,33 +11,27 @@
 from moin import error
 
 
-class TestEncoding(object):
+class TestEncoding:
     """ MoinMoin errors do work with unicode transparently """
 
     def testCreateWithUnicode(self):
         """ error: create with unicode """
-        err = error.Error(u'טעות')
-        assert unicode(err) == u'טעות'
+        err = error.Error('טעות')
         assert str(err) == 'טעות'
 
     def testCreateWithEncodedString(self):
         """ error: create with encoded string """
-        err = error.Error('טעות')
-        assert unicode(err) == u'טעות'
+        err = error.Error('טעות'.encode())
         assert str(err) == 'טעות'
 
     def testCreateWithObject(self):
         """ error: create with any object """
 
-        class Foo(object):
-            def __unicode__(self):
-                return u'טעות'
-
+        class Foo:
             def __str__(self):
                 return 'טעות'
 
         err = error.Error(Foo())
-        assert unicode(err) == u'טעות'
         assert str(err) == 'טעות'
 
     def testAccessLikeDict(self):
@@ -47,7 +41,7 @@ class TestEncoding(object):
         assert '%(message)s' % dict(message=err) == test
 
 
-class TestCompositeError(object):
+class TestCompositeError:
 
     def setup_method(self, method):
         self.CompositeError_obj = error.CompositeError(error.InternalError)

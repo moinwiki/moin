@@ -15,9 +15,6 @@ We use a simple custom format here::
     4 bytes 00 (== length of next meta -> there is none, this is the end)
 """
 
-
-from __future__ import absolute_import, division
-
 import struct
 import json
 
@@ -64,7 +61,7 @@ def serialize_iter(backend):
 def deserialize(src, backend):
     while True:
         meta_size_bytes = src.read(4)
-        if meta_size_bytes == '':
+        if not len(meta_size_bytes):
             return  # end of file
         meta_size = struct.unpack('!i', meta_size_bytes)[0]
         if not meta_size:
@@ -73,7 +70,7 @@ def deserialize(src, backend):
         text = meta_str.decode('utf-8')
         meta = json.loads(text)
         name = meta.get(NAME)
-        if isinstance(name, unicode):
+        if isinstance(name, str):
             # if we encounter single names, make a list of names:
             meta[NAME] = [name, ]
         if ITEMTYPE not in meta:

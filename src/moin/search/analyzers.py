@@ -31,17 +31,17 @@ class MimeTokenizer(Tokenizer):
             instead of 0,1,2,...
         :param positions: Whether to record token positions in the token.
         """
-        assert isinstance(value, unicode), "{0!r} is not unicode".format(value)
-        if u'/' not in value:  # Add '/' if user forgot do this
-            value += u'/'
+        assert isinstance(value, str), "{0!r} is not str".format(value)
+        if '/' not in value:  # Add '/' if user forgot do this
+            value += '/'
         pos = start_pos
         tk = Token()
         tp = Type(value)
         # we need to yield the complete contenttype in one piece,
         # so we can find it with Term(CONTENTTYPE, contenttype):
         if tp.type is not None and tp.subtype is not None:
-            # note: we do not use "value" directly, so Type.__unicode__ can normalize it:
-            tk.text = unicode(tp)
+            # note: we do not use "value" directly, so Type.__str__ can normalize it:
+            tk.text = str(tp)
             if positions:
                 tk.pos = pos
                 pos += 1
@@ -59,7 +59,7 @@ class MimeTokenizer(Tokenizer):
                 pos += 1
             yield tk
         for key, value in tp.parameters.items():
-            tk.text = u"{0}={1}".format(key, value)
+            tk.text = "{0}={1}".format(key, value)
             if positions:
                 tk.pos = pos
                 pos += 1
@@ -75,7 +75,7 @@ class AclTokenizer(Tokenizer):
         """
         self._acl_rights_contents = acl_rights_contents
 
-    def __call__(self, value, start_pos=0, positions=False, mode=u'', **kwargs):
+    def __call__(self, value, start_pos=0, positions=False, mode='', **kwargs):
         """
         Calls AccessControlList for tokenization
 
@@ -94,13 +94,13 @@ class AclTokenizer(Tokenizer):
 
             Output: u"JoeDoe:+write"
 
-        :param value: unicode string
+        :param value: str
         :param positions: Whether to record token positions in the token.
         :param start_pos: The position number of the first token. For example,
             if you set start_pos=2, the tokens will be numbered 2,3,4,...
             instead of 0,1,2,...
         """
-        assert isinstance(value, unicode)
+        assert isinstance(value, str)
         pos = start_pos
         tk = Token()
         tk.mode = mode
@@ -114,7 +114,7 @@ class AclTokenizer(Tokenizer):
             for name, permissions in acl.acl:
                 for permission in permissions:
                     sign = "+" if permissions[permission] else "-"
-                    tk.text = u"{0}:{1}{2}".format(name, sign, permission)
+                    tk.text = "{0}:{1}{2}".format(name, sign, permission)
                     if positions:
                         tk.pos = pos
                         pos += 1

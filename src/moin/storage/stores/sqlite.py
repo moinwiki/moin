@@ -11,9 +11,7 @@ name.
 Optionally, you can use zlib/"gzip" compression.
 """
 
-
-from __future__ import absolute_import, division
-
+import base64
 import zlib
 from sqlite3 import connect, Row
 
@@ -88,12 +86,15 @@ class BytesStore(BytesMutableStoreBase):
             value = zlib.compress(value, self.compression_level)
         # we store some magic start/end markers and the compression level,
         # so we can later uncompress correctly (or rather NOT uncompress if level == 0)
-        return "{{{GZ%(level)d|%(value)s}}}" % dict(level=self.compression_level, value=value)
+        header = "{{{GZ%d|" % self.compression_level
+        tail = "}}}"
+        return header.encode() + value + tail.encode()
 
     def _decompress(self, value):
-        if not value.startswith("{{{GZ") or not value.endswith("}}}"):
+        if not (value[:5] == b"{{{GZ" and value[-3:] == b"}}}"):
+            print("value = %r ... %r" % (value[:5], value[-3:]))
             raise ValueError("Invalid data format in database.")
-        compression_level = int(value[5])
+        compression_level = int(chr(value[5]))
         value = value[7:-3]
         if compression_level:
             value = zlib.decompress(value)
@@ -103,13 +104,15 @@ class BytesStore(BytesMutableStoreBase):
         rows = list(self.conn.execute("select value from {0} where key=?".format(self.table_name), (key, )))
         if not rows:
             raise KeyError(key)
-        value = str(rows[0]['value'])
+        value = str(rows[0]['value'])  # a str in base64 encoding
+        value = base64.b64decode(value.encode())
         return self._decompress(value)
 
     def __setitem__(self, key, value):
         value = self._compress(value)
         with self.conn:
-            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, buffer(value)))
+            value = base64.b64encode(value).decode()  # a str in base64 encoding
+            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, value))
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):

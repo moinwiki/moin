@@ -23,7 +23,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Base(object):
+class Base:
     input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:html="{2}" xmlns:xlink="{3}" xmlns:xml="{4}"'.format(moin_page.namespace, moin_page.namespace, html.namespace, xlink.namespace, xml.namespace)
     output_namespaces = {
         html.namespace: '',
@@ -40,7 +40,7 @@ class Base(object):
 
     def handle_output(self, elem, **options):
         output = serialize(elem, namespaces=self.output_namespaces, **options)
-        return self.output_re.sub(u'', output)
+        return self.output_re.sub('', output)
 
     def do(self, input, xpath, args={}):
         out = self.conv(self.handle_input(input), **args)

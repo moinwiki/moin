@@ -23,7 +23,7 @@ output_re = XMLNS_RE3
 
 def serialize_strip(elem, **options):
     result = serialize(elem, namespaces=output_namespaces, **options)
-    return output_re.sub(u'', result)
+    return output_re.sub('', result)
 
 
 @pytest.mark.parametrize('input,query', [
@@ -56,12 +56,12 @@ def serialize_strip(elem, **options):
 ])
 def test_smiley_convert(input, query):
     conv = Converter()
-    print 'input:', input
+    print('input:', input)
     out_elem = conv(ET.XML(input))
     after_conversion = serialize_strip(out_elem)
-    print 'output:', after_conversion
-    print 'query:', query
+    print('output:', after_conversion)
+    print('query:', query)
     tree = etree.fromstring(after_conversion)
     result = tree.xpath(query)
-    print 'query result:', result
+    print('query result:', result)
     assert result

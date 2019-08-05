@@ -17,8 +17,6 @@
 """
 
 
-from __future__ import absolute_import, division
-
 import copy
 import hashlib
 import werkzeug
@@ -76,7 +74,7 @@ space between words. Group page name is not allowed.""", name=username)
         return _("This user name already belongs to somebody else.")
 
     # XXX currently we just support creating with 1 name:
-    theuser.profile[NAME] = [unicode(username), ]
+    theuser.profile[NAME] = [str(username), ]
 
     pw_checker = app.cfg.password_checker
     if validate and pw_checker:
@@ -208,18 +206,18 @@ def assemble_subscription(keyword, value, namespace=None):
     :return: subscription string
     """
     if keyword == ITEMID:
-        subscription = u"{0}:{1}".format(ITEMID, value)
+        subscription = "{0}:{1}".format(ITEMID, value)
     elif keyword in [NAME, TAGS, NAMERE, NAMEPREFIX, ]:
         if namespace is not None:
-            subscription = u"{0}:{1}:{2}".format(keyword, namespace, value)
+            subscription = "{0}:{1}:{2}".format(keyword, namespace, value)
         else:
-            raise ValueError(u"The subscription by {0} keyword requires a namespace".format(keyword))
+            raise ValueError("The subscription by {0} keyword requires a namespace".format(keyword))
     else:
-        raise ValueError(u"Invalid keyword string: {0}".format(keyword))
+        raise ValueError("Invalid keyword string: {0}".format(keyword))
     return subscription
 
 
-class UserProfile(object):
+class UserProfile:
     """ A User Profile"""
 
     def __init__(self, **q):
@@ -292,7 +290,7 @@ class UserProfile(object):
             self._changed = False
 
 
-class User(object):
+class User:
     """ A MoinMoin User """
 
     def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):
@@ -348,7 +346,7 @@ class User(object):
         name = getattr(self, NAME, [])
         itemid = getattr(self, ITEMID, None)
 
-        return u"<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
+        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
             name, itemid, self.valid, self.trusted)
 
@@ -582,10 +580,10 @@ class User(object):
         subscriptions = set()
         itemid = meta.get(ITEMID)
         if itemid is not None:
-            subscriptions.update([u"{0}:{1}".format(ITEMID, itemid)])
-        subscriptions.update(u"{0}:{1}:{2}".format(NAME, item_namespace, name)
+            subscriptions.update(["{0}:{1}".format(ITEMID, itemid)])
+        subscriptions.update("{0}:{1}:{2}".format(NAME, item_namespace, name)
                              for name in meta.get(NAME, []))
-        subscriptions.update(u"{0}:{1}:{2}".format(TAGS, item_namespace, tag)
+        subscriptions.update("{0}:{1}:{2}".format(TAGS, item_namespace, tag)
                              for tag in meta.get(TAGS, []))
         if subscriptions & set(self.subscriptions):
             return True

@@ -9,10 +9,9 @@ MoinMoin - Markdown markup output converter
 Converts an internal document tree into markdown markup.
 """
 
-
-from __future__ import absolute_import, division
-
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 
 from . import ElementException
 
@@ -29,58 +28,58 @@ from . import default_registry
 from moin.utils.mime import Type, type_moin_document
 
 
-class Markdown(object):
+class Markdown:
     """
     Markdown syntax elements
     It's dummy
     """
-    h = u'#'
-    a_open = u'<'
+    h = '#'
+    a_open = '<'
     a_desc_open = '('
     a_desc_close = ')'
-    a_close = u'>'
+    a_close = '>'
     comment_open = '<!-- '
     comment_close = ' -->'
-    verbatim_open = u'    '  # * 3
-    verbatim_close = u'    '  # * 3
-    monospace = u'`'
-    strong = u"**"
-    emphasis = u"*"
-    underline_open = u'<u>'
-    underline_close = u'</u>'
-    samp_open = u'`'
-    samp_close = u'`'
-    stroke_open = u'<strike>'
-    stroke_close = u'</strike>'
-    table_marker = u'|'
-    p = u'\n'
-    linebreak = u'  '
-    larger_open = u'<big>'
-    larger_close = u'</big>'
-    smaller_open = u'<small>'
-    smaller_close = u'</small>'
-    object_open = u'{{'
-    object_close = u'}}'
-    definition_list_marker = u':  '
-    separator = u'----'
+    verbatim_open = '    '  # * 3
+    verbatim_close = '    '  # * 3
+    monospace = '`'
+    strong = "**"
+    emphasis = "*"
+    underline_open = '<u>'
+    underline_close = '</u>'
+    samp_open = '`'
+    samp_close = '`'
+    stroke_open = '<strike>'
+    stroke_close = '</strike>'
+    table_marker = '|'
+    p = '\n'
+    linebreak = '  '
+    larger_open = '<big>'
+    larger_close = '</big>'
+    smaller_open = '<small>'
+    smaller_close = '</small>'
+    object_open = '{{'
+    object_close = '}}'
+    definition_list_marker = ':  '
+    separator = '----'
     # TODO: definition list
     list_type = {
-        (u'definition', None): u'',
-        (u'ordered', None): u'1.',
-        (u'ordered', u'lower-alpha'): u'1.',
-        (u'ordered', u'upper-alpha'): u'1.',
-        (u'ordered', u'lower-roman'): u'1.',
-        (u'ordered', u'upper-roman'): u'1.',
-        (u'unordered', None): u'*',
-        (u'unordered', u'no-bullet'): u'*',
-        (None, None): u'::',
+        ('definition', None): '',
+        ('ordered', None): '1.',
+        ('ordered', 'lower-alpha'): '1.',
+        ('ordered', 'upper-alpha'): '1.',
+        ('ordered', 'lower-roman'): '1.',
+        ('ordered', 'upper-roman'): '1.',
+        ('unordered', None): '*',
+        ('unordered', 'no-bullet'): '*',
+        (None, None): '::',
     }
 
     def __init__(self):
         pass
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> text/x.moin.wiki
     """
@@ -94,8 +93,8 @@ class Converter(object):
         return cls()
 
     def __init__(self):
-        self.list_item_labels = [u'', ]
-        self.list_item_label = u''
+        self.list_item_labels = ['', ]
+        self.list_item_label = ''
         self.list_level = 0
         self.footnotes = []  # tuple of (name, text)
         self.footnote_number = 0  # incremented if a footnote name was not passed
@@ -111,25 +110,25 @@ class Converter(object):
             # add footnote definitions to end of content
             notes = []
             for name, txt in self.footnotes:
-                notes.append(u'[^{0}]: {1}'.format(name, txt))
-            notes = u'\n'.join(notes)
-            content += u'\n\n' + notes + u'\n'
+                notes.append('[^{0}]: {1}'.format(name, txt))
+            notes = '\n'.join(notes)
+            content += '\n\n' + notes + '\n'
         return content
 
-    def open_children(self, elem, join_char=u''):
+    def open_children(self, elem, join_char=''):
         childrens_output = []
         for child in elem:
             if isinstance(child, ET.Element):
                 # open function can change self.output
                 childrens_output.append(self.open(child))
             else:
-                ret = u''
+                ret = ''
                 if self.status[-1] == "text":
                     if self.last_closed == "p":
-                        ret = u'\n'
+                        ret = '\n'
                 if child == '\n' and getattr(elem, 'level', 0):
-                    child = child + ' ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
-                childrens_output.append(u'{0}{1}'.format(ret, child))
+                    child = child + ' ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
+                childrens_output.append('{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
         out = join_char.join(childrens_output)
         return out
@@ -157,12 +156,12 @@ class Converter(object):
     def open_moinpage_a(self, elem):
         href = elem.get(xlink.href, None)
         if isinstance(href, Iri):
-            href = unicode(href)
-        href = href.split(u'wiki.local:')[-1]
+            href = str(href)
+        href = href.split('wiki.local:')[-1]
         ret = href
         text = self.open_children(elem)
         if text:
-            return u'[{0}]({1})'.format(text, href)
+            return '[{0}]({1})'.format(text, href)
         if ret.startswith('wiki://'):
             # interwiki fixup
             ret = ret[7:]
@@ -170,7 +169,7 @@ class Converter(object):
         return Markdown.a_open + ret + Markdown.a_close
 
     def open_moinpage_blockcode(self, elem):
-        text = u''.join(elem.itertext())
+        text = ''.join(elem.itertext())
 
         if elem.attrib.get(html.class_, None) == 'codehilite':
             return text
@@ -190,12 +189,12 @@ class Converter(object):
         ret = ret.strip()
         indented = []
         for line in ret.split('\n'):
-            indented.append(u' > ' + line)
+            indented.append(' > ' + line)
         return '\n' + '\n'.join(indented) + '\n'
 
     def open_moinpage_code(self, elem):
         ret = Markdown.monospace
-        ret += u''.join(elem.itertext())
+        ret += ''.join(elem.itertext())
         ret += Markdown.monospace
         return ret
 
@@ -207,17 +206,17 @@ class Converter(object):
             # we do not want expanded toc
             return '\n\n[TOC]\n\n'
 
-        if elem.attrib.get(html.class_, None) == 'codehilite' and isinstance(elem[0][1], unicode):
+        if elem.attrib.get(html.class_, None) == 'codehilite' and isinstance(elem[0][1], str):
             # in most cases, codehilite returns plain text blocks; return an indented block
             text = elem[0][1].split('\n')
-            return '\n' + '\n'.join([u'    ' + x for x in text]) + '\n'
+            return '\n' + '\n'.join(['    ' + x for x in text]) + '\n'
 
         childrens_output = self.open_children(elem)
         return '\n\n' + childrens_output + '\n\n'
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
-        return u"{0}{1}{2}".format(Markdown.emphasis, childrens_output, Markdown.emphasis)
+        return "{0}{1}{2}".format(Markdown.emphasis, childrens_output, Markdown.emphasis)
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -229,79 +228,79 @@ class Converter(object):
             level = 1
         elif level > 6:
             level = 6
-        ret = Markdown.h * level + u' '
-        ret += u''.join(elem.itertext())
-        ret += u' {0}\n'.format(Markdown.h * level)
-        return u'\n' + ret
+        ret = Markdown.h * level + ' '
+        ret += ''.join(elem.itertext())
+        ret += ' {0}\n'.format(Markdown.h * level)
+        return '\n' + ret
 
     def open_moinpage_line_break(self, elem):
         return Markdown.linebreak
 
     def open_moinpage_list(self, elem):
         label_type = elem.get(moin_page.item_label_generate, None), elem.get(moin_page.list_style_type, None)
-        self.list_item_labels.append(Markdown.list_type.get(label_type, u'*'))
+        self.list_item_labels.append(Markdown.list_type.get(label_type, '*'))
         self.list_level += 1
-        ret = u''
+        ret = ''
         if self.status[-1] != 'text' or self.last_closed:
-            ret = u'\n'
+            ret = '\n'
         self.status.append('list')
         self.last_closed = None
         childrens_output = self.open_children(elem)
         list_start = elem.attrib.get(moin_page.list_start)
         if list_start:
-            child_out1, child_out2 = childrens_output.split(u'.', 1)
-            childrens_output = u'{0}.#{1}{2}'.format(child_out1, list_start, child_out2)
+            child_out1, child_out2 = childrens_output.split('.', 1)
+            childrens_output = '{0}.#{1}{2}'.format(child_out1, list_start, child_out2)
         self.list_item_labels.pop()
         self.list_level -= 1
         self.status.pop()
         if self.status[-1] == 'list':
-            ret_end = u''
+            ret_end = ''
         else:
-            ret_end = u'\n'
-        return u"{0}{1}{2}".format(ret, childrens_output, ret_end)
+            ret_end = '\n'
+        return "{0}{1}{2}".format(ret, childrens_output, ret_end)
 
     def open_moinpage_list_item(self, elem):
-        self.list_item_label = self.list_item_labels[-1] + u' '
+        self.list_item_label = self.list_item_labels[-1] + ' '
         return self.open_children(elem)
 
     def open_moinpage_list_item_label(self, elem):
         """Used for definition list terms"""
-        ret = u''
-        if self.list_item_labels[-1] == u'' or self.list_item_labels[-1] == Markdown.definition_list_marker:
+        ret = ''
+        if self.list_item_labels[-1] == '' or self.list_item_labels[-1] == Markdown.definition_list_marker:
             self.list_item_labels[-1] = Markdown.definition_list_marker
-            self.list_item_label = self.list_item_labels[-1] + u' '
-            ret = u'   ' * (len(u''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
+            self.list_item_label = self.list_item_labels[-1] + ' '
+            ret = '   ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
             if self.last_closed:
-                ret = u'\n{0}'.format(ret)
+                ret = '\n{0}'.format(ret)
         childrens_output = self.open_children(elem)
         return "\n{0}{1}".format(ret, childrens_output)
 
     def open_moinpage_list_item_body(self, elem):
-        ret = u''
+        ret = ''
         if self.last_closed:
-            ret = u'\n'
-        ret += u'    ' * len(self.list_item_labels[:-2]) + self.list_item_label
+            ret = '\n'
+        ret += '    ' * len(self.list_item_labels[:-2]) + self.list_item_label
         child_out = self.open_children(elem)
         if self.list_item_label[0] == Markdown.definition_list_marker[0]:
-            child_out = u'\n    '.join(child_out.split('\n'))
+            child_out = '\n    '.join(child_out.split('\n'))
         return ret + child_out
 
     def open_moinpage_note(self, elem):
         # used for moinwiki to markdown conversion; not used for broken markdown to markdown conversion
-        class_ = elem.get(moin_page.note_class, u"")
+        class_ = elem.get(moin_page.note_class, "")
         if class_:
             if class_ == "footnote":
                 self.footnote_number += 1
                 self.footnotes.append((self.footnote_number, self.open_children(elem)))
-                return u'[^{0}]'.format(self.footnote_number)
+                return '[^{0}]'.format(self.footnote_number)
         # moinwiki footnote placement is ignored; markdown cannot place footnotes in middle of document like moinwiki
-        return u''
+        return ''
 
     def open_moinpage_nowiki(self, elem):
         """No support for moin features like highlight or nowiki within nowiki."""
-        if isinstance(elem[0], ET.Element) and elem[0].tag.name == 'blockcode' and isinstance(elem[0][0], unicode):
+        if isinstance(elem[0], ET.Element) and elem[0].tag.name == 'blockcode' and isinstance(elem[0][0], str):
             text = elem[0][0].split('\n')
-            return '\n' + '\n'.join([u'    ' + x for x in text]) + '\n'
+            return '\n' + '\n'.join(['    ' + x for x in text]) + '\n'
         return self.open_children(elem)
 
     def open_moinpage_object(self, elem):
@@ -310,32 +309,32 @@ class Converter(object):
 
         Transcluded objects are expanded in output because Markdown does not support transclusions.
         """
-        href = elem.get(xlink.href, elem.get(xinclude.href, u''))
+        href = elem.get(xlink.href, elem.get(xinclude.href, ''))
         if isinstance(href, Iri):
-            href = unicode(href)
-            href = urllib.unquote(href)
+            href = str(href)
+            href = urllib.parse.unquote(href)
             if href.startswith('/+get/+'):
                 href = href.split('/')[-1]
-        href = href.split(u'wiki.local:')[-1]
-        if len(elem) and isinstance(elem[0], unicode):
+        href = href.split('wiki.local:')[-1]
+        if len(elem) and isinstance(elem[0], str):
             # alt text for objects is enclosed within <object...>...</object>
             alt = elem[0]
         else:
-            alt = elem.attrib.get(html.alt, u'')
-        title = elem.attrib.get(html.title_, u'')
+            alt = elem.attrib.get(html.alt, '')
+        title = elem.attrib.get(html.title_, '')
         if title:
-            title = u'"{0}"'.format(title)
-        ret = u'![{0}]({1} {2})'.format(alt, href, title)
+            title = '"{0}"'.format(title)
+        ret = '![{0}]({1} {2})'.format(alt, href, title)
         ret = ret.replace(' )', ')')
         return ret
 
     def open_moinpage_p(self, elem):
         if moin_page.class_ in elem.attrib and 'moin-error' in elem.attrib[moin_page.class_]:
             # ignore error messages inserted into DOM
-            return u''
+            return ''
 
         self.status.append("p")
-        ret = u""
+        ret = ""
         if self.status[-2] == 'text':
             if self.last_closed == 'text':
                 ret = Markdown.p * 2 + self.open_children(elem) + Markdown.p
@@ -362,7 +361,7 @@ class Converter(object):
 
     def open_moinpage_page(self, elem):
         self.last_closed = None
-        ret = u''
+        ret = ''
         if len(self.status) > 1:
             self.status.append('text')
             childrens_output = self.open_children(elem)
@@ -375,39 +374,39 @@ class Converter(object):
         return childrens_output
 
     def open_moinpage_body(self, elem):
-        class_ = elem.get(moin_page.class_, u'').replace(u' ', u'/')
+        class_ = elem.get(moin_page.class_, '').replace(' ', '/')
         if class_:
-            ret = u' {0}\n'.format(class_)
+            ret = ' {0}\n'.format(class_)
         elif len(self.status) > 2:
-            ret = u'\n'
+            ret = '\n'
         else:
-            ret = u''
+            ret = ''
         childrens_output = self.open_children(elem)
-        return u"{0}{1}".format(ret, childrens_output)
+        return "{0}{1}".format(ret, childrens_output)
 
     def open_moinpage_samp(self, elem):
         # text {{{more text}}} end
         ret = Markdown.samp_open
-        ret += u''.join(elem.itertext())
+        ret += ''.join(elem.itertext())
         ret += Markdown.samp_close
         return ret
 
     def open_moinpage_separator(self, elem):
-        return u'\n----\n'
+        return '\n----\n'
 
     def open_moinpage_span(self, elem):
-        font_size = elem.get(moin_page.font_size, u'')
-        baseline_shift = elem.get(moin_page.baseline_shift, u'')
+        font_size = elem.get(moin_page.font_size, '')
+        baseline_shift = elem.get(moin_page.baseline_shift, '')
         if font_size:
-            return u"{0}{1}{2}".format(
-                Markdown.larger_open if font_size == u"120%" else Markdown.smaller_open,
+            return "{0}{1}{2}".format(
+                Markdown.larger_open if font_size == "120%" else Markdown.smaller_open,
                 self.open_children(elem),
-                Markdown.larger_close if font_size == u"120%" else Markdown.smaller_close)
-        if baseline_shift == u'super':
-            return u'<sup>{0}</sup>'.format(u''.join(elem.itertext()))
-        if baseline_shift == u'sub':
-            return u'<sub>{0}</sub>'.format(u''.join(elem.itertext()))
-        return u''.join(self.open_children(elem))
+                Markdown.larger_close if font_size == "120%" else Markdown.smaller_close)
+        if baseline_shift == 'super':
+            return '<sup>{0}</sup>'.format(''.join(elem.itertext()))
+        if baseline_shift == 'sub':
+            return '<sub>{0}</sub>'.format(''.join(elem.itertext()))
+        return ''.join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
         return Markdown.stroke_open + self.open_children(elem) + Markdown.stroke_close
@@ -423,7 +422,7 @@ class Converter(object):
 
     def open_moinpage_strong(self, elem):
         ret = Markdown.strong
-        return u"{0}{1}{2}".format(Markdown.strong, self.open_children(elem), Markdown.strong)
+        return "{0}{1}{2}".format(Markdown.strong, self.open_children(elem), Markdown.strong)
 
     def open_moinpage_table(self, elem):
         self.status.append('table')
@@ -438,7 +437,7 @@ class Converter(object):
             marker = Markdown.table_marker + Markdown.table_marker.join(['----' for x in cells]) + Markdown.table_marker
             rows.insert(1, marker)
             ret = '\n'.join(rows)
-        return u'\n' + ret + u'\n'
+        return '\n' + ret + '\n'
 
     def open_moinpage_table_header(self, elem):
         # used for reST to moinwiki conversion, maybe others that generate table head
@@ -454,7 +453,7 @@ class Converter(object):
                 separator.append('------')
         separator = Markdown.table_marker.join(separator)
         ret = self.open_children(elem)
-        ret = ret + u'{0}{1}{0}\n'.format(Markdown.table_marker, separator)
+        ret = ret + '{0}{1}{0}\n'.format(Markdown.table_marker, separator)
         return ret
 
     def open_moinpage_table_body(self, elem):
@@ -463,10 +462,10 @@ class Converter(object):
 
     def open_moinpage_table_row(self, elem):
         ret = self.open_children(elem, join_char=Markdown.table_marker)
-        return u'{0}{1}{0}\n'.format(Markdown.table_marker, ret)
+        return '{0}{1}{0}\n'.format(Markdown.table_marker, ret)
 
     def open_moinpage_table_of_content(self, elem):
-        return u"\n[TOC]\n"
+        return "\n[TOC]\n"
 
     def open_xinclude(self, elem):
         """Processing of transclusions is similar to objects."""

@@ -16,7 +16,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Clock(object):
+class Clock:
     """
     Helper class for measuring the time needed to run code.
 

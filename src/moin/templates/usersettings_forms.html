@@ -47,7 +47,7 @@
 {% endmacro %}
 
 {% macro ui(form) %}
-    {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
+    {{ gen.form.open(form, id="usersettings_ui", method="post", action=url_for('frontend.usersettings')) }}
         {{ forms.render_errors(form) }}
         <dl>
             {{ forms.render(form['theme_name']) }}

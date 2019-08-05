@@ -21,62 +21,62 @@ PARSER_TEXT_MIMETYPE = [
     'cplusplus', 'java', 'pascal', 'diff', 'gettext', 'xslt', 'creole',
 ]
 
-CONTENTTYPE_USER = u'application/x.moin.userprofile'
-CONTENTTYPE_DEFAULT = u'application/octet-stream'
-CONTENTTYPE_NONEXISTENT = u'application/x-nonexistent'
+CONTENTTYPE_USER = 'application/x.moin.userprofile'
+CONTENTTYPE_DEFAULT = 'application/octet-stream'
+CONTENTTYPE_NONEXISTENT = 'application/x-nonexistent'
 
 CONTENTTYPE_MARKUP = [
-    u'text/x.moin.wiki;charset=utf-8',
-    u'text/x-mediawiki;charset=utf-8',
-    u'text/x.moin.creole;charset=utf-8',
-    u'text/x-markdown;charset=utf-8',
-    u'text/x-rst;charset=utf-8',
-    u'text/html;charset=utf-8',
-    u'application/docbook+xml;charset=utf-8',
+    'text/x.moin.wiki;charset=utf-8',
+    'text/x-mediawiki;charset=utf-8',
+    'text/x.moin.creole;charset=utf-8',
+    'text/x-markdown;charset=utf-8',
+    'text/x-rst;charset=utf-8',
+    'text/html;charset=utf-8',
+    'application/docbook+xml;charset=utf-8',
 ]
 
 CONTENTTYPE_NO_EXPANSION = [
     # no need to expand transclusions, etc. when converting to/from these types
-    u'text/x.moin.wiki;charset=utf-8',
-    u'text/x.moin.creole;charset=utf-8',
+    'text/x.moin.wiki;charset=utf-8',
+    'text/x.moin.creole;charset=utf-8',
 ]
 
 CONTENTTYPE_VARIABLES = [
     # content types that support variables: @SIG@, @EMAIL@, @TIME@, @DATE@, etc
-    u'text/x.moin.wiki;charset=utf-8',
-    u'text/x.moin.wiki;format=1.9;charset=utf-8',
+    'text/x.moin.wiki;charset=utf-8',
+    'text/x.moin.wiki;format=1.9;charset=utf-8',
 ]
 
 CONTENTTYPE_MOIN_19 = [
-    u'text/x.moin.wiki;format=1.9;charset=utf-8',
+    'text/x.moin.wiki;format=1.9;charset=utf-8',
 ]
 
 CONTENTTYPE_TEXT = [
-    u'text/plain;charset=utf-8',
-    u'text/x-diff;charset=utf-8',
-    u'text/x-python;charset=utf-8',
-    u'text/csv;charset=utf-8',
-    u'text/x-irclog;charset=utf-8',
+    'text/plain;charset=utf-8',
+    'text/x-diff;charset=utf-8',
+    'text/x-python;charset=utf-8',
+    'text/csv;charset=utf-8',
+    'text/x-irclog;charset=utf-8',
 ]
 
 CONTENTTYPE_IMAGE = [
-    u'image/svg+xml',
-    u'image/png',
-    u'image/jpeg',
-    u'image/gif',
+    'image/svg+xml',
+    'image/png',
+    'image/jpeg',
+    'image/gif',
 ]
 
 CONTENTTYPE_AUDIO = [
-    u'audio/wave',
-    u'audio/ogg',
-    u'audio/mpeg',
-    u'audio/webm',
+    'audio/wave',
+    'audio/ogg',
+    'audio/mpeg',
+    'audio/webm',
 ]
 
 CONTENTTYPE_VIDEO = [
-    u'video/ogg',
-    u'video/webm',
-    u'video/mp4',
+    'video/ogg',
+    'video/webm',
+    'video/mp4',
 ]
 
 # TODO: is there a source that maps all (or common) file suffixes to media contenttypes as used by /maint/dump_html.py
@@ -84,52 +84,52 @@ CONTENTTYPE_MEDIA = CONTENTTYPE_VIDEO + CONTENTTYPE_AUDIO + CONTENTTYPE_IMAGE
 CONTENTTYPE_MEDIA_SUFFIX = tuple('.svg .png .jpg .jpeg .gif .wave .wav .ogg .oga .ogv.mpeg .mpg .mp3 .webm .mp4'.split())
 
 CONTENTTYPE_DRAWING = [
-    u'application/x-twikidraw',
-    u'application/x-anywikidraw',
-    u'application/x-svgdraw',
+    'application/x-twikidraw',
+    'application/x-anywikidraw',
+    'application/x-svgdraw',
 ]
 
 CONTENTTYPE_OTHER = [
-    u'application/octet-stream',
-    u'application/x-tar',
-    u'application/x-gtar',
-    u'application/zip',
-    u'application/pdf',
+    'application/octet-stream',
+    'application/x-tar',
+    'application/x-gtar',
+    'application/zip',
+    'application/pdf',
 ]
 
 CONTENTTYPES_MAP = {
-    u'text/x.moin.wiki;charset=utf-8': 'Moinmoin',
-    u'text/x.moin.wiki;format=1.9;charset=utf-8': 'Moinmoin 1.9',
-    u'text/x-mediawiki;charset=utf-8': 'MediaWiki',
-    u'text/x.moin.creole;charset=utf-8': 'Creole',
-    u'text/x-markdown;charset=utf-8': 'Markdown',
-    u'text/x-rst;charset=utf-8': 'ReST',
-    u'text/html;charset=utf-8': 'HTML',
-    u'application/docbook+xml;charset=utf-8': 'DocBook',
-    u'text/plain;charset=utf-8': 'Plain Text',
-    u'text/x-diff;charset=utf-8': 'Diff/Patch',
-    u'text/x-python;charset=utf-8': 'Python Code',
-    u'text/csv;charset=utf-8': 'CSV',
-    u'text/x-irclog;charset=utf-8': 'IRC Log',
-    u'image/svg+xml': 'SVG Image',
-    u'image/png': 'PNG Image',
-    u'image/jpeg': 'JPEG Image',
-    u'image/gif': 'GIF Image',
-    u'audio/wave': 'WAV Audio',
-    u'audio/ogg': 'OGG Audio',
-    u'audio/mpeg': 'MP3 Audio',
-    u'audio/webm': 'WebM Audio',
-    u'video/ogg': 'OGG Video',
-    u'video/webm': 'WebM Video',
-    u'video/mp4': 'MP4 Video',
-    u'application/x-twikidraw': 'TDRAW',
-    u'application/x-anywikidraw': 'ADRAW',
-    u'application/x-svgdraw': 'SVGDRAW',
-    u'application/octet-stream': 'Binary File',
-    u'application/x-tar': 'TAR',
-    u'application/x-gtar': 'TGZ',
-    u'application/zip': 'ZIP',
-    u'application/pdf': 'PDF',
+    'text/x.moin.wiki;charset=utf-8': 'Moinmoin',
+    'text/x.moin.wiki;format=1.9;charset=utf-8': 'Moinmoin 1.9',
+    'text/x-mediawiki;charset=utf-8': 'MediaWiki',
+    'text/x.moin.creole;charset=utf-8': 'Creole',
+    'text/x-markdown;charset=utf-8': 'Markdown',
+    'text/x-rst;charset=utf-8': 'ReST',
+    'text/html;charset=utf-8': 'HTML',
+    'application/docbook+xml;charset=utf-8': 'DocBook',
+    'text/plain;charset=utf-8': 'Plain Text',
+    'text/x-diff;charset=utf-8': 'Diff/Patch',
+    'text/x-python;charset=utf-8': 'Python Code',
+    'text/csv;charset=utf-8': 'CSV',
+    'text/x-irclog;charset=utf-8': 'IRC Log',
+    'image/svg+xml': 'SVG Image',
+    'image/png': 'PNG Image',
+    'image/jpeg': 'JPEG Image',
+    'image/gif': 'GIF Image',
+    'audio/wave': 'WAV Audio',
+    'audio/ogg': 'OGG Audio',
+    'audio/mpeg': 'MP3 Audio',
+    'audio/webm': 'WebM Audio',
+    'video/ogg': 'OGG Video',
+    'video/webm': 'WebM Video',
+    'video/mp4': 'MP4 Video',
+    'application/x-twikidraw': 'TDRAW',
+    'application/x-anywikidraw': 'ADRAW',
+    'application/x-svgdraw': 'SVGDRAW',
+    'application/octet-stream': 'Binary File',
+    'application/x-tar': 'TAR',
+    'application/x-gtar': 'TGZ',
+    'application/zip': 'ZIP',
+    'application/pdf': 'PDF',
 }
 
 GROUP_MARKUP_TEXT = 'Markup Text Items'
@@ -158,37 +158,37 @@ help_on_csv = ' '.join((
 
 CONTENTTYPES_HELP_DOCS = {
     # content type: tuple - must defer forming url until wiki root is known
-    u'text/x.moin.wiki;charset=utf-8': (('user/moinwiki.html', _("Click for help on Moin Wiki markup."))),
-    u'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
-    u'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
-    u'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),
-    u'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on reST Wiki markup."))),
-    u'application/docbook+xml;charset=utf-8': (('user/docbook.html', _("Click for help on Docbook Wiki markup."))),
+    'text/x.moin.wiki;charset=utf-8': (('user/moinwiki.html', _("Click for help on Moin Wiki markup."))),
+    'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
+    'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
+    'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),
+    'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on reST Wiki markup."))),
+    'application/docbook+xml;charset=utf-8': (('user/docbook.html', _("Click for help on Docbook Wiki markup."))),
     # content type: help string
-    u'text/html;charset=utf-8': ext_link('http://ckeditor.com/'),
-    u'text/plain;charset=utf-8': help_on_plain_text,
-    u'text/x-diff;charset=utf-8': help_on_plain_text,
-    u'text/x-python;charset=utf-8': help_on_plain_text,
-    u'text/csv;charset=utf-8': help_on_csv,
-    u'text/x-irclog;charset=utf-8': help_on_plain_text,
-    u'image/svg+xml': help_on_binary,
-    u'image/png': help_on_binary,
-    u'image/jpeg': help_on_binary,
-    u'image/gif': help_on_binary,
-    u'audio/wave': help_on_binary,
-    u'audio/ogg': help_on_binary,
-    u'audio/mpeg': help_on_binary,
-    u'audio/webm': help_on_binary,
-    u'video/ogg': help_on_binary,
-    u'video/webm': help_on_binary,
-    u'video/mp4': help_on_binary,
-    u'application/x-twikidraw': ext_link('http://twiki.org/cgi-bin/view/Plugins/TWikiDrawPlugin'),
-    u'application/x-anywikidraw': ext_link('http://anywikidraw.sourceforge.net/'),
-    u'application/x-svgdraw': ext_link('http://code.google.com/p/svg-edit/'),
-    u'application/octet-stream': help_on_binary,
-    u'application/x-tar': help_on_binary,
-    u'application/x-gtar': help_on_binary,
-    u'application/zip': help_on_binary,
-    u'application/pdf': help_on_binary,
+    'text/html;charset=utf-8': ext_link('http://ckeditor.com/'),
+    'text/plain;charset=utf-8': help_on_plain_text,
+    'text/x-diff;charset=utf-8': help_on_plain_text,
+    'text/x-python;charset=utf-8': help_on_plain_text,
+    'text/csv;charset=utf-8': help_on_csv,
+    'text/x-irclog;charset=utf-8': help_on_plain_text,
+    'image/svg+xml': help_on_binary,
+    'image/png': help_on_binary,
+    'image/jpeg': help_on_binary,
+    'image/gif': help_on_binary,
+    'audio/wave': help_on_binary,
+    'audio/ogg': help_on_binary,
+    'audio/mpeg': help_on_binary,
+    'audio/webm': help_on_binary,
+    'video/ogg': help_on_binary,
+    'video/webm': help_on_binary,
+    'video/mp4': help_on_binary,
+    'application/x-twikidraw': ext_link('http://twiki.org/cgi-bin/view/Plugins/TWikiDrawPlugin'),
+    'application/x-anywikidraw': ext_link('http://anywikidraw.sourceforge.net/'),
+    'application/x-svgdraw': ext_link('http://code.google.com/p/svg-edit/'),
+    'application/octet-stream': help_on_binary,
+    'application/x-tar': help_on_binary,
+    'application/x-gtar': help_on_binary,
+    'application/zip': help_on_binary,
+    'application/pdf': help_on_binary,
 }
 CONTENTTYPES_HELP_DOCS = defaultdict(lambda: _('No help for unknown content type.'), CONTENTTYPES_HELP_DOCS)

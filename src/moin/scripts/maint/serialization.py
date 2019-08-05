@@ -42,9 +42,9 @@ class Serialize(Command):
     description = 'Serialize the backend into a file.'
 
     option_list = [
-        Option('--file', '-f', dest='filename', type=unicode, required=False,
+        Option('--file', '-f', dest='filename', type=str, required=False,
                help='Filename of the output file.'),
-        Option('--backends', '-b', dest='backends', type=unicode, required=False,
+        Option('--backends', '-b', dest='backends', type=str, required=False,
                help='Backend names to serialize (comma separated).'),
         Option('--all-backends', '-a', dest='all_backends', action='store_true', default=False,
                help='Serialize all configured backends.'),
@@ -69,16 +69,16 @@ class Serialize(Command):
                         backend = app.cfg.backend_mapping.get(backend_name)
                         serialize(backend, f)
                 else:
-                    print "Error: Wrong backend name given."
-                    print "Given Backends: %r" % backends
-                    print "Configured Backends: %r" % existing_backends
+                    print("Error: Wrong backend name given.")
+                    print("Given Backends: %r" % backends)
+                    print("Configured Backends: %r" % existing_backends)
 
 
 class Deserialize(Command):
     description = 'Deserialize a file into the backend.'
 
     option_list = [
-        Option('--file', '-f', dest='filename', type=unicode, required=False,
+        Option('--file', '-f', dest='filename', type=str, required=False,
                help='Filename of the input file.'),
     ]
 

@@ -5,6 +5,7 @@
     MoinMoin - parameter parsing and invoking of extension functions
 """
 
+from functools import cmp_to_key
 
 from moin.i18n import _, L_, N_
 
@@ -25,7 +26,7 @@ class BracketMissingCloseError(BracketError):
         BracketError.__init__(self, "Missing closing bracket {0}".format(bracket))
 
 
-class ParserPrefix(object):
+class ParserPrefix:
     """
     Trivial container-class holding a single character for
     the possible prefixes for parse_quoted_separated_ext
@@ -57,7 +58,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
 
     If a name or value does not start with a quote, then the quote
     looses its special meaning for that name or value, unless it
-    starts with one of the given prefixes (the parameter is unicode
+    starts with one of the given prefixes (the parameter is a str
     containing all allowed prefixes.) The prefixes will be returned
     as ParserPrefix() instances in the first element of the tuple
     for that particular argument.
@@ -103,15 +104,14 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     :param seplimit: limits the number of parsed arguments
     :param multikey: multiple keys allowed for a single value
     :rtype: list
-    :returns: list of unicode strings and tuples containing
-        unicode strings, or lists containing the same for
-        bracketing support
+    :returns: list of strs and tuples containing strs,
+              or lists containing the same for bracketing support
     """
     idx = 0
     assert name_value_separator is None or name_value_separator != separator
     assert name_value_separator is None or len(name_value_separator) == 1
-    if not isinstance(args, unicode):
-        raise TypeError('args must be unicode')
+    if not isinstance(args, str):
+        raise TypeError('args must be str')
     max = len(args)
     result = []         # result list
     cur = [None]        # current item
@@ -200,7 +200,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
         elif not quoted and not noquote and char in quotes:
             if len(cur) and cur[-1] is None:
                 del cur[-1]
-            cur.append(u'')
+            cur.append('')
             quoted = char
         elif char == quoted and not skipquote:
             if next == quoted:
@@ -277,7 +277,7 @@ def parse_quoted_separated(args, separator=',', name_value=True, seplimit=0):
         if isinstance(item, tuple):
             key, value = item
             if key is None:
-                key = u''
+                key = ''
             keywords[key] = value
             positional = trailing
         else:
@@ -291,11 +291,11 @@ def parse_quoted_separated(args, separator=',', name_value=True, seplimit=0):
 def get_bool(arg, name=None, default=None):
     """
     For use with values returned from parse_quoted_separated or given
-    as macro parameters, return a boolean from a unicode string.
+    as macro parameters, return a boolean from a str.
     Valid input is 'true'/'false', 'yes'/'no' and '1'/'0' or None for
     the default value.
 
-    :param arg: The argument, may be None or a unicode string
+    :param arg: The argument, may be None or a str
     :param name: Name of the argument, for error messages
     :param default: default value if arg is None
     :rtype: boolean or None
@@ -305,12 +305,12 @@ def get_bool(arg, name=None, default=None):
     assert default is None or isinstance(default, bool)
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
-        raise TypeError('Argument must be None or unicode')
+    elif not isinstance(arg, str):
+        raise TypeError('Argument must be None or str')
     arg = arg.lower()
-    if arg in [u'0', u'false', u'no']:
+    if arg in ['0', 'false', 'no']:
         return False
-    elif arg in [u'1', u'true', u'yes']:
+    elif arg in ['1', 'true', 'yes']:
         return True
     else:
         if name:
@@ -324,21 +324,21 @@ def get_bool(arg, name=None, default=None):
 def get_int(arg, name=None, default=None):
     """
     For use with values returned from parse_quoted_separated or given
-    as macro parameters, return an integer from a unicode string
+    as macro parameters, return an integer from a str
     containing the decimal representation of a number.
     None is a valid input and yields the default value.
 
-    :param arg: The argument, may be None or a unicode string
+    :param arg: The argument, may be None or a str
     :param name: Name of the argument, for error messages
     :param default: default value if arg is None
     :rtype: int or None
     :returns: the integer value of the string (or default value)
     """
-    assert default is None or isinstance(default, (int, long))
+    assert default is None or isinstance(default, int)
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
-        raise TypeError('Argument must be None or unicode')
+    elif not isinstance(arg, str):
+        raise TypeError('Argument must be None or str')
     try:
         return int(arg)
     except ValueError:
@@ -353,20 +353,20 @@ def get_int(arg, name=None, default=None):
 def get_float(arg, name=None, default=None):
     """
     For use with values returned from parse_quoted_separated or given
-    as macro parameters, return a float from a unicode string.
+    as macro parameters, return a float from a str.
     None is a valid input and yields the default value.
 
-    :param arg: The argument, may be None or a unicode string
+    :param arg: The argument, may be None or a str
     :param name: Name of the argument, for error messages
     :param default: default return value if arg is None
     :rtype: float or None
     :returns: the float value of the string (or default value)
     """
-    assert default is None or isinstance(default, (int, long, float))
+    assert default is None or isinstance(default, (int, float))
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
-        raise TypeError('Argument must be None or unicode')
+    elif not isinstance(arg, str):
+        raise TypeError('Argument must be None or str')
     try:
         return float(arg)
     except ValueError:
@@ -381,20 +381,20 @@ def get_float(arg, name=None, default=None):
 def get_complex(arg, name=None, default=None):
     """
     For use with values returned from parse_quoted_separated or given
-    as macro parameters, return a complex from a unicode string.
+    as macro parameters, return a complex from a str.
     None is a valid input and yields the default value.
 
-    :param arg: The argument, may be None or a unicode string
+    :param arg: The argument, may be None or a str
     :param name: Name of the argument, for error messages
     :param default: default return value if arg is None
     :rtype: complex or None
     :returns: the complex value of the string (or default value)
     """
-    assert default is None or isinstance(default, (int, long, float, complex))
+    assert default is None or isinstance(default, (int, float, complex))
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
-        raise TypeError('Argument must be None or unicode')
+    elif not isinstance(arg, str):
+        raise TypeError('Argument must be None or str')
     try:
         # allow writing 'i' instead of 'j'
         arg = arg.replace('i', 'j').replace('I', 'j')
@@ -408,23 +408,23 @@ def get_complex(arg, name=None, default=None):
                 _('Argument must be a complex value, not "%(value)s"', value=arg))
 
 
-def get_unicode(arg, name=None, default=None):
+def get_str(arg, name=None, default=None):
     """
     For use with values returned from parse_quoted_separated or given
-    as macro parameters, return a unicode string from a unicode string.
+    as macro parameters, return a str.
     None is a valid input and yields the default value.
 
-    :param arg: The argument, may be None or a unicode string
+    :param arg: The argument, may be None or a str
     :param name: Name of the argument, for error messages
     :param default: default return value if arg is None;
-    :rtype: unicode or None
-    :returns: the unicode string (or default value)
+    :rtype: str or None
+    :returns: the str (or default value)
     """
-    assert default is None or isinstance(default, unicode)
+    assert default is None or isinstance(default, str)
     if arg is None:
         return default
-    elif not isinstance(arg, unicode):
-        raise TypeError('Argument must be None or unicode')
+    elif not isinstance(arg, str):
+        raise TypeError('Argument must be None or str')
 
     return arg
 
@@ -432,19 +432,19 @@ def get_unicode(arg, name=None, default=None):
 def get_choice(arg, name=None, choices=[None], default_none=False):
     """
     For use with values returned from parse_quoted_separated or given
-    as macro parameters, return a unicode string that must be in the
+    as macro parameters, return a str that must be in the
     choices given. None is a valid input and yields first of the valid
     choices.
 
-    :param arg: The argument, may be None or a unicode string
+    :param arg: The argument, may be None or a str
     :param name: Name of the argument, for error messages
     :param choices: the possible choices
     :param default_none: If False (default), get_choice returns first available
                          choice if arg is None. If True, get_choice returns
                          None if arg is None. This is useful if some arg value
                          is required (no default choice).
-    :rtype: unicode or None
-    :returns: the unicode string (or default value)
+    :rtype: str or None
+    :returns: the str (or default value)
     """
     assert isinstance(choices, (tuple, list))
     if arg is None:
@@ -452,8 +452,8 @@ def get_choice(arg, name=None, choices=[None], default_none=False):
             return None
         else:
             return choices[0]
-    elif not isinstance(arg, unicode):
-        raise TypeError('Argument must be None or unicode')
+    elif not isinstance(arg, str):
+        raise TypeError('Argument must be None or str')
     elif arg not in choices:
         if name:
             raise ValueError(
@@ -513,7 +513,7 @@ class UnitArgument(IEFArgument):
         """
         IEFArgument.__init__(self)
         self._units = list(units)
-        self._units.sort(lambda x, y: len(y) - len(x))
+        self._units.sort(key=cmp_to_key(lambda x, y: len(y) - len(x)))
         self._type = argtype
         self._defaultunit = defaultunit
         assert defaultunit is None or defaultunit in units
@@ -551,7 +551,7 @@ class required_arg:
         Initialise a required_arg
         :param argtype: the type the argument should have
         """
-        if not (argtype in (bool, int, long, float, complex, unicode) or
+        if not (argtype in (bool, int, float, complex, str) or
                 isinstance(argtype, (IEFArgument, tuple, list))):
             raise TypeError("argtype must be a valid type")
         self.argtype = argtype
@@ -563,22 +563,22 @@ def invoke_extension_function(function, args, fixed_args=[]):
     function with the arguments.
 
     If the macro function has a default value that is a bool,
-    int, long, float or unicode object, then the given value
+    int, float or str object, then the given value
     is converted to the type of that default value before passing
     it to the macro function. That way, macros need not call the
     get_* functions for any arguments that have a default.
 
     :param function: the function to invoke
-    :param args: unicode string with arguments (or evaluating to False)
+    :param args: str with arguments (or evaluating to False)
     :param fixed_args: fixed arguments to pass as the first arguments
     :returns: the return value from the function called
     """
-    from inspect import getargspec, isfunction, isclass, ismethod
+    from inspect import getfullargspec, isfunction, isclass, ismethod
 
     def _convert_arg(value, default, name=None):
         """
         Using the get_* functions, convert argument to the type of the default
-        if that is any of bool, int, long, float or unicode; if the default
+        if that is any of bool, int, float or str; if the default
         is the type itself then convert to that type (keeps None) or if the
         default is a list require one of the list items.
 
@@ -587,19 +587,19 @@ def invoke_extension_function(function, args, fixed_args=[]):
         # if extending this, extend required_arg as well!
         if isinstance(default, bool):
             return get_bool(value, name, default)
-        elif isinstance(default, (int, long)):
+        elif isinstance(default, int):
             return get_int(value, name, default)
         elif isinstance(default, float):
             return get_float(value, name, default)
         elif isinstance(default, complex):
             return get_complex(value, name, default)
-        elif isinstance(default, unicode):
-            return get_unicode(value, name, default)
+        elif isinstance(default, str):
+            return get_str(value, name, default)
         elif isinstance(default, (tuple, list)):
             return get_choice(value, name, default)
         elif default is bool:
             return get_bool(value, name)
-        elif default is int or default is long:
+        elif default is int:
             return get_int(value, name)
         elif default is float:
             return get_float(value, name)
@@ -626,15 +626,12 @@ def invoke_extension_function(function, args, fixed_args=[]):
     trailing_args = []
 
     if args:
-        assert isinstance(args, unicode)
+        assert isinstance(args, str)
 
         positional, keyword, trailing = parse_quoted_separated(args)
 
         for kw in keyword:
-            try:
-                kwargs[str(kw)] = keyword[kw]
-            except UnicodeEncodeError:
-                kwargs_to_pass[kw] = keyword[kw]
+            kwargs[kw] = keyword[kw]
 
         trailing_args.extend(trailing)
 
@@ -642,12 +639,12 @@ def invoke_extension_function(function, args, fixed_args=[]):
         positional = []
 
     if isfunction(function) or ismethod(function):
-        argnames, varargs, varkw, defaultlist = getargspec(function)
+        f = function
     elif isclass(function):
-        (argnames, varargs,
-         varkw, defaultlist) = getargspec(function.__init__.im_func)
+        f = function.__init__
     else:
         raise TypeError('function must be a function, method or class')
+    argnames, varargs, varkw, defaultlist, kwonlyargs, kwonlydefaults, annotations = getfullargspec(f)
 
     # self is implicit!
     if ismethod(function) or isclass(function):
@@ -699,7 +696,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
 
     # type-convert all keyword arguments to the type
     # that the default value indicates
-    for argname in kwargs.keys()[:]:
+    for argname in list(kwargs.keys()):  # new list object with keys for iteration as we modify kwargs
         if argname in defaults:
             # the value of 'argname' from kwargs will be put into the
             # macro's 'argname' argument, so convert that giving the
@@ -721,6 +718,6 @@ def invoke_extension_function(function, args, fixed_args=[]):
     if kwargs_to_pass:
         kwargs['_kwargs'] = kwargs_to_pass
         if not allow_kwargs:
-            raise ValueError(_(u'No argument named "%(name)s"', name=kwargs_to_pass.keys()[0]))
+            raise ValueError(_('No argument named "%(name)s"', name=list(kwargs_to_pass.keys())[0]))
 
     return function(*fixed_args, **kwargs)

@@ -21,13 +21,13 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Base(object):
-    input_namespaces = ns_all = u'xmlns="{0}" xmlns:xlink="{1}"'.format(docbook.namespace, xlink.namespace)
+class Base:
+    input_namespaces = ns_all = 'xmlns="{0}" xmlns:xlink="{1}"'.format(docbook.namespace, xlink.namespace)
     output_namespaces = {
-        moin_page.namespace: u'',
-        xlink.namespace: u'xlink',
-        xml.namespace: u'xml',
-        html.namespace: u'html',
+        moin_page.namespace: '',
+        xlink.namespace: 'xlink',
+        xml.namespace: 'xml',
+        html.namespace: 'html',
     }
 
     namespaces_xpath = {'xlink': xlink.namespace,
@@ -48,18 +48,18 @@ class Base(object):
             to_conv = input
         out = self.conv(to_conv, 'application/docbook+xml;charset=utf-8')
         output = serialize(out, namespaces=self.output_namespaces)
-        return self.output_re.sub(u'', output)
+        return self.output_re.sub('', output)
 
     def do(self, input, xpath_query):
         string_to_parse = self.handle_output(input)
-        logging.debug(u"After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
+        logging.debug("After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO(string_to_parse))
-        print 'string_to_parse = %s' % string_to_parse  # provide a clue for failing tests
+        print('string_to_parse = %s' % string_to_parse)  # provide a clue for failing tests
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 
     def do_nonamespace(self, input, xpath_query):
         string_to_parse = self.handle_output(input, nonamespace=True)
-        logging.debug(u"After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
+        logging.debug("After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
         tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 
@@ -82,9 +82,9 @@ class TestConverter(Base):
          # <page><body><div html:class="article"><h outline-level="1">Heading 1</h><p>First Paragraph</p></div></body></page>
          '/page/body/div[./h[@outline-level="1"][text()="Heading 1"]][./p[text()="First Paragraph"]]'),
         # Test for conversion with unicode char
-        (u'<article><para>안녕 유빈</para></article>',
+        ('<article><para>안녕 유빈</para></article>',
          # <page><body><div html:class="article"><p>안녕 유빈</p></div></body></page>
-         u'/page/body/div[p="안녕 유빈"]'),
+         '/page/body/div[p="안녕 유빈"]'),
         # Ignored tags
         ('<article><info><title>Title</title><author>Author</author></info><para>text</para></article>',
          # <page><body><div html:class="article"><p>text</p></div></body></page>
@@ -429,13 +429,13 @@ class TestConverter(Base):
     data = [
         ('<article><para><trademark class="copyright">MoinMoin</trademark></para></article>',
          # <page><body><div html:class="db-article"><p><span html:class="db-trademark">\xa9  MoinMoin</span></p></div></body></page>
-         u'/page/body/div/p/span[@html:class="db-trademark"][text()="\xa9 MoinMoin"]'),
+         '/page/body/div/p/span[@html:class="db-trademark"][text()="\xa9 MoinMoin"]'),
         ('<article><para><trademark class="registered">Nutshell Handbook</trademark></para></article>',
          # <page><body><div html:class="db-article"><p><span html:class="db-trademark">Nutshell Handbook\xae</span></p></div></body></page>
-         u'/page/body/div/p/span[@html:class="db-trademark"][text()="Nutshell Handbook\xae"]'),
+         '/page/body/div/p/span[@html:class="db-trademark"][text()="Nutshell Handbook\xae"]'),
         ('<article><para><trademark class="trade">Foo Bar</trademark></para></article>',
          # <page><body><div html:class="db-article"><p><span html:class="db-trademark">Foo Bar\u2122</span></p></div></body></page>
-         u'/page/body/div/p/span[@html:class="db-trademark"][text()="Foo Bar\u2122"]'),
+         '/page/body/div/p/span[@html:class="db-trademark"][text()="Foo Bar\u2122"]'),
         ('<article><para><trademark class="service">MoinMoin</trademark></para></article>',
          # <page><body><div html:class="article"><p><span class="db-trademark">MoinMoin<span baseline-shift="super">SM</span></span></p></div></body></page>
          '/page/body/div/p/span[@html:class="db-trademark"][text()="MoinMoin"]/span[@baseline-shift="super"][text()="SM"]'),

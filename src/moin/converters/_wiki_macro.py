@@ -21,7 +21,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class ConverterMacro(object):
+class ConverterMacro:
     def _BR_repl(self, args, text, context_block):
         if context_block:
             return
@@ -88,34 +88,34 @@ class ConverterMacro(object):
         xpointer_moin = []
 
         def add_moin_xpointer(function, args):
-            args = unicode(args).replace('^', '^^').replace('(', '^(').replace(')', '^)')
-            xpointer_moin.append(function + u'(' + args + u')')
+            args = str(args).replace('^', '^^').replace('(', '^(').replace(')', '^)')
+            xpointer_moin.append(function + '(' + args + ')')
 
         moin_args = []
 
-        if pagename.startswith(u'^'):
-            add_moin_xpointer(u'pages', pagename)
+        if pagename.startswith('^'):
+            add_moin_xpointer('pages', pagename)
             if sort:
-                add_moin_xpointer(u'sort', sort)
+                add_moin_xpointer('sort', sort)
             if items:
-                add_moin_xpointer(u'items', items)
+                add_moin_xpointer('items', items)
             if skipitems:
-                add_moin_xpointer(u'skipitems', skipitems)
+                add_moin_xpointer('skipitems', skipitems)
         else:
-            link = iri.Iri(scheme=u'wiki.local', path=pagename)
+            link = iri.Iri(scheme='wiki.local', path=pagename)
             attrib[xinclude.href] = link
 
         if heading is not None:
-            add_moin_xpointer(u'heading', heading)
+            add_moin_xpointer('heading', heading)
         if level:
-            add_moin_xpointer(u'level', str(level))
+            add_moin_xpointer('level', str(level))
         if titlesonly:
-            add_moin_xpointer(u'titlesonly', u'')
+            add_moin_xpointer('titlesonly', '')
         if editlink:
-            add_moin_xpointer(u'editlink', u'')
+            add_moin_xpointer('editlink', '')
 
         if xpointer_moin:
-            xpointer.append(u'page:include({0})'.format(u' '.join(xpointer_moin)))
+            xpointer.append('page:include({0})'.format(' '.join(xpointer_moin)))
 
         if xpointer:
             # TODO: Namespace?

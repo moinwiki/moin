@@ -11,9 +11,6 @@ Note: for method / attribute docs, please see the same methods / attributes in
       IndexingMiddleware class.
 """
 
-
-from __future__ import absolute_import, division
-
 import time
 
 from whoosh.util.cache import lru_cache
@@ -55,7 +52,7 @@ def pchecker(right, allowed, item):
     return allowed
 
 
-class ProtectingMiddleware(object):
+class ProtectingMiddleware:
     def __init__(self, indexer, user, acl_mapping):
         """
         :param indexer: indexing middleware instance
@@ -91,14 +88,14 @@ class ProtectingMiddleware(object):
         :param fqname: fully qualified itemname
         :returns: acl configuration (acl dict from the acl_mapping)
         """
-        itemname = fqname.value if fqname.field == NAME_EXACT else u''
+        itemname = fqname.value if fqname.field == NAME_EXACT else ''
         for namespace, acls in self.acl_mapping:
             if namespace == fqname.namespace:
                 return acls
         else:
             if fqname.namespace == NAMESPACE_ALL:
                 # prevent traceback, /+index/all page has several links to /+index/all
-                return {'default': u'All:', 'hierarchic': False, 'after': u'', 'before': u''}
+                return {'default': 'All:', 'hierarchic': False, 'after': '', 'before': ''}
             raise ValueError('No acl_mapping entry found for item {0!r}'.format(fqname))
 
     def _get_acls(self, itemid=None, fqname=None):
@@ -192,21 +189,21 @@ class ProtectingMiddleware(object):
         return ProtectedItem(self, item)
 
     def may(self, fqname, capability, usernames=None):
-        if usernames is not None and isinstance(usernames, (str, unicode)):
-            # we got a single username (maybe str), make a list of unicode:
-            if isinstance(usernames, str):
+        if usernames is not None and isinstance(usernames, (bytes, str)):
+            # we got a single username (maybe bytes), make a list of str:
+            if isinstance(usernames, bytes):
                 usernames = usernames.decode('utf-8')
             usernames = [usernames, ]
         # TODO Make sure that fqname must be a CompositeName class instance, not unicode or list.
         fqname = fqname[0] if isinstance(fqname, list) else fqname
-        if isinstance(fqname, unicode):
+        if isinstance(fqname, str):
             fqname = split_fqname(fqname)
         item = self.get_item(**fqname.query)
         allowed = item.allows(capability, user_names=usernames)
         return allowed
 
 
-class ProtectedItem(object):
+class ProtectedItem:
     def __init__(self, protector, item):
         """
         :param protector: protector middleware
@@ -243,7 +240,7 @@ class ProtectedItem(object):
     def acl(self):
         return self.item.acl
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.item)
 
     def full_acls(self):
@@ -259,7 +256,7 @@ class ProtectedItem(object):
         for item_acl in self.protector.get_acls(itemid, fqname):
             if item_acl is None:
                 item_acl = acl_cfg['default']
-            yield u' '.join([before_acl, item_acl, after_acl])
+            yield ' '.join([before_acl, item_acl, after_acl])
 
     def allows(self, right, user_names=None):
         """ Check if usernames may have <right> access on this item.
@@ -332,7 +329,7 @@ class ProtectedItem(object):
             self.destroy_revision(rev.revid)
 
 
-class ProtectedRevision(object):
+class ProtectedRevision:
     def __init__(self, protector, rev, p_item=None):
         """
         :param protector: Protector middleware
@@ -391,6 +388,3 @@ class ProtectedRevision(object):
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.close()
-
-    def __cmp__(self, other):
-        return cmp(self.meta, other.meta)

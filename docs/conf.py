@@ -44,8 +44,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MoinMoin'
-copyright = u'2011-2018, The MoinMoin developers'
+project = 'MoinMoin'
+copyright = '2011-2018, The MoinMoin developers'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -198,8 +198,8 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'MoinMoin.tex', u'MoinMoin Documentation',
-   u'The MoinMoin developers', 'manual'),
+  ('index', 'MoinMoin.tex', 'MoinMoin Documentation',
+   'The MoinMoin developers', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -231,8 +231,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('man/moin', 'moin', u'MoinMoin Commandline Interface', [u'The MoinMoin developers'], 1),
-    ('index', 'moinmoin', u'MoinMoin Documentation', [u'The MoinMoin developers'], 1),
+    ('man/moin', 'moin', 'MoinMoin Commandline Interface', ['The MoinMoin developers'], 1),
+    ('index', 'moinmoin', 'MoinMoin Documentation', ['The MoinMoin developers'], 1),
 ]
 
 
@@ -242,7 +242,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'MoinMoin', u'MoinMoin Documentation', u'The MoinMoin developers',
+  ('index', 'MoinMoin', 'MoinMoin Documentation', 'The MoinMoin developers',
    'MoinMoin', 'One line description of project.', 'Miscellaneous'),
 ]
 

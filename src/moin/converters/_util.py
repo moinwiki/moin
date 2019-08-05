@@ -5,9 +5,6 @@
 MoinMoin - converter utilities
 """
 
-
-from __future__ import absolute_import, division
-
 try:
     from flask import g as flaskg
 except ImportError:
@@ -32,22 +29,22 @@ def decode_data(data, contenttype=None):
 
     supported types for data:
     - rev object
+    - bytes
     - str
-    - unicode
 
-    file-like objects and str need to be either utf-8 (or ascii, which is a subset of utf-8)
+    file-like objects and bytes need to be either utf-8 (or ascii, which is a subset of utf-8)
     encoded or contenttype (including a charset parameter) needs to be given.
     """
-    if not isinstance(data, (str, unicode)):
+    if not isinstance(data, (bytes, str)):
         data = data.data.read()
-    if isinstance(data, str):
+    if isinstance(data, bytes):
         coding = 'utf-8'
         if contenttype is not None:
             ct = Type(contenttype)
             coding = ct.parameters.get('charset', coding)
         data = data.decode(coding)
-    if not isinstance(data, unicode):
-        raise TypeError("data must be rev or str (requires contenttype with charset) or unicode, "
+    if not isinstance(data, str):
+        raise TypeError("data must be rev or bytes (requires contenttype with charset) or str, "
                         "but we got {0!r}".format(data))
     return data
 
@@ -56,12 +53,12 @@ def normalize_split_text(text):
     """
     normalize line endings, split text into a list of lines
     """
-    text = text.replace(u'\r\n', u'\n')
-    lines = text.split(u'\n')
+    text = text.replace('\r\n', '\n')
+    lines = text.split('\n')
     return lines
 
 
-class _Iter(object):
+class _Iter:
     """
     Iterator with push back support
 
@@ -81,7 +78,7 @@ class _Iter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.__finished:
             raise StopIteration
 
@@ -90,7 +87,7 @@ class _Iter(object):
             return self.__prepend.pop(0)
 
         try:
-            return self.__parent.next()
+            return next(self.__parent)
         except StopIteration:
             self.__finished = True
             raise
@@ -100,8 +97,8 @@ class _Iter(object):
         self.lineno -= 1
 
 
-class _Stack(object):
-    class Item(object):
+class _Stack:
+    class Item:
         def __init__(self, elem):
             self.elem = elem
             if elem.tag.uri == moin_page:
@@ -164,4 +161,4 @@ class _Stack(object):
         Check if the top of the stack name and attrib matches the parameters.
         """
         attrib = kwargs.get('attrib', {})
-        return self._list[-1].name in names and set(attrib.items()).issubset(self._list[-1].elem.attrib.items())
+        return self._list[-1].name in names and set(attrib.items()).issubset(set(self._list[-1].elem.attrib.items()))

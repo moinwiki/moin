@@ -47,13 +47,13 @@ from moin.forms import RequiredText, YourEmail
 @admin.route('/superuser')
 @require_permission(SUPERUSER)
 def index():
-    return render_template('admin/index.html', title_name=_(u"Admin"))
+    return render_template('admin/index.html', title_name=_("Admin"))
 
 
 @admin.route('/user')
 def index_user():
     return render_template('user/index_user.html',
-                           title_name=_(u"User"),
+                           title_name=_("User"),
                            flaskg=flaskg,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
                            )
@@ -89,7 +89,7 @@ def register_new_user():
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    title_name = _(u'Register New User')
+    title_name = _('Register New User')
     FormClass = RegisterNewUserForm
 
     if request.method in ['GET', 'HEAD']:
@@ -161,7 +161,7 @@ def userbrowser():
                                   email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
                                   disabled=rev.meta[DISABLED],
                                   groups=user_groups))
-    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
+    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_("Users"))
 
 
 @admin.route('/userprofile/<user_name>', methods=['GET', 'POST', ])
@@ -172,7 +172,7 @@ def userprofile(user_name):
     """
     u = user.User(auth_username=user_name)
     if request.method == 'GET':
-        return _(u"User profile of %(username)s: %(email)s %(disabled)s", username=user_name,
+        return _("User profile of %(username)s: %(email)s %(disabled)s", username=user_name,
                  email=u.email, disabled=u.disabled)
 
     if request.method == 'POST':
@@ -186,16 +186,16 @@ def userprofile(user_name):
                 val = bool(int(val))
             elif isinstance(oldval, int):
                 val = int(val)
-            elif isinstance(oldval, unicode):
-                val = unicode(val)
+            elif isinstance(oldval, str):
+                val = str(val)
             else:
                 ok = False
         if ok:
             u.profile[key] = val
             u.save()
-            flash(u'{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
+            flash('{0}.{1}: {2} -> {3}'.format(user_name, key, str(oldval), str(val), ), "info")
         else:
-            flash(u'modifying {0}.{1} failed'.format(user_name, key, ), "error")
+            flash('modifying {0}.{1} failed'.format(user_name, key, ), "error")
     return redirect(url_for('.userbrowser'))
 
 
@@ -265,7 +265,7 @@ def wikiconfig():
     found.sort()
     found_default.sort()
     return render_template('admin/wikiconfig.html',
-                           title_name=_(u"Show Wiki Configuration"),
+                           title_name=_("Show Wiki Configuration"),
                            len=len,
                            found=found,
                            found_default=found_default,
@@ -282,17 +282,17 @@ def wikiconfighelp():
             default_txt = default.text
         else:
             if len(repr(default)) > max_len_default and isinstance(default, list) and len(default) > 1:
-                txt = [u'[']
+                txt = ['[']
                 for entry in default:
-                    txt.append(u'&#013;{0},'.format(repr(entry)))
-                txt.append(u'&#013;]')
-                return u''.join(txt)
+                    txt.append('&#013;{0},'.format(repr(entry)))
+                txt.append('&#013;]')
+                return ''.join(txt)
             elif len(repr(default)) > max_len_default and isinstance(default, dict) and len(default) > 1:
-                txt = [u'{']
+                txt = ['{']
                 for key, val in default.items():
-                    txt.append(u'&#013;{0}: {1},'.format(repr(key), repr(val)))
-                txt.append(u'&#013;}')
-                return u''.join(txt)
+                    txt.append('&#013;{0}: {1},'.format(repr(key), repr(val)))
+                txt.append('&#013;}')
+                return ''.join(txt)
             else:
                 default_txt = repr(default)
         return default_txt
@@ -310,7 +310,7 @@ def wikiconfighelp():
         groups.append((heading, desc, opts))
     groups.sort()
     return render_template('admin/wikiconfighelp.html',
-                           title_name=_(u"Wiki Configuration Help"),
+                           title_name=_("Wiki Configuration Help"),
                            groups=groups,
                            len=len,
                            max_len_default=max_len_default,
@@ -331,7 +331,7 @@ def highlighterhelp():
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
     return render_template('user/highlighterhelp.html',
-                           title_name=_(u"Highlighters"),
+                           title_name=_("Highlighters"),
                            headings=headings,
                            rows=rows)
 
@@ -345,7 +345,7 @@ def interwikihelp():
     ]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template('user/interwikihelp.html',
-                           title_name=_(u"Interwiki Names"),
+                           title_name=_("Interwiki Names"),
                            headings=headings,
                            rows=rows)
 
@@ -361,7 +361,7 @@ def itemsize():
             for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
-                           title_name=_(u"Item Sizes"),
+                           title_name=_("Item Sizes"),
                            headings=headings,
                            rows=rows)
 
@@ -375,8 +375,8 @@ def trash(namespace):
     """
     trash = _trashed(namespace)
     return render_template('admin/trash.html',
-                           headline=_(u'Trashed Items'),
-                           title_name=_(u'Trashed Items'),
+                           headline=_('Trashed Items'),
+                           title_name=_('Trashed Items'),
                            results=trash)
 
 
@@ -400,7 +400,7 @@ def user_acl_report(uid):
     theuser = user.User(uid=uid)
     itemwise_acl = []
     for item in all_items:
-        fqname = CompositeName(item.meta.get(NAMESPACE), u'itemid', item.meta.get(ITEMID))
+        fqname = CompositeName(item.meta.get(NAMESPACE), 'itemid', item.meta.get(ITEMID))
         itemwise_acl.append({'name': item.meta.get(NAME),
                              'itemid': item.meta.get(ITEMID),
                              'fqname': fqname,
@@ -410,7 +410,7 @@ def user_acl_report(uid):
                              'admin': theuser.may.admin(fqname),
                              'destroy': theuser.may.destroy(fqname)})
     return render_template('admin/user_acl_report.html',
-                           title_name=_(u'User ACL Report'),
+                           title_name=_('User ACL Report'),
                            user_names=theuser.name,
                            itemwise_acl=itemwise_acl)
 
@@ -434,7 +434,7 @@ def groupbrowser():
                            member_groups=all_groups[group].member_groups,
                            grouptype=group_type))
     return render_template('admin/groupbrowser.html',
-                           title_name=_(u'Groups'),
+                           title_name=_('Groups'),
                            groups=groups)
 
 
@@ -498,13 +498,13 @@ def group_acl_report(group_name):
         for modifier, entries, rights in acl_iterator:
             if group_name in entries:
                 item_id = item.meta.get(ITEMID)
-                fqname = CompositeName(item.meta.get(NAMESPACE), u'itemid', item_id)
+                fqname = CompositeName(item.meta.get(NAMESPACE), 'itemid', item_id)
                 group_items.append(dict(name=item.meta.get(NAME),
                                         itemid=item_id,
                                         fqname=fqname,
                                         rights=rights))
     return render_template('admin/group_acl_report.html',
-                           title_name=_(u'Group ACL Report'),
+                           title_name=_('Group ACL Report'),
                            group_items=group_items,
                            group_name=group_name)
 

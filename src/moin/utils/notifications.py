@@ -8,7 +8,7 @@
 from io import BytesIO
 
 from blinker import ANY
-from urlparse import urljoin
+from urllib.parse import urljoin
 from whoosh.query import Term, And
 
 from flask import url_for, g as flaskg
@@ -31,12 +31,12 @@ from moin import log
 logging = log.getLogger(__name__)
 
 # additional action values
-ACTION_CREATE = u"CREATE"
-ACTION_MODIFY = u"MODIFY"
+ACTION_CREATE = "CREATE"
+ACTION_MODIFY = "MODIFY"
 
 # destroy types
-DESTROY_REV = u"DESTROY_REV"
-DESTROY_ALL = u"DESTROY_ALL"
+DESTROY_REV = "DESTROY_REV"
+DESTROY_ALL = "DESTROY_ALL"
 
 
 def msgs():
@@ -61,7 +61,7 @@ def msgs():
 MESSAGES = msgs()
 
 
-class Notification(object):
+class Notification:
     """
     Represents a mail notification about an item change
     """
@@ -84,7 +84,7 @@ class Notification(object):
         if self.action == ACTION_TRASH:
             self.meta = self.revs[0].meta
 
-        kw = dict(fqname=unicode(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0, item_url=url_for_item(self.fqname))
+        kw = dict(fqname=str(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0, item_url=url_for_item(self.fqname))
         self.notification_sentence = L_(MESSAGES[self.action], **kw)
 
     def get_content_diff(self):
@@ -94,10 +94,10 @@ class Notification(object):
         """
         if self.action in [DESTROY_REV, DESTROY_ALL, ]:
             contenttype = self.meta[CONTENTTYPE]
-            oldfile, newfile = self.content, BytesIO("")
+            oldfile, newfile = self.content, BytesIO(b"")
         elif self.action == ACTION_TRASH:
             contenttype = self.meta[CONTENTTYPE]
-            oldfile, newfile = self.revs[0].data, BytesIO("")
+            oldfile, newfile = self.revs[0].data, BytesIO(b"")
         else:
             # if user does not have permission to read object,
             # get_item_last_revisions() returns an empty list to self.revs
@@ -105,7 +105,7 @@ class Notification(object):
                 newfile = self.revs[0].data
                 if len(self.revs) == 1:
                     contenttype = self.revs[0].meta[CONTENTTYPE]
-                    oldfile = BytesIO("")
+                    oldfile = BytesIO(b"")
                 else:
                     from moin.apps.frontend.views import _common_type
                     contenttype = _common_type(self.revs[0].meta[CONTENTTYPE], self.revs[1].meta[CONTENTTYPE])
@@ -139,7 +139,7 @@ class Notification(object):
         :return: the absolute URL to the diff page
         """
         if len(self.revs) < 2:
-            return u""
+            return ""
         else:
             revid1 = self.revs[1].revid
             revid2 = self.revs[0].revid
@@ -217,7 +217,7 @@ def send_notifications(app, fqname, **kwargs):
     except Exception:
         # current user has likely corrupted an item or fixed a corrupted item
         # if current item is corrupt, another exception will occur in a downstream script
-        content_diff = [u'- ' + _('An error has occurred, the current or prior revision of this item may be corrupt.')]
+        content_diff = ['- ' + _('An error has occurred, the current or prior revision of this item may be corrupt.')]
     meta_diff = notification.get_meta_diff()
 
     u = flaskg.user
@@ -229,7 +229,7 @@ def send_notifications(app, fqname, **kwargs):
         with force_locale(locale):
             txt_msg, html_msg = notification.render_templates(content_diff, meta_diff)
             subject = L_('[%(moin_name)s] Update of "%(fqname)s" by %(user_name)s',
-                         moin_name=app.cfg.interwikiname, fqname=unicode(fqname), user_name=u.name0)
+                         moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=u.name0)
             subscribers_emails = [subscriber.email for subscriber in subscribers
                                   if subscriber.locale == locale]
             sendmail(subject, txt_msg, to=subscribers_emails, html=html_msg)

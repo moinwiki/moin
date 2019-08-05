@@ -6,9 +6,6 @@
 MoinMoin - Pygments driven syntax highlighting input converter
 """
 
-
-from __future__ import absolute_import, division
-
 try:
     import pygments
     import pygments.formatter
@@ -50,7 +47,7 @@ if pygments:
             if lastval:
                 self._append(lasttype, lastval, element)
 
-    class Converter(object):
+    class Converter:
         @classmethod
         def _factory(cls, type_input, type_output, **kw):
             pygments_name = None
@@ -113,7 +110,7 @@ if pygments:
         def __call__(self, data, contenttype=None, arguments=None):
             text = decode_data(data, contenttype)
             content = normalize_split_text(text)
-            content = u'\n'.join(content)
+            content = '\n'.join(content)
             blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
             pygments.highlight(content, self.lexer, TreeFormatter(), blockcode)
             body = moin_page.body(children=(blockcode, ))
@@ -126,7 +123,7 @@ if pygments:
 
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
-    class Converter(object):
+    class Converter:
         def __init__(self, lexer=None, contenttype=None):
             pass
 

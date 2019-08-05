@@ -8,7 +8,9 @@
 """
 
 
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 import datetime
 
 from json import dumps
@@ -57,7 +59,7 @@ def render_template(template, **context):
 
 
 def themed_error(e):
-    item_name = request.view_args.get('item_name', u'')
+    item_name = request.view_args.get('item_name', '')
     if e.code == 403:
         title = L_('Access Denied')
         description = L_('You are not allowed to access this resource.')
@@ -73,7 +75,7 @@ def themed_error(e):
     return content, e.code
 
 
-class ThemeSupport(object):
+class ThemeSupport:
     """
     Support code for template feeding.
     """
@@ -271,7 +273,7 @@ class ThemeSupport(object):
             fq_segment = CompositeName(segment1_namespace, NAME_EXACT, segment)
             breadcrumbs.append((fq_segment, fq_current, bool(self.storage.get_item(**fq_current.query))))
             current_item += '/'
-            segment1_namespace = u''
+            segment1_namespace = ''
         return breadcrumbs
 
     def path_breadcrumbs(self):
@@ -322,7 +324,7 @@ class ThemeSupport(object):
         name = user.name0
         display_name = user.display_name or name
         wikiname, itemname = getInterwikiHome(name)
-        title = u"{0} @ {1}".format(display_name, wikiname)
+        title = "{0} @ {1}".format(display_name, wikiname)
         # link to (interwiki) user homepage
         if is_local_wiki(wikiname):
             exists = self.storage.has_item(itemname)
@@ -430,7 +432,7 @@ class ThemeSupport(object):
                 cid = cache_key(usage="SisterSites", sistername=sistername)
                 sisteritems = app.cache.get(cid)
                 if sisteritems is None:
-                    uo = urllib.URLopener()
+                    uo = urllib.request.URLopener()
                     uo.version = 'MoinMoin SisterItem list fetcher 1.0'
                     try:
                         sisteritems = {}
@@ -500,12 +502,12 @@ class ThemeSupport(object):
         than the current namespace.
         """
         if ns is not None and ns.value == '~':
-            ns = u''
+            ns = ''
         namespace_root_mapping = []
         for namespace, _unused in app.cfg.namespace_mapping:
             namespace = namespace.rstrip('/')
             if ns is None or namespace != ns:
-                fq_namespace = CompositeName(namespace, NAME_EXACT, u'')
+                fq_namespace = CompositeName(namespace, NAME_EXACT, '')
                 namespace_root_mapping.append((namespace or '~', fq_namespace.get_root_fqname()))
         return namespace_root_mapping
 
@@ -546,11 +548,11 @@ def get_editor_info(meta, external=False):
         # only tell ip / hostname if show_hosts is True
         if hostname:
             text = hostname[:15]  # 15 = len(ipaddr)
-            name = title = u'{0}[{1}]'.format(hostname, addr)
+            name = title = '{0}[{1}]'.format(hostname, addr)
             css = 'editor host'
         else:
             name = text = addr
-            title = u'[{0}]'.format(addr)
+            title = '[{0}]'.format(addr)
             css = 'editor ip'
 
     userid = meta.get(USERID)
@@ -561,7 +563,7 @@ def get_editor_info(meta, external=False):
         display_name = u.display_name or name
         if title:
             # we already have some address info
-            title = u"{0} @ {1}".format(display_name, title)
+            title = "{0} @ {1}".format(display_name, title)
         else:
             title = display_name
         if u.mailto_author and u.email:
@@ -633,10 +635,10 @@ def shorten_item_name(name, length=25):
         # If it's not enough, replace the middle with '...'
         if len(name_part) > length:
             half, left = divmod(length - 3, 2)
-            name = u'{0}...{1}'.format(name_part[:half + left], name_part[-half:])
+            name = '{0}...{1}'.format(name_part[:half + left], name_part[-half:])
         elif len(name_part) < length - 6:
             # now it is too short, add back starting characters
-            name = u'{0}...{1}'.format(name[:length - len(name_part) - 3], name_part)
+            name = '{0}...{1}'.format(name[:length - len(name_part) - 3], name_part)
         else:
             name = name_part
     return name
@@ -744,7 +746,7 @@ def setup_jinja_env():
         'storage': flaskg.storage,
         'clock': flaskg.clock,
         'cfg': app.cfg,
-        'item_name': u'@NONAMEGIVEN',  # XXX can we just use u'' ?
+        'item_name': '@NONAMEGIVEN',  # XXX can we just use '' ?
         'url_for_item': url_for_item,
         'get_fqname': get_fqname,
         'get_editor_info': lambda meta: get_editor_info(meta),

@@ -29,4 +29,4 @@ def pytest_runtest_makereport(item, call):
     if call.excinfo is not None:
         if driver_register.get_driver() is not None and hasattr(item, 'obj'):
             driver_register.get_driver().get_screenshot_as_file(
-                unicode(item.obj).split(u" ")[2] + u'.png')
+                str(item.obj).split(" ")[2] + '.png')

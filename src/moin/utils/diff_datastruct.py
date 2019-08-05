@@ -2,15 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import difflib
-from types import NoneType
-from collections import Hashable
+from collections.abc import Hashable
 
-INSERT = u"insert"
-DELETE = u"delete"
-REPLACE = u"replace"
+INSERT = "insert"
+DELETE = "delete"
+REPLACE = "replace"
 
 
-class UndefinedType(object):
+class UndefinedType:
     """ Represents a non-existing value """
 
 
@@ -47,7 +46,7 @@ def diff(d1, d2, basekeys=None):
             else:
                 changes.extend(diff(d1[key], d2[key], keys))
     elif isinstance(d1, list) and isinstance(d2, list):
-        hashable = all(isinstance(d1, unicode) or all(
+        hashable = all(isinstance(d1, str) or all(
             isinstance(v, Hashable) for v in d) for d in [d1, d2])
         if hashable:
             matches = difflib.SequenceMatcher(None, d1, d2)
@@ -60,13 +59,13 @@ def diff(d1, d2, basekeys=None):
                 elif tag == INSERT:
                     changes.append((INSERT, basekeys, d2[d2_start:d2_end]))
         else:
-            changes.extend(diff(unicode(d1), unicode(d2), basekeys))
-    elif any(isinstance(d, (NoneType, bool, int, long, float, unicode, )) for d in (d1, d2)):
+            changes.extend(diff(str(d1), str(d2), basekeys))
+    elif any(isinstance(d, (type(None), bool, int, float, str, )) for d in (d1, d2)):
         if isinstance(d1, UndefinedType):
             changes.append((INSERT, basekeys, d2))
         elif isinstance(d2, UndefinedType):
             changes.append((DELETE, basekeys, d1))
-        elif type(d1) == type(d2):
+        elif isinstance(d1, type(d2)):
             if d1 != d2:
                 changes.extend([(DELETE, basekeys, d1), (INSERT, basekeys, d2)])
         else:
@@ -87,8 +86,8 @@ def make_text_diff(changes):
                     that represent a diff
     :return: a generator of text diffs
     """
-    marker = {INSERT: u"+", DELETE: u"-"}
+    marker = {INSERT: "+", DELETE: "-"}
     for change_type, keys, value in changes:
         yield "{0} {1}{2}{3}".format(marker[change_type],
-                                     ".".join(unicode(key) for key in keys),
-                                     ": " if keys else "", unicode(value))
+                                     ".".join(str(key) for key in keys),
+                                     ": " if keys else "", str(value))

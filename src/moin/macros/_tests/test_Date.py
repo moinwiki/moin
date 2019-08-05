@@ -14,7 +14,7 @@ from flask_babel import format_date, format_datetime
 from moin.macros.Date import MacroDateTimeBase, Macro
 
 
-class TestMacroDateTimeBase(object):
+class TestMacroDateTimeBase:
     def test_parse_time(self):
         MacroDateTimeBase_obj = MacroDateTimeBase()
         test_time_args = '2011-08-07T11:11:11+0533'
@@ -22,14 +22,14 @@ class TestMacroDateTimeBase(object):
         expected = 1312695491.0
         assert result == expected
         result = format_datetime(datetime.utcfromtimestamp(result))
-        expected = u'Aug 7, 2011, 5:38:11 AM'  # comma after year was added in recent CLDR
+        expected = 'Aug 7, 2011, 5:38:11 AM'  # comma after year was added in recent CLDR
         assert result == expected
         with pytest.raises(ValueError):
             # things after next 10,000 years can't be predicted
             MacroDateTimeBase_obj.parse_time('12011-08-07T11:11:11')
 
 
-class TestMacro(object):
+class TestMacro:
     def test_macro(self):
         macro_obj = Macro()
         # when arguments is None
@@ -40,5 +40,5 @@ class TestMacro(object):
 
         arguments = ['2011-08-07T11:11:11+0533', 'argument2']
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-        expected = u'Aug 7, 2011'
+        expected = 'Aug 7, 2011'
         assert result == expected

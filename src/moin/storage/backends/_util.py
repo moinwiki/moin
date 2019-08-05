@@ -6,13 +6,10 @@
 MoinMoin - backend utilities
 """
 
-
-from __future__ import absolute_import, division
-
 import hashlib
 
 
-class TrackingFileWrapper(object):
+class TrackingFileWrapper:
     """
     Wraps a file and computes hashcode and file size while it is read.
     Requires that initially the realfile is open and at pos 0.

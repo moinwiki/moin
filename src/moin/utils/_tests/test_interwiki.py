@@ -6,9 +6,6 @@
     MoinMoin - moin.utils.interwiki Tests
 """
 
-
-from __future__ import absolute_import, division
-
 import tempfile
 import os.path
 import shutil
@@ -22,7 +19,7 @@ from moin.constants.keys import CURRENT
 from moin.app import before_wiki
 
 
-class TestInterWiki(object):
+class TestInterWiki:
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
@@ -74,8 +71,8 @@ class TestInterWiki(object):
 
     def test__split_namespace(self):
         map = set()
-        map.add(u'ns1')
-        map.add(u'ns1/ns2')
+        map.add('ns1')
+        map.add('ns1/ns2')
         tests = [('', ('', '')),
                  ('OtherWiki/', ('', 'OtherWiki/')),
                  ('ns1/', ('ns1', '')),
@@ -91,7 +88,7 @@ class TestInterWiki(object):
             namespace, pagename = _split_namespace(map, markup)
 
     def test_split_interwiki(self):
-        app.cfg.namespace_mapping = [(u'', 'default_backend'), (u'ns1/', 'default_backend'), (u'ns1/ns2/', 'other_backend')]
+        app.cfg.namespace_mapping = [('', 'default_backend'), ('ns1/', 'default_backend'), ('ns1/ns2/', 'other_backend')]
         tests = [('', ('Self', '', 'name_exact', '')),
                  ('OtherWiki/', ('OtherWiki', '', 'name_exact', '')),
                  ('/ns1/', ('Self', 'ns1', 'name_exact', '')),
@@ -113,29 +110,29 @@ class TestInterWiki(object):
         for markup, (wikiname, namespace, field, pagename) in tests:
             assert split_interwiki(markup) == (wikiname, namespace, field, pagename)
             wikiname, namespace, field, pagename = split_interwiki(markup)
-            assert isinstance(namespace, unicode)
-            assert isinstance(pagename, unicode)
-            assert isinstance(field, unicode)
-            assert isinstance(wikiname, unicode)
+            assert isinstance(namespace, str)
+            assert isinstance(pagename, str)
+            assert isinstance(field, str)
+            assert isinstance(wikiname, str)
 
     def testJoinWiki(self):
-        tests = [(('http://example.org/', u'SomePage', '', ''), 'http://example.org/SomePage'),
-                 (('', u'SomePage', '', ''), 'SomePage'),
-                 (('http://example.org/?page=$PAGE&action=show', u'SomePage', '', ''), 'http://example.org/?page=SomePage&action=show'),
-                 (('http://example.org/', u'Aktuelle\xc4nderungen', '', ''), 'http://example.org/Aktuelle%C3%84nderungen'),
-                 (('http://example.org/$PAGE/show', u'Aktuelle\xc4nderungen', '', ''), 'http://example.org/Aktuelle%C3%84nderungen/show'),
+        tests = [(('http://example.org/', 'SomePage', '', ''), 'http://example.org/SomePage'),
+                 (('', 'SomePage', '', ''), 'SomePage'),
+                 (('http://example.org/?page=$PAGE&action=show', 'SomePage', '', ''), 'http://example.org/?page=SomePage&action=show'),
+                 (('http://example.org/', 'Aktuelle\xc4nderungen', '', ''), 'http://example.org/Aktuelle%C3%84nderungen'),
+                 (('http://example.org/$PAGE/show', 'Aktuelle\xc4nderungen', '', ''), 'http://example.org/Aktuelle%C3%84nderungen/show'),
 
-                 (('http://example.org/', u'SomeItemID', 'itemid', u'ns1'), 'http://example.org/ns1/@itemid/SomeItemID'),
-                 (('http://example.org/?page=$PAGE&action=show&namespace=$NAMESPACE', u'SomePage', '', u'ns1'), 'http://example.org/?page=SomePage&action=show&namespace=ns1'),
-                 (('http://example.org/', u'Aktuelle\xc4nderungen', '', u'ns1\xc4'), 'http://example.org/ns1%C3%84/Aktuelle%C3%84nderungen'),
-                 (('http://example.org/$NAMESPACE/$PAGE/show', u'Aktuelle\xc4nderungen', '', u'ns\xc41'), 'http://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show'),
-                 (('http://example.org/@$FIELD/$PAGE/show', u'Aktuelle\xc4nderungen', u'itemid', u''), 'http://example.org/@itemid/Aktuelle%C3%84nderungen/show'),
+                 (('http://example.org/', 'SomeItemID', 'itemid', 'ns1'), 'http://example.org/ns1/@itemid/SomeItemID'),
+                 (('http://example.org/?page=$PAGE&action=show&namespace=$NAMESPACE', 'SomePage', '', 'ns1'), 'http://example.org/?page=SomePage&action=show&namespace=ns1'),
+                 (('http://example.org/', 'Aktuelle\xc4nderungen', '', 'ns1\xc4'), 'http://example.org/ns1%C3%84/Aktuelle%C3%84nderungen'),
+                 (('http://example.org/$NAMESPACE/$PAGE/show', 'Aktuelle\xc4nderungen', '', 'ns\xc41'), 'http://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show'),
+                 (('http://example.org/@$FIELD/$PAGE/show', 'Aktuelle\xc4nderungen', 'itemid', ''), 'http://example.org/@itemid/Aktuelle%C3%84nderungen/show'),
                 ]
         for (baseurl, pagename, field, namespace), url in tests:
             assert join_wiki(baseurl, pagename, field, namespace) == url
 
     def test_split_fqname(self):
-        app.cfg.namespace_mapping = [(u'', 'default_backend'), (u'ns1/', 'default_backend'), (u'ns1/ns2/', 'other_backend')]
+        app.cfg.namespace_mapping = [('', 'default_backend'), ('ns1/', 'default_backend'), ('ns1/ns2/', 'other_backend')]
         tests = [('ns1/ns2/@itemid/SomeItemID', ('ns1/ns2', 'itemid', 'SomeItemID')),
                  ('ns3/@itemid/SomeItemID', ('', 'name_exact', 'ns3/@itemid/SomeItemID')),
                  ('Page', ('', 'name_exact', 'Page')),
@@ -148,7 +145,7 @@ class TestInterWiki(object):
             assert split_fqname(url) == (namespace, field, pagename)
 
 
-class TestInterWikiMapBackend(object):
+class TestInterWikiMapBackend:
     """
     tests for interwiki map
     """
@@ -188,8 +185,8 @@ class TestInterWikiMapBackend(object):
         Test that InterWikiMap.from_unicode correctly loads unicode objects.
         """
         # test for void wiki maps
-        assert InterWikiMap.from_string(u'').iwmap == dict()
-        assert InterWikiMap.from_string(u'#spam\r\n').iwmap == dict()
+        assert InterWikiMap.from_string('').iwmap == dict()
+        assert InterWikiMap.from_string('#spam\r\n').iwmap == dict()
         # test for comments
         s = ('# foo bar\n'
              '#spamham\r\n'
@@ -205,7 +202,7 @@ class TestInterWikiMapBackend(object):
                      link2='http://link2.in/'))
         # test invalid strings
         with pytest.raises(ValueError):
-            InterWikiMap.from_string(u'foobarbaz')
+            InterWikiMap.from_string('foobarbaz')
 
     def test_real_interwiki_map(self):
         """

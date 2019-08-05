@@ -24,7 +24,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class ProfilerMiddleware(object):
+class ProfilerMiddleware:
     """ Abstract base class for profiling middlewares.
 
     Concrete implementations of this class should provide implementations
@@ -44,7 +44,7 @@ class ProfilerMiddleware(object):
         logging.debug("Profiling call for '%s %s'", method, url)
         try:
             res = self.run_profile(self.app, (environ, start_response))
-        except Exception, e:
+        except Exception as e:
             logging.exception("Exception while profiling '%s %s'", method, url)
             raise
         return res
@@ -75,18 +75,6 @@ class CProfileMiddleware(ProfilerMiddleware):
 
     def shutdown(self):
         self._profile.dump_stats(self._filename)
-
-
-class HotshotMiddleware(ProfilerMiddleware):
-    """ A profiler based on the more recent hotshot module from the stdlib. """
-    def __init__(self, app, *args, **kwargs):
-        super(HotshotMiddleware, self).__init__(app)
-        import hotshot
-        self._profile = hotshot.Profile(*args, **kwargs)
-        self.run_profile = self._profile.runcall
-
-    def shutdown(self):
-        self._profile.close()
 
 
 class PycallgraphMiddleware(ProfilerMiddleware):

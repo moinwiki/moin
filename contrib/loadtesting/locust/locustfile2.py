@@ -15,6 +15,13 @@ Running this script will register users,
 and each user will update the Home item multiple times. It is best to start with
 an empty wiki (./m new-wiki).
 
+Each locust will attempt to update the Home item 10 times. If the Home item is
+locked by another user, a fail message is created and saved for the next update
+attempt. If the Home item is available for update, all fail messages and a success
+message is added to the Home item. If the update for a locust fails on the 10th
+attempt, then a new <username> item is created and all accumulated fail
+messages are written to the file.
+
 To load test Moin2:
  * read about Locust at https://docs.locust.io/en/stable/index.html
  * install Locust per the docs
@@ -42,8 +49,7 @@ To load test Moin2:
 
 import sys
 import argparse
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
 import datetime
 
 from locust import HttpLocust, Locust, TaskSet, TaskSequence, task, seq_task
@@ -81,7 +87,7 @@ class UserSequence(TaskSequence):
         # Home and users/Home have been created by setup, see below
         response = self.client.get("/Home")
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(1)
     def click_login(self):
@@ -90,16 +96,16 @@ class UserSequence(TaskSequence):
         self.user_name = 'JohnDoe' + str(user_number)
         self.user_email = self.user_name + '@john.doe'
         self.user_home_page = '/users/' + self.user_name
-        print '==== starting user = %s ====' % self.user_name
+        print('==== starting user = %s ====' % self.user_name)
         response = self.client.get("/+login")
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(2)
     def click_register(self):
         response = self.client.get("/+register")
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(3)
     def click_post_register(self):
@@ -110,13 +116,13 @@ class UserSequence(TaskSequence):
                                      "register_email": self.user_email,
                                     })
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(4)
     def click_login_again(self):
         response = self.client.get("/+login")
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(5)
     def click_post_login(self):
@@ -127,7 +133,7 @@ class UserSequence(TaskSequence):
                                      "login_nexturl": "/Home",
                                     })
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(6)
     @task(10)
@@ -138,18 +144,19 @@ class UserSequence(TaskSequence):
         item_name = 'Home'
         response = self.client.get('/' + item_name)
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
         # click modify link
         page_get = '/+modify/' + item_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default'
         response = self.client.get(page_get)
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
-        if 'is locked by' in response.content:
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
+        if b'is locked by' in response.content:
             # someone else has item locked for editing
             self.message += '\n\n%s Item %s is locked, Locust user %s cannot do change number %s' % (dt, item_name, self.user_name, self.count)
             return
 
-        textarea_data = get_textarea(response.content) + self.message
+        content = response.content.decode('utf-8')
+        textarea_data = get_textarea(content) + self.message
         self.message = ''
         # complete form and post
         new_content = '%s\n\n%s Item %s updated by Locust user %s change number = %s' % (textarea_data, dt, item_name, self.user_name, self.count)
@@ -168,8 +175,8 @@ class UserSequence(TaskSequence):
                                      "extra_meta_text": '{"namespace": ""}',
                                      })
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
-        assert 'Deletions are marked like this.' in response.content
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
+        assert b'Deletions are marked like this.' in response.content
 
         # do save
         response = self.client.post(new_page_post,
@@ -184,7 +191,7 @@ class UserSequence(TaskSequence):
                                      "extra_meta_text": '{"namespace": ""}',
                                      })
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(7)
     def save_messages(self):
@@ -192,7 +199,7 @@ class UserSequence(TaskSequence):
         if self.message:
             response = self.client.get('/+modify/' + self.user_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default')
             if response.status_code != 200:
-                print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+                print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
             # complete form and post
             new_content = '= %s =\n\n== Unsaved locked out messages ==%s' % (self.user_name, self.message)
             home_page_post = '/+modify/' + self.user_name + '?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template='
@@ -208,13 +215,13 @@ class UserSequence(TaskSequence):
                                          "extra_meta_text": '{"namespace": "","rev_number": 1}',
                                          })
             if response.status_code != 200:
-                print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+                print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
     @seq_task(8)
     def logout(self):
-        response = self.client.get(u"/+logout?logout_submit=1")
+        response = self.client.get("/+logout?logout_submit=1")
         if response.status_code != 200:
-            print '%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code)
+            print('%s: response.status_code = %s' % (sys._getframe().f_lineno, response.status_code))
 
 
 class WebsiteUser(HttpLocust):
@@ -233,16 +240,17 @@ class WebsiteUser(HttpLocust):
             if host.endswith('/'):
                 host = host[:-1]
 
-            print '==== creating Home ===='
-            url = host + u"/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-            data = urllib.urlencode({"content_form_data_text": "= Home =\n * created by Locust",
+            print('==== creating Home ====')
+            url = host + "/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+            data = urllib.parse.urlencode({"content_form_data_text": "= Home =\n * created by Locust",
                                      "comment": "",
                                      "submit": "OK",
-                                     u'meta_form_contenttype': u'text/x.moin.wiki;charset=utf-8',
+                                     'meta_form_contenttype': 'text/x.moin.wiki;charset=utf-8',
                                      "meta_form_itemtype": "default",
                                      "meta_form_acl": "None",
                                      "meta_form_tags": "None",
                                      "meta_form_name": "Home",
                                      "extra_meta_text": '{"namespace": "","rev_number": 1}',
                                      })
-            content = urllib2.urlopen(url=url, data=data).read()
+            data = data.encode('utf-8')
+            content = urllib.request.urlopen(url=url, data=data).read()

@@ -28,17 +28,17 @@ def acliter(acl):
     return ACLStringIterator(app.cfg.acl_rights_contents, acl)
 
 
-class TestACLStringIterator(object):
+class TestACLStringIterator:
 
     def testEmpty(self):
         """ security: empty acl string raise StopIteration """
         acl_iter = acliter('')
-        pytest.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.__next__)
 
     def testWhiteSpace(self):
         """ security: white space acl string raise StopIteration """
         acl_iter = acliter('       ')
-        pytest.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.__next__)
 
     def testDefault(self):
         """ security: default meta acl """
@@ -50,79 +50,79 @@ class TestACLStringIterator(object):
     def testEmptyRights(self):
         """ security: empty rights """
         acl_iter = acliter('WikiName:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['WikiName']
         assert rights == []
 
     def testSingleWikiNameSingleRight(self):
         """ security: single wiki name, single right """
         acl_iter = acliter('WikiName:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['WikiName']
         assert rights == ['read']
 
     def testMultipleWikiNameAndRights(self):
         """ security: multiple wiki names and rights """
         acl_iter = acliter('UserOne,UserTwo:read,write')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne', 'UserTwo']
         assert rights == ['read', 'write']
 
     def testMultipleWikiNameAndRightsSpaces(self):
         """ security: multiple names with spaces """
         acl_iter = acliter('user one,user two:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user one', 'user two']
         assert rights == ['read']
 
     def testMultipleEntries(self):
         """ security: multiple entries """
         acl_iter = acliter('UserOne:read,write UserTwo:read All:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserTwo']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['All']
         assert rights == []
 
     def testNameWithSpaces(self):
         """ security: single name with spaces """
         acl_iter = acliter('user one:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user one']
         assert rights == ['read']
 
     def testMultipleEntriesWithSpaces(self):
         """ security: multiple entries with spaces """
         acl_iter = acliter('user one:read,write user two:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user one']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user two']
         assert rights == ['read']
 
     def testMixedNames(self):
         """ security: mixed wiki names and names with spaces """
         acl_iter = acliter('UserOne,user two:read,write user three,UserFour:read')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user three', 'UserFour']
         assert rights == ['read']
 
     def testModifier(self):
         """ security: acl modifiers """
         acl_iter = acliter('+UserOne:read -UserTwo:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert mod == '+'
         assert entries == ['UserOne']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert mod == '-'
         assert entries == ['UserTwo']
         assert rights == []
@@ -134,10 +134,10 @@ class TestACLStringIterator(object):
         then it will be parsed as one name with spaces.
         """
         acl_iter = acliter('UserOne:read user two is ignored')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read']
-        pytest.raises(StopIteration, acl_iter.next)
+        pytest.raises(StopIteration, acl_iter.__next__)
 
     def testEmptyNamesWithRight(self):
         """ security: empty names with rights
@@ -146,13 +146,13 @@ class TestACLStringIterator(object):
         the rights because there is no entry.
         """
         acl_iter = acliter('UserOne:read :read All:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == []
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['All']
         assert rights == []
 
@@ -163,14 +163,14 @@ class TestACLStringIterator(object):
               regeneration test for storage.backends.fs19).
         """
         acl_iter = acliter('UserOne:read,sing,write,drink,sleep')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert rights == ['read', 'write']
 
         # we use strange usernames that include invalid rights as substrings
-        acls = list(acliter(u"JimAdelete,JoeArevert:admin,read,delete,write,revert"))
+        acls = list(acliter("JimAdelete,JoeArevert:admin,read,delete,write,revert"))
         # now check that we have lost the invalid rights 'delete' and 'revert',
         # but the usernames should be still intact.
-        assert acls == [('', [u'JimAdelete', u'JoeArevert'], ['admin', 'read', 'write', ])]
+        assert acls == [('', ['JimAdelete', 'JoeArevert'], ['admin', 'read', 'write', ])]
 
     def testBadGuy(self):
         """ security: bad guy may not allowed anything
@@ -178,26 +178,26 @@ class TestACLStringIterator(object):
         This test was failing on the apply acl rights test.
         """
         acl_iter = acliter('UserOne:read,write BadGuy: All:read')
-        mod, entries, rights = acl_iter.next()
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
+        mod, entries, rights = next(acl_iter)
         assert entries == ['BadGuy']
         assert rights == []
 
     def testAllowExtraWhitespace(self):
         """ security: allow extra white space between entries """
         acl_iter = acliter('UserOne,user two:read,write   user three,UserFour:read  All:')
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['UserOne', 'user two']
         assert rights == ['read', 'write']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['user three', 'UserFour']
         assert rights == ['read']
-        mod, entries, rights = acl_iter.next()
+        mod, entries, rights = next(acl_iter)
         assert entries == ['All']
         assert rights == []
 
 
-class TestAcl(object):
+class TestAcl:
     """ security: testing access control list
 
     TO DO: test unknown user?
@@ -263,20 +263,20 @@ class TestAcl(object):
                 assert not acl.may(user, right)
 
 
-class TestGroupACL(object):
+class TestGroupACL:
 
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
             def groups(cfg):
                 groups = {
-                    u'PGroup': frozenset([u'Antony', u'Beatrice', ]),
-                    u'AGroup': frozenset([u'All', ]),
+                    'PGroup': frozenset(['Antony', 'Beatrice', ]),
+                    'AGroup': frozenset(['All', ]),
                     # note: the next line is a INTENDED misnomer, there is "All" in
                     # the group NAME, but not in the group members. This makes
                     # sure that a bug that erroneously checked "in groupname" (instead
                     # of "in groupmembers") does not reappear.
-                    u'AllGroup': frozenset([]),  # note: intended misnomer
+                    'AllGroup': frozenset([]),  # note: intended misnomer
                 }
                 return ConfigGroups(groups)
 
@@ -311,40 +311,40 @@ class TestGroupACL(object):
                 assert not acl.may(user, right)
 
 
-class TestItemAcls(object):
+class TestItemAcls:
     """ security: real-life access control list on items testing
     """
-    mainitem_name = u'AclTestMainItem'
-    subitem1_name = u'AclTestMainItem/SubItem1'
-    subitem2_name = u'AclTestMainItem/SubItem2'
-    item_rwforall = u'EveryoneMayReadWriteMe'
-    subitem_4boss = u'EveryoneMayReadWriteMe/OnlyTheBossMayWMe'
+    mainitem_name = 'AclTestMainItem'
+    subitem1_name = 'AclTestMainItem/SubItem1'
+    subitem2_name = 'AclTestMainItem/SubItem2'
+    item_rwforall = 'EveryoneMayReadWriteMe'
+    subitem_4boss = 'EveryoneMayReadWriteMe/OnlyTheBossMayWMe'
     items = [
         # itemname, acl, content
-        (mainitem_name, u'JoeDoe: JaneDoe:read,write', u'Foo!'),
+        (mainitem_name, 'JoeDoe: JaneDoe:read,write', 'Foo!'),
         # acl None means: "no acl given in item metadata" - this will trigger
         # usage of default acl (non-hierarchical) or usage of default acl and
         # inheritance (hierarchical):
-        (subitem1_name, None, u'FooFoo!'),
+        (subitem1_name, None, 'FooFoo!'),
         # acl u'' means: "empty acl (no rights for noone) given" - this will
         # INHIBIT usage of default acl / inheritance (we DO HAVE an item acl,
         # it is just empty!):
-        (subitem2_name, u'', u'BarBar!'),
-        (item_rwforall, u'All:read,write', u'May be read from and written to by anyone'),
-        (subitem_4boss, u'JoeDoe:read,write', u'Only JoeDoe (the boss) may write'),
+        (subitem2_name, '', 'BarBar!'),
+        (item_rwforall, 'All:read,write', 'May be read from and written to by anyone'),
+        (subitem_4boss, 'JoeDoe:read,write', 'Only JoeDoe (the boss) may write'),
     ]
 
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
-            default_acl = dict(hierarchic=False, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
-            acl_functions = u"SuperUser:superuser"
+            default_acl = dict(hierarchic=False, before="WikiAdmin:admin,read,write,create,destroy", default="All:read,write", after="All:read")
+            acl_functions = "SuperUser:superuser"
 
         return Config
 
     @pytest.fixture(autouse=True)
     def custom_setup(self):
-        become_trusted(username=u'WikiAdmin')
+        become_trusted(username='WikiAdmin')
         for item_name, item_acl, item_content in self.items:
             if item_acl is not None:
                 update_item(item_name, {ACL: item_acl}, item_content)
@@ -355,18 +355,18 @@ class TestItemAcls(object):
         """ security: test item acls """
         tests = [
             # itemname, username, expected_rights
-            (self.mainitem_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.mainitem_name, u'AnyUser', ['read']),  # by after acl
-            (self.mainitem_name, u'JaneDoe', ['read', 'write']),  # by item acl
-            (self.mainitem_name, u'JoeDoe', []),  # by item acl
-            (self.subitem1_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem1_name, u'AnyUser', ['read', 'write']),  # by default acl
-            (self.subitem1_name, u'JoeDoe', ['read', 'write']),  # by default acl
-            (self.subitem1_name, u'JaneDoe', ['read', 'write']),  # by default acl
-            (self.subitem2_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem2_name, u'AnyUser', ['read']),  # by after acl
-            (self.subitem2_name, u'JoeDoe', ['read']),  # by after acl
-            (self.subitem2_name, u'JaneDoe', ['read']),  # by after acl
+            (self.mainitem_name, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
+            (self.mainitem_name, 'AnyUser', ['read']),  # by after acl
+            (self.mainitem_name, 'JaneDoe', ['read', 'write']),  # by item acl
+            (self.mainitem_name, 'JoeDoe', []),  # by item acl
+            (self.subitem1_name, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
+            (self.subitem1_name, 'AnyUser', ['read', 'write']),  # by default acl
+            (self.subitem1_name, 'JoeDoe', ['read', 'write']),  # by default acl
+            (self.subitem1_name, 'JaneDoe', ['read', 'write']),  # by default acl
+            (self.subitem2_name, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
+            (self.subitem2_name, 'AnyUser', ['read']),  # by after acl
+            (self.subitem2_name, 'JoeDoe', ['read']),  # by after acl
+            (self.subitem2_name, 'JaneDoe', ['read']),  # by after acl
         ]
 
         for itemname, username, may in tests:
@@ -391,39 +391,39 @@ class TestItemAcls(object):
         assert not u.may.superuser()
 
 
-class TestItemHierachicalAcls(object):
+class TestItemHierachicalAcls:
     """ security: real-life access control list on items testing
     """
-    mainitem_name = u'AclTestMainItem'
-    subitem1_name = u'AclTestMainItem/SubItem1'
-    subitem2_name = u'AclTestMainItem/SubItem2'
-    item_rwforall = u'EveryoneMayReadWriteMe'
-    subitem_4boss = u'EveryoneMayReadWriteMe/OnlyTheBossMayWMe'
+    mainitem_name = 'AclTestMainItem'
+    subitem1_name = 'AclTestMainItem/SubItem1'
+    subitem2_name = 'AclTestMainItem/SubItem2'
+    item_rwforall = 'EveryoneMayReadWriteMe'
+    subitem_4boss = 'EveryoneMayReadWriteMe/OnlyTheBossMayWMe'
     items = [
         # itemname, acl, content
-        (mainitem_name, u'JoeDoe: JaneDoe:read,write', u'Foo!'),
+        (mainitem_name, 'JoeDoe: JaneDoe:read,write', 'Foo!'),
         # acl None means: "no acl given in item metadata" - this will trigger
         # usage of default acl (non-hierarchical) or usage of default acl and
         # inheritance (hierarchical):
-        (subitem1_name, None, u'FooFoo!'),
+        (subitem1_name, None, 'FooFoo!'),
         # acl u'' means: "empty acl (no rights for noone) given" - this will
         # INHIBIT usage of default acl / inheritance (we DO HAVE an item acl,
         # it is just empty!):
-        (subitem2_name, u'', u'BarBar!'),
-        (item_rwforall, u'All:read,write', u'May be read from and written to by anyone'),
-        (subitem_4boss, u'JoeDoe:read,write', u'Only JoeDoe (the boss) may write'),
+        (subitem2_name, '', 'BarBar!'),
+        (item_rwforall, 'All:read,write', 'May be read from and written to by anyone'),
+        (subitem_4boss, 'JoeDoe:read,write', 'Only JoeDoe (the boss) may write'),
     ]
 
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
-            default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"All:read,write", after=u"All:read")
+            default_acl = dict(hierarchic=True, before="WikiAdmin:admin,read,write,create,destroy", default="All:read,write", after="All:read")
 
         return Config
 
     @pytest.fixture(autouse=True)
     def custom_setup(self):
-        become_trusted(username=u'WikiAdmin')
+        become_trusted(username='WikiAdmin')
         for item_name, item_acl, item_content in self.items:
             if item_acl is not None:
                 update_item(item_name, {ACL: item_acl}, item_content)
@@ -434,20 +434,20 @@ class TestItemHierachicalAcls(object):
         """ security: test item acls """
         tests = [
             # itemname, username, expected_rights
-            (self.mainitem_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.mainitem_name, u'AnyUser', ['read']),  # by after acl
-            (self.mainitem_name, u'JaneDoe', ['read', 'write']),  # by item acl
-            (self.mainitem_name, u'JoeDoe', []),  # by item acl
-            (self.subitem1_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem1_name, u'AnyUser', ['read']),  # by after acl
-            (self.subitem1_name, u'JoeDoe', []),  # by inherited acl from main item
-            (self.subitem1_name, u'JaneDoe', ['read', 'write']),  # by inherited acl from main item
-            (self.subitem2_name, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
-            (self.subitem2_name, u'AnyUser', ['read']),  # by after acl
-            (self.subitem2_name, u'JoeDoe', ['read']),  # by after acl
-            (self.subitem2_name, u'JaneDoe', ['read']),  # by after acl
-            (self.subitem_4boss, u'AnyUser', ['read']),  # by after acl
-            (self.subitem_4boss, u'JoeDoe', ['read', 'write']),  # by item acl
+            (self.mainitem_name, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
+            (self.mainitem_name, 'AnyUser', ['read']),  # by after acl
+            (self.mainitem_name, 'JaneDoe', ['read', 'write']),  # by item acl
+            (self.mainitem_name, 'JoeDoe', []),  # by item acl
+            (self.subitem1_name, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
+            (self.subitem1_name, 'AnyUser', ['read']),  # by after acl
+            (self.subitem1_name, 'JoeDoe', []),  # by inherited acl from main item
+            (self.subitem1_name, 'JaneDoe', ['read', 'write']),  # by inherited acl from main item
+            (self.subitem2_name, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),
+            (self.subitem2_name, 'AnyUser', ['read']),  # by after acl
+            (self.subitem2_name, 'JoeDoe', ['read']),  # by after acl
+            (self.subitem2_name, 'JaneDoe', ['read']),  # by after acl
+            (self.subitem_4boss, 'AnyUser', ['read']),  # by after acl
+            (self.subitem_4boss, 'JoeDoe', ['read', 'write']),  # by item acl
         ]
 
         for itemname, username, may in tests:
@@ -467,19 +467,19 @@ class TestItemHierachicalAcls(object):
                 assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
 
 
-class TestItemHierachicalAclsMultiItemNames(object):
+class TestItemHierachicalAclsMultiItemNames:
     """ security: real-life access control list on items testing
     """
     # parent / child item names
-    p1 = [u'p1', ]
-    c1 = [u'p1/c1', ]
-    p2 = [u'p2', ]
-    c2 = [u'p2/c2', ]
-    c12 = [u'p1/c12', u'p2/c12', ]
+    p1 = ['p1', ]
+    c1 = ['p1/c1', ]
+    p2 = ['p2', ]
+    c2 = ['p2/c2', ]
+    c12 = ['p1/c12', 'p2/c12', ]
     content = b''
     items = [
         # itemnames, acl, content
-        (p1, u'Editor:', content),  # deny access (due to hierarchic acl mode also effective for children)
+        (p1, 'Editor:', content),  # deny access (due to hierarchic acl mode also effective for children)
         (c1, None, content),  # no own acl -> inherit from parent
         (p2, None, content),  # default acl effective (also for children)
         (c2, None, content),  # no own acl -> inherit from parent
@@ -489,12 +489,12 @@ class TestItemHierachicalAclsMultiItemNames(object):
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
-            default_acl = dict(hierarchic=True, before=u"WikiAdmin:admin,read,write,create,destroy", default=u"Editor:read,write", after=u"All:read")
+            default_acl = dict(hierarchic=True, before="WikiAdmin:admin,read,write,create,destroy", default="Editor:read,write", after="All:read")
         return Config
 
     @pytest.fixture(autouse=True)
     def custom_setup(self):
-        become_trusted(username=u'WikiAdmin')
+        become_trusted(username='WikiAdmin')
         for item_names, item_acl, item_content in self.items:
             meta = {NAME: item_names}
             if item_acl is not None:
@@ -505,22 +505,22 @@ class TestItemHierachicalAclsMultiItemNames(object):
         """ security: test item acls """
         tests = [
             # itemname, username, expected_rights
-            (self.p1, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
-            (self.p2, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
-            (self.c1, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
-            (self.c2, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
-            (self.c12, u'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
-            (self.p1, u'Editor', []),  # by p1 acl
-            (self.c1, u'Editor', []),  # by p1 acl
-            (self.p1, u'SomeOne', ['read']),  # by after acl
-            (self.c1, u'SomeOne', ['read']),  # by after acl
-            (self.p2, u'Editor', ['read', 'write']),  # by default acl
-            (self.c2, u'Editor', ['read', 'write']),  # by default acl
-            (self.p2, u'SomeOne', ['read']),  # by after acl
-            (self.c2, u'SomeOne', ['read']),  # by after acl
-            (self.c12, u'SomeOne', ['read']),  # by after acl
+            (self.p1, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.p2, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.c1, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.c2, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.c12, 'WikiAdmin', ['read', 'write', 'admin', 'create', 'destroy']),  # by before acl
+            (self.p1, 'Editor', []),  # by p1 acl
+            (self.c1, 'Editor', []),  # by p1 acl
+            (self.p1, 'SomeOne', ['read']),  # by after acl
+            (self.c1, 'SomeOne', ['read']),  # by after acl
+            (self.p2, 'Editor', ['read', 'write']),  # by default acl
+            (self.c2, 'Editor', ['read', 'write']),  # by default acl
+            (self.p2, 'SomeOne', ['read']),  # by after acl
+            (self.c2, 'SomeOne', ['read']),  # by after acl
+            (self.c12, 'SomeOne', ['read']),  # by after acl
             # now check the rather special stuff:
-            (self.c12, u'Editor', ['read', 'write']),  # disallowed via p1, but allowed via p2 via default acl
+            (self.c12, 'Editor', ['read', 'write']),  # disallowed via p1, but allowed via p2 via default acl
         ]
 
         for itemnames, username, may in tests:

@@ -142,7 +142,7 @@ class ValidName(Validator):
         try:
             validate_name(state['meta'], state[ITEMID])
         except NameNotValidError as e:
-            self.invalid_name_msg = _(e)
+            self.invalid_name_msg = _(str(e))
             return self.note_error(element, state, 'invalid_name_msg')
         return True
 
@@ -256,7 +256,7 @@ class SubscriptionsJoinedString(JoinedString):
                     name_ = _("This item doesn't exist.")
                 except AttributeError:
                     name_ = _("This item name is corrupt, delete and recreate.")
-                value = u"{0} ({1})".format(value, name_)
+                value = "{0} ({1})".format(value, name_)
             else:
                 # name::ExampleItem | tags::demo | nameprefix::jp | namere::.* | name:MyNamespace:ExampleItem
                 value = child.u
@@ -278,7 +278,7 @@ Subscriptions = SubscriptionsJoinedString.of(String).with_properties(
 Quicklinks = MyJoinedString.of(String).with_properties(widget=WIDGET_MULTILINE_TEXT, rows=ROWS, cols=COLS).using(
     label=L_('Quick Links'), optional=True, separator='\n', separator_regex=re.compile(r'[\r\n]+'))
 
-Search = Text.using(default=u'', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
+Search = Text.using(default='', optional=True).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Search Query"))
 
 _Integer = Integer.validated_by(Converted())
 
@@ -314,7 +314,7 @@ class DateTimeUNIX(_DateTime):
                 # check if a value is a correct timestamp
                 dt = datetime.datetime.utcfromtimestamp(value)
                 return value
-            except ValueError:
+            except (ValueError, OSError):  # OSError errno 75 "Value too large for defined data type"
                 raise AdaptationError()
         dt = super(DateTimeUNIX, self).adapt(value)
         if isinstance(dt, datetime.datetime):
@@ -353,7 +353,7 @@ class ValidReference(Validator):
         return True
 
 
-class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(ValidReference())):
+class Reference(Select.with_properties(empty_label=L_('(None)')).validated_by(ValidReference())):
     """
     A metadata property that points to another item selected out of the
     Results of a search query.
@@ -370,7 +370,7 @@ class Reference(Select.with_properties(empty_label=L_(u'(None)')).validated_by(V
         label_getter = cls.properties['label_getter']
         choices = [(rev.meta[ITEMID], label_getter(rev)) for rev in revs]
         if cls.optional:
-            choices.append((u'', cls.properties['empty_label']))
+            choices.append(('', cls.properties['empty_label']))
         return choices
 
     def __init__(self, value=Unspecified, **kw):

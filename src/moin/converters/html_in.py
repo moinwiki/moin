@@ -9,9 +9,6 @@ Converts an XHTML document into an internal document tree.
 TODO : Add support for style
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from flask import flash
@@ -31,7 +28,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class NoDupsFlash(object):
+class NoDupsFlash:
     """
     Issue flash messages for unsupported HTML tags; but do not create duplicate messages.
     """
@@ -44,7 +41,7 @@ class NoDupsFlash(object):
             flash(message, category)
 
 
-class Converter(object):
+class Converter:
     """
     Converter html -> .x.moin.document
     """
@@ -54,10 +51,10 @@ class Converter(object):
     }
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote', 'span'])
+    symmetric_tags = {'div', 'p', 'strong', 'code', 'quote', 'blockquote', 'span'}
 
     # HTML tags to define a list, except dl which is a little bit different
-    list_tags = set(['ul', 'dir', 'ol'])
+    list_tags = {'ul', 'dir', 'ol'}
 
     # HTML tags which can be convert without attributes in a different DOM tag
     simple_tags = {  # Emphasis
@@ -74,20 +71,20 @@ class Converter(object):
 
     # HTML Tag which does not have equivalence in the DOM Tree
     # But we keep the information using <span element>
-    inline_tags = set(['abbr', 'acronym', 'address', 'dfn', 'kbd'])
+    inline_tags = {'abbr', 'acronym', 'address', 'dfn', 'kbd'}
 
     # HTML tags which are completely ignored by our converter.
     # We even do not process children of these elements.
-    ignored_tags = set(['applet', 'area', 'button', 'caption', 'center', 'fieldset',
-                        'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
-                        'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
-                        'optgroup', 'option', 'param', 'script', 'select', 'style',
-                        'textarea', 'title', 'var',
-    ])
+    ignored_tags = {'applet', 'area', 'button', 'caption', 'center', 'fieldset',
+                    'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
+                    'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
+                    'optgroup', 'option', 'param', 'script', 'select', 'style',
+                    'textarea', 'title', 'var',
+                    }
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion
-    standard_attributes = set(['title', 'class', 'style', 'alt'])
+    standard_attributes = {'title', 'class', 'style', 'alt'}
 
     # Regular expression to detect an html heading tag
     heading_re = re.compile('h[1-6]')
@@ -121,7 +118,7 @@ class Converter(object):
         # We create an element tree from the HTML content
         # The content is a list of string, line per line
         # We can concatenate all in one string
-        html_str = u'\n'.join(content)
+        html_str = '\n'.join(content)
         try:
             html_tree = HTML(html_str)
         except AssertionError as reason:
@@ -202,7 +199,7 @@ class Converter(object):
 
     def convert_attributes(self, element):
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == html and \
                 key.name in self.standard_attributes:
                 result[key] = value
@@ -369,12 +366,12 @@ class Converter(object):
         """
         return self.new_copy(moin_page.s, element, {})
 
-    def visit_xhtml_hr(self, element, min_class=u'moin-hr1', max_class=u'moin-hr6', default_class=u'moin-hr3'):
+    def visit_xhtml_hr(self, element, min_class='moin-hr1', max_class='moin-hr6', default_class='moin-hr3'):
         """
         <hr /> --> <separator />
         """
         hr_class = element.attrib.get(html('class'))
-        if not (min_class <= hr_class <= max_class):
+        if hr_class is None or not (min_class <= hr_class <= max_class):
             element.attrib[html('class')] = default_class
         return self.new_copy(moin_page.separator, element, {})
 
@@ -421,7 +418,7 @@ class Converter(object):
             attrib[key] = element.get(html.data)
 
         # Convert the href attribute into unicode
-        attrib[key] = unicode(attrib[key])
+        attrib[key] = str(attrib[key])
         return moin_page.object(attrib)
 
     def visit_xhtml_inline(self, element):

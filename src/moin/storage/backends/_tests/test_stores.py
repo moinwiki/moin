@@ -8,9 +8,6 @@ Note: theoretically, it should be enough to test with one kind of store,
       but we better test with a fs AND a memory store.
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 import tempfile
 

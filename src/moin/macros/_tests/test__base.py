@@ -9,7 +9,7 @@ import pytest
 from moin.macros._base import MacroBase, MacroBlockBase, MacroInlineBase, MacroInlineOnlyBase, MacroPageLinkListBase
 
 
-class TestMacroBase(object):
+class TestMacroBase:
     """ Test for Macro base and related classes """
 
     def test_MacroBase(self):

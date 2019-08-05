@@ -74,7 +74,7 @@ class LineBuffer:
 
         lengthpreviousline = 0
         offset = begin
-        for i in xrange(linecount+1):
+        for i in range(linecount+1):
             offset += lengthpreviousline
             lengthpreviousline = offsets[i]
             offsets[i] = offset
@@ -82,7 +82,7 @@ class LineBuffer:
         self.offsets = offsets
         self.len = linecount
         # Decode lines after offset in file is calculated
-        self.lines = [unicode(line, CHARSET) for line in lines]
+        self.lines = [str(line, CHARSET) for line in lines]
 
 
 class LogFile:
@@ -150,16 +150,16 @@ class LogFile:
             try:
                 # Open the file (NOT using codecs.open, it breaks our offset calculation. We decode it later.).
                 # Use binary mode in order to retain \r - otherwise the offset calculation would fail.
-                self._input = file(self.__filename, "rb", )
+                self._input = open(self.__filename, "rb", )
             except IOError as err:
                 if err.errno == errno.ENOENT: # "file not found"
                     # XXX workaround if edit-log does not exist: just create it empty
                     # if this workaround raises another error, we don't catch
                     # it, so the admin will see it.
-                    f = file(self.__filename, "ab")
+                    f = open(self.__filename, "ab")
                     f.write('')
                     f.close()
-                    self._input = file(self.__filename, "rb", )
+                    self._input = open(self.__filename, "rb", )
                 else:
                     logging.error("logfile: {0!r} IOERROR errno {1} ({2})".format(self.__filename, err.errno, os.strerror(err.errno)))
                     raise
@@ -196,7 +196,7 @@ class LogFile:
         :rtype: Int
         """
         try:
-            f = file(self.__filename, 'r')
+            f = open(self.__filename, 'r')
             try:
                 count = 0
                 for line in f:
@@ -297,6 +297,8 @@ class LogFile:
             if self.filter and not self.filter(result):
                 result = None
         return result
+
+    __next__ = next  # py3
 
     def __previous(self):
         """get previous line already parsed"""

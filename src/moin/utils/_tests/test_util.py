@@ -9,7 +9,7 @@
 from moin import utils
 
 
-class TestUtil(object):
+class TestUtil:
 
     def testRangeList(self):
         """ utils.rangelist: test correct function for misc. input values """

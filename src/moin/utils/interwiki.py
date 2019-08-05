@@ -6,8 +6,6 @@
     MoinMoin - interwiki support code
 """
 
-from __future__ import absolute_import, division
-
 from werkzeug import url_quote
 
 from flask import current_app as app
@@ -27,7 +25,7 @@ def is_local_wiki(wiki_name):
     """
     check if <wiki_name> is THIS wiki
     """
-    return wiki_name in [u'', u'Self', app.cfg.interwikiname, ]
+    return wiki_name in ['', 'Self', app.cfg.interwikiname, ]
 
 
 def is_known_wiki(wiki_name):
@@ -46,13 +44,13 @@ def get_fqname(item_name, field, namespace):
     composite name == [NAMESPACE/][@FIELD/]NAME
     """
     if field and field != NAME_EXACT:
-        item_name = u'@{0}/{1}'.format(field, item_name)
+        item_name = '@{0}/{1}'.format(field, item_name)
     if namespace:
-        item_name = u'{0}/{1}'.format(namespace, item_name)
+        item_name = '{0}/{1}'.format(namespace, item_name)
     return item_name
 
 
-def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT, endpoint=u'frontend.show_item', _external=False, regex=''):
+def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT, endpoint='frontend.show_item', _external=False, regex=''):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -69,7 +67,7 @@ def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT
     Computed URLs are always fully specified.
     """
     if field == NAME_EXACT:
-        field = u''
+        field = ''
     if is_local_wiki(wiki_name):
         item_name = get_fqname(item_name, field, namespace)
         if rev is None or rev == CURRENT:
@@ -79,14 +77,14 @@ def url_for_item(item_name, wiki_name=u'', field=u'', namespace=u'', rev=CURRENT
     else:
         try:
             wiki_base_url = app.cfg.interwiki_map[wiki_name]
-        except KeyError, err:
+        except KeyError as err:
             logging.warning("no interwiki_map entry for {0!r}".format(wiki_name))
             item_name = get_fqname(item_name, field, namespace)
             if wiki_name:
-                url = u'{0}/{1}'.format(wiki_name, item_name)
+                url = '{0}/{1}'.format(wiki_name, item_name)
             else:
                 url = item_name
-            url = u'/{0}'.format(url)
+            url = '/{0}'.format(url)
         else:
             if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
                 # we just want to show latest revision (no special revision given) -
@@ -133,11 +131,11 @@ def _split_namespace(namespaces, url):
     param url: string
     returns: (namespace, url)
     """
-    namespace = u''
+    namespace = ''
     tokens_list = url.split('/')
     for token in tokens_list:
         if namespace:
-            token = u'{0}/{1}'.format(namespace, token)
+            token = '{0}/{1}'.format(namespace, token)
         if token in namespaces:
             namespace = token
         else:
@@ -157,13 +155,13 @@ class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
         """
         returns a dict of field_names/field_values
         """
-        return {NAMESPACE: self.namespace, u'field': self.field, u'item_name': self.value}
+        return {NAMESPACE: self.namespace, 'field': self.field, 'item_name': self.value}
 
     @property
     def fullname(self):
         return get_fqname(self.value, self.field, self.namespace)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.fullname
 
     @property
@@ -198,7 +196,7 @@ def split_fqname(url):
         url: u'ns1/ns2/@notfield' return u'ns1/ns2', u'', u'@notfield'
     """
     if not url:
-        return CompositeName(u'', NAME_EXACT, u'')
+        return CompositeName('', NAME_EXACT, '')
     namespaces = {namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping}
     namespace, url = _split_namespace(namespaces, url)
     field = NAME_EXACT
@@ -206,7 +204,7 @@ def split_fqname(url):
         tokens = url[1:].split('/', 1)
         if tokens[0] in FIELDS:
             field = tokens[0]
-            url = tokens[1] if len(tokens) > 1 else u''
+            url = tokens[1] if len(tokens) > 1 else ''
     return CompositeName(namespace, field, url)
 
 
@@ -231,12 +229,12 @@ def split_interwiki(wikiurl):
         :rtype: tuple
         :returns: (wikiname, namespace, field, pagename)
     """
-    if not isinstance(wikiurl, unicode):
+    if not isinstance(wikiurl, str):
         wikiurl = wikiurl.decode('utf-8')
     # Base case: no colon in wikiurl
     if '/' not in wikiurl:
-        return u'Self', u'', NAME_EXACT, wikiurl
-    wikiname = field = namespace = u''
+        return 'Self', '', NAME_EXACT, wikiurl
+    wikiname = field = namespace = ''
     if not wikiurl.startswith('/'):
         interwiki_mapping = set()
         for interwiki_name in app.cfg.interwiki_map:
@@ -246,11 +244,11 @@ def split_interwiki(wikiurl):
             wikiurl = wikiurl[len(wikiname) + 1:]
         namespace, field, item_name = split_fqname(wikiurl)
         if not wikiname:
-            wikiname = u'Self'
+            wikiname = 'Self'
         return wikiname, namespace, field, item_name
     else:
         namespace, field, item_name = split_fqname(wikiurl.split('/', 1)[1])
-        return u'Self', namespace, field, item_name
+        return 'Self', namespace, field, item_name
 
 
 def join_wiki(wikiurl, wikitail, field, namespace):
@@ -284,11 +282,11 @@ def getInterwikiName(item_name):
     """
     Get the (fully qualified) interwiki name of a local item name.
 
-    :param item_name: item name (unicode)
-    :rtype: unicode
+    :param item_name: item name (str)
+    :rtype: str
     :returns: wiki_name:item_name
     """
-    return u"{0}/{1}".format(app.cfg.interwikiname, item_name)
+    return "{0}/{1}".format(app.cfg.interwikiname, item_name)
 
 
 def getInterwikiHome(username):
@@ -307,11 +305,11 @@ def getInterwikiHome(username):
     """
     homewiki = app.cfg.user_homewiki
     if is_local_wiki(homewiki):
-        homewiki = u'Self'
+        homewiki = 'Self'
     return homewiki, username
 
 
-class InterWikiMap(object):
+class InterWikiMap:
     """
     Parse a valid interwiki map file/string, transforming into a simple python dict
     object.
@@ -345,7 +343,7 @@ class InterWikiMap(object):
     @staticmethod
     def from_string(ustring):
         """
-        Load and parse a valid interwiki map "unicode" object.
+        Load and parse a valid interwiki map "str" object.
         """
         return InterWikiMap(ustring)
 

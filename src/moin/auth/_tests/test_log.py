@@ -15,7 +15,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class TestAuthLog(object):
+class TestAuthLog:
     """ Test: TestAuthLog """
     def test_login(self):
         authlog_obj = AuthLog()

@@ -25,8 +25,8 @@ from moin.items import Item, Default, register, BaseMetaForm
 from moin.utils.interwiki import split_fqname
 
 
-ITEMTYPE_BLOG = u'blog'
-ITEMTYPE_BLOG_ENTRY = u'blogentry'
+ITEMTYPE_BLOG = 'blog'
+ITEMTYPE_BLOG_ENTRY = 'blogentry'
 
 
 class BlogMetaForm(BaseMetaForm):
@@ -60,7 +60,7 @@ class Blog(Default):
         """
         # for now it is just one tag=value, later it could be tag=value1&tag=value2&...
         tag = request.values.get('tag')
-        prefix = self.name + u'/'
+        prefix = self.name + '/'
         current_timestamp = int(time.time())
         terms = [Term(WIKINAME, app.cfg.interwikiname),
                  # Only blog entry itemtypes

@@ -22,7 +22,7 @@ from moin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE, FQNAME
 def test_datetimeunix():
     dt = datetime.datetime(2012, 12, 21, 23, 45, 59)
     timestamp = timegm(dt.timetuple())
-    dt_u = u'2012-12-21 23:45:59'
+    dt_u = '2012-12-21 23:45:59'
 
     d = DateTimeUNIX(timestamp)
     assert d.value == timestamp
@@ -31,7 +31,7 @@ def test_datetimeunix():
     incorrect_timestamp = 99999999999999999
     d = DateTimeUNIX(incorrect_timestamp)
     assert d.value is None
-    assert d.u == unicode(incorrect_timestamp)
+    assert d.u == str(incorrect_timestamp)
 
     d = DateTimeUNIX(dt)
     assert d.value == timestamp
@@ -42,14 +42,14 @@ def test_datetimeunix():
     assert d.value == timestamp
     assert d.u == dt_u
 
-    incorrect_timestring = u'2012-10-30'
+    incorrect_timestring = '2012-10-30'
     d = DateTimeUNIX(incorrect_timestring)
     assert d.value is None
     assert d.u == incorrect_timestring
 
     d = DateTimeUNIX(None)
     assert d.value is None
-    assert d.u == u''
+    assert d.u == ''
 
 
 def test_validjson():
@@ -58,23 +58,23 @@ def test_validjson():
 
     Does not apply to usersettings form.
     """
-    app.cfg.namespace_mapping = [(u'', 'default_backend'), (u'ns1/', 'default_backend'), (u'users/', 'other_backend')]
-    item = Item.create(u'users/existingname')
-    meta = {NAMESPACE: u'users', CONTENTTYPE: u'text/plain;charset=utf-8'}
+    app.cfg.namespace_mapping = [('', 'default_backend'), ('ns1/', 'default_backend'), ('users/', 'other_backend')]
+    item = Item.create('users/existingname')
+    meta = {NAMESPACE: 'users', CONTENTTYPE: 'text/plain;charset=utf-8'}
     become_trusted()
     item._save(meta, data='This is a valid Item.')
 
     valid_itemid = 'a1924e3d0a34497eab18563299d32178'
     # ('names', 'namespace', 'field', 'value', 'result')
-    tests = [([u'somename', u'@revid'], '', '', 'somename', False),  # item names cannot begin with @
+    tests = [(['somename', '@revid'], '', '', 'somename', False),  # item names cannot begin with @
              # TODO for above? - create item @x, get error message, change name in meta to xx, get an item with names @40x and alias of xx
-             ([u'bar', u'ns1'], '', '', 'bar', False),  # item names cannot match namespace names
-             ([u'foo', u'foo', u'bar'], '', '', 'foo', False),  # names in the name list must be unique.
-             ([u'ns1ns2ns3', u'ns1/subitem'], '', '', 'valid', False),  # Item names must not match with existing namespaces; items cannot be in 2 namespaces
-             ([u'foobar', u'validname'], '', ITEMID, valid_itemid + '8080', False),  # attempts to change itemid in meta result in "Item(s) named foobar, validname already exist."
-             ([u'barfoo', u'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),  # similar to above
+             (['bar', 'ns1'], '', '', 'bar', False),  # item names cannot match namespace names
+             (['foo', 'foo', 'bar'], '', '', 'foo', False),  # names in the name list must be unique.
+             (['ns1ns2ns3', 'ns1/subitem'], '', '', 'valid', False),  # Item names must not match with existing namespaces; items cannot be in 2 namespaces
+             (['foobar', 'validname'], '', ITEMID, valid_itemid + '8080', False),  # attempts to change itemid in meta result in "Item(s) named foobar, validname already exist."
+             (['barfoo', 'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),  # similar to above
              ([], '', 'itemid', valid_itemid, True),  # deleting all names from the metadata of an existing item will make it nameless, succeeds
-             ([u'existingname'], 'users', '', 'existingname', False),  # item already exists
+             (['existingname'], 'users', '', 'existingname', False),  # item already exists
             ]
     for name, namespace, field, value, result in tests:
         meta = {NAME: name, NAMESPACE: namespace}

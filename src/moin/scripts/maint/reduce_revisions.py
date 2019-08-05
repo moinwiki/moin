@@ -24,7 +24,7 @@ from moin.app import before_wiki
 class Reduce_Revisions(Command):
     description = "This command can be used to remove all revisions but the last one from all selected items."
     option_list = (
-        Option('--query', '-q', dest="query", type=unicode, default='',
+        Option('--query', '-q', dest="query", type=str, default='',
                help='Only perform the operation on items found by the given query.'),
     )
 
@@ -38,7 +38,7 @@ class Reduce_Revisions(Command):
         for current_rev in app.storage.search(q, limit=None):
             current_name = current_rev.meta[NAME]
             current_revid = current_rev.meta[REVID]
-            print "Destroying historical revisions of {0!r}:".format(current_name)
+            print("Destroying historical revisions of {0!r}:".format(current_name))
             has_historical_revision = False
             for rev in current_rev.item.iter_revs():
                 revid = rev.meta[REVID]
@@ -54,16 +54,16 @@ class Reduce_Revisions(Command):
                         del meta[PARENTID]
                     if changed:
                         current_rev.item.store_revision(meta, current_rev.data, overwrite=True)
-                        print "    (current rev meta data updated)"
+                        print("    (current rev meta data updated)")
                     continue
                 has_historical_revision = True
                 name = rev.meta[NAME]
                 if name == current_name:
-                    print "    Destroying revision {0}".format(revid)
+                    print("    Destroying revision {0}".format(revid))
                 else:
-                    print "    Destroying revision {0} (named {1!r})".format(revid, name)
+                    print("    Destroying revision {0} (named {1!r})".format(revid, name))
                 current_rev.item.destroy_revision(revid)
             if not has_historical_revision:
-                print "    (no historical revisions)"
+                print("    (no historical revisions)")
 
-        print "Finished reducing backend."
+        print("Finished reducing backend.")

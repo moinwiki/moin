@@ -14,7 +14,7 @@ from moin.utils.tree import moin_page, xlink
 from moin.storage.middleware.protecting import AccessDenied
 
 
-class MacroBase(object):
+class MacroBase:
     """
     Macro base class.
     """
@@ -99,7 +99,7 @@ class MacroPageLinkListBase(MacroBlockBase):
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
         for pagename in pagenames:
             # This link can never reach pagelinks
-            url = unicode(iri.Iri(scheme=u'wiki', authority=u'', path=u'/' + pagename))
+            url = str(iri.Iri(scheme='wiki', authority='', path='/' + pagename))
 
             if display == "FullPath":
                 linkname = pagename
@@ -170,7 +170,7 @@ class MacroNumberPageLinkListBase(MacroBlockBase):
         for num, pagename in num_pagenames:
             num_code = moin_page.code(children=["{0:6d} ".format(num)])
             # This link can never reach pagelinks
-            url = unicode(iri.Iri(scheme=u'wiki', authority=u'', path=u'/' + pagename))
+            url = str(iri.Iri(scheme='wiki', authority='', path='/' + pagename))
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[pagename])
             item_body = moin_page.list_item_body(children=[num_code, pagelink])
             item = moin_page.list_item(children=[item_body])

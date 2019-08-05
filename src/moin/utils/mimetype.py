@@ -5,9 +5,6 @@
 MoinMoin - mimetype support
 """
 
-
-from __future__ import absolute_import, division
-
 import mimetypes
 
 import pygments.lexers
@@ -83,7 +80,7 @@ for _key, _value in MIMETYPES_sanitize_mapping.items():
     MIMETYPES_spoil_mapping[_value] = _key
 
 
-class MimeType(object):
+class MimeType:
     """ represents a mimetype like text/plain """
 
     def __init__(self, mimestr=None, filename=None):

@@ -46,10 +46,10 @@ def split_body(body):
             verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
             pi.setdefault(verb.lower(), []).append(args.strip())
 
-    for key, value in pi.iteritems():
+    for key, value in pi.items():
         if key in ['acl', ]:
             # join the list of values to a single value
-            pi[key] = u' '.join(value)
+            pi[key] = ' '.join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
             pi[key] = value[-1] # use the last value to copy 1.9 parsing behaviour
@@ -67,7 +67,7 @@ def add_metadata_to_body(metadata, data):
     meta_keys = [NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE, ]
 
     metadata_data = ""
-    for key, value in metadata.iteritems():
+    for key, value in metadata.items():
         if key not in meta_keys:
             continue
         # special handling for list metadata
@@ -127,7 +127,7 @@ def unquoteWikiname(filename, charset=CHARSET):
     :returns: WikiName
     """
     # From some places we get called with Unicode strings
-    if isinstance(filename, unicode):
+    if isinstance(filename, str):
         filename = filename.encode(CHARSET)
 
     parts = []

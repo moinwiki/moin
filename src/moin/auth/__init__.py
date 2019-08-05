@@ -165,7 +165,7 @@ def get_multistage_continuation_url(auth_name, extra_fields={}):
     return url
 
 
-class LoginReturn(object):
+class LoginReturn:
     """ LoginReturn - base class for auth method login() return value"""
     def __init__(self, user_obj, continue_flag, message=None, multistage=None,
                  redirect_to=None):
@@ -200,7 +200,7 @@ class MultistageRedirectLogin(LoginReturn):
         LoginReturn.__init__(self, None, False, redirect_to=url)
 
 
-class BaseAuth(object):
+class BaseAuth:
     name = None
     login_inputs = []
     logout_possible = False
@@ -303,7 +303,7 @@ class GivenAuth(BaseAuth):
 
     def decode_username(self, name):
         """ decode the name we got from the environment var to unicode """
-        if isinstance(name, str):
+        if isinstance(name, bytes):
             name = name.decode(self.coding)
         return name
 
@@ -313,14 +313,14 @@ class GivenAuth(BaseAuth):
             Note: if you need something more special, you could create your own
                   auth class, inherit from this class and overwrite this function.
         """
-        assert isinstance(name, unicode)
+        assert isinstance(name, str)
         if self.strip_maildomain:
             # split off mail domain, e.g. "user@example.org" -> "user"
-            name = name.split(u'@')[0]
+            name = name.split('@')[0]
 
         if self.strip_windomain:
             # split off window domain, e.g. "DOMAIN\user" -> "user"
-            name = name.split(u'\\')[-1]
+            name = name.split('\\')[-1]
 
         if self.titlecase:
             # this "normalizes" the login name, e.g. meier, Meier, MEIER -> Meier
@@ -328,7 +328,7 @@ class GivenAuth(BaseAuth):
 
         if self.remove_blanks:
             # remove blanks e.g. "Joe Doe" -> "JoeDoe"
-            name = u''.join(name.split())
+            name = ''.join(name.split())
 
         return name
 

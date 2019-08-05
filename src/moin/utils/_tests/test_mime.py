@@ -35,36 +35,36 @@ def test_Type_init_3():
 def test_Type_text():
     i = '*/*'
     t = Type(i)
-    assert t.type is None
-    assert t.subtype is None
+    assert t.type == ''
+    assert t.subtype == ''
     assert t.parameters == {}
-    assert unicode(t) == i
+    assert str(t) == i
 
     i = 'text/*'
     t = Type(i)
     assert t.type == 'text'
-    assert t.subtype is None
+    assert t.subtype == ''
     assert t.parameters == {}
-    assert unicode(t) == i
+    assert str(t) == i
 
     i = 'text/plain'
     t = Type(i)
     assert t.type == 'text'
     assert t.subtype == 'plain'
     assert t.parameters == {}
-    assert unicode(t) == i
+    assert str(t) == i
 
     i = 'text/plain;encoding=utf-8;foo=bar'
     t = Type(i)
     assert t.type == 'text'
     assert t.subtype == 'plain'
     assert t.parameters == {'encoding': 'utf-8', 'foo': 'bar'}
-    assert unicode(t) == i
+    assert str(t) == i
 
     i = 'text/plain;encoding=utf-8;foo="["'
     t = Type(i)
     assert t.parameters == {'encoding': 'utf-8', 'foo': '['}
-    assert unicode(t) == i
+    assert str(t) == i
 
 
 def test_Type_compare():
