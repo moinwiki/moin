@@ -9,7 +9,7 @@ Usage for installation:
 
     <python> quickinstall.py (where <python> is any Python 3.5+ executable)
 
-Requires: Python 3.5+, virtualenv, pip
+Requires: Python 3.6+, pip
 
 After initial installation, a menu of frequently used commands is provided for
 moin2 developers and desktop wiki users.
@@ -53,16 +53,11 @@ import glob
 import shutil
 import fnmatch
 from collections import Counter
-try:
-    import virtualenv
-except ImportError:
-    sys.exit("""
-Error: import virtualenv failed, either virtualenv is not installed (see installation docs)
-or the virtual environment must be deactivated before rerunning quickinstall.py
-""")
+import venv
 
-if sys.hexversion < 0x3050000:
-    sys.exit("Error: MoinMoin requires Python 3.5+, current version is %s\n" % (platform.python_version(), ))
+
+if sys.hexversion < 0x3060000:
+    sys.exit("Error: MoinMoin requires Python 3.6+, current version is %s\n" % (platform.python_version(), ))
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
@@ -604,7 +599,7 @@ class QuickInstall:
         sys.stdout.write("\n\nSuccessfully created or updated venv at {0}".format(self.dir_venv))
 
     def do_venv(self):
-        virtualenv.create_environment(self.dir_venv)
+        venv.create(self.dir_venv)
 
     def get_pip_version(self):
         """Return pip version as a list: [1, 5, 1]"""
