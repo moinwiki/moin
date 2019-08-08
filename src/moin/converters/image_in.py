@@ -45,8 +45,7 @@ class Converter:
 
         attrib.update({
             moin_page.type_: str(self.input_type),
-            xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
-                            query=query),
+            xlink.href: Iri(scheme='wiki', authority='', path='/' + rev.fqname.fullname, query=query),
         })
 
         obj = moin_page.object_(attrib=attrib, children=[item_name, ])
