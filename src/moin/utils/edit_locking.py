@@ -22,37 +22,7 @@ There are two small tables within the db saved in /wiki/sql/:
 
 The preview drafts are saved in the /wiki/preview/ directory.
 
-TODO: create automated tests with two users updating same item, or use the
-Locust based tests in /contrib/loadtesting/.
-
-Manual Test senarios (where 1 = user 1, 2 = user 2, abandon = view other item, return = view original item:
- * 1modify 1save
- * 1modify 1preview 1save
- * 1modify 1cancel
- * 1modify 1preview 1cancel
- * 1modify 1preview 1abandon 1return 1modify 1loaddraft 1save
- * 1modify 1preview 1abandon 1return 1modify 1loaddraft 1cancel
- * 1modify 1preview 1abandon 1return 1modify 1loaddraft 1preview 1save
-
- * 1modify 2modify 2cancel 1save
- * 1modify 2modify 2save 1save
- * 1modify 2modify 2preview 2save 1save
- * 1modify 2modify 2preview 2save 1preview 1save
- * 1modify 2modify 2preview 2save 1preview 1cancel
- * 1modify 2modify 2preview 2cancel 1save
- * 1modify 2modify 2preview 2cancel 1 preview 1save
-
- * 1modify 1preview 2modify 2modify 2cancel 1save
- * 1modify 1preview 2modify 2save 1save
- * 1modify 1preview 2modify 2preview 2save 1save
- * 1modify 1preview 2modify 2preview 2save 1preview 1save
- * 1modify 1preview 2modify 2preview 2save 1preview 1cancel
- * 1modify 1preview 2modify 2preview 2cancel 1save
- * 1modify 1preview 2modify 2preview 2cancel 1 preview 1save
-
- * 1modify 1preview 2modify 2preview 1save 2save
- * 1modify 1preview 2modify 2preview 1preview 1save 2save
- * 1modify 1preview 2modify 2preview 1preview 1save 2 preview 2save
+To stress test edit locking use the Locust based tests in /contrib/loadtesting/.
 """
 
 import os
@@ -104,15 +74,15 @@ class Edit_Utils:
 
         self.sql_filename = os.path.join(app.cfg.instance_dir, SQL, DB_NAME)
         if os.path.exists(self.sql_filename):
-            self.con = sqlite3.connect(self.sql_filename)
+            self.conn = sqlite3.connect(self.sql_filename)
         else:
-            self.con = self.create_db_tables()
-        self.cursor = self.con.cursor()
+            self.conn = self.create_db_tables()
+        self.cursor = self.conn.cursor()
         self.preview_path = os.path.join(app.cfg.instance_dir, PREVIEW)
         self.draft_name = self.make_draft_name(self.rev_id)
 
-        self.con.isolation_level = 'EXCLUSIVE'
-        self.con.execute('BEGIN EXCLUSIVE')
+        self.conn.isolation_level = 'EXCLUSIVE'
+        self.conn.execute('BEGIN EXCLUSIVE')
 
     def create_db_tables(self):
         """
@@ -147,7 +117,8 @@ class Edit_Utils:
 
     def cursor_close(self):
         """Call this to release cursor and avoid OperationalError: database is locked"""
-        self.cursor.close()
+        # on windows development server seems better to close conn rather than cursor
+        self.conn.close()
 
     def make_draft_name(self, rev_id):
         """Return a file name consisting of rev_id + user_name."""
@@ -195,7 +166,7 @@ class Edit_Utils:
             save_time = 0  # indicates user is editing item but has not done a preview, no draft has been saved
         self.cursor.execute('''INSERT INTO editdraft(user_name, item_id, item_name, rev_number, save_time, rev_id)
                           VALUES(?,?,?,?,?,?)''', (self.user_name, self.item_id, self.item_name, draft_rev_number, save_time, rev_id))
-        self.con.commit()
+        self.conn.commit()
 
     def get_draft(self):
         """
@@ -242,14 +213,14 @@ class Edit_Utils:
                 # draft file is created only when user does Preview
                 logging.error("IOError when deleting draft named {0} for user {1}".format(draft_name, self.user_name))
         self.cursor.execute('''DELETE FROM editdraft WHERE user_name = ? ''', (self.user_name, ))
-        self.con.commit()
+        self.conn.commit()
 
     # editlock methods start here
     def update_editlock(self):
         """Reset existing editlock, same user or different user is given the item lock."""
         timeout = int(time.time()) + app.cfg.edit_lock_time * 60
         self.cursor.execute('''UPDATE editlock SET timeout = ?, user_name = ? WHERE item_id = ? ''', (timeout, self.user_name, self.item_id))
-        self.con.commit()
+        self.conn.commit()
 
     def get_lock_status(self):
         """Return lock status of item_id, either a row of editlock or None"""
@@ -301,13 +272,13 @@ class Edit_Utils:
                               item_name=self.item_name)
                     self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                       VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
-                    self.con.commit()
+                    self.conn.commit()
                     return LOCKED, msg
                 # if no draft, preserve starting rev_number by creating entry without rev_id
                 self.put_draft(None)
                 self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                   VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
-                self.con.commit()
+                self.conn.commit()
         return LOCKED, msg
 
     def unlock_item(self, cancel=False):
@@ -322,7 +293,7 @@ class Edit_Utils:
             i_id, i_name, u_name, timeout = locked
             if u_name == user_name:
                 self.cursor.execute('''DELETE FROM editlock WHERE item_id = ? ''', (self.item_id, ))
-                self.con.commit()
+                self.conn.commit()
                 return
             elif not cancel:
                 # bug: someone else has active edit lock, relock_item() should have been called prior to item save
