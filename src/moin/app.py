@@ -285,8 +285,9 @@ def teardown_wiki(response):
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass
     if hasattr(flaskg, 'edit_utils'):
+        # if transaction fails with sql file locked, we try to free it here
         try:
-            flaskg.edit_utils.db.close()
+            flaskg.edit_utils.conn.close()
         except AttributeError:
             pass
     return response
