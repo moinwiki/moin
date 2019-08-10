@@ -11,13 +11,23 @@ This test requires user self-registration, set wikiconfig configuration to:
     edit_locking_policy = 'lock'
     edit_lock_time = 2  # or any number of minutes
 
+If you run this test with "user_email_verification = None" the test system
+will become increasingly sluggish as the Home item grows larger and larger
+due to the insertion of edit conflict messages.
+
 Running this script will register users, create user home pages,
 and create wiki items as part of the test. It is best to start with
 an empty wiki (./m new-wiki).
 
 Each locust registers a new id, creates and updates a home page in the user namespace,
-creates and updates a <username> item in the default namespace, and logs-out. Because
-each locust is working on unique items, it does not test edit locking. Use locustfile2.py
+creates and updates a <username> item in the default namespace, and logs-out.
+
+The  primary goal of this test is to create a server overload. A server overload will likely take the
+form of a LockError in the Whoosh AsyncWriter (/whoosh/writing.py). Each thread attempting
+to update the Whoosh index tries to obtain the write lock for a short period of time (~5
+seconds). If the lock is not obtained, a LockError exception is raised.
+
+Because each locust is working on unique items, it does not test edit locking. Use locustfile2.py
 for stress testing edit locking.
 
 To load test Moin2:
