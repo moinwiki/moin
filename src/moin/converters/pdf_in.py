@@ -5,6 +5,8 @@
 MoinMoin - PDF input converter
 """
 
+import io
+
 from pdfminer3.pdfpage import PDFPage
 from pdfminer3.pdfparser import PDFParser
 from pdfminer3.pdfdocument import PDFDocument
@@ -37,21 +39,6 @@ LAPARAMS = LAParams(
 )
 
 
-class UnicodeConverter(TextConverter):
-    # as result, we want a unicode object
-    # TextConverter only provides encoded output into a file-like object
-    def __init__(self, rsrcmgr, pageno=1, laparams=None, showpageno=False):
-        TextConverter.__init__(self, rsrcmgr, None, codec=None, pageno=pageno, laparams=laparams,
-                               showpageno=showpageno)
-        self.__text = []
-
-    def write_text(self, text):
-        self.__text.append(text)
-
-    def read_result(self):
-        return ''.join(self.__text)
-
-
 class PDFIndexingConverter:
     @classmethod
     def _factory(cls, input, output, **kw):
@@ -59,14 +46,15 @@ class PDFIndexingConverter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         rsrcmgr = PDFResourceManager()
-        device = UnicodeConverter(rsrcmgr, laparams=LAPARAMS)
-        try:
-            interpreter = PDFPageInterpreter(rsrcmgr, device)
-            for page in PDFPage.get_pages(rev):
-                interpreter.process_page(page)
-            return device.read_result()
-        finally:
-            device.close()
+        with io.StringIO() as f:
+            device = TextConverter(rsrcmgr, f, laparams=LAPARAMS)
+            try:
+                interpreter = PDFPageInterpreter(rsrcmgr, device)
+                for page in PDFPage.get_pages(rev):
+                    interpreter.process_page(page)
+                return f.getvalue()
+            finally:
+                device.close()
 
 
 default_registry.register(PDFIndexingConverter._factory, Type('application/pdf'), type_text_plain)
