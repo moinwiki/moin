@@ -42,15 +42,11 @@ class PDFIndexingConverter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         rsrcmgr = PDFResourceManager()
-        with io.StringIO() as f:
-            device = TextConverter(rsrcmgr, f, laparams=LAPARAMS)
-            try:
-                interpreter = PDFPageInterpreter(rsrcmgr, device)
-                for page in PDFPage.get_pages(rev):
-                    interpreter.process_page(page)
-                return f.getvalue()
-            finally:
-                device.close()
+        with io.StringIO() as f, TextConverter(rsrcmgr, f, laparams=LAPARAMS) as device:
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
+            for page in PDFPage.get_pages(rev):
+                interpreter.process_page(page)
+            return f.getvalue()
 
 
 default_registry.register(PDFIndexingConverter._factory, Type('application/pdf'), type_text_plain)
