@@ -8,12 +8,8 @@ MoinMoin - PDF input converter
 import io
 
 from pdfminer3.pdfpage import PDFPage
-from pdfminer3.pdfparser import PDFParser
-from pdfminer3.pdfdocument import PDFDocument
 from pdfminer3.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer3.pdfdevice import PDFDevice
 from pdfminer3.converter import TextConverter
-from pdfminer3.cmapdb import CMapDB
 from pdfminer3.layout import LAParams
 
 from . import default_registry
