@@ -209,6 +209,11 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
                    metadata as a side effect
     :returns: indexable content, text/plain, unicode object
     """
+    if not item_name:
+        try:
+            item_name = get_names(meta)[0]
+        except IndexError:
+            item_name = 'DoesNotExist'
     fqname = split_fqname(item_name)
 
     class PseudoRev:
@@ -235,12 +240,6 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
         logging.debug("not indexing content of {0!r} as requested by configuration".format(meta[NAME]))
         return ''
-
-    if not item_name:
-        try:
-            item_name = get_names(meta)[0]
-        except IndexError:
-            item_name = 'DoesNotExist'
 
     rev = PseudoRev(meta, data)
     try:
