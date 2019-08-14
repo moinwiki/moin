@@ -412,7 +412,7 @@ class Commands:
         """delete and rebuild index"""
         if wiki_exists():
             command = '{0}moin index-create -i{1} moin index-build'.format(ACTIVATE, SEP)
-            print('Rebuilding indexes...(ignore log messages from rst parser)...')
+            print('Rebuilding indexes...')
             try:
                 subprocess.call(command, shell=True)
             except KeyboardInterrupt:
