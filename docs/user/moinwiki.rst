@@ -521,6 +521,9 @@ Table Styling Example
  ||cell in the 2nd column of the 2nd row||
  ||<rowstyle="font-weight: bold;" class="monospaced">monospaced text||bold text||
 
+ ||<tableclass="no-borders">A||B||C||
+ ||D||E||F||
+
 **Result**:
 
 
@@ -536,7 +539,8 @@ Table Styling Example
 |``monospaced text``   |**bold text**                          |
 +----------------------+---------------------------------------+
 
-
+| A B C
+| D E F
 
 Verbatim Display
 ----------------
@@ -684,13 +688,14 @@ danger, error, hint, important, note, tip, and warning.
  will look restless and will be harder to follow than a page where
  admonitions are used sparingly.
 
-CSS classes for use with the wiki parser
-----------------------------------------
+CSS classes for use with the wiki parser, tables, and comments
+--------------------------------------------------------------
 
  - Background colors: red, green, blue, yellow, or orange
  - Borders: solid, dashed, or dotted
  - Text-alignment: left, center, right, or justify
  - Admonitions: caution, important, note, tip, warning
+ - Tables: moin-sortable, no-borders
  - Comments: comment
 
 Variables

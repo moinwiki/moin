@@ -317,6 +317,13 @@ td p { margin: 0; padding: 0; }
 #moin-content table > tfoot { background-color: #C9E2F8; }
 .moin-thead { background-color: #C9E2F8; } /* creole table headings in left column */
 
+/* alternate table and admonition styling with no borders */
+div.no-borders,
+.no-borders,
+.no-borders caption,
+.no-borders th,
+.no-borders td { border-width: 0; }
+
 /* zebra table styling */
 
 .zebra td form input { box-shadow: none; }

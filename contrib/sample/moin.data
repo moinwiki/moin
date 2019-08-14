@@ -422,6 +422,9 @@ Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, r
 ||<caption="My Table" tablewidth="30em">A ||<rowspan="2" > like <|2> ||
 ||<bgcolor="#00FF00"> like <#00FF00> ||
 ||<colspan="2"> like <-2>||
+
+||<tableclass="no-borders">A||B||C||
+||1||2||3||
 }}}
 
 '''Result:'''
@@ -429,6 +432,9 @@ Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, r
 ||<caption="My Table" tablewidth="30em">A ||<rowspan="2" > like <|2> ||
 ||<bgcolor="#00FF00"> like <#00FF00> ||
 ||<colspan="2"> like <-2>||
+
+||<tableclass="no-borders">A||B||C||
+||1||2||3||
 
 
 == Preformatted code ==
@@ -575,12 +581,13 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
 Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
 }}}
 
-=== CSS classes for use with the wiki parser ===
+=== CSS classes for use with the wiki parser, tables, and comments ===
 
  * Background colors: red, green, blue, yellow, or orange
  * Borders: solid, dashed, or dotted
  * Text-alignment: left, center, right, or justify
  * Admonitions: caution, important, note, tip, warning
+ * Tables: moin-sortable, no-borders
  * Comments: comment
 
 == Variables ==
