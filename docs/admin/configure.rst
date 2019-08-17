@@ -441,7 +441,7 @@ The following example shows how you can enable the additional package
 `XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is
 used for mathml or latex formulas in an item's content.
 
-* activate the virtual environment and do *pip install xstatic-mathjax*
+* install xstatic-mathjax (e.g. using ``pip install xstatic-mathjax``)
 * add the name 'mathjax' to to the list of mod_names in wikiconfig
 * copy /templates/snippets.html to the wiki_local directory
 * modify the snippets.html copy by adding the required fragment to the scripts macro::
