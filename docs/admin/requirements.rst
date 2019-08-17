@@ -14,24 +14,6 @@ http://www.activestate.com/.
 An alternative implementation of Python, PyPy, is available
 from http://pypy.org/.
 
-The `virtualenv` Python package is also required. The
-installation process for `virtualenv` varies with your OS and
-Python distribution.
-Many linux distributions have a package manager that may do
-the installation. Windows users (and perhaps others) may download
-setuptools from https://pypi.python.org/pypi/setuptools.
-Once setuptools is installed, do "`easy_install virtualenv`".
-Current ActiveState distributions include virtualenv in the installation bundle.
-If all else fails, try Google.
-
-git is required should you wish to contribute
-patches to the moin2 development effort. Even if you do not
-intend to contribute, git is highly recommended as it
-will make it easy for you to obtain fixes and enhancements
-from the moin2 repositories. git can be installed
-with most linux package managers or downloaded
-from https://git-scm.com/. You can also find GUI clients there.
-
 
 Servers
 =======
