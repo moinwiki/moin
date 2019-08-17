@@ -8,13 +8,40 @@ MoinMoin - Extension Script Package
 
 import sys
 
+from flask_script import Manager, Server, Command
 
-def main(default_command='moin', wiki_config=None):
+import moin
+
+
+class Help(Command):
+    description = 'Quick help'
+
+    def run(self):
+        # TODO: add more help here as soon as stuff has been migrated from "m" to "moin".
+        print("""\
+Quick help / most important commands overview:
+
+moin index-create  # create index (optionally also create empty storage)
+
+moin moin  # run moin's builtin web server
+
+moin import19  # import data from moin 1.9
+
+moin index-build  # (re)build index
+
+For more information please see:
+
+- "moin --help" command output
+- "moin <subcommand> --help" command output
+- docs
+""")
+
+
+def main(default_command='help', wiki_config=None):
     """
     console_script entry point
     """
     from moin.app import create_app
-    from flask_script import Manager, Server
 
     manager = Manager(create_app)
     manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)
@@ -22,6 +49,8 @@ def main(default_command='moin', wiki_config=None):
                        required=False, default=False)
     manager.add_option('-s', '--storage-create', action='store_true', dest='create_storage',
                        required=False, default=False)
+
+    manager.add_command("help", Help())
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
 
     from moin.scripts.maint import index
