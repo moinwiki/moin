@@ -20,10 +20,10 @@ Running the built-in server
 Run the moin built-in server as follows::
 
  # easiest for debugging (single-process, single-threaded server):
- ./m run  # Windows:  "m run"
+ moin moin
 
  # or, if you need another configuration file, ip address, or port:
- ./m run --config /path/to/wikiconfig.py --host 1.2.3.4 --port 7777
+ moin --config /path/to/wikiconfig.py moin --host 1.2.3.4 --port 7777
 
 While the moin server is starting up, you will see some log output, for example::
 
@@ -58,7 +58,7 @@ Using the built-in server for production
  ignored by the built-in server. You must use the -d and -r flags.
  See Werkzeug docs for more information.::
 
- ./m run --host 0.0.0.0 --port 80 -d -r
+ moin moin --host 0.0.0.0 --port 80 -D -R
 
 
 External Web Server (advanced)
@@ -106,9 +106,9 @@ To execute dump-html, use the command line interface.
 The following three commands are equivalent as the
 specified options are the defaults. ::
 
-    ./m dump-html
-    ./m dump-html --directoy HTML --theme topside_cms --exclude-ns userprofiles --query .*
-    ./m dump-html -d HTML -t topside_cms -e userprofiles -q .*
+    moin dump-html
+    moin dump-html --directoy HTML --theme topside_cms --exclude-ns userprofiles --query .*
+    moin dump-html -d HTML -t topside_cms -e userprofiles -q .*
 
 The --directory option may be a relative or absolute path. The default directory,
 HTML, will be placed under the wiki root.

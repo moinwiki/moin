@@ -321,11 +321,11 @@ Here is the source code segment from snippets.html::
                     <br>
                 {%- endif %}
 
-                {% if request.user_agent and search_form %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
+                {% if request.user_agent and search_form %} {# request.user_agent is true if browser, false if run as moin dump-html #}
                     {{ utils.header_search(search_form) }}
                 {% endif %}
 
-                {% if request.user_agent %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
+                {% if request.user_agent %} {# request.user_agent is true if browser, false if run as moin dump-html #}
                     <ul id="moin-username" class="moin-header-links">
                         {{ utils.user_login_logoff() }}
                     </ul>
