@@ -10,6 +10,7 @@ from datetime import datetime
 
 import pytest
 from flask_babel import format_date, format_datetime
+from flask import g as flaskg
 
 from moin.macros.Date import MacroDateTimeBase, Macro
 
@@ -31,6 +32,7 @@ class TestMacroDateTimeBase:
 
 class TestMacro:
     def test_macro(self):
+        flaskg.user.valid = True  # show_time creates ISO 8601 dates if user is not logged in
         macro_obj = Macro()
         # when arguments is None
         result = macro_obj.macro('content', None, 'page_url', 'alternative')
