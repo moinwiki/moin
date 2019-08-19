@@ -6,19 +6,15 @@ MoinMoin DateTime macro - outputs the date and time for some specific point in t
 adapted to the TZ settings of the user viewing the content.
 """
 
-import time
-from datetime import datetime
-
-from flask_babel import format_datetime
-
 from moin.macros.Date import MacroDateTimeBase
+from moin.utils import show_time
 
 
 class Macro(MacroDateTimeBase):
     def macro(self, content, arguments, page_url, alternative):
         if arguments is None:
-            tm = time.time()  # always UTC
+            tm = None
         else:
             stamp = arguments[0]
             tm = self.parse_time(stamp)
-        return format_datetime(datetime.utcfromtimestamp(tm))
+        return show_time.format_date_time(tm)

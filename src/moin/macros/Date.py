@@ -8,16 +8,16 @@ adapted to the TZ settings of the user viewing the content.
 
 
 import time
-from datetime import datetime
-
-from flask_babel import format_date
 
 from moin.macros._base import MacroInlineBase
+from moin.utils import show_time
 
 
 class MacroDateTimeBase(MacroInlineBase):
     def parse_time(self, args):
-        """ parse a time specification argument for usage by Date and DateTime macro
+        """
+        Parse a time specification argument for usage by Date and DateTime macro.
+        Not all ISO 8601 formats are accepted as input.
 
         :param args: YYYY-MM-DDTHH:MM:SS (plus optional Z for UTC, or +/-HHMM) or
                      float/int UNIX timestamp
@@ -60,9 +60,8 @@ class MacroDateTimeBase(MacroInlineBase):
 class Macro(MacroDateTimeBase):
     def macro(self, content, arguments, page_url, alternative):
         if arguments is None:
-            tm = time.time()  # always UTC
+            tm = None
         else:
-            # XXX looks like args are split at ':' -> <Arguments([u'2010-12-31T23', u'59', u'00'], {})>
             stamp = arguments[0]
             tm = self.parse_time(stamp)
-        return format_date(datetime.utcfromtimestamp(tm))
+        return show_time.format_date(tm)

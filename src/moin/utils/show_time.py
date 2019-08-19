@@ -36,7 +36,7 @@ def duration(seconds):
     return _("years"), (seconds+15768000)//31536000
 
 
-def format_date_time(utc_dt=None, fmt='yyyy-MM-dd hh:mm:ss', interval='datetime'):
+def format_date_time(utc_dt=None, fmt='yyyy-MM-dd HH:mm:ss', interval='datetime'):
     """
     Add an ISO 8601 alternative to babel's date/time formatting.
 
@@ -55,6 +55,8 @@ def format_date_time(utc_dt=None, fmt='yyyy-MM-dd hh:mm:ss', interval='datetime'
     """
     if utc_dt is None:
         utc_dt = datetime.datetime.utcnow()
+    elif isinstance(utc_dt, (float, int)):
+        utc_dt = datetime.datetime.utcfromtimestamp(utc_dt)
 
     if not flaskg.user.valid:
         # users who are not logged-in get moin version of ISO 8601: 2019-07-15 07:08:09z
