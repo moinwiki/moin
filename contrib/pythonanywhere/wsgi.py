@@ -4,7 +4,7 @@ import site
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-site.addsitedir(this_dir + '-venv-python3.5/lib/python3.5/site-packages')
+site.addsitedir(this_dir + '-venv-python3.7/lib/python3.7/site-packages')
 
 # make sure this directory is in sys.path (.lower() avoids duplicate entries in windows)
 if not (this_dir in sys.path or this_dir.lower() in sys.path):
