@@ -759,7 +759,7 @@ def hash_hexdigest(content, bufsize=4096):
             size += len(buf)
             if not buf:
                 break
-    elif isinstance(content, str):
+    elif isinstance(content, bytes):
         hash.update(content)
         size = len(content)
     else:
