@@ -711,14 +711,10 @@ class Item:
             else:
                 data = b''
 
-        # TODO XXX broken: data can be all sorts of stuff there and handle_variables can't deal with it yet:
-        # - non-text binary as bytes
-        # - text as bytes? as str? as BytesIO?
-        #
-        # data = self.handle_variables(data, meta)
-
         if isinstance(data, str):
-            data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = self.handle_variables(data, meta)
+            charset = meta['contenttype'].split('charset=')[1]
+            data = data.encode(charset)
 
         if isinstance(data, bytes):
             data = BytesIO(data)
@@ -741,7 +737,6 @@ class Item:
         @rtype: string
         @return: new text of wikipage, variables replaced
         """
-        assert isinstance(data, str)
         logging.debug("handle_variable data: %r" % data)
         if self.contenttype not in CONTENTTYPE_VARIABLES:
             return data
@@ -1119,7 +1114,7 @@ class Default(Contentful):
                                 original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
                                 original_rev = get_storage_revision(self.fqname, itemtype=self.itemtype, contenttype=original_item.contenttype, rev_id=rev_id)
                                 charset = original_item.contenttype.split('charset=')[1]
-                                original_text = original_rev.data.read().decode(charset)
+                                original_text = str(original_rev)
                             else:
                                 original_text = ''
                             if original_text == data and not self.meta_changed(item.meta):

@@ -340,6 +340,14 @@ class ProtectedRevision:
         self.rev = rev
         self.item = p_item or ProtectedItem(protector, rev.item)
 
+    def __str__(self):
+        """
+        Return revision contents as a string.
+        """
+        self.data.seek(0)
+        charset = self.meta['contenttype'].split('charset=')[1]
+        return self.data.read().decode(charset)
+
     def allows(self, capability):
         # to check allowance for a revision, we always ask the item
         return self.item.allows(capability)

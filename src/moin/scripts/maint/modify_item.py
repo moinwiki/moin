@@ -40,7 +40,7 @@ class GetItem(Command):
         if 'charset' in rev.meta['contenttype']:
             # input data will have \r\n line endings, output will have platform dependent line endings
             charset = rev.meta['contenttype'].split('charset=')[1]
-            data = rev.data.read().decode(charset)
+            data = str(rev.data)
             lines = data.splitlines()
             lines = '\n'.join(lines)
             with open(data_file, 'w', encoding=charset) as df:
