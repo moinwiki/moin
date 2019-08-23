@@ -96,7 +96,7 @@ class TestItem:
             item = Item.create(basename + name)
             item._save({CONTENTTYPE: 'text/plain;charset=utf-8'}, "foo")
         item = Item.create(basename + '/mn')
-        item._save({CONTENTTYPE: 'image/jpeg'}, "JPG")
+        item._save({CONTENTTYPE: 'image/jpeg'}, b"JPG")
 
         baseitem = Item.create(basename)
 
@@ -346,7 +346,7 @@ class TestItem:
         assert item.meta['test_key'] == 'test_value'
         # modify
         another_data = 'another_test_data'
-        another_meta = {'another_test_key': 'another_test_value'}
+        another_meta = {'another_test_key': 'another_test_value', CONTENTTYPE: contenttype, }
         item.modify(another_meta, another_data)
         item = Item.create(name)
         assert item.name == 'Test_Item'
@@ -358,6 +358,7 @@ class TestItem:
         another_meta = {
             'test_key': 'test_value',
             'another_test_key': 'another_test_value',
+            CONTENTTYPE: contenttype,
         }
         item.modify(another_meta, another_data)
         item = Item.create(name)
@@ -365,6 +366,7 @@ class TestItem:
             'another_test_key': 'updated_test_value',
             'new_test_key': 'new_test_value',
             'none_test_key': None,
+            CONTENTTYPE: contenttype,
         }
         item.modify(another_meta, another_data, **update_meta)
         item = Item.create(name)
