@@ -655,7 +655,8 @@ def convert_item(item_name):
 
     namespace = item.rev.meta.revision.namespace or 'default'
     revno = item.rev.revid
-    content = str(item.rev)
+    item.rev.data.seek(0)
+    content = item.rev.data.read()
     input_conv = reg.get(Type(item.contenttype), type_moin_document)
     dom = input_conv(content, item.contenttype)
 

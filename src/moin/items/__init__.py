@@ -1114,7 +1114,7 @@ class Default(Contentful):
                                 original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
                                 original_rev = get_storage_revision(self.fqname, itemtype=self.itemtype, contenttype=original_item.contenttype, rev_id=rev_id)
                                 charset = original_item.contenttype.split('charset=')[1]
-                                original_text = str(original_rev)
+                                original_text = original_rev.data.read().decode(charset)
                             else:
                                 original_text = ''
                             if original_text == data and not self.meta_changed(item.meta):
