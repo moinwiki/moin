@@ -126,10 +126,6 @@ def unquoteWikiname(filename, charset=CHARSET):
     :rtype: unicode
     :returns: WikiName
     """
-    # From some places we get called with Unicode strings
-    if isinstance(filename, str):
-        filename = filename.encode(CHARSET)
-
     parts = []
     start = 0
     for needle in QUOTED.finditer(filename):
@@ -157,4 +153,4 @@ def unquoteWikiname(filename, charset=CHARSET):
         parts.append(filename[start:len(filename)])
         wikiname = ''.join(parts)
 
-    return wikiname.decode(charset)
+    return wikiname
