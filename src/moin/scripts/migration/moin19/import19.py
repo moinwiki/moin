@@ -204,7 +204,9 @@ class PageBackend:
 
     def __iter__(self):
         pages_dir = os.path.join(self._path, 'pages')
-        for f in os.listdir(pages_dir):
+        pages = os.listdir(pages_dir)
+        pages.sort()
+        for f in pages:
             itemname = unquoteWikiname(f)
             try:
                 item = PageItem(self, os.path.join(pages_dir, f), itemname)
