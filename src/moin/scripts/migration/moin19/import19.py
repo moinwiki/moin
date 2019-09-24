@@ -29,7 +29,7 @@ from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
 from moin.constants.keys import *  # noqa
-from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
@@ -49,8 +49,6 @@ logging = log.getLogger(__name__)
 
 UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
 
-CHARSET = 'utf-8'
-
 ACL_RIGHTS_CONTENTS = ['read', 'write', 'create', 'destroy', 'admin', ]
 
 DELETED_MODE_KEEP = 'keep'
@@ -65,10 +63,12 @@ FORMAT_TO_CONTENTTYPE = {
     'creole': 'text/x.moin.creole;charset=utf-8',
     'python': 'text/x-python;charset=utf-8',
     'text/creole': 'text/x.moin.creole;charset=utf-8',
-    'rst': 'text/rst;charset=utf-8',
-    'text/rst': 'text/rst;charset=utf-8',
+    'rst': 'text/x-rst;charset=utf-8',
+    'text/rst': 'text/x-rst;charset=utf-8',
     'plain': 'text/plain;charset=utf-8',
     'text/plain': 'text/plain;charset=utf-8',
+    'csv': 'text/csv;charset=utf-8',
+    'text/csv': 'text/csv;charset=utf-8',
 }
 
 last_moin19_rev = {}
@@ -119,7 +119,7 @@ class ImportMoin19(Command):
                     meta[USERID] = userid_old2new[meta[USERID]]
                 except KeyError:
                     # user profile lost, but userid referred by revision
-                    print(("Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)).encode('utf-8'))
+                    print("Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid))
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
@@ -136,8 +136,8 @@ class ImportMoin19(Command):
             if namespace == '':
                 namespace = 'default'
             meta, data = backend.retrieve(namespace, revno)
-            data_in = ''.join(data.readlines())
-            dom = self.conv_in(data_in, 'text/x.moin.wiki;format=1.9;charset=utf-8')
+            data_in = data.read().decode(CHARSET)
+            dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
             out = self.conv_out(dom)
             out = out.encode(CHARSET)
             iri = Iri(scheme='wiki', authority='', path='/' + item_name)
@@ -202,14 +202,16 @@ class PageBackend:
 
     def __iter__(self):
         pages_dir = os.path.join(self._path, 'pages')
-        for f in os.listdir(pages_dir):
+        # sort by moin 1.9 directory names, non-ascii characters converted to 2 hex characters and enclosed in (..)
+        pages = sorted(os.listdir(pages_dir))
+        for f in pages:
             itemname = unquoteWikiname(f)
             try:
                 item = PageItem(self, os.path.join(pages_dir, f), itemname)
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
-                print(("    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))).encode('utf-8'))
+                print("    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f))))
             except Exception as err:
                 logging.exception(("PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
@@ -227,7 +229,7 @@ class PageItem:
         self.backend = backend
         self.name = itemname
         self.path = path
-        print(("Processing item {0}".format(itemname)).encode('utf-8'))
+        print("Processing item {0}".format(itemname))
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -238,7 +240,7 @@ class PageItem:
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
             if not os.path.exists(revpath):
-                print(("    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)).encode('utf-8'))
+                print("    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current))
                 raise KillRequested('deleted_mode wants killing/ignoring')
 
     def iter_revisions(self):
@@ -268,7 +270,7 @@ class PageItem:
         except OSError:
             fnames = []
         for fname in fnames:
-            attachname = fname.decode('utf-8')
+            attachname = fname
             try:
                 yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname),
                                          self.editlog, self.acl)
@@ -313,7 +315,7 @@ class PageRevision:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print(("    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)).encode('utf-8'))
+                print("    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno))
                 if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
                         ACTION: 'SAVE/DELETE',
@@ -325,7 +327,7 @@ class PageRevision:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print(("    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)).encode('utf-8'))
+                print("    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno))
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -335,8 +337,12 @@ class PageRevision:
             meta, data = split_body(content)
         meta.update(editlog_data)
         format = meta.pop('format', self.backend.format_default)
+        if format.startswith('csv'):
+            format = 'csv'  # drop trailing sep character as in "format csv ;"
         meta[CONTENTTYPE] = FORMAT_TO_CONTENTTYPE.get(format, CONTENTTYPE_DEFAULT)
         data = self._process_data(meta, data)
+        if format == 'csv':
+            data = data.lstrip()  # leading blank lines confuses csv.sniffer
         data = data.encode(CHARSET)
         size, hash_name, hash_digest = hash_hexdigest(data)
         meta[hash_name] = hash_digest
@@ -377,10 +383,8 @@ class PageRevision:
             if k not in self.meta:
                 self.meta[k] = ''
         self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
-
-        print(("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
-               item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8'))
-
+        print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+              item_name, meta[REVID], meta[CONTENTTYPE]))
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
@@ -635,8 +639,7 @@ class UserRevision:
 
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
-
-        print(("    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8'))
+        print("    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email']))
 
         # transfer subscribed_pages to subscription_patterns
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
@@ -711,7 +714,7 @@ class UserRevision:
         RECHARS = r'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            print(("        User is subscribed to {0}".format(subscribed_item)).encode('utf-8'))
+            print("        User is subscribed to {0}".format(subscribed_item))
             if flaskg.item_name2id.get(subscribed_item):
                 subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
             else:
