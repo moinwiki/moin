@@ -8,7 +8,7 @@ MoinMoin - helpers for 1.9 migration
 import re
 
 from moin.constants.keys import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
-from moin.constants.contenttypes import CHARSET
+from moin.constants.contenttypes import CHARSET19
 
 
 # Precompiled patterns for file name [un]quoting
@@ -79,7 +79,7 @@ def add_metadata_to_body(metadata, data):
     return metadata_data + data
 
 
-def quoteWikinameFS(wikiname, charset=CHARSET):
+def quoteWikinameFS(wikiname, charset=CHARSET19):
     """
     Return file system representation of a Unicode WikiName.
 
@@ -115,7 +115,7 @@ class InvalidFileNameError(Exception):
     pass
 
 
-def unquoteWikiname(filename, charset=CHARSET):
+def unquoteWikiname(filename, charset=CHARSET19):
     """
     Return Unicode WikiName from quoted file name.
 
@@ -130,7 +130,7 @@ def unquoteWikiname(filename, charset=CHARSET):
     start = 0
     for needle in QUOTED.finditer(filename):
         # append leading unquoted stuff
-        parts.append(bytes(filename[start:needle.start()].encode(charset)))
+        parts.append(filename[start:needle.start()].encode(charset))
         start = needle.end()
         # Append quoted stuff
         group = needle.group(1)
@@ -147,10 +147,9 @@ def unquoteWikiname(filename, charset=CHARSET):
 
     # append rest of string
     if start == 0:
-        wikiname = bytes(filename.encode(charset))
+        wikiname = filename.encode(charset)
     else:
-        parts.append(bytes(filename[start:len(filename)].encode(charset)))
+        parts.append(filename[start:len(filename)].encode(charset))
         wikiname = b''.join(parts)
 
-    wikiname = wikiname.decode(charset)
-    return wikiname
+    return wikiname.decode(charset)

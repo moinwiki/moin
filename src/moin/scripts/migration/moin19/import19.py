@@ -8,8 +8,6 @@ MoinMoin - import content and user data from a moin 1.9 compatible storage
 
 TODO
 ----
-
-* translate revno numbering into revid parents
 * ACLs for attachments
 """
 
@@ -29,7 +27,7 @@ from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
 from moin.constants.keys import *  # noqa
-from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET
+from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
@@ -69,6 +67,7 @@ FORMAT_TO_CONTENTTYPE = {
     'text/plain': 'text/plain;charset=utf-8',
     'csv': 'text/csv;charset=utf-8',
     'text/csv': 'text/csv;charset=utf-8',
+    'docbook': 'application/docbook+xml;charset=utf-8',
 }
 
 last_moin19_rev = {}
@@ -136,10 +135,10 @@ class ImportMoin19(Command):
             if namespace == '':
                 namespace = 'default'
             meta, data = backend.retrieve(namespace, revno)
-            data_in = data.read().decode(CHARSET)
+            data_in = data.read().decode(CHARSET19)
             dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
             out = self.conv_out(dom)
-            out = out.encode(CHARSET)
+            out = out.encode(CHARSET19)
             iri = Iri(scheme='wiki', authority='', path='/' + item_name)
             dom.set(moin_page.page_href, str(iri))
             refs_conv(dom)
@@ -290,7 +289,7 @@ class PageRevision:
         editlog.to_begin()
         # we just read the page and parse it here, makes the rest of the code simpler:
         try:
-            with codecs.open(path, 'r', CHARSET) as f:
+            with codecs.open(path, 'r', CHARSET19) as f:
                 content = f.read()
         except (IOError, OSError):
             # handle deleted revisions (for all revnos with 0<=revno<=current) here
@@ -343,7 +342,7 @@ class PageRevision:
         data = self._process_data(meta, data)
         if format == 'csv':
             data = data.lstrip()  # leading blank lines confuses csv.sniffer
-        data = data.encode(CHARSET)
+        data = data.encode(CHARSET19)
         size, hash_name, hash_digest = hash_hexdigest(data)
         meta[hash_name] = hash_digest
         meta[SIZE] = size
@@ -592,7 +591,7 @@ class UserRevision:
         self.data = BytesIO(b'')
 
     def _parse_userprofile(self):
-        with codecs.open(os.path.join(self.path, self.uid), "r", CHARSET) as meta_file:
+        with codecs.open(os.path.join(self.path, self.uid), "r", CHARSET19) as meta_file:
             metadata = {}
             for line in meta_file:
                 if line.startswith('#') or line.strip() == "":
