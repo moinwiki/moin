@@ -754,12 +754,12 @@ class Item:
             'PAGE': item_name,
             'ITEM': item_name,
             'TIMESTAMP': strftime("%Y-%m-%d %H:%M:%S %Z"),
-            'TIME': "<<DateTime(%s)>>" % time(),
-            'DATE': "<<Date(%s)>>" % time(),
+            'TIME': "<<DateTime(%s)>>" % strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'DATE': "<<Date(%s)>>" % strftime("%Y-%m-%dT%H:%M:%SZ"),
             'ME': flaskg.user.name0,
             'USERNAME': signature,
             'USER': "-- %s" % signature,
-            'SIG': "-- %s <<DateTime(%s)>>" % (signature, time()),
+            'SIG': "-- %s <<DateTime(%s)>>" % (signature, strftime("%Y-%m-%dT%H:%M:%SZ")),
         }
 
         email = flaskg.user.profile._meta.get('email', None)
