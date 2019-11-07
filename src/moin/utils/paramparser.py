@@ -44,7 +44,7 @@ class ParserPrefix:
 
 def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
                                brackets=None, seplimit=0, multikey=False,
-                               prefixes=None, quotes='"'):
+                               prefixes=None, quotes='"\''):
     """
     Parses the given string according to the other parameters.
 
