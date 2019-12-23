@@ -33,15 +33,15 @@ if not (moin_dir in sys.path or moin_dir.lower() in sys.path):
     sys.path.insert(0, moin_dir)
 
 # for debugging sys.path issues, comment out after things are working
-print '== moin2.wsgi sys.path =='
+print('== moin2.wsgi sys.path ==')
 for p in sys.path:
-    print p
-print '== end moin2.wsgi sys.path =='
+    print(p)
+print('== end moin2.wsgi sys.path ==')
 
 wiki_config = moin_dir + '/wikiconfig_local.py'
 if not os.path.exists(wiki_config):
     wiki_config = moin_dir + '/wikiconfig.py'
-print '== wiki_config path =', wiki_config, '=='
+print('== wiki_config path =', wiki_config, '==')
 
 # create the Moin (Flask) WSGI application
 from moin.app import create_app
