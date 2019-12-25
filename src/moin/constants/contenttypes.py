@@ -13,6 +13,7 @@ from moin.i18n import _, L_, N_
 # we don't have the resources to test them, and there is no real
 # benefit for the user. IMPORTANT: use only lowercase 'utf-8'!
 CHARSET = 'utf-8'
+CHARSET19 = 'utf-8'
 
 # Parser to use mimetype text
 PARSER_TEXT_MIMETYPE = [

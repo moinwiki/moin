@@ -8,8 +8,8 @@ MoinMoin - helpers for 1.9 migration
 import re
 
 from moin.constants.keys import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
+from moin.constants.contenttypes import CHARSET19
 
-CHARSET = 'utf-8'
 
 # Precompiled patterns for file name [un]quoting
 UNSAFE = re.compile(r'[^a-zA-Z0-9_]+')
@@ -79,7 +79,7 @@ def add_metadata_to_body(metadata, data):
     return metadata_data + data
 
 
-def quoteWikinameFS(wikiname, charset=CHARSET):
+def quoteWikinameFS(wikiname, charset=CHARSET19):
     """
     Return file system representation of a Unicode WikiName.
 
@@ -115,7 +115,7 @@ class InvalidFileNameError(Exception):
     pass
 
 
-def unquoteWikiname(filename, charset=CHARSET):
+def unquoteWikiname(filename, charset=CHARSET19):
     """
     Return Unicode WikiName from quoted file name.
 
@@ -126,15 +126,11 @@ def unquoteWikiname(filename, charset=CHARSET):
     :rtype: unicode
     :returns: WikiName
     """
-    # From some places we get called with Unicode strings
-    if isinstance(filename, str):
-        filename = filename.encode(CHARSET)
-
     parts = []
     start = 0
     for needle in QUOTED.finditer(filename):
         # append leading unquoted stuff
-        parts.append(filename[start:needle.start()])
+        parts.append(filename[start:needle.start()].encode(charset))
         start = needle.end()
         # Append quoted stuff
         group = needle.group(1)
@@ -144,17 +140,16 @@ def unquoteWikiname(filename, charset=CHARSET):
         try:
             for i in range(0, len(group), 2):
                 byte = group[i:i+2]
-                character = chr(int(byte, 16))
-                parts.append(character)
+                parts.append(bytes.fromhex(byte))
         except ValueError:
             # byte not in hex, e.g 'xy'
             raise InvalidFileNameError(filename)
 
     # append rest of string
     if start == 0:
-        wikiname = filename
+        wikiname = filename.encode(charset)
     else:
-        parts.append(filename[start:len(filename)])
-        wikiname = ''.join(parts)
+        parts.append(filename[start:len(filename)].encode(charset))
+        wikiname = b''.join(parts)
 
     return wikiname.decode(charset)
