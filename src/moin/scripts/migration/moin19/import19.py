@@ -383,7 +383,8 @@ class PageRevision:
 
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
-            last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
+            if item_name not in last_moin19_rev or (item_name in last_moin19_rev and meta[REVID] > last_moin19_rev[item_name][0]):
+                last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
 
     def _process_data(self, meta, data):
         """ In moin 1.x markup, not all metadata is stored in the page's header.
