@@ -28,7 +28,7 @@ class Converter(TableMixin):
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
-        dialect = csv.Sniffer().sniff(content[0])
+        dialect = csv.Sniffer().sniff(text)
         reader = csv.reader(content, dialect)
         rows = list(reader)
         head = None
