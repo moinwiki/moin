@@ -17,16 +17,15 @@ class MacroDateTimeBase(MacroInlineBase):
     def parse_time(self, args):
         """
         Parse a time specification argument for usage by Date and DateTime macro.
-        Not all ISO 8601 formats are accepted as input.
+        Not all ISO 8601 format variations are accepted as input.
 
-        :param args: YYYY-MM-DDTHH:MM:SS (plus optional Z for UTC, or +/-HHMM) or
-                     float/int UNIX timestamp
+        :param args: float/int UNIX timestamp or ISO 8601 formatted date time:
+                     YYYY-MM-DDTHH:MM:SS (plus optional Z or z for UTC, or +/-HHMM) or
+                     YYYY-MM-DD HH:MM:SS (same as above but replacing T separator with " ")
         :returns: UNIX timestamp (UTC)
         """
         if (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
-                args[10] == 'T' and args[13] == ':' and args[16] == ':'):
-            # we ignore any time zone offsets here, assume UTC,
-            # and accept (and ignore) any trailing stuff
+                args[10] in 'T ' and args[13] == ':' and args[16] == ':'):
             try:
                 year, month, day = int(args[0:4]), int(args[5:7]), int(args[8:10])
                 hour, minute, second = int(args[11:13]), int(args[14:16]), int(args[17:19])
