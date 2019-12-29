@@ -55,14 +55,19 @@
             #}
             {% if not form['content_form'].is_draw %}
                 <div>
-                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label, class='moin-button moin-modify-submit') }}
-                    {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
-                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')") }}
-                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
-                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')") }}
+                    {% set warning = "" %}
                     {% if draft_data %}
                         <button class="moin-button moin-load-draft" type="button" >{{ _("Load Draft") }}</button>
+                        {% set warning = _("Clicking this button will delete draft!") %}
                     {% endif %}
+                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label,
+                        class='moin-button moin-modify-submit', title=warning) }}
+                    {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning) }}
+                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning) }}
                 </div>
                 <dl>
                     {{ forms.render(form['comment']) }}
