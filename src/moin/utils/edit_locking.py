@@ -159,7 +159,8 @@ class Edit_Utils:
                 self.draft_name = self.make_draft_name(rev_id)
             self.cursor.execute('''DELETE FROM editdraft WHERE user_name = ? ''', (self.user_name, ))
         if data_in:
-            with open(self.draft_name, 'w', encoding=self.coding) as f:
+            data_in = data_in.encode(self.coding)
+            with open(self.draft_name, 'wb') as f:
                 f.write(data_in)
             save_time = int(time.time())
         else:
