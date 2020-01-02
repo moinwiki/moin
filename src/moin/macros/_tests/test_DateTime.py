@@ -40,3 +40,15 @@ def test_Macro():
     arguments = ['incorrect_argument']
     with pytest.raises(ValueError):
         macro_obj.macro('content', arguments, 'page_url', 'alternative')
+
+    # the following are different ways to specify the same moment
+    expected = '2019-10-07 18:30:00z'
+    arguments = ['2019-10-07T18:30:00Z'
+                 '2019-10-07T22:30:00+0400',
+                 '2019-10-07 11:30:00-0700',  # ascii hyphen-minus
+                 '2019-10-07T15:00:00-0330',
+                 '2019-10-07 11:30:00\u22120700',  # unicode minus \u2212
+                 '2019-10-07T15:00:00\u22120330', ]
+    for arg in arguments:
+        result = macro_obj.macro('content', (arg, ), 'page_url', 'alternative')
+        assert result == expected
