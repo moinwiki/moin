@@ -183,8 +183,9 @@ class Edit_Utils:
                 if save_time:
                     self.draft_name = self.make_draft_name(rev_id)
                     try:
-                        with open(self.draft_name, 'r', encoding=self.coding) as f:
+                        with open(self.draft_name, 'rb') as f:
                             data = f.read()
+                        data = data.decode(self.coding)
                         return draft, data
                     except IOError:
                         logging.error("User {0} failed to load draft for: {1}".format(u_name, i_name))
