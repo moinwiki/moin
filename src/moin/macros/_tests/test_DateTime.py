@@ -13,7 +13,7 @@ from flask import g as flaskg
 import pytest
 
 from moin.macros.DateTime import Macro
-from moin.utils.show_time import format_date_time as format_datetime
+from moin.utils.show_time import format_date_time
 
 
 def test_Macro():
@@ -24,12 +24,17 @@ def test_Macro():
     result = macro_obj.macro('content', None, 'page_url', 'alternative')
     # get the current time
     test_time = time.time()
-    test_time = format_datetime(datetime.utcfromtimestamp(test_time))
+    test_time = format_date_time(datetime.utcfromtimestamp(test_time))
     assert test_time == result
 
     arguments = ['2011-08-07T11:11:11', 'argument2']
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
     expected = 'Aug 7, 2011, 11:11:11 AM'  # comma after year was added in recent CLDR
+    assert result == expected
+
+    flaskg.user.valid = False
+    result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
+    expected = '2011-08-07 11:11:11z'  # comma after year was added in recent CLDR
     assert result == expected
 
     arguments = ['incorrect_argument']
