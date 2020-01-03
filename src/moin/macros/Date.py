@@ -33,10 +33,10 @@ class MacroDateTimeBase(MacroInlineBase):
                 tzoffset = 0  # we assume UTC no matter if there is a Z
                 if tz:
                     sign = tz[0]
-                    if sign in '+-':
+                    if sign in '+-\u2212':  # ascii plus, ascii hyphen-minus, unicode minus
                         tzh, tzm = int(tz[1:3]), int(tz[3:])
                         tzoffset = (tzh * 60 + tzm) * 60
-                        if sign == '-':
+                        if sign in '-\u2212':  # ascii hyphen-minus, unicode minus
                             tzoffset = -tzoffset
                 tm = year, month, day, hour, minute, second, 0, 0, 0
             except ValueError as err:
