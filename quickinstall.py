@@ -156,11 +156,12 @@ def search_for_phrase(filename):
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version', 'successfully installed', 'finished', ),
         # ': e' matches lines similar to: src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
-        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f' ),
+        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f', ),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
         DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', )
     }
+    ignore_phrases = {TOX: ('interpreternotfound', )}
     # for these file names, display a count of occurrances rather than each found line
     print_counts = (CODING_STD, DIST, )
 
@@ -168,6 +169,7 @@ def search_for_phrase(filename):
         lines = f.readlines()
     name = os.path.split(filename)[1]
     phrases = files[name]
+    ignore_phrase = ignore_phrases[name] if name in ignore_phrases else ()
     counts = Counter()
     for idx, line in enumerate(lines):
         for phrase in phrases:
@@ -175,7 +177,13 @@ def search_for_phrase(filename):
                 if filename in print_counts:
                     counts[phrase] += 1
                 else:
-                    print(idx + 1, line.rstrip())
+                    skip = False
+                    for ignore in ignore_phrase:
+                        if ignore in line.lower():
+                            skip = True
+                            break
+                    if not skip:
+                        print(idx + 1, line.rstrip())
                     break
     for key in counts:
         print('The phrase "%s" was found %s times.' % (key, counts[key]))
