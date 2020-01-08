@@ -34,7 +34,7 @@ def test_Macro():
 
     flaskg.user.valid = False
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    expected = '2011-08-07 11:11:11z'  # comma after year was added in recent CLDR
+    expected = '2011-08-07 11:11:11z'
     assert result == expected
 
     arguments = ['incorrect_argument']
