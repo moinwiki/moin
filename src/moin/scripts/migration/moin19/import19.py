@@ -245,8 +245,8 @@ class PageItem:
     def iter_revisions(self):
         revisionspath = os.path.join(self.path, 'revisions')
         try:
-            # rather use this or a range(1, self.current+1)?
-            fnames = os.listdir(revisionspath)
+            # alternative method is to generate file names using range(1, self.current+1)
+            fnames = sorted(os.listdir(revisionspath))
         except OSError:
             fnames = []
         parent_id = None
