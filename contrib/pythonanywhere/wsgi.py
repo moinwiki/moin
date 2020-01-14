@@ -1,12 +1,17 @@
+# Copyright: 2020 MoinMoin:RogerHaase
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+# Upload this file to the pythonanywhere
+# Working directory: /home/<account-name>/moin
+
 import sys
 import os
 import site
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-site.addsitedir(this_dir + '-venv-python3.7/lib/python3.7/site-packages')
+site.addsitedir(this_dir + '-venv-{0}/lib/{0}/site-packages'.format(sys.executable))
 
-# make sure this directory is in sys.path (.lower() avoids duplicate entries in windows)
 if not (this_dir in sys.path or this_dir.lower() in sys.path):
     sys.path.insert(0, this_dir)
 
