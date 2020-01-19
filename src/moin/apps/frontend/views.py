@@ -50,7 +50,7 @@ from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
 
 from moin.i18n import _, L_, N_
-from moin.themes import render_template, contenttype_to_class
+from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
 from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
@@ -1104,6 +1104,7 @@ def index(item_name):
     # value for a specific key) unless explicitly told to expose multiple
     # values, eg. calling items with multi=True. See Werkzeug documentation for
     # more.
+
     form = IndexForm.from_flat(request.args.items(multi=True))
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
@@ -1295,8 +1296,8 @@ def history(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
-    offset = request.values.get('offset', 0)
-    offset = max(int(offset), 0)
+    page_num = request.values.get('page_num', 1)
+    page_num = max(int(page_num), 1)
     bookmark_time = int(request.values.get('bookmark', 0))
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
@@ -1307,30 +1308,54 @@ def history(item_name):
     if bookmark_time:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
-    # TODO: due to how getPageContent and the template works, we need to use limit=None -
-    # it would be better to use search_page (and an appropriate limit, if needed)
-    revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+
+    prev_page = 0
+    next_page = 0
+    if results_per_page:
+        len_revs = flaskg.storage.search_len(query, idx_name=ALL_REVS)
+        revs = flaskg.storage.search_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        if page_num > 1:
+            prev_page = page_num - 1
+        pages = (len_revs + results_per_page - 1) // results_per_page
+        if page_num < pages:
+            next_page = page_num + 1
+    else:
+        revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+
     # get rid of the content value to save potentially big amounts of memory:
     history = []
+    flaskg.clock.start('runrevs')
     for rev in revs:
         entry = dict(rev.meta)
         entry[FQNAME] = rev.fqname
         entry[FQNAMES] = rev.fqnames
         history.append(entry)
         close_file(rev.data)
-    history_page = utils.getPageContent(history, offset, results_per_page)
+    flaskg.clock.stop('runrevs')
     close_file(item.rev.data)
     trash = item.meta['trash'] if 'trash' in item.meta else False
+
+    # avoid repeated IO to get user profile when same user edits this item multiple times
+    editor_infos = {}  # userid: user_info
+    for hist_meta in history:
+        uid = hist_meta.get(USERID) or hist_meta.get(ADDRESS)
+        if uid not in editor_infos:
+            editor_infos[uid] = get_editor_info(hist_meta)
+    flaskg.clock.start('renderrevs')
     ret = render_template('history.html',
                           fqname=fqname,
                           item=item,
                           item_name=item_name,
-                          history_page=history_page,
+                          history=history,
+                          prev_page=prev_page,
+                          next_page=next_page,
+                          editor_infos=editor_infos,
                           bookmark_time=bookmark_time,
                           NAME_EXACT=NAME_EXACT,
                           len=len,
                           trash=trash,
     )
+    flaskg.clock.stop('renderrevs')
     close_file(item.rev.data)
     return ret
 
