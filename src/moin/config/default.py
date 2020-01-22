@@ -488,7 +488,7 @@ options_no_group_name = {
             ],
             THEME_NAME: None,  # None -> use cfg.theme_default
             EDIT_ROWS: 0,
-            RESULTS_PER_PAGE: 0,
+            RESULTS_PER_PAGE: 50,
             LOCALE: None,  # None -> do browser language detection, otherwise just use this locale
             TIMEZONE: None,  # None -> use cfg.timezone_default
             EMAIL_UNVALIDATED: None,
