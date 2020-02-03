@@ -455,6 +455,11 @@ class AttachmentRevision:
         meta[REVID] = make_uuid()
         meta[REV_NUMBER] = 1
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        meta[WIKINAME] = app.cfg.sitename  # old 1.9 sitename is not available
+        for attr in (COMMENT, SUMMARY, ):
+            meta[attr] = ""
+        for attr in (EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, NAME_OLD, TAGS, ):
+            meta[attr] = []
         self.meta = meta
 
 

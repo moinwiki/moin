@@ -463,12 +463,13 @@ def item_acl_report():
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
         items_acls.append({'name': item_name,
-                           'name_old': item.meta['name_old'],
+                           'name_old': item.meta.get('name_old', []),
                            'itemid': item_id,
                            'fqname': item.rev.fqname,
                            'fqnames': item.rev.fqnames,
                            'acl': item_acl,
                            'acl_default': acl_default})
+    # deleted items have no names; this sort places deleted items on top of the report; the display name may be similar to: "9cf939f ~(DeletedItem)"
     items_acls = sorted(items_acls, key=lambda k: (k['name'], k['name_old']))
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
