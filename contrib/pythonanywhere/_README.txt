@@ -12,7 +12,7 @@ Then load all the files in the /moin/contrib/pythonanywhere directory
 into your favorite text editor (one of the files is this file).
 
 
-STEP 2 - Get an account
+STEP 2A - Get an account
 
 If you have not already done so, head over to https://www.pythonanywhere.com,
 maybe read some help pages, open a free or paid account, and confirm your
@@ -24,7 +24,7 @@ installation process will run slowly during the later steps but
 will eventually complete.
 
 
-STEP 2A - If there is an old moin installation, delete it
+STEP 2B - If there is an old moin installation, delete it
 
 If you have a broken moinmoin2 installation or a Python 2.7 installation
 that you want to convert to Python 3, then choose the Web tab on the
@@ -135,7 +135,7 @@ click the "Open" button. When the upload is complete you should see the
 wsgi.py file above the yellow "Upload a file" button.
 
 
-STEP 5 - Reload server and view Home page
+STEP 5A - Reload server and view Home page
 
 Near the top right of the web page, click the "Web" button. Click the green
 "Reload <AccountName>.pythonanywhere.com" button.
@@ -148,7 +148,7 @@ from unwanted hackers. See /contrib/wikiconfig/ contents. Reload the server afte
 making any changes.
 
 
-STEP 5 - Troubleshooting
+STEP 5B - Troubleshooting
 
 If you get the dreaded
     "Something went wrong :-("
