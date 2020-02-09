@@ -56,6 +56,7 @@ ITEMID = "itemid"
 REVID = "revid"
 REV_NUMBER = "rev_number"
 PARENTID = "parentid"
+PARENTNAMES = "parentnames"
 DATAID = "dataid"
 WIKINAME = "wikiname"
 CONTENT = "content"
@@ -143,6 +144,7 @@ REPLY_TO = "reply_to"
 # index names
 LATEST_REVS = 'latest_revs'
 ALL_REVS = 'all_revs'
+KEY_LATEST_REVS = 'key_latest_revs'
 
 # values for ACTION key
 ACTION_SAVE = "SAVE"

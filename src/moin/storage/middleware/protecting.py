@@ -16,7 +16,7 @@ import time
 from whoosh.util.cache import lru_cache
 
 from moin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
-from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID
+from moin.constants.keys import ACL, ALL_REVS, KEY_LATEST_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAME, NAME, NAMESPACE, PARENTNAMES
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
@@ -108,7 +108,6 @@ class ProtectingMiddleware:
         be returned.
         All lists are without considering before/default/after acls.
         """
-
         if itemid is not None:
             q = {ITEMID: itemid}
         elif fqname is not None:
@@ -148,6 +147,29 @@ class ProtectingMiddleware:
         for rev in self.indexer.search(q, idx_name, **kw):
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ) or rev.allows(PUBREAD):
+                yield rev
+
+    def search_key(self, q, idx_name=KEY_LATEST_REVS, **kw):
+        """
+        Save processing time by searching the key index vs. the latest revs with item content.
+
+        Save more time by avoiding a full ACL check when the answer will be the same as the last.
+        """
+        last_rev_acl_parts = (None, None, None)
+        last_rev_result = None
+        for rev in self.indexer.search_key(q, idx_name, **kw):
+            rev = ProtectedItemMeta(self, rev)
+            this_rev_acl_parts = (rev.meta[NAMESPACE], rev.meta.get(PARENTNAMES), rev.meta.get(ACL))
+            if this_rev_acl_parts == last_rev_acl_parts:
+                # we can skip the acl check because we know the answer will be the same
+                if last_rev_result:
+                    yield rev
+                continue
+            last_rev_acl_parts = this_rev_acl_parts
+            # TODO: could save a few seconds by streamlining this check, use key_latest_revs, save parent acls in a dict
+            result = rev.allows(READ) or rev.allows(PUBREAD)
+            last_rev_result = result
+            if result:
                 yield rev
 
     def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
@@ -204,6 +226,63 @@ class ProtectingMiddleware:
         item = self.get_item(**fqname.query)
         allowed = item.allows(capability, user_names=usernames)
         return allowed
+
+
+class ProtectedItemMeta:
+    """
+    Perform ACL checks for key meta
+    """
+    def __init__(self, protector, meta):
+        """
+        :param protector: protector middleware
+        :param meta: meta data of item to protect
+        """
+        self.protector = protector
+        self.meta = meta
+        self.fqname = split_fqname(meta[NAME][0])
+
+    def __getitem__(self, revid):
+        self.require(READ, PUBREAD)
+        rev = self.item[revid]
+        return ProtectedRevision(self.protector, rev, p_item=self)
+
+    def full_acls(self):
+        """
+        iterator over all alternatively possible full acls for this item,
+        including before/default/after acl.
+        """
+        fqname = self.fqname
+        itemid = self.meta[ITEMID]
+        acl_cfg = self.protector._get_configured_acls(fqname)
+        before_acl = acl_cfg['before']
+        after_acl = acl_cfg['after']
+        for item_acl in self.protector.get_acls(itemid, fqname):
+            if item_acl is None:
+                item_acl = acl_cfg['default']
+            yield ' '.join([before_acl, item_acl, after_acl])
+
+    def allows(self, right, user_names=None):
+        """ Check if usernames may have <right> access on this item.
+
+        :param right: the right to check
+        :param user_names: user names to use for permissions check (default is to
+                          use the user names doing the current request)
+        :rtype: bool
+        :returns: True if you have permission or False
+        """
+        if user_names is None:
+            user_names = self.protector.user.name
+        # must be a non-empty list of user names
+        assert isinstance(user_names, list)
+        assert user_names
+        acl_cfg = self.protector._get_configured_acls(self.fqname)
+        for user_name in user_names:
+            for full_acl in self.full_acls():
+                allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
+                # TODO: If blogs are brought back we need:  if allowed is True and pchecker(right, allowed, self.item):
+                if allowed is True:
+                    return True
+        return False
 
 
 class ProtectedItem:

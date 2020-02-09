@@ -17,10 +17,11 @@ is indexed, we can do all sorts of operations on the indexer level:
 * listing
 
 Using Whoosh (a fast pure-Python indexing and search library), we build,
-maintain and use 2 indexes:
+maintain and use 3 indexes:
 
 * "all revisions" index (big, needed for history search)
 * "latest revisions" index (smaller, just the current revisions)
+* "key latest revisions" index (contains key fields needed to generate reports)
 
 When creating or destroying revisions, indexes are automatically updated.
 
@@ -46,6 +47,15 @@ The layers below are using UUIDs to identify revisions meta and data:
 Many methods provided by the indexing middleware will be fast, because they
 will not access the layers below (like the backend), but just the index files,
 usually it is even just the small and thus quick latest-revs index.
+
+The key-latest-revs index is used to generate reports that provide small
+amounts of data spanning all revisions.
+* Global Index
+* Global History
+* Tags
+* Admin Item ACL Report
+* Admin User ACL Info
+* User Item Sizes
 """
 
 import os
@@ -87,7 +97,7 @@ logging = log.getLogger(__name__)
 
 
 WHOOSH_FILESTORAGE = 'FileStorage'
-INDEXES = [LATEST_REVS, ALL_REVS, ]
+INDEXES = [LATEST_REVS, ALL_REVS, KEY_LATEST_REVS]
 
 VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
@@ -169,8 +179,10 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
             doc[key] = datetime.datetime.utcfromtimestamp(doc[key])
     doc[NAME_EXACT] = doc[NAME]
     doc[WIKINAME] = wikiname
-    doc[CONTENT] = content
-    doc[BACKENDNAME] = backend_name
+    if CONTENT in schema:
+        doc[CONTENT] = content
+    if BACKENDNAME in schema:
+        doc[BACKENDNAME] = backend_name
     if CONTENTNGRAM in schema:
         doc[CONTENTNGRAM] = content
     return doc
@@ -300,6 +312,38 @@ class IndexingMiddleware:
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
+        # small fast schema for showing global history, index, tags, admin ACL report, admin user ACL info, user item sizes
+        key_fields = {
+            # ITEMID from metadata - as there is only latest rev of same item here, it is unique
+            ITEMID: ID(unique=True, stored=True),
+            # revision id (aka meta id)
+            REVID: ID(unique=True, stored=True),
+            # wikiname so we can have a shared index in a wiki farm, always check this!
+            WIKINAME: ID(stored=True),
+            # namespace, so we can have different namespaces within a wiki, always check this!
+            NAMESPACE: ID(stored=True),
+            # tokenized NAME from metadata - use this for manual searching from UI
+            NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            # unmodified NAME from metadata - use this for precise lookup by the code.
+            # also needed for wildcard search, so the original string as well as the query
+            # (with the wildcard) is not cut into pieces.
+            NAME_EXACT: ID(field_boost=3.0),
+            # unmodified list of TAGS from metadata
+            TAGS: ID(stored=True),
+            # USERID from metadata
+            USERID: ID(stored=True),
+            # SIZE from metadata
+            SIZE: NUMERIC(stored=True),
+            # ACTION from metadata
+            ACTION: ID(stored=True),
+            # TRASH from metadata
+            TRASH: BOOLEAN(stored=True),
+            # tokenized ACL from metadata
+            ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
+            # tokenized CONTENTTYPE from metadata
+            CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
+        }
+
         common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
             WIKINAME: ID(stored=True),
@@ -427,6 +471,7 @@ class IndexingMiddleware:
         # schemas are needed by query parser and for index creation
         self.schemas[ALL_REVS] = all_revisions_schema
         self.schemas[LATEST_REVS] = latest_revisions_schema
+        self.schemas[KEY_LATEST_REVS] = Schema(**key_fields)
 
         # what fields could whoosh result documents have (no matter whether all revs index
         # or latest revs index):
@@ -512,7 +557,7 @@ class IndexingMiddleware:
 
     def index_revision(self, meta, content, backend_name, async_=True):
         """
-        Index a single revision, add it to all-revs and latest-revs index.
+        Index a single revision, add it to all_revs, latest_revs, and key_latest_revs indexes.
 
         :param meta: metadata dict
         :param content: preprocessed (filtered) indexable content
@@ -525,11 +570,20 @@ class IndexingMiddleware:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.update_document(**doc)  # update, because store_revision() may give us an existing revid
+
         doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
         if async_:
             writer = AsyncWriter(self.ix[LATEST_REVS])
         else:
             writer = self.ix[LATEST_REVS].writer()
+        with writer as writer:
+            writer.update_document(**doc)
+
+        doc = backend_to_index(meta, content, self.schemas[KEY_LATEST_REVS], self.wikiname, backend_name)
+        if async_:
+            writer = AsyncWriter(self.ix[KEY_LATEST_REVS])
+        else:
+            writer = self.ix[KEY_LATEST_REVS].writer()
         with writer as writer:
             writer.update_document(**doc)
 
@@ -543,6 +597,7 @@ class IndexingMiddleware:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.delete_by_term(REVID, revid)
+
         if async_:
             writer = AsyncWriter(self.ix[LATEST_REVS])
         else:
@@ -634,10 +689,19 @@ class IndexingMiddleware:
             latest_backends_revids = self._find_latest_backends_revids(index)
         finally:
             index.close()
+
         # now build the index of the latest revisions:
         index = storage.open_index(LATEST_REVS)
         try:
             self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, 'add',
+                               procs, limitmb)
+        finally:
+            index.close()
+
+        # now build the index of the key version of the latest revisions:
+        index = storage.open_index(KEY_LATEST_REVS)
+        try:
+            self._modify_index(index, self.schemas[KEY_LATEST_REVS], self.wikiname, latest_backends_revids, 'add',
                                procs, limitmb)
         finally:
             index.close()
@@ -778,6 +842,17 @@ class IndexingMiddleware:
                 latest_doc = doc if idx_name == LATEST_REVS else None
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
+
+    def search_key(self, q, idx_name=KEY_LATEST_REVS, **kw):
+        """
+        Search with query q, yield Revision metadata from index.
+        """
+        with self.ix[idx_name].searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search(q, **kw):
+                meta = hit.fields()
+                yield meta
 
     def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
         """
@@ -1018,7 +1093,7 @@ class Item(PropertiesMixin):
         """
         parent_ids = set()
         for parent_name in self.parentnames:
-            rev = self.indexer._document(idx_name=LATEST_REVS, **{NAME_EXACT: parent_name})
+            rev = self.indexer._document(idx_name=KEY_LATEST_REVS, **{NAME_EXACT: parent_name})
             if rev:
                 parent_ids.add(rev[ITEMID])
         return parent_ids

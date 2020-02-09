@@ -1085,7 +1085,6 @@ def index(item_name):
         """
         initials = set()
         for item in files:
-            close_file(item.meta.revision.data)
             initial = item.relname[0]
             if uppercase:
                 initial = initial.upper()
