@@ -1,5 +1,6 @@
 {#
-    Display a table of item names with current ACL rules; allow authorized admins to update ACL rules.
+    Display a table of item names with current ACL rules; allow superusers to update ACL rules.
+    ACL rule updates will fail downstream if superuser lacks admin permission.
 
     This template uses DIVs styled as TABLE parts so a FORM can span "table cells".
 #}
@@ -25,17 +26,10 @@
             <form style="display: table-row;" class="{{ default_style }} moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
                 <div style="display: table-cell;" class="moin-acl-name-cell">
                     {{ utils.item_moniker(item, item.fqnames) }}
-                    {% if user.may.admin(item['fqname']) %}
-                        <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
-                    {% endif %}
+                    <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
                 </div>
                 <div style="display: table-cell;" class="moin-acl-rule-cell">
-                    {% if user.may.admin(item['fqname']) %}
-                            <textarea class="moin-acl-string" name="{{ item['fqname'] }}" rows="1">{{ item['acl'] }}</textarea>
-                    {% else %}
-                        {# user may read item, but cannot "admin" this rule #}
-                        <span class="moin-acl-string moin-acl-edit-disable"> {{ item['acl'] }} </span>
-                    {% endif %}
+                    <textarea class="moin-acl-string" name="{{ item['fqname'] }}" rows="1">{{ item['acl'] }}</textarea>
                 </div>
             </form>
         {% endfor %}
