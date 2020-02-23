@@ -9,8 +9,10 @@
 
 {% block content %}
     <h1>{{ _("Item ACLs") }}</h1>
+
     {% set button_text = _("Show/Hide items with default ACLs") %}
     <input onclick="$('.moin-acl-default').toggle()" value="{{ button_text }}" class="moin-button" type="button">
+    <div class="moin-acl-count moin-acl-default">{{ _("Number items:") }} {{ number_items }}</div>
     <div style="display: table;" class="moin-acl-report">
         <div style="display: table-row;" class="moin-acl-heading">
             <div style="display: table-cell;">{{ _("Item Names") }}</div>

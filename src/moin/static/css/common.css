@@ -264,6 +264,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; color: #4
 .moin-acl-rule-cell .moin-acl-edit-disable { color: #ccc; }
 .moin-acl-string { padding: .3em .4em; width: 100%; overflow: scroll; overflow-wrap: break-word; }
 span.moin-acl-string { vertical-align: middle; }
+.moin-acl-count { float: right; font-weight: bold; }
 
 /* tablesorter  - adding a moin-sortable class to a table enables JS sorting of table columns */
 .tablesorter-header { background-image: url('../img/bg.png'); background-repeat: no-repeat; background-position: left center; }

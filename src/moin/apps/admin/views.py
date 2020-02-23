@@ -494,6 +494,7 @@ def item_acl_report():
     items_acls = sorted(items_acls, key=lambda k: (k['name'], k['name_old']))
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
+                           number_items=len(items_acls),
                            items_acls=items_acls)
 
 
