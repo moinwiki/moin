@@ -21,7 +21,7 @@ from flask import g as flaskg
 from flatland.validation import Validator
 from flatland import Form
 
-from whoosh.query import Term, And
+from whoosh.query import Term, And, Not
 
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, get_editor_info
@@ -30,10 +30,11 @@ from moin.apps.frontend.views import _using_moin_auth
 from moin import user
 from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
                                  NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
-                                 ACTION_SAVE)
+                                 ACTION_SAVE, PARENTNAMES)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
 from moin.security import require_permission, ACLStringIterator
+from moin.storage.middleware.protecting import AccessDenied
 from moin.utils.interwiki import CompositeName
 from moin.utils.crypto import make_uuid
 from moin.datastructures.backends.wiki_groups import WikiGroup
@@ -357,8 +358,10 @@ def itemsize():
         _('Size'),
         _('Item name'),
     ]
-    rows = [(rev.meta[SIZE], rev.fqname)
-            for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    rows = [(rev.meta[SIZE], CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0]))
+            for rev in revs]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
                            title_name=_("Item Sizes"),
@@ -395,20 +398,34 @@ def _trashed(namespace):
 @admin.route('/user_acl_report/<uid>', methods=['GET'])
 @require_permission(SUPERUSER)
 def user_acl_report(uid):
-    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
-    groups = flaskg.groups
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     theuser = user.User(uid=uid)
     itemwise_acl = []
+    last_item_acl_parts = (None, None, None)
+    last_item_result = {'read': False,
+                        'write': False,
+                        'create': False,
+                        'admin': False,
+                        'destroy': False}
     for item in all_items:
-        fqname = CompositeName(item.meta.get(NAMESPACE), 'itemid', item.meta.get(ITEMID))
-        itemwise_acl.append({'name': item.meta.get(NAME),
-                             'itemid': item.meta.get(ITEMID),
-                             'fqname': fqname,
-                             'read': theuser.may.read(fqname),
-                             'write': theuser.may.write(fqname),
-                             'create': theuser.may.create(fqname),
-                             'admin': theuser.may.admin(fqname),
-                             'destroy': theuser.may.destroy(fqname)})
+        if item.meta.get(NAME):
+            fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
+        else:
+            fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
+        this_rev_acl_parts = (item.meta[NAMESPACE], item.meta.get(PARENTNAMES), item.meta.get(ACL))
+        name_parts = {'name': item.meta.get(NAME),
+                      'namespace': item.meta.get(NAMESPACE),
+                      'itemid': item.meta.get(ITEMID),
+                      'fqname': fqname}
+        if not last_item_acl_parts == this_rev_acl_parts:
+            last_item_acl_parts = this_rev_acl_parts
+            last_item_result = {'read': theuser.may.read(fqname),
+                                'write': theuser.may.write(fqname),
+                                'create': theuser.may.create(fqname),
+                                'admin': theuser.may.admin(fqname),
+                                'destroy': theuser.may.destroy(fqname)}
+        itemwise_acl.append({**name_parts, **last_item_result})
     return render_template('admin/user_acl_report.html',
                            title_name=_('User ACL Report'),
                            user_names=theuser.name,
@@ -447,7 +464,8 @@ def item_acl_report():
     Item names are prefixed with the namespace, if there is a non-default namespace.
     If there are multiple names, the first name is used for sorting.
     """
-    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), ])
+    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
     for item in all_items:
         item_namespace = item.meta.get(NAMESPACE)
@@ -462,14 +480,17 @@ def item_acl_report():
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
+        fqnames = [CompositeName(item_namespace, NAME_EXACT, name) for name in item.meta[NAME]]
+        fqname = fqnames[0]
         items_acls.append({'name': item_name,
                            'name_old': item.meta.get('name_old', []),
                            'itemid': item_id,
-                           'fqname': item.rev.fqname,
-                           'fqnames': item.rev.fqnames,
+                           'fqnames': fqnames,
+                           'fqname': fqnames[0],
                            'acl': item_acl,
                            'acl_default': acl_default})
-    # deleted items have no names; this sort places deleted items on top of the report; the display name may be similar to: "9cf939f ~(DeletedItem)"
+    # deleted items have no names; this sort places deleted items on top of the report;
+    # the display name may be similar to: "9cf939f ~(DeletedItemName)"
     items_acls = sorted(items_acls, key=lambda k: (k['name'], k['name_old']))
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
@@ -489,20 +510,23 @@ def search_group(group_name):
 @require_permission(SUPERUSER)
 def group_acl_report(group_name):
     """
-    Display a 2-column table of items and ACLs, where the ACL rule specifies any
+    Display a table of items and permissions, where the ACL rule specifies any
     WikiGroup or ConfigGroup name.
     """
-    group = search_group(group_name)
-    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     group_items = []
     for item in all_items:
         acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, item.meta.get(ACL, ''))
         for modifier, entries, rights in acl_iterator:
             if group_name in entries:
-                item_id = item.meta.get(ITEMID)
-                fqname = CompositeName(item.meta.get(NAMESPACE), 'itemid', item_id)
+                if item.meta.get(NAME):
+                    fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
+                else:
+                    fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
                 group_items.append(dict(name=item.meta.get(NAME),
-                                        itemid=item_id,
+                                        itemid=item.meta.get(ITEMID),
+                                        namespace=item.meta.get(NAMESPACE),
                                         fqname=fqname,
                                         rights=rights))
     return render_template('admin/group_acl_report.html',
@@ -517,6 +541,7 @@ def modify_acl(item_name):
     fqname = split_fqname(item_name)
     item = Item.create(item_name)
     meta = dict(item.meta)
+    old_acl = meta.get(ACL, '')
     new_acl = request.form.get(fqname.fullname)
     is_valid = acl_validate(new_acl)
     if is_valid:
@@ -526,7 +551,12 @@ def modify_acl(item_name):
             del(meta[ACL])
         else:
             meta[ACL] = new_acl
-        item._save(meta=meta)
+        try:
+            item._save(meta=meta)
+        except AccessDenied:
+            # superuser viewed item acl report and tried to change acl but lacked admin permission
+            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=old_acl), "error")
+            return redirect(url_for('.item_acl_report'))
         flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "info")
     else:
         flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "error")

@@ -45,7 +45,7 @@ import pytz
 from babel import Locale
 
 from whoosh import sorting
-from whoosh.query import Term, Prefix, And, Or, DateRange, Every
+from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
 from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
 
@@ -1085,7 +1085,6 @@ def index(item_name):
         """
         initials = set()
         for item in files:
-            close_file(item.meta.revision.data)
             initial = item.relname[0]
             if uppercase:
                 initial = initial.upper()
@@ -1417,7 +1416,9 @@ def _compute_item_sets():
     linked = set()
     transcluded = set()
     existing = set()
-    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = And([Term(WIKINAME, app.cfg.interwikiname),
+            Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     for rev in revs:
         existing |= set(rev.fqnames)
         linked.update(rev.meta.get(ITEMLINKS, []))
@@ -2562,10 +2563,15 @@ def global_tags(namespace):
     If namespace == '<namespace>' tags from that namespace are shown.
     """
     title_name = _('Global Tags')
-    query = {WIKINAME: app.cfg.interwikiname}
-    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
-    if namespace != NAMESPACE_ALL:
-        query[NAMESPACE] = namespace
+    if namespace == NAMESPACE_ALL:
+        query = And([Term(WIKINAME, app.cfg.interwikiname), ])
+        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
+    else:
+        # TODO: to speed searching on wikis having few items with tags, we need to add an extra field
+        # to schema (HAS_TAGS) as described in
+        # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
+        # and then modify the query below and above
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
         headline = _("Global Tags")
@@ -2573,11 +2579,11 @@ def global_tags(namespace):
         headline = _("Global Tags in All Namespaces")
     else:
         headline = _("Tags in Namespace '%(namespace)s'", namespace=namespace)
-    revs = flaskg.storage.documents(**query)
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.name, rev.meta[REVID], tags))
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
