@@ -1362,25 +1362,27 @@ def history(item_name):
 @frontend.route('/<namespace>/+history')
 @frontend.route('/+history', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
 def global_history(namespace):
-    all_revs = bool(request.values.get('all'))
+    all_revs = bool(request.values.get('all'))  # no UI help, user must add ?all=1 to url
     idx_name = ALL_REVS if all_revs else LATEST_REVS
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
     fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
         terms.append(Term(NAMESPACE, namespace))
         fqname = split_fqname(namespace)
+    else:
+        terms.append(Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)))
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
-    revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
+    revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
     for rev in revs:
-        rev_date = show_time.format_date(datetime.utcfromtimestamp(rev.meta[MTIME]))
+        rev_date = show_time.format_date(rev.meta[MTIME].timestamp())
         if rev_date == prev_date:
             dh.entries.append(rev)
         else:
@@ -1406,6 +1408,7 @@ def global_history(namespace):
                            bookmark_time=bookmark_time,
                            fqname=fqname,
                            title=title,
+                           int=int,
     )
 
 
