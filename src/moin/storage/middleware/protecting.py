@@ -181,8 +181,8 @@ class ProtectingMiddleware:
             if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
-    def search_len(self, q, idx_name=ALL_REVS, **kw):
-        return self.indexer.search_len(q, idx_name, **kw)
+    def search_results_size(self, q, idx_name=ALL_REVS, **kw):
+        return self.indexer.search_results_size(q, idx_name, **kw)
 
     def documents(self, idx_name=LATEST_REVS, **kw):
         for rev in self.indexer.documents(idx_name, **kw):

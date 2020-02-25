@@ -804,7 +804,7 @@ class IndexingMiddleware:
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_len(self, q, idx_name=ALL_REVS, **kw):
+    def search_results_size(self, q, idx_name=ALL_REVS, **kw):
         """
         Return the number of matching revisions.
         """
