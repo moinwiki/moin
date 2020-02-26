@@ -21,7 +21,7 @@ from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
 
-from moin.utils.interwiki import split_fqname
+from moin.utils.interwiki import split_fqname, CompositeName
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -243,7 +243,10 @@ class ProtectedItemMeta:
         """
         self.protector = protector
         self.meta = meta
-        self.fqnames = [split_fqname(name) for name in meta[NAME]]
+        if meta[NAME]:
+            self.fqnames = [split_fqname(name) for name in meta[NAME]]
+        else:
+            self.fqnames = [CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])]
 
     def full_acls(self):
         """
