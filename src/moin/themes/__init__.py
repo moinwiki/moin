@@ -707,18 +707,19 @@ def shorten_ctype(contenttype):
 
 def time_hh_mm(dt):
     """
-    Convert a datetime object into a short string of the form HH:MM
+    Convert a datetime object or timestamp into a short string of the form HH:MM
     where HH varies from 0 to 23.
     """
-    return show_time.format_time(datetime.datetime.utcfromtimestamp(dt), fmt='HH:mm')
+    return show_time.format_time(dt, fmt='HH:mm')
 
 
 def time_datetime(dt):
     """
     Alternative to babel datetimeformat, allows user to choose ISO 8601 format
-    by checking box in usersettings Options.
+    by checking box in usersettings Options. Input may be datetime object or
+    timestamp.
     """
-    return show_time.format_date_time(datetime.datetime.utcfromtimestamp(dt))
+    return show_time.format_date_time(dt)
 
 
 def setup_jinja_env():
