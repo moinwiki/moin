@@ -149,6 +149,12 @@ class ProtectingMiddleware:
             if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
+    def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+        for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
+            rev = ProtectedRevision(self, rev)
+            if rev.allows(READ) or rev.allows(PUBREAD):
+                yield rev
+
     def search_meta(self, q, idx_name=LATEST_REVS, **kw):
         """
         Yield an item's metadata, skipping any items where read permission is denied.
@@ -173,12 +179,6 @@ class ProtectingMiddleware:
             result = rev.allows(READ) or rev.allows(PUBREAD)
             last_rev_result = result
             if result:
-                yield rev
-
-    def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
-        for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
-            rev = ProtectedRevision(self, rev)
-            if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
     def search_results_size(self, q, idx_name=ALL_REVS, **kw):
