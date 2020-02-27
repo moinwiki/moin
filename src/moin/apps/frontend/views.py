@@ -1311,7 +1311,7 @@ def history(item_name):
     prev_page = 0
     next_page = 0
     if results_per_page:
-        len_revs = flaskg.storage.search_len(query, idx_name=ALL_REVS)
+        len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
         revs = flaskg.storage.search_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
         if page_num > 1:
             prev_page = page_num - 1

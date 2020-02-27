@@ -780,17 +780,6 @@ class IndexingMiddleware:
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_meta(self, q, idx_name=LATEST_REVS, **kw):
-        """
-        Search with query q, yield Revision metadata from index.
-        """
-        with self.ix[idx_name].searcher() as searcher:
-            # Note: callers must consume everything we yield, so the for loop
-            # ends and the "with" is left to close the index files.
-            for hit in searcher.search(q, **kw):
-                meta = hit.fields()
-                yield meta
-
     def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
         """
         Same as search, but with paging support.
@@ -804,7 +793,18 @@ class IndexingMiddleware:
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_len(self, q, idx_name=ALL_REVS, **kw):
+    def search_meta(self, q, idx_name=LATEST_REVS, **kw):
+        """
+        Search with query q, yield Revision metadata from index.
+        """
+        with self.ix[idx_name].searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search(q, **kw):
+                meta = hit.fields()
+                yield meta
+
+    def search_results_size(self, q, idx_name=ALL_REVS, **kw):
         """
         Return the number of matching revisions.
         """

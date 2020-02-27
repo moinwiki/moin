@@ -480,7 +480,10 @@ def item_acl_report():
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
-        fqnames = [CompositeName(item_namespace, NAME_EXACT, name) for name in item.meta[NAME]]
+        if item.meta.get(NAME):
+            fqnames = [CompositeName(item.meta[NAMESPACE], NAME_EXACT, name) for name in item.meta[NAME]]
+        else:
+            fqnames = [CompositeName(item.meta[NAMESPACE], ITEMID, item.meta[ITEMID])]
         fqname = fqnames[0]
         items_acls.append({'name': item_name,
                            'name_old': item.meta.get('name_old', []),
