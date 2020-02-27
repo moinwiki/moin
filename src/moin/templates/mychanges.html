@@ -8,22 +8,22 @@
 {% import "utils.html" as utils %}
 
 {# Create next page, prior page links shown at top and bottom of report. #}
-{% macro next_page(next_offset, previous_offset) %}
+{% macro page_links(next_page, prev_page) %}
+    {# if history is long and displayed as several pages, create links to show next and/or prior pages #}
     <div class='moin-offset-links'>
-        {% if previous_offset >= 0 %}
-            <a class='moin-prior-page' href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
+        {% if prev_page > 0 %}
+            <a class='moin-prior-page' href="{{ url_for('frontend.mychanges', page_num=prev_page) }}" title="{{ _("Previous") }}">&laquo;</a>
         {% endif %}
-        {% if next_offset %}
-            <a class='moin-next-page'href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
+        {% if next_page %}
+            <a class='moin-next-page' href="{{ url_for('frontend.mychanges', page_num=next_page) }}" title="{{ _("Next") }}">&raquo;</a>
         {% endif %}
     </div>
 {% endmacro %}
 
 {% block content %}
-    {% set (my_changes, next_offset, previous_offset) = my_changes_page %}
     <h1>{{ _('My Changes') }}</h1>
     {% if my_changes %}
-        {{ next_page(next_offset, previous_offset) }}
+        {{ page_links(next_page, prev_page) }}
         <div class="moin-clr"></div>
         <div class="moin-mychanges">
             <table class="zebra">
@@ -54,7 +54,7 @@
                 </tbody>
             </table>
         </div>
-        {{ next_page(next_offset, previous_offset) }}
+        {{ page_links(next_page, prev_page) }}
     {% else %}
         <p class='moin-flash moin-flash-javascript moin-flash-error'>{{ _("No changes found.") }}</p>
     {% endif %}

@@ -1161,45 +1161,54 @@ def index(item_name):
 @frontend.route('/+mychanges')
 def mychanges():
     """
-    Returns the list of all items the current user has contributed to.
+    Returns the list of all revisions the current user has modified. The list is
+    sorted in descending order by date-time and may be broken into pages
+    based upon user or site settings for results-per-page.
 
-    :returns: a page with all the items the current user has contributed to
+    :returns: a page with all the items the current user has modified.
     """
-    offset = request.values.get('offset', 0)
-    offset = max(int(offset), 0)
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    my_changes = _mychanges(flaskg.user.itemid)
-    my_changes_page = utils.getPageContent(my_changes, offset, results_per_page)
+    page_num = request.values.get('page_num', 1)
+    page_num = max(int(page_num), 1)
+
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
+    prev_page = 0
+    next_page = 0
+    if results_per_page:
+        len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
+        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        if page_num > 1:
+            prev_page = page_num - 1
+        pages = (len_revs + results_per_page - 1) // results_per_page
+        if page_num < pages:
+            next_page = page_num + 1
+    else:
+        revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+
+    my_changes = []
+    for rev in revs:
+        entry = {}
+        for key in (MTIME, SIZE, REV_NUMBER, REVID, CONTENTTYPE, ):
+            entry[key] = rev.meta[key]
+        entry[COMMENT] = rev.meta.get(COMMENT, '')
+        if rev.meta[NAME]:
+            entry[FQNAMES] = [CompositeName(rev.meta[NAMESPACE], NAME_EXACT, name) for name in rev.meta[NAME]]
+        else:
+            entry[FQNAMES] = [CompositeName(rev.meta[NAMESPACE], ITEMID, rev.meta[ITEMID])]
+        entry[FQNAME] = entry[FQNAMES][0]
+        my_changes.append(entry)
 
     return render_template('mychanges.html',
                            title_name=_('My Changes'),
                            headline=_('My Changes'),
-                           my_changes_page=my_changes_page,
+                           my_changes=my_changes,
+                           prev_page=prev_page,
+                           next_page=next_page,
+                           page_num=page_num,
     )
-
-
-def _mychanges(userid):
-    """
-    Returns a list with all fqnames of items which user userid has contributed to.
-
-    :param userid: user itemid
-    :type userid: unicode
-    :returns: the list of all items with user userid's contributions
-    """
-    q = And([Term(WIKINAME, app.cfg.interwikiname),
-             Term(USERID, userid)])
-    revs = flaskg.storage.search(q, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
-    # get rid of the content value to save potentially big amounts of memory:
-    history = []
-    for rev in revs:
-        entry = dict(rev.meta)
-        entry[FQNAME] = rev.fqname
-        entry[FQNAMES] = rev.fqnames
-        history.append(entry)
-    return history
 
 
 def shorten_item_id(name, length=7):
