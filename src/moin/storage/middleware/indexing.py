@@ -804,6 +804,17 @@ class IndexingMiddleware:
                 meta = hit.fields()
                 yield meta
 
+    def search_meta_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+        """
+        Same as search_meta, but with paging support.
+        """
+        with self.ix[idx_name].searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
+                meta = hit.fields()
+                yield meta
+
     def search_results_size(self, q, idx_name=ALL_REVS, **kw):
         """
         Return the number of matching revisions.

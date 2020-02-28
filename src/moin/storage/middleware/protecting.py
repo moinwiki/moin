@@ -181,6 +181,35 @@ class ProtectingMiddleware:
             if result:
                 yield rev
 
+    def search_meta_page(self, q, idx_name=LATEST_REVS, pagenum=None, pagelen=None, **kw):
+        """
+        Yield a revision's metadata, skipping any items where read permission is denied.
+
+        The intended use of this method is to return the rev metadata for a pagefull of
+        the items in the namespace subject to query restrictions. This is useful for reports
+        such as My Changes, Item History, etc.
+
+        Save processing time by avoiding a full ACL check when the answer will be the same as the last.
+
+        Note that ALCs are checked after whoosh returns a pagefull of items. It is possible that
+        the results shown to the user will have fewer revisions than expected.
+        """
+        last_rev_acl_parts = (None, None, None)
+        last_rev_result = None
+        for rev in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
+            rev = ProtectedItemMeta(self, rev)
+            this_rev_acl_parts = (rev.meta[NAMESPACE], rev.meta.get(PARENTNAMES), rev.meta.get(ACL))
+            if this_rev_acl_parts == last_rev_acl_parts:
+                # skip the acl check because we know the answer will be the same
+                if last_rev_result:
+                    yield rev
+                continue
+            last_rev_acl_parts = this_rev_acl_parts
+            result = rev.allows(READ) or rev.allows(PUBREAD)
+            last_rev_result = result
+            if result:
+                yield rev
+
     def search_results_size(self, q, idx_name=ALL_REVS, **kw):
         return self.indexer.search_results_size(q, idx_name, **kw)
 
