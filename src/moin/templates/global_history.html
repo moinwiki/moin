@@ -30,7 +30,7 @@
 {% block content %}
     <h1>{{ title }}</h1>
     <div class='moin-clr'></div>
-        {# TODO: need bookmark control and days to show here, see 1.9 RecentChanges #}
+        {{ utils.page_links(page_num, pages, url) }}
         {# make columns line up by creating one long table styled to look like one table per day  #}
         <table id="moin-global-history">
             {% for day, revs in history %}
@@ -81,4 +81,5 @@
             {% endif %}
 
         </table>
+        {{ utils.page_links(page_num, pages, url) }}
 {% endblock %}

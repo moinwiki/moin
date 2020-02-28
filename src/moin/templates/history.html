@@ -37,14 +37,7 @@
         {% endif %}
 
         {# if history is long and displayed as several pages, create links to show next and/or prior pages #}
-        <div class='moin-offset-links'>
-            {% if prev_page > 0 %}
-                <a class='moin-prior-page' href="{{ url_for('frontend.history', item_name=fqname, page_num=prev_page) }}" title="{{ _("Previous") }}">&laquo;</a>
-            {% endif %}
-            {% if next_page %}
-                <a class='moin-next-page' href="{{ url_for('frontend.history', item_name=fqname, page_num=next_page) }}" title="{{ _("Next") }}">&raquo;</a>
-            {% endif %}
-        </div>
+        {{ utils.page_links(page_num, pages, url) }}
 
         <div class="moin-clr"></div>
         <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
@@ -187,5 +180,6 @@
                 </table>
             </div>
         </form>
+        {{ utils.page_links(page_num, pages, url) }}
     {%- endif %}
 {%- endblock %}
