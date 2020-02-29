@@ -1175,18 +1175,16 @@ def mychanges():
     page_num = max(int(page_num), 1)
 
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
-    prev_page = 0
-    next_page = 0
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
         revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
-        if page_num > 1:
-            prev_page = page_num - 1
         pages = (len_revs + results_per_page - 1) // results_per_page
-        if page_num < pages:
-            next_page = page_num + 1
+        if page_num > pages:
+            # user has entered bad page_num in url
+            page_num = pages
     else:
-        revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        pages = 1
+        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     my_changes = []
     for rev in revs:
@@ -1205,9 +1203,9 @@ def mychanges():
                            title_name=_('My Changes'),
                            headline=_('My Changes'),
                            my_changes=my_changes,
-                           prev_page=prev_page,
-                           next_page=next_page,
                            page_num=page_num,
+                           pages=pages,
+                           url=request.url.split('?')[0],
     )
 
 
@@ -1317,17 +1315,14 @@ def history(item_name):
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
 
-    prev_page = 0
-    next_page = 0
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
         revs = flaskg.storage.search_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
-        if page_num > 1:
-            prev_page = page_num - 1
         pages = (len_revs + results_per_page - 1) // results_per_page
-        if page_num < pages:
-            next_page = page_num + 1
+        if page_num > pages:
+            page_num = pages
     else:
+        pages = 1
         revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     # get rid of the content value to save potentially big amounts of memory:
@@ -1355,8 +1350,8 @@ def history(item_name):
                           item=item,
                           item_name=item_name,
                           history=history,
-                          prev_page=prev_page,
-                          next_page=next_page,
+                          page_num=page_num,
+                          pages=pages,
                           editor_infos=editor_infos,
                           bookmark_time=bookmark_time,
                           NAME_EXACT=NAME_EXACT,
@@ -1373,6 +1368,14 @@ def history(item_name):
 def global_history(namespace):
     all_revs = bool(request.values.get('all'))  # no UI help, user must add ?all=1 to url
     idx_name = ALL_REVS if all_revs else LATEST_REVS
+
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
+
+    page_num = request.values.get('page_num', 1)
+    page_num = max(int(page_num), 1)
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
     fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
@@ -1384,7 +1387,17 @@ def global_history(namespace):
     if bookmark_time is not None:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
-    revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
+
+    if results_per_page:
+        len_revs = flaskg.storage.search_results_size(query, idx_name=idx_name)
+        revs = flaskg.storage.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME],
+               reverse=True, pagenum=page_num, pagelen=results_per_page)
+        pages = (len_revs + results_per_page - 1) // results_per_page
+        if page_num > pages:
+            page_num = pages
+    else:
+        pages = 1
+        revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=None)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
@@ -1418,6 +1431,9 @@ def global_history(namespace):
                            fqname=fqname,
                            title=title,
                            int=int,
+                           page_num=page_num,
+                           pages=pages,
+                           url=request.url.split('?')[0],
     )
 
 

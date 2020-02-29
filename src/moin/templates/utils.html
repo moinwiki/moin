@@ -1,3 +1,9 @@
+{#
+    Macros used by multiple templates.
+
+    Original Moin code should be added here. Macros derived from Flatland should be added to forms.html.
+#}
+
 {% import 'forms.html' as forms %}
 
 {# "item" must be passed because of flakey jinja2 context passing #}
@@ -57,12 +63,10 @@
     {%- endif -%}
 {% endmacro %}
 
-
 {% macro editor_info(meta) %}
     {%- set info = get_editor_info(meta) -%}
     {{ show_editor_info(info) }}
 {% endmacro %}
-
 
 {% macro table(headings, rows, itemname_cols=[], url_cols=[]) %}
     <table class="zebra table table-hover">
@@ -321,7 +325,6 @@
     </li>
 {% endmacro %}
 
-
 {# called by diff to provide revision navigation on right column:  <  revision: 5  >  >> #}
 {% macro show_newer_rev_links(item_name, rev, rev_links) %}
     <div class="moin-diff-revision-caption">
@@ -456,7 +459,6 @@
     </table>
 {% endmacro %}
 
-
 {# Return links to Login or User/Settings/Logout; callers must provide an enclosing UL tag #}
 {% macro user_login_logoff() %}
     {% if user.valid -%}
@@ -501,7 +503,6 @@
     {%- endif %}
 {% endmacro %}
 
-
 {# create an icon with a link to revert or diff, or an icon based on contenttype of item #}
 {% macro item_status_icon(fqname, meta, bookmark_time) %}
     {% if meta.trash %}
@@ -524,7 +525,6 @@
     {% endif %}
 {% endmacro %}
 
-
 {# Display an item name, item alias names, item summary or item ID and old names #}
 {%- macro item_moniker(meta, fqnames) %}
     {%- if meta.name %}
@@ -545,3 +545,20 @@
         <span class="moin-history-name-old" title="{{ meta.name_old[0] }} was deleted">~({{ meta.name_old|join(' | ') }})</span>
     {%- endif %}
 {%- endmacro %}
+
+{# Create next page, prior page links for multi-page reports. #}
+{% macro page_links(page_num, pages, url) %}
+    {# if history is long and displayed as several pages, create links to show next and/or prior pages #}
+    <div class="moin-offset-links">
+        {% if page_num > 1 %}
+            <a class="moin-prior-page" href="{{ url }}?page_num={{ page_num-1 }}" title="{{ _("Previous") }}">&laquo;</a>
+        {% endif %}
+        {% if pages > 1 %}
+            {% set page_number = _("Page %(page_num)s of %(pages)s", page_num=page_num, pages=pages) %}
+            <span class="moin-page-num"> {{ page_number }} </span>
+        {% endif %}
+        {% if page_num < pages %}
+            <a class="moin-next-page" href="{{ url }}?page_num={{ page_num+1 }}" title="{{ _("Next") }}">&raquo;</a>
+        {% endif %}
+    </div>
+{% endmacro %}
