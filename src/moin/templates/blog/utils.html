@@ -15,7 +15,7 @@
         <div class="moin-blog-entry-info">
             {% set publication_time = entry_item.meta['ptime'] or entry_item.meta['mtime'] %}
             {% if publication_time %}
-                {{ _("Published on") }} {{ publication_time|datetimeformat }}
+                {{ _("Published on") }} {{ publication_time|time_datetime }}
                 {{ _("by") }} {{ utils.editor_info(entry_item.meta) }}
             {% endif %}
         </div>

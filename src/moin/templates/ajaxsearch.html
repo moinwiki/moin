@@ -68,7 +68,7 @@
                                 {% endif %}
                                 <tr class="moin-search-meta">
                                     <td>
-                                        <p class="info searchhitinfobar">{{ _("Revision: %(revid)s - %(size)s - %(mtime)s - %(type)s", type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|datetimeformat, size=result['size']|filesizeformat, revid=result['revid']|shorten_id) }}</p>
+                                        <p class="info searchhitinfobar">{{ _("Revision: %(revid)s - %(size)s - %(mtime)s - %(type)s", type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|time_datetime, size=result['size']|filesizeformat, revid=result['revid']|shorten_id) }}</p>
                                     </td>
                                 </tr>
                                 <tr>

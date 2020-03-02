@@ -18,7 +18,7 @@
             <a class="moin-button" href="{{ url_for('frontend.revert_item', item_name=item_name, rev=newrev.meta.revid) }}" title="{{ _('revert') }}">
                 {{ _('Revert to Revision') }}
                 {{ newrev.meta['rev_number'] or newrev.revid|shorten_id }} -
-                {{ newrev.meta.mtime|datetimeformat }}
+                {{ newrev.meta.mtime|time_datetime }}
             </a>
         </div>
         <div class="moin-float-fix"></div>
