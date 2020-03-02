@@ -15,7 +15,7 @@
                 {% if prior_mtime -%}
                     <a href="{{ url_for(view, item_name=fqname, rev=prior_rev) }}">
                         <span class="fa fa-arrow-left"></span>
-                        {{ _('older') }} {{ prior_mtime|datetimeformat }}
+                        {{ _('older') }} {{ prior_mtime|time_datetime }}
                     </a>
                 {%- else -%}
                     <span class="moin-disabled">{{ _('no older revision') }}</span>
@@ -24,12 +24,12 @@
             <li class="moin-rev-navigation-current">
                 {{ _('Revision ') }}
                 {{ item.meta.rev_number or current_rev | shorten_id }}:
-                {{ current_mtime|datetimeformat }}
+                {{ current_mtime|time_datetime }}
             </li>
             <li class="moin-rev-navigation-newer">
                 {% if next_mtime -%}
                     <a href="{{ url_for(view, item_name=fqname, rev=next_rev) }}">
-                        {{ _('newer') }} {{ next_mtime|datetimeformat }}
+                        {{ _('newer') }} {{ next_mtime|time_datetime }}
                         <span class="fa fa-arrow-right"></span>
                     </a>
                 {%- else -%}
@@ -412,7 +412,7 @@
             {{ _('Time') }}:
         </span>
         <span class="moin-diff-info-value">
-            {{ rev.meta.mtime|datetimeformat }}
+            {{ rev.meta.mtime|time_datetime }}
         </span>
     </div>
     <div>
