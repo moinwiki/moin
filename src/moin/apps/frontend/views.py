@@ -27,6 +27,7 @@ import urllib.parse
 import urllib.error
 from io import BytesIO
 from datetime import datetime
+from datetime import timezone
 from collections import namedtuple
 from functools import wraps, partial
 
@@ -1192,11 +1193,7 @@ def mychanges():
         for key in (MTIME, SIZE, REV_NUMBER, REVID, CONTENTTYPE, ):
             entry[key] = rev.meta[key]
         entry[COMMENT] = rev.meta.get(COMMENT, '')
-        if rev.meta[NAME]:
-            entry[FQNAMES] = [CompositeName(rev.meta[NAMESPACE], NAME_EXACT, name) for name in rev.meta[NAME]]
-        else:
-            entry[FQNAMES] = [CompositeName(rev.meta[NAMESPACE], ITEMID, rev.meta[ITEMID])]
-        entry[FQNAME] = entry[FQNAMES][0]
+        entry[FQNAMES] = rev.fqnames
         my_changes.append(entry)
 
     return render_template('mychanges.html',
@@ -1323,7 +1320,7 @@ def history(item_name):
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     # get rid of the content value to save potentially big amounts of memory:
     history = []
@@ -1377,10 +1374,8 @@ def global_history(namespace):
     page_num = request.values.get('page_num', 1)
     page_num = max(int(page_num), 1)
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
-    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
         terms.append(Term(NAMESPACE, namespace))
-        fqname = split_fqname(namespace)
     else:
         terms.append(Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)))
     bookmark_time = flaskg.user.bookmark
@@ -1404,7 +1399,8 @@ def global_history(namespace):
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
     for rev in revs:
-        rev_date = show_time.format_date(rev.meta[MTIME].timestamp())
+        rev.meta[MTIME] = int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
+        rev_date = show_time.format_date(rev.meta[MTIME])
         if rev_date == prev_date:
             dh.entries.append(rev)
         else:
@@ -1414,7 +1410,6 @@ def global_history(namespace):
     else:
         history.append(dh)
     del history[0]  # kill the dummy
-
     title_name = _('Global History')
     if namespace == NAMESPACE_ALL:
         title = _("Global History of All Namespaces")
@@ -1428,7 +1423,6 @@ def global_history(namespace):
                            history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
-                           fqname=fqname,
                            title=title,
                            int=int,
                            page_num=page_num,
