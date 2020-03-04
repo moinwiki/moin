@@ -228,8 +228,8 @@ def send_notifications(app, fqname, **kwargs):
     for locale in subscribers_locale:
         with force_locale(locale):
             txt_msg, html_msg = notification.render_templates(content_diff, meta_diff)
-            subject = L_('[%(moin_name)s] Update of "%(fqname)s" by %(user_name)s',
-                         moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=u.name0)
+            subject = _('[%(moin_name)s] Update of "%(fqname)s" by %(user_name)s',
+                        moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=u.name0)
             subscribers_emails = [subscriber.email for subscriber in subscribers
                                   if subscriber.locale == locale]
             sendmail(subject, txt_msg, to=subscribers_emails, html=html_msg)
