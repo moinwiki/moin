@@ -273,7 +273,7 @@ class ProtectedItemMeta:
         self.protector = protector
         self.meta = meta
         if meta[NAME]:
-            self.fqnames = [split_fqname(name) for name in meta[NAME]]
+            self.fqnames = [CompositeName(meta[NAMESPACE], NAME_EXACT, name) for name in meta[NAME]]
         else:
             self.fqnames = [CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])]
 
