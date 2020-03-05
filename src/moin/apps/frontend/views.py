@@ -1372,8 +1372,10 @@ def global_history(namespace):
     page_num = request.values.get('page_num', 1)
     page_num = max(int(page_num), 1)
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
         terms.append(Term(NAMESPACE, namespace))
+        fqname = split_fqname(namespace)
     else:
         terms.append(Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)))
     bookmark_time = flaskg.user.bookmark
@@ -1421,6 +1423,7 @@ def global_history(namespace):
                            history=history,
                            current_timestamp=current_timestamp,
                            bookmark_time=bookmark_time,
+                           fqname=fqname,
                            title=title,
                            int=int,
                            page_num=page_num,
