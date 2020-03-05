@@ -2187,9 +2187,10 @@ def diff(item_name):
     set a bookmark, then the diff is made between the current revision and the
     revision just prior to the user's bookmark date-time or the oldest revision available.
 
-    If the above condition is not met, then the call from Global history or a call
-    from Item History or a call from a Diff display will pass two revision IDs to
-    be processed.
+    If the user is not logged-in or has no bookmark, then the call from Global history
+    will pass the 2 most recent revision IDs to be compared. If a call is made from
+    Item History or from a Diff display then the two revision IDs selected by the user
+    will be processed.
 
     If the call is made from Item History, then there may be a difference in the
     display based upon whether the call is made based upon Item Name or
@@ -2214,15 +2215,19 @@ def diff(item_name):
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
     terms.extend(Term(term, value) for term, value in fqname.query.items())
     query = And(terms)
-    revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+    revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     close_file(item.rev.data)
     item = flaskg.storage.get_item(**fqname.query)
-    revs = [(rev.meta[MTIME], rev.meta[REVID]) for rev in revs]
+    revs = [(int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), rev.meta[REVID], rev.meta[ITEMID]) for rev in revs]
     if not revs:
         abort(404)
+    # we do not do diffs across item IDs should an item be deleted and recreated with same name
+    item_id = revs[0][2]
+    rev_ids = [x[1] for x in revs if x[2] == item_id]
+    rev_ids.reverse()
     if bookmark_time:
         # try to find the latest rev1 before user's bookmark <date-time>
-        for mtime, revid in revs:
+        for mtime, revid, item_id in revs:
             if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
@@ -2233,7 +2238,6 @@ def diff(item_name):
         # otherwise we try get the 2 revids directly
         rev1 = request.values.get('rev1')
         rev2 = request.values.get('rev2')
-        rev_ids = [x[1] for x in revs]
         if rev1 not in rev_ids:
             if len(revs) > 1:
                 rev1 = revs[1][1]  # take second newest rev
@@ -2242,7 +2246,7 @@ def diff(item_name):
                 flash(_('There is only one revision eligible for diff.'), "info")
         if rev2 not in rev_ids:
             rev2 = revs[0][1]  # the newest rev we have
-    return _diff(item, rev1, rev2, fqname)
+    return _diff(item, rev1, rev2, fqname, rev_ids)
 
 
 def _common_type(ct1, ct2):
@@ -2275,7 +2279,7 @@ def _crash(item, oldrev, newrev):
     )
 
 
-def _diff(item, revid1, revid2, fqname):
+def _diff(item, revid1, revid2, fqname, rev_ids):
     """
     Return html fragment containing formatted diff and rendered item revision
     defined by revid2.
@@ -2290,20 +2294,13 @@ def _diff(item, revid1, revid2, fqname):
         oldrev, newrev = newrev, oldrev
         revid1, revid2 = revid2, revid1
     common_ct = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
+
     try:
         item = Item.create(fqname.fullname, contenttype=common_ct, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
 
-    # create dict containing older and newer revids to be used in formatting links
-    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in item.fqname.query.items())
-    query = And(terms)
-    rev_ids = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=False, limit=None)
-    rev_ids = [x.meta for x in rev_ids]
-    # we do not do diffs across item IDs should an item be deleted and recreated with same name
-    item_id = rev_ids[-1]['itemid']
-    rev_ids = [x['revid'] for x in rev_ids if x['itemid'] == item_id]
+    # if there are many revisions, create rev_links dict with links to older and newer revisions on diff display
     rev_links = {}
     if len(rev_ids) > 2:
         rev1_idx = rev_ids.index(revid1)
