@@ -488,7 +488,7 @@ class EditLog(LogFile):
                 # keep EXTRA for find_attach
             elif action == 'SAVE/RENAME':
                 if extra:
-                    result[NAME_OLD] = extra
+                    result[NAME_OLD] = [extra]
                 del result[EXTRA]
                 result[ACTION] = ACTION_RENAME
             elif action == 'SAVE/REVERT':
