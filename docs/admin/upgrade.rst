@@ -12,10 +12,13 @@ Upgrading
    to be compatible in some areas:
 
    * Server and wiki engine Configuration: expect to review/rewrite it
-   * Wiki content: expect 90% compatibility for existing moin 1.9 content. The
-     most commonly used simple moin wiki markup (like headlines, lists, bold,
-     ...) will still work, but expect to change macros, parsers, action links,
-     3rd party extensions, for example.
+   * Wiki content: expect 90% compatibility for existing moin 1.9 content.
+     * The most commonly used simple moin wiki markup (like headlines, lists, bold,
+       ...) has not changed
+     * CamelCase auto links will be converted to explicit [[CamelCase]] links
+     * [[attachment:my.jpg]] will be converted to [[/my.jpg]]
+     * {{attachment:my.jpg}} will be converted to {{/my.jpg}}
+     * expect to change macros, parsers, action links, 3rd party extensions
 
 From moin < 1.9
 ===============
@@ -117,3 +120,28 @@ Keep your backups
 -----------------
 Make sure you keep all backups of your moin 1.9 installation, such as code, config,
 data, just in case you are not happy with moin2 and need to revert to the old version.
+
+
+Converting after reverting
+--------------------------
+.. if the above title is changed, also change CONTENTTYPES_HELP_DOCS in constants/contenttypes.py
+
+The import19 process converts text items using Moinmoin 1.9 syntax to
+Moinmoin 2.0 syntax.
+
+The conversion is accomplished by creating a new revision of each moin wiki text item.
+Click the History link under the Item Views panel to view the revisions.
+The latest revision will have a content type of "Moinmoin" while the older revisions
+created prior to conversion will have a content type of "Moinmoin 1.9"
+Click the Diff link to see the content changes made by import19.
+
+If a moin wiki item is reverted to a revision having a content type of "Moinmoin 1.9"
+with embedded old style CamelCase auto links and/or attachments (`{{attachment:my.jpg}}`),
+the revision is not converted to the Moinmoin 2 syntax automatically. Editors must do
+the conversion by clicking the Convert link within the Item Views panel.
+
+Reverted revisions left in the Moinmoin 1.9 format will render correctly and
+the reverted item may be updated and saved using the old 1.9 syntax. However,
+it is recommended that all such revisions be converted to the new moin syntax
+because the old CamelCase and attachment conventions are deprecated and will
+never be included in the moin 2 docs.

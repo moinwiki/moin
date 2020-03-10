@@ -991,8 +991,12 @@ class Default(Contentful):
 
     def doc_link(self, filename, link_text):
         """create a link to serve local doc files as help for wiki editors"""
-        filename = url_for('serve.files', name='docs', filename=filename)
-        return '<a href="%s">%s</a>' % (filename, link_text)
+        if '#' in filename:
+            filename, anchor = filename.split('#')
+        else:
+            anchor = None
+        filename = url_for('serve.files', name='docs', filename=filename, _anchor=anchor)
+        return filename, link_text
 
     def meta_changed(self, meta):
         """
@@ -1198,6 +1202,7 @@ class Default(Contentful):
                                edit_rows=edit_rows,
                                draft_data=draft_data,
                                lock_duration=lock_duration,
+                               tuple=tuple,
                               )
 
 
