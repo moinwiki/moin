@@ -131,7 +131,11 @@ class ImportMoin19(Command):
         reg = default_registry
         refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
         for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
-            print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
+            try:
+                print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
+            except UnicodeEncodeError:
+                print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(
+                      item_name.encode('ascii', errors='replace'), namespace, revno))
             if namespace == '':
                 namespace = 'default'
             meta, data = backend.retrieve(namespace, revno)
@@ -228,7 +232,10 @@ class PageItem:
         self.backend = backend
         self.name = itemname
         self.path = path
-        print("Processing item {0}".format(itemname))
+        try:
+            print("Processing item {0}".format(itemname))
+        except UnicodeEncodeError:
+            print("Processing item {0}".format(itemname.encode('ascii', errors='replace')))
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -382,8 +389,12 @@ class PageRevision:
             if k not in self.meta:
                 self.meta[k] = ''
         self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
-        print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
-              item_name, meta[REVID], meta[CONTENTTYPE]))
+        try:
+            print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+                  item_name, meta[REVID], meta[CONTENTTYPE]))
+        except UnicodeEncodeError:
+            print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+                  item_name.encode('ascii', errors='replace'), meta[REVID], meta[CONTENTTYPE]))
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
