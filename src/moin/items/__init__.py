@@ -852,13 +852,10 @@ class Item:
                             direct_fullname = prefix + direct_relname
                             direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
                             fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
-                            try:
-                                direct_rev = get_storage_revision(fqname)
-                            except AccessDenied:
-                                continue  # user has permission to see parent, but not this subitem
-                            dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, direct_rev.meta))
+                            dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                     else:
-                        files.append(IndexEntry(relname, fullname_fqname, rev.meta))
+                        mini_meta = {key: rev.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}
+                        files.append(IndexEntry(relname, fullname_fqname, mini_meta))
         files.sort()  # files with multiple names are not in sequence
         return dirs, files
 
