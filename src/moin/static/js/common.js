@@ -318,21 +318,6 @@ MoinMoin.prototype.toggleSubtree = function (item) {
 };
 
 
-// Executed when user clicks insert-name button defined in modify.html.
-// When a page with subitems is modified, a subitems sidebar is present. User may
-// position caret in textarea and click button to insert name into textarea.
-MoinMoin.prototype.InsertName = function (fullname) {
-    "use strict";
-    var textArea, endPos, startPos;
-    textArea = document.getElementById('f_content_form_data_text');
-    startPos = textArea.selectionStart;
-    endPos = textArea.selectionEnd;
-    textArea.value = textArea.value.substring(0, startPos) + fullname + textArea.value.substring(endPos, textArea.value.length);
-    textArea.focus();
-    textArea.setSelectionRange(startPos + fullname.length, startPos + fullname.length);
-};
-
-
 // User Settings page enhancements - make long multi-form page appear as a shorter page
 // with a row of tabs at the top or side that may be clicked to select a form.
 MoinMoin.prototype.enhanceUserSettings = function () {
@@ -776,11 +761,6 @@ $(document).ready(function () {
     // remove a server-side flash message by clicking on it
     $('.moin-flash').click(function () {
         this.remove();
-    });
-
-    $('.moin-insertname-action').click(function () {
-        var fullname = $(this).data('name');
-        moin.InsertName(fullname);
     });
 
     $('.expander').click(function () {
