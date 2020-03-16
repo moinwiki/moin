@@ -101,44 +101,6 @@
     </table>
 {% endmacro %}
 
-{% macro _render_subitem_navigation_tree(index, newtab, parentcaller) %}
-    <ul>
-        {% for e in index %}
-            <li>
-                {# call our parent's caller with all the data we have if they exist, used to implement
-                    transclude/link actions in the modify view #}
-                {% if parentcaller %}
-                    {{ parentcaller(e.fullname, e.relname, e.meta['contenttype'], e.hassubitems) }}
-                {% endif %}
-                <a href="{{ url_for('frontend.show_item', item_name=e.fullname) }}"
-                    title="{{ e.relname }}" class="subitem-link"
-                    {% if newtab %}target="_blank"{% endif %}>{{ e.relname }}</a>
-                {% if e.hassubitems %}
-                    <button class="expander" title="{{ _('Expand Subitem') }}"></button>
-                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.fullname), newtab, parentcaller) }}
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-{% endmacro %}
-
-{% macro render_subitem_navigation(fqname, newtab, subitems=None) %}
-    {% if not subitems %}
-        {% set subitems = theme_supp.subitem_index(fqname) %}
-    {% endif %}
-    {% if caller %}
-        {% set mycaller = caller %}
-    {% endif %}
-    {% if subitems %}
-        <div class="moin-subitem-navigation">
-            <div class="list-header">
-                {{ _('Subitems') }}
-            </div>
-            {{ _render_subitem_navigation_tree(subitems, newtab, mycaller) }}
-        </div>
-    {% endif %}
-{% endmacro %}
-
 {% macro header_search(form) %}
     {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
             {{ forms.render(form['q']) }}

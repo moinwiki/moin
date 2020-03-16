@@ -34,15 +34,6 @@
     {% endif %}
 {% endblock %}
 
-{% block subitem_navigation %}
-    {% call(fullname, shortname, contenttype, has_children) utils.render_subitem_navigation(fqname, True) %}
-        {% set shortname = shortname|json_dumps %}
-        <button class="moin-insertname-action" data-name="{{ fullname }}"
-            title="{{ _('Insert Name') }}">{{ _('Insert Name') }}</button>
-    {% endcall %}
-{% endblock %}
-
-
 {% block content %}
     <h1>{{ title }}</h1>
     <div id="moin-modify" class="moin-form">

@@ -109,7 +109,6 @@ ul.moin-breadcrumb li:hover ul.moin-alias{display:block}
 }@media (max-width: 1025px){ul.moin-itemviews span{display:none}
 ul.moin-itemviews i{display:inline}
 }.moin-subitem-navigation{padding:.9em;background:#d8dfe9;margin:0;vertical-align:top;font-size:.8em;width:15%;overflow:hidden;display:table-cell;word-wrap:break-word;border-radius:9px}
-.moin-subitem-navigation .list-header{margin:2px 0;padding:0;font-size:1.1em}
 .moin-subitem-navigation .sep{font-size:1.2em;margin-left:0}
 .moin-subitem-navigation ul{display:block;margin:0;padding:0 4px}
 .moin-subitem-navigation li{padding:.5em 2px;line-height:1em;list-style:none}
@@ -118,7 +117,6 @@ ul.moin-itemviews i{display:inline}
 .moin-subitem-navigation a:hover{text-decoration:underline}
 .moin-subitem-navigation li ul{border-left:1px dotted #4e7da9;display:none}
 .moin-subitem-navigation .expander{background:url("../img/moin-expand.png") no-repeat center center;cursor:pointer;height:16px;overflow:hidden;vertical-align:middle;width:16px;border:hidden;text-indent:-9000%}
-.moin-insertname-action{border:hidden;text-indent:-9000%;padding:0;margin:0 -2px;vertical-align:middle;height:16px;width:16px;overflow:hidden;cursor:pointer;box-shadow:none;background:url("../img/moin-link.png") no-repeat center center}
 #moin-navibar li.moin-panel-heading,li.moin-panel-heading{display:none}
 a.moin-permalink{display:none;cursor:pointer;margin-left:.1em;color:#939393;}
 a.moin-permalink:hover.moin-permalink{color:#1f62ad}
