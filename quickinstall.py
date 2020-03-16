@@ -52,6 +52,7 @@ import platform
 import glob
 import shutil
 import fnmatch
+import timeit
 from collections import Counter
 try:
     import virtualenv
@@ -79,6 +80,7 @@ BACKUPWIKI = 'm-backup-wiki.txt'
 DUMPHTML = 'm-dump-html.txt'
 EXTRAS = 'm-extras.txt'
 DIST = 'm-create-dist.txt'
+INDEX = 'm-rebuild-index.txt'
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath('wiki/backup.moin')
 JUST_IN_CASE_BACKUP = os.path.normpath('wiki/deleted-backup.moin')
@@ -109,6 +111,7 @@ CMD_LOGS = {
     'dump-html': DUMPHTML,
     'extras': EXTRAS,
     'dist': DIST,
+    'index': INDEX,
 }
 
 
@@ -156,10 +159,11 @@ def search_for_phrase(filename):
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version', 'successfully installed', 'finished', ),
         # ': e' matches lines similar to: src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
-        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f', ),
+        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f', ' passed, '),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
-        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', )
+        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', ),
+        INDEX: ('error', 'fail', 'timeout', 'traceback', 'success', ),
     }
     ignore_phrases = {TOX: ('interpreternotfound', )}
     # for these file names, display a count of occurrances rather than each found line
@@ -293,7 +297,13 @@ def create_m():
 class Commands:
     """Each cmd_ method processes a choice on the menu."""
     def __init__(self):
-        pass
+        self.tic = timeit.default_timer()
+
+    def run_time(self, command):
+        seconds = int(timeit.default_timer() - self.tic)
+        (t_min, t_sec) = divmod(seconds, 60)
+        (t_hour,t_min) = divmod(t_min, 60)
+        print('{} run time (h:mm:ss) {}:{:0>2}:{:0>2}'.format(command, t_hour, t_min, t_sec))
 
     def cmd_quickinstall(self, *args):
         """create or update a virtual environment with the required packages"""
@@ -309,6 +319,7 @@ class Commands:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
+        self.run_time('Quickinstall')
 
     def cmd_docs(self, *args):
         """create local Sphinx html documentation"""
@@ -322,6 +333,7 @@ class Commands:
             print('HTML docs successfully created in {0}.'.format(os.path.normpath('docs/_build/html')))
         else:
             print('Error: creation of HTML docs failed with return code "{0}". Do "{1} log docs" to see complete log.'.format(result, M))
+        self.run_time('Docs')
 
     def cmd_extras(self, *args):
         """install optional packages: Pillow, sqlalchemy, ldap, requirements.d"""
@@ -339,6 +351,7 @@ class Commands:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('\nImportant messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(EXTRAS, M))
         search_for_phrase(EXTRAS)
+        self.run_time('Extras')
 
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
@@ -389,6 +402,7 @@ class Commands:
         # load individual items from contrib/sample, index will be updated
         if success:
             success = put_items()
+        self.run_time('Sample')
 
     def cmd_restore(self, *args):
         """create wiki and load data from wiki/backup.moin or user specified path"""
@@ -402,6 +416,7 @@ class Commands:
             make_wiki(command)
         else:
             print('Error: cannot create wiki because {0} does not exist.'.format(filename))
+        self.run_time('Restore')
 
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki directory named dir"""
@@ -415,6 +430,7 @@ class Commands:
                 print('Error: cannot create wiki because {0} does not exist.'.format(dirname))
         else:
             print('Error: a path to the Moin 1.9 wiki/data data directory is required.')
+        self.run_time('Import19')
 
     def cmd_index(self, *args):
         """delete and rebuild index"""
@@ -422,11 +438,15 @@ class Commands:
             command = '{0}moin index-create -i{1} moin index-build'.format(ACTIVATE, SEP)
             print('Rebuilding indexes...')
             try:
-                subprocess.call(command, shell=True)
+                with open(INDEX, 'w') as messages:
+                    subprocess.call(command, shell=True, stderr=messages, stdout=messages)
+                print('\nImportant messages from {0} are shown below. Do "{1} log index" to see complete log.'.format(INDEX, M))
+                search_for_phrase(INDEX)
             except KeyboardInterrupt:
                 pass  # eliminates traceback on windows
         else:
             print('Error: a wiki must be created before rebuilding the indexes.')
+        self.run_time('Rebuild index')
 
     def cmd_run(self, *args):
         """run built-in wiki server"""
@@ -470,6 +490,7 @@ class Commands:
                 print('\nError: attempt to backup wiki failed.')
         else:
             print('Error: cannot backup wiki because it has not been created.')
+        self.run_time('Backup')
 
     def cmd_dump_html(self, *args):
         """create a static html dump of this wiki"""
@@ -487,6 +508,7 @@ class Commands:
             search_for_phrase(DUMPHTML)
         else:
             print('Error: cannot dump wiki because it has not been created.')
+        self.run_time('HTML Dump')
 
     def cmd_css(self, *args):
         """run Stylus and lessc to update CSS files"""
@@ -529,6 +551,7 @@ class Commands:
         result = subprocess.call(command, shell=True)
         print('Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(TOX, M))
         search_for_phrase(TOX)
+        self.run_time('Tests')
 
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
@@ -590,6 +613,7 @@ class Commands:
             print('Wiki data successfully deleted.')
         else:
             print('Wiki data not deleted because it does not exist.')
+        self.run_time('Delete wiki')
 
 
 class QuickInstall:
