@@ -28,7 +28,7 @@ class Converter:
         return cls()
 
     def __call__(self, rev, contenttype=None, arguments=None):
-        item_name = rev.item.fqname.value
+        item_name = rev.item.fqname.fullname
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name, query='do=modify'),
         }
