@@ -1432,21 +1432,33 @@ def global_history(namespace):
     )
 
 
-def _compute_item_sets():
+def _compute_item_sets(wanted=False):
     """
     compute sets of existing, linked, transcluded and no-revision item fqnames
     """
     linked = set()
     transcluded = set()
     existing = set()
+    who_wants = {}
     query = And([Term(WIKINAME, app.cfg.interwikiname),
             Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
-    for rev in revs:
-        existing |= set(rev.fqnames)
-        linked.update(rev.meta.get(ITEMLINKS, []))
-        transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
-    return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded))
+    if wanted:
+        for rev in revs:
+            existing |= set(rev.fqnames)
+            linked.update(rev.meta.get(ITEMLINKS, []))
+            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+            # who_wants needed by wanted_items, may add a few seconds of processing time for larger wikis
+            for name in rev.meta.get(ITEMLINKS, []):
+                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+            for name in rev.meta.get(ITEMTRANSCLUSIONS, []):
+                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+    else:
+        for rev in revs:
+            existing |= set(rev.fqnames)
+            linked.update(rev.meta.get(ITEMLINKS, []))
+            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+    return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded)), who_wants
 
 
 def split_fqname_list(names):
@@ -1460,16 +1472,21 @@ def split_fqname_list(names):
 def wanted_items():
     """
     Returns a list view of non-existing items that are linked to or
-    transcluded by other items. If you want to know by which items they are
-    referred to, use the backrefs functionality of the item in question.
+    transcluded by other items. Also returns the names of items
+    having the links or transclusions.
+
+    A second way of finding the items with the referred to links, is to
+    use the backrefs functionality of the item in question. A UI backrefs
+    link may not be present in all themes.
     """
-    existing, linked, transcluded = _compute_item_sets()
+    existing, linked, transcluded, who_wants = _compute_item_sets(wanted=True)
     referred = linked | transcluded
     wanteds = referred - existing
     title_name = _('Wanted Items')
-    return render_template('link_list_no_item_panel.html',
+    return render_template('wanteds.html',
                            headline=_('Wanted Items'),
                            title_name=title_name,
+                           who_wants=who_wants,
                            fq_names=wanteds)
 
 
@@ -1479,7 +1496,7 @@ def orphaned_items():
     Return a list view of existing items not being linked or transcluded
     by any other item (which makes them sometimes not discoverable).
     """
-    existing, linked, transcluded = _compute_item_sets()
+    existing, linked, transcluded, who_wants = _compute_item_sets()
     referred = linked | transcluded
     orphans = existing - referred
     title_name = _('Orphaned Items')
