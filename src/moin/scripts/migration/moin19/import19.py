@@ -5,10 +5,6 @@
 """
 MoinMoin - import content and user data from a moin 1.9 compatible storage
            into the moin2 storage.
-
-TODO
-----
-* ACLs for attachments
 """
 
 
@@ -241,7 +237,7 @@ class PageItem:
             self.current = int(f.read().strip())
         editlogpath = os.path.join(self.path, 'edit-log')
         self.editlog = EditLog(editlogpath)
-        self.acl = None  # TODO
+        self.acl = None
         self.itemid = make_uuid()
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
@@ -264,6 +260,8 @@ class PageItem:
                 if parent_id:
                     page_rev.meta[PARENTID] = parent_id
                 parent_id = page_rev.meta[REVID]
+                # save ACL from last rev of this PageItem, copy to all attachments
+                self.acl = page_rev.meta.get(ACL, None)
                 yield page_rev
 
             except Exception as err:
