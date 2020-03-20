@@ -93,7 +93,7 @@ class MacroPageLinkListBase(MacroBlockBase):
                       UnCameled : ChildName, but with a space ' ' character between
                                   blocks of lowercase characters or numbers and an
                                   uppercase character.
-                      PageTitle : Use the title from the first header in the linked page
+                      ItemTitle : Use the title from the first header in the linked page
             """
 
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
@@ -113,8 +113,8 @@ class MacroPageLinkListBase(MacroBlockBase):
                 index = pagename.rfind('/')
                 tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[index+1:])  # space before a cap char
                 linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
-            elif display == "PageTitle":
-                raise NotImplementedError(_('"PageTitle" is not implemented yet.'))
+            elif display == "ItemTitle":
+                raise NotImplementedError(_('"ItemTitle" is not implemented yet.'))
             else:
                 raise KeyError(_('Unrecognized display value "%s".' % display))
 
