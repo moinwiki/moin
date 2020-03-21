@@ -2,17 +2,17 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-ItemPageList - Replaced by a list of links to a specified page's descendents.
+ItemList - generates a list of links to an item's subitems.
 
   Only items the user has access to are queryable.  If the specified item
-  has no children pages matching the filter, which may be due to filters or
+  has no subitems matching the filter, which may be due to filters or
   access controls, the macro displays a list (to match context) containing a
-  single item having the string "<No matching pages were found>".
+  single item with the message no matching items were found.
 
 Parameters:
 
     item: the wiki item to select.  If no item is specified, then the
-          current page is used.
+          current item is used.
 
     startswith: the substring the item's descendents must begin with.
                 If no value is specified, then no startswith-filtering
@@ -29,7 +29,7 @@ Parameters:
     display: How should the link be displayed?
 
         Options:
-            FullPath  : The full page path (default)
+            FullPath  : The full item path (default)
 
             ChildPath : The last component of the FullPath, including the '/'
 
@@ -39,8 +39,8 @@ Parameters:
                         blocks of lowercase characters or numbers and an
                         uppercase character.
 
-            PageTitle : Use the title from the first header in the linked
-                        page [*** NOT IMPLEMENTED YET ***]
+            ItemTitle : Use the title from the first header in the linked
+                        item [*** NOT IMPLEMENTED YET ***]
 
 Notes:
 
@@ -51,9 +51,12 @@ Notes:
     filter is more efficient, since it's passed into the underlyng database query,
     whereas the "regex" filter is applied on the results returned from the database.
 
-Example:
+    This is a block level macro, do not embed in a paragraph.
 
-    <<ItemPageList(item="Foo/Bar", ordered='True', display="UnCameled")>>
+Examples:
+    <<ItemList>>
+    <<ItemList(item="")>>
+    <<ItemList(item="Foo/Bar", ordered='True', display="UnCameled")>>
 """
 
 import re
@@ -83,10 +86,10 @@ class Macro(MacroPageLinkListBase):
             try:
                 key, val = [x.strip() for x in arg.split('=')]
             except ValueError:
-                raise ValueError(_('Argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg))
+                raise ValueError(_('ItemList macro: Argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg))
 
             if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
-                raise ValueError(_("The key's value must be bracketed by matching quotes."))
+                raise ValueError(_("ItemList macro: The key's value must be bracketed by matching quotes."))
             val = val[1:-1]  # strip out the doublequote characters
 
             if key == "item":
@@ -101,28 +104,31 @@ class Macro(MacroPageLinkListBase):
                 elif val == "True":
                     ordered = True
                 else:
-                    raise ValueError(_('The value must be "True" or "False". (got "%s")' % val))
+                    raise ValueError(_('ItemList macro: The value must be "True" or "False". (got "%s")' % val))
             elif key == "display":
                 display = val  # let 'create_pagelink_list' throw an exception if needed
             else:
-                raise KeyError(_('Unrecognized key "%s".' % key))
+                raise KeyError(_('ItemList macro: Unrecognized key "%s".' % key))
 
-        # use curr page if not specified
+        # use curr item if not specified
         if item is None:
             item = request.path[1:]
+            if item.startswith('+modify/'):
+                item = item.split('/', 1)[1]
 
-        # test if item doesn't exist (potentially due to user's ACL, but that doesn't matter)
-        if item != "":  # why are we retaining this behavior from PagenameList?
+        # verify item exists and current user has read permission
+        if item != "":
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
-                raise LookupError(_('The specified item "%s" does not exist.' % item))
+                # if user lacks read permission, a 403 error was thrown on line above
+                raise LookupError(_('ItemList macro: The specified item "%s" does not exist.' % item))
 
-        # process child pages
+        # process subitems
         children = self.get_item_names(item, startswith)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
             except re.error as err:
-                raise ValueError(_("Error in regex {0!r}: {1}".format(regex, err)))
+                raise ValueError(_("ItemList macro: Error in regex {0!r}: {1}".format(regex, err)))
             newlist = []
             for child in children:
                 if regex_re.search(child):
@@ -130,7 +136,7 @@ class Macro(MacroPageLinkListBase):
             children = newlist
         if not children:
             empty_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
-            item_body = moin_page.list_item_body(children=[_("<No matching pages were found>")])
+            item_body = moin_page.list_item_body(children=[_("<ItemList macro: No matching items were found.>")])
             item = moin_page.list_item(children=[item_body])
             empty_list.append(item)
             return empty_list
