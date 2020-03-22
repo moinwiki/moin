@@ -122,6 +122,10 @@
 {% macro meta_info(meta) %}
     <!-- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list -->
     <ul class="list-group">
+        {%- if user.may.admin(fqname) %}
+            {%- set acl = meta['acl'] or '(None)' %}
+            <li class="list-group-item">ACL: {{ acl }}</li>
+        {%- endif %}
         <li class="list-group-item">Action: {{ meta['action'] }}</li>
         <li class="list-group-item">Address: {{ meta['address'] }}</li>
         <li class="list-group-item">Comment: '{{ meta['comment'] }}'</li>
