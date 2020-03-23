@@ -1,3 +1,10 @@
+{#
+    Display a table of user data collected from userprofiles metadata.
+    The report includes users name(s), email address, group memberships,
+    and subscriptions. Action buttons include links to disable/enable a user's account,
+    email a password reset, and display a User ACL Report.
+#}
+
 {% extends theme("layout.html") %}
 {% block content %}
     <h1>{{ _("Users") }}</h1>
@@ -5,38 +12,50 @@
         <thead>
             <tr>
                 <th>{{ _("User name") }}</th>
-                <th>{{ _("Member of Groups") }}</th>
                 <th>{{ _("Email address") }}</th>
                 <th class="center" colspan="3" data-sorter="false">{{ _("Actions") }}</th>
+                <th>{{ _("Groups") }}</th>
+                <th>{{ _("Subscriptions") }}</th>
             </tr>
         </thead>
         <tbody>
             {% for u in user_accounts %}
                 <tr>
                     <td><a href="{{ url_for('frontend.show_item', item_name=u.fqname) }}">{{ u.name|join(', ') }}</a>{{ u.disabled and " (%s)" % _("disabled") or "" }}</td>
-                    <td>{{ u.groups|join(', ') }}</td>
                     <td>
-                        {% if u.email %}
+                        {%- if u.email -%}
                             <a href="mailto:{{ u.email|e }}" class="mailto">{{ u.email|e }}</a>
-                        {% endif %}
+                        {%- endif -%}
                     </td>
                     <td>
                         <form action="{{ url_for('admin.userprofile', user_name=u.name[0]) }}" method="POST">
                             <input type="hidden" name="key" value="disabled" />
                             <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}" />
-                            <input class="moin-button" type="submit" name="userprofile" value="{{ u.disabled and _("Enable user") or _("Disable user") }}" />
+                            {%- set cls = "fa fa-user-circle-o fa-lg moin-button-less" if u.disabled else "fa fa-user-times fa-lg moin-button-less" %}
+                            {%- set title = _("Enable user") if u.disabled else _("Disable user") %}
+                            <button type="submit" class="{{ cls }}" title="{{ title }}">&nbsp;
+                            </button>
                         </form>
                     </td>
                     <td>
                         <form action="{{ url_for('admin.mail_recovery_token') }}" method="POST">
                             <input type="hidden" name="username" value="{{ u.name[0] }}" />
-                            <input class="moin-button" type="submit" name="recoverpass" value="{{ _("Mail password reset") }}" />
+                            <button type="submit" class="fa fa-envelope fa-lg moin-button-less" title="{{ _('Mail password reset') }}">&nbsp;
+                            </button>
                         </form>
                     </td>
                     <td>
-                        <form action="{{ url_for('admin.user_acl_report', uid=u.uid) }}" method="GET">
-                            <input class="moin-button" type="submit" value="{{ _("User ACL Info") }}" />
-                        </form>
+                        <button class="moin-button-less">
+                            <a href="{{ url_for('admin.user_acl_report', uid=u.uid) }}">
+                                <i class="fa fa-info fa-lg" title="{{ _('User ACL Report') }}"></i>
+                            </a>
+                        </button>
+                    </td>
+                    <td>{{ u.groups|join('<br>')|safe }}</td>
+                    <td>
+                        {%- for subscription in u.subscriptions -%}
+                            {{ subscription }}{%- if not loop.last %}<br>{% endif -%}
+                        {%- endfor -%}
                     </td>
                 </tr>
             {% endfor %}
