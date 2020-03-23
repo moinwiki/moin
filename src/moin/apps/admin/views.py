@@ -30,7 +30,7 @@ from moin.apps.frontend.views import _using_moin_auth
 from moin import user
 from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
                                  NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
-                                 ACTION_SAVE, PARENTNAMES)
+                                 ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
 from moin.security import require_permission, ACLStringIterator
@@ -156,12 +156,14 @@ def userbrowser():
         user_groups = member_groups.get(user_names[0], [])
         for name in user_names[1:]:
             user_groups = user_groups + member_groups.get(name, [])
+        subscriptions = rev.meta[SUBSCRIPTIONS]
         user_accounts.append(dict(uid=rev.meta[ITEMID],
                                   name=user_names,
                                   fqname=CompositeName(NAMESPACE_USERS, NAME_EXACT, rev.name),
                                   email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
                                   disabled=rev.meta[DISABLED],
-                                  groups=user_groups))
+                                  groups=user_groups,
+                                  subscriptions=subscriptions))
     return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_("Users"))
 
 

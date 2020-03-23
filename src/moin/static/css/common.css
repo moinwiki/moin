@@ -409,6 +409,7 @@ a.moin-button:active { color: #000; text-decoration: none; }
 .moin-button.active {background: #00417f; color: #fff; }
 input.moin-button:disabled { color: #666; background: #eee; }
 input.moin-button:disabled:hover { box-shadow: none; }
+.moin-button-less { border: 0px; background: inherit; color: #1409b9; }
 
 /* pre */
 pre { border: 1px solid #AEBDCC; background-color: #F3F5F7; padding: 7px 10px; clear: both; margin: .75em 0;
