@@ -196,9 +196,9 @@ def userprofile(user_name):
         if ok:
             u.profile[key] = val
             u.save()
-            flash('{0}.{1}: {2} -> {3}'.format(user_name, key, str(oldval), str(val), ), "info")
+            flash(_('{0} "{1}" status changed to "{2}"').format(user_name, key, str(val), ), "info")
         else:
-            flash('modifying {0}.{1} failed'.format(user_name, key, ), "error")
+            flash(_('modifying {0}.{1} failed').format(user_name, key, ), "error")
     return redirect(url_for('.userbrowser'))
 
 
