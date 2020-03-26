@@ -260,9 +260,6 @@ class ACLValidator(Validator):
 
 
 class BaseMetaForm(Form):
-
-    itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
-    contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
     # Flatland doesn't distinguish between empty value and nonexistent value, use None for noneexistent and Empty for empty
     acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List - Use 'None' for default")).validated_by(ACLValidator())
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
