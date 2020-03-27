@@ -579,7 +579,6 @@ class Item:
         ModifyForm.
         """
         meta_form = BaseMetaForm
-        extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
@@ -598,7 +597,6 @@ class Item:
             self['meta_form'].set(meta, policy='duck')
             for k in list(self['meta_form'].field_schema_mapping.keys()) + IMMUTABLE_KEYS:
                 meta.pop(k, None)
-            self['extra_meta_text'].set(item.meta_dict_to_text(meta))
             self['content_form']._load(item.content)
 
         def _dump(self, item):
@@ -616,7 +614,6 @@ class Item:
             # e.g. we get PARENTID in here
             meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
             meta.update(self['meta_form'].value)
-            meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
