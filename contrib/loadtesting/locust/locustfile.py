@@ -56,7 +56,7 @@ import sys
 import argparse
 import urllib.request, urllib.error, urllib.parse
 
-from locust import HttpLocust, Locust, TaskSet, TaskSequence, task, seq_task
+from locust import HttpLocust, Locust, TaskSet, TaskSequence, task, seq_task, between
 
 
 user_number = 0
@@ -288,8 +288,7 @@ class UserSequence(TaskSequence):
 class WebsiteUser(HttpLocust):
 
     task_set = UserSequence
-    min_wait = 2000
-    max_wait = 3000
+    wait_time = between(2, 3)  # min_wait and max_wait deprecated since version 0.13
 
     def setup(self):
         """create Home and users/Home items"""
