@@ -540,6 +540,9 @@ form.upload_file button { display: none; }
 .moin-form .moin-load-draft { border: 1px solid red; background: #fee; }
 .moin-watermark { background-image: url("../../../static/img/draft.png"); border: 1px solid #4e7da9; }
 
+.moin-form dd.moin-radio { line-height: 1.5em}
+.moin-form .moin-radio input { width: 1em; }
+
 #options dd { width: 10%; }
 #options dt { width: 60%; max-width: 40em; }
 #subscriptions textarea,

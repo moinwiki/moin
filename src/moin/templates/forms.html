@@ -36,6 +36,7 @@ Helpers for using flatland with jinja2 to create html forms.
       'inline_checkbox': inline_checkbox,
       'any_integer': any_integer,
       'small_natural': small_natural,
+      'radio_choice': radio_choice,
       'datetime': datetime,
       'search': search,
       'hidden': raw_input,
@@ -125,6 +126,19 @@ Helpers for using flatland with jinja2 to create html forms.
             {{ gen.input(field, type='radio', value=i|string) }}
             {{ _radio_label(field, value=i|string, class='moin-inline-label') }}
         {% endfor %}
+    </dd>
+{% endmacro %}
+
+{% macro radio_choice(field) %}
+    <dt>
+        {{ field['label'] }}
+    </dt>
+    <dd class="moin-radio">
+        {%- for id, theme in (field.properties.choices) %}
+            {{ gen.input(field, type='radio', value=id) -}}
+            {{- _valued_label(field, value=id, contents=theme, class='moin-inline-label') }}
+            {% if not loop.last -%}<br>{% endif -%}
+        {%- endfor %}
     </dd>
 {% endmacro %}
 
