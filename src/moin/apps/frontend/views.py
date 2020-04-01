@@ -55,7 +55,7 @@ from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
 from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
-                        Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
+                        Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks, RadioChoice,
                         validate_name, NameNotValidError)
 from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
@@ -2015,8 +2015,8 @@ def usersettings():
 
     class UserSettingsUIForm(Form):
         form_name = 'usersettings_ui'
-        theme_name = Select.using(label=L_('Theme name')).out_of(
-            ((str(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
+        theme_name = RadioChoice.using(label=L_('Theme name')).with_properties(
+            choices=((str(t.identifier), t.name) for t in get_themes_list()))
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)"))
         edit_rows = Natural.using(label=L_('Number rows in edit textarea')).with_properties(

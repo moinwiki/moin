@@ -16,6 +16,7 @@ WIDGET_CHECKBOX = 'checkbox'
 WIDGET_INLINE_CHECKBOX = 'inline_checkbox'
 WIDGET_ANY_INTEGER = 'any_integer'
 WIDGET_SMALL_NATURAL = 'small_natural'
+WIDGET_RADIO_CHOICE = 'radio_choice'
 WIDGET_DATETIME = 'datetime'
 
 WIDGET_FILE = 'file'

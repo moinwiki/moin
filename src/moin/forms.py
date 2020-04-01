@@ -282,6 +282,8 @@ Natural = AnyInteger.validated_by(ValueAtLeast(0))
 
 SmallNatural = _Integer.with_properties(widget=WIDGET_SMALL_NATURAL)
 
+RadioChoice = Text.with_properties(widget=WIDGET_RADIO_CHOICE)
+
 
 class DateTimeUNIX(_DateTime):
     """
