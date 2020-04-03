@@ -661,12 +661,17 @@ def convert_item(item_name):
     input_conv = reg.get(Type(item.contenttype), type_moin_document)
     dom = input_conv(content, item.contenttype)
 
-    if item.contenttype in CONTENTTYPE_NO_EXPANSION and not form['new_type'].value in CONTENTTYPE_NO_EXPANSION:
-        # expand macros, includes,... when converting from moin or creole to something other than moin or creole
-        dom = item.content._expand_document(dom)
+    try:
+        if item.contenttype in CONTENTTYPE_NO_EXPANSION and not form['new_type'].value in CONTENTTYPE_NO_EXPANSION:
+            # expand macros, includes,... when converting from moin or creole to something other than moin or creole
+            dom = item.content._expand_document(dom)
 
-    conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
-    out = conv_out(dom)
+        conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
+        out = conv_out(dom)
+    except Exception:
+        logging.exception("Error converting item: %s", item.fqname)
+        flash(L_("Item conversion failed"), 'error')
+        return redirect(url_for_item(**item.fqname.split))
     meta = dict(item.meta)
     if form['new_type'].value == 'application/x-xhtml-moin-page':
         # serialize the html tree created by the html converter, and change content type
@@ -699,6 +704,7 @@ def convert_item(item_name):
                                          return_rev=True,
                                          )
     item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE)
+    flash(L_("Item converted successfully"), 'info')
     return redirect(url_for_item(**item.fqname.split))
 
 
