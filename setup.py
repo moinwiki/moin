@@ -113,6 +113,9 @@ setup_args = dict(
                                          # requires special libs/header to be installed before it can be compiled successfully
                                          # windows binaries available from 3rd parties
         'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
+        'docs': ["Sphinx",
+                 "sphinx-rtd-theme",
+        ],
     },
     entry_points=dict(
         console_scripts=['moin = moin.scripts:main'],
