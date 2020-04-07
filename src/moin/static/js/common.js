@@ -235,7 +235,7 @@ MoinMoin.prototype.QuicklinksExpander = function () {
     "use strict";
     var QUICKLINKS_EXPAND = ">>>",
         QUICKLINKS_COLLAPSE = "<<<",
-        QUICKLINKS_MAX = 5,
+        QUICKLINKS_MAX = $('#moin-navibar').data('expanded_quicklinks_size'),
         newThis;
     // 8 helper functions
     function getLinks() {
