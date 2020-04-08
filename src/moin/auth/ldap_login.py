@@ -171,7 +171,7 @@ class LDAPAuth(BaseAuth):
                 # you can use %(username)s and %(password)s here to get the stuff entered in the form:
                 binddn = self.bind_dn % locals()
                 bindpw = self.bind_pw % locals()
-                conn.simple_bind_s(binddn.encode(coding), bindpw.encode(coding))
+                conn.simple_bind_s(binddn, bindpw)
                 logging.debug("Bound with binddn {0!r}".format(binddn))
 
                 # you can use %(username)s here to get the stuff entered in the form:
@@ -183,7 +183,7 @@ class LDAPAuth(BaseAuth):
                     'surname_attribute',
                     'givenname_attribute',
                 ] if getattr(self, attr) is not None]
-                lusers = conn.search_st(self.base_dn, self.scope, filterstr.encode(coding),
+                lusers = conn.search_st(self.base_dn, self.scope, filterstr,
                                      attrlist=attrs, timeout=self.timeout)
                 # we remove entries with dn == None to get the real result list:
                 lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
@@ -207,12 +207,12 @@ class LDAPAuth(BaseAuth):
                 dn, ldap_dict = lusers[0]
                 if not self.bind_once:
                     logging.debug("DN found is {0!r}, trying to bind with pw".format(dn))
-                    conn.simple_bind_s(dn, password.encode(coding))
+                    conn.simple_bind_s(dn, password)
                     logging.debug("Bound with dn {0!r} (username: {1!r})".format(dn, username))
 
                 if self.email_callback is None:
                     if self.email_attribute:
-                        email = ldap_dict.get(self.email_attribute, [''])[0].decode(coding)
+                        email = ldap_dict.get(self.email_attribute, [''])[0]
                     else:
                         email = None
                 else:
@@ -230,7 +230,6 @@ class LDAPAuth(BaseAuth):
                         display_name = "{0}, {1}".format(sn, gn)
                     elif sn:
                         display_name = sn
-                display_name = display_name.decode(coding)
 
                 if self.name_callback:
                     username = self.name_callback(ldap_dict)
