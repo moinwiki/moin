@@ -191,7 +191,8 @@ class LdapEnvironment:
         f.write(db_config)
         f.close()
 
-        rootpw = '{MD5}' + base64.b64encode(hashlib.new('md5', self.rootpw).digest())
+        hash_pw = hashlib.new('md5', self.rootpw.encode(self.coding))
+        rootpw = '{MD5}' + base64.b64encode(hash_pw.digest()).decode()
 
         # create slapd.conf from content template in slapd_config
         slapd_config = slapd_config % {
@@ -202,12 +203,9 @@ class LdapEnvironment:
             'rootdn': self.rootdn,
             'rootpw': rootpw,
         }
-        if isinstance(slapd_config, str):
-            slapd_config = slapd_config.encode(self.coding)
         self.slapd_conf = os.path.join(self.ldap_dir, "slapd.conf")
-        f = open(self.slapd_conf, 'w')
-        f.write(slapd_config)
-        f.close()
+        with open(self.slapd_conf, 'w', encoding=self.coding) as f:
+            f.write(slapd_config)
 
     def start_slapd(self):
         """ start a slapd and optionally wait until it talks with us """
@@ -224,7 +222,6 @@ class LdapEnvironment:
         class LDIFLoader(ldif.LDIFParser):
             def handle(self, dn, entry):
                 lo.add_s(dn, ldap.modlist.addModlist(entry))
-
         loader = LDIFLoader(StringIO(ldif_content))
         loader.parse()
 
