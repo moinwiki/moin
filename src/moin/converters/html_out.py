@@ -213,16 +213,16 @@ class Converter:
         # Unknown element are just copied
         return self.new_copy(elem.tag, elem)
 
-    def visit_moinpage_a(self, elem, _tag_html_a=html.a, _tag_html_href=html.href, _tag_xlink_href=xlink.href):
+    def visit_moinpage_a(self, elem):
         attrib = {}
-        href = elem.get(_tag_xlink_href)
+        href = elem.get(xlink.href)
         if href:
-            attrib[_tag_html_href] = href
+            attrib[html.href] = href
         if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == '':
             # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
-            elem[0] = href.path[1:]
+            elem[0] = href.path[1:] if href.path else href.fragment
         # html attibutes are copied by default (html.target, html.class, html.download...
-        return self.new_copy(_tag_html_a, elem, attrib)
+        return self.new_copy(html.a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):
         """Used by reST and docbook."""

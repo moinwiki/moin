@@ -176,7 +176,7 @@ class ConverterExternOutput(ConverterBase):
                 # XXX these index accesses slow down the link converter quite a bit
                 elem.set(moin_page.class_, 'moin-nonexistent')
         else:
-            item_name = str(page.path[1:])
+            item_name = str(page.path[1:]) if page else ''
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, rev=rev, endpoint=endpoint)
         if not page:
