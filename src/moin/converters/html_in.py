@@ -582,19 +582,23 @@ class Converter:
     def visit_xhtml_tr(self, element):
         return self.new_copy(moin_page.table_row, element, attrib={})
 
-    def visit_xhtml_td(self, element, attr={}):
-        attrib = attr
+    def visit_xhtml_td(self, element):
+        attrib = self.rowspan_colspan(element)
+        return self.new_copy(moin_page.table_cell, element, attrib=attrib)
+
+    def visit_xhtml_th(self, element):
+        attrib = self.rowspan_colspan(element)
+        return self.new_copy(moin_page.table_cell_head, element, attrib=attrib)
+
+    def rowspan_colspan(self, element):
+        attrib = {}
         rowspan = element.get(html.rowspan)
         colspan = element.get(html.colspan)
         if rowspan:
             attrib[moin_page('number-rows-spanned')] = rowspan
         if colspan:
             attrib[moin_page('number-columns-spanned')] = colspan
-        return self.new_copy(moin_page.table_cell, element, attrib=attrib)
-
-    def visit_xhtml_th(self, element):
-        """html_out does not support th tags, so we do td tags like all other converters."""
-        return self.visit_xhtml_td(element, {moin_page.class_: 'moin-thead'})
+        return attrib
 
 
 default_registry.register(Converter._factory, Type('text/html'), type_moin_document)
