@@ -615,6 +615,9 @@ class Converter:
     def visit_moinpage_table_cell(self, elem):
         return self.new_copy(html.td, elem)
 
+    def visit_moinpage_table_cell_head(self, elem):
+        return self.new_copy(html.th, elem)
+
     def visit_moinpage_table_row(self, elem):
         return self.new_copy(html.tr, elem)
 

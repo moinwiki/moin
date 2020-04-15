@@ -619,6 +619,9 @@ class Converter:
         self.table_rowclass = ''
         return ret + Moinwiki.table_marker + '\n'
 
+    def open_moinpage_table_cell_head(self, elem):
+        return self.open_moinpage_table_cell(elem)
+
     def open_moinpage_table_cell(self, elem):
         table_cellclass = elem.attrib.get(moin_page.class_, '')
         table_cellstyle = elem.attrib.get(moin_page.style, '')
