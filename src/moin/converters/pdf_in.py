@@ -6,6 +6,7 @@ MoinMoin - PDF input converter
 """
 
 import io
+from datetime import datetime, timedelta
 
 from pdfminer3.pdfpage import PDFPage
 from pdfminer3.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -19,20 +20,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-LAPARAMS = LAParams(
-    # value is specified not as an actual length, but as a proportion of the length to the
-    # size of each character in question.
-    # two text chunks whose distance is closer than the char_margin is considered
-    # continuous and get grouped into one.
-    char_margin=0.3,
-    # it may be required to insert blank characters (spaces) as necessary if the distance
-    # between two words is greater than the word_margin, as a blank between words might
-    # not be represented as a space, but indicated by the positioning of each word.
-    word_margin=0.2,
-    # two lines whose distance is closer than the line_margin is grouped as a text box,
-    # which is a rectangular area that contains a "cluster" of text portions.
-    line_margin=0.3,
-)
+LAPARAMS = LAParams()
 
 
 class PDFIndexingConverter:
@@ -42,10 +30,17 @@ class PDFIndexingConverter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         rsrcmgr = PDFResourceManager()
+        max_parse_time = timedelta(seconds=15)
+        start = datetime.now()
         with io.StringIO() as f, TextConverter(rsrcmgr, f, laparams=LAPARAMS) as device:
             interpreter = PDFPageInterpreter(rsrcmgr, device)
-            for page in PDFPage.get_pages(rev):
+            for page_idx, page in enumerate(PDFPage.get_pages(rev)):
+                logging.debug("Processing PDF page %d", page_idx)
                 interpreter.process_page(page)
+                if datetime.now() - start > max_parse_time:
+                    logging.info("PDF parsing timed out after %d pages", page_idx)
+                    break
+            logging.debug("PDF text extraction took: %s", datetime.now() - start)
             return f.getvalue()
 
 
