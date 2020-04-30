@@ -538,6 +538,9 @@ class Converter:
         return Moinwiki.separator + hr_ending
 
     def open_moinpage_span(self, elem):
+        # moin syntax does not support style attributes within span tags.
+        # Colored text or backgrounds supported by html, markdown extensions, etc
+        # are ignored and not converted.
         font_size = elem.get(moin_page.font_size, '')
         baseline_shift = elem.get(moin_page.baseline_shift, '')
         class_ = elem.get(moin_page.class_, '')
