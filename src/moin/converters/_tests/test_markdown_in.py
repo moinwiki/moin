@@ -10,7 +10,7 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.utils.tree import moin_page, xlink, xml, xinclude, html
+from moin.utils.tree import moin_page, xlink, xinclude, html
 
 from ..markdown_in import Converter
 
@@ -19,7 +19,6 @@ class TestConverter:
     namespaces = {
         moin_page: '',
         xlink: 'xlink',
-        xml: 'xml',
         xinclude: 'xinclude',
         html: 'html',
     }
@@ -78,43 +77,6 @@ class TestConverter:
 
     @pytest.mark.parametrize('input,output', data)
     def test_escape(self, input, output):
-        self.do(input, output)
-
-    data = [
-        ('# Heading 1',
-         '<h outline-level="1" xml:id="heading-1">Heading 1</h>'),
-        ('## Heading 2',
-         '<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
-        ('### Heading 3',
-         '<h outline-level="3" xml:id="heading-3">Heading 3</h>'),
-        ('#### Heading 4',
-         '<h outline-level="4" xml:id="heading-4">Heading 4</h>'),
-        ('##### Heading 5',
-         '<h outline-level="5" xml:id="heading-5">Heading 5</h>'),
-        ('###### Heading 6',
-         '<h outline-level="6" xml:id="heading-6">Heading 6</h>'),
-        ('# Heading 1 #',
-         '<h outline-level="1" xml:id="heading-1">Heading 1</h>'),
-        ('## Heading 2 ##',
-         '<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
-        ('### Heading 3 ###',
-         '<h outline-level="3" xml:id="heading-3">Heading 3</h>'),
-        ('#### Heading 4 ####',
-         '<h outline-level="4" xml:id="heading-4">Heading 4</h>'),
-        ('##### Heading 5 #####',
-         '<h outline-level="5" xml:id="heading-5">Heading 5</h>'),
-        ('###### Heading 6 ######',
-         '<h outline-level="6" xml:id="heading-6">Heading 6</h>'),
-        ('Heading 1\n=========\nHeading 2\n---------\n',
-         '<h outline-level="1" xml:id="heading-1">Heading 1</h><h outline-level="2" xml:id="heading-2">Heading 2</h>'),
-        ('Heading 2\n---------\n',
-         '<h outline-level="2" xml:id="heading-2">Heading 2</h>'),
-        ('Heading\n=======\n\nxxxx',
-         '<h outline-level="1" xml:id="heading">Heading</h><p>xxxx</p>'),
-    ]
-
-    @pytest.mark.parametrize('input,output', data)
-    def test_heading(self, input, output):
         self.do(input, output)
 
     data = [

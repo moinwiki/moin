@@ -27,7 +27,6 @@ except ImportError:
 from markdown import Markdown
 import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
-from markdown.extensions.toc import TocExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
 from . import default_registry
@@ -54,6 +53,9 @@ def postproc_text(markdown, text):
 
     if text is None:
         return None
+
+    if text == '[TOC]':
+        return moin_page.table_of_content(attrib={})
 
     for pp in markdown.postprocessors:
         text = pp.run(text)
@@ -532,7 +534,6 @@ class Converter:
     def __init__(self):
         self.markdown = Markdown(extensions=[
             ExtraExtension(),
-            TocExtension(),
             CodeHiliteExtension(guess_lang=False),
         ])
 
