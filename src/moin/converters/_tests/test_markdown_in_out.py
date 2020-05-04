@@ -136,6 +136,14 @@ class TestConverter:
          '[PNG](png)\n'),
         ('[MoinMoin][moin]\n[moin]: http://moinmo.in\n',
          '[MoinMoin](http://moinmo.in)\n'),
+        ('[![Image name](png)](Home "click me")',
+         '[![Image name](png)](Home "click me")'),
+        ('[toc](#table-of-contents)',
+         '[toc](#table-of-contents)'),
+        ('[toc](markdown#table-of-contents)',
+         '[toc](markdown#table-of-contents)'),
+        ('[moinmoin](https://moinmo.in "Go there")',
+         '[moinmoin](https://moinmo.in "Go there")'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

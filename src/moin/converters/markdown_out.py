@@ -155,12 +155,15 @@ class Converter:
 
     def open_moinpage_a(self, elem):
         href = elem.get(xlink.href, None)
+        title = elem.get(html.title_, None)
         if isinstance(href, Iri):
             href = str(href)
         href = href.split('wiki.local:')[-1]
         ret = href
         text = self.open_children(elem)
         if text:
+            if title:
+                href = '{0} "{1}"'.format(href, title)
             return '[{0}]({1})'.format(text, href)
         if ret.startswith('wiki://'):
             # interwiki fixup
