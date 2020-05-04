@@ -483,15 +483,12 @@ class Converter:
         Allow embedded raw HTML markup per https://daringfireball.net/projects/markdown/syntax#html
         This replaces the functionality of RawHtmlPostprocessor in .../markdown/postprocessors.py.
 
-        In addition to users being able to insert raw HTML into markdown items,
-        some markdown extensions output raw HTML strings (e.g. fenced_code outputs "<pre><code>...").
-
-        To prevent hackers from exploiting raw HTML, the strings of safe HTML is converted to
+        To prevent hackers from exploiting raw HTML, the strings of safe HTML are converted to
         tree nodes by using the html_in.py converter.
         """
         try:
-            # we enclose plain text and block tags with DIV-tags
-            p_text = html_in_converter('<div>%s</div>' % text)
+            # we enclose plain text and span tags with P-tags
+            p_text = html_in_converter('<p>%s</p>' % text)
             # discard page and body tags
             return p_text[0][0]
         except AssertionError:
