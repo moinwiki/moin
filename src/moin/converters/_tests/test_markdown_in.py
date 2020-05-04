@@ -67,6 +67,23 @@ class TestConverter:
         self.do(input, output)
 
     data = [
+        ('<em>Emphasis</em>',
+         '<div><p><emphasis>Emphasis</emphasis></p></div>'),
+        ('<i>Italic</i>',
+         '<div><p><emphasis>Italic</emphasis></p></div>'),
+        ('<u>underline</u>',
+         '<div><p><u>underline</u></p></div>'),
+        ('<del>deleted</del>',
+         '<div><p><del>deleted</del></p></div>'),
+        ('<hr>',
+         '<div><p><separator html:class="moin-hr3" /></p></div>'),
+    ]
+
+    @pytest.mark.parametrize('input,output', data)
+    def test_html_extension(self, input, output):
+        self.do(input, output)
+
+    data = [
         ('http://moinmo.in/',
          '<p>http://moinmo.in/</p>'),
         ('\\[escape](yo)',
