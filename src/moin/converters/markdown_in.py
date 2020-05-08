@@ -170,7 +170,7 @@ class Converter:
         result = {}
         for key, value in element.attrib.items():
             if key in self.standard_attributes:
-                result[html(key)] = value
+                result[moin_page(key)] = value
             if key == 'id':
                 result[xml('id')] = value
         return result
@@ -520,8 +520,7 @@ class Converter:
         :param node: a tree node
         """
         for child in node:
-            # TODO: bug in codehilite? <, > are returned as string (not unicode) given ~~~{html}\n<html>\n~~~
-            if not isinstance(child, (bytes, str)):
+            if not isinstance(child, str):
                 if child.tag == moin_page.p and len(child):
                     for grandchild in child:
                         if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:
