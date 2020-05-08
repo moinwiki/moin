@@ -25,7 +25,7 @@ from moin._tests import wikiconfig
 from moin.storage import create_simple_mapping
 
 
-# exclude some directories from py.test test discovery, pathes relative to this file
+# exclude some directories from pytest test discovery, pathes relative to this file
 collect_ignore = [
     'static',  # same
     '../wiki',  # no tests there
