@@ -9,7 +9,7 @@ Convert image to <object> tag for the DOM Tree.
 
 from emeraldtree import ElementTree as ET
 
-from werkzeug import url_encode, url_decode
+from werkzeug.urls import url_encode, url_decode
 
 from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri

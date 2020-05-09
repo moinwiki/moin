@@ -53,7 +53,7 @@ import shutil
 import datetime
 import time
 
-from collections import Mapping
+from collections.abc import Mapping
 
 from flask import request
 from flask import g as flaskg

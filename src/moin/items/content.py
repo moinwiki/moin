@@ -38,7 +38,7 @@ from flatland import Form, String
 
 from jinja2 import Markup
 
-from werkzeug import is_resource_modified
+from werkzeug.http import is_resource_modified
 
 from whoosh.query import Term, And
 
