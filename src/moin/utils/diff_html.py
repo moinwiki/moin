@@ -9,7 +9,7 @@
 
 import difflib
 
-from werkzeug import escape
+from werkzeug.utils import escape
 
 from moin.i18n import _, L_, N_
 
