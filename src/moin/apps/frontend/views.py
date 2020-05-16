@@ -662,9 +662,10 @@ def convert_item(item_name):
     dom = input_conv(content, item.contenttype)
 
     try:
-        if item.contenttype in CONTENTTYPE_NO_EXPANSION and not form['new_type'].value in CONTENTTYPE_NO_EXPANSION:
-            # expand macros, includes,... when converting from moin or creole to something other than moin or creole
-            dom = item.content._expand_document(dom)
+        if not item.contenttype == form['new_type'].value:
+            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+                # expand DOM only when converting to dissimilar item types (moin and creole are similar)
+                dom = item.content._expand_document(dom)
 
         conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
         out = conv_out(dom)
