@@ -2017,7 +2017,7 @@ def usersettings():
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
         _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
         locale = Select.using(label=L_('Locale')).out_of(
-            ((str(l), l.display_name) for l in _supported_locales), sort_by=1)
+            ((str(locale), locale.display_name) for locale in _supported_locales), sort_by=1)
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
