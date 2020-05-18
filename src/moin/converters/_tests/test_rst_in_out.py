@@ -23,8 +23,6 @@ from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.constants.contenttypes import CHARSET
 
-# ### TODO: try block (do not crash if we don't have docutils)
-pytest.importorskip('docutils')  # noqa
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block
@@ -33,6 +31,9 @@ from docutils.parsers.rst import directives, roles
 
 from moin.converters.rst_in import Converter as conv_in
 from moin.converters.rst_out import Converter as conv_out
+
+# ### TODO: try block (do not crash if we don't have docutils)
+pytest.importorskip('docutils')  # noqa
 
 
 class TestConverter:

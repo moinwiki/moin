@@ -7,10 +7,10 @@ MoinMoin - Tests for moin.converters.smiley
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')  # noqa
-
 from moin.converters.smiley import Converter, moin_page, ET
 from . import serialize, XMLNS_RE3, TAGSTART_RE
+
+etree = pytest.importorskip('lxml.etree')  # noqa
 
 
 output_namespaces = {

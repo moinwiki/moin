@@ -662,9 +662,10 @@ def convert_item(item_name):
     dom = input_conv(content, item.contenttype)
 
     try:
-        if item.contenttype in CONTENTTYPE_NO_EXPANSION and not form['new_type'].value in CONTENTTYPE_NO_EXPANSION:
-            # expand macros, includes,... when converting from moin or creole to something other than moin or creole
-            dom = item.content._expand_document(dom)
+        if not item.contenttype == form['new_type'].value:
+            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+                # expand DOM only when converting to dissimilar item types (moin and creole are similar)
+                dom = item.content._expand_document(dom)
 
         conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
         out = conv_out(dom)
@@ -2016,7 +2017,7 @@ def usersettings():
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
         _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
         locale = Select.using(label=L_('Locale')).out_of(
-            ((str(l), l.display_name) for l in _supported_locales), sort_by=1)
+            ((str(locale), locale.display_name) for locale in _supported_locales), sort_by=1)
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):

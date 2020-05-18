@@ -7,7 +7,7 @@ MoinMoin - sqlalchemy store
 Stores k/v pairs into any database supported by sqlalchemy.
 """
 
-from sqlalchemy import create_engine, select, MetaData, Table, Column, String, Binary
+from sqlalchemy import create_engine, select, MetaData, Table, Column, String, LargeBinary
 from sqlalchemy.pool import StaticPool
 
 from . import (BytesMutableStoreBase, FileMutableStoreBase,
@@ -61,7 +61,7 @@ class BytesStore(BytesMutableStoreBase):
         metadata.bind = self.engine
         self.table = Table(self.table_name, metadata,
                            Column('key', String(KEY_LEN), primary_key=True),
-                           Column('value', Binary(VALUE_LEN)),
+                           Column('value', LargeBinary(VALUE_LEN)),
                           )
 
     def close(self):
