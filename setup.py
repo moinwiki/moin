@@ -91,6 +91,7 @@ setup_args = dict(
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
+        'sqlalchemy==1.3.16',  # used by sqla store TODO make this >= and/or put back in extras_require: #1014
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
         'XStatic-Font-Awesome>=4.1.0.0',
@@ -112,7 +113,7 @@ setup_args = dict(
         'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
                                          # requires special libs/header to be installed before it can be compiled successfully
                                          # windows binaries available from 3rd parties
-        'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
+        # 'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
     },
     entry_points=dict(
         console_scripts=['moin = moin.scripts:main'],
