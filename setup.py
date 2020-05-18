@@ -84,6 +84,7 @@ setup_args = dict(
         'Flask-Script>=2.0.5',  # scripting support
         'Flask-Theme>=0.3.3',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
+        'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
