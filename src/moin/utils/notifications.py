@@ -211,6 +211,10 @@ def send_notifications(app, fqname, **kwargs):
     action = kwargs.get('action')
     revs = get_item_last_revisions(app, fqname) if action not in [
         DESTROY_REV, DESTROY_ALL, ] else []
+    meta = kwargs.get('meta') if action in [DESTROY_REV, DESTROY_ALL, ] else revs[0].meta._meta
+    subscribers = {subscriber for subscriber in get_subscribers(**meta) if subscriber.itemid != flaskg.user.itemid}
+    if not subscribers:
+        return
     notification = Notification(app, fqname, revs, **kwargs)
     try:
         content_diff = notification.get_content_diff()
@@ -219,17 +223,12 @@ def send_notifications(app, fqname, **kwargs):
         # if current item is corrupt, another exception will occur in a downstream script
         content_diff = ['- ' + _('An error has occurred, the current or prior revision of this item may be corrupt.')]
     meta_diff = notification.get_meta_diff()
-
-    u = flaskg.user
-    meta = kwargs.get('meta') if action in [DESTROY_REV, DESTROY_ALL, ] else revs[0].meta._meta
-    subscribers = {subscriber for subscriber in get_subscribers(**meta) if
-                   subscriber.itemid != u.itemid}
     subscribers_locale = {subscriber.locale for subscriber in subscribers}
     for locale in subscribers_locale:
         with force_locale(locale):
             txt_msg, html_msg = notification.render_templates(content_diff, meta_diff)
             subject = _('[%(moin_name)s] Update of "%(fqname)s" by %(user_name)s',
-                        moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=u.name0)
+                        moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=flaskg.user.name0)
             subscribers_emails = [subscriber.email for subscriber in subscribers
                                   if subscriber.locale == locale]
             sendmail(subject, txt_msg, to=subscribers_emails, html=html_msg)
