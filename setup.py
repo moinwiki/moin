@@ -82,7 +82,7 @@ setup_args = dict(
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Script>=2.0.5',  # scripting support
-        'Flask-Theme>=0.3.3',  # theme support
+        'Flask-Theme>=0.3.5',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
