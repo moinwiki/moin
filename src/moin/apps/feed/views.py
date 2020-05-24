@@ -77,7 +77,8 @@ def atom(item_name):
                 if previous_revid is not None:
                     # HTML diff for subsequent revisions
                     previous_rev = item[previous_revid]
-                    content = hl_item.content._render_data_diff_atom(previous_rev, this_rev)
+                    content = hl_item.content._render_data_diff_atom(previous_rev, this_rev,
+                                                                     fqname=this_rev.item.fqname)
                 else:
                     # full html rendering for new items
                     content = render_template('atom.html', get='first_revision', rev=this_rev,
