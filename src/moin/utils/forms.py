@@ -7,7 +7,7 @@
 
 
 from jinja2 import Markup
-import werkzeug
+import werkzeug.datastructures
 
 from flatland import AdaptationError, Scalar
 from flatland.out.markup import Generator
@@ -107,6 +107,6 @@ class FileStorage(Scalar):
     """Schema element for Werkzeug FileStorage instances."""
 
     def adapt(self, value):
-        if not isinstance(value, (type(None), werkzeug.FileStorage)):
+        if not isinstance(value, (type(None), werkzeug.datastructures.FileStorage)):
             raise AdaptationError
         return value
