@@ -12,7 +12,7 @@ from io import BytesIO
 
 from flask import Markup
 
-from werkzeug import escape
+from werkzeug.utils import escape
 
 from moin.utils import diff_html
 
