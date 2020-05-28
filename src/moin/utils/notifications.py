@@ -68,21 +68,19 @@ class Notification:
     txt_template = "mail/notification.txt"
     html_template = "mail/notification_main.html"
 
-    def __init__(self, app, fqname, revs, **kwargs):
+    def __init__(self, app, fqname, action, data, meta, new_data, new_meta, **kwargs):
         self.app = app
         self.fqname = fqname
-        self.revs = revs
-        self.action = kwargs.get('action', None)
-        self.content = kwargs.get('content', None)
-        self.meta = kwargs.get('meta', None)
+        self.action = action
+        self.data = data
+        self.meta = meta
+        self.new_meta = new_meta
+        self.new_data = new_data
         self.comment = kwargs.get('comment', None)
         self.wiki_name = self.app.cfg.interwikiname
 
         if self.action == ACTION_SAVE:
-            self.action = ACTION_CREATE if len(self.revs) == 1 else ACTION_MODIFY
-
-        if self.action == ACTION_TRASH:
-            self.meta = self.revs[0].meta
+            self.action = ACTION_CREATE if meta is None else ACTION_MODIFY
 
         kw = dict(fqname=str(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0, item_url=url_for_item(self.fqname))
         self.notification_sentence = L_(MESSAGES[self.action], **kw)
@@ -92,24 +90,21 @@ class Notification:
 
         :return: list of diff lines
         """
-        if self.action in [DESTROY_REV, DESTROY_ALL, ]:
+        if self.action in [ACTION_TRASH, DESTROY_REV, DESTROY_ALL, ]:
             contenttype = self.meta[CONTENTTYPE]
-            oldfile, newfile = self.content, BytesIO(b"")
-        elif self.action == ACTION_TRASH:
-            contenttype = self.meta[CONTENTTYPE]
-            oldfile, newfile = self.revs[0].data, BytesIO(b"")
+            coding = contenttype.split('charset=')[1]
+            oldfile, newfile = self.data, BytesIO(b"")
         else:
-            # if user does not have permission to read object,
-            # get_item_last_revisions() returns an empty list to self.revs
-            if len(self.revs) > 0:
-                newfile = self.revs[0].data
-                if len(self.revs) == 1:
-                    contenttype = self.revs[0].meta[CONTENTTYPE]
+            if self.new_data:
+                newfile = self.new_data
+                newfile.seek(0)
+                if self.meta is None:
+                    contenttype = self.new_meta[CONTENTTYPE]
                     oldfile = BytesIO(b"")
                 else:
                     from moin.apps.frontend.views import _common_type
-                    contenttype = _common_type(self.revs[0].meta[CONTENTTYPE], self.revs[1].meta[CONTENTTYPE])
-                    oldfile = self.revs[1].data
+                    contenttype = _common_type(self.new_meta[CONTENTTYPE], self.meta[CONTENTTYPE])
+                    oldfile = self.data
             else:
                 abort(403)
         content = Content.create(contenttype)
@@ -124,11 +119,11 @@ class Notification:
         if self.action in [ACTION_TRASH, DESTROY_REV, DESTROY_ALL, ]:
             old_meta, new_meta = dict(self.meta), dict()
         else:
-            new_meta = dict(self.revs[0].meta)
-            if len(self.revs) == 1:
+            new_meta = dict(self.new_meta)
+            if self.meta is None:
                 old_meta = dict()
             else:
-                old_meta = dict(self.revs[1].meta)
+                old_meta = dict(self.meta)
         meta_diff = dict_diff(old_meta, new_meta)
         return meta_diff
 
@@ -137,13 +132,13 @@ class Notification:
 
         :param domain: domain name
         :return: the absolute URL to the diff page
+
+        if data/meta are None, then new item is being created
+        if new_data/new_meta is None then item is being deleted or destroyed
         """
-        if len(self.revs) < 2:
+        if self.new_data is None or self.data is None:
             return ""
-        else:
-            revid1 = self.revs[1].revid
-            revid2 = self.revs[0].revid
-        diff_rel_url = url_for('frontend.diff', item_name=self.fqname, rev1=revid1, rev2=revid2)
+        diff_rel_url = url_for('frontend.diff', item_name=self.fqname, rev1=self.meta['revid'], rev2=self.new_meta['revid'])
         return urljoin(domain, diff_rel_url)
 
     def render_templates(self, content_diff, meta_diff):
@@ -158,16 +153,12 @@ class Notification:
                                                   item_name=self.fqname))
         diff_url = self.generate_diff_url(domain)
         item_url = urljoin(domain, url_for('frontend.show_item', item_name=self.fqname))
-        if self.comment is not None:
-            comment = self.meta["comment"]
-        else:
-            comment = self.revs[0].meta["comment"]
         txt_template = render_template(Notification.txt_template,
                                        wiki_name=self.wiki_name,
                                        notification_sentence=self.notification_sentence,
                                        diff_url=diff_url,
                                        item_url=item_url,
-                                       comment=comment,
+                                       comment=self.comment,
                                        content_diff_=content_diff,
                                        meta_diff_=meta_diff_txt,
                                        unsubscribe_url=unsubscribe_url,
@@ -177,7 +168,7 @@ class Notification:
                                         notification_sentence=self.notification_sentence,
                                         diff_url=diff_url,
                                         item_url=item_url,
-                                        comment=comment,
+                                        comment=self.comment,
                                         content_diff_=content_diff,
                                         meta_diff_=meta_diff,
                                         unsubscribe_url=unsubscribe_url,
@@ -191,6 +182,8 @@ def get_item_last_revisions(app, fqname):
     :param app: local proxy app
     :param fqname: the fqname of the item
     :return: a list of revisions
+
+    TODO: no longer used, remove this and related tests
     """
     terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
     query = And(terms)
@@ -200,22 +193,25 @@ def get_item_last_revisions(app, fqname):
 
 
 @item_modified.connect_via(ANY)
-def send_notifications(app, fqname, **kwargs):
+def send_notifications(app, fqname, action, data=None, meta=None, new_data=None, new_meta=None, **kwargs):
     """ Send mail notifications to subscribers on item change
 
     :param app: local proxy app
     :param fqname: fqname of the changed item
-    :param kwargs: key/value pairs that contain extra information about the item
-                   required in order to create a notification
+    :param action: type of modification - save, rename, destroy...
+    :param data: the item's data, None if item is new
+    :param meta: the item's meta data, None if item is new
+    :param new_data: open file with new data, None if action is delete or destroy
+    :param new_meta: new meta data, None if action is delete or destroy
+    :param kwargs: optional comment
     """
-    action = kwargs.get('action')
-    revs = get_item_last_revisions(app, fqname) if action not in [
-        DESTROY_REV, DESTROY_ALL, ] else []
-    meta = kwargs.get('meta') if action in [DESTROY_REV, DESTROY_ALL, ] else revs[0].meta._meta
-    subscribers = {subscriber for subscriber in get_subscribers(**meta) if subscriber.itemid != flaskg.user.itemid}
+    if new_meta is None:
+        subscribers = {subscriber for subscriber in get_subscribers(**meta) if subscriber.itemid != flaskg.user.itemid}
+    else:
+        subscribers = {subscriber for subscriber in get_subscribers(**new_meta) if subscriber.itemid != flaskg.user.itemid}
     if not subscribers:
         return
-    notification = Notification(app, fqname, revs, **kwargs)
+    notification = Notification(app, fqname, action, data, meta, new_data, new_meta, **kwargs)
     try:
         content_diff = notification.get_content_diff()
     except Exception:

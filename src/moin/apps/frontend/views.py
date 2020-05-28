@@ -704,7 +704,8 @@ def convert_item(item_name):
                                          contenttype_guessed=Type(form['new_type'].value),
                                          return_rev=True,
                                          )
-    item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE)
+    item_modified.send(app, fqname=meta['name'][0], action=ACTION_SAVE, data=BytesIO(content),
+                       meta=meta, new_data=out, new_meta=meta)
     flash(L_("Item converted successfully"), 'info')
     return redirect(url_for_item(**item.fqname.split))
 
@@ -1054,9 +1055,8 @@ def jfu_server(item_name):
     try:
         item = Item.create(item_name)
         revid, size = item.modify({'itemtype': ITEMTYPE_DEFAULT, }, data, contenttype_guessed=contenttype)
-        item_modified.send(app._get_current_object(),
-                           fqname=item.fqname, action=ACTION_SAVE)
         jfu_server_lock.release()
+        item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
