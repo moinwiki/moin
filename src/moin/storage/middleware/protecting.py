@@ -415,7 +415,7 @@ class ProtectedItem:
     def get_revision(self, revid):
         return self[revid]
 
-    def store_revision(self, meta, data, overwrite=False, return_rev=False, fqname=None, **kw):
+    def store_revision(self, meta, data, overwrite=False, return_rev=False, return_meta=False, fqname=None, **kw):
         self.require(WRITE)
         if not self:
             self.require(CREATE)
@@ -424,6 +424,12 @@ class ProtectedItem:
         if meta.get(ACL) != self.acl:
             self.require(ADMIN)
         rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, fqname=fqname, **kw)
+        if return_meta:
+            # handle odd case where user changes or reverts ACLs and loses read permission
+            # email notifications will be sent and user will get 403 on item show
+            pr = ProtectedRevision(self.protector, rev, p_item=self)
+            self.protector._clear_acl_cache()
+            return (pr.fqname, pr.meta)
         self.protector._clear_acl_cache()
         if return_rev:
             return ProtectedRevision(self.protector, rev, p_item=self)
