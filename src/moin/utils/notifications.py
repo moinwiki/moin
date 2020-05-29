@@ -15,7 +15,7 @@ from flask import url_for, g as flaskg
 from flask import abort
 
 from moin.constants.keys import (ACTION_COPY, ACTION_RENAME, ACTION_REVERT,
-                                 ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
+                                 ACTION_CONVERT, ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
                                  MTIME, NAME_EXACT, WIKINAME)
 from moin.i18n import _, L_, N_
 from moin.i18n import force_locale
@@ -50,6 +50,7 @@ def msgs():
         ACTION_MODIFY: _("The '%(fqname)s' item on '%(wiki_name)s' has been modified by %(user_name)s:"),
         ACTION_RENAME: _("The '%(fqname)s' item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
         ACTION_COPY: _("The '%(fqname)s' item on '%(wiki_name)s' has been copied by %(user_name)s:"),
+        ACTION_CONVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been converted by %(user_name)s:"),
         ACTION_REVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
         ACTION_TRASH: _("The '%(fqname)s' item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
         DESTROY_REV: _("The '%(fqname)s' item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
@@ -174,22 +175,6 @@ class Notification:
                                         unsubscribe_url=unsubscribe_url,
         )
         return txt_template, html_template
-
-
-def get_item_last_revisions(app, fqname):
-    """ Get 2 or less most recent item revisions from the index
-
-    :param app: local proxy app
-    :param fqname: the fqname of the item
-    :return: a list of revisions
-
-    TODO: no longer used, remove this and related tests
-    """
-    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
-    query = And(terms)
-    return list(
-        flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME],
-                              reverse=True, limit=2))
 
 
 @item_modified.connect_via(ANY)

@@ -720,6 +720,8 @@ class Item:
         else:
             item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta,
                                data=currentrev.data, meta=currentrev.meta)
+        if currentrev is not None:
+            close_file(currentrev.data)
         return new_meta[REVID], new_meta[SIZE]
 
     def handle_variables(self, data, meta):
