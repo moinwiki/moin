@@ -527,8 +527,7 @@ class Item:
         """
         delete this item (remove current name from NAME list)
         """
-        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, meta=self.meta,
-                           content=self.rev.data, comment=comment)
+        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
         ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
         if [self.name] == self.names:
             flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
@@ -545,8 +544,7 @@ class Item:
     def destroy(self, comment='', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
         action = DESTROY_ALL if destroy_item else DESTROY_REV
-        item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
-                           content=self.rev.data, comment=comment)
+        item_modified.send(app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
         close_file(self.rev.data)
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
@@ -657,8 +655,6 @@ class Item:
                 name = self.fqname.value
             oldname = meta.get(NAME)
             if oldname:
-                if not isinstance(oldname, list):
-                    oldname = [oldname]
                 if delete or name not in oldname:  # this is a delete or rename
                     try:
                         oldname.remove(self.name)
@@ -712,14 +708,21 @@ class Item:
 
         if isinstance(data, bytes):
             data = BytesIO(data)
-        newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
+        fqname, new_meta = storage_item.store_revision(meta, data, overwrite=overwrite,
                                              action=str(action),
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
+                                             return_meta=True,
                                              return_rev=True,
                                              )
-        item_modified.send(app, fqname=newrev.fqname, action=action)
-        return newrev.revid, newrev.meta[SIZE]
+        if currentrev is None:
+            item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta)
+        else:
+            item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta,
+                               data=currentrev.data, meta=currentrev.meta)
+        if currentrev is not None:
+            close_file(currentrev.data)
+        return new_meta[REVID], new_meta[SIZE]
 
     def handle_variables(self, data, meta):
         """ Expand @VARIABLE@ in data, where variable is SIG, DATE, etc
