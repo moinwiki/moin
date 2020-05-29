@@ -14,7 +14,7 @@ from flask import url_for
 from moin.constants.keys import ACTION_SAVE, ACTION_TRASH
 from moin.items import Item
 from moin.utils.diff_datastruct import diff as dict_diff
-from moin.utils.notifications import Notification, get_item_last_revisions, DESTROY_REV, DESTROY_ALL
+from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL
 from moin.utils.interwiki import split_fqname
 
 import pytest
@@ -28,19 +28,6 @@ class TestNotifications:
         self.imw = flaskg.unprotected_storage
         self.item_name = "foo"
         self.fqname = split_fqname(self.item_name)
-
-    def test_get_last_item_revisions(self):
-        assert get_item_last_revisions(app, self.fqname) == []
-        item = self.imw[self.item_name]
-        rev1 = item.store_revision(dict(name=[self.item_name, ]),
-                                   BytesIO(b'x'), trusted=True, return_rev=True)
-        assert get_item_last_revisions(app, self.fqname) == [rev1]
-        rev2 = item.store_revision(dict(name=[self.item_name, ]),
-                                   BytesIO(b'xx'), trusted=True, return_rev=True)
-        assert get_item_last_revisions(app, self.fqname) == [rev2, rev1]
-        rev3 = item.store_revision(dict(name=[self.item_name, ]),
-                                   BytesIO(b'xxx'), trusted=True, return_rev=True)
-        assert get_item_last_revisions(app, self.fqname) == [rev3, rev2]
 
     def test_get_content_diff(self):
         item = self.imw[self.item_name]

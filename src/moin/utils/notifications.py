@@ -176,22 +176,6 @@ class Notification:
         return txt_template, html_template
 
 
-def get_item_last_revisions(app, fqname):
-    """ Get 2 or less most recent item revisions from the index
-
-    :param app: local proxy app
-    :param fqname: the fqname of the item
-    :return: a list of revisions
-
-    TODO: no longer used, remove this and related tests
-    """
-    terms = [Term(WIKINAME, app.cfg.interwikiname), Term(fqname.field, fqname.value), ]
-    query = And(terms)
-    return list(
-        flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME],
-                              reverse=True, limit=2))
-
-
 @item_modified.connect_via(ANY)
 def send_notifications(app, fqname, action, data=None, meta=None, new_data=None, new_meta=None, **kwargs):
     """ Send mail notifications to subscribers on item change
