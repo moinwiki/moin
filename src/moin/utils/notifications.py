@@ -15,7 +15,7 @@ from flask import url_for, g as flaskg
 from flask import abort
 
 from moin.constants.keys import (ACTION_COPY, ACTION_RENAME, ACTION_REVERT,
-                                 ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
+                                 ACTION_CONVERT, ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
                                  MTIME, NAME_EXACT, WIKINAME)
 from moin.i18n import _, L_, N_
 from moin.i18n import force_locale
@@ -50,6 +50,7 @@ def msgs():
         ACTION_MODIFY: _("The '%(fqname)s' item on '%(wiki_name)s' has been modified by %(user_name)s:"),
         ACTION_RENAME: _("The '%(fqname)s' item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
         ACTION_COPY: _("The '%(fqname)s' item on '%(wiki_name)s' has been copied by %(user_name)s:"),
+        ACTION_CONVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been converted by %(user_name)s:"),
         ACTION_REVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
         ACTION_TRASH: _("The '%(fqname)s' item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
         DESTROY_REV: _("The '%(fqname)s' item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
