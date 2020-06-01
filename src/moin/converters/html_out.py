@@ -234,6 +234,16 @@ class Converter:
         elem.attrib = {}
         return self.new_copy(html.div, elem, attrib)
 
+    def visit_moinpage_audio(self, elem):
+        href = elem.get(xlink.href, None)
+        attrib = {html.src: href} if href else {}
+        return self.new_copy(html.audio, elem)
+
+    def visit_moinpage_video(self, elem):
+        href = elem.get(xlink.href, None)
+        attrib = {html.src: href} if href else {}
+        return self.new_copy(html.video, elem, attrib)
+
     def visit_moinpage_nowiki(self, elem):
         return self.new_copy(html.div, elem)
 

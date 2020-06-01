@@ -421,6 +421,40 @@ class Converter:
         attrib[key] = str(attrib[key])
         return moin_page.object(attrib)
 
+    def visit_xhtml_audio(self, element):
+        """
+        <audio src="URI" /> --> <audio xlink:href="URI />
+        """
+        attrib = {}
+        key = xlink('href')
+        if self.base_url:
+            attrib[key] = ''.join([self.base_url, element.get(html.src)])
+        else:
+            attrib[key] = element.get(html.src)
+        for key, value in element.attrib.items():
+            if key.uri == html and key.name in ('controls', ):
+                attrib[key] = value
+            if key.name == 'id':
+                attrib[xml('id')] = value
+        return moin_page.audio(attrib)
+
+    def visit_xhtml_video(self, element):
+        """
+        <video src="URI" /> --> <video xlink:href="URI />
+        """
+        attrib = {}
+        key = xlink('href')
+        if self.base_url:
+            attrib[key] = ''.join([self.base_url, element.get(html.src)])
+        else:
+            attrib[key] = element.get(html.src)
+        for key, value in element.attrib.items():
+            if key.uri == html and key.name in ('controls', 'width', 'height', 'autoplay'):
+                attrib[key] = value
+            if key.name == 'id':
+                attrib[xml('id')] = value
+        return moin_page.video(attrib)
+
     def visit_xhtml_inline(self, element):
         """
         For some specific inline tags (defined in inline_tags)
