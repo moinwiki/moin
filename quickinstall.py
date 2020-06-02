@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright: 2013 MoinMoin:BastianBlank
 # Copyright: 2013-2018 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
