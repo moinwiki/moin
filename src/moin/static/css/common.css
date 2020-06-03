@@ -481,7 +481,7 @@ a.moin-auth-failed { color: red; }
 .moin-item-index div .moin-select-item { display: inline-block; width: 17px; cursor: default; }
 .moin-align-right { text-align: right; float: right; }
 .moin-align-right ul { margin: 0; padding: 0; }
-.moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; *display: inline; zoom: 1; }
+.moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
 
 #popup { padding: 0; width: 80%; position: absolute; top: 10%; left: 10%; display: none; z-index: 10; border: 3px solid #00417f; }
 .popup-header { background-color: #00417f; color: #fff; font-size: 1.25em; padding: 10px; margin: 0; font-weight: bold; }
@@ -515,7 +515,7 @@ form.upload_file button { display: none; }
 
 .moin-tabs .moin-tab-titles a{ color: #00008b; }
 .moin-tab-titles{ margin: 0; padding: -10px 0 0; list-style: none; border-bottom: 3px solid #4e7da9; }
-.moin-tab-titles li { display: inline-block; *display: inline; zoom: 1; margin: 10px 0 -3px; padding: 0 5px; border-bottom: 3px solid #4e7da9; }
+.moin-tab-titles li { display: inline-block; margin: 10px 0 -3px; padding: 0 5px; border-bottom: 3px solid #4e7da9; }
 .moin-tab-titles a { display: inline-block; padding: 4px; background-color: #eef1f6; border-width: 1px 1px 0; border-style: solid;
     border-color: #4e7da9; color: #00008b; border-top-left-radius: 7px; border-top-right-radius: 7px; }
 .moin-tab-titles a: hover { background-color: #d8dfe9; text-decoration: none; }
