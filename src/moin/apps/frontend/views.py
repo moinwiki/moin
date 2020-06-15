@@ -1079,7 +1079,7 @@ ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(
 
 class IndexForm(Form):
     contenttype = ContenttypeGroup
-    submit_label = L_('Filter')
+    submit_label = L_('Apply Filter')
 
 
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])

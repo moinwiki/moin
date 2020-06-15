@@ -402,7 +402,7 @@ a.moin-button:visited,
 a.moin-button:hover,
 a.moin-button:active { color: #000; text-decoration: none; }
 .moin-button { background: #aed4fa; border: 1px solid #00417F; border-radius: 6px; cursor: pointer;
-    font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
+    font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; display: inline-block; }
 .moin-button.moin-button-disabled { background: #ccc; }
 .moin-button:hover,
 .moin-button:focus { box-shadow: 2px 2px 1px #000; outline: none; }
@@ -447,17 +447,17 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-index-message span { padding: 4px; background-color: #eee; color: red; }
 .moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; }
-.moin-contenttype-selection div { cursor: pointer; margin: .1em; padding: .5em 1.2em .5em .5em; height: 1em; }
+.moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em 0; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
 div.moin-ct-shown { background: #d8dfe9 url("../img/moin-movedown.png") no-repeat center right; color: #000; }
 div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat center right; }
 a.moin-auth-failed { color: red; }
 
-.moin-contenttype-selection form { z-index: 2; background-color: #fff; border: 1px solid #4e7da9; padding: .2em; }
+.moin-contenttype-selection form { z-index: 2; background-color: #fff; border: 1px solid #4e7da9; padding: .2em; border-radius: 5px; }
 .moin-contenttype-selection ul li { list-style-type: none; }
 .moin-contenttype-selection ul li label { display: inline; vertical-align: middle; }
 .moin-contenttype-selection ul li .helper-text { font-size: .7em; color: #737373; }
 .moin-contenttype-selection ul li a { font-size: 80%; }
-.moin-contenttype-selection form input[type="submit"] { margin-left: 22%; padding-left: 20%; padding-right: 20%; }
+.moin-contenttype-selection form input[type="submit"] { font-size: .9em; }
 .moin-contenttype-selection:hover div { background-color: #d8dfe9; color: #1f9ae0; }
 
 .moin-filter-toggle { margin: 0 .2em; font-size: 90%; }
@@ -473,7 +473,7 @@ a.moin-auth-failed { color: red; }
 .moin-ns-toggle,
 .moin-ct-toggle { color: black; }
 
-#moin-initials { width: 90%; margin: 5px auto; text-align: center; }
+#moin-initials { width: 90%; margin: 5px auto 1em auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: #00008b; border-radius: 5px; color: #fff; text-decoration: none; }
 .moin-item-index { width: 99%; margin-left: .5%; }
