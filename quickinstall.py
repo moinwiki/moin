@@ -284,7 +284,7 @@ def get_sitepackages_location():
 
 
 def create_m():
-    """Create an 'm.bat or 'm' bash script that will run make.py using this Python"""
+    """Create an 'm.bat or 'm' bash script that will run quickinstall.py using this Python"""
     if WINDOWS_OS:
         with open('m.bat', 'w') as f:
             f.write(':: {0}\n\n@{1} quickinstall.py %* --help\n'.format(WIN_INFO, sys.executable))
@@ -315,8 +315,10 @@ class Commands:
             command = '{0} quickinstall.py --FirstCall'.format(sys.executable, ' '.join(args), )
             print('Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL))
         with open(QUICKINSTALL, 'w') as messages:
-            # we run ourself as a subprocess so we can capture output in a log file
-            result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
+            # we run ourself as a subprocess so output can be captured in a log file
+            result = subprocess.run(command, shell=True, stderr=messages, stdout=messages)
+            # above result will be flagged as error unless all python versions specified in tox.ini are installed:
+            # [tox]\n envlist = py{35,36,37,38},pypy3,flake8
         print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
         self.run_time('Quickinstall')
@@ -622,9 +624,9 @@ class QuickInstall:
         self.dir_source = source
         base, source_name = os.path.split(source)
         executable = os.path.basename(sys.executable).split('.exe')[0]
-        venv = os.path.join(base, '{0}-venv-{1}'.format(source_name, executable))
-        venv = os.path.abspath(venv)
-        venv_home, venv_lib, venv_inc, venv_bin = virtualenv.path_locations(venv)
+        venv_path = os.path.join(base, '{0}-venv-{1}'.format(source_name, executable))
+        venv_path = os.path.abspath(venv_path)
+        venv_home, venv_lib, venv_inc, venv_bin = path_locations(venv_path)
         self.dir_venv = venv_home
         self.dir_venv_bin = venv_bin
 
@@ -690,6 +692,62 @@ class QuickInstall:
             if os.path.exists('activate'):
                 os.unlink('activate')
             os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')  # no need to define deactivate on unix
+
+
+# code below and path_locations copied from virtualenv.py v16.7.10 because path_locations dropped in v20.0.0 rewrite.
+IS_PYPY = hasattr(sys, "pypy_version_info")
+IS_WIN = sys.platform == "win32"
+join = os.path.join
+
+
+def mkdir(at_path):
+    if not os.path.exists(at_path):
+        os.makedirs(at_path)
+
+
+def path_locations(home_dir, dry_run=False):
+    """Return the path locations for the environment (where libraries are,
+    where scripts go, etc)"""
+    home_dir = os.path.abspath(home_dir)
+    lib_dir, inc_dir, bin_dir = None, None, None
+    # XXX: We'd use distutils.sysconfig.get_python_inc/lib but its
+    # prefix arg is broken: http://bugs.python.org/issue3386
+    if IS_WIN:
+        # Windows has lots of problems with executables with spaces in
+        # the name; this function will remove them (using the ~1
+        # format):
+        if not dry_run:
+            mkdir(home_dir)
+        if " " in home_dir:
+            import ctypes
+
+            get_short_path_name = ctypes.windll.kernel32.GetShortPathNameW
+            size = max(len(home_dir) + 1, 256)
+            buf = ctypes.create_unicode_buffer(size)
+            try:
+                # noinspection PyUnresolvedReferences
+                u = unicode
+            except NameError:
+                u = str
+            ret = get_short_path_name(u(home_dir), buf, size)
+            if not ret:
+                print('Error: the path "{}" has a space in it'.format(home_dir))
+                print("We could not determine the short pathname for it.")
+                print("Exiting.")
+                sys.exit(3)
+            home_dir = str(buf.value)
+        lib_dir = join(home_dir, "Lib")
+        inc_dir = join(home_dir, "Include")
+        bin_dir = join(home_dir, "Scripts")
+    if IS_PYPY:
+        lib_dir = home_dir
+        inc_dir = join(home_dir, "include")
+        bin_dir = join(home_dir, "bin")
+    elif not IS_WIN:
+        lib_dir = join(home_dir, "lib", PY_VERSION)
+        inc_dir = join(home_dir, "include", PY_VERSION + ABI_FLAGS)
+        bin_dir = join(home_dir, "bin")
+    return home_dir, lib_dir, inc_dir, bin_dir
 
 
 if __name__ == '__main__':
