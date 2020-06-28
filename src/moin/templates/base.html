@@ -53,6 +53,11 @@
 
                 {%- block theme_stylesheets %}
                     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
+                    {% if theme_supp.variables_css() %}
+                        <link media="all" rel="stylesheet" href="{{ theme_static('css/variables.css') }}" />
+                    {% else %}
+                        <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}" />
+                    {% endif %}
                     <link media="all" rel="stylesheet" href="{{ url_for('serve.files', name='pygments', filename='css/colorful.css') }}" />
                     <link media="all" rel="stylesheet" href="{{ url_for('serve.files', name='font_awesome', filename='css/font-awesome.css') }}" />
                     <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
