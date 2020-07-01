@@ -2006,6 +2006,9 @@ def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
+    # wergzeug 1.0.0 dropped support for request.is_xhr, True if the request was triggered via a JavaScript XMLHttpRequest
+    is_xhr = request.accept_mimetypes.best == "text/javascript"
+
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         form_name = 'usersettings_personal'
@@ -2050,7 +2053,7 @@ def usersettings():
         part = request.form.get('part')
         if part not in form_classes:
             # the current part does not exist
-            if request.is_xhr:
+            if is_xhr:
                 # if the request is made via XHR, we return 404 Not Found
                 abort(404)
             # otherwise we basically fall back to a normal GET request
@@ -2122,12 +2125,12 @@ def usersettings():
                 # if no flash message was added until here, we add a generic success message
                 response['flash'].append((_("Your changes have been saved."), "info"))
 
-            if response['redirect'] is not None or not request.is_xhr:
+            if response['redirect'] is not None or not is_xhr:
                 # if we redirect or it is no XHR request, we just flash() the messages normally
                 for f in response['flash']:
                     flash(*f)
 
-            if request.is_xhr:
+            if is_xhr:
                 # if it is a XHR request, render the part from the usersettings_ajax.html template
                 # and send the response encoded as an JSON object
                 response['form'] = render_template('usersettings_ajax.html',
