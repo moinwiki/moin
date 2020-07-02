@@ -695,8 +695,10 @@ class QuickInstall:
 
 
 # code below and path_locations copied from virtualenv.py v16.7.10 because path_locations dropped in v20.0.0 rewrite.
+PY_VERSION = "python{}.{}".format(sys.version_info[0], sys.version_info[1])
 IS_PYPY = hasattr(sys, "pypy_version_info")
 IS_WIN = sys.platform == "win32"
+ABI_FLAGS = getattr(sys, "abiflags", "")
 join = os.path.join
 
 
