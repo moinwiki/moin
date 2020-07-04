@@ -682,7 +682,7 @@ MoinMoin.prototype.enhanceEdit = function () {
 
 // diffScroll is executed on page load.
 // Adds an onclick function to the line # links in a diff view.
-// Multiple consecutive blank lines in markup source make diff and DOM line numbers out of sync,
+// Multiple consecutive blank lines in Markdown source make diff and DOM line numbers out of sync,
 // so window may be scrolled to wrong line.
 MoinMoin.prototype.diffScroll = function () {
     "use strict";
