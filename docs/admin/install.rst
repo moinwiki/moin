@@ -170,22 +170,6 @@ all ready cached (view the contents of pip-download-cache) will not
 be downloaded again. Hopefully, any temporary download errors will
 cease with multiple tries.
 
-ActiveState Python
-------------------
-While ActiveState bundles pip and virtualenv in its distribution,
-there are two missing files. The result is the following error
-messages followed by a traceback::
-
-
-  Cannot find sdist setuptools-*.tar.gz
-  Cannot find sdist pip-*.tar.gz
-
-To install the missing files, do the following and then rerun
-"python quickinstall.py"::
-
-  \Python27\Scripts\pip.exe uninstall virtualenv
-  \Python27\Scripts\easy_install virtualenv
-
 Other Issues
 ------------
 

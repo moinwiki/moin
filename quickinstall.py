@@ -54,13 +54,8 @@ import shutil
 import fnmatch
 import timeit
 from collections import Counter
-try:
-    import virtualenv
-except ImportError:
-    sys.exit("""
-Error: import virtualenv failed, either virtualenv is not installed (see installation docs)
-or the virtual environment must be deactivated before rerunning quickinstall.py
-""")
+import venv
+
 
 if sys.hexversion < 0x3050000:
     sys.exit("Error: MoinMoin requires Python 3.5+, current version is %s\n" % (platform.python_version(), ))
@@ -638,7 +633,7 @@ class QuickInstall:
         sys.stdout.write("\n\nSuccessfully created or updated venv at {0}".format(self.dir_venv))
 
     def do_venv(self):
-        virtualenv.create_environment(self.dir_venv)
+        venv.create(self.dir_venv, system_site_packages=False, clear=False, symlinks=False, with_pip=True, prompt=None)
 
     def get_pip_version(self):
         """Return pip version as a list: [1, 5, 1]"""
@@ -695,8 +690,10 @@ class QuickInstall:
 
 
 # code below and path_locations copied from virtualenv.py v16.7.10 because path_locations dropped in v20.0.0 rewrite.
+PY_VERSION = "python{}.{}".format(sys.version_info[0], sys.version_info[1])
 IS_PYPY = hasattr(sys, "pypy_version_info")
 IS_WIN = sys.platform == "win32"
+ABI_FLAGS = getattr(sys, "abiflags", "")
 join = os.path.join
 
 
