@@ -2006,8 +2006,9 @@ def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
-    # wergzeug 1.0.0 dropped support for request.is_xhr, True if the request was triggered via a JavaScript XMLHttpRequest
-    is_xhr = request.accept_mimetypes.best == "text/javascript"
+    # wergzeug 1.0.0 dropped support for request.is_xhr, was True if the request was triggered via a JavaScript XMLHttpRequest
+    # TODO: maybe "is_xhr = request.method == 'POST'" would work
+    is_xhr = request.accept_mimetypes.best in ("application/json", "text/javascript", )
 
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):

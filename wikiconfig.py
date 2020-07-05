@@ -172,9 +172,9 @@ SECRET_KEY = 'you need to change this so it is really secret'
 DEBUG = False  # use True for development only, not for public sites!
 TESTING = False  # built-in server (./m run) ignores TESTING and DEBUG settings
 # per https://flask.palletsprojects.com/en/1.1.x/security/#set-cookie-options
-SESSION_COOKIE_SECURE=True  # flask default is False
-SESSION_COOKIE_HTTPONLY=True  # flask default is True
-SESSION_COOKIE_SAMESITE='Lax'  # flask default is None
+SESSION_COOKIE_SECURE = False  # flask default is False
+SESSION_COOKIE_HTTPONLY = True  # flask default is True
+SESSION_COOKIE_SAMESITE = 'Lax'  # flask default is None
 # SESSION_COOKIE_NAME = 'session'
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
 # USE_X_SENDFILE = False
