@@ -433,9 +433,6 @@ input.moin-button:disabled:hover { box-shadow: none; }
 pre { border: 1px solid #AEBDCC; border: 1px solid var(--border-code); background-color: #F3F5F7; background-color: var(--bg-code);
     padding: 7px 10px; clear: both; margin: .75em 0; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; border-radius: 4px;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
-/* TODO following 2 rules may be obsolete, pre.comment not used */
-pre.comment { background: #ccc; background: var(--bg-disabled); color: red; color: var(--alert); padding: 0; margin: 0; border: 0; }
-pre.comment:before { content: url(../img/attention.png); }
 
 /* table of contents (div.toc is for markdown parser) */
 div.moin-table-of-contents,
@@ -462,12 +459,6 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-show-action:after { content: url("../img/moin-moveup.png"); margin: 0 .2em; }
 .moin-action-visible .moin-show-action:after { content: url("../img/moin-movedown.png"); margin: 0 .2em; }
 .moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
-/* TODO remove entire rule, not used
-.moin-select-all { padding: .5em; color: #00008b; color: var(--link); background: #eef1f6; background: var(--bg-tabs);
-    border: 1px solid #4e7da9; border: 1px solid var(--border); text-align: left; }   */
-/* TODO following 2 rules for moin-index-message may be artifacts see .moin-flash rules */
-.moin-index-message { width: 50%; margin: 1em auto; text-align: center; display: none; }
-.moin-index-message span { padding: 4px; background-color: #EEE; background-color: var(--bg-zebra); color: red; color: var(--alert); }
 .moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; }
 .moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em 0; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
