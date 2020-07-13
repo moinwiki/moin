@@ -8,6 +8,7 @@
 """
 
 
+import os
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -519,6 +520,16 @@ class ThemeSupport:
         :returns: whether item pointed to by the link exists or not
         """
         return self.storage.has_item(itemname)
+
+    def variables_css(self):
+        """
+        Check whether this theme has a variables.css file
+
+        :rtype: boolean
+        :returns: whether variables.css file exists or not
+        """
+        path = os.path.join(get_current_theme().path, 'static/css/variables.css')
+        return os.path.isfile(path)
 
     def is_markup_or_text(self, contenttype):
         """
