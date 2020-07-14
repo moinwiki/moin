@@ -561,7 +561,7 @@ class Commands:
         """create distribution archive in dist/"""
         print('Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(DIST))
         self.cmd_del_wiki(*args)
-        command = '{0} setup.py sdist'.format(sys.executable)
+        command = '{0}{1} setup.py sdist bdist_wheel'.format(ACTIVATE, sys.executable)
         with open(DIST, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('Summary message from {0} is shown below:'.format(DIST))
