@@ -25,6 +25,7 @@ from flask_caching import Cache
 from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
+from whoosh.index import EmptyIndexError
 
 from moin.constants.misc import ANON
 from moin.i18n import i18n_init
@@ -32,7 +33,7 @@ from moin.i18n import _, L_, N_
 from moin.themes import setup_jinja_env, themed_error
 from moin.utils.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
-from moin import auth, user
+from moin import auth, user, config
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -86,7 +87,12 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
             if not path.exists(flask_config_file):
                 flask_config_file = path.abspath('wikiconfig.py')
                 if not path.exists(flask_config_file):
-                    flask_config_file = None
+                    # we should be here only because wiki admin is performing `moin create-instance`
+                    if 'create-instance' in sys.argv:
+                        config_path = path.dirname(config.__file__)
+                        flask_config_file = path.join(config_path, 'wikiconfig.py')
+                    else:
+                        flask_config_file = None
             if flask_config_file:
                 app.config.from_pyfile(flask_config_file)
     if flask_config_dict:
@@ -189,7 +195,14 @@ def init_backends(app):
                                               acl_rights_contents=app.cfg.acl_rights_contents)
     if app.cfg.create_index:
         app.storage.create()
-    app.storage.open()
+    try:
+        app.storage.open()
+    except EmptyIndexError:
+        # we should be here only because wiki admin is performing `moin create-instance`
+        if 'create-instance' in sys.argv:
+            pass
+        else:
+            raise
 
 
 def deinit_backends(app):

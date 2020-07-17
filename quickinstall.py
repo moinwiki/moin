@@ -300,6 +300,12 @@ class Commands:
         (t_hour,t_min) = divmod(t_min, 60)
         print('{} run time (h:mm:ss) {}:{:0>2}:{:0>2}'.format(command, t_hour, t_min, t_sec))
 
+    def copy_config_files(self):
+        if not os.path.isfile('wikiconfig.py'):
+            shutil.copy('src/moin/config/wikiconfig.py', 'wikiconfig.py')
+        if not os.path.isfile('intermap.txt'):
+            shutil.copy('src/moin/config/intermap.txt', 'intermap.txt')
+
     def cmd_quickinstall(self, *args):
         """create or update a virtual environment with the required packages"""
         if os.path.isdir('.tox'):
@@ -353,7 +359,7 @@ class Commands:
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
         print('Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt')))
-        command = '{0} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw contrib/interwiki/intermap.txt'.format(sys.executable)
+        command = '{0} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw intermap.txt'.format(sys.executable)
         subprocess.call(command, shell=True)
 
     def cmd_log(self, *args):
@@ -382,12 +388,14 @@ class Commands:
 
     def cmd_new_wiki(self, *args):
         """create empty wiki"""
+        self.copy_config_files()
         command = '{0}moin index-create -s -i'.format(ACTIVATE)
         print('Creating a new empty wiki...')
         make_wiki(command)  # share code with loading sample data and restoring backups
 
     def cmd_sample(self, *args):
         """create wiki and load sample data"""
+        self.copy_config_files()
         # load items with non-ASCII names from a serialized backup
         command = '{0}moin index-create -s -i{1} moin load --file contrib/sample/unicode.moin'.format(ACTIVATE, SEP)
         print('Creating a new wiki populated with sample data...')
@@ -403,6 +411,7 @@ class Commands:
 
     def cmd_restore(self, *args):
         """create wiki and load data from wiki/backup.moin or user specified path"""
+        self.copy_config_files()
         command = '{0} moin index-create -s -i{1} moin load --file %s{1} moin index-build'.format(ACTIVATE, SEP)
         filename = BACKUP_FILENAME
         if args:
@@ -417,6 +426,7 @@ class Commands:
 
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki directory named dir"""
+        self.copy_config_files()
         if args:
             dirname = args[0]
             if os.path.isdir(dirname):

@@ -19,8 +19,9 @@ with open(os.path.join(basedir, 'README.rst')) as f:
 
 
 setup_args = dict(
-    name="moin",
+    name="moin2",
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
+    long_description_content_type="text/x-rst",
     long_description=long_description,
     author="Juergen Hermann et al.",
     author_email="moin-user@python.org",
@@ -30,7 +31,7 @@ setup_args = dict(
     keywords="wiki web",
     platforms="any",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
         "Intended Audience :: Education",
         "Intended Audience :: End Users/Desktop",
@@ -45,6 +46,7 @@ setup_args = dict(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
