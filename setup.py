@@ -19,7 +19,7 @@ with open(os.path.join(basedir, 'README.rst')) as f:
 
 
 setup_args = dict(
-    name="moin2",
+    name="moin",
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
     long_description_content_type="text/x-rst",
     long_description=long_description,

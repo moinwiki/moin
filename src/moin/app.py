@@ -11,6 +11,7 @@ Use create_app(config) to create the WSGI application (using Flask).
 """
 
 import os
+from os import path
 import sys
 
 # do this early, but not in moin/__init__.py because we need to be able to
@@ -78,11 +79,10 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
     clock.start('create_app load config')
     if flask_config_file:
-        app.config.from_pyfile(flask_config_file)
+        app.config.from_pyfile(path.abspath(flask_config_file))
     else:
         if not app.config.from_envvar('MOINCFG', silent=True):
             # no MOINCFG env variable set, try stuff in cwd:
-            from os import path
             flask_config_file = path.abspath('wikiconfig_local.py')
             if not path.exists(flask_config_file):
                 flask_config_file = path.abspath('wikiconfig.py')
@@ -93,8 +93,10 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
                         flask_config_file = path.join(config_path, 'wikiconfig.py')
                     else:
                         flask_config_file = None
+            else:
+                logging.warning("Use of wikiconfig_editme.py is deprecated, merge into wikiconfig.py.")
             if flask_config_file:
-                app.config.from_pyfile(flask_config_file)
+                app.config.from_pyfile(path.abspath(flask_config_file))
     if flask_config_dict:
         app.config.update(flask_config_dict)
     Config = moin_config_class
