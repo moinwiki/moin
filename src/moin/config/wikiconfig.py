@@ -72,7 +72,7 @@ class Config(DefaultConfig):
     # it is required that you set this to a unique, stable and non-empty name:
     interwikiname = 'MyMoinMoin'
     # load the interwiki map from intermap.txt:
-    interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'contrib', 'interwiki', 'intermap.txt')).iwmap
+    interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'intermap.txt')).iwmap
     # we must add entries for 'Self' and our interwikiname, change these if you are not running the built-in desktop server:
     interwiki_map[interwikiname] = 'http://127.0.0.1:8080/'
     interwiki_map['Self'] = 'http://127.0.0.1:8080/'

@@ -23,6 +23,10 @@ def main(default_command='moin', wiki_config=None):
     manager.add_option('-s', '--storage-create', action='store_true', dest='create_storage',
                        required=False, default=False)
     manager.add_command("moin", Server(host='127.0.0.1', port=8080))
+    manager.add_command("run", Server(host='127.0.0.1', port=8080))
+
+    from moin.scripts.maint import create_instance
+    manager.add_command("create-instance", create_instance.CreateInstance())
 
     from moin.scripts.maint import index
     manager.add_command("index-create", index.IndexCreate())
