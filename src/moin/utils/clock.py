@@ -42,7 +42,7 @@ class Clock:
     def stop(self, timer):
         if timer in self.timers:
             value = time.time() - self.timers[timer].pop()
-            logging.info('timer {0}({1}): {2:.2f}ms'.format(timer, len(self.timers[timer]), value * 1000))
+            logging.debug('timer {0}({1}): {2:.2f}ms'.format(timer, len(self.timers[timer]), value * 1000))
             if not self.timers[timer]:
                 del self.timers[timer]
             return value
