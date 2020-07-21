@@ -2,33 +2,13 @@
 """
 MoinMoin Wiki Configuration - see https://moin-20.readthedocs.org/en/latest/admin/configure.html
 
-This configuration is designed to run moin from a workdir using
-the built-in server. Wiki admins who install moin via a git repository rather
-than a release package may opt to follow the developer instructions below to
-reduce merge issues when pulling updates.
+This file should be customized before creating content and adding user registrations.
 
+This starting configuration is designed to run moin using the built-in server to serve files
+to browsers running on the local PC.
 
-DEVELOPERS! Do not add your configuration items here - you could accidentally
-commit them! Instead, follow these steps:
-
-(1) In this directory, create a wikiconfig_local.py file containing the following one line of code:
-
-from wikiconfig_editme import *  # enable auto reload when wikiconfig_editme.py changes
-
-(2) Create a second file named wikiconfig_editme.py with the following six lines of code:
-
-from wikiconfig import *
-class LocalConfig(Config):
-    configuration_item_1 = 'value1'  # overlay this with local customizations
-MOINCFG = LocalConfig
-SECRET_KEY = 'you need to change this so it is really secret'
-DEBUG = True
-
-(3) Overlay the 3rd line in wikiconfig_editme.py by copying any or all of the indented
-    lines from "class Config" below.
-
-(4) Customize wikiconfig_editme.py as needed. Not all customization options are included
-    here, read the docs for other options.
+The security settings below are very relaxed, and not suitable for wikis
+serving files to the general public on the web.
 """
 
 import os
