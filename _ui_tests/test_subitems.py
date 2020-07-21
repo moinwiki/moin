@@ -58,7 +58,7 @@ class TestSubitems:
         self.driver.quit()
 
 if __name__ == '__main__':
-    # This lets us run the test directly, without using py.test
+    # This lets us run the test directly, without using pytest
     # This is useful for example for being able to call help, eg
     # 'help(driver)', or 'help(driver.find_element_by_id("f_submit"))'
     testSubitems = TestSubitems()

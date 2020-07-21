@@ -16,8 +16,6 @@
             {{ forms.raw_input(form['acl'], type='hidden') }}
         {% endif %}
         {% for e in [
-            'itemtype',
-            'contenttype',
             'summary',
             'tags',
             'name',
@@ -25,4 +23,5 @@
             {{ forms.render(form[e]) }}
         {% endfor %}
     </dl>
+    <div class="hint">{{ _("Tags and names may have embedded blanks, use commas to separate.") }}</div>
 {% endmacro %}

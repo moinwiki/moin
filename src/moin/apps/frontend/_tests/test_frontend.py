@@ -10,7 +10,7 @@ from io import BytesIO
 
 from flask import url_for
 from flask import g as flaskg
-from werkzeug import ImmutableMultiDict, FileStorage
+from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 
 from moin.apps.frontend import views
 from moin import user

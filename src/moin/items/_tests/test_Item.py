@@ -19,22 +19,38 @@ from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT
 
 
+def build_dirs_index(basename, relnames):
+    """
+    Build a list of IndexEntry by hand, useful as a test helper for index testing.
+    Dirs are files with subitems and have meta == {}.
+    """
+    return [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), {}))
+            for relname in relnames]
+
+
 def build_index(basename, relnames):
     """
-    Build a list of IndexEntry by hand, useful as a test helper.
+    Build a list of IndexEntry by hand, useful as a test helper for index testing.
+    Files have no subitems, meta content is reduced to required keys.
     """
-    return [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
+    files = [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
+    return [(IndexEntry(f.relname, f.fullname, {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}))
+            for f in files]
 
 
 def build_mixed_index(basename, spec):
     """
-    Build a list of MixedIndexEntry by hand, useful as a test helper.
+    Build a list of MixedIndexEntry by hand, useful as a test helper for index testing.
+    The mixed index is a combo of dirs and files with empty meta (dirs) or reduced
+    meta (files).
 
     :spec is a list of (relname, hassubitem) tuples.
     """
-    return [(MixedIndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta, hassubitem))
+    files = [(MixedIndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta, hassubitem))
             for relname, hassubitem in spec]
+    return [(MixedIndexEntry(f.relname, f.fullname, {} if f.hassubitems else {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}, f.hassubitems))
+            for f in files]
 
 
 class TestItem:
@@ -94,16 +110,16 @@ class TestItem:
         basename = 'Foo'
         for name in ['', '/ab', '/cd/ef', '/gh', '/ij', '/ij/kl', ]:
             item = Item.create(basename + name)
-            item._save({CONTENTTYPE: 'text/plain;charset=utf-8'}, "foo")
+            item._save({CONTENTTYPE: 'text/plain;charset=utf-8', ITEMTYPE: 'default'}, "foo")
         item = Item.create(basename + '/mn')
-        item._save({CONTENTTYPE: 'image/jpeg'}, "JPG")
+        item._save({CONTENTTYPE: 'image/jpeg', ITEMTYPE: 'default'}, b"JPG")
 
         baseitem = Item.create(basename)
 
         # test Item.make_flat_index
         # TODO: test Item.get_subitem_revs
         dirs, files = baseitem.get_index()
-        assert dirs == build_index(basename, ['cd', 'ij'])
+        assert dirs == build_dirs_index(basename, ['cd', 'ij'])
         assert files == build_index(basename, ['ab', 'gh', 'ij', 'mn'])
 
         # test Item.get_mixed_index
@@ -124,7 +140,7 @@ class TestItem:
         # check filtered index when contenttype_groups is passed
         ctgroups = ["Other Text Items"]
         dirs, files = baseitem.get_index(selected_groups=ctgroups)
-        assert dirs == build_index(basename, ['cd', 'ij'])
+        assert dirs == build_dirs_index(basename, ['cd', 'ij'])
         assert files == build_index(basename, ['ab', 'gh', 'ij'])
 
     def test_meta_filter(self):
@@ -346,7 +362,7 @@ class TestItem:
         assert item.meta['test_key'] == 'test_value'
         # modify
         another_data = 'another_test_data'
-        another_meta = {'another_test_key': 'another_test_value'}
+        another_meta = {'another_test_key': 'another_test_value', CONTENTTYPE: contenttype, }
         item.modify(another_meta, another_data)
         item = Item.create(name)
         assert item.name == 'Test_Item'
@@ -358,6 +374,7 @@ class TestItem:
         another_meta = {
             'test_key': 'test_value',
             'another_test_key': 'another_test_value',
+            CONTENTTYPE: contenttype,
         }
         item.modify(another_meta, another_data)
         item = Item.create(name)
@@ -365,6 +382,7 @@ class TestItem:
             'another_test_key': 'updated_test_value',
             'new_test_key': 'new_test_value',
             'none_test_key': None,
+            CONTENTTYPE: contenttype,
         }
         item.modify(another_meta, another_data, **update_meta)
         item = Item.create(name)

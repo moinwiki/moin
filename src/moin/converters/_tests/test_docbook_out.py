@@ -9,8 +9,6 @@ from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')  # noqa
-
 from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE3, TAGSTART_RE
@@ -20,6 +18,8 @@ from moin.converters.docbook_out import Converter
 
 from moin import log
 logging = log.getLogger(__name__)
+
+etree = pytest.importorskip('lxml.etree')  # noqa
 
 
 class Base:

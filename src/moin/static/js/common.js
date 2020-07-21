@@ -235,7 +235,7 @@ MoinMoin.prototype.QuicklinksExpander = function () {
     "use strict";
     var QUICKLINKS_EXPAND = ">>>",
         QUICKLINKS_COLLAPSE = "<<<",
-        QUICKLINKS_MAX = 5,
+        QUICKLINKS_MAX = $('#moin-navibar').data('expanded_quicklinks_size'),
         newThis;
     // 8 helper functions
     function getLinks() {
@@ -315,21 +315,6 @@ MoinMoin.prototype.toggleSubtree = function (item) {
     "use strict";
     var subtree = $(item).siblings("ul");
     subtree.toggle(200);
-};
-
-
-// Executed when user clicks insert-name button defined in modify.html.
-// When a page with subitems is modified, a subitems sidebar is present. User may
-// position caret in textarea and click button to insert name into textarea.
-MoinMoin.prototype.InsertName = function (fullname) {
-    "use strict";
-    var textArea, endPos, startPos;
-    textArea = document.getElementById('f_content_form_data_text');
-    startPos = textArea.selectionStart;
-    endPos = textArea.selectionEnd;
-    textArea.value = textArea.value.substring(0, startPos) + fullname + textArea.value.substring(endPos, textArea.value.length);
-    textArea.focus();
-    textArea.setSelectionRange(startPos + fullname.length, startPos + fullname.length);
 };
 
 
@@ -697,7 +682,7 @@ MoinMoin.prototype.enhanceEdit = function () {
 
 // diffScroll is executed on page load.
 // Adds an onclick function to the line # links in a diff view.
-// Multiple consecutive blank lines in markup source make diff and DOM line numbers out of sync,
+// Multiple consecutive blank lines in Markdown source make diff and DOM line numbers out of sync,
 // so window may be scrolled to wrong line.
 MoinMoin.prototype.diffScroll = function () {
     "use strict";
@@ -776,11 +761,6 @@ $(document).ready(function () {
     // remove a server-side flash message by clicking on it
     $('.moin-flash').click(function () {
         this.remove();
-    });
-
-    $('.moin-insertname-action').click(function () {
-        var fullname = $(this).data('name');
-        moin.InsertName(fullname);
     });
 
     $('.expander').click(function () {

@@ -251,7 +251,7 @@ def anchor_name_from_text(text):
     valid ID/name, it will return it without modification (identity
     transformation).
     """
-    quoted = werkzeug.url_quote_plus(text, charset='utf-7', safe=':')
+    quoted = werkzeug.urls.url_quote_plus(text, charset='utf-7', safe=':')
     res = quoted.replace('%', '.').replace('+', '_')
     if not res[:1].isalpha():
         return 'A{0}'.format(res)

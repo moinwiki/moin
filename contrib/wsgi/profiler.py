@@ -18,7 +18,7 @@
     @copyright: 2008 MoinMoin:FlorianKrupicka,
     @license: GNU GPL, see COPYING for details.
 """
-from werkzeug import get_current_url
+from werkzeug.wsgi import get_current_url
 
 from moin import log
 logging = log.getLogger(__name__)

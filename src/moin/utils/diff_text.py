@@ -29,8 +29,8 @@ def diff(oldlines, newlines, **kw):
 
     # return empty list if there were no changes
     changed = 0
-    for l in lines:
-        if l[0] != ' ':
+    for line in lines:
+        if line[0] != ' ':
             changed = 1
             break
     if not changed:

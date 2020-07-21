@@ -1,11 +1,4 @@
-# +++++++++++ CUSTOM WSGI +++++++++++
-# If you have a WSGI file that you want to serve using PythonAnywhere, perhaps
-# in your home directory under version control, then use something like this:
-#
-import sys
-
-path = '/home/MoinMoin2/moin'
-if path not in sys.path:
-    sys.path.append(path)
+# Copy the contents of this file to the pythonanywhere
+# WSGI configuration file:  /var/www/<account-name>_pythonanywhere_com_wsgi.py
 
 from wsgi import application  # noqa

@@ -93,36 +93,35 @@ class TestConverter:
         ('[TOC]\n',
          '[TOC]\n'),
         ('|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n',
-         '|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n'),
-        # TODO: wrong output
+         '|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered{: class="center"}|$12{: class="right"}|Gloves{: class="left"}|\n'),
+        # TODO: wrong output, creates indented blockcode, loses fenced code language
+        # fix probably requires replacing site-packages/markdown/extensions/codehilite.py
         ('``` javascript\nvar s = "JavaScript syntax highlighting";\nalert(s);\n```\n',
          '    var s = "JavaScript syntax highlighting";\n    alert(s);\n'),
-        # TODO: wrong output
+        # TODO: wrong output, creates indented blockcode, loses fenced code language
         ('~~~ {python}\ndef hello():\n    print "Hello World!"\n~~~\n',
          '    def hello():\n        print "Hello World!"\n'),
         ('~~~\nddd\neee\nfff\n~~~\n',
          '    ddd\n    eee\n    fff\n'),
-        # TODO: maybe wrong output
         ('Text with double__underscore__words.\n\n__Strong__ still works.\n\n__this__works__too__.\n',
          'Text with double__underscore__words.\n\n**Strong** still works.\n\n**this__works__too**.\n'),
-        # TODO: missing class
-        ('### orange heading #### {: .orange }\n',
-         '### orange heading ###\n'),
-        # TODO: missing class
-        ('A class of LawnGreen is added to this paragraph.\n{: class="LawnGreen "}\n',
-         'A class of LawnGreen is added to this paragraph.\n'),
+        ('### orange heading ### {: .orange }\n',
+         '### orange heading ### {: class="orange"}\n'),
+        ('A class of LawnGreen is added to this paragraph.\n{: class="LawnGreen"}\n',
+         'A class of LawnGreen is added to this paragraph.\n{: class="LawnGreen"}\n'),
         ('{: #para3 }\n',
          '{: #para3 }\n'),
         ('so [click to see 3rd paragraph](#para3).\n',
          'so [click to see 3rd paragraph](#para3).\n'),
         ('Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n',
          'Apple\n:   Pomaceous fruit of plants of the genus Malus in\n    the family Rosaceae.\n:   An american computer company.\n'),
-        # footnotes test is incomplete, footnotes are positioned but not defined
+        # incomplete footnote test, footnotes are positioned but not defined
         ('Footnotes[^1] have a label[^label] and a definition[^!DEF].\n',
          'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
-        # TODO: spectacular failure, causes 19 UnicodeEncodeErrors, claims \xA0 characters
-        # (u'Footnotes[^a\n\n[^a]: This is a footnote\n',
-        #  u'Footnotes[^a\n\n[^a]: This is a footnote\n'),
+        # TODO: test footnote placement succeeds but output is wrong, and other tests will fail due to pytest multithreading
+        # fix probably requires replacing site-packages/markdown/extensions/footnotes.py
+        # (u'Footnotes[^a]\n\n[^a]: This is a footnote.\n',
+        #  u'Footnotes<sup>1</sup>\n\n----\n\n1. This is a footnote.\xa0[\u21a9](#fnref:a){: class="footnote-backref" title="Jump back to footnote 1 in the text"}\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -136,6 +135,14 @@ class TestConverter:
          '[PNG](png)\n'),
         ('[MoinMoin][moin]\n[moin]: http://moinmo.in\n',
          '[MoinMoin](http://moinmo.in)\n'),
+        ('[![Image name](png)](Home "click me")',
+         '[![Image name](png)](Home){: title="click me"}'),
+        ('[toc](#table-of-contents)',
+         '[toc](#table-of-contents)'),
+        ('[toc](markdown#table-of-contents)',
+         '[toc](markdown#table-of-contents)'),
+        ('[moinmoin](https://moinmo.in "Go there")',
+         '[moinmoin](https://moinmo.in){: title="Go there"}'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -165,11 +172,11 @@ class TestConverter:
         ('|A|B|C|\n|-|-|-|\n|1|2|3|\n',
          '|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
         ('|A|B|C|\n|:-|:-:|-:|\n|1|2|3|\n',
-         '|A|B|C|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
+         '|A|B|C|\n|:-----|:----:|-----:|\n|1{: class="left"}|2{: class="center"}|3{: class="right"}|\n'),
         ('A|B|C\n-|-|-\n1|2|3\n',
          '|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
         ('`A`|*B*|_C_\n:-|:-:|-:\n1|2|3\n',
-         '|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
+         '|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1{: class="left"}|2{: class="center"}|3{: class="right"}|\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -183,10 +190,12 @@ class TestConverter:
          '![Alt text](png)\n'),
         ('![Alt text][logo]\n[logo]: png "Optional title attribute"',
          '![Alt text](png "Optional title attribute")\n'),
+        # alt defined twice
         ('![remote image](http://static.moinmo.in/logos/moinmoin.png)',
-         '![remote image](http://static.moinmo.in/logos/moinmoin.png)\n'),
+         '![remote image](http://static.moinmo.in/logos/moinmoin.png){: alt="remote image"}\n'),
+        # alt defined twice
         ('![Alt text](http://test.moinmo.in/png)',
-         '![Alt text](http://test.moinmo.in/png)\n'),
+         '![Alt text](http://test.moinmo.in/png){: alt="Alt text"}\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

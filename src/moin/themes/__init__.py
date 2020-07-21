@@ -8,6 +8,7 @@
 """
 
 
+import os
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -520,6 +521,16 @@ class ThemeSupport:
         """
         return self.storage.has_item(itemname)
 
+    def variables_css(self):
+        """
+        Check whether this theme has a variables.css file
+
+        :rtype: boolean
+        :returns: whether variables.css file exists or not
+        """
+        path = os.path.join(get_current_theme().path, 'static/css/variables.css')
+        return os.path.isfile(path)
+
     def is_markup_or_text(self, contenttype):
         """
         Return true if contenttype is markup or text-like.
@@ -707,18 +718,19 @@ def shorten_ctype(contenttype):
 
 def time_hh_mm(dt):
     """
-    Convert a datetime object into a short string of the form HH:MM
+    Convert a datetime object or timestamp into a short string of the form HH:MM
     where HH varies from 0 to 23.
     """
-    return show_time.format_time(datetime.datetime.utcfromtimestamp(dt), fmt='HH:mm')
+    return show_time.format_time(dt, fmt='HH:mm')
 
 
 def time_datetime(dt):
     """
     Alternative to babel datetimeformat, allows user to choose ISO 8601 format
-    by checking box in usersettings Options.
+    by checking box in usersettings Options. Input may be datetime object or
+    timestamp.
     """
-    return show_time.format_date_time(datetime.datetime.utcfromtimestamp(dt))
+    return show_time.format_date_time(dt)
 
 
 def setup_jinja_env():

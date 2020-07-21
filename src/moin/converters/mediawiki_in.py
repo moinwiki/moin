@@ -12,7 +12,7 @@ MoinMoin - Media Wiki input converter
 import re
 from html.entities import name2codepoint
 
-from werkzeug import url_encode
+from werkzeug.urls import url_encode
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES

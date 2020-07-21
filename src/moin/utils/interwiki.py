@@ -6,7 +6,7 @@
     MoinMoin - interwiki support code
 """
 
-from werkzeug import url_quote
+from werkzeug.urls import url_quote
 
 from flask import current_app as app
 from flask import url_for

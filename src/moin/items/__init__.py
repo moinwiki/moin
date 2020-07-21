@@ -260,9 +260,6 @@ class ACLValidator(Validator):
 
 
 class BaseMetaForm(Form):
-
-    itemtype = RequiredText.using(label=L_("Item type")).with_properties(placeholder=L_("Item type"))
-    contenttype = RequiredText.using(label=L_("Content type")).with_properties(placeholder=L_("Content type"))
     # Flatland doesn't distinguish between empty value and nonexistent value, use None for noneexistent and Empty for empty
     acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List - Use 'None' for default")).validated_by(ACLValidator())
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
@@ -530,8 +527,7 @@ class Item:
         """
         delete this item (remove current name from NAME list)
         """
-        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, meta=self.meta,
-                           content=self.rev.data, comment=comment)
+        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
         ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
         if [self.name] == self.names:
             flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
@@ -548,8 +544,7 @@ class Item:
     def destroy(self, comment='', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
         action = DESTROY_ALL if destroy_item else DESTROY_REV
-        item_modified.send(app, fqname=self.fqname, action=action, meta=self.meta,
-                           content=self.rev.data, comment=comment)
+        item_modified.send(app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
         close_file(self.rev.data)
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
@@ -582,7 +577,6 @@ class Item:
         ModifyForm.
         """
         meta_form = BaseMetaForm
-        extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
@@ -601,7 +595,6 @@ class Item:
             self['meta_form'].set(meta, policy='duck')
             for k in list(self['meta_form'].field_schema_mapping.keys()) + IMMUTABLE_KEYS:
                 meta.pop(k, None)
-            self['extra_meta_text'].set(item.meta_dict_to_text(meta))
             self['content_form']._load(item.content)
 
         def _dump(self, item):
@@ -619,7 +612,6 @@ class Item:
             # e.g. we get PARENTID in here
             meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
             meta.update(self['meta_form'].value)
-            meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
@@ -663,8 +655,6 @@ class Item:
                 name = self.fqname.value
             oldname = meta.get(NAME)
             if oldname:
-                if not isinstance(oldname, list):
-                    oldname = [oldname]
                 if delete or name not in oldname:  # this is a delete or rename
                     try:
                         oldname.remove(self.name)
@@ -711,25 +701,28 @@ class Item:
             else:
                 data = b''
 
-        # TODO XXX broken: data can be all sorts of stuff there and handle_variables can't deal with it yet:
-        # - non-text binary as bytes
-        # - text as bytes? as str? as BytesIO?
-        #
-        # data = self.handle_variables(data, meta)
-
         if isinstance(data, str):
-            data = data.encode(CHARSET)  # XXX wrong! if contenttype gives a coding, we MUST use THAT.
+            data = self.handle_variables(data, meta)
+            charset = meta['contenttype'].split('charset=')[1]
+            data = data.encode(charset)
 
         if isinstance(data, bytes):
             data = BytesIO(data)
-        newrev = storage_item.store_revision(meta, data, overwrite=overwrite,
+        fqname, new_meta = storage_item.store_revision(meta, data, overwrite=overwrite,
                                              action=str(action),
                                              contenttype_current=contenttype_current,
                                              contenttype_guessed=contenttype_guessed,
+                                             return_meta=True,
                                              return_rev=True,
                                              )
-        item_modified.send(app, fqname=newrev.fqname, action=action)
-        return newrev.revid, newrev.meta[SIZE]
+        if currentrev is None:
+            item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta)
+        else:
+            item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta,
+                               data=currentrev.data, meta=currentrev.meta)
+        if currentrev is not None:
+            close_file(currentrev.data)
+        return new_meta[REVID], new_meta[SIZE]
 
     def handle_variables(self, data, meta):
         """ Expand @VARIABLE@ in data, where variable is SIG, DATE, etc
@@ -741,7 +734,6 @@ class Item:
         @rtype: string
         @return: new text of wikipage, variables replaced
         """
-        assert isinstance(data, str)
         logging.debug("handle_variable data: %r" % data)
         if self.contenttype not in CONTENTTYPE_VARIABLES:
             return data
@@ -759,12 +751,12 @@ class Item:
             'PAGE': item_name,
             'ITEM': item_name,
             'TIMESTAMP': strftime("%Y-%m-%d %H:%M:%S %Z"),
-            'TIME': "<<DateTime(%s)>>" % time(),
-            'DATE': "<<Date(%s)>>" % time(),
+            'TIME': "<<DateTime(%s)>>" % strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'DATE': "<<Date(%s)>>" % strftime("%Y-%m-%dT%H:%M:%SZ"),
             'ME': flaskg.user.name0,
             'USERNAME': signature,
             'USER': "-- %s" % signature,
-            'SIG': "-- %s <<DateTime(%s)>>" % (signature, time()),
+            'SIG': "-- %s <<DateTime(%s)>>" % (signature, strftime("%Y-%m-%dT%H:%M:%SZ")),
         }
 
         email = flaskg.user.profile._meta.get('email', None)
@@ -857,13 +849,10 @@ class Item:
                             direct_fullname = prefix + direct_relname
                             direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
                             fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
-                            try:
-                                direct_rev = get_storage_revision(fqname)
-                            except AccessDenied:
-                                continue  # user has permission to see parent, but not this subitem
-                            dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, direct_rev.meta))
+                            dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                     else:
-                        files.append(IndexEntry(relname, fullname_fqname, rev.meta))
+                        mini_meta = {key: rev.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}
+                        files.append(IndexEntry(relname, fullname_fqname, mini_meta))
         files.sort()  # files with multiple names are not in sequence
         return dirs, files
 
@@ -917,7 +906,7 @@ class Item:
         query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)
         if not fqname.value.startswith(NAMESPACE_ALL + '/') and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
-        revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
+        revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
         return self.make_flat_index(revs, isglobalindex)
 
     def get_mixed_index(self):
@@ -996,8 +985,12 @@ class Default(Contentful):
 
     def doc_link(self, filename, link_text):
         """create a link to serve local doc files as help for wiki editors"""
-        filename = url_for('serve.files', name='docs', filename=filename)
-        return '<a href="%s">%s</a>' % (filename, link_text)
+        if '#' in filename:
+            filename, anchor = filename.split('#')
+        else:
+            anchor = None
+        filename = url_for('serve.files', name='docs', filename=filename, _anchor=anchor)
+        return filename, link_text
 
     def meta_changed(self, meta):
         """
@@ -1203,6 +1196,7 @@ class Default(Contentful):
                                edit_rows=edit_rows,
                                draft_data=draft_data,
                                lock_duration=lock_duration,
+                               tuple=tuple,
                               )
 
 

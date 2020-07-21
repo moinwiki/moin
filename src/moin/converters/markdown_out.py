@@ -62,6 +62,8 @@ class Markdown:
     object_close = '}}'
     definition_list_marker = ':  '
     separator = '----'
+    attribute_open = '{: '
+    attribute_close = '}'
     # TODO: definition list
     list_type = {
         ('definition', None): '',
@@ -128,6 +130,10 @@ class Converter:
                         ret = '\n'
                 if child == '\n' and getattr(elem, 'level', 0):
                     child = child + ' ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
+                if elem.tag.name == 'td':
+                    attrib = self.attribute_list(elem)
+                    if attrib:
+                        child += attrib
                 childrens_output.append('{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
         out = join_char.join(childrens_output)
@@ -144,23 +150,49 @@ class Converter:
         # process odd things like xinclude
         return self.open_children(elem)
 
+    def attribute_list(self, elem):
+        """
+        Return a string of attributes, in long format: {: id="someid" class="someclass" somekey="some value" }
+        """
+        attr_list = []
+        for key, val in elem.attrib.items():
+            if key.name not in ('data-lineno', 'outline-level', 'href', 'item-label-generate', 'baseline-shift'):
+                attr_list.append('{0}="{1}"'.format(key.name, val))
+        if attr_list:
+            return Markdown.attribute_open + ' '.join(attr_list) + Markdown.attribute_close
+        return ''
+
     def open_moinpage(self, elem):
         n = 'open_moinpage_' + elem.tag.name.replace('-', '_')
         f = getattr(self, n, None)
         if f:
             ret = f(elem)
+            if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th', 'emphasis', 's', 'ins', 'u', 'span', ):
+                attrib = self.attribute_list(elem)
+                if attrib:
+                    if ret.endswith('#\n'):
+                        ret = ret[:-1] + ' ' + attrib + ret[-1:]
+                    elif ret.endswith('\n') and not elem.tag.name == 'p':
+                        ret = ret[:-1] + attrib + ret[-1:]
+                    elif ret.endswith('\n') and elem.tag.name == 'p':
+                        ret += attrib + '\n'
+                    else:
+                        ret += attrib
             self.last_closed = elem.tag.name.replace('-', '_')
             return ret
         return self.open_children(elem)
 
     def open_moinpage_a(self, elem):
         href = elem.get(xlink.href, None)
+        title = elem.get(html.title_, None)
         if isinstance(href, Iri):
             href = str(href)
         href = href.split('wiki.local:')[-1]
         ret = href
         text = self.open_children(elem)
         if text:
+            if title:
+                href = '{0} "{1}"'.format(href, title)
             return '[{0}]({1})'.format(text, href)
         if ret.startswith('wiki://'):
             # interwiki fixup

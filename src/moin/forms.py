@@ -133,12 +133,6 @@ class ValidName(Validator):
         if state is None:
             # incoming request is from +usersettings#personal; apps/frontend/views.py will validate changes to user names
             return True
-        # Make sure that the other meta is valid before validating the name.  TODO: prove the try below is always redundant and remove it.
-        try:
-            if not element.parent.parent['extra_meta_text'].valid:
-                return False
-        except AttributeError:
-            pass
         try:
             validate_name(state['meta'], state[ITEMID])
         except NameNotValidError as e:
@@ -287,6 +281,8 @@ AnyInteger = _Integer.with_properties(widget=WIDGET_ANY_INTEGER)
 Natural = AnyInteger.validated_by(ValueAtLeast(0))
 
 SmallNatural = _Integer.with_properties(widget=WIDGET_SMALL_NATURAL)
+
+RadioChoice = Text.with_properties(widget=WIDGET_RADIO_CHOICE)
 
 
 class DateTimeUNIX(_DateTime):

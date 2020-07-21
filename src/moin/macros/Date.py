@@ -8,25 +8,24 @@ adapted to the TZ settings of the user viewing the content.
 
 
 import time
-from datetime import datetime
-
-from flask_babel import format_date
 
 from moin.macros._base import MacroInlineBase
+from moin.utils import show_time
 
 
 class MacroDateTimeBase(MacroInlineBase):
     def parse_time(self, args):
-        """ parse a time specification argument for usage by Date and DateTime macro
+        """
+        Parse a time specification argument for usage by Date and DateTime macro.
+        Not all ISO 8601 format variations are accepted as input.
 
-        :param args: YYYY-MM-DDTHH:MM:SS (plus optional Z for UTC, or +/-HHMM) or
-                     float/int UNIX timestamp
+        :param args: float/int UNIX timestamp or ISO 8601 formatted date time:
+                     YYYY-MM-DDTHH:MM:SS (plus optional Z or z for UTC, or +/-HHMM) or
+                     YYYY-MM-DD HH:MM:SS (same as above but replacing T separator with " ")
         :returns: UNIX timestamp (UTC)
         """
         if (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
-                args[10] == 'T' and args[13] == ':' and args[16] == ':'):
-            # we ignore any time zone offsets here, assume UTC,
-            # and accept (and ignore) any trailing stuff
+                args[10] in 'T ' and args[13] == ':' and args[16] == ':'):
             try:
                 year, month, day = int(args[0:4]), int(args[5:7]), int(args[8:10])
                 hour, minute, second = int(args[11:13]), int(args[14:16]), int(args[17:19])
@@ -34,10 +33,10 @@ class MacroDateTimeBase(MacroInlineBase):
                 tzoffset = 0  # we assume UTC no matter if there is a Z
                 if tz:
                     sign = tz[0]
-                    if sign in '+-':
+                    if sign in '+-\u2212':  # ascii plus, ascii hyphen-minus, unicode minus
                         tzh, tzm = int(tz[1:3]), int(tz[3:])
                         tzoffset = (tzh * 60 + tzm) * 60
-                        if sign == '-':
+                        if sign in '-\u2212':  # ascii hyphen-minus, unicode minus
                             tzoffset = -tzoffset
                 tm = year, month, day, hour, minute, second, 0, 0, 0
             except ValueError as err:
@@ -60,9 +59,8 @@ class MacroDateTimeBase(MacroInlineBase):
 class Macro(MacroDateTimeBase):
     def macro(self, content, arguments, page_url, alternative):
         if arguments is None:
-            tm = time.time()  # always UTC
+            tm = None
         else:
-            # XXX looks like args are split at ':' -> <Arguments([u'2010-12-31T23', u'59', u'00'], {})>
             stamp = arguments[0]
             tm = self.parse_time(stamp)
-        return format_date(datetime.utcfromtimestamp(tm))
+        return show_time.format_date(tm)

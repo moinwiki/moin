@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright: 2013 MoinMoin:BastianBlank
 # Copyright: 2013-2018 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -52,14 +52,10 @@ import platform
 import glob
 import shutil
 import fnmatch
+import timeit
 from collections import Counter
-try:
-    import virtualenv
-except ImportError:
-    sys.exit("""
-Error: import virtualenv failed, either virtualenv is not installed (see installation docs)
-or the virtual environment must be deactivated before rerunning quickinstall.py
-""")
+import venv
+
 
 if sys.hexversion < 0x3050000:
     sys.exit("Error: MoinMoin requires Python 3.5+, current version is %s\n" % (platform.python_version(), ))
@@ -79,6 +75,7 @@ BACKUPWIKI = 'm-backup-wiki.txt'
 DUMPHTML = 'm-dump-html.txt'
 EXTRAS = 'm-extras.txt'
 DIST = 'm-create-dist.txt'
+INDEX = 'm-rebuild-index.txt'
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath('wiki/backup.moin')
 JUST_IN_CASE_BACKUP = os.path.normpath('wiki/deleted-backup.moin')
@@ -109,6 +106,7 @@ CMD_LOGS = {
     'dump-html': DUMPHTML,
     'extras': EXTRAS,
     'dist': DIST,
+    'index': INDEX,
 }
 
 
@@ -156,11 +154,13 @@ def search_for_phrase(filename):
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version', 'successfully installed', 'finished', ),
         # ': e' matches lines similar to: src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
-        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f' ),
+        TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f', ' passed, '),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
-        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', )
+        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', ),
+        INDEX: ('error', 'fail', 'timeout', 'traceback', 'success', ),
     }
+    ignore_phrases = {TOX: ('interpreternotfound', )}
     # for these file names, display a count of occurrances rather than each found line
     print_counts = (CODING_STD, DIST, )
 
@@ -168,6 +168,7 @@ def search_for_phrase(filename):
         lines = f.readlines()
     name = os.path.split(filename)[1]
     phrases = files[name]
+    ignore_phrase = ignore_phrases[name] if name in ignore_phrases else ()
     counts = Counter()
     for idx, line in enumerate(lines):
         for phrase in phrases:
@@ -175,7 +176,13 @@ def search_for_phrase(filename):
                 if filename in print_counts:
                     counts[phrase] += 1
                 else:
-                    print(idx + 1, line.rstrip())
+                    skip = False
+                    for ignore in ignore_phrase:
+                        if ignore in line.lower():
+                            skip = True
+                            break
+                    if not skip:
+                        print(idx + 1, line.rstrip())
                     break
     for key in counts:
         print('The phrase "%s" was found %s times.' % (key, counts[key]))
@@ -272,7 +279,7 @@ def get_sitepackages_location():
 
 
 def create_m():
-    """Create an 'm.bat or 'm' bash script that will run make.py using this Python"""
+    """Create an 'm.bat or 'm' bash script that will run quickinstall.py using this Python"""
     if WINDOWS_OS:
         with open('m.bat', 'w') as f:
             f.write(':: {0}\n\n@{1} quickinstall.py %* --help\n'.format(WIN_INFO, sys.executable))
@@ -285,7 +292,13 @@ def create_m():
 class Commands:
     """Each cmd_ method processes a choice on the menu."""
     def __init__(self):
-        pass
+        self.tic = timeit.default_timer()
+
+    def run_time(self, command):
+        seconds = int(timeit.default_timer() - self.tic)
+        (t_min, t_sec) = divmod(seconds, 60)
+        (t_hour,t_min) = divmod(t_min, 60)
+        print('{} run time (h:mm:ss) {}:{:0>2}:{:0>2}'.format(command, t_hour, t_min, t_sec))
 
     def cmd_quickinstall(self, *args):
         """create or update a virtual environment with the required packages"""
@@ -297,10 +310,13 @@ class Commands:
             command = '{0} quickinstall.py --FirstCall'.format(sys.executable, ' '.join(args), )
             print('Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL))
         with open(QUICKINSTALL, 'w') as messages:
-            # we run ourself as a subprocess so we can capture output in a log file
-            result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
+            # we run ourself as a subprocess so output can be captured in a log file
+            result = subprocess.run(command, shell=True, stderr=messages, stdout=messages)
+            # above result will be flagged as error unless all python versions specified in tox.ini are installed:
+            # [tox]\n envlist = py{35,36,37,38},pypy3,flake8
         print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
+        self.run_time('Quickinstall')
 
     def cmd_docs(self, *args):
         """create local Sphinx html documentation"""
@@ -314,6 +330,7 @@ class Commands:
             print('HTML docs successfully created in {0}.'.format(os.path.normpath('docs/_build/html')))
         else:
             print('Error: creation of HTML docs failed with return code "{0}". Do "{1} log docs" to see complete log.'.format(result, M))
+        self.run_time('Docs')
 
     def cmd_extras(self, *args):
         """install optional packages: Pillow, sqlalchemy, ldap, requirements.d"""
@@ -331,6 +348,7 @@ class Commands:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('\nImportant messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(EXTRAS, M))
         search_for_phrase(EXTRAS)
+        self.run_time('Extras')
 
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
@@ -381,6 +399,7 @@ class Commands:
         # load individual items from contrib/sample, index will be updated
         if success:
             success = put_items()
+        self.run_time('Sample')
 
     def cmd_restore(self, *args):
         """create wiki and load data from wiki/backup.moin or user specified path"""
@@ -394,6 +413,7 @@ class Commands:
             make_wiki(command)
         else:
             print('Error: cannot create wiki because {0} does not exist.'.format(filename))
+        self.run_time('Restore')
 
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki directory named dir"""
@@ -407,6 +427,7 @@ class Commands:
                 print('Error: cannot create wiki because {0} does not exist.'.format(dirname))
         else:
             print('Error: a path to the Moin 1.9 wiki/data data directory is required.')
+        self.run_time('Import19')
 
     def cmd_index(self, *args):
         """delete and rebuild index"""
@@ -414,11 +435,15 @@ class Commands:
             command = '{0}moin index-create -i{1} moin index-build'.format(ACTIVATE, SEP)
             print('Rebuilding indexes...')
             try:
-                subprocess.call(command, shell=True)
+                with open(INDEX, 'w') as messages:
+                    subprocess.call(command, shell=True, stderr=messages, stdout=messages)
+                print('\nImportant messages from {0} are shown below. Do "{1} log index" to see complete log.'.format(INDEX, M))
+                search_for_phrase(INDEX)
             except KeyboardInterrupt:
                 pass  # eliminates traceback on windows
         else:
             print('Error: a wiki must be created before rebuilding the indexes.')
+        self.run_time('Rebuild index')
 
     def cmd_run(self, *args):
         """run built-in wiki server"""
@@ -462,6 +487,7 @@ class Commands:
                 print('\nError: attempt to backup wiki failed.')
         else:
             print('Error: cannot backup wiki because it has not been created.')
+        self.run_time('Backup')
 
     def cmd_dump_html(self, *args):
         """create a static html dump of this wiki"""
@@ -479,6 +505,7 @@ class Commands:
             search_for_phrase(DUMPHTML)
         else:
             print('Error: cannot dump wiki because it has not been created.')
+        self.run_time('HTML Dump')
 
     def cmd_css(self, *args):
         """run Stylus and lessc to update CSS files"""
@@ -521,6 +548,7 @@ class Commands:
         result = subprocess.call(command, shell=True)
         print('Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(TOX, M))
         search_for_phrase(TOX)
+        self.run_time('Tests')
 
     def cmd_coding_std(self, *args):
         """correct scripts that taint the HG repository and clutter subsequent code reviews"""
@@ -533,7 +561,7 @@ class Commands:
         """create distribution archive in dist/"""
         print('Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(DIST))
         self.cmd_del_wiki(*args)
-        command = '{0} setup.py sdist'.format(sys.executable)
+        command = '{0}{1} setup.py sdist bdist_wheel'.format(ACTIVATE, sys.executable)
         with open(DIST, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('Summary message from {0} is shown below:'.format(DIST))
@@ -582,6 +610,7 @@ class Commands:
             print('Wiki data successfully deleted.')
         else:
             print('Wiki data not deleted because it does not exist.')
+        self.run_time('Delete wiki')
 
 
 class QuickInstall:
@@ -590,9 +619,9 @@ class QuickInstall:
         self.dir_source = source
         base, source_name = os.path.split(source)
         executable = os.path.basename(sys.executable).split('.exe')[0]
-        venv = os.path.join(base, '{0}-venv-{1}'.format(source_name, executable))
-        venv = os.path.abspath(venv)
-        venv_home, venv_lib, venv_inc, venv_bin = virtualenv.path_locations(venv)
+        venv_path = os.path.join(base, '{0}-venv-{1}'.format(source_name, executable))
+        venv_path = os.path.abspath(venv_path)
+        venv_home, venv_lib, venv_inc, venv_bin = path_locations(venv_path)
         self.dir_venv = venv_home
         self.dir_venv_bin = venv_bin
 
@@ -604,7 +633,7 @@ class QuickInstall:
         sys.stdout.write("\n\nSuccessfully created or updated venv at {0}".format(self.dir_venv))
 
     def do_venv(self):
-        virtualenv.create_environment(self.dir_venv)
+        venv.create(self.dir_venv, system_site_packages=False, clear=False, symlinks=False, with_pip=True, prompt=None)
 
     def get_pip_version(self):
         """Return pip version as a list: [1, 5, 1]"""
@@ -658,6 +687,64 @@ class QuickInstall:
             if os.path.exists('activate'):
                 os.unlink('activate')
             os.symlink(os.path.join(self.dir_venv_bin, 'activate'), 'activate')  # no need to define deactivate on unix
+
+
+# code below and path_locations copied from virtualenv.py v16.7.10 because path_locations dropped in v20.0.0 rewrite.
+PY_VERSION = "python{}.{}".format(sys.version_info[0], sys.version_info[1])
+IS_PYPY = hasattr(sys, "pypy_version_info")
+IS_WIN = sys.platform == "win32"
+ABI_FLAGS = getattr(sys, "abiflags", "")
+join = os.path.join
+
+
+def mkdir(at_path):
+    if not os.path.exists(at_path):
+        os.makedirs(at_path)
+
+
+def path_locations(home_dir, dry_run=False):
+    """Return the path locations for the environment (where libraries are,
+    where scripts go, etc)"""
+    home_dir = os.path.abspath(home_dir)
+    lib_dir, inc_dir, bin_dir = None, None, None
+    # XXX: We'd use distutils.sysconfig.get_python_inc/lib but its
+    # prefix arg is broken: http://bugs.python.org/issue3386
+    if IS_WIN:
+        # Windows has lots of problems with executables with spaces in
+        # the name; this function will remove them (using the ~1
+        # format):
+        if not dry_run:
+            mkdir(home_dir)
+        if " " in home_dir:
+            import ctypes
+
+            get_short_path_name = ctypes.windll.kernel32.GetShortPathNameW
+            size = max(len(home_dir) + 1, 256)
+            buf = ctypes.create_unicode_buffer(size)
+            try:
+                # noinspection PyUnresolvedReferences
+                u = unicode
+            except NameError:
+                u = str
+            ret = get_short_path_name(u(home_dir), buf, size)
+            if not ret:
+                print('Error: the path "{}" has a space in it'.format(home_dir))
+                print("We could not determine the short pathname for it.")
+                print("Exiting.")
+                sys.exit(3)
+            home_dir = str(buf.value)
+        lib_dir = join(home_dir, "Lib")
+        inc_dir = join(home_dir, "Include")
+        bin_dir = join(home_dir, "Scripts")
+    if IS_PYPY:
+        lib_dir = home_dir
+        inc_dir = join(home_dir, "include")
+        bin_dir = join(home_dir, "bin")
+    elif not IS_WIN:
+        lib_dir = join(home_dir, "lib", PY_VERSION)
+        inc_dir = join(home_dir, "include", PY_VERSION + ABI_FLAGS)
+        bin_dir = join(home_dir, "bin")
+    return home_dir, lib_dir, inc_dir, bin_dir
 
 
 if __name__ == '__main__':

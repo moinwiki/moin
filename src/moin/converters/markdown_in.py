@@ -27,7 +27,6 @@ except ImportError:
 from markdown import Markdown
 import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
-from markdown.extensions.toc import TocExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
 from . import default_registry
@@ -54,6 +53,9 @@ def postproc_text(markdown, text):
 
     if text is None:
         return None
+
+    if text == '[TOC]':
+        return moin_page.table_of_content(attrib={})
 
     for pp in markdown.postprocessors:
         text = pp.run(text)
@@ -168,7 +170,7 @@ class Converter:
         result = {}
         for key, value in element.attrib.items():
             if key in self.standard_attributes:
-                result[html(key)] = value
+                result[moin_page(key)] = value
             if key == 'id':
                 result[xml('id')] = value
         return result
@@ -481,15 +483,12 @@ class Converter:
         Allow embedded raw HTML markup per https://daringfireball.net/projects/markdown/syntax#html
         This replaces the functionality of RawHtmlPostprocessor in .../markdown/postprocessors.py.
 
-        In addition to users being able to insert raw HTML into markdown items,
-        some markdown extensions output raw HTML strings (e.g. fenced_code outputs "<pre><code>...").
-
-        To prevent hackers from exploiting raw HTML, the strings of safe HTML is converted to
+        To prevent hackers from exploiting raw HTML, the strings of safe HTML are converted to
         tree nodes by using the html_in.py converter.
         """
         try:
-            # we enclose plain text and block tags with DIV-tags
-            p_text = html_in_converter('<div>%s</div>' % text)
+            # we enclose plain text and span tags with P-tags
+            p_text = html_in_converter('<p>%s</p>' % text)
             # discard page and body tags
             return p_text[0][0]
         except AssertionError:
@@ -521,8 +520,7 @@ class Converter:
         :param node: a tree node
         """
         for child in node:
-            # TODO: bug in codehilite? <, > are returned as string (not unicode) given ~~~{html}\n<html>\n~~~
-            if not isinstance(child, (bytes, str)):
+            if not isinstance(child, str):
                 if child.tag == moin_page.p and len(child):
                     for grandchild in child:
                         if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:
@@ -532,7 +530,6 @@ class Converter:
     def __init__(self):
         self.markdown = Markdown(extensions=[
             ExtraExtension(),
-            TocExtension(),
             CodeHiliteExtension(guess_lang=False),
         ])
 

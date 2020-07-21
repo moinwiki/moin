@@ -12,7 +12,7 @@ from io import BytesIO
 
 from flask import Markup
 
-from werkzeug import escape
+from werkzeug.utils import escape
 
 from moin.utils import diff_html
 
@@ -165,7 +165,7 @@ class TestTransformableBitmapImage:
         meta = {CONTENTTYPE: contenttype}
         item._save(meta)
         item1 = Item.create(item_name)
-        data = 'test_data'
+        data = b'test_data'
         comment = 'next revision'
         item1._save(meta, data, comment=comment)
         item2 = Item.create(item_name)
@@ -236,10 +236,10 @@ class TestText:
         item = Item.create(item_name)
         contenttype = 'text/plain;charset=utf-8'
         meta = {CONTENTTYPE: contenttype}
-        data1 = "old_data"
+        data1 = b"old_data"
         item._save(meta, data1)
         item1 = Item.create(item_name)
-        data2 = 'new_data'
+        data2 = b'new_data'
         comment = 'next revision'
         item1._save(meta, data2, comment=comment)
         item2 = Item.create(item_name)

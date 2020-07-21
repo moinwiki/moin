@@ -38,7 +38,7 @@ from flatland import Form, String
 
 from jinja2 import Markup
 
-from werkzeug import is_resource_modified
+from werkzeug.http import is_resource_modified
 
 from whoosh.query import Term, And
 
@@ -902,9 +902,9 @@ class Text(Binary):
         new_text = self.data_storage_to_internal(newfile.read())
         return text_diff(old_text.splitlines(), new_text.splitlines())
 
-    def _render_data_diff_atom(self, oldrev, newrev):
+    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
         """ renders diff in HTML for atom feed """
-        return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html', fqname=fqname)
 
     def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         return self._render_data_diff_html(oldrev, newrev, 'diff_text.html', rev_links=rev_links, fqname=fqname)

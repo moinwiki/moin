@@ -1,5 +1,6 @@
 {#
-    Display a table of item names with current ACL rules; allow authorized admins to update ACL rules.
+    Display a table of item names with current ACL rules; allow superusers to update ACL rules.
+    ACL rule updates will fail downstream if superuser lacks admin permission.
 
     This template uses DIVs styled as TABLE parts so a FORM can span "table cells".
 #}
@@ -8,8 +9,10 @@
 
 {% block content %}
     <h1>{{ _("Item ACLs") }}</h1>
+
     {% set button_text = _("Show/Hide items with default ACLs") %}
     <input onclick="$('.moin-acl-default').toggle()" value="{{ button_text }}" class="moin-button" type="button">
+    <div class="moin-acl-count moin-acl-default">{{ _("Number items:") }} {{ number_items }}</div>
     <div style="display: table;" class="moin-acl-report">
         <div style="display: table-row;" class="moin-acl-heading">
             <div style="display: table-cell;">{{ _("Item Names") }}</div>
@@ -25,17 +28,10 @@
             <form style="display: table-row;" class="{{ default_style }} moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
                 <div style="display: table-cell;" class="moin-acl-name-cell">
                     {{ utils.item_moniker(item, item.fqnames) }}
-                    {% if user.may.admin(item['fqname']) %}
-                        <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
-                    {% endif %}
+                    <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
                 </div>
                 <div style="display: table-cell;" class="moin-acl-rule-cell">
-                    {% if user.may.admin(item['fqname']) %}
-                            <textarea class="moin-acl-string" name="{{ item['fqname'] }}" rows="1">{{ item['acl'] }}</textarea>
-                    {% else %}
-                        {# user may read item, but cannot "admin" this rule #}
-                        <span class="moin-acl-string moin-acl-edit-disable"> {{ item['acl'] }} </span>
-                    {% endif %}
+                    <textarea class="moin-acl-string" name="{{ item['fqname'] }}" rows="1">{{ item['acl'] }}</textarea>
                 </div>
             </form>
         {% endfor %}

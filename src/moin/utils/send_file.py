@@ -24,7 +24,9 @@ import mimetypes
 from time import time
 from zlib import adler32
 
-from werkzeug import Headers, wrap_file, url_quote
+from werkzeug.datastructures import Headers
+from werkzeug.urls import url_quote
+from werkzeug.wsgi import wrap_file
 from flask import current_app, request
 
 

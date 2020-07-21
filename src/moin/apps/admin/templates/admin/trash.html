@@ -22,7 +22,7 @@
                     <tr>
                         <td class="moin-wordbreak">{{ result.oldname|join(' | ') }}</td>
                         <td>{{ result.revid | shorten_id }}</td>
-                        <td>{{ result.mtime|datetimeformat }}</td>
+                        <td>{{ result.mtime|time_datetime }}</td>
                         <td class="moin-wordbreak">{{ utils.show_editor_info(result.editor)  }}</td>
                         <td class="moin-wordbreak">{{ result.comment }}</td>
                         <td><a href="{{ url_for('frontend.show_item', item_name=result.fqname) }}">{{ _('show') }}</a></td>

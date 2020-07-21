@@ -7,23 +7,10 @@
 {% extends theme("layout.html") %}
 {% import "utils.html" as utils %}
 
-{# Create next page, prior page links shown at top and bottom of report. #}
-{% macro next_page(next_offset, previous_offset) %}
-    <div class='moin-offset-links'>
-        {% if previous_offset >= 0 %}
-            <a class='moin-prior-page' href="{{ url_for('frontend.mychanges', offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
-        {% endif %}
-        {% if next_offset %}
-            <a class='moin-next-page'href="{{ url_for('frontend.mychanges', offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
-        {% endif %}
-    </div>
-{% endmacro %}
-
 {% block content %}
-    {% set (my_changes, next_offset, previous_offset) = my_changes_page %}
     <h1>{{ _('My Changes') }}</h1>
     {% if my_changes %}
-        {{ next_page(next_offset, previous_offset) }}
+        {{ utils.page_links(page_num, pages, url) }}
         <div class="moin-clr"></div>
         <div class="moin-mychanges">
             <table class="zebra">
@@ -42,7 +29,7 @@
                     {% for doc in my_changes %}
                         <tr>
                             {# create an icon with a link to diff, or other icon indicating state of item #}
-                            <td class="moin-history-links">{{ utils.item_status_icon(doc.fqname, doc, None) }}</td>
+                            <td class="moin-history-links">{{ utils.item_status_icon(doc.fqnames[0], doc, None) }}</td>
                             {# show item name or item id and old name if the item is nameless (deleted) #}
                             <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
                             <td>{{ doc.mtime|time_datetime }}</td>
@@ -54,7 +41,7 @@
                 </tbody>
             </table>
         </div>
-        {{ next_page(next_offset, previous_offset) }}
+        {{ utils.page_links(page_num, pages, url) }}
     {% else %}
         <p class='moin-flash moin-flash-javascript moin-flash-error'>{{ _("No changes found.") }}</p>
     {% endif %}

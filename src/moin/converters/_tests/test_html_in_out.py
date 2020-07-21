@@ -12,8 +12,6 @@ from io import StringIO
 
 import pytest
 
-etree = pytest.importorskip('lxml.etree')  # noqa
-
 from . import serialize, XMLNS_RE3
 
 from moin.converters.html_in import Converter as HTML_IN
@@ -22,6 +20,8 @@ from moin.utils.tree import html, moin_page, xlink
 
 from moin import log
 logging = log.getLogger(__name__)
+
+etree = pytest.importorskip('lxml.etree')  # noqa
 
 
 class Base:

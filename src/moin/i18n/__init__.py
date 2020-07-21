@@ -52,7 +52,7 @@ def get_locale():
         logging.debug("request.accept_languages = {0!r}".format(request.accept_languages))
         supported_locales = [Locale('en')] + current_app.babel_instance.list_translations()
         logging.debug("supported_locales = {0!r}".format(supported_locales))
-        supported_languages = [str(l) for l in supported_locales]
+        supported_languages = [str(locale) for locale in supported_locales]
         logging.debug("supported_languages = {0!r}".format(supported_languages))
         locale = request.accept_languages.best_match(supported_languages, 'en')
         logging.debug("best match locale = {0!r}".format(locale))

@@ -133,7 +133,9 @@
     name of the authentication method.
 """
 
-from werkzeug import redirect, abort, url_quote, url_quote_plus
+from werkzeug.exceptions import abort
+from werkzeug.urls import url_quote, url_quote_plus
+from werkzeug.utils import redirect
 from flask import url_for, session, request
 from flask import g as flaskg
 from flask import current_app as app

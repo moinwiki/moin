@@ -359,6 +359,8 @@ options_no_group_name = {
             # TODO: tickets are broken
             # ('wikilink', 'frontend.tickets', dict(), L_('Tickets'), L_('List of Tickets')),
         ], 'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
+        ('expanded_quicklinks_size', 8,
+         "Number of quicklinks to show as expanded in navi bar"),
 
         ('theme_default', 'topside', "Default theme."),
 
@@ -488,7 +490,7 @@ options_no_group_name = {
             ],
             THEME_NAME: None,  # None -> use cfg.theme_default
             EDIT_ROWS: 0,
-            RESULTS_PER_PAGE: 0,
+            RESULTS_PER_PAGE: 50,
             LOCALE: None,  # None -> do browser language detection, otherwise just use this locale
             TIMEZONE: None,  # None -> use cfg.timezone_default
             EMAIL_UNVALIDATED: None,

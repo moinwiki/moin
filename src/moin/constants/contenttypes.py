@@ -13,6 +13,7 @@ from moin.i18n import _, L_, N_
 # we don't have the resources to test them, and there is no real
 # benefit for the user. IMPORTANT: use only lowercase 'utf-8'!
 CHARSET = 'utf-8'
+CHARSET19 = 'utf-8'
 
 # Parser to use mimetype text
 PARSER_TEXT_MIMETYPE = [
@@ -159,6 +160,7 @@ help_on_csv = ' '.join((
 CONTENTTYPES_HELP_DOCS = {
     # content type: tuple - must defer forming url until wiki root is known
     'text/x.moin.wiki;charset=utf-8': (('user/moinwiki.html', _("Click for help on Moin Wiki markup."))),
+    'text/x.moin.wiki;format=1.9;charset=utf-8': (('admin/upgrade.html#converting-after-reverting', _("Moinmoin 1.9 format is deprecated, convert to moin 2."))),
     'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
     'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
     'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),

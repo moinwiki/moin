@@ -14,7 +14,7 @@ from flask import current_app as app
 from moin.constants.chartypes import CHARS_SPACES
 from moin import wikiutil
 
-from werkzeug import MultiDict
+from werkzeug.datastructures import MultiDict
 
 
 class TestCleanInput:

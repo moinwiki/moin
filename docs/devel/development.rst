@@ -384,7 +384,7 @@ The translated version of "somestring" can be accessed in the JavaScript code by
 Testing
 =======
 
-We use py.test for automated testing. It is currently automatically installed
+We use pytest for automated testing. It is currently automatically installed
 into your virtualenv as a dependency.
 
 Running the tests
@@ -393,14 +393,14 @@ To run all the tests, the easiest way is to do::
 
     ./m tests  # windows:  m tests
 
-To run selected tests, activate your virtual env and invoke py.test from the
+To run selected tests, activate your virtual env and invoke pytest from the
 toplevel directory::
 
-    py.test --pep8  # run all tests, including pep8 checks
-    py.test -rs  # run all tests and output information about skipped tests
-    py.test -k somekeyword  # run the tests matching somekeyword only
-    py.test --pep8 -k pep8  # runs pep8 checks only
-    py.test sometests.py  # run the tests contained in sometests.py
+    pytest --pep8  # run all tests, including pep8 checks
+    pytest -rs  # run all tests and output information about skipped tests
+    pytest -k somekeyword  # run the tests matching somekeyword only
+    pytest --pep8 -k pep8  # runs pep8 checks only
+    pytest sometests.py  # run the tests contained in sometests.py
 
 Tests output
 ------------
@@ -416,7 +416,7 @@ If something goes wrong, you will also see tracebacks in stdout/stderr.
 
 Writing tests
 -------------
-Writing tests with `py.test` is easy and has little overhead. Just
+Writing tests with `pytest` is easy and has little overhead. Just
 use the `assert` statements.
 
 For more information, please read: http://pytest.org/

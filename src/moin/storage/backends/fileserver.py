@@ -17,7 +17,7 @@ import os
 import errno
 import stat
 from io import BytesIO
-from werkzeug import url_quote, url_unquote
+from werkzeug.urls import url_quote, url_unquote
 
 from moin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
 from . import BackendBase

@@ -194,11 +194,18 @@ class Dump(Command):
                 with open(filename, 'wb') as f:
                     rev.data.seek(0)
                     shutil.copyfileobj(rev.data, f)
-                    print('Saved file named {0} as raw data'.format(filename))
+                    try:
+                        print('Saved file named {0} as raw data'.format(filename))
+                    except UnicodeEncodeError:
+                        print('Saved file named {0} as raw data'.format(filename.encode('ascii', errors='replace')))
+
             else:
                 with open(filename, 'wb') as f:
                     f.write(rendered.encode('utf8'))
-                    print('Saved file named {0}'.format(filename))
+                    try:
+                        print('Saved file named {0}'.format(filename))
+                    except UnicodeEncodeError:
+                        print('Saved file named {0}'.format(filename.encode('ascii', errors='replace')))
 
             if current_rev.name == app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click

@@ -82,15 +82,17 @@ setup_args = dict(
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Script>=2.0.5',  # scripting support
-        'Flask-Theme>=0.3.3',  # theme support
+        'Flask-Theme>=0.3.5',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
+        'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug>=0.11.2',  # wsgi toolkit
+        'Werkzeug>=1.0.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
+        'sqlalchemy>=1.3.16',  # used by sqla store TODO see: #1014
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
         'XStatic-Font-Awesome>=4.1.0.0',
@@ -112,7 +114,7 @@ setup_args = dict(
         'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
                                          # requires special libs/header to be installed before it can be compiled successfully
                                          # windows binaries available from 3rd parties
-        'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
+        # 'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
     },
     entry_points=dict(
         console_scripts=['moin = moin.scripts:main'],
