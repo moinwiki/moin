@@ -182,6 +182,8 @@ Transclusion syntax is defined as follows: ::
    - Search engine crawlers may use the text to index the page or image.
 - `optional parameters` may be used to resize or position the target.
 
+   - the browser will automatically resize the image to fit the enclosing container
+     by specifying either class=resize or width=100% height=auto
    - Images or other targets can be resized on the client side by specifying
      an option of `width=nn` or `height=nn` where nn is the desired size in pixels.
    - If Pillow is installed on the server, JPEG (or JPG) images can be resized
@@ -210,12 +212,14 @@ Transclusion syntax is defined as follows: ::
 +----------------------------------------------------+---------------------------------------+
 | ``{{/SubItem}}``                                   | Transclude SubItem                    |
 +----------------------------------------------------+---------------------------------------+
+| ``{{ example.jpg || class=resize }}``              | browser will automatically resize     |
+|                                                    | image to fit the enclosing container  |
++----------------------------------------------------+---------------------------------------+
 | ``{{ example.jpg || width=20, height=100 }}``      | Resizes example.png by using HTML     |
 |                                                    | tag attributes                        |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ example.jpg || &w=20 }}``                     | Resizes example.png by using server-  |
-|                                                    | side compression, PIL needs to be     |
-|                                                    | installed.                            |
+|                                                    | side compression, requires PIL        |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ https://moinmo.in/ || width=800 }}``          | Resizes the ``object`` which is       |
 |                                                    | embedded using HTML tags. Here markup |
