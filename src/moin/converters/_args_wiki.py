@@ -30,6 +30,27 @@ _parse_rules = r'''
 '''
 parse_re = re.compile(_parse_rules, re.X | re.U)
 
+# parsing rules for object keyword parameters, similar to default parsing rules, but
+# input value may have trailing %: width=100%
+_parse_rules = r'''
+(?:
+    ([-&\w]+)
+    =
+)?
+(?:
+    ([-\w]+%*)  # added `%*` to default rules
+    |
+    "
+    (.*?)
+    (?<!\\)"
+    |
+    '
+    (.*?)
+    (?<!\\)'
+)
+'''
+object_re = re.compile(_parse_rules, re.X | re.U)
+
 # rules for include macro, splits on commas, allows leading ^ and embedded /
 # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
 # <<Include(^Prefix..-..-..,,to="^----",sort=descending,items=3)>>

@@ -142,11 +142,13 @@ div.warning > p { margin-top: 8px; padding-left: 4em; }
 .solid { border: 2px solid #AEBDCC; border: 2px solid var(--border-code); padding: 2px; clear: both; }
 .dashed { border: 2px dashed #AEBDCC; border: 2px dashed var(--border-code); padding: 2px; clear: both; }
 .dotted { border: 2px dotted #AEBDCC; border: 2px dotted var(--border-code); padding: 2px; clear: both; }
+/* more css classes defined for use by wiki editors */
 .left { text-align: left; }
 .center { text-align: center; }
 .right { text-align: right; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
+.resize { max-width: 100%; height: auto; }
 /* end of userstyles */
 
 /* links */

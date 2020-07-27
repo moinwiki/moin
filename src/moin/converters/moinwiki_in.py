@@ -22,7 +22,7 @@ from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 from moin.i18n import _
 
 from ._args import Arguments
-from ._args_wiki import parse as parse_arguments
+from ._args_wiki import parse as parse_arguments, object_re
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
 from ._table import TableMixin
@@ -835,10 +835,9 @@ class Converter(ConverterMacro):
                            object_text=None, object_args=None):
         """Handles objects transcluded within the page."""
         if object_args:
-            args = parse_arguments(object_args).keyword  # XXX needs different parsing
+            args = parse_arguments(object_args, parse_re=object_re).keyword
         else:
             args = {}
-
         query_keys = {}
         attrib = {}
         whitelist = ['width', 'height', 'class']
