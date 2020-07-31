@@ -180,6 +180,14 @@ def wiki_exists():
     """Return true if a wiki exists."""
     return bool(glob.glob('wiki/index/_all_revs_*.toc'))
 
+def copy_config_files():
+    if not os.path.isfile('wikiconfig.py'):
+        shutil.copy('src/moin/config/wikiconfig.py', 'wikiconfig.py')
+    if not os.path.isfile('intermap.txt'):
+        shutil.copy('src/moin/config/intermap.txt', 'intermap.txt')
+    if not os.path.isdir('wiki_local'):
+        os.mkdir('wiki_local')
+
 
 def make_wiki(command, mode='w', msg='\nSuccess: a new wiki has been created.'):
     """Process command to create a new wiki."""
@@ -190,6 +198,7 @@ def make_wiki(command, mode='w', msg='\nSuccess: a new wiki has been created.'):
         with open(NEWWIKI, mode) as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         if result == 0:
+            copy_config_files()
             print(msg)
             return True
         else:
@@ -288,12 +297,6 @@ class Commands:
         (t_hour,t_min) = divmod(t_min, 60)
         print('{} run time (h:mm:ss) {}:{:0>2}:{:0>2}'.format(command, t_hour, t_min, t_sec))
 
-    def copy_config_files(self):
-        if not os.path.isfile('wikiconfig.py'):
-            shutil.copy('src/moin/config/wikiconfig.py', 'wikiconfig.py')
-        if not os.path.isfile('intermap.txt'):
-            shutil.copy('src/moin/config/intermap.txt', 'intermap.txt')
-
     def cmd_quickinstall(self, *args):
         """create or update a virtual environment with the required packages"""
         if os.path.isdir('.tox'):
@@ -376,14 +379,12 @@ class Commands:
 
     def cmd_new_wiki(self, *args):
         """create empty wiki"""
-        self.copy_config_files()
         command = 'moin index-create -s -i'
         print('Creating a new empty wiki...')
         make_wiki(command)  # share code with loading sample data and restoring backups
 
     def cmd_sample(self, *args):
         """create wiki and load sample data"""
-        self.copy_config_files()
         # load items with non-ASCII names from a serialized backup
         command = 'moin index-create -s -i{0} moin load --file contrib/sample/unicode.moin'.format(SEP)
         print('Creating a new wiki populated with sample data...')
@@ -399,7 +400,6 @@ class Commands:
 
     def cmd_restore(self, *args):
         """create wiki and load data from wiki/backup.moin or user specified path"""
-        self.copy_config_files()
         command = 'moin index-create -s -i{0} moin load --file %s{0} moin index-build'.format(SEP)
         filename = BACKUP_FILENAME
         if args:
@@ -414,7 +414,6 @@ class Commands:
 
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki directory named dir"""
-        self.copy_config_files()
         if args:
             dirname = args[0]
             if os.path.isdir(dirname):
