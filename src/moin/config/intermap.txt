@@ -1,15 +1,8 @@
-## Please edit system and help pages ONLY in the master wiki!
-## For more information, please see MoinMoin:MoinDev/Translation.
-##master-page:None
-##master-date:None
-#acl -All:write Default
-#format plain
-#language en
-
-# MoinMoin master InterWiki list
-# This list is deployed to all MoinMoin users in the file "intermap.txt". Nevertheless
-# you can add your own InterWiki entries to your wiki by editing your local InterWikiMap
-# if you do not want to modify the file directly.
+# MoinMoin InterWiki list
+# This list is deployed to all MoinMoin users in the file "intermap.txt".
+# You can add your own InterWiki entries to your wiki by editing your wikiconfig.py.
+# For items with moinwiki or creole contenttype, create interwiki links similar to:
+#   [[MeatBall:InterWiki|go to meatball wiki]]
 
 
 # for Germany: bookzilla.de instead of amazon == supporting GNU/Linux and 5% for FSF Europe
