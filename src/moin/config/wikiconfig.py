@@ -20,21 +20,45 @@ from moin.utils.interwiki import InterWikiMap
 
 class Config(DefaultConfig):
     """
-    We assume this structure for a git clone or simple "unpack and run" scenario:
-    moin/                     # clone root or unpack directory
-        contrib/
-            interwiki/
-                intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
+    We assume this structure for a git clone scenario used by developers:
+    moin/                   # clone root and wikiconfig dir, use this as CWD for ./m or moin commands
+        contrib             # developer tools
         docs/
             _build/
-                html/             # local copy of moin documentation, created by running "./m docs" command
+                html/       # local copy of moin documentation, created by running "./m docs" command
         src/
-            moin/                 # large directory containing moin application code
-        wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
-            data/                 # wiki data and metadata
-            index/                # wiki indexes
-        wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
-        wikiconfig.py             # main configuration file, modify this to add or change features
+            moin/           # directory containing moin application code
+        wiki/               # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
+            data/           # wiki data and metadata
+            index/          # wiki indexes
+            preview/        # edit backups created when user clicks edit Preview button
+            sql/            # sql database used for edit locking
+        wikiconfig.py       # main configuration file, modify this to add or change features
+        wiki_local/         # use this to store custom CSS, Javascript, templates, logos, etc.
+        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
+    <moin-venv-python>      # virtual env is created as a sibling to moin/ by default
+        bin/                # Windows calls this directory Scripts
+        include             # Windows calls this directory Include
+        lib/                # Windows calls this directory Lib
+
+
+    OR: This structure will be created by a `<python> -m venv <path-to-new-myvenv>`
+    myvenv/                 # virtualenv root
+        bin/                # Windows calls this directory Scripts
+        include             # Windows calls this directory Include
+        lib/                # Windows calls this directory Lib
+
+    After activating above venv, `moin create-instance -p <mywiki>` creates this structure
+    mywiki/                 # wikiconfig dir, use this as CWD for moin commands
+        wiki/               # the wiki instance; created by `moin create-instance`
+            data/           # wiki data and metadata
+            index/          # wiki indexes
+            preview/        # backups created when user clicks edit Preview button
+            sql/            # sqlite database used for edit locking
+        wikiconfig.py       # main configuration file, modify this to add or change features
+        wiki-local          # use this to store custom CSS, Javascript, templates, logos, etc.
+        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
+
     If that's not true, adjust these paths
     """
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
@@ -53,7 +77,8 @@ class Config(DefaultConfig):
     interwikiname = 'MyMoinMoin'
     # load the interwiki map from intermap.txt:
     interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'intermap.txt')).iwmap
-    # we must add entries for 'Self' and our interwikiname, change these if you are not running the built-in desktop server:
+    # we must add entries for 'Self' and our interwikiname,
+    # if you are not running the built-in desktop server change these to your wiki URL
     interwiki_map[interwikiname] = 'http://127.0.0.1:8080/'
     interwiki_map['Self'] = 'http://127.0.0.1:8080/'
 
@@ -146,7 +171,8 @@ class Config(DefaultConfig):
     """
 
 
-MOINCFG = Config  # Flask requires uppercase
+# flask settings require all caps
+MOINCFG = Config  # adding MOINCFG=<path> to OS environment overrides CWD
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = 'you need to change this so it is really secret'
 DEBUG = False  # use True for development only, not for public sites!
