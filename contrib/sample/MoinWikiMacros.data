@@ -1,6 +1,6 @@
 = Moin Wiki Macros =
 
-With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page. 
+With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page.
 
 Features that are not working correctly are marked with '''MOINTODO:'''
 
@@ -105,7 +105,7 @@ Include a page with a non-ascii name and a heading level 6:
 
 < < < < < end of <Include(StronaGłówna,My Favorite Page, 6)> > > > > >
 
-'''MOINTODO:''' Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink. 
+'''MOINTODO:''' Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink.
 
 '''MOINTODO:''' There is a console traceback when a regex pattern is used to select PNG or SVG images: `<<Include(^pn)>>`. See issue #573.
 
@@ -183,9 +183,9 @@ The format of the macro is:
 <<FontAwesome(classes,color,size)>>
 }}}
 
-The color and size parameters are optional. 
+The color and size parameters are optional.
 
- * color must be a hex digit color code of either 3 or 6 digits with a leading #: 
+ * color must be a hex digit color code of either 3 or 6 digits with a leading #:
    * #f00 or #F80000
  * size may be an unsigned decimal integer or float that will adjust the size of the character relative to the current font size.
    * 2 or 2.0 will create double the character size
@@ -198,16 +198,16 @@ Font awesome experts will know about the special "fa" class and the "fa-" name p
 '''Markup:'''
 
 {{{
-<<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>> 
+<<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>>
 
-<<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>> 
+<<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>>
 }}}
 
 '''Result:'''
 
-<<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>> 
+<<FontAwesome(thumbs-up,,2)>>  is identical to <<FontAwesome(fa fa-thumbs-up fa-2x)>>
 
-<<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>> 
+<<FontAwesome(spinner spin,#f00)>>  is identical to <<FontAwesome(fa fa-spinner fa-spin,#f00)>>
 
 === GetText ===
 
@@ -269,41 +269,8 @@ The MailTo macro exports different markup when the user is logged in.
 
 <<MailTo(user AT example DOT org, write me)>>
 
-=== PagenameList ===
 
-'''Markup:'''
-
-{{{
-All Pages:
-
-<<PagenameList()>>
-
-Pages having letters "ma":
-
-<<PagenameList(ma, True)>>
-
-Pages starting with "ma":
-
-<<PagenameList(ma)>>
-}}}
-
-'''Result:'''
-
-All Pages:
-
-<<PagenameList()>>
-
-Pages having letters "ma":
-
-<<PagenameList(ma, True)>>
-
-Pages starting with "ma":
-
-<<PagenameList(ma)>>
-
-
-
-=== ItemPageList ===
+=== ItemList ===
 
 This section is partitioned into subsections, one for each ItemPageList parameter.
 
@@ -319,38 +286,38 @@ item, the only sample-wiki item that contains a significant number of descendent
 {{{
 The default is the current page:
 
-<<ItemPageList()>>
+<<ItemList()>>
 
 An empty string gives the wiki root:
 
-<<ItemPageList(item="")>>
+<<ItemList(item="")>>
 
 An item that does not exist (potentially due to ACLs) produces a warning:
 
-<<ItemPageList(item="DoesNotExist")>>
+<<ItemList(item="DoesNotExist")>>
 
 An item that has no children (potentially due to ACLs) produces a message stating so:
 
-<<ItemPageList(item="Home/subitem")>>
+<<ItemList(item="Home/subitem")>>
 }}}
 
 '''Result:'''
 
 The default is the current page:
 
-<<ItemPageList()>>
+<<ItemList()>>
 
 An empty string gives the wiki root:
 
-<<ItemPageList(item="")>>
+<<ItemList(item="")>>
 
 An item that does not exist (potentially due to ACLs) produces a warning:
 
-<<ItemPageList(item="DoesNotExist")>>
+<<ItemList(item="DoesNotExist")>>
 
 An item that has no children (potentially due to ACLs) produces a message stating so:
 
-<<ItemPageList(item="Home/subitem")>>
+<<ItemList(item="Home/subitem")>>
 
 
 ===== The "ordered" parameter =====
@@ -363,14 +330,14 @@ Lists are unordered (ordered="False") by default (see above for examples).
 
 An ordered list:
 
-<<ItemPageList(item="OtherTextItems" ordered="True")>>
+<<ItemList(item="OtherTextItems" ordered="True")>>
 }}}
 
 '''Result:'''
 
 An ordered list:
 
-<<ItemPageList(item="OtherTextItems", ordered="True")>>
+<<ItemList(item="OtherTextItems", ordered="True")>>
 
 
 ===== The "startswith" parameter =====
@@ -381,12 +348,12 @@ the "startswith" parameter is more efficient than the equivalent "regex" express
 '''Markup:'''
 
 {{{
-<<ItemPageList(item="OtherTextItems", startswith="P")>>
+<<ItemList(item="OtherTextItems", startswith="P")>>
 }}}
 
 '''Result:'''
 
-<<ItemPageList(item="OtherTextItems", startswith="P")>>
+<<ItemList(item="OtherTextItems", startswith="P")>>
 
 
 ===== The "regex" parameter =====
@@ -396,30 +363,30 @@ the "startswith" parameter is more efficient than the equivalent "regex" express
 {{{
 Those items containing the string "Text" anywhere in the full path name:
 
-<<ItemPageList(item="OtherTextItems", regex="Text")>>
+<<ItemList(item="OtherTextItems", regex="Text")>>
 
 Those items containing the string "Text" only in the descendent's name:
 
-<<ItemPageList(item="OtherTextItems", regex="^.*/.*Text")>>
+<<ItemList(item="OtherTextItems", regex="^.*/.*Text")>>
 
 Those items containing a vowel as the 3rd-to-last character:
 
-<<ItemPageList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
+<<ItemList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
 }}}
 
 '''Result:'''
 
 Those items containing the string "Text" anywhere in the full path name:
 
-<<ItemPageList(item="OtherTextItems", regex="Text")>>
+<<ItemList(item="OtherTextItems", regex="Text")>>
 
 Those items containing the string "Text" only in the descendent's name:
 
-<<ItemPageList(item="OtherTextItems", regex="^.*/.*Text")>>
+<<ItemList(item="OtherTextItems", regex="^.*/.*Text")>>
 
 Those items containing a vowel as the 3rd-to-last character:
 
-<<ItemPageList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
+<<ItemList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
 
 
 ===== The "display" parameter =====
@@ -431,38 +398,38 @@ All of the following examples display just the "PlainText" item.
 {{{
 Displayed using "FullPath" (the default, see examples above):
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
 
 Displayed using "FullPath":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
 
 Displayed using "ChildName":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
 
 Displayed using "UnCameled":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
 }}}
 
 '''Result:'''
 
 Displayed using "FullPath":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
 
 Displayed using "FullPath":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
 
 Displayed using "ChildName":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
 
 Displayed using "UnCameled":
 
-<<ItemPageList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+<<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
 
 
 
@@ -510,4 +477,3 @@ Verbatim macro Returns `same` __text__ '''as''' entered
 <<Verbatim(Returns `same` __text__ '''as''' entered)>>
 
 <<Verbatim(<script>alert(1);</script>)>>
-
