@@ -152,7 +152,7 @@ Typing "./m" (or "m" on Windows) will display a menu similar to:
     dump-html *     create a static HTML image of wiki *options, see docs
     index           delete and rebuild indexes
 
-    css             run Stylus and lessc to update theme CSS files
+    css             run lessc to update basic theme CSS files
     tests *         run tests, log output (-v -k my_test)
     coding-std      correct scripts that taint the repository with trailing spaces..
 

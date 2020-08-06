@@ -118,7 +118,7 @@ backup *        roll 3 prior backups and create new backup *option, specify file
 dump-html *     create a static HTML image of wiki *options, see docs
 index           delete and rebuild indexes
 
-css             run Stylus and lessc to update theme CSS files
+css             run lessc to update basic theme CSS files
 tests *         run tests, log output (-v -k my_test)
 coding-std      correct scripts that taint the repository with trailing spaces..
 
@@ -505,25 +505,10 @@ class Commands:
         self.run_time('HTML Dump')
 
     def cmd_css(self, *args):
-        """run Stylus and lessc to update CSS files"""
-        # Note: we use / below within file paths; this works in Windows XP, 2000, 7, 8, 10
+        """run lessc to update basic theme CSS files"""
         bootstrap_loc = get_bootstrap_data_location().strip() + '/less'
         pygments_loc = get_pygments_data_location().strip() + '/css'
-        modernized_loc = 'src/moin/themes/modernized/static/css/stylus'
         basic_loc = 'src/moin/themes/basic/static/custom-less'
-
-        print('Running Stylus to update Modernized theme CSS files...')
-        command = 'cd {0}{1}stylus --include {2} --include-css --compress < theme.styl > ../theme.css'.format(modernized_loc, SEP, pygments_loc)
-        result = subprocess.call(command, shell=True)
-        if result == 0:
-            print('Success: Modernized CSS files updated.')
-        else:
-            print('Error: stylus failed to update css files, see error messages above.')
-        # stylus adds too many blank lines at end of modernized theme.css, fix it by running coding_std against css directory
-        command = 'python scripts/coding_std.py src/moin/themes/modernized/static/css'
-        result = subprocess.call(command, shell=True)
-        if result != 0:
-            print('Error: failure running coding_std.py against modernized css files')
 
         print('Running lessc to update Basic theme CSS files...')
         if WINDOWS_OS:
