@@ -86,12 +86,6 @@ add more tools, exercise tools
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
-* install stylus::
-
-    sudo npm install stylus@0.42.2 -g  # Windows: npm install stylus@0.42.2 -g
-    # we need 0.42.2 because with more recent versions, --compress compresses
-    # complete output to 1 line (0.42.2 compresses to 1 line per rule)
-    stylus -V  # show version number to prove it works
 * install lessc ("less" below is not a typo)::
 
     sudo npm install less -g  # Windows: npm install less -g
@@ -359,9 +353,7 @@ also be given directly to the render call.
 
 Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in
 MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
-``static/custom-less`` directory. Stylesheets for the Modernized and Foobar
-themes are compiled using the ``theme.styl files`` in their respective ``static/css/stylus``
-directories. To compile CSS for all themes::
+``static/custom-less`` directory.
 
     ./m css  # Windows: m css
 
