@@ -512,6 +512,26 @@
     {%- endif %}
 {%- endmacro %}
 
+{# Return a string containing an item name, item alias names, item summary or item ID and old names #}
+{%- macro best_item_name(meta) %}
+    {% set names = [] %}
+    {%- if not meta.trash %}
+        {#- if there are alias names, create a link to each alias #}
+        {%- for name in meta.fqnames -%}
+            {{- names.append(name.fullname) or "" -}}
+        {%- endfor -%}
+        {{- names|join(' | ') -}}
+    {%- elif meta.summary %}
+        {{- meta.summary -}}
+    {%- else %}
+        {{- meta.fqnames[0]|shorten_fqname -}}
+    {%- endif %}
+    {%- if not meta.name and not meta.summary and meta.name_old %}
+        {#- this is a deleted item, show old name(s) #}
+        ~({{ meta.name_old|join(' | ') }})
+    {%- endif %}
+{%- endmacro %}
+
 {# Create next page, prior page links for multi-page reports. #}
 {% macro page_links(page_num, pages, url) %}
     {# if history is long and displayed as several pages, create links to show next and/or prior pages #}

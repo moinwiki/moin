@@ -1178,6 +1178,7 @@ def mychanges():
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
+        flash(_('You must be logged in to see your changes.'), "error")
         results_per_page = app.cfg.results_per_page
     page_num = request.values.get('page_num', 1)
     page_num = max(int(page_num), 1)
@@ -1201,6 +1202,10 @@ def mychanges():
             entry[key] = rev.meta[key]
         entry[COMMENT] = rev.meta.get(COMMENT, '')
         entry[FQNAMES] = rev.fqnames
+        entry[PARENTID] = rev.meta.get(PARENTID, '')
+        entry[TRASH] = rev.meta.get(TRASH, False)
+        entry[SUMMARY] = rev.meta.get(SUMMARY, False)
+        entry[NAME_OLD] = rev.meta.get(NAME_OLD, False)
         my_changes.append(entry)
 
     return render_template('mychanges.html',

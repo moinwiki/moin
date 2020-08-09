@@ -26,12 +26,16 @@
                 </thead>
 
                 <tbody>
-                    {% for doc in my_changes %}
+                    {%- for doc in my_changes %}
                         <tr>
-                            {# create an icon with a link to diff, or other icon indicating state of item #}
-                            <td class="moin-history-links">{{ utils.item_status_icon(doc.fqnames[0], doc, None) }}</td>
-                            {# show item name or item id and old name if the item is nameless (deleted) #}
-                            <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
+                            {#- create an icon with a link to diff, or other icon indicating state of item #}
+                            <td class="moin-history-links">{{- utils.item_status_icon(doc.fqnames[0], doc, None) -}}</td>
+                            {#- show item name or item id and old name if the item is deleted/nameless #}
+                            <td class="moin-history-item moin-wordbreak">
+                                <a href="{{ url_for('frontend.show_item', item_name=doc.fqnames[0], rev=doc.revid) }}" title="{{ _('show revision') }}">
+                                    {{ utils.best_item_name(doc) }}
+                                </a>
+                            </td>
                             <td>{{ doc.mtime|time_datetime }}</td>
                             <td class="moin-integer">{{ doc.size }}</td>
                             <td class="moin-integer">{{ doc.rev_number  or doc.revid|shorten_id }}</td>
