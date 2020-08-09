@@ -35,6 +35,10 @@ E-Mail
  will be sent to the email address you provide. You must complete this step before you start using
  the wiki.
 
+ Other wikis may limit new account creation to administrators only to prevent the creation
+ of bogus accounts and spamming bots. In this case you will have to contact the administrator
+ to request an account.
+
 User Settings
 =============
 
@@ -164,14 +168,16 @@ screen, and is edited like a normal wiki item.
 ------------
 
 To view your modifications to a wiki, click on ``User`` in the navigation area, then on ``My Changes``.
- his will show a list of modifications you have made to wiki items.
+This will show a list of revisions you have made to wiki items sorted by date-time.
 
- **MOINTODO** +mychanges only links to the item which you edit, not the specific revision. If you edit
- and item several times, it just inserts several identical links to that item. This behaviour should be
- checked and rectified.
+The first column will usually show an icon with a link to a diff showing the changes made at
+that revision. If the item was deleted, the icon will have a link to a revert dialog. If the item
+has only one revision, the icon will indicate the content type.
 
- **MOINTODO** +mychanges isn't very pretty if you visit it without making any changes, it just says
- "My Changes" at the top with the rest of the page left blank.
+The second column will show the item name, aliases, or item ID (if the item was deleted)
+at that revision with a link to a revision display.
+
+The remaining columns with display timestamps, sizes, revision numbers, and comments.
 
 Bookmarking
 -----------
