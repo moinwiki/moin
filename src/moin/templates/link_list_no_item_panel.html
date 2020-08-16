@@ -1,5 +1,11 @@
+{#
+    Display a list of fqnames with links to the item. Used by orphaned items, tagged items, ...
+
+    There is not a target item, therefore an Item Views panel is not displayed.
+#}
+
 {% extends theme("layout.html") %}
-{% from "utils.html" import item_panel %}
+{% from "utils.html" import make_item_link %}
 {% block content %}
     {% if headline %}
         <h1>{{ headline }}</h1>
@@ -8,7 +14,7 @@
         <h2>Total: {{ fq_names|count }}</h2>
         <ul class="moin-link-list">
             {% for fq_name in fq_names|sort(attribute='value') %}
-                {{ item_panel(fq_name) }}
+                {{ make_item_link(fq_name) }}
             {% endfor %}
         </ul>
     {% endif %}

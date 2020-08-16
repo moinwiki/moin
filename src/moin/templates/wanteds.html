@@ -7,15 +7,15 @@
 
 {% extends theme("layout.html") %}
 
-{% macro item_panel(fq_name, who_wants) %}
+{% macro item_row(fq_name, who_wants) %}
     <tr>
         <td>
             <a class="moin-fqname"
                href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
-               {% if fq_name.value != fq_name|string %}
+               {% if fq_name.fullname != fq_name|string %}
                    title="{{ fq_name }}"
                {% endif %}>
-               {{ fq_name.value }}
+               {{ fq_name.fullname }}
             </a>
         </td>
         <td>
@@ -42,8 +42,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for fq_name in fq_names|sort(attribute='value') %}
-                    {{ item_panel(fq_name, who_wants) }}
+                {% for fq_name in fq_names|sort(attribute='fullname') %}
+                    {{ item_row(fq_name, who_wants) }}
                 {% endfor %}
             </tbody>
         </table>

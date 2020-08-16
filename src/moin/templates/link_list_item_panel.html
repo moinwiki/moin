@@ -1,5 +1,11 @@
+{#
+    Display a list of fqnames with links to the item. Used by Similar names, forwardrefs, backrefs, ...
+
+    There is a target item, therefore an Item Views panel is displayed.
+#}
+
 {% extends theme("show.html") %}
-{% from "utils.html" import item_panel %}
+{% from "utils.html" import make_item_link %}
 {% block content %}
     {% if headline %}
         <h1>{{ headline }}</h1>
@@ -7,8 +13,8 @@
     {% if fq_names %}
         Total: {{ fq_names|count }}
         <ul class="moin-link-list">
-            {% for fq_name in fq_names|sort(attribute='value') %}
-                {{ item_panel(fq_name) }}
+            {% for fq_name in fq_names|sort(attribute='fullname') %}
+                {{ make_item_link(fq_name) }}
             {% endfor %}
         </ul>
     {% endif %}
