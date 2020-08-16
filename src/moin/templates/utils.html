@@ -279,14 +279,15 @@
     </ul>
 {% endmacro %}
 
-{% macro item_panel(fq_name) %}
+{# Given an fqname, create a link to the item. The full name is displayed, including the namespace. #}
+{% macro make_item_link(fq_name) %}
     <li>
         <a class="moin-fqname"
            href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
            {% if fq_name.value != fq_name|string %}
                title="{{ fq_name }}"
            {% endif %}>
-           {{ fq_name.value }}
+           {{ fq_name.fullname }}
        </a>
     </li>
 {% endmacro %}
