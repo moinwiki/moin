@@ -14,9 +14,10 @@ a:hover { text-decoration: underline; }
 
 #moin-searchform,
 #moin-long-searchform > p > input { width: 200px; display: inline-block; font-size: 1em;
-    border: 1px solid #4e7da9; border-radius: 3px; background-color: #fff; }
+    border: 1px solid #4e7da9; border-radius: 3px; background-color: #fff; text-align: left;
+    float: none; }
 .moin-search-query { float: left; margin-right: 0; height: 1.5em; vertical-align: middle; color: #000;
-    border: 0; width: 150px; margin-left: 5px; }
+    border: 0; width: 150px; margin-left: 5px; padding-right: 0; }
 #moin-searchform .moin-float-fix { float: right; clear: none; padding: 0; }
 #moin-search-submit { width: 30px; text-indent: -9000px; border: 0; height: 1.5em;
     background: url("../../../static/img/moin-search.png") center center no-repeat; padding: 0;

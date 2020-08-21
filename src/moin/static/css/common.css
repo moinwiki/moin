@@ -249,17 +249,35 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 .moin-diff-revert { clear: both; float: right; margin: 1em 0; }
 /* end diffs */
 
-/* misc moin css keywords */
-.moin-suggestions { color: #FF9900; color: var(--suggestions); display: inline; }
-.moin-suggestion-terms { font-style: italic; display: inline; }
-.moin-wordbreak { word-break: break-all; word-wrap: break-word; }
+/* search  */
+.moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor:pointer; }
 .moin-search-meta { color: #737373; color: var(--muted); }
-.searchstats { color: #737373; color: var(--muted); }
-.searchhitinfobar { display: inline; }
-.moin-rights-info { display: inline; float: right; }
+.moin-search-stats { color: #737373; color: var(--muted); }
+.moin-search-hit-info { display: inline; }
 .moin-searchoptions > table { table-layout: fixed; }
 .moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
 .moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
+.moin-search-score { padding-left: 2em; color: #737373; color: var(--muted); }
+.moin-search-results p { font-size:.85em; }
+.moin-search-results td { border-width:0; }
+.moin-search-results .moin-search-hit-info { margin-top:0; display:inline; }
+.moin-search-results .moin-found-text { margin-top:0; }
+p.moin-search-stats { font-size:.8em; width:100%; padding-left:14px; }
+#moin-searchform { margin:2px 12px 0 0; padding:0; font-size:.82em; float:right; text-align:right; width:15em; }
+#moin-searchform div.moin-float-fix { display:inline; }
+#moin-search-submit { text-indent:-9000%; margin-left:-26px; width:20px; height:16px;
+    background:url("../img/moin-search.png") center center no-repeat; background-size:16px 16px; border:none;
+    overflow:hidden; vertical-align:middle; cursor:pointer; padding:0; box-shadow:none; }
+.moin-search-query { padding-right:20px; font-size:100%; vertical-align:middle; color:#000; color:var(--font_color);
+    background-color:#fff; background-color:var(--page_color); border:1px solid #4e7da9; border:var(--border_style);
+    border-radius:5px; }
+#moin-long-searchform { padding:0; font-size:1em; text-align:left; }
+#moin-long-searchform div { margin:0; }
+.moin-suggestions { font-weight: bold; }
+.moin-suggestion-terms { font-style: italic; font-weight: normal; }
+
+/* misc moin css keywords */
+.moin-wordbreak { word-break: break-all; word-wrap: break-word; }
 .hidden { display: none; visibility: hidden; }
 .moin-integer { text-align: right; padding-right: 1em; }
 .moin-big { font-size: 1.17em; }
