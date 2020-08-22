@@ -251,13 +251,13 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 
 /* search  */
 .moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor:pointer; }
-.moin-search-meta { color: #737373; color: var(--muted); }
-.moin-search-stats { color: #737373; color: var(--muted); }
+.moin-search-meta { color: #444; color: var(--muted); }
+.moin-search-stats { color: #444; color: var(--muted); }
 .moin-search-hit-info { display: inline; }
 .moin-searchoptions > table { table-layout: fixed; }
 .moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
 .moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
-.moin-search-score { padding-left: 2em; color: #737373; color: var(--muted); }
+.moin-search-score { padding-left: 2em; color: #444; color: var(--muted); }
 .moin-search-results p { font-size:.85em; }
 .moin-search-results td { border-width:0; }
 .moin-search-results .moin-search-hit-info { margin-top:0; display:inline; }
@@ -295,7 +295,7 @@ p.moin-search-stats { font-size:.8em; width:100%; padding-left:14px; }
 .moin-acl-name-cell > input { position:absolute; bottom: 0; right: 0; }
 .moin-acl-rule-cell { border: 1px solid #4e7da9; border: 1px solid var(--border); overflow: hidden; width: 70%; }
 .moin-acl-rule-cell textarea { border: 0; min-height: 3em; }
-.moin-acl-default .moin-acl-string { color: #737373; color: var(--muted); }
+.moin-acl-default .moin-acl-string { color: #444; color: var(--muted); }
 .moin-acl-rule-cell .moin-acl-edit-disable { color: #ccc; color: var(--disabled);}
 .moin-acl-string { padding: .3em .4em; width: 100%; overflow: scroll; overflow-wrap: break-word; }
 span.moin-acl-string { vertical-align: middle; }
@@ -374,7 +374,7 @@ div.no-borders,
 #moin-wiki-license,
 #moin-credits,
 #moin-version,
-#moin-timings { margin: 10px 20px; text-align: left; font-size: .7em; color: #737373; color: var(--muted); float: left; clear: left; }
+#moin-timings { margin: 10px 20px; text-align: left; font-size: .7em; color: #444; color: var(--muted); float: left; clear: left; }
 #moin-creditlogos { clear: both; float: right; }
 
 /* ordered lists */
@@ -492,7 +492,7 @@ a.moin-auth-failed { color: red; color: var(--alert); }
     border: 1px solid #4e7da9; border: 1px solid var(--border); padding: .2em; border-radius: 5px; }
 .moin-contenttype-selection ul li { list-style-type: none; }
 .moin-contenttype-selection ul li label { display: inline; vertical-align: middle; }
-.moin-contenttype-selection ul li .helper-text { font-size: .7em; color: #737373; color: var(--muted); }
+.moin-contenttype-selection ul li .helper-text { font-size: .7em; color: #444; color: var(--muted); }
 .moin-contenttype-selection ul li a { font-size: 80%; }
 .moin-contenttype-selection form input[type="submit"] { font-size: .9em; }
 .moin-contenttype-selection:hover div { background-color: #d8dfe9; background-color: var(--bg-selected); color: #1f9ae0; color: var(--hilite); }
@@ -551,7 +551,7 @@ form.upload_file button { display: none; }
 .file_upload_template .file_upload_start { visibility: hidden; border-width: 0; padding: 0; }
 .file_upload_template .file_upload_start button { width: 0; }
 .upload-form { display: none; }
-.moin-drag { font-size: .7em; color: #737373; color: var(--muted); }
+.moin-drag { font-size: .7em; color: #444; color: var(--muted); }
 .file_name { word-break:  break-all; word-wrap:  break-word; max-width:  10em; }
 
 /* Forms - User Settings, rename, delete, destroy, register, diff... */
@@ -637,7 +637,7 @@ form.upload_file button { display: none; }
 
 /* +admin/user */
 
-.moin-namespaces > li { color: gray; color: var(--muted); }
+.moin-namespaces > li { color: #444; color: var(--muted); }
 
 /* show wikiconfig and wikiconfighelp */
 
