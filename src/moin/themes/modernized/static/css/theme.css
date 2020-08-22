@@ -66,22 +66,6 @@ form[name="delete_item"] dt,
 form[name="rename_item"] dt,
 form[name="destroy_item"] dt { width:20%; }
 
-/* search form */
-.searchresults dt { margin-top:1em; font-weight:normal; }
-.searchresults dd,
-.searchresults p { font-size:.85em; }
-.searchresults td { border-width:0; }
-.searchresults .searchhitinfobar { margin-top:0; display:inline; }
-.searchresults .foundtext { margin-top:0; }
-p.searchstats { font-size:.8em; width:100%; padding-left:14px; }
-p.searchhint { background-color:#eef1f6; background-color:var(--table_bg_color);
-    border:1px solid #4e7da9; border:var(--border_style); padding:2px; }
-.searchpages { margin-left:auto; margin-right:auto; }
-.searchpages tr,
-.searchpages td { border:0; padding:5px; margin:0; text-align:center; vertical-align:middle;
-    color:#000; color:var(--font_color); font-weight:bold; font-size:1.05em; }
-.searchpages td a,
-.searchpages td a:link { text-decoration:underline; }
 #f_data_text { border:1px solid #4e7da9; border:var(--border_style); font-family:monospace;
     margin:.33em 0; padding:3px; width:100%; }
 #f_comment,
@@ -96,16 +80,6 @@ a.moin-conflict:before { content:url("../img/moin-conflict.png"); margin:0 .2em;
 
 #moin-header { margin:0; padding:7px 0 10px 0; background:#00417f; color:#fff; color:var(--heading_color);
     line-height:1.12em; border-bottom-left-radius:9px; border-bottom-right-radius:9px; }
-#moin-searchform { margin:2px 12px 0 0; padding:0; font-size:.82em; float:right; text-align:right; width:15em; }
-#moin-searchform div.moin-float-fix { display:inline; }
-#moin-search-submit { text-indent:-9000%; margin-left:-26px; width:20px; height:16px;
-    background:url("../img/moin-search.png") center center no-repeat; background-size:16px 16px; border:none;
-    overflow:hidden; vertical-align:middle; cursor:pointer; padding:0; box-shadow:none; }
-.moin-search-query { padding-right:20px; font-size:100%; vertical-align:middle; color:#000; color:var(--font_color);
-    background-color:#fff; background-color:var(--page_color); border:1px solid #4e7da9; border:var(--border_style);
-    border-radius:5px; }
-#moin-long-searchform { padding:0; font-size:.82em; text-align:left; }
-#moin-long-searchform div { margin:0; }
 
 #moin-logo { float:left; margin:2px 10px 8px 10px; padding:0; font-size:1.4em; line-height:1em; font-weight:bold; }
 #moin-logo img { vertical-align:middle; }
