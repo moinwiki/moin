@@ -29,6 +29,14 @@
             </div>
         {% endif %}
     {% else %}
+        {# when user keys changes into long search form, updates to whoosh_query indicates conclusion of queued searches #}
+        <p class="moin-suggestions"> {{ _("Whoosh query:") }}
+            <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
+            <br>
+            <span class="moin-suggestion-terms">
+                {{ _("%(result_len)d results found (%(runtime).3f secs).", result_len=results|length, runtime=results.runtime) }}
+            </span>
+        </p>
         {% if omitted_words %}
             <p class="moin-suggestions"> {{ _("Common words omitted from query:") }}
                 <span class="moin-suggestion-terms">{{ omitted_words }} </span>
@@ -48,16 +56,6 @@
                     <span class="moin-suggestion-terms">{{ content_suggestions }}</span>
                 </p>
             {% endif %}
-            <p class="moin-search-stats">
-                {% if results %}
-                    {{ _("%(result_len)d results found (%(runtime).3f secs).",
-                          result_len=results|length, runtime=results.runtime
-                        )
-                    }}
-                {% else %}
-                    {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
-                {% endif %}
-            </p>
             {% if results %}
                 <div class="moin-search-results">
                     <table>
@@ -80,9 +78,6 @@
                                                 <b>Item ID : {{ result['itemid'] }}</b>
                                             </a>
                                         {% endif %}
-                                        <span class="moin-search-score">
-                                            score={{ result.score|round(2) }}
-                                        </span>
                                     </td>
                                 </tr>
                                 {% if result['summary'] %}
@@ -95,14 +90,15 @@
                                 <tr class="moin-search-meta">
                                     <td>
                                         <p class="moin-search-hit-info">
-                                            {{ _("Revision: %(revid)s Size: %(size)s Time: %(mtime)s Content type: %(type)s",
+                                            {{ _("Revision: %(revid)s, Size: %(size)s, Time: %(mtime)s, Content type: %(type)s, Score: %(score)s",
                                             type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|time_datetime,
-                                            size=result['size']|filesizeformat, revid=result['rev_number']) }}
+                                            size=result['size']|filesizeformat, revid=result['rev_number'], score=result.score|round(2)) }}
                                         </p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
+                                        {# XXX if user.may.read is expensive and does not work as coded, link to Access Denied is created. #}
                                         {% if user.may.read(get_fqname(item_name=results['itemid'],field='ITEMID',namespace=results['namespace'])) %}
                                             <p class="moin-found-text">{{ result.highlights('content')|safe }}</p><br>
                                         {% else %}

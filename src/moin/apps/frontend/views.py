@@ -345,6 +345,8 @@ def search(item_name):
         query = request.args.get('q')
         history = request.args.get('history') == "true"
         time_sorting = request.args.get('time_sorting')
+        if time_sorting == 'default':
+            time_sorting = False
         filetypes = request.args.get('filetypes')
         is_ticket = bool(request.args.get('is_ticket'))
         if filetypes:
@@ -426,6 +428,7 @@ def search(item_name):
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
                                        is_ticket=is_ticket,
+                                       whoosh_query=q,
                 )
             else:
                 html = render_template('search.html',
@@ -437,6 +440,7 @@ def search(item_name):
                                        item_name=item_name,
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
+                                       whoosh_query=q,
                 )
             flaskg.clock.stop('search render')
     else:
