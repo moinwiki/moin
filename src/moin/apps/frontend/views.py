@@ -369,6 +369,7 @@ def search(item_name):
         if item_name:  # Only search this item and subitems
             prefix_name = item_name + '/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
+            terms.append(Term(WIKINAME, app.cfg.interwikiname))
 
             show_transclusions = True
             if show_transclusions:
