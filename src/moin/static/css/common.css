@@ -53,15 +53,15 @@
 
       TODO: create icons for attention, danger, error, and hint.
 */
-div.attention:before { content: url("../img/admonitions/important.png"); float: left; }
-div.caution:before { content: url("../img/admonitions/caution.png"); float: left; }
-div.danger:before { content: url("../img/admonitions/warning.png"); float: left; }
-div.error:before { content: url("../img/admonitions/warning.png"); float: left; }
-div.hint:before { content: url("../img/admonitions/tip.png"); float: left; }
-div.important:before { content: url("../img/admonitions/important.png"); float: left; }
-div.note:before { content: url("../img/admonitions/note.png"); float: left; }
-div.tip:before { content: url("../img/admonitions/tip.png"); float: left; }
-div.warning:before { content: url("../img/admonitions/warning.png"); float: left; }
+div.attention:before { content: url("../img/admonitions/important.png"); float: left; padding-right: 1em; }
+div.caution:before { content: url("../img/admonitions/caution.png"); float: left; padding-right: 1em; }
+div.danger:before { content: url("../img/admonitions/warning.png"); float: left; padding-right: 1em; }
+div.error:before { content: url("../img/admonitions/warning.png"); float: left; padding-right: 1em; }
+div.hint:before { content: url("../img/admonitions/tip.png"); float: left; padding-right: 1em; }
+div.important:before { content: url("../img/admonitions/important.png"); float: left; padding-right: 1em; }
+div.note:before { content: url("../img/admonitions/note.png"); float: left; padding-right: 1em; }
+div.tip:before { content: url("../img/admonitions/tip.png"); float: left; padding-right: 1em; }
+div.warning:before { content: url("../img/admonitions/warning.png"); float: left; padding-right: 1em; }
 div.attention,
 div.caution,
 div.danger,
