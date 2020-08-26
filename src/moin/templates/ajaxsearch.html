@@ -29,6 +29,14 @@
             </div>
         {% endif %}
     {% else %}
+        {# when user keys changes into long search form, updates to whoosh_query indicates conclusion of queued searches #}
+        <p class="moin-suggestions"> {{ _("Whoosh query:") }}
+            <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
+            <br>
+            <span class="moin-suggestion-terms">
+                {{ _("%(result_len)d results found (%(runtime).3f secs).", result_len=results|length, runtime=results.runtime) }}
+            </span>
+        </p>
         {% if omitted_words %}
             <p class="moin-suggestions"> {{ _("Common words omitted from query:") }}
                 <span class="moin-suggestion-terms">{{ omitted_words }} </span>
@@ -48,21 +56,14 @@
                     <span class="moin-suggestion-terms">{{ content_suggestions }}</span>
                 </p>
             {% endif %}
-            <p class="moin-search-stats">
-                {% if results %}
-                    {{ _("%(result_len)d results found (%(runtime).3f secs).",
-                          result_len=results|length, runtime=results.runtime
-                        )
-                    }}
-                {% else %}
-                    {{ _("No results found (%(runtime).3f secs).", runtime=results.runtime) }}
-                {% endif %}
-            </p>
+
+            {% set count = [0] %}
             {% if results %}
                 <div class="moin-search-results">
                     <table>
                         {% for result in results %}
-                            {% if result['wikiname'] == cfg.interwikiname %}
+                            {% set fullname = result.namespace + '/' + result.name[0] if result.namespace else result.name[0] %}
+                            {% if user.may.read(fullname) %}
                                 <tr>
                                     <td class="moin-wordbreak">
                                         {% if result['name'] %}
@@ -80,9 +81,6 @@
                                                 <b>Item ID : {{ result['itemid'] }}</b>
                                             </a>
                                         {% endif %}
-                                        <span class="moin-search-score">
-                                            score={{ result.score|round(2) }}
-                                        </span>
                                     </td>
                                 </tr>
                                 {% if result['summary'] %}
@@ -95,32 +93,27 @@
                                 <tr class="moin-search-meta">
                                     <td>
                                         <p class="moin-search-hit-info">
-                                            {{ _("Revision: %(revid)s Size: %(size)s Time: %(mtime)s Content type: %(type)s",
+                                            {{ _("Revision: %(revid)s, Size: %(size)s, Time: %(mtime)s, Content type: %(type)s, Score: %(score)s",
                                             type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|time_datetime,
-                                            size=result['size']|filesizeformat, revid=result['rev_number']) }}
+                                            size=result['size']|filesizeformat, revid=result['rev_number'], score=result.score|round(2)) }}
                                         </p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        {% if user.may.read(get_fqname(item_name=results['itemid'],field='ITEMID',namespace=results['namespace'])) %}
-                                            <p class="moin-found-text">{{ result.highlights('content')|safe }}</p><br>
-                                        {% else %}
-                                            <p class="moin-found-text">{{ _("You don't have read permission for this item.") }}</p><br>
-                                        {% endif %}
+                                        <p class="moin-found-text">{{ result.highlights('content')|safe }}</p><br>
                                     </td>
                                 </tr>
                             {% else %}
-                                <tr>
-                                    <td class="moin-wordbreak">
-                                        <a class="moin-interwiki" href="{{ url_for_item(item_name=result['name'], wiki_name=result['wikiname'], rev=result['revid']) }}">
-                                            <b>{{ "%s:%s" % (result['wikiname'], result['name']) }}</b>
-                                        </a>
-                                    </td>
-                                </tr>
+                                {# read permission denied, using list to work around jinja2 scoping issue #}
+                                {% if count.append(count.pop() + 1) %}
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     </table>
+                    {% if count[0] %}
+                        <div class="warning">{{ _('%(count)d items are not shown because read permission was denied.', count=count[0]) }}</div>
+                    {% endif %}
                 </div>
             {% endif %}
         {% endif %}
