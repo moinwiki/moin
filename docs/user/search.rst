@@ -5,14 +5,22 @@ Searching and Finding
 Entering search queries
 =======================
 
-Usually there is a simple but rather short search query input field offered by
-the theme. By submiting a query it will search in item names and
-content, but only in the current contents, not in non-current revisions, and display
-the search results to you.
+To start a search, enter a query in the short query input field and type
+enter or click the search icon. By default, the name, summary, tag and
+content indexes for the latest revisions of all items will be searched.
 
-On the search results view you will get a bigger search query input field,
-for example for refining your query, and you may also choose to additionally search
-in non-current item revisions. Selecting that will search in all revisions.
+The search results view provides a form for refining the search through
+ajax updates. A transaction is started each time a character is added to
+the search field or a checkbox is clicked.
+
+Below the search form is the query processed by whoosh, suggestions for
+additional searches by item name, and suggestions for additional
+searches by item content.
+
+And finally, the search hits are presented. By default these are ordered by
+the whoosh scoring number. Each hit will contain the item name, some
+meta data, item summary if available, and partial item content with the
+search term highlighted.
 
 Simple search queries
 =====================
@@ -128,6 +136,8 @@ To specify the field to search in, just use the `fieldname:searchterm` syntax.
 +-----------------------+-------------------------------------------------------+
 | ``tags``              | tags of the document, e.g. important, hard, todo      |
 +-----------------------+-------------------------------------------------------+
+| ``summary``           | summary text, if provided by author                   |
++-----------------------+-------------------------------------------------------+
 | ``language``          | (main) language of the document contents, e.g. en     |
 +-----------------------+-------------------------------------------------------+
 | ``mtime``             | document modification (submission) time, 201112312359 |
@@ -183,4 +193,4 @@ For example:
 More information
 ================
 
-See the `Whoosh query language docs <http://packages.python.org/Whoosh/querylang.html>`_.
+See the `Whoosh query language docs <https://whoosh.readthedocs.io/en/latest/querylang.html>`_.
