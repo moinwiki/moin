@@ -119,6 +119,7 @@
     {% endif %}
 {% endmacro %}
 
+{# display meta info in delete, destroy, rename, revert and meta view. #}
 {% macro meta_info(meta) %}
     {#- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list #}
     <ul class="list-group">
@@ -163,6 +164,7 @@
             {%- endif -%}
         </li>
         <li class="list-group-item">Item Type: {{ meta['itemtype'] }}</li>
+        <li class="list-group-item">Language: {{ meta['language'] }}</li>
         <li class="list-group-item">Modified Time: {{ meta['mtime']|time_datetime }}</li>
         <li class="list-group-item">Name:&nbsp;
             {%- if meta['name'] -%}
