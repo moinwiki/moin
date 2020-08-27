@@ -142,6 +142,10 @@
                 (None)
             {%- endif -%}
         </li>
+        {% if meta.get('has_tag') %}
+            {# has_tag should not exist in metadata file, belongs only in whoosh index #}
+            <li class="list-group-item">Has Tag ERROR: {{ meta['has_tag'] }}</li>
+        {% endif %}
         <li class="list-group-item">Item ID: {{ meta['itemid'] }}</li>
         <li class="list-group-item">Item Links:&nbsp;
             {%- if meta['itemlinks'] -%}

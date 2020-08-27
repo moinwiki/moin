@@ -173,6 +173,11 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     doc[BACKENDNAME] = backend_name
     if CONTENTNGRAM in schema:
         doc[CONTENTNGRAM] = content
+    if SUMMARYNGRAM in schema and SUMMARY in meta:
+        doc[SUMMARYNGRAM] = meta[SUMMARY]
+    if doc.get(TAGS, None):
+        # global tags uses this to search for items with tags
+        meta[HAS_TAG] = True
     return doc
 
 
@@ -293,6 +298,8 @@ class IndexingMiddleware:
     def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
+
+        See https://whoosh.readthedocs.io/en/latest/schema.html#built-in-field-types
         """
         self.index_storage = index_storage
         self.backend = backend
@@ -311,6 +318,8 @@ class IndexingMiddleware:
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
             NAME_EXACT: ID(field_boost=3.0),
+            # history and mychanges views show old name for deleted items
+            NAME_OLD: TEXT(stored=True),
             # revision id (aka meta id)
             REVID: ID(unique=True, stored=True),
             # sequential revision number for humans: 1, 2, 3...
@@ -328,7 +337,10 @@ class IndexingMiddleware:
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
-            TAGS: ID(stored=True),
+            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=2.0),
+            # search on HAS_TAGS improves response time of global tags
+            # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
+            HAS_TAG: BOOLEAN(stored=False),
             LANGUAGE: ID(stored=True),
             # USERID from metadata
             USERID: ID(stored=True),
@@ -343,7 +355,7 @@ class IndexingMiddleware:
             # tokenized COMMENT from metadata
             COMMENT: TEXT(stored=True),
             # SUMMARY from metadata
-            SUMMARY: TEXT(stored=True),
+            SUMMARY: TEXT(stored=True, field_boost=2.0),
             # DATAID from metadata
             DATAID: ID(stored=True),
             # TRASH from metadata
@@ -354,7 +366,7 @@ class IndexingMiddleware:
             REFERS_TO: ID(stored=True),
             # meta field to differentiate elements referring to an item
             ELEMENT: ID(stored=True),
-            # reply to comment
+            # reply to comment, used only by tickets
             REPLY_TO: ID(stored=True),
         }
 
@@ -369,6 +381,7 @@ class IndexingMiddleware:
             ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
             # ngram words, index ngrams of words from main content
             CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
+            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
         }
         latest_revs_fields.update(**common_fields)
 
@@ -410,6 +423,10 @@ class IndexingMiddleware:
         latest_revisions_schema = Schema(**latest_revs_fields)
         all_revisions_schema = Schema(**all_revs_fields)
 
+        # schemas are needed by query parser and for index creation
+        self.schemas[ALL_REVS] = all_revisions_schema
+        self.schemas[LATEST_REVS] = latest_revisions_schema
+
         # Define dynamic fields
         dynamic_fields = [("*_id", ID(stored=True)),
                           ("*_text", TEXT(stored=True)),
@@ -423,10 +440,6 @@ class IndexingMiddleware:
         for glob, field_type in dynamic_fields:
             latest_revisions_schema.add(glob, field_type, glob=True)
             all_revisions_schema.add(glob, field_type, glob=True)
-
-        # schemas are needed by query parser and for index creation
-        self.schemas[ALL_REVS] = all_revisions_schema
-        self.schemas[LATEST_REVS] = latest_revisions_schema
 
         # what fields could whoosh result documents have (no matter whether all revs index
         # or latest revs index):
@@ -588,6 +601,8 @@ class IndexingMiddleware:
                     meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
                     doc = backend_to_index(meta, content, schema, wikiname, backend_name)
+                    if doc.get(TAGS):
+                        doc[HAS_TAG] = True
                 if mode == 'update':
                     writer.update_document(**doc)
                 elif mode == 'add':

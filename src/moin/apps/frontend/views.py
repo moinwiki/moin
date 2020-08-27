@@ -361,7 +361,7 @@ def search(item_name):
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
 
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT, CONTENTNGRAM], idx_name=idx_name)
+        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, TAGS, SUMMARYNGRAM, CONTENT, CONTENTNGRAM], idx_name=idx_name)
         q = qp.parse(query)
 
         _filter = []
@@ -391,7 +391,6 @@ def search(item_name):
                         transcluded_names.update(transclusions)
                 # XXX Will whoosh cope with such a large filter query?
                 terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
-
             _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
@@ -2622,14 +2621,14 @@ def global_tags(namespace):
     """
     title_name = _('Global Tags')
     if namespace == NAMESPACE_ALL:
-        query = And([Term(WIKINAME, app.cfg.interwikiname), ])
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(HAS_TAG, True)])
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     else:
         # TODO: to speed searching on wikis having few items with tags, we need to add an extra field
         # to schema (HAS_TAGS) as described in
         # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
         # and then modify the query below and above
-        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace)])
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace), Term(HAS_TAG, True)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
         headline = _("Global Tags")
