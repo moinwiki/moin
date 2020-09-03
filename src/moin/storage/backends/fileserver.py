@@ -13,14 +13,11 @@ Directories create a virtual directory item, listing the files in that
 directory.
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 import errno
 import stat
 from io import BytesIO
-from werkzeug import url_quote, url_unquote
+from werkzeug.urls import url_quote, url_unquote
 
 from moin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
 from . import BackendBase
@@ -42,7 +39,7 @@ class Backend(BackendBase):
         """
         :param path: base directory (all files/dirs below will be exposed)
         """
-        self.path = unicode(path)
+        self.path = str(path)
 
     def open(self):
         pass
@@ -105,21 +102,21 @@ class Backend(BackendBase):
         meta = {}
         meta[NAME] = itemname
         meta[MTIME] = int(st.st_mtime)  # use int, not float
-        meta[REVID] = unicode(self._encode('%s.%d' % (meta[NAME], meta[MTIME])))
+        meta[REVID] = str(self._encode('%s.%d' % (meta[NAME], meta[MTIME])))
         meta[ITEMID] = meta[REVID]
-        meta[HASH_ALGORITHM] = u''  # XXX crap, but sendfile needs it for etag
+        meta[HASH_ALGORITHM] = ''  # XXX crap, but sendfile needs it for etag
         if stat.S_ISDIR(st.st_mode):
             # directory
             # we create a virtual wiki page listing links to subitems:
-            ct = u'text/x.moin.wiki;charset=utf-8'
+            ct = 'text/x.moin.wiki;charset=utf-8'
             size = 0
         elif stat.S_ISREG(st.st_mode):
             # normal file
-            ct = unicode(MimeType(filename=itemname).content_type())
+            ct = str(MimeType(filename=itemname).content_type())
             size = int(st.st_size)  # use int instead of long
         else:
             # symlink, device file, etc.
-            ct = u'application/octet-stream'
+            ct = 'application/octet-stream'
             size = 0
         meta[CONTENTTYPE] = ct
         meta[SIZE] = size
@@ -137,15 +134,15 @@ class Backend(BackendBase):
                 else:
                     files.append(name)
             content = [
-                u"= Directory contents =",
-                u" * [[../]]",
+                "= Directory contents =",
+                " * [[../]]",
             ]
-            content.extend(u" * [[/{0}|{1}/]]".format(name, name) for name in sorted(dirs))
-            content.extend(u" * [[/{0}|{1}]]".format(name, name) for name in sorted(files))
-            content.append(u"")
-            content = u'\r\n'.join(content)
+            content.extend(" * [[/{0}|{1}/]]".format(name, name) for name in sorted(dirs))
+            content.extend(" * [[/{0}|{1}]]".format(name, name) for name in sorted(files))
+            content.append("")
+            content = '\r\n'.join(content)
         except OSError as err:
-            content = unicode(err)
+            content = str(err)
         return content
 
     def _get_data(self, itemname, path):

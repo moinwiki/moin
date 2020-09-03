@@ -5,16 +5,13 @@
 MoinMoin - table data to DOM conversion support
 """
 
-
-from __future__ import absolute_import, division
-
 from moin.utils.tree import moin_page
 from emeraldtree import ElementTree as ET
 
 WORDBREAK_LEN = 30
 
 
-class TableMixin(object):
+class TableMixin:
     """
     Mixin to support building a DOM table.
     """
@@ -51,7 +48,7 @@ class TableMixin(object):
         for row in rows:
             table_row = moin_page.table_row()
             for cell in row:
-                if isinstance(cell, ET.Node) and len(cell) and isinstance(cell[0], unicode) and \
+                if isinstance(cell, ET.Node) and len(cell) and isinstance(cell[0], str) and \
                     len(cell[0].split()) == 1 and len(cell[0]) > WORDBREAK_LEN:
                     # avoid destroying table layout by applying special styling to cells with long file name hyperlinks
                     table_cell = moin_page.table_cell(children=[cell, ], attrib={moin_page.class_: 'moin-wordbreak'})

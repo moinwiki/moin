@@ -69,6 +69,17 @@ function moinFontChangeOnReady() {
 }
 
 
+// executed on page ready, if this is a modify view add action to Cancel button
+function cancelEdit() {
+    "use strict";
+    $('.moin-cancel').click(function () {
+        // do not ask to leave page; any edits will be lost, but browser back button may restore edits
+        $('#moin-modify').removeClass('moin-changed-input');
+        window.location = $('#moin-wiki-root').val() + '/' + $('#moin-item-name').val();
+    });
+}
+
+
 // Highlight currently selected link in side panel. Executed on page load
 MoinMoin.prototype.selected_link = function () {
     "use strict";
@@ -224,7 +235,7 @@ MoinMoin.prototype.QuicklinksExpander = function () {
     "use strict";
     var QUICKLINKS_EXPAND = ">>>",
         QUICKLINKS_COLLAPSE = "<<<",
-        QUICKLINKS_MAX = 5,
+        QUICKLINKS_MAX = $('#moin-navibar').data('expanded_quicklinks_size'),
         newThis;
     // 8 helper functions
     function getLinks() {
@@ -304,21 +315,6 @@ MoinMoin.prototype.toggleSubtree = function (item) {
     "use strict";
     var subtree = $(item).siblings("ul");
     subtree.toggle(200);
-};
-
-
-// Executed when user clicks insert-name button defined in modify.html.
-// When a page with subitems is modified, a subitems sidebar is present. User may
-// position caret in textarea and click button to insert name into textarea.
-MoinMoin.prototype.InsertName = function (fullname) {
-    "use strict";
-    var textArea, endPos, startPos;
-    textArea = document.getElementById('f_content_form_data_text');
-    startPos = textArea.selectionStart;
-    endPos = textArea.selectionEnd;
-    textArea.value = textArea.value.substring(0, startPos) + fullname + textArea.value.substring(endPos, textArea.value.length);
-    textArea.focus();
-    textArea.setSelectionRange(startPos + fullname.length, startPos + fullname.length);
 };
 
 
@@ -443,7 +439,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             newform.data('initialForm', newform.serialize());
             // replace the old form with the new one
             form.replaceWith(newform);
-            if (ev.currentTarget.name === 'usersettings_ui' ||  ev.currentTarget.id === 'usersettings_personal') {
+            if (ev.currentTarget.id === 'usersettings_ui' ||  ev.currentTarget.id === 'usersettings_personal') {
                 // theme or language may have changed, show user the new theme/language
                 location.reload(true);
             }
@@ -686,7 +682,7 @@ MoinMoin.prototype.enhanceEdit = function () {
 
 // diffScroll is executed on page load.
 // Adds an onclick function to the line # links in a diff view.
-// Multiple consecutive blank lines in markup source make diff and DOM line numbers out of sync,
+// Multiple consecutive blank lines in Markdown source make diff and DOM line numbers out of sync,
 // so window may be scrolled to wrong line.
 MoinMoin.prototype.diffScroll = function () {
     "use strict";
@@ -767,11 +763,6 @@ $(document).ready(function () {
         this.remove();
     });
 
-    $('.moin-insertname-action').click(function () {
-        var fullname = $(this).data('name');
-        moin.InsertName(fullname);
-    });
-
     $('.expander').click(function () {
         moin.toggleSubtree(this);
     });
@@ -804,13 +795,41 @@ $(document).ready(function () {
 
     $('#moin-save-text-button').on('click', function () {
         $('#moin-modify').removeClass('moin-changed-input');
+        location.hash = '';
     });
 
+    // add function to be executed when user clicks Load Draft button on +modify page
+    $('.moin-load-draft').on('click', function () {
+        $('.moin-edit-content').val($('#moin-draft-data').val());
+        $('#moin-modify').addClass('moin-changed-input');
+        $('.moin-load-draft').hide();
+        $('#moin-flash .moin-flash').remove();
+        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Your saved draft has been loaded."));
+    });
+
+    // if this is preview: scroll to diff and mark textarea changed
+    if ($('#moin-preview-diff').length && $('#moin-modify').length) {
+        window.location = window.location.href.split('#')[0] + '#moin-preview-diff';
+        $('#moin-modify').addClass('moin-changed-input');
+    }
+
+    // hide preview button if this page does not contain a edit textarea
+    if (!$('.moin-edit-content').length) {
+        $('#moin-preview-text-button').hide();
+    }
+
+    // warn user about unsaved changes; if user leaves page with unsaved edits, edit lock remains until timeout
     $(window).on('beforeunload', function () {
         if ($('.moin-changed-input').length) {
             return _("All changes will be discarded!");
         }
     });
+
+    // give user 1 minute warning before edit lock expires
+    if ($("#moin-lock_duration").length) {
+        setTimeout(function() {
+            alert(_("Your edit lock will expire in 1 minute: ") + $('#moin-item-name').val())}, (($("#moin-lock_duration").val() - 60) * 1000));
+    }
 
     moinFontChangeOnReady();
 
@@ -820,6 +839,9 @@ $(document).ready(function () {
 
     aclSaveButtons();
 
+    cancelEdit();
+
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
+
 });

@@ -88,9 +88,6 @@ effects are implemented through specialized tags rather than CSS classes.
 In the example above, only class="comment" will be applied to detail.csv.
 """
 
-
-from __future__ import absolute_import, division
-
 from emeraldtree import ElementTree as ET
 import re
 import types
@@ -153,7 +150,7 @@ class XPointer(list):
     """
     tokenizer_re = re.compile(tokenizer_rules, re.X)
 
-    class Entry(object):
+    class Entry:
         __slots__ = 'name', 'data'
 
         def __init__(self, name, data):
@@ -198,7 +195,7 @@ class XPointer(list):
             self.append(self.Entry(''.join(name), None))
 
 
-class Converter(object):
+class Converter:
 
     @classmethod
     def _factory(cls, input, output, includes=None, **kw):
@@ -301,8 +298,8 @@ class Converter(object):
 
                     link.path = path
 
-                    if flaskg.user.may.read(unicode(path)):
-                        page = Item.create(unicode(path))
+                    if flaskg.user.may.read(str(path)):
+                        page = Item.create(str(path))
                         pages = ((page, link), )
                     else:
                         # ACLs prevent user from viewing a transclusion - show message
@@ -335,8 +332,8 @@ class Converter(object):
                     if p_href in self.stack:
                         # we have a transclusion loop, create an error message showing list of pages forming loop
                         loop = self.stack[self.stack.index(p_href):]
-                        loop = [u'{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
-                        msg = u'Error: Transclusion loop via: ' + u', '.join(loop)
+                        loop = ['{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
+                        msg = 'Error: Transclusion loop via: ' + ', '.join(loop)
                         attrib = {html.class_: 'moin-error'}
                         strong = ET.Element(moin_page.strong, attrib, (msg, ))
                         included_elements.append(strong)
@@ -430,7 +427,7 @@ class Converter(object):
                                 classes += ret.attrib.get(html.class_, '').split()
                                 ret.attrib[html.class_] = ' '.join(classes)
                                 elem[i] = ret
-                        elif isinstance(ret, types.ListType):
+                        elif isinstance(ret, list):
                             # a container has been returned.
                             # Note: there are multiple places where a container may be constructed
                             ret_container, trans_ptr = ret
@@ -459,7 +456,7 @@ class Converter(object):
                             else:
                                 # elem is a block element
                                 for grandchild in child:
-                                    if isinstance(grandchild, ET.Node) and grandchild.tag.name == u'include':
+                                    if isinstance(grandchild, ET.Node) and grandchild.tag.name == 'include':
                                         # the include may have classes that must be added to transcluded element
                                         classes = grandchild.attrib.get(html.class_, '').split()
                                         classes += ret_container[trans_ptr].attrib.get(html.class_, '').split()

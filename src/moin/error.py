@@ -5,9 +5,6 @@
 MoinMoin errors / exception classes
 """
 
-
-from __future__ import absolute_import, division
-
 import sys
 
 from moin.constants.contenttypes import CHARSET
@@ -33,24 +30,17 @@ class Error(Exception):
     def __init__(self, message):
         """ Initialize an error, decode if needed
 
-        :param message: unicode, str or object that support __unicode__
-            and __str__. __str__ should use CHARSET.
+        :param message: str, bytes or object that supports __str__.
         """
+        if isinstance(message, bytes):
+            message = message.decode()
+        if not isinstance(message, str):
+            message = str(message)
         self.message = message
 
-    def __unicode__(self):
-        """ Return unicode error message """
-        if isinstance(self.message, str):
-            return unicode(self.message, CHARSET)
-        else:
-            return unicode(self.message)
-
     def __str__(self):
-        """ Return encoded message """
-        if isinstance(self.message, unicode):
-            return self.message.encode(CHARSET)
-        else:
-            return str(self.message)
+        """ Return str error message """
+        return self.message
 
     def __getitem__(self, item):
         """ Make it possible to access attributes like a dict """

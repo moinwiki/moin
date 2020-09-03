@@ -14,40 +14,41 @@ from flask import current_app as app
 from moin.constants.chartypes import CHARS_SPACES
 from moin import wikiutil
 
-from werkzeug import MultiDict
+from werkzeug.datastructures import MultiDict
 
 
-class TestCleanInput(object):
+class TestCleanInput:
     def testCleanInput(self):
         tests = [
-            (u"", u""),  # empty
-            (u"aaa\r\n\tbbb", u"aaa   bbb"),  # ws chars -> blanks
-            (u"aaa\x00\x01bbb", u"aaabbb"),  # strip weird chars
-            (u"a" * 500, u""),  # too long
+            ("", ""),  # empty
+            ("aaa\r\n\tbbb", "aaa   bbb"),  # ws chars -> blanks
+            ("aaa\x00\x01bbb", "aaabbb"),  # strip weird chars
+            ("a" * 500, ""),  # too long
         ]
         for instr, outstr in tests:
             assert wikiutil.clean_input(instr) == outstr
 
 
-class TestAnchorNames(object):
+class TestAnchorNames:
     @pytest.mark.parametrize('text,expected', [
         # text, expected output
-        # note: recent werkzeug encodes a "+" to %2B, giving .2B in the end
-        (u'\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
-        (u'level 2', 'level_2'),
-        (u'level_2', 'level_2'),
-        (u'', 'A'),
-        (u'123', 'A123'),
+        # note: recent werkzeug encodes a "+" to "%2B", giving ".2B" in the end,
+        #       also "-" to "%2D", giving ".2D".
+        ('\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g.2Dll.2BAN8A3w.2D'),
+        ('level 2', 'level_2'),
+        ('level_2', 'level_2'),
+        ('', 'A'),
+        ('123', 'A123'),
         # make sure that a valid anchor is not modified:
-        (u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-',
-         u'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.-')
+        ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.',
+         'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:_.')
     ])
     def test_anchor_name_encoding(self, text, expected):
         encoded = wikiutil.anchor_name_from_text(text)
         assert expected == encoded
 
 
-class TestRelativeTools(object):
+class TestRelativeTools:
     tests = [
         # test                      expected output
         # CHILD_PREFIX
@@ -71,26 +72,26 @@ class TestRelativeTools(object):
         assert relative_page == wikiutil.RelItemName(current_page, absolute_page)
 
 
-class TestNormalizePagename(object):
+class TestNormalizePagename:
 
     def testPageInvalidChars(self):
         """ request: normalize pagename: remove invalid unicode chars
 
         Assume the default setting
         """
-        test = u'\u0000\u202a\u202b\u202c\u202d\u202e'
-        expected = u''
+        test = '\u0000\u202a\u202b\u202c\u202d\u202e'
+        expected = ''
         result = wikiutil.normalize_pagename(test, app.cfg)
         assert result == expected
 
     def testNormalizeSlashes(self):
         """ request: normalize pagename: normalize slashes """
         cases = (
-            (u'/////', u''),
-            (u'/a', u'a'),
-            (u'a/', u'a'),
-            (u'a/////b/////c', u'a/b/c'),
-            (u'a b/////c d/////e f', u'a b/c d/e f'),
+            ('/////', ''),
+            ('/a', 'a'),
+            ('a/', 'a'),
+            ('a/////b/////c', 'a/b/c'),
+            ('a b/////c d/////e f', 'a b/c d/e f'),
         )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
@@ -99,13 +100,13 @@ class TestNormalizePagename(object):
     def testNormalizeWhitespace(self):
         """ request: normalize pagename: normalize whitespace """
         cases = (
-            (u'         ', u''),
-            (u'    a', u'a'),
-            (u'a    ', u'a'),
-            (u'a     b     c', u'a b c'),
-            (u'a   b  /  c    d  /  e   f', u'a b/c d/e f'),
+            ('         ', ''),
+            ('    a', 'a'),
+            ('a    ', 'a'),
+            ('a     b     c', 'a b c'),
+            ('a   b  /  c    d  /  e   f', 'a b/c d/e f'),
             # All 30 unicode spaces
-            (CHARS_SPACES, u''),
+            (CHARS_SPACES, ''),
         )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
@@ -118,18 +119,18 @@ class TestNormalizePagename(object):
         normalized, order is important!
         """
         cases = (
-            (u'         ', u''),
-            (u'  a', u'a'),
-            (u'a  ', u'a'),
-            (u'a  b  c', u'a b c'),
-            (u'a  b  /  c  d  /  e  f', u'a b/c d/e f'),
+            ('         ', ''),
+            ('  a', 'a'),
+            ('a  ', 'a'),
+            ('a  b  c', 'a b c'),
+            ('a  b  /  c  d  /  e  f', 'a b/c d/e f'),
         )
         for test, expected in cases:
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
 
 
-class TestGroupItems(object):
+class TestGroupItems:
 
     def testNormalizeGroupName(self):
         """ request: normalize itemname: restrict groups to alpha numeric Unicode
@@ -138,9 +139,9 @@ class TestGroupItems(object):
         """
         cases = (
             # current acl chars
-            (u'Name,:Group', u'NameGroup'),
+            ('Name,:Group', 'NameGroup'),
             # remove than normalize spaces
-            (u'Name ! @ # $ % ^ & * ( ) + Group', u'Name Group'),
+            ('Name ! @ # $ % ^ & * ( ) + Group', 'Name Group'),
         )
         for test, expected in cases:
             # validate we are testing valid group names
@@ -151,12 +152,12 @@ class TestGroupItems(object):
 
 def testParentItemName():
     # with no parent
-    result = wikiutil.ParentItemName(u'itemname')
-    expected = u''
+    result = wikiutil.ParentItemName('itemname')
+    expected = ''
     assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
     # with a parent
-    result = wikiutil.ParentItemName(u'some/parent/itemname')
-    expected = u'some/parent'
+    result = wikiutil.ParentItemName('some/parent/itemname')
+    expected = 'some/parent'
     assert result == expected
 
 

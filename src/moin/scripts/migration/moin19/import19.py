@@ -5,12 +5,6 @@
 """
 MoinMoin - import content and user data from a moin 1.9 compatible storage
            into the moin2 storage.
-
-TODO
-----
-
-* translate revno numbering into revid parents
-* ACLs for attachments
 """
 
 
@@ -29,7 +23,7 @@ from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
 from moin.constants.keys import *  # noqa
-from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
@@ -49,26 +43,27 @@ logging = log.getLogger(__name__)
 
 UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
 
-CHARSET = 'utf-8'
-
 ACL_RIGHTS_CONTENTS = ['read', 'write', 'create', 'destroy', 'admin', ]
 
 DELETED_MODE_KEEP = 'keep'
 DELETED_MODE_KILL = 'kill'
 
-CONTENTTYPE_DEFAULT = u'text/plain;charset=utf-8'
-CONTENTTYPE_MOINWIKI = u'text/x.moin.wiki;format=1.9;charset=utf-8'
+CONTENTTYPE_DEFAULT = 'text/plain;charset=utf-8'
+CONTENTTYPE_MOINWIKI = 'text/x.moin.wiki;format=1.9;charset=utf-8'
 FORMAT_TO_CONTENTTYPE = {
     'wiki': CONTENTTYPE_MOINWIKI,
     'text/wiki': CONTENTTYPE_MOINWIKI,
     'text/moin-wiki': CONTENTTYPE_MOINWIKI,
-    'creole': u'text/x.moin.creole;charset=utf-8',
-    'python': u'text/x-python;charset=utf-8',
-    'text/creole': u'text/x.moin.creole;charset=utf-8',
-    'rst': u'text/rst;charset=utf-8',
-    'text/rst': u'text/rst;charset=utf-8',
-    'plain': u'text/plain;charset=utf-8',
-    'text/plain': u'text/plain;charset=utf-8',
+    'creole': 'text/x.moin.creole;charset=utf-8',
+    'python': 'text/x-python;charset=utf-8',
+    'text/creole': 'text/x.moin.creole;charset=utf-8',
+    'rst': 'text/x-rst;charset=utf-8',
+    'text/rst': 'text/x-rst;charset=utf-8',
+    'plain': 'text/plain;charset=utf-8',
+    'text/plain': 'text/plain;charset=utf-8',
+    'csv': 'text/csv;charset=utf-8',
+    'text/csv': 'text/csv;charset=utf-8',
+    'docbook': 'application/docbook+xml;charset=utf-8',
 }
 
 last_moin19_rev = {}
@@ -79,7 +74,7 @@ class ImportMoin19(Command):
     description = 'Import data from a moin 1.9 wiki.'
 
     option_list = [
-        Option('--data_dir', '-d', dest='data_dir', type=unicode, required=True,
+        Option('--data_dir', '-d', dest='data_dir', type=str, required=True,
                help='moin 1.9 data_dir (contains pages and users subdirectories).'),
         Option('-i', '--index-create', action='store_true', dest='create_index',
                required=False, default=False),
@@ -94,24 +89,24 @@ class ImportMoin19(Command):
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
 
-        print "\nConverting Users...\n"
+        print("\nConverting Users...\n")
         for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
             global user_names
             user_names.append(rev.meta['name'][0])
             userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
             backend.store(rev.meta, rev.data)
 
-        print "\nConverting Pages/Attachments...\n"
-        for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup=u'wiki'):
+        print("\nConverting Pages/Attachments...\n")
+        for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
             for user_name in user_names:
                 if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
-                    rev.meta['namespace'] = u'users'
+                    rev.meta['namespace'] = 'users'
                     break
             backend.store(rev.meta, rev.data)
             # item_name to itemid xref required for migrating user subscriptions
             flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-        print "\nConverting Revision Editors...\n"
+        print("\nConverting Revision Editors...\n")
         for mountpoint, revid in backend:
             meta, data = backend.retrieve(mountpoint, revid)
             if USERID in meta:
@@ -119,29 +114,33 @@ class ImportMoin19(Command):
                     meta[USERID] = userid_old2new[meta[USERID]]
                 except KeyError:
                     # user profile lost, but userid referred by revision
-                    print (u"Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid)).encode('utf-8')
+                    print("Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid))
                     del meta[USERID]
                 backend.store(meta, data)
             elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
                 meta.pop(UID_OLD, None)  # not needed any more
                 backend.store(meta, data)
 
-        print "\nConverting last revision of Moin 1.9 items to Moin 2.0"
+        print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
         self.conv_in = conv_in()
         self.conv_out = conv_out()
         reg = default_registry
         refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
         for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
-            print '    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno)
-            if namespace == u'':
-                namespace = u'default'
+            try:
+                print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
+            except UnicodeEncodeError:
+                print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(
+                      item_name.encode('ascii', errors='replace'), namespace, revno))
+            if namespace == '':
+                namespace = 'default'
             meta, data = backend.retrieve(namespace, revno)
-            data_in = ''.join(data.readlines())
-            dom = self.conv_in(data_in, 'text/x.moin.wiki;format=1.9;charset=utf-8')
+            data_in = data.read().decode(CHARSET19)
+            dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
             out = self.conv_out(dom)
-            out = out.encode(CHARSET)
+            out = out.encode(CHARSET19)
             iri = Iri(scheme='wiki', authority='', path='/' + item_name)
-            dom.set(moin_page.page_href, unicode(iri))
+            dom.set(moin_page.page_href, str(iri))
             refs_conv(dom)
             meta[ITEMLINKS] = refs_conv.get_links()
             meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
@@ -160,27 +159,27 @@ class ImportMoin19(Command):
             out.seek(0)
             backend.store(meta, out)
 
-        print "\nRebuilding the index..."
+        print("\nRebuilding the index...")
         indexer.close()
         indexer.destroy()
         indexer.create()
         indexer.rebuild()
         indexer.open()
 
-        print "Finished conversion!"
+        print("Finished conversion!")
 
 
 class KillRequested(Exception):
     """raised if item killing is requested by DELETED_MODE"""
 
 
-class PageBackend(object):
+class PageBackend:
     """
     moin 1.9 page directory
     """
     def __init__(self, path, deleted_mode=DELETED_MODE_KEEP,
-                 default_markup=u'wiki',
-                 item_category_regex=ur'(?P<all>Category(?P<key>(?!Template)\S+))'):
+                 default_markup='wiki',
+                 item_category_regex=r'(?P<all>Category(?P<key>(?!Template)\S+))'):
         """
         :param path: storage path (data_dir)
         :param deleted_mode: 'kill' - just ignore deleted pages (pages with
@@ -202,16 +201,18 @@ class PageBackend(object):
 
     def __iter__(self):
         pages_dir = os.path.join(self._path, 'pages')
-        for f in os.listdir(pages_dir):
+        # sort by moin 1.9 directory names, non-ascii characters converted to 2 hex characters and enclosed in (..)
+        pages = sorted(os.listdir(pages_dir))
+        for f in pages:
             itemname = unquoteWikiname(f)
             try:
                 item = PageItem(self, os.path.join(pages_dir, f), itemname)
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
-                print (u"    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f)))).encode('utf-8')
+                print("    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f))))
             except Exception as err:
-                logging.exception((u"PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
+                logging.exception(("PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
                 for rev in item.iter_revisions():
                     yield rev
@@ -219,7 +220,7 @@ class PageBackend(object):
                     yield rev
 
 
-class PageItem(object):
+class PageItem:
     """
     moin 1.9 page
     """
@@ -227,25 +228,28 @@ class PageItem(object):
         self.backend = backend
         self.name = itemname
         self.path = path
-        print (u"Processing item {0}".format(itemname)).encode('utf-8')
+        try:
+            print("Processing item {0}".format(itemname))
+        except UnicodeEncodeError:
+            print("Processing item {0}".format(itemname.encode('ascii', errors='replace')))
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
         editlogpath = os.path.join(self.path, 'edit-log')
         self.editlog = EditLog(editlogpath)
-        self.acl = None  # TODO
+        self.acl = None
         self.itemid = make_uuid()
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
             if not os.path.exists(revpath):
-                print (u"    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current)).encode('utf-8')
+                print("    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current))
                 raise KillRequested('deleted_mode wants killing/ignoring')
 
     def iter_revisions(self):
         revisionspath = os.path.join(self.path, 'revisions')
         try:
-            # rather use this or a range(1, self.current+1)?
-            fnames = os.listdir(revisionspath)
+            # alternative method is to generate file names using range(1, self.current+1)
+            fnames = sorted(os.listdir(revisionspath))
         except OSError:
             fnames = []
         parent_id = None
@@ -256,6 +260,8 @@ class PageItem(object):
                 if parent_id:
                     page_rev.meta[PARENTID] = parent_id
                 parent_id = page_rev.meta[REVID]
+                # save ACL from last rev of this PageItem, copy to all attachments
+                self.acl = page_rev.meta.get(ACL, None)
                 yield page_rev
 
             except Exception as err:
@@ -268,7 +274,7 @@ class PageItem(object):
         except OSError:
             fnames = []
         for fname in fnames:
-            attachname = fname.decode('utf-8')
+            attachname = fname
             try:
                 yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname),
                                          self.editlog, self.acl)
@@ -276,7 +282,7 @@ class PageItem(object):
                 logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
 
 
-class PageRevision(object):
+class PageRevision:
     """
     moin 1.9 page revision
     """
@@ -288,7 +294,7 @@ class PageRevision(object):
         editlog.to_begin()
         # we just read the page and parse it here, makes the rest of the code simpler:
         try:
-            with codecs.open(path, 'r', CHARSET) as f:
+            with codecs.open(path, 'r', CHARSET19) as f:
                 content = f.read()
         except (IOError, OSError):
             # handle deleted revisions (for all revnos with 0<=revno<=current) here
@@ -309,14 +315,14 @@ class PageRevision(object):
             except NoSuchRevisionError:
                 pass  # should not happen
             meta[MTIME] += 1  # it is now either 0 or prev rev mtime + 1
-            data = u''
+            data = ''
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print (u"    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno)).encode('utf-8')
+                print("    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno))
                 if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
-                        ACTION: u'SAVE/DELETE',
+                        ACTION: 'SAVE/DELETE',
                     }
                 else:
                     raise NoSuchRevisionError('Item {0!r} has no revision {1} (not even a deleted one)!'.format(
@@ -325,7 +331,7 @@ class PageRevision(object):
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print (u"    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno)).encode('utf-8')
+                print("    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno))
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -335,9 +341,13 @@ class PageRevision(object):
             meta, data = split_body(content)
         meta.update(editlog_data)
         format = meta.pop('format', self.backend.format_default)
+        if format.startswith('csv'):
+            format = 'csv'  # drop trailing sep character as in "format csv ;"
         meta[CONTENTTYPE] = FORMAT_TO_CONTENTTYPE.get(format, CONTENTTYPE_DEFAULT)
         data = self._process_data(meta, data)
-        data = data.encode(CHARSET)
+        if format == 'csv':
+            data = data.lstrip()  # leading blank lines confuses csv.sniffer
+        data = data.encode(CHARSET19)
         size, hash_name, hash_digest = hash_hexdigest(data)
         meta[hash_name] = hash_digest
         meta[SIZE] = size
@@ -352,7 +362,7 @@ class PageRevision(object):
             else:
                 meta[TAGS] = [TEMPLATE]
         self.meta = {}
-        for k, v in meta.iteritems():
+        for k, v in meta.items():
             if isinstance(v, list):
                 v = tuple(v)
             self.meta[k] = v
@@ -364,7 +374,7 @@ class PageRevision(object):
 
         for user_name in user_names:
             if meta['name'][0] == user_name or meta['name'][0].startswith(user_name + '/'):
-                meta['namespace'] = u'users'
+                meta['namespace'] = 'users'
                 break
 
         # match item create process that adds some keys with none-like values
@@ -377,10 +387,12 @@ class PageRevision(object):
             if k not in self.meta:
                 self.meta[k] = ''
         self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
-
-        print (u"    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
-               item_name, meta[REVID], meta[CONTENTTYPE])).encode('utf-8')
-
+        try:
+            print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+                  item_name, meta[REVID], meta[CONTENTTYPE]))
+        except UnicodeEncodeError:
+            print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
+                  item_name.encode('ascii', errors='replace'), meta[REVID], meta[CONTENTTYPE]))
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
@@ -406,7 +418,7 @@ def process_categories(meta, data, item_category_regex):
         if start > 0:
             categories = data[-start:]
         else:
-            categories = u''
+            categories = ''
         if categories:
             # for CategoryFoo, group 'all' matches CategoryFoo, group 'key' matches just Foo
             # we use 'all' so we don't need to rename category items
@@ -419,14 +431,14 @@ def process_categories(meta, data, item_category_regex):
                 # unexpected text before and after categories survives, any text between categories is deleted
                 start = matches[0].start()
                 end = matches[-1].end()
-                print '    Converted Categories to Tags: {0}'.format(tags)
+                print('    Converted Categories to Tags: {0}'.format(tags))
                 rest = categories[:start] + categories[end:]
-                data += u'\r\n' + rest.lstrip()
-        data = data.rstrip() + u'\r\n'
+                data += '\r\n' + rest.lstrip()
+        data = data.rstrip() + '\r\n'
     return data
 
 
-class AttachmentRevision(object):
+class AttachmentRevision:
     """
     moin 1.9 attachment (there is no revisioning, just 1 revision per attachment)
     """
@@ -438,10 +450,10 @@ class AttachmentRevision(object):
                 MTIME: int(os.path.getmtime(attpath)),
                 ACTION: ACTION_SAVE,
             }
-        meta[NAME] = [u'{0}/{1}'.format(item_name, attach_name)]
+        meta[NAME] = ['{0}/{1}'.format(item_name, attach_name)]
         if acl is not None:
             meta[ACL] = acl
-        meta[CONTENTTYPE] = unicode(MimeType(filename=attach_name).content_type())
+        meta[CONTENTTYPE] = str(MimeType(filename=attach_name).content_type())
         f = open(attpath, 'rb')
         size, hash_name, hash_digest = hash_hexdigest(f)
         f.seek(0)
@@ -452,6 +464,11 @@ class AttachmentRevision(object):
         meta[REVID] = make_uuid()
         meta[REV_NUMBER] = 1
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        meta[WIKINAME] = app.cfg.sitename  # old 1.9 sitename is not available
+        for attr in (COMMENT, SUMMARY, ):
+            meta[attr] = ""
+        for attr in (EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, NAME_OLD, TAGS, ):
+            meta[attr] = []
         self.meta = meta
 
 
@@ -463,24 +480,24 @@ class EditLog(LogFile):
 
     def parser(self, line):
         """ Parse edit-log line into fields """
-        fields = line.strip().split(u'\t')
-        fields = (fields + [u''] * self._NUM_FIELDS)[:self._NUM_FIELDS]
+        fields = line.strip().split('\t')
+        fields = (fields + [''] * self._NUM_FIELDS)[:self._NUM_FIELDS]
         keys = (MTIME, '__rev', ACTION, NAME, ADDRESS, HOSTNAME, USERID, EXTRA, COMMENT)
         result = dict(zip(keys, fields))
         # do some conversions/cleanups/fallbacks:
         del result[HOSTNAME]  # HOSTNAME not used in moin 2.0
-        result[MTIME] = int(long(result[MTIME] or 0) / 1000000)  # convert usecs to secs
+        result[MTIME] = int(result[MTIME] or 0) // 1000000  # convert usecs to secs
         result['__rev'] = int(result['__rev'])
         result[NAME] = [unquoteWikiname(result[NAME])]
         action = result[ACTION]
         extra = result[EXTRA]
         if extra:
             if action.startswith('ATT'):
-                result[NAME] += u'/' + extra  # append filename to pagename
+                result[NAME] += '/' + extra  # append filename to pagename
                 # keep EXTRA for find_attach
             elif action == 'SAVE/RENAME':
                 if extra:
-                    result[NAME_OLD] = extra
+                    result[NAME_OLD] = [extra]
                 del result[EXTRA]
                 result[ACTION] = ACTION_RENAME
             elif action == 'SAVE/REVERT':
@@ -503,7 +520,7 @@ class EditLog(LogFile):
             raise KeyError
         del meta['__rev']
         meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
-        if meta.get(ACTION) == u'SAVENEW':
+        if meta.get(ACTION) == 'SAVENEW':
             # replace SAVENEW with just SAVE
             meta[ACTION] = ACTION_SAVE
         return meta
@@ -527,7 +544,7 @@ class EditLog(LogFile):
 
 def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
     """ recreate ACL string to remove invalid rights """
-    assert isinstance(acl_string, unicode)
+    assert isinstance(acl_string, str)
     result = []
     for modifier, entries, rights in security.ACLStringIterator(acl_rights_valid, acl_string):
         if (entries, rights) == (['Default'], []):
@@ -535,10 +552,10 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
         else:
             result.append("{0}{1}:{2}".format(
                           modifier,
-                          u','.join(entries),
-                          u','.join(rights)  # iterator has removed invalid rights
+                          ','.join(entries),
+                          ','.join(rights)  # iterator has removed invalid rights
                          ))
-    result = u' '.join(result)
+    result = ' '.join(result)
     logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
     return result
 
@@ -570,7 +587,7 @@ def _decode_dict(line):
     return dict(items)
 
 
-class UserRevision(object):
+class UserRevision:
     """
     moin 1.9 user
     """
@@ -588,7 +605,7 @@ class UserRevision(object):
         self.data = BytesIO(b'')
 
     def _parse_userprofile(self):
-        with codecs.open(os.path.join(self.path, self.uid), "r", CHARSET) as meta_file:
+        with codecs.open(os.path.join(self.path, self.uid), "r", CHARSET19) as meta_file:
             metadata = {}
             for line in meta_file:
                 if line.startswith('#') or line.strip() == "":
@@ -635,14 +652,13 @@ class UserRevision(object):
 
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
-
-        print (u"    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email'])).encode('utf-8')
+        print("    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email']))
 
         # transfer subscribed_pages to subscription_patterns
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
 
         # convert bookmarks from usecs (and str) to secs (int)
-        metadata[BOOKMARKS] = [(interwiki, int(long(bookmark) / 1000000))
+        metadata[BOOKMARKS] = [(interwiki, int(bookmark) // 1000000)
                                for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
 
         # stuff we want to get rid of:
@@ -682,7 +698,7 @@ class UserRevision(object):
         empty_kill = ['aliasname', DISPLAY_NAME, BOOKMARKS, ENC_PASSWORD,
                       'language', CSS_URL, EMAIL, ]  # XXX check subscribed_items, quicklinks
         for key in empty_kill:
-            if key in metadata and metadata[key] in [u'', tuple(), {}, [], ]:
+            if key in metadata and metadata[key] in ['', tuple(), {}, [], ]:
                 del metadata[key]
 
         # moin2 only supports passlib generated hashes, drop everything else
@@ -708,10 +724,10 @@ class UserRevision(object):
         :param subscribed_items: a list of moin19-format subscribed_items
         :return: subscriptions
         """
-        RECHARS = ur'.^$*+?{\|('
+        RECHARS = r'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            print (u"        User is subscribed to {0}".format(subscribed_item)).encode('utf-8')
+            print("        User is subscribed to {0}".format(subscribed_item))
             if flaskg.item_name2id.get(subscribed_item):
                 subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
             else:
@@ -727,7 +743,7 @@ class UserRevision(object):
         return subscriptions
 
 
-class UserBackend(object):
+class UserBackend:
     """
     moin 1.9 user directory
     """
@@ -759,9 +775,9 @@ def hash_hexdigest(content, bufsize=4096):
             size += len(buf)
             if not buf:
                 break
-    elif isinstance(content, str):
+    elif isinstance(content, bytes):
         hash.update(content)
         size = len(content)
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
-    return size, HASH_ALGORITHM, unicode(hash.hexdigest())
+    return size, HASH_ALGORITHM, str(hash.hexdigest())

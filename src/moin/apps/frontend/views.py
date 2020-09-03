@@ -22,9 +22,12 @@ import uuid
 import mimetypes
 import json
 import threading
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 from io import BytesIO
 from datetime import datetime
+from datetime import timezone
 from collections import namedtuple
 from functools import wraps, partial
 
@@ -43,16 +46,16 @@ import pytz
 from babel import Locale
 
 from whoosh import sorting
-from whoosh.query import Term, Prefix, And, Or, DateRange, Every
+from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
 from whoosh.query.qcore import QueryError
 from whoosh.analysis import StandardAnalyzer
 
 from moin.i18n import _, L_, N_
-from moin.themes import render_template, contenttype_to_class
+from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
 from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
-                        Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks,
+                        Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks, RadioChoice,
                         validate_name, NameNotValidError)
 from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
@@ -64,7 +67,8 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import *  # noqa
-from moin.utils import crypto, rev_navigation, close_file
+from moin.constants.rights import SUPERUSER
+from moin.utils import crypto, rev_navigation, close_file, show_time
 from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.mime import Type, type_moin_document
@@ -142,21 +146,14 @@ Allow: /
 """, mimetype='text/plain')
 
 
-@frontend.route('/favicon.ico')
-def favicon():
-    # although we tell that favicon.ico is at /static/logos/favicon.ico,
-    # some browsers still request it from /favicon.ico...
-    return app.send_static_file('logos/favicon.ico')
-
-
 @frontend.route('/all')
 def global_views():
     """
     Provides a link to all the global views.
     """
     return render_template('all.html',
-                           title_name=_(u"Global Views"),
-                           fqname=CompositeName(u'all', NAME_EXACT, u'')
+                           title_name=_("Global Views"),
+                           fqname=CompositeName('all', NAME_EXACT, '')
                           )
 
 
@@ -226,7 +223,7 @@ def lookup():
         if terms:
             LookupEntry = namedtuple('LookupEntry', 'name revid wikiname')
             name = lookup_form[NAME].value
-            name_exact = lookup_form[NAME_EXACT].value or u''
+            name_exact = lookup_form[NAME_EXACT].value or ''
             terms.append(Term(WIKINAME, app.cfg.interwikiname))
             q = And(terms)
             with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
@@ -337,7 +334,7 @@ def add_facets(facets, time_sorting):
 
 
 @frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
-@frontend.route('/+search', defaults=dict(item_name=u''), methods=['GET', 'POST'])
+@frontend.route('/+search', defaults=dict(item_name=''), methods=['GET', 'POST'])
 def search(item_name):
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
@@ -348,6 +345,8 @@ def search(item_name):
         query = request.args.get('q')
         history = request.args.get('history') == "true"
         time_sorting = request.args.get('time_sorting')
+        if time_sorting == 'default':
+            time_sorting = False
         filetypes = request.args.get('filetypes')
         is_ticket = bool(request.args.get('is_ticket'))
         if filetypes:
@@ -368,8 +367,9 @@ def search(item_name):
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
-            prefix_name = item_name + u'/'
+            prefix_name = item_name + '/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
+            terms.append(Term(WIKINAME, app.cfg.interwikiname))
 
             show_transclusions = True
             if show_transclusions:
@@ -423,23 +423,25 @@ def search(item_name):
             if ajax:
                 html = render_template('ajaxsearch.html',
                                        results=results,
-                                       word_suggestions=u', '.join(word_suggestions),
-                                       name_suggestions=u', '.join(name_suggestions),
-                                       content_suggestions=u', '.join(content_suggestions),
-                                       omitted_words=u', '.join(omitted_words),
+                                       word_suggestions=', '.join(word_suggestions),
+                                       name_suggestions=', '.join(name_suggestions),
+                                       content_suggestions=', '.join(content_suggestions),
+                                       omitted_words=', '.join(omitted_words),
                                        history=history,
                                        is_ticket=is_ticket,
+                                       whoosh_query=q,
                 )
             else:
                 html = render_template('search.html',
                                        results=results,
-                                       name_suggestions=u', '.join(name_suggestions),
-                                       content_suggestions=u', '.join(content_suggestions),
+                                       name_suggestions=', '.join(name_suggestions),
+                                       content_suggestions=', '.join(content_suggestions),
                                        query=query,
                                        medium_search_form=search_form,
                                        item_name=item_name,
-                                       omitted_words=u', '.join(omitted_words),
+                                       omitted_words=', '.join(omitted_words),
                                        history=history,
+                                       whoosh_query=q,
                 )
             flaskg.clock.stop('search render')
     else:
@@ -664,12 +666,18 @@ def convert_item(item_name):
     input_conv = reg.get(Type(item.contenttype), type_moin_document)
     dom = input_conv(content, item.contenttype)
 
-    if item.contenttype in CONTENTTYPE_NO_EXPANSION and not form['new_type'].value in CONTENTTYPE_NO_EXPANSION:
-        # expand macros, includes,... when converting from moin or creole to something other than moin or creole
-        dom = item.content._expand_document(dom)
+    try:
+        if not item.contenttype == form['new_type'].value:
+            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+                # expand DOM only when converting to dissimilar item types (moin and creole are similar)
+                dom = item.content._expand_document(dom)
 
-    conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
-    out = conv_out(dom)
+        conv_out = reg.get(type_moin_document, Type(form['new_type'].value))
+        out = conv_out(dom)
+    except Exception:
+        logging.exception("Error converting item: %s", item.fqname)
+        flash(L_("Item conversion failed"), 'error')
+        return redirect(url_for_item(**item.fqname.split))
     meta = dict(item.meta)
     if form['new_type'].value == 'application/x-xhtml-moin-page':
         # serialize the html tree created by the html converter, and change content type
@@ -696,12 +704,14 @@ def convert_item(item_name):
     backend = flaskg.storage
     storage_item = backend.get_item(**item.fqname.query)
     newrev = storage_item.store_revision(meta, out, overwrite=False,
-                                         action=unicode(ACTION_SAVE),
+                                         action=str(ACTION_CONVERT),
                                          contenttype_current=Type(form['new_type'].value),
                                          contenttype_guessed=Type(form['new_type'].value),
                                          return_rev=True,
                                          )
-    item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE)
+    item_modified.send(app, fqname=meta['name'][0], action=ACTION_CONVERT, data=BytesIO(content),
+                       meta=item.meta, new_data=out, new_meta=newrev.meta)
+    flash(L_("Item converted successfully"), 'info')
     return redirect(url_for_item(**item.fqname.split))
 
 
@@ -755,7 +765,7 @@ class ValidRevert(Validator):
             validate_name(state['meta'], state['meta'].get(ITEMID))
             return True
         except NameNotValidError as e:
-            self.invalid_name_msg = _(e)
+            self.invalid_name_msg = _(str(e))
             return self.note_error(element, state, 'invalid_name_msg')
 
 
@@ -919,8 +929,7 @@ def ajaxdestroy(item_name, req='destroy'):
     response = {"itemnames": [], "status": []}
     for itemname in itemnames:
         response["itemnames"].append(itemname)
-        # itemname is url quoted string coming across as unicode, must encode, unquote, decode
-        itemname = urllib.unquote(itemname.encode('ascii')).decode('utf-8')
+        itemname = urllib.parse.unquote(itemname)  # itemname is url quoted str
         try:
             item = Item.create(itemname)
             if isinstance(item, NonExistent):
@@ -948,7 +957,7 @@ def ajaxmodify(item_name):
     if not newitem:
         abort(404, item_name)
     if item_name:
-        newitem = item_name + u'/' + newitem
+        newitem = item_name + '/' + newitem
     return redirect(url_for_item(newitem))
 
 
@@ -1043,17 +1052,16 @@ def jfu_server(item_name):
     contenttype = data_file.content_type  # guess by browser, based on file name
     data = data_file.stream
     if item_name:
-        subitem_prefix = item_name + u'/'
+        subitem_prefix = item_name + '/'
     else:
-        subitem_prefix = u''
+        subitem_prefix = ''
     item_name = subitem_prefix + subitem_name
     jfu_server_lock.acquire()
     try:
         item = Item.create(item_name)
         revid, size = item.modify({'itemtype': ITEMTYPE_DEFAULT, }, data, contenttype_guessed=contenttype)
-        item_modified.send(app._get_current_object(),
-                           fqname=item.fqname, action=ACTION_SAVE)
         jfu_server_lock.release()
+        item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
         return jsonify(name=subitem_name,
                        size=size,
                        url=url_for('.show_item', item_name=item_name, rev=revid),
@@ -1066,9 +1074,9 @@ def jfu_server(item_name):
 
 def contenttype_selects_gen():
     for g in content_registry.group_names:
-        description = u', '.join([e.display_name for e in content_registry.groups[g]])
+        description = ', '.join([e.display_name for e in content_registry.groups[g]])
         yield g, None, description
-    yield u'Unknown Items', None, u'Items of contenttype unknown to MoinMoin'
+    yield 'Unknown Items', None, 'Items of contenttype unknown to MoinMoin'
 
 
 ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(optional=True)
@@ -1076,7 +1084,7 @@ ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(
 
 class IndexForm(Form):
     contenttype = ContenttypeGroup
-    submit_label = L_('Filter')
+    submit_label = L_('Apply Filter')
 
 
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
@@ -1090,7 +1098,6 @@ def index(item_name):
         """
         initials = set()
         for item in files:
-            close_file(item.meta.revision.data)
             initial = item.relname[0]
             if uppercase:
                 initial = initial.upper()
@@ -1109,6 +1116,7 @@ def index(item_name):
     # value for a specific key) unless explicitly told to expose multiple
     # values, eg. calling items with multi=True. See Werkzeug documentation for
     # more.
+
     form = IndexForm.from_flat(request.args.items(multi=True))
     selected_groups = form['contenttype'].value
     startswith = request.values.get("startswith")
@@ -1117,8 +1125,8 @@ def index(item_name):
     initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
-        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
-    item_names = item_name.split(u'/')
+        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
+    item_names = item_name.split('/')
     ns_len = len(item.meta['namespace']) + 1 if item.meta['namespace'] else 0
 
     # detect orphan subitems and make a list of their missing parents
@@ -1166,45 +1174,53 @@ def index(item_name):
 @frontend.route('/+mychanges')
 def mychanges():
     """
-    Returns the list of all items the current user has contributed to.
+    Returns the list of all revisions the current user has modified. The list is
+    sorted in descending order by date-time and may be broken into pages
+    based upon user or site settings for results-per-page.
 
-    :returns: a page with all the items the current user has contributed to
+    :returns: a page with all the items the current user has modified.
     """
-    offset = request.values.get('offset', 0)
-    offset = max(int(offset), 0)
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
+        flash(_('You must be logged in to see your changes.'), "error")
         results_per_page = app.cfg.results_per_page
-    my_changes = _mychanges(flaskg.user.itemid)
-    my_changes_page = utils.getPageContent(my_changes, offset, results_per_page)
+    page_num = request.values.get('page_num', 1)
+    page_num = max(int(page_num), 1)
+
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
+    if results_per_page:
+        len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
+        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        pages = (len_revs + results_per_page - 1) // results_per_page
+        if page_num > pages:
+            # user has entered bad page_num in url
+            page_num = pages
+    else:
+        pages = 1
+        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+
+    my_changes = []
+    for rev in revs:
+        entry = {}
+        for key in (MTIME, SIZE, REV_NUMBER, REVID, CONTENTTYPE, ):
+            entry[key] = rev.meta[key]
+        entry[COMMENT] = rev.meta.get(COMMENT, '')
+        entry[FQNAMES] = rev.fqnames
+        entry[PARENTID] = rev.meta.get(PARENTID, '')
+        entry[TRASH] = rev.meta.get(TRASH, False)
+        entry[SUMMARY] = rev.meta.get(SUMMARY, False)
+        entry[NAME_OLD] = rev.meta.get(NAME_OLD, False)
+        my_changes.append(entry)
 
     return render_template('mychanges.html',
-                           title_name=_(u'My Changes'),
-                           headline=_(u'My Changes'),
-                           my_changes_page=my_changes_page,
+                           title_name=_('My Changes'),
+                           headline=_('My Changes'),
+                           my_changes=my_changes,
+                           page_num=page_num,
+                           pages=pages,
+                           url=request.url.split('?')[0],
     )
-
-
-def _mychanges(userid):
-    """
-    Returns a list with all fqnames of items which user userid has contributed to.
-
-    :param userid: user itemid
-    :type userid: unicode
-    :returns: the list of all items with user userid's contributions
-    """
-    q = And([Term(WIKINAME, app.cfg.interwikiname),
-             Term(USERID, userid)])
-    revs = flaskg.storage.search(q, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
-    # get rid of the content value to save potentially big amounts of memory:
-    history = []
-    for rev in revs:
-        entry = dict(rev.meta)
-        entry[FQNAME] = rev.fqname
-        entry[FQNAMES] = rev.fqnames
-        history.append(entry)
-    return history
 
 
 def shorten_item_id(name, length=7):
@@ -1229,7 +1245,7 @@ def forwardrefs(item_name):
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_(u"Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=split_fqname_list(refs),
     )
 
@@ -1271,7 +1287,7 @@ def backrefs(item_name):
                            item=item,
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_(u"Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=refs_here,
     )
 
@@ -1287,7 +1303,7 @@ def _backrefs(item_name):
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
     revs = flaskg.storage.search(q)
-    return set([fqname for rev in revs for fqname in rev.fqnames])
+    return {fqname for rev in revs for fqname in rev.fqnames}
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -1300,42 +1316,61 @@ def history(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
-    offset = request.values.get('offset', 0)
-    offset = max(int(offset), 0)
+    page_num = request.values.get('page_num', 1)
+    page_num = max(int(page_num), 1)
     bookmark_time = int(request.values.get('bookmark', 0))
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
+    terms.extend(Term(term, value) for term, value in fqname.query.items())
     if bookmark_time:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
-    # TODO: due to how getPageContent and the template works, we need to use limit=None -
-    # it would be better to use search_page (and an appropriate limit, if needed)
-    revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+
+    if results_per_page:
+        len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
+        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        pages = (len_revs + results_per_page - 1) // results_per_page
+        if page_num > pages:
+            page_num = pages
+    else:
+        pages = 1
+        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+
     # get rid of the content value to save potentially big amounts of memory:
     history = []
+    flaskg.clock.start('runrevs')
     for rev in revs:
         entry = dict(rev.meta)
-        entry[FQNAME] = rev.fqname
         entry[FQNAMES] = rev.fqnames
         history.append(entry)
-        close_file(rev.data)
-    history_page = utils.getPageContent(history, offset, results_per_page)
+    flaskg.clock.stop('runrevs')
     close_file(item.rev.data)
     trash = item.meta['trash'] if 'trash' in item.meta else False
+
+    # avoid repeated IO to get user profile when same user edits this item multiple times
+    editor_infos = {}  # userid: user_info
+    for hist_meta in history:
+        uid = hist_meta.get(USERID) or hist_meta.get(ADDRESS)
+        if uid not in editor_infos:
+            editor_infos[uid] = get_editor_info(hist_meta)
+    flaskg.clock.start('renderrevs')
     ret = render_template('history.html',
                           fqname=fqname,
                           item=item,
                           item_name=item_name,
-                          history_page=history_page,
+                          history=history,
+                          page_num=page_num,
+                          pages=pages,
+                          editor_infos=editor_infos,
                           bookmark_time=bookmark_time,
                           NAME_EXACT=NAME_EXACT,
                           len=len,
                           trash=trash,
     )
+    flaskg.clock.stop('renderrevs')
     close_file(item.rev.data)
     return ret
 
@@ -1343,25 +1378,46 @@ def history(item_name):
 @frontend.route('/<namespace>/+history')
 @frontend.route('/+history', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
 def global_history(namespace):
-    all_revs = bool(request.values.get('all'))
+    all_revs = bool(request.values.get('all'))  # no UI help, user must add ?all=1 to url
     idx_name = ALL_REVS if all_revs else LATEST_REVS
+
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
+
+    page_num = request.values.get('page_num', 1)
+    page_num = max(int(page_num), 1)
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
-    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
+    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     if namespace != NAMESPACE_ALL:
         terms.append(Term(NAMESPACE, namespace))
         fqname = split_fqname(namespace)
+    else:
+        terms.append(Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)))
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
         terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
-    revs = flaskg.storage.search(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=1000)
+
+    if results_per_page:
+        len_revs = flaskg.storage.search_results_size(query, idx_name=idx_name)
+        revs = flaskg.storage.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME],
+               reverse=True, pagenum=page_num, pagelen=results_per_page)
+        pages = (len_revs + results_per_page - 1) // results_per_page
+        if page_num > pages:
+            page_num = pages
+    else:
+        pages = 1
+        revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=None)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
     for rev in revs:
-        rev_date = format_date(datetime.utcfromtimestamp(rev.meta[MTIME]))
+        rev.meta[MTIME] = int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
+        rev_date = show_time.format_date(rev.meta[MTIME])
         if rev_date == prev_date:
             dh.entries.append(rev)
         else:
@@ -1371,8 +1427,7 @@ def global_history(namespace):
     else:
         history.append(dh)
     del history[0]  # kill the dummy
-
-    title_name = _(u'Global History')
+    title_name = _('Global History')
     if namespace == NAMESPACE_ALL:
         title = _("Global History of All Namespaces")
     elif namespace:
@@ -1387,22 +1442,40 @@ def global_history(namespace):
                            bookmark_time=bookmark_time,
                            fqname=fqname,
                            title=title,
+                           int=int,
+                           page_num=page_num,
+                           pages=pages,
+                           url=request.url.split('?')[0],
     )
 
 
-def _compute_item_sets():
+def _compute_item_sets(wanted=False):
     """
     compute sets of existing, linked, transcluded and no-revision item fqnames
     """
     linked = set()
     transcluded = set()
     existing = set()
-    revs = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
-    for rev in revs:
-        existing |= set(rev.fqnames)
-        linked.update(rev.meta.get(ITEMLINKS, []))
-        transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
-    return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded))
+    who_wants = {}
+    query = And([Term(WIKINAME, app.cfg.interwikiname),
+            Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    if wanted:
+        for rev in revs:
+            existing |= set(rev.fqnames)
+            linked.update(rev.meta.get(ITEMLINKS, []))
+            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+            # who_wants needed by wanted_items, may add a few seconds of processing time for larger wikis
+            for name in rev.meta.get(ITEMLINKS, []):
+                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+            for name in rev.meta.get(ITEMTRANSCLUSIONS, []):
+                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+    else:
+        for rev in revs:
+            existing |= set(rev.fqnames)
+            linked.update(rev.meta.get(ITEMLINKS, []))
+            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+    return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded)), who_wants
 
 
 def split_fqname_list(names):
@@ -1416,16 +1489,21 @@ def split_fqname_list(names):
 def wanted_items():
     """
     Returns a list view of non-existing items that are linked to or
-    transcluded by other items. If you want to know by which items they are
-    referred to, use the backrefs functionality of the item in question.
+    transcluded by other items. Also returns the names of items
+    having the links or transclusions.
+
+    A second way of finding the items with the referred to links, is to
+    use the backrefs functionality of the item in question. A UI backrefs
+    link may not be present in all themes.
     """
-    existing, linked, transcluded = _compute_item_sets()
+    existing, linked, transcluded, who_wants = _compute_item_sets(wanted=True)
     referred = linked | transcluded
     wanteds = referred - existing
-    title_name = _(u'Wanted Items')
-    return render_template('link_list_no_item_panel.html',
-                           headline=_(u'Wanted Items'),
+    title_name = _('Wanted Items')
+    return render_template('wanteds.html',
+                           headline=_('Wanted Items'),
                            title_name=title_name,
+                           who_wants=who_wants,
                            fq_names=wanteds)
 
 
@@ -1435,13 +1513,13 @@ def orphaned_items():
     Return a list view of existing items not being linked or transcluded
     by any other item (which makes them sometimes not discoverable).
     """
-    existing, linked, transcluded = _compute_item_sets()
+    existing, linked, transcluded, who_wants = _compute_item_sets()
     referred = linked | transcluded
     orphans = existing - referred
     title_name = _('Orphaned Items')
     return render_template('link_list_no_item_panel.html',
                            title_name=title_name,
-                           headline=_(u'Orphaned Items'),
+                           headline=_('Orphaned Items'),
                            fq_names=orphans)
 
 
@@ -1483,7 +1561,7 @@ def subscribe_item(item_name):
         # Try to unsubscribe
         if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
             msg = _(
-                "Can't remove the subscription! You are subscribed to this page, but not by itemid.") + u' ' + _(
+                "Can't remove the subscription! You are subscribed to this page, but not by itemid.") + ' ' + _(
                 "Please edit the subscription in your settings."), "error"
     else:
         # Try to subscribe
@@ -1536,10 +1614,14 @@ def _using_moin_auth():
 
 @frontend.route('/+register', methods=['GET', 'POST'])
 def register():
+    if app.cfg.registration_only_by_superuser and not getattr(flaskg.user.may, SUPERUSER)():
+        # deny registration to bots
+        abort(404)
+
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
 
-    title_name = _(u'Register')
+    title_name = _('Register')
     template = 'register.html'
     FormClass = RegistrationForm
 
@@ -1637,7 +1719,7 @@ class PasswordLostForm(Form):
 @frontend.route('/+lostpass', methods=['GET', 'POST'])
 def lostpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    title_name = _(u'Lost Password')
+    title_name = _('Lost Password')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1705,7 +1787,7 @@ class PasswordRecoveryForm(Form):
 @frontend.route('/+recoverpass', methods=['GET', 'POST'])
 def recoverpass():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
-    title_name = _(u'Recover Password')
+    title_name = _('Recover Password')
 
     if not _using_moin_auth():
         return Response('No MoinAuth in auth list', 403)
@@ -1774,7 +1856,7 @@ def login():
         form = LoginForm.from_flat(request.form)
         nexturl = form['nexturl']
         return redirect(nexturl)
-    title_name = _(u'Login')
+    title_name = _('Login')
 
     if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
@@ -1846,7 +1928,7 @@ class ValidChangePass(Validator):
 
 
 class UserSettingsPasswordForm(Form):
-    name = 'usersettings_password'
+    form_name = 'usersettings_password'
     validators = [ValidChangePass()]
 
     password_current = RequiredPassword.using(label=L_('Current Password')).with_properties(
@@ -1859,7 +1941,7 @@ class UserSettingsPasswordForm(Form):
 
 
 class UserSettingsNotificationForm(Form):
-    name = 'usersettings_notification'
+    form_name = 'usersettings_notification'
     email = YourEmail
     submit_label = L_('Save')
 
@@ -1868,13 +1950,14 @@ class UserSettingsQuicklinksForm(Form):
     """
     No validation is performed as lots of things are valid, existing items, non-existing items, external links, mailto, external wiki links...
     """
-    name = 'usersettings_quicklinks'
+    form_name = 'usersettings_quicklinks'
     quicklinks = Quicklinks
     submit_label = L_('Save')
 
 
 class UserSettingsOptionsForm(Form):
-    name = 'usersettings_options'
+    form_name = 'usersettings_options'
+    iso_8601 = Checkbox.using(label=L_('Always use ISO 8601 date-time format'))
     mailto_author = Checkbox.using(label=L_('Publish my email (not my wiki homepage) in author info'))
     edit_on_doubleclick = Checkbox.using(label=L_('Open editor on double click'))
     scroll_page_after_edit = Checkbox.using(label=L_('Scroll page after edit'))
@@ -1921,7 +2004,7 @@ class ValidSubscriptions(Validator):
 
 
 class UserSettingsSubscriptionsForm(Form):
-    name = 'usersettings_subscriptions'
+    form_name = 'usersettings_subscriptions'
     subscriptions = Subscriptions
     submit_label = L_('Save')
 
@@ -1933,24 +2016,28 @@ def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
+    # wergzeug 1.0.0 dropped support for request.is_xhr, was True if the request was triggered via a JavaScript XMLHttpRequest
+    # TODO: maybe "is_xhr = request.method == 'POST'" would work
+    is_xhr = request.accept_mimetypes.best in ("application/json", "text/javascript", )
+
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
-        name = 'usersettings_personal'  # "name" is duplicate
+        form_name = 'usersettings_personal'
         name = Names.using(label=L_('Usernames')).with_properties(placeholder=L_("The login usernames you want to use"))
         display_name = OptionalText.using(label=L_('Display-Name')).with_properties(
             placeholder=L_("Your display name (informational)"))
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
-        _timezones_keys = [unicode(tz) for tz in pytz.common_timezones]
+        _timezones_keys = [str(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
         _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
         locale = Select.using(label=L_('Locale')).out_of(
-            ((unicode(l), l.display_name) for l in _supported_locales), sort_by=1)
+            ((str(locale), locale.display_name) for locale in _supported_locales), sort_by=1)
         submit_label = L_('Save')
 
     class UserSettingsUIForm(Form):
-        name = 'usersettings_ui'
-        theme_name = Select.using(label=L_('Theme name')).out_of(
-            ((unicode(t.identifier), t.name) for t in get_themes_list()), sort_by=1)
+        form_name = 'usersettings_ui'
+        theme_name = RadioChoice.using(label=L_('Theme name')).with_properties(
+            choices=((str(t.identifier), t.name) for t in get_themes_list()))
         css_url = URL.using(label=L_('User CSS URL'), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)"))
         edit_rows = Natural.using(label=L_('Number rows in edit textarea')).with_properties(
@@ -1977,7 +2064,7 @@ def usersettings():
         part = request.form.get('part')
         if part not in form_classes:
             # the current part does not exist
-            if request.is_xhr:
+            if is_xhr:
                 # if the request is made via XHR, we return 404 Not Found
                 abort(404)
             # otherwise we basically fall back to a normal GET request
@@ -2049,12 +2136,12 @@ def usersettings():
                 # if no flash message was added until here, we add a generic success message
                 response['flash'].append((_("Your changes have been saved."), "info"))
 
-            if response['redirect'] is not None or not request.is_xhr:
+            if response['redirect'] is not None or not is_xhr:
                 # if we redirect or it is no XHR request, we just flash() the messages normally
                 for f in response['flash']:
                     flash(*f)
 
-            if request.is_xhr:
+            if is_xhr:
                 # if it is a XHR request, render the part from the usersettings_ajax.html template
                 # and send the response encoded as an JSON object
                 response['form'] = render_template('usersettings_ajax.html',
@@ -2072,7 +2159,7 @@ def usersettings():
             forms[part] = form
 
     # initialize all remaining forms
-    for p, FormClass in form_classes.iteritems():
+    for p, FormClass in form_classes.items():
         if p not in forms:
             forms[p] = FormClass.from_object(flaskg.user)
 
@@ -2093,7 +2180,7 @@ def bookmark():
             else:
                 try:
                     tm = int(timestamp)
-                except StandardError:
+                except ValueError:
                     tm = int(time.time())
         else:
             tm = int(time.time())
@@ -2135,20 +2222,53 @@ def diffraw(item_name):
 @frontend.route('/+diff/<itemname:item_name>')
 def diff(item_name):
     """
-    Find 2 revisions suitable (e.g. not trash) for a diff and return a formatted diff view.
+    Return an html fragment displaying an item diff and a rendered item revision.
 
-    If the url generated by Global History one-click diff points to a deleted revision,
-    we will substitute a different revision. Or, if the Global History url has a bookmark time,
-    we will choose the last revision before the bookmark time and the current revision.
+    If call is made from a namespace Global History by a logged-in user who has
+    set a bookmark, then the diff is made between the current revision and the
+    revision just prior to the user's bookmark date-time or the oldest revision available.
+
+    If the user is not logged-in or has no bookmark, then the call from Global history
+    will pass the 2 most recent revision IDs to be compared. If a call is made from
+    Item History or from a Diff display then the two revision IDs selected by the user
+    will be processed.
+
+    If the call is made from Item History, then there may be a difference in the
+    display based upon whether the call is made based upon Item Name or
+    Item ID. Calls based on Item IDs will include revisions prior to an item
+    rename and revisions created by Item delete.
     """
-    item = flaskg.storage[item_name]
-    revs = sorted([(rev.meta[MTIME], rev.revid) for rev in item.iter_revs() if not rev.meta.get(TRASH, None)], reverse=True)
+    fqname = split_fqname(item_name)
+    try:
+        item = Item.create(item_name)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
+
+    offset = request.values.get('offset', 0)
+    offset = max(int(offset), 0)
+    bookmark_time = int(request.values.get('bookmark', 0))
+    if flaskg.user.valid:
+        results_per_page = flaskg.user.results_per_page
+    else:
+        results_per_page = app.cfg.results_per_page
+    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
+    terms.extend(Term(term, value) for term, value in fqname.query.items())
+    query = And(terms)
+    revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+    close_file(item.rev.data)
+    item = flaskg.storage.get_item(**fqname.query)
+    revs = [(int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), rev.meta[REVID], rev.meta[ITEMID]) for rev in revs]
     if not revs:
         abort(404)
-    bookmark_time = request.values.get('bookmark')
-    if bookmark_time is not None:
-        # try to find the latest rev1 before bookmark <date>
-        for mtime, revid in revs:
+    # we do not do diffs across item IDs should an item be deleted and recreated with same name
+    item_id = revs[0][2]
+    rev_ids = [x[1] for x in revs if x[2] == item_id]
+    rev_ids.reverse()
+    if bookmark_time:
+        # try to find the latest rev1 before user's bookmark <date-time>
+        for mtime, revid, item_id in revs:
             if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
@@ -2159,7 +2279,6 @@ def diff(item_name):
         # otherwise we try get the 2 revids directly
         rev1 = request.values.get('rev1')
         rev2 = request.values.get('rev2')
-        rev_ids = [x[1] for x in revs]
         if rev1 not in rev_ids:
             if len(revs) > 1:
                 rev1 = revs[1][1]  # take second newest rev
@@ -2168,7 +2287,7 @@ def diff(item_name):
                 flash(_('There is only one revision eligible for diff.'), "info")
         if rev2 not in rev_ids:
             rev2 = revs[0][1]  # the newest rev we have
-    return _diff(item, rev1, rev2)
+    return _diff(item, rev1, rev2, fqname, rev_ids)
 
 
 def _common_type(ct1, ct2):
@@ -2201,7 +2320,11 @@ def _crash(item, oldrev, newrev):
     )
 
 
-def _diff(item, revid1, revid2):
+def _diff(item, revid1, revid2, fqname, rev_ids):
+    """
+    Return html fragment containing formatted diff and rendered item revision
+    defined by revid2.
+    """
     try:
         oldrev = item[revid1]
         newrev = item[revid2]
@@ -2211,21 +2334,14 @@ def _diff(item, revid1, revid2):
         # within diff, always place oldest on left, newest on right
         oldrev, newrev = newrev, oldrev
         revid1, revid2 = revid2, revid1
-    commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
+    common_ct = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
+
     try:
-        item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
+        item = Item.create(fqname.fullname, contenttype=common_ct, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
 
-    # create dict containing older and newer revids to be used in formatting links
-    terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-    terms.extend(Term(term, value) for term, value in item.fqname.query.iteritems())
-    query = And(terms)
-    rev_ids = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=False, limit=None)
-    rev_ids = [x.meta for x in rev_ids]
-    # we do not do diffs across item IDs should an item be deleted and recreated with same name
-    item_id = rev_ids[-1]['itemid']
-    rev_ids = [x['revid'] for x in rev_ids if x['itemid'] == item_id]
+    # if there are many revisions, create rev_links dict with links to older and newer revisions on diff display
     rev_links = {}
     if len(rev_ids) > 2:
         rev1_idx = rev_ids.index(revid1)
@@ -2246,18 +2362,14 @@ def _diff(item, revid1, revid2):
         rev_links['revid2'] = revid2
 
     try:
-        diff_html = Markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links))
+        diff_html = Markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
     except Exception:
         return _crash(item, oldrev, newrev)
 
     return render_template('diff.html',
-                           item=item, item_name=item.name,
+                           item_name=item.name,
                            fqname=item.fqname,
                            diff_html=diff_html,
-                           rev=item.rev,
-                           rev_links=rev_links,
-                           oldrev=oldrev,
-                           newrev=newrev,
     )
 
 
@@ -2358,9 +2470,9 @@ def wikiMatches(fq_name, fq_names, start_re=None, end_re=None):
     :returns: start, end, matches dict
     """
     if start_re is None:
-        start_re = re.compile(u'([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
+        start_re = re.compile('([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
     if end_re is None:
-        end_re = re.compile(u'([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
+        end_re = re.compile('([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
 
     # If we don't get results with wiki words matching, fall back to
     # simple first word and last word, using spaces.
@@ -2419,7 +2531,7 @@ def closeMatches(fq_name, fq_names):
             lower[key] = [fqname]
     # Get all close matches
     item_name = fq_name.value
-    all_matches = difflib.get_close_matches(item_name.lower(), lower.keys(),
+    all_matches = difflib.get_close_matches(item_name.lower(), list(lower.keys()),
                                             n=len(lower), cutoff=0.6)
 
     # Replace lower names with original names
@@ -2456,7 +2568,7 @@ def sitemap(item_name):
     )
 
 
-class NestedItemListBuilder(object):
+class NestedItemListBuilder:
     def __init__(self):
         self.children = set()
         self.numnodes = 0
@@ -2508,11 +2620,16 @@ def global_tags(namespace):
     If namespace == '' tags from the default namespace are shown.
     If namespace == '<namespace>' tags from that namespace are shown.
     """
-    title_name = _(u'Global Tags')
-    query = {WIKINAME: app.cfg.interwikiname}
-    fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, u'')
-    if namespace != NAMESPACE_ALL:
-        query[NAMESPACE] = namespace
+    title_name = _('Global Tags')
+    if namespace == NAMESPACE_ALL:
+        query = And([Term(WIKINAME, app.cfg.interwikiname), ])
+        fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
+    else:
+        # TODO: to speed searching on wikis having few items with tags, we need to add an extra field
+        # to schema (HAS_TAGS) as described in
+        # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
+        # and then modify the query below and above
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
         headline = _("Global Tags")
@@ -2520,11 +2637,11 @@ def global_tags(namespace):
         headline = _("Global Tags in All Namespaces")
     else:
         headline = _("Tags in Namespace '%(namespace)s'", namespace=namespace)
-    revs = flaskg.storage.documents(**query)
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     tags_counts = {}
     for rev in revs:
         tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.name, rev.meta[REVID], tags))
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -2611,7 +2728,7 @@ def tickets():
         status = request.form['status']
     else:
         query = None
-        status = u'open'
+        status = 'open'
 
     current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     idx_name = ALL_REVS
@@ -2621,12 +2738,12 @@ def tickets():
     if query:
         term2.append(qp.parse(query))
 
-    if status == u'open':
+    if status == 'open':
         term1.append(Term(CLOSED, False))
-    elif status == u'closed':
+    elif status == 'closed':
         term1.append(Term(CLOSED, True))
 
-    selected_tags = set(request.args.getlist(u'selected_tags'))
+    selected_tags = set(request.args.getlist('selected_tags'))
     term1.extend(Term(TAGS, tag) for tag in selected_tags)
     assigned_username = request.args.get(ASSIGNED_TO) or query
     user = [Term(NAME, assigned_username)]
@@ -2718,7 +2835,7 @@ def ticket_search():
                                )
 
 
-@frontend.route('/+comment', defaults=dict(item_name=u''), methods=['POST'])
+@frontend.route('/+comment', defaults=dict(item_name=''), methods=['POST'])
 def comment(item_name):
     """
     Initiated by tickets.js when user clicks Save button adding a reply to a prior comment.
@@ -2730,9 +2847,9 @@ def comment(item_name):
     data = request.form.get('data')
     if data:
         current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-        item_name = unicode(itemid) + u'/' + u'comment_' + unicode(current_timestamp)
+        item_name = str(itemid) + '/' + 'comment_' + str(current_timestamp)
         item = Item.create(item_name)
-        item.modify({}, data=data, element=u'comment', contenttype_guessed=u'text/x.moin.wiki;charset=utf-8',
+        item.modify({}, data=data, element='comment', contenttype_guessed='text/x.moin.wiki;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
         item = Item.create(item.name, rev_id=CURRENT)
         html = render_template('ticket/comment.html',

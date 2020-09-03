@@ -11,7 +11,7 @@ src/moin/_tests/wiki/index/
 src/moin.egg-info/
 wiki/
 wiki_local/
-wikiconfig_*.py
+/wikiconfig_*.py
 .DS_Store
 .cache/
 .coverage

@@ -9,9 +9,6 @@ Stores k/v pairs into memory (RAM, non-persistent!).
 Note: likely this is mostly useful for unit tests.
 """
 
-
-from __future__ import absolute_import, division
-
 from . import (BytesMutableStoreBase, FileMutableStoreBase,
                BytesMutableStoreMixin, FileMutableStoreMixin)
 

@@ -9,9 +9,6 @@ Replace all the text corresponding to a smiley, by the corresponding
 element for the DOM Tree.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from emeraldtree import ElementTree as ET
@@ -22,7 +19,7 @@ from moin.utils.tree import moin_page
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     """
     Replace each smiley by the corresponding element in the DOM Tree
     """
@@ -61,16 +58,16 @@ class Converter(object):
         '{o}': 'star_off',
     }
 
-    smiley_rule = ur"""
+    smiley_rule = r"""
     (^|(?<=\s))  # we require either beginning of line or some space before a smiley
     (%(smiley)s)  # one of the smileys
     ($|(?=\s))  # we require either ending of line or some space after a smiley
-""" % {'smiley': u'|'.join([re.escape(s) for s in smileys])}
+""" % {'smiley': '|'.join([re.escape(s) for s in smileys])}
 
     smiley_re = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 
     # We do not process any smiley conversion within these elements.
-    tags_to_ignore = set(['code', 'blockcode', 'nowiki', ])
+    tags_to_ignore = {'code', 'blockcode', 'nowiki', }
 
     @classmethod
     def _factory(cls, input, output, icon=None, **kw):

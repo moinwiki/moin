@@ -17,7 +17,7 @@ from moin._tests import wikiconfig
 import pytest
 
 
-class TestStorageEnvironWithoutConfig(object):
+class TestStorageEnvironWithoutConfig:
     def setup_method(self, method):
         self.class_level_value = 123
 
@@ -29,10 +29,10 @@ class TestStorageEnvironWithoutConfig(object):
         storage = flaskg.storage
         assert storage
         assert hasattr(storage, '__getitem__')
-        itemname = u"this item shouldn't exist yet"
+        itemname = "this item shouldn't exist yet"
         assert not storage.has_item(itemname)
         item = storage[itemname]
-        new_rev = item.store_revision({NAME: [itemname, ], CONTENTTYPE: u'text/plain;charset=utf-8'}, BytesIO(b''))
+        new_rev = item.store_revision({NAME: [itemname, ], CONTENTTYPE: 'text/plain;charset=utf-8'}, BytesIO(b''))
         assert storage.has_item(itemname)
 
 
@@ -44,7 +44,7 @@ DEFAULT_ACL = dict(
 )
 
 
-class TestStorageEnvironWithConfig(object):
+class TestStorageEnvironWithConfig:
 
     @pytest.fixture
     def cfg(self):

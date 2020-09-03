@@ -10,9 +10,6 @@
     MoinMoin - Wiki Utility Functions
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 
 from flask import current_app as app
@@ -58,11 +55,11 @@ def clean_input(text, max_len=201):
     # we only have input fields with max 200 chars, but spammers send us more
     length = len(text)
     if length == 0 or length > max_len:
-        return u''
+        return ''
     else:
-        if isinstance(text, str):
+        if isinstance(text, bytes):
             # the translate() below can ONLY process unicode, thus, if we get
-            # str, we try to decode it using the usual coding:
+            # bytes, we try to decode it using the usual coding:
             text = text.decode(CHARSET)
         return text.translate(CLEAN_INPUT_TRANSLATION_MAP)
 
@@ -82,10 +79,10 @@ def normalize_pagename(name, cfg):
     :returns: decoded and sanitized page name
     """
     # Strip invalid characters
-    name = ITEM_INVALID_CHARS_REGEX.sub(u'', name)
+    name = ITEM_INVALID_CHARS_REGEX.sub('', name)
 
     # Split to pages and normalize each one
-    pages = name.split(u'/')
+    pages = name.split('/')
     normalized = []
     for page in pages:
         # Ignore empty or whitespace only pages
@@ -95,18 +92,18 @@ def normalize_pagename(name, cfg):
         # Cleanup group pages.
         # Strip non alpha numeric characters, keep white space
         if isGroupItem(page):
-            page = u''.join([c for c in page
-                             if c.isalnum() or c.isspace()])
+            page = ''.join([c for c in page
+                            if c.isalnum() or c.isspace()])
 
         # Normalize white space. Each name can contain multiple
         # words separated with only one space. Split handle all
         # 30 unicode spaces (isspace() == True)
-        page = u' '.join(page.split())
+        page = ' '.join(page.split())
 
         normalized.append(page)
 
     # Assemble components into full pagename
-    name = u'/'.join(normalized)
+    name = '/'.join(normalized)
     return name
 
 
@@ -137,7 +134,7 @@ def AbsItemName(context, itemname):
         while context and itemname.startswith(PARENT_PREFIX):
             context = '/'.join(context.split('/')[:-1])
             itemname = itemname[PARENT_PREFIX_LEN:]
-        itemname = '/'.join(filter(None, [context, itemname, ]))
+        itemname = '/'.join([e for e in [context, itemname, ] if e])
     elif itemname.startswith(CHILD_PREFIX):
         if context:
             itemname = context + '/' + itemname[CHILD_PREFIX_LEN:]
@@ -191,7 +188,7 @@ def ParentItemName(itemname):
         pos = itemname.rfind('/')
         if pos > 0:
             return itemname[:pos]
-    return u''
+    return ''
 
 
 #############################################################################
@@ -218,8 +215,8 @@ def getUnicodeIndexGroup(name):
     :returns: group letter or None
     """
     c = name[0]
-    if u'\uAC00' <= c <= u'\uD7AF':  # Hangul Syllables
-        return unichr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
+    if '\uAC00' <= c <= '\uD7AF':  # Hangul Syllables
+        return chr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
     else:
         return c.upper()  # we put lower and upper case words into the same index group
 
@@ -254,7 +251,7 @@ def anchor_name_from_text(text):
     valid ID/name, it will return it without modification (identity
     transformation).
     """
-    quoted = werkzeug.url_quote_plus(text, charset='utf-7', safe=':')
+    quoted = werkzeug.urls.url_quote_plus(text, charset='utf-7', safe=':')
     res = quoted.replace('%', '.').replace('+', '_')
     if not res[:1].isalpha():
         return 'A{0}'.format(res)
@@ -299,35 +296,35 @@ def get_hostname(addr):
     if app.cfg.log_reverse_dns_lookups:
         import socket
         try:
-            return unicode(socket.gethostbyaddr(addr)[0], CHARSET)
+            return str(socket.gethostbyaddr(addr)[0], CHARSET)
         except (socket.error, UnicodeError):
             pass
 
 
 def file_headers(filename=None, content_type=None, content_length=None):
-        """
-        Compute http headers for sending a file
+    """
+    Compute http headers for sending a file
 
-        :param filename: filename for autodetecting content_type (unicode, default: None)
-        :param content_type: content-type header value (str, default: autodetect from filename)
-        :param content_length: for content-length header (int, default:None)
-        """
-        if filename:
-            # make sure we just have a simple filename (without path)
-            filename = os.path.basename(filename)
-            mt = MimeType(filename=filename)
+    :param filename: filename for autodetecting content_type (unicode, default: None)
+    :param content_type: content-type header value (str, default: autodetect from filename)
+    :param content_length: for content-length header (int, default:None)
+    """
+    if filename:
+        # make sure we just have a simple filename (without path)
+        filename = os.path.basename(filename)
+        mt = MimeType(filename=filename)
+    else:
+        mt = None
+
+    if content_type is None:
+        if mt is not None:
+            content_type = mt.content_type()
         else:
-            mt = None
+            content_type = 'application/octet-stream'
+    else:
+        mt = MimeType(mimestr=content_type)
 
-        if content_type is None:
-            if mt is not None:
-                content_type = mt.content_type()
-            else:
-                content_type = 'application/octet-stream'
-        else:
-            mt = MimeType(mimestr=content_type)
-
-        headers = [('Content-Type', content_type)]
-        if content_length is not None:
-            headers.append(('Content-Length', str(content_length)))
-        return headers
+    headers = [('Content-Type', content_type)]
+    if content_length is not None:
+        headers.append(('Content-Length', str(content_length)))
+    return headers

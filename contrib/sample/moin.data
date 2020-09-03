@@ -78,21 +78,38 @@
 
 == Transclusions ==
 
-Transcluded images can be positioned by using any of the classes left, center, right, top, middle, or bottom. 
+Transclusion syntax is defined as follows:
 
-  * Images can be resized on the client side by specifying an option of width=nn or height=nn where nn is the desired size in pixels. 
-  * If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of &w=nn or &h=nn where nn is the desired size in pixels.
+{{{
+{{<target>|<optional alternate text>|<optional parameters>}}
+
+{{bird.jpg|rare yellow bird|class=center}}
+}}}
+
+ * `<target>` is a relative or absolute URL pointing to an image, video, audio, or web page. 
+ * `<optional alternate text>` has several potential uses:
+   * Screen readers used by visually impaired users will speak the text.
+   * The alternate text may be displayed by the browser if the URL is broken.
+   * Search engine crawlers may use the text to index the page or image.
+ * `optional parameters` may be used to resize or position the target.
+   * Images or other targets can be resized on the client side by specifying an option of `width=nn` or `height=nn` where nn is the desired size in pixels.
+   * If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of `&w=nn` or `&h=nn` where nn is the desired size in pixels.
+   * Images embedded within text can be positioned relative to a line of text by using `class=bottom`, `class=top` or `class="middle"`. 
+   * Images displayed as block elements my be floated left or right by using `class="left"` or `class=right` respectively, or centered by using `class=center`.
 
 {{{#!wiki caution
-Most browsers will suppress transcluded content having a different protocol (HTTP/HTTPS) than the parent page. Some browsers may provide a warning icon or message.
+When transcluding content from a different web site,
+most browsers will suppress transcluded content having a protocol different 
+(HTTP/HTTPS) than the parent page. Some browsers may provide a warning 
+icon or message.
 }}}
 
 '''Markup:'''
 
 {{{
  1. Images are aligned to bottom {{png}} of text by default. 
- 1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
- 1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
+ 1. This image is the big logo floated to the right: {{svg|my svg|class=right}}
+ 1. Image aligned to top of text. {{jpeg||&w=75 class=top}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
@@ -101,8 +118,8 @@ Most browsers will suppress transcluded content having a different protocol (HTT
 '''Result:'''
 
  1. Images are aligned to bottom {{png}} of text by default. 
- 1. This image is the big logo floated to the right: {{svg|my svg|class="right"}}
- 1. Image aligned to top of text. {{jpeg||&w=75 class="top"}}
+ 1. This image is the big logo floated to the right: {{svg|my svg|class=right}}
+ 1. Image aligned to top of text. {{jpeg||&w=75 class=top}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
@@ -273,18 +290,25 @@ When there is a need to start an ordered list at a specific number, use the form
 
 == Horizontal Rules ==
 
+To create a horizontal rule, start a line with 4 or more hyphen (-) characters. Nine (or more) 
+characters creates a line of maximum height.
+
 '''Markup:'''
 
 {{{
 ----
+text
 ------
+text
 ---------
 }}}
 
 '''Result:'''
 
 ----
+text
 ------
+text
 ---------
 
 == Tables ==
@@ -398,6 +422,9 @@ Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, r
 ||<caption="My Table" tablewidth="30em">A ||<rowspan="2" > like <|2> ||
 ||<bgcolor="#00FF00"> like <#00FF00> ||
 ||<colspan="2"> like <-2>||
+
+||<tableclass="no-borders">A||B||C||
+||1||2||3||
 }}}
 
 '''Result:'''
@@ -405,6 +432,9 @@ Keywords include: bgcolor, rowbgcolor, tablebgcolor, width, tablewidth, class, r
 ||<caption="My Table" tablewidth="30em">A ||<rowspan="2" > like <|2> ||
 ||<bgcolor="#00FF00"> like <#00FF00> ||
 ||<colspan="2"> like <-2>||
+
+||<tableclass="no-borders">A||B||C||
+||1||2||3||
 
 
 == Preformatted code ==
@@ -551,12 +581,13 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
 Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
 }}}
 
-=== CSS classes for use with the wiki parser ===
+=== CSS classes for use with the wiki parser, tables, and comments ===
 
  * Background colors: red, green, blue, yellow, or orange
  * Borders: solid, dashed, or dotted
  * Text-alignment: left, center, right, or justify
  * Admonitions: caution, important, note, tip, warning
+ * Tables: moin-sortable, no-borders
  * Comments: comment
 
 == Variables ==

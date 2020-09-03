@@ -24,7 +24,7 @@ from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
 from moin.converters.moinwiki_out import Converter as conv_out
 
 
-class TestConverter(object):
+class TestConverter:
 
     input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:xinclude="{3}" xmlns:html="{4}"'.format(
         moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)
@@ -45,9 +45,9 @@ class TestConverter(object):
     data = [
         # Note: old style attachments are are supported in moinwiki_in so conversion to moin 2 markup is not necessary
         # TODO: in a perfect world, moinwiki19_in should convert attachments
-        (u'[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
+        ('[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
         # moin 1.9 to 2.0 conversion
-        (u'TestPage', '[[TestPage]]\n'),
+        ('TestPage', '[[TestPage]]\n'),
         # (u'../SisterPage', '[[../SisterPage]]\n'),
     ]
 
@@ -64,7 +64,7 @@ class TestConverter(object):
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', result)
+        return self.output_re.sub('', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:

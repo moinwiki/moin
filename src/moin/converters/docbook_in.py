@@ -13,9 +13,6 @@ for backward compatibility:
 - ulink
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from emeraldtree import ElementTree as ET
@@ -66,7 +63,7 @@ class XMLParser(ET.XMLParser):
         return elem
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/docbook+xml -> x.moin.document
     """
@@ -77,104 +74,105 @@ class Converter(object):
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
-    ignored_tags = set([  # Info elements
-                       'abstract', 'artpagenums', 'annotation',
-                       'artpagenums', 'author', 'authorgroup',
-                       'authorinitials', 'bibliocoverage', 'biblioid',
-                       'bibliomisc', 'bibliomset', 'bibliorelation',
-                       'biblioset', 'bibliosource', 'collab', 'confdates',
-                       'confgroup', 'confnum', 'confsponsor', 'conftitle',
-                       'contractnum', 'contractsponsor', 'copyright',
-                       'contrib', 'cover', 'edition', 'editor',
-                       'extendedlink', 'issuenum', 'itermset', 'keyword',
-                       'keywordset', 'legalnotice', 'org', 'orgname',
-                       'orgdiv', 'otheraddr', 'othercredit', 'pagenums',
-                       'personblurb', 'printhistory', 'productname',
-                       'productnumber', 'pubdate', 'publisher',
-                       'publishername', 'releaseinfo', 'revdescription',
-                       'revhistory', 'revision', 'revnumber', 'revremark',
-                       'seriesvolnums', 'subjectset', 'volumenum',
-                       # Other bibliography elements
-                       'bibliodiv', 'biblioentry', 'bibliography',
-                       'bibliolist', 'bibliomixed', 'biblioref',
-                       'bibliorelation', 'citation', 'citerefentry',
-                       'citetitle',
-                       # Callout elements
-                       'callout', 'calloutlist', 'area', 'areaset',
-                       'areaspec', 'co', 'imageobjectco',
-                       # Class information
-                       'classname', 'classsynopsis', 'classsynopsisinfo',
-                       'constructorsynopsis', 'destructorsynopsis',
-                       'fieldsynopsis', 'funcdef', 'funcparams',
-                       'funcprototype', 'funcsynopsis',
-                       'funcsynopsisinfo', 'function', 'group',
-                       'initializer', 'interfacename',
-                       'methodname', 'methodparam', 'methodsynopsis',
-                       'ooclass', 'ooexception', 'oointerface', 'varargs',
-                       'void',
-                       # GUI elements
-                       'guibutton', 'guiicon', 'guilabel',
-                       'guimenu', 'guimenuitem', 'guisubmenu',
-                       # EBNF Elements
-                       'constraint', 'constraintdef', 'lhs', 'rhs',
-                       'nonterminal',
-                       # msg elements
-                       'msg', 'msgaud', 'msgentry', 'msgexplan',
-                       'msginfo', 'msglevel', 'msgmain', 'msgorig',
-                       'msgrel', 'msgset', 'msgsub', 'msgtext',
-                       # REF entry
-                       'refclass', 'refdescriptor', 'refentry',
-                       'refentrytitle', 'reference', 'refmeta',
-                       'refmiscinfo', 'refname', 'refnamediv',
-                       'refpurpose', 'refsect1', 'refsect2', 'refsect3',
-                       'refsection', 'refsynopsisdiv'
-                       # TOC
-                       'toc', 'tocdiv', 'tocentry',
-                       # Index elements
-                       'index', 'indexdiv', 'indexentry', 'indexterm',
-                       'primary', 'primaryie', 'secondary',
-                       'secondaryie', 'see', 'seealso',
-                       'tertiary', 'tertiaryie',
-                       # Other elements
-                       'info', 'bridgehead', 'arc', 'titleabbrev',
-                       'spanspec', 'xref',
-                       ])
+    ignored_tags = {
+        # Info elements
+        'abstract', 'artpagenums', 'annotation',
+        'artpagenums', 'author', 'authorgroup',
+        'authorinitials', 'bibliocoverage', 'biblioid',
+        'bibliomisc', 'bibliomset', 'bibliorelation',
+        'biblioset', 'bibliosource', 'collab', 'confdates',
+        'confgroup', 'confnum', 'confsponsor', 'conftitle',
+        'contractnum', 'contractsponsor', 'copyright',
+        'contrib', 'cover', 'edition', 'editor',
+        'extendedlink', 'issuenum', 'itermset', 'keyword',
+        'keywordset', 'legalnotice', 'org', 'orgname',
+        'orgdiv', 'otheraddr', 'othercredit', 'pagenums',
+        'personblurb', 'printhistory', 'productname',
+        'productnumber', 'pubdate', 'publisher',
+        'publishername', 'releaseinfo', 'revdescription',
+        'revhistory', 'revision', 'revnumber', 'revremark',
+        'seriesvolnums', 'subjectset', 'volumenum',
+        # Other bibliography elements
+        'bibliodiv', 'biblioentry', 'bibliography',
+        'bibliolist', 'bibliomixed', 'biblioref',
+        'bibliorelation', 'citation', 'citerefentry',
+        'citetitle',
+        # Callout elements
+        'callout', 'calloutlist', 'area', 'areaset',
+        'areaspec', 'co', 'imageobjectco',
+        # Class information
+        'classname', 'classsynopsis', 'classsynopsisinfo',
+        'constructorsynopsis', 'destructorsynopsis',
+        'fieldsynopsis', 'funcdef', 'funcparams',
+        'funcprototype', 'funcsynopsis',
+        'funcsynopsisinfo', 'function', 'group',
+        'initializer', 'interfacename',
+        'methodname', 'methodparam', 'methodsynopsis',
+        'ooclass', 'ooexception', 'oointerface', 'varargs',
+        'void',
+        # GUI elements
+        'guibutton', 'guiicon', 'guilabel',
+        'guimenu', 'guimenuitem', 'guisubmenu',
+        # EBNF Elements
+        'constraint', 'constraintdef', 'lhs', 'rhs',
+        'nonterminal',
+        # msg elements
+        'msg', 'msgaud', 'msgentry', 'msgexplan',
+        'msginfo', 'msglevel', 'msgmain', 'msgorig',
+        'msgrel', 'msgset', 'msgsub', 'msgtext',
+        # REF entry
+        'refclass', 'refdescriptor', 'refentry',
+        'refentrytitle', 'reference', 'refmeta',
+        'refmiscinfo', 'refname', 'refnamediv',
+        'refpurpose', 'refsect1', 'refsect2', 'refsect3',
+        'refsection', 'refsynopsisdiv',
+        # TOC
+        'toc', 'tocdiv', 'tocentry',
+        # Index elements
+        'index', 'indexdiv', 'indexentry', 'indexterm',
+        'primary', 'primaryie', 'secondary',
+        'secondaryie', 'see', 'seealso',
+        'tertiary', 'tertiaryie',
+        # Other elements
+        'info', 'bridgehead', 'arc', 'titleabbrev',
+        'spanspec', 'xref',
+    }
 
     # DocBook inline elements which does not have equivalence in the DOM
     # tree, but we keep the information using <span element='tag.name'>
-    inline_tags = set(['abbrev', 'address', 'accel', 'acronym', 'alt',
-                       'affiliation', 'city', 'command', 'constant',
-                       'country', 'database', 'date', 'errorcode',
-                       'errorname', 'errortext', 'errortype',
-                       'exceptionname', 'fax', 'filename', 'firstname',
-                       'firstterm', 'foreignphrase', 'hardware', 'holder',
-                       'honorific', 'jobtitle', 'keycap', 'keycode',
-                       'keycombo', 'keysym', 'lineannotation',
-                       'manvolnum', 'mousebutton', 'option', 'optional',
-                       'package', 'person', 'personname', 'phone', 'pob',
-                       'postcode', 'prompt', 'remark', 'replaceable',
-                       'returnvalue', 'shortaffil', 'shortcut', 'state',
-                       'street', 'surname', 'symbol', 'systemitem',
-                       'termdef', 'type', 'uri', 'userinput',
-                       'wordasword', 'varname', 'anchor',
-                       ])
+    inline_tags = {'abbrev', 'address', 'accel', 'acronym', 'alt',
+                   'affiliation', 'city', 'command', 'constant',
+                   'country', 'database', 'date', 'errorcode',
+                   'errorname', 'errortext', 'errortype',
+                   'exceptionname', 'fax', 'filename', 'firstname',
+                   'firstterm', 'foreignphrase', 'hardware', 'holder',
+                   'honorific', 'jobtitle', 'keycap', 'keycode',
+                   'keycombo', 'keysym', 'lineannotation',
+                   'manvolnum', 'mousebutton', 'option', 'optional',
+                   'package', 'person', 'personname', 'phone', 'pob',
+                   'postcode', 'prompt', 'remark', 'replaceable',
+                   'returnvalue', 'shortaffil', 'shortcut', 'state',
+                   'street', 'surname', 'symbol', 'systemitem',
+                   'termdef', 'type', 'uri', 'userinput',
+                   'wordasword', 'varname', 'anchor',
+                   }
 
     # DocBook block element which does not have equivalence in the DOM
     # tree, but we keep the information using <div html:class='tag.name'>
-    block_tags = set(['acknowledgements', 'appendix', 'article', 'book',
-                      'caption', 'chapter', 'cmdsynopsis', 'colophon',
-                      'dedication', 'epigraph', 'example', 'figure',
-                      'equation', 'part', 'partintro',
-                      'screenshoot', 'set', 'setindex', 'sidebar',
-                      'simplesect', 'subtitle', 'synopsis',
-                      'synopfragment', 'task', 'taskprerequisites',
-                      'taskrelated', 'tasksummary', 'title',
-    ])
+    block_tags = {'acknowledgements', 'appendix', 'article', 'book',
+                  'caption', 'chapter', 'cmdsynopsis', 'colophon',
+                  'dedication', 'epigraph', 'example', 'figure',
+                  'equation', 'part', 'partintro',
+                  'screenshoot', 'set', 'setindex', 'sidebar',
+                  'simplesect', 'subtitle', 'synopsis',
+                  'synopfragment', 'task', 'taskprerequisites',
+                  'taskrelated', 'tasksummary', 'title',
+                  }
 
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
     # admonitions in this list, into the admonition element of the DOM Tree.
-    admonition_tags = set(['attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'])
+    admonition_tags = {'attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'}
 
     # DocBook can handle three kinds of media: audio, image, video.
     # TODO: a media format attribute is optional, e.g.: <imagedata format="jpeg" fileref="jpeg.jpg"/>
@@ -222,16 +220,16 @@ class Converter(object):
                    'tr': moin_page('table-row'),
                    'variablelist': moin_page('list'),
                    'varlistentry': moin_page('list-item'),
-    }
+                   }
 
     # Other block elements which can be root element.
-    root_tags = set(['blockquote', 'formalpara', 'informalequation',
-                     'informalexample', 'informalfigure',
-                     'informalfigure', 'orderedlist', 'sect1', 'sect2',
-                     'sect3', 'sect4', 'sect5', 'section',
-                     'segmentedlist', 'simplelist', 'procedure',
-                     'qandaset',
-    ])
+    root_tags = {'blockquote', 'formalpara', 'informalequation',
+                 'informalexample', 'informalfigure',
+                 'informalfigure', 'orderedlist', 'sect1', 'sect2',
+                 'sect3', 'sect4', 'sect5', 'section',
+                 'segmentedlist', 'simplelist', 'procedure',
+                 'qandaset',
+                 }
 
     # Regular expression to find section tag.
     sect_re = re.compile('sect[1-5]')
@@ -243,7 +241,7 @@ class Converter(object):
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
-        docbook_str = u'\n'.join(content)
+        docbook_str = '\n'.join(content)
         logging.debug(docbook_str)
 
         # Initalize our attributes
@@ -328,7 +326,7 @@ class Converter(object):
         We save the result in our standard attribute.
         """
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xml and key.name in ['id', 'base', 'lang'] or key.name == 'data-lineno':
                 result[key] = value
         if result:
@@ -480,7 +478,7 @@ class Converter(object):
         else:
             attrib[moin_page('type')] = mimetype
         align = object_to_show.get('align')
-        if align and align in set(['left', 'center', 'right', 'top', 'middle', 'bottom']):
+        if align and align in {'left', 'center', 'right', 'top', 'middle', 'bottom'}:
             attrib[html.class_] = align
 
         # return object tag, html_out.py will convert to img, audio, or video based on type attr
@@ -527,7 +525,7 @@ class Converter(object):
           --> <blockquote source="Unknow">Text</blockquote>
         """
         # TODO: Translate
-        source = u"Unknow"
+        source = "Unknow"
         children = []
         for child in element:
             if isinstance(child, ET.Element):
@@ -550,7 +548,7 @@ class Converter(object):
 
         However, it is still semantic, so we call it emphasis and strong.
         """
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.name == 'role' and value == 'bold':
                 return self.new_copy(moin_page.strong, element,
                                      depth, attrib={})
@@ -685,7 +683,7 @@ class Converter(object):
         the anchors.
         """
         attrib = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xlink and allowed_uri_scheme(value):
                 attrib[key] = value
         linkend = element.get('linkend')
@@ -986,9 +984,9 @@ class Converter(object):
         Docbook supports 4 types of trademark: copyright, registered, trade (mark), and service (mark).
         <trademark> --> <span class="db-trademark">
         """
-        trademark_entities = {'copyright': u'\xa9 ',  # '&copy; ',
-                              'registered': u'\xae',  # u'&reg;',
-                              'trade': u'\u2122',  # no entity name defined for superscript TM
+        trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
+                              'registered': '\xae',  # u'&reg;',
+                              'trade': '\u2122',  # no entity name defined for superscript TM
         }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
@@ -1015,9 +1013,9 @@ class Converter(object):
         colspan = element.get('morecols')
         try:
             if rowspan:
-                attrib[moin_page.number_rows_spanned] = unicode(1 + int(rowspan))
+                attrib[moin_page.number_rows_spanned] = str(1 + int(rowspan))
             if colspan:
-                attrib[moin_page.number_columns_spanned] = unicode(1 + int(colspan))
+                attrib[moin_page.number_columns_spanned] = str(1 + int(colspan))
         except ValueError:
             pass
         return self.new_copy(moin_page.table_cell,
@@ -1048,7 +1046,7 @@ class Converter(object):
         # Since it is an element of DocBook v.4,
         # The namespace does not always work, so we will try to retrive the attribute whatever
         if not href:
-            for key, value in element.attrib.iteritems():
+            for key, value in element.attrib.items():
                 if key.name == 'url' and allowed_uri_scheme(value):
                     href = value
         key = xlink.href
@@ -1177,7 +1175,7 @@ class Converter(object):
 
         Here we handle the conversion of such of list.
         """
-        list_item_tags = set(['listitem', 'step', 'stepalternatives', 'member'])
+        list_item_tags = {'listitem', 'step', 'stepalternatives', 'member'}
         items = []
         for child in element:
             if isinstance(child, ET.Element):

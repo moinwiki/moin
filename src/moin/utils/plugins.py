@@ -13,7 +13,7 @@
 
 import os
 import sys
-import imp
+import importlib
 import hashlib
 
 from moin import error
@@ -188,51 +188,36 @@ def searchAndImportPlugin(cfg, type, name, what=None):
     return plugin
 
 
+@pysupport.makeThreadSafe
 def _loadPluginModule(cfg):
     """
     import all plugin modules
 
-    To be able to import plugin from arbitrary path, we have to load
-    the base package once using imp.load_module. Later, we can use
-    standard __import__ call to load plugins in this package.
+    To be able to import plugin from arbitrary path, we have to load the base
+    package. Later, we can use standard mechanisms to load plugins in this package.
 
-    Since each configured plugin path has unique plugins, we load the
-    plugin packages as "moin_plugin_<sha1(path)>.plugin".
+    Since each configured plugin path has unique plugins, we load the plugin
+    packages as "moin_p_<sha1(path)>".
     """
+    assert isinstance(cfg.plugin_dirs, (list, tuple))
     cfg._plugin_modules = []
-
-    try:
-        # Lock other threads while we check and import
-        imp.acquire_lock()
-        try:
-            for pdir in cfg.plugin_dirs:
-                csum = 'p_{0}'.format(hashlib.new('sha1', pdir).hexdigest())
-                modname = '{0}.{1}'.format(cfg.siteid, csum)
-                # If the module is not loaded, try to load it
-                if modname not in sys.modules:
-                    # Find module on disk and try to load - slow!
-                    abspath = os.path.abspath(pdir)
-                    parent_dir, pname = os.path.split(abspath)
-                    fp, path, info = imp.find_module(pname, [parent_dir])
-                    try:
-                        # Load the module and set in sys.modules
-                        module = imp.load_module(modname, fp, path, info)
-                        # XXX for what was this good for?:
-                        # setattr(sys.modules[cfg.siteid], 'csum', module)
-                    finally:
-                        # Make sure fp is closed properly
-                        if fp:
-                            fp.close()
-                if modname not in cfg._plugin_modules:
-                    cfg._plugin_modules.append(modname)
-        finally:
-            imp.release_lock()
-    except ImportError as err:
-        msg = """
-Could not import plugin package "%(path)s" because of ImportError:
-%(err)s.
+    for pdir in cfg.plugin_dirs:
+        assert isinstance(pdir, str)
+        modname = 'moin_p_{0}'.format(hashlib.new('sha1', pdir.encode()).hexdigest())
+        if modname not in sys.modules:
+            init_path = os.path.join(os.path.abspath(pdir), '__init__.py')
+            spec = importlib.util.spec_from_file_location(modname, init_path)
+            if spec is not None:
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                sys.modules[modname] = module
+            else:
+                msg = """\
+Could not import plugin package "%(path)s":
 
 Make sure your data directory path is correct, check permissions, and
 that the data/plugin directory has an __init__.py file.
-""" % dict(path=pdir, err=str(err))
-        raise error.ConfigurationError(msg)
+""" % dict(path=pdir)
+                raise error.ConfigurationError(msg)
+        if modname not in cfg._plugin_modules:
+            cfg._plugin_modules.append(modname)

@@ -60,7 +60,7 @@ class Profiler:
         :param collect: should call gc.collect() in each sample
         """
         logname = '{0}--{1}.log'.format(name, time.strftime('%Y-%m-%d--%H-%M'))
-        self.logfile = file(logname, 'a')
+        self.logfile = open(logname, 'a')
         self.requestsPerSample = requestsPerSample
         self.collect = collect
         self.pid = os.getpid()
@@ -181,4 +181,4 @@ class TwistedProfiler(Profiler):
 
 if __name__ == '__main__':
     # In case someone try to run as a script
-    print __doc__
+    print(__doc__)

@@ -5,9 +5,6 @@
 MoinMoin - Arguments support for wiki formats
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from ._args import Arguments
@@ -32,6 +29,27 @@ _parse_rules = r'''
 )
 '''
 parse_re = re.compile(_parse_rules, re.X | re.U)
+
+# parsing rules for object keyword parameters, similar to default parsing rules, but
+# input value may have trailing %: width=100%
+_parse_rules = r'''
+(?:
+    ([-&\w]+)
+    =
+)?
+(?:
+    ([-\w]+%*)  # added `%*` to default rules
+    |
+    "
+    (.*?)
+    (?<!\\)"
+    |
+    '
+    (.*?)
+    (?<!\\)'
+)
+'''
+object_re = re.compile(_parse_rules, re.X | re.U)
 
 # rules for include macro, splits on commas, allows leading ^ and embedded /
 # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
@@ -88,20 +106,23 @@ def unparse(args):
     :param args: Argument instance
     :returns: argument unicode object
     """
+    def quote(s):
+        return '"%s"' % s.encode('unicode-escape').decode('ascii')
+
     ret = []
 
     for value in args.positional:
         if not _unparse_re.match(value):
-            value = u'"' + value.encode('unicode-escape') + u'"'
+            value = quote(value)
         ret.append(value)
 
-    keywords = args.keyword.items()
+    keywords = list(args.keyword.items())
     keywords.sort(key=lambda a: a[0])
     for key, value in keywords:
         if not _unparse_re.match(key):
             raise ValueError("Invalid keyword string")
         if not _unparse_re.match(value):
-            value = u'"' + value.encode('unicode-escape') + u'"'
-        ret.append(key + u'=' + value)
+            value = quote(value)
+        ret.append(key + '=' + value)
 
-    return u' '.join(ret)
+    return ' '.join(ret)

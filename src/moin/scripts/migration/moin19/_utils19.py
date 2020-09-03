@@ -8,8 +8,8 @@ MoinMoin - helpers for 1.9 migration
 import re
 
 from moin.constants.keys import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
+from moin.constants.contenttypes import CHARSET19
 
-CHARSET = 'utf-8'
 
 # Precompiled patterns for file name [un]quoting
 UNSAFE = re.compile(r'[^a-zA-Z0-9_]+')
@@ -46,10 +46,10 @@ def split_body(body):
             verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
             pi.setdefault(verb.lower(), []).append(args.strip())
 
-    for key, value in pi.iteritems():
+    for key, value in pi.items():
         if key in ['acl', ]:
             # join the list of values to a single value
-            pi[key] = u' '.join(value)
+            pi[key] = ' '.join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
             pi[key] = value[-1] # use the last value to copy 1.9 parsing behaviour
@@ -67,7 +67,7 @@ def add_metadata_to_body(metadata, data):
     meta_keys = [NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE, ]
 
     metadata_data = ""
-    for key, value in metadata.iteritems():
+    for key, value in metadata.items():
         if key not in meta_keys:
             continue
         # special handling for list metadata
@@ -79,7 +79,7 @@ def add_metadata_to_body(metadata, data):
     return metadata_data + data
 
 
-def quoteWikinameFS(wikiname, charset=CHARSET):
+def quoteWikinameFS(wikiname, charset=CHARSET19):
     """
     Return file system representation of a Unicode WikiName.
 
@@ -115,7 +115,7 @@ class InvalidFileNameError(Exception):
     pass
 
 
-def unquoteWikiname(filename, charset=CHARSET):
+def unquoteWikiname(filename, charset=CHARSET19):
     """
     Return Unicode WikiName from quoted file name.
 
@@ -126,15 +126,11 @@ def unquoteWikiname(filename, charset=CHARSET):
     :rtype: unicode
     :returns: WikiName
     """
-    # From some places we get called with Unicode strings
-    if isinstance(filename, unicode):
-        filename = filename.encode(CHARSET)
-
     parts = []
     start = 0
     for needle in QUOTED.finditer(filename):
         # append leading unquoted stuff
-        parts.append(filename[start:needle.start()])
+        parts.append(filename[start:needle.start()].encode(charset))
         start = needle.end()
         # Append quoted stuff
         group = needle.group(1)
@@ -144,17 +140,16 @@ def unquoteWikiname(filename, charset=CHARSET):
         try:
             for i in range(0, len(group), 2):
                 byte = group[i:i+2]
-                character = chr(int(byte, 16))
-                parts.append(character)
+                parts.append(bytes.fromhex(byte))
         except ValueError:
             # byte not in hex, e.g 'xy'
             raise InvalidFileNameError(filename)
 
     # append rest of string
     if start == 0:
-        wikiname = filename
+        wikiname = filename.encode(charset)
     else:
-        parts.append(filename[start:len(filename)])
-        wikiname = ''.join(parts)
+        parts.append(filename[start:len(filename)].encode(charset))
+        wikiname = b''.join(parts)
 
     return wikiname.decode(charset)

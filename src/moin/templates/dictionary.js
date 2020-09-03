@@ -12,6 +12,7 @@
 $(document).ready(function () {
     'use strict';
     var i18n_dict = {
+        "Cancel": "{{ _("Cancel") }}",
         "Hide comments": "{{ _("Hide comments") }}",
         "Show comments": "{{ _("Show comments") }}",
         "Hide transclusions": "{{ _("Hide transclusions") }}",
@@ -35,7 +36,8 @@ $(document).ready(function () {
         "Nothing was selected.": "{{ _("Nothing was selected.") }}",
         "All changes will be discarded!": "{{ _("All changes will be discarded!") }}",
         "Toggle font width": "{{ _("Toggle font width") }}",
-        "Download failed, no items were selected.": "{{ _("Download failed, no items were selected.") }}"
+        "Download failed, no items were selected.": "{{ _("Download failed, no items were selected.") }}",
+        "Your saved draft has been loaded.": "{{ _("Your saved draft has been loaded.") }}"
     };
 
     $.i18n.setDictionary(i18n_dict);

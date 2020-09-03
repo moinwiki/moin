@@ -27,11 +27,11 @@ import re
 # file types to be processed
 SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
 
-# stuff considered DOS/WIN
+# stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())
 
 
-class NoDupsLogger(object):
+class NoDupsLogger:
     """
     A simple report logger that suppresses duplicate headings and messages.
     """
@@ -41,11 +41,11 @@ class NoDupsLogger(object):
 
     def log(self, heading, message):
         if heading and heading not in self.headings:
-            print u"\n%s" % heading
+            print("\n%s" % heading)
             self.headings.add(heading)
 
         if message and message not in self.messages:
-            print u"   ", message
+            print("   ", message)
             self.messages.add(message)
 
 
@@ -111,7 +111,7 @@ def check_template_indentation(lines, filename, logger):
                     block_end = block_endings.get(block_start)
                     if not block_end:
                         # should never get here, mismatched indent_after and block_endings
-                        logger.log(filename, u"Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
+                        logger.log(filename, "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
                         continue
                     if any(x in stripped for x in block_end):
                         # found line similar to: {% block ... %}...{% endblock %}
@@ -119,10 +119,10 @@ def check_template_indentation(lines, filename, logger):
                     if any(x in lines[idx + incre] for x in block_end):
                         # found 2 consecutive lines similar to: {% block....\n{% endblock %}
                         continue
-                    logger.log(filename, u"Non-standard indent after line %d -- not fixed!" % (idx + 1))
+                    logger.log(filename, "Non-standard indent after line %d -- not fixed!" % (idx + 1))
             except IndexError:
                 # should never get here, there is an unclosed block near end of template
-                logger.log(filename, u"End of file reached with open block element at line %d!" % (idx + 1))
+                logger.log(filename, "End of file reached with open block element at line %d!" % (idx + 1))
 
         elif stripped.startswith(indent_before):
             # we have found the end of a block
@@ -131,7 +131,7 @@ def check_template_indentation(lines, filename, logger):
                 decre -= 1
             if idx + decre < 0:
                 # should never get here; file begins with something like {% endblock %} or </div>
-                logger.log(filename, u"Beginning of file reached searching for block content at line %d!" % (idx + 1))
+                logger.log(filename, "Beginning of file reached searching for block content at line %d!" % (idx + 1))
                 continue
             prior_indentation, prior_line = calc_indentation(lines[idx + decre])
             if prior_indentation <= indentation:
@@ -148,7 +148,7 @@ def check_template_indentation(lines, filename, logger):
                     if prior_line.startswith(block_end):
                         # found lines similar to: {% block...\n{% endblock %}
                         continue
-                logger.log(filename, u"Non-standard dedent before line %d -- not fixed!" % (idx + 1))
+                logger.log(filename, "Non-standard dedent before line %d -- not fixed!" % (idx + 1))
 
 
 def check_template_spacing(lines, filename, logger):
@@ -163,7 +163,7 @@ def check_template_spacing(lines, filename, logger):
             m_start = [m.start() for m in re.finditer('{%|{{|{#', line)]
             for index in m_start:
                 if not line.startswith((' ', '- '), index + 2) and not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-'):
-                    logger.log(filename, u'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
+                    logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
             m_end = [m.start() for m in re.finditer('%}|}}|#}', line)]
             for index in m_end:
                 if not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2)) and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}'):
@@ -181,7 +181,8 @@ def check_files(filename, suffix):
         line_end = "\n"
     logger = NoDupsLogger()
 
-    with open(filename, "rb") as f:
+    # newline="" does not change incoming line endings
+    with open(filename, "r", encoding="utf-8", newline="") as f:
         lines = f.readlines()
 
     if filename.endswith('.html'):
@@ -192,28 +193,28 @@ def check_files(filename, suffix):
     while lines:
         if not lines[-1].strip():
             del lines[-1]
-            logger.log(filename, u"Empty lines at eof removed.")
+            logger.log(filename, "Empty lines at eof removed.")
         else:
             break
 
-    with open(filename, "wb") as f:
+    with open(filename, "w", encoding="utf-8", newline="") as f:
         for idx, line in enumerate(lines):
             line_length = len(line)
             line = line.replace('\t', '    ')
             if len(line) != line_length:
-                logger.log(filename, u"Tab characters replaced with 4 spaces.")
+                logger.log(filename, "Tab characters replaced with 4 spaces.")
             pep8_line = line.rstrip() + line_end
             f.write(pep8_line)
             # if line was changed, issue warning once for each type of change
             if suffix in WIN_SUFFIXES and not line.endswith("\r\n"):
-                logger.log(filename, u"Line endings changed to DOS style.")
+                logger.log(filename, "Line endings changed to DOS style.")
             elif suffix not in WIN_SUFFIXES and line.endswith("\r\n"):
-                logger.log(filename, u"Line endings changed to Unix style.")
+                logger.log(filename, "Line endings changed to Unix style.")
             elif pep8_line != line:
                 if len(pep8_line) < len(line):
-                    logger.log(filename, u"Trailing blanks removed.")
+                    logger.log(filename, "Trailing blanks removed.")
                 else:
-                    logger.log(filename, u"End of line character added at end of file.")
+                    logger.log(filename, "End of line character added at end of file.")
 
 
 def file_picker(starting_dir):
@@ -241,5 +242,5 @@ if __name__ == "__main__":
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
         starting_dir = os.path.join(starting_dir.split(os.sep + 'scripts')[0], 'src')
-    NoDupsLogger().log(u"Starting directory is %s" % starting_dir, None)
+    NoDupsLogger().log("Starting directory is %s" % starting_dir, None)
     file_picker(starting_dir)

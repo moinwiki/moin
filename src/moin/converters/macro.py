@@ -7,8 +7,6 @@ MoinMoin - Macro handling
 Expands all macro elements in an internal Moin document.
 """
 
-from __future__ import absolute_import, division
-
 from flask import current_app as app
 
 from emeraldtree import ElementTree as ET
@@ -26,7 +24,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class Converter(object):
+class Converter:
     @classmethod
     def _factory(cls, input, output, macros=None, **kw):
         if macros == 'expandall':
@@ -67,7 +65,7 @@ class Converter(object):
             # some standard text.
             logging.exception("Macro {0} raised an exception:".format(name))
             elem_error.append(_('<<%(macro_name)s: execution failed [%(error_msg)s] (see also the log)>>',
-                              macro_name=name, error_msg=unicode(e), ))
+                              macro_name=name, error_msg=str(e), ))
 
         if len(elem_body):
             elem.append(elem_body)

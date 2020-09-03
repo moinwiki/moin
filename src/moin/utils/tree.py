@@ -17,7 +17,7 @@ class Name(ET.QName):
         return ET.Element(self, attrib=attrib, children=children, **extra)
 
 
-class Namespace(unicode):
+class Namespace(str):
     """
     Represents a namespace and factory for Names within this namespace
     """
@@ -57,7 +57,23 @@ class Namespace(unicode):
         return self
 
 
-# MoinMoin namespaces
+# MoinMoin namespaces - any-converter-in => Moin DOM => any-converter-out
+#
+# Namespaces are used to prevent naming collisions
+#    moin_page is used to define many types of elements on the moin DOM
+#    xinclude is used to describe transclusions on the moin DOM
+#    xlink is used to describe links on the moin DOM
+#    the html_in and html_out converters use the html namespace to process file input and output
+#    the html_in and mediawiki_in converters place style attributes on the moin DOM using the html namespace
+#        TODO: the above may be an error, the moin_page namespace should be used
+#    the docbook_in and docbook_out converters use the docbook namespace to process file input and output
+#    xml is used by html_in, html_out, and markdown_in to place ID attributes on the moin DOM
+#        TODO: the above may be an error, the moin_page namespace should be used
+#    xml is used in several tests
+#    the dc namespace is not used
+#    the mathml namespace is not used
+#    the svg namespace is not used
+
 moin_page = Namespace('http://moinmo.in/namespaces/page')
 
 # Well-known namespaces

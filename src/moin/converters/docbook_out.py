@@ -8,22 +8,19 @@ MoinMoin - DocBook output converter
 Converts an internal document tree into a DocBook v5 document.
 """
 
-
-from __future__ import absolute_import, division
-
 from emeraldtree import ElementTree as ET
 
 from moin.utils.tree import html, moin_page, xlink, docbook, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.utils.mime import Type, type_moin_document
 
-from . import default_registry
+from . import default_registry, ElementException
 
 from moin import log
 logging = log.getLogger(__name__)
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> application/docbook+xml
     """
@@ -31,10 +28,10 @@ class Converter(object):
         moin_page: 'moinpage'
     }
 
-    unsupported_tags = set(['separator', ])
+    unsupported_tags = {'separator'}
 
     # Only these admonitions are supported by DocBook 5
-    admonition_tags = set(['caution', 'important', 'note', 'tip', 'warning'])
+    admonition_tags = {'caution', 'important', 'note', 'tip', 'warning'}
 
     # DOM Tree element which can easily be converted into a DocBook
     # element, without attributes.
@@ -118,7 +115,7 @@ class Converter(object):
         We save the result in standard_attribute.
         """
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xml:
                 result[key] = value
         if result:
@@ -137,7 +134,7 @@ class Converter(object):
         """
         uri = element.tag.uri
         name = self.namespaces_visit.get(uri, None)
-        print '==== uri = %s, name = %s' % (uri, name)  # @@@@@@@@@@@@@
+        print('==== uri = %s, name = %s' % (uri, name))  # @@@@@@@@@@@@@
         if name is not None:
             method_name = 'visit_' + name
             method = getattr(self, method_name, None)
@@ -185,7 +182,7 @@ class Converter(object):
         into an <link> tag.
         """
         attrib = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.uri == xlink:
                 attrib[key] = value
         return self.new_copy(docbook.link, element, attrib=attrib)
@@ -258,7 +255,11 @@ class Converter(object):
         A section is closed when we have a new heading with an equal or
         higher level.
         """
-        depth = element.get(moin_page('outline-level'))
+        depth = element.get(moin_page('outline-level'), 1)
+        try:
+            depth = int(depth)
+        except ValueError:
+            raise ElementException('page:outline-level needs to be an integer')
         # We will have a new section
         # under another section
         if depth > self.current_section:
@@ -418,7 +419,7 @@ class Converter(object):
         attrib = {}
         rowspan = element.get(moin_page('number-rows-spanned'))
         colspan = element.get(moin_page('number-columns-spanned'))
-        print "rowspan : {0}".format(rowspan)
+        print("rowspan : {0}".format(rowspan))
         if rowspan:
             attrib[docbook.rowspan] = rowspan
         if colspan:
@@ -490,7 +491,7 @@ class Converter(object):
         """
         title_attr = element.get(html('title'))
         if title_attr:
-            print title_attr
+            print(title_attr)
             children = []
             title_elem = self.new(docbook('title'), attrib={},
                                   children=[title_attr])
@@ -509,7 +510,7 @@ class Converter(object):
         TODO: Add support for font-size attribute
         """
         # Check for the attributes of span
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key.name == 'baseline-shift':
                 if value == 'super':
                     return self.new_copy(docbook.superscript,

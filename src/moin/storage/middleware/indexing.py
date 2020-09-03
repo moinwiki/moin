@@ -48,14 +48,12 @@ will not access the layers below (like the backend), but just the index files,
 usually it is even just the small and thus quick latest-revs index.
 """
 
-
-from __future__ import absolute_import, division
-
 import os
 import shutil
 import datetime
+import time
 
-from collections import Mapping
+from collections.abc import Mapping
 
 from flask import request
 from flask import g as flaskg
@@ -95,13 +93,36 @@ VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
 VALIDATION_HANDLING = VALIDATION_HANDLING_WARN
 
+INDEXER_TIMEOUT = 20.0
+
+
+def get_indexer(fn, **kw):
+    """
+    Return a valid indexer or raise a KeyError.
+
+    Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
+    indexes to storage. Try several times before failing.
+
+    :param fn: the indexer function
+    :param **kw: "revid" is required, index name optional
+    """
+    until = time.time() + INDEXER_TIMEOUT
+    while True:
+        indexer = fn(**kw)
+        if indexer is not None:
+            break
+        time.sleep(2)
+        if time.time() > until:
+            raise KeyError(kw.get('revid', '') + ' - server overload or corrupt index')
+    return indexer
+
 
 def get_names(meta):
     """
     Get the (list of) names from meta data and deal with misc. bad things that
     can happen then (while not all code is fixed to do it correctly).
 
-    TODO make sure meta[NAME] is always a list of unicode
+    TODO make sure meta[NAME] is always a list of str
 
     :param meta: a metadata dictionary that might have a NAME key
     :return: list of names
@@ -111,10 +132,10 @@ def get_names(meta):
     if names is None:
         logging.warning(msg % names)
         names = []
-    elif isinstance(names, str):
+    elif isinstance(names, bytes):
         logging.warning(msg % names)
         names = [names.decode('utf-8'), ]
-    elif isinstance(names, unicode):
+    elif isinstance(names, str):
         logging.warning(msg % names)
         names = [names, ]
     elif isinstance(names, tuple):
@@ -188,15 +209,20 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
                    metadata as a side effect
     :returns: indexable content, text/plain, unicode object
     """
+    if not item_name:
+        try:
+            item_name = get_names(meta)[0]
+        except IndexError:
+            item_name = 'DoesNotExist'
     fqname = split_fqname(item_name)
 
-    class PseudoRev(object):
+    class PseudoRev:
         def __init__(self, meta, data):
             self.meta = meta
             self.data = data
             self.revid = meta.get(REVID)
 
-            class PseudoItem(object):
+            class PseudoItem:
                 def __init__(self, fqname):
                     self.fqname = fqname
                     self.name = fqname.value
@@ -213,13 +239,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
         logging.debug("not indexing content of {0!r} as requested by configuration".format(meta[NAME]))
-        return u''
-
-    if not item_name:
-        try:
-            item_name = get_names(meta)[0]
-        except IndexError:
-            item_name = u'DoesNotExist'
+        return ''
 
     rev = PseudoRev(meta, data)
     try:
@@ -252,7 +272,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             if is_new:
                 # we only can modify new, uncommitted revisions, not stored revs
                 i = Iri(scheme='wiki', authority='', path='/' + item_name)
-                doc.set(moin_page.page_href, unicode(i))
+                doc.set(moin_page.page_href, str(i))
                 refs_conv(doc)
                 # side effect: we update some metadata:
                 meta[ITEMLINKS] = refs_conv.get_links()
@@ -265,11 +285,11 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
         logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(
                           item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
-        doc = u'ERROR [{0!s}]'.format(e)
+        doc = 'ERROR [{0!s}]'.format(e)
         return doc
 
 
-class IndexingMiddleware(object):
+class IndexingMiddleware:
     def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
@@ -490,7 +510,7 @@ class IndexingMiddleware(object):
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async_=False):  # True
+    def index_revision(self, meta, content, backend_name, async_=True):
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -614,6 +634,7 @@ class IndexingMiddleware(object):
             latest_backends_revids = self._find_latest_backends_revids(index)
         finally:
             index.close()
+
         # now build the index of the latest revisions:
         index = storage.open_index(LATEST_REVS)
         try:
@@ -705,8 +726,8 @@ class IndexingMiddleware(object):
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
-                    name = doc.pop(NAME, u"")
-                    content = doc.pop(CONTENT, u"")
+                    name = doc.pop(NAME, "")
+                    content = doc.pop(CONTENT, "")
                     yield [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]
         finally:
             ix.close()
@@ -772,6 +793,35 @@ class IndexingMiddleware(object):
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
+    def search_meta(self, q, idx_name=LATEST_REVS, **kw):
+        """
+        Search with query q, yield Revision metadata from index.
+        """
+        with self.ix[idx_name].searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search(q, **kw):
+                meta = hit.fields()
+                yield meta
+
+    def search_meta_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+        """
+        Same as search_meta, but with paging support.
+        """
+        with self.ix[idx_name].searcher() as searcher:
+            # Note: callers must consume everything we yield, so the for loop
+            # ends and the "with" is left to close the index files.
+            for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
+                meta = hit.fields()
+                yield meta
+
+    def search_results_size(self, q, idx_name=ALL_REVS, **kw):
+        """
+        Return the number of matching revisions.
+        """
+        with self.ix[idx_name].searcher() as searcher:
+            return len(searcher.search(q, **kw))
+
     def documents(self, idx_name=LATEST_REVS, **kw):
         """
         Yield Revisions matching the kw args.
@@ -821,7 +871,8 @@ class IndexingMiddleware(object):
         """
         if name.startswith('@itemid/'):
             return Item(self, **{ITEMID: name[8:]})
-        return Item(self, **{NAME_EXACT: name})
+        fqname = split_fqname(name)
+        return Item(self, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
 
     def get_item(self, **query):
         """
@@ -851,7 +902,7 @@ class IndexingMiddleware(object):
         return Item.existing(self, **query)
 
 
-class PropertiesMixin(object):
+class PropertiesMixin:
     """
     PropertiesMixin offers methods to find out some additional information from meta.
     """
@@ -865,12 +916,12 @@ class PropertiesMixin(object):
             except IndexError:
                 # empty name list, no name:
                 name = None
-        assert isinstance(name, unicode) or not name
+        assert isinstance(name, str) or not name
         return name
 
     @property
     def namespace(self):
-        return self.meta.get(NAMESPACE, u'')
+        return self.meta.get(NAMESPACE, '')
 
     def _fqname(self, name=None):
         """
@@ -1015,7 +1066,10 @@ class Item(PropertiesMixin):
             return item
         raise NoSuchItemError(repr(query))
 
-    def __nonzero__(self):
+    def __repr__(self):
+        return '<Item %s>' % (self.name, )
+
+    def __bool__(self):
         """
         Item exists (== has at least one revision)?
         """
@@ -1078,7 +1132,7 @@ class Item(PropertiesMixin):
         if remote_addr is None:
             try:
                 # if we get here outside a request, this won't work:
-                remote_addr = unicode(request.remote_addr)
+                remote_addr = str(request.remote_addr)
             except:  # noqa
                 pass
         if userid is None:
@@ -1143,7 +1197,7 @@ class Item(PropertiesMixin):
         meta[REVID] = revid
         self.indexer.index_revision(meta, content, backend_name)
         if not overwrite:
-            self._current = self.indexer._document(revid=revid)
+            self._current = get_indexer(self.indexer._document, revid=revid)
         if return_rev:
             return Revision(self, revid)
 
@@ -1184,9 +1238,8 @@ class Revision(PropertiesMixin):
             if is_current:
                 doc = item._current
             else:
-                doc = item.indexer._document(idx_name=ALL_REVS, revid=revid)
-                if doc is None:
-                    raise KeyError
+                doc = get_indexer(item.indexer._document, idx_name=ALL_REVS, revid=revid)
+
         if is_current:
             revid = doc.get(REVID)
             if revid is None:
@@ -1233,8 +1286,17 @@ class Revision(PropertiesMixin):
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.close()
 
-    def __cmp__(self, other):
-        return cmp(self.meta, other.meta)
+    def __hash__(self):
+        return hash(self.meta)
+
+    def __eq__(self, other):
+        return self.meta == other.meta
+
+    def __lt__(self, other):
+        return self.meta < other.meta
+
+    def __repr__(self):
+        return '<Revision %s of Item %s>' % (self.revid[:6], self.name)
 
 
 class Meta(Mapping):
@@ -1272,10 +1334,14 @@ class Meta(Mapping):
             self._meta, _ = self.revision._load()
             return self._meta[key]
 
-    def __cmp__(self, other):
-        if self[REVID] == other[REVID]:
-            return 0
-        return cmp(self[MTIME], other[MTIME])
+    def __hash__(self):
+        return hash(self[REVID])
+
+    def __eq__(self, other):
+        return self[REVID] == other[REVID]
+
+    def __lt__(self, other):
+        return self[MTIME] < other[MTIME]
 
     def __len__(self):
         return 0  # XXX

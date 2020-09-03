@@ -8,13 +8,10 @@
 MoinMoin - Moin Wiki input converter
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from flask import request
-from werkzeug import url_encode
+from werkzeug.urls import url_encode
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
@@ -25,7 +22,7 @@ from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 from moin.i18n import _
 
 from ._args import Arguments
-from ._args_wiki import parse as parse_arguments
+from ._args_wiki import parse as parse_arguments, object_re
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
 from ._table import TableMixin
@@ -35,7 +32,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class _TableArguments(object):
+class _TableArguments:
     rules = r'''
     (?:
         - (?P<number_columns_spanned> \d+)
@@ -86,7 +83,7 @@ class _TableArguments(object):
 
     def arg_repl(self, args, arg, key=None, value_u=None, value_q1=None, value_q2=None):
         key = self.map_keys.get(key, key)
-        value = (value_u or value_q1 or value_q2).decode('unicode-escape')
+        value = (value_u or value_q1 or value_q2).encode('ascii', errors='backslashreplace').decode('unicode-escape')
         if key:
             args.keyword[key] = value
         else:
@@ -129,7 +126,7 @@ class _TableArguments(object):
         args = Arguments()
 
         for match in self._re.finditer(input):
-            data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+            data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
             getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
 
         return args
@@ -214,7 +211,7 @@ class Converter(ConverterMacro):
         $
     """
 
-    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=u''):
+    def block_macro_repl(self, _iter_content, stack, macro, macro_name, macro_args=''):
         """Handles macros using the placeholder syntax.
 
         Arguments are passed as a single positional parameter, each macro must parse as required.
@@ -274,7 +271,7 @@ class Converter(ConverterMacro):
                           optional_args=None):
         stack.clear()
         lines = _Iter(self.block_nowiki_lines(iter_content, len(nowiki_marker)), startno=iter_content.lineno)
-        content = u'\n'.join(lines)
+        content = '\n'.join(lines)
         # the arguments for wiki, csv, and highlight are diverse, one parser does not fit all
         # we push everything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
         all_nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
@@ -284,7 +281,7 @@ class Converter(ConverterMacro):
 
     block_separator = r'(?P<separator> ^ \s* -{4,} \s* $ )'
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class=u'moin-hr{0}'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class='moin-hr{0}'):
         stack.clear()
         hr_height = min((len(separator) - 3), 6)
         hr_height = max(hr_height, 1)
@@ -317,7 +314,7 @@ class Converter(ConverterMacro):
     def block_table_repl(self, iter_content, stack, table):
         stack.clear()
 
-        element = moin_page.table(attrib={moin_page('class'): u'moin-wiki-table'})
+        element = moin_page.table(attrib={moin_page('class'): 'moin-wiki-table'})
         stack.push(element)
         stack.push(moin_page.table_body())
 
@@ -393,7 +390,10 @@ class Converter(ConverterMacro):
         yield line
 
         while True:
-            line = iter_content.next()
+            try:
+                line = next(iter_content)
+            except StopIteration:
+                return
 
             match = self.indent_re.match(line)
 
@@ -432,7 +432,7 @@ class Converter(ConverterMacro):
                 list_type = 'ordered', 'upper-roman'
             elif list_roman:
                 list_type = 'ordered', 'lower-roman'
-            elif list_bullet == u'*':
+            elif list_bullet == '*':
                 list_type = 'unordered', None
 
         element_use = None
@@ -583,10 +583,10 @@ class Converter(ConverterMacro):
                 c = int(entity[3:-1], 16)
             else:
                 c = int(entity[2:-1], 10)
-            c = unichr(c)
+            c = chr(c)
         else:
-            from htmlentitydefs import name2codepoint
-            c = unichr(name2codepoint.get(entity[1:-1], 0xfffe))
+            from html.entities import name2codepoint
+            c = chr(name2codepoint.get(entity[1:-1], 0xfffe))
         stack.top_append(c)
 
     inline_size = r"""
@@ -776,7 +776,7 @@ class Converter(ConverterMacro):
         )
     """
 
-    def inline_macro_repl(self, stack, macro, macro_name, macro_args=u''):
+    def inline_macro_repl(self, stack, macro, macro_name, macro_args=''):
         """Handles macros using the placeholder syntax."""
         elem = self.macro(macro_name, macro_args, macro)
         stack.top_append(elem)
@@ -835,14 +835,13 @@ class Converter(ConverterMacro):
                            object_text=None, object_args=None):
         """Handles objects transcluded within the page."""
         if object_args:
-            args = parse_arguments(object_args).keyword  # XXX needs different parsing
+            args = parse_arguments(object_args, parse_re=object_re).keyword
         else:
             args = {}
-
         query_keys = {}
         attrib = {}
         whitelist = ['width', 'height', 'class']
-        for attr, value in args.iteritems():
+        for attr, value in args.items():
             if attr.startswith('&'):
                 query_keys[attr[1:]] = value
             elif attr in whitelist:
@@ -891,7 +890,7 @@ class Converter(ConverterMacro):
     def tablerow_cell_repl(self, stack, table, row, cell, cell_marker, cell_text, cell_args=None):
 
         def add_attr_to_style(attrib, attr):
-            attr = attr.strip().decode('unicode-escape')
+            attr = attr.strip().encode('ascii', errors='backslashreplace').decode('unicode-escape')
             if not attr.endswith(';'):
                 attr += ';'
             if attrib.get(moin_page('style'), ""):
@@ -926,7 +925,7 @@ class Converter(ConverterMacro):
                 elif key == 'caption':
                     table.insert(0, moin_page.caption(children=[value, ]))
                 elif key == 'tableclass':
-                    table.attrib[moin_page('class')] = value + u' moin-wiki-table'
+                    table.attrib[moin_page('class')] = value + ' moin-wiki-table'
                 elif key == 'rowclass':
                     row.attrib[moin_page('class')] = value
                 elif key == 'class':
@@ -1029,7 +1028,7 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+        data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
         func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
         # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
@@ -1037,7 +1036,7 @@ class Converter(ConverterMacro):
     def parse_block(self, iter_content, arguments):
         attrib = {}
         if arguments:
-            for key, value in arguments.keyword.iteritems():
+            for key, value in arguments.keyword.items():
                 if key in ('style', 'class', ):
                     attrib[moin_page(key)] = value
 
@@ -1045,7 +1044,7 @@ class Converter(ConverterMacro):
         stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
-            data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().iteritems() if v is not None))
+            data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().items() if v is not None))
             self.indent_repl(iter_content, stack, line, **data)
 
         return body

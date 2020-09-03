@@ -8,11 +8,8 @@ MoinMoin - Markdown input converter
 http://daringfireball.net/projects/markdown/
 """
 
-
-from __future__ import absolute_import, division
-
 import re
-import htmlentitydefs
+from html.entities import name2codepoint
 from collections import deque
 
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
@@ -30,7 +27,6 @@ except ImportError:
 from markdown import Markdown
 import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
-from markdown.extensions.toc import TocExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
 from . import default_registry
@@ -58,6 +54,9 @@ def postproc_text(markdown, text):
     if text is None:
         return None
 
+    if text == '[TOC]':
+        return moin_page.table_of_content(attrib={})
+
     for pp in markdown.postprocessors:
         text = pp.run(text)
 
@@ -72,15 +71,15 @@ def postproc_text(markdown, text):
             # character reference
             try:
                 if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
+                    return chr(int(text[3:-1], 16))
                 else:
-                    return unichr(int(text[2:-1]))
+                    return chr(int(text[2:-1]))
             except ValueError:
                 pass
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = chr(name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text  # leave as is
@@ -88,14 +87,14 @@ def postproc_text(markdown, text):
     return re.sub(r"&#?\w+;", fixup, text)
 
 
-class Converter(object):
+class Converter:
     # {{{ html conversion
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = set(['div', 'p', 'strong', 'code', 'quote', 'blockquote'])
+    symmetric_tags = {'div', 'p', 'strong', 'code', 'quote', 'blockquote'}
 
     # HTML tags to define a list, except dl which is a little bit different
-    list_tags = set(['ul', 'ol'])
+    list_tags = {'ul', 'ol'}
 
     # HTML tags which can be convert without attributes in a different DOM tag
     simple_tags = {  # Emphasis
@@ -121,20 +120,20 @@ class Converter(object):
 
     # HTML Tag which does not have equivalence in the DOM Tree
     # But we keep the information using <span element>
-    inline_tags = set(['abbr', 'acronym', 'address', 'dfn', 'kbd'])
+    inline_tags = {'abbr', 'acronym', 'address', 'dfn', 'kbd'}
 
     # HTML tags which are completely ignored by our converter.
     # We even do not process children of these elements.
-    ignored_tags = set(['applet', 'area', 'button', 'caption', 'center', 'fieldset',
-                        'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
-                        'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
-                        'optgroup', 'option', 'param', 'script', 'select', 'style',
-                        'textarea', 'title', 'var',
-    ])
+    ignored_tags = {'applet', 'area', 'button', 'caption', 'center', 'fieldset',
+                    'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
+                    'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
+                    'optgroup', 'option', 'param', 'script', 'select', 'style',
+                    'textarea', 'title', 'var',
+                    }
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion
-    standard_attributes = set(['title', 'class', 'style'])
+    standard_attributes = {'title', 'class', 'style'}
 
     # Regular expression to detect an html heading tag
     heading_re = re.compile('h[1-6]')
@@ -169,9 +168,9 @@ class Converter(object):
 
     def convert_attributes(self, element):
         result = {}
-        for key, value in element.attrib.iteritems():
+        for key, value in element.attrib.items():
             if key in self.standard_attributes:
-                result[html(key)] = value
+                result[moin_page(key)] = value
             if key == 'id':
                 result[xml('id')] = value
         return result
@@ -244,7 +243,7 @@ class Converter(object):
         attrib[key] = 'line-through'
         return self.new_copy(moin_page.span, element, attrib)
 
-    def visit_hr(self, element, default_class=u'moin-hr3'):
+    def visit_hr(self, element, default_class='moin-hr3'):
         return self.new_copy(moin_page.separator, element, {moin_page.class_: default_class})
 
     def visit_img(self, element):
@@ -280,7 +279,7 @@ class Converter(object):
             attrib[key] = element.get(html.data)
 
         # Convert the href attribute into unicode
-        attrib[key] = unicode(attrib[key])
+        attrib[key] = str(attrib[key])
         return moin_page.object(attrib)
 
     def visit_inline(self, element):
@@ -352,7 +351,7 @@ class Converter(object):
     def convert_align_to_class(self, attrib):
         attr = {}
         alignment = attrib.get('align')
-        if alignment in (u'right', u'center', u'left'):
+        if alignment in ('right', 'center', 'left'):
             attr[moin_page.class_] = alignment
         return attr
 
@@ -413,7 +412,7 @@ class Converter(object):
         """
         new = []
         # copy anything but '\n'
-        if hasattr(element, "text") and element.text is not None and element.text != u'\n':
+        if hasattr(element, "text") and element.text is not None and element.text != '\n':
             new.append(postproc_text(self.markdown, element.text))
 
         for child in element:
@@ -427,7 +426,7 @@ class Converter(object):
                 r = (r, )
             new.extend(r)
             # copy anything but '\n'
-            if hasattr(child, "tail") and child.tail is not None and child.tail != u'\n':
+            if hasattr(child, "tail") and child.tail is not None and child.tail != '\n':
                 new.append(postproc_text(self.markdown, child.tail))
         return new
 
@@ -453,16 +452,16 @@ class Converter(object):
         line_numbers = deque()
         lineno = 1
         in_blockquote = False
-        blocks = text.split(u'\n\n')
+        blocks = text.split('\n\n')
         for block in blocks:
             if not block:
                 # bump count because empty blocks will be discarded
                 lineno += 2
                 continue
-            line_count = block.count(u'\n')
+            line_count = block.count('\n')
 
             # detect and fix the problem of interspersed blank lines within blockquotes
-            if block.startswith(u'    ') or block.startswith(u'\n    '):
+            if block.startswith('    ') or block.startswith('\n    '):
                 if in_blockquote:
                     lineno += line_count + 2
                     continue
@@ -470,7 +469,7 @@ class Converter(object):
             else:
                 in_blockquote = False
 
-            if block.startswith(u'\n'):
+            if block.startswith('\n'):
                 lineno += 1
                 line_numbers.append(lineno)
                 lineno += line_count + 2 - 1  # -1 is already in count
@@ -484,15 +483,12 @@ class Converter(object):
         Allow embedded raw HTML markup per https://daringfireball.net/projects/markdown/syntax#html
         This replaces the functionality of RawHtmlPostprocessor in .../markdown/postprocessors.py.
 
-        In addition to users being able to insert raw HTML into markdown items,
-        some markdown extensions output raw HTML strings (e.g. fenced_code outputs "<pre><code>...").
-
-        To prevent hackers from exploiting raw HTML, the strings of safe HTML is converted to
+        To prevent hackers from exploiting raw HTML, the strings of safe HTML are converted to
         tree nodes by using the html_in.py converter.
         """
         try:
-            # we enclose plain text and block tags with DIV-tags
-            p_text = html_in_converter(u'<div>%s</div>' % text)
+            # we enclose plain text and span tags with P-tags
+            p_text = html_in_converter('<p>%s</p>' % text)
             # discard page and body tags
             return p_text[0][0]
         except AssertionError:
@@ -506,8 +502,8 @@ class Converter(object):
         :param node: a tree node
         """
         for idx, child in enumerate(node):
-            if isinstance(child, unicode):
-                if u'<' in child:
+            if isinstance(child, str):
+                if '<' in child:
                     node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
             else:
                 # do not convert markup within a <pre> tag
@@ -524,18 +520,16 @@ class Converter(object):
         :param node: a tree node
         """
         for child in node:
-            # TODO: bug in codehilite? <, > are returned as string (not unicode) given ~~~{html}\n<html>\n~~~
-            if not isinstance(child, (unicode, str)):
+            if not isinstance(child, str):
                 if child.tag == moin_page.p and len(child):
                     for grandchild in child:
-                        if not isinstance(grandchild, unicode) and grandchild.tag in BLOCK_ELEMENTS:
+                        if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
         self.markdown = Markdown(extensions=[
             ExtraExtension(),
-            TocExtension(),
             CodeHiliteExtension(guess_lang=False),
         ])
 

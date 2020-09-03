@@ -40,7 +40,7 @@ if __name__ == "__main__":
         elif os.path.isfile(target):
             convert_file(target)
         else:
-            print "Error: %s does not exist." % target
+            print("Error: %s does not exist." % target)
     else:
-        print "Error: incorrect parameters passed."
-        print "usage: python <path_to>dos2unix.py <target_directory>"
+        print("Error: incorrect parameters passed.")
+        print("usage: python <path_to>dos2unix.py <target_directory>")

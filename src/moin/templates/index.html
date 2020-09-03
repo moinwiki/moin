@@ -48,7 +48,6 @@ places a content type icon before the link), and a link to display subitems
 {% endmacro %}
 
 {% block content %}
-    <div class="moin-index-message"><span></span></div>
     <h1>{{ title }}</h1>
 
     {% if missing_dirs %}
@@ -80,21 +79,20 @@ places a content type icon before the link), and a link to display subitems
             </p>
         {% else %}
             {# display the row of action buttons #}
-            <a href="#" class="moin-select-allitem allitem-toselect moin-button">
+            <a href="#" class="moin-select-allitem allitem-toselect moin-button" title="{{ _('Toggle item selections') }}">
                <i class="fa fa-square-o fa-lg"></i>
                <span class="moin-select-button-text">{{ _("Select All") }}</span>
             </a>
-            <a class="moin-button" id="moin-download-trigger" href="#">
+            <a class="moin-button" id="moin-download-trigger" href="#" title="{{ _('Download selected items') }}">
                <i class="fa fa-download fa-lg"></i>
                {{ _("Download") }}
             </a>
-            <a class="moin-action-tab moin-button" id="moin-delete-trigger"
+            <a class="moin-action-tab moin-button" id="moin-delete-trigger" title="{{ _('Delete selected items') }}"
                data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}" href="#">
                <i class="fa fa-minus-circle fa-lg"></i>
                {{ _("Delete") }}
             </a>
-            <a class="moin-action-tab moin-button"
-               id="moin-destroy-trigger"
+            <a class="moin-action-tab moin-button" id="moin-destroy-trigger" title="{{ _('Destroy selected items') }}"
                data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}" href="#">
                <i class="fa fa-times-circle fa-lg"></i>
                {{ _("Destroy") }}
@@ -102,7 +100,7 @@ places a content type icon before the link), and a link to display subitems
         {% endif %}
         {% if dirs or files or form.contenttype %}
             {# prior filter action on contenttype may have resulted in no dirs or files #}
-            <a class="moin-ct-toggle moin-button" title="{{ _('Filter by content type') }}">
+            <a class="moin-ct-toggle moin-button" title="{{ _('Filter items by content type') }}">
                 <i class="fa fa-filter"></i>
                 {{ _("Filter") }}
             </a>
@@ -112,7 +110,7 @@ places a content type icon before the link), and a link to display subitems
             <i class="fa fa-list-alt"></i>
             {{ _("Namespace") }}
         </a>
-        <a class="moin-button" id="moin-create-new-item" href="#">
+        <a class="moin-button" id="moin-create-new-item" href="#" title="{{ _('Open create item dialog') }}" >
            <i class="fa fa-file-o fa-lg"></i>
            {{ _("New Item") }}
         </a>

@@ -84,7 +84,7 @@ def check_environ():
     return None
 
 
-class Slapd(object):
+class Slapd:
     """ Manage a slapd process for testing purposes """
     def __init__(
         self,
@@ -139,7 +139,7 @@ class Slapd(object):
         os.waitpid(pid, 0)
 
 
-class LdapEnvironment(object):
+class LdapEnvironment:
     """ Manage a (temporary) environment for running a slapd in it """
 
     # default DB_CONFIG bdb configuration file contents
@@ -191,7 +191,8 @@ class LdapEnvironment(object):
         f.write(db_config)
         f.close()
 
-        rootpw = '{MD5}' + base64.b64encode(hashlib.new('md5', self.rootpw).digest())
+        hash_pw = hashlib.new('md5', self.rootpw.encode(self.coding))
+        rootpw = '{MD5}' + base64.b64encode(hash_pw.digest()).decode()
 
         # create slapd.conf from content template in slapd_config
         slapd_config = slapd_config % {
@@ -202,12 +203,9 @@ class LdapEnvironment(object):
             'rootdn': self.rootdn,
             'rootpw': rootpw,
         }
-        if isinstance(slapd_config, unicode):
-            slapd_config = slapd_config.encode(self.coding)
         self.slapd_conf = os.path.join(self.ldap_dir, "slapd.conf")
-        f = open(self.slapd_conf, 'w')
-        f.write(slapd_config)
-        f.close()
+        with open(self.slapd_conf, 'w', encoding=self.coding) as f:
+            f.write(slapd_config)
 
     def start_slapd(self):
         """ start a slapd and optionally wait until it talks with us """
@@ -224,7 +222,6 @@ class LdapEnvironment(object):
         class LDIFLoader(ldif.LDIFParser):
             def handle(self, dn, entry):
                 lo.add_s(dn, ldap.modlist.addModlist(entry))
-
         loader = LDIFLoader(StringIO(ldif_content))
         loader.parse()
 
@@ -240,7 +237,7 @@ class LdapEnvironment(object):
 try:
     import pytest
 
-    class LDAPTstBase(object):
+    class LDAPTstBase:
         """ Test base class for pytest based tests which need a LDAP server to talk to.
 
             Inherit your test class from this base class to test LDAP stuff.

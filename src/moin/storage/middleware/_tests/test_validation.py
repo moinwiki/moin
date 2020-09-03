@@ -5,9 +5,6 @@
 MoinMoin - validation tests
 """
 
-
-from __future__ import absolute_import, division
-
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from moin.constants import keys
@@ -18,7 +15,7 @@ from moin.utils.crypto import make_uuid
 from moin.utils.interwiki import CompositeName
 
 
-class TestValidation(object):
+class TestValidation:
     def test_content(self):
         class REV(dict):
             """ fake rev """
@@ -26,73 +23,73 @@ class TestValidation(object):
         rev = REV()
         rev[keys.ITEMID] = make_uuid()
         rev[keys.REVID] = make_uuid()
-        rev[keys.ACL] = u"All:read"
+        rev[keys.ACL] = "All:read"
 
         meta = {
             keys.REVID: make_uuid(),
             keys.PARENTID: make_uuid(),
-            keys.NAME: [u"a", ],
-            keys.NAMESPACE: u"",
-            keys.ACL: u"All:read",
-            keys.TAGS: [u"foo", u"bar"],
+            keys.NAME: ["a", ],
+            keys.NAMESPACE: "",
+            keys.ACL: "All:read",
+            keys.TAGS: ["foo", "bar"],
         }
 
         state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
-                 keys.NAME: u'somename',  # name we decoded from URL path
+                 keys.NAME: 'somename',  # name we decoded from URL path
                  keys.ACTION: keys.ACTION_SAVE,
-                 keys.HOSTNAME: u'localhost',
-                 keys.ADDRESS: u'127.0.0.1',
+                 keys.HOSTNAME: 'localhost',
+                 keys.ADDRESS: '127.0.0.1',
                  keys.USERID: make_uuid(),
-                 keys.HASH_ALGORITHM: u'b9064b9a5efd8c6cef2d38a8169a0e1cbfdb41ba',
+                 keys.HASH_ALGORITHM: 'b9064b9a5efd8c6cef2d38a8169a0e1cbfdb41ba',
                  keys.SIZE: 0,
-                 keys.WIKINAME: u'ThisWiki',
-                 keys.NAMESPACE: u'',
+                 keys.WIKINAME: 'ThisWiki',
+                 keys.NAMESPACE: '',
                  'rev_parent': rev,
-                 'acl_parent': u"All:read",
-                 'contenttype_current': u'text/x.moin.wiki;charset=utf-8',
-                 'contenttype_guessed': u'text/plain;charset=utf-8',
-                 keys.FQNAME: CompositeName(u'', u'', u'somename'),
+                 'acl_parent': "All:read",
+                 'contenttype_current': 'text/x.moin.wiki;charset=utf-8',
+                 'contenttype_guessed': 'text/plain;charset=utf-8',
+                 keys.FQNAME: CompositeName('', '', 'somename'),
                 }
 
         m = ContentMetaSchema(meta)
         valid = m.validate(state)
-        assert m[keys.CONTENTTYPE].value == u'text/x.moin.wiki;charset=utf-8'
+        assert m[keys.CONTENTTYPE].value == 'text/x.moin.wiki;charset=utf-8'
         if not valid:
             for e in m.children:
-                print e.valid, e
-            print m.valid, m
+                print(e.valid, e)
+            print(m.valid, m)
         assert valid
 
     def test_user(self):
         meta = {
             keys.ITEMID: make_uuid(),
             keys.REVID: make_uuid(),
-            keys.NAME: [u"user name", ],
-            keys.NAMESPACE: u"userprofiles",
-            keys.EMAIL: u"foo@example.org",
-            keys.SUBSCRIPTIONS: [u"{0}:{1}".format(keys.ITEMID, make_uuid()),
-                                 u"{0}::foo".format(keys.NAME),
-                                 u"{0}::bar".format(keys.TAGS),
-                                 u"{0}::".format(keys.NAMERE),
-                                 u"{0}:userprofiles:a".format(keys.NAMEPREFIX),
+            keys.NAME: ["user name", ],
+            keys.NAMESPACE: "userprofiles",
+            keys.EMAIL: "foo@example.org",
+            keys.SUBSCRIPTIONS: ["{0}:{1}".format(keys.ITEMID, make_uuid()),
+                                 "{0}::foo".format(keys.NAME),
+                                 "{0}::bar".format(keys.TAGS),
+                                 "{0}::".format(keys.NAMERE),
+                                 "{0}:userprofiles:a".format(keys.NAMEPREFIX),
                                  ]
         }
 
         invalid_meta = {
-            keys.SUBSCRIPTIONS: [u"", u"unknown_tag:123",
-                                 u"{0}:123".format(keys.ITEMID),
-                                 u"{0}:foo".format(keys.NAME),
+            keys.SUBSCRIPTIONS: ["", "unknown_tag:123",
+                                 "{0}:123".format(keys.ITEMID),
+                                 "{0}:foo".format(keys.NAME),
                                  ]
         }
 
         state = {'trusted': False,  # True for loading a serialized representation or other trusted sources
-                 keys.NAME: u'somename',  # name we decoded from URL path
+                 keys.NAME: 'somename',  # name we decoded from URL path
                  keys.ACTION: keys.ACTION_SAVE,
-                 keys.HOSTNAME: u'localhost',
-                 keys.ADDRESS: u'127.0.0.1',
-                 keys.WIKINAME: u'ThisWiki',
-                 keys.NAMESPACE: u'',
-                 keys.FQNAME: CompositeName(u'', u'', u'somename')
+                 keys.HOSTNAME: 'localhost',
+                 keys.ADDRESS: '127.0.0.1',
+                 keys.WIKINAME: 'ThisWiki',
+                 keys.NAMESPACE: '',
+                 keys.FQNAME: CompositeName('', '', 'somename')
                 }
 
         m = UserMetaSchema(meta)
@@ -100,8 +97,8 @@ class TestValidation(object):
         assert m[keys.CONTENTTYPE].value == CONTENTTYPE_USER
         if not valid:
             for e in m.children:
-                print e.valid, e
-            print m.valid, m
+                print(e.valid, e)
+            print(m.valid, m)
         assert valid
 
         m = UserMetaSchema(invalid_meta)

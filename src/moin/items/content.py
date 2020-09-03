@@ -38,7 +38,7 @@ from flatland import Form, String
 
 from jinja2 import Markup
 
-from werkzeug import is_resource_modified
+from werkzeug.http import is_resource_modified
 
 from whoosh.query import Term, And
 
@@ -138,7 +138,7 @@ def conv_serialize(doc, namespaces, method='polyglot'):
     return out
 
 
-class Content(object):
+class Content:
     """
     Base for content classes defining some helpers, agnostic about content
     data.
@@ -183,21 +183,20 @@ class Content(object):
     data = property(fget=get_data)
 
     @timed('conv_in_dom')
-    def internal_representation(self, attributes=None):
+    def internal_representation(self, attributes=None, preview=None):
         """
         Return the internal representation of a document using a DOM Tree
         """
-        hash_name = HASH_ALGORITHM
-        hash_hexdigest = self.rev.meta.get(hash_name)
-        if hash_hexdigest:
-            cid = cache_key(usage="internal_representation",
-                            hash_name=hash_name,
-                            hash_hexdigest=hash_hexdigest,
-                            attrs=repr(attributes))
-            doc = app.cache.get(cid)
-        else:
-            # likely a non-existing item
-            doc = cid = None
+        doc = cid = None
+        if preview is None:
+            hash_name = HASH_ALGORITHM
+            hash_hexdigest = self.rev.meta.get(hash_name)
+            if hash_hexdigest:
+                cid = cache_key(usage="internal_representation",
+                                hash_name=hash_name,
+                                hash_hexdigest=hash_hexdigest,
+                                attrs=repr(attributes))
+                doc = app.cache.get(cid)
         if doc is None:
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
@@ -209,14 +208,15 @@ class Content(object):
             smiley_conv = reg.get(type_moin_document, type_moin_document, icon='smiley')
 
             # We can process the conversion
-            links = Iri(scheme='wiki', authority='', path='/' + self.name)
-            doc = input_conv(self.rev, self.contenttype, arguments=attributes)
+            name = self.rev.fqname.fullname if self.rev else self.name
+            links = Iri(scheme='wiki', authority='', path='/' + name)
+            doc = input_conv(preview or self.rev, self.contenttype, arguments=attributes)
             # XXX is the following assuming that the top element of the doc tree
             # is a moin_page.page element? if yes, this is the wrong place to do that
             # as not every doc will have that element (e.g. for images, we just get
             # moin_page.object, for a tar item, we get a moin_page.table):
-            doc.set(moin_page.page_href, unicode(links))
-            if self.contenttype.startswith((u'text/x.moin.wiki', u'text/x-mediawiki', u'text/x.moin.creole', )):
+            doc.set(moin_page.page_href, str(links))
+            if self.contenttype.startswith(('text/x.moin.wiki', 'text/x-mediawiki', 'text/x.moin.creole', )):
                 doc = smiley_conv(doc)
             if cid:
                 app.cache.set(cid, doc)
@@ -248,11 +248,11 @@ class Content(object):
             flaskg.clock.stop('highlight')
         return doc
 
-    def _render_data(self):
+    def _render_data(self, preview=None):
         try:
             from moin.converters import default_registry as reg
             # TODO: Real output format
-            doc = self.internal_representation()
+            doc = self.internal_representation(preview=preview)
             doc = self._expand_document(doc)
             flaskg.clock.start('conv_dom_html')
             html_conv = reg.get(type_moin_document, Type('application/x-xhtml-moin-page'))
@@ -350,7 +350,7 @@ class Binary(Content):
             else:
                 return None, None
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}):
+    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         hash_name = HASH_ALGORITHM
         if oldrev.meta[hash_name] == newrev.meta[hash_name]:
             return _("The items have the same data hash code (that means they very likely have the same data).")
@@ -429,7 +429,7 @@ class Application(Binary):
     """ Base class for application/* """
 
 
-class TarMixin(object):
+class TarMixin:
     """
     TarMixin offers additional functionality for tar-like items to list and
     access member files and to create new revisions by multiple posts.
@@ -459,30 +459,30 @@ class TarMixin(object):
         to a new item revision.
 
         :param name: name of the data in the container file
-        :param content: the data to store into the tar file (str or file-like)
-        :param content_length: byte-length of content (for str, None can be given)
+        :param content: the data to store into the tar file (bytes or file-like)
+        :param content_length: byte-length of content (for bytes, None can be given)
         :param expected_members: set of expected member file names
         """
         if name not in expected_members:
             raise StorageError("tried to add unexpected member {0!r} to container item {1!r}".format(name, self.name))
-        if isinstance(name, unicode):
-            name = name.encode('utf-8')
+        assert isinstance(name, str)
         temp_fname = os.path.join(tempfile.gettempdir(), 'TarContainer_' +
                                   cache_key(usage='TarContainer', name=self.name))
-        tf = tarfile.TarFile(temp_fname, mode='a')
-        ti = tarfile.TarInfo(name)
-        if isinstance(content, bytes):
-            if content_length is None:
-                content_length = len(content)
-            content = BytesIO(content)  # we need a file obj
-        elif not hasattr(content, 'read'):
-            logging.error("unsupported content object: {0!r}".format(content))
-            raise StorageError("unsupported content object: {0!r}".format(content))
-        assert content_length >= 0  # we don't want -1 interpreted as 4G-1
-        ti.size = content_length
-        tf.addfile(ti, content)
-        tf_members = set(tf.getnames())
-        tf.close()
+        with tarfile.open(temp_fname, mode='a') as tf:
+            ti = tarfile.TarInfo(name)
+            if isinstance(content, bytes):
+                if content_length is None:
+                    content_length = len(content)
+                content = BytesIO(content)  # we need a file obj
+            elif not hasattr(content, 'read'):
+                logging.error("unsupported content object: {0!r}".format(content))
+                raise StorageError("unsupported content object: {0!r}".format(content))
+            else:
+                raise NotImplemented
+            assert content_length >= 0  # we don't want -1 interpreted as 4G-1
+            ti.size = content_length
+            tf.addfile(ti, content)
+            tf_members = set(tf.getnames())
         if tf_members - expected_members:
             msg = "found unexpected members in container item {0!r}".format(self.name)
             logging.error(msg)
@@ -491,9 +491,8 @@ class TarMixin(object):
         if tf_members == expected_members:
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
-            data = open(temp_fname, 'rb')
-            self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
-            data.close()
+            with open(temp_fname, 'rb') as data:
+                self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
             os.remove(temp_fname)
 
 
@@ -515,7 +514,7 @@ class ApplicationXGTar(ApplicationXTar):
     display_name = 'TGZ'
 
 
-class ZipMixin(object):
+class ZipMixin:
     """
     ZipMixin offers additional functionality for zip-like items to list and
     access member files.
@@ -737,14 +736,14 @@ class TransformableBitmapImage(RenderableBitmapImage):
         url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template('atom.html',
                                oldrev=oldrev, newrev=newrev, get='binary',
-                               content=Markup(u'<img src="{0}" />'.format(escape(url))))
+                               content=Markup('<img src="{0}" />'.format(escape(url))))
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}):
+    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
             return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
         url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
-        return Markup(u'<img src="{0}" />'.format(escape(url)))
+        return Markup('<img src="{0}" />'.format(escape(url)))
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -839,27 +838,27 @@ class Text(Binary):
                 data = item.data_form_to_internal(data)
                 data = item.data_internal_to_storage(data)
                 # we know it is text and utf-8 - XXX is there a way to get the charset of the form?
-                contenttype_guessed = u'text/plain;charset=utf-8'
+                contenttype_guessed = 'text/plain;charset=utf-8'
             return data, contenttype_guessed
 
     # text/plain mandates crlf - but in memory, we want lf only
     def data_internal_to_form(self, text):
         """ convert data from memory format to form format """
-        return text.replace(u'\n', u'\r\n')
+        return text.replace('\n', '\r\n')
 
     def data_form_to_internal(self, data):
         """ convert data from form format to memory format """
-        return data.replace(u'\r\n', u'\n')
+        return data.replace('\r\n', '\n')
 
     def data_internal_to_storage(self, text):
         """ convert data from memory format to storage format """
-        return text.replace(u'\n', u'\r\n').encode(CHARSET)
+        return text.replace('\n', '\r\n').encode(CHARSET)
 
     def data_storage_to_internal(self, data):
         """ convert data from storage format to memory format """
-        return data.decode(CHARSET).replace(u'\r\n', u'\n')
+        return data.decode(CHARSET).replace('\r\n', '\n')
 
-    def _render_data_diff_html(self, oldrev, newrev, template, rev_links={}):
+    def _render_data_diff_html(self, oldrev, newrev, template, rev_links={}, fqname=None):
         """ Render HTML formatted meta and content diff of 2 revisions
 
         :param oldrev: old revision object
@@ -869,10 +868,10 @@ class Text(Binary):
         """
         from moin.items import Item  # XXX causes import error if placed near top
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
-        item = Item.create(newrev.meta['name'][0], rev_id=newrev.meta['revid'])
+        item = Item.create(fqname.fullname, rev_id=newrev.meta['revid'])
         rendered = Markup(item.content._render_data())
         return render_template(template,
-                               item_name=self.name,
+                               item_name=fqname.fullname,
                                oldrev=oldrev,
                                newrev=newrev,
                                diffs=diffs,
@@ -903,12 +902,12 @@ class Text(Binary):
         new_text = self.data_storage_to_internal(newfile.read())
         return text_diff(old_text.splitlines(), new_text.splitlines())
 
-    def _render_data_diff_atom(self, oldrev, newrev):
+    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
         """ renders diff in HTML for atom feed """
-        return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html')
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text_atom.html', fqname=fqname)
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}):
-        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html', rev_links=rev_links)
+    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
+        return self._render_data_diff_html(oldrev, newrev, 'diff_text.html', rev_links=rev_links, fqname=fqname)
 
     def _render_data_diff_text(self, oldrev, newrev):
         """ Render text diff of 2 revisions' contents
@@ -1115,9 +1114,9 @@ class DrawPNGMap(Draw):
         if image_map:
             mapid, image_map = self._transform_map(image_map, title)
             title = _('Clickable drawing: %(filename)s', filename=self.name)
-            return Markup(image_map + u'<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
+            return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
-            return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, title))
+            return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
 
 
 class DrawAWDTWDBase(DrawPNGMap):
@@ -1156,7 +1155,7 @@ class TWikiDraw(DrawAWDTWDBase):
     """
     contenttype = 'application/x-twikidraw'
     display_name = 'TDRAW'
-    _expected_members = set(['drawing.draw', 'drawing.map', 'drawing.png'])
+    _expected_members = {'drawing.draw', 'drawing.map', 'drawing.png'}
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_twikidraw.html"
@@ -1179,7 +1178,7 @@ class AnyWikiDraw(DrawAWDTWDBase):
     """
     contenttype = 'application/x-anywikidraw'
     display_name = 'ADRAW'
-    _expected_members = set(['drawing.svg', 'drawing.map', 'drawing.png'])
+    _expected_members = {'drawing.svg', 'drawing.map', 'drawing.png'}
 
     class ModifyForm(Draw.ModifyForm):
         template = "modify_anywikidraw.html"
@@ -1195,10 +1194,10 @@ class AnyWikiDraw(DrawAWDTWDBase):
     def _transform_map(self, image_map, title):
         # drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
         mapid = 'ImageMapOf' + self.name  # TODO: make it unique
-        image_map = image_map.replace(u'id="drawing.svg"', '')
-        image_map = image_map.replace(u'name="drawing.svg"', u'name="{0}"'.format(mapid))
+        image_map = image_map.replace('id="drawing.svg"', '')
+        image_map = image_map.replace('name="drawing.svg"', 'name="{0}"'.format(mapid))
         # unxml, because 4.01 concrete will not validate />
-        image_map = image_map.replace(u'/>', u'>')
+        image_map = image_map.replace('/>', '>')
         return mapid, image_map
 
 
@@ -1220,13 +1219,13 @@ class SvgDraw(Draw):
         svg_content = svg_upload.decode('base_64')
         content_length = None
         self.put_member("drawing.svg", svg_content, content_length,
-                        expected_members=set(['drawing.svg', 'drawing.png']))
+                        expected_members={'drawing.svg', 'drawing.png'})
         self.put_member("drawing.png", png_content, content_length,
-                        expected_members=set(['drawing.svg', 'drawing.png']))
+                        expected_members={'drawing.svg', 'drawing.png'})
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
         png_url = url_for('frontend.get_item', item_name=self.name, member='drawing.png', rev=self.rev.revid)
-        return Markup(u'<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))
+        return Markup('<img src="{0}" alt="{1}" />'.format(png_url, drawing_url))

@@ -15,7 +15,7 @@ from flask import request, Response
 from flask import current_app as app
 from flask import g as flaskg
 
-from werkzeug.contrib.atom import AtomFeed
+from feedgen.feed import FeedGenerator
 from jinja2 import Markup
 
 from whoosh.query import Term, And
@@ -54,10 +54,14 @@ def atom(item_name):
         cid = None
     if content is None:
         if not item_name:
-            title = u"{0}".format(app.cfg.sitename)
+            title = "{0}".format(app.cfg.sitename)
         else:
-            title = u"{0} - {1}".format(app.cfg.sitename, item_name)
-        feed = AtomFeed(title=title, feed_url=request.url, url=request.host_url)
+            title = "{0} - {1}".format(app.cfg.sitename, item_name)
+        feed = FeedGenerator()
+        feed.id(request.url)
+        feed.title(title)
+        feed.link(href=request.host_url)
+        feed.link(href=request.url, rel='self')
         query = Term(WIKINAME, app.cfg.interwikiname)
         if item_name:
             query = And([query, Term(NAME_EXACT, item_name), ])
@@ -73,7 +77,8 @@ def atom(item_name):
                 if previous_revid is not None:
                     # HTML diff for subsequent revisions
                     previous_rev = item[previous_revid]
-                    content = hl_item.content._render_data_diff_atom(previous_rev, this_rev)
+                    content = hl_item.content._render_data_diff_atom(previous_rev, this_rev,
+                                                                     fqname=this_rev.item.fqname)
                 else:
                     # full html rendering for new items
                     content = render_template('atom.html', get='first_revision', rev=this_rev,
@@ -81,7 +86,7 @@ def atom(item_name):
                 content_type = 'html'
             except Exception as e:
                 logging.exception("content rendering crashed")
-                content = _(u'MoinMoin feels unhappy.')
+                content = _('MoinMoin feels unhappy.')
                 content_type = 'text'
             author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, '')
@@ -90,19 +95,19 @@ def atom(item_name):
                 if len(rev_comment) > 80:
                     content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:],
                                               content=Markup(content))
-                    rev_comment = u"{0}...".format(rev_comment[:79])
-                feed_title = u"{0} - {1}".format(author.get(NAME, ''), rev_comment)
+                    rev_comment = "{0}...".format(rev_comment[:79])
+                feed_title = "{0} - {1}".format(author.get(NAME, ''), rev_comment)
             else:
-                feed_title = u"{0}".format(author.get(NAME, ''))
+                feed_title = "{0}".format(author.get(NAME, ''))
             if not item_name:
-                feed_title = u"{0} - {1}".format(name, feed_title)
-            feed.add(title=feed_title, title_type='text',
-                     summary=content, summary_type=content_type,
-                     author=author,
-                     url=url_for_item(name, rev=this_revid, _external=True),
-                     updated=datetime.fromtimestamp(rev.meta[MTIME]),
-            )
-        content = feed.to_string()
+                feed_title = "{0} - {1}".format(name, feed_title)
+            feed_entry = feed.add_entry()
+            feed_entry.id(url_for_item(name, rev=this_revid, _external=True))
+            feed_entry.title(feed_title)
+            feed_entry.summary(content)
+            feed_entry.author({'name': author.get(NAME, '')})
+            feed_entry.link(href=url_for_item(name, rev=this_revid, _external=True))
+        content = feed.atom_str(pretty=True).decode("utf-8")
         # Hack to add XSLT stylesheet declaration since AtomFeed doesn't allow this
         content = content.split("\n")
         content.insert(1, render_template('atom.html', get='xml'))

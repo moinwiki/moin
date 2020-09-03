@@ -1,3 +1,11 @@
+{#
+    As of July, 2017, this template is bypassed and the default (moinwiki) item type is selected.
+    See issue #576: Links to tickets and blogs removed from UI, both are broken, incomplete
+
+    Renders links to varios item types (default (moinwiki), ticket, blog).
+    User must choose one to create an item.
+#}
+
 {% extends theme("show.html") %}
 {% block content %}
     <h1>{{ _("Item not found, create it now?") }}</h1>

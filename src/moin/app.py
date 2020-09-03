@@ -10,9 +10,8 @@ MoinMoin - wsgi application setup and related code
 Use create_app(config) to create the WSGI application (using Flask).
 """
 
-from __future__ import absolute_import, division
-
 import os
+from os import path
 import sys
 
 # do this early, but not in moin/__init__.py because we need to be able to
@@ -27,6 +26,7 @@ from flask_caching import Cache
 from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
+from whoosh.index import EmptyIndexError
 
 from moin.constants.misc import ANON
 from moin.i18n import i18n_init
@@ -34,13 +34,14 @@ from moin.i18n import _, L_, N_
 from moin.themes import setup_jinja_env, themed_error
 from moin.utils.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
-from moin import auth, user
+from moin import auth, user, config
 
 from moin import log
 logging = log.getLogger(__name__)
 
 
-if os.getcwd() not in sys.path:
+if os.getcwd() not in sys.path and '' not in sys.path:
+    # required in cases where wikiconfig_local.py imports wikiconfig_editme.py, see #698
     sys.path.append(os.getcwd())
 
 
@@ -78,18 +79,24 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
     clock.start('create_app load config')
     if flask_config_file:
-        app.config.from_pyfile(flask_config_file)
+        app.config.from_pyfile(path.abspath(flask_config_file))
     else:
         if not app.config.from_envvar('MOINCFG', silent=True):
             # no MOINCFG env variable set, try stuff in cwd:
-            from os import path
             flask_config_file = path.abspath('wikiconfig_local.py')
             if not path.exists(flask_config_file):
                 flask_config_file = path.abspath('wikiconfig.py')
                 if not path.exists(flask_config_file):
-                    flask_config_file = None
+                    # we should be here only because wiki admin is performing `moin create-instance`
+                    if 'create-instance' in sys.argv:
+                        config_path = path.dirname(config.__file__)
+                        flask_config_file = path.join(config_path, 'wikiconfig.py')
+                    else:
+                        flask_config_file = None
+            else:
+                logging.warning("Use of wikiconfig_editme.py is deprecated, merge into wikiconfig.py.")
             if flask_config_file:
-                app.config.from_pyfile(flask_config_file)
+                app.config.from_pyfile(path.abspath(flask_config_file))
     if flask_config_dict:
         app.config.update(flask_config_dict)
     Config = moin_config_class
@@ -99,7 +106,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
         if warn_default:
             logging.warning("using builtin default configuration")
         from moin.config.default import DefaultConfig as Config
-    for key, value in kwargs.iteritems():
+    for key, value in kwargs.items():
         setattr(Config, key, value)
     if Config.secrets is None:
         # reuse the secret configured for flask (which is required for sessions)
@@ -190,7 +197,14 @@ def init_backends(app):
                                               acl_rights_contents=app.cfg.acl_rights_contents)
     if app.cfg.create_index:
         app.storage.create()
-    app.storage.open()
+    try:
+        app.storage.open()
+    except EmptyIndexError:
+        # we should be here only because wiki admin is performing `moin create-instance`
+        if 'create-instance' in sys.argv:
+            pass
+        else:
+            raise
 
 
 def deinit_backends(app):
@@ -285,4 +299,10 @@ def teardown_wiki(response):
     except AttributeError:
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass
+    if hasattr(flaskg, 'edit_utils'):
+        # if transaction fails with sql file locked, we try to free it here
+        try:
+            flaskg.edit_utils.conn.close()
+        except AttributeError:
+            pass
     return response

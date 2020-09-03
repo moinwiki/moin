@@ -1,0 +1,51 @@
+{#
+    Displays list of wanted items and names of items having links or
+    transclusions refering to the non-existant item.
+
+    If the wanting item has multiple names, only the first name is displayed.
+#}
+
+{% extends theme("layout.html") %}
+
+{% macro item_row(fq_name, who_wants) %}
+    <tr>
+        <td>
+            <a class="moin-fqname"
+               href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
+               {% if fq_name.fullname != fq_name|string %}
+                   title="{{ fq_name }}"
+               {% endif %}>
+               {{ fq_name.fullname }}
+            </a>
+        </td>
+        <td>
+            {% set names = who_wants[fq_name.fullname] %}
+            {% for name in names %}
+                <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a>
+                <br>
+            {% endfor %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{% block content %}
+    {% if headline %}
+        <h1>{{ headline }}</h1>
+    {% endif %}
+    {% if fq_names %}
+        <h2>Total: {{ fq_names|count }}</h2>
+        <table class="moin-link-list">
+            <thead>
+                <tr>
+                    <td> {{ _('Wanted Item') }} </td>
+                    <td> {{ _('Referring Item') }} </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fq_name in fq_names|sort(attribute='fullname') %}
+                    {{ item_row(fq_name, who_wants) }}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

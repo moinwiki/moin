@@ -2,8 +2,8 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """
-Contains events called by py.test during the life-cycle of the test suite
-This module is automatically loaded by py.test, which looks for a file
+Contains events called by pytest during the life-cycle of the test suite
+This module is automatically loaded by pytest, which looks for a file
 of this name
 """
 
@@ -21,12 +21,12 @@ def pytest_runtest_makereport(item, call):
     - item: the method called
     - call: an object of type CallInfo, which has two properties, of which
       excinfo contains info about any exception that got thrown by the method
-    This method is called automatically by py.test.  The name of the method
-    is used by py.test to locate it, and decide when to call it
+    This method is called automatically by pytest.  The name of the method
+    is used by pytest to locate it, and decide when to call it
     This specific method instance is used to take a screenshot whenever a test
     fails, ie whenever the method throws an exception
     """
     if call.excinfo is not None:
         if driver_register.get_driver() is not None and hasattr(item, 'obj'):
             driver_register.get_driver().get_screenshot_as_file(
-                unicode(item.obj).split(u" ")[2] + u'.png')
+                str(item.obj).split(" ")[2] + '.png')

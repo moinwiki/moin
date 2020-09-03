@@ -41,7 +41,7 @@ the menu::
     dump-html *     create a static HTML image of wiki *options, see docs
     index           delete and rebuild indexes
 
-    css             run Stylus and lessc to update theme CSS files
+    css             run lessc to update basic theme CSS files
     tests *         run tests, output to pytest.txt *options (-v -k my_test)
     coding-std      correct scripts that taint the repository with trailing spaces..
     api             update moin api docs (files are under git version control)
@@ -58,20 +58,13 @@ moin Interface
 --------------
 
 :program:`moin` is the command line interface to miscellaneous MoinMoin Wiki related
-tools. The virtual environment must be activated before running these commands::
+tools.
 
-    . activate    # Unix
-    activate      # Windows
+If you invoke :program:`moin` without any arguments, it will show a short quick help,
 
-If you invoke :program:`moin` without any arguments, it will start the
-builtin server and you'll have moin running! This is a shortcut for
-invoking :program:`moin moin`.
+`moin --help` will show a more complete overview:
 
-:program:`moin --help` will give a list of available subcommands.
-
-:program:`moin <subcommand> --help` will give help for some subcommand.
-
-Example output of the `moin --help` command follows::
+::
 
     usage: moin [-c CONFIG] [-i] [-s] [-?]
         {moin,index-create,index-build,index-update,index-destroy,index-move,index-optimize,

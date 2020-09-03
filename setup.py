@@ -9,8 +9,8 @@ import sys
 from setuptools import setup, find_packages
 
 
-if sys.hexversion < 0x2070000 or sys.hexversion > 0x2999999:
-    sys.exit("Error: MoinMoin requires Python 2.7.x., current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3050000:
+    sys.exit("Error: MoinMoin requires Python 3.5+., current version is %s\n" % (platform.python_version(), ))
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -21,6 +21,7 @@ with open(os.path.join(basedir, 'README.rst')) as f:
 setup_args = dict(
     name="moin",
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
+    long_description_content_type="text/x-rst",
     long_description=long_description,
     author="Juergen Hermann et al.",
     author_email="moin-user@python.org",
@@ -30,7 +31,7 @@ setup_args = dict(
     keywords="wiki web",
     platforms="any",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
         "Intended Audience :: Education",
         "Intended Audience :: End Users/Desktop",
@@ -41,7 +42,11 @@ setup_args = dict(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -79,17 +84,17 @@ setup_args = dict(
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Script>=2.0.5',  # scripting support
-        # TODO: Flask-Theme 0.2.0 does not have python 3 support
-        # fix Flask-Theme or add new package to pypi based upon: https://bitbucket.org/RogerHaase/flask-themes/get/6f0fbeb3156b.tar.gz#egg=Flask-Themes-0.3.0
-        'Flask-Theme>=0.2.0',  # theme support
+        'Flask-Theme>=0.3.5',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
+        'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
         'Jinja2>=2.7',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug>=0.11.2',  # wsgi toolkit
+        'Werkzeug>=1.0.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
-        'pdfminer',  # pdf -> text/plain conversion
+        'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
+        'sqlalchemy>=1.3.16',  # used by sqla store TODO see: #1014
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
         'XStatic-Font-Awesome>=4.1.0.0',
@@ -111,7 +116,7 @@ setup_args = dict(
         'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
                                          # requires special libs/header to be installed before it can be compiled successfully
                                          # windows binaries available from 3rd parties
-        'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
+        # 'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
     },
     entry_points=dict(
         console_scripts=['moin = moin.scripts:main'],

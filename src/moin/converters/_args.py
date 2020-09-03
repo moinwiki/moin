@@ -6,7 +6,7 @@ MoinMoin - Arguments wrapper
 """
 
 
-class Arguments(object):
+class Arguments:
     """
     Represent an argument list that may contain positional or keyword args.
     """
@@ -46,14 +46,14 @@ class Arguments(object):
         """
         for value in self.positional:
             yield None, value
-        for item in self.keyword.iteritems():
+        for item in self.keyword.items():
             yield item
 
     def keys(self):
         """
         Return an iterator over all keys from the keyword arguments.
         """
-        for key in self.keyword.iterkeys():
+        for key in self.keyword.keys():
             yield key
 
     def values(self):
@@ -62,5 +62,5 @@ class Arguments(object):
         """
         for value in self.positional:
             yield value
-        for value in self.keyword.itervalues():
+        for value in self.keyword.values():
             yield value

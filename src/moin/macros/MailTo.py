@@ -34,12 +34,12 @@ class Macro(MacroInlineBase):
         try:
             text = arguments[1]
         except IndexError:
-            text = u''
+            text = ''
 
         if flaskg.user.valid:
             # decode address and generate mailto: link
             email = decodeSpamSafeEmail(email)
-            result = moin_page.a(attrib={xlink.href: u'mailto:{0}'.format(email)}, children=[text or email])
+            result = moin_page.a(attrib={xlink.href: 'mailto:{0}'.format(email)}, children=[text or email])
         else:
             # unknown user, maybe even a spambot, so just return text as given in macro args
             if text:

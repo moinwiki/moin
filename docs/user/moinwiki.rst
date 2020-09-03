@@ -167,29 +167,63 @@ External Links
 Images and Transclusions
 ========================
 
+Transclusion syntax is defined as follows: ::
+
+  {{<target>|<optional alternate text>|<optional parameters>}}
+
+  {{bird.jpg|rare yellow bird|class=center}}
+
+
+- `<target>` is a relative or absolute URL pointing to an image, video, audio, or web page.
+- `<optional alternate text>` has several potential uses:
+
+   - Screen readers used by visually impaired users will speak the text.
+   - The alternate text may be displayed by the browser if the URL is broken.
+   - Search engine crawlers may use the text to index the page or image.
+- `optional parameters` may be used to resize or position the target.
+
+   - the browser will automatically resize the image to fit the enclosing container
+     by specifying either class=resize or width=100% height=auto
+   - Images or other targets can be resized on the client side by specifying
+     an option of `width=nn` or `height=nn` where nn is the desired size in pixels.
+   - If Pillow is installed on the server, JPEG (or JPG) images can be resized
+     on the server by specifying an option of `&w=nn` or `&h=nn` where nn is the
+     desired size in pixels.
+   - Images embedded within text can be positioned relative to a line of text by
+     using `class=bottom`, `class=top` or `class="middle"`.
+   - Images displayed as block elements my be floated left or right by using
+     `class="left"` or `class=right` respectively, or centered by using `class=center`.
+
 +----------------------------------------------------+---------------------------------------+
 | Markup                                             | Comment                               |
 +====================================================+=======================================+
-| ``{{example.png}}``                                | Embed example.png inline              |
+| ``text {{example.png}} text``                      | Embed example.png inline              |
 +----------------------------------------------------+---------------------------------------+
-| ``{{https://static.moinmo.in/logos/moinmoin.png}}``| Embed example.png inline              |
+| ``text {{example.png||class=top height=96}} text`` | Embed example.png inline              |
++----------------------------------------------------+---------------------------------------+
+|                                                    |                                       |
+| ``{{example.png||class=center}}``                  | example.png as centered image         |
+|                                                    |                                       |
++----------------------------------------------------+---------------------------------------+
+| ``{{https://static.moinmo.in/logos/moinmoin.png}}``| example.png aligned left, not float   |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ItemName}}``                                   | Transclude (embed the contents of)    |
-|                                                    | ItemName inline.                      |
+|                                                    | ItemName                              |
 +----------------------------------------------------+---------------------------------------+
-| ``{{/SubItem}}``                                   | Transclude SubItem inline.            |
+| ``{{/SubItem}}``                                   | Transclude SubItem                    |
++----------------------------------------------------+---------------------------------------+
+| ``{{ example.jpg || class=resize }}``              | browser will automatically resize     |
+|                                                    | image to fit the enclosing container  |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ example.jpg || width=20, height=100 }}``      | Resizes example.png by using HTML     |
 |                                                    | tag attributes                        |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ example.jpg || &w=20 }}``                     | Resizes example.png by using server-  |
-|                                                    | side compression, PIL needs to be     |
-|                                                    | installed.                            |
+|                                                    | side compression, requires PIL        |
 +----------------------------------------------------+---------------------------------------+
 | ``{{ https://moinmo.in/ || width=800 }}``          | Resizes the ``object`` which is       |
-|                                                    | embedded using HTML tags. Also markup |
-|                                                    | involving '&' parameters like ``&w``  |
-|                                                    | doesn't make much sense.              |
+|                                                    | embedded using HTML tags. Here markup |
+|                                                    | like ``&w=800`` will not work.        |
 +----------------------------------------------------+---------------------------------------+
 
 **Extra Info**:
@@ -395,6 +429,25 @@ Definition Lists
  - Using the prescribed Moin Wiki markup will, in fact, produce two
    separate definitions in MoinMoin (using separate ``<dd>`` tags).
 
+Horizontal Rules
+================
+
+To create a horizontal rule, start a line with 4 or more hyphen (-) characters. Nine (or more) characters creates a line of maximum height.
+
+**Markup**: ::
+
+ Text
+ ----
+ Text
+
+**Result**:
+
+Text
+
+----
+
+Text
+
 Tables
 ======
 
@@ -472,6 +525,9 @@ Table Styling Example
  ||cell in the 2nd column of the 2nd row||
  ||<rowstyle="font-weight: bold;" class="monospaced">monospaced text||bold text||
 
+ ||<tableclass="no-borders">A||B||C||
+ ||D||E||F||
+
 **Result**:
 
 
@@ -487,7 +543,8 @@ Table Styling Example
 |``monospaced text``   |**bold text**                          |
 +----------------------+---------------------------------------+
 
-
+| A B C
+| D E F
 
 Verbatim Display
 ----------------
@@ -635,13 +692,14 @@ danger, error, hint, important, note, tip, and warning.
  will look restless and will be harder to follow than a page where
  admonitions are used sparingly.
 
-CSS classes for use with the wiki parser
-----------------------------------------
+CSS classes for use with the wiki parser, tables, and comments
+--------------------------------------------------------------
 
  - Background colors: red, green, blue, yellow, or orange
  - Borders: solid, dashed, or dotted
  - Text-alignment: left, center, right, or justify
  - Admonitions: caution, important, note, tip, warning
+ - Tables: moin-sortable, no-borders
  - Comments: comment
 
 Variables
@@ -737,6 +795,8 @@ extra features. The following is a table of MoinMoin's macros.
 |                                           | The second parameter containing link text is optional.     |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<ItemPageList()>>``                    | Inserts names for matching descendents of specified item.  |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
 +-------------------------------------------+------------------------------------------------------------+

@@ -5,9 +5,6 @@
 MoinMoin - Text highlighting converter
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from flask import request
@@ -18,7 +15,7 @@ from moin.utils.tree import html, moin_page
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     @classmethod
     def _factory(cls, input, output, highlight='', regex='', **kw):
         if highlight == 'highlight':
@@ -29,7 +26,7 @@ class Converter(object):
         new_childs = []
 
         for child in elem:
-            if isinstance(child, (unicode, str)):
+            if isinstance(child, (bytes, str)):
                 pos = 0
 
                 # Restrict it to our own namespace for now

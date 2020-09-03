@@ -8,9 +8,6 @@ Expands all links in an internal Moin document, including interwiki and
 special wiki links.
 """
 
-
-from __future__ import absolute_import, division
-
 from flask import g as flaskg
 
 from moin.utils.interwiki import is_known_wiki, url_for_item
@@ -22,7 +19,7 @@ from moin.wikiutil import AbsItemName
 from . import default_registry
 
 
-class ConverterBase(object):
+class ConverterBase:
     _tag_xlink_href = xlink.href
     _tag_xinclude_href = xinclude.href
 
@@ -76,9 +73,9 @@ class ConverterBase(object):
             elif xinclude_href.scheme == 'wiki':
                 self.handle_wiki_transclusions(elem, xinclude_href)
 
-        elif xlink_href == u'':
+        elif xlink_href == '':
             # reST link to page fragment
-            elem.set(self._tag_xlink_href, u'#' + elem.text.replace(' ', '_'))
+            elem.set(self._tag_xlink_href, '#' + elem.text.replace(' ', '_'))
 
         for child in elem.iter_elements():
             self.traverse_tree(child, page)
@@ -138,7 +135,7 @@ class ConverterExternOutput(ConverterBase):
                 if k == 'rev':
                     rev = v
                     continue  # we remove rev=n from qs
-                result.append(u'{0}={1}'.format(k, v))
+                result.append('{0}={1}'.format(k, v))
         if result:
             query = separator.join(result)
         else:
@@ -157,12 +154,12 @@ class ConverterExternOutput(ConverterBase):
     def handle_wiki_links(self, elem, input):
         wiki_name = 'Self'
         if input.authority and input.authority.host:
-            wn = unicode(input.authority.host)
+            wn = str(input.authority.host)
             if is_known_wiki(wn):
                 # interwiki link
                 elem.set(moin_page.class_, 'moin-interwiki')
                 wiki_name = wn
-        item_name = unicode(input.path[1:])
+        item_name = str(input.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, wiki_name=wiki_name, rev=rev, endpoint=endpoint)
         link = Iri(url, query=query, fragment=input.fragment)
@@ -174,12 +171,12 @@ class ConverterExternOutput(ConverterBase):
             path = input.path
             if page:
                 path = self.absolute_path(path, page.path)
-            item_name = unicode(path)
+            item_name = str(path)
             if not flaskg.storage.has_item(item_name):
                 # XXX these index accesses slow down the link converter quite a bit
                 elem.set(moin_page.class_, 'moin-nonexistent')
         else:
-            item_name = unicode(page.path[1:])
+            item_name = str(page.path[1:]) if page else ''
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, rev=rev, endpoint=endpoint)
         if not page:
@@ -234,7 +231,7 @@ class ConverterItemRefs(ConverterBase):
             return
 
         path = self.absolute_path(path, page.path)
-        self.links.add(unicode(path))
+        self.links.add(str(path))
 
     def handle_wikilocal_transclusions(self, elem, input, page):
         """
@@ -248,7 +245,7 @@ class ConverterItemRefs(ConverterBase):
             return
 
         path = self.absolute_path(path, page.path)
-        self.transclusions.add(unicode(path))
+        self.transclusions.add(str(path))
 
     def handle_external_links(self, elem, input):
         """
@@ -256,7 +253,7 @@ class ConverterItemRefs(ConverterBase):
         :param elem: the element of the link
         :param input: the iri of the link
         """
-        self.external_links.add(unicode(input))
+        self.external_links.add(str(input))
 
     def get_links(self):
         """

@@ -6,10 +6,10 @@ MoinMoin - Tests for moin.macros._base
 """
 
 import pytest
-from moin.macros._base import MacroBase, MacroBlockBase, MacroInlineBase, MacroInlineOnlyBase
+from moin.macros._base import MacroBase, MacroBlockBase, MacroInlineBase, MacroInlineOnlyBase, MacroPageLinkListBase
 
 
-class TestMacroBase(object):
+class TestMacroBase:
     """ Test for Macro base and related classes """
 
     def test_MacroBase(self):
@@ -56,4 +56,15 @@ class TestMacroBase(object):
 
         macroinlineonlybase_obj = Test_MacroInlineOnlyBase()
         result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
+        assert result == 'test_macro'
+
+    def test_MacroPageLinkListBase(self):
+        """ test for MacroPageLinkListBase class """
+        class Test_MacroPageLinkListBase(MacroPageLinkListBase):
+            """ inherited class from MacroPageLinkListBase """
+            def macro(self, content, arguments, page_url, alternative):
+                return 'test_macro'
+
+        macropagelinklistbase_obj = Test_MacroPageLinkListBase()
+        result = macropagelinklistbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
         assert result == 'test_macro'

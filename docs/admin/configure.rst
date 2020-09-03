@@ -58,17 +58,18 @@ Shown below are parts of the directory structure after cloning moin or unpacking
 The default uses the OS file system for storage of wiki data and indexes.
 The directories and files shown are referenced in this section of documentation related to configuration::
 
-    moin-2.0/                     # clone root or unpack directory
+    moin/                     # clone root or unpack directory
         contrib/
             interwiki/
                 intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
         docs/
             _build/
                 html/             # local copy of moin documentation, created by running "./m docs" command
-        MoinMoin/                 # large directory containing moin application code
+        src/
+            moin/                 # large directory containing moin application code
         wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
-            data/                 # wiki data is stored here
-            index/                # wiki indexes are stored here
+            data/                 # wiki data and metadata
+            index/                # wiki indexes
         wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
         wikiconfig.py             # main configuration file, modify this to add or change features
 
@@ -320,11 +321,11 @@ Here is the source code segment from snippets.html::
                     <br>
                 {%- endif %}
 
-                {% if request.user_agent and search_form %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
+                {% if request.user_agent and search_form %} {# request.user_agent is true if browser, false if run as moin dump-html #}
                     {{ utils.header_search(search_form) }}
                 {% endif %}
 
-                {% if request.user_agent %} {# request.user_agent is true if browser, false if run as ./m dump-html #}
+                {% if request.user_agent %} {# request.user_agent is true if browser, false if run as moin dump-html #}
                     <ul id="moin-username" class="moin-header-links">
                         {{ utils.user_login_logoff() }}
                     </ul>
@@ -440,7 +441,7 @@ The following example shows how you can enable the additional package
 `XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is
 used for mathml or latex formulas in an item's content.
 
-* activate the virtual environment and do *pip install xstatic-mathjax*
+* install xstatic-mathjax (e.g. using ``pip install xstatic-mathjax``)
 * add the name 'mathjax' to to the list of mod_names in wikiconfig
 * copy /templates/snippets.html to the wiki_local directory
 * modify the snippets.html copy by adding the required fragment to the scripts macro::

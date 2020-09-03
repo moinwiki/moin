@@ -30,7 +30,7 @@
 {% block content %}
     <h1>{{ title }}</h1>
     <div class='moin-clr'></div>
-        {# TODO: need bookmark control and days to show here, see 1.9 RecentChanges #}
+        {{ utils.page_links(page_num, pages, url) }}
         {# make columns line up by creating one long table styled to look like one table per day  #}
         <table id="moin-global-history">
             {% for day, revs in history %}
@@ -50,12 +50,12 @@
                     {% set meta = rev.meta %}
                     <tr>
                         {# create an icon with a link to diff, or other icon indicating state of item #}
-                        <td class="moin-history-links">{{ utils.item_status_icon(rev.fqname, meta, bookmark_time) }}</td>
+                        <td class="moin-history-links">{{ utils.item_status_icon(rev.fqnames[0], meta, bookmark_time) }}</td>
                         {# show item name or item id and old name if the item is nameless (deleted) #}
                         <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(meta, rev.fqnames) }}</td>
                         <td class="moin-history-time">{{ meta.mtime|time_hh_mm }}</td>
                         <td class="moin-history-links">
-                            <a href="{{ url_for('frontend.history', item_name=rev.fqname, bookmark=bookmark_time) }}">
+                            <a href="{{ url_for('frontend.history', item_name=rev.fqnames[0], bookmark=bookmark_time) }}">
                                 <span class="fa fa-clock-o" title="{{ _('History') }}"></span>
                             </a>
                         </td>
@@ -74,11 +74,12 @@
             {% if bookmark_time %}
                 <tr class="moin-history-day-banner">
                     <td colspan="7">
-                        <span class="moin-history-date">{{ bookmark_time|datetimeformat }}</span>
+                        <span class="moin-history-date">{{ bookmark_time|time_datetime }}</span>
                         <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
                     </td>
                 </tr>
             {% endif %}
 
         </table>
+        {{ utils.page_links(page_num, pages, url) }}
 {% endblock %}

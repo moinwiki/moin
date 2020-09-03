@@ -29,12 +29,12 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class CacheClass(object):
+class CacheClass:
     """ just a container for stuff we cache """
     pass
 
 
-class ConfigFunctionality(object):
+class ConfigFunctionality:
     """ Configuration base class with config class behaviour.
 
         This class contains the functionality for the DefaultConfig
@@ -70,8 +70,8 @@ class ConfigFunctionality(object):
         self.cache.item_group_regex = re.compile(self.item_group_regex, re.UNICODE)
 
         # the ..._regexact versions only match if nothing is left (exact match)
-        self.cache.item_dict_regexact = re.compile(u'^{0}$'.format(self.item_dict_regex), re.UNICODE)
-        self.cache.item_group_regexact = re.compile(u'^{0}$'.format(self.item_group_regex), re.UNICODE)
+        self.cache.item_dict_regexact = re.compile('^{0}$'.format(self.item_dict_regex), re.UNICODE)
+        self.cache.item_group_regexact = re.compile('^{0}$'.format(self.item_group_regex), re.UNICODE)
 
         # compiled functions ACL
         self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
@@ -200,7 +200,7 @@ configuration for typos before requesting support or reporting a bug.
         config files.
         """
         charset = 'utf-8'
-        message = u"""
+        message = """
 "%(name)s" configuration variable is a string, but should be
 unicode. Use %(name)s = u"value" syntax for unicode variables.
 
@@ -221,19 +221,19 @@ file. It should match the actual charset of the configuration file.
             attr = getattr(self, name, None)
             if attr is not None:
                 # Try to decode strings
-                if isinstance(attr, str):
+                if isinstance(attr, bytes):
                     try:
-                        setattr(self, name, unicode(attr, charset))
+                        setattr(self, name, str(attr, charset))
                     except UnicodeError:
                         raise error.ConfigurationError(message %
                                                        {'name': name})
                 # Look into lists and try to decode strings inside them
                 elif isinstance(attr, list):
-                    for i in xrange(len(attr)):
+                    for i in range(len(attr)):
                         item = attr[i]
-                        if isinstance(item, str):
+                        if isinstance(item, bytes):
                             try:
-                                attr[i] = unicode(item, charset)
+                                attr[i] = str(item, charset)
                             except UnicodeError:
                                 raise error.ConfigurationError(message %
                                                                {'name': name})
@@ -280,8 +280,8 @@ def _default_password_checker(cfg, username, password,
        username_lower in password_lower or password_lower in username_lower:
         return _("Password is too easy to guess (password contains name or name contains password).")
 
-    keyboards = (ur"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./",  # US kbd
-                 ur"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-",  # german kbd
+    keyboards = (r"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./",  # US kbd
+                 r"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-",  # german kbd
     )  # TODO add more keyboards!
     for kbd in keyboards:
         rev_kbd = kbd[::-1]
@@ -291,7 +291,7 @@ def _default_password_checker(cfg, username, password,
     return None
 
 
-class DefaultExpression(object):
+class DefaultExpression:
     def __init__(self, exprstr):
         self.text = exprstr
         self.value = eval(exprstr)
@@ -344,7 +344,7 @@ options_no_group_name = {
     )),
     # ==========================================================================
     'style': ('Style / Theme / UI', 'These settings control how the wiki user interface will look like.', (
-        ('sitename', u'Untitled Wiki',
+        ('sitename', 'Untitled Wiki',
          "Short description of your wiki site, displayed below the logo on each page, and used in RSS documents as the channel title [Unicode]"),
         ('interwikiname', None, "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]"),
         ('html_pagetitle', None, "Allows you to set a specific HTML page title (if None, it defaults to the value of 'sitename') [Unicode]"),
@@ -359,8 +359,10 @@ options_no_group_name = {
             # TODO: tickets are broken
             # ('wikilink', 'frontend.tickets', dict(), L_('Tickets'), L_('List of Tickets')),
         ], 'Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]'),
+        ('expanded_quicklinks_size', 8,
+         "Number of quicklinks to show as expanded in navi bar"),
 
-        ('theme_default', u'topside', "Default theme."),
+        ('theme_default', 'topside', "Default theme."),
 
         ('serve_files', {},
          """
@@ -368,7 +370,7 @@ options_no_group_name = {
          from the filesystem as url .../+serve/<name>/...
          """),
 
-        ('supplementation_item_names', [u'Discussion', ],
+        ('supplementation_item_names', ['Discussion', ],
          "List of names of the supplementation (sub)items [Unicode]"),
 
         ('interwiki_preferred', [], "In dialogues, show those wikis at the top of the list [list of Unicode]."),
@@ -412,11 +414,12 @@ options_no_group_name = {
         ('template_dirs', [], "list of directories with templates that will override theme and base templates."),
     )),
     # ==========================================================================
-    # 'editor': ('Editor', None, (
-    #     ('item_license', u'', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
-    #     # ('edit_locking', 'warn 10', "Editor locking policy: 'None', 'warn <timeout in minutes>', or 'lock <timeout in minutes>'"),
-    #     ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
-    # )),
+    'editor': ('Editor', None, (
+        ('edit_locking_policy', 'lock', "Editor locking policy: None or 'lock'"),  # 'warn' as in 1.9.x is not supported
+        ('edit_lock_time', 10, "Time, in minutes, to hold or renew edit lock at start of edit or preview"),
+        # ('item_license', u'', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
+        # ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
+    )),
     # ==========================================================================
     'paging': ('Paging', None, (
         ('results_per_page', 50, "Number of results to be shown on a single page in pagination"),
@@ -446,16 +449,16 @@ options_no_group_name = {
     )),
     # ==========================================================================
     'items': ('Special Item Names', None, (
-        ('default_root', u'Home', "Default root, use this value in case no match is found in root_mapping. [Unicode]"),
+        ('default_root', 'Home', "Default root, use this value in case no match is found in root_mapping. [Unicode]"),
         ('root_mapping', {}, "mapping of namespaces to item_roots."),
 
         # the following regexes should match the complete name when used in free text
         # the group 'all' shall match all, while the group 'key' shall match the key only
         # e.g. FooGroup -> group 'all' ==  FooGroup, group 'key' == Foo
         # moin's code will add ^ / $ at beginning / end when needed
-        ('item_dict_regex', ur'(?P<all>(?P<key>\S+)Dict)',
+        ('item_dict_regex', r'(?P<all>(?P<key>\S+)Dict)',
          'Item names exactly matching this regex are regarded as items containing variable dictionary definitions [Unicode]'),
-        ('item_group_regex', ur'(?P<all>(?P<key>\S+)Group)',
+        ('item_group_regex', r'(?P<all>(?P<key>\S+)Group)',
          'Item names exactly matching this regex are regarded as items containing group definitions [Unicode]'),
     )),
     # ==========================================================================
@@ -465,14 +468,15 @@ options_no_group_name = {
             DISPLAY_NAME: None,
             EMAIL: None,
             CSS_URL: None,
+            ISO_8601: False,
             MAILTO_AUTHOR: False,
             EDIT_ON_DOUBLECLICK: True,
             SCROLL_PAGE_AFTER_EDIT: True,
             SHOW_COMMENTS: False,
             WANT_TRIVIAL: False,
-            ENC_PASSWORD: u'',  # empty value == invalid hash
-            RECOVERPASS_KEY: u'',  # empty value == invalid key
-            SESSION_KEY: u'',  # empty value == invalid key
+            ENC_PASSWORD: '',  # empty value == invalid hash
+            RECOVERPASS_KEY: '',  # empty value == invalid key
+            SESSION_KEY: '',  # empty value == invalid key
             DISABLED: False,
             BOOKMARKS: {},
             QUICKLINKS: [],
@@ -486,7 +490,7 @@ options_no_group_name = {
             ],
             THEME_NAME: None,  # None -> use cfg.theme_default
             EDIT_ROWS: 0,
-            RESULTS_PER_PAGE: 0,
+            RESULTS_PER_PAGE: 50,
             LOCALE: None,  # None -> do browser language detection, otherwise just use this locale
             TIMEZONE: None,  # None -> use cfg.timezone_default
             EMAIL_UNVALIDATED: None,
@@ -498,8 +502,8 @@ options_no_group_name = {
 
         ('config_check_enabled', False, "if True, check configuration for unknown settings."),
 
-        ('timezone_default', u'UTC', "Default time zone."),
-        ('locale_default', u'en_US', "Default locale for user interface and content."),
+        ('timezone_default', 'UTC', "Default time zone."),
+        ('locale_default', 'en_US', "Default locale for user interface and content."),
 
         # ('log_remote_addr', True, "if True, log the remote IP address (and maybe hostname)."),
         ('log_reverse_dns_lookups', True,
@@ -543,7 +547,7 @@ options_no_group_name = {
 #
 options = {
     'acl': ('Access Control Lists', 'ACLs control who may do what.', (
-        ('functions', u'', 'Access Control List for functions.'),
+        ('functions', '', 'Access Control List for functions.'),
         ('rights_contents', ACL_RIGHTS_CONTENTS, 'Valid tokens for right sides of content ACL entries.'),
         ('rights_functions', ACL_RIGHTS_FUNCTIONS, 'Valid tokens for right sides of function ACL entries.'),
     )),
@@ -563,7 +567,7 @@ options = {
         ('email_verification', False,
          "if True, require a new user to verify his or her email address before the first login."),
 
-        ('homewiki', u'Self',
+        ('homewiki', 'Self',
          "interwiki name of the wiki where the user home pages are located [Unicode] - useful if you have ''many'' users. You could even link to nonwiki \"user pages\" if the wiki username is in the target URL."),
         ('use_gravatar', False, "if True, gravatar.com will be used to find User's avatar")
     )),
@@ -574,6 +578,11 @@ options = {
         ('password', None, "Password for SMTP server authentication (None = don't use auth)."),
         ('smarthost', None, "Address of SMTP server to use for sending mail (None = don't use SMTP server)."),
         ('sendmail', None, "sendmail command to use for sending mail (None = don't use sendmail)"),
+    )),
+
+    'registration': ('Registration', 'These settings control registration options', (
+        ('only_by_superuser', False, 'True is recommended value for public wikis on the internet.'),
+        ('hint', _('To request an account, see bottom of Home page.'), 'message on login page when only_by_superuser is True'),
     )),
 }
 

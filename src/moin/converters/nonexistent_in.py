@@ -19,7 +19,7 @@ from moin.utils.mime import Type, type_moin_document
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     """
     Convert a non-existing item to DOM Tree.
     """
@@ -28,7 +28,7 @@ class Converter(object):
         return cls()
 
     def __call__(self, rev, contenttype=None, arguments=None):
-        item_name = rev.item.fqname.value
+        item_name = rev.item.fqname.fullname
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name, query='do=modify'),
         }

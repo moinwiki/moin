@@ -1,3 +1,9 @@
+{#
+    Macros used by multiple templates.
+
+    Original Moin code should be added here. Macros derived from Flatland should be added to forms.html.
+#}
+
 {% import 'forms.html' as forms %}
 
 {# "item" must be passed because of flakey jinja2 context passing #}
@@ -9,7 +15,7 @@
                 {% if prior_mtime -%}
                     <a href="{{ url_for(view, item_name=fqname, rev=prior_rev) }}">
                         <span class="fa fa-arrow-left"></span>
-                        {{ _('older') }} {{ prior_mtime|datetimeformat }}
+                        {{ _('older') }} {{ prior_mtime|time_datetime }}
                     </a>
                 {%- else -%}
                     <span class="moin-disabled">{{ _('no older revision') }}</span>
@@ -18,12 +24,12 @@
             <li class="moin-rev-navigation-current">
                 {{ _('Revision ') }}
                 {{ item.meta.rev_number or current_rev | shorten_id }}:
-                {{ current_mtime|datetimeformat }}
+                {{ current_mtime|time_datetime }}
             </li>
             <li class="moin-rev-navigation-newer">
                 {% if next_mtime -%}
                     <a href="{{ url_for(view, item_name=fqname, rev=next_rev) }}">
-                        {{ _('newer') }} {{ next_mtime|datetimeformat }}
+                        {{ _('newer') }} {{ next_mtime|time_datetime }}
                         <span class="fa fa-arrow-right"></span>
                     </a>
                 {%- else -%}
@@ -57,12 +63,10 @@
     {%- endif -%}
 {% endmacro %}
 
-
 {% macro editor_info(meta) %}
     {%- set info = get_editor_info(meta) -%}
     {{ show_editor_info(info) }}
 {% endmacro %}
-
 
 {% macro table(headings, rows, itemname_cols=[], url_cols=[]) %}
     <table class="zebra table table-hover">
@@ -97,44 +101,6 @@
     </table>
 {% endmacro %}
 
-{% macro _render_subitem_navigation_tree(index, newtab, parentcaller) %}
-    <ul>
-        {% for e in index %}
-            <li>
-                {# call our parent's caller with all the data we have if they exist, used to implement
-                    transclude/link actions in the modify view #}
-                {% if parentcaller %}
-                    {{ parentcaller(e.fullname, e.relname, e.meta['contenttype'], e.hassubitems) }}
-                {% endif %}
-                <a href="{{ url_for('frontend.show_item', item_name=e.fullname) }}"
-                    title="{{ e.relname }}" class="subitem-link"
-                    {% if newtab %}target="_blank"{% endif %}>{{ e.relname }}</a>
-                {% if e.hassubitems %}
-                    <button class="expander" title="{{ _('Expand Subitem') }}"></button>
-                    {{ _render_subitem_navigation_tree(theme_supp.subitem_index(e.fullname), newtab, parentcaller) }}
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-{% endmacro %}
-
-{% macro render_subitem_navigation(fqname, newtab, subitems=None) %}
-    {% if not subitems %}
-        {% set subitems = theme_supp.subitem_index(fqname) %}
-    {% endif %}
-    {% if caller %}
-        {% set mycaller = caller %}
-    {% endif %}
-    {% if subitems %}
-        <div class="moin-subitem-navigation">
-            <div class="list-header">
-                {{ _('Subitems') }}
-            </div>
-            {{ _render_subitem_navigation_tree(subitems, newtab, mycaller) }}
-        </div>
-    {% endif %}
-{% endmacro %}
-
 {% macro header_search(form) %}
     {{ gen.form.open(form, id='moin-searchform', method='get', action=url_for('frontend.search')) }}
             {{ forms.render(form['q']) }}
@@ -145,70 +111,76 @@
 
 {% macro help_on_editing(help) %}
     {% if help %}
-        {% if "<a " == help[:3] %}
-            <span class="moin-edit-help moin-button"> {{ help|safe }} </span>
+        {% if isinstance(help, tuple) %}
+            <span class="moin-edit-help moin-button"><a href="{{ help[0] }}">{{ help[1] }}</a></span>
         {% else %}
-            <span class="moin-edit-no-help"> {{ help|safe }} </span>
+            <span class="moin-edit-no-help"> {{ help }} </span>
         {% endif %}
     {% endif %}
 {% endmacro %}
 
+{# display meta info in delete, destroy, rename, revert and meta view. #}
 {% macro meta_info(meta) %}
-    <!-- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list -->
+    {#- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list #}
     <ul class="list-group">
+        {%- if user.may.admin(fqname) %}
+            {%- set acl = meta['acl'] or '(None)' %}
+            <li class="list-group-item">ACL: {{ acl }}</li>
+        {%- endif %}
         <li class="list-group-item">Action: {{ meta['action'] }}</li>
         <li class="list-group-item">Address: {{ meta['address'] }}</li>
         <li class="list-group-item">Comment: '{{ meta['comment'] }}'</li>
         <li class="list-group-item">Content Type: {{ meta['contenttype']|shorten_ctype }} [{{ meta['contenttype'] }}]</li>
         <li class="list-group-item">Data ID: {{ meta['dataid'] }}</li>
-        <li class="list-group-item">External Links:
-            {% if meta['externallinks'] %}
-                {% for item in meta['externallinks']|sort -%}
+        <li class="list-group-item">External Links:&nbsp;
+            {%- if meta['externallinks'] -%}
+                {%- for item in meta['externallinks']|sort -%}
                     <a href="{{ item|safe }}">{{ item }}</a>
-                    {%- if not loop.last -%}, {% endif %}
-                {% endfor %}
-            {% else %}
+                    {%- if not loop.last %}, {% endif -%}
+                {%- endfor -%}
+            {%- else -%}
                 (None)
-            {% endif %}
+            {%- endif -%}
         </li>
         <li class="list-group-item">Item ID: {{ meta['itemid'] }}</li>
-        <li class="list-group-item">Item Links:
-            {% if meta['itemlinks'] %}
-                {% for item in meta['itemlinks']|sort -%}
+        <li class="list-group-item">Item Links:&nbsp;
+            {%- if meta['itemlinks'] -%}
+                {%- for item in meta['itemlinks']|sort -%}
                     <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
-                    {%- if not loop.last -%}, {% endif %}
-                {% endfor %}
-            {% else %}
+                    {%- if not loop.last %}, {% endif -%}
+                {%- endfor -%}
+            {%- else -%}
                 (None)
-            {% endif %}
+            {%- endif -%}
         </li>
-        <li class="list-group-item">Item Transclusions:
-            {% if meta['itemtransclusions'] %}
-                {% for item in meta['itemtransclusions']|sort -%}
+        <li class="list-group-item">Item Transclusions:&nbsp;
+            {%- if meta['itemtransclusions'] -%}
+                {%- for item in meta['itemtransclusions']|sort -%}
                     <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
-                    {%- if not loop.last -%}, {% endif %}
-                {% endfor %}
-            {% else %}
+                    {%- if not loop.last %}, {% endif -%}
+                {%- endfor -%}
+            {%- else -%}
                 (None)
-            {% endif %}
+            {%- endif -%}
         </li>
         <li class="list-group-item">Item Type: {{ meta['itemtype'] }}</li>
-        <li class="list-group-item">Modified Time: {{ meta['mtime']|datetimeformat }}</li>
-        <li class="list-group-item">Name:
-            {% if meta['name'] %}
-                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) %}
+        <li class="list-group-item">Language: {{ meta['language'] }}</li>
+        <li class="list-group-item">Modified Time: {{ meta['mtime']|time_datetime }}</li>
+        <li class="list-group-item">Name:&nbsp;
+            {%- if meta['name'] -%}
+                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) -%}
                 {{ names|safe }}
-            {% else %}
+            {%- else -%}
                 (None)
-            {% endif %}
+            {%- endif -%}
         </li>
-        <li class="list-group-item">Old Name:
-            {% if meta['name_old'] %}
-                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) %}
+        <li class="list-group-item">Old Name:&nbsp;
+            {%- if meta['name_old'] -%}
+                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) -%}
                 {{ names|safe }}
-            {% else %}
+            {%- else -%}
                 (None)
-            {% endif %}
+            {%- endif -%}
         </li>
         <li class="list-group-item">Namespace: '{{ meta['namespace'] }}'</li>
         <li class="list-group-item">Parent Revision ID: {{ meta['parentid'] }}</li>
@@ -217,14 +189,14 @@
         <li class="list-group-item">SHA1: {{ meta['sha1'] }}</li>
         <li class="list-group-item">Size: {{ meta['size']|filesizeformat }}</li>
         <li class="list-group-item">Summary: '{{ meta['summary'] }}'</li>
-        <li class="list-group-item">Tags:
-            {% if meta['tags'] %}
-                {% for tag in meta['tags'] %}
-                    {{ tag }}
-                {% endfor %}
-            {% else %}
+        <li class="list-group-item">Tags:&nbsp;
+            {%- if meta['tags'] -%}
+                {%- for tag in meta['tags'] -%}
+                    {{ tag }} {%- if not loop.last %}, {% endif -%}
+                {%- endfor -%}
+            {%- else -%}
                 (None)
-            {% endif %}
+            {%- endif -%}
         </li>
         <li class="list-group-item">Trash: {{ meta['trash'] or False }}</li>
         <li class="list-group-item">User ID: {{ meta['userid'] }}</li>
@@ -309,18 +281,18 @@
     </ul>
 {% endmacro %}
 
-{% macro item_panel(fq_name) %}
+{# Given an fqname, create a link to the item. The full name is displayed, including the namespace. #}
+{% macro make_item_link(fq_name) %}
     <li>
         <a class="moin-fqname"
            href="{{ url_for('frontend.show_item', item_name=fq_name) }}"
            {% if fq_name.value != fq_name|string %}
                title="{{ fq_name }}"
            {% endif %}>
-           {{ fq_name.value }}
+           {{ fq_name.fullname }}
        </a>
     </li>
 {% endmacro %}
-
 
 {# called by diff to provide revision navigation on right column:  <  revision: 5  >  >> #}
 {% macro show_newer_rev_links(item_name, rev, rev_links) %}
@@ -409,7 +381,7 @@
             {{ _('Time') }}:
         </span>
         <span class="moin-diff-info-value">
-            {{ rev.meta.mtime|datetimeformat }}
+            {{ rev.meta.mtime|time_datetime }}
         </span>
     </div>
     <div>
@@ -422,6 +394,39 @@
     </div>
 {% endmacro %}
 
+{# Render a table showing diffs for two text item revisions. #}
+{% macro diff_table(diffs) %}
+    <table id="moin-preview-diff", class="moin-diff">
+        {% if rev_links %}
+            {# caller is from Item History, show links to older/newer revisions. #}
+            <tr>
+                <td class="moin-diff-header">
+                    {{ show_older_rev_links(item_name, oldrev, rev_links) }}
+                    {{ show_meta(oldrev, do_rev=False) }}
+                </td>
+                <td class="moin-diff-header">
+                    {{ show_newer_rev_links(item_name, newrev, rev_links) }}
+                    {{ show_meta(newrev, do_rev=False) }}
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td class="moin-diff-removed"><span>{{ _('Deletions are marked like this.') }}</span></td>
+            <td class="moin-diff-added"><span>{{ _('Additions are marked like this.') }}</span></td>
+        </tr>
+        {% for llineno, lcontent, rlineno, rcontent in diffs %}
+            <tr class="moin-diff-line-number">
+                {# these links are to non-existant anchors, see diffScroll in common.js #}
+                <td><a href="#{{ llineno }}">{{ _('Line') }} {{ llineno }}:</a></td>
+                <td><a href="#{{ rlineno }}">{{ _('Line') }} {{ rlineno }}:</a></td>
+            </tr>
+            <tr>
+                <td class="moin-diff-removed">{{ lcontent }}</td>
+                <td class="moin-diff-added">{{ rcontent }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
 
 {# Return links to Login or User/Settings/Logout; callers must provide an enclosing UL tag #}
 {% macro user_login_logoff() %}
@@ -467,7 +472,6 @@
     {%- endif %}
 {% endmacro %}
 
-
 {# create an icon with a link to revert or diff, or an icon based on contenttype of item #}
 {% macro item_status_icon(fqname, meta, bookmark_time) %}
     {% if meta.trash %}
@@ -490,7 +494,6 @@
     {% endif %}
 {% endmacro %}
 
-
 {# Display an item name, item alias names, item summary or item ID and old names #}
 {%- macro item_moniker(meta, fqnames) %}
     {%- if meta.name %}
@@ -511,3 +514,40 @@
         <span class="moin-history-name-old" title="{{ meta.name_old[0] }} was deleted">~({{ meta.name_old|join(' | ') }})</span>
     {%- endif %}
 {%- endmacro %}
+
+{# Return a string containing an item name, item alias names, item summary or item ID and old names #}
+{%- macro best_item_name(meta) %}
+    {% set names = [] %}
+    {%- if not meta.trash %}
+        {#- if there are alias names, create a link to each alias #}
+        {%- for name in meta.fqnames -%}
+            {{- names.append(name.fullname) or "" -}}
+        {%- endfor -%}
+        {{- names|join(' | ') -}}
+    {%- elif meta.summary %}
+        {{- meta.summary -}}
+    {%- else %}
+        {{- meta.fqnames[0]|shorten_fqname -}}
+    {%- endif %}
+    {%- if not meta.name and not meta.summary and meta.name_old %}
+        {#- this is a deleted item, show old name(s) #}
+        ~({{ meta.name_old|join(' | ') }})
+    {%- endif %}
+{%- endmacro %}
+
+{# Create next page, prior page links for multi-page reports. #}
+{% macro page_links(page_num, pages, url) %}
+    {# if history is long and displayed as several pages, create links to show next and/or prior pages #}
+    <div class="moin-offset-links">
+        {% if page_num > 1 %}
+            <a class="moin-prior-page" href="{{ url }}?page_num={{ page_num-1 }}" title="{{ _("Previous") }}">&laquo;</a>
+        {% endif %}
+        {% if pages > 1 %}
+            {% set page_number = _("Page %(page_num)s of %(pages)s", page_num=page_num, pages=pages) %}
+            <span class="moin-page-num"> {{ page_number }} </span>
+        {% endif %}
+        {% if page_num < pages %}
+            <a class="moin-next-page" href="{{ url }}?page_num={{ page_num+1 }}" title="{{ _("Next") }}">&raquo;</a>
+        {% endif %}
+    </div>
+{% endmacro %}

@@ -21,9 +21,6 @@ defaults, the validators may implant the defaults into the metadata or reject
 the data.
 """
 
-
-from __future__ import absolute_import, division
-
 import time
 import re
 
@@ -46,7 +43,7 @@ def uuid_validator(element, state):
     a uuid must be a hex unicode string of specific length
     """
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     if len(v) != UUID_LEN:
         return False
@@ -100,15 +97,15 @@ def name_validator(element, state):
     if element.raw is Unset:
         element.set(state[keys.NAME])
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     if v != v.strip():
         return False
-    if v.startswith(u'+'):  # used for views, like /+meta/<itemname>
+    if v.startswith('+'):  # used for views, like /+meta/<itemname>
         return False
-    if v.startswith(u'/') or v.endswith(u'/'):
+    if v.startswith('/') or v.endswith('/'):
         return False
-    if u'//' in v:  # empty ancestor name is invalid
+    if '//' in v:  # empty ancestor name is invalid
         return False
     return True
 
@@ -120,7 +117,7 @@ def tag_validator(element, state):
     if element.raw is Unset:
         return True
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     if v != v.strip():
         return False
@@ -155,7 +152,7 @@ def user_contenttype_validator(element, state):
     if element.raw is Unset:
         element.set(CONTENTTYPE_USER)
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     return v == CONTENTTYPE_USER
 
@@ -172,7 +169,7 @@ def contenttype_validator(element, state):
                 ct = CONTENTTYPE_DEFAULT
         element.set(ct)
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     ct = Type(v)
     if ct.type not in ['text', 'image', 'audio', 'video', 'application', ]:
@@ -198,7 +195,7 @@ def mtime_validator(element, state):
         now = int(time.time())
         element.set(now)
     v = element.value
-    if not isinstance(v, (int, long)):
+    if not isinstance(v, int):
         return False
     # if v < 31 * 24 * 3600:
     #    # we don't have negative values nor timestamps from Jan 1970,
@@ -215,7 +212,7 @@ def action_validator(element, state):
     if not state['trusted']:
         element.value = state[keys.ACTION]
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     if v not in [keys.ACTION_SAVE, keys.ACTION_REVERT, keys.ACTION_TRASH,
                  keys.ACTION_COPY, keys.ACTION_RENAME]:
@@ -235,7 +232,7 @@ def acl_validator(element, state):
         return True
     else:  # untrusted
         v = element.value
-        if not isinstance(v, unicode):
+        if not isinstance(v, str):
             return False
         # TODO check parent revision acl / whether acl would be changed
         # acl_changed = v != state['acl_parent']
@@ -252,7 +249,7 @@ def comment_validator(element, state):
     if element.raw is Unset:
         return True
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     # TODO: check if comment was somehow invalid, e.g. contained html
     return True
@@ -267,7 +264,7 @@ def hostname_validator(element, state):
         element.value = None  # TODO: lookup(addr)
         return True
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     return True
 
@@ -279,7 +276,7 @@ def address_validator(element, state):
     if not state['trusted']:
         element.value = state[keys.ADDRESS]
     v = element.value
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     return True
 
@@ -311,7 +308,7 @@ def hash_validator(element, state):
         # untrusted hash gets overwritten by the real value
         # in the storage code, so everything is acceptable.
         return True
-    if not isinstance(v, unicode):
+    if not isinstance(v, str):
         return False
     if len(v) != keys.HASH_LEN:
         return False
@@ -418,6 +415,7 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named(keys.EDIT_ON_DOUBLECLICK).using(optional=True),
     Boolean.named(keys.SCROLL_PAGE_AFTER_EDIT).using(optional=True),
     Boolean.named(keys.MAILTO_AUTHOR).using(optional=True),
+    Boolean.named(keys.ISO_8601).using(optional=True),
     List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
     List.named(keys.SUBSCRIPTIONS).of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),

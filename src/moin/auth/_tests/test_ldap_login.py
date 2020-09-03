@@ -20,7 +20,7 @@ if msg:
     pytestmark = pytest.mark.skip(msg)
 del msg
 
-pytest.importorskip('ldap')
+ldap = pytest.importorskip('ldap')
 
 
 class TestLDAPServer(LDAPTstBase):
@@ -39,8 +39,8 @@ class TestLDAPServer(LDAPTstBase):
         lo.simple_bind_s('', '')
         lusers = lo.search_st(base_dn, ldap.SCOPE_SUBTREE, '(uid=*)')
         uids = [ldap_dict['uid'][0] for dn, ldap_dict in lusers]
-        assert 'usera' in uids
-        assert 'userb' in uids
+        assert b'usera' in uids
+        assert b'userb' in uids
 
 
 class TestMoinLDAPLogin(LDAPTstBase):
@@ -50,14 +50,16 @@ class TestMoinLDAPLogin(LDAPTstBase):
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
-    class Config(wikiconfig.Config):
-        from moin.auth.ldap_login import LDAPAuth
-        # ToDo get these vars from the test environment
-        server_uri = 'ldap://127.0.0.1:3890'
-        base_dn = 'ou=testing,dc=example,dc=org'
-
-        ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
-        auth = [ldap_auth1, ]
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            from moin.auth.ldap_login import LDAPAuth
+            # ToDo get these vars from the test environment
+            server_uri = 'ldap://127.0.0.1:3890'
+            base_dn = 'ou=testing,dc=example,dc=org'
+            ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
+            auth = [ldap_auth1, ]
+        return Config
 
     def testMoinLDAPLogin(self):
         """ Just try accessing the LDAP server and see if usera and userb are in LDAP. """
@@ -82,7 +84,7 @@ class TestMoinLDAPLogin(LDAPTstBase):
         assert u2.valid
 
         # check if usera and userb have different ids:
-        assert u1.id != u2.id
+        assert u1.profile['itemid'] != u2.profile['itemid']
 
 
 class TestBugDefaultPasswd(LDAPTstBase):
@@ -92,15 +94,18 @@ class TestBugDefaultPasswd(LDAPTstBase):
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
-    class Config(wikiconfig.Config):
-        from moin.auth.ldap_login import LDAPAuth
-        from moin.auth import MoinAuth
-        # ToDo get these vars from the test environment
-        server_uri = 'ldap://127.0.0.1:3890'
-        base_dn = 'ou=testing,dc=example,dc=org'
-        ldap_auth = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
-        moin_auth = MoinAuth()
-        auth = [ldap_auth, moin_auth]
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            from moin.auth.ldap_login import LDAPAuth
+            from moin.auth import MoinAuth
+            # ToDo get these vars from the test environment
+            server_uri = 'ldap://127.0.0.1:3890'
+            base_dn = 'ou=testing,dc=example,dc=org'
+            ldap_auth = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
+            moin_auth = MoinAuth()
+            auth = [ldap_auth, moin_auth]
+        return Config
 
     def teardown_class(self):
         """ Stop slapd, remove LDAP server environment """
@@ -134,7 +139,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
         assert u2 is None
 
 
-class TestTwoLdapServers(object):
+class TestTwoLdapServers:
     basedn = BASEDN
     rootdn = ROOTDN
     rootpw = ROOTPW
@@ -170,11 +175,11 @@ class TestTwoLdapServers(object):
             lo.simple_bind_s('', '')
             lusers = lo.search_st(base_dn, ldap.SCOPE_SUBTREE, '(uid=*)')
             uids = [ldap_dict['uid'][0] for dn, ldap_dict in lusers]
-            assert 'usera' in uids
-            assert 'userb' in uids
+            assert b'usera' in uids
+            assert b'userb' in uids
 
 
-class TestLdapFailover(object):
+class TestLdapFailover:
     basedn = BASEDN
     rootdn = ROOTDN
     rootpw = ROOTPW
@@ -194,21 +199,23 @@ class TestLdapFailover(object):
             ldap_env.load_directory(ldif_content=self.ldif_content)
             self.ldap_envs.append(ldap_env)
 
-    class Config(wikiconfig.Config):
-        from moin.auth.ldap_login import LDAPAuth
-        # ToDo get these vars from the test environment
-        server_uri = 'ldap://127.0.0.1:3891'
-        base_dn = 'ou=testing,dc=example,dc=org'
-        ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,
-                              name="ldap1", autocreate=True,
-                              timeout=1)
-        # short timeout, faster testing
-        server_uri = 'ldap://127.0.0.1:3892'
-        ldap_auth2 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,
-                              name="ldap2", autocreate=True,
-                              timeout=1)
-
-        auth = [ldap_auth1, ldap_auth2]
+    @pytest.fixture
+    def cfg(self):
+        class Config(wikiconfig.Config):
+            from moin.auth.ldap_login import LDAPAuth
+            # ToDo get these vars from the test environment
+            server_uri = 'ldap://127.0.0.1:3891'
+            base_dn = 'ou=testing,dc=example,dc=org'
+            ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,
+                                  name="ldap1", autocreate=True,
+                                  timeout=1)
+            # short timeout, faster testing
+            server_uri = 'ldap://127.0.0.1:3892'
+            ldap_auth2 = LDAPAuth(server_uri=server_uri, base_dn=base_dn,
+                                  name="ldap2", autocreate=True,
+                                  timeout=1)
+            auth = [ldap_auth1, ldap_auth2]
+        return Config
 
     def teardown_class(self):
         """ Stop slapd, remove LDAP server environment """

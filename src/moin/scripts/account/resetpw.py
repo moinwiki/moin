@@ -56,11 +56,11 @@ def set_password(uid, password, notify=False, skip_invalid=False, subject=None, 
 class Set_Password(Command):
     description = 'This command allows you to set a user password.'
     option_list = (
-        Option('--name', '-n', required=False, dest='name', type=unicode,
+        Option('--name', '-n', required=False, dest='name', type=str,
                help='Set password for the user with user name NAME.'),
-        Option('--uid', '-u', required=False, dest='uid', type=unicode,
+        Option('--uid', '-u', required=False, dest='uid', type=str,
                help='Set password for the user with user id UID.'),
-        Option('--password', '-p', required=False, dest='password', type=unicode,
+        Option('--password', '-p', required=False, dest='password', type=str,
                help='New password for this account.'),
         Option('--all-users', '-a', required=False, dest='all_users', action='store_true', default=False,
                help='Reset password for ALL users.'),
@@ -68,11 +68,11 @@ class Set_Password(Command):
                help='Notify user(s), send them an E-Mail with a password reset link.'),
         Option('--verbose', '-v', required=False, dest='verbose', action='store_true', default=False,
                help='Verbose operation'),
-        Option('--subject', required=False, dest='subject', type=unicode,
+        Option('--subject', required=False, dest='subject', type=str,
                help='Subject text for the password reset notification E-Mail.'),
-        Option('--text', required=False, dest='text', type=unicode,
+        Option('--text', required=False, dest='text', type=str,
                help='Template text for the password reset notification E-Mail. Default: use the builtin standard template'),
-        Option('--text-from-file', required=False, dest='text_file', type=unicode,
+        Option('--text-from-file', required=False, dest='text_file', type=str,
                help='Read full template for the password reset notification E-Mail from the given file, overrides --text. Default: None'),
         Option('--skip-invalid', required=False, dest='skip_invalid', action='store_true',
                help='If a user\'s password hash is already invalid (pw is already reset), skip this user.'),
@@ -81,11 +81,11 @@ class Set_Password(Command):
     def run(self, name, uid, password, all_users, notify, verbose, subject, text, text_file, skip_invalid):
         flags_given = name or uid or all_users
         if not flags_given:
-            print 'incorrect number of arguments'
+            print('incorrect number of arguments')
             sys.exit(1)
 
         if notify and not app.cfg.mail_enabled:
-            print "This wiki is not enabled for mail processing. The --notify option requires this. Aborting..."
+            print("This wiki is not enabled for mail processing. The --notify option requires this. Aborting...")
             sys.exit(1)
 
         if text_file:
@@ -120,4 +120,4 @@ class Set_Password(Command):
             else:
                 status = "SUCCESS"
             if verbose:
-                print "uid %s, name %s, email %s (%05d / %05d) %s" % (uid, name, email, nr, total, status)
+                print("uid %s, name %s, email %s (%05d / %05d) %s" % (uid, name, email, nr, total, status))

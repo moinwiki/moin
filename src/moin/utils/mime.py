@@ -13,9 +13,9 @@ from moin.utils.pysupport import AutoNe
 class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
     """
     :ivar type: Type part
-    :type type: unicode
+    :type type: str
     :ivar subtype: Subtype part
-    :type subtype: unicode
+    :type subtype: str
     :ivar parameters: Parameters part
     :type parameters: dict
     """
@@ -48,7 +48,7 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
         return super(Type, cls).__new__(cls, new_type, new_subtype, new_parameters)
 
     def __eq__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return self.__eq__(self.__class__(other))
 
         if isinstance(other, Type):
@@ -56,17 +56,17 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
 
         return NotImplemented
 
-    def __unicode__(self):
-        ret = [u'{0}/{1}'.format(self.type or '*', self.subtype or '*')]
+    def __str__(self):
+        ret = ['{0}/{1}'.format(self.type or '*', self.subtype or '*')]
 
         parameters = sorted(self.parameters.items())
         for key, value in parameters:
             if self.__token_check(value):
-                ret.append(u'{0}={1}'.format(key, value))
+                ret.append('{0}={1}'.format(key, value))
             else:
-                ret.append(u'{0}="{1}"'.format(key, value))
+                ret.append('{0}="{1}"'.format(key, value))
 
-        return u';'.join(ret)
+        return ';'.join(ret)
 
     def __token_check(self, value):
         token_allowed = self.__token_allowed
@@ -81,8 +81,8 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
 
         type, subtype = parts[0].strip().lower().split('/', 1)
 
-        type = type != '*' and type or None
-        subtype = subtype != '*' and subtype or None
+        type = type != '*' and type or ''
+        subtype = subtype != '*' and subtype or ''
         parameters = {}
 
         for param in parts[1:]:
@@ -108,8 +108,8 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
                 return False
             if self.subtype and self.subtype != other.subtype:
                 return False
-            self_params = set(self.parameters.iteritems())
-            other_params = set(other.parameters.iteritems())
+            self_params = set(self.parameters.items())
+            other_params = set(other.parameters.items())
             return self_params <= other_params
 
         raise ValueError

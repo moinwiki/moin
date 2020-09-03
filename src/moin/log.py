@@ -51,10 +51,7 @@
     will do the logging.
 """
 
-
-from __future__ import absolute_import, division
-
-from io import BytesIO
+from io import StringIO
 import os
 import logging
 import logging.config
@@ -67,7 +64,7 @@ import warnings
 # See http://docs.python.org/library/logging.html#configuring-logging
 # We just use stderr output by default, if you want anything else,
 # you will have to configure logging.
-logging_config = b"""\
+logging_config = """\
 [DEFAULT]
 # Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
 loglevel=INFO
@@ -138,24 +135,24 @@ def load_config(conf_fname=None):
                 f.close()
             configured = True
             logger = getLogger(__name__)
-            logger.info('using logging configuration read from "{0}"'.format(conf_fname))
+            logger.debug('using logging configuration read from "{0}"'.format(conf_fname))
             warnings.showwarning = _log_warning
         except Exception as err:  # XXX be more precise
             err_msg = str(err)
     if not configured:
         # load builtin fallback logging config
-        with BytesIO(logging_config) as f:
+        with StringIO(logging_config) as f:
             logging.config.fileConfig(f)
         configured = True
         logger = getLogger(__name__)
         if err_msg:
             logger.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
-        logger.info('using logging configuration read from built-in fallback in moin.log module!')
+        logger.debug('using logging configuration read from built-in fallback in moin.log module!')
         warnings.showwarning = _log_warning
 
     import moin
     code_path = os.path.dirname(moin.__file__)
-    logger.info('Running %s %s code from %s' % (moin.project, moin.version, code_path))
+    logger.debug('Running %s %s code from %s' % (moin.project, moin.version, code_path))
 
 
 def getLogger(name):
@@ -168,9 +165,8 @@ def getLogger(name):
     if not configured:
         load_config()
     logger = logging.getLogger(name)
-    for levelnumber, levelname in logging._levelNames.items():
-        if isinstance(levelnumber, int):  # that list has also the reverse mapping...
-            setattr(logger, levelname, levelnumber)
+    for levelnumber, levelname in logging._levelToName.items():
+        setattr(logger, levelname, levelnumber)
     return logger
 
 
@@ -178,14 +174,14 @@ class EmailHandler(logging.Handler):
     """ A custom handler class which sends email for each logging event using
     wiki mail configuration
     """
-    def __init__(self, toaddrs=[], subject=u''):
+    def __init__(self, toaddrs=[], subject=''):
         """ Initialize the handler
 
         :param toaddrs: address or a list of email addresses whom to send email
         :param subject: unicode email's subject
         """
         logging.Handler.__init__(self)
-        if isinstance(toaddrs, basestring):
+        if isinstance(toaddrs, str):
             toaddrs = [toaddrs]
         self.toaddrs = toaddrs
         self.subject = subject
@@ -215,7 +211,7 @@ class EmailHandler(logging.Handler):
         try:
             toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
             log_level = logging.getLevelName(self.level)
-            subject = self.subject if self.subject else u'[{0}][{1}] Log message'.format(
+            subject = self.subject if self.subject else '[{0}][{1}] Log message'.format(
                 app.cfg.sitename, log_level)
             msg = self.format(record)
             from moin.mail.sendmail import sendmail

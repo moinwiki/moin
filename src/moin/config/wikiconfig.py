@@ -2,33 +2,13 @@
 """
 MoinMoin Wiki Configuration - see https://moin-20.readthedocs.org/en/latest/admin/configure.html
 
-This configuration is designed to run moin from a workdir using
-the built-in server. Wiki admins who install moin via a git repository rather
-than a release package may opt to follow the developer instructions below to
-reduce merge issues when pulling updates.
+This file should be customized before creating content and adding user registrations.
 
+This starting configuration is designed to run moin using the built-in server to serve files
+to browsers running on the local PC.
 
-DEVELOPERS! Do not add your configuration items here - you could accidentally
-commit them! Instead, follow these steps:
-
-(1) In this directory, create a wikiconfig_local.py file containing the following one line of code:
-
-from wikiconfig_editme import *  # enable auto reload when wikiconfig_editme.py changes
-
-(2) Create a second file named wikiconfig_editme.py with the following six lines of code:
-
-from wikiconfig import *
-class LocalConfig(Config):
-    configuration_item_1 = 'value1'  # overlay this with local customizations
-MOINCFG = LocalConfig
-SECRET_KEY = 'you need to change this so it is really secret'
-DEBUG = True
-
-(3) Overlay the 3rd line in wikiconfig_editme.py by copying any or all of the indented
-    lines from "class Config" below.
-
-(4) Customize wikiconfig_editme.py as needed. Not all customization options are included
-    here, read the docs for other options.
+The security settings below are very relaxed, and not suitable for wikis
+serving files to the general public on the web.
 """
 
 import os
@@ -39,21 +19,48 @@ from moin.utils.interwiki import InterWikiMap
 
 
 class Config(DefaultConfig):
+    """
+    We assume this structure for a git clone scenario used by developers:
+    moin/                   # clone root and wikiconfig dir, use this as CWD for ./m or moin commands
+        contrib             # developer tools
+        docs/
+            _build/
+                html/       # local copy of moin documentation, created by running "./m docs" command
+        src/
+            moin/           # directory containing moin application code
+        wiki/               # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
+            data/           # wiki data and metadata
+            index/          # wiki indexes
+            preview/        # edit backups created when user clicks edit Preview button
+            sql/            # sql database used for edit locking
+        wikiconfig.py       # main configuration file, modify this to add or change features
+        wiki_local/         # use this to store custom CSS, Javascript, templates, logos, etc.
+        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
+    <moin-venv-python>      # virtual env is created as a sibling to moin/ by default
+        bin/                # Windows calls this directory Scripts
+        include             # Windows calls this directory Include
+        lib/                # Windows calls this directory Lib
 
-    # We assume this structure for a git clone or simple "unpack and run" scenario:
-    # moin-2.0/                     # wikiconfig_dir points here: clone root or unpack directory, contains this file.
-    #     wikiconfig.py             # the file you are reading now.
-    #     wiki/                     # instance_dir variable points here: created by running "./m sample" or "./m new-wiki" commands.
-    #         data/                 # data_dir variable points here.
-    #         index/                # index_storage variable points here.
-    #     contrib/
-    #         interwiki/
-    #             intermap.txt      # interwiki_map variable points here.
-    #     docs/
-    #         _build/
-    #             html/             # serve_files['docs']: html docs made by sphinx, create by running "./m docs" command.
-    #     wiki_local/               # serve_files['wiki_local']: store custom logos, CSS, templates, etc. here
-    # If that's not true, adjust these paths
+
+    OR: This structure will be created by a `<python> -m venv <path-to-new-myvenv>`
+    myvenv/                 # virtualenv root
+        bin/                # Windows calls this directory Scripts
+        include             # Windows calls this directory Include
+        lib/                # Windows calls this directory Lib
+
+    After activating above venv, `moin create-instance -p <mywiki>` creates this structure
+    mywiki/                 # wikiconfig dir, use this as CWD for moin commands
+        wiki/               # the wiki instance; created by `moin create-instance`
+            data/           # wiki data and metadata
+            index/          # wiki indexes
+            preview/        # backups created when user clicks edit Preview button
+            sql/            # sqlite database used for edit locking
+        wikiconfig.py       # main configuration file, modify this to add or change features
+        wiki-local          # use this to store custom CSS, Javascript, templates, logos, etc.
+        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
+
+    If that's not true, adjust these paths
+    """
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data')
@@ -67,15 +74,16 @@ class Config(DefaultConfig):
     template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
 
     # it is required that you set this to a unique, stable and non-empty name:
-    interwikiname = u'MyMoinMoin'
+    interwikiname = 'MyMoinMoin'
     # load the interwiki map from intermap.txt:
-    interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'contrib', 'interwiki', 'intermap.txt')).iwmap
-    # we must add entries for 'Self' and our interwikiname, change these if you are not running the built-in desktop server:
+    interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'intermap.txt')).iwmap
+    # we must add entries for 'Self' and our interwikiname,
+    # if you are not running the built-in desktop server change these to your wiki URL
     interwiki_map[interwikiname] = 'http://127.0.0.1:8080/'
     interwiki_map['Self'] = 'http://127.0.0.1:8080/'
 
     # sitename is displayed in heading of all wiki pages
-    sitename = u'My MoinMoin'
+    sitename = 'My MoinMoin'
 
     # default theme is topside
     # theme_default = u"modernized"  # or basic or topside_cms
@@ -104,6 +112,10 @@ class Config(DefaultConfig):
     admin_emails = []
     # send tracebacks to admins
     email_tracebacks = False
+
+    # options for new user registration
+    # registration_only_by_superuser = True  # disables self-registration, recommended for public wikis on internet
+    # registration_hint = u'To request an account, see bottom of <a href="/Home">Home</a> page.'
 
     # add or remove packages - see https://bitbucket.org/thomaswaldmann/xstatic for info about xstatic
     # it is uncommon to change these because of local customizations
@@ -137,33 +149,38 @@ class Config(DefaultConfig):
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
         # XXX we use rather relaxed ACLs for the development wiki:
-        default_acl=dict(before=u'',
-                         default=u'All:read,write,create,destroy,admin',
-                         after=u'',
+        default_acl=dict(before='',
+                         default='All:read,write,create,destroy,admin',
+                         after='',
                          hierarchic=False, ),
-        users_acl=dict(before=u'',
-                       default=u'All:read,write,create,destroy,admin',
-                       after=u'',
+        users_acl=dict(before='',
+                       default='All:read,write,create,destroy,admin',
+                       after='',
                        hierarchic=False, ),
         # userprofiles contain only metadata, no content will be created
-        userprofiles_acl=dict(before=u'All:',
-                              default=u'',
-                              after=u'',
+        userprofiles_acl=dict(before='All:',
+                              default='',
+                              after='',
                               hierarchic=False, ),
     )
 
     """
     secrets = {
-        'security/ticket': 'EnterDifferentSceretStringHere',
+        'security/ticket': 'EnterDifferentSecretStringHere',
     }
     """
 
 
-MOINCFG = Config  # Flask requires uppercase
+# flask settings require all caps
+MOINCFG = Config  # adding MOINCFG=<path> to OS environment overrides CWD
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = 'you need to change this so it is really secret'
 DEBUG = False  # use True for development only, not for public sites!
 TESTING = False  # built-in server (./m run) ignores TESTING and DEBUG settings
+# per https://flask.palletsprojects.com/en/1.1.x/security/#set-cookie-options
+SESSION_COOKIE_SECURE = False  # flask default is False
+SESSION_COOKIE_HTTPONLY = True  # flask default is True
+SESSION_COOKIE_SAMESITE = 'Lax'  # flask default is None
 # SESSION_COOKIE_NAME = 'session'
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
 # USE_X_SENDFILE = False

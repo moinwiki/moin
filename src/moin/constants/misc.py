@@ -7,12 +7,12 @@ MoinMoin - misc. constants not fitting elsewhere
 
 import re
 
-ANON = u'anonymous'
+ANON = 'anonymous'
 
 # Invalid characters - invisible characters that should not be in page
 # names. Prevent user confusion and wiki abuse, e.g u'\u202aFrontPage'.
 ITEM_INVALID_CHARS_REGEX = re.compile(
-    ur"""
+    r"""
     \u0000 | # NULL
 
     # Bidi control characters
@@ -27,11 +27,11 @@ ITEM_INVALID_CHARS_REGEX = re.compile(
 
 CLEAN_INPUT_TRANSLATION_MAP = {
     # these chars will be replaced by blanks
-    ord(u'\t'): u' ',
-    ord(u'\r'): u' ',
-    ord(u'\n'): u' ',
+    ord('\t'): ' ',
+    ord('\r'): ' ',
+    ord('\n'): ' ',
 }
-for c in u'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f':
+for c in '\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f':
     # these chars will be removed
     CLEAN_INPUT_TRANSLATION_MAP[ord(c)] = None
 del c
@@ -46,3 +46,8 @@ URI_SCHEMES = [
     'notes',
     'rtp', 'rtsp', 'rtcp',
 ]
+
+# "ok" constants returned by /utils/edit_locking as in: ok, message = edit_utils.xxx()
+NO_LOCK = 0  # false, someone else holds lock for current item
+LOCKED = 1  # true, current user has obtained or renewed lock
+LOCK = 'lock'

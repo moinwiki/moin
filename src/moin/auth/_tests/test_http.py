@@ -15,12 +15,12 @@ from moin.constants.misc import ANON
 import pytest
 
 
-class TestHTTPAuthMoin(object):
+class TestHTTPAuthMoin:
     """ Test: HTTPAuthMoin """
 
     @pytest.yield_fixture(autouse=True)
     def custom_setup(self):
-        class Auth(object):
+        class Auth:
             def __init__(self):
                 self.username = 'ValidUser'
                 self.password = 'test_pass'
@@ -35,11 +35,11 @@ class TestHTTPAuthMoin(object):
 
     def test_request(self):
         # create a new user
-        create_user(u'ValidUser', u'test_pass', u'test_email@moinmoin')
+        create_user('ValidUser', 'test_pass', 'test_email@moinmoin')
         httpauthmoin_obj = HTTPAuthMoin()
         test_user, bool_val = httpauthmoin_obj.request(flaskg.user)
         assert test_user.valid
-        assert test_user.name == [u'ValidUser', ]
+        assert test_user.name == ['ValidUser', ]
         assert bool_val
 
         # when auth_method is not 'http'

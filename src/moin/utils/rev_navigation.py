@@ -24,13 +24,13 @@ def prior_next_revs(revid, fqname):
         show_revision = False
     if show_revision:
         terms = [Term(WIKINAME, app.cfg.interwikiname), ]
-        terms.extend(Term(term, value) for term, value in fqname.query.iteritems())
+        terms.extend(Term(term, value) for term, value in fqname.query.items())
         query = And(terms)
         revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
         rev_ids = []
         mtimes = []
         for rev in revs:
-            mtimes.append(dict(rev.meta)[u'mtime'])
+            mtimes.append(dict(rev.meta)['mtime'])
             rev_ids.append(rev.revid)
         prior_rev = next_rev = prior_mtime = next_mtime = None
         current_idx = rev_ids.index(revid)

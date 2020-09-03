@@ -50,13 +50,13 @@ class HTTPAuthMoin(BaseAuth):
         if auth and auth.username and auth.password is not None:
             logging.debug("http basic auth, received username: {0!r} password: {1!r}".format(
                 auth.username, auth.password))
-            u = user.User(name=auth.username.decode(self.coding),
-                          password=auth.password.decode(self.coding),
+            u = user.User(name=auth.username, password=auth.password,
                           auth_method=self.name, auth_attribs=[], trusted=self.trusted)
             logging.debug("user: {0!r}".format(u))
 
         if not u or not u.valid:
-            from werkzeug import Response, abort
+            from werkzeug import Response
+            from werkzeug.exceptions import abort
             response = Response(_('Please log in first.'), 401,
                                 {'WWW-Authenticate': 'Basic realm="{0}"'.format(self.realm)})
             abort(response)

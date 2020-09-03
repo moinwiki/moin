@@ -14,6 +14,11 @@ import pytest
     'url_for_args,status,data',
     (
         (
+            {'endpoint': 'admin.register_new_user'},
+            '403 FORBIDDEN',
+            ('<html>', '</html>'),
+        ),
+        (
             {'endpoint': 'admin.index'},
             '403 FORBIDDEN',
             ('<html>', '</html>'),
@@ -56,4 +61,4 @@ def test_admin(app, url_for_args, status, data):
         assert rv.status == status
         assert rv.headers['Content-Type'] == 'text/html; charset=utf-8'
         for item in data:
-            assert item in rv.data
+            assert item.encode() in rv.data

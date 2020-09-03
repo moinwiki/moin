@@ -13,7 +13,7 @@ def main():
     digits = []
     space = []
     for code in range(1, 65535):
-        c = unichr(code)
+        c = chr(code)
         str = "\\u{0:04x}".format(code)
         if c.isupper():
             uppercase.append(str)
@@ -24,12 +24,12 @@ def main():
         elif c.isspace():
             space.append(str)
 
-    chars_upper = u''.join(uppercase)
-    chars_lower = u''.join(lowercase + digits)
-    chars_digits = u''.join(digits)
-    chars_spaces = u''.join(space)
+    chars_upper = ''.join(uppercase)
+    chars_lower = ''.join(lowercase + digits)
+    chars_digits = ''.join(digits)
+    chars_spaces = ''.join(space)
 
-    print """
+    print("""
 CHARS_UPPER = u"%(chars_upper)s"
 
 CHARS_LOWER = u"%(chars_lower)s"
@@ -39,7 +39,7 @@ CHARS_DIGITS = u"%(chars_digits)s"
 CHARS_SPACES = u"%(chars_spaces)s"
 
 
-""" % locals()
+""" % locals())
 
 
 if __name__ == '__main__':

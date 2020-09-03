@@ -67,7 +67,7 @@ class Dump(Command):
     description = 'Create a static HTML image of this wiki.'
 
     option_list = [
-        Option('--directory', '-d', dest='directory', type=unicode, required=False, default='HTML',
+        Option('--directory', '-d', dest='directory', type=str, required=False, default='HTML',
                help='Directory name containing the output files, default HTML'),
         Option('--theme', '-t', dest='theme', required=False, default='topside_cms',
                help='Name of theme used in creating output pages, default topside_cms'),
@@ -100,7 +100,7 @@ class Dump(Command):
             acls['before'] = 'All:read'
 
         # create an empty output directory after deleting any existing directory
-        print u'Creating output directory {0}, starting to copy supporting files'.format(html_root)
+        print('Creating output directory {0}, starting to copy supporting files'.format(html_root))
         if os.path.exists(html_root):
             shutil.rmtree(html_root, ignore_errors=False)
         else:
@@ -132,7 +132,7 @@ class Dump(Command):
         # convert: <img alt="svg" src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg" />
         # to:      <img alt="svg" src="+get/svg" />
         invalid_src = re.compile(r' src="/\+get/\+[0-9a-f]{32}/')
-        valid_src = u' src="+get/'
+        valid_src = ' src="+get/'
 
         # get ready to render and copy individual items
         names = []
@@ -145,7 +145,7 @@ class Dump(Command):
         else:
             q = Every()
 
-        print 'Starting to dump items'
+        print('Starting to dump items')
         for current_rev in app.storage.search(q, limit=None, sortedby="name"):
             if current_rev.namespace in exclude_ns:
                 # we usually do not copy userprofiles, no one can login to a static wiki
@@ -162,27 +162,27 @@ class Dump(Command):
                 filename = norm(join(html_root, file_name))
                 names.append(file_name)
             except Forbidden:
-                print u'Failed to dump {0}: Forbidden'.format(current_rev.name)
+                print('Failed to dump {0}: Forbidden'.format(current_rev.name))
                 continue
             except KeyError:
-                print u'Failed to dump {0}: KeyError'.format(current_rev.name)
+                print('Failed to dump {0}: KeyError'.format(current_rev.name))
                 continue
 
-            if not isinstance(rendered, unicode):
-                print u'Rendering failed for {0} with response {1}'.format(file_name, rendered)
+            if not isinstance(rendered, str):
+                print('Rendering failed for {0} with response {1}'.format(file_name, rendered))
                 continue
             # make hrefs relative to current folder
             rendered = rendered.replace('href="/', 'href="')
             rendered = rendered.replace('src="/static/', 'src="static/')
             rendered = rendered.replace('src="/+serve/', 'src="+serve/')
             rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
-            rendered = rendered.replace('<a href="">', u'<a href="{0}">'.format(app.cfg.default_root))  # TODO: fix basic theme
+            rendered = rendered.replace('<a href="">', '<a href="{0}">'.format(app.cfg.default_root))  # TODO: fix basic theme
             # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
             rendered = re.sub(invalid_src, valid_src, rendered)
             rendered = self.subitems(rendered)
 
             # copy raw data for all items to output /+get directory; images are required, text items are of marginal/no benefit
-            item = app.storage[current_rev.name]
+            item = app.storage[current_rev.fqname.fullname]
             rev = item[CURRENT]
             with open(get_dir + '/' + file_name, 'wb') as f:
                 shutil.copyfileobj(rev.data, f)
@@ -194,11 +194,18 @@ class Dump(Command):
                 with open(filename, 'wb') as f:
                     rev.data.seek(0)
                     shutil.copyfileobj(rev.data, f)
-                    print u'Saved file named {0} as raw data'.format(filename).encode('utf-8')
+                    try:
+                        print('Saved file named {0} as raw data'.format(filename))
+                    except UnicodeEncodeError:
+                        print('Saved file named {0} as raw data'.format(filename.encode('ascii', errors='replace')))
+
             else:
                 with open(filename, 'wb') as f:
                     f.write(rendered.encode('utf8'))
-                    print u'Saved file named {0}'.format(filename).encode('utf-8')
+                    try:
+                        print('Saved file named {0}'.format(filename))
+                    except UnicodeEncodeError:
+                        print('Saved file named {0}'.format(filename.encode('ascii', errors='replace')))
 
             if current_rev.name == app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click
@@ -220,25 +227,25 @@ class Dump(Command):
                 end = '<footer id="moin-footer">'
                 div_end = '</div></div>'
             # build a page named "+index" containing links to all wiki items
-            ul = u'<h1>Index</h1><ul>{0}</ul>'
-            li = u'<li><a href="{0}">{1}</a></li>'
+            ul = '<h1>Index</h1><ul>{0}</ul>'
+            li = '<li><a href="{0}">{1}</a></li>'
             links = []
             names.sort()
             for name in names:
                 links.append(li.format(name, name.replace(SLASH, '/')))
-            name_links = ul.format(u'\n'.join(links))
+            name_links = ul.format('\n'.join(links))
             try:
                 part1 = home_page.split(start)[0]
                 part2 = home_page.split(end)[1]
                 page = part1 + start + name_links + div_end + end + part2
             except IndexError:
                 page = home_page
-                print u'Error: failed to find {0} in item named {1}'.format(end, app.cfg.default_root)
+                print('Error: failed to find {0} in item named {1}'.format(end, app.cfg.default_root))
             for target in ['+index', '_+index.html']:
                 with open(norm(join(html_root, target)), 'wb') as f:
                     f.write(page.encode('utf8'))
         else:
-            print 'Error: no item matching name in app.cfg.default_root was found'
+            print('Error: no item matching name in app.cfg.default_root was found')
 
     def subitems(self, s, target='href="'):
         """

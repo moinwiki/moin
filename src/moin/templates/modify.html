@@ -1,5 +1,20 @@
+{#
+    This template renders the web page used to modify an existing item, preview
+    changes to a text item, or create a new wiki item.
+
+    Based upon content type, the data_editor macro that is passed will generate a
+    file upload option and/or a text editor, or specialized drawing tools to
+    create/modify twikidraw, anywikidraw, svgdraw items.
+
+    If a new item, this page is displayed after the user navigates through a series of web pages to:
+        * select item type (modify_select_itemtype.html), user may select default, ticket, blog
+        * select content type (modify_select_contenttype.html)
+        * select edit "from scratch" or "from template"
+#}
+
 {% import "forms.html" as forms %}
 {% import "utils.html" as utils %}
+
 {% extends theme("show.html") %}
 
 {% from form.meta_template import meta_editor %}
@@ -19,15 +34,6 @@
     {% endif %}
 {% endblock %}
 
-{% block subitem_navigation %}
-    {% call(fullname, shortname, contenttype, has_children) utils.render_subitem_navigation(fqname, True) %}
-        {% set shortname = shortname|json_dumps %}
-        <button class="moin-insertname-action" data-name="{{ fullname }}"
-            title="{{ _('Insert Name') }}">{{ _('Insert Name') }}</button>
-    {% endcall %}
-{% endblock %}
-
-
 {% block content %}
     <h1>{{ title }}</h1>
     <div id="moin-modify" class="moin-form">
@@ -39,7 +45,21 @@
                POSTs originate from their respective applets.
             #}
             {% if not form['content_form'].is_draw %}
-                {{ forms.render_submit(form, id='moin-save-text-button') }}
+                <div>
+                    {% set warning = "" %}
+                    {% if draft_data %}
+                        <button class="moin-button moin-load-draft" type="button" >{{ _("Load Draft") }}</button>
+                        {% set warning = _("Clicking this button will delete draft!") %}
+                    {% endif %}
+                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label,
+                        class='moin-button moin-modify-submit', title=warning) }}
+                    {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning) }}
+                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning) }}
+                </div>
                 <dl>
                     {{ forms.render(form['comment']) }}
                 </dl>
@@ -48,15 +68,28 @@
             {{ data_editor(form['content_form'], item_name) }}
             {% set may_admin = user.may.admin(fqname) %}
             {{ meta_editor(form['meta_form'], may_admin) }}
-            <dl>
-                {{ forms.render(form['extra_meta_text']) }}
-            </dl>
         {{ gen.form.close() }}
     </div>
+
+    {% if preview_rendered %}
+        {# user clicked Preview button, show diff and modified item as draft #}
+        {{ utils.diff_table(preview_diffs) }}
+        <div class="moin-watermark">
+            {{ preview_rendered | safe }}
+        </div>
+    {% endif %}
+
 {% endblock %}
 
 {% block options_for_javascript %}
     {%- if user.scroll_page_after_edit -%}
         <br id="moin-scroll-page-after-edit" />
     {%- endif %}
+    {%- if draft_data -%}
+        <textarea id="moin-draft-data">{{ draft_data }}</textarea>
+    {%- endif %}
+    {%- if lock_duration -%}
+        <input id="moin-lock_duration" value="{{ lock_duration }}" />
+    {%- endif %}
+    <input id="moin-item-name" value="{{ fqname }}" />
 {% endblock %}

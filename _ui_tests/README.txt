@@ -39,7 +39,7 @@ Instructions
 
 1. Open a terminal
 2. Change into the directory of this README
-3. Execute 'py.test -v -s'
+3. Execute 'pytest -v -s'
 
 If any tests fail, screenshots will be generated in the current directory 
 with names corresponding to the test class name and method name.
@@ -52,7 +52,7 @@ Pre-requisite:
 
 1. Open a terminal
 2. Change into the directory of this README
-3. Execute 'xfvb-run py.test -v -s'
+3. Execute 'xfvb-run pytest -v -s'
 
 Configuration
 -------------

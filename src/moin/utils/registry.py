@@ -13,7 +13,7 @@ can return a callable to consider itself as a match.
 from collections import namedtuple
 
 
-class RegistryBase(object):
+class RegistryBase:
     PRIORITY_REALLY_FIRST = -20
     PRIORITY_FIRST = -10
     PRIORITY_MIDDLE = 0
@@ -50,7 +50,7 @@ class RegistryBase(object):
     def _register(self, entry):
         if entry not in self._entries:
             entries = self._entries[:]
-            for i in xrange(len(entries)):
+            for i in range(len(entries)):
                 if entry < entries[i]:
                     entries.insert(i, entry)
                     break

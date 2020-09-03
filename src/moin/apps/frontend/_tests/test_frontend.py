@@ -10,7 +10,7 @@ from io import BytesIO
 
 from flask import url_for
 from flask import g as flaskg
-from werkzeug import ImmutableMultiDict, FileStorage
+from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 
 from moin.apps.frontend import views
 from moin import user
@@ -18,7 +18,7 @@ from moin import user
 import pytest
 
 
-class TestFrontend(object):
+class TestFrontend:
 
     @pytest.fixture(autouse=True)
     def custom_setup(self, app):
@@ -32,13 +32,14 @@ class TestFrontend(object):
 
         with self.app.test_client() as c:
             for method in ['HEAD', 'GET']:
-                print '%s %s' % (method, url_for(viewname, **viewopts))
+                print('%s %s' % (method, url_for(viewname, **viewopts)))
                 rv = c.open(url_for(viewname, **viewopts), method=method, data=params)
+                rv_data = rv.data.decode()
                 assert rv.status == status
                 assert rv.headers['Content-Type'] in content_types
                 if method == 'GET':
                     for item in data:
-                        assert item in rv.data
+                        assert item in rv_data
         return rv
 
     def _test_view_post(self, viewname, status='302 FOUND', content_types=('text/html; charset=utf-8', ), data=('<html>', '</html>'), form=None, viewopts=None):
@@ -46,13 +47,14 @@ class TestFrontend(object):
             viewopts = {}
         if form is None:
             form = {}
-        print 'POST %s' % url_for(viewname, **viewopts)
+        print('POST %s' % url_for(viewname, **viewopts))
         with self.app.test_client() as c:
             rv = c.post(url_for(viewname, **viewopts), data=form)
+            rv_data = rv.data.decode()
             assert rv.status == status
             assert rv.headers['Content-Type'] in content_types
             for item in data:
-                assert item in rv.data
+                assert item in rv_data
             return rv
 
     def test_ajaxdelete_item_name_route(self):
@@ -209,15 +211,11 @@ class TestFrontend(object):
         # TODO another test with valid rev1 and rev2 url args and an existing item is needed
         self._test_view('frontend.diffraw', status='404 NOT FOUND', data=[], viewopts=dict(item_name='DoesntExist'))
 
-    def test_favicon(self):
-        rv = self._test_view('frontend.favicon', content_types=['image/x-icon', 'image/vnd.microsoft.icon', ], data=[])
-        assert rv.data.startswith('\x00\x00')  # "reserved word, should always be 0"
-
     def test_global_tags(self):
         self._test_view('frontend.global_tags')
 
 
-class TestUsersettings(object):
+class TestUsersettings:
     reinit_storage = True  # avoid username / email collisions
 
     @pytest.yield_fixture(autouse=True)
@@ -228,26 +226,26 @@ class TestUsersettings(object):
         flaskg.user = saved_user
 
     def test_user_password_change(self):
-        self.createUser(u'moin', u'Xiwejr622')
-        flaskg.user = user.User(name=u'moin', password=u'Xiwejr622')
-        form = self.fillPasswordChangeForm(u'Xiwejr622', u'Woodoo645', u'Woodoo645')
+        self.createUser('moin', 'Xiwejr622')
+        flaskg.user = user.User(name='moin', password='Xiwejr622')
+        form = self.fillPasswordChangeForm('Xiwejr622', 'Woodoo645', 'Woodoo645')
         valid = form.validate()
         assert valid  # form data is valid
 
     def test_user_unicode_password_change(self):
-        name = u'moin'
-        password = u'__שם משתמש לא קיים__'  # Hebrew
+        name = 'moin'
+        password = '__שם משתמש לא קיים__'  # Hebrew
 
         self.createUser(name, password)
         flaskg.user = user.User(name=name, password=password)
-        form = self.fillPasswordChangeForm(password, u'Woodoo645', u'Woodoo645')
+        form = self.fillPasswordChangeForm(password, 'Woodoo645', 'Woodoo645')
         valid = form.validate()
         assert valid  # form data is valid
 
     def test_user_password_change_to_unicode_pw(self):
-        name = u'moin'
-        password = u'Xiwejr622'
-        new_password = u'__שם משתמש לא קיים__'  # Hebrew
+        name = 'moin'
+        password = 'Xiwejr622'
+        new_password = '__שם משתמש לא קיים__'  # Hebrew
 
         self.createUser(name, password)
         flaskg.user = user.User(name=name, password=password)
@@ -256,17 +254,17 @@ class TestUsersettings(object):
         assert valid  # form data is valid
 
     def test_fail_user_password_change_pw_mismatch(self):
-        self.createUser(u'moin', u'Xiwejr622')
-        flaskg.user = user.User(name=u'moin', password=u'Xiwejr622')
-        form = self.fillPasswordChangeForm(u'Xiwejr622', u'Piped33', u'Woodoo645')
+        self.createUser('moin', 'Xiwejr622')
+        flaskg.user = user.User(name='moin', password='Xiwejr622')
+        form = self.fillPasswordChangeForm('Xiwejr622', 'Piped33', 'Woodoo645')
         valid = form.validate()
         # form data is invalid because password1 != password2
         assert not valid
 
     def test_fail_password_change(self):
-        self.createUser(u'moin', u'Xiwejr622')
-        flaskg.user = user.User(name=u'moin', password=u'Xiwejr622')
-        form = self.fillPasswordChangeForm(u'Xinetd33', u'Woodoo645', u'Woodoo645')
+        self.createUser('moin', 'Xiwejr622')
+        flaskg.user = user.User(name='moin', password='Xiwejr622')
+        form = self.fillPasswordChangeForm('Xinetd33', 'Woodoo645', 'Woodoo645')
         valid = form.validate()
         # form data is invalid because password_current != user.password
         assert not valid
@@ -277,12 +275,12 @@ class TestUsersettings(object):
         """ helper to fill UserSettingsPasswordForm form
         """
         FormClass = views.UserSettingsPasswordForm
-        request_form = ImmutableMultiDict([
-            ('usersettings_password_password_current', current_password),
-            ('usersettings_password_password1', password1),
-            ('usersettings_password_password2', password2),
-            ('usersettings_password_submit', u'Save')
-        ])
+        request_form = (
+            ('password_current', current_password),
+            ('password1', password1),
+            ('password2', password2),
+            ('submit', 'Save')
+        )
         form = FormClass.from_flat(request_form)
         return form
 

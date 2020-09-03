@@ -18,11 +18,11 @@ from moin.constants.keys import (ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TA
 import pytest
 
 
-class TestSimple(object):
+class TestSimple:
     def test_create_retrieve(self):
-        name = u"foo"
-        password = u"barbaz4711"
-        email = u"foo@example.org"
+        name = "foo"
+        password = "barbaz4711"
+        email = "foo@example.org"
         # nonexisting user
         u = user.User(name=name, password=password)
         assert u.name == [name, ]
@@ -39,7 +39,7 @@ class TestSimple(object):
         assert u.exists()
 
 
-class TestUser(object):
+class TestUser:
 
     @pytest.yield_fixture(autouse=True)
     def saved_user(self):
@@ -53,7 +53,7 @@ class TestUser(object):
     def testAsciiPassword(self):
         """ user: login with ascii password """
         # Create test user
-        name = u'__Non Existent User Name__'
+        name = '__Non Existent User Name__'
         password = name
         self.createUser(name, password)
 
@@ -64,7 +64,7 @@ class TestUser(object):
     def testUnicodePassword(self):
         """ user: login with non-ascii password """
         # Create test user
-        name = u'__שם משתמש לא קיים__'  # Hebrew
+        name = '__שם משתמש לא קיים__'  # Hebrew
         password = name
         self.createUser(name, password)
 
@@ -75,7 +75,7 @@ class TestUser(object):
     def testInvalidatePassword(self):
         """ user: test invalidation of password """
         # Create test user
-        name = u'__Non Existent User Name__'
+        name = '__Non Existent User Name__'
         password = name
         self.createUser(name, password)
 
@@ -101,7 +101,7 @@ class TestUser(object):
         with the correct password and can not log in with a wrong password.
         """
         # Create test user
-        name = u'Test User'
+        name = 'Test User'
         # sha512_crypt passlib hash for '12345':
         pw_hash = '$6$rounds=1001$y9ObPHKb8cvRCs5G$39IW1i5w6LqXPRi4xqAu3OKv1UOpVKNkwk7zPnidsKZWqi1CrQBpl2wuq36J/s6yTxjCnmaGzv/2.dAmM8fDY/'
         self.createUser(name, pw_hash, True)
@@ -117,22 +117,22 @@ class TestUser(object):
     # Subscriptions ---------------------------------------------------
 
     def test_subscriptions(self):
-        pagename = u"Foo:foo 123"
-        tagname = u"xxx"
+        pagename = "Foo:foo 123"
+        tagname = "xxx"
         regexp = r"\d+"
         item = Item.create(pagename)
-        item._save({NAMESPACE: u"", TAGS: [tagname]})
+        item._save({NAMESPACE: "", TAGS: [tagname]})
         item = Item.create(pagename)
         meta = item.meta
 
-        name = u'bar'
+        name = 'bar'
         password = name
         email = "bar@example.org"
         user.create_user(name, password, email)
         the_user = user.User(name=name, password=password)
         assert not the_user.is_subscribed_to(item)
-        the_user.subscribe(NAME, u"SomeOtherPageName", u"")
-        result = the_user.unsubscribe(NAME, u"OneMorePageName", u"")
+        the_user.subscribe(NAME, "SomeOtherPageName", "")
+        result = the_user.unsubscribe(NAME, "OneMorePageName", "")
         assert result is False
 
         subscriptions = [(ITEMID, meta[ITEMID], None),
@@ -150,7 +150,7 @@ class TestUser(object):
     # Bookmarks -------------------------------------------------------
 
     def test_bookmark(self):
-        name = u'Test_User_bookmark'
+        name = 'Test_User_bookmark'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
@@ -174,8 +174,8 @@ class TestUser(object):
         """
         Test for the quicklinks
         """
-        pagename = u'Test_page_quicklink'
-        name = u'Test_User_quicklink'
+        pagename = 'Test_page_quicklink'
+        name = 'Test_User_quicklink'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
@@ -188,13 +188,13 @@ class TestUser(object):
         assert not result
 
         # add quicklink
-        theUser.quicklink(u'Test_page_added')
+        theUser.quicklink('Test_page_added')
         result_on_addition = theUser.quicklinks
-        expected = [u'MoinTest/Test_page_added']
+        expected = ['MoinTest/Test_page_added']
         assert result_on_addition == expected
 
         # remove quicklink
-        theUser.quickunlink(u'Test_page_added')
+        theUser.quickunlink('Test_page_added')
         result_on_removal = theUser.quicklinks
         expected = []
         assert result_on_removal == expected
@@ -202,8 +202,8 @@ class TestUser(object):
     # Trail -----------------------------------------------------------
 
     def test_trail(self):
-        pagename = u'Test_page_trail'
-        name = u'Test_User_trail'
+        pagename = 'Test_page_trail'
+        name = 'Test_User_trail'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
@@ -214,16 +214,16 @@ class TestUser(object):
         assert result == expected
 
         # item name added to trail
-        theUser.add_trail(u'item_added')
+        theUser.add_trail('item_added')
         theUser = user.User(name=name, password=password)
         result = theUser.get_trail()
-        expected = [u'MoinTest/item_added']
+        expected = ['MoinTest/item_added']
         assert result == expected
 
     # Sessions -------------------------------------------------------
 
     def test_sessions(self):
-        name = u'Test_User_sessions'
+        name = 'Test_User_sessions'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
@@ -245,18 +245,18 @@ class TestUser(object):
     # Other ----------------------------------------------------------
 
     def test_recovery_token(self):
-        name = u'Test_User_other'
+        name = 'Test_User_other'
         password = name
         self.createUser(name, password)
         theUser = user.User(name=name, password=password)
 
         # use recovery token to generate new password
         test_token = theUser.generate_recovery_token()
-        result_success = theUser.apply_recovery_token(test_token, u'test_newpass')
+        result_success = theUser.apply_recovery_token(test_token, 'test_newpass')
         assert result_success
 
         # wrong token
-        result_failure = theUser.apply_recovery_token('test_wrong_token', u'test_newpass')
+        result_failure = theUser.apply_recovery_token('test_wrong_token', 'test_newpass')
         assert not result_failure
 
     # Helpers ---------------------------------------------------------
@@ -266,23 +266,23 @@ class TestUser(object):
         assert ret is None, "create_user returned: {0}".format(ret)
 
 
-class TestGroupName(object):
+class TestGroupName:
 
     def testGroupNames(self):
         """ user: isValidName: reject group names """
-        test = u'AdminGroup'
+        test = 'AdminGroup'
         assert not user.isValidName(test)
 
 
-class TestIsValidName(object):
+class TestIsValidName:
 
     def testNonAlnumCharacters(self):
         """ user: isValidName: reject unicode non alpha numeric characters
 
         : and , used in acl rules, we might add more characters to the syntax.
         """
-        invalid = u'! # $ % ^ & * ( ) = + , : ; " | ~ / \\ \u0000 \u202a'.split()
-        base = u'User{0}Name'
+        invalid = '! # $ % ^ & * ( ) = + , : ; " | ~ / \\ \u0000 \u202a'.split()
+        base = 'User{0}Name'
         for c in invalid:
             name = base.format(c)
             assert not user.isValidName(name)
@@ -290,9 +290,9 @@ class TestIsValidName(object):
     def testWhitespace(self):
         """ user: isValidName: reject leading, trailing or multiple whitespace """
         cases = (
-            u' User Name',
-            u'User Name ',
-            u'User   Name',
+            ' User Name',
+            'User Name ',
+            'User   Name',
         )
         for test in cases:
             assert not user.isValidName(test)
@@ -300,10 +300,10 @@ class TestIsValidName(object):
     def testValid(self):
         """ user: isValidName: accept names in any language, with spaces """
         cases = (
-            u'Jürgen Hermann',  # German
-            u'ניר סופר',  # Hebrew
-            u'CamelCase',  # Good old camel case
-            u'가각간갇갈 갉갊감 갬갯걀갼'  # Hangul (gibberish)
+            'Jürgen Hermann',  # German
+            'ניר סופר',  # Hebrew
+            'CamelCase',  # Good old camel case
+            '가각간갇갈 갉갊감 갬갯걀갼'  # Hangul (gibberish)
         )
         for test in cases:
             assert user.isValidName(test)

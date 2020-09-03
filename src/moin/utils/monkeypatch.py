@@ -14,6 +14,9 @@ please notify us, so we can remove it from here.
 
 # make werkzeug's BaseRequestHandler use some more sane logging format, get
 # rid of the duplicate log_date_time_string() werkzeug usually outputs:
+# 2019-04-10 08:59:20,898 INFO werkzeug:97 127.0.0.1 - - [10/Apr/2019 08:59:20] "GET /Home HTTP/1.1" 200 -
+# with this monkeypatch:
+# 2019-04-10 09:10:09,273 INFO werkzeug:97 127.0.0.1 "GET /Home HTTP/1.1" 200 -
 import werkzeug.serving
 from werkzeug._internal import _log
 

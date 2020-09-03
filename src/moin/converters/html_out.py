@@ -9,9 +9,6 @@ MoinMoin - HTML output converter
 Converts an internal document tree into a HTML tree.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 from flask import request
@@ -32,7 +29,7 @@ logging = log.getLogger(__name__)
 
 
 # strings not allowed in style attributes
-SUSPECT = set(('/*', '/>', '\\', '`', 'script', '&#', 'http', 'expression', 'behavior', ))
+SUSPECT = {'/*', '/>', '\\', '`', 'script', '&#', 'http', 'expression', 'behavior', }
 
 
 def style_attr_filter(style):
@@ -64,7 +61,7 @@ def mark_item_as_transclusion(elem, href):
     On the client side, a Javascript function will wrap the element (or a parent element)
     in a span or div and 2 overlay siblings will be created.
     """
-    href = unicode(href)
+    href = str(href)
     # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
     # or "http://Some.Org/SomeThing" for external link
     if elem.tag.name not in ('object', 'img'):
@@ -82,7 +79,7 @@ def mark_item_as_transclusion(elem, href):
     return elem
 
 
-class Attribute(object):
+class Attribute:
     """ Adds the attribute with the HTML namespace to the output. """
     __slots__ = 'key'
 
@@ -93,7 +90,7 @@ class Attribute(object):
         out[self.key] = value
 
 
-class Attributes(object):
+class Attributes:
     namespaces_valid_output = frozenset([
         html,
     ])
@@ -128,7 +125,7 @@ class Attributes(object):
         new = {}
         new_default = {}
 
-        for key, value in self.element.attrib.iteritems():
+        for key, value in self.element.attrib.items():
             if key == html.style:
                 value = style_attr_filter(value)
             if key.uri == moin_page:
@@ -160,7 +157,7 @@ class Attributes(object):
         return new_default
 
 
-class Converter(object):
+class Converter:
     """
     Converter application/x.moin.document -> application/x.moin.document
     """
@@ -170,7 +167,7 @@ class Converter(object):
     }
 
     # Inline tags which can be directly converted into an HTML element
-    direct_inline_tags = set(['abbr', 'address', 'dfn', 'kbd'])
+    direct_inline_tags = {'abbr', 'address', 'dfn', 'kbd'}
 
     def __call__(self, element):
         return self.visit(element)
@@ -216,26 +213,36 @@ class Converter(object):
         # Unknown element are just copied
         return self.new_copy(elem.tag, elem)
 
-    def visit_moinpage_a(self, elem, _tag_html_a=html.a, _tag_html_href=html.href, _tag_xlink_href=xlink.href):
+    def visit_moinpage_a(self, elem):
         attrib = {}
-        href = elem.get(_tag_xlink_href)
+        href = elem.get(xlink.href)
         if href:
-            attrib[_tag_html_href] = href
-        if len(elem) == 1 and isinstance(elem[0], unicode) and elem[0] == u'':
+            attrib[html.href] = href
+        if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == '':
             # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
-            elem[0] = href.path[1:]
+            elem[0] = href.path[1:] if href.path else href.fragment
         # html attibutes are copied by default (html.target, html.class, html.download...
-        return self.new_copy(_tag_html_a, elem, attrib)
+        return self.new_copy(html.a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):
         """Used by reST and docbook."""
         attrib = {}
-        valid_classes = set(["attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"])
+        valid_classes = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
         cls = elem.get(moin_page.type)
         if cls in valid_classes:
             attrib[html.class_] = cls
         elem.attrib = {}
         return self.new_copy(html.div, elem, attrib)
+
+    def visit_moinpage_audio(self, elem):
+        href = elem.get(xlink.href, None)
+        attrib = {html.src: href} if href else {}
+        return self.new_copy(html.audio, elem)
+
+    def visit_moinpage_video(self, elem):
+        href = elem.get(xlink.href, None)
+        attrib = {html.src: href} if href else {}
+        return self.new_copy(html.video, elem, attrib)
 
     def visit_moinpage_nowiki(self, elem):
         return self.new_copy(html.div, elem)
@@ -446,7 +453,7 @@ class Converter(object):
         if href is not None:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
-        alt = convert_getlink_to_showlink(unicode(href))
+        alt = convert_getlink_to_showlink(str(href))
         alt = re.sub(r'^/', '', alt)
 
         if obj_type == "img":
@@ -589,7 +596,7 @@ class Converter(object):
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if len(elem) > 1 + caption and html('class') in attrib and u'moin-wiki-table' in attrib[html('class')]:
+                if len(elem) > 1 + caption and html('class') in attrib and 'moin-wiki-table' in attrib[html('class')]:
                     # moinwiki tables require special handling because
                     # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
                     if idx == 0 + caption:
@@ -618,6 +625,9 @@ class Converter(object):
     def visit_moinpage_table_cell(self, elem):
         return self.new_copy(html.td, elem)
 
+    def visit_moinpage_table_cell_head(self, elem):
+        return self.new_copy(html.th, elem)
+
     def visit_moinpage_table_row(self, elem):
         return self.new_copy(html.tr, elem)
 
@@ -625,7 +635,7 @@ class Converter(object):
         return self.new_copy(html.u, elem)
 
 
-class SpecialId(object):
+class SpecialId:
     def __init__(self):
         self._ids = {}
 
@@ -644,10 +654,10 @@ class SpecialId(object):
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         if nr == 1:
             return id
-        return id + u'-{0}'.format(nr)
+        return id + '-{0}'.format(nr)
 
 
-class SpecialPage(object):
+class SpecialPage:
     def __init__(self):
         self._footnotes = []
         self._headings = []
@@ -792,7 +802,7 @@ class ConverterPage(Converter):
             elem.set(_tag_html_id, id)
         try:
             # do not create duplicate anchors to this heading when converting from one markup to another
-            if not elem[-1].attrib[html.class_] == u'moin-permalink':
+            if not elem[-1].attrib[html.class_] == 'moin-permalink':
                 self._special_stack[-1].add_heading(elem, elem.level, id)
         except (AttributeError, KeyError):
             self._special_stack[-1].add_heading(elem, elem.level, id)

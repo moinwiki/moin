@@ -10,7 +10,7 @@ import pytest
 from moin.utils.diff_datastruct import diff, make_text_diff, Undefined, INSERT, DELETE
 
 
-class TestDiffDatastruct(object):
+class TestDiffDatastruct:
 
     def _test_make_text_diff(self, tests):
         for changes, expected in tests:
@@ -18,7 +18,7 @@ class TestDiffDatastruct(object):
                 assert got == expected
 
     def test_diff_no_change(self):
-        datastruct = [None, True, 42, u"value", [1, 2, 3], dict(one=1, two=2)]
+        datastruct = [None, True, 42, "value", [1, 2, 3], dict(one=1, two=2)]
         for d in datastruct:
             assert diff(d, d) == []
 
@@ -54,11 +54,11 @@ class TestDiffDatastruct(object):
             assert diff(d1, d2) == expected
 
     def test_diff_unicode(self):
-        tests = [(u"same", u"same", []),
-                 (Undefined, u"new", [(INSERT, [], u"new")]),
-                 (u"old", Undefined, [(DELETE, [], u"old")]),
-                 (u"some value", u"some other value",
-                  [(DELETE, [], u"some value"), (INSERT, [], u"some other value")])]
+        tests = [("same", "same", []),
+                 (Undefined, "new", [(INSERT, [], "new")]),
+                 ("old", Undefined, [(DELETE, [], "old")]),
+                 ("some value", "some other value",
+                  [(DELETE, [], "some value"), (INSERT, [], "some other value")])]
         for d1, d2, expected in tests:
             assert diff(d1, d2) == expected
 
@@ -89,13 +89,13 @@ class TestDiffDatastruct(object):
             assert diff(d1, d2) == expected
 
     def test_diff_str_unicode_keys(self):
-        d1 = {"old": u"old", u"same1": u"same1", "same2": u"same2"}
-        d2 = {u"new": u"new", "same1": u"same1", u"same2": u"same2"}
-        assert diff(d1, d2) == [(INSERT, ["new"], u"new"),
-                                (DELETE, ["old"], u"old")]
+        d1 = {"old": "old", "same1": "same1", "same2": "same2"}
+        d2 = {"new": "new", "same1": "same1", "same2": "same2"}
+        assert diff(d1, d2) == [(INSERT, ["new"], "new"),
+                                (DELETE, ["old"], "old")]
 
     def test_diff_errors(self):
-        tests = [(u"foo", True),
+        tests = [("foo", True),
                  ((1, 2, ), (3, 4, )),
                  (dict(key=(1, 2, )), dict()),
                  (None, [1, 2, ])]
@@ -105,44 +105,44 @@ class TestDiffDatastruct(object):
 
     def test_make_text_diff_empty(self):
         for got in make_text_diff([]):
-            assert got == u""
+            assert got == ""
 
     def test_make_text_diff_none(self):
-        tests = [([(INSERT, [], None)], u"+ None"),
-                 ([(DELETE, [], None)], u"- None")]
+        tests = [([(INSERT, [], None)], "+ None"),
+                 ([(DELETE, [], None)], "- None")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_bool(self):
-        tests = [([(INSERT, [], True)], u"+ True"),
-                 ([(DELETE, [], False)], u"- False")]
+        tests = [([(INSERT, [], True)], "+ True"),
+                 ([(DELETE, [], False)], "- False")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_int(self):
-        tests = [([(INSERT, [], 123)], u"+ 123"),
-                 ([(DELETE, [], 321)], u"- 321")]
+        tests = [([(INSERT, [], 123)], "+ 123"),
+                 ([(DELETE, [], 321)], "- 321")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_float(self):
-        tests = [([(INSERT, [], 1.2)], u"+ 1.2"),
-                 ([(DELETE, [], 3.4)], u"- 3.4")]
+        tests = [([(INSERT, [], 1.2)], "+ 1.2"),
+                 ([(DELETE, [], 3.4)], "- 3.4")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_unicode(self):
-        tests = [([(INSERT, [], u"new value")], u"+ new value"),
-                 ([(DELETE, [], u"old value")], u"- old value")]
+        tests = [([(INSERT, [], "new value")], "+ new value"),
+                 ([(DELETE, [], "old value")], "- old value")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_list(self):
-        tests = [([(INSERT, [], [1, 2, 3, ])], u"+ [1, 2, 3]"),
-                 ([(DELETE, [], [4, 5, ])], u"- [4, 5]")]
+        tests = [([(INSERT, [], [1, 2, 3, ])], "+ [1, 2, 3]"),
+                 ([(DELETE, [], [4, 5, ])], "- [4, 5]")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_one_key(self):
-        tests = [([(INSERT, ["key"], u"new value")], u"+ key: new value"),
-                 ([(DELETE, ["key"], u"old value")], u"- key: old value")]
+        tests = [([(INSERT, ["key"], "new value")], "+ key: new value"),
+                 ([(DELETE, ["key"], "old value")], "- key: old value")]
         self._test_make_text_diff(tests)
 
     def test_make_text_diff_multiple_keys(self):
-        tests = [([(INSERT, ["key1", "key2"], 1)], u"+ key1.key2: 1"),
-                 ([(DELETE, ["key1", "key2", "key3"], 2)], u"- key1.key2.key3: 2")]
+        tests = [([(INSERT, ["key1", "key2"], 1)], "+ key1.key2: 1"),
+                 ([(DELETE, ["key1", "key2", "key3"], 2)], "- key1.key2.key3: 2")]
         self._test_make_text_diff(tests)

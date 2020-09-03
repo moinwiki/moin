@@ -7,10 +7,11 @@
 
 {% import "utils.html" as utils with context %}
 
-{% set (history, next_offset, previous_offset) = history_page %}
 {% set summary = history[0].get('summary', None) if history else None %}
 {% set heading = _("History of '%(fqname)s'", fqname=fqname|shorten_fqname) %}
 {% set first_itemid = history[0].itemid %}
+{% set user_may_write = user.may.write(fqname) %}
+{% set user_may_destroy = user.may.destroy(fqname) %}
 
 {% block content %}
     {% if history %}
@@ -23,22 +24,20 @@
                     Click to show history spanning item delete and recreate.
                 </p>
             {% else %}
+                {% if fqname.namespace %}
+                    {% set namespace = fqname.namespace + "/" %}
+                {% else %}
+                    {% set namespace = "" %}
+                {% endif %}
                 <p class="moin-no-print">
-                    <a class="moin-button" href="{{ url_for('frontend.history', item_name='@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
+                    <a class="moin-button" href="{{ url_for('frontend.history', item_name=namespace + '@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
                     Click to show history spanning item renames.
                 </p>
             {% endif %}
         {% endif %}
 
-        {# if history is long, create links to show next and/or prior pages #}
-        <div class='moin-offset-links'>
-            {% if previous_offset >= 0 %}
-                <a class='moin-prior-page' href="{{ url_for('frontend.history', item_name=fqname, offset=previous_offset) }}" title="{{ _("Previous") }}">&laquo;</a>
-            {% endif %}
-            {% if next_offset %}
-                <a class='moin-next-page' href="{{ url_for('frontend.history', item_name=fqname, offset=next_offset) }}" title="{{ _("Next") }}">&raquo;</a>
-            {% endif %}
-        </div>
+        {# if history is long and displayed as several pages, create links to show next and/or prior pages #}
+        {{ utils.page_links(page_num, pages, url) }}
 
         <div class="moin-clr"></div>
         <form action="{{ url_for('frontend.diff', item_name=fqname) }}" method="GET">
@@ -75,7 +74,7 @@
                             <tr>
                                 <td class="moin-wordbreak">{{ utils.item_moniker(doc, doc.fqnames) }}</td>
                                 <td class="moin-integer">{{ doc.rev_number or doc.revid|shorten_id }}</td>
-                                <td>{{ doc.mtime|datetimeformat }}</td>
+                                <td>{{ doc.mtime|time_datetime }}</td>
                                 <td class="moin-integer">{{ doc.size }}</td>
                                 <td>
                                     {#- do not create radio buttons if item was deleted and recreated with same name, different itemid #}
@@ -99,7 +98,9 @@
                                         </div>
                                     {%- endif %}
                                 </td>
-                                <td class="moin-wordbreak">{{ utils.editor_info(doc) }}</td>
+                                {% set uid = doc.get('userid') or doc.get('address') %}
+                                {% set editor_info = editor_infos.get(uid) %}
+                                <td class="moin-wordbreak">{{ utils.show_editor_info(editor_info) }}</td>
                                 <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
                                 <td class="moin-wordbreak">{{ doc.comment }}</td>
                                 {%- if loop.first %}
@@ -127,7 +128,7 @@
                                         <span class="fa fa-download"></span>
                                     </a>
                                 </td>
-                                {%- if user.may.write(fqname) and not doc.trash -%}
+                                {%- if user_may_write and not doc.trash -%}
                                     {%- if loop.first %}
                                         <td>
                                             <a href="{{ url_for('frontend.delete_item', item_name=fqname) }}" title="{{ _('delete item') }}">
@@ -147,7 +148,7 @@
                                 {%- else %}
                                     <td></td>
                                 {%- endif %}
-                                {%- if user.may.destroy(fqname) -%}
+                                {%- if user_may_destroy -%}
                                     {%- if loop.first %}
                                         <td>
                                             <a href="{{ url_for('frontend.destroy_item', item_name=fqname) }}" title="{{ _('destroy all revisions') }}">
@@ -171,7 +172,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="2">Bookmark is set to</td>
-                                <td>{{ bookmark_time|datetimeformat }}</td>
+                                <td>{{ bookmark_time|time_datetime }}</td>
                                 <td colspan="11"></td>
                             </tr>
                         </tfoot>
@@ -179,5 +180,6 @@
                 </table>
             </div>
         </form>
+        {{ utils.page_links(page_num, pages, url) }}
     {%- endif %}
 {%- endblock %}

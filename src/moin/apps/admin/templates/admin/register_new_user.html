@@ -1,0 +1,21 @@
+{#
+    Simple form used by SuperUsers to create new user accounts without passwords.
+    New users will create passwords by responding to an email.
+#}
+
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+    <h1>{{ _("Register New User") }}</h1>
+    <div class="moin-form">
+        {{ gen.form.open(form, method="post", action=url_for('admin.register_new_user')) }}
+            {{ forms.render_errors(form) }}
+            <dl>
+                {{ forms.render(form['username']) }}
+                {{ forms.render(form['email']) }}
+            </dl>
+            {{ forms.render_submit(form) }}
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}

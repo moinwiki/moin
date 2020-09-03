@@ -22,7 +22,7 @@ class Macro(MacroInlineBase):
             key = args[1].strip()
         except (IndexError, AssertionError):
             raise ValueError(_("GetVal: invalid parameters, try <<GetVal(DictName, key)>>"))
-        if not flaskg.user.may.read(unicode(item_name)):
+        if not flaskg.user.may.read(str(item_name)):
             raise ValueError(_("GetVal: permission to read denied: ") + item_name)
         try:
             d = flaskg.dicts[item_name]

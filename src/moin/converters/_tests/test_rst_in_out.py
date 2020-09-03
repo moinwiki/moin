@@ -23,8 +23,6 @@ from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.constants.contenttypes import CHARSET
 
-# ### TODO: try block (do not crash if we don't have docutils)
-pytest.importorskip('docutils')  # noqa
 from docutils import nodes, utils, writers, core
 from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block
@@ -34,8 +32,11 @@ from docutils.parsers.rst import directives, roles
 from moin.converters.rst_in import Converter as conv_in
 from moin.converters.rst_out import Converter as conv_out
 
+# ### TODO: try block (do not crash if we don't have docutils)
+pytest.importorskip('docutils')  # noqa
 
-class TestConverter(object):
+
+class TestConverter:
 
     input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:xinclude="{3}" xmlns:html="{4}"'.format(
         moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)
@@ -55,13 +56,13 @@ class TestConverter(object):
 
     data = [
         # output is not identical to input, but HTML out display is the same
-        (u'=====\nTitle\n=====\n\nSubTitle\n========\n\nSection\n-------\n',
+        ('=====\nTitle\n=====\n\nSubTitle\n========\n\nSection\n-------\n',
          '\n=====\nTitle\n=====\n\nSubTitle\n========\n\nSection\n=======\n'),
-        (u'para\n\n=======\nSection\n=======\n\nSubsection\n==========\n\nSubsubection\n------------\n',
+        ('para\n\n=======\nSection\n=======\n\nSubsection\n==========\n\nSubsubection\n------------\n',
          'para\n\nSection\n=======\n\nSubsection\n----------\n\nSubsubection\n************\n'),
         # output identical to input
-        (u'\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n',
-         u'\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n'),
+        ('\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n',
+         '\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -69,19 +70,19 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u'Text', 'Text\n'),
-        (u"Text\n\nText\n", 'Text\n\nText\n'),
-        (u"**strong**\n", "**strong**\n"),
-        (u"*emphasis*\n", "*emphasis*\n"),
+        ('Text', 'Text\n'),
+        ("Text\n\nText\n", 'Text\n\nText\n'),
+        ("**strong**\n", "**strong**\n"),
+        ("*emphasis*\n", "*emphasis*\n"),
         # extraneous x required below to prevent IndexError, side effect of serializer
-        (u"{{{{{x\nblockcode\n}}}}}\n", "{{{{{x\nblockcode\n}}}}}\n"),
-        (u"--(stroke)--\n", '--(stroke)--\n'),
-        (u"__underline__\n", '__underline__\n'),
-        (u"~+larger+~\n", '~+larger+~\n'),
-        (u"~-smaller-~\n", '~-smaller-~\n'),
-        (u"^super^script\n", '^super^script\n'),
-        (u",,sub,,script\n", ',,sub,,script\n'),
-        (u"#ANY any", "#ANY any\n"),
+        ("{{{{{x\nblockcode\n}}}}}\n", "{{{{{x\nblockcode\n}}}}}\n"),
+        ("--(stroke)--\n", '--(stroke)--\n'),
+        ("__underline__\n", '__underline__\n'),
+        ("~+larger+~\n", '~+larger+~\n'),
+        ("~-smaller-~\n", '~-smaller-~\n'),
+        ("^super^script\n", '^super^script\n'),
+        (",,sub,,script\n", ',,sub,,script\n'),
+        ("#ANY any", "#ANY any\n"),
         # line blocks
         ('\n| Lend us a couple of bob till Thursday.\n', '\n| Lend us a couple of bob till Thursday.\n'),
     ]
@@ -91,11 +92,11 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u".. This is a comment", u"\n..\n This is a comment\n"),
-        (u"..\n This is a comment", u"\n..\n This is a comment\n"),
-        (u"..\n [and] this!", u"\n..\n [and] this!\n"),
-        (u"..\n this:: too!", u"\n..\n this:: too!\n"),
-        (u"..\n |even| this:: !", u"\n..\n |even| this:: !\n"),
+        (".. This is a comment", "\n..\n This is a comment\n"),
+        ("..\n This is a comment", "\n..\n This is a comment\n"),
+        ("..\n [and] this!", "\n..\n [and] this!\n"),
+        ("..\n this:: too!", "\n..\n this:: too!\n"),
+        ("..\n |even| this:: !", "\n..\n |even| this:: !\n"),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -103,13 +104,13 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u".. macro:: <<TableOfContents()>>", '\n\n.. contents::\n\n'),
-        (u".. contents::", '\n\n.. contents::\n\n'),
-        (u".. macro:: <<Include(MyPage)>>", '\n.. include:: MyPage\n'),
-        (u".. include:: MyPage", '\n.. include:: MyPage\n'),
-        (u".. macro:: <<RandomItem()>>", '\n.. macro:: <<RandomItem()>>\n'),
-        (u".. macro:: <<RandomItem(5)>>", '\n.. macro:: <<RandomItem(5)>>\n'),
-        (u".. macro:: <<Date>>", '\n.. macro:: <<Date()>>\n'),
+        (".. macro:: <<TableOfContents()>>", '\n\n.. contents::\n\n'),
+        (".. contents::", '\n\n.. contents::\n\n'),
+        (".. macro:: <<Include(MyPage)>>", '\n.. include:: MyPage\n'),
+        (".. include:: MyPage", '\n.. include:: MyPage\n'),
+        (".. macro:: <<RandomItem()>>", '\n.. macro:: <<RandomItem()>>\n'),
+        (".. macro:: <<RandomItem(5)>>", '\n.. macro:: <<RandomItem(5)>>\n'),
+        (".. macro:: <<Date>>", '\n.. macro:: <<Date()>>\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -119,29 +120,29 @@ class TestConverter(object):
     data = [
         # examples taken from http://docutils.sourceforge.net/docs/user/rst/quickref.html#explicit-markup
         # output is not identical to input, but HTML out display is the same
-        (u'External hyperlinks, like Python_.\n\n.. _Python: http://www.python.org/',
-         u'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
-        (u'External hyperlinks, like `Python <http://www.python.org/>`_.',
-         u'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
-        (u'Internal crossreferences, like example_.\n\n.. _example:\n\nThis is an example crossreference target.',
-         u'Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n'),
-        (u'Python_ is `my favourite programming language`__.\n\n.. _Python: http://www.python.org/\n\n__ Python_',
-         u'`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n'),
-        (u'Titles are targets, too \n======================= \nImplict references, like `Titles are targets, too`_.',
-         u'\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
+        ('External hyperlinks, like Python_.\n\n.. _Python: http://www.python.org/',
+         'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
+        ('External hyperlinks, like `Python <http://www.python.org/>`_.',
+         'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
+        ('Internal crossreferences, like example_.\n\n.. _example:\n\nThis is an example crossreference target.',
+         'Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n'),
+        ('Python_ is `my favourite programming language`__.\n\n.. _Python: http://www.python.org/\n\n__ Python_',
+         '`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n'),
+        ('Titles are targets, too \n======================= \nImplict references, like `Titles are targets, too`_.',
+         '\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
         # output is same as input
-        (u'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n',
-         u'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
-        (u'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n',
-         u'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
-        (u'Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n',
-         u'Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n'),
+        ('External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n',
+         'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
+        ('External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n',
+         'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
+        ('Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n',
+         'Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n'),
         (
-        u'`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n',
-        u'`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n'),
+        '`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n',
+        '`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n'),
         (
-        u'\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n',
-        u'\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
+        '\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n',
+        '\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -149,11 +150,11 @@ class TestConverter(object):
         self.do(input, output)
 
     data = [
-        (u"- a\n- b\n\n  - aa\n  - ab\n",
+        ("- a\n- b\n\n  - aa\n  - ab\n",
          "\n* a\n* b\n\n  * aa\n  * ab\n"),
-        (u"1. a\n#. b\n\n   (A) aa\n   (#) ab\n\n",
+        ("1. a\n#. b\n\n   (A) aa\n   (#) ab\n\n",
          "\n1. a\n#. b\n\n   A. aa\n   #. ab\n"),
-        (u"1. a\n#. b\n\n   (A) aa\n   (#) ab\n",
+        ("1. a\n#. b\n\n   (A) aa\n   (#) ab\n",
          "\n1. a\n#. b\n\n   A. aa\n   #. ab\n"),
     ]
 
@@ -163,8 +164,8 @@ class TestConverter(object):
 
     data = [
         # simple tables are converted to grid tables
-        (u'== == ==\na  b  c  \n== == ==\n1  2  3\n== == ==', u'\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
-        (u'\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n', u'\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
+        ('== == ==\na  b  c  \n== == ==\n1  2  3\n== == ==', '\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
+        ('\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n', '\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -173,10 +174,10 @@ class TestConverter(object):
 
     data = [
         (
-        u'.. image:: png\n   :scale: 50\n   :alt: alternate text png\n   :align: center\n   :height: 100\n   :width: 200\n',
+        '.. image:: png\n   :scale: 50\n   :alt: alternate text png\n   :align: center\n   :height: 100\n   :width: 200\n',
         '\n.. image:: png\n   :alt: alternate text png\n   :align: center\n   :height: 50\n   :width: 100\n'),
         (
-        u'.. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n   :scale: 50\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
+        '.. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n   :scale: 50\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
         '\n.. figure:: png\n   :alt: alternate text png\n   :height: 50\n   :width: 100\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n'),
     ]
 
@@ -193,7 +194,7 @@ class TestConverter(object):
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', result)
+        return self.output_re.sub('', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:

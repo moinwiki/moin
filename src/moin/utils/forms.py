@@ -7,7 +7,7 @@
 
 
 from jinja2 import Markup
-import werkzeug
+import werkzeug.datastructures
 
 from flatland import AdaptationError, Scalar
 from flatland.out.markup import Generator
@@ -23,7 +23,7 @@ def label_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-label_filter.tags = set(['label'])
+label_filter.tags = {'label'}
 
 
 def button_filter(tagname, attributes, contents, context, bind):
@@ -39,39 +39,39 @@ def button_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-button_filter.tags = set(['input', 'button'])
+button_filter.tags = {'input', 'button'}
 
 
 def required_filter(tagname, attributes, contents, context, bind):
     if bind is not None and not bind.optional:
         if tagname == 'input':
-            attributes[u'required'] = u'required'
+            attributes['required'] = 'required'
     return contents
 
 
-required_filter.tags = set(['input', 'label'])
+required_filter.tags = {'input', 'label'}
 
 
 def autofocus_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
         autofocus = bind.properties.get('autofocus')
         if autofocus:
-            attributes[u'autofocus'] = u'autofocus'
+            attributes['autofocus'] = 'autofocus'
     return contents
 
 
-autofocus_filter.tags = set(['input', 'textarea', ])
+autofocus_filter.tags = {'input', 'textarea', }
 
 
 def placeholder_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
         placeholder = bind.properties.get('placeholder')
         if placeholder:
-            attributes[u'placeholder'] = placeholder
+            attributes['placeholder'] = placeholder
     return contents
 
 
-placeholder_filter.tags = set(['input', 'textarea', ])
+placeholder_filter.tags = {'input', 'textarea', }
 
 
 def error_filter_factory(class_='moin-error'):
@@ -87,7 +87,7 @@ def error_filter_factory(class_='moin-error'):
             else:
                 attributes['class'] = class_
         return contents
-    error_filter.tags = set(['input'])
+    error_filter.tags = {'input'}
     return error_filter
 
 
@@ -107,6 +107,6 @@ class FileStorage(Scalar):
     """Schema element for Werkzeug FileStorage instances."""
 
     def adapt(self, value):
-        if not isinstance(value, (type(None), werkzeug.FileStorage)):
+        if not isinstance(value, (type(None), werkzeug.datastructures.FileStorage)):
             raise AdaptationError
         return value

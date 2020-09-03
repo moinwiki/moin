@@ -5,9 +5,6 @@
 MoinMoin - CSV text data to DOM converter
 """
 
-
-from __future__ import absolute_import, division
-
 import csv
 
 from ._table import TableMixin
@@ -31,23 +28,13 @@ class Converter(TableMixin):
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
-        # as of py 2.7.x (and in the year 2013), the csv module seems to still
-        # have troubles with unicode, thus we encode to utf-8 ...
-        content = [line.encode('utf-8') for line in content]
-        dialect = csv.Sniffer().sniff(content[0])
+        dialect = csv.Sniffer().sniff(text)
         reader = csv.reader(content, dialect)
-        # ... and decode back to unicode
-        rows = []
-        for encoded_row in reader:
-            row = []
-            for encoded_cell in encoded_row:
-                row.append(encoded_cell.decode('utf-8'))
-            if row:
-                rows.append(row)
+        rows = list(reader)
         head = None
         cls = None
         try:
-            # fragile function throws errors when csv file is incorrectly formatted
+            # fragile function, throws errors when csv file is incorrectly formatted
             if csv.Sniffer().has_header('\n'.join(content)):
                 head = rows[0]
                 rows = rows[1:]

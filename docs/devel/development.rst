@@ -20,11 +20,30 @@ Documentation (installation, configuration, user docs, api reference):
 
 Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
 
-* https://gitub.com/moinwiki/moin
+* https://github.com/moinwiki/moin
 
 Pastebin (temporary storage - do not use for code review or any long-term need):
 
 * http://rn0.ru/
+
+
+Requirements for development
+============================
+
+The `virtualenv` Python package is required.
+The installation process for `virtualenv` varies with your OS and Python distribution.
+Many linux distributions have a package manager that may do the installation.
+Windows users (and perhaps others) may download setuptools from https://pypi.python.org/pypi/setuptools.
+Once setuptools is installed, do "`easy_install virtualenv`".
+Current ActiveState distributions include virtualenv in the installation bundle.
+If all else fails, try Google.
+
+git is required should you wish to contribute patches to the moin2 development effort.
+Even if you do not intend to contribute, git is highly recommended as it
+will make it easy for you to obtain fixes and enhancements from the moin2 repositories.
+git can be installed with most linux package managers or downloaded from https://git-scm.com/.
+You can also find GUI clients there.
+
 
 Typical development workflow
 ============================
@@ -67,12 +86,6 @@ add more tools, exercise tools
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
-* install stylus::
-
-    sudo npm install stylus@0.42.2 -g  # Windows: npm install stylus@0.42.2 -g
-    # we need 0.42.2 because with more recent versions, --compress compresses
-    # complete output to 1 line (0.42.2 compresses to 1 line per rule)
-    stylus -V  # show version number to prove it works
 * install lessc ("less" below is not a typo)::
 
     sudo npm install less -g  # Windows: npm install less -g
@@ -84,10 +97,6 @@ add more tools, exercise tools
 * check for coding errors (tabs, trailing spaces, line endings, template indentation and spacing)::
 
     ./m coding-std  # Windows: m coding-std
-    git diff  # verify nothing changed
-* check for uncommitted API doc changes::
-
-    ./m api  # Windows m api
     git diff  # verify nothing changed
 * revert any changes from above::
 
@@ -344,9 +353,7 @@ also be given directly to the render call.
 
 Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in
 MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
-``static/custom-less`` directory. Stylesheets for the Modernized and Foobar
-themes are compiled using the ``theme.styl files`` in their respective ``static/css/stylus``
-directories. To compile CSS for all themes::
+``static/custom-less`` directory.
 
     ./m css  # Windows: m css
 
@@ -369,7 +376,7 @@ The translated version of "somestring" can be accessed in the JavaScript code by
 Testing
 =======
 
-We use py.test for automated testing. It is currently automatically installed
+We use pytest for automated testing. It is currently automatically installed
 into your virtualenv as a dependency.
 
 Running the tests
@@ -378,14 +385,14 @@ To run all the tests, the easiest way is to do::
 
     ./m tests  # windows:  m tests
 
-To run selected tests, activate your virtual env and invoke py.test from the
+To run selected tests, activate your virtual env and invoke pytest from the
 toplevel directory::
 
-    py.test --pep8  # run all tests, including pep8 checks
-    py.test -rs  # run all tests and output information about skipped tests
-    py.test -k somekeyword  # run the tests matching somekeyword only
-    py.test --pep8 -k pep8  # runs pep8 checks only
-    py.test sometests.py  # run the tests contained in sometests.py
+    pytest --pep8  # run all tests, including pep8 checks
+    pytest -rs  # run all tests and output information about skipped tests
+    pytest -k somekeyword  # run the tests matching somekeyword only
+    pytest --pep8 -k pep8  # runs pep8 checks only
+    pytest sometests.py  # run the tests contained in sometests.py
 
 Tests output
 ------------
@@ -401,7 +408,7 @@ If something goes wrong, you will also see tracebacks in stdout/stderr.
 
 Writing tests
 -------------
-Writing tests with `py.test` is easy and has little overhead. Just
+Writing tests with `pytest` is easy and has little overhead. Just
 use the `assert` statements.
 
 For more information, please read: http://pytest.org/

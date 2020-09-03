@@ -14,7 +14,7 @@ from moin.converters.moinwiki19_in import ConverterFormat19
 from moin.utils.tree import moin_page, xlink, html, xinclude
 
 
-class TestConverter(object):
+class TestConverter:
     namespaces = {
         moin_page: '',
         xlink: 'xlink',
@@ -28,20 +28,20 @@ class TestConverter(object):
         self.conv = ConverterFormat19()
 
     data = [
-        (u'MoinMoin',
+        ('MoinMoin',
          '<page><body><p><a xlink:href="wiki.local:MoinMoin">MoinMoin</a></p></body></page>'),
-        (u'!MoinMoin',
+        ('!MoinMoin',
          '<page><body><p>MoinMoin</p></body></page>'),
-        (u'Self:FrontPage',
+        ('Self:FrontPage',
          '<page><body><p><a xlink:href="wiki://Self/FrontPage">FrontPage</a></p></body></page>'),
-        (u'http://moinmo.in/',
+        ('http://moinmo.in/',
          '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>'),
         # email tests
-        (u'mailto:foo@bar.baz',
+        ('mailto:foo@bar.baz',
          '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>'),
-        (u'foo@bar.baz',
+        ('foo@bar.baz',
          '<page><body><p><a xlink:href="mailto:foo@bar.baz">foo@bar.baz</a></p></body></page>'),
-        (u'foo@bar',  # 1.9 requires domain
+        ('foo@bar',  # 1.9 requires domain
          '<page><body><p>foo@bar</p></body></page>'),
     ]
 
@@ -51,7 +51,7 @@ class TestConverter(object):
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub(u'', result)
+        return self.output_re.sub('', result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:

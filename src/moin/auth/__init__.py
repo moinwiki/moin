@@ -133,7 +133,9 @@
     name of the authentication method.
 """
 
-from werkzeug import redirect, abort, url_quote, url_quote_plus
+from werkzeug.exceptions import abort
+from werkzeug.urls import url_quote, url_quote_plus
+from werkzeug.utils import redirect
 from flask import url_for, session, request
 from flask import g as flaskg
 from flask import current_app as app
@@ -165,7 +167,7 @@ def get_multistage_continuation_url(auth_name, extra_fields={}):
     return url
 
 
-class LoginReturn(object):
+class LoginReturn:
     """ LoginReturn - base class for auth method login() return value"""
     def __init__(self, user_obj, continue_flag, message=None, multistage=None,
                  redirect_to=None):
@@ -200,7 +202,7 @@ class MultistageRedirectLogin(LoginReturn):
         LoginReturn.__init__(self, None, False, redirect_to=url)
 
 
-class BaseAuth(object):
+class BaseAuth:
     name = None
     login_inputs = []
     logout_possible = False
@@ -260,7 +262,10 @@ class MoinAuth(BaseAuth):
             return ContinueLogin(user_obj, _("Invalid username or password."))
 
     def login_hint(self):
-        msg = _('If you do not have an account, <a href="%(register_url)s">you can create one now</a>. ',
+        if app.cfg.registration_only_by_superuser:
+            msg = app.cfg.registration_hint + ' '
+        else:
+            msg = _('If you do not have an account, <a href="%(register_url)s">you can create one now</a>. ',
                 register_url=url_for('frontend.register'))
         msg += _('<a href="%(recover_url)s">Forgot your password?</a>',
                  recover_url=url_for('frontend.lostpass'))
@@ -300,7 +305,7 @@ class GivenAuth(BaseAuth):
 
     def decode_username(self, name):
         """ decode the name we got from the environment var to unicode """
-        if isinstance(name, str):
+        if isinstance(name, bytes):
             name = name.decode(self.coding)
         return name
 
@@ -310,14 +315,14 @@ class GivenAuth(BaseAuth):
             Note: if you need something more special, you could create your own
                   auth class, inherit from this class and overwrite this function.
         """
-        assert isinstance(name, unicode)
+        assert isinstance(name, str)
         if self.strip_maildomain:
             # split off mail domain, e.g. "user@example.org" -> "user"
-            name = name.split(u'@')[0]
+            name = name.split('@')[0]
 
         if self.strip_windomain:
             # split off window domain, e.g. "DOMAIN\user" -> "user"
-            name = name.split(u'\\')[-1]
+            name = name.split('\\')[-1]
 
         if self.titlecase:
             # this "normalizes" the login name, e.g. meier, Meier, MEIER -> Meier
@@ -325,7 +330,7 @@ class GivenAuth(BaseAuth):
 
         if self.remove_blanks:
             # remove blanks e.g. "Joe Doe" -> "JoeDoe"
-            name = u''.join(name.split())
+            name = ''.join(name.split())
 
         return name
 

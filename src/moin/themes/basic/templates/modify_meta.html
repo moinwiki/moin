@@ -2,8 +2,6 @@
 
 {% macro basic_meta_editor(form) %}
     {% for e in [
-        'itemtype',
-        'contenttype',
         'summary',
         'tags',
         'name',
@@ -13,4 +11,5 @@
             {{ gen.textarea(form[e], rows='1', class='form-control') }}
         </div>
     {% endfor %}
+    <div class="hint">{{ _("Tags and names may have embedded blanks, use commas to separate.") }}</div>
 {% endmacro %}

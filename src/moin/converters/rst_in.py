@@ -14,9 +14,6 @@ This converter based on ReStructuredText 2006-09-22.
 Works with docutils version 0.5 (2008-06-25) or higher.
 """
 
-
-from __future__ import absolute_import, division
-
 import re
 
 import docutils
@@ -44,7 +41,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class NodeVisitor(object):
+class NodeVisitor:
     """
     Part of docutils which converts docutils DOM tree to Moin DOM tree
     """
@@ -67,7 +64,8 @@ class NodeVisitor(object):
         """
         node_name = node.__class__.__name__
         method = getattr(self, 'visit_' + node_name, self.unknown_visit)
-        self.current_lineno = node.line
+        if isinstance(node.line, int):
+            self.current_lineno = node.line
         return method(node)
 
     def dispatch_departure(self, node):
@@ -189,7 +187,7 @@ class NodeVisitor(object):
 
     def visit_bullet_list(self, node):
         self.open_moin_page_node(moin_page.list(
-            attrib={moin_page.item_label_generate: u'unordered'}))
+            attrib={moin_page.item_label_generate: 'unordered'}))
 
     def depart_bullet_list(self, node):
         self.close_moin_page_node()
@@ -225,7 +223,7 @@ class NodeVisitor(object):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
         # TODO: i18n for docutils:
-        self.open_moin_page_node(u"Author:")
+        self.open_moin_page_node("Author:")
         self.close_moin_page_node()
         self.close_moin_page_node()
         self.close_moin_page_node()
@@ -240,7 +238,7 @@ class NodeVisitor(object):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
         # TODO: i18n for docutils:
-        self.open_moin_page_node(u"Version:")
+        self.open_moin_page_node("Version:")
         self.close_moin_page_node()
         self.close_moin_page_node()
         self.close_moin_page_node()
@@ -261,7 +259,7 @@ class NodeVisitor(object):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
         # TODO: i18n for docutils:
-        self.open_moin_page_node(u"Copyright:")
+        self.open_moin_page_node("Copyright:")
         self.close_moin_page_node()
         self.close_moin_page_node()
         self.close_moin_page_node()
@@ -304,13 +302,13 @@ class NodeVisitor(object):
     def visit_enumerated_list(self, node):
         enum_style = {
             'arabic': None,
-            'loweralpha': u'lower-alpha',
-            'upperalpha': u'upper-alpha',
-            'lowerroman': u'lower-roman',
-            'upperroman': u'upper-roman',
+            'loweralpha': 'lower-alpha',
+            'upperalpha': 'upper-alpha',
+            'lowerroman': 'lower-roman',
+            'upperroman': 'upper-roman',
         }
         new_node = moin_page.list(
-            attrib={moin_page.item_label_generate: u'ordered'})
+            attrib={moin_page.item_label_generate: 'ordered'})
         type = enum_style.get(node['enumtype'], None)
         if type:
             new_node.set(moin_page.list_style_type, type)
@@ -343,7 +341,7 @@ class NodeVisitor(object):
     def visit_field_name(self, node):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
-        self.open_moin_page_node(u'{0}:'.format(node.astext()))
+        self.open_moin_page_node('{0}:'.format(node.astext()))
         node.children = []
         self.close_moin_page_node()
 
@@ -371,7 +369,7 @@ class NodeVisitor(object):
 
     def visit_footnote_reference(self, node):
         self.open_moin_page_node(moin_page.note(
-            attrib={moin_page.note_class: u'footnote'}))
+            attrib={moin_page.note_class: 'footnote'}))
         new_footnote = moin_page.note_body()
         self.open_moin_page_node(new_footnote)
         self.footnotes[node.children[-1]] = new_footnote
@@ -477,7 +475,7 @@ class NodeVisitor(object):
         self.close_moin_page_node()
 
     def visit_literal_block(self, node):
-        parser = node.get('parser', u'')
+        parser = node.get('parser', '')
         if parser:
             named_args = re.findall(r"(\w+)=(\w+)", parser)
             simple_args = re.findall(r"(?:\s)\w+(?:\s|$)", parser)
@@ -542,21 +540,21 @@ class NodeVisitor(object):
         pass
 
     def visit_reference(self, node):
-        refuri = node.get('refuri', u'')
-        if refuri.startswith(u'<<') and refuri.endswith(u'>>'):  # moin macro
-            macro_name = refuri[2:-2].split(u'(')[0]
-            if macro_name == u"TableOfContents":
-                arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
+        refuri = node.get('refuri', '')
+        if refuri.startswith('<<') and refuri.endswith('>>'):  # moin macro
+            macro_name = refuri[2:-2].split('(')[0]
+            if macro_name == "TableOfContents":
+                arguments = refuri[2:-2].split('(')[1][:-1].split(',')
                 node = moin_page.table_of_content()
                 self.open_moin_page_node(node)
                 if arguments and arguments[0]:
                     node.set(moin_page.outline_level, arguments[0])
                 return
-            if macro_name == u"Include":
+            if macro_name == "Include":
                 # include macros are expanded by include.py similar to transclusions
                 # rst include handles only wiki pages and does not support additional arguments like moinwiki
-                arguments = refuri[2:-2].split(u'(')[1][:-1].split(u',')
-                link = Iri(scheme=u'wiki.local', path=arguments)
+                arguments = refuri[2:-2].split('(')[1][:-1].split(',')
+                link = Iri(scheme='wiki.local', path=arguments)
                 node = xinclude.include(attrib={
                     xinclude.href: link,
                     moin_page.alt: refuri,
@@ -565,9 +563,9 @@ class NodeVisitor(object):
                 self.open_moin_page_node(node)
                 return
             try:
-                arguments = refuri[2:-2].split(u'(')[1][:-1]
+                arguments = refuri[2:-2].split('(')[1][:-1]
             except IndexError:
-                arguments = u''  # <<DateTime>>
+                arguments = ''  # <<DateTime>>
 
             self.open_moin_page_node(
                 moin_page.inline_part(
@@ -582,7 +580,7 @@ class NodeVisitor(object):
         if not allowed_uri_scheme(refuri):
             self.visit_error(node)
             return
-        if refuri == u'':
+        if refuri == '':
             # build a link to a heading or an explicitly defined anchor
             refuri = Iri(scheme='wiki.local', fragment=node.attributes['name'].replace(' ', '_'))
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
@@ -635,7 +633,7 @@ class NodeVisitor(object):
     def visit_subscript(self, node):
         self.open_moin_page_node(
             moin_page.span(
-                attrib={moin_page.baseline_shift: u'sub'}))
+                attrib={moin_page.baseline_shift: 'sub'}))
 
     def depart_subscript(self, node):
         self.close_moin_page_node()
@@ -653,7 +651,7 @@ class NodeVisitor(object):
     def visit_superscript(self, node):
         self.open_moin_page_node(
             moin_page.span(
-                attrib={moin_page.baseline_shift: u'super'}))
+                attrib={moin_page.baseline_shift: 'super'}))
 
     def depart_superscript(self, node):
         self.close_moin_page_node()
@@ -698,7 +696,7 @@ class NodeVisitor(object):
         # classifiers arrive as siblings of the term; search the parent and convert them to children
         for child in node.parent:
             if isinstance(child, docutils.nodes.classifier):
-                classifier = u":" + child[0]
+                classifier = ":" + child[0]
                 self.open_moin_page_node(moin_page.span(children=[classifier]))
                 self.close_moin_page_node()
         self.close_moin_page_node()
@@ -742,7 +740,7 @@ class NodeVisitor(object):
     def depart_title_reference(self, node):
         pass
 
-    def visit_transition(self, node, default_class=u'moin-hr3'):
+    def visit_transition(self, node, default_class='moin-hr3'):
         # TODO: add to rst_out
         attrib = {html.class_: default_class}
         self.open_moin_page_node(moin_page.separator(attrib=attrib))
@@ -798,7 +796,7 @@ class Writer(writers.Writer):
         self.output = visitor.tree()
 
 
-class MoinDirectives(object):
+class MoinDirectives:
     """
     Class to handle all custom directive handling. This code is called as
     part of the parsing stage.
@@ -849,9 +847,9 @@ class MoinDirectives(object):
             return []
 
         if content:
-            macro = u'<<Include({0})>>'.format(content[0])
+            macro = '<<Include({0})>>'.format(content[0])
         else:
-            macro = u'<<Include()>>'
+            macro = '<<Include()>>'
         ref = reference(macro, refuri=macro)
         return [ref]
 
@@ -871,10 +869,10 @@ class MoinDirectives(object):
         # content contains macro to be called
         if len(content):
             # Allow either with or without brackets
-            if content[0].startswith(u'<<'):
+            if content[0].startswith('<<'):
                 macro = content[0]
             else:
-                macro = u'<<{0}>>'.format(content[0])
+                macro = '<<{0}>>'.format(content[0])
             ref = reference(macro, refuri=macro)
             ref['name'] = macro
             return [ref]
@@ -890,9 +888,9 @@ class MoinDirectives(object):
         for i in content:
             m = re.search(r':(\w+): (\w+)', i)
             if m and len(m.groups()) == 2:
-                if m.groups()[0] == u'depth':
+                if m.groups()[0] == 'depth':
                     text = m.groups()[1]
-        macro = u'<<TableOfContents({0})>>'.format(text)
+        macro = '<<TableOfContents({0})>>'.format(text)
         ref = reference(macro, refuri=macro)
         ref['name'] = macro
         return [ref]
@@ -905,7 +903,7 @@ class MoinDirectives(object):
     def parser(self, name, arguments, options, content, lineo, content_offset, block_text, state, state_machine):
         block = literal_block()
         block['parser'] = content[0]
-        block.children = [nodes.Text(u"\n".join(content[1:]))]
+        block.children = [nodes.Text("\n".join(content[1:]))]
         return [block]
 
     parser.has_content = parser.content = True
@@ -914,7 +912,7 @@ class MoinDirectives(object):
     parser.optional_arguments = 0
 
 
-class Converter(object):
+class Converter:
     @classmethod
     def factory(cls, input, output, **kw):
         return cls()
@@ -924,7 +922,7 @@ class Converter(object):
         input = normalize_split_text(text)
         parser = MoinDirectives()
         while True:
-            input = u'\n'.join(input)
+            input = '\n'.join(input)
             try:
                 docutils_tree = core.publish_doctree(source=input)
             except utils.SystemMessage as inst:

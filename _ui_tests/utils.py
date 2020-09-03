@@ -5,7 +5,7 @@
 """Functions to facilitate functional testing"""
 
 import random
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import pytest
 
@@ -15,7 +15,7 @@ webdriver = selenium.webdriver
 import config
 
 try:
-    f = urllib.urlopen(config.BASE_URL)
+    f = urllib.request.urlopen(config.BASE_URL)
 except IOError:
     pytestmark = pytest.mark.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
 
@@ -41,7 +41,7 @@ def generate_random_word(length):
     """
     generates a random string containing numbers, of length 'length'
     """
-    word = unicode(random.randint(10 ** (length - 1), 10 ** length))
+    word = str(random.randint(10 ** (length - 1), 10 ** length))
     return word
 
 

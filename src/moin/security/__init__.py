@@ -40,7 +40,7 @@ def require_permission(permission):
     return wrap
 
 
-class DefaultSecurityPolicy(object):
+class DefaultSecurityPolicy:
     """Basic interface for user permissions and system policy.
 
     If you want to define your own policy, inherit from DefaultSecurityPolicy,
@@ -289,7 +289,7 @@ class AccessControlList(AutoNe):
         return self.acl_lines == other.acl_lines
 
 
-class ACLStringIterator(object):
+class ACLStringIterator:
     """ Iterator for acl string
 
     Parse acl string and return the next entry on each call to next.
@@ -316,7 +316,7 @@ class ACLStringIterator(object):
         """ Required by the Iterator protocol """
         return self
 
-    def next(self):
+    def __next__(self):
         """ Return the next values from the acl string
 
         When the iterator is finished and you try to call next, it

@@ -1,15 +1,96 @@
-==========================
-Downloading and Installing
-==========================
+============
+Installation
+============
 
-Downloading
-===========
-The recommended way to download moin2 is to clone the moin2 repository.
+Installing the code
+===================
+There are a lot of ways to do this and as this is not moin specific,
+we won't go into details:
 
-Open a terminal window or a command prompt, cd to the directory that will
-hold your project root directory and enter either the command below::
+- Use your operating system's / distribution's package manager to install the
+  moin2 package. This is the recommended method as it will install moin2 and
+  all other software it requires. Also your OS / dist might have a mechanism
+  for updating the installed software with security fixes or to future releases.
+
+  E.g. on Debian/Ubuntu Linux: ``apt install moin2``
+- Install from PyPI: ``pip install moin2``
+
+  - Optionally, create a virtual env first for better separation or
+  - use ``pip install --user moin2`` to install into your home directory.
+  - pip will automatically install other python packages moin2 requires,
+    but you maybe have to install required non-python packages yourself.
+  - You will have to care for updates / installing security fixes yourself.
+
+After this, you should have a ``moin`` command available, try it:
+
+::
+
+ moin help
+
+Creating a wiki instance
+========================
+
+You'll need one instance directory per wiki site you want to run using moin -
+this is where wiki data, indexes and configuration for that site are stored.
+
+Let's create a new instance:
+
+::
+
+ moin create-instance INSTANCE-DIRECTORY  # TODO: implement this!
+
+Change into the new instance directory:
+
+::
+
+ cd INSTANCE-DIRECTORY
+
+You'll find a ``wikiconfig.py`` there to edit. Adapt it as you like,
+you'll find some comments in there.
+
+After configuring, you need to initialize the storage and the index:
+
+::
+
+ moin index-create -s -i
+
+If you don't want to start with an empty wiki, but rather play with some
+sample content we provide, load it into your wiki:
+
+::
+
+ moin load-sample-content
+ # TODO: implement this using code like in:
+ # moin load --file contrib/sample/unicode.moin
+ # moin index-build
+
+Run your wiki instance
+======================
+Now try your new wiki using the builtin python-based web server:
+
+::
+
+ moin moin  # visit the URL it shows in the log output
+
+For production, please use a real web server like apache or nginx.
+
+
+=============================
+Installation (for developers)
+=============================
+
+Clone the git repository
+========================
+If you like to work on the moin2 code, clone the project repository:
+
+::
 
  git clone https://github.com/moinwiki/moin
+
+If you use github, you can also first fork that project repo to your own
+user's github repositories and then clone your forked repo to your local
+development machine. You can easily publish own changes and do pull requests
+that way.
 
 Installing
 ==========
@@ -17,9 +98,11 @@ Before you can run moin, you need to install it:
 
 Using your standard user account, run the following command
 from the project root directory. Replace <python> in the command
-below with the path to a python 2.7 executable. This is usually
-just "python", but may be "python2.7", "/opt/pypy/bin/pypy"
-or even <some-other-path-to-python>::
+below with the path to a python 3.5+ executable. This is usually
+just "python", but may be "python3", "python3.5", "/opt/pypy/bin/pypy"
+or even <some-other-path-to-python>:
+
+::
 
  <python> quickinstall.py
 
@@ -47,7 +130,9 @@ finally a message to type "m" to display a menu.
 
 If there are failure messages, see the troubleshooting section below.
 
-Typing "./m" (or "m" on Windows) will display a menu similar to::
+Typing "./m" (or "m" on Windows) will display a menu similar to:
+
+::
 
     usage: "./m <target>" where <target> is:
 
@@ -67,7 +152,7 @@ Typing "./m" (or "m" on Windows) will display a menu similar to::
     dump-html *     create a static HTML image of wiki *options, see docs
     index           delete and rebuild indexes
 
-    css             run Stylus and lessc to update theme CSS files
+    css             run lessc to update basic theme CSS files
     tests *         run tests, log output (-v -k my_test)
     coding-std      correct scripts that taint the repository with trailing spaces..
 
@@ -78,13 +163,17 @@ Typing "./m" (or "m" on Windows) will display a menu similar to::
     del-wiki        create a backup, then delete all wiki data
 
 While most of the above menu choices may be executed now, new users should
-do::
+do:
+
+::
 
  m sample   # in Windows
  ./m sample # in Unix
 
 to create a wiki instance and load it with sample data. Next, run the
-built-in wiki server::
+built-in wiki server:
+
+::
 
  m run      # in Windows
  ./m run    # in Unix
@@ -133,12 +222,16 @@ items into the new wiki. While no such changes are planned,
 they have happened in the past and may happen in the future.
 
 If you installed moin2 by cloning the repository,
-then you will likely want to keep your master branch uptodate.
+then you will likely want to keep your master branch uptodate:
+
+::
 
   git checkout master ; git pull mm master
 
 After pulling updates, it is best to also rerun the quickinstall process
-to install any changes or new releases to the dependant packages::
+to install any changes or new releases to the dependant packages:
+
+::
 
  m quickinstall  # in Windows
  ./m run         # in Unix
@@ -151,7 +244,9 @@ PyPi down
 Now and then, PyPi might be down or unreachable.
 
 There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
-you can use in such cases. You just need to tell pip to do so::
+you can use in such cases. You just need to tell pip to do so:
+
+::
 
  # put this into ~/.pip/pip.conf
  [global]
@@ -169,22 +264,6 @@ script multiple times. With each subsequent run, packages that are
 all ready cached (view the contents of pip-download-cache) will not
 be downloaded again. Hopefully, any temporary download errors will
 cease with multiple tries.
-
-ActiveState Python
-------------------
-While ActiveState bundles pip and virtualenv in its distribution,
-there are two missing files. The result is the following error
-messages followed by a traceback::
-
-
-  Cannot find sdist setuptools-*.tar.gz
-  Cannot find sdist pip-*.tar.gz
-
-To install the missing files, do the following and then rerun
-"python quickinstall.py"::
-
-  \Python27\Scripts\pip.exe uninstall virtualenv
-  \Python27\Scripts\easy_install virtualenv
 
 Other Issues
 ------------

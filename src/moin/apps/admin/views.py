@@ -12,35 +12,128 @@ MoinMoin - admin views
 This shows the user interface for wiki admins.
 """
 from collections import namedtuple
+
 from flask import request, url_for, flash, redirect
+from flask import Response
 from flask import current_app as app
 from flask import g as flaskg
-from whoosh.query import Term, And
+
+from flatland.validation import Validator
+from flatland import Form
+
+from whoosh.query import Term, And, Not
+
 from moin.i18n import _, L_, N_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
+from moin.apps.frontend.views import _using_moin_auth
 from moin import user
-from moin.constants.keys import NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE, NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL
+from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
+                                 NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
+                                 ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
 from moin.security import require_permission, ACLStringIterator
+from moin.storage.middleware.protecting import AccessDenied
 from moin.utils.interwiki import CompositeName
+from moin.utils.crypto import make_uuid
 from moin.datastructures.backends.wiki_groups import WikiGroup
 from moin.datastructures.backends import GroupDoesNotExistError
 from moin.items import Item, acl_validate
 from moin.utils.interwiki import split_fqname
 from moin.config import default as defaultconfig
+from moin.forms import RequiredText, YourEmail
 
 
 @admin.route('/superuser')
 @require_permission(SUPERUSER)
 def index():
-    return render_template('admin/index.html', title_name=_(u"Admin"))
+    return render_template('admin/index.html', title_name=_("Admin"))
 
 
 @admin.route('/user')
 def index_user():
-    return render_template('user/index_user.html', title_name=_(u"User"), flaskg=flaskg, NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES)
+    return render_template('user/index_user.html',
+                           title_name=_("User"),
+                           flaskg=flaskg,
+                           NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           )
+
+
+class ValidRegisterNewUser(Validator):
+    """
+    Validator for RegisterNewUserForm.
+    """
+    def validate(self, element, state):
+        if not (element['username'].valid and element['email'].valid):
+            return False
+        return True
+
+
+class RegisterNewUserForm(Form):
+    """
+    Simple user registration form for use by SuperUsers to create new accounts.
+    """
+    name = 'register_new_user'
+    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("User Name"), autofocus=True)
+    email = YourEmail
+    submit_label = L_('Register')
+    validators = [ValidRegisterNewUser()]
+
+
+@admin.route('/register_new_user', methods=['GET', 'POST', ])
+@require_permission(SUPERUSER)
+def register_new_user():
+    """
+    Create a new account and send email with link to create password.
+    """
+    if not _using_moin_auth():
+        return Response('No MoinAuth in auth list', 403)
+
+    title_name = _('Register New User')
+    FormClass = RegisterNewUserForm
+
+    if request.method in ['GET', 'HEAD']:
+        form = FormClass.from_defaults()
+    elif request.method == 'POST':
+        form = FormClass.from_flat(request.form)
+        if form.validate():
+            username = form['username'].value
+            email = form['email'].value
+            user_profile = user.UserProfile()
+            user_profile[ITEMID] = make_uuid()
+            user_profile[NAME] = [username, ]
+            user_profile[EMAIL] = email
+            user_profile[DISABLED] = False
+            user_profile[ACTION] = ACTION_SAVE
+
+            users = user.search_users(**{NAME_EXACT: username})
+            if users:
+                flash(_('User already exists'), 'error')
+            emails = None
+            if app.cfg.user_email_unique:
+                emails = user.search_users(email=email)
+                if emails:
+                    flash(_("This email already belongs to somebody else."), 'error')
+            if not(users or emails):
+                user_profile.save()
+                flash(_("Account for %(username)s created", username=username), "info")
+                form = FormClass.from_defaults()
+
+                u = user.User(auth_username=username)
+                if u.valid:
+                    is_ok, msg = u.mail_password_recovery()
+                    if not is_ok:
+                        flash(msg, "error")
+                    else:
+                        flash(L_("%(username)s has been sent a password recovery email.", username=username), "info")
+                else:
+                    flash(_("%(username)s is an invalid user, no email has been sent.", username=username), "error")
+
+    return render_template('admin/register_new_user.html',
+                           title_name=title_name,
+                           form=form,
+                           )
 
 
 @admin.route('/userbrowser')
@@ -63,13 +156,15 @@ def userbrowser():
         user_groups = member_groups.get(user_names[0], [])
         for name in user_names[1:]:
             user_groups = user_groups + member_groups.get(name, [])
+        subscriptions = rev.meta[SUBSCRIPTIONS]
         user_accounts.append(dict(uid=rev.meta[ITEMID],
                                   name=user_names,
                                   fqname=CompositeName(NAMESPACE_USERS, NAME_EXACT, rev.name),
                                   email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
                                   disabled=rev.meta[DISABLED],
-                                  groups=user_groups))
-    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_(u"Users"))
+                                  groups=user_groups,
+                                  subscriptions=subscriptions))
+    return render_template('admin/userbrowser.html', user_accounts=user_accounts, title_name=_("Users"))
 
 
 @admin.route('/userprofile/<user_name>', methods=['GET', 'POST', ])
@@ -80,7 +175,7 @@ def userprofile(user_name):
     """
     u = user.User(auth_username=user_name)
     if request.method == 'GET':
-        return _(u"User profile of %(username)s: %(email)s %(disabled)s", username=user_name,
+        return _("User profile of %(username)s: %(email)s %(disabled)s", username=user_name,
                  email=u.email, disabled=u.disabled)
 
     if request.method == 'POST':
@@ -94,16 +189,16 @@ def userprofile(user_name):
                 val = bool(int(val))
             elif isinstance(oldval, int):
                 val = int(val)
-            elif isinstance(oldval, unicode):
-                val = unicode(val)
+            elif isinstance(oldval, str):
+                val = str(val)
             else:
                 ok = False
         if ok:
             u.profile[key] = val
             u.save()
-            flash(u'{0}.{1}: {2} -> {3}'.format(user_name, key, unicode(oldval), unicode(val), ), "info")
+            flash(_('{0} "{1}" status changed to "{2}"').format(user_name, key, str(val), ), "info")
         else:
-            flash(u'modifying {0}.{1} failed'.format(user_name, key, ), "error")
+            flash(_('modifying {0}.{1} failed').format(user_name, key, ), "error")
     return redirect(url_for('.userbrowser'))
 
 
@@ -173,7 +268,7 @@ def wikiconfig():
     found.sort()
     found_default.sort()
     return render_template('admin/wikiconfig.html',
-                           title_name=_(u"Show Wiki Configuration"),
+                           title_name=_("Show Wiki Configuration"),
                            len=len,
                            found=found,
                            found_default=found_default,
@@ -190,17 +285,17 @@ def wikiconfighelp():
             default_txt = default.text
         else:
             if len(repr(default)) > max_len_default and isinstance(default, list) and len(default) > 1:
-                txt = [u'[']
+                txt = ['[']
                 for entry in default:
-                    txt.append(u'&#013;{0},'.format(repr(entry)))
-                txt.append(u'&#013;]')
-                return u''.join(txt)
+                    txt.append('&#013;{0},'.format(repr(entry)))
+                txt.append('&#013;]')
+                return ''.join(txt)
             elif len(repr(default)) > max_len_default and isinstance(default, dict) and len(default) > 1:
-                txt = [u'{']
+                txt = ['{']
                 for key, val in default.items():
-                    txt.append(u'&#013;{0}: {1},'.format(repr(key), repr(val)))
-                txt.append(u'&#013;}')
-                return u''.join(txt)
+                    txt.append('&#013;{0}: {1},'.format(repr(key), repr(val)))
+                txt.append('&#013;}')
+                return ''.join(txt)
             else:
                 default_txt = repr(default)
         return default_txt
@@ -218,7 +313,7 @@ def wikiconfighelp():
         groups.append((heading, desc, opts))
     groups.sort()
     return render_template('admin/wikiconfighelp.html',
-                           title_name=_(u"Wiki Configuration Help"),
+                           title_name=_("Wiki Configuration Help"),
                            groups=groups,
                            len=len,
                            max_len_default=max_len_default,
@@ -239,7 +334,7 @@ def highlighterhelp():
     rows = sorted([[desc, ' '.join(names), ' '.join(patterns), ' '.join(mimetypes), ]
                    for desc, names, patterns, mimetypes in lexers])
     return render_template('user/highlighterhelp.html',
-                           title_name=_(u"Highlighters"),
+                           title_name=_("Highlighters"),
                            headings=headings,
                            rows=rows)
 
@@ -253,7 +348,7 @@ def interwikihelp():
     ]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template('user/interwikihelp.html',
-                           title_name=_(u"Interwiki Names"),
+                           title_name=_("Interwiki Names"),
                            headings=headings,
                            rows=rows)
 
@@ -265,11 +360,13 @@ def itemsize():
         _('Size'),
         _('Item name'),
     ]
-    rows = [(rev.meta[SIZE], rev.fqname)
-            for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname)]
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    rows = [(rev.meta[SIZE], CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0]))
+            for rev in revs]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
-                           title_name=_(u"Item Sizes"),
+                           title_name=_("Item Sizes"),
                            headings=headings,
                            rows=rows)
 
@@ -283,8 +380,8 @@ def trash(namespace):
     """
     trash = _trashed(namespace)
     return render_template('admin/trash.html',
-                           headline=_(u'Trashed Items'),
-                           title_name=_(u'Trashed Items'),
+                           headline=_('Trashed Items'),
+                           title_name=_('Trashed Items'),
                            results=trash)
 
 
@@ -303,22 +400,36 @@ def _trashed(namespace):
 @admin.route('/user_acl_report/<uid>', methods=['GET'])
 @require_permission(SUPERUSER)
 def user_acl_report(uid):
-    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
-    groups = flaskg.groups
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     theuser = user.User(uid=uid)
     itemwise_acl = []
+    last_item_acl_parts = (None, None, None)
+    last_item_result = {'read': False,
+                        'write': False,
+                        'create': False,
+                        'admin': False,
+                        'destroy': False}
     for item in all_items:
-        fqname = CompositeName(item.meta.get(NAMESPACE), u'itemid', item.meta.get(ITEMID))
-        itemwise_acl.append({'name': item.meta.get(NAME),
-                             'itemid': item.meta.get(ITEMID),
-                             'fqname': fqname,
-                             'read': theuser.may.read(fqname),
-                             'write': theuser.may.write(fqname),
-                             'create': theuser.may.create(fqname),
-                             'admin': theuser.may.admin(fqname),
-                             'destroy': theuser.may.destroy(fqname)})
+        if item.meta.get(NAME):
+            fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
+        else:
+            fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
+        this_rev_acl_parts = (item.meta[NAMESPACE], item.meta.get(PARENTNAMES), item.meta.get(ACL))
+        name_parts = {'name': item.meta.get(NAME),
+                      'namespace': item.meta.get(NAMESPACE),
+                      'itemid': item.meta.get(ITEMID),
+                      'fqname': fqname}
+        if not last_item_acl_parts == this_rev_acl_parts:
+            last_item_acl_parts = this_rev_acl_parts
+            last_item_result = {'read': theuser.may.read(fqname),
+                                'write': theuser.may.write(fqname),
+                                'create': theuser.may.create(fqname),
+                                'admin': theuser.may.admin(fqname),
+                                'destroy': theuser.may.destroy(fqname)}
+        itemwise_acl.append({**name_parts, **last_item_result})
     return render_template('admin/user_acl_report.html',
-                           title_name=_(u'User ACL Report'),
+                           title_name=_('User ACL Report'),
                            user_names=theuser.name,
                            itemwise_acl=itemwise_acl)
 
@@ -342,7 +453,7 @@ def groupbrowser():
                            member_groups=all_groups[group].member_groups,
                            grouptype=group_type))
     return render_template('admin/groupbrowser.html',
-                           title_name=_(u'Groups'),
+                           title_name=_('Groups'),
                            groups=groups)
 
 
@@ -355,7 +466,8 @@ def item_acl_report():
     Item names are prefixed with the namespace, if there is a non-default namespace.
     If there are multiple names, the first name is used for sorting.
     """
-    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), ])
+    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
     for item in all_items:
         item_namespace = item.meta.get(NAMESPACE)
@@ -370,23 +482,31 @@ def item_acl_report():
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
+        if item.meta.get(NAME):
+            fqnames = [CompositeName(item.meta[NAMESPACE], NAME_EXACT, name) for name in item.meta[NAME]]
+        else:
+            fqnames = [CompositeName(item.meta[NAMESPACE], ITEMID, item.meta[ITEMID])]
+        fqname = fqnames[0]
         items_acls.append({'name': item_name,
-                           'name_old': item.meta['name_old'],
+                           'name_old': item.meta.get('name_old', []),
                            'itemid': item_id,
-                           'fqname': item.rev.fqname,
-                           'fqnames': item.rev.fqnames,
+                           'fqnames': fqnames,
+                           'fqname': fqnames[0],
                            'acl': item_acl,
                            'acl_default': acl_default})
+    # deleted items have no names; this sort places deleted items on top of the report;
+    # the display name may be similar to: "9cf939f ~(DeletedItemName)"
     items_acls = sorted(items_acls, key=lambda k: (k['name'], k['name_old']))
     return render_template('admin/item_acl_report.html',
                            title_name=_('Item ACL Report'),
+                           number_items=len(items_acls),
                            items_acls=items_acls)
 
 
 def search_group(group_name):
     groups = flaskg.groups
     if groups[group_name]:
-            return groups[group_name]
+        return groups[group_name]
     else:
         raise GroupDoesNotExistError(group_name)
 
@@ -395,24 +515,27 @@ def search_group(group_name):
 @require_permission(SUPERUSER)
 def group_acl_report(group_name):
     """
-    Display a 2-column table of items and ACLs, where the ACL rule specifies any
+    Display a table of items and permissions, where the ACL rule specifies any
     WikiGroup or ConfigGroup name.
     """
-    group = search_group(group_name)
-    all_items = flaskg.storage.documents(wikiname=app.cfg.interwikiname)
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     group_items = []
     for item in all_items:
         acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, item.meta.get(ACL, ''))
         for modifier, entries, rights in acl_iterator:
             if group_name in entries:
-                item_id = item.meta.get(ITEMID)
-                fqname = CompositeName(item.meta.get(NAMESPACE), u'itemid', item_id)
+                if item.meta.get(NAME):
+                    fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
+                else:
+                    fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
                 group_items.append(dict(name=item.meta.get(NAME),
-                                        itemid=item_id,
+                                        itemid=item.meta.get(ITEMID),
+                                        namespace=item.meta.get(NAMESPACE),
                                         fqname=fqname,
                                         rights=rights))
     return render_template('admin/group_acl_report.html',
-                           title_name=_(u'Group ACL Report'),
+                           title_name=_('Group ACL Report'),
                            group_items=group_items,
                            group_name=group_name)
 
@@ -423,6 +546,7 @@ def modify_acl(item_name):
     fqname = split_fqname(item_name)
     item = Item.create(item_name)
     meta = dict(item.meta)
+    old_acl = meta.get(ACL, '')
     new_acl = request.form.get(fqname.fullname)
     is_valid = acl_validate(new_acl)
     if is_valid:
@@ -432,7 +556,12 @@ def modify_acl(item_name):
             del(meta[ACL])
         else:
             meta[ACL] = new_acl
-        item._save(meta=meta)
+        try:
+            item._save(meta=meta)
+        except AccessDenied:
+            # superuser viewed item acl report and tried to change acl but lacked admin permission
+            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=old_acl), "error")
+            return redirect(url_for('.item_acl_report'))
         flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "info")
     else:
         flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "error")

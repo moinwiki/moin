@@ -9,9 +9,6 @@ If some kvstore implementation you'ld like to use is missing from this package,
 you can likely implement it adding very little and rather easy code.
 """
 
-
-from __future__ import absolute_import, division
-
 from abc import abstractmethod
 from collections import Mapping, MutableMapping
 from io import BytesIO
@@ -114,7 +111,7 @@ class BytesMutableStoreBase(MutableStoreBase):
         """
 
 
-class BytesMutableStoreMixin(object):
+class BytesMutableStoreMixin:
     """
     mix this into a FileMutableStore to get a BytesMutableStore, like shown here:
 
@@ -142,7 +139,7 @@ class FileMutableStoreBase(MutableStoreBase):
         """
 
 
-class FileMutableStoreMixin(object):
+class FileMutableStoreMixin:
     """
     mix this into a BytesMutableStore to get a FileMutableStore, like shown here:
 

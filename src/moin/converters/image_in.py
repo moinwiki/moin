@@ -9,7 +9,7 @@ Convert image to <object> tag for the DOM Tree.
 
 from emeraldtree import ElementTree as ET
 
-from werkzeug import url_encode, url_decode
+from werkzeug.urls import url_encode, url_decode
 
 from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri
@@ -19,7 +19,7 @@ from moin.utils.tree import moin_page, xlink, xinclude, html
 from . import default_registry
 
 
-class Converter(object):
+class Converter:
     """
     Convert an image to the corresponding <object> in the DOM Tree
     """
@@ -44,9 +44,8 @@ class Converter(object):
         query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
 
         attrib.update({
-            moin_page.type_: unicode(self.input_type),
-            xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
-                            query=query),
+            moin_page.type_: str(self.input_type),
+            xlink.href: Iri(scheme='wiki', authority='', path='/' + rev.item.fqname.fullname, query=query),
         })
 
         obj = moin_page.object_(attrib=attrib, children=[item_name, ])

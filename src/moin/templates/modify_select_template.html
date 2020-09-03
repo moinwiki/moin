@@ -1,4 +1,12 @@
+{#
+    Renders a list of available templates containing boilerplate that may assist the user in creating a new item.
+
+    This page is only displayed if items with a tag of "template" and the same content type exist.
+    Note moin templates are not the same as jinja templates.
+#}
+
 {% extends theme("show.html") %}
+
 {% block content %}
     <h1>{{ _("Create new item?") }}</h1>
     <p>

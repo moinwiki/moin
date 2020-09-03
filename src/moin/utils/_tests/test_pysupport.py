@@ -18,7 +18,7 @@ from moin.utils import pysupport, crypto
 from moin.utils import plugins
 
 
-class TestImportNameFromMoin(object):
+class TestImportNameFromMoin:
     """ Test importName of MoinMoin modules
 
     We don't make any testing for files, assuming that moin package is
@@ -40,7 +40,7 @@ class TestImportNameFromMoin(object):
         assert importName is t
 
 
-class TestImportNameFromPlugin(object):
+class TestImportNameFromPlugin:
     """ Base class for import plugin tests """
 
     name = 'Parser'
@@ -114,7 +114,7 @@ class Parser:
     key = '{0}'
 '''.format(self.key)
         try:
-            file(self.pluginFilePath('.py'), 'w').write(data)
+            open(self.pluginFilePath('.py'), 'w').write(data)
         except Exception as err:
             pytest.skip("Can't create test plugin: {0!s}".format(err))
 

@@ -9,13 +9,10 @@
 MoinMoin - Media Wiki input converter
 """
 
-
-from __future__ import absolute_import, division
-
 import re
-from htmlentitydefs import name2codepoint
+from html.entities import name2codepoint
 
-from werkzeug import url_encode
+from werkzeug.urls import url_encode
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
@@ -32,7 +29,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-class _TableArguments(object):
+class _TableArguments:
     rules = r'''
     (?:
         (?P<arg>
@@ -63,8 +60,7 @@ class _TableArguments(object):
 
     def arg_repl(self, args, arg, key=None, value_u=None, value_q1=None, value_q2=None):
         key = self.map_keys.get(key, key)
-        value = (value_u or value_q1 or value_q2).decode('unicode-escape')
-
+        value = (value_u or value_q1 or value_q2).encode('ascii', errors='backslashreplace').decode('unicode-escape')
         if key:
             args.keyword[key] = value
         else:
@@ -80,7 +76,7 @@ class _TableArguments(object):
         args = Arguments()
 
         for match in self._re.finditer(input):
-            data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+            data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
             getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
 
         return args
@@ -168,7 +164,7 @@ class Converter(ConverterMacro):
         stack.push(elem)
         if table_args:
             table_args = _TableArguments()(table_args)
-            for key, value in table_args.keyword.iteritems():
+            for key, value in table_args.keyword.items():
                 attrib = elem.attrib
                 if key in ('class', 'style', 'number-columns-spanned', 'number-rows-spanned'):
                     attrib[moin_page(key)] = value
@@ -198,7 +194,7 @@ class Converter(ConverterMacro):
                     element = moin_page.table_cell()
                     if len(cell) > 1:
                         cell_args = _TableArguments()(cell[0])
-                        for key, value in cell_args.keyword.iteritems():
+                        for key, value in cell_args.keyword.items():
                             attrib = element.attrib
                             if key in ('class', 'style', 'number-columns-spanned', 'number-rows-spanned'):
                                 attrib[moin_page(key)] = value
@@ -254,7 +250,10 @@ class Converter(ConverterMacro):
         yield line
 
         while True:
-            line = iter_content.next()
+            try:
+                line = next(iter_content)
+            except StopIteration:
+                return
 
             match = self.indent_re.match(line)
 
@@ -438,9 +437,9 @@ class Converter(ConverterMacro):
                 c = int(entity[3:-1], 16)
             else:
                 c = int(entity[2:-1], 10)
-            c = unichr(c)
+            c = chr(c)
         else:
-            c = unichr(name2codepoint.get(entity[1:-1], 0xfffe))
+            c = chr(name2codepoint.get(entity[1:-1], 0xfffe))
         stack.top_append(c)
 
     inline_blockquote = r"""
@@ -637,7 +636,7 @@ class Converter(ConverterMacro):
         return ret
 
     def inline_link_repl(self, stack, link, link_url=None, link_item=None,
-                         link_args=u'', external_link_url=None, alt_text=u''):
+                         link_args='', external_link_url=None, alt_text=''):
         """Handle all kinds of links."""
         link_text = ''
         link_args_list = []
@@ -821,9 +820,9 @@ class Converter(ConverterMacro):
     # Table row
     tablerow_re = re.compile(tablerow, re.X | re.U)
 
-    class Mediawiki_preprocessor(object):
+    class Mediawiki_preprocessor:
 
-        class Preprocessor_tag(object):
+        class Preprocessor_tag:
             def __init__(self, name='', text='', tag='', status=True):
                 self.tag_name = name
                 self.tag = tag
@@ -966,7 +965,7 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+        data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
         func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
         # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
@@ -974,7 +973,7 @@ class Converter(ConverterMacro):
     def parse_block(self, iter_content, arguments):
         attrib = {}
         if arguments:
-            for key, value in arguments.keyword.iteritems():
+            for key, value in arguments.keyword.items():
                 if key in ('style', ):
                     attrib[moin_page(key)] = value
                 elif key == '_old':
@@ -987,7 +986,7 @@ class Converter(ConverterMacro):
         for line in iter_content:
             match = self.indent_re.match(line)
             if match:
-                data = dict(((str(k), v) for k, v in match.groupdict().iteritems() if v is not None))
+                data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
                 self.indent_repl(iter_content, stack, line, **data)
             else:
                 self.indent_repl(iter_content, stack, line, '', line)
