@@ -429,6 +429,7 @@ def search(item_name):
                                        history=history,
                                        is_ticket=is_ticket,
                                        whoosh_query=q,
+                                       flaskg=flaskg,
                 )
             else:
                 html = render_template('search.html',
@@ -441,6 +442,7 @@ def search(item_name):
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
                                        whoosh_query=q,
+                                       flaskg=flaskg,
                 )
             flaskg.clock.stop('search render')
     else:

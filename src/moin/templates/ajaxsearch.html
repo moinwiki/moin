@@ -33,8 +33,8 @@
         <p class="moin-suggestions"> {{ _("Whoosh query:") }}
             <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
             <br>
-            <span class="moin-suggestion-terms">
-                {{ _("%(result_len)d results found (%(runtime).3f secs).", result_len=results|length, runtime=results.runtime) }}
+            <span class="moin-search-hits">
+                {{ _("%(result_len)d results found.", result_len=results|length) }}
             </span>
         </p>
         {% if omitted_words %}
@@ -56,14 +56,25 @@
                     <span class="moin-suggestion-terms">{{ content_suggestions }}</span>
                 </p>
             {% endif %}
-
-            {% set count = [0] %}
             {% if results %}
                 <div class="moin-search-results">
-                    <table>
+                    {% set count = [0] %}
+                    <table
+                        {% set vars = {'old_acl_in': [None, None, None], 'old_permission': False} %}
                         {% for result in results %}
                             {% set fullname = result.namespace + '/' + result.name[0] if result.namespace else result.name[0] %}
-                            {% if user.may.read(fullname) %}
+                            {% set new_acl = result.get('acl', '') %}
+                            {% set new_parentnames = theme_supp.parentnames(result.name) %}
+                            {% set new_acl_in = [new_acl, result['namespace'], new_parentnames] %}
+                            {% if vars['old_acl_in'] == new_acl_in %}
+                                {# save a few seconds by avoiding recalculation of acls #}
+                                {% set permission = vars['old_permission'] %}
+                            {% else %}
+                                {% set permission = flaskg.storage.may_read_rev(result) %}
+                            {% endif %}
+                            {# workaround jinja2 scoping issue #}
+                            {% if vars.update({'old_acl_in': new_acl_in, 'old_permission': permission}) %} {% endif %}
+                            {% if permission %}
                                 <tr>
                                     <td class="moin-wordbreak">
                                         {% if result['name'] %}

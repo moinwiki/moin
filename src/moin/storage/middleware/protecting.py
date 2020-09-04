@@ -181,6 +181,15 @@ class ProtectingMiddleware:
             if result:
                 yield rev
 
+    def may_read_rev(self, windex):
+        """
+        Return true if user may read item revision represented by whoosh index hit.
+        Called by search templates, maybe others.
+        """
+        hit = ProtectedItemMeta(self, windex)
+        may_read = hit.allows(READ) or hit.allows(PUBREAD)
+        return may_read
+
     def search_meta_page(self, q, idx_name=LATEST_REVS, pagenum=None, pagelen=None, **kw):
         """
         Yield a revision's metadata, skipping any items where read permission is denied.

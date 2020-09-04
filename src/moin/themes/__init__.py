@@ -35,6 +35,7 @@ from moin.utils.clock import timed
 from moin.utils.mime import Type
 from moin.utils import show_time
 
+
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -467,6 +468,18 @@ class ThemeSupport:
         parent_item_name = wikiutil.ParentItemName(item_name)
         if item_name and parent_item_name:
             return parent_item_name
+
+    def parentnames(self, names):
+        """
+        Compute list of parent names (same order as in names, but no dupes)
+        Copied from indexing.py
+
+        :param names: item NAME from whoosh index, where NAME is a list
+        :return: parent names (list of unicode)
+        """
+        # must import here to avoid circular import error
+        from moin.storage.middleware.indexing import parent_names
+        return parent_names(names)
 
     # TODO: reimplement on-wiki-page sidebar definition with moin.converters
 

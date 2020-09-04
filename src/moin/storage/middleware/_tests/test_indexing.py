@@ -416,7 +416,7 @@ class TestIndexingMiddleware:
                                  contenttype='text/plain;charset=utf-8'),
                             BytesIO(b''))
         item = self.imw[item_name]
-        assert item.parentnames == ['p1', 'p2', 'p3/p4', ]  # one p2 duplicate removed
+        assert item.parentnames == {'p1', 'p2', 'p3/p4', }  # one p2 duplicate removed
 
 
 class TestProtectedIndexingMiddleware:

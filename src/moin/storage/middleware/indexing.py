@@ -148,6 +148,21 @@ def get_names(meta):
     return names
 
 
+def parent_names(names):
+    """
+    Compute list of parent names (same order as in names, but no dupes)
+
+    :param names: item NAME from whoosh index, where NAME is a list
+    :return: parent names list
+    """
+    parents = set()
+    for name in names:
+        parent_tail = name.rsplit('/', 1)
+        if len(parent_tail) == 2:
+            parents.add(parent_tail[0])
+    return parents
+
+
 def backend_to_index(meta, content, schema, wikiname, backend_name):
     """
     Convert backend metadata/data to a whoosh document.
@@ -967,18 +982,11 @@ class PropertiesMixin:
     @property
     def parentnames(self):
         """
-        compute list of parent names (same order as in names, but no dupes)
+        Return list of parent names (same order as in names, but no dupes)
 
         :return: parent names (list of unicode)
         """
-        parent_names = []
-        for name in self.names:
-            parentname_tail = name.rsplit('/', 1)
-            if len(parentname_tail) == 2:
-                parent_name = parentname_tail[0]
-                if parent_name not in parent_names:
-                    parent_names.append(parent_name)
-        return parent_names
+        return parent_names(self.names)
 
     @property
     def fqparentnames(self):

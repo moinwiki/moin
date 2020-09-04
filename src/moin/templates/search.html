@@ -27,7 +27,8 @@
                 {{ forms.render_submit(medium_search_form) } }
             #}
         </p>
-        <div class="hint">{{ _("An Ajax transaction is submitted with each character typed into the search box.
+        <div class="hint">{{ _("An Ajax transaction is submitted with each character keyed into the search box.
+            Transactions may be completed out of order if keying is rapid.
             <br><br>For help on searching see:") }}
             <a href="/+serve/docs/user/search.html">Local docs</a> or
             <a href="https://moin-20.readthedocs.io/en/latest/user/search.html">Internet docs.</a>
@@ -71,9 +72,7 @@
                    </form>
                 </tr>
             </table>
-
             <div class="hint">{{ _("An Ajax transaction is submitted each time a radio or checkbox is clicked.") }}</div>
-
         </div>
         <p>
             {{ forms.render_errors(medium_search_form) }}
