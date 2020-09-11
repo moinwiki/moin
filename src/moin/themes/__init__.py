@@ -468,7 +468,17 @@ class ThemeSupport:
         if item_name and parent_item_name:
             return parent_item_name
 
-    # TODO: reimplement on-wiki-page sidebar definition with moin.converters
+    def parentnames(self, names):
+        """
+        Compute list of parent names (same order as in names, but no dupes)
+        Copied from indexing.py
+
+        :param names: item NAME from whoosh index, where NAME is a list
+        :return: parent names (list of unicode)
+        """
+        # must import here to avoid circular import error
+        from moin.storage.middleware.indexing import parent_names
+        return parent_names(names)
 
     # Properties ##############################################################
 

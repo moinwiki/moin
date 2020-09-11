@@ -253,6 +253,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 .moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor: pointer; color: #1409B9; color: var(--link); }
 .moin-search-meta { color: #444; color: var(--muted); }
 .moin-search-hit-info { display: inline; }
+.moin-search-hits { font-weight: bold; }
 .moin-searchoptions > table { table-layout: fixed; }
 .moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
 .moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }

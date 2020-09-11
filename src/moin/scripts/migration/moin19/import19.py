@@ -152,7 +152,8 @@ class ImportMoin19(Command):
             meta[PARENTID] = meta[REVID]
             meta[REVID] = make_uuid()
             meta[REV_NUMBER] = meta[REV_NUMBER] + 1
-            meta[MTIME] = int(time.time())
+            # bumping modified time makes global and item history views more useful
+            meta[MTIME] = meta[MTIME] + 1
             meta[COMMENT] = 'Convert moin 1.9 markup to 2.0'
             meta[CONTENTTYPE] = 'text/x.moin.wiki;charset=utf-8'
             del meta['dataid']

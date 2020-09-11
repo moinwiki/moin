@@ -5,9 +5,9 @@
     characters to the search query.
 #}
 
-{% if results is defined %}
-    {% if is_ticket %}
-        {% if results %}
+{%- if results is defined %}
+    {%- if is_ticket %}
+        {%- if results %}
             <div id="ticket-results">
                 <h4>{{ _("Please check these tickets if they cover your issue:") }}</h4>
                 <table>
@@ -33,63 +33,74 @@
         <p class="moin-suggestions"> {{ _("Whoosh query:") }}
             <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
             <br>
-            <span class="moin-suggestion-terms">
-                {{ _("%(result_len)d results found (%(runtime).3f secs).", result_len=results|length, runtime=results.runtime) }}
+            <span class="moin-search-hits">
+                {{ _("%(result_len)d results found.", result_len=results|length) }}
             </span>
         </p>
-        {% if omitted_words %}
+        {%- if omitted_words %}
             <p class="moin-suggestions"> {{ _("Common words omitted from query:") }}
                 <span class="moin-suggestion-terms">{{ omitted_words }} </span>
             </p>
-        {% endif %}
-        {% if results is defined %}
-            {% if word_suggestions %}
+        {%- endif %}
+        {%- if results is defined %}
+            {%- if word_suggestions %}
                 <p class="moin-suggestions">{{ _("Input suggestions : ") }}
                     <span class="moin-suggestion-terms">{{ word_suggestions }}</span>
                 </p>
-            {% endif %}
-            {% if name_suggestions or content_suggestions %}
+            {%- endif %}
+            {%- if name_suggestions or content_suggestions %}
                 <p class="moin-suggestions">{{ _("Name term suggestions : ") }}
                     <span class="moin-suggestion-terms">{{ name_suggestions }}</span>
                 </p>
                 <p class="moin-suggestions">{{ _("Content term suggestions : ") }}
                     <span class="moin-suggestion-terms">{{ content_suggestions }}</span>
                 </p>
-            {% endif %}
-
-            {% set count = [0] %}
-            {% if results %}
+            {%- endif %}
+            {%- if results %}
                 <div class="moin-search-results">
+                    {%- set count = [0] %}
                     <table>
-                        {% for result in results %}
-                            {% set fullname = result.namespace + '/' + result.name[0] if result.namespace else result.name[0] %}
-                            {% if user.may.read(fullname) %}
+                        {%- set vars = {'old_acl_in': [None, None, None], 'old_permission': False} %}
+                        {%- for result in results %}
+                            {%- set fullname = result.namespace + '/' + result.name[0] if result.namespace else result.name[0] %}
+                            {%- set new_acl = result.get('acl', '') %}
+                            {%- set new_parentnames = theme_supp.parentnames(result.name) %}
+                            {%- set new_acl_in = [new_acl, result['namespace'], new_parentnames] %}
+                            {%- if vars['old_acl_in'] == new_acl_in %}
+                                {#- save a few seconds by avoiding recalculation of acls #}
+                                {%- set permission = vars['old_permission'] %}
+                            {%- else %}
+                                {%- set permission = flaskg.storage.may_read_rev(result) %}
+                            {%- endif %}
+                            {#- workaround jinja2 scoping issue #}
+                            {%- if vars.update({'old_acl_in': new_acl_in, 'old_permission': permission}) %} {% endif %}
+                            {%- if permission %}
                                 <tr>
                                     <td class="moin-wordbreak">
-                                        {% if result['name'] %}
-                                            {% if history %}
+                                        {%- if result['name'] %}
+                                            {%- if history %}
                                                 <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid', regex=query) }}">
                                                     <b>{{ result['name'] | join(' | ') }}</b>
                                                 </a>
-                                            {% else %}
+                                            {%- else %}
                                                 <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace'], regex=query) }}">
                                                     <b>{{ result['name'] | join(' | ') }}</b>
                                                 </a>
-                                            {% endif %}
-                                        {% else %}
+                                            {%- endif %}
+                                        {%- else %}
                                             <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid', regex=query) }}">
                                                 <b>Item ID : {{ result['itemid'] }}</b>
                                             </a>
-                                        {% endif %}
+                                        {%- endif %}
                                     </td>
                                 </tr>
-                                {% if result['summary'] %}
+                                {%- if result['summary'] %}
                                     <tr>
                                         <td>
                                             <p class="moin-search-hit-info">{{ _("Summary: %(summary)s", summary=result['summary']) }}</p>
                                         </td>
                                     </tr>
-                                {% endif %}
+                                {%- endif %}
                                 <tr class="moin-search-meta">
                                     <td>
                                         <p class="moin-search-hit-info">
@@ -104,12 +115,12 @@
                                         <p class="moin-found-text">{{ result.highlights('content')|safe }}</p><br>
                                     </td>
                                 </tr>
-                            {% else %}
-                                {# read permission denied, using list to work around jinja2 scoping issue #}
-                                {% if count.append(count.pop() + 1) %}
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
+                            {%- else %}
+                                {#- read permission denied, using list to work around jinja2 scoping issue #}
+                                {%- if count.append(count.pop() + 1) %}
+                                {%- endif %}
+                            {%- endif %}
+                        {%- endfor %}
                     </table>
                     {% if count[0] %}
                         <div class="warning">{{ _('%(count)d items are not shown because read permission was denied.', count=count[0]) }}</div>

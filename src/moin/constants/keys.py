@@ -31,8 +31,10 @@ EXTERNALLINKS = "externallinks"
 ITEMLINKS = "itemlinks"
 ITEMTRANSCLUSIONS = "itemtransclusions"
 TAGS = "tags"
-TEMPLATE = 'template'  # a TAGS value identifying an item as a template
+HAS_TAG = "has_tag"
+TEMPLATE = "template"  # a TAGS value identifying an item as a template
 CONTENTNGRAM = "contentngram"
+SUMMARYNGRAM = "summaryngram"
 
 ACTION = "action"
 ADDRESS = "address"
