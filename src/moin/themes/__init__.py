@@ -35,7 +35,6 @@ from moin.utils.clock import timed
 from moin.utils.mime import Type
 from moin.utils import show_time
 
-
 from moin import log
 logging = log.getLogger(__name__)
 
@@ -480,8 +479,6 @@ class ThemeSupport:
         # must import here to avoid circular import error
         from moin.storage.middleware.indexing import parent_names
         return parent_names(names)
-
-    # TODO: reimplement on-wiki-page sidebar definition with moin.converters
 
     # Properties ##############################################################
 
