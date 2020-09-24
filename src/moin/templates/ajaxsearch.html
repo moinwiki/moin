@@ -60,20 +60,9 @@
                 <div class="moin-search-results">
                     {%- set count = [0] %}
                     <table>
-                        {%- set vars = {'old_acl_in': [None, None, None], 'old_permission': False} %}
                         {%- for result in results %}
                             {%- set fullname = result.namespace + '/' + result.name[0] if result.namespace else result.name[0] %}
-                            {%- set new_acl = result.get('acl', '') %}
-                            {%- set new_parentnames = theme_supp.parentnames(result.name) %}
-                            {%- set new_acl_in = [new_acl, result['namespace'], new_parentnames] %}
-                            {%- if vars['old_acl_in'] == new_acl_in %}
-                                {#- save a few seconds by avoiding recalculation of acls #}
-                                {%- set permission = vars['old_permission'] %}
-                            {%- else %}
-                                {%- set permission = flaskg.storage.may_read_rev(result) %}
-                            {%- endif %}
-                            {#- workaround jinja2 scoping issue #}
-                            {%- if vars.update({'old_acl_in': new_acl_in, 'old_permission': permission}) %} {% endif %}
+                            {%- set permission = flaskg.storage.may_read_rev(result) %}
                             {%- if permission %}
                                 <tr>
                                     <td class="moin-wordbreak">

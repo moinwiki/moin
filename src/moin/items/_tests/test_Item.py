@@ -122,16 +122,6 @@ class TestItem:
         assert dirs == build_dirs_index(basename, ['cd', 'ij'])
         assert files == build_index(basename, ['ab', 'gh', 'ij', 'mn'])
 
-        # test Item.get_mixed_index
-        mixed_index = baseitem.get_mixed_index()
-        assert mixed_index == build_mixed_index(basename, [
-            ('ab', False),
-            ('cd', True),
-            ('gh', False),
-            ('ij', True),
-            ('mn', False),
-        ])
-
         # check filtered index when startswith param is passed
         dirs, files = baseitem.get_index(startswith='a')
         assert dirs == []

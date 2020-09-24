@@ -76,7 +76,7 @@ from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
 from moin.scripts.migration.moin19.import19 import hash_hexdigest
 
@@ -1205,13 +1205,13 @@ def mychanges():
     for rev in revs:
         entry = {}
         for key in (MTIME, SIZE, REV_NUMBER, REVID, CONTENTTYPE, ):
-            entry[key] = rev.meta[key]
-        entry[COMMENT] = rev.meta.get(COMMENT, '')
-        entry[FQNAMES] = rev.fqnames
-        entry[PARENTID] = rev.meta.get(PARENTID, '')
-        entry[TRASH] = rev.meta.get(TRASH, False)
-        entry[SUMMARY] = rev.meta.get(SUMMARY, False)
-        entry[NAME_OLD] = rev.meta.get(NAME_OLD, False)
+            entry[key] = rev[key]
+        entry[COMMENT] = rev.get(COMMENT, '')
+        entry[FQNAMES] = gen_fqnames(rev)
+        entry[PARENTID] = rev.get(PARENTID, '')
+        entry[TRASH] = rev.get(TRASH, False)
+        entry[SUMMARY] = rev.get(SUMMARY, False)
+        entry[NAME_OLD] = rev.get(NAME_OLD, False)
         my_changes.append(entry)
 
     return render_template('mychanges.html',
@@ -1344,8 +1344,8 @@ def history(item_name):
     history = []
     flaskg.clock.start('runrevs')
     for rev in revs:
-        entry = dict(rev.meta)
-        entry[FQNAMES] = rev.fqnames
+        entry = dict(rev)
+        entry[FQNAMES] = gen_fqnames(rev)
         history.append(entry)
     flaskg.clock.stop('runrevs')
     close_file(item.rev.data)
@@ -1417,8 +1417,9 @@ def global_history(namespace):
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
     for rev in revs:
-        rev.meta[MTIME] = int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
-        rev_date = show_time.format_date(rev.meta[MTIME])
+        rev[MTIME] = int(rev[MTIME].replace(tzinfo=timezone.utc).timestamp())
+        rev[FQNAMES] = gen_fqnames(rev)
+        rev_date = show_time.format_date(rev[MTIME])
         if rev_date == prev_date:
             dh.entries.append(rev)
         else:
@@ -1463,19 +1464,19 @@ def _compute_item_sets(wanted=False):
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     if wanted:
         for rev in revs:
-            existing |= set(rev.fqnames)
-            linked.update(rev.meta.get(ITEMLINKS, []))
-            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+            existing |= set(rev[FQNAMES])
+            linked.update(rev.get(ITEMLINKS, []))
+            transcluded.update(rev.get(ITEMTRANSCLUSIONS, []))
             # who_wants needed by wanted_items, may add a few seconds of processing time for larger wikis
-            for name in rev.meta.get(ITEMLINKS, []):
-                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
-            for name in rev.meta.get(ITEMTRANSCLUSIONS, []):
-                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+            for name in rev.get(ITEMLINKS, []):
+                who_wants[name] = who_wants.get(name, []) + [rev[FQNAMES][0].fullname]
+            for name in rev.get(ITEMTRANSCLUSIONS, []):
+                who_wants[name] = who_wants.get(name, []) + [rev[FQNAMES][0].fullname]
     else:
         for rev in revs:
-            existing |= set(rev.fqnames)
-            linked.update(rev.meta.get(ITEMLINKS, []))
-            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+            existing |= set(rev[FQNAMES])
+            linked.update(rev.get(ITEMLINKS, []))
+            transcluded.update(rev.get(ITEMTRANSCLUSIONS, []))
     return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded)), who_wants
 
 
@@ -2260,7 +2261,7 @@ def diff(item_name):
     revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     close_file(item.rev.data)
     item = flaskg.storage.get_item(**fqname.query)
-    revs = [(int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), rev.meta[REVID], rev.meta[ITEMID]) for rev in revs]
+    revs = [(int(rev[MTIME].replace(tzinfo=timezone.utc).timestamp()), rev[REVID], rev[ITEMID]) for rev in revs]
     if not revs:
         abort(404)
     # we do not do diffs across item IDs should an item be deleted and recreated with same name
@@ -2641,8 +2642,8 @@ def global_tags(namespace):
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     tags_counts = {}
     for rev in revs:
-        tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
+        tags = rev.get(TAGS, [])
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev[NAME], rev[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())

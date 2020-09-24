@@ -301,19 +301,6 @@ class ThemeSupport:
                 breadcrumbs.append((wiki_name, fqname, href, exists, err))
         return breadcrumbs
 
-    def subitem_index(self, fqname):
-        """
-        Get a list of subitems for the given fqname
-
-        :rtype: list
-        :returns: list of item tuples (item_name, item_title, item_mime_type, has_children)
-        """
-        from moin.items import Item
-        if not isinstance(fqname, CompositeName):
-            fqname = split_fqname(fqname)
-        item = Item.create(fqname.fullname)
-        return item.get_mixed_index()
-
     def userhome(self):
         """
         Assemble arguments used to build user homepage link
