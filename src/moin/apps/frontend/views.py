@@ -2625,10 +2625,6 @@ def global_tags(namespace):
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(HAS_TAG, True)])
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     else:
-        # TODO: to speed searching on wikis having few items with tags, we need to add an extra field
-        # to schema (HAS_TAGS) as described in
-        # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
-        # and then modify the query below and above
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace), Term(HAS_TAG, True)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
