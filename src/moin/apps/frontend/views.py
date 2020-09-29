@@ -2676,8 +2676,9 @@ def tagged_items(tag, namespace):
     if namespace != NAMESPACE_ALL:
         terms = And([terms, Term(NAMESPACE, namespace), ])
     query = And(terms)
-    revs = flaskg.storage.search(query, limit=None)
-    fq_names = [fq_name for rev in revs for fq_name in rev.fqnames]
+    metas = flaskg.storage.search_meta(query, limit=None)
+    fq_names = [gen_fqnames(meta) for meta in metas]
+    fq_names = [fqn for sublist in fq_names for fqn in sublist]
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
