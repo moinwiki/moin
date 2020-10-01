@@ -305,4 +305,9 @@ def teardown_wiki(response):
             flaskg.edit_utils.conn.close()
         except AttributeError:
             pass
+    # whoosh cache performance
+    for cache in (flaskg.storage.parse_acl, flaskg.storage.eval_acl, flaskg.storage.get_acls, flaskg.storage.allows, ):
+        msg = 'cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s' % ((cache.__name__, ) + cache.cache_info())
+        logging.info(msg)
+
     return response
