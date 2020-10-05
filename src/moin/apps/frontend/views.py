@@ -1273,7 +1273,7 @@ def _forwardrefs(item_name):
 @frontend.route('/+backrefs/<itemname:item_name>')
 def backrefs(item_name):
     """
-    Returns the list of all items that link or transclude item_name
+    Returns a list of all items that link or transclude item_name.
 
     :param item_name: the name of the current item
     :type item_name: unicode
@@ -1295,7 +1295,7 @@ def backrefs(item_name):
 
 def _backrefs(item_name):
     """
-    Returns a list with all names of items which ref fq_name
+    Returns a list with all names of items which reference item_name.
 
     :param item_name: the name of the item transcluded or linked
     :type item_name: unicode
@@ -1303,8 +1303,8 @@ def _backrefs(item_name):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
-    revs = flaskg.storage.search(q)
-    return {fqname for rev in revs for fqname in rev.fqnames}
+    metas = flaskg.storage.search_meta(q)
+    return {fqname for meta in metas for fqname in meta[FQNAMES]}
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -2545,7 +2545,12 @@ def closeMatches(fq_name, fq_names):
 @frontend.route('/+sitemap/<itemname:item_name>')
 def sitemap(item_name):
     """
-    sitemap view shows item link structure, relative to current item
+    sitemap view shows item link structure relative to item_name.
+
+    * If there are multiple links to same item, only first link to same item is processed.
+    * Missing items are marked as missing in template rendering.
+    * Links to items where current user lacks read authority are generated, but
+       suppressed in template rendering.
     """
     fq_name = split_fqname(item_name)
     try:
@@ -2555,9 +2560,9 @@ def sitemap(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
-    backrefs = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
+    backrefs, junk, junk2 = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
-    sitemap = NestedItemListBuilder().recurse_build([fq_name])
+    sitemap, no_read_auth, missing = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
                            item=item,
@@ -2565,6 +2570,8 @@ def sitemap(item_name):
                            backrefs=backrefs,
                            sitemap=sitemap,
                            fqname=fq_name,
+                           no_read_auth=no_read_auth,
+                           missing=missing,
     )
 
 
@@ -2573,8 +2580,13 @@ class NestedItemListBuilder:
         self.children = set()
         self.numnodes = 0
         self.maxnodes = 35  # approx. max count of nodes, not strict
+        self.no_read_auth = set()
+        self.missing = set()
 
     def recurse_build(self, fq_names, backrefs=False):
+        """
+        Return a list of fqnames and lists containing more fqnames that represent a sitemap.
+        """
         result = []
         if self.numnodes < self.maxnodes:
             for fq_name in fq_names:
@@ -2583,31 +2595,33 @@ class NestedItemListBuilder:
                 self.numnodes += 1
                 childs = self.childs(fq_name, backrefs=backrefs)
                 if childs:
-                    childs = self.recurse_build(childs, backrefs=backrefs)
+                    childs, no_read_auth, missing = self.recurse_build(childs, backrefs=backrefs)
                     result.append(childs)
-        return result
+        return result, self.no_read_auth, self.missing
 
     def childs(self, fq_name, backrefs=False):
-        # does not recurse
+        """
+        Return a sorted list of fqnames that link-to or are linked-by fq_name)
+        """
         try:
             item = flaskg.storage.get_item(**fq_name.query)
-            rev = item[CURRENT]
+            meta = item.item.meta
+            mayread = flaskg.storage.may_read_rev(meta)
         except (AccessDenied, KeyError):
+            return []
+        if item.itemid is None:
+            self.missing.add(fq_name)
+        if not mayread:
+            # user lacks read permission to item already added to self.children
+            # to save time we handle it later in template rendering
+            self.no_read_auth.add(fq_name)
             return []
         if backrefs:
             itemlinks = _backrefs(fq_name.value)
         else:
-            itemlinks = set(split_fqname_list(rev.meta.get(ITEMLINKS, []) + rev.meta.get(ITEMTRANSCLUSIONS, [])))
-        return [child for child in itemlinks if self.is_ok(child)]
-
-    def is_ok(self, child):
-        if child not in self.children:
-            if not flaskg.user.may.read(child):
-                return False
-            if flaskg.storage.get_item(**child.query):
-                self.children.add(child)
-                return True
-        return False
+            itemlinks = set(split_fqname_list(meta.get(ITEMLINKS, []) + meta.get(ITEMTRANSCLUSIONS, [])))
+        # test for child not in self.children prevents loops when 2 or more items link to each other
+        return sorted([child for child in itemlinks if child not in self.children])
 
 
 @frontend.route('/+tags', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])

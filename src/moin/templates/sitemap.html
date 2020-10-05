@@ -1,6 +1,20 @@
+{#
+    This template creates the moin version of a sitemap. The input `sitemap`
+    is a list comprised of fqnames or lists of fqnames. List entries that are fqnames
+    represent links or transclusions embedded in the starting item. List entries that are lists
+    represent links or transclusions embedded in the item most recently processed. The resulting
+    display is a multilevel unordered list.
+
+    The input `backrefs` has an identical structure, but each fqname is a backward reference.
+
+    The input `missing` is a set of fqnames that are non-existent.
+
+    The input `no-read-auth` is a set of fqnames that may not be read by current user.
+#}
+
 {% extends theme("show.html") %}
 
-{% set title = _("SiteMap of '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+{% set title = _("SiteMap of '%(item_name)s'", item_name=fqname) %}
 
 {% macro showtree(sitemap) %}
     <ul>
@@ -16,14 +30,22 @@
                     </li>
                 {% endif %}
             {% else %}
-                <li>
-                    <a href="{{ url_for('frontend.sitemap', item_name=entry) }}">
-                        <span class="fa fa-sitemap"></span>
-                    </a>
-                    <a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=entry) }}">
-                        {{ entry.value }}
-                    </a>
-                </li>
+                {% if entry not in no_read_auth %}
+                    <li>
+                        {% if entry in missing %}
+                            <a class="moin-fqname moin-nonexistent" href="{{ url_for('frontend.show_item', item_name=entry) }}">
+                                {{ entry.fullname }}
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('frontend.sitemap', item_name=entry) }}">
+                                <span class="fa fa-sitemap"></span>
+                            </a>
+                            <a class="moin-fqname" href="{{ url_for('frontend.show_item', item_name=entry) }}">
+                                {{ entry.fullname }}
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endif %}
             {% endif %}
         {% endfor %}
     </ul>
@@ -31,8 +53,8 @@
 
 {% block content %}
     <h1>{{ title }}</h1>
-    <h2>{{ _('Outgoing') }}</h2>
+    <h2>{{ _('Forward References') }}</h2>
     {{ showtree(sitemap) }}
-    <h2>{{ _('Incoming') }}</h2>
+    <h2>{{ _('Backward References') }}</h2>
     {{ showtree(backrefs) }}
 {% endblock %}
