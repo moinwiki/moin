@@ -16,7 +16,7 @@ import time
 from whoosh.util.cache import lru_cache
 
 from moin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
-from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAME, NAME, NAMESPACE, PARENTNAMES
+from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAME, FQNAMES, NAME, NAMESPACE, PARENTNAMES
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
@@ -28,9 +28,10 @@ logging = log.getLogger(__name__)
 
 
 # max sizes of some lru caches:
-LOOKUP_CACHE = 100  # ACL lookup for some itemname
-PARSE_CACHE = 100  # ACL string -> ACL object parsing
-EVAL_CACHE = 500  # ACL evaluation for some username / capability
+PARSE_CACHE = 100  # ACL string -> ACL object parsing:  acl, default > acls
+EVAL_CACHE = 300  # ACL evaluation for some username / capability:  acl, default_acl, user_name, right > t/f
+LOOKUP_CACHE = 200  # ACL lookup for some itemname:  itemid,fqname > acl
+ACL_CACHE = 600  # avoid ACL recalculation: user, namespace, ACL, parents, right > True/false
 
 
 class AccessDenied(Exception):
@@ -39,13 +40,20 @@ class AccessDenied(Exception):
     """
 
 
+def gen_fqnames(meta):
+    """Generate fqnames from meta data."""
+    if meta[NAME]:
+        return [CompositeName(meta[NAMESPACE], NAME_EXACT, name) for name in meta[NAME]]
+    return [CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])]
+
+
 def pchecker(right, allowed, item):
-    """some permissions need additional checking"""
+    """Check blog entry publication date."""
     if allowed and right == PUBREAD:
         # PUBREAD permission is only granted after publication time (ptime)
         # if PTIME is not defined, we use MTIME (which is usually in the past)
         # if MTIME is not defined, we use now.
-        # TODO: implement sth like PSTARTTIME <= now <= PENDTIME ?
+        # TODO: implement new feature like PSTARTTIME <= now <= PENDTIME ?
         now = time.time()
         ptime = item.ptime or item.mtime or now
         allowed = now >= ptime
@@ -53,8 +61,12 @@ def pchecker(right, allowed, item):
 
 
 class ProtectingMiddleware:
+    from .indexing import parent_names
+
     def __init__(self, indexer, user, acl_mapping):
         """
+        This object is created at the start of a transaction. It is accessed via flaskg.storage.
+
         :param indexer: indexing middleware instance
         :param user: a User instance (used for checking permissions)
         :param acl_mapping: list of (name_prefix, acls) tuples, longest prefix first, '' last
@@ -73,6 +85,10 @@ class ProtectingMiddleware:
         self.eval_acl = lru_cache_decorator(self._eval_acl)
         lru_cache_decorator = lru_cache(LOOKUP_CACHE)
         self.get_acls = lru_cache_decorator(self._get_acls)
+        lru_cache_decorator = lru_cache(ACL_CACHE)
+        self.allows = lru_cache_decorator(self._allows)
+        # placeholder to show we are passing meta data around without affecting lru caches
+        self.meta = None
 
     def _clear_acl_cache(self):
         # if we have modified the backend somehow so ACL lookup is influenced,
@@ -88,7 +104,6 @@ class ProtectingMiddleware:
         :param fqname: fully qualified itemname
         :returns: acl configuration (acl dict from the acl_mapping)
         """
-        itemname = fqname.value if fqname.field == NAME_EXACT else ''
         for namespace, acls in self.acl_mapping:
             if namespace == fqname.namespace:
                 return acls
@@ -162,33 +177,58 @@ class ProtectingMiddleware:
         The intended use of this method is to return the current rev metadata for all
         of the items in namespace subject to query restrictions. This is useful for reports
         such as Global Index, Global Tags, Wanted Items, Orphaned Items, etc.
-
-        Save processing time by avoiding a full ACL check when the answer will be the same as the last.
         """
         last_rev_acl_parts = (None, None, None)
         last_rev_result = None
-        for rev in self.indexer.search_meta(q, idx_name, **kw):
-            rev = ProtectedItemMeta(self, rev)
-            this_rev_acl_parts = (rev.meta[NAMESPACE], rev.meta.get(PARENTNAMES), rev.meta.get(ACL))
-            if this_rev_acl_parts == last_rev_acl_parts:
-                # skip the acl check because we know the answer will be the same
-                if last_rev_result:
-                    yield rev
-                continue
-            last_rev_acl_parts = this_rev_acl_parts
-            result = rev.allows(READ) or rev.allows(PUBREAD)
-            last_rev_result = result
+        for meta in self.indexer.search_meta(q, idx_name, **kw):
+            meta[FQNAMES] = gen_fqnames(meta)
+            result = self.may_read_rev(meta)
             if result:
-                yield rev
+                yield meta
 
-    def may_read_rev(self, windex):
+    def may_read_rev(self, meta):
         """
         Return true if user may read item revision represented by whoosh index hit.
-        Called by search templates, maybe others.
+        Called by ajaxsearch template, others.
         """
-        hit = ProtectedItemMeta(self, windex)
-        may_read = hit.allows(READ) or hit.allows(PUBREAD)
+        from .indexing import parent_names
+        self.meta = meta
+        self.fqnames = gen_fqnames(meta)
+        may_read = self.allows(tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
         return may_read
+
+    def full_acls(self):
+        """
+        iterator over all alternatively possible full acls for this item,
+        including before/default/after acl.
+        """
+        fqname = self.fqnames[0]
+        itemid = self.meta[ITEMID]
+        acl_cfg = self._get_configured_acls(fqname)
+        before_acl = acl_cfg['before']
+        after_acl = acl_cfg['after']
+        for item_acl in self.get_acls(itemid, fqname):
+            if item_acl is None:
+                item_acl = acl_cfg['default']
+            yield ' '.join([before_acl, item_acl, after_acl])
+
+    def _allows(self, user_names, acls, parentnames, namespace, right):
+        """
+        Check if usernames may have <right> access on this item.
+
+        :param right: the right to check
+        :param user_names: user names to use for permissions check (default is to
+                          use the user names doing the current request)
+        :rtype: bool
+        :returns: True if you have permission or False
+        """
+        acl_cfg = self._get_configured_acls(self.fqnames[0])
+        for user_name in user_names:
+            for full_acl in self.full_acls():
+                allowed = self.eval_acl(full_acl, acl_cfg['default'], user_name, right)
+                if allowed and pchecker(right, allowed, self.meta):
+                    return True
+        return False
 
     def search_meta_page(self, q, idx_name=LATEST_REVS, pagenum=None, pagelen=None, **kw):
         """
@@ -203,21 +243,15 @@ class ProtectingMiddleware:
         Note that ALCs are checked after whoosh returns a pagefull of items. It is possible that
         the results shown to the user will have fewer revisions than expected.
         """
-        last_rev_acl_parts = (None, None, None)
-        last_rev_result = None
-        for rev in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
-            rev = ProtectedItemMeta(self, rev)
-            this_rev_acl_parts = (rev.meta[NAMESPACE], rev.meta.get(PARENTNAMES), rev.meta.get(ACL))
-            if this_rev_acl_parts == last_rev_acl_parts:
-                # skip the acl check because we know the answer will be the same
-                if last_rev_result:
-                    yield rev
-                continue
-            last_rev_acl_parts = this_rev_acl_parts
-            result = rev.allows(READ) or rev.allows(PUBREAD)
-            last_rev_result = result
+        # import here to avoid circular import error
+        from .indexing import parent_names
+
+        for meta in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
+            self.meta = meta
+            self.fqnames = gen_fqnames(meta)
+            result = self.allows(tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
             if result:
-                yield rev
+                yield meta
 
     def search_results_size(self, q, idx_name=ALL_REVS, **kw):
         return self.indexer.search_results_size(q, idx_name, **kw)
@@ -267,63 +301,6 @@ class ProtectingMiddleware:
         item = self.get_item(**fqname.query)
         allowed = item.allows(capability, user_names=usernames)
         return allowed
-
-
-class ProtectedItemMeta:
-    """
-    Perform ACL checks using only metadata. Does not create or use Item objects.
-    Intended usage is for reports that process all revisions while ignoring item content.
-    """
-    def __init__(self, protector, meta):
-        """
-        :param protector: protector middleware
-        :param meta: meta data of item to protect
-        """
-        self.protector = protector
-        self.meta = meta
-        if meta[NAME]:
-            self.fqnames = [CompositeName(meta[NAMESPACE], NAME_EXACT, name) for name in meta[NAME]]
-        else:
-            self.fqnames = [CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])]
-
-    def full_acls(self):
-        """
-        iterator over all alternatively possible full acls for this item,
-        including before/default/after acl.
-        """
-        fqname = self.fqnames[0]
-        itemid = self.meta[ITEMID]
-        acl_cfg = self.protector._get_configured_acls(fqname)
-        before_acl = acl_cfg['before']
-        after_acl = acl_cfg['after']
-        for item_acl in self.protector.get_acls(itemid, fqname):
-            if item_acl is None:
-                item_acl = acl_cfg['default']
-            yield ' '.join([before_acl, item_acl, after_acl])
-
-    def allows(self, right, user_names=None):
-        """
-        Check if usernames may have <right> access on this item.
-
-        :param right: the right to check
-        :param user_names: user names to use for permissions check (default is to
-                          use the user names doing the current request)
-        :rtype: bool
-        :returns: True if you have permission or False
-        """
-        if user_names is None:
-            user_names = self.protector.user.name
-        # must be a non-empty list of user names
-        assert isinstance(user_names, list)
-        assert user_names
-        acl_cfg = self.protector._get_configured_acls(self.fqnames[0])
-        for user_name in user_names:
-            for full_acl in self.full_acls():
-                allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
-                # TODO: If blogs are brought back we need:  if allowed is True and pchecker(right, allowed, self.item):
-                if allowed is True:
-                    return True
-        return False
 
 
 class ProtectedItem:

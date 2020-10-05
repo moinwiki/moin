@@ -35,7 +35,7 @@
         <table id="moin-global-history">
             {% for day, revs in history %}
                 {# create day header with date and link for setting bookmark #}
-                {% set latest_timestamp = revs[0].meta['mtime'] %}
+                {% set latest_timestamp = revs[0]['mtime'] %}
                 <tr class="moin-history-day-banner">
                     <td colspan="6">
                         <span class="moin-history-date">{{ day }}</span>
@@ -50,17 +50,17 @@
                     {% set meta = rev.meta %}
                     <tr>
                         {# create an icon with a link to diff, or other icon indicating state of item #}
-                        <td class="moin-history-links">{{ utils.item_status_icon(rev.fqnames[0], meta, bookmark_time) }}</td>
+                        <td class="moin-history-links">{{ utils.item_status_icon(rev.fqnames[0], rev, bookmark_time) }}</td>
                         {# show item name or item id and old name if the item is nameless (deleted) #}
-                        <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(meta, rev.fqnames) }}</td>
-                        <td class="moin-history-time">{{ meta.mtime|time_hh_mm }}</td>
+                        <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(rev, rev.fqnames) }}</td>
+                        <td class="moin-history-time">{{rev.mtime|time_hh_mm }}</td>
                         <td class="moin-history-links">
                             <a href="{{ url_for('frontend.history', item_name=rev.fqnames[0], bookmark=bookmark_time) }}">
                                 <span class="fa fa-clock-o" title="{{ _('History') }}"></span>
                             </a>
                         </td>
-                        <td class="moin-wordbreak moin-history-editorinfo">{{ utils.editor_info(meta) }}</td>
-                        <td class="moin-wordbreak moin-history-comment">{{ meta['comment'] }}</td>
+                        <td class="moin-wordbreak moin-history-editorinfo">{{ utils.editor_info(rev) }}</td>
+                        <td class="moin-wordbreak moin-history-comment">{{ rev['comment'] }}</td>
                     </tr>
                 {% endfor %}
 

@@ -831,11 +831,11 @@ class Item:
         dirs = []
         added_dir_relnames = set()
         for rev in subitems:
-            fullnames = rev.meta[NAME]
+            fullnames = rev[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
                 if prefix is not None:
-                    fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, fullname)
+                    fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, fullname)
                     relname = fullname[len(prefix):]
                     if '/' in relname:
                         # Find the *direct* subitem that is the ancestor of current
@@ -843,15 +843,15 @@ class Item:
                         # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                         # 'foo/bar' will be found.
                         direct_relname = relname.partition('/')[0]
-                        direct_relname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_relname)
+                        direct_relname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_relname)
                         if direct_relname_fqname not in added_dir_relnames:
                             added_dir_relnames.add(direct_relname_fqname)
                             direct_fullname = prefix + direct_relname
-                            direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
-                            fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
+                            direct_fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
+                            fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                     else:
-                        mini_meta = {key: rev.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}
+                        mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE)}
                         files.append(IndexEntry(relname, fullname_fqname, mini_meta))
         files.sort()  # files with multiple names are not in sequence
         return dirs, files
@@ -908,13 +908,6 @@ class Item:
             query = Term(NAMESPACE, fqname.namespace) & query
         revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
         return self.make_flat_index(revs, isglobalindex)
-
-    def get_mixed_index(self):
-        dirs, files = self.make_flat_index(self.get_subitem_revs())
-        dirs_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=True)) for e in dirs])
-        index_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
-        index_dict.update(dirs_dict)
-        return sorted(index_dict.values())
 
 
 class Contentful(Item):

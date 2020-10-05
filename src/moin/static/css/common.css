@@ -289,15 +289,15 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 /* item ACL report */
 .moin-acl-report { width: 100%; border-collapse: collapse; }
 .moin-acl-heading > div { border: 1px solid #4e7da9; border: 1px solid var(--border); background-color: #C9E2F8; background-color: var(--bg-heading);
-    text-align: left; color: #000; color: var(--primary); padding: .3em .4em; vertical-align: middle; font-weight: bold; }
-.moin-acl-name-cell { border: 1px solid #4e7da9; border: 1px solid var(--border); vertical-align: top; position:relative; padding: .3em .4em; }
+    text-align: left; color: #000; color: var(--primary); padding: .3em .4em; vertical-align: middle; font-weight: bold; width: 50%; }
+.moin-acl-name-cell { border: 1px solid #4e7da9; border: 1px solid var(--border); vertical-align: top; position:relative;
+    padding: .3em .4em; word-break: break-all; }
 .moin-acl-name-cell > input { position:absolute; bottom: 0; right: 0; }
-.moin-acl-rule-cell { border: 1px solid #4e7da9; border: 1px solid var(--border); overflow: hidden; width: 70%; }
+.moin-acl-rule-cell { border: 1px solid #4e7da9; border: 1px solid var(--border); }
 .moin-acl-rule-cell textarea { border: 0; min-height: 3em; }
-.moin-acl-default .moin-acl-string { color: #444; color: var(--muted); }
-.moin-acl-rule-cell .moin-acl-edit-disable { color: #ccc; color: var(--disabled);}
-.moin-acl-string { padding: .3em .4em; width: 100%; overflow: scroll; overflow-wrap: break-word; }
-span.moin-acl-string { vertical-align: middle; }
+.moin-acl-default .moin-acl-string { color: #444; color: var(--muted); background-color: #F3F5F7; background-color: var(--bg-code);}
+.moin-acl-rule-cell .moin-acl-edit-disable { color: #ccc; color: var(--disabled); }
+.moin-acl-string { padding: .3em .4em; width: 100%; word-wrap: break-word; }
 .moin-acl-count { float: right; font-weight: bold; }
 
 /* tablesorter  - adding a moin-sortable class to a table enables JS sorting of table columns */

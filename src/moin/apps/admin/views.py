@@ -32,9 +32,10 @@ from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT
                                  NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
                                  ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
-from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
+from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS, READ, PUBREAD, WRITE, CREATE, ADMIN, DESTROY
 from moin.security import require_permission, ACLStringIterator
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
+from moin.storage.middleware.indexing import parent_names
 from moin.utils.interwiki import CompositeName
 from moin.utils.crypto import make_uuid
 from moin.datastructures.backends.wiki_groups import WikiGroup
@@ -362,7 +363,7 @@ def itemsize():
     ]
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
-    rows = [(rev.meta[SIZE], CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0]))
+    rows = [(rev[SIZE], CompositeName(rev[NAMESPACE], NAME_EXACT, rev[NAME][0]))
             for rev in revs]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
@@ -401,33 +402,24 @@ def _trashed(namespace):
 @require_permission(SUPERUSER)
 def user_acl_report(uid):
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
-    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     theuser = user.User(uid=uid)
     itemwise_acl = []
-    last_item_acl_parts = (None, None, None)
-    last_item_result = {'read': False,
-                        'write': False,
-                        'create': False,
-                        'admin': False,
-                        'destroy': False}
-    for item in all_items:
-        if item.meta.get(NAME):
-            fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
-        else:
-            fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
-        this_rev_acl_parts = (item.meta[NAMESPACE], item.meta.get(PARENTNAMES), item.meta.get(ACL))
-        name_parts = {'name': item.meta.get(NAME),
-                      'namespace': item.meta.get(NAMESPACE),
-                      'itemid': item.meta.get(ITEMID),
-                      'fqname': fqname}
-        if not last_item_acl_parts == this_rev_acl_parts:
-            last_item_acl_parts = this_rev_acl_parts
-            last_item_result = {'read': theuser.may.read(fqname),
-                                'write': theuser.may.write(fqname),
-                                'create': theuser.may.create(fqname),
-                                'admin': theuser.may.admin(fqname),
-                                'destroy': theuser.may.destroy(fqname)}
-        itemwise_acl.append({**name_parts, **last_item_result})
+    for meta in all_metas:
+        fqname = gen_fqnames(meta)
+        acl_parts = {'name': meta.get(NAME),
+                     'namespace': meta.get(NAMESPACE),
+                     'itemid': meta.get(ITEMID),
+                     'fqname': fqname}
+        parentnames = tuple(parent_names(meta[NAME]))
+        usernames = tuple(theuser.name)
+        acl = meta.get(ACL, None)
+        last_item_result = {'read': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], READ),
+                            'write': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], WRITE),
+                            'create': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], CREATE),
+                            'admin': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], ADMIN),
+                            'destroy': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], DESTROY)}
+        itemwise_acl.append({**acl_parts, **last_item_result})
     return render_template('admin/user_acl_report.html',
                            title_name=_('User ACL Report'),
                            user_names=theuser.name,
@@ -467,28 +459,25 @@ def item_acl_report():
     If there are multiple names, the first name is used for sorting.
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), ])
-    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
-    for item in all_items:
-        item_namespace = item.meta.get(NAMESPACE)
-        item_id = item.meta.get(ITEMID)
+    for meta in all_metas:
+        item_namespace = meta.get(NAMESPACE)
+        item_id = meta.get(ITEMID)
         if item_namespace:
-            item_name = [item_namespace + '/' + name for name in item.meta.get(NAME)]
+            item_name = [item_namespace + '/' + name for name in meta.get(NAME)]
         else:
-            item_name = item.meta.get(NAME)
-        item_acl = item.meta.get(ACL)
+            item_name = meta.get(NAME)
+        item_acl = meta.get(ACL)
         acl_default = item_acl is None
         if acl_default:
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
-        if item.meta.get(NAME):
-            fqnames = [CompositeName(item.meta[NAMESPACE], NAME_EXACT, name) for name in item.meta[NAME]]
-        else:
-            fqnames = [CompositeName(item.meta[NAMESPACE], ITEMID, item.meta[ITEMID])]
+        fqnames = gen_fqnames(meta)
         fqname = fqnames[0]
         items_acls.append({'name': item_name,
-                           'name_old': item.meta.get('name_old', []),
+                           'name_old': meta.get('name_old', []),
                            'itemid': item_id,
                            'fqnames': fqnames,
                            'fqname': fqnames[0],
@@ -519,19 +508,16 @@ def group_acl_report(group_name):
     WikiGroup or ConfigGroup name.
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
-    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     group_items = []
-    for item in all_items:
-        acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, item.meta.get(ACL, ''))
+    for meta in all_metas:
+        acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, meta.get(ACL, ''))
         for modifier, entries, rights in acl_iterator:
             if group_name in entries:
-                if item.meta.get(NAME):
-                    fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
-                else:
-                    fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
-                group_items.append(dict(name=item.meta.get(NAME),
-                                        itemid=item.meta.get(ITEMID),
-                                        namespace=item.meta.get(NAMESPACE),
+                fqname = gen_fqnames(meta)
+                group_items.append(dict(name=meta.get(NAME),
+                                        itemid=meta.get(ITEMID),
+                                        namespace=meta.get(NAMESPACE),
                                         fqname=fqname,
                                         rights=rights))
     return render_template('admin/group_acl_report.html',

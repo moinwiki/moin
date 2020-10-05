@@ -76,7 +76,7 @@ from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
 from moin.scripts.migration.moin19.import19 import hash_hexdigest
 
@@ -1192,26 +1192,26 @@ def mychanges():
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
-        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             # user has entered bad page_num in url
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     my_changes = []
-    for rev in revs:
+    for meta in metas:
         entry = {}
         for key in (MTIME, SIZE, REV_NUMBER, REVID, CONTENTTYPE, ):
-            entry[key] = rev.meta[key]
-        entry[COMMENT] = rev.meta.get(COMMENT, '')
-        entry[FQNAMES] = rev.fqnames
-        entry[PARENTID] = rev.meta.get(PARENTID, '')
-        entry[TRASH] = rev.meta.get(TRASH, False)
-        entry[SUMMARY] = rev.meta.get(SUMMARY, False)
-        entry[NAME_OLD] = rev.meta.get(NAME_OLD, False)
+            entry[key] = meta[key]
+        entry[COMMENT] = meta.get(COMMENT, '')
+        entry[FQNAMES] = gen_fqnames(meta)
+        entry[PARENTID] = meta.get(PARENTID, '')
+        entry[TRASH] = meta.get(TRASH, False)
+        entry[SUMMARY] = meta.get(SUMMARY, False)
+        entry[NAME_OLD] = meta.get(NAME_OLD, False)
         my_changes.append(entry)
 
     return render_template('mychanges.html',
@@ -1332,22 +1332,20 @@ def history(item_name):
 
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
-        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     # get rid of the content value to save potentially big amounts of memory:
     history = []
-    flaskg.clock.start('runrevs')
-    for rev in revs:
-        entry = dict(rev.meta)
-        entry[FQNAMES] = rev.fqnames
+    for meta in metas:
+        entry = dict(meta)
+        entry[FQNAMES] = gen_fqnames(meta)
         history.append(entry)
-    flaskg.clock.stop('runrevs')
     close_file(item.rev.data)
     trash = item.meta['trash'] if 'trash' in item.meta else False
 
@@ -1403,27 +1401,28 @@ def global_history(namespace):
 
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=idx_name)
-        revs = flaskg.storage.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME],
+        metas = flaskg.storage.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME],
                reverse=True, pagenum=page_num, pagelen=results_per_page)
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=None)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
-    for rev in revs:
-        rev.meta[MTIME] = int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
-        rev_date = show_time.format_date(rev.meta[MTIME])
+    for meta in metas:
+        meta[MTIME] = int(meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
+        meta[FQNAMES] = gen_fqnames(meta)
+        rev_date = show_time.format_date(meta[MTIME])
         if rev_date == prev_date:
-            dh.entries.append(rev)
+            dh.entries.append(meta)
         else:
             history.append(dh)
-            dh = day_history(rev_date, [rev])
+            dh = day_history(rev_date, [meta])
             prev_date = rev_date
     else:
         history.append(dh)
@@ -1460,22 +1459,22 @@ def _compute_item_sets(wanted=False):
     who_wants = {}
     query = And([Term(WIKINAME, app.cfg.interwikiname),
             Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
-    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     if wanted:
-        for rev in revs:
-            existing |= set(rev.fqnames)
-            linked.update(rev.meta.get(ITEMLINKS, []))
-            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+        for meta in metas:
+            existing |= set(meta[FQNAMES])
+            linked.update(meta.get(ITEMLINKS, []))
+            transcluded.update(meta.get(ITEMTRANSCLUSIONS, []))
             # who_wants needed by wanted_items, may add a few seconds of processing time for larger wikis
-            for name in rev.meta.get(ITEMLINKS, []):
-                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
-            for name in rev.meta.get(ITEMTRANSCLUSIONS, []):
-                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+            for name in meta.get(ITEMLINKS, []):
+                who_wants[name] = who_wants.get(name, []) + [meta[FQNAMES][0].fullname]
+            for name in meta.get(ITEMTRANSCLUSIONS, []):
+                who_wants[name] = who_wants.get(name, []) + [meta[FQNAMES][0].fullname]
     else:
-        for rev in revs:
-            existing |= set(rev.fqnames)
-            linked.update(rev.meta.get(ITEMLINKS, []))
-            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+        for meta in metas:
+            existing |= set(meta[FQNAMES])
+            linked.update(meta.get(ITEMLINKS, []))
+            transcluded.update(meta.get(ITEMTRANSCLUSIONS, []))
     return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded)), who_wants
 
 
@@ -2257,19 +2256,19 @@ def diff(item_name):
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
     terms.extend(Term(term, value) for term, value in fqname.query.items())
     query = And(terms)
-    revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+    metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     close_file(item.rev.data)
     item = flaskg.storage.get_item(**fqname.query)
-    revs = [(int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), rev.meta[REVID], rev.meta[ITEMID]) for rev in revs]
-    if not revs:
+    metas = [(int(meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), meta[REVID], meta[ITEMID]) for meta in metas]
+    if not metas:
         abort(404)
     # we do not do diffs across item IDs should an item be deleted and recreated with same name
-    item_id = revs[0][2]
-    rev_ids = [x[1] for x in revs if x[2] == item_id]
+    item_id = metas[0][2]
+    rev_ids = [x[1] for x in metas if x[2] == item_id]
     rev_ids.reverse()
     if bookmark_time:
         # try to find the latest rev1 before user's bookmark <date-time>
-        for mtime, revid, item_id in revs:
+        for mtime, revid, item_id in metas:
             if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
@@ -2281,13 +2280,13 @@ def diff(item_name):
         rev1 = request.values.get('rev1')
         rev2 = request.values.get('rev2')
         if rev1 not in rev_ids:
-            if len(revs) > 1:
-                rev1 = revs[1][1]  # take second newest rev
+            if len(metas) > 1:
+                rev1 = metas[1][1]  # take second newest rev
             else:
-                rev1 = revs[0][1]  # we will compare rev to itself
+                rev1 = metas[0][1]  # we will compare rev to itself
                 flash(_('There is only one revision eligible for diff.'), "info")
         if rev2 not in rev_ids:
-            rev2 = revs[0][1]  # the newest rev we have
+            rev2 = metas[0][1]  # the newest rev we have
     return _diff(item, rev1, rev2, fqname, rev_ids)
 
 
@@ -2626,10 +2625,6 @@ def global_tags(namespace):
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(HAS_TAG, True)])
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     else:
-        # TODO: to speed searching on wikis having few items with tags, we need to add an extra field
-        # to schema (HAS_TAGS) as described in
-        # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
-        # and then modify the query below and above
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace), Term(HAS_TAG, True)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
@@ -2638,11 +2633,11 @@ def global_tags(namespace):
         headline = _("Global Tags in All Namespaces")
     else:
         headline = _("Tags in Namespace '%(namespace)s'", namespace=namespace)
-    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     tags_counts = {}
-    for rev in revs:
-        tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
+    for meta in metas:
+        tags = meta.get(TAGS, [])
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(meta[NAME], meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -2681,8 +2676,9 @@ def tagged_items(tag, namespace):
     if namespace != NAMESPACE_ALL:
         terms = And([terms, Term(NAMESPACE, namespace), ])
     query = And(terms)
-    revs = flaskg.storage.search(query, limit=None)
-    fq_names = [fq_name for rev in revs for fq_name in rev.fqnames]
+    metas = flaskg.storage.search_meta(query, limit=None)
+    fq_names = [gen_fqnames(meta) for meta in metas]
+    fq_names = [fqn for sublist in fq_names for fqn in sublist]
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
