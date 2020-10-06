@@ -2578,8 +2578,6 @@ def sitemap(item_name):
 class NestedItemListBuilder:
     def __init__(self):
         self.children = set()
-        self.numnodes = 0
-        self.maxnodes = 35  # approx. max count of nodes, not strict
         self.no_read_auth = set()
         self.missing = set()
 
@@ -2588,15 +2586,13 @@ class NestedItemListBuilder:
         Return a list of fqnames and lists containing more fqnames that represent a sitemap.
         """
         result = []
-        if self.numnodes < self.maxnodes:
-            for fq_name in fq_names:
-                self.children.add(fq_name)
-                result.append(fq_name)
-                self.numnodes += 1
-                childs = self.childs(fq_name, backrefs=backrefs)
-                if childs:
-                    childs, no_read_auth, missing = self.recurse_build(childs, backrefs=backrefs)
-                    result.append(childs)
+        for fq_name in fq_names:
+            self.children.add(fq_name)
+            result.append(fq_name)
+            childs = self.childs(fq_name, backrefs=backrefs)
+            if childs:
+                childs, no_read_auth, missing = self.recurse_build(childs, backrefs=backrefs)
+                result.append(childs)
         return result, self.no_read_auth, self.missing
 
     def childs(self, fq_name, backrefs=False):
