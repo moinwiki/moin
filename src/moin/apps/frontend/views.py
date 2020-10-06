@@ -2429,9 +2429,9 @@ def findMatches(fq_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-
-    fq_names = [fqname for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname) for fqname in rev.fqnames
-                if rev.fqname is not None]
+    query = Term(WIKINAME, app.cfg.interwikiname)
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    fq_names = {fqname for meta in metas for fqname in meta[FQNAMES] if FQNAMES in meta}
     if fq_name in fq_names:
         fq_names.remove(fq_name)
     # Get matches using wiki way, start and end of word
