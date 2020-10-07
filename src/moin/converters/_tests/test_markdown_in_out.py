@@ -68,6 +68,8 @@ class TestConverter:
          '<sup>super</sup>script\n'),
         ('<sub>sub</sub>script\n',
          '<sub>sub</sub>script\n'),
+        ('<hr>\n\n<hr>\n\n<hr>\n',
+         '----\n\n----\n\n----\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
