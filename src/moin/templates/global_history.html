@@ -53,7 +53,7 @@
                         <td class="moin-history-links">{{ utils.item_status_icon(rev.fqnames[0], rev, bookmark_time) }}</td>
                         {# show item name or item id and old name if the item is nameless (deleted) #}
                         <td class="moin-history-item moin-wordbreak">{{ utils.item_moniker(rev, rev.fqnames) }}</td>
-                        <td class="moin-history-time">{{rev.mtime|time_hh_mm }}</td>
+                        <td class="moin-history-time">{{ rev.mtime|time_hh_mm }}</td>
                         <td class="moin-history-links">
                             <a href="{{ url_for('frontend.history', item_name=rev.fqnames[0], bookmark=bookmark_time) }}">
                                 <span class="fa fa-clock-o" title="{{ _('History') }}"></span>
