@@ -1317,6 +1317,7 @@ def history(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
+    flash_if_deleted(item)
     page_num = request.values.get('page_num', 1)
     page_num = max(int(page_num), 1)
     bookmark_time = int(request.values.get('bookmark', 0))
