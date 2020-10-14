@@ -953,7 +953,7 @@ class Default(Contentful):
                                data_rendered='',
                                )
 
-    def do_show(self, revid):
+    def do_show(self, revid, item_is_deleted=False):
         """
         Display an item. If this is not the current revision, page content will be
         prefaced with links to the next-rev and prior-rev.
@@ -974,6 +974,7 @@ class Default(Contentful):
                                rev_navigation_ids_dates=rev_navigation_ids_dates,
                                data_rendered=Markup(self.content._render_data()),
                                html_head_meta=html_head_meta,
+                               item_is_deleted=item_is_deleted,
                               )
 
     def doc_link(self, filename, link_text):
@@ -1216,7 +1217,7 @@ class NonExistent(Item):
     def _convert(self, doc):
         abort(404)
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         # First, check if the current user has the required privileges
         if flaskg.user.may.create(self.name):
             content = self._select_itemtype()

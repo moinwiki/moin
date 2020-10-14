@@ -2,13 +2,14 @@
     This template is used by other templates (show.html, etc.) to format the
     numerous links within the Item Views panel in the theme's header or sidebar.
 
-    Some entries may be suppressed because the user is not logged in or item ACLs.
+    Some links may be suppressed because of item ACLs.
+    Several links are suppressed if the item or revision is deleted.
     Comment and Transclusion links may be hidden by Javascript if item lacks content.
 #}
 
 {% set exists = fqname and storage.get_item(**fqname.query) %}
 {% set item = item %}
-{% set not_trash = not item.meta.trash if item else False %}
+{% set not_trash =  not item_is_deleted if item_is_deleted is defined else True %}
 {% set icon_classes = theme_supp.get_endpoint_iconmap() %}
 
 {%- macro a_label(icon_class, label) %}
@@ -19,9 +20,6 @@
 <ul class="moin-itemviews panel">
     <li class="moin-panel-heading">{{ _('Item Views') }}</li>
     {%- for endpoint, label, title, check_exists in cfg.item_views if not endpoint in cfg.endpoints_excluded %}
-
-
-
         {% set icon_class = icon_classes[endpoint] %}
         {%- if not check_exists or check_exists and exists %}
             {%- if endpoint in [

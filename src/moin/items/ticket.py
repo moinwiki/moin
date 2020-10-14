@@ -346,7 +346,7 @@ class Ticket(Contentful):
     submit_template = 'ticket/submit.html'
     modify_template = 'ticket/modify.html'
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         if revid != CURRENT:
             # TODO When requesting a historical version, show a readonly view
             abort(403)

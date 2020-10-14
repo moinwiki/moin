@@ -51,7 +51,7 @@ class Blog(Default):
         meta_form = BlogMetaForm
         meta_template = 'blog/modify_main_meta.html'
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         """
         Show a blog item and a list of its blog entries below it.
 
@@ -114,7 +114,7 @@ class BlogEntry(Default):
                 form['meta_form']['ptime'].set(datetime.utcnow())
             return form
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         blog_item_name = self.name.rsplit('/', 1)[0]
         try:
             blog_item = Item.create(blog_item_name)

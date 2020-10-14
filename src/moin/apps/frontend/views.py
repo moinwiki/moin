@@ -489,10 +489,25 @@ def presenter(view, add_trail=False, abort404=True):
     return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
-def flash_if_deleted(item):
-    """Show flash info message when user views a deleted revision."""
-    if TRASH in item.meta and item.meta[TRASH]:
-        flash(_('This item or item revision is deleted.'), "info")
+def flash_if_item_deleted(item_name, rev_id, itemrev):
+    """
+    Show flash info message if target item is deleted, show another message if revision is deleted.
+    Return True if item is deleted or this revision is deleted.
+    """
+    if not rev_id == CURRENT:
+        ret = False
+        current_item = Item.create(item_name, rev_id=CURRENT)
+        if TRASH in current_item.meta and current_item.meta[TRASH]:
+            flash(_('This item is deleted.'), "info")
+            ret = True
+        if TRASH in itemrev.meta and itemrev.meta[TRASH]:
+            flash(_('This item revision is deleted.'), "info")
+            ret = True
+        return ret
+    elif TRASH in itemrev.meta and itemrev.meta[TRASH]:
+        flash(_('This item is deleted.'), "info")
+        return True
+    return False
 
 
 # The first form accepts POST to allow modifying behavior like modify_item.
@@ -509,8 +524,8 @@ def show_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
-        flash_if_deleted(item)
-        result = item.do_show(rev)
+        item_is_deleted = flash_if_item_deleted(item_name, rev, item)
+        result = item.do_show(rev, item_is_deleted=item_is_deleted)
     except AccessDenied:
         abort(403)
     except FieldNotUniqueError:
@@ -522,6 +537,7 @@ def show_item(item_name, rev):
                                headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
                                fqname=fqname,
                                fq_names=fq_names,
+                               item_is_deleted=item_is_deleted,
                                )
     close_file(item.rev.data)
     return result
@@ -562,7 +578,7 @@ def indexable(item_name, rev):
 @presenter('highlight')
 def highlight_item(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    flash_if_deleted(item)
+    item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
     try:
         ret = render_template('highlight.html',
                               item=item, item_name=item.name,
@@ -571,6 +587,7 @@ def highlight_item(item):
                               rev=item.rev,
                               rev_navigation_ids_dates=rev_navigation_ids_dates,
                               meta=item._meta_info(),
+                              item_is_deleted=item_is_deleted,
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
@@ -581,7 +598,7 @@ def highlight_item(item):
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    flash_if_deleted(item)
+    item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
     ret = render_template('meta.html',
                           item=item,
                           item_name=item.name,
@@ -590,6 +607,7 @@ def show_item_meta(item):
                           contenttype=item.contenttype,
                           rev_navigation_ids_dates=rev_navigation_ids_dates,
                           meta=item._meta_info(),
+                          item_is_deleted=item_is_deleted,
     )
     close_file(item.meta.revision.data)
     return ret
@@ -1005,6 +1023,7 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+    item_is_deleted = flash_if_item_deleted(item_name, rev, item)
     subitem_names = []
     alias_names = []
     if rev is None:
@@ -1036,7 +1055,8 @@ def destroy_item(item_name, rev):
                           fqname=fqname,
                           rev_id=rev,
                           form=form,
-                          data_rendered=Markup(item.content._render_data())
+                          data_rendered=Markup(item.content._render_data()),
+                          item_is_deleted=item_is_deleted,
     )
     close_file(item.meta.revision.data)
     close_file(item.rev.data)
@@ -1317,7 +1337,7 @@ def history(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
-    flash_if_deleted(item)
+    item_is_deleted = flash_if_item_deleted(item_name, CURRENT, item)
     page_num = request.values.get('page_num', 1)
     page_num = max(int(page_num), 1)
     bookmark_time = int(request.values.get('bookmark', 0))
@@ -1369,6 +1389,7 @@ def history(item_name):
                           NAME_EXACT=NAME_EXACT,
                           len=len,
                           trash=trash,
+                          item_is_deleted=item_is_deleted,
     )
     flaskg.clock.stop('renderrevs')
     close_file(item.rev.data)
