@@ -506,7 +506,12 @@
             {%- if not loop.first %}
                 <i class="fa fa-circle moin-tiny"></i>
             {% endif -%}
-            <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a>
+            {% if name.field == 'itemid' %}
+                {# an item revision of a deleted item is being destroyed #}
+                <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name|shorten_fqname }}</a> ~( {{ meta.name[0] }})
+            {% else %}
+                <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a>
+            {% endif %}
         {%- endfor -%}
     {%- elif meta.summary %}
         <a href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ meta.summary }}</a>
@@ -519,7 +524,7 @@
     {%- endif %}
 {%- endmacro %}
 
-{# Return a string containing an item name, item alias names, item summary or item ID and old names #}
+{# Output a string containing an item name, item alias names, item summary or item ID and old names #}
 {%- macro best_item_name(meta) %}
     {% set names = [] %}
     {%- if not meta.trash %}
