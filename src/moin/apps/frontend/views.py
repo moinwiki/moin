@@ -1035,7 +1035,6 @@ def destroy_item(item_name, rev):
 
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
-        close_file(item.rev.data)
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
         if form.validate():
