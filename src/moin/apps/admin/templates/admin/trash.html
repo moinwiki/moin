@@ -25,11 +25,13 @@
                         <td>{{ result.mtime|time_datetime }}</td>
                         <td class="moin-wordbreak">{{ utils.show_editor_info(result.editor)  }}</td>
                         <td class="moin-wordbreak">{{ result.comment }}</td>
-                        <td><a href="{{ url_for('frontend.show_item', item_name=result.fqname) }}">{{ _('show') }}</a></td>
-                        {% if user.may.write(result.fqname) -%}
-                            <td><a href="{{ url_for('frontend.history', item_name=result.fqname) }}">{{ _('History') }}</a></td>
-                            <td><a href="{{ url_for('frontend.destroy_item', item_name=result.fqname) }}">{{ _('Destroy') }}</a></td>
-                        {%- endif %}
+                        <td><a href="{{ url_for('frontend.show_item', item_name=result.fqname) }}">{{ _('Show') }}</a></td>
+                        <td><a href="{{ url_for('frontend.history', item_name=result.fqname) }}">{{ _('History') }}</a></td>
+                        <td>
+                            {%- if user.may.write(result.fqname) %}
+                                <a href="{{ url_for('frontend.destroy_item', item_name=result.fqname) }}">{{ _('Destroy') }}</a>
+                            {% endif -%}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
