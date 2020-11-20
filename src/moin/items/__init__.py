@@ -554,7 +554,8 @@ class Item:
                 item = Item.create(subitem_name, rev_id=CURRENT)
                 close_file(item.rev.data)
                 item.rev.item.destroy_all_revisions()
-            flash(L_('The item "%(name)s" was destroyed.', name=self.name), 'info')
+            name = self.name or self.meta[NAME_OLD][0]
+            flash(L_('The item "%(name)s" was destroyed.', name=name), 'info')
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
