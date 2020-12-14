@@ -779,6 +779,7 @@ if __name__ == '__main__':
                     sys.stdout = messages
                     sys.stderr = messages
                     QuickInstall(os.path.dirname(os.path.realpath(args[0])))()
+                    copy_config_files()
                     sys.stdout = orig_stdout
                     sys.stderr = orig_stderr
 

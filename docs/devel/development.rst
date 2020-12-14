@@ -59,9 +59,15 @@ create your development environment
 
     cd <parent_directory_of_your_future_repo>
     git clone https://github.com/yourname/moin.git
+* cd to repo root
+
+    cd moin
 * create the virtualenv and download packages::
 
     python quickinstall.py
+* activate virtualenv
+
+    . activate  # Windows: activate
 * create a wiki instance and load sample data::
 
     ./m sample  # Windows: m sample
