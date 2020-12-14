@@ -271,6 +271,7 @@ class UserProfile:
         self._meta = dict(rev.meta)
         self._stored = True
         self._changed = False
+        rev.data.close()
 
     def save(self, force=False):
         """
