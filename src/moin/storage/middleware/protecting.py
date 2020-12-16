@@ -20,7 +20,7 @@ from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, 
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
-
+from moin.utils import close_file
 from moin.utils.interwiki import split_fqname, CompositeName
 
 from moin import log
@@ -410,6 +410,8 @@ class ProtectedItem:
         if meta.get(ACL) != self.acl:
             self.require(ADMIN)
         rev = self.item.store_revision(meta, data, overwrite=overwrite, return_rev=return_rev, fqname=fqname, **kw)
+        if rev:  # tests may return None
+            close_file(rev.data)
         if return_meta:
             # handle odd case where user changes or reverts ACLs and loses read permission
             # email notifications will be sent and user will get 403 on item show
