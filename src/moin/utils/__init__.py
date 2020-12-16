@@ -9,6 +9,7 @@
 
 import re
 import pickle
+from io import BytesIO
 
 # Set pickle protocol, see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
@@ -86,5 +87,6 @@ def close_file(f):
     will result an error:
         The process cannot access the file because it is being used by another process.
     """
-    if hasattr(f, 'close') and not f.closed:
+    # some tests reuse BytesIO objects and will fail with I/O operation on closed file.
+    if hasattr(f, 'close') and not f.closed and not isinstance(f, BytesIO):
         f.close()
