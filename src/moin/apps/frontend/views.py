@@ -1007,6 +1007,23 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
 @frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+destroy/<itemname:item_name>', methods=['GET', 'POST'], defaults=dict(rev=None))
 def destroy_item(item_name, rev):
+    """
+    If incoming item_name has alias names, then destroy processing is different than delete
+    processing. With delete, the alias names survive intact. With destroy, the underlying data
+    and meta files are removed so all alias names are destroyed.
+
+    If the incoming target item `a` is deleted (Trash=True), then it is expected that all subitems
+    of `a` are also deleted. Any subitems of `a` that are found using the metadata NAME_OLD
+    links will be destroyed.
+
+    If an item `a` with an alias `b` is deleted, then it is not possible to destroy `a` because
+    `a` is not in the admin Trash list and there is no means of selecting `a`. However, any subitems
+    of `a` that were deleted will appear in the admin Trash list and may be destroyed individually.
+
+    :param item_name: item name or item ID if item is deleted
+    :param rev: None if all revisions are to be destroyed or revision ID for specific revision
+    :return: if GET rendered template, else POST will redirect to url to create item
+    """
     if rev is None:
         # no revision given
         _rev = CURRENT  # for item creation
@@ -1026,9 +1043,14 @@ def destroy_item(item_name, rev):
     item_is_deleted = flash_if_item_deleted(item_name, rev, item)
     subitem_names = []
     alias_names = []
-    if rev is None:
+    if rev is None and item_is_deleted:
+        item_name = item.meta[NAME_OLD][0]
         subitems = item.get_subitem_revs()
-        # XXX this matches what destroy does, but can leave orphans when alias names have subitems
+        subitem_names = [y for x in subitems for y in x.meta[NAME_OLD] if y.startswith(item_name + '/')]
+        if not [item_name] == item.meta[NAME_OLD]:
+            alias_names = [x for x in item.meta[NAME_OLD] if not x == item_name]
+    elif rev is None:
+        subitems = item.get_subitem_revs()
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
         if not [item.name] == item.names:
             alias_names = [x for x in item.names if not x == item.name]
@@ -1045,7 +1067,7 @@ def destroy_item(item_name, rev):
                 abort(403)
             log_destroy_action(item, subitem_names, comment, revision=rev)
             # show user item is deleted by showing "item does not exist, create it?" page
-            return redirect(url_for_item(fqname.fullname))
+            return redirect(url_for_item(item_name))
     ret = render_template('destroy.html',
                           item=item,
                           item_name=item_name,

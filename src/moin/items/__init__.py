@@ -788,6 +788,14 @@ class Item:
         names = self.names[0:1] if self.fqname.field == NAME_EXACT else self.names
         return [name + '/' if name else '' for name in names]
 
+    @property
+    def name_old_subitem_prefixes(self):
+        """
+        Return the possible prefixes for subitems using name_old value for deleted items.
+        """
+        names = self.meta[NAME_OLD]
+        return [name + '/' for name in names]
+
     def get_prefix_match(self, name, prefixes):
         """
         returns the prefix match found.
@@ -801,12 +809,19 @@ class Item:
         Create a list of subitems of this item.
 
         Subitems are in the form of storage Revisions.
+
+        trick: an item of empty name can be considered as "virtual root item"
+        that has all wiki items as sub items, but deleted items have empty names.
+
+        If item is trashed we must query name_old field to avoid processing all items.
         """
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, self.fqname.namespace)])
-        # trick: an item of empty name can be considered as "virtual root item"
-        # that has all wiki items as sub items
+
         if self.names:
             query = And([query, Or([Prefix(NAME_EXACT, prefix) for prefix in self.subitem_prefixes])])
+        elif self.meta.get(TRASH, False):
+            name_old = self.meta[NAME_OLD]
+            query = And([query, Or([Prefix(NAME_OLD, prefix) for prefix in self.name_old_subitem_prefixes])])
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
