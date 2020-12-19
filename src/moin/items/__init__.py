@@ -511,6 +511,7 @@ class Item:
                     item = Item.create(old_fqname.fullname)
                     item._save(item.meta, item.content.data,
                                name=child_newname, action=action, comment=comment, delete=delete)
+                    close_file(item.rev.data)
 
     def rename(self, name, comment=''):
         """
@@ -723,6 +724,8 @@ class Item:
                                data=currentrev.data, meta=currentrev.meta)
         if currentrev is not None:
             close_file(currentrev.data)
+        close_file(data)
+        close_file(new_meta.revision.data)
         return new_meta[REVID], new_meta[SIZE]
 
     def handle_variables(self, data, meta):
@@ -1096,6 +1099,7 @@ class Default(Contentful):
                     old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
                     preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
                     preview_rendered = item.content._render_data(preview=data)
+                    close_file(old_item.rev.data)
                 else:
                     # user clicked OK/Save button, check for conflicts,
                     if 'charset' in self.contenttype:
@@ -1105,9 +1109,9 @@ class Default(Contentful):
                             u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                             if not rev_id == 'new-item':
                                 original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
-                                original_rev = get_storage_revision(self.fqname, itemtype=self.itemtype, contenttype=original_item.contenttype, rev_id=rev_id)
                                 charset = original_item.contenttype.split('charset=')[1]
-                                original_text = original_rev.data.read().decode(charset)
+                                original_text = original_item.rev.data.read().decode(charset)
+                                close_file(original_item.rev.data)
                             else:
                                 original_text = ''
                             if original_text == data and not self.meta_changed(item.meta):

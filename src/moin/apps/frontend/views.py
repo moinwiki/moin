@@ -759,10 +759,7 @@ def modify_item(item_name):
         # user may have changed or deleted namespace, contenttype, or strict data validation failed in indexing.py
         flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
         return redirect(url_for_item(item_name))
-    try:
-        close_file(item.meta.revision.data)
-    except AttributeError:
-        pass
+    close_file(item.rev.data)
     return ret
 
 
@@ -832,7 +829,7 @@ def revert_item(item_name, rev):
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
-            close_file(item.meta.revision.data)
+            close_file(item.rev.data)
             return redirect(url_for_item(item_name))
     ret = render_template('revert.html',
                           item=item,
@@ -841,7 +838,7 @@ def revert_item(item_name, rev):
                           form=form,
                           data_rendered=Markup(item.content._render_data()),
     )
-    close_file(item.meta.revision.data)
+    close_file(item.rev.data)
     return ret
 
 
@@ -907,7 +904,7 @@ def delete_item(item_name):
         form = DeleteItemForm.from_defaults()
         subitems = item.get_subitem_revs()
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
-        close_file(item.rev.data)
+        data_rendered = Markup(item.content._render_data())
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -916,15 +913,18 @@ def delete_item(item_name):
                 item.delete(comment)
             except AccessDenied:
                 abort(403)
+            close_file(item.meta.revision.data)
             return redirect(url_for_item(item_name))
-    return render_template('delete.html',
-                           item=item,
-                           item_name=item_name,
-                           subitem_names=subitem_names,
-                           fqname=split_fqname(item_name),
-                           form=form,
-                           data_rendered=Markup(item.content._render_data()),
+    ret = render_template('delete.html',
+                          item=item,
+                          item_name=item_name,
+                          subitem_names=subitem_names,
+                          fqname=split_fqname(item_name),
+                          form=form,
+                          data_rendered=data_rendered,
     )
+    close_file(item.rev.data)
+    return ret
 
 
 @frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
