@@ -1194,8 +1194,10 @@ class Default(Contentful):
             lock_duration = app.cfg.edit_lock_time * 60
         else:
             lock_duration = None
-        # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
         edit_utils.cursor_close()
+        # enable sidebar themes to show OK, Preview, Cancel buttons that do not scroll off display
+        is_modify_text = True if 'text' in self.contenttype and 'html' not in self.contenttype else False
+        # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,
@@ -1208,6 +1210,7 @@ class Default(Contentful):
                                preview_diffs=preview_diffs,
                                preview_rendered=preview_rendered,
                                edit_rows=edit_rows,
+                               is_modify_text=is_modify_text,
                                draft_data=draft_data,
                                lock_duration=lock_duration,
                                tuple=tuple,

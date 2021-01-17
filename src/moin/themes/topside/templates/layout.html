@@ -29,6 +29,13 @@
                 {%- if search_form %}
                     {{ header_search(search_form) }}
                 {%- endif %}
+                {%- if is_modify_text %}
+                    <div class="moin-edit-actions">
+                        <button class="moin-button" onclick="document.getElementById('moin-save-text-button').click()">OK</button>
+                        <button class="moin-button" onclick="document.getElementById('moin-preview-text-button').click()">Preview</button>
+                        <button class="moin-button" onclick="document.getElementById('moin-cancel-text-button').click()">Cancel</button>
+                    </div>
+                {%- endif %}
                 <ul id="moin-username">
                     {{ utils.user_login_logoff() }}
                 </ul>
