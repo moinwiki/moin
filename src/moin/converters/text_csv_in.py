@@ -27,6 +27,8 @@ class Converter(TableMixin):
 
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
+        # prevent incorrect output when there are multiple trailing blank lines
+        text = text.rstrip()
         content = normalize_split_text(text)
         dialect = csv.Sniffer().sniff(text)
         reader = csv.reader(content, dialect)
