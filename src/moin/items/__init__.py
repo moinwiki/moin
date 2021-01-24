@@ -1196,7 +1196,7 @@ class Default(Contentful):
             lock_duration = None
         edit_utils.cursor_close()
         # enable sidebar themes to show OK, Preview, Cancel buttons that do not scroll off display
-        is_modify_text = True if 'text' in self.contenttype and 'html' not in self.contenttype else False
+        is_modify_text = True if 'text' in self.contenttype else False
         # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
         return render_template('modify.html',
                                fqname=self.fqname,
