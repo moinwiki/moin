@@ -669,11 +669,12 @@ figcaption { font-weight: bold; }
 .moin-fixed-width { font-family: Inconsolata, Consolas, "DejaVu Sans Mono", "Courier New", courier; }
 .moin-edit-no-help { float: right; border: 1px solid #00417F; border: 1px solid var(--border-button); border-radius: 6px; cursor: pointer;
     font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
-.moin-edit-no-help:before { content: url("../img/smileys/alert.png"); padding-right: 1em; }
+.moin-edit-no-help:before { content: url("../img/smileys/icon-info.png"); padding-right: 1em; }
 .moin-autosize { min-height: 10em; }
-
 .moin-edit-help { float: right; }
 .moin-edit-help a { color: #000; color: var(--primary); }
+/* ckeditor hides textarea, this prevents editor help link overlaying ckeditor controls */
+#cke_f_content_form_data_text { clear: both; }
 
 /* revision navigation on show, highlight, and meta views */
 .moin-revert { text-align: center; }

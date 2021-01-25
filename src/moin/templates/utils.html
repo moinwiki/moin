@@ -109,12 +109,15 @@
     {{ gen.form.close() }}
 {% endmacro %}
 
+{# return help for editors based upon current item's contenttype #}
 {% macro help_on_editing(help) %}
     {% if help %}
         {% if isinstance(help, tuple) %}
+            {# display nice button with link to internal help: moinwiki, creole, markdown... #}
             <span class="moin-edit-help moin-button"><a href="{{ help[0] }}">{{ help[1] }}</a></span>
         {% else %}
-            <span class="moin-edit-no-help"> {{ help }} </span>
+            {# no help, one sentence help, or link to help in external site: CSV, images, binary... #}
+            <span class="moin-edit-no-help"> {{ help|safe }} </span>
         {% endif %}
     {% endif %}
 {% endmacro %}
