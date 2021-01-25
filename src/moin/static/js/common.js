@@ -800,7 +800,12 @@ $(document).ready(function () {
 
     // add function to be executed when user clicks Load Draft button on +modify page
     $('.moin-load-draft').on('click', function () {
-        $('.moin-edit-content').val($('#moin-draft-data').val());
+        try { CKEDITOR.prop;
+            CKEDITOR.instances.f_content_form_data_text.setData($('#moin-draft-data').val());
+        }
+        catch {
+            $('.moin-edit-content').val($('#moin-draft-data').val());
+        }
         $('#moin-modify').addClass('moin-changed-input');
         $('.moin-load-draft').hide();
         $('#moin-flash .moin-flash').remove();
@@ -811,11 +816,6 @@ $(document).ready(function () {
     if ($('#moin-preview-diff').length && $('#moin-modify').length) {
         window.location = window.location.href.split('#')[0] + '#moin-preview-diff';
         $('#moin-modify').addClass('moin-changed-input');
-    }
-
-    // hide preview button if this page does not contain a edit textarea
-    if (!$('.moin-edit-content').length) {
-        $('#moin-preview-text-button').hide();
     }
 
     // warn user about unsaved changes; if user leaves page with unsaved edits, edit lock remains until timeout
