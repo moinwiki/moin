@@ -86,7 +86,7 @@ Transclusion syntax is defined as follows:
 {{bird.jpg|rare yellow bird|class=center}}
 }}}
 
- * `<target>` is a relative or absolute URL pointing to an image, video, audio, or web page. 
+ * `<target>` is a relative or absolute URL pointing to an image, video, audio, or web page.
  * `<optional alternate text>` has several potential uses:
    * Screen readers used by visually impaired users will speak the text.
    * The alternate text may be displayed by the browser if the URL is broken.
@@ -94,20 +94,20 @@ Transclusion syntax is defined as follows:
  * `optional parameters` may be used to resize or position the target.
    * Images or other targets can be resized on the client side by specifying an option of `width=nn` or `height=nn` where nn is the desired size in pixels.
    * If Pillow is installed on the server, JPEG (or JPG) images can be resized on the server by specifying an option of `&w=nn` or `&h=nn` where nn is the desired size in pixels.
-   * Images embedded within text can be positioned relative to a line of text by using `class=bottom`, `class=top` or `class="middle"`. 
+   * Images embedded within text can be positioned relative to a line of text by using `class=bottom`, `class=top` or `class="middle"`.
    * Images displayed as block elements my be floated left or right by using `class="left"` or `class=right` respectively, or centered by using `class=center`.
 
 {{{#!wiki caution
 When transcluding content from a different web site,
-most browsers will suppress transcluded content having a protocol different 
-(HTTP/HTTPS) than the parent page. Some browsers may provide a warning 
+most browsers will suppress transcluded content having a protocol different
+(HTTP/HTTPS) than the parent page. Some browsers may provide a warning
 icon or message.
 }}}
 
 '''Markup:'''
 
 {{{
- 1. Images are aligned to bottom {{png}} of text by default. 
+ 1. Images are aligned to bottom {{png}} of text by default.
  1. This image is the big logo floated to the right: {{svg|my svg|class=right}}
  1. Image aligned to top of text. {{jpeg||&w=75 class=top}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
@@ -117,7 +117,7 @@ icon or message.
 
 '''Result:'''
 
- 1. Images are aligned to bottom {{png}} of text by default. 
+ 1. Images are aligned to bottom {{png}} of text by default.
  1. This image is the big logo floated to the right: {{svg|my svg|class=right}}
  1. Image aligned to top of text. {{jpeg||&w=75 class=top}}
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
@@ -128,9 +128,9 @@ icon or message.
 
 The most common use of blockquotes is to indent several lines of text at the same level. In this case the lines will be combined, word-wrapped as a single paragraph, and displayed as indented text.
 
-When blockquotes contain several levels of indentation, the rendering will be similar to bulletless lists. The difference is that any adjacent lines with the same indentation will be combined and word-wrapped to fit the page width. 
+When blockquotes contain several levels of indentation, the rendering will be similar to bulletless lists. The difference is that any adjacent lines with the same indentation will be combined and word-wrapped to fit the page width.
 
-In the example below, the second to last line has a leading bulletless list character (a period) that results in the creation of a new list item. 
+In the example below, the second to last line has a leading bulletless list character (a period) that results in the creation of a new list item.
 
 '''Markup:'''
 
@@ -255,7 +255,7 @@ When there is a need to start an ordered list at a specific number, use the form
  1. twelve
     i.#11 roman numeral xi
  1. thirteen
- 
+
  A.#11 letter K
  A. letter J
 }}}
@@ -266,7 +266,7 @@ When there is a need to start an ordered list at a specific number, use the form
  1. twelve
     i.#11 roman numeral xi
  1. thirteen
- 
+
  A.#11 letter K
  A. letter J
 
@@ -290,7 +290,7 @@ When there is a need to start an ordered list at a specific number, use the form
 
 == Horizontal Rules ==
 
-To create a horizontal rule, start a line with 4 or more hyphen (-) characters. Nine (or more) 
+To create a horizontal rule, start a line with 4 or more hyphen (-) characters. Nine (or more)
 characters creates a line of maximum height.
 
 '''Markup:'''
@@ -544,8 +544,8 @@ The wiki parser is the moinwiki parser. If there is a need to emphasize a sectio
 {{{{
 {{{#!wiki solid/orange
  * plain
- * ''italic'' 
- * '''bold''' 
+ * ''italic''
+ * '''bold'''
  * '''''bold italic.'''''
 }}}
 }}}}
@@ -554,8 +554,8 @@ The wiki parser is the moinwiki parser. If there is a need to emphasize a sectio
 
 {{{#!wiki solid/orange
  * plain
- * ''italic'' 
- * '''bold''' 
+ * ''italic''
+ * '''bold'''
  * '''''bold italic.'''''
 }}}
 
@@ -581,14 +581,15 @@ Admonitions are used to draw the reader's attention to an important paragraph. T
 Admonitions should be used with care. A page riddled with admonitions will look restless and will be harder to follow than a page where admonitions are used sparingly.
 }}}
 
-=== CSS classes for use with the wiki parser, tables, and comments ===
+=== CSS classes for use with the wiki parser, tables and comments ===
 
- * Background colors: red, green, blue, yellow, or orange
- * Borders: solid, dashed, or dotted
- * Text-alignment: left, center, right, or justify
- * Admonitions: caution, important, note, tip, warning
+ * Background colors: red, green, blue, yellow or orange
+ * Borders: solid, dashed or dotted
+ * Text-alignment: left, center, right or justify
+ * Admonitions: caution, important, note, tip or warning
  * Tables: moin-sortable, no-borders
  * Comments: comment
+ * position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
 
 == Variables ==
 
@@ -638,7 +639,7 @@ Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed
 
 == Smileys and Icons ==
 
-(!) To insert a smiley icon into your wiki content, type in the markup characters from the table below. Be sure to include a 
+(!) To insert a smiley icon into your wiki content, type in the markup characters from the table below. Be sure to include a
 space character before and after the smiley text, or add the smiley text at the beginning or end of a line. :)
 
 ||Markup||Display||Emotion   ||
@@ -699,7 +700,7 @@ Logged in users may set User Preferences to display or hide comments, overriding
 ## Lines starting with "##" may be used to give instructions
 ## to future page editors.
 
-Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
+Click on "Comments" within Item Views to toggle the /* comments */ visibility.
 
 {{{#!wiki comment/dashed
 This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
@@ -713,7 +714,7 @@ Its visibility gets toggled the same way.
 ## Lines starting with "##" may be used to give instructions
 ## to future page editors.
 
-Click on "Comments" within Item Views to toggle the /* comments */ visibility. 
+Click on "Comments" within Item Views to toggle the /* comments */ visibility.
 
 {{{#!wiki comment/dashed
 This is a wiki parser section with class "comment dashed" (see HelpOnParsers).
