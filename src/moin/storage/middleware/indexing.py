@@ -345,7 +345,7 @@ class IndexingMiddleware:
             BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
-            # publish time from metadata (converted to UTC datetime)
+            # blog publish time from metadata (converted to UTC datetime), TODO: move to blog_entry_fields?
             PTIME: DATETIME(stored=True),
             # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
@@ -377,11 +377,11 @@ class IndexingMiddleware:
             TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True, spelling=True),
-            # refers to another item using itemid
+            # refers to another item ticket using itemid, TODO move to ticket_fields?
             REFERS_TO: ID(stored=True),
-            # meta field to differentiate elements referring to an item
+            # meta field to differentiate ticket elements referring to an item, TODO move to ticket_fields?
             ELEMENT: ID(stored=True),
-            # reply to comment, used only by tickets
+            # reply to comment, used only by tickets, TODO move to ticket_fields?
             REPLY_TO: ID(stored=True),
         }
 
