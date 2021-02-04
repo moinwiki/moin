@@ -142,6 +142,14 @@ div.warning > p { margin-top: 8px; padding-left: 4em; }
 .solid { border: 2px solid #AEBDCC; border: 2px solid var(--border-code); padding: 2px; clear: both; }
 .dashed { border: 2px dashed #AEBDCC; border: 2px dashed var(--border-code); padding: 2px; clear: both; }
 .dotted { border: 2px dotted #AEBDCC; border: 2px dotted var(--border-code); padding: 2px; clear: both; }
+/* position tables and nowiki blocks */
+.float-right { float: right; margin-left: 1em; margin-bottom: 1em; }
+.float-left { float: left; margin-right: 1em; margin-bottom: 1em; }
+.inline { display: inline-block; margin-right: 1em; margin-bottom: 1em; vertical-align: top; }
+.middle { display: table; margin-left: auto; margin-right: auto; clear: both; }
+.clear-right { clear: right; }
+.clear-left { clear: left; }
+.clear-both { clear: both; }
 /* more css classes defined for use by wiki editors */
 .left { text-align: left; }
 .center { text-align: center; }

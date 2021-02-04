@@ -245,6 +245,20 @@ class Converter:
         return self.new_copy(html.video, elem, attrib)
 
     def visit_moinpage_nowiki(self, elem):
+        """
+        Avoid creation of a div used only for its data-lineno attrib.
+        """
+        if elem.attrib.get(html.data_lineno, None) and isinstance(elem[0][0], ET.Element):
+            # {{{#!wiki\ntext\n}}}
+            elem[0][0].attrib[html.data_lineno] = elem.attrib[html.data_lineno]
+            elem[0][0].attrib[moin_page.class_] = elem[0][0].attrib.get(moin_page.class_, "") + " moin-nowiki"
+            return self.do_children(elem)
+        if elem.attrib.get(html.data_lineno, None) and isinstance(elem[0][0], str) and isinstance(elem[0], ET.Element):
+            # {{{\ntext\n}}} OR {{{#!highlight python\ndef xx:\n}}}
+            elem[0].attrib[html.data_lineno] = elem.attrib[html.data_lineno]
+            elem[0].attrib[moin_page.class_] = elem[0].attrib.get(moin_page.class_, "") + " moin-nowiki"
+            return self.do_children(elem)
+        # {{{\n{{{{{\ntext\n}}}}}\n}}}  # data_lineno not available, parent will have class=moin-nowiki
         return self.new_copy(html.div, elem)
 
     def visit_moinpage_blockcode(self, elem):

@@ -701,6 +701,7 @@ CSS classes for use with the wiki parser, tables, and comments
  - Admonitions: caution, important, note, tip, warning
  - Tables: moin-sortable, no-borders
  - Comments: comment
+ - position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
 
 Variables
 =========
