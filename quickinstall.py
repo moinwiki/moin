@@ -76,10 +76,12 @@ if os.name == 'nt':
     M = 'm'  # customize help to local OS
     SEP = ' & '
     WINDOWS_OS = True
+    ACTIVATE = 'activate'
 else:
     M = './m'
     SEP = ';'
     WINDOWS_OS = False
+    ACTIVATE = '. activate'
 
 
 # commands that create log files
@@ -756,7 +758,7 @@ if __name__ == '__main__':
             # run this same script (quickinstall.py) again in a subprocess to create the virtual env
             command()
             # a few success/failure messages will have printed on users terminal, suggest next step
-            print('\n> > > Type "%s" for menu < < <' % M)
+            print('\n> > > Type "%s" to activate venv, then "%s" for menu < < <' % (ACTIVATE, M))
 
         elif args == ['quickinstall.py', 'quickinstall']:
             # user keyed "./m quickinstall" to update virtualenv
