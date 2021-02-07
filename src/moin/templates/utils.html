@@ -436,23 +436,23 @@
 {% endmacro %}
 
 {# Return links to Login or User/Settings/Logout; callers must provide an enclosing UL tag #}
-{% macro user_login_logoff() %}
-    {% if user.valid -%}
-        {% set avatar = user.avatar(20) %}
-        {% if avatar %}
+{%- macro user_login_logoff() %}
+    {%- if user.valid -%}
+        {%- set avatar = user.avatar(20) %}
+        {%- if avatar %}
             <li>
                 <img id="moin-avatar" src="{{ avatar }}" />
             </li>
         {%- endif %}
         {% if user.name -%}
-            {% set wiki_href, display_name, title, exists = theme_supp.userhome() %}
+            {%- set wiki_href, display_name, title, exists = theme_supp.userhome() %}
             <li>
                 <a href="{{ wiki_href }}" {% if not exists %}class="moin-nonexistent"{% endif %} rel="nofollow" title="{{ title }}">
                     <i class="fa fa-user"> </i>
                     <span>{{ display_name }}</span>
                 </a>
             </li>
-            {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+            {%- if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
                 <li>
                     <a href="{{ url_for('frontend.usersettings') }}" class="moin-usersettings" rel="nofollow" title="{{ _('Settings') }}">
                         <i class="fa fa-cog"> </i>
@@ -461,21 +461,21 @@
                 </li>
             {%- endif %}
         {%- endif %}
-        {% if user.auth_method in cfg.auth_can_logout %}
+        {%- if user.auth_method in cfg.auth_can_logout %}
             <li>
                 <a href="{{ url_for('frontend.logout', logout_submit=1) }}" class="moin-logout" rel="nofollow" title="{{ _('Logout') }}">
                     <i class="fa fa-sign-out"> </i>
                     <span>{{ _('Logout') }}</span>
                 </a>
             </li>
-        {% endif %}
-    {% else %}
-        {% set login_url = theme_supp.login_url() %}
-        {% if login_url %}
+        {%- endif %}
+    {%- else %}
+        {%- set login_url = theme_supp.login_url() %}
+        {%- if login_url %}
             <li>
                 <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
             </li>
-        {% endif %}
+        {%- endif %}
     {%- endif %}
 {% endmacro %}
 

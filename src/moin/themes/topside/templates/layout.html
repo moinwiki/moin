@@ -1,16 +1,16 @@
-{#
+{#-
     Define layout of wiki headers and footers: logo, site name, search, user login/logout, page trail...
 
     The difference between this file and /templates/layout.html is sequence of panels,
     addition of custom_panels from snippets.html, and addition of LI tags containing panel headings.
-#}
+-#}
 
-{% extends "base.html" %}
+{%- extends "base.html" %}
 
-{% import "snippets.html" as snippets with context %}
-{% import "utils.html" as utils with context %}
+{%- import "snippets.html" as snippets with context %}
+{%- import "utils.html" as utils with context %}
 
-{% block layout %}
+{%- block layout -%}
 
     <div id="moin-main-wrapper">
         {{ snippets.before_header() }}
@@ -29,7 +29,7 @@
                 {%- if search_form %}
                     {{ header_search(search_form) }}
                 {%- endif %}
-                {% if form and form['content_form'] and not form['content_form'].is_draw %}
+                {%- if form and form['content_form'] and not form['content_form'].is_draw %}
                     <div class="moin-edit-actions">
                         <button class="moin-button" onclick="document.getElementById('moin-save-text-button').click()">OK</button>
                         <button class="moin-button" onclick="document.getElementById('moin-preview-text-button').click()">Preview</button>
@@ -39,24 +39,24 @@
                 <ul id="moin-username">
                     {{ utils.user_login_logoff() }}
                 </ul>
-                {% set navibar_items = theme_supp.navibar(fqname) %}
-                {% if navibar_items %}
+                {%- set navibar_items = theme_supp.navibar(fqname) %}
+                {%- if navibar_items %}
                     <ul id="moin-navibar" class="panel">
                         <li class="moin-panel-heading">{{ _('Navigation') }}</li>
                         {% for cls, url, text, title in navibar_items %}
                             <li class="{{ cls }}">
                                 <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}title="{{ url|safe }}"{% endif %}>{{ text }}</a>
                             </li>
-                        {% endfor %}
+                        {%- endfor %}
                     </ul>
-                {% endif %}
+                {%- endif %}
                 {{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}
                 <div id="moin-pageline">
                     <hr style="display:none;" />
                 </div>
-                {% block header_itemviews %}{% endblock %}
+                {%- block header_itemviews %}{% endblock %}
                 {{ snippets.custom_panels() }}
-            {% endblock %}
+            {%- endblock %}
         </header>
         {{ snippets.after_header() }}
 
@@ -78,15 +78,15 @@
 
         {{ snippets.before_footer() }}
         <footer id="moin-footer">
-            {% block footer %}
+            {%- block footer %}
                 {% block footer_hr %}<hr/>{% endblock %}
-                {% block footer_itemviews %}{% endblock %}
-                {{ snippets.creditlogos() }}
-                {% block footer_meta %}{% endblock %}
-                {{ snippets.credits() }}
-                {{ snippets.license_info() }}
-            {% endblock %}
+                {%- block footer_itemviews %}{% endblock %}
+                {{- snippets.creditlogos() }}
+                {%- block footer_meta %}{% endblock %}
+                {{- snippets.credits() }}
+                {{- snippets.license_info() }}
+            {%- endblock -%}
         </footer>
-        {{ snippets.after_footer() }}
+        {{- snippets.after_footer() }}
     </div>
-{% endblock %}
+{%- endblock %}

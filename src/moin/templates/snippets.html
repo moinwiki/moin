@@ -153,11 +153,11 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# Custom panel for wiki's that want links to key pages in header or sidebar; not all themes support this #}
 {% macro custom_panels() %}
-    {# remove start-comment, end-comment marker lines; then customize the following:
+    {#- remove start-comment, end-comment marker lines; then customize the following:
         <ul class="moin-custom-panel">
             <li class="moin-panel-heading">Important Reports</li>
             <li><a href="{{ url_for('frontend.show_item', item_name='Home') }}">Home Page</a></li>
             <li><a href="{{ url_for('frontend.show_item', item_name='+index') }}">Global Index Page</a></li>
         </ul>
-    #}
+    -#}
 {% endmacro %}
