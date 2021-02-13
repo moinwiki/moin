@@ -375,12 +375,6 @@ class IndexingMiddleware:
             TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True, spelling=True),
-            # refers to another item ticket using itemid, TODO move to ticket_fields?
-            REFERS_TO: ID(stored=True),
-            # meta field to differentiate ticket elements referring to an item, TODO move to ticket_fields?
-            ELEMENT: ID(stored=True),
-            # reply to comment, used only by tickets, TODO move to ticket_fields?
-            REPLY_TO: ID(stored=True),
         }
 
         latest_revs_fields = {
@@ -418,6 +412,9 @@ class IndexingMiddleware:
             SEVERITY: NUMERIC(stored=True),
             PRIORITY: NUMERIC(stored=True),
             ASSIGNED_TO: ID(stored=True),
+            REPLY_TO: ID(stored=True),
+            REFERS_TO: ID(stored=True),
+            ELEMENT: ID(stored=True),
             SUPERSEDED_BY: ID(stored=True),
             DEPENDS_ON: ID(stored=True),
             CLOSED: BOOLEAN(stored=True),
