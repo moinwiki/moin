@@ -345,8 +345,6 @@ class IndexingMiddleware:
             BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
-            # blog publish time from metadata (converted to UTC datetime), TODO: move to blog_entry_fields?
-            PTIME: DATETIME(stored=True),
             # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
@@ -427,6 +425,8 @@ class IndexingMiddleware:
         latest_revs_fields.update(**ticket_fields)
 
         blog_entry_fields = {
+            # blog publish time from metadata (converted to UTC datetime)
+            PTIME: DATETIME(stored=True),
         }
         latest_revs_fields.update(**blog_entry_fields)
 
