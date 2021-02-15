@@ -10,7 +10,7 @@
 
 {% macro personal(form) %}
     {{ gen.form.open(form, id="usersettings_personal", method="post", action=url_for('frontend.usersettings')) }}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['name']) }}
             {{ forms.render(form['display_name']) }}
@@ -23,7 +23,7 @@
 
 {% macro password(form) %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['password_current']) }}
             {{ forms.render(form['password1']) }}
@@ -38,7 +38,7 @@
         {% if cfg.user_email_verification %}
             <p>{{ _("Changing your email address requires you to verify it. A link will be sent to you.") }}</p>
         {% endif %}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['email']) }}
         </dl>
@@ -48,7 +48,7 @@
 
 {% macro ui(form) %}
     {{ gen.form.open(form, id="usersettings_ui", method="post", action=url_for('frontend.usersettings')) }}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['theme_name']) }}
             {{ forms.render(form['css_url']) }}
@@ -61,7 +61,7 @@
 
 {% macro quicklinks(form) %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['quicklinks']) }}
         </dl>
@@ -80,7 +80,7 @@
 
 {% macro options(form) %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['iso_8601']) }}
             {{ forms.render(form['mailto_author']) }}
@@ -94,13 +94,13 @@
 {% endmacro %}
 
 {% macro subscriptions(form) %}
-    {% set myitemname =  _('MyItemName')  %}
-    {% set mytagname =  _('MyTagName')  %}
-    {% set mynamespace =  _('MyNameSpace')  %}
-    {% set my =  _('My')  %}
-    {% set itemid =  _('item id')  %}
+    {%- set myitemname =  _('MyItemName')  %}
+    {%- set mytagname =  _('MyTagName')  %}
+    {%- set mynamespace =  _('MyNameSpace')  %}
+    {%- set my =  _('My')  %}
+    {%- set itemid =  _('item id')  %}
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
-        {{ forms.render_errors(form) }}
+        {{ forms.render_errors(form) -}}
         <dl>
             {{ forms.render(form['subscriptions']) }}
         </dl>
