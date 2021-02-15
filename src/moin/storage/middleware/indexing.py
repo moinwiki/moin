@@ -345,8 +345,6 @@ class IndexingMiddleware:
             BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
-            # blog publish time from metadata (converted to UTC datetime), TODO: move to blog_entry_fields?
-            PTIME: DATETIME(stored=True),
             # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
@@ -377,12 +375,6 @@ class IndexingMiddleware:
             TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True, spelling=True),
-            # refers to another item ticket using itemid, TODO move to ticket_fields?
-            REFERS_TO: ID(stored=True),
-            # meta field to differentiate ticket elements referring to an item, TODO move to ticket_fields?
-            ELEMENT: ID(stored=True),
-            # reply to comment, used only by tickets, TODO move to ticket_fields?
-            REPLY_TO: ID(stored=True),
         }
 
         latest_revs_fields = {
@@ -420,6 +412,9 @@ class IndexingMiddleware:
             SEVERITY: NUMERIC(stored=True),
             PRIORITY: NUMERIC(stored=True),
             ASSIGNED_TO: ID(stored=True),
+            REPLY_TO: ID(stored=True),
+            REFERS_TO: ID(stored=True),
+            ELEMENT: ID(stored=True),
             SUPERSEDED_BY: ID(stored=True),
             DEPENDS_ON: ID(stored=True),
             CLOSED: BOOLEAN(stored=True),
@@ -427,6 +422,8 @@ class IndexingMiddleware:
         latest_revs_fields.update(**ticket_fields)
 
         blog_entry_fields = {
+            # blog publish time from metadata (converted to UTC datetime)
+            PTIME: DATETIME(stored=True),
         }
         latest_revs_fields.update(**blog_entry_fields)
 
