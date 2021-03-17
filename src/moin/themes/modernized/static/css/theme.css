@@ -58,7 +58,6 @@ input,
 select { padding:3px; background:#fff; background:var(--page_color); border:1px solid #4e7da9; border:var(--border_style);
     border-radius:2px; }
 input[type="text"] { width:96%; }
-input.blank { border-color:#4e7da9; border-color:var(--border_color); border-width:2px; }
 form[name="delete_item"] dd input,
 form[name="rename_item"] dd input,
 form[name="destroy_item"] dd input { width:100%; }

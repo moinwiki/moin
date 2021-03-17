@@ -85,9 +85,9 @@ class TestFrontend:
         self._test_view_post('frontend.ajaxmodify', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_jfu_server(self):
-        self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
-            data_file=FileStorage(BytesIO(b"Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
-        ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
+        self._test_view_post('frontend.jfu_server', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
+            file_storage=FileStorage(BytesIO(b"Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
+        ), viewopts=dict(item_name='WillBeCreated'))
 
     def test_show_item(self):
         self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))

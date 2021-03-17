@@ -78,7 +78,7 @@ places a content type icon before the link), and a link to display subitems
                 {{ _("There are no items or read permission is denied for all.") }}
             </p>
         {% else %}
-            {# display the row of action buttons #}
+            {# display the row of action buttons: Select All, Download, Delete, Destroy, Filter, Namespace, New Item #}
             <a href="#" class="moin-select-allitem allitem-toselect moin-button" title="{{ _('Toggle item selections') }}">
                <i class="fa fa-square-o fa-lg"></i>
                <span class="moin-select-button-text">{{ _("Select All") }}</span>
@@ -110,13 +110,13 @@ places a content type icon before the link), and a link to display subitems
             <i class="fa fa-list-alt"></i>
             {{ _("Namespace") }}
         </a>
-        <a class="moin-button" id="moin-create-new-item" href="#" title="{{ _('Open create item dialog') }}" >
+        <a class="moin-newitem-toggle moin-button" id="moin-create-new-item" title="{{ _('Open create item dialog') }}" >
            <i class="fa fa-file-o fa-lg"></i>
            {{ _("New Item") }}
         </a>
     </div>
 
-    {# Hidden namespace selection popup that is revealed if user clicks namespace button above. #}
+    {# Hidden namespace selection content that is revealed if user clicks namespace button above. #}
     <div class="moin-namespace-selection" style="display: none;">
         <p> {{ _("Click home icon to view namespace home page or click name to view namespace index.") }} </p>
         <ul class="moin-namespaces">
@@ -135,7 +135,7 @@ places a content type icon before the link), and a link to display subitems
         </ul>
     </div>
 
-    {# Hidden filter popup that is revealed if user clicks filter button above. #}
+    {# Hidden filter content that is revealed if user clicks filter button above. #}
     <div class="moin-contenttype-selection" style="display: none;">
         {% set unknown_items_label = _("items having unknown mime types") %}
         {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
@@ -148,6 +148,37 @@ places a content type icon before the link), and a link to display subitems
             </a>
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
+    </div>
+
+    {# Hidden New Item content that is revealed if user clicks New Item button above. #}
+    <div class="moin-newitem-selection" style="display: none;">
+        <br/>
+        <form class="moin-new-item" action={{ url_for('.ajaxmodify') }} method="post">
+            <label for="moin-newitem">{{ _("Item name") }}</label>
+            {% if item_name %}
+                <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
+            {% else %}
+                <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
+            {% endif %}
+            <input class="moin-button" type="submit" value="{{ _("Create") }}"/>
+        </form>
+        <div id="moin-upload-cont">
+            <div class="hint">
+                <p>{{ _("Enter Item name and click Create button above to edit or upload one item.
+                    To upload multiple files click the button below to open a file selection dialog,
+                    or drag and drop multiple files here.") }}
+                </p>
+            </div>
+            {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
+            {{ forms.render_file_uploader(submit_url) }}
+        </div>
+        <div id="moin-new-index" class="moin-new-index">
+            <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
+            <div class="file_download_template" style="display: none;">
+                <a></a>
+            </div>
+        </div>
+        <div class="moin-index-separator"></div>
     </div>
 
     {# If this is an index of subitems, display links to Global Index and any parent subitems. #}
@@ -208,7 +239,7 @@ places a content type icon before the link), and a link to display subitems
     {% endif %}
 
     {# initially hidden by CSS, index_action.js displays this as a popup
-    if user clicks on Download, Delete, or Destroy button #}
+    if user clicks on Delete or Destroy button #}
     <div id="popup">
         <div id="popup-for-action" class="popup-container">
             <div class="popup-header">
@@ -223,45 +254,9 @@ places a content type icon before the link), and a link to display subitems
                 <input type="button" class="moin-button popup-cancel" value="{{ _("Cancel") }}"/>
             </div>
         </div>
-        <div id="popup-for-newitem" class="popup-container">
-            <div class="popup-header">
-                <input type="button" class="popup-closer popup-cancel" value="{{ _("X") }}" title="{{ _("Close") }}"/>
-                <span>{{ _("Create new item") }}</span>
-            </div>
-            <div class="popup-body">
-                <form action={{ url_for('.ajaxmodify') }} method="post">
-                    <label for="moin-newitem">{{ _("Item name") }}</label>
-                    {% if item_name %}
-                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
-                    {% else %}
-                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
-                    {% endif %}
-                    <br/>
-                    <input class="moin-button" type="submit" value="{{ _("Create") }}"/>
-                    <input type="button" class="popup-cancel moin-button" value="{{ _("Cancel") }}"/>
-                </form>
-            </div>
-        </div>
     </div>
-
-    {# initially hidden, used by jfu.js (jquery file upload) to display list of recently uploaded items. #}
-    <div id="moin-new-index" class="moin-item-index">
-        <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
-        <div class="file_download_template" style="display: none;">
-            <a></a>
-        </div>
-    </div>
-    <div class="moin-index-separator"></div>
-
-    {# The span.moin-drag below is visible on load, the divs below are initially an empty space
-    or hidden. The file upload controls will appear if users drags files to .moin-drag below. #}
-    <div id="moin-upload-cont">
-        {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
-        {{ forms.render_file_uploader(submit_url) }}
-    </div>
-    <span class="moin-drag">{{ _("(Drag and drop multiple files to this white area to upload them.)") }}</span>
+    {# lightbox is used by jquery and css to dim and disable underlying page when above popup is triggered #}
     <div id="lightbox">&nbsp;</div>
-
 {% endblock %}
 
 {% block body_scripts %}
@@ -269,9 +264,4 @@ places a content type icon before the link), and a link to display subitems
     <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     {{ forms.file_uploader_scripts() }}
-{% endblock %}
-
-{% block head %}
-    {{ super() }}
-    {{ forms.file_uploader_styles() }}
 {% endblock %}

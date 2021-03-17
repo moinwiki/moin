@@ -482,6 +482,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 /* Global Index */
 
 .moin-clr { clear: both; }
+.moin-index-menu { margin-bottom: 1em; }
 .moin-index-menu li { display: inline-block; }
 .moin-show-action:after { content: url("../img/moin-moveup.png"); margin: 0 .2em; }
 .moin-action-visible .moin-show-action:after { content: url("../img/moin-movedown.png"); margin: 0 .2em; }
@@ -496,7 +497,7 @@ div.ct-hide { background: transparent url("../img/moin-moveup.png") no-repeat ce
 a.moin-auth-failed { color: red; color: var(--alert); }
 
 .moin-contenttype-selection form { z-index: 2; background: #fff; background: var(--bg-primary);
-    border: 1px solid #4e7da9; border: 1px solid var(--border); padding: .2em; border-radius: 5px; }
+    border: 3px solid #4e7da9; border: 3px solid var(--border); padding: .2em; border-radius: 7px; }
 .moin-contenttype-selection ul li { list-style-type: none; }
 .moin-contenttype-selection ul li label { display: inline; vertical-align: middle; }
 .moin-contenttype-selection ul li .helper-text { font-size: .7em; color: #444; color: var(--muted); }
@@ -513,13 +514,17 @@ a.moin-auth-failed { color: red; color: var(--alert); }
 .moin-index-separator { clear: both; border-top: 3px solid #4e7da9; border-top: 3px solid var(--border);
     width: 99%; margin-left: .5%; margin-bottom: 1.5em; display: none; }
 
-.moin-namespace-selection { background: #fff; background: var(--bg-primary);
-    border: 1px solid #4e7da9; border: 1px solid var(--border); padding: .2em; }
+.moin-namespace-selection { background: #fff; background: var(--bg-primary); border-radius: 7px;
+    border: 3px solid #4e7da9; border: 3px solid var(--border); padding: .2em; }
 .moin-namespace-selection ul li { list-style-type: none; font-size: 1.25em; }
+.moin-newitem-toggle,
 .moin-ns-toggle,
 .moin-ct-toggle { color: #000; color: var(--primary); }
-
-#moin-initials { width: 90%; margin: 5px auto 1em auto; text-align: center; }
+#moin-newitem { width: 50%; }
+.moin-new-item { margin-left: 1em; }
+.moin-newitem-selection { background: #fff; background: var(--bg-primary); border-radius: 7px;
+    border: 3px solid #4e7da9; border: 3px solid var(--border); padding: .2em; }
+#moin-initials { width: 90%; margin: 1em auto 1em auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: #00008b; background: var(--bg-inverse); border-radius: 5px;
     color: #fff; color: var(--inverse); text-decoration: none; }
@@ -538,28 +543,21 @@ a.moin-auth-failed { color: red; color: var(--alert); }
     font-size: 1em; padding: 1px 4px; margin: 0; float: right; cursor: pointer; border: none; border-radius: 0; }
 .popup-body { clear: both; background: #fff; background: var(--bg-primary); color: #000; color: var(--primary); padding: 10px; margin: 0; }
 .popup-body label { margin: 5px; display: block; font-weight: bold; }
-
+.popup-comment { margin-bottom: 1em; }
 .popup-body input[type="text"] { width: 96%; }
-.popup-body input.blank { border-color: #4e7da9; border-color: var(--border); border-width: 2px; }
 .popup-container { margin: 0; }
 #lightbox { background: #fff; background: var(--bg-primary); opacity: .7; position: absolute; left: 0; top: 0;
     width: 100%; height: 100%; z-index: 9; margin: 0; display: none; }
 
-/* file upload on global index, class names required by jquery fileupload */
+/* file upload on global index */
 
-#moin-upload-cont { min-height: 10px; }
-#file_upload { margin-top: 2em; }
-form.upload_file { cursor: pointer; font-weight: bold; overflow: hidden; position: relative; text-align: center; width: 15em; }
-form.upload_file { display: block; }
-form.upload_file:hover { color: #fff; color: var(--inverse); }
-form.upload_file input { cursor: pointer; height: 100%; margin: 0; opacity: 0; position: absolute; right: 0; top: 0; }
-form.upload_file button { display: none; }
-
-.file_upload_template .file_upload_start { visibility: hidden; border-width: 0; padding: 0; }
-.file_upload_template .file_upload_start button { width: 0; }
-.upload-form { display: none; }
-.moin-drag { font-size: .7em; color: #444; color: var(--muted); }
-.file_name { word-break:  break-all; word-wrap:  break-word; max-width:  10em; }
+.jfu-file { background: linear-gradient(to right, #C9E2F8 50%, transparent 50%); background-size: 200% 100%;
+   background-position: right bottom; transition:all 1s ease; padding: 1em; }
+.jfu-file.jfu-failed { background: linear-gradient(to right, #FCC 100%, transparent 100%); }
+.jfu-file b { display: inline-block; padding: 5px; color: black; }
+.jfu-bar { margin-top: 1em; font-weight: bold; background: #C9E2F8; }
+.jfu-recent a { margin-left: 1em; }
+#jfu-fileupload { margin-left: 1em; }
 
 /* Forms - User Settings, rename, delete, destroy, register, diff... */
 

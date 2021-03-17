@@ -23,17 +23,11 @@ $("document").ready(function () {
     function showpop(action) {
         // hide Actions popup and show either New Item or Comment popup
         $(".popup-container").css("display", "none");
-        if (action === "newitem") {
-            $("#popup-for-newitem").css("display", "block");
-            $("#file_upload").appendTo("#popup-for-newitem .popup-body");
-            $(".upload-form").css("display", "block");
-        } else {
-            $("#popup-for-action").css("display", "block");
-            $(".popup-comment").removeClass("blank");
-            $(".popup-comment").val("");
-            $(".popup-action").val(action);
-        }
+        $("#popup-for-action").css("display", "block");
+        $(".popup-comment").val("");
+        $(".popup-action").val(action);
         $("#popup").fadeIn();
+        $(".popup-comment").focus();
         $("#lightbox").css("display", "block");
     }
 
@@ -41,7 +35,7 @@ $("document").ready(function () {
     function hidepop() {
         // hide popup
         $("#popup").css("display", "none");
-        $("#lightbox").css("display", "none");
+        $("#lightbox").css("display", "none");  // qqq
     }
 
     // called by Actions Download click handler
@@ -160,35 +154,9 @@ $("document").ready(function () {
         }
     });
 
-    // add click handler to "New Item" action tab entry
-    $("#moin-create-new-item").click(function () {
-        // show new item popup and hide actions dropdown
-        showpop("newitem");
-        $(".moin-show-action").trigger("click");
-    });
-
-    // add click handler to close button "X" on new item popup
+    // add click handler to Cancel buttons and "X" on Delete, Destroy and New Item popups
     $(".popup-cancel").click(function () {
-        // if files are selected for upload, add to drag and drop area; hide popup
-        if ($("#popup-for-newitem:visible").length) {
-            $("#file_upload").appendTo("#moin-upload-cont");
-            $(".upload-form").css("display", "none");
-        }
         hidepop();
-    });
-
-    // add submit handler to "Create" button on new item popup
-    // This is a workaround for browsers that do not support "required" attribute (ie9, safari 5.1)
-    // note: The creation of a new item is performed via action=... attribute on form
-    $("#popup-for-newitem").find("form:first").submit(function () {
-        // if no item name was provided show hint and stop form action
-        var itembox = $(this).children("input[name='newitem']"),
-            itemname = itembox.val();
-        if ($.trim(itemname) === "") {
-            itembox.addClass("blank");
-            itembox.focus();
-            return false;
-        }
     });
 
     // add click handler to "Download" button of Actions dropdown
@@ -259,21 +227,31 @@ $("document").ready(function () {
         return false;
     });
 
-    // add click handler to toggle button for content type
+    // Filter, Namespace, New Item buttons have similar actions
+    // add click handler to toggle button for content type "Filter" dropdown
     $(".moin-ct-toggle").click(function () {
         // show/hide content type selection
         $(".moin-contenttype-selection").toggle();
         $(".moin-namespace-selection").css("display", "none");
+        $(".moin-newitem-selection").css("display", "none");
     });
 
-    // -- namespace handler
-
-    // add click handler to "Toggle" button on "Namespace" dropdown
+    // add click handler to toggle button on "Namespace" dropdown
     $(".moin-ns-toggle").click(function () {
         // show/hide namespace selection
         $(".moin-namespace-selection").toggle();
         $(".moin-contenttype-selection").css("display", "none");
+        $(".moin-newitem-selection").css("display", "none");
     });
+
+    // add click handler to toggle button on "New Item" dropdown
+    $(".moin-newitem-toggle").click(function () {
+        // show/hide new item selection
+        $(".moin-newitem-selection").toggle();
+        $(".moin-contenttype-selection").css("display", "none");
+        $(".moin-namespace-selection").css("display", "none");
+    });
+
 
     // -- individual item handlers start here
 

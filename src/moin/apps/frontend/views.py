@@ -15,6 +15,7 @@
 """
 
 
+import os
 import re
 import difflib
 import time
@@ -30,6 +31,8 @@ from datetime import datetime
 from datetime import timezone
 from collections import namedtuple
 from functools import wraps, partial
+
+from werkzeug.utils import secure_filename
 
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
@@ -1087,11 +1090,18 @@ def destroy_item(item_name, rev):
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+jfu-server', defaults=dict(item_name=''), methods=['POST'])
 def jfu_server(item_name):
-    """jquery-file-upload server component
     """
-    data_file = request.files.get('data_file')
-    subitem_name = data_file.filename
+    jquery-file-upload server component, returns a json response
+    """
+    msg = ''
+    data_file = request.files.get('file_storage')
+    base_file_name = os.path.basename(data_file.filename)
+    file_name = secure_filename(base_file_name)
+    if not file_name == base_file_name:
+        msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ", bad_name=base_file_name, good_name=file_name)
     contenttype = data_file.content_type  # guess by browser, based on file name
+    data = data_file.stream
+    subitem_name = file_name
     data = data_file.stream
     if item_name:
         subitem_prefix = item_name + '/'
@@ -1101,17 +1111,34 @@ def jfu_server(item_name):
     jfu_server_lock.acquire()
     try:
         item = Item.create(item_name)
+        if not isinstance(item, NonExistent):
+            msg += _("File Successfully uploaded, existing file overwritten: '%(file_name)s'.", file_name=file_name)
         revid, size = item.modify({'itemtype': ITEMTYPE_DEFAULT, }, data, contenttype_guessed=contenttype)
         jfu_server_lock.release()
-        item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
-        return jsonify(name=subitem_name,
-                       size=size,
-                       url=url_for('.show_item', item_name=item_name, rev=revid),
-                       contenttype=contenttype_to_class(contenttype),
-        )
     except AccessDenied:
+        # return 200 status with error message
         jfu_server_lock.release()
-        abort(403)
+        msg = _("Permission denied, upload failed: '%(file_name)s'.", file_name=file_name)
+        ret = make_response(jsonify({"name": subitem_name,
+                                     "files": [item_name],
+                                     "message": msg,
+                                     "class": "jfu-failed",
+                                     "contenttype": contenttype_to_class(contenttype),
+        }), 200)
+        return ret
+
+    data_file.close()
+    item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
+    if not msg:
+        msg = _("File Successfully uploaded: '%(item_name)s'.", item_name=item_name)
+    ret = make_response(jsonify(name=subitem_name,
+                        files=[item_name],
+                        message=msg,
+                        size=size,
+                        url=url_for('.show_item', item_name=item_name),
+                        contenttype=contenttype_to_class(contenttype),
+    ), 200)
+    return ret
 
 
 def contenttype_selects_gen():
