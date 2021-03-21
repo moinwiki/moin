@@ -1,5 +1,5 @@
 /*
- * Click and submit handlers for form elements on the global index page.
+ * Click and submit handlers for form elements on the global index and subitem index pages.
  * Copyright 2011, AkashSinha<akash2607@gmail.com>
  * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
  */
@@ -23,17 +23,11 @@ $("document").ready(function () {
     function showpop(action) {
         // hide Actions popup and show either New Item or Comment popup
         $(".popup-container").css("display", "none");
-        if (action === "newitem") {
-            $("#popup-for-newitem").css("display", "block");
-            $("#file_upload").appendTo("#popup-for-newitem .popup-body");
-            $(".upload-form").css("display", "block");
-        } else {
-            $("#popup-for-action").css("display", "block");
-            $(".popup-comment").removeClass("blank");
-            $(".popup-comment").val("");
-            $(".popup-action").val(action);
-        }
+        $("#popup-for-action").css("display", "block");
+        $(".popup-comment").val("");
+        $(".popup-action").val(action);
         $("#popup").fadeIn();
+        $(".popup-comment").focus();
         $("#lightbox").css("display", "block");
     }
 
@@ -41,7 +35,7 @@ $("document").ready(function () {
     function hidepop() {
         // hide popup
         $("#popup").css("display", "none");
-        $("#lightbox").css("display", "none");
+        $("#lightbox").css("display", "none");  // qqq
     }
 
     // called by Actions Download click handler
@@ -119,8 +113,6 @@ $("document").ready(function () {
         }, "json");
     }
 
-    // -- Select All handlers start here
-
     // add click handler to "Select All" tab to select/deselect all items
     $(".moin-select-allitem").click(function () {
         // toggle classes
@@ -144,51 +136,9 @@ $("document").ready(function () {
         }
     });
 
-    // -- Actions handlers start here
-
-    // add click handler to "Actions" drop down list
-    // also executed via .click call when user clicks on an action (new, download, delete, destroy)
-    $(".moin-show-action").click(function () {
-        // show/hide actions drop down list
-        var actionsDiv = $(this).parent().parent();
-        if (actionsDiv.find("ul:first").is(":visible")) {
-            actionsDiv.find("ul:first").fadeOut(POPUP_FADE_TIME);
-            actionsDiv.removeClass("moin-action-visible");
-        } else {
-            actionsDiv.find("ul:first").fadeIn(POPUP_FADE_TIME);
-            actionsDiv.addClass("moin-action-visible");
-        }
-    });
-
-    // add click handler to "New Item" action tab entry
-    $("#moin-create-new-item").click(function () {
-        // show new item popup and hide actions dropdown
-        showpop("newitem");
-        $(".moin-show-action").trigger("click");
-    });
-
-    // add click handler to close button "X" on new item popup
+    // add click handler to Cancel buttons and red "X" on Delete, Destroy popups
     $(".popup-cancel").click(function () {
-        // if files are selected for upload, add to drag and drop area; hide popup
-        if ($("#popup-for-newitem:visible").length) {
-            $("#file_upload").appendTo("#moin-upload-cont");
-            $(".upload-form").css("display", "none");
-        }
         hidepop();
-    });
-
-    // add submit handler to "Create" button on new item popup
-    // This is a workaround for browsers that do not support "required" attribute (ie9, safari 5.1)
-    // note: The creation of a new item is performed via action=... attribute on form
-    $("#popup-for-newitem").find("form:first").submit(function () {
-        // if no item name was provided show hint and stop form action
-        var itembox = $(this).children("input[name='newitem']"),
-            itemname = itembox.val();
-        if ($.trim(itemname) === "") {
-            itembox.addClass("blank");
-            itembox.focus();
-            return false;
-        }
     });
 
     // add click handler to "Download" button of Actions dropdown
@@ -204,8 +154,6 @@ $("document").ready(function () {
                 setTimeout(function () { startFileDownload(element); }, wait);
             });
         }
-        // hide the list of actions
-        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to "Delete" and "Destroy" buttons of Actions dropdown
@@ -222,7 +170,6 @@ $("document").ready(function () {
                 showpop("destroy");
             }
         }
-        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to "Submit" button on "Please provide comment..." popup
@@ -235,21 +182,6 @@ $("document").ready(function () {
         hidepop();
     });
 
-    // -- Filter by content type handlers start here
-
-    // add click handler to "Filter by content type" button
-    $(".moin-contenttype-selection").children("span").click(function () {
-        // show/hide content type dropdown
-        var wrapper = $(this).parent();
-        if (wrapper.find("form:visible").length) {
-            $(".moin-contenttype-selection").find("form").fadeOut(POPUP_FADE_TIME);
-            $(this).removeClass("moin-ct-shown").addClass("moin-ct-hide");
-        } else {
-            $(".moin-contenttype-selection").find("form").fadeIn(POPUP_FADE_TIME);
-            $(this).removeClass("moin-ct-hide").addClass("moin-ct-shown");
-        }
-    });
-
     // add click handler to "Toggle" button on "Filter by content type" dropdown
     $(".moin-filter-toggle").click(function () {
         // reverse checked/unchecked for each content type
@@ -259,23 +191,30 @@ $("document").ready(function () {
         return false;
     });
 
-    // add click handler to toggle button for content type
+    // Filter, Namespace, New Item buttons have similar actions, show last clicked action, hide others
+    // add click handler to toggle button for content type "Filter" dropdown
     $(".moin-ct-toggle").click(function () {
         // show/hide content type selection
         $(".moin-contenttype-selection").toggle();
         $(".moin-namespace-selection").css("display", "none");
+        $(".moin-newitem-selection").css("display", "none");
     });
 
-    // -- namespace handler
-
-    // add click handler to "Toggle" button on "Namespace" dropdown
+    // add click handler to toggle button on "Namespace" dropdown
     $(".moin-ns-toggle").click(function () {
         // show/hide namespace selection
         $(".moin-namespace-selection").toggle();
         $(".moin-contenttype-selection").css("display", "none");
+        $(".moin-newitem-selection").css("display", "none");
     });
 
-    // -- individual item handlers start here
+    // add click handler to toggle button on "New Item" dropdown
+    $(".moin-newitem-toggle").click(function () {
+        // show/hide new item selection
+        $(".moin-newitem-selection").toggle();
+        $(".moin-contenttype-selection").css("display", "none");
+        $(".moin-namespace-selection").css("display", "none");
+    });
 
     // add click handlers to all items shown on global index page
     $(".moin-select-item").click(function () {
