@@ -139,13 +139,13 @@ places a content type icon before the link), and a link to display subitems
     <div class="moin-contenttype-selection" style="display: none;">
         {% set unknown_items_label = _("items having unknown mime types") %}
         {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
-            <ul>
-                {{ forms.render(form['contenttype']) }}
-            </ul>
             <a href="#" class="moin-filter-toggle moin-button">
                 <i class="fa fa-refresh"></i>
                 {{ _("Toggle") }}
             </a>
+            <ul>
+                {{ forms.render(form['contenttype']) }}
+            </ul>
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
     </div>
@@ -172,21 +172,15 @@ places a content type icon before the link), and a link to display subitems
             {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
             {{ forms.render_file_uploader(submit_url) }}
         </div>
-        <div id="moin-new-index" class="moin-new-index">
-            <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
-            <div class="file_download_template" style="display: none;">
-                <a></a>
-            </div>
-        </div>
-        <div class="moin-index-separator"></div>
     </div>
 
-    {# If this is an index of subitems, display links to Global Index and any parent subitems. #}
+    {# If this is an index of subitems, display links to Global Index and all parent subitems. #}
     <div>
         {% if item_name: %}
             <div class="moin-index-path">
-                <i class="fa fa-folder-o"></i>
-                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}" class="moin-bigger">..</a>
+                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">
+                    <i class="fa fa-level-up"></i>
+                </a>
                 <span class="moin-path-separator">{{ ("/") }}</span>
                 {% for i in range(0, item_names|count) %}
                     {% set fullname = item_names[:i+1]|join('/') %}
@@ -227,16 +221,14 @@ places a content type icon before the link), and a link to display subitems
                 {% endif %}
             {% endfor %}
         </div>
-        {% if files %}
-            {# Finally! this is what user wants to see - the list of items. #}
-            <div class="moin-item-index">
-                {% for e in files %}
-                    {{ render_file_entry(e) }}
-                {% endfor %}
-            </div>
-            <div class="moin-clr"></div>
-        {% endif %}
     {% endif %}
+    {# Finally! this is what user wants to see - the list of items. jfu.js needs moin-item-index class. #}
+    <div class="moin-item-index">
+        {% for e in files %}
+            {{ render_file_entry(e) }}
+        {% endfor %}
+    </div>
+    <div class="moin-clr"></div>
 
     {# initially hidden by CSS, index_action.js displays this as a popup
     if user clicks on Delete or Destroy button #}

@@ -1,5 +1,5 @@
 /*
- * Click and submit handlers for form elements on the global index page.
+ * Click and submit handlers for form elements on the global index and subitem index pages.
  * Copyright 2011, AkashSinha<akash2607@gmail.com>
  * License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
  */
@@ -113,8 +113,6 @@ $("document").ready(function () {
         }, "json");
     }
 
-    // -- Select All handlers start here
-
     // add click handler to "Select All" tab to select/deselect all items
     $(".moin-select-allitem").click(function () {
         // toggle classes
@@ -138,23 +136,7 @@ $("document").ready(function () {
         }
     });
 
-    // -- Actions handlers start here
-
-    // add click handler to "Actions" drop down list
-    // also executed via .click call when user clicks on an action (new, download, delete, destroy)
-    $(".moin-show-action").click(function () {
-        // show/hide actions drop down list
-        var actionsDiv = $(this).parent().parent();
-        if (actionsDiv.find("ul:first").is(":visible")) {
-            actionsDiv.find("ul:first").fadeOut(POPUP_FADE_TIME);
-            actionsDiv.removeClass("moin-action-visible");
-        } else {
-            actionsDiv.find("ul:first").fadeIn(POPUP_FADE_TIME);
-            actionsDiv.addClass("moin-action-visible");
-        }
-    });
-
-    // add click handler to Cancel buttons and "X" on Delete, Destroy and New Item popups
+    // add click handler to Cancel buttons and red "X" on Delete, Destroy popups
     $(".popup-cancel").click(function () {
         hidepop();
     });
@@ -172,8 +154,6 @@ $("document").ready(function () {
                 setTimeout(function () { startFileDownload(element); }, wait);
             });
         }
-        // hide the list of actions
-        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to "Delete" and "Destroy" buttons of Actions dropdown
@@ -190,7 +170,6 @@ $("document").ready(function () {
                 showpop("destroy");
             }
         }
-        $(".moin-show-action").trigger("click");
     });
 
     // add click handler to "Submit" button on "Please provide comment..." popup
@@ -203,21 +182,6 @@ $("document").ready(function () {
         hidepop();
     });
 
-    // -- Filter by content type handlers start here
-
-    // add click handler to "Filter by content type" button
-    $(".moin-contenttype-selection").children("span").click(function () {
-        // show/hide content type dropdown
-        var wrapper = $(this).parent();
-        if (wrapper.find("form:visible").length) {
-            $(".moin-contenttype-selection").find("form").fadeOut(POPUP_FADE_TIME);
-            $(this).removeClass("moin-ct-shown").addClass("moin-ct-hide");
-        } else {
-            $(".moin-contenttype-selection").find("form").fadeIn(POPUP_FADE_TIME);
-            $(this).removeClass("moin-ct-hide").addClass("moin-ct-shown");
-        }
-    });
-
     // add click handler to "Toggle" button on "Filter by content type" dropdown
     $(".moin-filter-toggle").click(function () {
         // reverse checked/unchecked for each content type
@@ -227,7 +191,7 @@ $("document").ready(function () {
         return false;
     });
 
-    // Filter, Namespace, New Item buttons have similar actions
+    // Filter, Namespace, New Item buttons have similar actions, show last clicked action, hide others
     // add click handler to toggle button for content type "Filter" dropdown
     $(".moin-ct-toggle").click(function () {
         // show/hide content type selection
@@ -251,9 +215,6 @@ $("document").ready(function () {
         $(".moin-contenttype-selection").css("display", "none");
         $(".moin-namespace-selection").css("display", "none");
     });
-
-
-    // -- individual item handlers start here
 
     // add click handlers to all items shown on global index page
     $(".moin-select-item").click(function () {

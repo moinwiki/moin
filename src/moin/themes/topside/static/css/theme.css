@@ -20,7 +20,7 @@ a:hover { text-decoration: underline; }
     border: 0; width: 150px; margin-left: 5px; padding-right: 0; }
 #moin-searchform .moin-float-fix { float: right; clear: none; padding: 0; }
 #moin-search-submit { width: 30px; text-indent: -9000px; border: 0; height: 1.5em;
-    background: url("../../../static/img/moin-search.png") center center no-repeat; padding: 0;
+    background: url("../../../static/img/icons/moin-search.png") center center no-repeat; padding: 0;
     cursor: pointer; margin: 0; box-shadow: none; display: inline-block;  }
 
 .wikilink,
