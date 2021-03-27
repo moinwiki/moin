@@ -19,32 +19,55 @@ initially hidden by CSS, and displayed when the user clicks a button.
     {{ itemviews }}
 {% endblock %}
 
-{% set maxchars = 16 %}
-
 {# Each item entry is formatted by the following macro. The entry includes
 a checkbox, an invisible link used by js for download, a link to the item (CSS
 places a content type icon before the link), and a link to display subitems
 (if the item has subitems). #}
 {% macro render_file_entry(e) %}
-    <div>
-        <span class="moin-select-item">
-            <input type="checkbox">
-        </span>
-        {% set mimetype = "application/x.moin.download" %}
-        <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
-        </a>
-        <a href="{{ url_for('.show_item', item_name=e.fullname) }}"
-           class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }} moin-item"
-           title="{{ e.relname }} - {{ e.meta['contenttype']|shorten_ctype }}">
-           {{ e.relname|truncate(maxchars, true, '..') }}
-        </a>
-        {% if e.fullname in dirs_fullname %}
-            <a href="{{ url_for('.index', item_name=e.fullname) }}"
-               title="{{ _("This item has subitems that match your filter.") }}">
-               <i class="fa fa-arrow-down"></i>
+    <tr>
+        <td>
+            <span class="moin-select-item">
+                <input class="moin-item" type="checkbox" value="{{ url_for('.show_item', item_name=e.fullname) }}">
+            </span>
+            {% set mimetype = "application/x.moin.download" %}
+            {# invisible link below is used by js to download item #}
+            <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
             </a>
-        {% endif %}
-    </div>
+            {# invisible span below has css before attribute to show mimetype icon #}
+            <span
+               class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }}"
+               title="{{ e.meta['contenttype']|shorten_ctype }}">
+            </span>
+        </td>
+        <td>
+            {% if e.meta.namespace %}
+                {# we use a leading / to indicate item is not in default namespace #}
+                {% set name = "/" + str(e.fullname) %}
+            {% else %}
+                {% set name = e.fullname %}
+            {% endif %}
+            {# hack to make items in default namespace sort first #}
+            <span class="hidden">{{ e.fullname.namespace or "!" }}</span>
+            <a href="{{ url_for('.show_item', item_name=e.fullname) }}">
+               {{ name }}
+            </a>
+            {% if e.fullname in dirs_fullname %}
+                <a href="{{ url_for('.index', item_name=e.fullname) }}"
+                   title="{{ _("This item has subitems that match your filter.") }}">
+                   <i class="fa fa-arrow-down"></i>
+                </a>
+            {% endif %}
+        </td>
+        <td class="moin-integer">
+            {{ e.meta.size }}
+        </td>
+        <td>
+            {{ e.meta.mtime }}
+        </td>
+        <td class="moin-integer">
+            {{ e.meta.rev_number }}
+        </td>
+    </tr>
 {% endmacro %}
 
 {% block content %}
@@ -223,12 +246,20 @@ places a content type icon before the link), and a link to display subitems
         </div>
     {% endif %}
     {# Finally! this is what user wants to see - the list of items. jfu.js needs moin-item-index class. #}
-    <div class="moin-item-index">
-        {% for e in files %}
-            {{ render_file_entry(e) }}
-        {% endfor %}
-    </div>
-    <div class="moin-clr"></div>
+    <table class="moin-index moin-sortable">
+        <thead>
+            <th class="sorter-false"></th>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Modified</th>
+            <th>Revisions</th>
+        </thead>
+        <tbody>
+            {% for e in files %}
+                {{ render_file_entry(e) }}
+            {% endfor %}
+        </tbody>
+    </table>
 
     {# initially hidden by CSS, index_action.js displays this as a popup
     if user clicks on Delete or Destroy button #}

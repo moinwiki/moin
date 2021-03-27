@@ -480,7 +480,7 @@ div.db-mediaobject > span > span.db.caption { display: block; text-align: center
 span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions are ugly */
 
 /* Global Index */
-
+.moin-index tr th { text-align: center; }
 .moin-clr { clear: both; }
 .moin-index-menu { margin-bottom: 1em; }
 .moin-index-menu li { display: inline-block; }

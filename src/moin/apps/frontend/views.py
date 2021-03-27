@@ -1237,6 +1237,7 @@ def index(item_name):
                            item=item,
                            title=title,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           str=str,
     )
 
 

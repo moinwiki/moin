@@ -870,9 +870,9 @@ class Item:
                             fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                     else:
-                        mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE)}
+                        mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}
                         files.append(IndexEntry(relname, fullname_fqname, mini_meta))
-        files.sort()  # files with multiple names are not in sequence
+        files = sorted(files, key=lambda x: x[1])  # default namespace items are on top
         return dirs, files
 
     def build_index_query(self, startswith=None, selected_groups=None, isglobalindex=False):

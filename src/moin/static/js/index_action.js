@@ -69,8 +69,8 @@ $("document").ready(function () {
             itemnames,
             actionTrigger,
             url;
-        $(".selected-item").children("a.moin-item").each(function () {
-            var itemname = $(this).attr("href").slice(1);
+        $(".selected-item").children().children("input.moin-item").each(function () {
+            var itemname = $(this).attr("value").slice(1);
             links.push(itemname);
         });
         // remove any flash messages, display "deleting..." or "destroying..." briefly while process is in progress
@@ -96,7 +96,7 @@ $("document").ready(function () {
             $.each(itemnames, function (itemindex, itemname) {
                 // hide (remove) deleted/destroyed items, or show conflict (ACL rules, or ?)
                 if (action_status[itemindex]) {
-                    hide($('.selected-item').children('a.moin-item[href="/' + itemname + '"]'));
+                    hide($('.selected-item'));
                     success_item += 1;
                 } else {
                     show_conflict($('.selected-item').children('a.moin-item[href="/' + itemname + '"]'));
@@ -143,7 +143,7 @@ $("document").ready(function () {
 
     // add click handler to "Download" button of Actions dropdown
     $("#moin-download-trigger").click(function () {
-        if (!($("div.selected-item").length)) {
+        if (!($("td.selected-item").length)) {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Download failed, no items were selected."));
         } else {
@@ -160,7 +160,7 @@ $("document").ready(function () {
     $(".moin-action-tab").click(function () {
         var action = this.text;
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
-        if (!($("div.selected-item").length)) {
+        if (!($("td.selected-item").length)) {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, action + ' failed, no items were selected.');
         } else {
