@@ -54,7 +54,7 @@ from moin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
-    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
+    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER, MAILTO_AUTHOR,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, HAS_TAG, TEMPLATE,
     LATEST_REVS, EDIT_ROWS
 )
@@ -871,6 +871,8 @@ class Item:
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                     else:
                         mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}
+                        mini_meta[USERID] = rev.get(USERID, '')
+                        mini_meta[ADDRESS] = rev.get(ADDRESS, '') if app.cfg.show_hosts else ''
                         files.append(IndexEntry(relname, fullname_fqname, mini_meta))
         files = sorted(files, key=lambda x: x[1])  # default namespace items are on top
         return dirs, files

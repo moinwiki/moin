@@ -11,7 +11,7 @@ import pytest
 from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
 from moin.utils.interwiki import CompositeName
-from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
+from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, USERID,
                                  ADDRESS, TRASH, ITEMID, NAME_EXACT, SIZE, MTIME, REV_NUMBER, NAMESPACE,
                                  ACTION, ACTION_REVERT)
 from moin.constants.namespaces import NAMESPACE_DEFAULT
@@ -35,7 +35,7 @@ def build_index(basename, relnames):
     """
     files = [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
             for relname in relnames]
-    return [(IndexEntry(f.relname, f.fullname, {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}))
+    return [(IndexEntry(f.relname, f.fullname, {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE, ADDRESS)}))
             for f in files]
 
 
@@ -53,18 +53,23 @@ def build_mixed_index(basename, spec):
             for f in files]
 
 
-def fix_datetime(files, builds):
+def fix_meta(files, builds):
     """
     Fix potential problem of datetimes being slightly different within files and builds metadata.
+    Also fix problem where userid is sometimes missing from meta.
     """
     fix_files = []
     fix_builds = []
     for idx in range(len(files)):
         fix_file = files[idx]
         fix_file.meta['mtime'] = 7
+        fix_file.meta['userid'] = None
+        fix_file.meta['address'] = ''
         fix_files.append(fix_file)
         fix_build = builds[idx]
         fix_build.meta['mtime'] = 7
+        fix_build.meta['userid'] = None
+        fix_build.meta['address'] = ''
         fix_builds.append(fix_build)
     return fix_files, fix_builds
 
@@ -139,14 +144,14 @@ class TestItem:
 
         # fix potential problem of datetime being slightly different
         builds = build_index(basename, ['ab', 'gh', 'ij', 'mn'])
-        fix_files, fix_builds = fix_datetime(files, builds)
+        fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
         # check filtered index when startswith param is passed
         dirs, files = baseitem.get_index(startswith='a')
         assert dirs == []
         builds == build_index(basename, ['ab'])
-        fix_files, fix_builds = fix_datetime(files, builds)
+        fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
         # check filtered index when contenttype_groups is passed
@@ -154,7 +159,7 @@ class TestItem:
         dirs, files = baseitem.get_index(selected_groups=ctgroups)
         assert dirs == build_dirs_index(basename, ['cd', 'ij'])
         builds == build_index(basename, ['ab'])
-        fix_files, fix_builds = fix_datetime(files, builds)
+        fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
     def test_meta_filter(self):

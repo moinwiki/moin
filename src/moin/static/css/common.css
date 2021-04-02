@@ -480,6 +480,7 @@ div.db-mediaobject > span > span.db.caption { display: block; text-align: center
 span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions are ugly */
 
 /* Global Index */
+.moin-index { width: 100%; }
 .moin-index tr th { text-align: center; }
 .moin-clr { clear: both; }
 .moin-index-menu { margin-bottom: 1em; }
@@ -599,7 +600,7 @@ a.moin-auth-failed { color: red; color: var(--alert); }
     color: #000; color: var(--primary); }
 .moin-history-day-banner a.moin-bookmark-link { margin-left: 20px; color: blue; color: var(--link); font-weight: bold; }
 .moin-history-date { font-size: 125%; font-weight: bold; }
-.moin-history-time { text-align: right; width: 3em; }
+.moin-history-time { text-align: right; width: 6em; }
 .moin-history-action { width: .5em; cursor: default; }
 .moin-history-action a:hover { text-decoration: none; }
 .moin-history-links { width: 1em; text-align: center; }

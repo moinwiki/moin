@@ -1237,7 +1237,9 @@ def index(item_name):
                            item=item,
                            title=title,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           editors=editor_info_for_reports(),
                            str=str,
+                           app=app,
     )
 
 
@@ -1443,6 +1445,22 @@ def history(item_name):
     flaskg.clock.stop('renderrevs')
     close_file(item.rev.data)
     return ret
+
+
+def editor_info_for_reports():
+    """
+    Return a {userid:(name, email or False), } dict extracted from the userprofiles namespace.
+
+    This is useful for history and index reports that show the last editor's name and email address.
+    It avoids multiple calls to whoosh for same userid.
+    """
+    query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    metas = flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    editors = {}
+    for meta in metas:
+        email = meta.get(EMAIL, False) if meta.get(MAILTO_AUTHOR, False) else False
+        editors[meta[ITEMID]] = (meta[NAME][0], email)
+    return editors
 
 
 @frontend.route('/<namespace>/+history')

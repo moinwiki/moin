@@ -20,9 +20,9 @@ initially hidden by CSS, and displayed when the user clicks a button.
 {% endblock %}
 
 {# Each item entry is formatted by the following macro. The entry includes
-a checkbox, an invisible link used by js for download, a link to the item (CSS
-places a content type icon before the link), and a link to display subitems
-(if the item has subitems). #}
+a checkbox, an invisible link used by js for download, a link to the item
+(CSS places a content type icon before the link), a link to display subitems
+(if the item has subitems), size, number revisions, editor and modified time. #}
 {% macro render_file_entry(e) %}
     <tr>
         <td>
@@ -40,33 +40,37 @@ places a content type icon before the link), and a link to display subitems
             </span>
         </td>
         <td>
-            {% if e.meta.namespace %}
-                {# we use a leading / to indicate item is not in default namespace #}
-                {% set name = "/" + str(e.fullname) %}
-            {% else %}
-                {% set name = e.fullname %}
-            {% endif %}
-            {# hack to make items in default namespace sort first #}
+            {%- if e.meta.namespace %}
+                {#- we use a leading / to indicate item is not in default namespace #}
+                {%- set name = "/" + str(e.fullname) %}
+            {%- else %}
+                {%- set name = e.fullname %}
+            {%- endif %}
+            {#- hack to make items in default namespace sort first #}
             <span class="hidden">{{ e.fullname.namespace or "!" }}</span>
             <a href="{{ url_for('.show_item', item_name=e.fullname) }}">
                {{ name }}
             </a>
-            {% if e.fullname in dirs_fullname %}
+            {%- if e.fullname in dirs_fullname %}
                 <a href="{{ url_for('.index', item_name=e.fullname) }}"
                    title="{{ _("This item has subitems that match your filter.") }}">
                    <i class="fa fa-arrow-down"></i>
                 </a>
-            {% endif %}
+            {%- endif %}
         </td>
-        <td class="moin-integer">
-            {{ e.meta.size }}
-        </td>
-        <td>
-            {{ e.meta.mtime }}
-        </td>
-        <td class="moin-integer">
-            {{ e.meta.rev_number }}
-        </td>
+        <td class="moin-integer">{{ e.meta.size }}</td>
+        <td class="moin-integer">{{ e.meta.rev_number }}</td>
+        {%- if e.meta.userid %}
+            {%- set editor_name, editor_email = editors[e.meta.userid] %}
+            {%- if editor_email %}
+                <td><a href="mailto:{{ editor_email }}" title="{{ e.meta.address }}">{{ editor_name }}</td>
+            {%- else %}
+                <td><a href="{{ url_for_item(editor_name, wiki_name=app.cfg.user_homewiki, namespace='users') }}" title="{{ e.meta.address }}">{{ editor_name }}</td>
+            {%- endif %}
+        {%- else %}
+            <td>{{ e.meta.address }}</td>
+        {%- endif %}
+        <td>{{ e.meta.mtime }}</td>
     </tr>
 {% endmacro %}
 
@@ -251,8 +255,9 @@ places a content type icon before the link), and a link to display subitems
             <th class="sorter-false"></th>
             <th>Name</th>
             <th>Size</th>
-            <th>Modified</th>
             <th>Revisions</th>
+            <th>Editor</th>
+            <th>Modified</th>
         </thead>
         <tbody>
             {% for e in files %}
