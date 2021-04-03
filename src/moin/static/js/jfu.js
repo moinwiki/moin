@@ -49,7 +49,9 @@ $(function () {
                 if (!(JSON.parse(data.jqXHR.responseText).class)) {
                     url = JSON.parse(data.jqXHR.responseText).url;
                     name = JSON.parse(data.jqXHR.responseText).name;
-                    $(".moin-item-index").prepend('<div class="jfu-recent"><i class="fa fa-upload" /><a href=' + url + '>' + name + '</a></div>');
+                    $("table.moin-index tbody").prepend('<tr class="jfu-recent"><td><i class="fa fa-upload" /></td>' +
+                        '<td><a href=' + url + '>' + name + '</a></td><td class="moin-integer">' + data.total +
+                        '</td><td class="moin-integer">1</td><td></td><td></td></tr>');
                 }
             });
         }

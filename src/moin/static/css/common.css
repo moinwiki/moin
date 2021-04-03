@@ -518,9 +518,6 @@ a.moin-auth-failed { color: red; color: var(--alert); }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: #00008b; background: var(--bg-inverse); border-radius: 5px;
     color: #fff; color: var(--inverse); text-decoration: none; }
-.moin-item-index { width: 99%; margin-left: .5%; }
-.moin-item-index div { float: left; width: 16em; }
-.moin-item-index div .moin-select-item input { cursor: pointer; }
 .moin-align-right { text-align: right; float: right; }
 .moin-align-right ul { margin: 0; padding: 0; }
 .moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
@@ -546,7 +543,6 @@ a.moin-auth-failed { color: red; color: var(--alert); }
 .jfu-file.jfu-failed { background: linear-gradient(to right, #FCC 100%, transparent 100%); }
 .jfu-file b { display: inline-block; padding: 5px; color: black; }
 .jfu-bar { margin-top: 1em; font-weight: bold; background: #C9E2F8; }
-.jfu-recent a { margin-left: 1em; }
 #jfu-fileupload { margin-left: 1em; }
 
 /* Forms - User Settings, rename, delete, destroy, register, diff... */

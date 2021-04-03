@@ -117,7 +117,7 @@ $("document").ready(function () {
     $(".moin-select-allitem").click(function () {
         // toggle classes
         if ($(this).hasClass("allitem-toselect")) {
-            $(".moin-item-index div").removeClass().addClass("selected-item");
+            $(".moin-index tbody tr td:first-child").removeClass().addClass("selected-item");
             $(this).removeClass("allitem-toselect").addClass("allitem-selected");
             $(this).children("i").removeClass("fa-square-o").addClass("fa fa-check-square-o");
             $(".moin-select-button-text").text(_("Deselect All"));
@@ -127,7 +127,7 @@ $("document").ready(function () {
             $(".moin-auth-failed").removeClass("moin-auth-failed");
         } else {
             $(this).removeClass("allitem-selected").addClass("allitem-toselect");
-            $(".moin-item-index div").removeClass();
+            $(".moin-index tbody tr td:first-child").removeClass();
             $(this).children("i").removeClass("fa-check-square-o").addClass("fa-square-o");
             $(".moin-select-button-text").text(_("Select All"));
             $(".moin-select-item > input[type='checkbox']").each(function () {
