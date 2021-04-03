@@ -1191,7 +1191,11 @@ def index(item_name):
     startswith = request.values.get("startswith")
     dirs, files = item.get_index(startswith, selected_groups)
     dirs_fullname = [x.fullname for x in dirs]
-    initials = name_initial(files, uppercase=True)
+    initials = request.values.get("initials")
+    if initials:
+        initials = initials.split(',')
+    else:
+        initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')

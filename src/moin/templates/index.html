@@ -242,9 +242,9 @@ a checkbox, an invisible link used by js for download, a link to the item
             {% endif %}
             {% for initial in initials %}
                 {% if startswith == initial %}
-                    <a class="selected moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                    <a class="selected moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial, initials=','.join(initials)) }}">{{ initial }}</a>
                 {% else %}
-                    <a class="moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                    <a class="moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial, initials=','.join(initials)) }}">{{ initial }}</a>
                 {% endif %}
             {% endfor %}
         </div>
