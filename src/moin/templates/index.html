@@ -25,7 +25,7 @@ a checkbox, an invisible link used by js for download, a link to the item
 (if the item has subitems), size, number revisions, editor and modified time. #}
 {% macro render_file_entry(e) %}
     <tr>
-        <td>
+        <td class="moin-index-icons">
             <span class="moin-select-item">
                 <input class="moin-item" type="checkbox" value="{{ url_for('.show_item', item_name=e.fullname) }}">
             </span>
@@ -38,6 +38,9 @@ a checkbox, an invisible link used by js for download, a link to the item
                class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }}"
                title="{{ e.meta['contenttype']|shorten_ctype }}">
             </span>
+            <a href="{{ url_for('frontend.history', item_name=e.fullname) }}">
+                <span class="fa fa-clock-o" title="{{ _('Item History') }}"></span>
+            </a>
         </td>
         <td>
             {%- if e.meta.namespace %}

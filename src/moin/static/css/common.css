@@ -481,6 +481,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 
 /* Global Index */
 .moin-index { width: 100%; }
+.moin-index-icons { width: 4em; }
 .moin-index tr th { text-align: center; }
 .moin-clr { clear: both; }
 .moin-index-menu { margin-bottom: 1em; }
