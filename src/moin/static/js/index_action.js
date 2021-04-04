@@ -230,4 +230,8 @@ $("document").ready(function () {
             $(this).next().removeClass("moin-auth-failed");
         }
     });
-});
+
+    // add item count to upper left of table
+    $(".moin-num-rows").text($('.moin-index tbody tr').length);
+
+    });

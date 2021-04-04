@@ -255,12 +255,14 @@ a checkbox, an invisible link used by js for download, a link to the item
     {# Finally! this is what user wants to see - the list of items. jfu.js needs moin-index class. #}
     <table class="moin-index moin-sortable">
         <thead>
-            <th class="sorter-false"></th>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Revisions</th>
-            <th>Editor</th>
-            <th>Modified</th>
+            <tr>
+                <th class="sorter-false moin-num-rows" title='{{ _("Number Items") }}'></th>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Revisions</th>
+                <th>Editor</th>
+                <th>Modified</th>
+            </tr>
         </thead>
         <tbody>
             {% for e in files %}
