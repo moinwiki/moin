@@ -56,34 +56,34 @@ def build_mixed_index(basename, spec):
 def fix_meta(files, builds):
     """
     Fix potential problem of datetimes being slightly different within files and builds metadata.
-    Also fix problem where userid is sometimes missing from meta.
+    Also fix problem where userid is in files metadata but missing from builds metadata.
     """
     fix_files = []
     fix_builds = []
     for idx in range(len(files)):
         fix_file = files[idx]
-        fix_file.meta['mtime'] = 7
-        fix_file.meta['userid'] = None
-        fix_file.meta['address'] = ''
+        fix_file.meta.pop('mtime', None)
+        fix_file.meta.pop('userid', None)
         fix_files.append(fix_file)
+    for idx in range(len(builds)):
         fix_build = builds[idx]
-        fix_build.meta['mtime'] = 7
-        fix_build.meta['userid'] = None
-        fix_build.meta['address'] = ''
+        fix_build.meta.pop('mtime', None)
+        fix_build.meta.pop('userid', None)
         fix_builds.append(fix_build)
     return fix_files, fix_builds
 
 
 class TestItem:
 
-    def _testNonExistent(self):
+    def testNonExistent(self):
         item = Item.create('DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
         assert meta == {
             ITEMTYPE: ITEMTYPE_NONEXISTENT,
             CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
-            NAME: 'DoesNotExist',
+            NAME: ['DoesNotExist'],
+            NAMESPACE: '',
         }
         assert data == ''
 
@@ -142,15 +142,16 @@ class TestItem:
         dirs, files = baseitem.get_index()
         assert dirs == build_dirs_index(basename, ['cd', 'ij'])
 
-        # fix potential problem of datetime being slightly different
-        builds = build_index(basename, ['ab', 'gh', 'ij', 'mn'])
+        # after +index converted to table output it shows subitems
+        builds = build_index(basename, ['ab', 'cd/ef', 'gh', 'ij', 'ij/kl', 'mn'])
+        # fix potential problem of datetime and userid being different
         fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
         # check filtered index when startswith param is passed
         dirs, files = baseitem.get_index(startswith='a')
         assert dirs == []
-        builds == build_index(basename, ['ab'])
+        builds = build_index(basename, ['ab'])
         fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
@@ -158,7 +159,8 @@ class TestItem:
         ctgroups = ["Other Text Items"]
         dirs, files = baseitem.get_index(selected_groups=ctgroups)
         assert dirs == build_dirs_index(basename, ['cd', 'ij'])
-        builds == build_index(basename, ['ab'])
+        # mn missing from results because it is image/jpeg, cd was never created
+        builds = build_index(basename, ['ab', 'cd/ef', 'gh', 'ij', 'ij/kl'])
         fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
