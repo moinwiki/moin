@@ -98,6 +98,8 @@ $("document").ready(function () {
                 if (action_status[itemindex]) {
                     hide($('.selected-item'));
                     success_item += 1;
+                    // update item count in upper left of table
+                    $(".moin-num-rows").text($('.moin-index tbody tr').length);
                 } else {
                     show_conflict($('.selected-item').children('a.moin-item[href="/' + itemname + '"]'));
                     left_item += 1;
