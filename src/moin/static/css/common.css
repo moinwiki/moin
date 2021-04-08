@@ -522,6 +522,9 @@ a.moin-auth-failed { color: red; color: var(--alert); }
 .moin-align-right ul { margin: 0; padding: 0; }
 .moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
 
+p.moin-selected-groups { font-size: 1.25em; font-weight: bold; }
+li.moin-selected-groups { font-size: 1em; font-weight: bold; }
+
 #popup { padding: 0; width: 80%; position: absolute; top: 10%; left: 10%; display: none; z-index: 10;
     border: 3px solid #00417f; border: 3px solid var(--border-popup); }
 .popup-header { background: #00417f; background: var(--bg-popup-header); color: #fff; color: var(--inverse);

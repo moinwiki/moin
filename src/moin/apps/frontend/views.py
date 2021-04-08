@@ -1242,6 +1242,7 @@ def index(item_name):
                            title=title,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
                            editors=editor_info_for_reports(),
+                           selected_groups=selected_groups,
                            str=str,
                            app=app,
     )

@@ -146,6 +146,17 @@ a checkbox, an invisible link used by js for download, a link to the item
         </a>
     </div>
 
+    {% if selected_groups %}
+        <div>
+            <p class="moin-selected-groups">{{ _("Filter is on for these selected groups:") }}</p>
+            <ul>
+                {%- for selection in selected_groups %}
+                    <li class="moin-selected-groups">{{ selection }}</li>
+                {%- endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     {# Hidden namespace selection content that is revealed if user clicks namespace button above. #}
     <div class="moin-namespace-selection" style="display: none;">
         <p> {{ _("Click home icon to view namespace home page or click name to view namespace index.") }} </p>
