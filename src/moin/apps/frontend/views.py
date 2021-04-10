@@ -1159,6 +1159,10 @@ class IndexForm(Form):
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
+    """
+    Generate data for various index reports: global, sub-item, starts with character,
+    or namespace. Identify missing items causing orphan sub-items.
+    """
 
     def name_initial(files, uppercase=False, lowercase=False):
         """
@@ -1209,6 +1213,16 @@ def index(item_name):
             used_dirs.add(file_[0])
     all_dirs = set(x[0] for x in dirs)
     missing_dirs = all_dirs - used_dirs
+
+    if selected_groups:
+        # there will likely be false missing_dirs caused by filter
+        missing = set()
+        for m_dir in missing_dirs:
+            query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAME_EXACT, m_dir))])
+            metas = tuple(flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=1))
+            if not metas:
+                missing.add(m_dir)
+        missing_dirs = missing
 
     if item_name:
         what = ''
