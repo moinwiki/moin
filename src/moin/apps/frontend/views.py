@@ -1159,6 +1159,10 @@ class IndexForm(Form):
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
+    """
+    Generate data for various index reports: global, sub-item, starts with character,
+    or namespace. Identify missing items causing orphan sub-items.
+    """
 
     def name_initial(files, uppercase=False, lowercase=False):
         """
@@ -1191,7 +1195,11 @@ def index(item_name):
     startswith = request.values.get("startswith")
     dirs, files = item.get_index(startswith, selected_groups)
     dirs_fullname = [x.fullname for x in dirs]
-    initials = name_initial(files, uppercase=True)
+    initials = request.values.get("initials")
+    if initials:
+        initials = initials.split(',')
+    else:
+        initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
@@ -1202,9 +1210,19 @@ def index(item_name):
     used_dirs = set()
     for file_ in files:
         if file_.fullname in dirs_fullname:
-            used_dirs.add(file_[0])
-    all_dirs = set(x[0] for x in dirs)
+            used_dirs.add(file_.fullname)
+    all_dirs = set(x.fullname for x in dirs)
     missing_dirs = all_dirs - used_dirs
+
+    if selected_groups:
+        # there will likely be false missing_dirs caused by filter
+        missing = set()
+        for m_dir in missing_dirs:
+            query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAME_EXACT, m_dir))])
+            metas = tuple(flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=1))
+            if not metas:
+                missing.add(m_dir)
+        missing_dirs = missing
 
     if item_name:
         what = ''
@@ -1237,6 +1255,10 @@ def index(item_name):
                            item=item,
                            title=title,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           editors=editor_info_for_reports(),
+                           selected_groups=selected_groups,
+                           str=str,
+                           app=app,
     )
 
 
@@ -1442,6 +1464,22 @@ def history(item_name):
     flaskg.clock.stop('renderrevs')
     close_file(item.rev.data)
     return ret
+
+
+def editor_info_for_reports():
+    """
+    Return a {userid:(name, email or False), } dict extracted from the userprofiles namespace.
+
+    This is useful for history and index reports that show the last editor's name and email address.
+    It avoids multiple calls to whoosh for same userid.
+    """
+    query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    metas = flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    editors = {}
+    for meta in metas:
+        email = meta.get(EMAIL, False) if meta.get(MAILTO_AUTHOR, False) else False
+        editors[meta[ITEMID]] = (meta[NAME][0], email)
+    return editors
 
 
 @frontend.route('/<namespace>/+history')

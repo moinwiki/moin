@@ -398,6 +398,7 @@ class IndexingMiddleware:
             # unique overall! Wrongly declaring it unique would lead to whoosh
             # killing other users from index when update_document() is called!
             EMAIL: ID(stored=True),
+            MAILTO_AUTHOR: BOOLEAN(stored=True),
             DISABLED: BOOLEAN(stored=True),
             LOCALE: ID(stored=True),
             SUBSCRIPTION_IDS: ID(),

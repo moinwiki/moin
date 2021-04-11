@@ -480,7 +480,9 @@ div.db-mediaobject > span > span.db.caption { display: block; text-align: center
 span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions are ugly */
 
 /* Global Index */
-
+.moin-index { width: 100%; }
+.moin-index-icons { width: 4em; }
+.moin-index tr th { text-align: center; }
 .moin-clr { clear: both; }
 .moin-index-menu { margin-bottom: 1em; }
 .moin-index-menu li { display: inline-block; }
@@ -516,14 +518,14 @@ a.moin-auth-failed { color: red; color: var(--alert); }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: #00008b; background: var(--bg-inverse); border-radius: 5px;
     color: #fff; color: var(--inverse); text-decoration: none; }
-.moin-item-index { width: 99%; margin-left: .5%; }
-.moin-item-index div { float: left; width: 16em; }
-.moin-item-index div .moin-select-item input { cursor: pointer; }
 .moin-align-right { text-align: right; float: right; }
 .moin-align-right ul { margin: 0; padding: 0; }
 .moin-align-right ul li.action-bar { list-style-type: none; display: inline-block; }
 
-#popup { padding: 0; width: 80%; position: absolute; top: 10%; left: 10%; display: none; z-index: 10;
+p.moin-selected-groups { font-size: 1.25em; font-weight: bold; }
+li.moin-selected-groups { font-size: 1em; font-weight: bold; }
+
+#popup { padding: 0; width: 80%; position: absolute; top: 10em; left: 10%; display: none; z-index: 10;
     border: 3px solid #00417f; border: 3px solid var(--border-popup); }
 .popup-header { background: #00417f; background: var(--bg-popup-header); color: #fff; color: var(--inverse);
     font-size: 1.25em; padding: 10px; margin: 0; font-weight: bold; }
@@ -544,7 +546,6 @@ a.moin-auth-failed { color: red; color: var(--alert); }
 .jfu-file.jfu-failed { background: linear-gradient(to right, #FCC 100%, transparent 100%); }
 .jfu-file b { display: inline-block; padding: 5px; color: black; }
 .jfu-bar { margin-top: 1em; font-weight: bold; background: #C9E2F8; }
-.jfu-recent a { margin-left: 1em; }
 #jfu-fileupload { margin-left: 1em; }
 
 /* Forms - User Settings, rename, delete, destroy, register, diff... */
@@ -599,7 +600,7 @@ a.moin-auth-failed { color: red; color: var(--alert); }
     color: #000; color: var(--primary); }
 .moin-history-day-banner a.moin-bookmark-link { margin-left: 20px; color: blue; color: var(--link); font-weight: bold; }
 .moin-history-date { font-size: 125%; font-weight: bold; }
-.moin-history-time { text-align: right; width: 3em; }
+.moin-history-time { text-align: right; width: 6em; }
 .moin-history-action { width: .5em; cursor: default; }
 .moin-history-action a:hover { text-decoration: none; }
 .moin-history-links { width: 1em; text-align: center; }
