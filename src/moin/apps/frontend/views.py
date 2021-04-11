@@ -1210,8 +1210,8 @@ def index(item_name):
     used_dirs = set()
     for file_ in files:
         if file_.fullname in dirs_fullname:
-            used_dirs.add(file_[0])
-    all_dirs = set(x[0] for x in dirs)
+            used_dirs.add(file_.fullname)
+    all_dirs = set(x.fullname for x in dirs)
     missing_dirs = all_dirs - used_dirs
 
     if selected_groups:

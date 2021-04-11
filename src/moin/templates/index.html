@@ -85,14 +85,13 @@ a checkbox, an invisible link used by js for download, a link to the item
         <div class="error">
             <p><strong> {{ _("These items have orphan sub-items. Click name to create or arrow to view sub-items.") }} </strong></p>
             {% for dir in missing_dirs %}
-                {% set full_dir = item_name + '/' + dir if item_name else dir %}
                 <p>
-                    <a href="{{ url_for('.show_item', item_name=full_dir) }}"
+                    <a href="{{ url_for('.show_item', item_name=dir.fullname) }}"
                        class="moin-nonexistent moin-item"
-                       title="{{ full_dir }}">
+                       title="{{ dir.fullname }}">
                        {{ dir }}
                     </a>
-                    <a href="{{ url_for('.index', item_name=full_dir) }}"
+                    <a href="{{ url_for('.index', item_name=dir.fullname) }}"
                        title="{{ _("This missing item has subitems that match your filter.") }}">
                        <i class="fa fa-arrow-down"></i>
                     </a>
