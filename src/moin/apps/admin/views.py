@@ -58,6 +58,7 @@ def index_user():
                            title_name=_("User"),
                            flaskg=flaskg,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           app=app,
                            )
 
 
