@@ -1003,7 +1003,10 @@ class Default(Contentful):
             filename, anchor = filename.split('#')
         else:
             anchor = None
-        filename = url_for('serve.files', name='docs', filename=filename, _anchor=anchor)
+        if 'docs' in app.cfg.serve_files:
+            filename = url_for('serve.files', name='docs', filename=filename, _anchor=anchor)
+        else:
+            filename = app.cfg.serve_files['external_docs'] + filename + ('#' + anchor if anchor else '')
         return filename, link_text
 
     def meta_changed(self, meta):

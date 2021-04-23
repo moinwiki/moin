@@ -12,7 +12,6 @@ serving files to the general public on the web.
 """
 
 import os
-
 from moin.config.default import DefaultConfig, _default_password_checker
 from moin.storage import create_simple_mapping
 from moin.utils.interwiki import InterWikiMap
@@ -65,11 +64,18 @@ class Config(DefaultConfig):
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data')
     index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
+
     # setup static files' serving:
     serve_files = dict(
-        docs=os.path.join(wikiconfig_dir, 'docs', '_build', 'html'),  # html docs made by sphinx
         wiki_local=os.path.join(wikiconfig_dir, 'wiki_local'),  # store custom logos, CSS, templates, etc. here
     )
+    docs = os.path.join(wikiconfig_dir, 'docs', '_build', 'html')
+    if os.path.isdir(docs):
+        serve_files['docs'] = docs
+    else:
+        # change target if a specific release or language is available
+        serve_files['external_docs'] = "https://moin-20.readthedocs.io/en/latest/"
+
     # copy templates/snippets.html to directory below and edit per requirements to customize logos, etc.
     template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
 

@@ -80,7 +80,7 @@ setup_args = dict(
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.8.1',  # reST markup processing
         'Markdown>=3.0.0',  # Markdown markup processing
-        'Flask>=0.10',  # micro framework
+        'Flask<2.0.0',  # micro framework
         'Flask-Babel>=0.11.1',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Script>=2.0.5',  # scripting support
@@ -88,9 +88,9 @@ setup_args = dict(
         'emeraldtree>=0.10.0',  # xml processing
         'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
-        'Jinja2>=2.7',  # template engine
+        'Jinja2<3.0.0',  # template engine
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug>=1.0.0',  # wsgi toolkit
+        'Werkzeug<2.0.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
