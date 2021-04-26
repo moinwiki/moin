@@ -60,7 +60,7 @@ from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                         Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks, RadioChoice,
                         validate_name, NameNotValidError)
-from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
+from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError, MissingParentError,
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
@@ -879,6 +879,8 @@ def rename_item(item_name):
                     # the item was successfully renamed, show it with new name
                     return redirect(url_for_item(fqname))
                 except NameNotUniqueError as e:
+                    flash(str(e), "error")
+                except MissingParentError as e:
                     flash(str(e), "error")
     ret = render_template('rename.html',
                           item=item,
