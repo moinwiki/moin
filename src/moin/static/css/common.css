@@ -564,7 +564,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-tab-titles .moin-change-indicator { font-weight: bold; color: #1f9ae0; color: var(--hilite); }
 .moin-current-form h2 { display: none; }
 .moin-settings-head a { color: #000; color: var(--primary); text-decoration: none; }
-.moin-subitem-list { font-size: 1.25em; }
+.moin-subitem-list { font-size: 1.25em; color: red; color: var(--alert); }
 
 .moin-form dd { float: left; width: 70%; margin: .3em 0 .3em 0; }
 .moin-form dd input { width: 75%; }

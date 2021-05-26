@@ -239,31 +239,35 @@ class TestItem:
         assert item.meta[COMMENT] == 'renamed'
         assert item.content.data == b'test_data'
 
-    def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
+    def test_rename_works_with_multiple_names(self):
         content = "This is page content"
-
-        update_item('Page',
-                    {NAME: ['First',
-                            'Second',
-                            'Third',
-                            ],
-                     CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}, content)
+        meta = {NAME: ['First', 'Second', 'Third', ], CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}
+        r = update_item('Page', meta, content)
 
         item = Item.create('Second')
-        item.rename('New name', comment='renamed')
+        rev = item.rename(['New name', 'First', 'Third'], comment='renamed')
 
         item1 = Item.create('First')
         assert item1.name == 'First'
+        assert 'First' in item1.meta[NAME]
+        assert 'Third' in item1.meta[NAME]
+        assert 'New name' in item1.meta[NAME]
         assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item1.content.data == content.encode()
 
         item2 = Item.create('New name')
         assert item2.name == 'New name'
+        assert 'First' in item2.meta[NAME]
+        assert 'Third' in item2.meta[NAME]
+        assert 'New name' in item2.meta[NAME]
         assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item2.content.data == content.encode()
 
         item3 = Item.create('Third')
         assert item3.name == 'Third'
+        assert 'First' in item3.meta[NAME]
+        assert 'Third' in item3.meta[NAME]
+        assert 'New name' in item3.meta[NAME]
         assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item3.content.data == content.encode()
 
@@ -414,22 +418,22 @@ class TestItem:
         assert 'none_test_key' not in item.meta
 
     def test_trash(self):
-        fqname = 'trash_item_test'
+        name = 'trash_item_test'
         contenttype = 'text/plain;charset=utf-8'
         data = 'test_data'
         meta = {CONTENTTYPE: contenttype}
-        item = Item.create(fqname)
+        item = Item.create(name)
         # save rev 0
         item._save(meta, data)
-        item = Item.create(fqname)
+        item = Item.create(name)
         assert not item.meta.get(TRASH)
 
         meta = dict(item.meta)
         meta[NAME] = []
         # save new rev with no names.
-        item._save(meta, data)
-        new_fqname = '@itemid/' + item.meta[ITEMID]
-        item = Item.create(new_fqname)
+        item._save(meta, data, delete=True)
+        new_name = '@itemid/' + item.meta[ITEMID]
+        item = Item.create(new_name)
         assert item.meta[TRASH]
 
         new_meta = {NAME: ['foobar', 'buz'], CONTENTTYPE: contenttype}
@@ -442,7 +446,7 @@ class TestItem:
 
         # Also delete the only name left.
         item.delete('Moving item to trash.')
-        item = Item.create(new_fqname)
+        item = Item.create(new_name)
         assert item.meta[TRASH]
 
 
