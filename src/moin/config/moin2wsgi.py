@@ -16,6 +16,7 @@ import sys
 import os
 import site
 
+from moin.app import create_app
 
 moin_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,7 +26,6 @@ if not (moin_dir in sys.path or moin_dir.lower() in sys.path):
 wiki_config = moin_dir + '/wikiconfig.py'
 
 # create the Moin (Flask) WSGI application
-from moin.app import create_app
 application = create_app(wiki_config)
 
 # if you want to do some wsgi app wrapping, do it like shown below:
