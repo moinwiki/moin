@@ -210,7 +210,6 @@ class TestItem:
         assert item2.name == 'Another name'
         assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item2.content.data == content
-
         assert item1.rev.revid == item2.rev.revid
 
     def test_rename(self):
@@ -359,6 +358,54 @@ class TestItem:
         item = Item.create(name)
         assert item.name == 'Test_Item2'
         # this should be a fresh, new item, NOT the stuff we deleted:
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+    def test_delete_multi_name_multi_subs(self):
+        """
+        Parent name is [aaa,bbbb,ccccc], subs are aaa/aaa, bbbb/bbbb. Deleting ccccc deletes all.
+        """
+        contenttype = 'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
+        comment = 'saved it'
+        item = Item.create('aaa')
+        item._save(meta, data, comment=comment)
+
+        # rename
+        item = Item.create('aaa')
+        item.rename(['aaa', 'bbbb', 'ccccc'], comment='renamed')
+
+        # create subs aaa/aaa and bbbb/bbbb
+        asub = Item.create('aaa/aaa')
+        asub._save(meta, data, comment='aaa/aaa created')
+        bsub = Item.create('bbbb/bbbb')
+        bsub._save(meta, data, comment='bbbb/bbbb created')
+
+        # item and its contents before deleting
+        item = Item.create('ccccc')
+        assert item.name == 'ccccc'
+        assert item.meta[COMMENT] == 'renamed'
+        item.delete('deleted ccccc')
+
+        # all three alias names and both subitems are deleted
+        item = Item.create('aaa')
+        assert item.name == 'aaa'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('bbbb')
+        assert item.name == 'bbbb'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('ccccc')
+        assert item.name == 'ccccc'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('aaa/aaa')
+        assert item.name == 'aaa/aaa'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('bbbb/bbbb')
+        assert item.name == 'bbbb/bbbb'
         assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
 
     def test_revert(self):
