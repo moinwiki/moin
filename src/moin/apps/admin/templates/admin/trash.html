@@ -6,7 +6,7 @@
     {% endif %}
     Total: {{ results|count }}
     {% if results %}
-        <table class="zebra">
+        <table class="zebra moin-sortable">
             <thead>
                 <tr>
                     <th>{{ _("Old Name") }}</th>
@@ -14,22 +14,47 @@
                     <th>{{ _("Timestamp") }}</th>
                     <th>{{ _("Editor") }}</th>
                     <th>{{ _("Comment") }}</th>
-                    <th colspan="3">{{ _("Actions") }}</th>
+                    <th class="sorter-false" colspan="6">{{ _("Actions") }}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for result in results| sort(attribute='mtime', reverse=True) %}
                     <tr>
                         <td class="moin-wordbreak">{{ result.oldname|join(' | ') }}</td>
-                        <td>{{ result.revid | shorten_id }}</td>
+                        <td class="moin-integer">{{ result.rev_number }}</td>
                         <td>{{ result.mtime|time_datetime }}</td>
                         <td class="moin-wordbreak">{{ utils.show_editor_info(result.editor)  }}</td>
                         <td class="moin-wordbreak">{{ result.comment }}</td>
-                        <td><a href="{{ url_for('frontend.show_item', item_name=result.fqname) }}">{{ _('Show') }}</a></td>
-                        <td><a href="{{ url_for('frontend.history', item_name=result.fqname) }}">{{ _('History') }}</a></td>
+                        <td>
+                            <a href="{{ url_for('frontend.show_item', item_name=result.fqname) }}" title="{{ _('Show') }}">
+                                <span class="fa fa-eye"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('frontend.highlight_item', item_name=result.fqname) }}" title="{{ _('Highlight') }}">
+                                <span class="fa fa-code"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('frontend.show_item_meta', item_name=result.fqname, rev=result.revid) }}" title="{{ _('Meta') }}">
+                                <span class="fa fa-table"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('frontend.history', item_name=result.fqname) }}" title="{{ _('History') }}">
+                                <span class="fa fa-clock-o"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('frontend.revert_item', item_name=result.fqname, rev=result.parentid) }}" title="{{ _('Revert deleted item') }}">
+                                <span class="fa fa-undo"></span>
+                            </a>
+                        </td>
                         <td>
                             {%- if user.may.write(result.fqname) %}
-                                <a href="{{ url_for('frontend.destroy_item', item_name=result.fqname) }}">{{ _('Destroy') }}</a>
+                                <a href="{{ url_for('frontend.destroy_item', item_name=result.fqname) }}" title="{{ _('Destroy') }}">
+                                    <span class="fa fa-fire"></span>
+                                </a>
                             {% endif -%}
                         </td>
                     </tr>

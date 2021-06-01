@@ -833,7 +833,7 @@ def revert_item(item_name, rev):
         if form.validate(state):
             item.revert(form['comment'])
             close_file(item.rev.data)
-            return redirect(url_for_item(item_name))
+            return redirect(url_for_item(item.name or item_name))
     ret = render_template('revert.html',
                           item=item,
                           fqname=item.fqname,
@@ -858,25 +858,31 @@ def rename_item(item_name):
     subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
-        form['target'] = item.name
+        form['target'] = ', '.join(item.names)
         subitems = item.get_subitem_revs()
-        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        item_names = tuple(x + '/' for x in item.names)
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
         if form.validate():
-            target = form['target'].value
+            target = form['target']
+            targets = [x.strip() for x in str(target).split(',') if x]
             comment = form['comment'].value
             namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
             namespaces = namespaces + NAMESPACES_IDENTIFIER
-            if target.split('/', 1)[0] in namespaces:
-                msg = L_("Item name segment (%(invalid_name)s) must not match existing namespaces.", invalid_name=target.split('/', 1)[0])
-                flash(msg, "error")
-            else:
+
+            is_valid = True
+            for target in targets:
+                if target.split('/', 1)[0] in namespaces:
+                    msg = L_("Item name segment (%(invalid_name)s) must not match existing namespaces.", invalid_name=target.split('/', 1)[0])
+                    flash(msg, "error")
+                    is_valid = False
+            if is_valid:
                 try:
-                    fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
-                    item.rename(target, comment)
+                    fqname = CompositeName(item.fqname.namespace, item.fqname.field, targets[0])
+                    item.rename(targets, comment)
                     close_file(item.meta.revision.data)
-                    # the item was successfully renamed, show it with new name
+                    # the item was successfully renamed, show it with new name or first name if list
                     return redirect(url_for_item(fqname))
                 except NameNotUniqueError as e:
                     flash(str(e), "error")
@@ -885,10 +891,12 @@ def rename_item(item_name):
     ret = render_template('rename.html',
                           item=item,
                           item_name=item_name,
+                          item_names=item.names,
                           subitem_names=subitem_names,
                           fqname=item.fqname,
                           form=form,
-                          data_rendered=Markup(item.content._render_data())
+                          data_rendered=Markup(item.content._render_data()),
+                          len=len,
     )
     close_file(item.meta.revision.data)
     return ret
@@ -907,9 +915,12 @@ def delete_item(item_name):
     subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
-        subitems = item.get_subitem_revs()
-        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        subitems = list(item.get_subitem_revs())
+        item_names = tuple(x + '/' for x in item.names)
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
+
         data_rendered = Markup(item.content._render_data())
+        alias_names = set(item.names) - set([item_name])
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -923,6 +934,7 @@ def delete_item(item_name):
     ret = render_template('delete.html',
                           item=item,
                           item_name=item_name,
+                          alias_names=tuple(alias_names),
                           subitem_names=subitem_names,
                           fqname=split_fqname(item_name),
                           form=form,

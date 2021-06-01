@@ -494,53 +494,75 @@ class Item:
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, name, comment, action, delete=False):
-        self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
-        old_prefix = self.subitem_prefixes[0]
-        old_prefixlen = len(old_prefix)
-        if not delete:
-            new_prefix = name + '/'
-        for child in self.get_subitem_revs():
-            for child_oldname in child.meta[NAME]:
-                if child_oldname.startswith(old_prefix):
-                    if delete:
-                        child_newname = None
-                    else:  # rename
-                        child_newname = new_prefix + child_oldname[old_prefixlen:]
-                    old_fqname = CompositeName(self.fqname.namespace, self.fqname.field, child_oldname)
-                    item = Item.create(old_fqname.fullname)
-                    item._save(item.meta, item.content.data,
-                               name=child_newname, action=action, comment=comment, delete=delete)
-                    close_file(item.rev.data)
+    def _rename(self, names, comment, action, delete=False):
+        """
+        Process Delete and Rename actions.
 
-    def rename(self, name, comment=''):
+        Delete removes all alias names and all subitems of all aliases.
+        Rename changes subitem names only when the parent name is removed/changed.
         """
-        rename this item to item <name> (replace current name by another name in the NAME list)
+        self._save(self.meta, self.content.data, names=names, action=action, comment=comment, delete=delete)
+        if delete:
+            flash(L_('The item "%(name)s" was deleted.', name=self.names), 'info')
+            old_prefix = tuple(self.subitem_prefixes)
+        else:
+            flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=self.names, new_name=names), 'info')
+            old_prefix = (self.subitem_prefixes[0], )
+
+        old_prefixlen = len(old_prefix[0])
+        new_parent = names[0] + '/'  # new prefix adopts orphan subitems
+        for child in self.get_subitem_revs():
+            if delete:
+                child_newname = None
+                old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
+                item = Item.create(old_fqname.fullname)
+                item._save(item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete)
+                flash(L_('The item "%(name)s" was deleted.', name=child.meta[NAME]), 'info')
+                close_file(item.rev.data)
+            else:  # rename
+                working_name = child.meta[NAME][:]
+                for child_oldname in child.meta[NAME]:
+                    if child_oldname.startswith(old_prefix):
+                        child_newname = new_parent + child_oldname[old_prefixlen:]
+                        working_name = [child_newname if x == child_oldname else x for x in working_name]
+                        old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child_oldname)
+                        item = Item.create(old_fqname.fullname)
+                        item._save(item.meta, item.content.data, names=working_name, action=action, comment=comment, delete=delete)
+                        flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=child.meta[NAME], new_name=working_name), 'info')
+                        close_file(item.rev.data)
+
+    def rename(self, names, comment=''):
         """
-        fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
-        if flaskg.storage.get_item(**fqname.query):
-            raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
-        # if this is a subitem, verify all parent items exist
-        _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
-        return self._rename(name, comment, action=ACTION_RENAME)
+        rename this item to item <names> (replace current names by names in the NAME list)
+        Modify allows users to rename an item by changing meta data, so most work is done in _save.
+        """
+        if isinstance(names, str):
+            names = [names]
+        for name in names:
+            if name not in self.names:
+                # verify new names do not exist
+                fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
+                if flaskg.storage.get_item(**fqname.query):
+                    raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
+            if '/' in name:
+                # if this is a subitem, verify all parent items exist
+                _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
+        self._rename(names, comment, action=ACTION_RENAME)
 
     def delete(self, comment=''):
         """
-        delete this item (remove current name from NAME list)
+        delete this item
         """
         item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
-        ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
-        if [self.name] == self.names:
-            flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
-        else:
-            # the item has several names, we deleted only one name
-            name_list = [x for x in self.names if not x == self.name]
-            msg = L_('The item name "%(name)s" was deleted, the item persists with alias names: "%(name_list)s"', name=self.name, name_list=name_list)
-            flash(msg, 'info')
+        ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True)
         return ret
 
     def revert(self, comment=''):
-        return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
+        meta = dict(self.meta)
+        meta[TRASH] = False
+        if not self.meta[NAME]:
+            meta[NAME] = meta[NAME_OLD]
+        return self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
 
     def destroy(self, comment='', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
@@ -627,8 +649,16 @@ class Item:
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=ACTION_SAVE, contenttype_guessed=None, comment=None,
+    def _save(self, meta, data=None, names=None, action=ACTION_SAVE, contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
+        """
+        Called by rename (delete calls rename), revert, modify (including first save), admin acl changes.
+
+        Destroy is not processed here.
+        Returns new revid and data size (ignored by most callers).
+        """
+        if isinstance(names, str):
+            names = [names]
         backend = flaskg.storage
         storage_item = backend.get_item(**self.fqname.query)
         try:
@@ -650,23 +680,15 @@ class Item:
             elif meta['acl'] == 'Empty':
                 meta['acl'] = ''
 
-        # we store the previous (if different) and current item name into revision metadata
-        # this is useful for rename history and backends that use item uids internally
+        # we store the previous (if different) and current item names into revision metadata
+        # this is useful for deletes, rename history and backends that use item uids internally
         if self.fqname.field == NAME_EXACT:
-            if name is None:
-                name = self.fqname.value
-            oldname = meta.get(NAME)
-            if oldname:
-                if delete or name not in oldname:  # this is a delete or rename
-                    try:
-                        oldname.remove(self.name)
-                    except ValueError:
-                        pass
-                    if not delete:
-                        oldname.append(name)
-                    meta[NAME] = oldname
-            elif not meta.get(ITEMID):
-                meta[NAME] = [name]
+            if names is None:
+                if self.names:
+                    # many tests do not pass a name
+                    meta[NAME] = self.names
+            else:
+                meta[NAME] = names
         elif self.fqname.field == ITEMID and delete:
             # delete by itemid will display deleted item with flash message
             meta[NAME] = []
@@ -679,13 +701,14 @@ class Item:
 
         if currentrev:
             current_names = currentrev.meta.get(NAME, [])
-            new_names = meta.get(NAME, [])
+            new_names = meta.get(NAME, []) if delete is False else []
             deleted_names = set(current_names) - set(new_names)
             if deleted_names:  # some names have been deleted.
                 meta[NAME_OLD] = current_names
                 # if no names left, then set the trash but not if the item is a ticket (tickets get closed, not deleted)
                 if not new_names and (ITEMTYPE not in meta or not meta[ITEMTYPE] == ITEMTYPE_TICKET):
                     meta[TRASH] = True
+                    meta[NAME] = None
             meta[REV_NUMBER] = currentrev.meta.get(REV_NUMBER, 0) + 1
         else:
             meta[REV_NUMBER] = 1
@@ -785,7 +808,7 @@ class Item:
         """
         Return the possible prefixes for subitems.
         """
-        names = self.names[0:1] if self.fqname.field == NAME_EXACT else self.names
+        names = self.names if self.fqname.field == NAME_EXACT else self.names
         return [name + '/' if name else '' for name in names]
 
     @property

@@ -492,7 +492,7 @@ class TarMixin:
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
             with open(temp_fname, 'rb') as data:
-                self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
+                self.item._save(meta, data, names=self.name, action=ACTION_SAVE, comment='')
             os.remove(temp_fname)
 
 
