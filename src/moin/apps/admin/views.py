@@ -29,8 +29,8 @@ from moin.apps.admin import admin
 from moin.apps.frontend.views import _using_moin_auth
 from moin import user
 from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
-                                 NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
-                                 ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS)
+                                 NAME_OLD, REVID, REV_NUMBER, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
+                                 ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS, PARENTID)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS, READ, PUBREAD, WRITE, CREATE, ADMIN, DESTROY
 from moin.security import require_permission, ACLStringIterator
@@ -391,11 +391,11 @@ def _trashed(namespace):
     q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
     if namespace != NAMESPACE_ALL:
         q = And([q, Term(NAMESPACE, namespace), ])
-    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
+    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid rev_number mtime comment editor parentid')
     results = []
     for meta in flaskg.storage.search_meta(q, limit=None):
         fqname = CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])
-        results.append(trashedEntry(fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
+        results.append(trashedEntry(fqname, meta[NAME_OLD], meta[REVID], meta[REV_NUMBER], meta[MTIME], meta[COMMENT], get_editor_info(meta), meta[PARENTID]))
     return results
 
 

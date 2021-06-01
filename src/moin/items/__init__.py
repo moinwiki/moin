@@ -499,7 +499,7 @@ class Item:
         Process Delete and Rename actions.
 
         Delete removes all alias names and all subitems of all aliases.
-        Rename changes subitem names only when former parent name is removed.
+        Rename changes subitem names only when the parent name is removed/changed.
         """
         self._save(self.meta, self.content.data, names=names, action=action, comment=comment, delete=delete)
         if delete:
@@ -511,26 +511,25 @@ class Item:
 
         old_prefixlen = len(old_prefix[0])
         new_parent = names[0] + '/'  # new prefix adopts orphan subitems
-        for name in names:
-            for child in self.get_subitem_revs():
-                if delete:
-                    child_newname = None
-                    old_fqname = CompositeName(self.fqname.namespace, self.fqname.field, child.meta[NAME][0])
-                    item = Item.create(old_fqname.fullname)
-                    item._save(item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete)
-                    flash(L_('The item "%(name)s" was deleted.', name=child.meta[NAME]), 'info')
-                    close_file(item.rev.data)
-                else:  # rename
-                    working_name = child.meta[NAME][:]
-                    for child_oldname in child.meta[NAME]:
-                        if child_oldname.startswith(old_prefix):
-                            child_newname = new_parent + child_oldname[old_prefixlen:]
-                            working_name = [child_newname if x == child_oldname else x for x in working_name]
-                            old_fqname = CompositeName(self.fqname.namespace, self.fqname.field, child_oldname)
-                            item = Item.create(old_fqname.fullname)
-                            item._save(item.meta, item.content.data, names=working_name, action=action, comment=comment, delete=delete)
-                            flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=child.meta[NAME], new_name=working_name), 'info')
-                            close_file(item.rev.data)
+        for child in self.get_subitem_revs():
+            if delete:
+                child_newname = None
+                old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
+                item = Item.create(old_fqname.fullname)
+                item._save(item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete)
+                flash(L_('The item "%(name)s" was deleted.', name=child.meta[NAME]), 'info')
+                close_file(item.rev.data)
+            else:  # rename
+                working_name = child.meta[NAME][:]
+                for child_oldname in child.meta[NAME]:
+                    if child_oldname.startswith(old_prefix):
+                        child_newname = new_parent + child_oldname[old_prefixlen:]
+                        working_name = [child_newname if x == child_oldname else x for x in working_name]
+                        old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child_oldname)
+                        item = Item.create(old_fqname.fullname)
+                        item._save(item.meta, item.content.data, names=working_name, action=action, comment=comment, delete=delete)
+                        flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=child.meta[NAME], new_name=working_name), 'info')
+                        close_file(item.rev.data)
 
     def rename(self, names, comment=''):
         """
@@ -559,7 +558,11 @@ class Item:
         return ret
 
     def revert(self, comment=''):
-        return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
+        meta = dict(self.meta)
+        meta[TRASH] = False
+        if not self.meta[NAME]:
+            meta[NAME] = meta[NAME_OLD]
+        return self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
 
     def destroy(self, comment='', destroy_item=False, subitem_names=[]):
         # called from destroy UI/POST
