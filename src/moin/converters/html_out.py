@@ -484,11 +484,16 @@ class Converter:
             else:
                 # is an object
                 new_elem = html.object(attrib=attrib)
-            # alt attr is invalid within object, audio, and video tags , append alt text as a child
+            # alt attr is invalid within object, audio, and video tags , append alt text to existing child
+            # alt text will be transclusion alt field, item meta summary, or item name
             if new_elem.attrib.get(html.alt):
+                if new_elem.text:
+                    new_elem.append(' - ')
                 new_elem.append(new_elem.attrib.get(html.alt))
                 del new_elem.attrib[html.alt]
             else:
+                if new_elem.text:
+                    new_elem.append(' - ')
                 new_elem.append(alt)
 
         if obj_type == "object" and getattr(href, 'scheme', None):
