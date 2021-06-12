@@ -44,6 +44,8 @@ def test_wiki(app, conv, input_, output):
         ('wiki.local:', 'wiki:///Root', '/Root'),
         ('wiki.local:Test', 'wiki:///Root', '/Test'),
         ('wiki.local:Test:colon', 'wiki:///Root', '/Test:colon'),
+        ('wiki.local:users/Test:colon', 'wiki:///Root', '/users/Test:colon'),
+        ('wiki.local:users:ns/Test:colon', 'wiki:///Root', '/users:ns/Test:colon'),
         ('wiki.local:Test', 'wiki:///Root/Sub', '/Test'),
         ('wiki.local:/Test', 'wiki:///Root', '/Root/Test'),
         ('wiki.local:/Test', 'wiki:///Root/Sub', '/Root/Sub/Test'),
