@@ -22,6 +22,7 @@ def conv():
     'input_,output',
     (
         ('wiki:///Test', '/Test'),
+        ('wiki:///Test:colon', '/Test:colon'),
         ('wiki:///Test?mode=raw', '/Test?mode=raw'),
         ('wiki:///Test#anchor', '/Test#anchor'),
         ('wiki:///Test?mode=raw#anchor', '/Test?mode=raw#anchor'),
@@ -42,6 +43,7 @@ def test_wiki(app, conv, input_, output):
         # note: result URLs assume test wiki running at /
         ('wiki.local:', 'wiki:///Root', '/Root'),
         ('wiki.local:Test', 'wiki:///Root', '/Test'),
+        ('wiki.local:Test:colon', 'wiki:///Root', '/Test:colon'),
         ('wiki.local:Test', 'wiki:///Root/Sub', '/Test'),
         ('wiki.local:/Test', 'wiki:///Root', '/Root/Test'),
         ('wiki.local:/Test', 'wiki:///Root/Sub', '/Root/Sub/Test'),
