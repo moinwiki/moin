@@ -509,32 +509,36 @@ class Item:
             flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=self.names, new_name=names), 'info')
             old_prefix = (self.subitem_prefixes[0], )
 
-        old_prefixlen = len(old_prefix[0])
-        new_parent = names[0] + '/'  # new prefix adopts orphan subitems
-        for child in self.get_subitem_revs():
-            if delete:
-                child_newname = None
-                old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
-                item = Item.create(old_fqname.fullname)
-                item._save(item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete)
-                flash(L_('The item "%(name)s" was deleted.', name=child.meta[NAME]), 'info')
-                close_file(item.rev.data)
-            else:  # rename
-                working_name = child.meta[NAME][:]
-                for child_oldname in child.meta[NAME]:
-                    if child_oldname.startswith(old_prefix):
-                        child_newname = new_parent + child_oldname[old_prefixlen:]
-                        working_name = [child_newname if x == child_oldname else x for x in working_name]
-                        old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child_oldname)
-                        item = Item.create(old_fqname.fullname)
-                        item._save(item.meta, item.content.data, names=working_name, action=action, comment=comment, delete=delete)
-                        flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=child.meta[NAME], new_name=working_name), 'info')
-                        close_file(item.rev.data)
+        removed_names = set(self.meta[NAME]) - set(names)
+        removed_names = tuple(x + '/' for x in removed_names)
+        if removed_names or delete:
+            new_parent = names[0] + '/'  # new prefix that will adopt any orphaned subitems
+            subitems = list(self.get_subitem_revs())
+            for child in subitems:
+                if delete:
+                    child_newname = None
+                    old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
+                    item = Item.create(old_fqname.fullname)
+                    item._save(item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete)
+                    flash(L_('The item "%(name)s" was deleted.', name=child.meta[NAME]), 'info')
+                    close_file(item.rev.data)
+                else:  # rename
+                    working_name = child.meta[NAME][:]
+                    for child_oldname in child.meta[NAME]:
+                        for removed_name in removed_names:
+                            if child_oldname.startswith(removed_name):
+                                old_prefixlen = len(removed_name)
+                                child_newname = new_parent + child_oldname[old_prefixlen:]  # matched name
+                                working_name = [child_newname if x == child_oldname else x for x in working_name]
+                                old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child_oldname)
+                                item = Item.create(old_fqname.fullname)
+                                item._save(item.meta, item.content.data, names=working_name, action=action, comment=comment, delete=delete)
+                                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=child.meta[NAME], new_name=working_name), 'info')
+                                close_file(item.rev.data)
 
     def rename(self, names, comment=''):
         """
         rename this item to item <names> (replace current names by names in the NAME list)
-        Modify allows users to rename an item by changing meta data, so most work is done in _save.
         """
         if isinstance(names, str):
             names = [names]
@@ -684,7 +688,7 @@ class Item:
         # this is useful for deletes, rename history and backends that use item uids internally
         if self.fqname.field == NAME_EXACT:
             if names is None:
-                if self.names:
+                if self.names and not meta.get(NAME):
                     # many tests do not pass a name
                     meta[NAME] = self.names
             else:
@@ -808,7 +812,7 @@ class Item:
         """
         Return the possible prefixes for subitems.
         """
-        names = self.names if self.fqname.field == NAME_EXACT else self.names
+        names = self.names
         return [name + '/' if name else '' for name in names]
 
     @property
@@ -1047,9 +1051,6 @@ class Default(Contentful):
         if new_tags == [""]:
             new_tags = []
         if new_tags != meta.get('tags', None):
-            return True
-        new_name = request.values.get('meta_form_name').replace(" ", "").split(',')
-        if new_name != meta.get('name', None):
             return True
         return False
 
