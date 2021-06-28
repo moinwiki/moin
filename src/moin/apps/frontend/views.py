@@ -745,6 +745,11 @@ def modify_item(item_name):
     On POST, saves the new page (unless there's an error in input).
     After successful POST, redirects to the page.
     """
+    if ',' in item_name:
+        flash(_("Error: invalid name: '%(invalid_name)s'. Create item with 1 name, use rename to create multiple names.", invalid_name=item_name), "error")
+        # XXX is there a way to redirect to +index with the Create popup displayed? then user could correct name
+        return redirect(url_for('frontend.show_item', item_name=item_name))
+
     # XXX drawing applets don't send itemtype
     itemtype = request.values.get('itemtype', ITEMTYPE_DEFAULT)
     contenttype = request.values.get('contenttype')
