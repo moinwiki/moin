@@ -5,8 +5,6 @@
 MoinMoin - Audio/Video converter
 
 Convert audio/video to <object> tag for the DOM Tree.
-
-Note: currently this is quite same as image_in.
 """
 
 
@@ -14,8 +12,9 @@ from emeraldtree import ElementTree as ET
 
 from . import default_registry
 from moin.utils.iri import Iri
-from moin.utils.tree import moin_page, xlink
+from moin.utils.tree import moin_page, xlink, html
 from moin.utils.mime import Type, type_moin_document
+from moin.constants.keys import SUMMARY
 
 
 class Converter:
@@ -36,6 +35,10 @@ class Converter:
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
                             query='do=get&rev={0}'.format(rev.revid)),
         }
+        if html.alt in arguments:
+            attrib[html.alt] = arguments[html.alt]
+        elif rev.meta.get(SUMMARY):
+            attrib[html.alt] = rev.meta[SUMMARY]
         obj = moin_page.object_(attrib=attrib, children=['Your Browser does not support HTML5 audio/video element.', ])
         body = moin_page.body(children=(obj, ))
         return moin_page.page(children=(body, ))

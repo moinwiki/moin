@@ -15,6 +15,7 @@ from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.constants.keys import SUMMARY
 
 from . import default_registry
 
@@ -47,6 +48,8 @@ class Converter:
             moin_page.type_: str(self.input_type),
             xlink.href: Iri(scheme='wiki', authority='', path='/' + rev.item.fqname.fullname, query=query),
         })
+        if rev.meta.get(SUMMARY) and html.alt not in attrib:
+            attrib[html.alt] = rev.meta[SUMMARY]
 
         obj = moin_page.object_(attrib=attrib, children=[item_name, ])
         body = moin_page.body(children=(obj, ))

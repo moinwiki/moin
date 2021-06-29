@@ -329,7 +329,7 @@ class TestItem:
 
         item = Item.create('Page')
 
-        item.rename('Renamed', comment='renamed')
+        item.rename(['Renamed', 'Other'], comment='renamed')
 
         assert Item.create('Page/Child').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         assert Item.create('Renamed/Child').content.data == b'Child of Page'

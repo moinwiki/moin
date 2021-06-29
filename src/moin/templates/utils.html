@@ -516,34 +516,16 @@
                 <a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a>
             {% endif %}
         {%- endfor -%}
-    {%- elif meta.summary %}
-        <a href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ meta.summary }}</a>
     {%- else %}
-        <a class="moin-nameless-item" href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ fqnames[0]|shorten_fqname }}</a>
+        {% if meta.summary %}
+            <a class="moin-nameless-item" href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}" title="{{ meta.summary }}">{{ fqnames[0]|shorten_fqname }}</a>
+        {% else %}
+            <a class="moin-nameless-item" href="{{ url_for('frontend.show_item', item_name=fqnames[0]) }}">{{ fqnames[0]|shorten_fqname }}</a>
+        {% endif %}
     {%- endif %}
-    {%- if not meta.name and not meta.summary and meta.name_old %}
+    {%- if not meta.name and meta.name_old %}
         {#- this is a deleted item, show old name(s) #}
         <span class="moin-history-name-old" title="{{ meta.name_old[0] }} was deleted">~({{ meta.name_old|join(' | ') }})</span>
-    {%- endif %}
-{%- endmacro %}
-
-{# Output a string containing an item name, item alias names, item summary or item ID and old names #}
-{%- macro best_item_name(meta) %}
-    {% set names = [] %}
-    {%- if not meta.trash %}
-        {#- if there are alias names, create a link to each alias #}
-        {%- for name in meta.fqnames -%}
-            {{- names.append(name.fullname) or "" -}}
-        {%- endfor -%}
-        {{- names|join(' | ') -}}
-    {%- elif meta.summary %}
-        {{- meta.summary -}}
-    {%- else %}
-        {{- meta.fqnames[0]|shorten_fqname -}}
-    {%- endif %}
-    {%- if not meta.name and not meta.summary and meta.name_old %}
-        {#- this is a deleted item, show old name(s) #}
-        ~({{ meta.name_old|join(' | ') }})
     {%- endif %}
 {%- endmacro %}
 
