@@ -14,29 +14,29 @@
 {% set user_may_destroy = user.may.destroy(fqname) %}
 
 {% block content %}
-    {% if history %}
+    {%- if history %}
         <h1>{{ heading }}</h1>
-        {% if not trash %}
-            {# add button to switch between history by name or history by item id #}
-            {% if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
+        {%- if not trash %}
+            {#- add button to switch between history by name or history by item id #}
+            {%- if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
                 <p class="moin-no-print">
-                    <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqname, bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
+                    <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqnames[0], bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
                     Click to show history spanning item delete and recreate.
                 </p>
-            {% else %}
-                {% if fqname.namespace %}
-                    {% set namespace = fqname.namespace + "/" %}
-                {% else %}
-                    {% set namespace = "" %}
-                {% endif %}
+            {%- else %}
+                {%- if fqname.namespace %}
+                    {%- set namespace = fqname.namespace + "/" %}
+                {%- else %}
+                    {%- set namespace = "" %}
+                {%- endif %}
                 <p class="moin-no-print">
                     <a class="moin-button" href="{{ url_for('frontend.history', item_name=namespace + '@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
                     Click to show history spanning item renames.
                 </p>
-            {% endif %}
-        {% endif %}
+            {%- endif %}
+        {%- endif %}
 
-        {# if history is long and displayed as several pages, create links to show next and/or prior pages #}
+        {#- if history is long and displayed as several pages, create links to show next and/or prior pages #}
         {{ utils.page_links(page_num, pages, url) }}
 
         <div class="moin-clr"></div>
@@ -45,25 +45,18 @@
                 <table class="zebra">
                     <thead>
                         <tr>
-                            {% if fqname.field == NAME_EXACT %}
-                                <th>{{ _("Name") }}</th>
-                            {% elif summary %}
-                                <th>{{ _("Summary") }}</th>
-                            {% else %}
-                                <th>{{ _("ID or Name") }}</th>
-                            {% endif %}
-
+                            <th>{{ _("Name or ID ~(Old Name)") }}</th>
                             <th>{{ _("Rev.") }}</th>
                             <th>{{ _("Timestamp") }}</th>
                             <th class="moin-integer">{{ _("Size") }}</th>
-                            {% if history[0].trash %}
+                            {%- if history[0].trash %}
                                 <th class="moin-button-diff"><span class="moin-button moin-button-disabled">Diff</span></th>
-                            {% else %}
+                            {%- else %}
                                 <th class="moin-button-diff"><input class="moin-button" type="submit" value="Diff" /></th>
-                            {% endif %}
+                            {%- endif %}
                             <th>{{ _("Editor") }}</th>
                             <th>{{ _("Content Type") }}</th>
-                            <th>{{ _("Comment") }}</th>
+                            <th>{{ _("Comment and/or `Summary`") }}</th>
                             <th class="center" colspan="6">{{ _("Actions") }}</th>
                         </tr>
                     </thead>
@@ -98,11 +91,15 @@
                                         </div>
                                     {%- endif %}
                                 </td>
-                                {% set uid = doc.get('userid') or doc.get('address') %}
-                                {% set editor_info = editor_infos.get(uid) %}
+                                {%- set uid = doc.get('userid') or doc.get('address') %}
+                                {%- set editor_info = editor_infos.get(uid) %}
                                 <td class="moin-wordbreak">{{ utils.show_editor_info(editor_info) }}</td>
                                 <td class="moin-wordbreak">{{ doc.contenttype|shorten_ctype }}</td>
-                                <td class="moin-wordbreak">{{ doc.comment }}</td>
+                                {%- set comment =  doc.comment %}
+                                {%- if doc.summary %}
+                                    {%- set comment = comment + '`' + doc.summary + '`' %}
+                                {%- endif %}
+                                <td class="moin-wordbreak">{{ comment }}</td>
                                 {%- if loop.first %}
                                     {%- set revid = None %}
                                 {%- else %}
