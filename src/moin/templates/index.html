@@ -73,7 +73,7 @@ a checkbox, an invisible link used by js for download, a link to the item
         {%- else %}
             <td>{{ e.meta.address }}</td>
         {%- endif %}
-        <td>{{ e.meta.mtime }}</td>
+        <td>{{ e.meta.mtime|time_datetime }}</td>
     </tr>
 {% endmacro %}
 
@@ -262,6 +262,7 @@ a checkbox, an invisible link used by js for download, a link to the item
             {% endfor %}
         </div>
     {% endif %}
+
     {# Finally! this is what user wants to see - the list of items. jfu.js needs moin-index class. #}
     <table class="moin-index moin-sortable">
         <thead>
