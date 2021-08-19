@@ -13,6 +13,7 @@ import time
 import re
 import codecs
 import hashlib
+import importlib
 from io import BytesIO
 
 from flask import current_app as app
@@ -23,7 +24,7 @@ from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
 from moin.constants.keys import *  # noqa
-from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19
+from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
@@ -31,7 +32,6 @@ from moin.utils.mimetype import MimeType
 from moin.utils.crypto import make_uuid
 from moin import security
 from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
-from moin.converters.moinwiki_out import Converter as conv_out
 from moin.converters import default_registry
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.iri import Iri
@@ -80,9 +80,11 @@ class ImportMoin19(Command):
                required=False, default=False),
         Option('-s', '--storage-create', action='store_true', dest='create_storage',
                required=False, default=False),
+        Option('--markup_out', '-m', type=str, choices=CONTENTTYPE_MARKUP_OUT.keys(),
+               required=False, default='moinwiki'),
     ]
 
-    def run(self, data_dir=None):
+    def run(self, data_dir=None, markup_out=None):
         flaskg.add_lineno_attr = False
         flaskg.item_name2id = {}
         userid_old2new = {}
@@ -123,7 +125,9 @@ class ImportMoin19(Command):
 
         print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
         self.conv_in = conv_in()
-        self.conv_out = conv_out()
+        self.markup_out = markup_out
+        conv_out = importlib.import_module("moin.converters." + self.markup_out + "_out")
+        self.conv_out = conv_out.Converter()
         reg = default_registry
         refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
         for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
@@ -154,8 +158,8 @@ class ImportMoin19(Command):
             meta[REV_NUMBER] = meta[REV_NUMBER] + 1
             # bumping modified time makes global and item history views more useful
             meta[MTIME] = meta[MTIME] + 1
-            meta[COMMENT] = 'Convert moin 1.9 markup to 2.0'
-            meta[CONTENTTYPE] = 'text/x.moin.wiki;charset=utf-8'
+            meta[COMMENT] = 'Converted moin 1.9 markup to ' + self.markup_out + ' markup'
+            meta[CONTENTTYPE] = CONTENTTYPE_MARKUP_OUT[self.markup_out]
             del meta['dataid']
             out.seek(0)
             backend.store(meta, out)

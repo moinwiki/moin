@@ -36,6 +36,16 @@ CONTENTTYPE_MARKUP = [
     'application/docbook+xml;charset=utf-8',
 ]
 
+CONTENTTYPE_MARKUP_OUT = {
+    'moinwiki': 'text/x.moin.wiki;charset=utf-8',
+    # 'mediawiki': 'text/x-mediawiki;charset=utf-8',  # no output converter
+    # 'creole': 'text/x.moin.creole;charset=utf-8',  # no output converter
+    'markdown': 'text/x-markdown;charset=utf-8',
+    'rst': 'text/x-rst;charset=utf-8',
+    'html': 'text/html;charset=utf-8',
+    'docbook': 'application/docbook+xml;charset=utf-8',
+}
+
 CONTENTTYPE_NO_EXPANSION = [
     # no need to expand transclusions, etc. when converting to/from these types
     'text/x.moin.wiki;charset=utf-8',
