@@ -674,7 +674,7 @@ class Converter(ConverterMacro):
                 )
                 |
                 (
-                    (?P<link_interwiki_site>[A-Z][a-zA-Z]+)
+                    (?P<link_interwiki_site>[a-zA-Z][a-zA-Z0-9]+)
                     :
                     (?P<link_interwiki_item>[^|]+) # accept any item name; will verify link_interwiki_site below
                 )
