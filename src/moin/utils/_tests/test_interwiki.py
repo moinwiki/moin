@@ -217,6 +217,8 @@ class TestInterWikiMapBackend:
         assert 'PythonInfo' in testiwm.iwmap
         assert 'this' not in testiwm.iwmap
         assert testiwm.iwmap['MoinMoin'] == 'https://moinmo.in/'
+        assert testiwm.iwmap['hg'] == 'https://www.mercurial-scm.org/wiki/'
+        assert testiwm.iwmap['h2g2'] == 'http://h2g2.com/dna/h2g2/'
 
 
 coverage_modules = ['moin.utils.interwiki']

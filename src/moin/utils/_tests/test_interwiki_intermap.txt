@@ -3,3 +3,5 @@
 MoinMaster https://master.moinmo.in/
 MoinMoin https://moinmo.in/
 PythonInfo https://wiki.python.org/moin/
+hg https://www.mercurial-scm.org/wiki/
+h2g2 http://h2g2.com/dna/h2g2/
