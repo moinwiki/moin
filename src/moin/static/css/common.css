@@ -490,7 +490,6 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; }
 .moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em 0; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
-a.moin-auth-failed { color: red; color: var(--alert); }
 
 .moin-contenttype-selection form { z-index: 2; background: #fff; background: var(--bg-primary);
     border: 3px solid #4e7da9; border: 3px solid var(--border); padding: .2em; border-radius: 7px; }

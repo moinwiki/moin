@@ -27,16 +27,15 @@ a checkbox, an invisible link used by js for download, a link to the item
     <tr>
         <td class="moin-index-icons">
             <span class="moin-select-item">
-                <input class="moin-item" type="checkbox" value="{{ url_for('.show_item', item_name=e.fullname) }}">
+                <input class="moin-item" type="checkbox" value="{{ url_for('.show_item', item_name=e.fullname) }}"/>
+                {% set mimetype = "application/x.moin.download" %}
+                {# invisible link below is used by js to download item #}
+                <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
+                </a>
             </span>
-            {% set mimetype = "application/x.moin.download" %}
-            {# invisible link below is used by js to download item #}
-            <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
-            </a>
             {# invisible span below has css before attribute to show mimetype icon #}
-            <span
-               class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }}"
-               title="{{ e.meta['contenttype']|shorten_ctype }}">
+            <span class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }}"
+                title="{{ e.meta['contenttype']|shorten_ctype }}">
             </span>
             <a href="{{ url_for('frontend.history', item_name=e.fullname) }}">
                 <span class="fa fa-clock-o" title="{{ _('Item History') }}"></span>
@@ -108,41 +107,41 @@ a checkbox, an invisible link used by js for download, a link to the item
             </p>
         {% else %}
             {# display the row of action buttons: Select All, Download, Delete, Destroy, Filter, Namespace, New Item #}
-            <a href="#" class="moin-select-allitem allitem-toselect moin-button" title="{{ _('Toggle item selections') }}">
-               <i class="fa fa-square-o fa-lg"></i>
-               <span class="moin-select-button-text">{{ _("Select All") }}</span>
-            </a>
-            <a class="moin-button" id="moin-download-trigger" href="#" title="{{ _('Download selected items') }}">
+            <span class="moin-select-toggle moin-button" title="{{ _('Toggle item selections') }}">
+               <input type="checkbox" id="moin-select-all"/>
+               <label for="moin-select-all">{{ _("Select All") }}</label>
+            </span>
+            <span class="moin-button" id="moin-download-trigger" title="{{ _('Download selected items') }}">
                <i class="fa fa-download fa-lg"></i>
                {{ _("Download") }}
-            </a>
-            <a class="moin-action-tab moin-button" id="moin-delete-trigger" title="{{ _('Delete selected items') }}"
-               data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}" href="#">
+            </span>
+            <span class="moin-action-tab moin-button" id="moin-delete-trigger" title="{{ _('Delete selected items') }}"
+               data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
                <i class="fa fa-minus-circle fa-lg"></i>
                {{ _("Delete") }}
-            </a>
-            <a class="moin-action-tab moin-button" id="moin-destroy-trigger" title="{{ _('Destroy selected items') }}"
-               data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}" href="#">
+            </span>
+            <span class="moin-action-tab moin-button" id="moin-destroy-trigger" title="{{ _('Destroy selected items') }}"
+               data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
                <i class="fa fa-times-circle fa-lg"></i>
                {{ _("Destroy") }}
-            </a>
+            </span>
         {% endif %}
         {% if dirs or files or form.contenttype %}
             {# prior filter action on contenttype may have resulted in no dirs or files #}
-            <a class="moin-ct-toggle moin-button" title="{{ _('Filter items by content type') }}">
+            <span class="moin-ct-toggle moin-button" title="{{ _('Filter items by content type') }}">
                 <i class="fa fa-filter"></i>
                 {{ _("Filter") }}
-            </a>
+            </span>
         {% endif %}
         {# these action buttons have a purpose even when there are no items. #}
-        <a class="moin-ns-toggle moin-button" title="{{ _('Change namespace') }}">
+        <span class="moin-ns-toggle moin-button" title="{{ _('Change namespace') }}">
             <i class="fa fa-list-alt"></i>
             {{ _("Namespace") }}
-        </a>
-        <a class="moin-newitem-toggle moin-button" id="moin-create-new-item" title="{{ _('Open create item dialog') }}" >
+        </span>
+        <span class="moin-newitem-toggle moin-button" id="moin-create-new-item" title="{{ _('Open create item dialog') }}" >>
            <i class="fa fa-file-o fa-lg"></i>
            {{ _("New Item") }}
-        </a>
+        </span>
     </div>
 
     {% if selected_groups %}
@@ -237,9 +236,8 @@ a checkbox, an invisible link used by js for download, a link to the item
     </div>
 
     <div class='moin-clr'></div>
-
     {% if files or dirs %}
-        {# display row of buttons, first is Show All remainder is first letter of items. #}
+        {# display row of buttons, Show All, followed by first letter of items. #}
         <div id="moin-initials">
             {# one button will be highlighted via the selected class, either Show All or some letter. #}
             {% if not startswith %}
