@@ -120,6 +120,7 @@ Disallow: /+delete/
 Disallow: /+ajaxdelete/
 Disallow: /+ajaxdestroy/
 Disallow: /+ajaxmodify/
+Disallow: /+ajaxsubitems/
 Disallow: /+destroy/
 Disallow: /+create/
 Disallow: /+rename/
@@ -966,6 +967,7 @@ def ajaxdestroy(item_name, req='destroy'):
     args = request.values.to_dict()
     comment = args.get("comment")
     itemnames = args.get("itemnames")
+    do_subitems = True if args.get("do_subitems") == 'true' else False
     itemnames = json.loads(itemnames)
     response = {"itemnames": [], "status": []}
     for itemname in itemnames:
@@ -978,13 +980,15 @@ def ajaxdestroy(item_name, req='destroy'):
                 response["status"].append(False)
                 continue
             if req == 'destroy':
-                subitems = item.get_subitem_revs()
-                # XXX this matches what destroy does, but can leave orphans when alias names have subitems
-                subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(itemname + '/')]
+                subitem_names = []
+                if do_subitems:
+                    subitems = item.get_subitem_revs()
+                    # if subitem has alias of unselected sibling or ancester, it will be included
+                    subitem_names = [y for x in subitems for y in x.meta[NAME]]
                 item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names)
                 log_destroy_action(item, subitem_names, comment)
             else:
-                item.delete(comment)
+                item.delete(comment, do_subitems=do_subitems)
             response["status"].append(True)
         except AccessDenied:
             response["status"].append(False)
@@ -1002,10 +1006,62 @@ def ajaxmodify(item_name):
     return redirect(url_for_item(newitem))
 
 
+@frontend.route('/+ajaxsubitems', methods=['POST'])
+def ajaxsubitems():
+    """
+    Given a list of item names, return lists of alias names, subitem names,
+    selected names (where user has auth to delete or destroy),
+    and rejected names (where user has auth to read, but not delete or destroy).
+
+    Note subitems are not checked for destroy auth.
+    """
+    item_names = request.values.getlist("item_names[]")
+    action_auth = request.values.get("action_auth")
+    all_alias_names = []
+    all_subitem_names = []
+    all_selected_names = []
+    all_rejected_names = []
+    for item_name in item_names:
+        try:
+            item = Item.create(item_name, rev_id=CURRENT)
+        except AccessDenied:
+            abort(403)  # should never happen
+        if isinstance(item, NonExistent):
+            abort(404, fqname.fullname)  # should never happen
+        fqname = item.fqname
+        if action_auth == "destroy":
+            if not flaskg.user.may.destroy(fqname):
+                # user can read this item, but not destroy
+                all_rejected_names.append(item_name)
+                continue
+        else:
+            if not flaskg.user.may.write(fqname):
+                # user can read this item, but not delete
+                all_rejected_names.append(item_name)
+                continue
+        alias_names = []
+        subitems = list(item.get_subitem_revs())
+        # TODO: add check for delete/destroy auth, add to rejected names,
+        item_names = tuple(x + '/' for x in item.names)
+        # subitems may have alias names pointing to sibling or parent of user selected items
+        subitem_names = [y for x in subitems for y in x.meta[NAME]]
+        if not [item.name] == item.names:
+            alias_names = [x for x in item.names if not x == item.name]
+        all_alias_names += alias_names
+        all_subitem_names += subitem_names
+        all_selected_names.append(item_name)
+    all_subitem_names = set(all_subitem_names)
+    response = {"subitem_names": list(all_subitem_names),
+                "alias_names": all_alias_names,
+                "selected_names": all_selected_names,
+                "rejected_names": all_rejected_names}
+    return jsonify(response)
+
+
 def log_destroy_action(item, subitem_names, comment, revision=None):
     """Document the destruction of an item or item revision."""
     destroy_info = [('An item has been destroyed', ''),
-                    ('  Names', item.names),
+                    ('  Names', item.meta[NAME]),
                     ('  Old Name', item.meta[NAME_OLD]),
                     ('  Subitem Names', subitem_names),
                     ('  Namespace', item.meta[NAMESPACE]),

@@ -494,7 +494,7 @@ class Item:
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, names, comment, action, delete=False):
+    def _rename(self, names, comment, action, delete=False, do_subitems=True):
         """
         Process Delete and Rename actions.
 
@@ -515,7 +515,7 @@ class Item:
             new_parent = names[0] + '/'  # new prefix that will adopt any orphaned subitems
             subitems = list(self.get_subitem_revs())
             for child in subitems:
-                if delete:
+                if delete and do_subitems:
                     child_newname = None
                     old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
                     item = Item.create(old_fqname.fullname)
@@ -553,12 +553,12 @@ class Item:
                 _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
         self._rename(names, comment, action=ACTION_RENAME)
 
-    def delete(self, comment=''):
+    def delete(self, comment='', do_subitems=True):
         """
         delete this item
         """
         item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
-        ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True)
+        ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True, do_subitems=do_subitems)
         return ret
 
     def revert(self, comment=''):

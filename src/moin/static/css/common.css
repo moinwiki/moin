@@ -531,10 +531,10 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .popup-closer.popup-cancel { background-color: red; background-color: var(--bg-close); color: #fff; color: var(--inverse);
     font-size: 1em; padding: 1px 4px; margin: 0; float: right; cursor: pointer; border: none; border-radius: 0; }
 .popup-body { clear: both; background: #fff; background: var(--bg-primary); color: #000; color: var(--primary); padding: 10px; margin: 0; }
-.popup-body label { margin: 5px; display: block; font-weight: bold; }
 .popup-comment { margin-bottom: 1em; }
 .popup-body input[type="text"] { width: 96%; }
 .popup-container { margin: 0; }
+.popup-names { font-weight: bold; }
 #lightbox { background: #fff; background: var(--bg-primary); opacity: .7; position: absolute; left: 0; top: 0;
     width: 100%; height: 100%; z-index: 9; margin: 0; display: none; }
 

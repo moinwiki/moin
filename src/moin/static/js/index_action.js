@@ -17,7 +17,50 @@ $("document").ready(function () {
         // delete and destroy process started and completed messages
         ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
         ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
-        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")};
+        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")},
+        POPUP_DELETE_HEADER = _("Add optional comment for Delete change log. "),
+        POPUP_DESTROY_HEADER = _("Add optional comment for Destroy change log. ");
+
+    // return a list of item names having checked boxes
+    function get_checked() {
+        var checked_names = [];
+        $("input.moin-item:checked").each(function () {
+            var itemname = $(this).attr("value").slice(1);
+            checked_names.push(itemname);
+        });
+        return checked_names;
+    }
+
+    // add a list of all selected, alias, subitem, and rejected names to comment popup
+    function get_subitem_names(action) {
+        var checked_names = get_checked(),
+            wiki_root = $('#moin-wiki-root').val(),
+            checked_name,
+            alias_names = [],
+            subitem_names = [];
+        $.ajax({
+            url: wiki_root + "/+ajaxsubitems",
+            type: "POST",
+            dataType: "json",
+            data: {item_names: checked_names, action_auth: action},
+            success: (function(response) {
+                if (response.rejected_names.length) {
+                    $('p.popup-rejected-names > span').text(response.rejected_names.join(', '));
+                    $('p.popup-rejected-names').removeClass("hidden");
+                }
+                $('p.popup-selected-names > span').text(response.selected_names.join(', '));
+                $('p.popup-alias-names > span').text(response.alias_names.join(', '));
+                $('p.popup-subitem-names > span').text(response.subitem_names.join(', '));
+            }),
+            error: (function(xhr, textstatus, message) {
+                if(textstatus === "timeout") {
+                    alert("Server operation timed out: " + "textstatus = "+ textstatus + ",  message = " + message);
+                } else {
+                    alert("Unknown server error =" + "textstatus = "+ textstatus + " message = " + message);
+                }
+            })
+        })
+    }
 
     // called by click handlers Delete item, and Destroy item within Actions dropdown menu
     function showpop(action) {
@@ -26,6 +69,12 @@ $("document").ready(function () {
         $("#popup-for-action").css("display", "block");
         $(".popup-comment").val("");
         $(".popup-action").val(action);
+        if (action === "delete") {
+            $(".popup-header > span").html(POPUP_DELETE_HEADER);
+        } else{
+            $(".popup-header > span").html(POPUP_DESTROY_HEADER);
+        }
+        get_subitem_names(action);
         $("#popup").fadeIn();
         $(".popup-comment").focus();
         $("#lightbox").css("display", "block");
@@ -76,32 +125,31 @@ $("document").ready(function () {
         url = $("#" + actionTrigger).attr("data-actionurl");
         $.post(url, {
             itemnames: itemnames,
-            comment: comment
+            comment: comment,
+            do_subitems: $("#moin-do-subitems").is(":checked") ? "true" : "false"
         }, function (data) {
             // process post results
             var itemnames = data.itemnames,
                 action_status = data.status,
                 success_item = 0,
-                left_item = 0,
-                message;
+                left_item = 0;
             $.each(itemnames, function (itemindex, itemname) {
                 // hide (remove) deleted/destroyed items, or show conflict (ACL rules, or ?)
                 if (action_status[itemindex]) {
                     hide($('.selected-item'));
                     success_item += 1;
+                    if (action === 'delete') {
+                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item deleted: ") +  itemname);
+                    } else {
+                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item destroyed: ") +  itemname);
+                    }
                     // update item count in upper left of table
                     $(".moin-num-rows").text($('.moin-index tbody tr').length);
                 } else {
                     left_item += 1;
+                    MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action denied:") + itemname);
                 }
             });
-            // show a message summarizing delete/destroy
-            message = ACTION_DONE[action] + success_item;
-            if (left_item) {
-                message += ACTION_FAILED[action] + left_item + ".";
-            }
-            $(".moin-flash").remove();
-            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, message);
         }, "json");
     }
 

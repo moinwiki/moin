@@ -282,13 +282,23 @@ a checkbox, an invisible link used by js for download, a link to the item
 
     {# initially hidden by CSS, index_action.js displays this as a popup
     if user clicks on Delete or Destroy button #}
-    <div id="popup">
+    <div id="popup" class="moin-new-item">
         <div id="popup-for-action" class="popup-container">
             <div class="popup-header">
                 <input type="button" class="popup-closer popup-cancel" value="{{ _("X") }}" title="{{ _("Close") }}"/>
                 <span>{{ _("Add optional comment for change log.") }}</span>
             </div>
             <div class="popup-body">
+                <div class="caution">
+                    <p class="popup-selected-names">{{ _("Selected names: ") }}<span class="popup-names"></span></p>
+                    <p class="popup-alias-names">{{ _("Alias names: ") }}<span class="popup-names"></span></p>
+                    <p>
+                        <input type="checkbox" id="moin-do-subitems"/>
+                        <label for="moin-do-subitems">{{ _("Check to remove subitems") }}</label>
+                    </p>
+                    <p class="popup-subitem-names">{{ _("Subitem names: ") }}<span class="popup-names"></span></p>
+                    <p class="popup-rejected-names hidden">{{ _("Rejected names, permission denied: ") }}<span class="popup-names"></span></p>
+                </div>
                 <input type="text" class="popup-comment" placeholder="{{ _("Enter your comment") }}"/>
                 <input type="hidden" class="popup-action" value=""/>
                 <br/>
