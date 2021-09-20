@@ -96,12 +96,6 @@ $("document").ready(function () {
         setTimeout(function () { frame.remove(); }, IFRAME_REMOVE_DELAY);
     }
 
-    // called by do_action when an item is successfully deleted or destroyed
-    function hide(item_link) {
-        // remove a deleted or destroyed item from current display
-        item_link.parent().remove();
-    }
-
     // executed via the "provide comment" popup triggered by an Actions Delete or Destroy selection
     function do_action(comment, action) {
         // create an array of selected item names
@@ -128,29 +122,32 @@ $("document").ready(function () {
             comment: comment,
             do_subitems: $("#moin-do-subitems").is(":checked") ? "true" : "false"
         }, function (data) {
-            // process post results
-            var itemnames = data.itemnames,
+            var success_item = 0,
+                left_item = 0,
                 action_status = data.status,
-                success_item = 0,
-                left_item = 0;
+                format_names = data.format_names,
+                itemnames = data.itemnames;
             $.each(itemnames, function (itemindex, itemname) {
-                // hide (remove) deleted/destroyed items, or show conflict (ACL rules, or ?)
+                // hide (remove) deleted/destroyed items, or leave checkbox checked
+                var input_value;
                 if (action_status[itemindex]) {
-                    hide($('.selected-item'));
+                    input_value = "/" + itemname;
+                    $('input[value="' + input_value + '"]').parent().parent().parent().remove();
                     success_item += 1;
                     if (action === 'delete') {
-                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item deleted: ") +  itemname);
+                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item deleted: ") +  format_names[itemindex]);
                     } else {
-                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item destroyed: ") +  itemname);
+                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item destroyed: ") +  format_names[itemindex]);
                     }
                     // update item count in upper left of table
                     $(".moin-num-rows").text($('.moin-index tbody tr').length);
                 } else {
                     left_item += 1;
-                    MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action denied:") + itemname);
+                    MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action denied:") + format_names[itemindex]);
                 }
             });
         }, "json");
+        $(".moin-num-rows").text($('.moin-index tbody tr').length);
     }
 
     // add click handler to "Select All" tab to select/deselect all items

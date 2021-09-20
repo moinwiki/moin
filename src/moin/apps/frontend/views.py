@@ -969,7 +969,7 @@ def ajaxdestroy(item_name, req='destroy'):
     itemnames = args.get("itemnames")
     do_subitems = True if args.get("do_subitems") == 'true' else False
     itemnames = json.loads(itemnames)
-    response = {"itemnames": [], "status": []}
+    response = {"itemnames": [], "format_names": [], "status": []}
     for itemname in itemnames:
         response["itemnames"].append(itemname)
         itemname = urllib.parse.unquote(itemname)  # itemname is url quoted str
@@ -979,6 +979,10 @@ def ajaxdestroy(item_name, req='destroy'):
                 # if we get here there is a bug (or a test?), we should not try to destroy a nonexistent item
                 response["status"].append(False)
                 continue
+            if len(item.meta[NAME]) > 1:
+                response["format_names"].append("[" + ", ".join(item.meta[NAME]) + "]")
+            else:
+                response["format_names"].append(item.meta[NAME])
             if req == 'destroy':
                 subitem_names = []
                 if do_subitems:
@@ -1027,7 +1031,9 @@ def ajaxsubitems():
         except AccessDenied:
             abort(403)  # should never happen
         if isinstance(item, NonExistent):
-            abort(404, fqname.fullname)  # should never happen
+            # user deletes item with alias, then tries to delete same item with other alias
+            all_rejected_names.append(item_name)
+            continue
         fqname = item.fqname
         if action_auth == "destroy":
             if not flaskg.user.may.destroy(fqname):
