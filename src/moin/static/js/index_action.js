@@ -129,7 +129,8 @@ $("document").ready(function () {
                 itemnames = data.itemnames;
             $.each(itemnames, function (itemindex, itemname) {
                 // hide (remove) deleted/destroyed items, or leave checkbox checked
-                var input_value;
+                var input_value,
+                    isLastElement = itemindex == itemnames.length -1;
                 if (action_status[itemindex]) {
                     input_value = "/" + itemname;
                     $('input[value="' + input_value + '"]').parent().parent().parent().remove();
@@ -145,9 +146,11 @@ $("document").ready(function () {
                     left_item += 1;
                     MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action denied:") + format_names[itemindex]);
                 }
+                if (isLastElement) {
+                    MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action complete."));
+                }
             });
         }, "json");
-        $(".moin-num-rows").text($('.moin-index tbody tr').length);
     }
 
     // add click handler to "Select All" tab to select/deselect all items
