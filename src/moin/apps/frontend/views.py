@@ -962,40 +962,47 @@ def ajaxdestroy(item_name, req='destroy'):
     """
     Handles both ajax delete and ajax destroy.
 
-    item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+    Incoming item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+
+    Jason response object includes these lists:
+        - itemnames: list of item names and subnames successfully deleted/destroyed in url format
+        - messages: formatted success/fail message for each item processed
     """
     args = request.values.to_dict()
     comment = args.get("comment")
     itemnames = args.get("itemnames")
     do_subitems = True if args.get("do_subitems") == 'true' else False
     itemnames = json.loads(itemnames)
-    response = {"itemnames": [], "format_names": [], "status": []}
-    for itemname in itemnames:
-        response["itemnames"].append(itemname)
-        itemname = urllib.parse.unquote(itemname)  # itemname is url quoted str
+    response = {"itemnames": [], "messages": []}
+    messages = []
+    for itemname_url in itemnames:
+        itemname = urllib.parse.unquote(itemname_url)  # itemname is url quoted str
         try:
             item = Item.create(itemname)
             if isinstance(item, NonExistent):
-                # if we get here there is a bug (or a test?), we should not try to destroy a nonexistent item
-                response["status"].append(False)
+                # we should not try to destroy a nonexistent item, user probably checked a subitem and checked do subitems
+                response["messages"].append(_("Item '%(bad_name)s' does not exist.", bad_name=item.name))
                 continue
-            if len(item.meta[NAME]) > 1:
-                response["format_names"].append("[" + ", ".join(item.meta[NAME]) + "]")
-            else:
-                response["format_names"].append(item.meta[NAME])
             if req == 'destroy':
                 subitem_names = []
                 if do_subitems:
                     subitems = item.get_subitem_revs()
                     # if subitem has alias of unselected sibling or ancester, it will be included
-                    subitem_names = [y for x in subitems for y in x.meta[NAME]]
-                item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names)
+                    subitem_names = [x.meta.revision.names for x in subitems]
+                messages, subitem_names = item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names, ajax=True)
                 log_destroy_action(item, subitem_names, comment)
             else:
-                item.delete(comment, do_subitems=do_subitems)
-            response["status"].append(True)
+                try:
+                    messages, subitem_names = item.delete(comment, do_subitems=do_subitems, ajax=True)
+                except AccessDenied:
+                    # some deletes may have succeeded, one failed, there may be unprocessed items
+                    msg = _("Access denied for a subitem of %(bad_name)s, check History for status.", bad_name=itemname)
+                    response["messages"].append(msg)
+            response["messages"] += messages
+            response["itemnames"] += subitem_names + item.names
         except AccessDenied:
-            response["status"].append(False)
+            response["messages"].append(_("Access denied processing '%(bad_name)s'.", bad_name=itemname))
+    response["itemnames"] = [url_for_item(x) for x in response["itemnames"]]
     return jsonify(response)
 
 
@@ -1026,6 +1033,7 @@ def ajaxsubitems():
     all_selected_names = []
     all_rejected_names = []
     for item_name in item_names:
+        item_name = urllib.parse.unquote(item_name)
         try:
             item = Item.create(item_name, rev_id=CURRENT)
         except AccessDenied:

@@ -98,56 +98,48 @@ $("document").ready(function () {
 
     // executed via the "provide comment" popup triggered by an Actions Delete or Destroy selection
     function do_action(comment, action) {
-        // create an array of selected item names
         var links = [],
             itemnames,
             actionTrigger,
             url;
+        // create an array of selected item names
         $("input.moin-item:checked").each(function () {
             var itemname = $(this).attr("value").slice(1);
             links.push(itemname);
         });
-        // remove any flash messages, display "deleting..." or "destroying..." briefly while process is in progress
+        // remove any flash messages, display "deleting..." or "destroying..." flash msg while process is in progress
         $("#popup").css("display", "none");
         // note the parent of .moin-flash messages is #moin-flash; moin-flash is used as both id and class
         $(".moin-flash").remove();
         MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, ACTION_LOADING[action]);
-
         // create a transaction to delete or destroy selected items
         itemnames = JSON.stringify(links);
         actionTrigger = "moin-" + action + "-trigger";
         url = $("#" + actionTrigger).attr("data-actionurl");
+        // outgoing itemnames is an array of checked item names; comment is from text field of popup,
+        // do_subitems is state of checkbox - true if subitems are to be processed
         $.post(url, {
             itemnames: itemnames,
             comment: comment,
             do_subitems: $("#moin-do-subitems").is(":checked") ? "true" : "false"
         }, function (data) {
-            var success_item = 0,
-                left_item = 0,
-                action_status = data.status,
-                format_names = data.format_names,
-                itemnames = data.itemnames;
+            // incoming itemnames is url-encoded list of item names (including alias names) successfully deleted/destroyed
+            var itemnames = data.itemnames,
+                idx;
+            // display success/fail flash messages created by server for each selected item and subitem
+            for (idx = 0; idx < data.messages.length; idx += 1) {
+                MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, data.messages[idx]);
+            }
+            // remove index rows for all deleted/destroyed items; including alias names (items with alias names have multiple rows)
             $.each(itemnames, function (itemindex, itemname) {
-                // hide (remove) deleted/destroyed items, or leave checkbox checked
-                var input_value,
-                    isLastElement = itemindex == itemnames.length -1;
-                if (action_status[itemindex]) {
-                    input_value = "/" + itemname;
-                    $('input[value="' + input_value + '"]').parent().parent().parent().remove();
-                    success_item += 1;
-                    if (action === 'delete') {
-                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item deleted: ") +  format_names[itemindex]);
-                    } else {
-                        MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Item destroyed: ") +  format_names[itemindex]);
-                    }
-                    // update item count in upper left of table
-                    $(".moin-num-rows").text($('.moin-index tbody tr').length);
-                } else {
-                    left_item += 1;
-                    MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action denied:") + format_names[itemindex]);
-                }
+                var isLastElement = itemindex == itemnames.length -1;
+                $('input[value="' + itemname + '"]').parent().parent().parent().remove();
                 if (isLastElement) {
                     MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action complete."));
+                    // update item count in upper left of table
+                    $(".moin-num-rows").text($('.moin-index tbody tr').length);
+                    // remove Deleting... flash message
+                    $('#moin-flash').find('p').first().remove();
                 }
             });
         }, "json");
