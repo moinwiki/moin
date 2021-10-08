@@ -141,7 +141,7 @@ def search_for_phrase(filename):
         QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', 'no such option', ),
         NEWWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         BACKUPWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
-        DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', ),
+        DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', 'error', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
         EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version', 'successfully installed', 'finished', ),
         # ': e' matches lines similar to: src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
