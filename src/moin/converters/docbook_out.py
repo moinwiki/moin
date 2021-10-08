@@ -134,7 +134,6 @@ class Converter:
         """
         uri = element.tag.uri
         name = self.namespaces_visit.get(uri, None)
-        print('==== uri = %s, name = %s' % (uri, name))  # @@@@@@@@@@@@@
         if name is not None:
             method_name = 'visit_' + name
             method = getattr(self, method_name, None)
