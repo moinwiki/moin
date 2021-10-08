@@ -35,7 +35,7 @@ class Converter:
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
                             query='do=get&rev={0}'.format(rev.revid)),
         }
-        if html.alt in arguments:
+        if arguments and html.alt in arguments:
             attrib[html.alt] = arguments[html.alt]
         elif rev.meta.get(SUMMARY):
             attrib[html.alt] = rev.meta[SUMMARY]

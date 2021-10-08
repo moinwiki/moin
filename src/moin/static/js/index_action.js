@@ -17,15 +17,64 @@ $("document").ready(function () {
         // delete and destroy process started and completed messages
         ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
         ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
-        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")};
+        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")},
+        POPUP_DELETE_HEADER = _("Add optional comment for Delete change log. "),
+        POPUP_DESTROY_HEADER = _("Add optional comment for Destroy change log. ");
 
-    // called by click handlers New Item, Delete item, and Destroy item within Actions dropdown menu
+    // return a list of item names having checked boxes
+    function get_checked() {
+        var checked_names = [];
+        $("input.moin-item:checked").each(function () {
+            var itemname = $(this).attr("value").slice(1);
+            checked_names.push(itemname);
+        });
+        return checked_names;
+    }
+
+    // add a list of all selected, alias, subitem, and rejected names to comment popup
+    function get_subitem_names(action) {
+        var checked_names = get_checked(),
+            wiki_root = $('#moin-wiki-root').val(),
+            checked_name,
+            alias_names = [],
+            subitem_names = [];
+        $.ajax({
+            url: wiki_root + "/+ajaxsubitems",
+            type: "POST",
+            dataType: "json",
+            data: {item_names: checked_names, action_auth: action},
+            success: (function(response) {
+                if (response.rejected_names.length) {
+                    $('p.popup-rejected-names > span').text(response.rejected_names.join(', '));
+                    $('p.popup-rejected-names').removeClass("hidden");
+                }
+                $('p.popup-selected-names > span').text(response.selected_names.join(', '));
+                $('p.popup-alias-names > span').text(response.alias_names.join(', '));
+                $('p.popup-subitem-names > span').text(response.subitem_names.join(', '));
+            }),
+            error: (function(xhr, textstatus, message) {
+                if(textstatus === "timeout") {
+                    alert("Server operation timed out: " + "textstatus = "+ textstatus + ",  message = " + message);
+                } else {
+                    alert("Unknown server error =" + "textstatus = "+ textstatus + " message = " + message);
+                }
+            })
+        })
+    }
+
+    // called by click handlers Delete item, and Destroy item within Actions dropdown menu
     function showpop(action) {
-        // hide Actions popup and show either New Item or Comment popup
+        // hide Actions popup and show Comment popup
         $(".popup-container").css("display", "none");
         $("#popup-for-action").css("display", "block");
         $(".popup-comment").val("");
         $(".popup-action").val(action);
+        if (action === "delete") {
+            $(".popup-header > span").html(POPUP_DELETE_HEADER);
+        } else{
+            $(".popup-header > span").html(POPUP_DESTROY_HEADER);
+        }
+        get_subitem_names(action);
         $("#popup").fadeIn();
         $(".popup-comment").focus();
         $("#lightbox").css("display", "block");
@@ -35,7 +84,7 @@ $("document").ready(function () {
     function hidepop() {
         // hide popup
         $("#popup").css("display", "none");
-        $("#lightbox").css("display", "none");  // qqq
+        $("#lightbox").css("display", "none");
     }
 
     // called by Actions Download click handler
@@ -47,92 +96,63 @@ $("document").ready(function () {
         setTimeout(function () { frame.remove(); }, IFRAME_REMOVE_DELAY);
     }
 
-    // called by do_action when an item is successfully deleted or destroyed
-    function hide(item_link) {
-        // remove a deleted or destroyed item from current display
-        item_link.parent().remove();
-    }
-
-    // called by do_action when item cannot be deleted or destroyed
-    function show_conflict(item_link) {
-        // highlight item that failed a delete or destroy operation
-        item_link.addClass("moin-auth-failed");
-        // cleanup display by unchecking checkbox and removing selected class
-        item_link.prev().children().prop("checked", false);
-        item_link.parent().removeClass("selected-item");
-    }
-
     // executed via the "provide comment" popup triggered by an Actions Delete or Destroy selection
     function do_action(comment, action) {
-        // create an array of selected item names
         var links = [],
             itemnames,
             actionTrigger,
             url;
-        $(".selected-item").children().children("input.moin-item").each(function () {
+        // create an array of selected item names
+        $("input.moin-item:checked").each(function () {
             var itemname = $(this).attr("value").slice(1);
             links.push(itemname);
         });
-        // remove any flash messages, display "deleting..." or "destroying..." briefly while process is in progress
+        // remove any flash messages, display "deleting..." or "destroying..." flash msg while process is in progress
         $("#popup").css("display", "none");
         // note the parent of .moin-flash messages is #moin-flash; moin-flash is used as both id and class
         $(".moin-flash").remove();
         MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, ACTION_LOADING[action]);
-
         // create a transaction to delete or destroy selected items
         itemnames = JSON.stringify(links);
         actionTrigger = "moin-" + action + "-trigger";
         url = $("#" + actionTrigger).attr("data-actionurl");
+        // outgoing itemnames is an array of checked item names; comment is from text field of popup,
+        // do_subitems is state of checkbox - true if subitems are to be processed
         $.post(url, {
             itemnames: itemnames,
-            comment: comment
+            comment: comment,
+            do_subitems: $("#moin-do-subitems").is(":checked") ? "true" : "false"
         }, function (data) {
-            // process post results
+            // incoming itemnames is url-encoded list of item names (including alias names) successfully deleted/destroyed
             var itemnames = data.itemnames,
-                action_status = data.status,
-                success_item = 0,
-                left_item = 0,
-                message;
+                idx;
+            // display success/fail flash messages created by server for each selected item and subitem
+            for (idx = 0; idx < data.messages.length; idx += 1) {
+                MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, data.messages[idx]);
+            }
+            // remove index rows for all deleted/destroyed items; including alias names (items with alias names have multiple rows)
             $.each(itemnames, function (itemindex, itemname) {
-                // hide (remove) deleted/destroyed items, or show conflict (ACL rules, or ?)
-                if (action_status[itemindex]) {
-                    hide($('.selected-item'));
-                    success_item += 1;
+                var isLastElement = itemindex == itemnames.length -1;
+                $('input[value="' + itemname + '"]').parent().parent().parent().remove();
+                if (isLastElement) {
+                    MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action complete."));
                     // update item count in upper left of table
                     $(".moin-num-rows").text($('.moin-index tbody tr').length);
-                } else {
-                    show_conflict($('.selected-item').children('a.moin-item[href="/' + itemname + '"]'));
-                    left_item += 1;
+                    // remove Deleting... flash message
+                    $('#moin-flash').find('p').first().remove();
                 }
             });
-            // show a message summarizing delete/destroy
-            message = ACTION_DONE[action] + success_item;
-            if (left_item) {
-                message += ACTION_FAILED[action] + left_item + ".";
-            }
-            $(".moin-flash").remove();
-            MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, message);
         }, "json");
     }
 
     // add click handler to "Select All" tab to select/deselect all items
-    $(".moin-select-allitem").click(function () {
-        // toggle classes
-        if ($(this).hasClass("allitem-toselect")) {
-            $(".moin-index tbody tr td:first-child").removeClass().addClass("selected-item");
-            $(this).removeClass("allitem-toselect").addClass("allitem-selected");
-            $(this).children("i").removeClass("fa-square-o").addClass("fa fa-check-square-o");
-            $(".moin-select-button-text").text(_("Deselect All"));
-            $(".moin-select-item > input[type='checkbox']").each(function () {
+    $(".moin-select-toggle").change(function () {
+        if ($(this).find("input").prop("checked")) {
+            $(".moin-select-item > input.moin-item").each(function () {
                 $(this).prop('checked', true);
             });
-            $(".moin-auth-failed").removeClass("moin-auth-failed");
         } else {
-            $(this).removeClass("allitem-selected").addClass("allitem-toselect");
-            $(".moin-index tbody tr td:first-child").removeClass();
-            $(this).children("i").removeClass("fa-check-square-o").addClass("fa-square-o");
-            $(".moin-select-button-text").text(_("Select All"));
-            $(".moin-select-item > input[type='checkbox']").each(function () {
+            $(".moin-select-item > input.moin-item").each(function () {
                 $(this).prop('checked', false);
             });
         }
@@ -145,24 +165,25 @@ $("document").ready(function () {
 
     // add click handler to "Download" button of Actions dropdown
     $("#moin-download-trigger").click(function () {
-        if (!($("td.selected-item").length)) {
+        if (!($(".moin-item:checked").length)) {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Download failed, no items were selected."));
         } else {
             // download selected files (add small delay to start of multiple downloads for IE9)
-            $(".selected-item").children(".moin-download-link").each(function (index, element) {
+            $(".moin-item:checked").siblings(".moin-download-link").each(function (index, element) {
                 // at 0 ms IE9 skipped 41 of 42 downloads, at 100 ms IE9 skipped 14 of 42, success at 200 ms
                 var wait = index * IFRAME_CREATE_DELAY;
                 setTimeout(function () { startFileDownload(element); }, wait);
             });
+            $("input.moin-item:checked").prop('checked', false);
         }
     });
 
     // add click handler to "Delete" and "Destroy" buttons of Actions dropdown
     $(".moin-action-tab").click(function () {
-        var action = this.text;
+        var action = this.innerText;
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
-        if (!($("td.selected-item").length)) {
+        if (!($(".moin-item:checked").length)) {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, action + ' failed, no items were selected.');
         } else {
@@ -229,7 +250,6 @@ $("document").ready(function () {
             }
         } else {
             $(this).parent().addClass("selected-item");
-            $(this).next().removeClass("moin-auth-failed");
         }
     });
 

@@ -245,7 +245,7 @@ class Dump(Command):
                 with open(norm(join(html_root, target)), 'wb') as f:
                     f.write(page.encode('utf8'))
         else:
-            print('Error: no item matching name in app.cfg.default_root was found')
+            print('Error: index pages not created because no home page exists, expected an item named "{0}".'.format(app.cfg.default_root))
 
     def subitems(self, s, target='href="'):
         """

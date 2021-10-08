@@ -490,7 +490,6 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; }
 .moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em 0; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
-a.moin-auth-failed { color: red; color: var(--alert); }
 
 .moin-contenttype-selection form { z-index: 2; background: #fff; background: var(--bg-primary);
     border: 3px solid #4e7da9; border: 3px solid var(--border); padding: .2em; border-radius: 7px; }
@@ -532,10 +531,10 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .popup-closer.popup-cancel { background-color: red; background-color: var(--bg-close); color: #fff; color: var(--inverse);
     font-size: 1em; padding: 1px 4px; margin: 0; float: right; cursor: pointer; border: none; border-radius: 0; }
 .popup-body { clear: both; background: #fff; background: var(--bg-primary); color: #000; color: var(--primary); padding: 10px; margin: 0; }
-.popup-body label { margin: 5px; display: block; font-weight: bold; }
 .popup-comment { margin-bottom: 1em; }
 .popup-body input[type="text"] { width: 96%; }
 .popup-container { margin: 0; }
+.popup-names { font-weight: bold; }
 #lightbox { background: #fff; background: var(--bg-primary); opacity: .7; position: absolute; left: 0; top: 0;
     width: 100%; height: 100%; z-index: 9; margin: 0; display: none; }
 
