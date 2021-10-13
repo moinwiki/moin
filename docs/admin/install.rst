@@ -37,7 +37,7 @@ Let's create a new instance:
 
 ::
 
- moin create-instance INSTANCE-DIRECTORY  # TODO: implement this!
+ moin create-instance INSTANCE-DIRECTORY
 
 Change into the new instance directory:
 
@@ -48,7 +48,8 @@ Change into the new instance directory:
 You'll find a ``wikiconfig.py`` there to edit. Adapt it as you like,
 you'll find some comments in there.
 
-After configuring, you need to initialize the storage and the index:
+After configuring, you can create an empty wiki by initializing the
+storage and the index:
 
 ::
 
@@ -81,20 +82,29 @@ Installation (for developers)
 
 Clone the git repository
 ========================
-If you like to work on the moin2 code, clone the project repository:
+If you like to work on the moin2 code, clone the master project repository
+or see the option below:
 
 ::
 
+ cd <to the parent of your moin repo>
  git clone https://github.com/moinwiki/moin
+ cd moin
 
-If you use github, you can also first fork that project repo to your own
+If you use github, you can also first fork the project repo to your own
 user's github repositories and then clone your forked repo to your local
-development machine. You can easily publish own changes and do pull requests
-that way.
+development machine. You can easily publish your own changes and
+do pull requests that way. If you do fork the project, then an alternative
+to the above command is to clone your fork and add a remote url to the
+master::
+
+ git clone https://github.com/<your name>/moin
+ cd moin
+ git remote add moinwiki https://github.com/moinwiki/moin
 
 Installing
 ==========
-Before you can run moin, you need to install it:
+Before you can run moin, you need to install it.
 
 Using your standard user account, run the following command
 from the project root directory. Replace <python> in the command
@@ -129,6 +139,11 @@ messages will be extracted and written to the terminal window, and
 finally a message to type "m" to display a menu.
 
 If there are failure messages, see the troubleshooting section below.
+
+Activate the virtual environment::
+
+ activate #windows
+ . activate  # unix
 
 Typing "./m" (or "m" on Windows) will display a menu similar to:
 
@@ -195,15 +210,17 @@ instructions waiting for you under the Development topic.
 If you plan on using this wiki as a production wiki,
 then before you begin adding or importing data and registering users
 review the configuration options. See the sections on configuration for
-details. Be sure to edit `wikiconfig.py` (or `wikiconfig_editme.py`) and
-change the settings for:
+details. Be sure to edit `wikiconfig.py` and change the settings for::
 
+ * sitename
  * interwikiname
  * SECRET_KEY
  * secrets
+ * default_acl
+ * users_acl
 
 If you plan on just using moin2 as a desktop wiki (and maybe
-help by reporting bugs), then some logical menu choices are:
+help by reporting bugs), then some logical menu choices are::
 
  * `./m extras` - to install packages required for docs and moin development
  * `./m docs` - to create docs, see User tab, Documentation (local)
@@ -211,22 +228,14 @@ help by reporting bugs), then some logical menu choices are:
  * `./m new-wiki` or `m import19 ...` - no data or moin 1.9 data
  * `./m backup` - backup wiki data as needed or as scheduled
 
-Warning: Backing up data at this point may provide a false sense
-of security because no migration tool has been developed to migrate
-data between moin2 versions.  In its current alpha state, there
-may be code changes that impact the structure of the wiki data or
-indexes. Should this occur, first try rebuilding the indexes with the
-`./m index` command. If that fails, you must start over with an empty
-wiki and copy and paste the contents of all the old wiki
-items into the new wiki. While no such changes are planned,
-they have happened in the past and may happen in the future.
-
 If you installed moin2 by cloning the repository,
 then you will likely want to keep your master branch uptodate:
 
 ::
 
-  git checkout master ; git pull mm master
+  git checkout master
+  git pull # if you cloned the moinwiki master repo OR
+  git pull moinwiki master # if you cloned your fork and added a remote
 
 After pulling updates, it is best to also rerun the quickinstall process
 to install any changes or new releases to the dependant packages:
@@ -234,7 +243,7 @@ to install any changes or new releases to the dependant packages:
 ::
 
  m quickinstall  # in Windows
- ./m run         # in Unix
+ ./m quickinstall # in Unix
 
 Troubleshooting
 ===============
