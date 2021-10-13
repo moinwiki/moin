@@ -11,14 +11,14 @@ Upgrading
    So please consider it to be different and incompatible software that tries
    to be compatible in some areas:
 
-   * Server and wiki engine Configuration: expect to review/rewrite it
-   * Wiki content: expect 90% compatibility for existing moin 1.9 content.
-     * The most commonly used simple moin wiki markup (like headlines, lists, bold,
-       ...) has not changed
-     * CamelCase auto links will be converted to explicit [[CamelCase]] links
-     * [[attachment:my.jpg]] will be converted to [[/my.jpg]]
-     * {{attachment:my.jpg}} will be converted to {{/my.jpg}}
-     * expect to change macros, parsers, action links, 3rd party extensions
+       * Server and wiki engine Configuration: expect to review/rewrite it
+       * Wiki content: expect 90% compatibility for existing moin 1.9 content.
+
+           * The most commonly used simple moin wiki markup (like headlines, lists, bold) has not changed
+           * CamelCase auto links will be converted to explicit [[CamelCase]] links
+           * [[attachment:my.jpg]] will be converted to [[/my.jpg]]
+           * {{attachment:my.jpg}} will be converted to {{/my.jpg}}
+           * expect to change custom macros, parsers, action links, 3rd party extensions
 
 From moin < 1.9
 ===============
@@ -55,22 +55,15 @@ the moin2 sample config. Do *not* just use your 1.9 wikiconfig.
 
 Adjusting the moin2 configuration
 ---------------------------------
-It is essential that you adjust the wiki config before you import your 1.9
-data:
+It is essential that you edit wikiconfig.py before you import your 1.9
+data. In particular, review the settings for::
 
-Example configuration::
-
-    from os.path import join
-    from MoinMoin.storage import create_simple_mapping
-
-    interwikiname = u'...' # critical, make sure it is same as in 1.9!
-    sitename = u'...' # same as in 1.9
-    item_root = u'...' # see page_front_page in 1.9
-
-    # if you had a custom passlib_crypt_context in 1.9, put it here
-
-    # configure backend and ACLs to use in future
-    # TODO
+- sitename
+- interwikiname
+- SECRET_KEY
+- secrets
+- default_acl
+- users_acl
 
 
 Clean up your moin 1.9 data
@@ -84,33 +77,52 @@ You do this with moin *1.9*, using these commands::
   moin ... maint cleanpage
   moin ... maint cleancache
 
-.. todo::
-   add more info about handling of deleted pages
+Deleted pages will not be migrated. A message will be written to the
+log for each deleted page.
 
 
 Importing your moin 1.9 data
 ----------------------------
-Assuming you have no moin2 storage and no index created yet, include the
+Assuming you have no moin2 storage and no index directories created yet, include the
 -s and -i options to create the storage and an index.
 
-The import19 argument to the `moin` script will then read your 1.9 data_dir (pages, attachments and users),
-convert the data as needed, and write it to your moin2 storage and also
-build the index::
+The import19 argument to the `moin` script will read your 1.9 data_dir (pages, attachments and users),
+convert the data, write it to your moin2 storage and build the index::
 
-  moin import19 -s -i --data_dir /your/moin/1.9/data 1>import1.log 2>import2.log
+  moin import19 -s -i --data_dir /<path to moin1.9>/wiki/data 1>import19out.log 2>import19err.log
 
-If you use the command as given, it will write all output into two log files.
+If you use the command as given, it will write all stdout and stderr output into two log files.
 Please review them to find out whether the importer had critical issues with your
 data.
 
+By default, all items using moin 1.9 markup are converted to moin 2 markup. The converted
+revision will have a timestamp one second later than the last revision's timestamp to preserve
+revision history.
+
+Page revisions that were created with leading `#format creole` and `#format rst` commands
+will retain the creole and rst markups.
+
+There is an additional option to convert pages with moin wiki markup using one of the other moin2
+output converters: markdown, rst, html, or docbook.
+Add the `--markup_out` or `-m` option to the `moin import19` command above. To
+convert the last revision of all pages with moin wiki markup to markdown::
+
+ -m markdown
+
+The import19 process will create a wiki directory structure different from moin 1.9.
+There will be three namespaces under /wiki/data: "default", "userprofiles", and "users".
+Each namespace will have "data" and "meta" subdirectories. Additional custom namespaces can
+be created by editing wikiconfig.py.
+
+Most of the data from the 1.9 pages directory will be converted to the "default" directory. User
+home pages and subpages will be converted to the "users" directory. The data from the 1.9 "users"
+directory will be converted to the "userprofiles" directory. The "userprofiles" directory
+contains data used internally and should always be protected from any access by ACLs.
 
 Testing
 -------
-Start moin now, as it should have your data available.
-
-Try "Index" and "History" views to see what is included.
-
-Check whether your data is complete and working fine.
+Review the logs for error messages. Start the moin server and try the "Index" and "History"
+views to see what is included. Check whether your data is complete and rendering correctly.
 
 If you find issues with data migration from moin 1.9 to 2, please check the
 moin2 issue tracker.
