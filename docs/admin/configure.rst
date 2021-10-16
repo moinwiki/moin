@@ -83,7 +83,7 @@ A wikiconfig.py looks like this::
 
  class Config(DefaultConfig):
      # some comment
-     sometext = u'your value'
+     sometext = 'your value'
      somelist = [1, 2, 3]
 
  MOINCFG = Config  # Flask only likes uppercase characters
@@ -104,8 +104,7 @@ Let's go through this line-by-line:
 4. a `#` character defines a comment in your config. This line, as
    well as all other following lines with Config settings, is indented by 4
    blanks, because Python defines blocks by indentation.
-5. define a Config attribute called `sometext` with value u'your value' whereby
-   the `u'...'` means that this is a unicode string.
+5. define a Config attribute called `sometext` with value 'your value'.
 6. define a Config attribute called `somelist` with value [1, 2, 3]; this is
    a list with the numbers 1, 2 and 3 as its elements.
 7. empty line, for better readability
@@ -295,7 +294,7 @@ Customizing the CMS header may be done as follows. Several restarts of the serve
    and Global Index.
  - If many links are desired, consider using `macro custom_panels`.
  - Test by logging in and setting "Topside CMS Theme" as your preferred theme.
- - After testing, make the cms theme the default theme by adding ``theme_default = u"topside_cms"`` to wikiconfig.
+ - After testing, make the cms theme the default theme by adding ``theme_default = "topside_cms"`` to wikiconfig.
  - Inform your editors to login and set another theme as their preferred theme.
  - If the login link was removed, the login page is available by keying ``+login`` as the page name in the browser URL.
 
@@ -643,9 +642,9 @@ authentication debugging::
 
 Example logging output::
 
- 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<MoinMoin.user.User at 0x90a0f0c name:u'ThomasWaldmann' valid:1> kw={'username': u'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': u'secret', 'login_username': u'ThomasWaldmann', 'password': u'secret', 'login_submit': u''}
- 2011-02-05 16:35:04,716 INFO MoinMoin.auth.log:22 session: user_obj=<MoinMoin.user.User at 0x90a0f6c name:u'ThomasWaldmann' valid:1> kw={}
- 2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:u'ThomasWaldmann' valid:False> kw={}
+ 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<MoinMoin.user.User at 0x90a0f0c name:'ThomasWaldmann' valid:1> kw={'username': 'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': 'secret', 'login_username': 'ThomasWaldmann', 'password': 'secret', 'login_submit': ''}
+ 2011-02-05 16:35:04,716 INFO MoinMoin.auth.log:22 session: user_obj=<MoinMoin.user.User at 0x90a0f6c name:'ThomasWaldmann' valid:1> kw={}
+ 2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:'ThomasWaldmann' valid:False> kw={}
  2011-02-05 16:35:06,328 INFO MoinMoin.auth.log:22 session: user_obj=None kw={}
 
 **Note:** there is sensitive information like usernames and passwords in this
@@ -668,7 +667,7 @@ with the fileserver storage backend::
         # see man mount.cifs for details
         server='smb.example.org',  # (no default) mount.cifs //server/share
         share='FILESHARE',  # (no default) mount.cifs //server/share
-        mountpoint_fn=lambda username: u'/mnt/wiki/%s' % username,  # (no default) function of username to determine the mountpoint
+        mountpoint_fn=lambda username: '/mnt/wiki/%s' % username,  # (no default) function of username to determine the mountpoint
         dir_user='www-data',  # (no default) username to get the uid that is used for mount.cifs -o uid=...
         domain='DOMAIN',  # (no default) mount.cifs -o domain=...
         dir_mode='0700',  # (default) mount.cifs -o dir_mode=...
@@ -680,7 +679,7 @@ with the fileserver storage backend::
 
     auth = [....., smbmounter]  # you need a real auth object in the list before smbmounter
 
-    smb_display_prefix = u"S:"  # where //server/share is usually mounted for your windows users (display purposes only)
+    smb_display_prefix = "S:"  # where //server/share is usually mounted for your windows users (display purposes only)
 
 .. todo::
 
@@ -829,7 +828,7 @@ Moin has some built in functions that are protected by ACLs:
 
 Example::
 
-    acl_functions = u'YourName:superuser'
+    acl_functions = 'YourName:superuser'
 
 ACLs for contents
 -----------------
@@ -838,9 +837,9 @@ may have ACLs defined in their metadata. Within wikiconfig, ACLs are specified
 per namespace and storage backend (see storage backend docs for details). The
 example below shows an entry for the default namespace::
 
-    default_acl=dict(before=u'SuperUser:read,write,create,destroy,admin',
-                     default=u'TrustedEditorGroup:read,write,create,destroy,admin Known:read,write,create',
-                     after=u'All:read',
+    default_acl=dict(before='SuperUser:read,write,create,destroy,admin',
+                     default='TrustedEditorGroup:read,write,create,destroy,admin Known:read,write,create',
+                     after='All:read',
                      hierarchic=False, ),
 
 As shown above, `before`, `default` and  `after` ACLs are specified. The `default` ACL
@@ -910,7 +909,7 @@ An ACL is processed from left to right, where the first left-side match counts.
 
 Example::
 
-    u"SuperMan,WonderWoman:read,write,create,destroy,admin All:read,write"
+    "SuperMan,WonderWoman:read,write,create,destroy,admin All:read,write"
 
 If "SuperMan" is currently logged in and moin processes this ACL, it will find
 a name match in the first entry. If moin wants to know whether he may destroy,
@@ -958,7 +957,7 @@ it will continue with the next entry.
 
 Example::
 
-    u"+SuperMan:create,destroy,admin -Idiot:write All:read,write"
+    "+SuperMan:create,destroy,admin -Idiot:write All:read,write"
 
 If "SuperMan" is currently logged in and moin wants to know whether he may
 destroy, it'll find a match in the first entry, because the name matches *and* permission
@@ -992,7 +991,7 @@ having to edit lots of items.
 
 Example::
 
-    u"-NotThisGuy:write Default"
+    "-NotThisGuy:write Default"
 
 This will behave as usual, except that "NotThisGuy" will never be given write
 permission.
@@ -1068,8 +1067,8 @@ the use of any WikiGroups::
 
     def groups(self):
         from MoinMoin.datastruct import ConfigGroups
-        groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
-                  u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
+        groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1'],
+                  'AdminGroup': ['Admin1', 'Admin2', 'John']}
         return ConfigGroups(groups)
 
 CompositeGroups enable both ConfigGroups and WikiGroups to be used. The example
@@ -1080,8 +1079,8 @@ items with the same names::
 
     def groups(self):
         from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
-        groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
-                  u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
+        groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1'],
+                  'AdminGroup': ['Admin1', 'Admin2', 'John']}
         return CompositeGroups(ConfigGroups(groups), WikiGroups())
 
 
@@ -1118,10 +1117,10 @@ the use of any WikiDicts::
 
     def dicts(self):
         from MoinMoin.datastruct import ConfigDicts
-        dicts = {u'OneDict': {u'first_key': u'first item',
-                              u'second_key': u'second item'},
-                 u'NumbersDict': {u'1': 'One',
-                                  u'2': 'Two'}}
+        dicts = {'OneDict': {'first_key': 'first item',
+                              'second_key': 'second item'},
+                 'NumbersDict': {'1': 'One',
+                                  '2': 'Two'}}
         return ConfigDicts(dicts)
 
 CompositeDicts enable both ConfigDicts and WikiDicts to be used. The example
@@ -1132,10 +1131,10 @@ items with the same names::
 
     def dicts(self):
         from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
-        dicts = {u'OneDict': {u'first_key': u'first item',
-                              u'second_key': u'second item'},
-                 u'NumbersDict': {u'1': 'One',
-                                  u'2': 'Two'}}
+        dicts = {'OneDict': {'first_key': 'first item',
+                              'second_key': 'second item'},
+                 'NumbersDict': {'1': 'One',
+                                  '2': 'Two'}}
         return CompositeDicts(ConfigDicts(dicts),
                               WikiDicts())
 
@@ -1190,7 +1189,7 @@ see below. Usually it is a URL-like string in the form of::
 specification. `fs` is the type of the store, followed by a specification
 that makes sense for the fs (filesystem) store, i.e. a path with placeholders.
 
-`%(backend)s` placeholder will be replaced by 'default' or 'userprofiles' for
+`%(backend)s` placeholder will be replaced by 'default', users or 'userprofiles' for
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
 later.
 
@@ -1205,7 +1204,7 @@ In this case, the mapping created will look like this:
 +----------------+-----------------------------+
 
 `default_acl` and `userprofiles_acl` are dictionaries specifying the ACLs for
-this part of the namespace (normal content, user profiles).
+this part of the namespace (normal content, user home pages, and user profiles).
 See the docs about ACLs.
 
 protecting middleware
@@ -1252,12 +1251,12 @@ Configuration::
     data_dir = '/srv/mywiki/data'
     namespace_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
-        default_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
-                         default=u'All:read,write,create',
-                         after=u'', ),
-        userprofiles_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
-                              default=u'',
-                              after=u'', ),
+        default_acl=dict(before='WikiAdmin:read,write,create,destroy',
+                         default='All:read,write,create',
+                         after='', ),
+        userprofiles_acl=dict(before='WikiAdmin:read,write,create,destroy',
+                              default='',
+                              after='', ),
     )
 
 
@@ -1369,51 +1368,51 @@ A sample configuration looks like this::
         namespaces = {
             # maps namespace name -> backend name
             # first, configure the required, standard namespaces:
-            NAMESPACE_DEFAULT: u'default',
-            NAMESPACE_USERPROFILES: u'userprofiles',
+            NAMESPACE_DEFAULT: 'default',
+            NAMESPACE_USERPROFILES: 'userprofiles',
             # some additional custom namespaces stored in default backend:
-            u'foo/': u'default',
-            u'bar/': u'default',
+            'foo/': 'default',
+            'bar/': 'default',
             # custom namespace with a backend - note absence of trailing /
-            # u'baz': u'baz',
+            # 'baz': 'baz',
         }
         backends = {
             # maps backend name -> storage
             # not implemented; storage type for all backends is set in 'uri' above; issue #566
-            u'default': None,
-            u'userprofiles': None,
+            'default': None,
+            'userprofiles': None,
             # required for baz namespace defined above
-            # u'baz': None,
+            # 'baz': None,
         }
         acls = {
             # maps namespace name -> acl configuration dict for that namespace
-            NAMESPACE_USERPROFILES: dict(before=u'',
-                                         default=u'All:read,write,create,destroy,admin',
-                                         after=u'',
+            NAMESPACE_USERPROFILES: dict(before='',
+                                         default='All:read,write,create,destroy,admin',
+                                         after='',
                                          hierarchic=False, ),
-            NAMESPACE_DEFAULT: dict(before=u'',
-                                    default=u'All:read,write,create,destroy,admin',
-                                    after=u'',
+            NAMESPACE_DEFAULT: dict(before='',
+                                    default='All:read,write,create,destroy,admin',
+                                    after='',
                                     hierarchic=False, ),
-            u'foo/': dict(before=u'',  # trailing / required because foo is stored in default backend
-                          default=u'All:read,write,create,destroy,admin',
-                          after=u'',
+            'foo/': dict(before='',  # trailing / required because foo is stored in default backend
+                          default='All:read,write,create,destroy,admin',
+                          after='',
                           hierarchic=False, ),
-            u'bar/': dict(before=u'',
-                          default=u'All:read,write,create,destroy,admin',
-                          after=u'',
+            'bar/': dict(before='',
+                          default='All:read,write,create,destroy,admin',
+                          after='',
                           hierarchic=False, ),
-            u'baz/': dict(before=u'',
-                          default=u'All:read,write,create,destroy,admin',
-                          after=u'',
+            'baz/': dict(before='',
+                          default='All:read,write,create,destroy,admin',
+                          after='',
                           hierarchic=False, ),
         }
         namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
 
         # define mapping of namespaces to item_roots (home pages within namespaces).
-        root_mapping = {u'foo': u'fooHome'}
+        root_mapping = {'foo': 'fooHome'}
         # default root, use this value in case a particular namespace key is not present in the above mapping.
-        default_root = u'Home'
+        default_root = 'Home'
 
     MOINCFG = LocalConfig
     DEBUG = False
@@ -1435,7 +1434,7 @@ Moin can optionally send E-Mail. Possible uses:
 You need to configure some settings before sending E-Mail can be supported::
 
     # the "from:" address [Unicode]
-    mail_from = u"wiki <wiki@example.org>"
+    mail_from = "wiki <wiki@example.org>"
 
     # a) using an SMTP server, e.g. "mail.provider.com" with optional `:port`
     appendix, which defaults to 25 (set None to disable mail)
@@ -1459,7 +1458,7 @@ If you want to enable admins to receive Python tracebacks, you need to configure
 the following::
 
     # list of admin emails
-    admin_emails = [u"admin <admin@example.org>"]
+    admin_emails = ["admin <admin@example.org>"]
 
     # send tracebacks to admins
     email_tracebacks = True
