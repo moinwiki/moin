@@ -1159,6 +1159,7 @@ This is a helper function to make storage setup easier. It helps you to:
   namespaces:
 
   - default
+  - users
   - userprofiles
 * configure ACLs protecting these namespaces
 * setup a router middleware that dispatches to these backends
@@ -1174,6 +1175,10 @@ Call it as follows::
                          default=...,
                          after=...,
                          hierarchic=..., ),
+        users_acl=dict(before=...,
+                       default=...,
+                       after=...,
+                       hierarchiv=False, ),
         userprofiles_acl=dict(before=...,
                               default=...,
                               after=...,
@@ -1199,6 +1204,8 @@ In this case, the mapping created will look like this:
 | Namespace      | Filesystem path for storage |
 +----------------+-----------------------------+
 | default        | /srv/mywiki/default/        |
++----------------+-----------------------------+
+| users          | /srv/mywiki/users/          |
 +----------------+-----------------------------+
 | userprofiles   | /srv/mywiki/userprofiles/   |
 +----------------+-----------------------------+
@@ -1254,7 +1261,11 @@ Configuration::
         default_acl=dict(before='WikiAdmin:read,write,create,destroy',
                          default='All:read,write,create',
                          after='', ),
-        userprofiles_acl=dict(before='WikiAdmin:read,write,create,destroy',
+        users_acl=dict(before='WikiAdmin:read,write,create,destroy',
+                       default='All:read,write,create',
+                       after='', ),
+        # userprofiles is for internal use, contains only user metadata, access denied to all
+        userprofiles_acl=dict(before='All:',
                               default='',
                               after='', ),
     )
@@ -1357,7 +1368,7 @@ A sample configuration looks like this::
     from MoinMoin.storage import create_mapping
     from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 
-    class LocalConfig(Config):
+    class Config(DefaultConfig):
         wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
         instance_dir = os.path.join(wikiconfig_dir, 'wiki')
         data_dir = os.path.join(instance_dir, 'data')
@@ -1369,6 +1380,7 @@ A sample configuration looks like this::
             # maps namespace name -> backend name
             # first, configure the required, standard namespaces:
             NAMESPACE_DEFAULT: 'default',
+            NAMESPACE_USERS: 'users',
             NAMESPACE_USERPROFILES: 'userprofiles',
             # some additional custom namespaces stored in default backend:
             'foo/': 'default',
@@ -1380,30 +1392,32 @@ A sample configuration looks like this::
             # maps backend name -> storage
             # not implemented; storage type for all backends is set in 'uri' above; issue #566
             'default': None,
+            'users': None,
             'userprofiles': None,
             # required for baz namespace defined above
             # 'baz': None,
         }
         acls = {
             # maps namespace name -> acl configuration dict for that namespace
-            NAMESPACE_USERPROFILES: dict(before='',
-                                         default='All:read,write,create,destroy,admin',
+            NAMESPACE_USERPROFILES: dict(before='All:',
+                                         default='',
                                          after='',
                                          hierarchic=False, ),
-            NAMESPACE_DEFAULT: dict(before='',
-                                    default='All:read,write,create,destroy,admin',
+            NAMESPACE_DEFAULT: dict(before='SuperUser:read,write,create,destroy,admin',
+                                    default='All:read,write,create',
                                     after='',
                                     hierarchic=False, ),
-            'foo/': dict(before='',  # trailing / required because foo is stored in default backend
-                          default='All:read,write,create,destroy,admin',
+            # trailing / causes foo, bar, and baz to be stored in default backend
+            'foo/': dict(before='SuperUser:read,write,create,destroy,admin',
+                          default='All:read,write,create',
                           after='',
                           hierarchic=False, ),
-            'bar/': dict(before='',
-                          default='All:read,write,create,destroy,admin',
+            'bar/': dict(before='SuperUser:read,write,create,destroy,admin',
+                          default='All:read,write,create',
                           after='',
                           hierarchic=False, ),
-            'baz/': dict(before='',
-                          default='All:read,write,create,destroy,admin',
+            'baz/': dict(before='SuperUser:read,write,create,destroy,admin',
+                          default='All:read,write,create',
                           after='',
                           hierarchic=False, ),
         }
