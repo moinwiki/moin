@@ -152,13 +152,13 @@ wiki configs could look like:
 
 ``Sales``::
 
-      interwikiname = u"Sales"
+      interwikiname = "Sales"
       index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
 
 
 ``Engineering``::
 
-      interwikiname = u"Engineering"
+      interwikiname = "Engineering"
       index_storage = 'FileStorage', ("/path/to/moin-2.0/wiki/index", ), {}
 
 

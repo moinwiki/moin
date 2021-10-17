@@ -19,11 +19,11 @@ class MimeTokenizer(Tokenizer):
         """
         Tokenizer behaviour:
 
-        Input: u"text/x.moin.wiki;charset=utf-8"
-        Output: u"text/x.moin.wiki;charset=utf-8", u"text", u"x.moin.wiki", u"charset=utf-8"
+        Input: "text/x.moin.wiki;charset=utf-8"
+        Output: "text/x.moin.wiki;charset=utf-8", "text", "x.moin.wiki", "charset=utf-8"
 
-        Input: u"application/pdf"
-        Output: u"application/pdf", u"application", u"pdf"
+        Input: "application/pdf"
+        Output: "application/pdf", "application", "pdf"
 
         :param value: String for tokenization
         :param start_pos: The position number of the first token. For example,
@@ -82,17 +82,17 @@ class AclTokenizer(Tokenizer):
         Analyzer behaviour:
 
         In index mode:
-            Input: u"JoeDoe,JaneDoe:admin,read,write,destroy +EditorGroup:write All:read"
+            Input: "JoeDoe,JaneDoe:admin,read,write,destroy +EditorGroup:write All:read"
 
-            Output: "u'JoeDoe:+read', u'JoeDoe:+write', u'JoeDoe:-create', u'JoeDoe:+admin',
-                     u'JoeDoe:+destroy', u'JaneDoe:+read', u'JaneDoe:+write', u'JaneDoe:-create',
-                     u'JaneDoe:+admin', u'JaneDoe:+destroy', u'EditorGroup:+write', u'All:+read',
-                     u'All:-write', u'All:-create', u'All:-admin', u'All:-destroy'
+            Output: "'JoeDoe:+read', 'JoeDoe:+write', 'JoeDoe:-create', 'JoeDoe:+admin',
+                     'JoeDoe:+destroy', 'JaneDoe:+read', 'JaneDoe:+write', 'JaneDoe:-create',
+                     'JaneDoe:+admin', 'JaneDoe:+destroy', 'EditorGroup:+write', 'All:+read',
+                     'All:-write', 'All:-create', 'All:-admin', 'All:-destroy'
 
         In query mode:
-            Input: u"JoeDoe:+write"
+            Input: "JoeDoe:+write"
 
-            Output: u"JoeDoe:+write"
+            Output: "JoeDoe:+write"
 
         :param value: str
         :param positions: Whether to record token positions in the token.
@@ -125,9 +125,9 @@ def item_name_analyzer():
     """
     Analyzer behaviour:
 
-    Input: u"some item name", u"SomeItem/SubItem", u"GSOC2011"
+    Input: "some item name", "SomeItem/SubItem", "GSOC2011"
 
-    Output: u"some", u"item", u"name"; u"Some", u"Item", u"Sub", u"Item"; u"GSOC", u"2011"
+    Output: "some", "item", "name"; "Some", "Item", "Sub", "Item"; "GSOC", "2011"
     """
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)

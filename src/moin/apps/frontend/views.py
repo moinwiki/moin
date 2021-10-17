@@ -354,7 +354,7 @@ def search(item_name):
         filetypes = request.args.get('filetypes')
         is_ticket = bool(request.args.get('is_ticket'))
         if filetypes:
-            filetypes = filetypes.split(',')[:-1]  # To remove the extra u'' at the end of the list
+            filetypes = filetypes.split(',')[:-1]  # To remove the extra '' at the end of the list
     else:
         query = search_form['q'].value
         history = bool(request.values.get('history'))

@@ -122,8 +122,8 @@ class TestConverter:
          'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
         # TODO: test footnote placement succeeds but output is wrong, and other tests will fail due to pytest multithreading
         # fix probably requires replacing site-packages/markdown/extensions/footnotes.py
-        # (u'Footnotes[^a]\n\n[^a]: This is a footnote.\n',
-        #  u'Footnotes<sup>1</sup>\n\n----\n\n1. This is a footnote.\xa0[\u21a9](#fnref:a){: class="footnote-backref" title="Jump back to footnote 1 in the text"}\n'),
+        # ('Footnotes[^a]\n\n[^a]: This is a footnote.\n',
+        #  'Footnotes<sup>1</sup>\n\n----\n\n1. This is a footnote.\xa0[\u21a9](#fnref:a){: class="footnote-backref" title="Jump back to footnote 1 in the text"}\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

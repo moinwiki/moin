@@ -326,7 +326,7 @@ class TestItemAcls:
         # usage of default acl (non-hierarchical) or usage of default acl and
         # inheritance (hierarchical):
         (subitem1_name, None, 'FooFoo!'),
-        # acl u'' means: "empty acl (no rights for noone) given" - this will
+        # acl '' means: "empty acl (no rights for anyone) given" - this will
         # INHIBIT usage of default acl / inheritance (we DO HAVE an item acl,
         # it is just empty!):
         (subitem2_name, '', 'BarBar!'),
@@ -406,7 +406,7 @@ class TestItemHierachicalAcls:
         # usage of default acl (non-hierarchical) or usage of default acl and
         # inheritance (hierarchical):
         (subitem1_name, None, 'FooFoo!'),
-        # acl u'' means: "empty acl (no rights for noone) given" - this will
+        # acl '' means: "empty acl (no rights for anyone) given" - this will
         # INHIBIT usage of default acl / inheritance (we DO HAVE an item acl,
         # it is just empty!):
         (subitem2_name, '', 'BarBar!'),

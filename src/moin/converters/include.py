@@ -132,7 +132,7 @@ class XPointer(list):
     """
     Simple XPointer parser
 
-    parses strings like u'xmlns(page=http://moinmo.in/namespaces/page)page:include(pages(^^pn))'
+    parses strings like 'xmlns(page=http://moinmo.in/namespaces/page)page:include(pages(^^pn))'
     """
 
     tokenizer_rules = r"""

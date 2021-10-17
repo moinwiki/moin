@@ -229,7 +229,7 @@ def acl_validate(acl_string):
     """
     all_rights = {'read', 'write', 'create', 'destroy', 'admin'}
     acls = str(acl_string)
-    if acls in ('None', 'Empty', ''):  # u'' is not possible if field is required on form
+    if acls in ('None', 'Empty', ''):  # '' is not possible if field is required on form
         return True
     acls = acls.split()
     for acl in acls:
@@ -1141,7 +1141,7 @@ class Default(Contentful):
             if template_name is None:
                 edit_utils.cursor_close()
                 return self._do_modify_show_templates()
-            # template_name == u'' when user chooses "create item from scratch"
+            # template_name == '' when user chooses "create item from scratch"
             elif template_name:
                 item = Item.create(template_name)
                 form = self.ModifyForm.from_item(item)

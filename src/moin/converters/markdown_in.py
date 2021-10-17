@@ -406,7 +406,7 @@ class Converter:
         an EmeraldTree object or a list of unicode is returned.
 
         Markdown parser may have set text and tail attributes of ElementTree
-        objects to u"\n" values, omit these.
+        objects to "\n" values, omit these.
 
         Add data-lineno attributes to children if requested.
         """
@@ -542,7 +542,7 @@ class Converter:
         Convert markdown to moin DOM.
 
         data is a pointer to an open file (ProtectedRevision object)
-        contenttype is likely == u'text/x-markdown;charset=utf-8'
+        contenttype is likely == 'text/x-markdown;charset=utf-8'
         arguments is not used
 
         Markdown processing takes place in five steps:

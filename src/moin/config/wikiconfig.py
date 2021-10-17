@@ -92,7 +92,7 @@ class Config(DefaultConfig):
     sitename = 'My MoinMoin'
 
     # default theme is topside
-    # theme_default = u"modernized"  # or basic or topside_cms
+    # theme_default = "modernized"  # or basic or topside_cms
 
     # read about PRIVACY ISSUES in docs before uncommenting the line below to use gravatars
     # user_use_gravatar = True
@@ -106,7 +106,7 @@ class Config(DefaultConfig):
     # password_checker = lambda cfg, name, pw: _default_password_checker(cfg, name, pw, min_length=8, min_different=5)  # default
 
     # optional, configure email, uncomment line below and choose (a) or (b)
-    # mail_from = u"wiki <wiki@example.org>"  # the "from:" address [Unicode]
+    # mail_from = "wiki <wiki@example.org>"  # the "from:" address [Unicode]
     # (a) using an SMTP server, e.g. "mail.provider.com" with optional `:port`appendix, which defaults to 25 (set None to disable mail)
     # mail_smarthost = "smtp.example.org"
     # mail_username = "smtp_username"  # if you need to use SMTP AUTH at your mail_smarthost:
@@ -121,7 +121,7 @@ class Config(DefaultConfig):
 
     # options for new user registration
     # registration_only_by_superuser = True  # disables self-registration, recommended for public wikis on internet
-    # registration_hint = u'To request an account, see bottom of <a href="/Home">Home</a> page.'
+    # registration_hint = 'To request an account, see bottom of <a href="/Home">Home</a> page.'
 
     # add or remove packages - see https://bitbucket.org/thomaswaldmann/xstatic for info about xstatic
     # it is uncommon to change these because of local customizations
@@ -144,10 +144,10 @@ class Config(DefaultConfig):
         serve_files[xs.name] = xs.base_dir
 
     # create a super user who will have access to administrative functions
-    # acl_functions = u'+YourName:superuser'
+    # acl_functions = '+YourName:superuser'
     # OR, create several WikiGroups and create several superusers
     # SuperGroup and TrustedEditorGroup reference WikiGroups you must create
-    # acl_functions = u'+YourName:superuser SuperGroup:superuser'
+    # acl_functions = '+YourName:superuser SuperGroup:superuser'
 
     # This provides a simple default setup for your backend configuration.
     # 'stores:fs:...' indicates that you want to use the filesystem backend.
