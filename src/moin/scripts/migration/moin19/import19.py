@@ -68,6 +68,7 @@ FORMAT_TO_CONTENTTYPE = {
 
 last_moin19_rev = {}
 user_names = []
+custom_namespaces = []
 
 
 class ImportMoin19(Command):
@@ -90,6 +91,8 @@ class ImportMoin19(Command):
         userid_old2new = {}
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
+        global custom_namespaces
+        custom_namespaces = namespaces()
 
         print("\nConverting Users...\n")
         for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
@@ -98,7 +101,7 @@ class ImportMoin19(Command):
             userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
             backend.store(rev.meta, rev.data)
 
-        print("\nConverting Pages/Attachments...\n")
+        print("\nConverting Pages and Attachments...\n")
         for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
             for user_name in user_names:
                 if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
@@ -366,6 +369,21 @@ class PageRevision:
                 meta[TAGS].append(TEMPLATE)
             else:
                 meta[TAGS] = [TEMPLATE]
+        # if this revision matches a custom namespace defined in wikiconfig, then modify the meta data for namespace and name
+        for custom_namespace in custom_namespaces:
+            if meta['name'][0] == custom_namespace:
+                # cannot have itemname == namespace_name, so we rename. XXX may create an item with duplicate name
+                new_name = app.cfg.root_mapping.get(meta['name'][0], app.cfg.default_root)
+                print("    Converting {0} to namespace:homepage {1}:{2}".format(meta['name'][0], custom_namespace, new_name))
+                meta['namespace'] = custom_namespace
+                meta['name'] = [new_name]
+                break
+            if meta['name'][0].startswith(custom_namespace + '/'):
+                # split the namespace from the name
+                print("    Converting {0} to namespace:itemname {1}:{2}".format(meta['name'][0], custom_namespace, meta['name'][0][len(custom_namespace) + 1:]))
+                meta['namespace'] = custom_namespace
+                meta['name'] = [meta['name'][0][len(custom_namespace) + 1:]]
+                break
         self.meta = {}
         for k, v in meta.items():
             if isinstance(v, list):
@@ -786,3 +804,13 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, str(hash.hexdigest())
+
+
+def namespaces():
+    """
+    Return a list of custom namespaces defined in wikiconfig.
+    """
+    blacklist = ["default", "userprofiles", "users", ""]
+    custom_namespaces = [x.rstrip('/') for x in app.cfg.namespaces.keys() if x not in blacklist]
+    custom_namespaces.sort(key=len, reverse=True)
+    return custom_namespaces
