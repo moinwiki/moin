@@ -16,7 +16,7 @@ we won't go into details:
 - Install from PyPI: ``pip install moin2``
 
   - Optionally, create a virtual env first for better separation or
-  - use ``pip install --user moin2`` to install into your home directory.
+  - use ``pip install --user moin2`` or ``pip install git+https://github.com/moinwiki/moin.git`` to install into your home directory.
   - pip will automatically install other python packages moin2 requires,
     but you maybe have to install required non-python packages yourself.
   - You will have to care for updates / installing security fixes yourself.
@@ -25,7 +25,7 @@ After this, you should have a ``moin`` command available, try it:
 
 ::
 
- moin help
+ moin --help
 
 Creating a wiki instance
 ========================
