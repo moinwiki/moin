@@ -10,7 +10,7 @@ import re
 ANON = 'anonymous'
 
 # Invalid characters - invisible characters that should not be in page
-# names. Prevent user confusion and wiki abuse, e.g u'\u202aFrontPage'.
+# names. Prevent user confusion and wiki abuse, e.g '\u202aFrontPage'.
 ITEM_INVALID_CHARS_REGEX = re.compile(
     r"""
     \u0000 | # NULL

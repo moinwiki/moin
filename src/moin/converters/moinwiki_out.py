@@ -352,7 +352,7 @@ class Converter:
         """
         Return a properly formatted include macro.
 
-        xpointer similar to: u'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
+        xpointer similar to: 'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
         TODO: xpointer format is ugly, Arguments class would be easier to use here.
 
         The include moin 2.x macro (per include.py) supports: pages (pagename), sort, items, skipitems, heading, and level.

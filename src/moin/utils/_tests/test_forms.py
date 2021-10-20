@@ -62,8 +62,8 @@ def test_required_filter():
     expected = 'new_content'
     assert content_result == expected
     # fixing a class for the form element, restricts the HTML we can generate
-    # attribute_result = test_attributes[u'class']
-    # expected = u'required'
+    # attribute_result = test_attributes['class']
+    # expected = 'required'
     # assert attribute_result == expected
 
     # tagname == 'input'

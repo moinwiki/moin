@@ -190,10 +190,10 @@ def split_fqname(url):
     :returns: a namedtuple CompositeName(namespace, field, itemname)
     Examples::
 
-        url: u'ns1/ns2/@itemid/Page' return u'ns1/ns2', u'itemid', u'Page'
-        url: u'@revid/OtherPage' return u'', u'revid', u'OtherPage'
-        url: u'ns1/Page' return u'ns1', u'', u'Page'
-        url: u'ns1/ns2/@notfield' return u'ns1/ns2', u'', u'@notfield'
+        url: 'ns1/ns2/@itemid/Page' return 'ns1/ns2', 'itemid', 'Page'
+        url: '@revid/OtherPage' return '', 'revid', 'OtherPage'
+        url: 'ns1/Page' return 'ns1', '', 'Page'
+        url: 'ns1/ns2/@notfield' return 'ns1/ns2', '', '@notfield'
     """
     if not url:
         return CompositeName('', NAME_EXACT, '')

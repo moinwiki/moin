@@ -172,7 +172,7 @@ class TestInclude:
         assert '<p>comment <span class="comment">before </span></p><div class="comment moin-transclusion" data-href="/page2"><p>Double</p><p>Line</p></div><p><span class="comment"> after</span></p>' in rendered
 
     def test_InlineIncludeImage(self):
-        # the 3rd parameter, u'',  should be a binary string defining a png image, but it is not needed for this simple test
+        # the 3rd parameter, '',  should be a binary string defining a png image, but it is not needed for this simple test
         update_item('logo.png', {CONTENTTYPE: 'image/png'}, '')
         # simple transclusion
         update_item('page1', {CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}, '{{logo.png}}')
@@ -204,7 +204,7 @@ class TestInclude:
         assert '<p></p>' not in rendered
 
     def test_IncludeAsLinkAlternate(self):
-        # the 3rd parameter, u'',  should be a binary string defining a png image, but it is not needed for this simple test
+        # the 3rd parameter, '',  should be a binary string defining a png image, but it is not needed for this simple test
         update_item('logo.png', {CONTENTTYPE: 'image/png'}, '')
         update_item('page2', {CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}, "Single Line")
         # image as link alternate

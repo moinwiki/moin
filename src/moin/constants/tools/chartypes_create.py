@@ -30,13 +30,13 @@ def main():
     chars_spaces = ''.join(space)
 
     print("""
-CHARS_UPPER = u"%(chars_upper)s"
+CHARS_UPPER = "%(chars_upper)s"
 
-CHARS_LOWER = u"%(chars_lower)s"
+CHARS_LOWER = "%(chars_lower)s"
 
-CHARS_DIGITS = u"%(chars_digits)s"
+CHARS_DIGITS = "%(chars_digits)s"
 
-CHARS_SPACES = u"%(chars_spaces)s"
+CHARS_SPACES = "%(chars_spaces)s"
 
 
 """ % locals())

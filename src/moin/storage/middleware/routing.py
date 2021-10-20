@@ -23,15 +23,15 @@ class Backend(MutableBackendBase):
 
         The namespace mapping given must satisfy the following criteria:
             * Order matters.
-            * Namespaces are unicode strings like u'' (default ns), u'userprofiles:'
-              (used to store userprofiles) or u'files:' (could map to a fileserver
-              backend). Can be also a hierarchic ns spec like u'foo:bar:'.
-            * There *must* be a default namespace entry for u'' at the end of
+            * Namespaces are unicode strings like '' (default ns), 'userprofiles:'
+              (used to store userprofiles) or 'files:' (could map to a fileserver
+              backend). Can be also a hierarchic ns spec like 'foo:bar:'.
+            * There *must* be a default namespace entry for '' at the end of
               the list.
 
         namespaces = [
-            (u'userprofiles:', 'user_be'),
-            (u'', 'default_be'), # default (u'') must be last
+            ('userprofiles:', 'user_be'),
+            ('', 'default_be'), # default ('') must be last
         ]
 
         The backends mapping maps backend names to backend instances:

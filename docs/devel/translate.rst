@@ -117,8 +117,8 @@ Note for developers
 Since we support newstyle gettext there is no need to use the
 ``format()``-Method in internationalized Strings anymore. An example
 will explain this: instead of
-``_(u'Hello %(name)s!') % dict(name='World')`` you can just
-write ``_(u'Hello %(name)s!', name='World')``.
+``_('Hello %(name)s!') % dict(name='World')`` you can just
+write ``_('Hello %(name)s!', name='World')``.
 
 If the translatable string contains a variable plural, that means
 the string contains an object which you don't know the exact quantity
