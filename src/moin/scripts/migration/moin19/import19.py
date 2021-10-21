@@ -809,8 +809,13 @@ def hash_hexdigest(content, bufsize=4096):
 def namespaces():
     """
     Return a list of custom namespaces defined in wikiconfig.
+
+    if create_simple_mapping is used, app.config.namespaces is not defined.
     """
     blacklist = ["default", "userprofiles", "users", ""]
-    custom_namespaces = [x.rstrip('/') for x in app.cfg.namespaces.keys() if x not in blacklist]
-    custom_namespaces.sort(key=len, reverse=True)
+    try:
+        custom_namespaces = [x.rstrip('/') for x in app.cfg.namespaces.keys() if x not in blacklist]
+        custom_namespaces.sort(key=len, reverse=True)
+    except AttributeError:
+        return []
     return custom_namespaces
