@@ -107,24 +107,17 @@ class ImportMoin19(Command):
                 if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
                     rev.meta['namespace'] = 'users'
                     break
+
+            if USERID in rev.meta:
+                try:
+                    rev.meta[USERID] = userid_old2new[rev.meta[USERID]]
+                except KeyError:
+                    # user profile lost, but userid referred by revision
+                    print("Missing userid {0!r}, editor of {1} revision {2}".format(rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID]))
+                    del rev.meta[USERID]
             backend.store(rev.meta, rev.data)
             # item_name to itemid xref required for migrating user subscriptions
             flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
-
-        print("\nConverting Revision Editors...\n")
-        for mountpoint, revid in backend:
-            meta, data = backend.retrieve(mountpoint, revid)
-            if USERID in meta:
-                try:
-                    meta[USERID] = userid_old2new[meta[USERID]]
-                except KeyError:
-                    # user profile lost, but userid referred by revision
-                    print("Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid))
-                    del meta[USERID]
-                backend.store(meta, data)
-            elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
-                meta.pop(UID_OLD, None)  # not needed any more
-                backend.store(meta, data)
 
         print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
         self.conv_in = conv_in()
