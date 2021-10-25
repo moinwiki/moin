@@ -11,6 +11,7 @@ name.
 Optionally, you can use zlib/"gzip" compression.
 """
 
+import os
 import base64
 import zlib
 from sqlite3 import connect, Row
@@ -55,6 +56,9 @@ class BytesStore(BytesMutableStoreBase):
         self.db_name = db_name
         self.table_name = table_name
         self.compression_level = compression_level
+        db_path = os.path.dirname(self.db_name)
+        if not os.path.exists(db_path):
+            os.makedirs(db_path)
 
     def create(self):
         conn = connect(self.db_name)
@@ -67,7 +71,7 @@ class BytesStore(BytesMutableStoreBase):
             conn.execute('drop table {0}'.format(self.table_name))
 
     def open(self):
-        self.conn = connect(self.db_name)
+        self.conn = connect(self.db_name, check_same_thread=False)
         self.conn.row_factory = Row  # make column access by ['colname'] possible
 
     def close(self):

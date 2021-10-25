@@ -1153,14 +1153,15 @@ Setup of storage is rather complex and layered, involving:
 
 create_simple_mapping
 ---------------------
-This is a helper function to make storage setup easier. It helps you to:
+This is a helper function to make storage setup easier when your wiki will not be
+using custom namespaces. It helps you to:
 
-* create a simple setup that uses 2 storage backends internally for these
-  namespaces:
+* create a simple setup that uses 3 storage backends internally for these namespaces
 
-  - default
-  - users
-  - userprofiles
+  + default
+  + users
+  + userprofiles
+
 * configure ACLs protecting these namespaces
 * setup a router middleware that dispatches to these backends
 * setup a indexing mixin that maintains an index
@@ -1213,6 +1214,10 @@ In this case, the mapping created will look like this:
 `default_acl` and `userprofiles_acl` are dictionaries specifying the ACLs for
 this part of the namespace (normal content, user home pages, and user profiles).
 See the docs about ACLs.
+
+If your wiki will be using custom namespaces then you cannot use the
+`create_simple_mapping` method. See the `create_mapping` method in the
+namespaces_ section below.
 
 protecting middleware
 ---------------------
@@ -1354,48 +1359,69 @@ Features:
   + directories will show up as index items, listing links to their contents
 * might be useful together with SMBMount pseudo-authenticator
 
+.. _namespaces:
 
 namespaces
 ----------
 Moin has support for multiple namespaces. You can configure them per your needs.
 URLs for items within a namespace are similar to sub-items.
-A sample configuration looks like this::
 
-    import os
-
-    from wikiconfig import *
+To configure custom namespaces, start by adding these imports near the top of
+wikiconfi.py::
 
     from MoinMoin.storage import create_mapping
-    from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+    from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
-    class Config(DefaultConfig):
-        wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
-        instance_dir = os.path.join(wikiconfig_dir, 'wiki')
-        data_dir = os.path.join(instance_dir, 'data')
+Next, find the section in wikiconfig.py that looks similar to this::
 
-        index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
+    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
+        uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),  # orig
+        default_acl=dict(before='',
+                         default='All:read,write,create,destroy,admin',
+                         after='',
+                         hierarchic=False, ),
+        users_acl=dict(before='',
+                       default='All:read,write,create,destroy,admin',
+                       after='',
+                       hierarchic=False, ),
+        # userprofiles contain only metadata, no content will be created
+        userprofiles_acl=dict(before='All:',
+                              default='',
+                              after='',
+                              hierarchic=False, ),
+    )
 
-        uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir)
+and replace all of the above with this::
+
+        uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),  # use file system for storage
+        # uri='stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  # sqlite, 1 table per db
+        # uri='stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir),  # sqlite, 2 tables per db
+        # sqlite via SQLAlchemy
+        # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  #  1 table per db
+        # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir),  # 2 tables per db
+
         namespaces = {
             # maps namespace name -> backend name
-            # first, configure the required, standard namespaces:
+            # these 3 standard namespaces are required
             NAMESPACE_DEFAULT: 'default',
             NAMESPACE_USERS: 'users',
             NAMESPACE_USERPROFILES: 'userprofiles',
-            # some additional custom namespaces stored in default backend:
+            # trailing / below causes foo, and bar to be stored in default backend
             'foo/': 'default',
             'bar/': 'default',
             # custom namespace with a backend - note absence of trailing /
-            # 'baz': 'baz',
+            'baz': 'baz',
         }
         backends = {
             # maps backend name -> storage
-            # not implemented; storage type for all backends is set in 'uri' above; issue #566
+            # feature to use different storage types for each namespace is not implemented so use None below.
+            # the storage type for all backends is set in 'uri' above,
+            # all values in `namespace` dict must be defined as keys in `backends` dict
             'default': None,
             'users': None,
             'userprofiles': None,
             # required for baz namespace defined above
-            # 'baz': None,
+            'baz': None,
         }
         acls = {
             # maps namespace name -> acl configuration dict for that namespace
@@ -1403,20 +1429,23 @@ A sample configuration looks like this::
                                          default='',
                                          after='',
                                          hierarchic=False, ),
+            NAMESPACE_USERS: dict(before='SuperUser:read,write,create,destroy,admin',
+                                    default='All:read,write,create',
+                                    after='',
+                                    hierarchic=False, ),
             NAMESPACE_DEFAULT: dict(before='SuperUser:read,write,create,destroy,admin',
                                     default='All:read,write,create',
                                     after='',
                                     hierarchic=False, ),
-            # trailing / causes foo, bar, and baz to be stored in default backend
-            'foo/': dict(before='SuperUser:read,write,create,destroy,admin',
+            'foo': dict(before='SuperUser:read,write,create,destroy,admin',
                           default='All:read,write,create',
                           after='',
                           hierarchic=False, ),
-            'bar/': dict(before='SuperUser:read,write,create,destroy,admin',
+            'bar': dict(before='SuperUser:read,write,create,destroy,admin',
                           default='All:read,write,create',
                           after='',
                           hierarchic=False, ),
-            'baz/': dict(before='SuperUser:read,write,create,destroy,admin',
+            'baz': dict(before='SuperUser:read,write,create,destroy,admin',
                           default='All:read,write,create',
                           after='',
                           hierarchic=False, ),
@@ -1428,9 +1457,12 @@ A sample configuration looks like this::
         # default root, use this value in case a particular namespace key is not present in the above mapping.
         default_root = 'Home'
 
-    MOINCFG = LocalConfig
-    DEBUG = False
+Edit the above renaming or deleting the lines with foo, bar, and baz and adding the desired custom namespaces.
+Be sure all the names in the `namespaces` dict are also added to the `acls` dict.  All of the values in the
+namespaces dict must be included as keys in the backends dict.
 
+There cannot be an item with the same name as a namespace. Using the example above, if import19 is used
+to convert a moin 1.9 wiki to moin 2.0, then an item `foo` would be renamed to `foo/fooHome`.
 
 .. _mail-configuration:
 
