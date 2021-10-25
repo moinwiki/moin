@@ -42,3 +42,26 @@ table.docutils td {
     border-width: 1px;
     border-color: #E1E4E5;
 }
+
+/* improve formatting of lists */
+ul {
+    margin: 0 0 1em 2em;
+}
+ul ul {
+    margin-bottom: 0;
+}
+li {
+    list-style-type: disc;
+}
+li li {
+    list-style-type: square;
+}
+li li li {
+    list-style-type: circle;
+}
+li > p {
+    margin: 0;
+}
+p {
+    margin-bottom: 1em;
+}
