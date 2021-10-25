@@ -1156,12 +1156,11 @@ create_simple_mapping
 This is a helper function to make storage setup easier when your wiki will not be
 using custom namespaces. It helps you to:
 
-* create a simple setup that uses 2 storage backends internally for these
-  namespaces:
+* create a simple setup that uses 3 storage backends internally for these namespaces
 
-   * default
-   * users
-   * userprofiles
+  + default
+  + users
+  + userprofiles
 
 * configure ACLs protecting these namespaces
 * setup a router middleware that dispatches to these backends
