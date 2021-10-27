@@ -232,7 +232,7 @@ See utils.html for more macros.
 {#- Show a list of names that will be affected by a recursive action; delete, destroy, rename #}
 {%- macro list_subitems(subitem_names, action) %}
     {%- if subitem_names %}
-        <div class="moin-subitem-list">{{ action }}</div>
+        <div class="moin-subitem-list">{{ action|safe }}</div>
         <ul>
             {%- for name in subitem_names %}
                 <li>
