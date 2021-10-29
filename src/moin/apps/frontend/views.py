@@ -801,10 +801,12 @@ class RevertItemForm(BaseChangeForm):
 
 class DeleteItemForm(BaseChangeForm):
     name = 'delete_item'
+    delete_subitems = Checkbox.using(label=L_('Delete all subitems listed below if checked:'))
 
 
 class DestroyItemForm(BaseChangeForm):
     name = 'destroy_item'
+    destroy_subitems = Checkbox.using(label=L_('Destroy all subitems listed below if checked:'))
 
 
 class RenameItemForm(TargetChangeForm):
@@ -931,8 +933,9 @@ def delete_item(item_name):
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
             comment = form['comment'].value
+            do_subitems = form['delete_subitems'].value
             try:
-                item.delete(comment)
+                item.delete(comment, do_subitems=do_subitems)
             except AccessDenied:
                 abort(403)
             close_file(item.meta.revision.data)
@@ -1153,6 +1156,9 @@ def destroy_item(item_name, rev):
         form = DestroyItemForm.from_flat(request.form)
         if form.validate():
             comment = form['comment'].value
+            do_subitems = form['destroy_subitems'].value
+            if not do_subitems:
+                subitem_names = []
             try:
                 item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
             except AccessDenied:

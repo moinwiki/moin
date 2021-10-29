@@ -592,6 +592,12 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 #subscriptions div.tip,
 #quicklinks div.tip { width: 80%; max-width: 60em; margin: auto; }
 
+.moin-delete-box dt,
+.moin-delete-box dd { display: inline; }
+.moin-delete-comment dd input { width: 90%; }
+.moin-form-delete button { float: left; }
+.moin-form-delete input[type="submit"] { clear: both; display: block; margin: auto; }
+
 /* Global history */
 
 #moin-global-history { font-size: 87%; width: 100%; margin: 0; }
