@@ -23,6 +23,7 @@ from io import BytesIO
 from collections import namedtuple
 from operator import attrgetter
 import re
+import difflib
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -56,8 +57,9 @@ from moin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
     UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER, MAILTO_AUTHOR,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, HAS_TAG, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS
+    LATEST_REVS, EDIT_ROWS, FQNAMES
 )
+from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL
 from moin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from moin.constants.itemtypes import (
@@ -75,6 +77,128 @@ logging = log.getLogger(__name__)
 
 COLS = 80
 ROWS_META = 10
+
+
+def find_matches(fq_name, s_re=None, e_re=None):
+    """ Find similar item names.
+
+    :param fq_name: fqname to match
+    :param s_re: start re for wiki matching
+    :param e_re: end re for wiki matching
+    :rtype: tuple
+    :returns: start word, end word, matches dict
+    """
+    query = Term(WIKINAME, app.cfg.interwikiname)
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    fq_names = {fqname for meta in metas for fqname in meta[FQNAMES] if FQNAMES in meta}
+    if fq_name in fq_names:
+        fq_names.remove(fq_name)
+    # Get matches using wiki way, start and end of word
+    start, end, matches = wiki_matches(fq_name, fq_names, start_re=s_re, end_re=e_re)
+    # Get the best 10 close matches
+    close_matches = {}
+    found = 0
+    for fqname in close_match(fq_name, fq_names):
+        if fqname not in matches:
+            # Skip fqname already in matches
+            close_matches[fqname] = 8
+            found += 1
+            # Stop after 10 matches
+            if found == 10:
+                break
+    # Finally, merge both dicts
+    matches.update(close_matches)
+    return start, end, matches
+
+
+def wiki_matches(fq_name, fq_names, start_re=None, end_re=None):
+    """
+    Get fqnames that starts or ends with same word as this fq_name.
+
+    Matches are ranked like this:
+        4 - item is subitem of fq_name
+        3 - match both start and end
+        2 - match end
+        1 - match start
+
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
+    :param start_re: start word re (compile regex)
+    :param end_re: end word re (compile regex)
+    :rtype: tuple
+    :returns: start, end, matches dict
+    """
+    if start_re is None:
+        start_re = re.compile('([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
+    if end_re is None:
+        end_re = re.compile('([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
+
+    # If we don't get results with wiki words matching, fall back to
+    # simple first word and last word, using spaces.
+    item_name = fq_name.value
+    words = item_name.split()
+    match = start_re.match(item_name)
+    if match:
+        start = match.group(1)
+    else:
+        start = words[0]
+
+    match = end_re.search(item_name)
+    if match:
+        end = match.group(1)
+    else:
+        end = words[-1]
+
+    matches = {}
+    subitem = item_name + '/'
+
+    # Find any matching item names and rank by type of match
+    for fqname in fq_names:
+        name = fqname.value
+        if name.startswith(subitem):
+            matches[fqname] = 4
+        else:
+            if name.startswith(start):
+                matches[fqname] = 1
+            if name.endswith(end):
+                matches[fqname] = matches.get(name, 0) + 2
+
+    return start, end, matches
+
+
+def close_match(fq_name, fq_names):
+    """ Get close matches.
+
+    Return all matching fqnames with rank above cutoff value.
+
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
+    :rtype: list
+    :returns: list of matching item names, sorted by rank
+    """
+    if not fq_names:
+        return []
+    # Match using case insensitive matching
+    # Make mapping from lower item names to fqnames.
+    lower = {}
+    for fqname in fq_names:
+        name = fqname.value
+        key = name.lower()
+        if key in lower:
+            lower[key].append(fqname)
+        else:
+            lower[key] = [fqname]
+    # Get all close matches
+    item_name = fq_name.value
+    all_matches = difflib.get_close_matches(item_name.lower(), list(lower.keys()),
+                                            n=len(lower), cutoff=0.6)
+
+    # Replace lower names with original names
+    matches = []
+    for name in all_matches:
+        matches.extend(lower[name])
+
+    return matches
 
 
 def _verify_parents(self, new_name, namespace, old_name=''):
@@ -1102,12 +1226,15 @@ class Default(Contentful):
         method = request.method
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
+                start, end, matches = find_matches(self.fqname)
+                similar_names = sorted(matches.keys())
                 return render_template('modify_select_contenttype.html',
                                        fqname=self.fqname,
                                        item_name=self.name,
                                        itemtype=self.itemtype,
                                        group_names=content_registry.group_names,
                                        groups=content_registry.groups,
+                                       similar_names=similar_names,
                                       )
 
         item = self
@@ -1354,14 +1481,17 @@ class NonExistent(Item):
                                    fqname=self.fqname,
                                    form=form,
             )
-
+        start, end, matches = find_matches(self.fqname)
+        similar_names = sorted(matches.keys())
         return render_template('modify_select_contenttype.html',
                                fqname=self.fqname,
                                item_name=self.name,
                                itemtype='default',  # create a normal wiki item
                                group_names=content_registry.group_names,
                                groups=content_registry.groups,
+                               similar_names=similar_names,
                               )
+
         # dead code, see above
         return render_template('modify_select_itemtype.html',
                                item=self,
