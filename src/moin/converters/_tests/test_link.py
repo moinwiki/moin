@@ -43,9 +43,9 @@ def test_wiki(app, conv, input_, output):
         # note: result URLs assume test wiki running at /
         ('wiki.local:', 'wiki:///Root', '/Root'),
         ('wiki.local:Test', 'wiki:///Root', '/Test'),
-        ('wiki.local:Test:colon', 'wiki:///Root', '/Test:colon'),
-        ('wiki.local:users/Test:colon', 'wiki:///Root', '/users/Test:colon'),
-        ('wiki.local:users:ns/Test:colon', 'wiki:///Root', '/users:ns/Test:colon'),
+        ('wiki.local:Test:colon', 'wiki:///Root', '/Test%3Acolon'),
+        ('wiki.local:users/Test:colon', 'wiki:///Root', '/users/Test%3Acolon'),
+        ('wiki.local:users:ns/Test:colon', 'wiki:///Root', '/users%3Ans/Test%3Acolon'),
         ('wiki.local:Test', 'wiki:///Root/Sub', '/Test'),
         ('wiki.local:/Test', 'wiki:///Root', '/Root/Test'),
         ('wiki.local:/Test', 'wiki:///Root/Sub', '/Root/Sub/Test'),

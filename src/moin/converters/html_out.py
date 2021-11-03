@@ -14,6 +14,7 @@ import re
 from flask import request
 from flask import current_app as app
 from emeraldtree import ElementTree as ET
+from werkzeug.urls import url_fix
 
 from moin import wikiutil
 from moin.i18n import _, L_, N_
@@ -71,6 +72,7 @@ def mark_item_as_transclusion(elem, href):
         if wiki_root:
             href = '/' + wiki_root + href
     href = convert_getlink_to_showlink(href)
+    href = url_fix(href)
     # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
     elem.attrib[html.data_href] = href
     classes = elem.attrib.get(html.class_, '').split()

@@ -9,6 +9,7 @@ special wiki links.
 """
 
 from flask import g as flaskg
+from werkzeug.urls import url_fix
 
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri
@@ -184,6 +185,7 @@ class ConverterExternOutput(ConverterBase):
         if not page:
             url = url[1:]
         link = Iri(url, query=query, fragment=input.fragment)
+        link = url_fix(str(link))
         elem.set(self._tag_xlink_href, link)
 
     def handle_external_links(self, elem, input):
