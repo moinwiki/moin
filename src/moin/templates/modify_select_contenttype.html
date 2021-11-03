@@ -1,9 +1,11 @@
 {#
-    Renders a web page filled with content type choices. Thses include:
+    Renders a web page filled with content type choices. These include:
         * Markup items ( MoinMoin, Creole, Markdown, ...)
         * Other text (plain, diff, ...)
         * Images (SVG, PNG, ...)
         * etc
+
+    Displays links to existing items with similar names.
 #}
 
 {% extends theme("layout.html") %}
@@ -26,4 +28,15 @@
             </tr>
         {% endfor %}
     </table>
+
+    {% if similar_names %}
+        <div>
+            <p>{{ _("Before creating a new item, review these existing items with similar names:") }}<p>
+            <ol>
+                {% for name in similar_names %}
+                    <li><a href="{{ url_for('frontend.show_item', item_name=name) }}">{{ name }}</a></li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endif %}
 {% endblock %}
