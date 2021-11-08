@@ -38,6 +38,10 @@ $(document).ready(function () {
         "Toggle font width": "{{ _("Toggle font width") }}",
         "Download failed, no items were selected.": "{{ _("Download failed, no items were selected.") }}",
         "Your saved draft has been loaded.": "{{ _("Your saved draft has been loaded.") }}"
+        "Your edit lock will expire in 1 minute: ": "{{ _("Your edit lock will expire in 1 minute: ") }}"
+        "Add optional comment for Delete change log. ": "{{ _("Add optional comment for Delete change log. ") }}"
+        "Add optional comment for Destroy change log. ": "{{ _("Add optional comment for Destroy change log. ") }}"
+        "Action complete.": "{{ _("Action complete.") }}"
     };
 
     $.i18n.setDictionary(i18n_dict);

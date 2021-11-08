@@ -15,9 +15,12 @@ $("document").ready(function () {
         IFRAME_CREATE_DELAY = 200, // delay between start of multiple downloads
         IFRAME_REMOVE_DELAY = 3000, // life expectancy of iframe used for file downloads
         // delete and destroy process started and completed messages
-        ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
-        ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
-        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")},
+        ACTION_LOADING = {'delete': _("Deleting.."),
+                          'destroy': _("Destroying..")},
+        ACTION_DONE = {'delete': _("Items deleted: "),
+                       'destroy': _("Items destroyed: ")},
+        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "),
+                         'destroy': _(", Not authorized, items not destroyed: ")},
         POPUP_DELETE_HEADER = _("Add optional comment for Delete change log. "),
         POPUP_DESTROY_HEADER = _("Add optional comment for Destroy change log. ");
 
