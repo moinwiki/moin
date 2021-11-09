@@ -30,6 +30,10 @@ SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
 # stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())
 
+# global variables for checking Javascript messages
+phrases = set()
+phrases_used = set()
+
 
 class NoDupsLogger:
     """
@@ -189,6 +193,9 @@ def check_files(filename, suffix):
         check_template_indentation(lines, filename, logger)
         check_template_spacing(lines, filename, logger)
 
+    if filename.endswith('.js'):
+        check_js_phrases(lines, filename)
+
     # now look at file end and get rid of all whitespace-only lines there:
     while lines:
         if not lines[-1].strip():
@@ -236,11 +243,95 @@ def file_picker(starting_dir):
                     check_files(filename, suffix)
 
 
+def find_js_phrases(starting_dir):
+    """
+    Create a set of phrases defined in /templates/dictionary.js.
+
+    Create warning message if key and value are not equal.
+    """
+    global phrases
+    target = os.path.join(starting_dir, 'moin', 'templates', 'dictionary.js')
+    with open(target, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    # "Cancel": "{{ _("Cancel") }}",
+    pattern = r"""
+        "
+        (?P<key>[,\s]*[\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)
+        "
+        [:\s]*"\{\{\s*_\(
+        "
+        (?P<val>[,\s]*[\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)
+        "
+        \)\s\}\}",*
+        """
+    pattern = re.compile(pattern, re.X)
+
+    for count, line in enumerate(lines, start=1):
+        if "{{" not in line:
+            continue
+        m = pattern.search(line)
+        if m:
+            if not m.group('key') == m.group('val'):
+                print('Error: /templates/dictionary.js dict has mismatched key and value on line', count)
+                print('   ', line.lstrip())
+            phrases.add(m.group('key'))
+        else:
+            print('Warning: /templates/dictionary.js {key: val} are not equal on line', count)
+            print('   ', line.lstrip())
+
+
+def check_js_phrases(lines, filename):
+    """
+    Check incoming js file for i18n phrases similar to: _("Hide comments")
+
+    Print error message if not defined in phrases, else add phrase to used phrases set.
+    """
+    global phrases_used
+    if filename.endswith('jquery.i18n.min.js'):
+        return
+    pattern = re.compile(r"""_\("([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)"\)""")
+    bad_pat = re.compile(r"""_\(([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)\)""")
+    for count, line in enumerate(lines, start=1):
+        if line.lstrip().startswith('// '):
+            continue
+        if line.lstrip().startswith('function '):
+            continue
+        if line.strip() == 'return $.i18n._(text);':
+            continue
+
+        m = pattern.search(line)
+        if m:
+            if m.group(1) in phrases:
+                phrases_used.add(m.group(1))
+            else:
+                print('Error: %s file at line %s has phrase not defined in /templates/dictionary.js.' % (filename, count))
+                print('   ', line.lstrip())
+        else:
+            m = bad_pat.search(line)
+            if m:
+                # _(variablename)
+                print('Warning: cannot verify i18n phrase defined in %s line %s.' % (filename, count))
+                print('   ', line.lstrip())
+
+
+def unused_phrases():
+    """
+    Print error message it there are unused i18n phrases defined in /templates/dictionary.js.
+    """
+    unused = phrases - phrases_used
+    if unused:
+        for phrase in unused:
+            print('Warning: unused phrase defined in /templates/dictionary.js:', phrase)
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         starting_dir = os.path.abspath(sys.argv[1])
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
         starting_dir = os.path.join(starting_dir.split(os.sep + 'scripts')[0], 'src')
-    NoDupsLogger().log("Starting directory is %s" % starting_dir, None)
+    NoDupsLogger().log("Starting directory is %s\n" % starting_dir, None)
+    find_js_phrases(starting_dir)
     file_picker(starting_dir)
+    unused_phrases()
