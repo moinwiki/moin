@@ -187,7 +187,7 @@ def copy_config_files():
     if not os.path.isfile('wikiconfig.py'):
         shutil.copy('src/moin/config/wikiconfig.py', 'wikiconfig.py')
     if not os.path.isfile('intermap.txt'):
-        shutil.copy('src/moin/config/intermap.txt', 'intermap.txt')
+        shutil.copy('src/moin/contrib/intermap.txt', 'intermap.txt')
     if not os.path.isdir('wiki_local'):
         os.mkdir('wiki_local')
 
