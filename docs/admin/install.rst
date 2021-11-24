@@ -56,14 +56,12 @@ storage and the index:
  moin index-create -s -i
 
 If you don't want to start with an empty wiki, but rather play with some
-sample content we provide, load it into your wiki:
+sample content we provide, load it into your wiki and rebuild the indexes:
 
 ::
 
- moin load-sample-content
- # TODO: implement this using code like in:
- # moin load --file contrib/sample/unicode.moin
- # moin index-build
+ moin load-sample
+ moin index-build
 
 Run your wiki instance
 ======================

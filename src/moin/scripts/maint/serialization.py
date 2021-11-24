@@ -6,6 +6,7 @@ MoinMoin - backend serialization / deserialization
 """
 
 import sys
+import os
 
 from flask import current_app as app
 from flask_script import Command, Option
@@ -83,5 +84,17 @@ class Deserialize(Command):
     ]
 
     def run(self, filename=None):
+        with open_file(filename, "rb") as f:
+            deserialize(f, app.storage.backend)
+
+
+class LoadSample(Command):
+    description = 'Load wiki sample items.'
+
+    def run(self):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(dir_path, '../../contrib/sample-backup.moin')
+        filename = os.path.normpath(filename)
+
         with open_file(filename, "rb") as f:
             deserialize(f, app.storage.backend)
