@@ -68,6 +68,7 @@ def main(default_command='help', wiki_config=None):
     from moin.scripts.maint import serialization
     manager.add_command("save", serialization.Serialize())
     manager.add_command("load", serialization.Deserialize())
+    manager.add_command("load-sample", serialization.LoadSample())
     from moin.scripts.maint.dump_html import Dump
     manager.add_command("dump-html", Dump())
     from moin.scripts.account.create import Create_User

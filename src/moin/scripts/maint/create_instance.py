@@ -28,6 +28,7 @@ class CreateInstance(Command):
 
     def run(self, path):
         config_path = os.path.dirname(config.__file__)
+        contrib_path = os.path.dirname(contrib.__file__)
         if not path:
             path = os.getcwd()
         if os.path.exists(path):
@@ -44,6 +45,6 @@ class CreateInstance(Command):
         if os.path.isfile(os.path.join(path, 'intermap.txt')):
             print('intermap.txt already exists, not copied.')
         else:
-            shutil.copy(os.path.join(config_path, 'intermap.txt'), path)
+            shutil.copy(os.path.join(contrib_path, 'intermap.txt'), path)
         if not os.path.isdir('wiki_local'):
             os.mkdir('wiki_local')
