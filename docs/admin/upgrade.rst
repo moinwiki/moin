@@ -124,6 +124,10 @@ Testing
 Review the logs for error messages. Start the moin server and try the "Index" and "History"
 views to see what is included. Check whether your data is complete and rendering correctly.
 
+Links to user's home items and subitems will be broken after the migration and must be
+corrected manually. Links similar to `[[JoeDoe]]` and `[[JoeDoe/SubItem]]` should be
+corrected to `[[users/JoeDoe]]` and `[[users/JoeDoe/SubItem]]` respectively.
+
 If you find issues with data migration from moin 1.9 to 2, please check the
 moin2 issue tracker.
 
