@@ -26,6 +26,8 @@ Parameters:
                False : Display list as an unordered list.  (default)
                True  : Display list as an ordered list.
 
+    skiptag: a tag name, items with tag will be skipped
+
     display: How should the link be displayed?
 
         Options:
@@ -77,6 +79,7 @@ class Macro(MacroPageLinkListBase):
         regex = None
         ordered = False
         display = "FullPath"
+        skiptag = ""
 
         # process input
         args = []
@@ -107,6 +110,8 @@ class Macro(MacroPageLinkListBase):
                     raise ValueError(_('ItemList macro: The value must be "True" or "False". (got "%s")' % val))
             elif key == "display":
                 display = val  # let 'create_pagelink_list' throw an exception if needed
+            elif key == "skiptag":
+                skiptag = val
             else:
                 raise KeyError(_('ItemList macro: Unrecognized key "%s".' % key))
 
@@ -123,7 +128,7 @@ class Macro(MacroPageLinkListBase):
                 raise LookupError(_('ItemList macro: The specified item "%s" does not exist.' % item))
 
         # process subitems
-        children = self.get_item_names(item, startswith)
+        children = self.get_item_names(item, startswith=startswith, skiptag=skiptag)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
