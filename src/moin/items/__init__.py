@@ -1062,6 +1062,8 @@ class Item:
                             fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                 mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}
+                if TAGS in rev and rev[TAGS]:
+                    mini_meta[TAGS] = rev[TAGS]
                 mini_meta[USERID] = rev.get(USERID, '')
                 mini_meta[ADDRESS] = rev.get(ADDRESS, '') if app.cfg.show_hosts else ''
                 files.append(IndexEntry(relname, fullname_fqname, mini_meta))
