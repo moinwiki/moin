@@ -109,9 +109,14 @@ Hyperlinks
 Moin2 hyperlinks are enclosed within double brackets. There are three possible
 fields separated by "|" characters: ::
 
-  1. PageName, relative URL, or fully qualified URL
+  1. PageName, relative URL, fully qualified URL, or interwiki link
   2. Text description or transcluded icon: [[ItemName|{{MyLogo.png}}]]
   3. Parameters: target, title, download, class, and accesskey are supported
+
+The special CSS class `redirect` may be used to immediately redirect the browser
+to an internal or external page. Once placed inside an item,
+that item cannot be viewed as redirection is immediate. To edit the item,
+type .../+modify/ItemName in the browsers address bar.
 
 Examples with parameters are not shown below because the effect cannot be
 duplicated with reST markup. To open a link in a new tab or window with a
@@ -144,6 +149,8 @@ Internal Links
 | ``[[Home/ItemName]]``                     | `Home/ItemName <Home/ItemName>`_            | Link to a subitem of Home item              |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[/filename.txt]]``                     | `/filename.txt </filename.txt>`_            | Link to a sub-item called Filename.txt      |
++-------------------------------------------+---------------------------------------------+---------------------------------------------+
+| ``[[AltItem||class="redirect"]]``         | `AltItem is displayed immediately`          | Type /+modify/<item> in address bar to edit |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 
 External Links
@@ -692,8 +699,8 @@ danger, error, hint, important, note, tip, and warning.
  will look restless and will be harder to follow than a page where
  admonitions are used sparingly.
 
-CSS classes for use with the wiki parser, tables, and comments
---------------------------------------------------------------
+CSS classes for use with the wiki parser, tables, comments, and links
+---------------------------------------------------------------------
 
  - Background colors: red, green, blue, yellow, or orange
  - Borders: solid, dashed, or dotted
@@ -701,7 +708,8 @@ CSS classes for use with the wiki parser, tables, and comments
  - Admonitions: caution, important, note, tip, warning
  - Tables: moin-sortable, no-borders
  - Comments: comment
- - position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
+ - Position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
+ - Links with browser redirection: redirect
 
 Variables
 =========
