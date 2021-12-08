@@ -127,6 +127,12 @@ mouseover title, do: ::
 Internal Links
 --------------
 
+Internal links for namespaces work the same as an item in the default namespace with subitems.
+Links without a leading `/` or `../` refer to an item in the top level of the default namespace,
+even if the current item is not in the default namespace.
+Links with a leading `/` refer to a subitem of the current item. Links with a leading `../`
+refer to a sibling of the current item.
+
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | Markup                                    | Result                                      | Comments                                    |
 +===========================================+=============================================+=============================================+
@@ -149,6 +155,8 @@ Internal Links
 | ``[[Home/ItemName]]``                     | `Home/ItemName <Home/ItemName>`_            | Link to a subitem of Home item              |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[/filename.txt]]``                     | `/filename.txt </filename.txt>`_            | Link to a sub-item called Filename.txt      |
++-------------------------------------------+---------------------------------------------+---------------------------------------------+
+| ``[[users/JoeDoe]]``                      | `users/JoeDoe`_                             | Link to a user's home item in user namespace|
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[AltItem||class="redirect"]]``         | `AltItem is displayed immediately`          | Type /+modify/<item> in address bar to edit |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
