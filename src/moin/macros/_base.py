@@ -94,7 +94,8 @@ class MacroPageLinkListBase(MacroBlockBase):
                       UnCameled : ChildName, but with a space ' ' character between
                                   blocks of lowercase characters or numbers and an
                                   uppercase character.
-                      ItemTitle : Use the title from the first header in the linked page
+                      skiptag   : skip items with this tag
+                      ItemTitle : Use the title from the first header in the linked page *not implemented
             """
 
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})

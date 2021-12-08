@@ -758,6 +758,11 @@ $(document).ready(function () {
         moin.QuicklinksExpander();
     }
 
+    // redirect when page contains an A tag with "redirect" class, see JSRedirect macro
+    if ($('a.redirect').length) {
+        window.location = $('a.redirect').prop('href');
+    }
+
     // remove a server-side flash message by clicking on it
     $('.moin-flash').click(function () {
         this.remove();

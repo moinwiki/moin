@@ -13,6 +13,7 @@ from flask_script import Command, Option
 from flask import g as flaskg
 
 from moin import config
+from moin import contrib
 
 from moin import log
 logging = log.getLogger(__name__)
