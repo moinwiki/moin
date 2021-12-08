@@ -159,7 +159,10 @@ class ConverterExternOutput(ConverterBase):
             wn = str(input.authority.host)
             if is_known_wiki(wn):
                 # interwiki link
-                elem.set(moin_page.class_, 'moin-interwiki')
+                if html.class_ in elem.attrib:
+                    elem.set(moin_page.class_, 'moin-interwiki ' + elem.attrib[html.class_])
+                else:
+                    elem.set(moin_page.class_, 'moin-interwiki')
                 wiki_name = wn
         item_name = str(input.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
