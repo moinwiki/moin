@@ -702,12 +702,23 @@ class Converter(ConverterMacro):
                          link_text=None, link_args=None,
                          link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
+        attribs = {}
+        query = []
+        if link_args:
+            link_args = parse_arguments(link_args)  # XXX needs different parsing
+            for key in link_args.keys():
+                if key in ('target', 'title', 'download', 'class', 'accesskey'):
+                    attribs[html(key)] = link_args[key]
+                if key[0] == '&':
+                    query.append('{0}={1}'.format(key[1:], link_args[key]))
+
         if link_interwiki_site:
             if is_known_wiki(link_interwiki_site):
                 link = Iri(scheme='wiki',
                            authority=link_interwiki_site,
                            path='/' + link_interwiki_item)
-                element = moin_page.a(attrib={xlink.href: link})
+                attribs[xlink.href] = link
+                element = moin_page.a(attrib=attribs)
                 stack.push(element)
                 if link_text:
                     self.parse_inline(link_text, stack, self.inlinedesc_re)
@@ -719,15 +730,6 @@ class Converter(ConverterMacro):
                 # assume local language uses ":" inside of words, set link_item and continue
                 link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
 
-        attribs = {}
-        query = []
-        if link_args:
-            link_args = parse_arguments(link_args)  # XXX needs different parsing
-            for key in link_args.keys():
-                if key in ('target', 'title', 'download', 'class', 'accesskey'):
-                    attribs[html(key)] = link_args[key]
-                if key[0] == '&':
-                    query.append('{0}={1}'.format(key[1:], link_args[key]))
         if link_item is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
