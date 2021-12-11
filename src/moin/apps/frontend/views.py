@@ -744,11 +744,6 @@ def modify_item(item_name):
     On POST, saves the new page (unless there's an error in input).
     After successful POST, redirects to the page.
     """
-    if ',' in item_name:
-        flash(_("Error: invalid name: '%(invalid_name)s'. Create item with 1 name, use rename to create multiple names.", invalid_name=item_name), "error")
-        # XXX is there a way to redirect to +index with the Create popup displayed? then user could correct name
-        return redirect(url_for('frontend.show_item', item_name=item_name))
-
     # XXX drawing applets don't send itemtype
     itemtype = request.values.get('itemtype', ITEMTYPE_DEFAULT)
     contenttype = request.values.get('contenttype')
@@ -808,7 +803,20 @@ class DestroyItemForm(BaseChangeForm):
 
 
 class RenameItemForm(TargetChangeForm):
-    name = 'rename_item'
+    """
+    Validator for a rename form.
+    """
+
+    def validate(self, element, state):
+        """
+        Element is a dict containing keys for 'name' and 'namespace'.
+        state is current itemid.
+        """
+        try:
+            validate_name(element, state)
+            return True
+        except NameNotValidError:
+            return False
 
 
 @frontend.route('/+create', methods=['POST'])
@@ -870,30 +878,24 @@ def rename_item(item_name):
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
-        if form.validate():
-            target = form['target']
-            targets = [x.strip() for x in str(target).split(',') if x]
-            comment = form['comment'].value
-            namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
-            namespaces = namespaces + NAMESPACES_IDENTIFIER
+        target = form['target']
+        targets = [x.strip() for x in str(target).split(',') if x]
+        alt_meta = {}
+        alt_meta[NAME] = targets
+        alt_meta[NAMESPACE] = item.meta[NAMESPACE]
 
-            is_valid = True
-            for target in targets:
-                if target.split('/', 1)[0] in namespaces:
-                    msg = L_("Item name segment (%(invalid_name)s) must not match existing namespaces.", invalid_name=target.split('/', 1)[0])
-                    flash(msg, "error")
-                    is_valid = False
-            if is_valid:
-                try:
-                    fqname = CompositeName(item.fqname.namespace, item.fqname.field, targets[0])
-                    item.rename(targets, comment)
-                    close_file(item.meta.revision.data)
-                    # the item was successfully renamed, show it with new name or first name if list
-                    return redirect(url_for_item(fqname))
-                except NameNotUniqueError as e:
-                    flash(str(e), "error")
-                except MissingParentError as e:
-                    flash(str(e), "error")
+        if form.validate(alt_meta, item.meta[ITEMID]):
+            comment = form['comment'].value
+            try:
+                fqname = CompositeName(item.fqname.namespace, item.fqname.field, targets[0])
+                item.rename(targets, comment)
+                close_file(item.meta.revision.data)
+                # the item was successfully renamed, show it with new name or first name if list
+                return redirect(url_for_item(fqname))
+            except NameNotUniqueError as e:
+                flash(str(e), "error")
+            except MissingParentError as e:
+                flash(str(e), "error")
     ret = render_template('rename.html',
                           item=item,
                           item_name=item_name,
