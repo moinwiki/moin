@@ -50,7 +50,7 @@ from moin.utils.registry import RegistryBase
 from moin.utils.clock import timed
 from moin.utils.diff_html import diff as html_diff
 from moin.utils import diff3
-from moin.forms import RequiredText, OptionalText, JSON, Tags, Names
+from moin.forms import RequiredText, OptionalText, JSON, Tags, Names, validate_name, NameNotValidError
 from moin.constants.keys import (
     NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
@@ -1483,6 +1483,19 @@ class NonExistent(Item):
                                    fqname=self.fqname,
                                    form=form,
             )
+
+        # verify name meets standards
+        try:
+            validate_name(self.meta, None)
+        except NameNotValidError:
+            # a flash message has already been created
+            form = CreateItemForm().from_defaults()
+            form['target'] = self.fqname.fullname
+            return render_template('create_new_item.html',
+                                   fqname=self.fqname,
+                                   form=form,
+            )
+
         start, end, matches = find_matches(self.fqname)
         similar_names = sorted(matches.keys())
         return render_template('modify_select_contenttype.html',
