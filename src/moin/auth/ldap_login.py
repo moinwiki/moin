@@ -44,6 +44,7 @@ class LDAPAuth(BaseAuth):
 
     def __init__(
         self,
+        trusted=True,
         server_uri='ldap://localhost',  # ldap / active directory server URI
                                         # use ldaps://server:636 url for ldaps,
                                         # use  ldap://server for ldap without tls (and set start_tls to 0),
