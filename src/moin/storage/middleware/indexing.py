@@ -192,7 +192,10 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
         doc[SUMMARYNGRAM] = meta[SUMMARY]
     if doc.get(TAGS, None):
         # global tags uses this to search for items with tags
-        meta[HAS_TAG] = True
+        doc[HAS_TAG] = True
+    if doc.get(NAME, None):
+        doc[NAMES] = ' '.join(doc[NAME])
+
     return doc
 
 
@@ -327,8 +330,11 @@ class IndexingMiddleware:
             WIKINAME: ID(stored=True),
             # namespace, so we can have different namespaces within a wiki, always check this!
             NAMESPACE: ID(stored=True),
-            # tokenized NAME from metadata - use this for manual searching from UI
-            NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            # since name is a list whoosh will think it is a list of tokens see #364
+            # we store list of names, but do not use for searching
+            NAME: TEXT(stored=True),
+            # string created by joining list of Name strings, we use NAMES for searching but do not store
+            NAMES: TEXT(stored=False, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
@@ -614,8 +620,6 @@ class IndexingMiddleware:
                     meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
                     doc = backend_to_index(meta, content, schema, wikiname, backend_name)
-                    if doc.get(TAGS):
-                        doc[HAS_TAG] = True
                 if mode == 'update':
                     writer.update_document(**doc)
                 elif mode == 'add':
