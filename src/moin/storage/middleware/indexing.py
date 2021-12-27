@@ -190,12 +190,13 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
         doc[CONTENTNGRAM] = content
     if SUMMARYNGRAM in schema and SUMMARY in meta:
         doc[SUMMARYNGRAM] = meta[SUMMARY]
+    if NAMENGRAM in schema and NAME in meta:
+        doc[NAMENGRAM] = ' '.join(meta[NAME])
     if doc.get(TAGS, None):
         # global tags uses this to search for items with tags
         doc[HAS_TAG] = True
     if doc.get(NAME, None):
         doc[NAMES] = ' '.join(doc[NAME])
-
     return doc
 
 
@@ -395,6 +396,7 @@ class IndexingMiddleware:
             # ngram words, index ngrams of words from main content
             CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
             SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
+            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, field_boost=2.0),
         }
         latest_revs_fields.update(**common_fields)
 

@@ -36,6 +36,7 @@ HAS_TAG = "has_tag"
 TEMPLATE = "template"  # a TAGS value identifying an item as a template
 CONTENTNGRAM = "contentngram"
 SUMMARYNGRAM = "summaryngram"
+NAMENGRAM = "namengram"
 
 ACTION = "action"
 ADDRESS = "address"
