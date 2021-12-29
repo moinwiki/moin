@@ -363,7 +363,7 @@ def search(item_name):
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
 
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, TAGS, SUMMARYNGRAM, CONTENT, CONTENTNGRAM], idx_name=idx_name)
+        qp = flaskg.storage.query_parser([NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM], idx_name=idx_name)
         q = qp.parse(query)
 
         _filter = []

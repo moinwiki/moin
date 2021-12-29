@@ -15,6 +15,7 @@ $(document).ready(function(){
 
     $(document).on("click", ".moin-search-option-bar", (function(){
         $('.moin-searchoptions').toggleClass('hidden');
+        $('.moin-search-option-bar > p').toggleClass('fa-chevron-down fa-chevron-up');
     }));
 
     $('.moin-loginsettings').addClass('navbar-right');

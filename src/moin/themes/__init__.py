@@ -23,7 +23,7 @@ from flask_theme import get_theme, render_theme_template
 
 from moin.i18n import _, L_, N_
 from moin import wikiutil, user
-from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
+from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
@@ -92,6 +92,16 @@ class ThemeSupport:
             self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
         else:
             self.wiki_root = ''
+
+    def get_fullname(self, meta):
+        """
+        Convert list of names to list of fullnames: <namespace>/<name> or <name>
+
+        :rtype: tuple
+        :returns: list of item names with namespace prefix or item names if default namespace
+        """
+        fullname = (name if not meta[NAMESPACE] else meta[NAMESPACE] + '/' + name for name in meta[NAME])
+        return fullname
 
     def get_action_tabs(self, fqname, current_endpoint):
         """

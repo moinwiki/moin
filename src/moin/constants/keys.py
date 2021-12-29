@@ -6,7 +6,8 @@ MoinMoin - meta data key / index field name related constants
 """
 
 # metadata keys
-NAME = "name"
+NAME = "name"  # a list of strings, not useful for searching, see #364
+NAMES = 'names'  # = ' '.join(NAME); useful for searching
 NAME_OLD = "name_old"
 NAMESPACE = "namespace"
 
@@ -35,6 +36,7 @@ HAS_TAG = "has_tag"
 TEMPLATE = "template"  # a TAGS value identifying an item as a template
 CONTENTNGRAM = "contentngram"
 SUMMARYNGRAM = "summaryngram"
+NAMENGRAM = "namengram"
 
 ACTION = "action"
 ADDRESS = "address"
