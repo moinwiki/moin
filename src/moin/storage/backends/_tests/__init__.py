@@ -17,7 +17,7 @@ class BackendTestBase:
         """
         self.be needs to be an opened backend
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def teardown_method(self, method):
         """
@@ -38,7 +38,7 @@ class MutableBackendTestBase(BackendTestBase):
         """
         self.be needs to be an created/opened backend
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def teardown_method(self, method):
         """

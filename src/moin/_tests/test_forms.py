@@ -75,7 +75,7 @@ def test_validjson():
              (['barfoo', 'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),  # similar to above
              ([], '', 'itemid', valid_itemid, True),  # deleting all names from the metadata of an existing item will make it nameless, succeeds
              (['existingname'], 'users', '', 'existingname', False),  # item already exists
-            ]
+             ]
     for name, namespace, field, value, result in tests:
         meta = {NAME: name, NAMESPACE: namespace}
         x = JSON(json.dumps(meta))

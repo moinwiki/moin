@@ -24,7 +24,7 @@ class CreateInstance(Command):
 
     option_list = [
         Option('--path', '-p', required=False, dest='path', type=str,
-            help="Path to new wikiconfig dir, defaults to CWD if not specified."),
+               help="Path to new wikiconfig dir, defaults to CWD if not specified."),
     ]
 
     def run(self, path):

@@ -165,7 +165,7 @@ FQNAME = 'fqname'
 FQNAMES = 'fqnames'
 # Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
 FIELDS = [
-    NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS
+    NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS,
 ]
 # Fields that can be used as a unique identifier.
 UFIELDS = [

@@ -902,13 +902,14 @@ class Item:
 
         if isinstance(data, bytes):
             data = BytesIO(data)
-        fqname, new_meta = storage_item.store_revision(meta, data, overwrite=overwrite,
-                                             action=str(action),
-                                             contenttype_current=contenttype_current,
-                                             contenttype_guessed=contenttype_guessed,
-                                             return_meta=True,
-                                             return_rev=True,
-                                             )
+        fqname, new_meta = storage_item.store_revision(meta, data,
+                                                       overwrite=overwrite,
+                                                       action=str(action),
+                                                       contenttype_current=contenttype_current,
+                                                       contenttype_guessed=contenttype_guessed,
+                                                       return_meta=True,
+                                                       return_rev=True,
+                                                       )
         if currentrev is None:
             item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta)
         else:
@@ -1189,7 +1190,7 @@ class Default(Contentful):
                                data_rendered=Markup(self.content._render_data()),
                                html_head_meta=html_head_meta,
                                item_is_deleted=item_is_deleted,
-                              )
+                               )
 
     def doc_link(self, filename, link_text):
         """create a link to serve local doc files as help for wiki editors"""
@@ -1237,7 +1238,7 @@ class Default(Contentful):
                                        group_names=content_registry.group_names,
                                        groups=content_registry.groups,
                                        similar_names=similar_names,
-                                      )
+                                       )
 
         item = self
         flaskg.edit_utils = edit_utils = Edit_Utils(self)
@@ -1412,7 +1413,7 @@ class Default(Contentful):
                                draft_data=draft_data,
                                lock_duration=lock_duration,
                                tuple=tuple,
-                              )
+                               )
 
 
 @register
@@ -1446,7 +1447,7 @@ class NonExistent(Item):
             content = render_template('show_nonexistent.html',
                                       item_name=self.name,
                                       fqname=self.fqname,
-                                     )
+                                      )
         return Response(content, 404)
 
     def do_modify(self):
@@ -1482,7 +1483,7 @@ class NonExistent(Item):
             return render_template('create_new_item.html',
                                    fqname=self.fqname,
                                    form=form,
-            )
+                                   )
 
         # verify name meets standards
         try:
@@ -1494,7 +1495,7 @@ class NonExistent(Item):
             return render_template('create_new_item.html',
                                    fqname=self.fqname,
                                    form=form,
-            )
+                                   )
 
         start, end, matches = find_matches(self.fqname)
         similar_names = sorted(matches.keys())
@@ -1505,7 +1506,7 @@ class NonExistent(Item):
                                group_names=content_registry.group_names,
                                groups=content_registry.groups,
                                similar_names=similar_names,
-                              )
+                               )
 
         # dead code, see above
         return render_template('modify_select_itemtype.html',
@@ -1513,7 +1514,7 @@ class NonExistent(Item):
                                item_name=self.name,
                                fqname=self.fqname,
                                itemtypes=item_registry.shown_entries,
-                              )
+                               )
 
     def rename(self, name, comment=''):
         # pointless for non-existing items

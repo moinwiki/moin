@@ -173,7 +173,7 @@ class Notification:
                                         content_diff_=content_diff,
                                         meta_diff_=meta_diff,
                                         unsubscribe_url=unsubscribe_url,
-        )
+                                        )
         return txt_template, html_template
 
 

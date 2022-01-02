@@ -987,7 +987,7 @@ class Converter:
         trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
                               'registered': '\xae',  # u'&reg;',
                               'trade': '\u2122',  # no entity name defined for superscript TM
-        }
+                              }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
         if trademark_class in trademark_entities:

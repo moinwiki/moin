@@ -110,10 +110,10 @@ class MacroPageLinkListBase(MacroBlockBase):
                 linkname = pagename[index:]
             elif display == "ChildName":
                 index = pagename.rfind('/')
-                linkname = pagename[index+1:]
+                linkname = pagename[(index + 1):]
             elif display == "UnCameled":
                 index = pagename.rfind('/')
-                tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[index+1:])  # space before a cap char
+                tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[(index + 1):])  # space before a cap char
                 linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
             elif display == "ItemTitle":
                 raise NotImplementedError(_('"ItemTitle" is not implemented yet.'))

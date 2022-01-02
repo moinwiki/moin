@@ -303,7 +303,7 @@ class PageRevision:
             meta = {MTIME: -1,  # fake, will get 0 in the end
                     NAME: [item_name],  # will get overwritten with name from edit-log
                                         # if we have an entry there
-                   }
+                    }
             try:
                 revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
                 previous_meta = PageRevision(item, revno - 1, revpath).meta
@@ -570,7 +570,7 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
                           modifier,
                           ','.join(entries),
                           ','.join(rights)  # iterator has removed invalid rights
-                         ))
+                          ))
     result = ' '.join(result)
     logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
     return result
@@ -704,7 +704,7 @@ class UserRevision:
                 'last_saved',  # renamed to MTIME
                 'email_subscribed_events',  # XXX no support yet
                 'jabber_subscribed_events',  # XXX no support yet
-               ]
+                ]
         for key in kill:
             if key in metadata:
                 del metadata[key]

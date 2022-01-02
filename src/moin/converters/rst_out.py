@@ -615,11 +615,11 @@ class Converter:
         elif self.status[-1] == 'table':
             self.status.append('p')
             if self.last_closed and self.last_closed != 'table_cell' \
-                and self.last_closed != 'table_row' \
-                and self.last_closed != 'table_header' \
-                and self.last_closed != 'table_footer' \
-                and self.last_closed != 'table_body' \
-                and self.last_closed != 'line_break':
+               and self.last_closed != 'table_row' \
+               and self.last_closed != 'table_header' \
+               and self.last_closed != 'table_footer' \
+               and self.last_closed != 'table_body' \
+               and self.last_closed != 'line_break':
                 # and self.last_closed != 'p':
                 ret = ReST.linebreak + self.open_children(elem)
             elif self.last_closed == 'p' or self.last_closed == 'line_break':
@@ -631,9 +631,9 @@ class Converter:
             if self.last_closed and self.last_closed == 'list_item_label':
                 ret = self.open_children(elem)
             elif self.last_closed and self.last_closed != 'list_item' \
-                and self.last_closed != 'list_item_header' \
-                and self.last_closed != 'list_item_footer' \
-                and self.last_closed != 'p':
+                    and self.last_closed != 'list_item_header' \
+                    and self.last_closed != 'list_item_footer' \
+                    and self.last_closed != 'p':
                 ret = (ReST.linebreak + ' ' * (len(''.join(self.list_item_labels)) +
                                                len(self.list_item_labels)) + self.open_children(elem))
             elif self.last_closed and self.last_closed == 'p':

@@ -54,7 +54,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
     def make_items(self, unprotected_acl, protected_acl):
         items = [(UNPROTECTED, unprotected_acl, UNPROTECTED_CONTENT),
                  (PROTECTED, protected_acl, PROTECTED_CONTENT),
-                ]
+                 ]
         revids = []
         for item_name, acl, content in items:
             item = self.imw[item_name]

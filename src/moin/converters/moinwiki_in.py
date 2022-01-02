@@ -796,7 +796,6 @@ class Converter(ConverterMacro):
     """
 
     def inline_nowiki_repl(self, stack, nowiki, nowiki_text=None, nowiki_text_backtick=None):
-        text = None
         if nowiki_text is not None:
             return stack.top_append(moin_page.samp(children=[nowiki_text]))
         # we must pass empty strings for moinwiki in > out conversions (@``DATE@ must not be converted to @DATE@)

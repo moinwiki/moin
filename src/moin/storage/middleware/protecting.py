@@ -178,8 +178,6 @@ class ProtectingMiddleware:
         of the items in namespace subject to query restrictions. This is useful for reports
         such as Global Index, Global Tags, Wanted Items, Orphaned Items, etc.
         """
-        last_rev_acl_parts = (None, None, None)
-        last_rev_result = None
         for meta in self.indexer.search_meta(q, idx_name, **kw):
             meta[FQNAMES] = gen_fqnames(meta)
             result = self.may_read_rev(meta)

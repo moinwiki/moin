@@ -68,7 +68,7 @@ class BytesStore(BytesMutableStoreBase):
         self.table = Table(self.table_name, metadata,
                            Column('key', String(KEY_LEN), primary_key=True),
                            Column('value', LargeBinary(VALUE_LEN)),
-                          )
+                           )
 
     def close(self):
         self.engine.dispose()

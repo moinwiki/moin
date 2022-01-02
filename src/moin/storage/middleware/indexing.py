@@ -455,7 +455,7 @@ class IndexingMiddleware:
                           ("*_numeric", NUMERIC(stored=True)),
                           ("*_datetime", DATETIME(stored=True)),
                           ("*_boolean", BOOLEAN(stored=True)),
-                         ]
+                          ]
 
         # Adding dynamic fields to schemas
         for glob, field_type in dynamic_fields:
@@ -1182,7 +1182,7 @@ class Item(PropertiesMixin):
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
                  FQNAME: fqname,
-                }
+                 }
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
             Schema = UserMetaSchema

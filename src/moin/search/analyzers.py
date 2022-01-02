@@ -131,6 +131,6 @@ def item_name_analyzer():
     """
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)
-                     )
+                      )
     analyzer = RegexTokenizer(r"\S+") | iwf | LowercaseFilter()
     return analyzer
