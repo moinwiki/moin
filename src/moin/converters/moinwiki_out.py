@@ -442,9 +442,11 @@ class Converter:
             else:
                 ret = self.open_children(elem)
         elif self.status[-2] == 'list':  # TODO: still possible? <p> after <li> removed from moinwiki_in
-            if self.last_closed and (
-                self.last_closed != 'list_item' and self.last_closed != 'list_item_header' and
-                self.last_closed != 'list_item_footer' and self.last_closed != 'list_item_label'):
+            if self.last_closed \
+               and (self.last_closed != 'list_item' and
+                    self.last_closed != 'list_item_header' and
+                    self.last_closed != 'list_item_footer' and
+                    self.last_closed != 'list_item_label'):
                 ret = Moinwiki.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)

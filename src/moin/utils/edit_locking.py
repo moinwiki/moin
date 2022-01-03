@@ -258,7 +258,7 @@ class Edit_Utils:
                 else:
                     # item is locked by somebody else, make current user wait
                     msg = L_("Item '%(item_name)s' is locked by %(user_name)s. Try again in %(number)s %(interval)s.",
-                          item_name=i_name, user_name=u_name, number=number, interval=interval, )
+                             item_name=i_name, user_name=u_name, number=number, interval=interval, )
                     return NO_LOCK, msg
 
             else:
@@ -271,7 +271,7 @@ class Edit_Utils:
                         # current user timed out, then other user updated and saved
                         msg = L_("""Someone else updated '%(item_name)s' after your edit lock timed out. If you click 'Save',
                                  conflicting changes must be manually merged. Click 'Cancel' to discard changes.""",
-                              item_name=self.item_name)
+                                 item_name=self.item_name)
                     self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                       VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
                     self.conn.commit()

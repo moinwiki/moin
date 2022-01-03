@@ -412,4 +412,4 @@ class Ticket(Contentful):
                                datetime=datetime.datetime,
                                ordered_comments=ordered_comments,
                                render_comment_data=render_comment_data,
-                              )
+                               )

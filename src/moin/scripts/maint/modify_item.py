@@ -71,7 +71,7 @@ class PutItem(Command):
         meta = json.loads(meta)
         to_kill = [SIZE, HASH_ALGORITHM,  # gets re-computed automatically
                    DATAID,
-                  ]
+                   ]
         for key in to_kill:
             meta.pop(key, None)
         if not overwrite:

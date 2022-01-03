@@ -57,7 +57,7 @@ class Backend(MutableBackendBase):
         """
         create an instance using the data given in uri
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def open(self):
         for backend in self.backends.values():

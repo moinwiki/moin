@@ -81,12 +81,10 @@ class TestConverter(Base):
          '/div/hr'),
         ('<page:page><page:body><page:div><page:p>Text</page:p></page:div></page:body></page:page>',
          '/div/div[p="Text"]'),
-        (
-        '<page:page><page:body><page:div><page:blockquote>Quotation</page:blockquote></page:div></page:body></page:page>',
-        '/div/div[blockquote="Quotation"]'),
-        (
-        '<page:page><page:body><page:div><page:p><page:quote>Quotation</page:quote></page:p></page:div></page:body></page:page>',
-        '/div/div/p/q[text()="Quotation"]'),
+        ('<page:page><page:body><page:div><page:blockquote>Quotation</page:blockquote></page:div></page:body></page:page>',
+         '/div/div[blockquote="Quotation"]'),
+        ('<page:page><page:body><page:div><page:p><page:quote>Quotation</page:quote></page:p></page:div></page:body></page:page>',
+         '/div/div/p/q[text()="Quotation"]'),
     ]
 
     @pytest.mark.parametrize('input,xpath', data)
@@ -172,27 +170,20 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        (
-        '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/ul[li="Item"]'),
-        (
-        '<page><body><list item-label-generate="ordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/ol[li="Item"]'),
-        (
-        '<page><body><list><list-item><list-item-label>Label</list-item-label><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/dl[dt="Label"][dd="Item"]'),
-        (
-        '<page><body><list item-label-generate="ordered" list-style-type="upper-alpha"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/ol[@class="moin-upperalpha-list"][li="Item"]'),
-        (
-        '<page><body><list item-label-generate="ordered" list-style-type="lower-alpha"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/ol[@class="moin-loweralpha-list"][li="Item"]'),
-        (
-        '<page><body><list item-label-generate="ordered" list-style-type="upper-roman"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/ol[@class="moin-upperroman-list"][li="Item"]'),
-        (
-        '<page><body><list item-label-generate="ordered" list-style-type="lower-roman"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
-        '/div/ol[@class="moin-lowerroman-list"][li="Item"]'),
+        ('<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/ul[li="Item"]'),
+        ('<page><body><list item-label-generate="ordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/ol[li="Item"]'),
+        ('<page><body><list><list-item><list-item-label>Label</list-item-label><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/dl[dt="Label"][dd="Item"]'),
+        ('<page><body><list item-label-generate="ordered" list-style-type="upper-alpha"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/ol[@class="moin-upperalpha-list"][li="Item"]'),
+        ('<page><body><list item-label-generate="ordered" list-style-type="lower-alpha"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/ol[@class="moin-loweralpha-list"][li="Item"]'),
+        ('<page><body><list item-label-generate="ordered" list-style-type="upper-roman"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/ol[@class="moin-upperroman-list"][li="Item"]'),
+        ('<page><body><list item-label-generate="ordered" list-style-type="lower-roman"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+         '/div/ol[@class="moin-lowerroman-list"][li="Item"]'),
     ]
 
     @pytest.mark.parametrize('input,xpath', data)
@@ -244,16 +235,13 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        (
-        '<page><body><table><table-header><table-row><table-cell>Header</table-cell></table-row></table-header><table-footer><table-row><table-cell>Footer</table-cell></table-row></table-footer><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
-        # <div><table><thead><tr><td>Header</td></tr></thead><tfoot><tr><td>Footer</td></tr></tfoot><tfoot><tr><td>Cell</td></tr></tfoot></table></div>
-        '/div/table[thead/tr[td="Header"]][tfoot/tr[td="Footer"]][tbody/tr[td="Cell"]]'),
-        (
-        '<page><body><table><table-body><table-row><table-cell number-columns-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
-        '/div/table/tbody/tr/td[@colspan="2"][text()="Cell"]'),
-        (
-        '<page><body><table><table-body><table-row><table-cell number-rows-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
-        '/div/table/tbody/tr/td[@rowspan="2"][text()="Cell"]'),
+        ('<page><body><table><table-header><table-row><table-cell>Header</table-cell></table-row></table-header><table-footer><table-row><table-cell>Footer</table-cell></table-row></table-footer><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
+         # <div><table><thead><tr><td>Header</td></tr></thead><tfoot><tr><td>Footer</td></tr></tfoot><tfoot><tr><td>Cell</td></tr></tfoot></table></div>
+         '/div/table[thead/tr[td="Header"]][tfoot/tr[td="Footer"]][tbody/tr[td="Cell"]]'),
+        ('<page><body><table><table-body><table-row><table-cell number-columns-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
+         '/div/table/tbody/tr/td[@colspan="2"][text()="Cell"]'),
+        ('<page><body><table><table-body><table-row><table-cell number-rows-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
+         '/div/table/tbody/tr/td[@rowspan="2"][text()="Cell"]'),
     ]
 
     @pytest.mark.parametrize('input,xpath', data)

@@ -34,7 +34,7 @@ def build_index(basename, relnames):
     Files have no subitems, meta content is reduced to required keys.
     """
     files = [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
-            for relname in relnames]
+             for relname in relnames]
     return [(IndexEntry(f.relname, f.fullname, {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE, ADDRESS)}))
             for f in files]
 
@@ -48,7 +48,7 @@ def build_mixed_index(basename, spec):
     :spec is a list of (relname, hassubitem) tuples.
     """
     files = [(MixedIndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta, hassubitem))
-            for relname, hassubitem in spec]
+             for relname, hassubitem in spec]
     return [(MixedIndexEntry(f.relname, f.fullname, {} if f.hassubitems else {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}, f.hassubitems))
             for f in files]
 

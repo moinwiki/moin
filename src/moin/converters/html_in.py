@@ -201,7 +201,7 @@ class Converter:
         result = {}
         for key, value in element.attrib.items():
             if key.uri == html and \
-                key.name in self.standard_attributes:
+               key.name in self.standard_attributes:
                 result[key] = value
             if key.name == 'id':
                 result[xml('id')] = value

@@ -380,9 +380,11 @@ class Converter:
             else:
                 ret = self.open_children(elem)
         elif self.status[-2] == 'list':  # TODO: still possible? <p> after <li> removed from moinwiki_in
-            if self.last_closed and (
-                self.last_closed != 'list_item' and self.last_closed != 'list_item_header' and
-                self.last_closed != 'list_item_footer' and self.last_closed != 'list_item_label'):
+            if self.last_closed \
+               and (self.last_closed != 'list_item' and
+                    self.last_closed != 'list_item_header' and
+                    self.last_closed != 'list_item_footer' and
+                    self.last_closed != 'list_item_label'):
                 ret = Markdown.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)
@@ -393,7 +395,6 @@ class Converter:
 
     def open_moinpage_page(self, elem):
         self.last_closed = None
-        ret = ''
         if len(self.status) > 1:
             self.status.append('text')
             childrens_output = self.open_children(elem)

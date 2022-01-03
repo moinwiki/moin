@@ -237,7 +237,7 @@ class Converter:
     def visit_moinpage_audio(self, elem):
         href = elem.get(xlink.href, None)
         attrib = {html.src: href} if href else {}
-        return self.new_copy(html.audio, elem)
+        return self.new_copy(html.audio, elem, attrib)
 
     def visit_moinpage_video(self, elem):
         href = elem.get(xlink.href, None)

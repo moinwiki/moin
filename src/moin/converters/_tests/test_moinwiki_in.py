@@ -354,9 +354,8 @@ class TestConverter:
          "<page><body><nowiki>3<nowiki-args>#!wiki red/solid</nowiki-args>wiki\n\nwiki</nowiki></body></page>"),
         ('{{{#!rst\nHeading\n-------\n}}}',
          "<page><body><nowiki>3<nowiki-args>#!rst</nowiki-args>Heading\n-------</nowiki></body></page>"),
-        (
-        "{{{#!docbook\n<article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'>\n<section>\n<title>A docbook document</title>\n</section>\n</article>\n}}}",
-        "<page><body><nowiki>3<nowiki-args>#!docbook</nowiki-args>&lt;article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'&gt;\n&lt;section&gt;\n&lt;title&gt;A docbook document&lt;/title&gt;\n&lt;/section&gt;\n&lt;/article&gt;</nowiki></body></page>"),
+        ("{{{#!docbook\n<article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'>\n<section>\n<title>A docbook document</title>\n</section>\n</article>\n}}}",
+         "<page><body><nowiki>3<nowiki-args>#!docbook</nowiki-args>&lt;article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'&gt;\n&lt;section&gt;\n&lt;title&gt;A docbook document&lt;/title&gt;\n&lt;/section&gt;\n&lt;/article&gt;</nowiki></body></page>"),
         ('{{{#!creole\n|=A|1\n|=B|2\n}}}',
          "<page><body><nowiki>3<nowiki-args>#!creole</nowiki-args>|=A|1\n|=B|2</nowiki></body></page>"),
         ('{{{#!text/x.moin.creole\ntext\n}}}',
