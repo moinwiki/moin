@@ -394,9 +394,9 @@ class IndexingMiddleware:
             # tokenized ACL from metadata
             ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
             # ngram words, index ngrams of words from main content
-            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
-            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
-            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, field_boost=2.0),
+            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
+            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
+            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=2.0),
         }
         latest_revs_fields.update(**common_fields)
 
