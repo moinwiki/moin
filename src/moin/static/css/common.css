@@ -258,17 +258,6 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 /* end diffs */
 
 /* search  */
-.moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor: pointer; color: #1409B9; color: var(--link); }
-.moin-search-meta { color: #444; color: var(--muted); }
-.moin-search-hit-info { display: inline; }
-.moin-search-hits { font-weight: bold; }
-.moin-searchoptions > table { table-layout: fixed; }
-.moin-searchoptions > table > tbody > tr > th { padding: 5px; text-decoration: underline; }
-.moin-searchoptions > table > tbody > tr > td { vertical-align: top; padding-right: 20px; width: 20%; }
-.moin-search-results p { font-size: .85em; }
-.moin-search-results td { border-width: 0; }
-.moin-search-results .moin-search-hit-info { margin-top: 0; display: inline; }
-.moin-search-results .moin-found-text { margin-top: 0; }
 #moin-searchform { margin: 2px 12px 0 0; padding: 0; font-size: .82em; float: right; text-align: right; width: 15em; }
 #moin-searchform div.moin-float-fix { display: inline; }
 #moin-search-submit { text-indent: -9000%; margin-left: -26px; width: 20px; height: 16px;
@@ -280,8 +269,15 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 #moin-long-searchform { padding: 0; font-size: 1em; text-align: left; }
 #moin-long-searchform div { margin: 0; }
 #moin-long-searchform .moin-search-query { width: 90%; margin-left: 0; }
+.moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor: pointer; color: #1409B9; color: var(--link); }
+.moin-search-hit-info { margin-top: 0; display: inline; }
+.moin-search-hits { font-weight: bold; }
+.moin-search-results { font-size: .92em; }
+.moin-found-text { margin-top: 0; }
 .moin-suggestions { font-weight: bold; }
-.moin-suggestion-terms { font-size: .85em; font-weight: normal; color: #444; color: var(--muted); }
+.moin-suggestion-terms { font-size: .92em; font-weight: normal; color: #444; color: var(--muted); }
+.moin-search-name { font-weight: bold; font-size: 1.25em; padding-right: 1em; }
+.moin-search-match { margin-top: 1.5em; margin-bottom: .2em; }
 
 /* misc moin css keywords */
 .moin-wordbreak { word-break: break-all; word-wrap: break-word; }
