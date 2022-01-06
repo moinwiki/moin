@@ -290,27 +290,37 @@ def add_file_filters(_filter, filetypes):
     :param filetypes: list of selected filetypes
     :returns: the required _filter for the search query
     """
-    if filetypes:
-        alltypes = "all" in filetypes
+    if filetypes and 'all' not in filetypes:
         contenttypes = []
         files_filter = []
-        if alltypes or "markup" in filetypes:
+        if "markup" in filetypes:
             contenttypes.append(CONTENTTYPE_MARKUP)
-        if alltypes or "text" in filetypes:
+        if "text" in filetypes:
             contenttypes.append(CONTENTTYPE_TEXT)
-        if alltypes or "image" in filetypes:
+        if "image" in filetypes:
             contenttypes.append(CONTENTTYPE_IMAGE)
-        if alltypes or "audio" in filetypes:
+        if "audio" in filetypes:
             contenttypes.append(CONTENTTYPE_AUDIO)
-        if alltypes or "video" in filetypes:
+        if "video" in filetypes:
             contenttypes.append(CONTENTTYPE_VIDEO)
-        if alltypes or "drawing" in filetypes:
+        if "drawing" in filetypes:
             contenttypes.append(CONTENTTYPE_DRAWING)
-        if alltypes or "other" in filetypes:
+        if "other" in filetypes:
             contenttypes.append(CONTENTTYPE_OTHER)
         for ctype in contenttypes:
             for itemtype in ctype:
                 files_filter.append(Term("contenttype", itemtype))
+        if 'unknown' in filetypes:
+            known_types = []
+            for known in CONTENTTYPES_MAP.keys():
+                known_types.append(Term("contenttype", known))
+            unknown_types = Not(Or(known_types))
+            if not files_filter:
+                _filter.append(unknown_types)
+                _filter = And(_filter)
+                return _filter
+            else:
+                files_filter.append(unknown_types)
         files_filter = Or(files_filter)
         _filter.append(files_filter)
         _filter = And(_filter)
