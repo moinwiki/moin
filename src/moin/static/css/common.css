@@ -273,7 +273,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: #e1edf7; backgroun
 .moin-search-hit-info { margin-top: 0; display: inline; }
 .moin-search-hits { font-weight: bold; }
 .moin-search-results { font-size: .92em; }
-.moin-found-text { margin-top: 0; }
+.moin-found-text { margin-top: 0; margin-bottom: 0; }
 .moin-suggestions { font-weight: bold; }
 .moin-suggestion-terms { font-size: .92em; font-weight: normal; color: #444; color: var(--muted); }
 .moin-search-name { font-weight: bold; font-size: 1.25em; padding-right: 1em; }
