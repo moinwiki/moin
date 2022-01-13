@@ -19,6 +19,9 @@
 
 {%- block content %}
     <h1>{{ _("Search") }}</h1>
+    {%- if item_name %}
+        <h2>Search "{{ item_name }}" Subitems and Transclusions</h2>
+    {%- endif %}
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <p>
             {{ forms.render(medium_search_form['q']) }}
