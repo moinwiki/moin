@@ -348,6 +348,20 @@ def add_facets(facets, time_sorting):
 @frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+search', defaults=dict(item_name=''), methods=['GET', 'POST'])
 def search(item_name):
+    """
+    Perform a whoosh search of the index and display the matching items.
+
+    The default search is across all namespaces in the index.
+
+    The Jinja template formatting the output may also display data related to the
+    search such as the whoosh query, filter (if any), hit counts, and additional
+    suggested search terms.
+
+    "Currently" there is no theme generating the '/+search/<itemname:item_name>' link
+    within Item Views. To access, users must key the query link into the browsers URL. The
+    query result is filtered limiting the output to the target item, target subitems
+    and sub-subitems..., and transclusions within those items.
+    """
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
     valid = search_form.validate()
@@ -375,13 +389,12 @@ def search(item_name):
         idx_name = ALL_REVS if history else LATEST_REVS
         qp = flaskg.storage.query_parser([NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name)
         q = qp.parse(query)
-
+        q = And(Or(q) & Term(WIKINAME, app.cfg.interwikiname))
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
             prefix_name = item_name + '/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
-            terms.append(Term(WIKINAME, app.cfg.interwikiname))
 
             show_transclusions = True
             if show_transclusions:
@@ -441,6 +454,7 @@ def search(item_name):
                                        history=history,
                                        is_ticket=is_ticket,
                                        whoosh_query=q,
+                                       whoosh_filter=_filter,
                                        flaskg=flaskg,
                                        )
             else:
@@ -454,6 +468,7 @@ def search(item_name):
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
                                        whoosh_query=q,
+                                       whoosh_filter=_filter,
                                        flaskg=flaskg,
                                        )
             flaskg.clock.stop('search render')

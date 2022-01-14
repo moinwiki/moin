@@ -32,8 +32,12 @@
         {# when user keys changes into long search form, updates to whoosh_query indicates conclusion of queued searches #}
         <p class="moin-suggestions"> {{ _("Whoosh query:") }}
             <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
-
         </p>
+        {%- if whoosh_filter %}
+            <p class="moin-suggestions"> {{ _("Whoosh filter:") }}
+                <span class="moin-suggestion-terms">{{ whoosh_filter }} </span>
+            </p>
+        {%- endif %}
         {%- if omitted_words %}
             <p class="moin-suggestions"> {{ _("Common words omitted from query:") }}
                 <span class="moin-suggestion-terms">{{ omitted_words }} </span>
