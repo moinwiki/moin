@@ -103,6 +103,20 @@ class ThemeSupport:
         fullname = (name if not meta[NAMESPACE] else meta[NAMESPACE] + '/' + name for name in meta[NAME])
         return fullname
 
+    def field_term(self, field, term):
+        """
+        Convert Whoosh stored bytes term to string, enables display of matching search terms by hit.
+
+        TODO: Incoming term is some form of Whoosh compressed bytes. There are no docs showing
+        how to convert integer and datetime to strings.
+        """
+        try:
+            term = term.decode()
+        except UnicodeDecodeError:
+            # field is integer or datetime?
+            term = "unknown"
+        return field, term
+
     def get_action_tabs(self, fqname, current_endpoint):
         """
         Create a list of commonly used item views. Used by Basic theme.
