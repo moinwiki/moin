@@ -94,7 +94,8 @@
                                     </span>
                                     <span>{{ _("MATCHED TERMS:") }}</span>
                                     {%- for field, term in result.matched_terms() %}
-                                        <span>{{ field }}:{{ term.decode() }}, </span>
+                                        {%- set field, term = theme_supp.field_term(field, term) %}
+                                        <span>{{ field }}:{{ term }}, </span>
                                     {%- endfor %}
                                 </p>
                                 <p class="moin-search-hit-info">

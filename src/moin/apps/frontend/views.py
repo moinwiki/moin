@@ -389,7 +389,6 @@ def search(item_name):
         idx_name = ALL_REVS if history else LATEST_REVS
         qp = flaskg.storage.query_parser([NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name)
         q = qp.parse(query)
-        q = And(Or(q) & Term(WIKINAME, app.cfg.interwikiname))
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
