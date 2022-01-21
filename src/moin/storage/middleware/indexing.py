@@ -357,8 +357,8 @@ class IndexingMiddleware:
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
-            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=2.0),
-            # search on HAS_TAGS improves response time of global tags
+            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=200.0),
+            # search on HAS_TAG improves response time of global tags
             # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
             HAS_TAG: BOOLEAN(stored=False),
             LANGUAGE: ID(stored=True),
@@ -375,7 +375,7 @@ class IndexingMiddleware:
             # tokenized COMMENT from metadata
             COMMENT: TEXT(stored=True),
             # SUMMARY from metadata
-            SUMMARY: TEXT(stored=True, field_boost=2.0),
+            SUMMARY: TEXT(stored=True, field_boost=200.0),
             # DATAID from metadata
             DATAID: ID(stored=True),
             # TRASH from metadata
@@ -396,7 +396,7 @@ class IndexingMiddleware:
             # ngram words, index ngrams of words from main content
             CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
             SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
-            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=2.0),
+            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
         }
         latest_revs_fields.update(**common_fields)
 
