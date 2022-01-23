@@ -157,7 +157,7 @@ The following table includes fields that may be useful for searching.
 +-----------------------+-------------------------------------------------------+
 | ``contentngram``      | document contents, tokenized by 3 to 6 characters.    |
 +-----------------------+-------------------------------------------------------+
-| ``contenttype``       | document type, e.g. text/plain;charset=utf-8          |
+| ``contenttype``       | document type: text, image, audio, moinwiki, jpg, ... |
 +-----------------------+-------------------------------------------------------+
 | ``itemlinks``         | link targets of the document, e.g. OtherItem          |
 +-----------------------+-------------------------------------------------------+
