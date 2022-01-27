@@ -113,18 +113,17 @@ class TestMimeTokenizer(TokenizerTestBase):
 
     test_cases_query = [
         # (query, tokens)
+        ('text/x.moin.wiki;charset=utf-8',
+         ['text/x.moin.wiki;charset=utf-8', 'text', 'moinwiki', 'x.moin.wiki', 'x', 'moin', 'wiki', 'charset=utf-8', 'charset', 'utf-8']),
         ('text/plain',
          ['text/plain', 'text', 'plain']),
         ('text/plain;charset=utf-8',
-         ['text/plain;charset=utf-8', 'text', 'plain', 'charset=utf-8']),
+         ['text/plain;charset=utf-8', 'text', 'plain', 'charset=utf-8', 'charset', 'utf-8']),
         ('text/html;value1=foo;value2=bar',
-         ['text/html;value1=foo;value2=bar', 'text', 'html', 'value1=foo', 'value2=bar']),
+         ['text/html;value1=foo;value2=bar', 'text', 'html', 'value1=foo', 'value1', 'foo', 'value2=bar', 'value2', 'bar']),
         # we normalize, sort the params:
         ('text/html;value2=bar;value1=foo',
-         ['text/html;value1=foo;value2=bar', 'text', 'html', 'value1=foo', 'value2=bar']),
-        # later values for same key overwrite earlier ones:
-        ('text/html;value1=foo;value1=bar',
-         ['text/html;value1=bar', 'text', 'html', 'value1=bar'])
+         ['text/html;value2=bar;value1=foo', 'text', 'html', 'value2=bar', 'value2', 'bar', 'value1=foo', 'value1', 'foo']),
     ]
 
     def make_tokenizer(self):
