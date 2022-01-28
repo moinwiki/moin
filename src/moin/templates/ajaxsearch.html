@@ -79,11 +79,11 @@
                                             {%- if history %}
                                                 {# user has checked "All" radio button under Revisions heading #}
                                                 <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid', regex=query) }}">
-                                                    <b>{{ fullname | join(' | ') }}</b>
+                                                    <b>{{ result['names'] }}</b>
                                                 </a>
                                             {%- else %}
                                                 <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace'], regex=query) }}">
-                                                    <b>{{ fullname | join(' | ') }}</b>
+                                                    <b>{{ result['names'] }}</b>
                                                 </a>
                                             {%- endif %}
                                         {%- else %}

@@ -196,7 +196,12 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
         # global tags uses this to search for items with tags
         doc[HAS_TAG] = True
     if doc.get(NAME, None):
-        doc[NAMES] = ' '.join(doc[NAME])
+        if doc.get(NAMESPACE, None):
+            fullnames = [doc[NAMESPACE] + '/' + x for x in doc[NAME]]
+            doc[NAMES] = ' | '.join(fullnames)
+        else:
+            doc[NAMES] = ' | '.join(doc[NAME])
+        doc[NAME_SORT] = doc[NAMES].replace('/', '')
     return doc
 
 
@@ -335,7 +340,9 @@ class IndexingMiddleware:
             # we store list of names, but do not use for searching
             NAME: TEXT(stored=True),
             # string created by joining list of Name strings, we use NAMES for searching but do not store
-            NAMES: TEXT(stored=False, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=2.0),
+            # names without slashes, slashes cause strange sort sequences
+            NAME_SORT: TEXT(stored=True),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.

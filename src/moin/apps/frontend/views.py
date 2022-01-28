@@ -333,15 +333,18 @@ def add_facets(facets, time_sorting):
 
     :param facets: current facets
     :param time_sorting: defines the sorting order and can have one of the following 3 values :
-                     1. default - default search
+                     1. default - default search, highest score first
                      2. old - sort old items first
                      3. new - sort new items first
+                     4. name - sort by name
     :returns: required facets for the search query
     """
     if time_sorting == "new":
-        facets.append(sorting.FieldFacet("mtime", reverse=True))
+        facets.append(sorting.FieldFacet(MTIME, reverse=True))
     elif time_sorting == "old":
-        facets.append(sorting.FieldFacet("mtime", reverse=False))
+        facets.append(sorting.FieldFacet(MTIME, reverse=False))
+    elif time_sorting == "name":
+        facets.append(sorting.FieldFacet(NAME_SORT, reverse=False))
     return facets
 
 
@@ -433,7 +436,7 @@ def search(item_name):
                                        )
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
-            name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
+            name_suggestions = [word for word, score in results.key_terms(NAMES, docs=20, numterms=10)]
             content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
