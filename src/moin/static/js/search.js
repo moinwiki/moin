@@ -42,10 +42,19 @@ $(document).ready(function(){
             type: "GET",
             url: wiki_root + "/+search",
             data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, boolajax: true, is_ticket: is_ticket }
-        }).done(function( html ) {
-            $('#finalresults').html(html);
-            // ajax search does not support search by item name; hide "item search' heading if present
-            $('#moin-content h2').hide();
+        }).done(function(data) {
+            if (data.search(/doctype/i) > 0) {
+                // this is a full page with a flash error message, replace everything
+                $("body").html(data);
+                // empty search text field
+                $("input[type=search]").val("");
+                $('#moin-flash').remove();
+            } else {
+                // normal response replaces old ajaxsearch.html
+                $('#finalresults').html(data);
+                // ajax search does not support search by item name; hide "item search' heading if present
+                $('#moin-content h2').hide();
+            }
         });
     }
 

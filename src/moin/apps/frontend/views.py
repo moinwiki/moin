@@ -49,7 +49,7 @@ from babel import Locale
 
 from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
-from whoosh.query.qcore import QueryError
+from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
 from moin.i18n import _, L_, N_
@@ -364,6 +364,7 @@ def search(item_name):
     within Item Views. To access, users must key the query link into the browsers URL. The
     query result is filtered limiting the output to the target item, target subitems
     and sub-subitems..., and transclusions within those items.
+    Example URL: http://127.0.0.1:8080/+search/OtherTextItems?q=moin
     """
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
@@ -427,8 +428,17 @@ def search(item_name):
             flaskg.clock.start('search')
             try:
                 results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
+            # this may be an ajax transaction, search.js will handle a full page response
             except QueryError:
                 flash(_("""QueryError: invalid search term: %(search_term)s""", search_term=q), "error")
+                return render_template('search.html',
+                                       query=query,
+                                       medium_search_form=search_form,
+                                       item_name=item_name,
+                                       )
+            except TermNotFound:
+                # name:'moin has bugs'
+                flash(_("""TermNotFound: field is not indexed: %(search_term)s""", search_term=q), "error")
                 return render_template('search.html',
                                        query=query,
                                        medium_search_form=search_form,
