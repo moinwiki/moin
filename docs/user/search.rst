@@ -144,49 +144,51 @@ multiple terms with a space: `content:foo tags:Foo` is the same as
 
 The following table includes fields that may be useful for searching.
 
-+-----------------------+-------------------------------------------------------+
-| Field name            | Field value                                           |
-+-----------------------+-------------------------------------------------------+
-| ``acl``               | access control list (see below)                       |
-+-----------------------+-------------------------------------------------------+
-| ``address``           | submitter IP address, e.g. 127.0.0.1                  |
-+-----------------------+-------------------------------------------------------+
-| ``comment``           | editor comment on save, rename, etc.                  |
-+-----------------------+-------------------------------------------------------+
-| ``content``           | document contents, e.g. This is some example content. |
-+-----------------------+-------------------------------------------------------+
-| ``contentngram``      | document contents, tokenized by 3 to 6 characters.    |
-+-----------------------+-------------------------------------------------------+
-| ``contenttype``       | document type: text, image, audio, moinwiki, jpg, ... |
-+-----------------------+-------------------------------------------------------+
-| ``itemlinks``         | link targets of the document, e.g. OtherItem          |
-+-----------------------+-------------------------------------------------------+
-| ``itemtransclusions`` | transclusion targets of the document, e.g. OtherItem  |
-+-----------------------+-------------------------------------------------------+
-| ``language``          | (main) language of the document contents, e.g. en     |
-+-----------------------+-------------------------------------------------------+
-| ``mtime``             | document modification (submission) date, 2011-08-07   |
-+-----------------------+-------------------------------------------------------+
-| ``namengram``         | document names, tokenized by 3 to 6 characters.       |
-+-----------------------+-------------------------------------------------------+
-| ``names``             | document names, e.g. Home, MyWikiPage                 |
-+-----------------------+-------------------------------------------------------+
-| ``namespace``         | namespace:"" for default or namespace:users           |
-+-----------------------+-------------------------------------------------------+
-| ``name_exact``        | same as ``name``, but is not tokenized                |
-+-----------------------+-------------------------------------------------------+
-| ``name_old``          | name_old:* for all renamed items                      |
-+-----------------------+-------------------------------------------------------+
-| ``summary``           | summary text, if provided by author                   |
-+-----------------------+-------------------------------------------------------+
-| ``summaryngram``      | summary text, tokenized by 3 to 6 characters.         |
-+-----------------------+-------------------------------------------------------+
-| ``tags``              | tags of the document, e.g. important, hard, todo      |
-+-----------------------+-------------------------------------------------------+
-| ``username``          | submitter user name, e.g. JoeDoe                      |
-+-----------------------+-------------------------------------------------------+
-| ``wikiname``          | wiki name, e.g. ITWiki, EngineeringWiki, SalesWiki    |
-+-----------------------+-------------------------------------------------------+
++-------------------------+-------------------------------------------------------+
+| Field name              | Field value                                           |
++-------------------------+-------------------------------------------------------+
+| ``acl`` **              | access control list (see below)                       |
++-------------------------+-------------------------------------------------------+
+| ``address``             | submitter IP address, e.g. 127.0.0.1                  |
++-------------------------+-------------------------------------------------------+
+| ``comment``             | editor comment on save, rename, etc.                  |
++-------------------------+-------------------------------------------------------+
+| ``content``             | document contents, e.g. This is some example content. |
++-------------------------+-------------------------------------------------------+
+| ``contentngram`` **     | document contents, tokenized by 3 to 6 characters.    |
++-------------------------+-------------------------------------------------------+
+| ``contenttype``         | document type: text, image, audio, moinwiki, jpg, ... |
++-------------------------+-------------------------------------------------------+
+| ``itemlinks`` **        | link targets of the document, e.g. OtherItem          |
++-------------------------+-------------------------------------------------------+
+| ``itemtransclusions`` **| transclusion targets of the document, e.g. OtherItem  |
++-------------------------+-------------------------------------------------------+
+| ``language``            | (main) language of the document contents, e.g. en     |
++-------------------------+-------------------------------------------------------+
+| ``mtime``               | document modification (submission) date, 2011-08-07   |
++-------------------------+-------------------------------------------------------+
+| ``namengram`` **        | document names, tokenized by 3 to 6 characters.       |
++-------------------------+-------------------------------------------------------+
+| ``names``               | document names, e.g. Home, MyWikiPage                 |
++-------------------------+-------------------------------------------------------+
+| ``namespace``           | namespace:"" for default or namespace:users           |
++-------------------------+-------------------------------------------------------+
+| ``name_exact``          | same as ``name``, but is not tokenized                |
++-------------------------+-------------------------------------------------------+
+| ``name_old``            | name_old:* for all renamed items                      |
++-------------------------+-------------------------------------------------------+
+| ``summary``             | summary text, if provided by author                   |
++-------------------------+-------------------------------------------------------+
+| ``summaryngram`` **     | summary text, tokenized by 3 to 6 characters.         |
++-------------------------+-------------------------------------------------------+
+| ``tags``                | tags of the document, e.g. important, hard, todo      |
++-------------------------+-------------------------------------------------------+
+| ``username``            | submitter user name, e.g. JoeDoe                      |
++-------------------------+-------------------------------------------------------+
+| ``wikiname``            | wiki name, e.g. ITWiki, EngineeringWiki, SalesWiki    |
++-------------------------+-------------------------------------------------------+
+
+** These fields exist only in the current revisions index, see Notes below.
 
 Examples
 --------
@@ -213,7 +215,8 @@ Notes
 There are two indexes. The smaller index is used by default. It only indexes the
 current revision of each item. The larger index is used when the `All` radio
 button under the Search Options link is selected. The larger indexes all
-revisions of all items including revisions of deleted items.
+revisions of all items including revisions of deleted items. As noted in the table
+above the larger index omits several fields to save space.
 
 By default, all namespaces and all wikinames are searched, including the userprofiles
 index. Because the userprofiles index is normally read restricted, hits will be
