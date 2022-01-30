@@ -6,8 +6,9 @@ MoinMoin - meta data key / index field name related constants
 """
 
 # metadata keys
-NAME = "name"  # a list of strings, not useful for searching, see #364
-NAMES = 'names'  # = ' '.join(NAME); useful for searching
+NAME = "name"  # a list of strings, not useful for searching nor sorting, see #364
+NAMES = "names"  # fullnames of item separated by |, useful for indexing/searching/display
+NAME_SORT = "name_sort"  # useful for sorting, slashes removed because of whoosh, see #209
 NAME_OLD = "name_old"
 NAMESPACE = "namespace"
 

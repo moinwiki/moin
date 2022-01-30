@@ -49,7 +49,7 @@ from babel import Locale
 
 from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
-from whoosh.query.qcore import QueryError
+from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
 from moin.i18n import _, L_, N_
@@ -333,15 +333,18 @@ def add_facets(facets, time_sorting):
 
     :param facets: current facets
     :param time_sorting: defines the sorting order and can have one of the following 3 values :
-                     1. default - default search
+                     1. default - default search, highest score first
                      2. old - sort old items first
                      3. new - sort new items first
+                     4. name - sort by name
     :returns: required facets for the search query
     """
     if time_sorting == "new":
-        facets.append(sorting.FieldFacet("mtime", reverse=True))
+        facets.append(sorting.FieldFacet(MTIME, reverse=True))
     elif time_sorting == "old":
-        facets.append(sorting.FieldFacet("mtime", reverse=False))
+        facets.append(sorting.FieldFacet(MTIME, reverse=False))
+    elif time_sorting == "name":
+        facets.append(sorting.FieldFacet(NAME_SORT, reverse=False))
     return facets
 
 
@@ -361,6 +364,7 @@ def search(item_name):
     within Item Views. To access, users must key the query link into the browsers URL. The
     query result is filtered limiting the output to the target item, target subitems
     and sub-subitems..., and transclusions within those items.
+    Example URL: http://127.0.0.1:8080/+search/OtherTextItems?q=moin
     """
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
@@ -424,6 +428,7 @@ def search(item_name):
             flaskg.clock.start('search')
             try:
                 results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
+            # this may be an ajax transaction, search.js will handle a full page response
             except QueryError:
                 flash(_("""QueryError: invalid search term: %(search_term)s""", search_term=q), "error")
                 return render_template('search.html',
@@ -431,9 +436,17 @@ def search(item_name):
                                        medium_search_form=search_form,
                                        item_name=item_name,
                                        )
+            except TermNotFound:
+                # name:'moin has bugs'
+                flash(_("""TermNotFound: field is not indexed: %(search_term)s""", search_term=q), "error")
+                return render_template('search.html',
+                                       query=query,
+                                       medium_search_form=search_form,
+                                       item_name=item_name,
+                                       )
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
-            name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
+            name_suggestions = [word for word, score in results.key_terms(NAMES, docs=20, numterms=10)]
             content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
