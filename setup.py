@@ -79,7 +79,7 @@ setup_args = dict(
     ],
     install_requires=[
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
-        'docutils<0.18',  # reST markup processing, see #1141 build fails with 0.18
+        'docutils>=0.18.1',  # reST markup processing, see #1141 build fails with 0.18
         'Markdown>=3.0.0',  # Markdown markup processing
         'Flask<2.0.0',  # micro framework
         'Flask-Babel>=0.11.1',  # i18n support
