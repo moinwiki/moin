@@ -147,7 +147,7 @@ class ImportMoin19(Command):
             dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
 
             # migrate macros that need update from 1.9 to 2.0
-            migrate_macros(dom) # in-place conversion
+            migrate_macros(dom)  # in-place conversion
 
             out = self.conv_out(dom)
             out = out.encode(CHARSET19)

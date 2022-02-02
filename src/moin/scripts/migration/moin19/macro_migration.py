@@ -4,6 +4,7 @@ from moin.utils.tree import moin_page
 # a dict of (content_type -> migration_callback)
 _migration_callbacks = {}
 
+
 def migrate_macros(dom):
     """ Walk the DOM tree and call known migration functions
 
@@ -30,11 +31,12 @@ def register_macro_migration(content_type, migration_callback):
     Once registered, the migration will walk the DOM tree and use the callback
     function to manipulate elements of the given content type for migration.
 
-    :param content_type: content type that shall be passed to the callback for conversion,
-                         e.g. x-moin/macro;name=My19MacroName
+    :param content_type: content type that shall be passed to the callback
+                         for conversion, e.g. x-moin/macro;name=My19MacroName
     :type content_type: str
-    :param migration_callback: conversion function that manipulates the DOM element in-place
-    :type migration_callback: function with a single emeraldtree.tree.Element argument
+    :param migration_callback: conversion function that manipulates
+                               the DOM element in-place
+    :type migration_callback: function(emeraldtree.tree.Element) -> None
     """
     if content_type not in _migration_callbacks:
         _migration_callbacks[content_type] = migration_callback

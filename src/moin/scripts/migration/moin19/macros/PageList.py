@@ -5,8 +5,9 @@ from moin.scripts.migration.moin19 import macro_migration
 from moin.utils.tree import html, moin_page, xlink, xinclude
 
 
-CONTENT_TYPE_MACRO_FORMATTER="x-moin/macro;name={}"
+CONTENT_TYPE_MACRO_FORMATTER = "x-moin/macro;name={}"
 MACRO_NAME_PAGE_LIST = "PageList"
+
 
 def convert_page_list_macro_to_item_list(node):
     """ Convert the given PageList macro node to an ItemList macro in-place
@@ -16,11 +17,11 @@ def convert_page_list_macro_to_item_list(node):
 
     Example conversions:
 
-    | PageList macro (moin1.9)              | ItemList macro (moin2)                      |
-    |---------------------------------------|---------------------------------------------|
-    | <<PageList()>>                        | <<ItemList()>>                              |
-    | <<PageList(MyInterestingSubPage)>>    | <<ItemList(item="MyInterestingSubPage")>>   |
-    | <<PageList(regex:RandomItem[^abc]+)>> | <<ItemList(regex="RandomItem[^abc]+")>>     |
+    | PageList macro (moin1.9)       | ItemList macro (moin2)           |
+    |--------------------------------|----------------------------------|
+    | <<PageList()>>                 | <<ItemList()>>                   |
+    | <<PageList(SomeSubPage)>>      | <<ItemList(item="SomeSubPage")>> |
+    | <<PageList(regex:Rnd[^abc]+)>> | <<ItemList(regex="Rnd[^abc]+")>> |
 
     :param node: the DOM node matching the PageList macro content type
     :type node: emeraldtree.tree.Element
