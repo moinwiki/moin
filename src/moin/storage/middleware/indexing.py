@@ -331,6 +331,9 @@ class IndexingMiddleware:
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
+        # field_boosts favor hits on names, tags, summary, comment, content, namengram, summaryngram, and contentngram respectively
+        # when query_parser default search includes [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT].
+        # Note *NGRAMS are only present in latest_revs index, see below
         common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
             WIKINAME: ID(stored=True),
@@ -340,13 +343,13 @@ class IndexingMiddleware:
             # we store list of names, but do not use for searching
             NAME: TEXT(stored=True),
             # string created by joining list of Name strings, we use NAMES for searching but do not store
-            NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=2.0),
+            NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
             # names without slashes, slashes cause strange sort sequences
             NAME_SORT: TEXT(stored=True),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
-            NAME_EXACT: ID(field_boost=3.0),
+            NAME_EXACT: ID(field_boost=1.0),
             # history and mychanges views show old name for deleted items
             NAME_OLD: TEXT(stored=True),
             # revision id (aka meta id)
@@ -364,7 +367,7 @@ class IndexingMiddleware:
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
-            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=200.0),
+            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=30.0),
             # search on HAS_TAG improves response time of global tags
             # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
             HAS_TAG: BOOLEAN(stored=False),
@@ -380,9 +383,9 @@ class IndexingMiddleware:
             # ACTION from metadata
             ACTION: ID(stored=True),
             # tokenized COMMENT from metadata
-            COMMENT: TEXT(stored=True),
+            COMMENT: TEXT(stored=True, field_boost=30.0),
             # SUMMARY from metadata
-            SUMMARY: TEXT(stored=True, field_boost=200.0),
+            SUMMARY: TEXT(stored=True, field_boost=10.0),
             # DATAID from metadata
             DATAID: ID(stored=True),
             # TRASH from metadata
@@ -400,10 +403,10 @@ class IndexingMiddleware:
             ITEMTRANSCLUSIONS: ID(stored=True),
             # tokenized ACL from metadata
             ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
-            # ngram words, index ngrams of words from main content
-            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
-            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
-            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True),
+            # index ngrams of words, field_boosts favor hits on name and summary over content
+            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=0.01),
+            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=1.0),
+            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=1.0),
         }
         latest_revs_fields.update(**common_fields)
 
