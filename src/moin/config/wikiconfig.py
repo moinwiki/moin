@@ -90,7 +90,8 @@ class Config(DefaultConfig):
     # copy templates/snippets.html to directory below and edit per requirements to customize logos, etc.
     template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
 
-    # it is required that you set this to a unique, stable and non-empty name:
+    # it is required that you set interwikiname to a unique, stable and non-empty name.
+    # Changing interwikiname on an existing wiki requires rebuilding the index.
     interwikiname = 'MyMoinMoin'
     # load the interwiki map from intermap.txt
     try:
