@@ -11,7 +11,6 @@
 import os
 import urllib.request
 import urllib.parse
-import urllib.error
 import datetime
 
 from json import dumps
@@ -106,15 +105,35 @@ class ThemeSupport:
     def field_term(self, field, term):
         """
         Convert Whoosh stored bytes term to string, enables display of matching search terms by hit.
-
-        TODO: Incoming term is some form of Whoosh compressed bytes. There are no docs showing
-        how to convert integer and datetime to strings.
         """
         try:
             term = term.decode()
         except UnicodeDecodeError:
-            # field is integer or datetime?
-            term = "unknown"
+            try:
+                # Whoosh converts datetime and integers to bytes using custom algorithms to compress bytes
+                # We use the request url to retrieve the terms for mtime and rev_number
+                # The request urls for short form searches and ajax searches are similar to the following:
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022+rev_number%3A2
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022-02&history=false&time_sorting=default&filetypes=all%2C&boolajax=true&is_ticket= HTTP/1.1
+                url = request.url
+                url = urllib.parse.unquote(url)
+                args = url.split('?q=')[1]
+                args = args.split('&')[0]
+                if '+' in args:
+                    terms = args.split('+')
+                elif ' ' in args:
+                    terms = args.split()
+                else:
+                    terms = [args]
+                for keyval in terms:
+                    fld, trm = keyval.split(':')
+                    if fld == 'mtime' == field:
+                        return fld, trm
+                    elif fld == 'rev_number' == field:
+                        return fld, trm
+                term = "unknown"
+            except Exception:
+                term = "unknown"
         return field, term
 
     def get_action_tabs(self, fqname, current_endpoint):
