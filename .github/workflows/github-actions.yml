@@ -1,24 +1,53 @@
 # Modified for MoinMoin, copied from: https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml
+# and https://github.com/borgbackup/borg/blob/master/.github/workflows/ci.yml
 
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions and OSes
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: Python package
 
 on:
-  # push:
-  #   branches: [ $default-branch ]
+  push:
+    branches: [ $default-branch ]
   pull_request:
     branches: [ $default-branch ]
 
 jobs:
-  build:
+  lint:
 
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8 src scripts src/moin/conftest.py
+  pytest:
+
+    needs: lint
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        include:
+            - os: macos-10.15  # macos-latest is macos 11.6.2 and hanging at test_fuse, #6099
+              python-version: '3.8'
+              toxenv: py38-fuse2
+            - os: windows-latest
+              python-version: '3.9'
+              toxenv: py38-fuse2
+            - os: ubuntu-latest
+              python-version: '3.10'
+              toxenv: py39-fuse3
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
 
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +60,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
         pip install -r requirements.d/development.txt
-        pip install .
+        pip install -e .
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
