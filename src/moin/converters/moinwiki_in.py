@@ -32,6 +32,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
+
 class _TableArguments:
     rules = r'''
     (?:
