@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-            - os: macos-10.15  # macos-latest is macos 11.6.2 and hanging at test_fuse, #6099
+            - os: macos-latest
               python-version: '3.8'
               toxenv: py38-fuse2
             - os: windows-latest
