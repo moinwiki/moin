@@ -68,6 +68,7 @@ def files_to_ignore():
     """Return a list of files that will not be processed."""
     return os.path.join('moin', '_version.py')
 
+
 def calc_indentation(line):
     """
     Return tuple (length of indentation, line stripped of leading blanks).
@@ -94,7 +95,7 @@ def check_template_indentation(lines, filename, logger):
                      '{% for': ('{% endfor %}', '{%- endfor %}', '{%- endfor -%}', '{% endfor -%}', ),
                      '{% macro': ('{% endmacro %}', '{%- endmacro %}', '{%- endmacro -%}', '{% endmacro -%}', ),
                      '{{ gen.form.open': ('{{ gen.form.close }}', ),
-                    }
+                     }
     ends = ('{% end', '{%- end')
 
     for idx, line in enumerate(lines):
@@ -238,7 +239,7 @@ def file_picker(starting_dir):
         for file in files:
             suffix = file.split(".")[-1]
             if suffix in SELECTED_SUFFIXES:
-                if not file in ignore_files:
+                if file not in ignore_files:
                     filename = os.path.join(root, file)
                     check_files(filename, suffix)
 
