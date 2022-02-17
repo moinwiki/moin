@@ -10,7 +10,7 @@ you can likely implement it adding very little and rather easy code.
 """
 
 from abc import abstractmethod
-from collections import Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping
 from io import BytesIO
 
 
