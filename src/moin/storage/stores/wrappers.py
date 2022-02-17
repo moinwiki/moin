@@ -6,7 +6,7 @@ MoinMoin - store wrappers
 """
 
 from io import BytesIO
-from collections import MutableMapping
+from collections.abc import MutableMapping
 
 
 class ByteToStreamWrappingStore(MutableMapping):
