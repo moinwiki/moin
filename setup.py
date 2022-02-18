@@ -9,8 +9,8 @@ import sys
 from setuptools import setup, find_packages
 
 
-if sys.hexversion < 0x3050000:
-    sys.exit("Error: MoinMoin requires Python 3.5+., current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3080000:
+    sys.exit("Error: MoinMoin requires Python 3.8+., current version is %s\n" % (platform.python_version(), ))
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
