@@ -90,6 +90,7 @@ setup_args = dict(
         'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
         'Jinja2<3.0.0',  # template engine
+        'markupsafe==2.0.1',  # required by jinja2<3.0.0
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug<2.0.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
