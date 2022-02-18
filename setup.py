@@ -9,10 +9,6 @@ import sys
 from setuptools import setup, find_packages
 
 
-if sys.hexversion < 0x3050000:
-    sys.exit("Error: MoinMoin requires Python 3.5+., current version is %s\n" % (platform.python_version(), ))
-
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(basedir, 'README.rst')) as f:
     long_description = f.read()
@@ -20,6 +16,7 @@ with open(os.path.join(basedir, 'README.rst')) as f:
 
 setup_args = dict(
     name="moin",
+    python_requires='>=3.8',
     description="MoinMoin is an easy to use, full-featured and extensible wiki software package",
     long_description_content_type="text/x-rst",
     long_description=long_description,
@@ -43,11 +40,9 @@ setup_args = dict(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -90,6 +85,7 @@ setup_args = dict(
         'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
         'Jinja2<3.0.0',  # template engine
+        'markupsafe==2.0.1',  # required by jinja2<3.0.0
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug<2.0.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
