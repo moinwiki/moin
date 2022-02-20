@@ -33,14 +33,14 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArchitectures: noarch
 BuildRequires:  python-devel
-Requires:       python >= 3.5
+Requires:       python >= 3.8
 
 %description
 
 A WikiWikiWeb is a collaborative hypertext environment, with an
 emphasis on easy access to and modification of information. MoinMoin
 is a Python WikiClone that allows you to easily set up your own wiki,
-only requiring a Python installation. 
+only requiring a Python installation.
 
 %prep
 %setup
@@ -70,4 +70,5 @@ rm -rf $RPM_BUILD_ROOT
 - Raised requirement to Python 2.7 (for MoinMoin 2.0.0alpha).
 * Fri Jul 19 2019 Thomas Waldmann
 - Raised requirement to Python 3.5 (for MoinMoin 2.0.0alpha).
-
+* Sun Feb 20 2022 UlrichB
+- Raised requirement to Python 3.8 (for MoinMoin 2.0.0alpha).

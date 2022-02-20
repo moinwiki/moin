@@ -2,11 +2,11 @@
 Requirements
 ============
 
-MoinMoin requires Python 3.5+. A CPython distribution is
+MoinMoin requires Python 3.8+. A CPython distribution is
 recommended because it will likely be the fastest and most stable.
 Most developers use a CPython distribution for testing.
-Typical linux distributions will either have Python 3.5+ installed by
-default or will have a package manager that will install Python 3.5+
+Typical linux distributions will either have Python 3.8+ installed by
+default or will have a package manager that will install Python 3.8+
 as a secondary Python.
 Windows users may download CPython distributions from  http://www.python.org/ or
 http://www.activestate.com/.

@@ -106,8 +106,8 @@ Before you can run moin, you need to install it.
 
 Using your standard user account, run the following command
 from the project root directory. Replace <python> in the command
-below with the path to a python 3.5+ executable. This is usually
-just "python", but may be "python3", "python3.5", "/opt/pypy/bin/pypy"
+below with the path to a python 3.8+ executable. This is usually
+just "python", but may be "python3", "python3.8", "/opt/pypy/bin/pypy"
 or even <some-other-path-to-python>:
 
 ::
