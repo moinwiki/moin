@@ -461,33 +461,17 @@ MoinMoin.prototype.enhanceUserSettings = function () {
 
 // This anonymous function supports doubleclick to edit, auto-scroll the edit textarea and page after edit
 MoinMoin.prototype.enhanceEdit = function () {
-    // NOTE: if browser does not support sessionStorage, then auto-scroll is not available
-    //       (sessionStorage is supported by FF3.5+, Chrome4+, Safari4+, Opera10.5+, and IE8+).
-    //       IE8 does not scroll page after edit (cannot determine caret position within textarea).
     "use strict";
 
     var TOPID = 'moin-content',
         LINENOATTR = "data-lineno",
         MESSAGEMISSED = _("You missed! Double-click on text or to the right of text to auto-scroll text editor."),
         MESSAGEOBSOLETE = _("Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."),
-        MESSAGEOLD = _("Your browser is old. Upgrade to gain auto-scroll page after edit feature."),
         OPERA = 'Opera', // special handling required because textareas have \r\n line endings
         modifyButton,
         modifyForm,
         lineno,
         caretLineno;
-
-    // IE8 workaround for missing setSelectionRange
-    function setSelection(textArea, charStart) {
-        // scroll IE8 textarea, target line will be near bottom of textarea
-        var range = textArea.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', charStart);
-        range.moveStart('character', charStart);
-        range.select();
-        //warn user that features are missing with IE8
-        this.moinFlashMessage(this.MOINFLASHWARNING, MESSAGEOLD);
-    }
 
     // called after +modify page loads -- scrolls the textarea after a doubleclick
     function scrollTextarea(jumpLine) {
@@ -518,19 +502,14 @@ MoinMoin.prototype.enhanceEdit = function () {
             textAreaClone.rows = 1;
             scrollAmount = textAreaClone.scrollHeight - 100; // get total height of clone - 100 pixels
             textAreaClone.parentNode.removeChild(textAreaClone);
-            // position the caret, works for all browsers if textarea rows option is > 0
-            // if textarea rows == 0, works for FF, IE11, Edge; user must press right arrow key for Chrome, Opera, Maxthon
+            // position the caret, works for all browsers if textarea rows option is > 0 in user settings
+            // if textarea rows == 0 user must press right arrow key to scroll window to caret position
             textArea.focus();
             if (scrollAmount > 0) { textArea.scrollTop = scrollAmount; }
-            if (textArea.setSelectionRange) {
-                // html5 compliant browsers, highlight the position of the caret for a second or so
-                textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
-                setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
-                setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
-            } else {
-                // IE8 workaround to position the caret and scroll textarea
-                setSelection(textArea, scrolledText.length);
-            }
+            // html5 compliant browsers, highlight the position of the caret for a second or so
+            textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
+            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
+            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
         }
     }
 
@@ -597,10 +576,6 @@ MoinMoin.prototype.enhanceEdit = function () {
             textLines;
         if (textArea.selectionStart) {
             caretPoint = textArea.selectionStart;
-        } else {
-            // IE7, IE8 or
-            // IE9 - user has clicked ouside of textarea causing loss of textarea focus and caret position
-            return 0;
         }
         // get textarea text, split at caret, return number of lines before caret
         if (navigator.userAgent && navigator.userAgent.substring(0, OPERA.length) === OPERA) {
