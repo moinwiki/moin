@@ -7,9 +7,9 @@ Create a virtual environment and install moin2 and all requirements in developme
 
 Usage for installation:
 
-    <python> quickinstall.py (where <python> is any Python 3.5+ executable)
+    <python> quickinstall.py (where <python> is any Python 3.8+ executable)
 
-Requires: Python 3.5+, pip
+Requires: Python 3.8+, pip
 
 The first run of quickinstall.py creates these files or symlink in the repo root:
 
@@ -48,8 +48,8 @@ from collections import Counter
 import venv
 
 
-if sys.hexversion < 0x3050000:
-    sys.exit("Error: MoinMoin requires Python 3.5+, current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3080000:
+    sys.exit("Error: MoinMoin requires Python 3.8+, current version is %s\n" % (platform.python_version(), ))
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
@@ -275,7 +275,7 @@ class Commands:
             # we run ourself as a subprocess so output can be captured in a log file
             result = subprocess.run(command, shell=True, stderr=messages, stdout=messages)
             # above result will be flagged as error unless all python versions specified in tox.ini are installed:
-            # [tox]\n envlist = py{35,36,37,38},pypy3,flake8
+            # [tox]\n envlist = py{38,39,310},pypy3,flake8
         print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
         self.run_time('Quickinstall')
