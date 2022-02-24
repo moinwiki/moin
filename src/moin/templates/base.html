@@ -90,10 +90,6 @@
             <script src="{{ url_for('serve.files', name='jquery_tablesorter', filename='jquery.tablesorter.js') }}"></script>
             <script src="{{ url_for('static', filename='js/common.js') }}"></script>
             {{- scripts }}
-            <!--[if lt IE 9]>
-                {#- from https://github.com/aFarkas/html5shiv/ #}
-                <script src="{{ url_for('static', filename='js/html5shiv.min.js') }}"></script>
-            <![endif]-->
         {%- endblock %}
 
     </body>
