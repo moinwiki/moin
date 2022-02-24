@@ -269,7 +269,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 #moin-long-searchform div { margin: 0; }
 #moin-long-searchform .moin-search-query { width: 90%; margin-left: 0; }
 .moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor: pointer;  color: var(--link); }
-.moin-search-hit-info { margin-top: 0; display: inline; }
+.moin-search-hit-info { display: inline; }
 .moin-search-hits { font-weight: bold; }
 .moin-search-results { font-size: .92em; }
 .moin-found-text { margin-top: 0; margin-bottom: 0; }
@@ -314,7 +314,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 /* tickets */
 .moin-existing-tags { display: inline; }
 .moin-ticket-create-link,
-.moin-ticket-search { display: inline; float: right; }
+.moin-ticket-search { float: right; }
 #ticket-table-tip { color: var(--border); }
 #ticket-summary { width: 50%; }
 .moin-ticket-tags { border-bottom: none; clear: both; }
@@ -570,7 +570,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-float-fix { clear: both; padding-top: .75em; }
 .moin-form  input[type="submit"].moin-modify-submit,
 .moin-form .moin-load-draft,
-.moin-form .moin-cancel { display: inline; clear: none; float: left; margin-right: 3em; margin-bottom: 1em; }
+.moin-form .moin-cancel { clear: none; float: left; margin-right: 3em; margin-bottom: 1em; }
 .moin-form .moin-load-draft { border: 1px solid var(--alert);
     background-color: var(--bg-message); }
 .moin-watermark { background-image: url("../../../static/img/draft.png");
