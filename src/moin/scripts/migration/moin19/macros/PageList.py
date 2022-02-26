@@ -1,6 +1,8 @@
 """ Migration of PageList macro (moin1.9) to new ItemList macro (moin2)
 """
 
+import re
+
 from moin.scripts.migration.moin19 import macro_migration
 from moin.utils.tree import html, moin_page, xlink, xinclude
 
@@ -12,15 +14,16 @@ MACRO_NAME_PAGE_LIST = "PageList"
 def convert_page_list_macro_to_item_list(node):
     """ Convert the given PageList macro node to an ItemList macro in-place
 
-    Depending on the argument of the moin1.0 PageList macro, the new
-    ItemList macro will have a simple "item" argument or a "regex" argument.
+    The moin1.0 PageList macro used to pass all arguments to the FullSearch
+    macro, so they were essentially all treated as regular expression search queries.
+    After conversion to the ItemList macro, the argument will be a simple "regex" argument.
 
     Example conversions:
 
     | PageList macro (moin1.9)       | ItemList macro (moin2)           |
     |--------------------------------|----------------------------------|
     | <<PageList()>>                 | <<ItemList()>>                   |
-    | <<PageList(SomeSubPage)>>      | <<ItemList(item="SomeSubPage")>> |
+    | <<PageList(SomeSubPage)>>      | <<ItemList(regex="SomeSubPage")>> |
     | <<PageList(regex:Rnd[^abc]+)>> | <<ItemList(regex="Rnd[^abc]+")>> |
 
     :param node: the DOM node matching the PageList macro content type
@@ -38,12 +41,10 @@ def convert_page_list_macro_to_item_list(node):
         if elem.tag.name == 'arguments':
             args_before = elem.text
     if args_before:
-        if args_before.startswith('regex:'):
-            # strip the "regex:" prefix and convert to keyword argument "regex"
-            args_after = 'regex="{}"'.format(args_before[6:])
-        else:
-            # wrap unnamed arguments in new keyword argument "item"
-            args_after = 'item="{}"'.format(args_before)
+        # strip the "regex:" prefix if necessary
+        args_intermediate = re.sub(r'^regex:', '', args_before)
+        # wrap argument in new keyword argument "regex"
+        args_after = 'regex="{}"'.format(args_intermediate)
 
     for elem in node.iter_elements():
         if elem.tag.name == 'arguments':
@@ -51,7 +52,7 @@ def convert_page_list_macro_to_item_list(node):
             elem.append(args_after)
 
     # 'alt' attribute
-    new_alt = '<<ItemList({})>'.format(args_after)
+    new_alt = '<<ItemList({})>>'.format(args_after)
     node.set(moin_page.alt, new_alt)
 
 
