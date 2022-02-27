@@ -17,14 +17,19 @@ def convert_page_list_macro_to_item_list(node):
     The moin1.0 PageList macro used to pass all arguments to the FullSearch
     macro, so they were essentially all treated as regular expression search queries.
     After conversion to the ItemList macro, the argument will be a simple "regex" argument.
+    To make sure all available pages are searched (not only subpages of the current page)
+    the item parameter is set to empty string (item="").
 
     Example conversions:
 
-    | PageList macro (moin1.9)       | ItemList macro (moin2)           |
-    |--------------------------------|----------------------------------|
-    | <<PageList()>>                 | <<ItemList()>>                   |
-    | <<PageList(SomeSubPage)>>      | <<ItemList(regex="SomeSubPage")>> |
-    | <<PageList(regex:Rnd[^abc]+)>> | <<ItemList(regex="Rnd[^abc]+")>> |
+    | PageList macro (moin1.9)       | ItemList macro (moin2)            |
+    |--------------------------------|-----------------------------------|
+    | <<PageList>>                   | <<ItemList(item="")>>             |
+    | <<PageList()>>                 | <<ItemList(item="")>>             |
+    | <<PageList(SomeSubPage)>>      | <<ItemList(item="",               |
+    |                                |            regex="SomeSubPage")>> |
+    | <<PageList(regex:Rnd[^abc]+)>> | <<ItemList(item="",               |
+    |                                |            regex="Rnd[^abc]+")>>  |
 
     :param node: the DOM node matching the PageList macro content type
     :type node: emeraldtree.tree.Element
@@ -44,7 +49,12 @@ def convert_page_list_macro_to_item_list(node):
         # strip the "regex:" prefix if necessary
         args_intermediate = re.sub(r'^regex:', '', args_before)
         # wrap argument in new keyword argument "regex"
-        args_after = 'regex="{}"'.format(args_intermediate)
+        args_after = 'item="",regex="{}"'.format(args_intermediate)
+    else:
+        # PageList macros without arguments used to show every
+        # available page in the wiki, so it's converted to an
+        # ItemList macro with an empty string item parameter
+        args_after = 'item=""'
 
     for elem in node.iter_elements():
         if elem.tag.name == 'arguments':

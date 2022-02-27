@@ -11,12 +11,13 @@ from moin.utils.tree import moin_page
 
 
 @pytest.mark.parametrize('legacy_macro,expected_args', [
-    ("<<PageList>>", ''),
-    ("<<PageList(regex:InterestingPage/*)>>", 'regex="InterestingPage/*"'),
-    ("<<PageList(Calendar/2014-08-22/)>>", 'regex="Calendar/2014-08-22/"'),
-    ("<<PageList(regex:SecondCalendar/2011[^/]*$)>>", 'regex="SecondCalendar/2011[^/]*$"'),
-    ("<<PageList(^WikiPageAboutRegularExpressions/*)>>", 'regex="^WikiPageAboutRegularExpressions/*"'),
-    ("<<PageList(regex:ArticleCollection/[^/]*)>>", 'regex="ArticleCollection/[^/]*"'),
+    ("<<PageList>>", 'item=""'),
+    ("<<PageList()>>", 'item=""'),
+    ("<<PageList(regex:InterestingPage/*)>>", 'item="",regex="InterestingPage/*"'),
+    ("<<PageList(Calendar/2014-08-22/)>>", 'item="",regex="Calendar/2014-08-22/"'),
+    ("<<PageList(regex:SecondCalendar/2011[^/]*$)>>", 'item="",regex="SecondCalendar/2011[^/]*$"'),
+    ("<<PageList(^WikiPageAboutRegularExpressions/*)>>", 'item="",regex="^WikiPageAboutRegularExpressions/*"'),
+    ("<<PageList(regex:ArticleCollection/[^/]*)>>", 'item="",regex="ArticleCollection/[^/]*"'),
 ])
 def test_macro_conversion(legacy_macro, expected_args):
     converter = ConverterFormat19()
