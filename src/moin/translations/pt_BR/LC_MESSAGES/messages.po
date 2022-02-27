@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moin 2.0.0a0\n"
 "Report-Msgid-Bugs-To: English <moin-user@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2022-02-03 18:17+0000\n"
+"POT-Creation-Date: 2022-02-26 21:10+0000\n"
 "PO-Revision-Date: 2018-09-04 02:28-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language: pt_BR\n"
@@ -1834,6 +1834,82 @@ msgstr ""
 msgid "MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
 msgstr ""
 
+#: src/moin/macros/MonthCalendar.py:208
+msgid "January"
+msgstr "Janeiro"
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "February"
+msgstr "Fevereiro"
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "March"
+msgstr "Março"
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "April"
+msgstr "Abril"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "May"
+msgstr "Maio"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "June"
+msgstr "Junho"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "July"
+msgstr "Julho"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "August"
+msgstr "Agosto"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "September"
+msgstr "Setembro"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "October"
+msgstr "Outubro"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "November"
+msgstr "Novembro"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "December"
+msgstr "Dezembro"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Mon"
+msgstr "Se"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Tue"
+msgstr "Te"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Wed"
+msgstr "Qu"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Thu"
+msgstr "Qu"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Fri"
+msgstr "Se"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Sat"
+msgstr "Sa"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Sun"
+msgstr "Do"
+
 #: src/moin/macros/ShowIcons.py:29
 msgid "Markup"
 msgstr ""
@@ -2364,25 +2440,25 @@ msgstr ""
 
 #: src/moin/templates/itemviews.html:86 src/moin/templates/ticket/base.html:26
 #: src/moin/templates/ticket/ticket_macros.html:101
-#: src/moin/themes/__init__.py:213
+#: src/moin/themes/__init__.py:232
 msgid "Remove Link"
 msgstr "Remover Link"
 
 #: src/moin/templates/itemviews.html:88 src/moin/templates/ticket/base.html:28
 #: src/moin/templates/ticket/ticket_macros.html:103
-#: src/moin/themes/__init__.py:211
+#: src/moin/themes/__init__.py:230
 msgid "Add Link"
 msgstr "Adicionar Link"
 
 #: src/moin/templates/itemviews.html:98
 #: src/moin/templates/ticket/ticket_macros.html:45
-#: src/moin/themes/__init__.py:218
+#: src/moin/themes/__init__.py:237
 msgid "Unsubscribe"
 msgstr "Não acompanhar"
 
 #: src/moin/templates/itemviews.html:100
 #: src/moin/templates/ticket/ticket_macros.html:47
-#: src/moin/themes/__init__.py:220
+#: src/moin/themes/__init__.py:239
 msgid "Subscribe"
 msgstr "Acompanhar"
 
@@ -2977,15 +3053,15 @@ msgstr "Criar novo tíquete"
 msgid "Describe the ticket"
 msgstr "Descreva o tíquete"
 
-#: src/moin/themes/__init__.py:65
+#: src/moin/themes/__init__.py:64
 msgid "Access Denied"
 msgstr "Acesso Negado"
 
-#: src/moin/themes/__init__.py:66
+#: src/moin/themes/__init__.py:65
 msgid "You are not allowed to access this resource."
 msgstr "Você não tem permissão para acessar este recurso."
 
-#: src/moin/themes/__init__.py:573
+#: src/moin/themes/__init__.py:592
 msgid "anonymous"
 msgstr "anônimo"
 
