@@ -691,24 +691,24 @@ ul#moin-rev-navigation { text-align: center; background-color: var(--bg-zebra); 
 
 /* MonthCalendar macro */
 
-.calendar a:link, .calendar a:visited { color: #202020; color: var(--cal-text); text-align: center; }
+.calendar a:link, .calendar a:visited { color: var(--cal-text); text-align: center; }
 .calendar table,
 .calendar th,
 .calendar thead,
-.calendar tr { padding: 0; border: 3px solid #FCFCFC; border: 3px solid var(--border-cal); text-align: center; }
-.calendar caption { padding: .5em 0 .3em 0; color: #202020; color: var(--cal-text); font-size: 1.1em; font-weight: bold; border: 3px solid #FCFCFC; border: 3px solid var(--border-cal); }
+.calendar tr { padding: 0; border: 3px solid var(--border-cal); text-align: center; }
+.calendar caption { padding: .5em 0 .3em 0; color: var(--cal-text); font-size: 1.1em; font-weight: bold; border: 3px solid var(--border-cal); }
 .calendar td { width: 14%; padding: .5em .2em .3em .2em; text-align: center; border: inherit; }
 
 table.calendar { table-layout: fixed; }
-.cal-header   { background-color: #DDDDFF; background-color: var(--bg-cal-header); }
+.cal-header   { background-color: var(--bg-cal-header); }
 /* general stuff: workdays, weekend, today */
-.cal-emptyday { background-color: #F0F0F0; background-color: var(--bg-cal-emptyday); }
-.cal-usedday  { background-color: #FFB380; background-color: var(--bg-cal-usedday); font-weight: bold; }
-.cal-workday  { background-color: #C9E2F8; background-color: var(--bg-heading); font-weight: bold; }
-.cal-weekend  { background-color: #FFDDDD; background-color: var(--bg-cal-weekend); font-weight: bold; }
-.cal-today    { background-color: #CCFFCC; background-color: var(--bg-cal-today); font-weight: bold; }
+.cal-emptyday { background-color: var(--bg-cal-emptyday); }
+.cal-usedday  { background-color: var(--bg-cal-usedday); font-weight: bold; }
+.cal-workday  { background-color: var(--bg-heading); font-weight: bold; }
+.cal-weekend  { background-color: var(--bg-cal-weekend); font-weight: bold; }
+.cal-today    { background-color: var(--bg-cal-today); font-weight: bold; }
 /* invalid places on the monthly calendar sheet */
-.cal-invalidday { background-color: #FCFCFC; background-color: var(--bg-cal-invalidday); }
+.cal-invalidday { background-color: var(--bg-cal-invalidday); }
 
 /* Printing */
 

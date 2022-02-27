@@ -65,13 +65,13 @@ Examples:
 
     Calendar of the month two months after December, 2022
     (maybe doesn't make much sense, but is possible)
-    <<MonthCalendar(year=2022,month=12,offset=+2)>>
+    <<MonthCalendar(year=2022,month=12,month_offset=+2)>>
 
     Calendar of year 2023 (every month padded to height of 6):
     ||||||Year 2023||
-    ||<<MonthCalendar(year=2023,month=1,fixed_height=true)>>||<<MonthCalendar(year=2023,month=2,fixed_height=true>>||<<MonthCalendar(year=2023,month=3,fixed_height=true)>>||
-    ||<<MonthCalendar(year=2023,month=4,fixed_height=true)>>||<<MonthCalendar(year=2023,month=5,fixed_height=true>>||<<MonthCalendar(year=2023,month=6,fixed_height=true)>>||
-    ||<<MonthCalendar(year=2023,month=7,fixed_height=true)>>||<<MonthCalendar(year=2023,month=8,fixed_height=true>>||<<MonthCalendar(year=2023,month=9,fixed_height=true)>>||
+    ||<<MonthCalendar(year=2023,month=1,fixed_height=true)>>||<<MonthCalendar(year=2023,month=2,fixed_height=true)>>||<<MonthCalendar(year=2023,month=3,fixed_height=true)>>||
+    ||<<MonthCalendar(year=2023,month=4,fixed_height=true)>>||<<MonthCalendar(year=2023,month=5,fixed_height=true)>>||<<MonthCalendar(year=2023,month=6,fixed_height=true)>>||
+    ||<<MonthCalendar(year=2023,month=7,fixed_height=true)>>||<<MonthCalendar(year=2023,month=8,fixed_height=true)>>||<<MonthCalendar(year=2023,month=9,fixed_height=true)>>||
     ||<<MonthCalendar(year=2023,month=10,fixed_height=true)>>||<<MonthCalendar(year=2023,month=11,fixed_height=true)>>||<<MonthCalendar(year=2023,month=12,fixed_height=true)>>||
 
 """
