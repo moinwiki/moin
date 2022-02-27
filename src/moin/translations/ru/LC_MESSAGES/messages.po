@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moin 2.0\n"
 "Report-Msgid-Bugs-To: Russian <moin-user@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2022-02-03 18:17+0000\n"
+"POT-Creation-Date: 2022-02-26 21:10+0000\n"
 "PO-Revision-Date: 2011-12-04 17:55+0400\n"
 "Last-Translator: S Kinder <skinder0@gmail.com>\n"
 "Language: ru\n"
@@ -1823,6 +1823,82 @@ msgstr ""
 msgid "MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
 msgstr ""
 
+#: src/moin/macros/MonthCalendar.py:208
+msgid "January"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "February"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "March"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "April"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "May"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "June"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "July"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "August"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "September"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "October"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "November"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "December"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Mon"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Tue"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Wed"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Thu"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Fri"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Sat"
+msgstr ""
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Sun"
+msgstr ""
+
 #: src/moin/macros/ShowIcons.py:29
 msgid "Markup"
 msgstr ""
@@ -2351,25 +2427,25 @@ msgstr ""
 
 #: src/moin/templates/itemviews.html:86 src/moin/templates/ticket/base.html:26
 #: src/moin/templates/ticket/ticket_macros.html:101
-#: src/moin/themes/__init__.py:213
+#: src/moin/themes/__init__.py:232
 msgid "Remove Link"
 msgstr "Убрать из закладок"
 
 #: src/moin/templates/itemviews.html:88 src/moin/templates/ticket/base.html:28
 #: src/moin/templates/ticket/ticket_macros.html:103
-#: src/moin/themes/__init__.py:211
+#: src/moin/themes/__init__.py:230
 msgid "Add Link"
 msgstr "Добавить в закладки"
 
 #: src/moin/templates/itemviews.html:98
 #: src/moin/templates/ticket/ticket_macros.html:45
-#: src/moin/themes/__init__.py:218
+#: src/moin/themes/__init__.py:237
 msgid "Unsubscribe"
 msgstr "Отписаться"
 
 #: src/moin/templates/itemviews.html:100
 #: src/moin/templates/ticket/ticket_macros.html:47
-#: src/moin/themes/__init__.py:220
+#: src/moin/themes/__init__.py:239
 msgid "Subscribe"
 msgstr "Подписаться"
 
@@ -2958,15 +3034,15 @@ msgstr ""
 msgid "Describe the ticket"
 msgstr ""
 
-#: src/moin/themes/__init__.py:65
+#: src/moin/themes/__init__.py:64
 msgid "Access Denied"
 msgstr ""
 
-#: src/moin/themes/__init__.py:66
+#: src/moin/themes/__init__.py:65
 msgid "You are not allowed to access this resource."
 msgstr "Вам запрещен доступ к этому ресурсу"
 
-#: src/moin/themes/__init__.py:573
+#: src/moin/themes/__init__.py:592
 msgid "anonymous"
 msgstr "анонимно"
 

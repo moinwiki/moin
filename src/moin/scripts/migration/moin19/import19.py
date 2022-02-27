@@ -27,6 +27,7 @@ from ._logfile19 import LogFile
 from .macro_migration import migrate_macros
 
 # individual macro migrations register with the migrate_macros module
+from .macros import MonthCalendar
 from .macros import PageList
 
 from moin.constants.keys import *  # noqa

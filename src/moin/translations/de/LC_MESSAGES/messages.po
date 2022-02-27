@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MoinMoin 2.0\n"
 "Report-Msgid-Bugs-To: German <moin-user@python.org>\n"
-"POT-Creation-Date: 2022-02-03 18:17+0000\n"
+"POT-Creation-Date: 2022-02-26 21:10+0000\n"
 "PO-Revision-Date: 2018-09-15 23:37+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -1840,6 +1840,82 @@ msgstr ""
 msgid "MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
 msgstr ""
 
+#: src/moin/macros/MonthCalendar.py:208
+msgid "January"
+msgstr "Januar"
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "February"
+msgstr "Februar"
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "March"
+msgstr "März"
+
+#: src/moin/macros/MonthCalendar.py:208
+msgid "April"
+msgstr "April"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "May"
+msgstr "Mai"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "June"
+msgstr "Juni"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "July"
+msgstr "Juli"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "August"
+msgstr "August"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "September"
+msgstr "September"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "October"
+msgstr "Oktober"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "November"
+msgstr "November"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "December"
+msgstr "Dezember"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Mon"
+msgstr "Mo"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Tue"
+msgstr "Di"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Wed"
+msgstr "Mi"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Thu"
+msgstr "Do"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Fri"
+msgstr "Fr"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Sat"
+msgstr "Sa"
+
+#: src/moin/macros/MonthCalendar.py:214 src/moin/macros/MonthCalendar.py:217
+msgid "Sun"
+msgstr "So"
+
 #: src/moin/macros/ShowIcons.py:29
 msgid "Markup"
 msgstr ""
@@ -2368,25 +2444,25 @@ msgstr "Item-Ansichten"
 
 #: src/moin/templates/itemviews.html:86 src/moin/templates/ticket/base.html:26
 #: src/moin/templates/ticket/ticket_macros.html:101
-#: src/moin/themes/__init__.py:213
+#: src/moin/themes/__init__.py:232
 msgid "Remove Link"
 msgstr "Link entfernen"
 
 #: src/moin/templates/itemviews.html:88 src/moin/templates/ticket/base.html:28
 #: src/moin/templates/ticket/ticket_macros.html:103
-#: src/moin/themes/__init__.py:211
+#: src/moin/themes/__init__.py:230
 msgid "Add Link"
 msgstr "Link hinzufügen"
 
 #: src/moin/templates/itemviews.html:98
 #: src/moin/templates/ticket/ticket_macros.html:45
-#: src/moin/themes/__init__.py:218
+#: src/moin/themes/__init__.py:237
 msgid "Unsubscribe"
 msgstr "Nicht abonnieren"
 
 #: src/moin/templates/itemviews.html:100
 #: src/moin/templates/ticket/ticket_macros.html:47
-#: src/moin/themes/__init__.py:220
+#: src/moin/themes/__init__.py:239
 msgid "Subscribe"
 msgstr "Abonnieren"
 
@@ -2978,15 +3054,15 @@ msgstr "Neues Ticket erstellen"
 msgid "Describe the ticket"
 msgstr "Ticket beschreiben"
 
-#: src/moin/themes/__init__.py:65
+#: src/moin/themes/__init__.py:64
 msgid "Access Denied"
 msgstr "Zugriff verweigert"
 
-#: src/moin/themes/__init__.py:66
+#: src/moin/themes/__init__.py:65
 msgid "You are not allowed to access this resource."
 msgstr "Sie haben nicht die notwendigen Rechte, um auf diese Ressource zuzugreifen"
 
-#: src/moin/themes/__init__.py:573
+#: src/moin/themes/__init__.py:592
 msgid "anonymous"
 msgstr "anonym"
 

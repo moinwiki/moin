@@ -81,4 +81,15 @@
     --bg-user-orange: #FFD59B;  /* user defined background color {{{#!wiki orange... */
     --bg-user-grey: #EEEEEE;  /* user defined background color {{{#!wiki grey... */
     --bg-user-gray: #EEEEEE;  /* user defined background color {{{#!wiki gray... */
+
+    /* MonthCalendar macro colors */
+    --cal-text: #202020;  /* calendar link text color */
+    --border-cal: #FCFCFC;  /* calendar border style and color */
+    --bg-cal-header: #DDDDFF;  /* header background */
+    --bg-cal-emptyday: #F0F0F0; /* empty days background */
+    --bg-cal-usedday: #FFB380; /* used day background */
+    --bg-cal-weekend: #FFDDDD; /* weekend background */
+    --bg-cal-today: #CCFFCC; /* todays background */
+    --bg-cal-invalidday: #FCFCFC; /* invalid days background */
+
 }
