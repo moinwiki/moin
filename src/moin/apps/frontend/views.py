@@ -446,22 +446,12 @@ def search(item_name):
                                        )
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
-            name_suggestions = [word for word, score in results.key_terms(NAMES, docs=20, numterms=10)]
-            content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
 
-            lastword = query.split(' ')[-1]
-            word_suggestions = []
-            if len(lastword) > 2:
-                corrector = searcher.corrector(CONTENT)
-                word_suggestions = corrector.suggest(lastword, limit=3)
             if ajax:
                 html = render_template('ajaxsearch.html',
                                        results=results,
-                                       word_suggestions=', '.join(word_suggestions),
-                                       name_suggestions=', '.join(name_suggestions),
-                                       content_suggestions=', '.join(content_suggestions),
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
                                        is_ticket=is_ticket,
@@ -472,8 +462,6 @@ def search(item_name):
             else:
                 html = render_template('search.html',
                                        results=results,
-                                       name_suggestions=', '.join(name_suggestions),
-                                       content_suggestions=', '.join(content_suggestions),
                                        query=query,
                                        medium_search_form=search_form,
                                        item_name=item_name,

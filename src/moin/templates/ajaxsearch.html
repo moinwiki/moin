@@ -44,19 +44,6 @@
             </p>
         {%- endif %}
         {%- if results is defined %}
-            {%- if word_suggestions %}
-                <p class="moin-suggestions">{{ _("Input suggestions : ") }}
-                    <span class="moin-suggestion-terms">{{ word_suggestions }}</span>
-                </p>
-            {%- endif %}
-            {%- if name_suggestions or content_suggestions %}
-                <p class="moin-suggestions">{{ _("Name term suggestions : ") }}
-                    <span class="moin-suggestion-terms">{{ name_suggestions }}</span>
-                </p>
-                <p class="moin-suggestions">{{ _("Content term suggestions : ") }}
-                    <span class="moin-suggestion-terms">{{ content_suggestions }}</span>
-                </p>
-            {%- endif %}
             <p class="moin-search-hits">
                 {%- if results.filtered_count %}
                     {%- set found = results|length - results.filtered_count %}
