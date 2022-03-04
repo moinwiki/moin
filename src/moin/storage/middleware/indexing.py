@@ -202,6 +202,8 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
         else:
             doc[NAMES] = ' | '.join(doc[NAME])
         doc[NAME_SORT] = doc[NAMES].replace('/', '')
+    else:
+        doc[NAME_SORT] = ""
     return doc
 
 
@@ -342,7 +344,7 @@ class IndexingMiddleware:
             # since name is a list whoosh will think it is a list of tokens see #364
             # we store list of names, but do not use for searching
             NAME: TEXT(stored=True),
-            # string created by joining list of Name strings, we use NAMES for searching but do not store
+            # string created by joining list of Name strings, we use NAMES for searching
             NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
             # names without slashes, slashes cause strange sort sequences
             NAME_SORT: TEXT(stored=True),
@@ -1215,6 +1217,9 @@ class Item(PropertiesMixin):
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
         meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
+        # file upload UI does not have a summary field
+        if SUMMARY not in meta:
+            meta[SUMMARY] = ""
 
         if valid and not validate_data(meta, data):  # need valid metadata to validate data
             logging.warning("data validation failed")
