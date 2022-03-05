@@ -93,9 +93,6 @@
                                 {%- if result.highlights('comment') %}
                                     <p class="moin-found-text">{{ _("COMMENT: %(content)s", content=result.highlights('comment')|safe) }}</p>
                                 {%- endif %}
-                                {%- if result.highlights('summary') %}
-                                    <p class="moin-found-text">{{ _("SUMMARY: %(content)s", content=result.highlights('summary')|safe) }}</p>
-                                {%- endif %}
                                 {%- if result['tags'] %}
                                     <p class="moin-found-text">{{ _("TAGS: %(content)s", content=result['tags']|safe) }}</p>
                                 {%- endif %}
