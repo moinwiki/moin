@@ -16,15 +16,11 @@ Wikis:
 
 Documentation (installation, configuration, user docs, api reference):
 
-* http://readthedocs.org/docs/moin-20/en/latest/
+* https://readthedocs.org/docs/moin-20/en/latest/
 
 Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
 
 * https://github.com/moinwiki/moin
-
-Pastebin (temporary storage - do not use for code review or any long-term need):
-
-* http://rn0.ru/
 
 
 Requirements for development
@@ -33,10 +29,10 @@ Requirements for development
 The `virtualenv` Python package is required.
 The installation process for `virtualenv` varies with your OS and Python distribution.
 Many linux distributions have a package manager that may do the installation.
-Windows users (and perhaps others) may download setuptools from https://pypi.python.org/pypi/setuptools.
+Windows users (and perhaps others) may download setuptools from https://pypi.org/project/setuptools/.
 Once setuptools is installed, do "`easy_install virtualenv`".
 Current ActiveState distributions include virtualenv in the installation bundle.
-If all else fails, try Google.
+If all else fails, try your favorite search engine.
 
 git is required should you wish to contribute patches to the moin2 development effort.
 Even if you do not intend to contribute, git is highly recommended as it
@@ -59,13 +55,13 @@ create your development environment
 
     cd <parent_directory_of_your_future_repo>
     git clone https://github.com/yourname/moin.git
-* cd to repo root
+* cd to repo root::
 
     cd moin
 * create the virtualenv and download packages::
 
     python quickinstall.py
-* activate virtualenv
+* activate virtualenv::
 
     . activate  # Windows: activate
 * create a wiki instance and load sample data::
@@ -88,7 +84,7 @@ add more tools, exercise tools
 
     ./m tests  # Windows: m tests
 
-* install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
+* install NodeJS and NPM with Linux package manager; Windows users may download both from https://nodejs.org/download/
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
@@ -119,7 +115,7 @@ add more tools, exercise tools
   - use mono-spaced font for editing
 * if you are new to git, read about it (https://git-scm.com/book/),
   consider printing a cheatsheet
-* if you want a Python IDE, try http://www.jetbrains.com/pycharm/ Free Community Edition
+* if you want a Python IDE, try https://www.jetbrains.com/pycharm/ Free Community Edition
 * join #moin-dev IRC channel; ask questions, learn what other developers are doing
 
 review configuration options
@@ -194,7 +190,7 @@ review your working solution
 * fix everything you find before requesting feedback from others
 * run tests again "./m tests"
 * check for trailing spaces, line endings, template indentation "./m coding-std"
-* if Javascript files were changed, run http://jslint.com/
+* if Javascript files were changed, run https://jslint.com/
 
 publish your change
 -------------------
@@ -360,6 +356,7 @@ also be given directly to the render call.
 Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in
 MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
 ``static/custom-less`` directory.
+::
 
     ./m css  # Windows: m css
 
@@ -417,11 +414,11 @@ Writing tests
 Writing tests with `pytest` is easy and has little overhead. Just
 use the `assert` statements.
 
-For more information, please read: http://pytest.org/
+For more information, please read: https://docs.pytest.org/
 
 Documentation
 =============
-Sphinx (http://sphinx.pocoo.org/) and reST markup are used for documenting
+Sphinx (https://www.sphinx-doc.org) and reST markup are used for documenting
 moin. Documentation reST source code, example files and some other text files
 are located in the `docs/` directory in the source tree.
 
