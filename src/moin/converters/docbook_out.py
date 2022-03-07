@@ -40,7 +40,7 @@ class Converter:
                    'list-item': docbook.varlistentry,
                    'list-item-label': docbook.term,
                    'quote': docbook.quote,
-    }
+                   }
 
     # We store the standard attributes of an element.
     # Once we have been able to put it into an output element,

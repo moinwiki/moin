@@ -20,7 +20,7 @@ class Macro(MacroBlockBase):
                     _('Lexer Aliases'),
                     _('File Patterns'),
                     _('Mimetypes'),
-                   )
+                    )
         rows = list(pygments.lexers.get_all_lexers())
         rows.sort(key=lambda t: tuple(t[0].lower()))
         table = TableMixin()

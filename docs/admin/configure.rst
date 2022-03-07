@@ -54,17 +54,17 @@ functionality.
 Directory Structure
 ===================
 
-Shown below are parts of the directory structure after cloning moin or unpacking a release.
+Shown below are parts of the directory structure after cloning moin and running quickinstall.py.
 The default uses the OS file system for storage of wiki data and indexes.
 The directories and files shown are referenced in this section of documentation related to configuration::
 
-    moin/                     # clone root or unpack directory
-        contrib/
-            interwiki/
-                intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
-        docs/
+    moin/                         # clone root, default name
+        contrib/                  # scripts and docs of interest to developers
+        docs/                     # moin documentation in restructured text (.rst) format
             _build/
                 html/             # local copy of moin documentation, created by running "./m docs" command
+        requirements.d/           # package requirements used by quickinstall.py
+        scripts/                  # misc. scripts of interest to developers
         src/
             moin/                 # large directory containing moin application code
         wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
@@ -72,6 +72,30 @@ The directories and files shown are referenced in this section of documentation 
             index/                # wiki indexes
         wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
         wikiconfig.py             # main configuration file, modify this to add or change features
+        intermap.txt              # interwiki map: copied by quickinstall.py, updated by "./m interwiki"
+
+After installing moin from pypi or unpacking using a package manager, the directory structure will
+look like this:
+
+    myvenv/                 # virtualenv root
+        bin/                # Windows calls this directory Scripts
+        include             # Windows calls this directory Include
+        lib/                # Windows calls this directory Lib, includes moin package
+
+After activating above venv, `moin create-instance -p <mywiki>` creates the structure below. Multiple
+instances of `mywiki` can be created with different names. `mywiki` may be created as a
+subdirectory of `myvenv` or elsewhere. The `preview` and `sql` subdirectories are created when a
+user edits a wiki item.
+
+    mywiki/                 # wikiconfig dir, use this as CWD for moin commands
+        wiki/               # the wiki instance; created by `moin create-instance`
+            data/           # wiki data and metadata
+            index/          # wiki indexes
+            preview/        # text item backups are created when user clicks edit Preview button
+            sql/            # sqlite database used for edit locking
+        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
+        wikiconfig.py       # main configuration file, modify this to add or change features
+        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 
 wikiconfig.py Layout
 ====================

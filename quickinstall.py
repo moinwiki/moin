@@ -7,9 +7,9 @@ Create a virtual environment and install moin2 and all requirements in developme
 
 Usage for installation:
 
-    <python> quickinstall.py (where <python> is any Python 3.5+ executable)
+    <python> quickinstall.py (where <python> is any Python 3.8+ executable)
 
-Requires: Python 3.5+, pip
+Requires: Python 3.8+, pip
 
 The first run of quickinstall.py creates these files or symlink in the repo root:
 
@@ -48,8 +48,8 @@ from collections import Counter
 import venv
 
 
-if sys.hexversion < 0x3050000:
-    sys.exit("Error: MoinMoin requires Python 3.5+, current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3080000:
+    sys.exit("Error: MoinMoin requires Python 3.8+, current version is %s\n" % (platform.python_version(), ))
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
@@ -69,6 +69,7 @@ DIST = 'm-create-dist.txt'
 INDEX = 'm-rebuild-index.txt'
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath('wiki/backup.moin')
+SAMPLE_FILENAME = 'src/moin/contrib/sample-backup.moin'
 JUST_IN_CASE_BACKUP = os.path.normpath('wiki/deleted-backup.moin')
 
 
@@ -187,7 +188,7 @@ def copy_config_files():
     if not os.path.isfile('wikiconfig.py'):
         shutil.copy('src/moin/config/wikiconfig.py', 'wikiconfig.py')
     if not os.path.isfile('intermap.txt'):
-        shutil.copy('src/moin/config/intermap.txt', 'intermap.txt')
+        shutil.copy('src/moin/contrib/intermap.txt', 'intermap.txt')
     if not os.path.isdir('wiki_local'):
         os.mkdir('wiki_local')
 
@@ -209,45 +210,6 @@ def make_wiki(command, mode='w', msg='\nSuccess: a new wiki has been created.'):
             search_for_phrase(NEWWIKI)
             print('\nError: attempt to create wiki failed. Do "%s log new-wiki" to see complete log.' % M)
             return False
-
-
-def put_items(dir='contrib/sample/'):
-    """Load sample items into wiki"""
-    metas = []
-    datas = []
-    files = []
-    for (dirpath, dirnames, filenames) in os.walk(dir):
-        files.extend(filenames)
-        break
-    for file in files:
-        if file.endswith('.meta'):
-            metas.append(file)
-        if file.endswith('.data'):
-            datas.append(file)
-    if not len(datas) == len(metas):
-        print('Error: the number of .data and .meta files should be equal')
-        return False
-    commands = []
-    command = 'moin item-put --meta {0} --data {1}'
-    for meta in metas:
-        data = meta.replace('.meta', '.data')
-        if data in datas:
-            commands.append(command.format(dir + meta, dir + data))
-        else:
-            print('Error: file "{0} is missing'.format(data))
-            return False
-    commands = SEP.join(commands)
-
-    with open(NEWWIKI, 'a') as messages:
-        result = subprocess.call(commands, shell=True, stderr=messages, stdout=messages)
-    if result == 0:
-        print('{0} items were added to wiki'.format(len(metas)))
-        return True
-    else:
-        print('Important messages from %s are shown below:' % NEWWIKI)
-        search_for_phrase(NEWWIKI)
-        print('\nError: attempt to add items to wiki failed. Do "%s log new-wiki" to see complete log.' % M)
-        return False
 
 
 def delete_files(pattern):
@@ -313,7 +275,7 @@ class Commands:
             # we run ourself as a subprocess so output can be captured in a log file
             result = subprocess.run(command, shell=True, stderr=messages, stdout=messages)
             # above result will be flagged as error unless all python versions specified in tox.ini are installed:
-            # [tox]\n envlist = py{35,36,37,38},pypy3,flake8
+            # [tox]\n envlist = py{38,39,310},pypy3,flake8
         print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
         self.run_time('Quickinstall')
@@ -386,20 +348,9 @@ class Commands:
         print('Creating a new empty wiki...')
         make_wiki(command)  # share code with loading sample data and restoring backups
 
-    def cmd_sample(self, *args):
+    def cmd_sample(self):
         """create wiki and load sample data"""
-        # load items with non-ASCII names from a serialized backup
-        command = 'moin index-create -s -i{0} moin load --file contrib/sample/unicode.moin'.format(SEP)
-        print('Creating a new wiki populated with sample data...')
-        success = make_wiki(command, msg='\nSuccess: a new wiki has been created... working...')
-        # build the index
-        if success:
-            command = 'moin index-build'
-            success = make_wiki(command, mode='a', msg='\nSuccess: the index has been created for the sample wiki... working...')
-        # load individual items from contrib/sample, index will be updated
-        if success:
-            success = put_items()
-        self.run_time('Sample')
+        self.cmd_restore(SAMPLE_FILENAME)
 
     def cmd_restore(self, *args):
         """create wiki and load data from wiki/backup.moin or user specified path"""

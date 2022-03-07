@@ -185,10 +185,10 @@ class TestConverter(Base):
         ('<html><p><a href="http:test">Test</a></p></html>',
          # <page><body><p><a xlink:href="http:test">Test</a></p></body></page>
          '/page/body/p/a[text()="Test"][@xlink:href="http:test"]'),
-        (
-        '<html><base href="http://www.base-url.com/" /><body><div><p><a href="myPage.html">Test</a></p></div></body></html>',
-        # <page><body><div><p><a xlink:href="http://www.base-url.com/myPage.html">Test</a></p></div></body></page>
-        '/page/body/div/p/a[@xlink:href="http://www.base-url.com/myPage.html"]'),
+        ('<html><base href="http://www.base-url.com/" /><body><div><p><a href="myPage.html">Test</a></p></div></body></html>',
+         # <page><body><div><p><a xlink:href="http://www.base-url.com/myPage.html">Test</a></p></div></body></page>
+         '/page/body/div/p/a[@xlink:href="http://www.base-url.com/myPage.html"]'),
+
         # verify invalid or forbidden uri schemes are removed
         ('''<html><p><a href="javascript:alert('hi')">Test</a></p></html>''',
          # <page><body><p>javascript:alert('hi')</p></body></page>
@@ -279,10 +279,9 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        (
-        '<html><div><table><thead><tr><td>Header</td></tr></thead><tfoot><tr><td>Footer</td></tr></tfoot><tbody><tr><td>Cell</td></tr></tbody></table></div></html>',
-        # <page><body><div><table><table-header><table-row><table-cell>Header</table-cell></table-row></table-header><table-footer><table-row><table-cell>Footer</table-cell></table-row></table-footer><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></div></body></page>
-        '/page/body/div/table[./table-header/table-row[table-cell="Header"]][./table-footer/table-row[table-cell="Footer"]][./table-body/table-row[table-cell="Cell"]]'),
+        ('<html><div><table><thead><tr><td>Header</td></tr></thead><tfoot><tr><td>Footer</td></tr></tfoot><tbody><tr><td>Cell</td></tr></tbody></table></div></html>',
+         # <page><body><div><table><table-header><table-row><table-cell>Header</table-cell></table-row></table-header><table-footer><table-row><table-cell>Footer</table-cell></table-row></table-footer><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></div></body></page>
+         '/page/body/div/table[./table-header/table-row[table-cell="Header"]][./table-footer/table-row[table-cell="Footer"]][./table-body/table-row[table-cell="Cell"]]'),
         ('<html><div><table><tbody><tr><td colspan="2">Cell</td></tr></tbody></table></div></html>',
          # <page><body><div><table><table-body><table-row><table-cell number-columns-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>
          '/page/body/div/table/table-body/table-row/table-cell[text()="Cell"][@number-columns-spanned="2"]'),

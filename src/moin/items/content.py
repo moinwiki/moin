@@ -277,8 +277,7 @@ class Content:
                               {moin_page.namespace: '',
                                xlink.namespace: 'xlink',
                                html.namespace: 'html',
-                              },
-                              'xml')
+                               }, 'xml')
 
     def _render_data_highlight(self):
         # override this in child classes
@@ -478,7 +477,7 @@ class TarMixin:
                 logging.error("unsupported content object: {0!r}".format(content))
                 raise StorageError("unsupported content object: {0!r}".format(content))
             else:
-                raise NotImplemented
+                raise NotImplementedError
             assert content_length >= 0  # we don't want -1 interpreted as 4G-1
             ti.size = content_length
             tf.addfile(ti, content)

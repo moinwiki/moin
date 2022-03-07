@@ -109,9 +109,14 @@ Hyperlinks
 Moin2 hyperlinks are enclosed within double brackets. There are three possible
 fields separated by "|" characters: ::
 
-  1. PageName, relative URL, or fully qualified URL
+  1. PageName, relative URL, fully qualified URL, or interwiki link
   2. Text description or transcluded icon: [[ItemName|{{MyLogo.png}}]]
   3. Parameters: target, title, download, class, and accesskey are supported
+
+The special CSS class `redirect` may be used to immediately redirect the browser
+to an internal or external page. Once placed inside an item,
+that item cannot be viewed as redirection is immediate. To edit the item,
+type .../+modify/ItemName in the browsers address bar.
 
 Examples with parameters are not shown below because the effect cannot be
 duplicated with reST markup. To open a link in a new tab or window with a
@@ -121,6 +126,12 @@ mouseover title, do: ::
 
 Internal Links
 --------------
+
+Internal links for namespaces work the same as an item in the default namespace with subitems.
+Links without a leading `/` or `../` refer to an item in the top level of the default namespace,
+even if the current item is not in the default namespace.
+Links with a leading `/` refer to a subitem of the current item. Links with a leading `../`
+refer to a sibling of the current item.
 
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | Markup                                    | Result                                      | Comments                                    |
@@ -144,6 +155,10 @@ Internal Links
 | ``[[Home/ItemName]]``                     | `Home/ItemName <Home/ItemName>`_            | Link to a subitem of Home item              |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[/filename.txt]]``                     | `/filename.txt </filename.txt>`_            | Link to a sub-item called Filename.txt      |
++-------------------------------------------+---------------------------------------------+---------------------------------------------+
+| ``[[users/JoeDoe]]``                      | `users/JoeDoe`_                             | Link to a user's home item in user namespace|
++-------------------------------------------+---------------------------------------------+---------------------------------------------+
+| ``[[AltItem||class="redirect"]]``         | `AltItem is displayed immediately`          | Type /+modify/<item> in address bar to edit |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 
 External Links
@@ -692,8 +707,8 @@ danger, error, hint, important, note, tip, and warning.
  will look restless and will be harder to follow than a page where
  admonitions are used sparingly.
 
-CSS classes for use with the wiki parser, tables, and comments
---------------------------------------------------------------
+CSS classes for use with the wiki parser, tables, comments, and links
+---------------------------------------------------------------------
 
  - Background colors: red, green, blue, yellow, or orange
  - Borders: solid, dashed, or dotted
@@ -701,7 +716,8 @@ CSS classes for use with the wiki parser, tables, and comments
  - Admonitions: caution, important, note, tip, warning
  - Tables: moin-sortable, no-borders
  - Comments: comment
- - position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
+ - Position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
+ - Links with browser redirection: redirect
 
 Variables
 =========
@@ -789,15 +805,16 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<Include(ItemOne/SubItem)>>``          | Embeds the contents of ``ItemOne/SubItem`` inline          |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<ItemList()>>``                        | Lists subitems of current item, see notes for options      |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<MailTo(user AT example DOT org,       | If the user is logged in this macro will display           |
 | write me)>>``                             | ``user@example.org``, otherwise it will display the        |
 |                                           | obfuscated email address supplied                          |
 |                                           | (``user AT example DOT org``)                              |
 |                                           | The second parameter containing link text is optional.     |
 +-------------------------------------------+------------------------------------------------------------+
-| ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
-+-------------------------------------------+------------------------------------------------------------+
-| ``<<ItemPageList()>>``                    | Inserts names for matching descendents of specified item.  |
+| ``<<MonthCalendar()>>``                   | Shows a monthly calendar in a table form,                  |
+|                                           | see notes for details                                      |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
 +-------------------------------------------+------------------------------------------------------------+
@@ -805,8 +822,62 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
-| ``<<Verbatim(`same` __text__)>>``         | Inserts text as entered                                    |
+| ``<<Verbatim(`same` __text__)>>``         | Inserts text as entered, no markup rendering               |
 +-------------------------------------------+------------------------------------------------------------+
+
+Notes
+-----
+
+**Date** and **DateTime** macros accept integer timestamps and ISO 8601 formatted date-times:
+
+    - <<Date(1434563755)>>
+    - <<Date(2002-01-23T12:34:56)>>
+
+**Footnotes** are created by placing the macro within text. By default footnotes are placed at the bottom
+of the page. Explicit placement of footnotes is accomplished by calling the macro without a parameter.
+
+    - text<<FootNote(A macro is enclosed in double angle brackets, and'''may''' have markup.)>> more text
+    - <<FootNote()>>
+
+**FontAwesome** color must be a hex digit color code of either 3 or 6 digits with a leading #: #f00 or #F80000.
+FontAwesome size must be an unsigned decimal integer or float that will adjust the size of the character
+relative to the current font size: 2 or 2.0 will create double the character size, .5 will create a character
+half the current size. Font awesome experts will know about the special "fa" class and the "fa-" name prefixes.
+It is acceptable, but not necessary to provide these. See https://fontawesome.com/v4/cheatsheet/
+
+    - <<FontAwesome(thumbs-up,#f00,2)>> is identical to
+    - <<FontAwesome(fa fa-thumbs-up fa-2x,#FF0000)>>
+
+The **Include** macro <<Include(my.png)>> produces results identical to the transclusion {{my.png}}.
+It is more flexible than a transclusion because it supports multiple parameters and the first parameter may
+be any regrex starting with a `^`. The include macro accepts 3 parameters where the second parameter is a
+heading and the third parameter a heading level between 1 and 6:
+
+    - <<Include(^zi)>> embeds all wiki items starting with `zi`.
+    - <<Include(moin.png,My Favorite icon, 6)>>
+
+The **ItemList** macro accepts multiple named parameters: item, startswith, regex, ordered and display.
+
+    - <<ItemList(item="Foo")>> lists subitems of Foo item
+    - <<ItemList(ordered='True')>> displays ordered list of subitems, default is unordered
+    - <<ItemList(startswith="Foo")>> lists subitems starting with Foo
+    - <<ItemList(regex="Foo$")>> lists subitems ending with Foo
+    - <<ItemList(skiptag="template")>> ignore items with this tag
+    - <<ItemList(display="FullPath")>> default, displays full path to subitems
+    - <<ItemList(display="ChildPath")>> displays last component of the FullPath, including the '/'
+    - <<ItemList(display="ChildName")>> displays subitem name
+    - <<ItemList(display="UnCameled")>> displays "fooBar" as "foo Bar"
+
+The **MonthCalendar** macro accepts multiple named parameters: item, year, month, month_offset,
+fixed_height and anniversary.
+
+    - <<MonthCalendar>>  Calendar of current month for current page
+    - <<MonthCalendar(month_offset=-1)>>  Calendar of last month
+    - <<MonthCalendar(month_offset=+1)>>  Calendar of next month
+    - <<MonthCalendar(item="SampleUser",month=12)>>  Calendar of Page SampleUser, this year's december
+    - <<MonthCalendar(month=12)>>  Calendar of current Page, this year's december
+    - <<MonthCalendar(year=2022,month=12)>>  Calendar of December, 2022
+
 
 Smileys and Icons
 =================

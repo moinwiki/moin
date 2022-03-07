@@ -13,6 +13,7 @@ from flask_script import Command, Option
 from flask import g as flaskg
 
 from moin import config
+from moin import contrib
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -23,11 +24,12 @@ class CreateInstance(Command):
 
     option_list = [
         Option('--path', '-p', required=False, dest='path', type=str,
-            help="Path to new wikiconfig dir, defaults to CWD if not specified."),
+               help="Path to new wikiconfig dir, defaults to CWD if not specified."),
     ]
 
     def run(self, path):
         config_path = os.path.dirname(config.__file__)
+        contrib_path = os.path.dirname(contrib.__file__)
         if not path:
             path = os.getcwd()
         if os.path.exists(path):
@@ -44,6 +46,6 @@ class CreateInstance(Command):
         if os.path.isfile(os.path.join(path, 'intermap.txt')):
             print('intermap.txt already exists, not copied.')
         else:
-            shutil.copy(os.path.join(config_path, 'intermap.txt'), path)
+            shutil.copy(os.path.join(contrib_path, 'intermap.txt'), path)
         if not os.path.isdir('wiki_local'):
             os.mkdir('wiki_local')

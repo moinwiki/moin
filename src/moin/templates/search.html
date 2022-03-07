@@ -19,13 +19,16 @@
 
 {%- block content %}
     <h1>{{ _("Search") }}</h1>
+    {%- if item_name %}
+        <h2>Search "{{ item_name }}" Subitems and Transclusions</h2>
+    {%- endif %}
     {{ gen.form.open(medium_search_form, id='moin-long-searchform', method='get', action=url_for('frontend.search', item_name=item_name)) }}
         <p>
             {{ forms.render(medium_search_form['q']) }}
         </p>
         <div class="hint">{{ _("An Ajax transaction is submitted with each character keyed into the search box.
-            Transactions may be completed out of order if keying is rapid.
-            <br><br>For help on searching see:") }}
+            Transactions may be completed out of order if keying is rapid.") }}
+            <br><br>{{ _("For help on searching see:") }}
             <a href="/+serve/docs/user/search.html">Local docs</a> or
             <a href="https://moin-20.readthedocs.io/en/latest/user/search.html">Internet docs.</a>
         </div>
@@ -46,6 +49,7 @@
                         <label><input type="radio" name="modified_time" value="default" checked="checked"> Highest Score</label><br>
                         <label><input type="radio" name="modified_time" value="old"> Oldest First</label><br>
                         <label><input type="radio" name="modified_time" value="new"> Newest First</label><br>
+                        <label><input type="radio" name="modified_time" value="name"> Name</label><br>
                     </td>
                     <td>
                         <label><input type="checkbox" name="itemtype" value="markup"> Markup Text</label><br>

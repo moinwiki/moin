@@ -11,7 +11,6 @@
 import os
 import urllib.request
 import urllib.parse
-import urllib.error
 import datetime
 
 from json import dumps
@@ -23,7 +22,7 @@ from flask_theme import get_theme, render_theme_template
 
 from moin.i18n import _, L_, N_
 from moin import wikiutil, user
-from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
+from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
@@ -92,6 +91,50 @@ class ThemeSupport:
             self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
         else:
             self.wiki_root = ''
+
+    def get_fullname(self, meta):
+        """
+        Convert list of names to list of fullnames: <namespace>/<name> or <name>
+
+        :rtype: tuple
+        :returns: list of item names with namespace prefix or item names if default namespace
+        """
+        fullname = (name if not meta[NAMESPACE] else meta[NAMESPACE] + '/' + name for name in meta[NAME])
+        return fullname
+
+    def field_term(self, field, term):
+        """
+        Convert Whoosh stored bytes term to string, enables display of matching search terms by hit.
+        """
+        try:
+            term = term.decode()
+        except UnicodeDecodeError:
+            try:
+                # Whoosh converts datetime and integers to bytes using custom algorithms to compress bytes
+                # We use the request url to retrieve the terms for mtime and rev_number
+                # The request urls for short form searches and ajax searches are similar to the following:
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022+rev_number%3A2
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022-02&history=false&time_sorting=default&filetypes=all%2C&boolajax=true&is_ticket= HTTP/1.1
+                url = request.url
+                url = urllib.parse.unquote(url)
+                args = url.split('?q=')[1]
+                args = args.split('&')[0]
+                if '+' in args:
+                    terms = args.split('+')
+                elif ' ' in args:
+                    terms = args.split()
+                else:
+                    terms = [args]
+                for keyval in terms:
+                    fld, trm = keyval.split(':')
+                    if fld == 'mtime' == field:
+                        return fld, trm
+                    elif fld == 'rev_number' == field:
+                        return fld, trm
+                term = "unknown"
+            except Exception:
+                term = "unknown"
+        return field, term
 
     def get_action_tabs(self, fqname, current_endpoint):
         """

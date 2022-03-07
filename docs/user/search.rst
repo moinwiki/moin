@@ -5,22 +5,25 @@ Searching and Finding
 Entering search queries
 =======================
 
-To start a search, enter a query in the short query input field and type
-enter or click the search icon. By default, the name, summary, tag and
-content indexes for the latest revisions of all items will be searched.
+To start a search, enter a query into the short query input field and type
+enter or click the search icon. By default, the names, summary, tags, content, namengram,
+summaryngram, and contentngram fields are searched.
 
 The search results view provides a form for refining the search through
-ajax updates. A transaction is started each time a character is added to
-the search field or a checkbox is clicked.
+ajax updates. A transaction is started each time a character is added or removed
+in the search field. If keying is rapid, it is possible that results will
+processed out of order. The `Whoosh query` shows the last term processed.
 
-Below the search form is the query processed by whoosh, suggestions for
-additional searches by item name, and suggestions for additional
-searches by item content.
+Clicking the Search Options link displays alternatives for modifying the search.
+Ajax updates will be made whenever a radio button or checkbox is changed.
 
-And finally, the search hits are presented. By default these are ordered by
-the whoosh scoring number. Each hit will contain the item name, some
-meta data, item summary if available, and partial item content with the
-search term highlighted.
+Below the search form is the query processed by Whoosh, and Whoosh generated
+suggestions for additional searches by input, item name, and item content.
+
+Finally, the search hits are presented. By default these are ordered by
+the whoosh scoring number. Each hit will contain the item name and some
+meta data. If available, the item summary and partial item content with the
+search term highlighted will be shown.
 
 Simple search queries
 =====================
@@ -39,7 +42,7 @@ Search for documents containing "wiki" AND "moin"::
 
   wiki moin
 
-  or (does the same):
+Explicit alternative (does the same as above)::
 
   wiki AND moin
 
@@ -50,6 +53,14 @@ Search for documents containing "wiki" OR "moin"::
 Search for documents containing "wiki" and NOT "bad"::
 
   wiki NOT bad
+
+Explicit alternative (does the same as above)::
+
+  wiki AND NOT bad
+
+Group terms using ()::
+
+  wiki AND NOT (bad OR worse)
 
 Using wildcards
 ===============
@@ -116,44 +127,68 @@ Search for something like wiki, willi, wi, ...::
 Searching in specific fields
 ============================
 
-As long as you do not specify otherwise, moin will search in ``name``,
-``name_exact`` and ``content`` fields.
+If not specified otherwise, moin will search in ``names``,
+``tags``, ``summary``, ``comment`` and ``content`` fields. Three fields with
+n-gram support are also searched by default: ``namengram``, ``summaryngram``
+and ``contentngram``.
+
+N-gram indexing is a powerful method for getting fast, “search as you type” functionality.
+A tokinizer splits words within ngram content fields into strings of 3 to 6 characters.
+These small strings may be matched against search terms that are tokinized into strings
+of 3 to 6 characters.
 
 To specify the field to search in, just use the `fieldname:searchterm` syntax.
+If embedded spaces are desired then do: `fieldname:"search term"`. Separate
+multiple terms with a space: `content:foo tags:Foo` is the same as
+`content:foo AND tags:Foo`.
 
-+-----------------------+-------------------------------------------------------+
-| Field name            | Field value                                           |
-+-----------------------+-------------------------------------------------------+
-| ``wikiname``          | wiki name, e.g. ITWiki, EngineeringWiki, SalesWiki    |
-+-----------------------+-------------------------------------------------------+
-| ``name``              | document name, e.g. Home, MyWikiPage                  |
-+-----------------------+-------------------------------------------------------+
-| ``name_exact``        | same as ``name``, but is not tokenized                |
-+-----------------------+-------------------------------------------------------+
-| ``content``           | document contents, e.g. This is some example content. |
-+-----------------------+-------------------------------------------------------+
-| ``contenttype``       | document type, e.g. text/plain;charset=utf-8          |
-+-----------------------+-------------------------------------------------------+
-| ``tags``              | tags of the document, e.g. important, hard, todo      |
-+-----------------------+-------------------------------------------------------+
-| ``summary``           | summary text, if provided by author                   |
-+-----------------------+-------------------------------------------------------+
-| ``language``          | (main) language of the document contents, e.g. en     |
-+-----------------------+-------------------------------------------------------+
-| ``mtime``             | document modification (submission) time, 201112312359 |
-+-----------------------+-------------------------------------------------------+
-| ``username``          | submitter user name, e.g. JoeDoe                      |
-+-----------------------+-------------------------------------------------------+
-| ``address``           | submitter IP address, e.g. 127.0.0.1                  |
-+-----------------------+-------------------------------------------------------+
-| ``hostname``          | submitter DNS name, e.g. foo.example.org              |
-+-----------------------+-------------------------------------------------------+
-| ``acl``               | access control list (see below)                       |
-+-----------------------+-------------------------------------------------------+
-| ``itemlinks``         | link targets of the document, e.g. OtherItem          |
-+-----------------------+-------------------------------------------------------+
-| ``itemtransclusions`` | transclusion targets of the document, e.g. OtherItem  |
-+-----------------------+-------------------------------------------------------+
+The following table includes fields that may be useful for searching.
+
++-------------------------+-------------------------------------------------------+
+| Field name              | Field value                                           |
++-------------------------+-------------------------------------------------------+
+| ``acl`` **              | access control list (see below)                       |
++-------------------------+-------------------------------------------------------+
+| ``address``             | submitter IP address, e.g. 127.0.0.1                  |
++-------------------------+-------------------------------------------------------+
+| ``comment``             | editor comment on save, rename, etc.                  |
++-------------------------+-------------------------------------------------------+
+| ``content``             | document contents, e.g. This is some example content. |
++-------------------------+-------------------------------------------------------+
+| ``contentngram`` **     | document contents, tokenized by 3 to 6 characters.    |
++-------------------------+-------------------------------------------------------+
+| ``contenttype``         | document type: text, image, audio, moinwiki, jpg, ... |
++-------------------------+-------------------------------------------------------+
+| ``itemlinks`` **        | link targets of the document, e.g. OtherItem          |
++-------------------------+-------------------------------------------------------+
+| ``itemtransclusions`` **| transclusion targets of the document, e.g. OtherItem  |
++-------------------------+-------------------------------------------------------+
+| ``language``            | (main) language of the document contents, e.g. en     |
++-------------------------+-------------------------------------------------------+
+| ``mtime``               | document modification (submission) date, 2011-08-07   |
++-------------------------+-------------------------------------------------------+
+| ``namengram`` **        | document names, tokenized by 3 to 6 characters.       |
++-------------------------+-------------------------------------------------------+
+| ``names``               | document names, e.g. Home, MyWikiPage                 |
++-------------------------+-------------------------------------------------------+
+| ``namespace``           | namespace:"" for default or namespace:users           |
++-------------------------+-------------------------------------------------------+
+| ``name_exact``          | same as ``name``, but is not tokenized                |
++-------------------------+-------------------------------------------------------+
+| ``name_old``            | name_old:* for all renamed items                      |
++-------------------------+-------------------------------------------------------+
+| ``summary``             | summary text, if provided by author                   |
++-------------------------+-------------------------------------------------------+
+| ``summaryngram`` **     | summary text, tokenized by 3 to 6 characters.         |
++-------------------------+-------------------------------------------------------+
+| ``tags``                | tags of the document, e.g. important, hard, todo      |
++-------------------------+-------------------------------------------------------+
+| ``username``            | submitter user name, e.g. JoeDoe                      |
++-------------------------+-------------------------------------------------------+
+| ``wikiname``            | wiki name, e.g. ITWiki, EngineeringWiki, SalesWiki    |
++-------------------------+-------------------------------------------------------+
+
+** These fields exist only in the current revisions index, see Notes below.
 
 Examples
 --------
@@ -162,10 +197,9 @@ Search in metadata fields::
   contenttype:text
   contenttype:image/jpeg
   tags:todo
-  mtime:201108
+  mtime:2022-01-08  # use ISO 8601 dates, not time; `mtime:2022-01 works
   address:127.0.0.1
-  language:en
-  hostname:localhost
+  username:JoeDoe
 
 Search items with an item ACL that explicitly gives Joe read rights::
 
@@ -173,22 +207,41 @@ Search items with an item ACL that explicitly gives Joe read rights::
 
 Limiting search to a specific wiki, for example in a wiki farm's shared index::
 
-  wikiname:SomeWiki
+  wikiname:SomeWiki  # requires correct caps
 
 Notes
 =====
-moin uses indexed search. Keep in mind that this has some special properties:
 
- * By using an index, the search is usually rather fast
+There are two indexes. The smaller index is used by default. It only indexes the
+current revision of each item. The larger index is used when the `All` radio
+button under the Search Options link is selected. The larger indexes all
+revisions of all items including revisions of deleted items. As noted in the table
+above the larger index omits several fields to save space.
+
+By default, all namespaces and all wikinames are searched, including the userprofiles
+index. Because the userprofiles index is normally read restricted, hits will be
+blocked and included as `n items are not shown because read permission was denied` at
+the bottom of the page.
+
+Items with transcluded content do not contain the transcluded content within the
+item's index. An item containing "foo" within its content and trancluding an item with
+"bar" within its content cannot be matched by searching for "foo AND bar". Both items
+will be matched by searching for "foo OR bar".
+
+Moin only uses an indexed search. Keep in mind that this has some special properties:
+
+ * By using an index, the search is fast
  * Because it is only using an index, it can only find what was put there
  * If you use wildcards or regexes, it will still use the index, but in a different, slower way
 
 For example:
 
- * "foobar" is put into the index somehow
- * you search for "ooba" - you will not find it, because only "foobar" was put into the index
- * solution: search for "foobar": fast and will find it
- * solution: search for "*ooba*" or r".*ooba.*": slow, but will find it
+ * create an item with "FooBar" in the name, content, summary, tag, and comment fields
+ * search for "ooba" - the namengram, summaryngram, and contentngram will match
+ * search for "FooBar": names, namengram, tags, summary, summaryngram, content,
+   contentngram, and comment will match
+ * search for "foobar":  names, namengram, summary, summaryngram, content, contentngram,
+   and comment will match
 
 More information
 ================

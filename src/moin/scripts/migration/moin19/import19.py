@@ -23,6 +23,13 @@ from flask_script import Command, Option
 from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
+# macro migration "framework"
+from .macro_migration import migrate_macros
+
+# individual macro migrations register with the migrate_macros module
+from .macros import MonthCalendar
+from .macros import PageList
+
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
@@ -95,11 +102,13 @@ class ImportMoin19(Command):
         custom_namespaces = namespaces()
 
         print("\nConverting Users...\n")
-        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
-            global user_names
-            user_names.append(rev.meta['name'][0])
-            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
-            backend.store(rev.meta, rev.data)
+        user_dir = os.path.join(data_dir, 'user')
+        if os.path.isdir(user_dir):
+            for rev in UserBackend(user_dir):
+                global user_names
+                user_names.append(rev.meta['name'][0])
+                userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
+                backend.store(rev.meta, rev.data)
 
         print("\nConverting Pages and Attachments...\n")
         for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
@@ -137,6 +146,10 @@ class ImportMoin19(Command):
             meta, data = backend.retrieve(namespace, revno)
             data_in = data.read().decode(CHARSET19)
             dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
+
+            # migrate macros that need update from 1.9 to 2.0
+            migrate_macros(dom)  # in-place conversion
+
             out = self.conv_out(dom)
             out = out.encode(CHARSET19)
             iri = Iri(scheme='wiki', authority='', path='/' + item_name)
@@ -303,7 +316,7 @@ class PageRevision:
             meta = {MTIME: -1,  # fake, will get 0 in the end
                     NAME: [item_name],  # will get overwritten with name from edit-log
                                         # if we have an entry there
-                   }
+                    }
             try:
                 revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
                 previous_meta = PageRevision(item, revno - 1, revpath).meta
@@ -570,7 +583,7 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
                           modifier,
                           ','.join(entries),
                           ','.join(rights)  # iterator has removed invalid rights
-                         ))
+                          ))
     result = ' '.join(result)
     logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
     return result
@@ -704,7 +717,7 @@ class UserRevision:
                 'last_saved',  # renamed to MTIME
                 'email_subscribed_events',  # XXX no support yet
                 'jabber_subscribed_events',  # XXX no support yet
-               ]
+                ]
         for key in kill:
             if key in metadata:
                 del metadata[key]

@@ -84,8 +84,9 @@ class NameNotValidError(ValueError):
 
 def validate_name(meta, itemid):
     """
-    Check whether the names are valid.
-    Will just return, if they are valid, will raise a NameNotValidError if not.
+    Common validation code for new, renamed and reverted items.
+
+    Will return None if valid, or raise a NameNotValidError if not.
     """
     names = meta.get(NAME)
     current_namespace = meta.get(NAMESPACE)
@@ -95,13 +96,21 @@ def validate_name(meta, itemid):
 
     if len(names) != len(set(names)):
         msg = L_("The names in the name list must be unique.")
-        flash(msg, "error")  # duplicate message at top of form
+        flash(msg, "error")
         raise NameNotValidError(msg)
+
     # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
     invalid_names = [name for name in names if name.startswith(('@', '+'))]
     if invalid_names:
         msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names))
-        flash(msg, "error")  # duplicate message at top of form
+        flash(msg, "error")
+        raise NameNotValidError(msg)
+
+    # Item names must not contain commas
+    invalid_names = [name for name in names if ',' in name]
+    if invalid_names:
+        msg = L_("Item name (%(invalid_names)s) must not contain ',' characters. Create item with 1 name, use rename to create multiple names.", invalid_names=", ".join(invalid_names))
+        flash(msg, "error")
         raise NameNotValidError(msg)
 
     namespaces = namespaces + NAMESPACES_IDENTIFIER  # Also dont allow item names to match with identifier namespaces.

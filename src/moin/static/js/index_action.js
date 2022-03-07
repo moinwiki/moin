@@ -12,12 +12,14 @@ $("document").ready(function () {
     "use strict";
 
     var POPUP_FADE_TIME = 200, // fade in, fade out times for selected popups
-        IFRAME_CREATE_DELAY = 200, // delay between start of multiple downloads
         IFRAME_REMOVE_DELAY = 3000, // life expectancy of iframe used for file downloads
         // delete and destroy process started and completed messages
-        ACTION_LOADING = {'delete': _("Deleting.."), 'destroy': _("Destroying..")},
-        ACTION_DONE = {'delete': _("Items deleted: "), 'destroy': _("Items destroyed: ")},
-        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "), 'destroy': _(", Not authorized, items not destroyed: ")},
+        ACTION_LOADING = {'delete': _("Deleting.."),
+                          'destroy': _("Destroying..")},
+        ACTION_DONE = {'delete': _("Items deleted: "),
+                       'destroy': _("Items destroyed: ")},
+        ACTION_FAILED = {'delete': _(", Not authorized, items not deleted: "),
+                         'destroy': _(", Not authorized, items not destroyed: ")},
         POPUP_DELETE_HEADER = _("Add optional comment for Delete change log. "),
         POPUP_DESTROY_HEADER = _("Add optional comment for Destroy change log. ");
 
@@ -169,11 +171,9 @@ $("document").ready(function () {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Download failed, no items were selected."));
         } else {
-            // download selected files (add small delay to start of multiple downloads for IE9)
+            // download selected files
             $(".moin-item:checked").siblings(".moin-download-link").each(function (index, element) {
-                // at 0 ms IE9 skipped 41 of 42 downloads, at 100 ms IE9 skipped 14 of 42, success at 200 ms
-                var wait = index * IFRAME_CREATE_DELAY;
-                setTimeout(function () { startFileDownload(element); }, wait);
+                startFileDownload(element);
             });
             $("input.moin-item:checked").prop('checked', false);
         }

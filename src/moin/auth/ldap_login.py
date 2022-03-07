@@ -44,6 +44,7 @@ class LDAPAuth(BaseAuth):
 
     def __init__(
         self,
+        trusted=True,
         server_uri='ldap://localhost',  # ldap / active directory server URI
                                         # use ldaps://server:636 url for ldaps,
                                         # use  ldap://server for ldap without tls (and set start_tls to 0),
@@ -184,7 +185,7 @@ class LDAPAuth(BaseAuth):
                     'givenname_attribute',
                 ] if getattr(self, attr) is not None]
                 lusers = conn.search_st(self.base_dn, self.scope, filterstr,
-                                     attrlist=attrs, timeout=self.timeout)
+                                        attrlist=attrs, timeout=self.timeout)
                 # we remove entries with dn == None to get the real result list:
                 lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
                 for _dn, _ldap_dict in lusers:

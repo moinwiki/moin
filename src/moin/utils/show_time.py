@@ -24,16 +24,16 @@ def duration(seconds):
     if seconds < 90:
         return _("seconds"), seconds
     if seconds < 5400:  # 1.5 hours
-        return _("minutes"), (seconds+30)//60
+        return _("minutes"), (seconds + 30) // 60
     if seconds < 129600:  # 36 hours
-        return _("hours"), (seconds+1800)//3600
+        return _("hours"), (seconds + 1800) // 3600
     if seconds < 864000:  # 10 days
-        return _("days"), (seconds+43200)//86400
+        return _("days"), (seconds + 43200) // 86400
     if seconds < 4838400:  # 8 weeks
-        return _("weeks"), (seconds+302400)//604800
+        return _("weeks"), (seconds + 302400) // 604800
     if seconds < 63072000:  # 24 months
-        return _("months"), (seconds+1296000)//2592000
-    return _("years"), (seconds+15768000)//31536000
+        return _("months"), (seconds + 1296000) // 2592000
+    return _("years"), (seconds + 15768000) // 31536000
 
 
 def format_date_time(utc_dt=None, fmt='yyyy-MM-dd HH:mm:ss', interval='datetime'):

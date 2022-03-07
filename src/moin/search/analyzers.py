@@ -8,62 +8,103 @@ MoinMoin - Misc. tokenizers and analyzers for whoosh indexing
 from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
 from whoosh.analysis import Tokenizer, Token, RegexTokenizer
 
-from moin.utils.mime import Type
 from moin.security import AccessControlList
 
 
 class MimeTokenizer(Tokenizer):
     """ Content type tokenizer """
 
-    def __call__(self, value, start_pos=0, positions=False, **kwargs):
+    def __call__(self, value, start_pos=0, positions=False, mode='', **kwargs):
         """
-        Tokenizer behaviour:
+        This tokenizer is used for both indexing and queries. Queries are simple, usually return the input value as is.
+
+        For indexing, tokens are generated for the incoming value plus various parts as shown below. Special cases
+        create tokens for moinwiki, jpg, and mp3.
 
         Input: "text/x.moin.wiki;charset=utf-8"
-        Output: "text/x.moin.wiki;charset=utf-8", "text", "x.moin.wiki", "charset=utf-8"
+        Output: "text/x.moin.wiki;charset=utf-8", "text", "moinwiki", "x.moin.wiki", "x", "moin", "wiki", "charset=utf-8", "charset", "utf-8"
 
         Input: "application/pdf"
         Output: "application/pdf", "application", "pdf"
 
         :param value: String for tokenization
+        :mode value: query or index
         :param start_pos: The position number of the first token. For example,
             if you set start_pos=2, the tokens will be numbered 2,3,4,...
             instead of 0,1,2,...
-        :param positions: Whether to record token positions in the token.
+        :param positions: Whether to record token positions in the token. These are unwanted,
+            but positions=True is passed on indexing, positions=False on queries.
         """
-        assert isinstance(value, str), "{0!r} is not str".format(value)
-        if '/' not in value:  # Add '/' if user forgot do this
-            value += '/'
-        pos = start_pos
         tk = Token()
-        tp = Type(value)
-        # we need to yield the complete contenttype in one piece,
-        # so we can find it with Term(CONTENTTYPE, contenttype):
-        if tp.type is not None and tp.subtype is not None:
-            # note: we do not use "value" directly, so Type.__str__ can normalize it:
-            tk.text = str(tp)
-            if positions:
-                tk.pos = pos
-                pos += 1
+        tk.pos = 0
+        if mode == 'query':
+            # 1 term expected, but contenttype:'moin utf-8' is valid
+            val = value.split()
+            for v in val:
+                tk.text = v
+                yield tk
+        else:
+            # mode = 'index'
+            tk.text = value
+            # text/x.moin.wiki;charset=utf-8
             yield tk
-        # now yield the pieces:
-        tk.text = tp.type
-        if positions:
-            tk.pos = pos
-            pos += 1
-        yield tk
-        if tp.subtype is not None:
-            tk.text = tp.subtype
-            if positions:
-                tk.pos = pos
-                pos += 1
+            if '/' not in value:
+                # unsupported contenttype
+                return
+            major, minor = value.split('/')
+            # text, x.moin.wiki;charset=utf-8
+            tk.text = major
+            # text
             yield tk
-        for key, value in tp.parameters.items():
-            tk.text = "{0}={1}".format(key, value)
-            if positions:
-                tk.pos = pos
-                pos += 1
+            if ';' in minor:
+                parameters = minor.split(';')
+                # x.moin.wiki, charset=utf-8
+                for par in parameters[1:]:
+                    tk.text = par
+                    # charset=utf-8
+                    yield tk
+                    key, val = par.split('=')
+                    # charset, utf-8
+                    tk.text = key
+                    # charset
+                    yield tk
+                    tk.text = val
+                    # utf-8
+                    yield tk
+                minor = parameters[0]  # x.moin.wiki
+            if minor == 'mpeg':
+                # 'audio/mpeg' most people expect mp3
+                tk.text = 'mp3'
+                yield tk
+            if minor == 'jpeg':
+                # 'image/jpeg' most people expect jpg
+                tk.text = 'jpg'
+                yield tk
+            if minor == 'x.moin.wiki':
+                # moin is valid for moin and creole, use this to get just moin
+                tk.text = 'moinwiki'
+                yield tk
+            tk.text = minor
+            # x.moin.wiki
             yield tk
+            if '.' in minor:
+                min = minor.split('.')
+                # x, moin, wiki
+                for m in min:
+                    tk.text = m
+                    yield tk
+            if '-' in minor:
+                # x-markdown
+                min = minor.split('-')
+                for m in min:
+                    tk.text = m
+                    yield tk
+            if '+' in minor:
+                # svg+xml
+                min = minor.split('+')
+                for m in min:
+                    tk.text = m
+                    yield tk
 
 
 class AclTokenizer(Tokenizer):
@@ -131,6 +172,6 @@ def item_name_analyzer():
     """
     iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
                       query=IntraWordFilter(mergewords=False, mergenums=False)
-                     )
+                      )
     analyzer = RegexTokenizer(r"\S+") | iwf | LowercaseFilter()
     return analyzer

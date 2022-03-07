@@ -67,7 +67,7 @@ class Blog(Default):
                  Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY),
                  # Only sub items of this item
                  Prefix(NAME_EXACT, prefix),
-                ]
+                 ]
         if tag:
             terms.append(Term(TAGS, tag))
         query = And(terms)
@@ -92,7 +92,7 @@ class Blog(Default):
                                blog_entry_items=blog_entry_items,
                                tag=tag,
                                item=self,
-                              )
+                               )
 
 
 @register
@@ -129,4 +129,4 @@ class BlogEntry(Default):
                                blog_item=blog_item,
                                blog_entry_item=self,
                                item=self,
-                              )
+                               )

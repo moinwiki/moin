@@ -10,7 +10,7 @@ Usage:  python <path_to>wget.py <url> <output_file>
 """
 
 import sys
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
 
 
 if __name__ == '__main__':

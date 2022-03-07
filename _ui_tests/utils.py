@@ -10,7 +10,7 @@ import urllib.request, urllib.parse, urllib.error
 import pytest
 
 pytest.importorskip('selenium')
-webdriver = selenium.webdriver
+webdriver = selenium.webdriver  # noqa
 
 import config
 

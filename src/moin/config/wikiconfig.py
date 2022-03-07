@@ -20,43 +20,54 @@ from moin.utils.interwiki import InterWikiMap
 class Config(DefaultConfig):
     """
     We assume this structure for a git clone scenario used by developers:
-    moin/                   # clone root and wikiconfig dir, use this as CWD for ./m or moin commands
-        contrib             # developer tools
-        docs/
-            _build/
-                html/       # local copy of moin documentation, created by running "./m docs" command
-        src/
-            moin/           # directory containing moin application code
-        wiki/               # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
-            data/           # wiki data and metadata
-            index/          # wiki indexes
-            preview/        # edit backups created when user clicks edit Preview button
-            sql/            # sql database used for edit locking
-        wikiconfig.py       # main configuration file, modify this to add or change features
-        wiki_local/         # use this to store custom CSS, Javascript, templates, logos, etc.
-        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
-    <moin-venv-python>      # virtual env is created as a sibling to moin/ by default
-        bin/                # Windows calls this directory Scripts
-        include             # Windows calls this directory Include
-        lib/                # Windows calls this directory Lib
+
+        moin/                   # clone root and wikiconfig dir, use this as CWD for ./m or moin commands
+            contrib             # developer tools
+            docs/
+                _build/
+                    html/       # local copy of moin documentation, created by running "./m docs" command
+            src/
+                moin/           # directory containing moin application code
+            wiki/               # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
+                data/           # wiki data and metadata
+                index/          # wiki indexes
+                preview/        # edit backups created when user clicks edit Preview button
+                sql/            # sql database used for edit locking
+            wikiconfig.py       # main configuration file, modify this to add or change features
+            wiki_local/         # use this to store custom CSS, Javascript, templates, logos, etc.
+            intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
+        <moin-venv-python>      # virtual env is created as a sibling to moin/ by default
+            bin/                # Windows calls this directory Scripts
+            include             # Windows calls this directory Include
+            lib/                # Windows calls this directory Lib
 
 
-    OR: This structure will be created by a `<python> -m venv <path-to-new-myvenv>`
-    myvenv/                 # virtualenv root
-        bin/                # Windows calls this directory Scripts
-        include             # Windows calls this directory Include
-        lib/                # Windows calls this directory Lib
+    OR: To install moin from pypi into a venv, enter this sequence of commands:
+        <python> -m venv <myvenv>
+        cd <path-to-new-myvenv>
+        source bin/activate activate  # Scripts\activate.bat
+        pip install wheel
+        pip install moin
+        moin create-instance --path <mywiki>
+        cd <mywiki>
+        moin index-create -s -i                                 # creates empty wiki, OR
+        moin import19 -s -i --data_dir <path to 1.9 wiki/data>  # import 1.9 data, OR
+        moin index-create; moin load-sample; moin index-build   # creates wiki with sample data
+    to create this structure:
 
-    After activating above venv, `moin create-instance -p <mywiki>` creates this structure
-    mywiki/                 # wikiconfig dir, use this as CWD for moin commands
-        wiki/               # the wiki instance; created by `moin create-instance`
-            data/           # wiki data and metadata
-            index/          # wiki indexes
-            preview/        # backups created when user clicks edit Preview button
-            sql/            # sqlite database used for edit locking
-        wikiconfig.py       # main configuration file, modify this to add or change features
-        wiki-local          # use this to store custom CSS, Javascript, templates, logos, etc.
-        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
+        <myvenv>/               # virtualenv root, moin installed in site-packages below include/
+            bin/                # Windows calls this directory Scripts
+            include/            # Windows calls this directory Include
+            lib/                # Windows calls this directory Lib
+        <mywiki>/               # wikiconfig dir, use this as CWD for moin commands after <myvenv> activated
+            wiki/               # the wiki instance; created by `moin create-instance`
+                data/           # wiki data and metadata
+                index/          # wiki indexes
+                preview/        # backups created when user clicks edit Preview button
+                sql/            # sqlite database used for edit locking
+            wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
+            wikiconfig.py       # main configuration file, modify this to add or change features
+            intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 
     If that's not true, adjust these paths
     """
@@ -79,10 +90,14 @@ class Config(DefaultConfig):
     # copy templates/snippets.html to directory below and edit per requirements to customize logos, etc.
     template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
 
-    # it is required that you set this to a unique, stable and non-empty name:
+    # it is required that you set interwikiname to a unique, stable and non-empty name.
+    # Changing interwikiname on an existing wiki requires rebuilding the index.
     interwikiname = 'MyMoinMoin'
-    # load the interwiki map from intermap.txt:
-    interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'intermap.txt')).iwmap
+    # load the interwiki map from intermap.txt
+    try:
+        interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, 'intermap.txt')).iwmap
+    except FileNotFoundError:
+        interwiki_map = {}
     # we must add entries for 'Self' and our interwikiname,
     # if you are not running the built-in desktop server change these to your wiki URL
     interwiki_map[interwikiname] = 'http://127.0.0.1:8080/'

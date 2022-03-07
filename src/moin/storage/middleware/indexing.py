@@ -190,9 +190,20 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
         doc[CONTENTNGRAM] = content
     if SUMMARYNGRAM in schema and SUMMARY in meta:
         doc[SUMMARYNGRAM] = meta[SUMMARY]
+    if NAMENGRAM in schema and NAME in meta:
+        doc[NAMENGRAM] = ' '.join(meta[NAME])
     if doc.get(TAGS, None):
         # global tags uses this to search for items with tags
-        meta[HAS_TAG] = True
+        doc[HAS_TAG] = True
+    if doc.get(NAME, None):
+        if doc.get(NAMESPACE, None):
+            fullnames = [doc[NAMESPACE] + '/' + x for x in doc[NAME]]
+            doc[NAMES] = ' | '.join(fullnames)
+        else:
+            doc[NAMES] = ' | '.join(doc[NAME])
+        doc[NAME_SORT] = doc[NAMES].replace('/', '')
+    else:
+        doc[NAME_SORT] = ""
     return doc
 
 
@@ -322,17 +333,25 @@ class IndexingMiddleware:
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
+        # field_boosts favor hits on names, tags, summary, comment, content, namengram, summaryngram, and contentngram respectively
+        # when query_parser default search includes [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT].
+        # Note *NGRAMS are only present in latest_revs index, see below
         common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
             WIKINAME: ID(stored=True),
             # namespace, so we can have different namespaces within a wiki, always check this!
             NAMESPACE: ID(stored=True),
-            # tokenized NAME from metadata - use this for manual searching from UI
-            NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            # since name is a list whoosh will think it is a list of tokens see #364
+            # we store list of names, but do not use for searching
+            NAME: TEXT(stored=True),
+            # string created by joining list of Name strings, we use NAMES for searching
+            NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
+            # names without slashes, slashes cause strange sort sequences
+            NAME_SORT: TEXT(stored=True),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
-            NAME_EXACT: ID(field_boost=3.0),
+            NAME_EXACT: ID(field_boost=1.0),
             # history and mychanges views show old name for deleted items
             NAME_OLD: TEXT(stored=True),
             # revision id (aka meta id)
@@ -350,8 +369,8 @@ class IndexingMiddleware:
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
-            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=2.0),
-            # search on HAS_TAGS improves response time of global tags
+            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=30.0),
+            # search on HAS_TAG improves response time of global tags
             # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
             HAS_TAG: BOOLEAN(stored=False),
             LANGUAGE: ID(stored=True),
@@ -366,9 +385,9 @@ class IndexingMiddleware:
             # ACTION from metadata
             ACTION: ID(stored=True),
             # tokenized COMMENT from metadata
-            COMMENT: TEXT(stored=True),
+            COMMENT: TEXT(stored=True, field_boost=30.0),
             # SUMMARY from metadata
-            SUMMARY: TEXT(stored=True, field_boost=2.0),
+            SUMMARY: TEXT(stored=True, field_boost=10.0),
             # DATAID from metadata
             DATAID: ID(stored=True),
             # TRASH from metadata
@@ -386,9 +405,10 @@ class IndexingMiddleware:
             ITEMTRANSCLUSIONS: ID(stored=True),
             # tokenized ACL from metadata
             ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
-            # ngram words, index ngrams of words from main content
-            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
-            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
+            # index ngrams of words, field_boosts favor hits on name and summary over content
+            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=0.01),
+            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=1.0),
+            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=1.0),
         }
         latest_revs_fields.update(**common_fields)
 
@@ -447,7 +467,7 @@ class IndexingMiddleware:
                           ("*_numeric", NUMERIC(stored=True)),
                           ("*_datetime", DATETIME(stored=True)),
                           ("*_boolean", BOOLEAN(stored=True)),
-                         ]
+                          ]
 
         # Adding dynamic fields to schemas
         for glob, field_type in dynamic_fields:
@@ -614,8 +634,6 @@ class IndexingMiddleware:
                     meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
                     doc = backend_to_index(meta, content, schema, wikiname, backend_name)
-                    if doc.get(TAGS):
-                        doc[HAS_TAG] = True
                 if mode == 'update':
                     writer.update_document(**doc)
                 elif mode == 'add':
@@ -1176,7 +1194,7 @@ class Item(PropertiesMixin):
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
                  FQNAME: fqname,
-                }
+                 }
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
             Schema = UserMetaSchema
@@ -1199,6 +1217,9 @@ class Item(PropertiesMixin):
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
         meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
+        # file upload UI does not have a summary field
+        if SUMMARY not in meta:
+            meta[SUMMARY] = ""
 
         if valid and not validate_data(meta, data):  # need valid metadata to validate data
             logging.warning("data validation failed")

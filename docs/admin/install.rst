@@ -56,14 +56,12 @@ storage and the index:
  moin index-create -s -i
 
 If you don't want to start with an empty wiki, but rather play with some
-sample content we provide, load it into your wiki:
+sample content we provide, load it into your wiki and rebuild the indexes:
 
 ::
 
- moin load-sample-content
- # TODO: implement this using code like in:
- # moin load --file contrib/sample/unicode.moin
- # moin index-build
+ moin load-sample
+ moin index-build
 
 Run your wiki instance
 ======================
@@ -108,8 +106,8 @@ Before you can run moin, you need to install it.
 
 Using your standard user account, run the following command
 from the project root directory. Replace <python> in the command
-below with the path to a python 3.5+ executable. This is usually
-just "python", but may be "python3", "python3.5", "/opt/pypy/bin/pypy"
+below with the path to a python 3.8+ executable. This is usually
+just "python", but may be "python3", "python3.8", "/opt/pypy/bin/pypy"
 or even <some-other-path-to-python>:
 
 ::
