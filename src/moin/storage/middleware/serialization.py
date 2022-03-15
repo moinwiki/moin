@@ -20,7 +20,7 @@ import json
 
 from werkzeug.wsgi import LimitedStream
 
-from moin.constants.keys import NAME, ITEMTYPE, SIZE
+from moin.constants.keys import NAME, ITEMTYPE, SIZE, NAMESPACE
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 
 
@@ -58,7 +58,14 @@ def serialize_iter(backend):
         yield data
 
 
-def deserialize(src, backend):
+def deserialize(src, backend, new_ns=None, old_ns=None, kill_ns=None):
+    """
+    Normal usage is to restore an empty wiki with data from a backup.
+
+    If new_ns and old_ns are passed, then all items in the old_ns are renamed into the new_ns.
+    If kill_ns is passed, then all items in that namespace are not loaded.
+    """
+    assert bool(new_ns is None) == bool(old_ns is None), 'new_ns and old_ns are co-dependent options'
     while True:
         meta_size_bytes = src.read(4)
         if not len(meta_size_bytes):
@@ -79,6 +86,12 @@ def deserialize(src, backend):
         data_size = meta[SIZE]
         curr_pos = src.tell()
         limited = LimitedStream(src, data_size)
+
+        if kill_ns and kill_ns == meta[NAMESPACE]:
+            continue
+        if new_ns is not None and old_ns == meta[NAMESPACE]:
+            meta[NAMESPACE] = new_ns
+
         backend.store(meta, limited)
         if not limited.is_exhausted:
             # if we already have the DATAID in the backend, the backend code
