@@ -891,7 +891,9 @@ subitems inherit ACLs from their parent items if they don't have an ACL themselv
 Note that while hierarchic ACLs are rather convenient sometimes, they make the
 system more complex. You have to be very careful with permission
 changes happening as a result of changes in the hierarchy, such as when you create,
-rename or delete items.
+rename or delete items. When multiple item names are used the complexity increases
+even more because all parents are searched for ACLs -- if conflicting
+allow/deny ACLs are found allow always wins.
 
 Supported capabilities (rights):
 
