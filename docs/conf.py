@@ -261,4 +261,4 @@ inheritance_graph_attrs = dict(rankdir="LR", size='"12.0, 16.0"',
 inheritance_node_attrs = dict(shape='box', fontsize=20, height=0.75,
                               color='yellow', style='filled')
 
-autosummary_generate = True
+autosummary_generate = False
