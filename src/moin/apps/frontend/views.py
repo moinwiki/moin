@@ -1027,7 +1027,7 @@ def ajaxdestroy(item_name, req='destroy'):
                     msg = _("Access denied for a subitem of %(bad_name)s, check History for status.", bad_name=itemname)
                     response["messages"].append(msg)
             response["messages"] += messages
-            response["itemnames"] += subitem_names + item.names
+            response["itemnames"] += subitem_names + itemnames
         except AccessDenied:
             response["messages"].append(_("Access denied processing '%(bad_name)s'.", bad_name=itemname))
     response["itemnames"] = [url_for_item(x) for x in response["itemnames"]]
