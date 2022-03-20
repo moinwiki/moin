@@ -872,7 +872,8 @@ def revert_item(item_name, rev):
         if form.validate(state):
             item.revert(form['comment'])
             close_file(item.rev.data)
-            return redirect(url_for_item(item.name or item_name))
+            name = CompositeName(item.fqname.namespace, NAME_EXACT, item.name)
+            return redirect(url_for_item(name))
     ret = render_template('revert.html',
                           item=item,
                           fqname=item.fqname,
