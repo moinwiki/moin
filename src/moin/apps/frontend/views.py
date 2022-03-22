@@ -872,7 +872,8 @@ def revert_item(item_name, rev):
         if form.validate(state):
             item.revert(form['comment'])
             close_file(item.rev.data)
-            return redirect(url_for_item(item.name or item_name))
+            name = CompositeName(item.fqname.namespace, NAME_EXACT, item.name)
+            return redirect(url_for_item(name))
     ret = render_template('revert.html',
                           item=item,
                           fqname=item.fqname,
@@ -1027,7 +1028,7 @@ def ajaxdestroy(item_name, req='destroy'):
                     msg = _("Access denied for a subitem of %(bad_name)s, check History for status.", bad_name=itemname)
                     response["messages"].append(msg)
             response["messages"] += messages
-            response["itemnames"] += subitem_names + item.names
+            response["itemnames"] += subitem_names + itemnames
         except AccessDenied:
             response["messages"].append(_("Access denied processing '%(bad_name)s'.", bad_name=itemname))
     response["itemnames"] = [url_for_item(x) for x in response["itemnames"]]

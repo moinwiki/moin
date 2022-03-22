@@ -658,7 +658,7 @@ class Item:
                     else:
                         flash(L_('The item "%(name)s" was deleted.', name=old_name), 'info')
                     close_file(item.rev.data)
-                    subitem_names += child.meta.revision.names
+                    subitem_names += [x.fullname for x in child.meta.revision.fqnames]
                 else:  # rename
                     working_name = child.meta[NAME][:]
                     for child_oldname in child.meta[NAME]:
