@@ -12,7 +12,7 @@ from flask import current_app as app
 from flask_script import Command, Option
 from flask import g as flaskg
 
-from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM
+from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM, NAMESPACE
 from moin.utils.interwiki import split_fqname
 
 
@@ -77,7 +77,7 @@ class PutItem(Command):
         if not overwrite:
             # if we remove the REVID, it will create a new one and store under the new one
             meta.pop(REVID, None)
-        query = {ITEMID: meta[ITEMID]}
+        query = {ITEMID: meta[ITEMID], NAMESPACE: meta[NAMESPACE]}
         item = app.storage.get_item(**query)
 
         # we want \r\n line endings in data out because \r\n is required in form textareas
