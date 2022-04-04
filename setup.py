@@ -91,6 +91,7 @@ setup_args = dict(
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
+        'setuptools>=51',  # dependency with setuptools_scm
         'sqlalchemy>=1.3.16',  # used by sqla store TODO see: #1014
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
