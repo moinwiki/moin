@@ -41,7 +41,7 @@ class ArchiveConverter(TableMixin):
 
     def process_name(self, member_name):
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/' + self.item_name,
+            xlink.href: Iri(scheme='wiki', authority='', path='/' + self.fullname,
                             query='do=get&member={0}'.format(member_name)),
         }
         return moin_page.a(attrib=attrib, children=[member_name, ])
@@ -53,7 +53,7 @@ class ArchiveConverter(TableMixin):
         return str(size)
 
     def __call__(self, rev, contenttype=None, arguments=None):
-        self.item_name = rev.item.name
+        self.fullname = rev.fqname.fullname
         try:
             contents = self.list_contents(rev.data)
             contents = [(self.process_size(size),
