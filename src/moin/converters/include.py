@@ -314,7 +314,7 @@ class Converter:
                     query = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, xp_include_pages)])
                     reverse = xp_include_sort == 'descending'
                     results = flaskg.storage.search(query, sortedby=NAME_EXACT, reverse=reverse, limit=None)
-                    pagelist = [result.name for result in results]
+                    pagelist = [result.fqname.fullname for result in results]
                     if xp_include_skipitems is not None:
                         pagelist = pagelist[xp_include_skipitems:]
                     if xp_include_items is not None:
