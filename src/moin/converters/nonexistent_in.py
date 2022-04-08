@@ -32,7 +32,7 @@ class Converter:
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name, query='do=modify'),
         }
-        a = moin_page.a(attrib=attrib, children=[_("%(item_name)s does not exist. Create it?", item_name=item_name)])
+        a = moin_page.a(attrib=attrib, children=[_("%(item_name)s does not exist. Create it? ", item_name=item_name)])
         body = moin_page.body(children=(a, ))
         return moin_page.page(children=(body, ))
 
