@@ -19,6 +19,8 @@ from moin.i18n import _, L_, N_
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.interwiki import CompositeName
+from moin.constants.keys import NAME, NAMESPACE, NAME_EXACT
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -53,7 +55,8 @@ class ArchiveConverter(TableMixin):
         return str(size)
 
     def __call__(self, rev, contenttype=None, arguments=None):
-        self.fullname = rev.fqname.fullname
+        fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0])
+        self.fullname = fqname.fullname
         try:
             contents = self.list_contents(rev.data)
             contents = [(self.process_size(size),
