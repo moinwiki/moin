@@ -93,8 +93,6 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
                         flask_config_file = path.join(config_path, 'wikiconfig.py')
                     else:
                         flask_config_file = None
-            else:
-                logging.warning("Use of wikiconfig_editme.py is deprecated, merge into wikiconfig.py.")
             if flask_config_file:
                 app.config.from_pyfile(path.abspath(flask_config_file))
     if flask_config_dict:
