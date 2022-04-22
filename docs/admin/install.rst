@@ -25,7 +25,7 @@ After this, you should have a ``moin`` command available, try it:
 
 ::
 
- moin help
+ moin --help
 
 Creating a wiki instance
 ========================
@@ -72,6 +72,8 @@ Now try your new wiki using the builtin python-based web server:
  moin moin  # visit the URL it shows in the log output
 
 For production, please use a real web server like apache or nginx.
+
+For more information on various wiki admin activities, see `Moin Command Line Interface`.
 
 
 =============================

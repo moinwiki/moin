@@ -1,0 +1,51 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "d2d3ede3c72b4ae699b28a8472f42b63",
+  "externallinks": [
+    "http://fontawesome.io/icons/",
+    "https://moinmo.in/HelpOnMacros/Include"
+  ],
+  "itemid": "8b76f40497fe4fcf8c37cb90fc89b49b",
+  "itemlinks": [
+    "MoinWikiMacros/MonthCalendar",
+    "MoinWikiMacros",
+    "WikiDict",
+    "MoinWikiMacros/Icons"
+  ],
+  "itemtransclusions": [
+    "help-common/logo.png"
+  ],
+  "itemtype": "default",
+  "mtime": 1649538977,
+  "name": [
+    "MoinWikiMacros"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "235fcf644b3f4656b50bcadb26efbdae",
+  "sha1": "18925562da4ab8f247c8e9753a3f3deec58e8e90",
+  "size": 12171,
+  "summary": "",
+  "tags": [
+    "macros",
+    "TableOfContents",
+    "FootNotes",
+    "BR",
+    "Include",
+    "Anchor",
+    "Date",
+    "DateTime",
+    "GetText",
+    "GetVal",
+    "MailTo",
+    "PagenameList",
+    "ItemPageList",
+    "RandomItem",
+    "Verbatim"
+  ],
+  "wikiname": "MyMoinMoin"
+}

@@ -1,0 +1,13 @@
+= Images =
+
+== png ==
+
+This is a png image: {{help-common/logo.png}}
+
+== svg ==
+
+This is an svg image: {{help-common/logo.svg}}
+
+== jpeg ==
+
+This is a jpg image: {{help-common/cat.jpg}}

@@ -68,16 +68,19 @@ If you invoke :program:`moin` without any arguments, it will show a short quick 
 ::
 
     usage: moin [-c CONFIG] [-i] [-s] [-?]
-        {moin,index-create,index-build,index-update,index-destroy,index-move,index-optimize,
-        index-dump,save,load,dump-html,account-create,account-disable,account-password,
-        maint-reduce-revisions,maint-set-meta,item-get,item-put,import19,shell,runserver}
-        ...
+                {help,moin,run,create-instance,index-create,index-build,index-update,index-destroy,index-move,index-optimize
+    ,index-dump,save,load,load-sample,dump-html,account-create,account-disable,account-password,maint-reduce-revisions,maint
+    -set-meta,item-get,item-put,load-help,dump-help,import19,shell,runserver}
+                ...
 
     positional arguments:
-      {moin,index-create,index-build,index-update,index-destroy,index-move,index-optimize,
-      index-dump,save,load,dump-html,account-create,account-disable,account-password,
-      maint-reduce-revisions,maint-set-meta,item-get,item-put,import19,shell,runserver}
+      {help,moin,run,create-instance,index-create,index-build,index-update,index-destroy,index-move,index-optimize,index-dum
+    p,save,load,load-sample,dump-html,account-create,account-disable,account-password,maint-reduce-revisions,maint-set-meta,
+    item-get,item-put,load-help,dump-help,import19,shell,runserver}
+        help
         moin                Runs the Flask development server i.e. app.run()
+        run                 Runs the Flask development server i.e. app.run()
+        create-instance
         index-create
         index-build
         index-update
@@ -87,6 +90,7 @@ If you invoke :program:`moin` without any arguments, it will show a short quick 
         index-dump
         save
         load
+        load-sample
         dump-html
         account-create
         account-disable
@@ -95,18 +99,17 @@ If you invoke :program:`moin` without any arguments, it will show a short quick 
         maint-set-meta
         item-get
         item-put
+        load-help           Load an entire help namespace from distribution source.
+        dump-help           Save an entire help namespace to the distribution source.
         import19
-        shell               Runs a Python shell inside Flask application context.
-                            :param banner: banner appearing at top of shell when
-                            started :param make_context: a callable returning a
-                            dict of variables used in the shell namespace. By
-                            default returns a dict consisting of just the app.
-                            :param use_ipython: use IPython shell if available,
-                            ignore if not. The IPython shell can be turned off in
-                            command line by passing the **--no-ipython** flag.
+        shell               Runs a Python shell inside Flask application context. :param banner: banner appearing at top
+                            of shell when started :param make_context: a callable returning a dict of variables used in
+                            the shell namespace. By default returns a dict consisting of just the app. :param use_ipython:
+                            use IPython shell if available, ignore if not. The IPython shell can be turned off in command
+                            line by passing the **--no-ipython** flag.
         runserver           Runs the Flask development server i.e. app.run()
 
-    optional arguments:
+    options:
       -c CONFIG, --config CONFIG
       -i, --index-create
       -s, --storage-create

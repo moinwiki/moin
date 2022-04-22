@@ -1,0 +1,31 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "application/docbook+xml;charset=utf-8",
+  "dataid": "855de8bb6e1b49a095ef9945b2e4b65b",
+  "externallinks": [
+    "http://moinmo.in/"
+  ],
+  "itemid": "4ee3f3c830d1498c83b031abd8ff51fa",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1650052084,
+  "name": [
+    "docbook"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "7889d5d392da4afd99b883eddf6b81a9",
+  "sha1": "51f2eabd46219c8f80446dfb3093209d2b373658",
+  "size": 12023,
+  "summary": "",
+  "tags": [
+    "parser",
+    "demo",
+    "docbook"
+  ],
+  "wikiname": "MyMoinMoin"
+}

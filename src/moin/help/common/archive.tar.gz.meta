@@ -1,0 +1,30 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "application/x-gtar",
+  "dataid": "62fe35dc961f4695895abeda551244c4",
+  "externallinks": [],
+  "itemid": "bc6ac210c52d46da9ba739fda6f30602",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1649538971,
+  "name": [
+    "archive.tar.gz"
+  ],
+  "name_old": [
+    "targz"
+  ],
+  "namespace": "help-common",
+  "rev_number": 1,
+  "revid": "c8f136fa5ba34535a5f8d4d418b44e3d",
+  "sha1": "b09ed32bcd78f6061fb51ac9ce76a2321ccb3d18",
+  "size": 9186,
+  "summary": "",
+  "tags": [
+    "tar",
+    "gzip"
+  ],
+  "wikiname": "MyMoinMoin"
+}

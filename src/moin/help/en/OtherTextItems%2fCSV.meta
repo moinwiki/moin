@@ -1,0 +1,25 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "text/csv;charset=utf-8",
+  "dataid": "7099fba826ef45aa954856a891b3d5e2",
+  "externallinks": [],
+  "itemid": "c061b2db8e994e3a8e9170bf6023191f",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1637601294,
+  "name": [
+    "OtherTextItems/CSV"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "73d91c494f9e42aca9e84a7c6ec3bd33",
+  "sha1": "67f2322581c19df99d1b8382b5d127c1137636c8",
+  "size": 65,
+  "summary": "",
+  "tags": [],
+  "wikiname": "MyMoinMoin"
+}

@@ -1,0 +1,30 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "image/png",
+  "dataid": "bbce1e45a56d4b089d6b4d4c9672ba07",
+  "externallinks": [],
+  "itemid": "4431543520a040c4b3d53fc3e1416566",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1649538972,
+  "name": [
+    "logo.png"
+  ],
+  "name_old": [
+    "png"
+  ],
+  "namespace": "help-common",
+  "rev_number": 1,
+  "revid": "f9f0caf384f048aead91c7d4bf69dc96",
+  "sha1": "959de9d9fde601bce040c44e3f7b01b17d38f463",
+  "size": 6190,
+  "summary": "",
+  "tags": [
+    "image",
+    "png"
+  ],
+  "wikiname": "MyMoinMoin"
+}

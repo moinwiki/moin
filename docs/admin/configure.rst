@@ -75,17 +75,19 @@ The directories and files shown are referenced in this section of documentation 
         intermap.txt              # interwiki map: copied by quickinstall.py, updated by "./m interwiki"
 
 After installing moin from pypi or unpacking using a package manager, the directory structure will
-look like this:
+look like this::
 
     myvenv/                 # virtualenv root
         bin/                # Windows calls this directory Scripts
         include             # Windows calls this directory Include
         lib/                # Windows calls this directory Lib, includes moin package
+        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
 
 After activating above venv, `moin create-instance -p <mywiki>` creates the structure below. Multiple
 instances of `mywiki` can be created with different names. `mywiki` may be created as a
 subdirectory of `myvenv` or elsewhere. The `preview` and `sql` subdirectories are created when a
-user edits a wiki item.
+user edits a wiki item. To run moin using the built-in server, cd to the `<mywiki>` directory
+and execute `moin run`.::
 
     mywiki/                 # wikiconfig dir, use this as CWD for moin commands
         wiki/               # the wiki instance; created by `moin create-instance`
@@ -93,7 +95,6 @@ user edits a wiki item.
             index/          # wiki indexes
             preview/        # text item backups are created when user clicks edit Preview button
             sql/            # sqlite database used for edit locking
-        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
         wikiconfig.py       # main configuration file, modify this to add or change features
         intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 
@@ -1179,18 +1180,21 @@ Setup of storage is rather complex and layered, involving:
 
 create_simple_mapping
 ---------------------
-This is a helper function to make storage setup easier when your wiki will not be
-using custom namespaces. It helps you to:
+This is a helper function to make storage setup easier when your wiki will be
+using only the predefined namespaces and one kind of backend (OS file system, sqla or sqlite).
+It creates a simple setup that defines storage backends for these namespaces:
 
-* create a simple setup that uses 3 storage backends internally for these namespaces
+* default - items that define wiki content
+* users - personnal user content
+* userprofiles - user metadata such as timezone, subscriptions, etc.
+* help-en - English language help pages for editors
+* help-common - media items used by help-en
 
-  + default
-  + users
-  + userprofiles
+For each namespace, the following structures are created:
 
-* configure ACLs protecting these namespaces
-* setup a router middleware that dispatches to these backends
-* setup a indexing mixin that maintains an index
+* configure ACLs protecting the namespaces
+* setup router middleware that dispatches to the namespace backends
+* setup a indexing mixin that maintains an index of all namespaces
 
 Call it as follows::
 
@@ -1212,6 +1216,9 @@ Call it as follows::
                               hierarchiv=False, ),
     )
 
+The *_acl variables are dictionaries specifying the ACLs for
+each namespace. See the docs about ACLs.
+
 The `uri` depends on the kind of storage backend and stores you want to use,
 see below. Usually it is a URL-like string in the form of::
 
@@ -1221,11 +1228,11 @@ see below. Usually it is a URL-like string in the form of::
 specification. `fs` is the type of the store, followed by a specification
 that makes sense for the fs (filesystem) store, i.e. a path with placeholders.
 
-`%(backend)s` placeholder will be replaced by 'default', users or 'userprofiles' for
+`%(backend)s` placeholder will be replaced by the namespace for
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
 later.
 
-In this case, the mapping created will look like this:
+The mapping created will look like this:
 
 +----------------+-----------------------------+
 | Namespace      | Filesystem path for storage |
@@ -1236,10 +1243,10 @@ In this case, the mapping created will look like this:
 +----------------+-----------------------------+
 | userprofiles   | /srv/mywiki/userprofiles/   |
 +----------------+-----------------------------+
-
-`default_acl` and `userprofiles_acl` are dictionaries specifying the ACLs for
-this part of the namespace (normal content, user home pages, and user profiles).
-See the docs about ACLs.
+| help-en        | /srv/mywiki/help-en/        |
++----------------+-----------------------------+
+| help-common    | /srv/mywiki/help-common/    |
++----------------+-----------------------------+
 
 If your wiki will be using custom namespaces then you cannot use the
 `create_simple_mapping` method. See the `create_mapping` method in the
