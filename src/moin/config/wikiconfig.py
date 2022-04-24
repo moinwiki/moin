@@ -183,6 +183,14 @@ class Config(DefaultConfig):
                               default='',
                               after='',
                               hierarchic=False, ),
+        help_common_acl=dict(before='',
+                             default='All:read,write,create,destroy',
+                             after='',
+                             hierarchic=False, ),
+        help_en_acl=dict(before='',
+                         default='All:read,write,create,destroy',
+                         after='',
+                         hierarchic=False, ),
     )
 
     """

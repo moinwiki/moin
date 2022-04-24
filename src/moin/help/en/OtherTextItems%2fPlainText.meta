@@ -1,0 +1,25 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "text/plain;charset=utf-8",
+  "dataid": "ce18aba8dac74226bfd385e748a99d2f",
+  "externallinks": [],
+  "itemid": "64a3dccc43bf4e929d08b0266264b550",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1637601304,
+  "name": [
+    "OtherTextItems/PlainText"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "9630e0562cc54640bf1cb4b5b4f943e0",
+  "sha1": "225a558e14e2f8a937097f62be0ed7e6b946d190",
+  "size": 37,
+  "summary": "",
+  "tags": [],
+  "wikiname": "MyMoinMoin"
+}

@@ -1,0 +1,28 @@
+{
+  "action": "SAVE",
+  "address": "None",
+  "comment": "",
+  "contenttype": "video/mp4",
+  "dataid": "54c3e1dcc4334abfa5e48fe8ee768f9d",
+  "externallinks": [],
+  "itemid": "d8b0beb383574299921ee24602c90a89",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1649013512,
+  "name": [
+    "video.mp4"
+  ],
+  "name_old": [],
+  "namespace": "help-common",
+  "rev_number": 1,
+  "revid": "f896c691fd9b42cab5884f911e43777e",
+  "sha1": "5c5a07267317b166a218e5edb7667ccd2b5351be",
+  "size": 383631,
+  "summary": "",
+  "tags": [
+    "video",
+    "mp4"
+  ],
+  "wikiname": "MyMoinMoin"
+}

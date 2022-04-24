@@ -84,6 +84,8 @@ def main(default_command='help', wiki_config=None):
     from moin.scripts.maint import modify_item
     manager.add_command("item-get", modify_item.GetItem())
     manager.add_command("item-put", modify_item.PutItem())
+    manager.add_command("load-help", modify_item.LoadHelp())
+    manager.add_command("dump-help", modify_item.DumpHelp())
     from moin.scripts.migration.moin19.import19 import ImportMoin19
     manager.add_command("import19", ImportMoin19())
 
