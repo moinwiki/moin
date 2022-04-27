@@ -25,10 +25,15 @@ import re
 
 
 # file types to be processed
-SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
+# meta and data are for help files, under version control data files have \n line endings
+# /scripts/maint/modify_item.py PutItem will convert \n to \r\n
+SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst meta data".split())
 
 # stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())
+
+# these are media files from help-common namespace
+BINARY_FILES = tuple(".gz.data .zip.data .mp3.data .jpg.data .png.data .mp4.data".split())
 
 # global variables for checking Javascript messages
 phrases = set()
@@ -179,6 +184,9 @@ def check_files(filename, suffix):
     """
     Delete trailing blanks, single linefeed at file end, line ending to be \r\n for bat files and \n for all others.
     """
+    if filename.endswith(BINARY_FILES):
+        return
+
     suffix = suffix.lower()
     if suffix in WIN_SUFFIXES:
         line_end = "\r\n"
@@ -186,9 +194,13 @@ def check_files(filename, suffix):
         line_end = "\n"
     logger = NoDupsLogger()
 
-    # newline="" does not change incoming line endings
-    with open(filename, "r", encoding="utf-8", newline="") as f:
-        lines = f.readlines()
+    try:
+        # newline="" does not change incoming line endings
+        with open(filename, "r", encoding="utf-8", newline="") as f:
+            lines = f.readlines()
+    except UnicodeDecodeError:
+        print('Skipping file due to UnicodeDecodeError:', filename)
+        return
 
     if filename.endswith('.html'):
         check_template_indentation(lines, filename, logger)
