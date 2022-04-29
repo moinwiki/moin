@@ -139,7 +139,8 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
 
             # cell with link to calendar
             else:
-                table_a = moin_page.a(attrib={xlink.href: Iri(cell_addr)}, children=[cell])
+                iri = Iri(scheme='wiki', path='/' + cell_addr)
+                table_a = moin_page.a(attrib={xlink.href: iri}, children=[cell])
                 table_cell = moin_page.table_cell(children=[table_a])
                 table_cell.attrib[moin_page('class')] = cell_class
             table_row.append(table_cell)
@@ -199,6 +200,7 @@ class Macro(MacroInlineBase):
         # find page name of current page
         # to be able to use it as a default page name
         this_page = request.path[1:]
+
         if this_page.startswith('+modify/'):
             this_page = this_page.split('/', 1)[1]
 
