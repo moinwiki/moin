@@ -80,10 +80,6 @@ import calendar
 from datetime import datetime
 import re
 
-from whoosh.query import Term, Prefix, And
-
-from flask import current_app as app
-from flask import g as flaskg
 from flask import request
 
 from moin.i18n import _
@@ -92,8 +88,7 @@ from moin.utils import paramparser
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page
 from moin.utils.tree import xlink
-from moin.constants.keys import NAME, NAME_EXACT, WIKINAME, LATEST_REVS  # noqa
-
+from moin.storage.middleware.indexing import search_names
 
 calendar.setfirstweekday(calendar.MONDAY)
 
@@ -176,21 +171,6 @@ def parseargs(args, defpagename, defyear, defmonth, defoffset, defheight6, defan
     parmpagename = re.split(r'\*', parmpagename)
 
     return parmpagename, parmyear, parmmonth, parmoffset, parmheight6, parmanniversary
-
-
-def search_names(name_prefix):
-    """ get list of item_names beginning with name_prefix """
-
-    idx_name = LATEST_REVS
-    terms = [Prefix(NAME_EXACT, name_prefix)]
-    terms.append(Term(WIKINAME, app.cfg.interwikiname))
-    q = And(terms)
-    with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
-        results = searcher.search(q, limit=100)
-        result_names = []
-        for result in results:
-            result_names += result[NAME]
-    return result_names
 
 
 class Macro(MacroInlineBase):
