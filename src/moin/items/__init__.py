@@ -1192,17 +1192,19 @@ class Default(Contentful):
                                item_is_deleted=item_is_deleted,
                                )
 
-    def doc_link(self, filename, link_text):
-        """create a link to serve local doc files as help for wiki editors"""
-        if '#' in filename:
-            filename, anchor = filename.split('#')
-        else:
-            anchor = None
-        if 'docs' in app.cfg.serve_files:
-            filename = url_for('serve.files', name='docs', filename=filename, _anchor=anchor)
-        else:
-            filename = app.cfg.serve_files['external_docs'] + filename + ('#' + anchor if anchor else '')
-        return filename, link_text
+    def doc_link(self, content_name, link_text):
+        """
+        Return a path to a help item in user's preferred language.
+
+        :param content_name: markup name of item being edited: moin, markdown, creole, rst...
+        :param link_text: unchanged or replaced by alert message
+        :return: path to help, link text
+        """
+        query = And([Term(NAMESPACE, "help-" + flaskg.user.language), Term(NAME_EXACT, content_name), Term(WIKINAME, app.cfg.interwikiname)])
+        results = list(flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None))
+        if results:
+            return "/help-" + flaskg.user.language + "/" + content_name, link_text
+        return "/help-en/" + content_name, _("Alert wiki admin that help items are not loaded")
 
     def meta_changed(self, meta):
         """
