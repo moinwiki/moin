@@ -222,7 +222,7 @@ class Macro(MacroInlineBase):
 
         # get list of calendar items for given month
         item_month = "{:s}/{:4d}-{:02d}-".format(parmpagename[0], year, month)
-        date_results = search_names(item_month)
+        date_results = search_names(item_month, limit=100)
 
         r7 = range(7)
 

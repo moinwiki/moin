@@ -163,12 +163,13 @@ def parent_names(names):
     return parents
 
 
-def search_names(name_prefix):
+def search_names(name_prefix, limit=None):
     """
     get list of item names beginning with name_prefix
 
     :param name_prefix: item NAME prefix
-    :return: parent names list
+    :param limit: limit number of search results
+    :return: item names list
     """
 
     idx_name = LATEST_REVS
@@ -176,10 +177,8 @@ def search_names(name_prefix):
     terms.append(Term(WIKINAME, app.cfg.interwikiname))
     q = And(terms)
     with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
-        results = searcher.search(q, limit=100)
-        result_names = []
-        for result in results:
-            result_names += result[NAME]
+        results = searcher.search(q, limit=limit)
+        result_names = [result[NAME][0] for result in results]
     return result_names
 
 
