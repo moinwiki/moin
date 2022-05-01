@@ -167,15 +167,16 @@ help_on_csv = ' '.join((
     ext_link("https://en.wikipedia.org/wiki/Comma-separated_values"),
 ))
 
+
 CONTENTTYPES_HELP_DOCS = {
-    # content type: tuple - must defer forming url until wiki root is known
-    'text/x.moin.wiki;charset=utf-8': (('user/moinwiki.html', _("Click for help on Moin Wiki markup."))),
-    'text/x.moin.wiki;format=1.9;charset=utf-8': (('admin/upgrade.html#converting-after-reverting', _("Moinmoin 1.9 format is deprecated, convert to moin 2."))),
-    'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
-    'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
-    'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),
-    'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on reST Wiki markup."))),
-    'application/docbook+xml;charset=utf-8': (('user/docbook.html', _("Click for help on Docbook Wiki markup."))),
+    # content type: tuple - content type, button text; link generated later based on user preferred language
+    'text/x.moin.wiki;charset=utf-8': (('moin', _("Click for help on Moin Wiki markup."))),
+    'text/x.moin.wiki;format=1.9;charset=utf-8': (('moin', _("Moinmoin 1.9 format is deprecated, convert to moin 2."))),
+    'text/x-mediawiki;charset=utf-8': (('mediawiki', _("Click for help on Media Wiki markup."))),
+    'text/x.moin.creole;charset=utf-8': (('creole', _("Click for help on Creole Wiki markup."))),
+    'text/x-markdown;charset=utf-8': (('markdown', _("Click for help on Markdown Wiki markup."))),
+    'text/x-rst;charset=utf-8': (('rst', _("Click for help on reST Wiki markup."))),
+    'application/docbook+xml;charset=utf-8': (('docbook', _("Click for help on Docbook Wiki markup."))),
     # content type: help string
     'text/html;charset=utf-8': ext_link('http://ckeditor.com/'),
     'text/plain;charset=utf-8': help_on_plain_text,
