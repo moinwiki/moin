@@ -80,16 +80,15 @@ import calendar
 from datetime import datetime
 import re
 
-from flask import g as flaskg
 from flask import request
 
 from moin.i18n import _
 from moin.macros._base import MacroInlineBase
 from moin.utils import paramparser
-from moin.utils.interwiki import split_fqname
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page
 from moin.utils.tree import xlink
+from moin.storage.middleware.indexing import search_names
 
 calendar.setfirstweekday(calendar.MONDAY)
 
@@ -135,7 +134,8 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
 
             # cell with link to calendar
             else:
-                table_a = moin_page.a(attrib={xlink.href: Iri(cell_addr)}, children=[cell])
+                iri = Iri(scheme='wiki', path='/' + cell_addr)
+                table_a = moin_page.a(attrib={xlink.href: iri}, children=[cell])
                 table_cell = moin_page.table_cell(children=[table_a])
                 table_cell.attrib[moin_page('class')] = cell_class
             table_row.append(table_cell)
@@ -180,6 +180,7 @@ class Macro(MacroInlineBase):
         # find page name of current page
         # to be able to use it as a default page name
         this_page = request.path[1:]
+
         if this_page.startswith('+modify/'):
             this_page = this_page.split('/', 1)[1]
 
@@ -218,6 +219,10 @@ class Macro(MacroInlineBase):
 
         calcaption = "{} {}".format(months[month - 1], year)
         calhead = []
+
+        # get list of calendar items for given month
+        item_month = "{:s}/{:4d}-{:02d}-".format(parmpagename[0], year, month)
+        date_results = search_names(item_month, limit=100)
 
         r7 = range(7)
 
@@ -258,7 +263,7 @@ class Macro(MacroInlineBase):
                         link = "{:s}/{:4d}-{:02d}-{:02d}".format(page, year, month, day)
                     day_addr = link
 
-                    if flaskg.storage.get_item(**(split_fqname(day_addr).query)):
+                    if day_addr in date_results:
                         day_class = "cal-usedday"
 
                     if day == currentday and month == currentmonth and year == currentyear:

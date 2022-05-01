@@ -63,7 +63,7 @@ from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, 
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, PseudoFieldPlugin
 from whoosh.qparser import WordNode
-from whoosh.query import Every, Term
+from whoosh.query import And, Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
 from moin.constants.keys import *  # noqa
@@ -161,6 +161,25 @@ def parent_names(names):
         if len(parent_tail) == 2:
             parents.add(parent_tail[0])
     return parents
+
+
+def search_names(name_prefix, limit=None):
+    """
+    get list of item names beginning with name_prefix
+
+    :param name_prefix: item NAME prefix
+    :param limit: limit number of search results
+    :return: item names list
+    """
+
+    idx_name = LATEST_REVS
+    terms = [Prefix(NAME_EXACT, name_prefix)]
+    terms.append(Term(WIKINAME, app.cfg.interwikiname))
+    q = And(terms)
+    with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
+        results = searcher.search(q, limit=limit)
+        result_names = [result[NAME][0] for result in results]
+    return result_names
 
 
 def backend_to_index(meta, content, schema, wikiname, backend_name):
