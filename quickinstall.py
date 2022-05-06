@@ -696,6 +696,11 @@ if __name__ == '__main__':
             choices.add(name)
     args = sys.argv[:]
 
+    if len(args) == 1:
+        # User run command as `./quickinstall` whithout any other arguments
+        command = getattr(commands, 'cmd_quickinstall')
+        command()
+
     if len(args) > 2 and args[-1] == '--help':
         # m and m.bat have trailing --help so "./m" comes across as "python quickinstall.py --help"
         # if user did "./m <option>" we have "python quickinstall.py <option> --help" then we can delete the --help and do <option>
