@@ -73,8 +73,9 @@ setup_args = dict(
         'setuptools_scm',  # magically cares for version and packaged files
     ],
     install_requires=[
+        'Babel==2.9.1',  # Babel 2.10.1 breaks quickinstall.py #1239
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
-        'docutils>=0.18.1',  # reST markup processing, see #1141 build fails with 0.18
+        'docutils<0.18',  # reST markup processing, see #1141 build fails with 0.18; sphinx 4.3.0 requires docutils<0.18,>=0.14,
         'Markdown>=3.0.0',  # Markdown markup processing
         'Flask<2.0.0',  # micro framework
         'Flask-Babel>=0.11.1',  # i18n support
