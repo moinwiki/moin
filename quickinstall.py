@@ -747,7 +747,6 @@ if __name__ == '__main__':
 
             else:
                 # we have some simple command like "./m css" that does not update virtualenv
-                print('lenght of args: ',len(args))
                 choice = 'cmd_%s' % args[1]
                 choice = choice.replace('-', '_')
                 if choice in choices:
