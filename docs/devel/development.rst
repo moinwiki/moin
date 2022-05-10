@@ -248,15 +248,15 @@ to acquire a more in-depth understanding, please read the other docs and code.
 
 WSGI application creation
 -------------------------
-First, the moin Flask application is created; see `MoinMoin.app.create_app`:
+First, the moin Flask application is created; see `moin.app.create_app`:
 
 * load the configuration (app.cfg)
 * register some modules that handle different parts of the functionality
 
-  - MoinMoin.apps.frontend - most of what a normal user uses
-  - MoinMoin.apps.admin - for admins
-  - MoinMoin.apps.feed - feeds, e.g. atom
-  - MoinMoin.apps.serve - serving some configurable static third party code
+  - moin.apps.frontend - most of what a normal user uses
+  - moin.apps.admin - for admins
+  - moin.apps.feed - feeds, e.g. atom
+  - moin.apps.serve - serving some configurable static third party code
 * register before/after request handlers
 * initialize the cache (app.cache)
 * initialize index and storage (app.storage)
@@ -272,13 +272,13 @@ Let's look at how it shows a wiki item:
 
 * the Flask app receives a GET request for /WikiItem
 * Flask's routing rules determine that this request should be served by
-  `MoinMoin.apps.frontend.show_item`.
+  `moin.apps.frontend.show_item`.
 * Flask calls the before request handler of this module, which:
 
   - sets up the user as flaskg.user - an anonymous user or logged in user
   - initializes dicts/groups as flaskg.dicts, flaskg.groups
   - initializes jinja2 environment - templating
-* Flask then calls the handler function `MoinMoin.apps.frontend.show_item`,
+* Flask then calls the handler function `moin.apps.frontend.show_item`,
   which:
 
   - creates an in-memory Item
@@ -297,13 +297,13 @@ Storage
 -------
 Moin supports different stores, like storing directly into files /
 directories, using key/value stores, using an SQL database etc, see
-`MoinMoin.storage.stores`. A store is extremely simple: store a value
+`moin.storage.stores`. A store is extremely simple: store a value
 for a key and retrieve the value using the key + iteration over keys.
 
 A backend is one layer above. It deals with objects that have metadata and
-data, see `MoinMoin.storage.backends`.
+data, see `moin.storage.backends`.
 
-Above that, there is miscellaneous functionality in `MoinMoin.storage.middleware` for:
+Above that, there is miscellaneous functionality in `moin.storage.middleware` for:
 
 * routing by namespace to some specific backend
 * indexing metadata and data + comfortable and fast index-based access,
@@ -324,7 +324,7 @@ input and output mimetypes / contenttypes.
 
 For example, if the contenttype is `text/x-moin-wiki;charset=utf-8`, it will
 find that the input converter handling this is the one defined in
-`converter.moinwiki_in`. It then feeds the data of this item into this
+`converters.moinwiki_in`. It then feeds the data of this item into this
 converter. The converter parses this input and creates an in-memory `dom tree`
 representation from it.
 
@@ -339,13 +339,13 @@ Finally, the dom-tree will reach the output converter, which will transform it
 into the desired output format, such as `text/html`.
 
 This is just one example of a supported transformation. There are quite a few
-converters in `MoinMoin.converter` supporting different input formats,
+converters in `moin.converters` supporting different input formats,
 dom-dom transformations and output formats.
 
 Templates and Themes
 --------------------
 Moin uses jinja2 as its templating engine and Flask-Themes as a flask extension to
-support multiple themes. There is a ``MoinMoin/templates`` directory that contains
+support multiple themes. There is a ``moin/templates`` directory that contains
 a base set of templates designed for the Modernized theme. Other themes may
 override or add to the base templates with a directory named ``themes/<theme_name>/templates``.
 
@@ -363,7 +363,7 @@ MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
 Internationalization in MoinMoin's JS
 -------------------------------------
 Any string which has to be translated and used in the JavaScript code, has to be defined
-at ``MoinMoin/templates/dictionary.js``. This dictionary is loaded when the page loads and
+at ``moin/templates/dictionary.js``. This dictionary is loaded when the page loads and
 the translation for any string can be received by passing it as a parameter to the ``_`` function,
 also defined in the same file.
 

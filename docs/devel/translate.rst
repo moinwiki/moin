@@ -6,7 +6,7 @@ If your language already exists
 -------------------------------
 
 To find out if someone has already started a translation of moin2 into your
-language; check the folder MoinMoin/translations in the source tree.
+language; check the folder moin/translations in the source tree.
 If there is a folder with your language code (locale) [#]_, you can
 start with the steps below. If not, please take a look at `If your
 language doesn't exist yet`_.
@@ -24,7 +24,7 @@ language doesn't exist yet`_.
    language. It should be the name of a folder in MoinMoin/translations.
    For German it is "de".
 
-3. Open the file ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po``
+3. Open the file ``src/moin/translations/<locale>/LC_MESSAGES/messages.po``
    and do your translation. A short explanation of this process follows:
 
    * Find an entry with an empty or bad translated text, the text after
@@ -85,7 +85,7 @@ the developers, but ...
 
        python setup.py init_catalog -l <locale>
 
-2. Adjust the ``MoinMoin/translations/<locale>/LC_MESSAGES/messages.po``.
+2. Adjust the ``src/moin/translations/<locale>/LC_MESSAGES/messages.po``.
 
    Follow the instructions in `First steps with a new *.po file`_ and
    then you can remove the fuzzy flag, which prevents the file from
