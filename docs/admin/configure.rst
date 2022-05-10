@@ -104,7 +104,7 @@ wikiconfig.py Layout
 A wikiconfig.py looks like this::
 
  # -*- coding: utf-8 -*-
- from MoinMoin.config.default import DefaultConfig
+ from moin.config.default import DefaultConfig
 
  class Config(DefaultConfig):
      # some comment
@@ -165,7 +165,7 @@ The user interface or html elements that often need customization are
 defined as macros in the template file `snippets.html`.
 
 If you would like to customize some parts, you have to copy the built-in
-`MoinMoin/templates/snippets.html` file and save it in the `wiki_local` directory so moin
+`src/moin/templates/snippets.html` file and save it in the `wiki_local` directory so moin
 can use your copy instead of the built-in one.
 
 To customize something, you usually have to insert your code between the
@@ -489,13 +489,13 @@ could also write your own theme.
 Caution: developing your own theme means you also have to maintain and update it,
 which normally requires a long-term effort.
 
-To add a new theme, add a new directory under MoinMoin/themes/ where the directory
+To add a new theme, add a new directory under src/moin/themes/ where the directory
 name is the name of your theme. Note the directory structure under the other existing
 themes. Copy an `info.json` file to your theme directory and edit as needed.
-Create a file named theme.css in the MoinMoin/themes/<theme name>/static/css/ directory.
+Create a file named theme.css in the src/moin/themes/<theme name>/static/css/ directory.
 
 To change the layout of the theme header, sidebar and footer, create a templates/ directory and
-copy and modify the files layout.html and show.html from either MoinMoin/templates/ or one
+copy and modify the files layout.html and show.html from either src/moin/templates/ or one
 of the existing theme templates directories.
 
 For many themes, modifying the files noted above will be sufficient. If changes to
@@ -519,7 +519,7 @@ else. The user logs in by filling out the login form with username and
 password, moin compares the password hash against the one stored in the user's
 profile and if both match, the user is authenticated::
 
-    from MoinMoin.auth import MoinAuth
+    from moin.auth import MoinAuth
     auth = [MoinAuth()]  # this is the default!
 
 HTTPAuthMoin
@@ -527,7 +527,7 @@ HTTPAuthMoin
 With HTTPAuthMoin moin does http basic authentication by itself without the help of
 the web server::
 
-    from MoinMoin.auth.http import HTTPAuthMoin
+    from moin.auth.http import HTTPAuthMoin
     auth = [HTTPAuthMoin(autocreate=True)]
 
 If configured like that, moin will request authentication by emitting a
@@ -543,7 +543,7 @@ GivenAuth
 With GivenAuth moin relies on the webserver doing the authentication and giving
 the result to moin, usually via the environment variable REMOTE_USER::
 
-    from MoinMoin.auth import GivenAuth
+    from moin.auth import GivenAuth
     auth = [GivenAuth(autocreate=True, coding='utf-8')]
 
 Using this method has some pros and cons:
@@ -580,7 +580,7 @@ LDAPAuth with single LDAP server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This example shows how to use LDAPAuth with a single LDAP/AD server::
 
-    from MoinMoin.auth.ldap_login import LDAPAuth
+    from moin.auth.ldap_login import LDAPAuth
     ldap_common_arguments = dict(
         # the values shown below are the DEFAULT values (you may remove them if you are happy with them),
         # the examples shown in the comments are typical for Active Directory (AD) or OpenLDAP.
@@ -661,13 +661,13 @@ AuthLog is not a real authenticator in the sense that it authenticates (logs in)
 deauthenticates (logs out) users. It is passively logging informations for
 authentication debugging::
 
-    from MoinMoin.auth import MoinAuth
-    from MoinMoin.auth.log import AuthLog
+    from moin.auth import MoinAuth
+    from moin.auth.log import AuthLog
     auth = [MoinAuth(), AuthLog(), ]
 
 Example logging output::
 
- 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<MoinMoin.user.User at 0x90a0f0c name:'ThomasWaldmann' valid:1> kw={'username': 'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': 'secret', 'login_username': 'ThomasWaldmann', 'password': 'secret', 'login_submit': ''}
+ 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<moin.user.User at 0x90a0f0c name:'ThomasWaldmann' valid:1> kw={'username': 'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': 'secret', 'login_username': 'ThomasWaldmann', 'password': 'secret', 'login_submit': ''}
  2011-02-05 16:35:04,716 INFO MoinMoin.auth.log:22 session: user_obj=<MoinMoin.user.User at 0x90a0f6c name:'ThomasWaldmann' valid:1> kw={}
  2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:'ThomasWaldmann' valid:False> kw={}
  2011-02-05 16:35:06,328 INFO MoinMoin.auth.log:22 session: user_obj=None kw={}
@@ -685,7 +685,7 @@ and uses them to mount a SMB share as this user.
 SMBMount is only useful for very special applications, e.g. in combination
 with the fileserver storage backend::
 
-    from MoinMoin.auth.smb_mount import SMBMount
+    from moin.auth.smb_mount import SMBMount
 
     smbmounter = SMBMount(
         # you may remove default values if you are happy with them
@@ -773,7 +773,7 @@ It **does not** check:
 If you are not satisfied with the default values, you can easily customize the
 checker::
 
-    from MoinMoin.config.default import DefaultConfig, _default_password_checker
+    from moin.config.default import DefaultConfig, _default_password_checker
     password_checker = lambda cfg, name, pw: _default_password_checker(
                            cfg, name, pw, min_length=10, min_different=6)
 
@@ -1068,7 +1068,7 @@ Group backend configuration
 The WikiGroups backend is enabled by default so there is no need to add the following to wikiconfig::
 
     def groups(self):
-        from MoinMoin.datastruct import WikiGroups
+        from moin.datastructures import WikiGroups
         return WikiGroups()
 
 To create a WikiGroup that can be used in an ACL rule:
@@ -1093,7 +1093,7 @@ following to wikiconfig creates an EditorGroup and an AdminGroup and prevents
 the use of any WikiGroups::
 
     def groups(self):
-        from MoinMoin.datastruct import ConfigGroups
+        from moin.datastructures import ConfigGroups
         groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1'],
                   'AdminGroup': ['Admin1', 'Admin2', 'John']}
         return ConfigGroups(groups)
@@ -1105,7 +1105,7 @@ the EditGroup and AdminGroup defined below will be used should there be WikiGrou
 items with the same names::
 
     def groups(self):
-        from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
+        from moin.datastructures import ConfigGroups, WikiGroups, CompositeGroups
         groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1'],
                   'AdminGroup': ['Admin1', 'Admin2', 'John']}
         return CompositeGroups(ConfigGroups(groups), WikiGroups())
@@ -1120,7 +1120,7 @@ use of the GetVal macro.
 The WikiDicts backend is enabled by default so there is no need to add the following to wikiconfig::
 
     def dicts(self):
-        from MoinMoin.datastruct import WikiDicts
+        from moin.datastructures import WikiDicts
         return WikiDicts()
 
 To create a WikiDict that can be used in an GetVal macro:
@@ -1143,7 +1143,7 @@ following to wikiconfig creates a OneDict and a NumbersDict and prevents
 the use of any WikiDicts::
 
     def dicts(self):
-        from MoinMoin.datastruct import ConfigDicts
+        from moin.datastructures import ConfigDicts
         dicts = {'OneDict': {'first_key': 'first item',
                               'second_key': 'second item'},
                  'NumbersDict': {'1': 'One',
@@ -1157,7 +1157,7 @@ the OneDict and NumbersDict defined below will be used should there be WikiDict
 items with the same names::
 
     def dicts(self):
-        from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
+        from moin import ConfigDicts, WikiDicts, CompositeDicts
         dicts = {'OneDict': {'first_key': 'first item',
                               'second_key': 'second item'},
                  'NumbersDict': {'1': 'One',
@@ -1198,7 +1198,7 @@ For each namespace, the following structures are created:
 
 Call it as follows::
 
-    from MoinMoin.storage import create_simple_mapping
+    from moin.storage import create_simple_mapping
 
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri=...,
@@ -1291,7 +1291,7 @@ Features:
 
 Configuration::
 
-    from MoinMoin.storage import create_simple_mapping
+    from moin.storage import create_simple_mapping
 
     data_dir = '/srv/mywiki/data'
     namespace_mapping, acl_mapping = create_simple_mapping(
@@ -1402,8 +1402,8 @@ URLs for items within a namespace are similar to sub-items.
 To configure custom namespaces, start by adding these imports near the top of
 wikiconfi.py::
 
-    from MoinMoin.storage import create_mapping
-    from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
+    from moin.storage import create_mapping
+    from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
 Next, find the section in wikiconfig.py that looks similar to this::
 
@@ -1601,7 +1601,7 @@ There are also some logging configurations in the
 Logging configuration needs to be done very early, usually it will be done
 from your adaptor script, e.g. moin.wsgi::
 
-    from MoinMoin import log
+    from moin import log
     log.load_config('wiki/config/logging/logfile')
 
 You have to fix that path to use a logging configuration matching your
