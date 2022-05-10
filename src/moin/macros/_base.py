@@ -8,7 +8,7 @@ MoinMoin - Macro base class
 import re
 from moin.utils import iri
 from moin.items import Item
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from werkzeug.exceptions import abort
 from moin.utils.tree import moin_page, xlink
 from moin.storage.middleware.protecting import AccessDenied
@@ -100,20 +100,24 @@ class MacroPageLinkListBase(MacroBlockBase):
 
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
         for pagename in pagenames:
+            fqname = pagename.fullname
             # This link can never reach pagelinks
-            url = str(iri.Iri(scheme='wiki', authority='', path='/' + pagename))
+            url = str(iri.Iri(scheme='wiki', authority='', path='/' + fqname))
 
             if display == "FullPath":
                 linkname = pagename
             elif display == "ChildPath":
-                index = pagename.rfind('/')
-                linkname = pagename[index:]
+                index = fqname.rfind('/')
+                if index == -1:
+                    linkname = fqname
+                else:
+                    linkname = fqname[index:]
             elif display == "ChildName":
-                index = pagename.rfind('/')
-                linkname = pagename[(index + 1):]
+                index = fqname.rfind('/')
+                linkname = fqname[(index + 1):]
             elif display == "UnCameled":
-                index = pagename.rfind('/')
-                tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", pagename[(index + 1):])  # space before a cap char
+                index = fqname.rfind('/')
+                tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", fqname[(index + 1):])  # space before a cap char
                 linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
             elif display == "ItemTitle":
                 raise NotImplementedError(_('"ItemTitle" is not implemented yet.'))
@@ -128,7 +132,7 @@ class MacroPageLinkListBase(MacroBlockBase):
 
     def get_item_names(self, name='', startswith='', kind='files', skiptag=''):
         """
-        For the specified item, return the fullname of matching descndents.
+        For the specified item, return the fullname of matching descendents.
 
         Input:
 
@@ -160,12 +164,12 @@ class MacroPageLinkListBase(MacroBlockBase):
             for item in files:
                 if skiptag and TAGS in item.meta and skiptag in item.meta[TAGS]:
                     continue
-                item_names.append(item.fullname.value)
+                item_names.append(item.fullname)
         if kind == "dirs" or kind == "both":
             for item in dirs:
                 if skiptag and skiptag in item.meta[TAGS]:
                     continue
-                item_names.append(item.fullname.value)
+                item_names.append(item.fullname)
         if kind == "both":
             item_names = list(set(item_names))  # remove duplicates
         return item_names
