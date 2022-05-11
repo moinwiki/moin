@@ -2,7 +2,29 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - create a wiki instance
+Create a MoinMoin wiki instance.
+
+Activate a moin virtual env, then run this command:
+
+    moin create-instance --path /path/to/new/instance
+
+If path is not specified, the CWD is used as a default.
+
+If the path does not exist, directories are created.
+If wikiconfig.py does not exist, it is copied from the venv config directory.
+If intermap.txt does not exist, it is copied from the venv contrib directory.
+If a wiki_local directory does not exist, it is created.
+
+Next: CD to new instance directory, run this command to initialize storage and index
+
+    moin index-create -s -i
+
+Optionally, populate the empty wiki with additional commands
+
+    moin load-sample
+    moin load <options>
+    moin import19 <options>
+    moin load-help <options>
 """
 
 import os
@@ -47,5 +69,6 @@ class CreateInstance(Command):
             print('intermap.txt already exists, not copied.')
         else:
             shutil.copy(os.path.join(contrib_path, 'intermap.txt'), path)
-        if not os.path.isdir('wiki_local'):
-            os.mkdir('wiki_local')
+        local_path = os.path.join(path, 'wiki_local')
+        if not os.path.isdir(local_path):
+            os.mkdir(local_path)
