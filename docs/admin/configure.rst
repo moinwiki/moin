@@ -81,9 +81,8 @@ look like this::
         bin/                # Windows calls this directory Scripts
         include             # Windows calls this directory Include
         lib/                # Windows calls this directory Lib, includes moin package
-        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
 
-After activating above venv, `moin create-instance -p <mywiki>` creates the structure below. Multiple
+After activating the above venv, `moin create-instance -p <mywiki>` creates the structure below. Multiple
 instances of `mywiki` can be created with different names. `mywiki` may be created as a
 subdirectory of `myvenv` or elsewhere. The `preview` and `sql` subdirectories are created when a
 user edits a wiki item. To run moin using the built-in server, cd to the `<mywiki>` directory
@@ -95,6 +94,7 @@ and execute `moin run`.::
             index/          # wiki indexes
             preview/        # text item backups are created when user clicks edit Preview button
             sql/            # sqlite database used for edit locking
+        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
         wikiconfig.py       # main configuration file, modify this to add or change features
         intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 

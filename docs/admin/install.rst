@@ -46,7 +46,13 @@ Change into the new instance directory:
  cd INSTANCE-DIRECTORY
 
 You'll find a ``wikiconfig.py`` there to edit. Adapt it as you like,
-you'll find some comments in there.
+you'll find some comments in there. Review and change the settings
+for:
+
+ * sitename
+ * interwikiname
+ * acls
+ * SECRET_KEY
 
 After configuring, you can create an empty wiki by initializing the
 storage and the index:
@@ -62,6 +68,19 @@ sample content we provide, load it into your wiki and rebuild the indexes:
 
  moin load-sample
  moin index-build
+
+ Or, if you have a moin 1.9.x wiki, convert it to moin 2:
+
+ ::
+
+  moin import19 -d <path to 1.9 wiki/data> -s -i
+
+If you want to load English help for editors (replace en with your wiki's preferred language):
+
+::
+
+ moin load-help -n en
+ moin load-help -n common
 
 Run your wiki instance
 ======================
@@ -178,22 +197,28 @@ Typing "./m" (or "m" on Windows) will display a menu similar to:
     del-wiki        create a backup, then delete all wiki data
 
 While most of the above menu choices may be executed now, new users should
-do:
+do the following to create a wiki instance and load it with sample data.:
 
 ::
 
  m sample   # in Windows
  ./m sample # in Unix
 
-to create a wiki instance and load it with sample data. Next, run the
-built-in wiki server:
+ If you want to load English help for editors (replace en with your wiki's preferred language):
+
+::
+
+ moin load-help -n en
+ moin load-help -n common
+
+Next, run the built-in wiki server:
 
 ::
 
  m run      # in Windows
  ./m run    # in Unix
 
-As the server starts, about 20 log messages will be output to the
+As the server starts, a few log messages will be output to the
 terminal window.  Point your browser to http://127.0.0.1:8080, the
 sample Home page will appear and more log messages will be output
 to the terminal window. Do a quick test by accessing some of the
@@ -214,10 +239,8 @@ details. Be sure to edit `wikiconfig.py` and change the settings for::
 
  * sitename
  * interwikiname
+ * acls
  * SECRET_KEY
- * secrets
- * default_acl
- * users_acl
 
 If you plan on just using moin2 as a desktop wiki (and maybe
 help by reporting bugs), then some logical menu choices are::

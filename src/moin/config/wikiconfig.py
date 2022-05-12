@@ -13,8 +13,9 @@ serving files to the general public on the web.
 
 import os
 from moin.config.default import DefaultConfig, _default_password_checker
-from moin.storage import create_simple_mapping
 from moin.utils.interwiki import InterWikiMap
+from moin.storage import create_mapping
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
 
 class Config(DefaultConfig):
@@ -59,6 +60,7 @@ class Config(DefaultConfig):
             bin/                # Windows calls this directory Scripts
             include/            # Windows calls this directory Include
             lib/                # Windows calls this directory Lib
+
         <mywiki>/               # wikiconfig dir, use this as CWD for moin commands after <myvenv> activated
             wiki/               # the wiki instance; created by `moin create-instance`
                 data/           # wiki data and metadata
@@ -107,7 +109,7 @@ class Config(DefaultConfig):
     sitename = 'My MoinMoin'
 
     # default theme is topside
-    # theme_default = "modernized"  # or basic or topside_cms
+    # theme_default = "modernized"  # or topside_cms
 
     # read about PRIVACY ISSUES in docs before uncommenting the line below to use gravatars
     # user_use_gravatar = True
@@ -164,46 +166,80 @@ class Config(DefaultConfig):
     # SuperGroup and TrustedEditorGroup reference WikiGroups you must create
     # acl_functions = '+YourName:superuser SuperGroup:superuser'
 
-    # This provides a simple default setup for your backend configuration.
-    # 'stores:fs:...' indicates that you want to use the filesystem backend.
-    # Alternatively you can set up the mapping yourself (see HelpOnStorageConfiguration).
-    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
-        uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),
-        # XXX we use rather relaxed ACLs for the development wiki:
-        default_acl=dict(before='',
-                         default='All:read,write,create,destroy,admin',
-                         after='',
-                         hierarchic=False, ),
-        users_acl=dict(before='',
-                       default='All:read,write,create,destroy,admin',
-                       after='',
-                       hierarchic=False, ),
-        # userprofiles contain only metadata, no content will be created
-        userprofiles_acl=dict(before='All:',
-                              default='',
+    # File Storage backends are recommended for most wikis
+    uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir)  # use file system for storage
+    # uri='stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  # sqlite, 1 table per db
+    # uri='stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir),  # sqlite, 2 tables per db
+    # sqlite via SQLAlchemy
+    # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  #  1 table per db
+    # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir),  # 2 tables per db
+
+    namespaces = {
+        # maps namespace name -> backend name
+        # these 3 standard namespaces are required, these have separate backends
+        NAMESPACE_DEFAULT: 'default',
+        NAMESPACE_USERS: 'users',
+        NAMESPACE_USERPROFILES: 'userprofiles',
+        # namespaces for editor help files are optional, if unwanted delete here and in backends and acls
+        'help-common': 'help-common',  # contains media files used by other language helps
+        'help-en': 'help-en',  # replace this with help-de, help-ru, etc.
+        # define custom namespaces if desired, trailing / below causes foo to be stored in default backend
+        # 'foo/': 'default',
+        # custom namespace with a separate backend - note absence of trailing /
+        # 'bar': 'bar',
+    }
+    backends = {
+        # maps backend name -> storage
+        # feature to use different storage types for each namespace is not implemented so use None below.
+        # the storage type for all backends is set in 'uri' above,
+        # all values in `namespace` dict must be defined as keys in `backends` dict
+        'default': None,
+        'users': None,
+        'userprofiles': None,
+        # help namespaces are optional
+        'help-common': None,
+        'help-en': None,
+        # required for bar namespace if defined above
+        # 'bar': None,
+    }
+    acls = {
+        # maps namespace name -> acl configuration dict for that namespace
+        # most wiki data will be store here
+        NAMESPACE_DEFAULT: dict(before='SuperUser:read,write,create,destroy,admin',
+                                default='All:read,write,create',
+                                after='',
+                                hierarchic=False, ),
+        # user home pages should be stored here
+        NAMESPACE_USERS: dict(before='SuperUser:read,write,create,destroy,admin',
+                              default='All:read,write,create',
                               after='',
                               hierarchic=False, ),
-        help_common_acl=dict(before='',
-                             default='All:read,write,create,destroy',
-                             after='',
-                             hierarchic=False, ),
-        help_en_acl=dict(before='',
-                         default='All:read,write,create,destroy',
-                         after='',
-                         hierarchic=False, ),
-    )
-
-    """
-    secrets = {
-        'security/ticket': 'EnterDifferentSecretStringHere',
+        # contains user data that should be kept secret, allow no access for all
+        NAMESPACE_USERPROFILES: dict(before='All:',
+                                     default='',
+                                     after='',
+                                     hierarchic=False, ),
+        # editor help namespacess are optional
+        'help-common': dict(before='SuperUser:read,write,create,destroy,admin',
+                            default='All:read,write,create,destroy',
+                            after='',
+                            hierarchic=True, ),
+        'help-en': dict(before='SuperUser:read,write,create,destroy,admin',
+                        default='All:read,write,create,destroy',
+                        after='',
+                        hierarchic=False, ),
     }
-    """
+    namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
+    # define mapping of namespaces to unique item_roots (home pages within namespaces).
+    # root_mapping = {'user': 'UserHome'}
+    # default root, use this value by default for all namespaces
+    default_root = 'Home'
 
 
 # flask settings require all caps
 MOINCFG = Config  # adding MOINCFG=<path> to OS environment overrides CWD
 # Flask settings - see the flask documentation about their meaning
-SECRET_KEY = 'you need to change this so it is really secret'
+SECRET_KEY = 'WARNING: set this to a unique string to create secure cookies'
 DEBUG = False  # use True for development only, not for public sites!
 TESTING = False  # built-in server (./m run) ignores TESTING and DEBUG settings
 # per https://flask.palletsprojects.com/en/1.1.x/security/#set-cookie-options
