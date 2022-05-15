@@ -103,6 +103,8 @@ def get_indexer(fn, **kw):
     Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
     indexes to storage. Try several times before failing.
 
+    FIXME: runs into timeout for a non-existing revid
+
     :param fn: the indexer function
     :param **kw: "revid" is required, index name optional
     """

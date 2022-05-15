@@ -8,12 +8,14 @@ MoinMoin - indexing middleware tests
 from io import BytesIO
 import hashlib
 
+from whoosh.query import Term
 import pytest
 
 from flask import g as flaskg
 
-from moin.constants.keys import (NAME, SIZE, ITEMID, REVID, DATAID, HASH_ALGORITHM, CONTENT, COMMENT,
-                                 LATEST_REVS, ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
+from moin.constants.keys import (NAME, NAME_EXACT, SIZE, ITEMID, REVID, DATAID,
+                                 HASH_ALGORITHM, CONTENT, COMMENT, LATEST_REVS,
+                                 ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
 from moin.constants.namespaces import NAMESPACE_USERS
 
 from moin.utils.interwiki import split_fqname
@@ -95,27 +97,27 @@ class TestIndexingMiddleware:
         item.destroy_revision(revid0)
         # check if the revision was destroyed:
         item = self.imw[item_name]
-        with pytest.raises(KeyError):
-            item.get_revision(revid0)
-        revids = [_rev.revid for _rev in item.iter_revs()]
+        query = Term(NAME_EXACT, item_name)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS)
+        revids = [meta[REVID] for meta in metas]
         print("after destroy revid0", revids)
         assert sorted(revids) == sorted([revid1, revid2])
         # destroy a current revision:
         item.destroy_revision(revid2)
         # check if the revision was destroyed:
         item = self.imw[item_name]
-        with pytest.raises(KeyError):
-            item.get_revision(revid2)
-        revids = [_rev.revid for _rev in item.iter_revs()]
+        query = Term(NAME_EXACT, item_name)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS)
+        revids = [meta[REVID] for meta in metas]
         print("after destroy revid2", revids)
         assert sorted(revids) == sorted([revid1])
         # destroy the last revision left:
         item.destroy_revision(revid1)
         # check if the revision was destroyed:
         item = self.imw[item_name]
-        with pytest.raises(KeyError):
-            item.get_revision(revid1)
-        revids = [_rev.revid for _rev in item.iter_revs()]
+        query = Term(NAME_EXACT, item_name)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS)
+        revids = [meta[REVID] for meta in metas]
         print("after destroy revid1", revids)
         assert sorted(revids) == sorted([])
 
@@ -177,9 +179,9 @@ class TestIndexingMiddleware:
     def test_documents(self):
         item_name = 'foo'
         item = self.imw[item_name]
-        rev1 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'x'), return_rev=True)
+        _rev1 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'x'), return_rev=True)
         rev2 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'xx'), return_rev=True)
-        rev3 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'xxx'), return_rev=True)
+        _rev3 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'xxx'), return_rev=True)
         rev = self.imw.document(idx_name=ALL_REVS, size=2)
         assert rev
         assert rev.revid == rev2.revid
