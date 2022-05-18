@@ -37,31 +37,29 @@ from jinja2 import Markup
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-from moin.constants.misc import NO_LOCK, LOCKED, LOCK
+from moin.constants.misc import LOCKED, LOCK
 from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.themes import render_template
 from moin.utils import rev_navigation, close_file, show_time
 from moin.utils.edit_locking import Edit_Utils
-from moin.utils.mime import Type
-from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
+from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.registry import RegistryBase
-from moin.utils.clock import timed
 from moin.utils.diff_html import diff as html_diff
 from moin.utils import diff3
-from moin.forms import RequiredText, OptionalText, JSON, Tags, Names, validate_name, NameNotValidError
+from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError
 from moin.constants.keys import (
-    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
-    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
-    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
-    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER, MAILTO_AUTHOR,
-    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, HAS_TAG, TEMPLATE,
+    NAME, NAMES, NAMENGRAM, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
+    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
+    IMMUTABLE_KEYS, UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
+    ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
     LATEST_REVS, EDIT_ROWS, FQNAMES
 )
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL
-from moin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from moin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 )
@@ -88,8 +86,10 @@ def find_matches(fq_name, s_re=None, e_re=None):
     :rtype: tuple
     :returns: start word, end word, matches dict
     """
-    query = Term(WIKINAME, app.cfg.interwikiname)
-    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    idx_name = LATEST_REVS
+    qp = flaskg.storage.query_parser([NAMES, NAMENGRAM], idx_name=idx_name)
+    q = qp.parse(fq_name.value)
+    metas = flaskg.storage.search_meta(q, idx_name=idx_name, limit=None)
     fq_names = {fqname for meta in metas for fqname in meta[FQNAMES] if FQNAMES in meta}
     if fq_name in fq_names:
         fq_names.remove(fq_name)
@@ -832,11 +832,9 @@ class Item:
         storage_item = backend.get_item(**self.fqname.query)
         try:
             currentrev = storage_item.get_revision(CURRENT)
-            rev_id = currentrev.revid
             contenttype_current = currentrev.meta.get(CONTENTTYPE)
         except KeyError:  # XXX was: NoSuchRevisionError:
             currentrev = None
-            rev_id = None
             contenttype_current = None
 
         meta = dict(meta)  # we may get a read-only dict-like, copy it
@@ -1013,7 +1011,6 @@ class Item:
         if self.names:
             query = And([query, Or([Prefix(NAME_EXACT, prefix) for prefix in self.subitem_prefixes])])
         elif self.meta.get(TRASH, False):
-            name_old = self.meta[NAME_OLD]
             query = And([query, Or([Prefix(NAME_OLD, prefix) for prefix in self.name_old_subitem_prefixes])])
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
@@ -1060,7 +1057,6 @@ class Item:
                             added_dir_relnames.add(direct_relname_fqname)
                             direct_fullname = prefix + direct_relname
                             direct_fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
-                            fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                 mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}
                 if TAGS in rev and rev[TAGS]:
