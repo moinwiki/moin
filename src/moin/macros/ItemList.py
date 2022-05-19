@@ -136,7 +136,7 @@ class Macro(MacroPageLinkListBase):
                 raise ValueError(_("ItemList macro: Error in regex {0!r}: {1}".format(regex, err)))
             newlist = []
             for child in children:
-                if regex_re.search(child):
+                if regex_re.search(child.fullname):
                     newlist.append(child)
             children = newlist
         if not children:
