@@ -66,3 +66,25 @@ class TestItemListMacro:
         rendered = Item.create('TestItemList02').content._render_data()
         assert 'other02' not in rendered
         assert 'item03' not in rendered
+
+    def test_ItemListRegex(self):
+        update_item('parent', meta, 'some-content')
+        update_item('parent/item01', meta, 'some-content')
+        update_item('parent/otheritem', meta, 'some-content')
+        update_item('item02', meta, 'some-content')
+        update_item('other02', meta, 'some-content')
+
+        update_item('TestItemList03', meta, '<<ItemList(item="",regex="item")>>')
+
+        rendered = Item.create('TestItemList03').content._render_data()
+        assert 'a href="/parent/item01">parent/item01' in rendered
+        assert 'a href="/parent/otheritem">parent/otheritem' in rendered
+        assert 'a href="/item02">item02' in rendered
+        assert 'other02' not in rendered
+
+        update_item('TestItemList04', meta, '<<ItemList(item="parent",regex="^parent/item")>>')
+
+        rendered = Item.create('TestItemList04').content._render_data()
+        assert 'a href="/parent/item01">parent/item01' in rendered
+        assert 'item02' not in rendered
+        assert 'other' not in rendered
