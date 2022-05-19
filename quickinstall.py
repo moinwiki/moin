@@ -302,7 +302,7 @@ class Commands:
             packages.append('python-ldap')
         installer = 'pip install --upgrade '
         reqs = ['requirements.d/development.txt', 'requirements.d/docs.txt', ]
-        reqs_installer = 'pip install -r '
+        reqs_installer = 'pip install --upgrade -r '
         command = SEP.join(list(installer + x for x in packages) + list(reqs_installer + x for x in reqs))
         print('Installing {0}.'.format(', '.join(packages + reqs)))
         print('Output messages written to {0}.'.format(EXTRAS))
