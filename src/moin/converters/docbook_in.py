@@ -470,7 +470,7 @@ class Converter:
             # but at this time we won't support it.
             return
         attrib[html.alt] = href
-        attrib[xlink.href] = '+get/' + href
+        attrib[xlink.href] = '/+get/' + href
         format = object_to_show.get('format')
         if format:
             format = format.lower()
