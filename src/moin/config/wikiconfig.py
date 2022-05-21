@@ -168,11 +168,11 @@ class Config(DefaultConfig):
 
     # File Storage backends are recommended for most wikis
     uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir)  # use file system for storage
-    # uri='stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  # sqlite, 1 table per db
-    # uri='stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir),  # sqlite, 2 tables per db
+    # uri = 'stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  # sqlite, 1 table per db
+    # uri = 'stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir)  # sqlite, 2 tables per db
     # sqlite via SQLAlchemy
-    # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  #  1 table per db
-    # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir),  # 2 tables per db
+    # uri = 'stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  #  1 table per db
+    # uri = 'stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir)  # 2 tables per db
 
     namespaces = {
         # maps namespace name -> backend name
