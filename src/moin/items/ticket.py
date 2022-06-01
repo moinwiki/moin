@@ -320,7 +320,7 @@ def build_tree(comments, root, comment_tree, indent):
     if comments[root]:
         for comment in comments[root]:
             comment_tree.append((comment, indent + 20))  # where 20, 40,... will become an indented left margin
-            # recursion is used to place comments in order based on comment heirarchy and date
+            # recursion is used to place comments in order based on comment hierarchy and date
             build_tree(comments, comment, comment_tree, indent + 20)
         return comment_tree
     else:

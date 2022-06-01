@@ -486,7 +486,7 @@ class Converter(ConverterMacro):
         for line in iter:
             match = self.block_re.match(line)
             it = iter
-            # XXX: Hack to allow nowiki to ignore the list identation
+            # XXX: Hack to allow nowiki to ignore the list indentation
             if match.lastgroup == 'nowiki':
                 it = iter_content
             self._apply(match, 'block', it, new_stack)

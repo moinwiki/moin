@@ -221,7 +221,7 @@ class Converter:
         if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == '':
             # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
             elem[0] = href.path[1:] if href.path else href.fragment
-        # html attibutes are copied by default (html.target, html.class, html.download...
+        # html attributes are copied by default (html.target, html.class, html.download...
         return self.new_copy(html.a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):
