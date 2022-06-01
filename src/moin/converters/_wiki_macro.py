@@ -167,7 +167,7 @@ class ConverterMacro:
 
     def macro_text(self, text):
         """
-        Should be overriden to format text in some macros according to the
+        Should be overridden to format text in some macros according to the
         input type.
         :returns: Sequence of (ET.Element, unicode)
         """

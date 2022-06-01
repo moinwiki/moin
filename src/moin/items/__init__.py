@@ -401,8 +401,8 @@ class BaseModifyForm(BaseChangeForm):
         """
         Construct an instance from :item.
 
-        This class method is not supposed to be overriden; subclasses should
-        overrride the _load method instead.
+        This class method is not supposed to be overridden; subclasses should
+        override the _load method instead.
         """
         form = cls.from_defaults()
         form._load(item)
@@ -960,7 +960,7 @@ class Item:
             variables['MAILTO'] = "<<MailTo({0})>>".format(obfuscated_email_address)
             variables['EMAIL'] = "<<MailTo({0})>>".format(email)
         else:
-            # penality for not being logged in is a mangled variable, else next user to save item may accidently reveal his email address
+            # penalty for not being logged in is a mangled variable, else next user to save item may accidentally reveal his email address
             variables['MAILTO'] = "@ EMAIl@"
             variables['EMAIL'] = "@ MAILTO@"
 
