@@ -263,7 +263,10 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     if not item_name:
         try:
-            item_name = get_names(meta)[0]
+            if NAMESPACE in meta and meta[NAMESPACE] is not None:
+                item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
+            else:
+                item_name = meta[NAME][0]
         except IndexError:
             item_name = 'DoesNotExist'
     fqname = split_fqname(item_name)
@@ -1160,7 +1163,7 @@ class Item(PropertiesMixin):
         """
         preprocess a revision before it gets stored and put into index.
         """
-        content = convert_to_indexable(meta, data, self.name, is_new=True)
+        content = convert_to_indexable(meta, data, is_new=True)
         return meta, data, content
 
     def store_revision(self, meta, data, overwrite=False,
