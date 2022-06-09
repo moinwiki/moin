@@ -2,7 +2,7 @@
 
 == Table Of Contents ==
 
-'''Markup:'''
+'''Markup:''' 
 
 {{{
 <<TableOfContents>>
@@ -69,21 +69,22 @@ Within MoinWiki and Creole syntax:
 ====
 || `[[Home]]` || [[Home]] # Home item in default namespace||
 || `[[help-en/Home]]` || [[help-en/Home]] # Home item in help-en namespace||
-|| `[[help-en/Home/subitem]]` || [[help-en/Home/subitem]] # link a sibling's subitem||
+|| `[[help-en/Home/subitem]]` || [[help-en/Home/subitem]] # link to a sibling's subitem||
 || `[[help-en/moin/MissingSubitem]]` || [[help-en/moin/MissingSubitem]] # subitem of current item||
 || `[[../Home]]` || [[../Home]] # sibling of current item||
+|| `[[/HighlighterList]]` || [[/HighlighterList]] # subitem of this item||
 || `[[help-en/Home|click me]]` || [[help-en/Home|click me]] # show descriptive text not link text||
 || `[[Home|{{help-common/logo.png}}]]` || {{help-common/logo.png}} # show logo image not link text||
-|| `[[#Lists]]` || [[#Lists]] # link to heading anchor within this item||
-|| `[[#Lists|description]]` || [[#Lists|description]] ||
-|| `[[help-en/creole#Internal_Links]]` || [[help-en/creole#Internal_Links]] ||
-|| `[[help-en/creole#Internal_Links|description]]` || [[help-en/creole#Internal_Links|description]] ||
+|| `[[#Lists]]` || [[#Lists]] # link to a heading anchor within this item||
+|| `[[#Lists|show me lists]]` || [[#Lists|show me lists]] # link to Lists heading||
+|| `[[help-en/creole#Internal_Links]]` || [[help-en/creole#Internal_Links]] # link to Internal Links within creole item||
+|| `[[help-en/creole#Internal_Links|show creole Internal Links]]` || [[help-en/creole#Internal_Links|show creole Internal Links]] ||
 || `[[MissingPage]]` || [[MissingPage]] # links to default namespace||
-|| `[[help-en/creole|description|target=_blank]]` || [[help-en/creole|description|target=_blank]] ||
-|| `[[../creole|description|target=_blank,class=orange]]` || [[../creole|description|target=_blank,class=orange]] ||
-|| `[[../creole|description|download=creole,title="Hi"]]` || [[../creole|description|download=creole,title="Hi"]] ||
-|| `[[../creole|description|accesskey=1]]` || [[../creole|description|accesskey=1]] ||
-|| `[[AltItem| |class="redirect"]]` || Browser view is redirected to AltItem ||
+|| `[[help-en/creole|show creole in new tab|target=_blank]]` || [[help-en/creole|show creole in new tab|target=_blank]] ||
+|| `[[../creole|show creole in new tab|target=_blank,class=orange]]` || [[../creole|show creole in new tab|target=_blank,class=orange]] ||
+|| `[[../creole|click to download creole|download=creole,title="Hi"]]` || [[../creole|click to download creole|download=creole,title="Hi"]] ||
+|| `[[../creole|accesskey demo|accesskey=1]]` || [[../creole|accesskey demo|accesskey=1]] # key alt-shift-1 to load creole||
+|| `[[AltItem| |class="redirect"]]` || Not active, causes immediate redirect to AltItem ||
 
 === External Links ===
 
@@ -252,16 +253,16 @@ In the example below, the second to last line has a leading bulletless list char
 
 {{{
  A. item A
-   a. item A. a)
-   a. item A. b)
+   a. item A. a
+   a. item A. b
  A. item B
 }}}
 
 '''Result:'''
 
  A. item A
-   a. item A. a)
-   a. item A. b)
+   a. item A. a
+   a. item A. b
  A. item B
 
 ==== Specify a Starting Point ====
@@ -493,7 +494,7 @@ Parsers are useful for rendering or highlighting small amounts of code written i
 
 === Highlight ===
 
-The highlight parser is implemented using Pygments. Pygments supports may languages. See [[moin/HighlighterList]] for a list of all languages.
+The highlight parser is implemented using Pygments. Pygments supports many languages. See [[../moin/HighlighterList]] for a list of all languages.
 
 {{{{
 {{{#!highlight python
@@ -643,7 +644,7 @@ If an editor is not logged in, then any @``EMAIL@ or @``MAILTO@ variables in the
 
 == Macros ==
 
-Macros are extensions to standard markup that allow developers to add extra features. See [[MoinWikiMacros]] for a list of all macros.
+Macros are extensions to standard markup that allow developers to add extra features. See [[../MoinWikiMacros]] for a list of all macros.
 
 === FootNotes ===
 

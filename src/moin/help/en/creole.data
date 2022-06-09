@@ -52,7 +52,7 @@ Features currently not working with moin's Creole parser are marked with **CREOL
 
 The examples below are complicated by the use of the "help-en" namespace to separate these help pages from the main wiki content. Some target pages may be missing from the default namespace.
 
-Within MoinWiki and Creole syntax:
+Within MoinWiki and Creole syntax: 
  * a simple link like `[[Home]]` links to an item in the default namespace
  * a relative link like `../Home` links to a sibling in the current namespace
  * a link that begins with a namespace like `[[users/Home]]` links to the Home item in the target namespace
@@ -259,7 +259,7 @@ Enclose
 
 == Macros ==
 
-Macros are extensions to standard Creole markup that allow developers to add extra features. See [[MoinWikiMacros]] for a list of all macros.
+Macros are extensions to standard Creole markup that allow developers to add extra features. See [[../MoinWikiMacros]] for a list of all macros.
 
 === FootNotes ===
 
