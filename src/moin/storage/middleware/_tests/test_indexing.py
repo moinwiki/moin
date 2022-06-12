@@ -15,13 +15,15 @@ from flask import g as flaskg
 
 from moin.constants.keys import (NAME, NAME_EXACT, SIZE, ITEMID, REVID, DATAID,
                                  HASH_ALGORITHM, CONTENT, COMMENT, LATEST_REVS,
-                                 ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX)
+                                 ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX,
+                                 CONTENTTYPE, ITEMTYPE, ITEMLINKS, REV_NUMBER)
+
 from moin.constants.namespaces import NAMESPACE_USERS
 
 from moin.utils.interwiki import split_fqname
 
 from moin.auth import GivenAuth
-from moin._tests import wikiconfig
+from moin._tests import wikiconfig, update_item
 
 
 def dumper(indexer, idx_name):
@@ -175,6 +177,18 @@ class TestIndexingMiddleware:
         assert ITEMID in rev.meta
         assert REVID in rev.meta
         assert DATAID in rev.meta
+
+    def test_meta_itemlinks_moin(self):
+        meta1 = {CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8', ITEMTYPE: 'default', REV_NUMBER: 1}
+        rev1 = update_item('item01', meta1, '[[Home]] [[users/user]] [[/Subitem01]]')
+        assert 'Home' in rev1.meta[ITEMLINKS]
+        assert 'users/user' in rev1.meta[ITEMLINKS]
+        assert 'item01/Subitem01' in rev1.meta[ITEMLINKS]
+        meta2 = {CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8', NAME: 'user',
+                 NAMESPACE: NAMESPACE_USERS, ITEMTYPE: 'default', REV_NUMBER: 1}
+        rev2 = update_item('%s/user' % NAMESPACE_USERS, meta2, '[[users/usr1]] [[../usr2]]')
+        assert 'users/usr1' in rev2.meta[ITEMLINKS]
+        assert 'users/usr2' in rev2.meta[ITEMLINKS]
 
     def test_documents(self):
         item_name = 'foo'
