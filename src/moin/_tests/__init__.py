@@ -14,9 +14,10 @@ from io import BytesIO
 from flask import g as flaskg
 
 from moin.constants.contenttypes import CHARSET
-from moin.constants.keys import NAME, CONTENTTYPE
+from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
 from moin.items import Item
 from moin.utils.crypto import random_string
+from moin.utils.interwiki import CompositeName
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you
@@ -48,7 +49,8 @@ def update_item(name, meta, data):
     """ creates or updates an item  """
     if isinstance(data, str):
         data = data.encode(CHARSET)
-    item = flaskg.storage[name]
+    fqname = CompositeName('', NAME_EXACT, name)
+    item = flaskg.storage.get_item(**fqname.query)
 
     meta = meta.copy()
     if NAME not in meta:
