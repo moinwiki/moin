@@ -51,7 +51,7 @@ def format_date_time(utc_dt=None, fmt='yyyy-MM-dd HH:mm:ss', interval='datetime'
     All other logged-in users will see the usual babel date/time formats based upon
     their time zone and locale.
 
-    See http://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
+    See https://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
     """
     if utc_dt is None:
         utc_dt = datetime.datetime.utcnow()

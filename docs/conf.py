@@ -262,3 +262,8 @@ inheritance_node_attrs = dict(shape='box', fontsize=20, height=0.75,
                               color='yellow', style='filled')
 
 autosummary_generate = False
+
+# -- Options for Linkcheck -----------------------------------------------------
+
+linkcheck_ignore = ['http://127.0.0.1.*', 'http://localhost.*', 'http:Home.*', 'http:#.*', 'ItemName.*']
+

@@ -5,7 +5,7 @@
 """
 MoinMoin - Markdown input converter
 
-http://daringfireball.net/projects/markdown/
+https://daringfireball.net/projects/markdown/
 """
 
 import re

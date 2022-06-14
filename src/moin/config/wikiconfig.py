@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-MoinMoin Wiki Configuration - see https://moin-20.readthedocs.org/en/latest/admin/configure.html
+MoinMoin Wiki Configuration - see https://moin-20.readthedocs.io/en/latest/admin/configure.html
 
 This file should be customized before creating content and adding user registrations.
 

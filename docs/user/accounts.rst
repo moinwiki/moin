@@ -123,7 +123,7 @@ remove quick links to local wiki items. Several different types of links may be 
 
  - To manually add a link to a local wiki item, prefix the item name with the wiki name: MyWiki/myitem
  - To add a link to an external wiki page, use the wiki name as a prefix: MeatBall/RecentChanges
- - To add a link to an external web page, use the full URL: http://google.com
+ - To add a link to an external web page, use the full URL, e.g.: https://moinmo.in
  - Other types of links, such as mailto: may be added
 
 

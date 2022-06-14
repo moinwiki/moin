@@ -16,7 +16,7 @@ Wikis:
 
 Documentation (installation, configuration, user docs, api reference):
 
-* https://readthedocs.org/docs/moin-20/en/latest/
+* https://moin-20.readthedocs.io/en/latest/
 
 Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
 
@@ -121,7 +121,7 @@ add more tools, exercise tools
 review configuration options
 ----------------------------
 
-* review https://moin-20.readthedocs.org/en/latest/admin/configure.html
+* review https://moin-20.readthedocs.io/en/latest/admin/configure.html
 * following the instructions in wikiconfig.py, create wikiconfig_local.py and wikiconfig_editme.py
 * configure options by editing wikiconfig_editme.py
 
@@ -190,7 +190,7 @@ review your working solution
 * fix everything you find before requesting feedback from others
 * run tests again "./m tests"
 * check for trailing spaces, line endings, template indentation "./m coding-std"
-* if Javascript files were changed, run https://jslint.com/
+* if Javascript files were changed, run https://www.jslint.com/
 
 publish your change
 -------------------

@@ -150,4 +150,4 @@ for this.
 ------
 
 .. [#] For more information on locale strings, see
-   http://www.gnu.org/software/hello/manual/gettext/Locale-Names.html.
+   https://www.gnu.org/software/gettext/manual/html_node/Locale-Names.html.

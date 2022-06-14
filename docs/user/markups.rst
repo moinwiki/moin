@@ -13,11 +13,11 @@ Markups Supported by MoinMoin
    markdown
 
 .. _MoinWiki: https://moinmo.in/HelpOnMoinWikiSyntax
-.. _WikiCreole: http://www.wikicreole.org/
-.. _reStructuredText: http://docutils.sourceforge.net/rst.html
-.. _Docbook: http://www.docbook.org/
-.. _MediaWiki: http://www.mediawiki.org/wiki/Help:Formatting
-.. _Markdown: http://daringfireball.net/projects/markdown/syntax
+.. _WikiCreole: https://www.wikicreole.org/
+.. _reStructuredText: https://docutils.sourceforge.io/rst.html
+.. _Docbook: https://docbook.org/
+.. _MediaWiki: https://www.mediawiki.org/wiki/Help:Formatting
+.. _Markdown: https://daringfireball.net/projects/markdown/syntax
 
 In Moin2, you specify the item's markup language when you create a new item.
 Currently Moin2 supports `MoinWiki`_, `WikiCreole`_, `reStructuredText`_, `Docbook`_,

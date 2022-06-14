@@ -8,11 +8,11 @@ Most developers use a CPython distribution for testing.
 Typical linux distributions will either have Python 3.8+ installed by
 default or will have a package manager that will install Python 3.8+
 as a secondary Python.
-Windows users may download CPython distributions from  http://www.python.org/ or
-http://www.activestate.com/.
+Windows users may download CPython distributions from  https://www.python.org/ or
+https://www.activestate.com/.
 
 An alternative implementation of Python, PyPy, is available
-from http://pypy.org/.
+from https://www.pypy.org/.
 
 
 Servers
@@ -25,8 +25,9 @@ For moin2, you can use any server compatible with WSGI:
 * apache with mod_wsgi is recommended for bigger/busier wikis.
 * other WSGI-compatible servers or middlewares are usable
 * For cgi, fastcgi, scgi, ajp, etc., you can use the "flup" middleware:
-  http://trac.saddi.com/flup
-* IIS with ISAPI-WSGI gateway is also compatible: http://code.google.com/p/isapi-wsgi/
+  https://www.saddi.com/software/flup/
+* IIS with ISAPI-WSGI gateway is also compatible: https://code.google.com/archive/p/isapi-wsgi
+
 
 .. caution:: When using the built-in server for public wikis (not recommended), use
         "moin moin -D -R" to turn off the werkzeug debugger and auto reloader.

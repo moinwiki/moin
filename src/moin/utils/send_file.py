@@ -9,7 +9,7 @@ A better send_file
 Initially, this was a modified implementation of flask 0.6.0's send_file(),
 trying to be as compatible as possible.
 
-For details see: https://github.com/mitsuhiko/flask/issues/issue/104 and the
+For details see: https://github.com/pallets/flask/issues/104 and the
 history of this file in our repository. This code fixes all the issues
 described in the bug report.
 
