@@ -5,7 +5,7 @@ Markdown Markup
 ===============
 
 This page introduces you to the most important elements of the Markdown syntax.
-For details on the Python implementation of Markdown see https://pythonhosted.org/Markdown/
+For details on the Python implementation of Markdown see https://python-markdown.github.io/
 
 In addition to being supported by moin2, the Markdown markup language is used by issue trackers
 such as those found in Bitbucket and Github. So what you learn here can be used there also.
@@ -182,7 +182,7 @@ reference link uses a form with square brackets rather than parens: ::
  [apple]: https://www.apple.com/
  [MoinMoin]: https://moinmo.in/ "go!"
  [see apples][apple]                           `see apples <https://www.apple.com>`_
- [go to MoinMoin][MoinMoin]                    `go to MoinMoin <https://MoinMo.in>`_
+ [go to MoinMoin][MoinMoin]                    `go to MoinMoin <https://moinmo.in>`_
 ===========================================   ==========================================
 
 **reST NOTE**: Links with title attributes are not supported in reST.

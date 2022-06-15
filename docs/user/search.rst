@@ -97,9 +97,9 @@ Using regular expressions
 
 Regular expressions enable even more flexibility for specifying search terms.
 
-See http://en.wikipedia.org/wiki/Regular_expression for basics about regexes.
+See https://en.wikipedia.org/wiki/Regular_expression for basics about regexes.
 
-See http://docs.python.org/library/re.html about python's regex implementation,
+See https://docs.python.org/3/library/re.html about python's regex implementation,
 which we use for MoinMoin.
 
 You need to use this syntax when entering regexes: r"yourregex"

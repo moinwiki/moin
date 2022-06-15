@@ -34,7 +34,7 @@ g_charToEntity = {
 def TranslateCDATA(text):
     """
         Convert a string to a CDATA-encoded one
-        Copyright (c) 1999-2000 FourThought, http://4suite.com/4DOM
+        Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
     new_string, num_subst = re.subn(g_cdataCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)
@@ -45,7 +45,7 @@ def TranslateCDATA(text):
 def TranslateText(text):
     """
         Convert a string to a PCDATA-encoded one (do minimal encoding)
-        Copyright (c) 1999-2000 FourThought, http://4suite.com/4DOM
+        Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
     new_string, num_subst = re.subn(g_textCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)

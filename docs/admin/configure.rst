@@ -258,7 +258,7 @@ macros to show something else::
     {{ sep }}
     {{ credit('https://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
     {{ sep }}
-    {{ credit('http://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
+    {{ credit('https://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
     {{ end }}
     {% endmacro %}
 
@@ -288,8 +288,8 @@ stylesheets.
 
 See:
 
-* `CSS media types <http://www.w3.org/TR/CSS2/media.html>`_
-* `Alternate Stylesheets <http://www.alistapart.com/articles/alternate/>`_
+* `CSS media types <https://www.w3.org/TR/CSS2/media.html>`_
+* `Alternate Stylesheets <https://alistapart.com/article/alternate/>`_
 
 A good way to test a stylesheet is to first use it as user CSS before
 configuring it for the public.
@@ -386,7 +386,7 @@ Please note that using the gravatar service has some privacy issues:
 
 XStatic Packages
 ----------------
-`XStatic <http://readthedocs.org/projects/xstatic>`_ is a packaging standard
+`XStatic <https://readthedocs.org/projects/xstatic>`_ is a packaging standard
 to package external static files as a Python package, often third party.
 That way they are easily usable on all operating systems, whether it has a package management
 system or not.
@@ -397,40 +397,40 @@ them into our project.
 
 For MoinMoin we require the following XStatic Packages in setup.py:
 
-* `jquery <http://pypi.python.org/pypi/XStatic-jQuery>`_
+* `jquery <https://pypi.org/project/XStatic-jQuery>`_
   for jquery lib functions loaded in the template file base.html
 
-* `jquery_file_upload <http://pypi.python.org/pypi/XStatic-jQuery-File-Upload>`_
+* `jquery_file_upload <https://pypi.org/project/XStatic-jQuery-File-Upload>`_
   loaded in the template file of index view. It allows to upload many files at once.
 
-* `bootstrap <https://pypi.python.org/pypi/XStatic-Bootstrap>`_
+* `bootstrap <https://pypi.org/project/XStatic-Bootstrap>`_
   used by the basic theme.
 
-* `font_awesome <https://pypi.python.org/pypi/XStatic-Font-Awesome>`_
+* `font_awesome <https://pypi.org/project/XStatic-Font-Awesome>`_
   provides text icons.
 
-* `ckeditor <http://pypi.python.org/pypi/XStatic-CKEditor>`_
+* `ckeditor <https://pypi.org/project/XStatic-CKEditor>`_
   used in template file modify_text_html. A WYSIWYG editor similar to word processing
   desktop editing applications.
 
-* `autosize <https://pypi.python.org/pypi/XStatic-autosize>`_
+* `autosize <https://pypi.org/project/XStatic-autosize>`_
   used by basic theme to adjust textarea on modify view.
 
-* `svgedit_moin <http://pypi.python.org/pypi/XStatic-svg-edit-moin>`_
+* `svgedit_moin <https://pypi.org/project/XStatic-svg-edit-moin>`_
   is loaded at template modify_svg-edit. It is a fast, web-based, Javascript-driven
   SVG editor.
 
-* `twikidraw_moin <http://pypi.python.org/pypi/XStatic-TWikiDraw-moin>`_
+* `twikidraw_moin <https://pypi.org/project/XStatic-TWikiDraw-moin>`_
   a Java applet loaded from template file of modify_twikidraw. It is a simple drawing editor.
 
-* `anywikidraw <http://pypi.python.org/pypi/XStatic-AnyWikiDraw>`_
+* `anywikidraw <https://pypi.org/project/XStatic-AnyWikiDraw>`_
   a Java applet loaded from template file of modify_anywikidraw. It can be used for
   editing drawings and diagrams on items.
 
-* `jquery_tablesorter <https://pypi.python.org/pypi/XStatic-JQuery.TableSorter/2.14.5.1>`_
+* `jquery_tablesorter <https://pypi.org/project/XStatic-JQuery.TableSorter/2.14.5.1>`_
   used to provide client side table sorting.
 
-* `pygments <https://pypi.python.org/pypi/XStatic-Pygments>`_
+* `pygments <https://pypi.org/project/XStatic-Pygments>`_
   used to style code fragments.
 
 
@@ -462,7 +462,7 @@ Adding XStatic Packages
 -----------------------
 
 The following example shows how you can enable the additional package
-`XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is
+`XStatic-MathJax <https://pypi.org/project/XStatic-MathJax>`_ which is
 used for mathml or latex formulas in an item's content.
 
 * install xstatic-mathjax (e.g. using ``pip install xstatic-mathjax``)
@@ -790,7 +790,8 @@ Password storage
 Moin never stores wiki user passwords in clear text, but uses strong
 cryptographic hashes provided by the "passlib" library, see there for details:
 
-    http://packages.python.org/passlib/.
+    https://passlib.readthedocs.io/en/stable/
+
 
 The passlib docs recommend 3 hashing schemes that have good security:
 sha512_crypt, pbkdf2_sha512 and bcrypt (bcrypt has additional binary/compiled
@@ -1592,7 +1593,7 @@ module of the Python standard library.
 
 The configuration file format is described there:
 
-http://www.python.org/doc/current/library/logging.html#configuring-logging
+https://docs.python.org/3/library/logging.config.html#configuration-file-format
 
 
 There are also some logging configurations in the
