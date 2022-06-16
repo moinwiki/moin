@@ -184,7 +184,7 @@ class TestIndexingMiddleware:
         assert 'Home' in rev1.meta[ITEMLINKS]
         assert 'users/user' in rev1.meta[ITEMLINKS]
         assert 'item01/Subitem01' in rev1.meta[ITEMLINKS]
-        meta2 = {CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8', NAME: 'user',
+        meta2 = {CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8', NAME: ['user', ],
                  NAMESPACE: NAMESPACE_USERS, ITEMTYPE: 'default', REV_NUMBER: 1}
         rev2 = update_item('%s/user' % NAMESPACE_USERS, meta2, '[[users/usr1]] [[../usr2]]')
         assert 'users/usr1' in rev2.meta[ITEMLINKS]
