@@ -6,16 +6,20 @@ Create sqlite3 data models for edit locking and saving drafts. Expected usage
 is limited to the +modify method in /items/__init__.py for text items.
 
 Moin2 has only two states for the edit_locking_Policy: None and 'lock'.
+None is suitable for single user desktop wikis.
 
 Drafts are always saved when an editor clicks the Preview link.
 Regardless of the edit_locking_policy, warning messages are given to the
-user when conflicts occur.
+user when conflicts occur. Conflicts are caused when a user's edit lock times
+out, a second user obtains the item's edit lock and saves the item with updates, and then
+the first editor saves the item with conflicting updates. Such instances are
+detected and warning messages are flashed and included in the saved item.
 
 There are two small tables within the db saved in /wiki/sql/:
-    * editlock - maintains state of edit locks on text items when locking policy is lock.
+    * editlock - maintains state of edit locks on text items when the locking policy is lock.
         * there will be 1 row for each text item being actively edited or abandoned without a Save or Cancel
         * rows for abandoned edits will be reused if a second user edits the item
-    * editdraft - saves pointers to text draft when user clicks Preview button
+    * editdraft - saves pointers to text draft when user clicks the Preview button
         * there will be 1 row per user who has clicked Modify and has not yet Saved or Cancelled
         * if a user clicks Preview while editing a second item, the users old draft will be
           deleted and the row reused to point to the new draft
@@ -28,6 +32,8 @@ To stress test edit locking use the Locust based tests in /contrib/loadtesting/.
 import os
 import time
 import sqlite3
+import random
+import string
 
 from flask import request
 from flask import g as flaskg
@@ -64,6 +70,8 @@ class Edit_Utils:
         # new items will not have rev_number, revid, nor itemid
         self.rev_number = item.meta.get(REV_NUMBER, 0)
         self.rev_id = item.meta.get(REVID, 'new-item')
+        if self.rev_id == 'new-item':
+            self.rev_id = 'new-item-' + "".join(random.choices(string.ascii_lowercase, k=10))
         self.item_id = item.meta.get(ITEMID, item.meta.get(NAME)[0])
 
         self.coding = 'utf-8'
@@ -88,7 +96,7 @@ class Edit_Utils:
         """
         Creates the SQLite3 database and tables used for saving edit drafts and edit locking.
 
-        The edit locking table is created even if locking policy is None. Wiki admin can later
+        The edit locking table is created even if locking policy is None. A wiki admin can later
         change locking policy without affecting saved drafts.
         """
         if not os.path.exists(os.path.join(app.cfg.instance_dir, SQL)):
@@ -97,14 +105,14 @@ class Edit_Utils:
             os.mkdir(os.path.join(app.cfg.instance_dir, PREVIEW))
         con = sqlite3.connect(self.sql_filename)  # opens existing file or creates new file
         cursor = con.cursor()
-        cursor.execute('''CREATE TABLE editlock(item_id TEXT PRIMARY KEY,
+        cursor.execute('''CREATE TABLE editlock(item_id TEXT NOT NULL PRIMARY KEY,
                                                 item_name TEXT,
                                                 user_name TEXT,
                                                 timeout FLOAT
                                                 )
         ''')
         cursor.execute('''
-            CREATE TABLE editdraft(user_name TEXT PRIMARY KEY,
+            CREATE TABLE editdraft(user_name TEXT NOT NULL PRIMARY KEY,
                                    item_id TEXT,
                                    item_name TEXT,
                                    rev_number INTEGER,
@@ -278,8 +286,9 @@ class Edit_Utils:
                     return LOCKED, msg
                 # if no draft, preserve starting rev_number by creating entry without rev_id
                 self.put_draft(None)
-                self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
-                                  VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
+
+                self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout) VALUES(?,?,?,?)''',
+                                    (self.item_id, self.item_name, self.user_name, timeout))
                 self.conn.commit()
         return LOCKED, msg
 
