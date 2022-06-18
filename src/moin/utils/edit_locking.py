@@ -32,8 +32,6 @@ To stress test edit locking use the Locust based tests in /contrib/loadtesting/.
 import os
 import time
 import sqlite3
-import random
-import string
 
 from flask import request
 from flask import g as flaskg
@@ -70,8 +68,6 @@ class Edit_Utils:
         # new items will not have rev_number, revid, nor itemid
         self.rev_number = item.meta.get(REV_NUMBER, 0)
         self.rev_id = item.meta.get(REVID, 'new-item')
-        if self.rev_id == 'new-item':
-            self.rev_id = 'new-item-' + "".join(random.choices(string.ascii_lowercase, k=10))
         self.item_id = item.meta.get(ITEMID, item.meta.get(NAME)[0])
 
         self.coding = 'utf-8'
