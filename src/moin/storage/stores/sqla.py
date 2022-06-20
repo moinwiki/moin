@@ -11,7 +11,9 @@ import os
 
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, LargeBinary
 from sqlalchemy.pool import StaticPool
+from sqlalchemy.exc import IntegrityError
 
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from . import (BytesMutableStoreBase, FileMutableStoreBase,
                BytesMutableStoreMixin, FileMutableStoreMixin)
 
@@ -100,7 +102,14 @@ class BytesStore(BytesMutableStoreBase):
             raise KeyError(key)
 
     def __setitem__(self, key, value):
-        self.table.insert().execute(key=key, value=value)
+        try:
+            self.table.insert().execute(key=key, value=value)
+        except IntegrityError:
+            if NAMESPACE_USERPROFILES in self.db_uri:
+                # userprofiles namespace does support revisions so we update existing row
+                self.table.update().execute(key=key, value=value)
+            else:
+                raise
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):

@@ -14,8 +14,9 @@ Optionally, you can use zlib/"gzip" compression.
 import os
 import base64
 import zlib
-from sqlite3 import connect, Row
+from sqlite3 import connect, Row, IntegrityError
 
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from . import (BytesMutableStoreBase, FileMutableStoreBase,
                BytesMutableStoreMixin, FileMutableStoreMixin)
 
@@ -116,7 +117,14 @@ class BytesStore(BytesMutableStoreBase):
         value = self._compress(value)
         with self.conn:
             value = base64.b64encode(value).decode()  # a str in base64 encoding
-            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, value))
+            try:
+                self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, value))
+            except IntegrityError:
+                if NAMESPACE_USERPROFILES in self.db_name:
+                    # userprofiles namespace does support revisions so we update existing row
+                    self.conn.execute('UPDATE {0} SET value = "{2}" WHERE key = "{1}"'.format(self.table_name, key, value))
+                else:
+                    raise
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
