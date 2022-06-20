@@ -37,7 +37,7 @@ Let's create a new instance:
 
 ::
 
- moin create-instance INSTANCE-DIRECTORY
+ moin create-instance --path INSTANCE-DIRECTORY
 
 Change into the new instance directory:
 
@@ -261,7 +261,7 @@ then you will likely want to keep your master branch uptodate:
   git pull moinwiki master # if you cloned your fork and added a remote
 
 After pulling updates, it is best to also rerun the quickinstall process
-to install any changes or new releases to the dependant packages:
+to install any changes or new releases of the dependent packages:
 
 ::
 
