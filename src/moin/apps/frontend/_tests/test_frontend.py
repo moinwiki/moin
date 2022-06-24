@@ -218,7 +218,7 @@ class TestFrontend:
 class TestUsersettings:
     reinit_storage = True  # avoid username / email collisions
 
-    @pytest.yield_fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def custom_setup(self, app):
         saved_user = flaskg.user
         flaskg.user = user.User()

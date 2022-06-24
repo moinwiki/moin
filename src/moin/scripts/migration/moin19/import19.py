@@ -225,7 +225,7 @@ class PageBackend:
                 pass  # a message was already output
             except (IOError, AttributeError):
                 print("    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f))))
-            except Exception as err:
+            except Exception:
                 logging.exception(("PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
                 for rev in item.iter_revisions():
@@ -278,7 +278,7 @@ class PageItem:
                 self.acl = page_rev.meta.get(ACL, None)
                 yield page_rev
 
-            except Exception as err:
+            except Exception:
                 logging.exception("PageRevision {0!r} {1!r} raised exception:".format(self.name, fname))
 
     def iter_attachments(self):
@@ -292,7 +292,7 @@ class PageItem:
             try:
                 yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname),
                                          self.editlog, self.acl)
-            except Exception as err:
+            except Exception:
                 logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
 
 
@@ -534,8 +534,8 @@ class EditLog(LogFile):
                     result[REVERTED_TO] = int(extra)
                 del result[EXTRA]
                 result[ACTION] = ACTION_REVERT
-        userid = result[USERID]
         # TODO
+        # userid = result[USERID]
         # if userid:
         #    result[USERID] = self.idx.user_uuid(old_id=userid, refcount=True)
         return result
@@ -788,7 +788,7 @@ class UserBackend:
             if user_re.match(uid):
                 try:
                     rev = UserRevision(self.path, uid)
-                except Exception as err:
+                except Exception:
                     logging.exception("Exception in user item processing {0}".format(uid))
                 else:
                     yield rev

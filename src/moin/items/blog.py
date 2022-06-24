@@ -61,7 +61,6 @@ class Blog(Default):
         # for now it is just one tag=value, later it could be tag=value1&tag=value2&...
         tag = request.values.get('tag')
         prefix = self.name + '/'
-        current_timestamp = int(time.time())
         terms = [Term(WIKINAME, app.cfg.interwikiname),
                  # Only blog entry itemtypes
                  Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY),

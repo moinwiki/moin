@@ -91,8 +91,6 @@ class ConverterMacro:
             args = str(args).replace('^', '^^').replace('(', '^(').replace(')', '^)')
             xpointer_moin.append(function + '(' + args + ')')
 
-        moin_args = []
-
         if pagename.startswith('^'):
             add_moin_xpointer('pages', pagename)
             if sort:

@@ -126,7 +126,7 @@ class Slapd:
                 try:
                     lo.simple_bind_s('', '')
                     started = True
-                except ldap.SERVER_DOWN as err:
+                except ldap.SERVER_DOWN:
                     time.sleep(0.1)
                 else:
                     break

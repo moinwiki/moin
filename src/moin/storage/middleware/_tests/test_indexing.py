@@ -193,9 +193,9 @@ class TestIndexingMiddleware:
     def test_documents(self):
         item_name = 'foo'
         item = self.imw[item_name]
-        _rev1 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'x'), return_rev=True)
+        item.store_revision(dict(name=[item_name, ]), BytesIO(b'x'), return_rev=True)
         rev2 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'xx'), return_rev=True)
-        _rev3 = item.store_revision(dict(name=[item_name, ]), BytesIO(b'xxx'), return_rev=True)
+        item.store_revision(dict(name=[item_name, ]), BytesIO(b'xxx'), return_rev=True)
         rev = self.imw.document(idx_name=ALL_REVS, size=2)
         assert rev
         assert rev.revid == rev2.revid

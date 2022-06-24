@@ -93,7 +93,6 @@ class Notification:
         """
         if self.action in [ACTION_TRASH, DESTROY_REV, DESTROY_ALL, ]:
             contenttype = self.meta[CONTENTTYPE]
-            coding = contenttype.split('charset=')[1]
             oldfile, newfile = self.data, BytesIO(b"")
         else:
             if self.new_data:

@@ -27,7 +27,6 @@ def test_create(tmpdir, Store):
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
 def test_destroy(tmpdir, Store):
-    dbfile = tmpdir.join('store.sqlite')
     store = test_create(tmpdir, Store)
     store.destroy()
     # XXX: check for dropped table

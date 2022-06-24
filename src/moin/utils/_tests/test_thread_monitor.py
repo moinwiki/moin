@@ -39,7 +39,7 @@ class TestMonitor:
         # activate the hook first
         Monitor_test_obj.activate_hook()
         with open(self.src, "w") as f:
-            result = Monitor_test_obj.trigger_dump(f)
+            Monitor_test_obj.trigger_dump(f)
         # read the content of first line
         with open(self.src, "r") as f:
             f.readline()

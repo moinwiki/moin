@@ -920,7 +920,7 @@ class Converter:
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         input = normalize_split_text(text)
-        parser = MoinDirectives()
+        MoinDirectives()
         while True:
             input = '\n'.join(input)
             try:

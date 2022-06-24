@@ -41,7 +41,7 @@ class TestSimple:
 
 class TestUser:
 
-    @pytest.yield_fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def saved_user(self):
         orig_user = flaskg.user
         flaskg.user = user.User()
@@ -202,7 +202,6 @@ class TestUser:
     # Trail -----------------------------------------------------------
 
     def test_trail(self):
-        pagename = 'Test_page_trail'
         name = 'Test_User_trail'
         password = name
         self.createUser(name, password)

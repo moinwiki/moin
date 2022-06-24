@@ -639,7 +639,6 @@ class Converter(ConverterMacro):
                          link_args='', external_link_url=None, alt_text=''):
         """Handle all kinds of links."""
         link_text = ''
-        link_args_list = []
         # Remove the first pipe/space, example of link_args : |arg1|arg2 or " arg1 arg2"
         parsed_args = self.parse_args(link_args[1:])
         query = None
