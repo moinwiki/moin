@@ -476,7 +476,6 @@ def item_acl_report():
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
         fqnames = gen_fqnames(meta)
-        fqname = fqnames[0]
         items_acls.append({'name': item_name,
                            'name_old': meta.get('name_old', []),
                            'itemid': item_id,

@@ -407,7 +407,6 @@ class Converter:
 
     def open_moinpage_blockcode(self, elem):
         text = ''.join(elem.itertext())
-        max_subpage_lvl = 3
         text = text.replace('\n', '\n  ' +
                             ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)))
         if self.list_level >= 0:
@@ -454,7 +453,6 @@ class Converter:
         return '\n'.join(lines)
 
     def open_moinpage_figcaption(self, elem):
-        ret = self.open_children(elem).split('\n')
         return '\n   {0}\n'.format(self.open_children(elem))
 
     def open_moinpage_emphasis(self, elem):
@@ -743,8 +741,6 @@ class Converter:
         return ret
 
     def open_moinpage_table_cell(self, elem):
-        table_cellclass = elem.attrib.get('class', '')
-        table_cellstyle = elem.attrib.get('style', '')
         number_cols_spanned = int(elem.get(moin_page.number_cols_spanned, 1))
         number_rows_spanned = int(elem.get(moin_page.number_rows_spanned, 1))
         self.table[-1].append((number_cols_spanned, number_rows_spanned, [self.open_children(elem)]))

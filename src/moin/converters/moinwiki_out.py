@@ -572,7 +572,6 @@ class Converter:
         return self.open_moinpage_ins(elem)
 
     def open_moinpage_strong(self, elem):
-        ret = Moinwiki.strong
         return "{0}{1}{2}".format(Moinwiki.strong, self.open_children(elem), Moinwiki.strong)
 
     def open_moinpage_table(self, elem):

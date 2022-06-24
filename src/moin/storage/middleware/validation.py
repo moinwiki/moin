@@ -260,7 +260,7 @@ def hostname_validator(element, state):
     a hostname (dns name)
     """
     if not state['trusted']:
-        addr = state[keys.ADDRESS]
+        # addr = state[keys.ADDRESS] # TODO
         element.value = None  # TODO: lookup(addr)
         return True
     v = element.value

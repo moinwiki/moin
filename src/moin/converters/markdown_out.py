@@ -454,7 +454,6 @@ class Converter:
         return self.open_moinpage_ins(elem)
 
     def open_moinpage_strong(self, elem):
-        ret = Markdown.strong
         return "{0}{1}{2}".format(Markdown.strong, self.open_children(elem), Markdown.strong)
 
     def open_moinpage_table(self, elem):

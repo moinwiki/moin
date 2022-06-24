@@ -41,7 +41,7 @@ class Macro(MacroPageLinkListBase):
 
             # Filter out items the user may not read.
             try:
-                item = Item.create(item_name.value)
+                Item.create(item_name.value)
                 random_item_names.append(item_name.value)
                 found += 1
             except AccessDenied:

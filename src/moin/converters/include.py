@@ -188,10 +188,6 @@ class XPointer(list):
             stack[-1].extend(top)
 
         if name:
-            if stack:
-                data = ''.join(stack.pop())
-            else:
-                data = None
             self.append(self.Entry(''.join(name), None))
 
 

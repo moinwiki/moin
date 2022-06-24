@@ -249,7 +249,7 @@ class LDAPAuth(BaseAuth):
                 logging.debug("creating user object with name {0!r} email {1!r} display name {2!r}".format(
                     username, email, display_name))
 
-            except ldap.INVALID_CREDENTIALS as err:
+            except ldap.INVALID_CREDENTIALS:
                 logging.debug("invalid credentials (wrong password?) for dn {0!r} (username: {1!r})".format(
                     dn, username))
                 return CancelLogin(_("Invalid username or password."))

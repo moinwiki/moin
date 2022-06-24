@@ -77,7 +77,7 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT, e
     else:
         try:
             wiki_base_url = app.cfg.interwiki_map[wiki_name]
-        except KeyError as err:
+        except KeyError:
             logging.warning("no interwiki_map entry for {0!r}".format(wiki_name))
             item_name = get_fqname(item_name, field, namespace)
             if wiki_name:

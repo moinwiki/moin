@@ -32,8 +32,9 @@ class Macro(MacroBlockBase):
         for filename in files:
             markup = '<<Icon({0})>>'.format(filename)
             src = url_for('static', filename='img/icons/' + filename)
-            reason = _('Icon not rendered, verify name is valid')
-            alt = '<<Icon({0})>> - {1}'.format(filename, reason)
+            # TODO: add alt attribute for img and add a macro test module
+            # reason = _('Icon not rendered, verify name is valid')
+            # alt = '<<Icon({0})>> - {1}'.format(filename, reason)
             rows.append((markup, html.img(attrib={html.src: src, html.alt: filename})))
         table = TableMixin()
         ret = table.build_dom_table(rows, head=headings)

@@ -104,7 +104,7 @@ class TestItem:
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
 
-        data = rev1_data = data * 10000
+        data *= 10000
         comment += ' again'
         # save rev 1
         item._save(meta, data, comment=comment)
@@ -241,10 +241,10 @@ class TestItem:
     def test_rename_works_with_multiple_names(self):
         content = "This is page content"
         meta = {NAME: ['First', 'Second', 'Third', ], CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}
-        r = update_item('Page', meta, content)
+        update_item('Page', meta, content)
 
         item = Item.create('Second')
-        rev = item.rename(['New name', 'First', 'Third'], comment='renamed')
+        item.rename(['New name', 'First', 'Third'], comment='renamed')
 
         item1 = Item.create('First')
         assert item1.name == 'First'

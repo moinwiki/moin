@@ -383,7 +383,6 @@ class Binary(Content):
         if member:  # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType(filename=filename)
-            content_length = None
             file_to_send = self.get_member(member)
             # force attachment download, so it uses attachment_filename
             # otherwise it will use the itemname from the URL for saving
@@ -397,7 +396,6 @@ class Binary(Content):
                 mt = MimeType(filename=filename)
             else:
                 mt = MimeType(mimestr=mimestr)
-            content_length = rev.meta[SIZE]
             file_to_send = rev.data
         if mimetype:
             content_type = mimetype
@@ -1033,7 +1031,6 @@ class DocBook(MarkupItem):
         # After creation of the BytesIO, we are at the end of the file
         # so position is the size the file.
         # and then we should move it back at the beginning of the file
-        content_length = file_to_send.tell()
         file_to_send.seek(0)
         # Important: empty filename keeps flask from trying to autodetect filename,
         # as this would not work for us, because our file's are not necessarily fs files.

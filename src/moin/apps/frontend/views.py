@@ -705,8 +705,6 @@ def convert_item(item_name):
                                fqname=split_fqname(item_name),
                                )
 
-    namespace = item.rev.meta.revision.namespace or 'default'
-    revno = item.rev.revid
     item.rev.data.seek(0)
     content = item.rev.data.read()
     input_conv = reg.get(Type(item.contenttype), type_moin_document)
@@ -1775,7 +1773,6 @@ def quicklink_item(item_name):
 def subscribe_item(item_name):
     """ Add/Remove the current wiki item to/from the user's subscriptions """
     u = flaskg.user
-    cfg = app.cfg
     msg = None
     try:
         item = Item.create(item_name)
@@ -1992,7 +1989,7 @@ class ValidPasswordRecovery(Validator):
         password = element['password1'].value
         try:
             app.cfg.cache.pwd_context.hash(password)
-        except (ValueError, TypeError) as err:
+        except (ValueError, TypeError):
             return self.note_error(element, state, 'password_problem_msg')
 
         return True
@@ -2152,7 +2149,7 @@ class ValidChangePass(Validator):
                 return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
             app.cfg.cache.pwd_context.hash(password)
-        except (ValueError, TypeError) as err:
+        except (ValueError, TypeError):
             return self.note_error(element, state, 'password_problem_msg')
         return True
 
@@ -2480,10 +2477,6 @@ def diff(item_name):
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get('bookmark', 0))
-    if flaskg.user.valid:
-        results_per_page = flaskg.user.results_per_page
-    else:
-        results_per_page = app.cfg.results_per_page
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
     terms.extend(Term(term, value) for term, value in fqname.query.items())
     query = And(terms)

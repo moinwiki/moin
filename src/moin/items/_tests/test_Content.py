@@ -190,7 +190,7 @@ class TestText:
         assert result == expected
         # test for data_form_to_internal
         test_form = 'This \r\n is \r\n a \r\n Test'
-        result = Text.data_form_to_internal(item.content, test_text)
+        result = Text.data_form_to_internal(item.content, test_form)
         expected = test_text
         assert result == expected
         # test for data_internal_to_storage

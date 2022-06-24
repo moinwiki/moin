@@ -83,11 +83,9 @@ def atom(item_name):
                     # full html rendering for new items
                     content = render_template('atom.html', get='first_revision', rev=this_rev,
                                               content=Markup(hl_item.content._render_data()), revision=this_revid)
-                content_type = 'html'
-            except Exception as e:
+            except Exception:
                 logging.exception("content rendering crashed")
                 content = _('MoinMoin feels unhappy.')
-                content_type = 'text'
             author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, '')
             if rev_comment:
