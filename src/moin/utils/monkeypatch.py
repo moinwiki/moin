@@ -12,7 +12,7 @@ please notify us, so we can remove it from here.
 
 # werkzeug patching ----------------------------------------------------------
 
-# make werkzeug's BaseRequestHandler use some more sane logging format, get
+# make werkzeug's WSGIRequestHandler use some more sane logging format, get
 # rid of the duplicate log_date_time_string() werkzeug usually outputs:
 # 2019-04-10 08:59:20,898 INFO werkzeug:97 127.0.0.1 - - [10/Apr/2019 08:59:20] "GET /Home HTTP/1.1" 200 -
 # with this monkeypatch:
@@ -21,10 +21,9 @@ import werkzeug.serving
 from werkzeug._internal import _log
 
 
-class BaseRequestHandler(werkzeug.serving.BaseRequestHandler):
+class WSGIRequestHandler(werkzeug.serving.WSGIRequestHandler):
     def log(self, type, message, *args):
         _log(type, "{0} {1}\n".format(self.address_string(), message % args))
 
 
-werkzeug.serving.BaseRequestHandler = BaseRequestHandler
-werkzeug.serving.WSGIRequestHandler = BaseRequestHandler
+werkzeug.serving.WSGIRequestHandler = WSGIRequestHandler
