@@ -16,9 +16,9 @@ from werkzeug.utils import escape
 
 from moin.utils import diff_html
 
-from moin._tests import become_trusted, update_item
+from moin._tests import update_item
 from moin.items import Item
-from moin.items.content import Content, ApplicationXTar, Binary, Text, Image, TransformableBitmapImage, MarkupItem
+from moin.items.content import Content, Binary, Text, Image, TransformableBitmapImage
 from moin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.utils.interwiki import split_fqname
@@ -131,7 +131,7 @@ class TestTransformableBitmapImage:
         item._save(meta)
         item = Item.create(item_name)
         try:
-            from PIL import Image as PILImage
+            from PIL import Image as PILImage  # noqa
             with pytest.raises(ValueError):
                 result = TransformableBitmapImage._transform(item.content, 'text/plain')
         except ImportError:
@@ -146,7 +146,7 @@ class TestTransformableBitmapImage:
         item._save(meta)
         item1 = Item.create(item_name)
         try:
-            from PIL import Image as PILImage
+            from PIL import Image as PILImage  # noqa
             result = Markup(TransformableBitmapImage._render_data_diff(item1.content, item.rev, item1.rev))
             # On Werkzeug 0.8.2+, urls with '+' are automatically encoded to '%2B'
             # The assert statement works with both older and newer versions of Werkzeug
@@ -170,7 +170,7 @@ class TestTransformableBitmapImage:
         item1._save(meta, data, comment=comment)
         item2 = Item.create(item_name)
         try:
-            from PIL import Image as PILImage
+            from PIL import Image as PILImage  # noqa
             result = TransformableBitmapImage._render_data_diff_text(item1.content, item1.rev, item2.rev)
             expected = 'The items have different data.'
             assert result == expected

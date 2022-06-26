@@ -15,7 +15,7 @@ from flask import url_for
 
 from moin.utils.tree import html
 from moin.macros._base import MacroInlineBase
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 
 class Macro(MacroInlineBase):

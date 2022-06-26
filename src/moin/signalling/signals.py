@@ -8,7 +8,7 @@
 """
 
 
-from blinker import Namespace, ANY
+from blinker import Namespace, ANY  # noqa
 
 _signals = Namespace()
 

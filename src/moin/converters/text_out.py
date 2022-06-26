@@ -12,7 +12,7 @@ way, so we get indexable plain text for our search index.
 """
 
 from . import default_registry
-from moin.utils.mime import Type, type_moin_document, type_text_plain
+from moin.utils.mime import type_moin_document, type_text_plain
 
 
 class Converter:

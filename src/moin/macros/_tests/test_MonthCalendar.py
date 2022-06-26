@@ -5,13 +5,10 @@
     MoinMoin - moin.macros.MonthCalendar Tests
 """
 
-from datetime import datetime
-
 from emeraldtree.tree import Element
 import pytest
 
 from moin.macros.MonthCalendar import Macro, parseargs, yearmonthplusoffset
-from moin.utils import paramparser
 
 
 def test_parseargs_one():

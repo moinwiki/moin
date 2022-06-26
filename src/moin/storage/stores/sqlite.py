@@ -17,8 +17,7 @@ import zlib
 from sqlite3 import connect, Row, IntegrityError
 
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from . import (BytesMutableStoreBase, FileMutableStoreBase,
-               BytesMutableStoreMixin, FileMutableStoreMixin)
+from . import (BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin)
 
 
 class BytesStore(BytesMutableStoreBase):

@@ -36,10 +36,10 @@ from werkzeug.utils import secure_filename
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
-from flask_babel import format_date, format_datetime
+from flask_babel import format_datetime
 from flask_theme import get_themes_list
 
-from flatland import Form, List
+from flatland import Form
 from flatland.validation import Validator
 
 from jinja2 import Markup
@@ -52,7 +52,7 @@ from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
 from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
 from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
@@ -63,10 +63,10 @@ from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError, M
                         FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm, find_matches)
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
-from moin import user, utils
+from moin import user
 from moin.constants.keys import *  # noqa
 from moin.constants.namespaces import *  # noqa
-from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
 from moin.utils import crypto, rev_navigation, close_file, show_time

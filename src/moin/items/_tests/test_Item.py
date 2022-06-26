@@ -11,9 +11,9 @@ import pytest
 from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
 from moin.utils.interwiki import CompositeName
-from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT, USERID,
-                                 ADDRESS, TRASH, ITEMID, NAME_EXACT, SIZE, MTIME, REV_NUMBER, NAMESPACE,
-                                 ACTION, ACTION_REVERT)
+from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
+                                 ADDRESS, TRASH, ITEMID, NAME_EXACT, SIZE, MTIME,
+                                 REV_NUMBER, NAMESPACE, ACTION, ACTION_REVERT)
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT

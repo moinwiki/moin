@@ -69,7 +69,7 @@ from moin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
 )
-from moin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, TEMPLATE,
+from moin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, TAGS, TEMPLATE,
                                  HASH_ALGORITHM, ACTION_SAVE, NAMESPACE)
 
 from moin import log

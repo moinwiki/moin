@@ -13,9 +13,9 @@ from flask import g as flaskg
 
 from whoosh.query import Term, Or
 
-from moin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
-                                 LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
-                                 NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
+from moin.constants.keys import (DEFAULT_LOCALE, EMAIL, ITEMID, LATEST_REVS, LOCALE,
+                                 NAME, NAMERE, NAMEPREFIX, NAMESPACE, SUBSCRIPTION_IDS,
+                                 SUBSCRIPTION_PATTERNS, TAGS)
 
 from moin.utils.interwiki import CompositeName
 

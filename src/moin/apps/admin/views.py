@@ -23,16 +23,16 @@ from flatland import Form
 
 from whoosh.query import Term, And, Not
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
 from moin.apps.frontend.views import _using_moin_auth
 from moin import user
 from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
-                                 NAME_OLD, REVID, REV_NUMBER, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
-                                 ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS, PARENTID)
+                                 NAME_OLD, REVID, REV_NUMBER, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED,
+                                 ACL, ACTION, ACTION_SAVE, SUBSCRIPTIONS, PARENTID)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
-from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS, READ, PUBREAD, WRITE, CREATE, ADMIN, DESTROY
+from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS, READ, WRITE, CREATE, ADMIN, DESTROY
 from moin.security import require_permission, ACLStringIterator
 from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.storage.middleware.indexing import parent_names

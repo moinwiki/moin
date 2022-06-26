@@ -6,7 +6,6 @@
 """
 from flask import g as flaskg
 
-import pytest
 from moin.utils import show_time
 
 

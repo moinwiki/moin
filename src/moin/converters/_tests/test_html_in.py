@@ -6,7 +6,6 @@ MoinMoin - Tests for moin.converters.html_in
 """
 
 
-import re
 from io import StringIO
 
 import pytest

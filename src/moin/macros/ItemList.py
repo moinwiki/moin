@@ -64,7 +64,7 @@ Examples:
 import re
 from flask import request
 from flask import g as flaskg
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils.tree import moin_page
 from moin.utils.interwiki import split_fqname
 from moin.macros._base import MacroPageLinkListBase

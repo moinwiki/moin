@@ -4,9 +4,8 @@ from moin.converters.moinwiki19_in import ConverterFormat19
 
 from moin.scripts.migration.moin19 import import19
 from moin.scripts.migration.moin19.macro_migration import migrate_macros
-from moin.scripts.migration.moin19.macros import PageList
+from moin.scripts.migration.moin19.macros import PageList  # noqa
 
-from moin.utils import paramparser
 from moin.utils.tree import moin_page
 
 

@@ -10,13 +10,12 @@ import json
 from calendar import timegm
 
 from flask import current_app as app
-from flask import g as flaskg
 
 from moin.forms import DateTimeUNIX, JSON, Names
 from moin.utils.interwiki import CompositeName
 from moin.items import Item
 from moin._tests import become_trusted
-from moin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE, FQNAME
+from moin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE
 
 
 def test_datetimeunix():

@@ -9,7 +9,6 @@ MoinMoin - import content and user data from a moin 1.9 compatible storage
 
 
 import os
-import time
 import re
 import codecs
 import hashlib
@@ -20,15 +19,15 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask_script import Command, Option
 
-from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
+from ._utils19 import unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
 # macro migration "framework"
 from .macro_migration import migrate_macros
 
 # individual macro migrations register with the migrate_macros module
-from .macros import MonthCalendar
-from .macros import PageList
+from .macros import MonthCalendar  # noqa
+from .macros import PageList  # noqa
 
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
@@ -40,7 +39,7 @@ from moin.utils.crypto import make_uuid
 from moin import security
 from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
 from moin.converters import default_registry
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page
 

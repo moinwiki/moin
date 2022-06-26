@@ -7,7 +7,7 @@
 
 from functools import cmp_to_key
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 
 class BracketError(Exception):

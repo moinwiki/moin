@@ -11,8 +11,6 @@ import difflib
 
 from werkzeug.utils import escape
 
-from moin.i18n import _, L_, N_
-
 
 def indent(line):
     eol = ''

@@ -9,8 +9,7 @@ Stores k/v pairs into memory (RAM, non-persistent!).
 Note: likely this is mostly useful for unit tests.
 """
 
-from . import (BytesMutableStoreBase, FileMutableStoreBase,
-               BytesMutableStoreMixin, FileMutableStoreMixin)
+from . import (BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin)
 
 
 class BytesStore(BytesMutableStoreBase):

@@ -14,10 +14,10 @@ import datetime
 import json
 from operator import itemgetter
 
-from flatland import (Element, Form, String, Integer, Boolean, Enum as BaseEnum, Dict, JoinedString, List, Array,
-                      DateTime as _DateTime)
+from flatland import (Form, String, Integer, Boolean, Enum as BaseEnum, JoinedString,  # noqa
+                      List, Array, DateTime as _DateTime)
 from flatland.util import class_cloner, Unspecified
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
+from flatland.validation import Validator, Present, IsEmail, URLValidator, Converted, ValueAtLeast
 from flatland.exc import AdaptationError
 
 from whoosh.query import Term, Or, Not, And
@@ -29,7 +29,7 @@ from flask import flash
 from moin.constants.forms import *  # noqa
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.utils.forms import FileStorage
 from moin.storage.middleware.validation import uuid_validator
 

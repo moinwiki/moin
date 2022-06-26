@@ -48,7 +48,7 @@ from whoosh.query import Term, And
 
 from moin.i18n import L_
 from moin.themes import render_template
-from moin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
+from moin.forms import (Form, OptionalMultilineText, SmallNatural, Tags,
                         Reference, BackReference, SelectSubmit, Text, Search, File)
 from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,

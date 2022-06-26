@@ -10,7 +10,7 @@ Routes requests to different backends depending on the namespace.
 
 from moin.constants.keys import NAME, BACKENDNAME, NAMESPACE
 
-from moin.storage.backends import BackendBase, MutableBackendBase
+from moin.storage.backends import MutableBackendBase
 
 
 class Backend(MutableBackendBase):

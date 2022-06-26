@@ -10,7 +10,7 @@ try:
     import pygments
     import pygments.formatter
     import pygments.lexers
-    from pygments.token import Token, STANDARD_TYPES
+    from pygments.token import STANDARD_TYPES
 except ImportError:
     pygments = None
 

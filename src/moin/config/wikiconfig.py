@@ -12,7 +12,7 @@ serving files to the general public on the web.
 """
 
 import os
-from moin.config.default import DefaultConfig, _default_password_checker
+from moin.config.default import DefaultConfig
 from moin.utils.interwiki import InterWikiMap
 from moin.storage import create_mapping
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS

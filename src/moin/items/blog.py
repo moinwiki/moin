@@ -6,14 +6,13 @@ MoinMoin - Blog itemtype
 """
 
 
-import time
 from datetime import datetime
 
 from flask import request, abort
 from flask import g as flaskg
 from flask import current_app as app
 
-from whoosh.query import Term, And, Prefix, DateRange
+from whoosh.query import Term, And, Prefix
 from whoosh.sorting import FunctionFacet
 
 from moin.i18n import L_

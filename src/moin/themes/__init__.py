@@ -11,7 +11,6 @@
 import os
 import urllib.request
 import urllib.parse
-import datetime
 
 from json import dumps
 
@@ -20,14 +19,15 @@ from flask import g as flaskg
 from flask import url_for, request
 from flask_theme import get_theme, render_theme_template
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
-from moin.utils.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
+from moin.utils.interwiki import (split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki,
+                                  url_for_item, CompositeName, split_fqname, get_fqname)
 from moin.utils.crypto import cache_key
 from moin.utils.forms import make_generator
 from moin.utils.clock import timed
@@ -232,7 +232,6 @@ class ThemeSupport:
                                     label = _('Remove Link')
                                 user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
-                                from moin.items import Item
                                 if flaskg.user.is_subscribed_to(item.item):
                                     label = _('Unsubscribe')
                                 else:

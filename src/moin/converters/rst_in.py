@@ -18,9 +18,7 @@ import re
 
 import docutils
 from docutils import nodes, utils, writers, core
-from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block
-from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 
 try:
@@ -29,7 +27,6 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document

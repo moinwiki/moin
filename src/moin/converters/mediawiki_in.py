@@ -17,7 +17,7 @@ from werkzeug.urls import url_encode
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
-from moin.utils.tree import html, moin_page, xlink
+from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry

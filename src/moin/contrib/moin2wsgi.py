@@ -14,7 +14,6 @@
 
 import sys
 import os
-import site
 
 from moin.app import create_app
 
