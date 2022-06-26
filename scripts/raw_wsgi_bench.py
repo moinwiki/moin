@@ -6,7 +6,6 @@
     @license: GNU GPL, see COPYING for details.
 """
 import time
-import itertools
 import sys
 import os
 
