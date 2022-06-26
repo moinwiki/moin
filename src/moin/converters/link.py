@@ -12,7 +12,7 @@ from flask import g as flaskg
 
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.wikiutil import AbsItemName
 

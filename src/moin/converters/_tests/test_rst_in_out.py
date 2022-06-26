@@ -19,15 +19,7 @@ except ImportError:
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, xinclude, html
-from moin.constants.contenttypes import CHARSET
-
-from docutils import nodes, utils, writers, core
-from docutils.parsers.rst import Parser
-from docutils.nodes import reference, literal_block
-from docutils.parsers import rst
-from docutils.parsers.rst import directives, roles
 
 from moin.converters.rst_in import Converter as conv_in
 from moin.converters.rst_out import Converter as conv_out

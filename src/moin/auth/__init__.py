@@ -142,14 +142,15 @@ from flask import current_app as app
 from jinja2 import Markup
 
 from moin import user
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 from moin import log
 logging = log.getLogger(__name__)
 
 
 def get_multistage_continuation_url(auth_name, extra_fields={}):
-    """get_continuation_url - return a multistage continuation URL
+    """
+    get_continuation_url - return a multistage continuation URL
 
     This function returns a URL that when loaded continues a multistage
     authentication at the auth method requesting it (parameter auth_name.)

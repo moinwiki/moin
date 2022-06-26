@@ -12,7 +12,7 @@ get very confusing).
 """
 
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.macros._base import MacroInlineBase
 
 

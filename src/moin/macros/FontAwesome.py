@@ -18,7 +18,6 @@ Where:
 
 from moin.utils.tree import moin_page
 from moin.macros._base import MacroInlineBase
-from moin.i18n import _, L_, N_
 
 
 class Macro(MacroInlineBase):

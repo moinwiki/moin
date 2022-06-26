@@ -16,7 +16,7 @@ import time
 from whoosh.util.cache import lru_cache
 
 from moin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
-from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAME, FQNAMES, NAME, NAMESPACE, PARENTNAMES
+from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAMES, NAME, NAMESPACE
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList

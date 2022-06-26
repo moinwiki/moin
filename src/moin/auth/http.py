@@ -20,8 +20,8 @@
 from flask import request
 
 from moin import user
-from moin.i18n import _, L_, N_
-from moin.auth import BaseAuth, GivenAuth
+from moin.i18n import _
+from moin.auth import BaseAuth
 
 from moin import log
 logging = log.getLogger(__name__)

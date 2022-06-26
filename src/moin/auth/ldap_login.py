@@ -19,7 +19,7 @@
 
 
 from moin import user
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.auth import BaseAuth, CancelLogin, ContinueLogin
 
 from moin import log

@@ -17,7 +17,7 @@ from flask import url_for
 
 from moin.utils.tree import html
 from moin.macros._base import MacroBlockBase
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.converters._table import TableMixin
 
 

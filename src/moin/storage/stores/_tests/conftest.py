@@ -8,8 +8,6 @@ MoinMoin - store test magic
 import pytest
 from ..wrappers import ByteToStreamWrappingStore
 
-from moin._tests import check_connection
-
 STORES_PACKAGE = 'moin.storage.stores'
 
 STORES = 'fs memory sqlite sqlite:compressed sqla'.split()

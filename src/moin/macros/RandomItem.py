@@ -10,8 +10,6 @@ TODO: add mimetype param and only show items matching this mimetype
 
 import random
 
-from flask import g as flaskg
-
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.items import Item

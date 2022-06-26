@@ -10,8 +10,6 @@ import sys
 
 from flask_script import Manager, Server, Command
 
-import moin
-
 
 class Help(Command):
     description = 'Quick help'

@@ -10,7 +10,7 @@ import csv
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
 from moin.utils.tree import moin_page
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 from . import default_registry
 from moin.utils.mime import Type, type_moin_document

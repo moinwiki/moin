@@ -14,7 +14,7 @@ from flask import current_app as app
 from flask_script import Command, Option
 from flask import g as flaskg
 
-from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM, NAMESPACE, NAME
+from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM, NAMESPACE
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 from moin.app import before_wiki

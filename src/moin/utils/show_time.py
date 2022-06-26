@@ -1,15 +1,13 @@
 # Copyright: 2019 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-import time
 import datetime
 import pytz
 
 from flask import g as flaskg
 import flask_babel
 
-from moin.constants.keys import TIMEZONE
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin import i18n
 
 

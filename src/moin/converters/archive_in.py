@@ -15,7 +15,7 @@ import zipfile
 from . import default_registry
 from ._table import TableMixin
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document

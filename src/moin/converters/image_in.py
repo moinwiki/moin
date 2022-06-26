@@ -7,8 +7,6 @@ MoinMoin - Image converter
 Convert image to <object> tag for the DOM Tree.
 """
 
-from emeraldtree import ElementTree as ET
-
 from werkzeug.urls import url_encode, url_decode
 
 from moin.constants.contenttypes import CHARSET

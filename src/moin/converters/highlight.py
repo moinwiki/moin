@@ -9,7 +9,7 @@ import re
 
 from flask import request
 
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.utils.tree import html, moin_page
 
 from . import default_registry

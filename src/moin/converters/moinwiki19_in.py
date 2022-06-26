@@ -15,7 +15,7 @@ from moin.constants.misc import URI_SCHEMES
 from moin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
 from moin.utils.interwiki import is_known_wiki
 from moin.utils.iri import Iri
-from moin.utils.mime import Type, type_moin_document, type_moin_wiki
+from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink
 
 from . import default_registry

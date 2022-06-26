@@ -14,8 +14,7 @@ from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import IntegrityError
 
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from . import (BytesMutableStoreBase, FileMutableStoreBase,
-               BytesMutableStoreMixin, FileMutableStoreMixin)
+from . import (BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin)
 
 KEY_LEN = 128
 VALUE_LEN = 1024 * 1024  # 1MB binary data

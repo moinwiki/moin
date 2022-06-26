@@ -30,9 +30,7 @@ Optionally, populate the empty wiki with additional commands
 import os
 import shutil
 
-from flask import current_app as app
 from flask_script import Command, Option
-from flask import g as flaskg
 
 from moin import config
 from moin import contrib

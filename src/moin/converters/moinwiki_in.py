@@ -25,7 +25,6 @@ from ._args import Arguments
 from ._args_wiki import parse as parse_arguments, object_re
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
-from ._table import TableMixin
 from . import default_registry
 
 from moin import log

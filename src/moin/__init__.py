@@ -10,7 +10,7 @@ MoinMoin - a wiki engine in Python.
 import sys
 import platform
 
-from ._version import version
+from ._version import version  # noqa
 
 project = "MoinMoin"
 

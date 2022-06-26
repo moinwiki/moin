@@ -9,8 +9,6 @@
 """
 
 
-from datetime import datetime
-
 from flask import request, Response
 from flask import current_app as app
 from flask import g as flaskg
@@ -20,7 +18,7 @@ from jinja2 import Markup
 
 from whoosh.query import Term, And
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.apps.feed import feed
 from moin.constants.keys import NAME, NAME_EXACT, WIKINAME, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
 from moin.themes import get_editor_info, render_template
@@ -35,12 +33,14 @@ logging = log.getLogger(__name__)
 @feed.route('/atom/<itemname:item_name>')
 @feed.route('/atom', defaults=dict(item_name=''))
 def atom(item_name):
-    # Currently atom feeds behave in the fol. way
-    # - Text diffs are shown in a side-by-side fashion
-    # - The current binary item is fully rendered in the feed
-    # - Image(binary)'s diff is shown using PIL
-    # - First item is always rendered fully
-    # - Revision meta(id, size and comment) is shown for parent and current revision
+    '''
+    Currently atom feeds behave in the following way
+    - Text diffs are shown in a side-by-side fashion
+    - The current binary item is fully rendered in the feed
+    - Image(binary)'s diff is shown using PIL
+    - First item is always rendered fully
+    - Revision meta(id, size and comment) is shown for parent and current revision
+    '''
     query = Term(WIKINAME, app.cfg.interwikiname)
     if item_name:
         query = And([query, Term(NAME_EXACT, item_name), ])

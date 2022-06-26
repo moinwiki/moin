@@ -90,22 +90,21 @@ In the example above, only class="comment" will be applied to detail.csv.
 
 from emeraldtree import ElementTree as ET
 import re
-import types
 import copy
 
 from flask import current_app as app
 from flask import g as flaskg
 
-from whoosh.query import Term, And, Wildcard, Regex
+from whoosh.query import Term, And, Regex
 
-from moin.constants.keys import NAME, NAME_EXACT, WIKINAME
+from moin.constants.keys import NAME_EXACT, WIKINAME
 from moin.items import Item
 from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
 from moin.utils.tree import html, moin_page, xinclude, xlink
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.converters.html_out import mark_item_as_transclusion, Attributes
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 from . import default_registry
 from ._args import Arguments

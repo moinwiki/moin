@@ -43,10 +43,9 @@ import shutil
 import re
 
 from flask import current_app as app
-from flask import g as flaskg
 from flask_script import Command, Option
 
-from whoosh.query import Every, Term, And, Wildcard, Regex
+from whoosh.query import Every, Term, And, Regex
 
 from werkzeug.exceptions import Forbidden
 

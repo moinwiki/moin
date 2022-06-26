@@ -59,7 +59,7 @@ from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
-from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
+from whoosh.fields import Schema, TEXT, ID, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, PseudoFieldPlugin
 from whoosh.qparser import WordNode
@@ -68,7 +68,6 @@ from whoosh.sorting import FieldFacet
 
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
-from moin.constants.namespaces import NAMESPACE_DEFAULT
 
 from moin import user
 from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer

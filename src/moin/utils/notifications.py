@@ -9,15 +9,13 @@ from io import BytesIO
 
 from blinker import ANY
 from urllib.parse import urljoin
-from whoosh.query import Term, And
 
 from flask import url_for, g as flaskg
 from flask import abort
 
 from moin.constants.keys import (ACTION_COPY, ACTION_RENAME, ACTION_REVERT,
-                                 ACTION_CONVERT, ACTION_SAVE, ACTION_TRASH, ALL_REVS, CONTENTTYPE,
-                                 MTIME, NAME_EXACT, WIKINAME)
-from moin.i18n import _, L_, N_
+                                 ACTION_CONVERT, ACTION_SAVE, ACTION_TRASH, CONTENTTYPE)
+from moin.i18n import _, L_
 from moin.i18n import force_locale
 from moin.items.content import Content
 from moin.mail.sendmail import sendmail

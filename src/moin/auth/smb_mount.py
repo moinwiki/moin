@@ -11,7 +11,7 @@
 """
 
 
-from moin.auth import BaseAuth, CancelLogin, ContinueLogin
+from moin.auth import BaseAuth, ContinueLogin
 
 from moin import log
 logging = log.getLogger(__name__)

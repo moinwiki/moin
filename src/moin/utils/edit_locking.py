@@ -37,7 +37,7 @@ from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
-from moin.i18n import _, L_, N_
+from moin.i18n import L_
 from moin.utils.mime import Type
 from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
 from moin.constants.keys import ITEMID, REVID, REV_NUMBER, NAME

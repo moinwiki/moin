@@ -4,7 +4,7 @@
 import re
 
 from moin.scripts.migration.moin19 import macro_migration
-from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.tree import moin_page
 
 
 CONTENT_TYPE_MACRO_FORMATTER = "x-moin/macro;name={}"

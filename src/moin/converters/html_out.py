@@ -16,10 +16,9 @@ from flask import current_app as app
 from emeraldtree import ElementTree as ET
 
 from moin import wikiutil
-from moin.i18n import _, L_, N_
-from moin.utils.tree import html, moin_page, xlink, xml, Name, xinclude
+from moin.i18n import _
+from moin.utils.tree import html, moin_page, xlink, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
-from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry, ElementException

@@ -19,7 +19,6 @@ from flask import abort
 from moin.constants import rights
 from moin.constants.keys import NAME_EXACT
 from moin import user
-from moin.i18n import _, L_, N_
 from moin.utils.pysupport import AutoNe
 
 

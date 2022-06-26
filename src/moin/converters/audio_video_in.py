@@ -8,8 +8,6 @@ Convert audio/video to <object> tag for the DOM Tree.
 """
 
 
-from emeraldtree import ElementTree as ET
-
 from . import default_registry
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, html
