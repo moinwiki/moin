@@ -76,6 +76,11 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.start('create_app total')
     app = Flask('moin')
 
+    # help command doesn't need a valid instance and environment
+    if 'help' in sys.argv or len(sys.argv) == 1:
+        clock.stop('create_app total')
+        return app
+
     clock.start('create_app load config')
     if flask_config_file:
         app.config.from_pyfile(path.abspath(flask_config_file))
