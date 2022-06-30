@@ -49,6 +49,7 @@ usually it is even just the small and thus quick latest-revs index.
 """
 
 import os
+import sys
 import shutil
 import datetime
 import time
@@ -80,6 +81,7 @@ from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 from moin.converters import default_registry
 from moin.utils.iri import Iri
+from moin.i18n import _
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -90,7 +92,8 @@ INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
-VALIDATION_HANDLING = VALIDATION_HANDLING_WARN
+# TODO: fix tests to create valid metadata
+VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
 INDEXER_TIMEOUT = 20.0
 
@@ -1220,12 +1223,15 @@ class Item(PropertiesMixin):
         m = Schema(meta)
         valid = m.validate(state)
         if not valid:
-            logging.warning("metadata validation failed, see below")
+            logging.warning("data validation skipped because metadata is invalid, see below")
+            val = []
             for e in m.children:
+                # this logging is not very helpful, shows "True, []" etc. without the field name
                 logging.warning("{0}, {1}".format(e.valid, e))
-            logging.warning("data validation skipped as we have no valid metadata")
+                if e.valid is False:
+                    val.append(str(e))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError('metadata validation failed and strict handling requested, see the log for details')
+                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}'.format(', '.join(val))))
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
@@ -1239,9 +1245,9 @@ class Item(PropertiesMixin):
             meta[SUMMARY] = ""
 
         if valid and not validate_data(meta, data):  # need valid metadata to validate data
-            logging.warning("data validation failed")
+            logging.warning("data validation failed for item {0} ".format(meta[NAME]))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError('data validation failed and strict handling requested, see the log for details')
+                raise ValueError(_('Error: nothing changed. Data unicode validation failed.'))
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
