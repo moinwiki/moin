@@ -51,7 +51,7 @@
     --bg-heading: #C9E2F8;  /* table headings and footers, captions, history and ACL report headings */
 
     --jfu-progress: #C9E2F8;  /* jfu progress bar */
-    --jfu-failed: #C9E2F8;  /* jfu progress bar for failed upload*/
+    --jfu-failed: #FCC;  /* jfu progress bar for failed upload*/
 
     --bg-trans-hover: #E1EDF7;  /* mouseover effect on transclusion corners */
 
