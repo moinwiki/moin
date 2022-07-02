@@ -80,6 +80,7 @@ from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
 from moin.scripts.migration.moin19.import19 import hash_hexdigest
+from moin.storage.middleware.validation import validate_data
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -778,11 +779,10 @@ def modify_item(item_name):
         abort(403)
     try:
         ret = item.do_modify()
-    except UnicodeDecodeError:
-        return _crash(item, None, None)
-    except ValueError:
-        # user may have changed or deleted namespace, contenttype, or strict data validation failed in indexing.py
-        flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
+    except ValueError as err:
+        # user may have changed or deleted namespace, contenttype... causing meta data validation failure
+        # or data unicode validation failed
+        flash(str(err), "error")
         return redirect(url_for_item(item_name))
     close_file(item.rev.data)
     return ret
@@ -1219,9 +1219,23 @@ def jfu_server(item_name):
     if not file_name == base_file_name:
         msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ", bad_name=base_file_name, good_name=file_name)
     contenttype = data_file.content_type  # guess by browser, based on file name
-    data = data_file.stream
     subitem_name = file_name
     data = data_file.stream
+
+    if 'text' in contenttype and 'charset' not in contenttype:
+        contenttype += ';charset=utf-8'
+    small_meta = {CONTENTTYPE: contenttype}
+    valid = validate_data(small_meta, data)
+    if not valid:
+        msg = _("UnicodeDecodeError, upload failed, not a text file, nothing saved: '%(file_name)s'. Try changing the name.", file_name=file_name)
+        ret = make_response(jsonify({"name": subitem_name,
+                                     "files": [item_name],
+                                     "message": msg,
+                                     "class": "jfu-failed",
+                                     "contenttype": contenttype_to_class(contenttype),
+                                     }), 200)
+        return ret
+
     if item_name:
         subitem_prefix = item_name + '/'
     else:
@@ -2531,6 +2545,7 @@ def _common_type(ct1, ct2):
 
 
 def _crash(item, oldrev, newrev):
+    """This is called from several places, need to handle passed message"""
     error_id = uuid.uuid4()
     logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
     return render_template("crash_view.html",
