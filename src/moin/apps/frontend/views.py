@@ -81,6 +81,7 @@ from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
 from moin.scripts.migration.moin19.import19 import hash_hexdigest
 from moin.storage.middleware.validation import validate_data
+import moin.utils.mimetype as mime_type
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -1218,12 +1219,10 @@ def jfu_server(item_name):
     file_name = secure_filename(base_file_name)
     if not file_name == base_file_name:
         msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ", bad_name=base_file_name, good_name=file_name)
-    contenttype = data_file.content_type  # guess by browser, based on file name
     subitem_name = file_name
     data = data_file.stream
-
-    if 'text' in contenttype and 'charset' not in contenttype:
-        contenttype += ';charset=utf-8'
+    mt = mime_type.MimeType(filename=file_name)
+    contenttype = mt.content_type(charset='utf-8')
     small_meta = {CONTENTTYPE: contenttype}
     valid = validate_data(small_meta, data)
     if not valid:

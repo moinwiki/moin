@@ -50,6 +50,8 @@ MIMETYPES_MORE = {
     '.dbx': 'application/docbook+xml',
     '.moin': 'text/x.moin.wiki',
     '.creole': 'text/x.moin.creole',
+    '.md': 'text/x.markdown',
+    '.markdown': 'text/x.markdown',
     '.mediawiki': 'text/x-mediawiki',
     '.ico': 'image/x-icon',
     '.svg': 'image/svg+xml',
@@ -73,6 +75,7 @@ MIMETYPES_sanitize_mapping = {
     ('application', 'x-latex'): ('text', 'latex'),
     ('application', 'x-tex'): ('text', 'tex'),
     ('application', 'javascript'): ('text', 'javascript'),
+    ('application', 'x-dos-batch'): ('text', 'bat'),
 }
 
 MIMETYPES_spoil_mapping = {}  # inverse mapping of above
