@@ -14,7 +14,7 @@ from flask import current_app as app
 from flask_script import Command, Option
 from flask import g as flaskg
 
-from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM, NAMESPACE
+from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM, NAMESPACE, WIKINAME
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 from moin.app import before_wiki
@@ -74,6 +74,7 @@ class PutItem(Command):
         meta = json.loads(meta)
         to_kill = [SIZE, HASH_ALGORITHM,  # gets re-computed automatically
                    DATAID,
+                   WIKINAME,  # use target wiki name
                    ]
         for key in to_kill:
             meta.pop(key, None)
