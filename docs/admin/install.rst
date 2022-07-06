@@ -12,14 +12,26 @@ we won't go into details:
   all other software it requires. Also your OS / dist might have a mechanism
   for updating the installed software with security fixes or to future releases.
 
-  E.g. on Debian/Ubuntu Linux: ``apt install moin2``
-- Install from PyPI: ``pip install moin2``
+  E.g. on Debian/Ubuntu Linux
+::
 
-  - Optionally, create a virtual env first for better separation or
-  - use ``pip install --user moin2`` to install into your home directory.
-  - pip will automatically install other python packages moin2 requires,
-    but you maybe have to install required non-python packages yourself.
-  - You will have to care for updates / installing security fixes yourself.
+ apt install moin2
+
+- Install from PyPI:
+::
+
+ pip install moin2
+
+- Install from Test Python Package Index as long as moin2 is not officially released:
+::
+
+  pip install --pre --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple moin
+
+- Optionally, create a virtual env first for better separation or
+- use ``pip install --user moin2`` to install into your home directory.
+- pip will automatically install other python packages moin2 requires,
+  but you maybe have to install required non-python packages yourself.
+- You will have to care for updates / installing security fixes yourself.
 
 After this, you should have a ``moin`` command available, try it:
 
@@ -46,8 +58,7 @@ Change into the new instance directory:
  cd INSTANCE-DIRECTORY
 
 You'll find a ``wikiconfig.py`` there to edit. Adapt it as you like,
-you'll find some comments in there. Review and change the settings
-for:
+you'll find some comments in there. Review and change the settings for::
 
  * sitename
  * interwikiname
@@ -69,9 +80,9 @@ sample content we provide, load it into your wiki and rebuild the indexes:
  moin load-sample
  moin index-build
 
- Or, if you have a moin 1.9.x wiki, convert it to moin 2:
+Or, if you have a moin 1.9.x wiki, convert it to moin 2:
 
- ::
+::
 
   moin import19 -d <path to 1.9 wiki/data> -s -i
 
@@ -145,7 +156,9 @@ install the packages in a virtual environment, and compile the translations
 
 The default virtual environment directory name is:
 
- * ../<PROJECT>-venv-<PYTHON>/
+::
+
+ ../<PROJECT>-venv-<PYTHON>/
 
 where <PROJECT> is the name of the project root directory, and <PYTHON>
 is the name of your python interpreter. As noted above, the default
@@ -161,8 +174,8 @@ If there are failure messages, see the troubleshooting section below.
 
 Activate the virtual environment::
 
- activate #windows
- . activate  # unix
+ activate    # in Windows
+ . activate  # in Unix or Linux
 
 Typing "./m" (or "m" on Windows) will display a menu similar to:
 
@@ -201,10 +214,10 @@ do the following to create a wiki instance and load it with sample data.:
 
 ::
 
- m sample   # in Windows
- ./m sample # in Unix
+ m sample    # in Windows
+ ./m sample  # in Unix or Linux
 
- If you want to load English help for editors (replace en with your wiki's preferred language):
+If you want to load English help for editors (replace en with your wiki's preferred language):
 
 ::
 
@@ -216,7 +229,7 @@ Next, run the built-in wiki server:
 ::
 
  m run      # in Windows
- ./m run    # in Unix
+ ./m run    # in Unix or Linux
 
 As the server starts, a few log messages will be output to the
 terminal window.  Point your browser to http://127.0.0.1:8080, the
@@ -235,7 +248,7 @@ instructions waiting for you under the Development topic.
 If you plan on using this wiki as a production wiki,
 then before you begin adding or importing data and registering users
 review the configuration options. See the sections on configuration for
-details. Be sure to edit `wikiconfig.py` and change the settings for::
+details. Be sure to edit ``wikiconfig.py`` and change the settings for::
 
  * sitename
  * interwikiname
@@ -245,19 +258,20 @@ details. Be sure to edit `wikiconfig.py` and change the settings for::
 If you plan on just using moin2 as a desktop wiki (and maybe
 help by reporting bugs), then some logical menu choices are::
 
- * `./m extras` - to install packages required for docs and moin development
- * `./m docs` - to create docs, see User tab, Documentation (local)
- * `./m del-wiki` - get rid of the sample data
- * `./m new-wiki` or `m import19 ...` - no data or moin 1.9 data
- * `./m backup` - backup wiki data as needed or as scheduled
+ ./m extras       # install packages required for docs and moin development
+ ./m docs         # create docs, see User tab, Documentation (local)
+ ./m del-wiki     # get rid of the sample data
+ ./m new-wiki     # create empty wiki or
+ ./m import19 ... # import moin 1.9 data
+ ./m backup       # backup wiki data as needed or as scheduled
 
 If you installed moin2 by cloning the repository,
-then you will likely want to keep your master branch uptodate:
+then you will likely want to keep your master branch up-to-date:
 
 ::
 
   git checkout master
-  git pull # if you cloned the moinwiki master repo OR
+  git pull                 # if you cloned the moinwiki master repo OR
   git pull moinwiki master # if you cloned your fork and added a remote
 
 After pulling updates, it is best to also rerun the quickinstall process
@@ -265,27 +279,15 @@ to install any changes or new releases of the dependent packages:
 
 ::
 
- m quickinstall  # in Windows
- ./m quickinstall # in Unix
+ m quickinstall   # in Windows
+ ./m quickinstall # in Unix or Linux
 
 Troubleshooting
 ===============
 
-PyPi down
----------
-Now and then, PyPi might be down or unreachable.
-
-There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
-you can use in such cases. You just need to tell pip to do so:
-
-::
-
- # put this into ~/.pip/pip.conf
- [global]
- index-url = http://c.pypi.python.org/simple
-
 Bad Network Connection
 ----------------------
+
 If you have a poor or limited network connection, you may run into
 trouble with the commands issued by the quickinstall.py script.
 You may see tracebacks from pip, timeout errors, etc. within the output
