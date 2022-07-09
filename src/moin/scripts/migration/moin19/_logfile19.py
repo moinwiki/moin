@@ -21,6 +21,7 @@ CHARSET = 'utf-8'
 class LogError(Exception):
     """ Base class for log errors """
 
+
 class LogMissing(LogError):
     """ Raised when the log is missing """
 
@@ -70,11 +71,11 @@ class LineBuffer:
 
         # now calculate the file offsets of all read lines
         offsets = [len(line) for line in lines]
-        offsets.append(0) # later this element will have the file offset after the last read line
+        offsets.append(0)  # later this element will have the file offset after the last read line
 
         lengthpreviousline = 0
         offset = begin
-        for i in range(linecount+1):
+        for i in range(linecount + 1):
             offset += lengthpreviousline
             lengthpreviousline = offsets[i]
             offsets[i] = offset
@@ -100,7 +101,7 @@ class LogFile:
         """
         self.loglevel = logging.NOTSET
         self.__filename = filename
-        self.__buffer = None # currently used buffer, points to one of the following:
+        self.__buffer = None  # currently used buffer, points to one of the following:
         self.__buffer1 = None
         self.__buffer2 = None
         self.buffer_size = buffer_size
@@ -137,7 +138,7 @@ class LogFile:
         """
         generate some attributes when needed
         """
-        if name == "_LogFile__rel_index": # Python black magic: this is the real name of the __rel_index attribute
+        if name == "_LogFile__rel_index":  # Python black magic: this is the real name of the __rel_index attribute
             # starting iteration from begin
             self.__buffer1 = LineBuffer(self._input, 0, self.buffer_size)
             self.__buffer2 = LineBuffer(self._input,
@@ -152,7 +153,7 @@ class LogFile:
                 # Use binary mode in order to retain \r - otherwise the offset calculation would fail.
                 self._input = open(self.__filename, "rb", )
             except IOError as err:
-                if err.errno == errno.ENOENT: # "file not found"
+                if err.errno == errno.ENOENT:  # "file not found"
                     # XXX workaround if edit-log does not exist: just create it empty
                     # if this workaround raises another error, we don't catch
                     # it, so the admin will see it.
@@ -161,7 +162,8 @@ class LogFile:
                     f.close()
                     self._input = open(self.__filename, "rb", )
                 else:
-                    logging.error("logfile: {0!r} IOERROR errno {1} ({2})".format(self.__filename, err.errno, os.strerror(err.errno)))
+                    logging.error("logfile: {0!r} IOERROR errno {1} ({2})".format(self.__filename,
+                                                                                  err.errno, os.strerror(err.errno)))
                     raise
             return self._input
         elif name == "_output":
@@ -233,7 +235,7 @@ class LogFile:
                     # change to buffer 1
                     self.__buffer = self.__buffer1
                     self.__rel_index += self.__buffer.len
-            else: # self.__buffer is self.__buffer1
+            else:  # self.__buffer is self.__buffer1
                 if self.__buffer.offsets[0] == 0:
                     # already at the beginning of the file
                     self.__rel_index = 0
@@ -254,7 +256,7 @@ class LogFile:
                 # change to buffer 2
                 self.__rel_index -= self.__buffer.len
                 self.__buffer = self.__buffer2
-            else: # self.__buffer is self.__buffer2
+            else:  # self.__buffer is self.__buffer2
                 # try to load next buffer
                 tmpbuff = LineBuffer(self._input,
                                      self.__buffer.offsets[-1],
@@ -262,9 +264,8 @@ class LogFile:
                 if tmpbuff.len == 0:
                     # end of file
                     if self.__lineno is not None:
-                        self.__lineno += (lines -
-                                         (self.__rel_index - self.__buffer.len))
-                    self.__rel_index = self.__buffer.len # point to after last read line
+                        self.__lineno += (lines - (self.__rel_index - self.__buffer.len))
+                    self.__rel_index = self.__buffer.len  # point to after last read line
                     return True
                 # shift buffers
                 self.__rel_index -= self.__buffer.len
@@ -337,7 +338,7 @@ class LogFile:
     def to_end(self):
         """moves file position to the end"""
         logging.log(self.loglevel, "LogFile.to_end {0}".format(self.__filename))
-        self._input.seek(0, 2) # to end of file
+        self._input.seek(0, 2)  # to end of file
         size = self._input.tell()
         if self.__buffer2 is None or size > self.__buffer2.offsets[-1]:
             self.__buffer2 = LineBuffer(self._input,
@@ -454,5 +455,6 @@ class LogFile:
             if line[-1] != '\n':
                 line += '\n'
             self._output.write(line)
-            self._output.close() # does this maybe help against the sporadic fedora wikis 160 \0 bytes in the edit-log?
-            del self._output # re-open the output file automagically
+            self._output.close()  # does this maybe help against the
+            # sporadic fedora wikis 160 \0 bytes in the edit-log?
+            del self._output  # re-open the output file automagically

@@ -29,7 +29,7 @@ def split_body(body):
     comments = []
     while body.startswith('#'):
         try:
-            line, body = body.split('\n', 1) # extract first line
+            line, body = body.split('\n', 1)  # extract first line
             line = line.rstrip('\r')
         except ValueError:
             line = body
@@ -43,7 +43,7 @@ def split_body(body):
         if line[1] == '#':  # two hash marks are a comment
             comments.append(line + '\n')
         else:
-            verb, args = (line[1:] + ' ').split(' ', 1) # split at the first blank
+            verb, args = (line[1:] + ' ').split(' ', 1)  # split at the first blank
             pi.setdefault(verb.lower(), []).append(args.strip())
 
     for key, value in pi.items():
@@ -52,7 +52,7 @@ def split_body(body):
             pi[key] = ' '.join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
-            pi[key] = value[-1] # use the last value to copy 1.9 parsing behaviour
+            pi[key] = value[-1]  # use the last value to copy 1.9 parsing behaviour
 
     if comments:
         body = ''.join(comments) + body
@@ -139,7 +139,7 @@ def unquoteWikiname(filename, charset=CHARSET19):
             raise InvalidFileNameError(filename)
         try:
             for i in range(0, len(group), 2):
-                byte = group[i:i+2]
+                byte = group[i:i + 2]
                 parts.append(bytes.fromhex(byte))
         except ValueError:
             # byte not in hex, e.g 'xy'
