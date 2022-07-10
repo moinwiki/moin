@@ -26,7 +26,13 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask import flash
 
-from moin.constants.forms import *  # noqa
+from moin.constants.forms import (
+    WIDGET_ANY_INTEGER, WIDGET_CHECKBOX, WIDGET_DATETIME, WIDGET_EMAIL, WIDGET_FILE, WIDGET_HIDDEN,
+    WIDGET_INLINE_CHECKBOX, WIDGET_MULTILINE_TEXT, WIDGET_MULTI_SELECT, WIDGET_PASSWORD, WIDGET_RADIO_CHOICE,
+    WIDGET_READONLY_ITEM_LINK_LIST, WIDGET_READONLY_STRING_LIST, WIDGET_SEARCH, WIDGET_SELECT,
+    WIDGET_SELECT_SUBMIT, WIDGET_SMALL_NATURAL, WIDGET_TEXT
+)
+
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
 from moin.i18n import _, L_
@@ -102,14 +108,17 @@ def validate_name(meta, itemid):
     # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
     invalid_names = [name for name in names if name.startswith(('@', '+'))]
     if invalid_names:
-        msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names))
+        msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'",
+                 invalid_names=", ".join(invalid_names))
         flash(msg, "error")
         raise NameNotValidError(msg)
 
     # Item names must not contain commas
     invalid_names = [name for name in names if ',' in name]
     if invalid_names:
-        msg = L_("Item name (%(invalid_names)s) must not contain ',' characters. Create item with 1 name, use rename to create multiple names.", invalid_names=", ".join(invalid_names))
+        msg = L_("Item name (%(invalid_names)s) must not contain ',' characters. "
+                 "Create item with 1 name, use rename to create multiple names.",
+                 invalid_names=", ".join(invalid_names))
         flash(msg, "error")
         raise NameNotValidError(msg)
 
@@ -117,7 +126,8 @@ def validate_name(meta, itemid):
     # Item names must not match with existing namespaces.
     invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
     if invalid_names:
-        msg = L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names))
+        msg = L_("Item names (%(invalid_names)s) must not match with existing namespaces.",
+                 invalid_names=", ".join(invalid_names))
         flash(msg, "error")  # duplicate message at top of form
         raise NameNotValidError(msg)
     query = And([Or([Term(NAME, name) for name in names]), Term(NAMESPACE, current_namespace)])
@@ -140,7 +150,8 @@ class ValidName(Validator):
 
     def validate(self, element, state):
         if state is None:
-            # incoming request is from +usersettings#personal; apps/frontend/views.py will validate changes to user names
+            # incoming request is from +usersettings#personal;
+            # apps/frontend/views.py will validate changes to user names
             return True
         try:
             validate_name(state['meta'], state[ITEMID])

@@ -6,7 +6,7 @@ MoinMoin - Tests for moin.utils.mime
 """
 
 
-from moin.utils.mime import *  # noqa
+from moin.utils.mime import Type
 
 
 def test_Type_init_1():

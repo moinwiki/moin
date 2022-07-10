@@ -32,7 +32,11 @@ from jinja2.runtime import Undefined
 from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from moin.constants.keys import *  # noqa
+from moin.constants.keys import (
+    BOOKMARKS, CONTENTTYPE, CURRENT, DISABLED, EMAIL, EMAIL_UNVALIDATED, ENC_PASSWORD, ITEMID, NAME, NAME_EXACT,
+    NAMEPREFIX, NAMERE, NAMESPACE, RECOVERPASS_KEY, SESSION_KEY, SESSION_TOKEN, TAGS, USEROBJ_ATTRS, WIKINAME
+)
+
 from moin.constants.misc import ANON
 from moin.i18n import _
 from moin.mail import sendmail
