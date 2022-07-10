@@ -59,7 +59,7 @@ from moin.constants.itemtypes import ITEMTYPE_TICKET
 from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from moin.items.content import NonExistentContent
 from moin.utils.interwiki import CompositeName
-from moin.constants.forms import *  # noqa
+from moin.constants.forms import WIDGET_SEARCH
 
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
@@ -94,7 +94,8 @@ OptionalUserReference = Reference.to(
 
 class AdvancedSearchForm(Form):
     q = Search
-    summary = Text.using(label=L_("Summary"), optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
+    summary = Text.using(label=L_("Summary"),
+                         optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))
@@ -105,7 +106,8 @@ class AdvancedSearchForm(Form):
 
 
 class TicketMetaForm(Form):
-    summary = Text.using(label=L_("Summary"), optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
+    summary = Text.using(label=L_("Summary"),
+                         optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))
@@ -370,7 +372,8 @@ class Ticket(Contentful):
         elif request.method == 'POST':
             form = Form.from_request(request)
             if form.validate():
-                meta, data, message, data_file = form._dump(self)  # saves new ticket revision if ticket meta has changed
+                # save new ticket revision if ticket meta has changed
+                meta, data, message, data_file = form._dump(self)
                 try:
                     if not is_new and message:
                         # user created a new comment
