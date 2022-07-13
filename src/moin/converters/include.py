@@ -252,7 +252,8 @@ class Converter:
                         for entry in xp_include:
                             name, data = entry.name, entry.data_unescape
                             # TODO: These do not include all parameters in moin 1.9 Include macro docs:
-                            # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
+                            # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending,
+                            #           items=n, skipitems=n, titlesonly, editlink)>>
                             # these are currently unsupported in moin 2.0: from, to, titlesonly, editlink
                             if name == 'pages':  # pages == pagename in moin 1.9
                                 xp_include_pages = data
@@ -417,7 +418,8 @@ class Converter:
                                     # is usually replaced by container
                                     return [container, new_trans_ptr]
                             else:
-                                # default action for inline transclusions or odd things like circular transclusion error messages
+                                # default action for inline transclusions or odd things like
+                                # circular transclusion error messages
                                 classes = child.attrib.get(html.class_, '').split()
                                 classes += ret.attrib.get(html.class_, '').split()
                                 ret.attrib[html.class_] = ' '.join(classes)

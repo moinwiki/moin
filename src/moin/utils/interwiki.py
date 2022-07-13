@@ -50,7 +50,8 @@ def get_fqname(item_name, field, namespace):
     return item_name
 
 
-def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT, endpoint='frontend.show_item', _external=False, regex=''):
+def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
+                 endpoint='frontend.show_item', _external=False, regex=''):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -216,15 +217,18 @@ def split_interwiki(wikiurl):
         'FrontPage' -> "Self", "", "", "FrontPage"
         'MoinMoin/Page with blanks' -> "MoinMoin", "", "", "Page with blanks"
         'MoinMoin/' -> "MoinMoin", "", "", ""
-        'MoinMoin/@Someid/SomeValue' -> "MoinMoin", "", "Someid", "SomeValue" if Someid field exists or "MoinMoin", "", "", "Someid/SomePage" if not
+        'MoinMoin/@Someid/SomeValue' -> "MoinMoin", "", "Someid", "SomeValue" if Someid field exists or
+                                        "MoinMoin", "", "", "Someid/SomePage" if not
         'MoinMoin/interwikins/AnyPage' -> "MoinMoin", "interwikins", "", "AnyPage"
-        'ns/AnyPage' -> "Self", "ns", "", "AnyPage" if ns namespace exists or "Self", "", "", "ns:AnyPage" if not.
+        'ns/AnyPage' -> "Self", "ns", "", "AnyPage" if ns namespace exists or
+                        "Self", "", "", "ns:AnyPage" if not.
         'ns1/ns2/AnyPage' -> "Self", "ns1/ns2", "", "AnyPage" if ns1/ns2 namespace exists OR
                              "Self", "ns1", "", "ns2/AnyPage" if ns1 namespace exists OR
                              "Self", "", "", "ns1/ns2/AnyPage" else.
-        'MoinMoin/ns/@Somefield/AnyPage' -> "MoinMoin", "ns", "", "@Somefield/AnyPage" if ns namespace exists and field Somefield does not OR
-                                         "MoinMoin", "ns", "Somefield", "AnyPage" if ns namespace and field Somefield exist OR
-                                         "MoinMoin", "", "", "ns/@Somefield/AnyPage" else.
+        'MoinMoin/ns/@Somefield/AnyPage' ->
+            "MoinMoin", "ns", "", "@Somefield/AnyPage" if ns namespace exists and field Somefield does not OR
+            "MoinMoin", "ns", "Somefield", "AnyPage" if ns namespace and field Somefield exist OR
+            "MoinMoin", "", "", "ns/@Somefield/AnyPage" else.
         :param wikiurl: the url to split
         :rtype: tuple
         :returns: (wikiname, namespace, field, pagename)

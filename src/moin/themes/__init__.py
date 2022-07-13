@@ -114,7 +114,8 @@ class ThemeSupport:
                 # We use the request url to retrieve the terms for mtime and rev_number
                 # The request urls for short form searches and ajax searches are similar to the following:
                 # http://127.0.0.1:5000/+search?q=mtime%3A2022+rev_number%3A2
-                # http://127.0.0.1:5000/+search?q=mtime%3A2022-02&history=false&time_sorting=default&filetypes=all%2C&boolajax=true&is_ticket= HTTP/1.1
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022-02&history=false&time_sorting=default&filetypes=all
+                #     %2C&boolajax=true&is_ticket= HTTP/1.1
                 url = request.url
                 url = urllib.parse.unquote(url)
                 args = url.split('?q=')[1]
@@ -305,7 +306,8 @@ class ThemeSupport:
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
         if fqname.field != NAME_EXACT:
-            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]  # flaskg.unprotected_storage.get_item(**fqname.query)
+            # flaskg.unprotected_storage.get_item(**fqname.query)
+            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]
         namespace = segment1_namespace = fqname.namespace
         item_name = fqname.value
         if not item_name:

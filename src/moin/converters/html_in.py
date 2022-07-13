@@ -262,19 +262,22 @@ class Converter:
         # We should ignore this tag
         if element.tag.name in self.ignored_tags:
             # tell user output from obsolete tags like "center" is suppressed
-            msg = _("Tag '%(invalid_tag)s' is not supported; all tag contents are discarded.", invalid_tag=element.tag.name)
+            msg = _("Tag '%(invalid_tag)s' is not supported; all tag contents are discarded.",
+                    invalid_tag=element.tag.name)
             self.no_dups_flash.log(msg, "info")
             logging.debug("WARNING : Ignored tag : {0}".format(element.tag.name))
             return
 
         # Otherwise we process children of the unknown element
-        msg = _("Tag '%(invalid_tag)s' is not known; tag ignored but children are processed.", invalid_tag=element.tag.name)
+        msg = _("Tag '%(invalid_tag)s' is not known; tag ignored but children are processed.",
+                invalid_tag=element.tag.name)
         self.no_dups_flash.log(msg, "info")
         logging.debug("WARNING : Unknown tag : {0}".format(element.tag.name))
         return self.do_children(element)
 
-    # TODO: if this is useful, it should be documented. Normally <BASE..> tags are in <HEAD> and browser modifies relative urls.
-    # Here the base_url is used to create fully qualified links within A, OBJECT, and IMG tags.
+    # TODO: if this is useful, it should be documented. Normally <BASE..> tags are in <HEAD> and
+    # browser modifies relative urls.
+    # Here the base_url is used to create fully qualified links within A, OBJECT and IMG tags.
     def visit_xhtml_base(self, element):
         """
         Function to store the base url for the relative url of the document
@@ -387,7 +390,8 @@ class Converter:
             if allowed_uri_scheme(href):
                 attrib[key] = href
             else:
-                # invalid uri schemes like: <p><a href="javascript:alert('hi')">Test</a></p> are converted to: <p><javascript:alert('hi')"</p>
+                # invalid uri schemes like:
+                # <p><a href="javascript:alert('hi')">Test</a></p> are converted to: <p><javascript:alert('hi')"</p>
                 return href
         return self.new_copy(moin_page.a, element, attrib)
 

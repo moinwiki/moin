@@ -211,7 +211,10 @@ def _verify_parents(self, new_name, namespace, old_name=''):
         fqname = CompositeName(namespace, NAME_EXACT, root_name)
         parent_item = flaskg.unprotected_storage.get_item(**fqname.query)
         if parent_item.itemid is None:
-            raise MissingParentError(_("Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.", new_name=new_name, parent_name=name_segments[idx]))
+            raise MissingParentError(_(
+                "Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.",
+                new_name=new_name, parent_name=name_segments[idx]
+            ))
 
 
 class RegistryItem(RegistryBase):
@@ -245,8 +248,8 @@ item_registry = RegistryItem()
 
 
 def register(cls):
-    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order),
-                           cls.shown)
+    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name,
+                                              cls.description, cls.order), cls.shown)
     return cls
 
 
@@ -334,7 +337,9 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
 
 class BaseChangeForm(Form):
     # autofocus=True causes javascript autoscroll in textarea to fail when using Chrome, Opera, or Maxthon browsers
-    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
+    comment = OptionalText.using(label=L_('Comment')).with_properties(
+        placeholder=L_("Comment about your change"), autofocus=False
+    )
     submit_label = L_('OK')
     preview_label = L_('Preview')
     cancel_label = L_('Cancel')
@@ -384,8 +389,13 @@ class ACLValidator(Validator):
 
 
 class BaseMetaForm(Form):
-    # Flatland doesn't distinguish between empty value and nonexistent value, use None for noneexistent and Empty for empty
-    acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List - Use 'None' for default")).validated_by(ACLValidator())
+    # Flatland doesn't distinguish between empty value and nonexistent value,
+    # use None for noneexistent and Empty for empty
+    acl = (
+        RequiredText.using(label=L_("ACL"))
+        .with_properties(placeholder=L_("Access Control List - Use 'None' for default"))
+        .validated_by(ACLValidator())
+    )
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     name = Names
     tags = Tags
@@ -638,9 +648,11 @@ class Item:
         else:
             # rename
             if ajax:
-                messages.append(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=old_name, new_name=new_name))
+                messages.append(L_('The item "%(name)s" was renamed to "%(new_name)s".',
+                                   name=old_name, new_name=new_name))
             else:
-                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=old_name, new_name=new_name), 'info')
+                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".',
+                         name=old_name, new_name=new_name), 'info')
         removed_names = set(self.meta[NAME]) - set(names)
         removed_names = tuple(x + '/' for x in removed_names)
         if removed_names or delete:
@@ -652,7 +664,8 @@ class Item:
                     child_newname = None
                     old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
                     item = Item.create(old_fqname.fullname)
-                    item._save(item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete)
+                    item._save(item.meta, item.content.data, names=child_newname, action=action,
+                               comment=comment, delete=delete)
                     if ajax:
                         messages.append(L_('The subitem "%(name)s" was deleted.', name=old_name))
                     else:
@@ -669,9 +682,11 @@ class Item:
                                 working_name = [child_newname if x == child_oldname else x for x in working_name]
                                 old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child_oldname)
                                 item = Item.create(old_fqname.fullname)
-                                item._save(item.meta, item.content.data, names=working_name, action=action, comment=comment, delete=delete)
+                                item._save(item.meta, item.content.data, names=working_name, action=action,
+                                           comment=comment, delete=delete)
                                 new_name = working_name if len(working_name) > 1 else working_name[0]
-                                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".', name=old_name, new_name=new_name), 'info')
+                                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".',
+                                         name=old_name, new_name=new_name), 'info')
                                 close_file(item.rev.data)
         return messages, subitem_names
 
@@ -686,7 +701,9 @@ class Item:
                 # verify new names do not exist
                 fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
                 if flaskg.storage.get_item(**fqname.query):
-                    raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
+                    raise NameNotUniqueError(L_(
+                        "An item named %s already exists in the namespace %s." % (name, fqname.namespace)
+                    ))
             if '/' in name:
                 # if this is a subitem, verify all parent items exist
                 _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
@@ -744,13 +761,16 @@ class Item:
                     destroyed_names += item.names
                 else:
                     if ajax:
-                        messages.append(L_('Error: The subitem "%(name)s" was not destroyed, permission denied.', name=old_name))
+                        messages.append(L_('Error: The subitem "%(name)s" was not destroyed, permission denied.',
+                                           name=old_name))
                     else:
-                        flash(L_('Error: The subitem "%(name)s" was not destroyed, permission denied.', name=old_name), 'info')
+                        flash(L_('Error: The subitem "%(name)s" was not destroyed, permission denied.',
+                                 name=old_name), 'info')
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
-            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.', rev_number=self.meta['rev_number'], name=old_name), 'info')
+            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.',
+                     rev_number=self.meta['rev_number'], name=old_name), 'info')
         return messages, destroyed_names
 
     def modify(self, meta, data, comment='', contenttype_guessed=None, **update_meta):
@@ -872,7 +892,8 @@ class Item:
             deleted_names = set(current_names) - set(new_names)
             if deleted_names:  # some names have been deleted.
                 meta[NAME_OLD] = current_names
-                # if no names left, then set the trash but not if the item is a ticket (tickets get closed, not deleted)
+                # if no names left, then set the trash
+                # but not if the item is a ticket (tickets get closed, not deleted)
                 if not new_names and (ITEMTYPE not in meta or not meta[ITEMTYPE] == ITEMTYPE_TICKET):
                     meta[TRASH] = True
                     meta[NAME] = None
@@ -960,7 +981,8 @@ class Item:
             variables['MAILTO'] = "<<MailTo({0})>>".format(obfuscated_email_address)
             variables['EMAIL'] = "<<MailTo({0})>>".format(email)
         else:
-            # penalty for not being logged in is a mangled variable, else next user to save item may accidentally reveal his email address
+            # penalty for not being logged in is a mangled variable,
+            # else next user to save item may accidentally reveal his email address
             variables['MAILTO'] = "@ EMAIl@"
             variables['EMAIL'] = "@ MAILTO@"
 
@@ -1114,7 +1136,9 @@ class Item:
         """
         fqname = self.fqname
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
-        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)
+        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(
+            startswith, selected_groups, isglobalindex
+        )
         if not fqname.value.startswith(NAMESPACE_ALL + '/') and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
         revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
@@ -1196,7 +1220,8 @@ class Default(Contentful):
         :param link_text: unchanged or replaced by alert message
         :return: path to help, link text
         """
-        query = And([Term(NAMESPACE, "help-" + flaskg.user.language), Term(NAME_EXACT, content_name), Term(WIKINAME, app.cfg.interwikiname)])
+        query = And([Term(NAMESPACE, "help-" + flaskg.user.language), Term(NAME_EXACT, content_name),
+                     Term(WIKINAME, app.cfg.interwikiname)])
         results = list(flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None))
         if results:
             return "/help-" + flaskg.user.language + "/" + content_name, link_text
@@ -1222,7 +1247,8 @@ class Default(Contentful):
 
     def do_modify(self):
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
-            abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
+            abort(403, description=' '
+                  + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
 
         method = request.method
         if method in ['GET', 'HEAD']:
@@ -1317,7 +1343,8 @@ class Default(Contentful):
                     if 'charset' in self.contenttype:
                         draft, draft_data = edit_utils.get_draft()
                         if draft:
-                            # will always be a draft for normal users, but bot (as in load testing) may post without prior get
+                            # will always be a draft for normal users,
+                            # but bot (as in load testing) may post without prior get
                             u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                             if not rev_id == 'new-item':
                                 original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
@@ -1335,14 +1362,16 @@ class Default(Contentful):
                                 return redirect(url_for_item(**self.fqname.split))
 
                             if rev_number < self.meta.get('rev_number', 0):
-                                # we have conflict - someone else has saved item, create and save 3-way diff, give user error message to fix it
+                                # we have conflict - someone else has saved item, create and save 3-way diff,
+                                # give user error message to fix it
                                 saved_item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
                                 charset = saved_item.contenttype.split('charset=')[1]
                                 saved_text = saved_item.content.data.decode(charset)
                                 data3 = diff3.text_merge(original_text, saved_text, data)
                                 data = data3
                                 comment = _("CONFLICT ") + comment or ''
-                                flash(_("An edit conflict has occurred, edit this item again to resolve conflicts."), "error")
+                                flash(_("An edit conflict has occurred, edit this item again to resolve conflicts."),
+                                      "error")
 
                     # save the new revision, unlock, delete draft
                     contenttype_qs = request.values.get('contenttype')
@@ -1362,7 +1391,8 @@ class Default(Contentful):
                         edit_utils.cursor_close()
                         return redirect(url_for_item(**self.fqname.split))
 
-        # prepare to show modify.html form, request is either +Modify GET or Preview (Save and Cancel processing complete)
+        # prepare to show modify.html form, request is either +Modify GET or
+        # Preview (Save and Cancel processing complete)
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
             help = self.doc_link(*help)
@@ -1379,12 +1409,17 @@ class Default(Contentful):
                 u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                 if save_time:
                     # if revno = current: you may recover a saved draft by clicking load draft button
-                    # if revno < current: a old draft is available, loading it will create a conflict that  must be merged manually
+                    # if revno < current: a old draft is available, loading it will create a conflict
+                    # that  must be merged manually
                     interval, number = show_time.duration(time() - save_time)
                     if self.rev.meta.get(REV_NUMBER, 0) == rev_number:
-                        flash(L_("You may recover your draft saved %(number)s %(interval)s ago by clicking the 'Load Draft' button.", number=number, interval=interval, ), 'info')
+                        flash(L_("You may recover your draft saved %(number)s %(interval)s "
+                                 "ago by clicking the 'Load Draft' button.",
+                                 number=number, interval=interval, ), 'info')
                     else:
-                        flash(L_("Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to merge conflicting updates.", number=number, interval=interval, ), 'error')
+                        flash(L_("Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard "
+                                 "or 'Load Draft', then 'Save' to merge conflicting updates.",
+                                 number=number, interval=interval, ), 'error')
 
         if app.cfg.edit_locking_policy == LOCK:
             # we pass lock_duration so javascript can show alert before timer expires
@@ -1394,7 +1429,8 @@ class Default(Contentful):
         edit_utils.cursor_close()
         # enable sidebar themes to show OK, Preview, Cancel buttons that do not scroll off display
         is_modify_text = True if 'text' in self.contenttype else False
-        # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
+        # if request is +modify GET we show modify form, else if POST Preview
+        # we show modify form + diff + rendered item
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,

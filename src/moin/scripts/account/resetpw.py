@@ -45,7 +45,8 @@ def set_password(uid, password, notify=False, skip_invalid=False, subject=None, 
         u.save()
         if notify and not u.disabled:
             if not u.email:
-                raise UserHasNoEMail('Notification was requested, but User profile does not have a validated E-Mail address (name: %r id: %r)!' % (u.name, u.itemid))
+                raise UserHasNoEMail('Notification was requested, but User profile does not have '
+                                     'a validated E-Mail address (name: %r id: %r)!' % (u.name, u.itemid))
             mailok, msg = u.mail_password_recovery(subject=subject, text=text)
             if not mailok:
                 raise MailFailed(msg)
@@ -71,9 +72,11 @@ class Set_Password(Command):
         Option('--subject', required=False, dest='subject', type=str,
                help='Subject text for the password reset notification E-Mail.'),
         Option('--text', required=False, dest='text', type=str,
-               help='Template text for the password reset notification E-Mail. Default: use the builtin standard template'),
+               help='Template text for the password reset notification E-Mail. '
+                    'Default: use the builtin standard template'),
         Option('--text-from-file', required=False, dest='text_file', type=str,
-               help='Read full template for the password reset notification E-Mail from the given file, overrides --text. Default: None'),
+               help='Read full template for the password reset notification E-Mail from the given file, '
+                    'overrides --text. Default: None'),
         Option('--skip-invalid', required=False, dest='skip_invalid', action='store_true',
                help='If a user\'s password hash is already invalid (pw is already reset), skip this user.'),
     )
@@ -109,7 +112,8 @@ class Set_Password(Command):
             if email is None:
                 email = meta.get(EMAIL_UNVALIDATED)
                 if email is None:
-                    raise ValueError("neither EMAIL nor EMAIL_UNVALIDATED key is present in user profile metadata of uid %r name %r" % (uid, name))
+                    raise ValueError("neither EMAIL nor EMAIL_UNVALIDATED key is present in "
+                                     "user profile metadata of uid %r name %r" % (uid, name))
                 else:
                     email += '[email_unvalidated]'
             try:

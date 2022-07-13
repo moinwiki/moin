@@ -175,12 +175,14 @@ class Dump(Command):
             rendered = rendered.replace('src="/static/', 'src="static/')
             rendered = rendered.replace('src="/+serve/', 'src="+serve/')
             rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
-            rendered = rendered.replace('<a href="">', '<a href="{0}">'.format(app.cfg.default_root))  # TODO: fix basic theme
+            # TODO: fix basic theme
+            rendered = rendered.replace('<a href="">', '<a href="{0}">'.format(app.cfg.default_root))
             # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
             rendered = re.sub(invalid_src, valid_src, rendered)
             rendered = self.subitems(rendered)
 
-            # copy raw data for all items to output /+get directory; images are required, text items are of marginal/no benefit
+            # copy raw data for all items to output /+get directory;
+            # images are required, text items are of marginal/no benefit
             item = app.storage[current_rev.fqname.fullname]
             rev = item[CURRENT]
             with open(get_dir + '/' + file_name, 'wb') as f:
@@ -189,7 +191,8 @@ class Dump(Command):
             # save rendered items or raw data to dump directory root
             contenttype = item.meta['contenttype'].split(';')[0]
             if contenttype in CONTENTTYPE_MEDIA and filename.endswith(CONTENTTYPE_MEDIA_SUFFIX):
-                # do not put a rendered html-formatted file with a name like video.mp4 into root; browsers want raw data
+                # do not put a rendered html-formatted file with a name like video.mp4 into root;
+                # browsers want raw data
                 with open(filename, 'wb') as f:
                     rev.data.seek(0)
                     shutil.copyfileobj(rev.data, f)
@@ -244,7 +247,8 @@ class Dump(Command):
                 with open(norm(join(html_root, target)), 'wb') as f:
                     f.write(page.encode('utf8'))
         else:
-            print('Error: index pages not created because no home page exists, expected an item named "{0}".'.format(app.cfg.default_root))
+            print('Error: index pages not created because no home page exists, expected an item named "{0}".'.format(
+                app.cfg.default_root))
 
     def subitems(self, s, target='href="'):
         """

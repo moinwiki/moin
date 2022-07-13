@@ -89,7 +89,8 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
             try:
                 namespace, pattern = value.split(":", 1)
             except ValueError:
-                logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+                logging.exception("User {0} has invalid subscription entry: {1}".format(
+                    flaskg.user.name[0], subscription))
                 continue
             if item_namespace == namespace:
                 if keyword == NAMEPREFIX:

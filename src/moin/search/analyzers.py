@@ -22,7 +22,8 @@ class MimeTokenizer(Tokenizer):
         create tokens for moinwiki, jpg, and mp3.
 
         Input: "text/x.moin.wiki;charset=utf-8"
-        Output: "text/x.moin.wiki;charset=utf-8", "text", "moinwiki", "x.moin.wiki", "x", "moin", "wiki", "charset=utf-8", "charset", "utf-8"
+        Output: "text/x.moin.wiki;charset=utf-8", "text", "moinwiki", "x.moin.wiki", "x", "moin",
+                "wiki", "charset=utf-8", "charset", "utf-8"
 
         Input: "application/pdf"
         Output: "application/pdf", "application", "pdf"

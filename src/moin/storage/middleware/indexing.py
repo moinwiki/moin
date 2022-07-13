@@ -353,8 +353,10 @@ class IndexingMiddleware:
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
-        # field_boosts favor hits on names, tags, summary, comment, content, namengram, summaryngram, and contentngram respectively
-        # when query_parser default search includes [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT].
+        # field_boosts favor hits on names, tags, summary, comment, content, namengram,
+        # summaryngram and contentngram respectively
+        # when query_parser default search includes [NAMES, NAMENGRAM, TAGS, SUMMARY,
+        # SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT].
         # Note *NGRAMS are only present in latest_revs index, see below
         common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
@@ -1231,7 +1233,9 @@ class Item(PropertiesMixin):
                 if e.valid is False:
                     val.append(str(e))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}'.format(', '.join(val))))
+                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}'.format(
+                    ', '.join(val)
+                )))
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we

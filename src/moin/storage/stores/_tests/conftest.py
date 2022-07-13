@@ -17,7 +17,9 @@ constructors = {
     'memory': lambda store, _: store(),
     'fs': lambda store, tmpdir: store(str(tmpdir.join('store'))),
     'sqlite': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=0),
-    'sqlite:compressed': lambda store, tmpdir: store(str(tmpdir.join('store.sqlite')), 'test_table', compression_level=1),
+    'sqlite:compressed': lambda store, tmpdir: store(
+        str(tmpdir.join('store.sqlite')), 'test_table', compression_level=1
+    ),
     'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')), 'test_table'),
 }
 

@@ -355,7 +355,9 @@ class Converter:
         xpointer similar to: 'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
         TODO: xpointer format is ugly, Arguments class would be easier to use here.
 
-        The include moin 2.x macro (per include.py) supports: pages (pagename), sort, items, skipitems, heading, and level.
+        The moin2 include macro (per include.py) supports:
+            pages (pagename), sort, items, skipitems, heading, and level.
+
         If incoming href == '', then there will be a pages value similar to '^^ma' that needs to be unescaped.
         TODO: some 1.9 features have been dropped.
         """

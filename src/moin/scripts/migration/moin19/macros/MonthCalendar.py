@@ -13,7 +13,9 @@ CONTENT_TYPE_MACRO_FORMATTER = "x-moin/macro;name={}"
 MACRO_NAME_MONTH_CALENDAR = "MonthCalendar"
 
 
-def parseargs_legacy(args, defpagename, defyear, defmonth, defoffset, defoffset2, defheight6, defanniversary, deftemplate):
+def parseargs_legacy(
+        args, defpagename, defyear, defmonth, defoffset, defoffset2, defheight6, defanniversary, deftemplate
+):
     """ Slightly modified parsing function from MonthCalendar.py in moin-1.9
 
     From the moin-1.9 version of the function
@@ -68,7 +70,8 @@ def convert_month_calendar_macro_syntax(node):
         if elem.tag.name == 'arguments':
             args_before = elem.text
     if args_before:
-        parmpagename, parmyear, parmmonth, parmoffset, parmoffset2, parmheight6, parmanniversary, parmtemplate = parseargs_legacy(args_before, None, None, None, None, None, False, False, None)
+        (parmpagename, parmyear, parmmonth, parmoffset, parmoffset2, parmheight6, parmanniversary, parmtemplate,
+         ) = parseargs_legacy(args_before, None, None, None, None, None, False, False, None)
 
         # Warn if parmoffset2 or parmtemplate are set,
         # they are not supported by the current
@@ -87,7 +90,9 @@ def convert_month_calendar_macro_syntax(node):
             'anniversary': 'true' if parmanniversary else False,
         }
 
-        args_after = ','.join(["{}={}".format(key, args_after_dict[key]) for key in args_after_dict if args_after_dict[key]])
+        args_after = ','.join(
+            ["{}={}".format(key, args_after_dict[key]) for key in args_after_dict if args_after_dict[key]]
+        )
 
     for elem in node.iter_elements():
         if elem.tag.name == 'arguments':

@@ -294,7 +294,8 @@ class Content:
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE), Term(NAMESPACE, self.item.fqname.namespace)]
+        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE),
+                 Term(NAMESPACE, self.item.fqname.namespace)]
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)

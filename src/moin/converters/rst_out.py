@@ -341,9 +341,9 @@ class Converter:
                     if self.last_closed == "p":
                         childrens_output.append('\n\n')
                 elif self.status[-1] == "list":
-                    child =\
-                        re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(
-                            ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                    child = re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' * (
+                        len(''.join(self.list_item_labels)) + len(self.list_item_labels)
+                    ), m.group(1)), child)
                     if self.last_closed == "p":
                         childrens_output.append(
                             '\n' + ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)))
@@ -352,9 +352,9 @@ class Converter:
                         childrens_output.append(self.define_references())
                         childrens_output.append('\n')
                 elif self.status[-2] == "list":
-                    child =\
-                        re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' *
-                               (len(''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                    child = re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' * (
+                        len(''.join(self.list_item_labels)) + len(self.list_item_labels)
+                    ), m.group(1)), child)
                 childrens_output.append(child)
                 self.last_closed = 'text'
         self.delete_newlines = delete_newlines
@@ -712,9 +712,9 @@ class Converter:
         self.status.pop()
         table = repr(self.tablec)
         if self.status[-1] == "list":
-            table =\
-                re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(
-                    ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), "\n" + table)
+            table = re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' * (
+                len(''.join(self.list_item_labels)) + len(self.list_item_labels)
+            ), m.group(1)), "\n" + table)
             return table + ReST.p
         return '\n' + table + ReST.linebreak
 
