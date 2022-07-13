@@ -121,7 +121,8 @@ def check_template_indentation(lines, filename, logger):
                     block_end = block_endings.get(block_start)
                     if not block_end:
                         # should never get here, mismatched indent_after and block_endings
-                        logger.log(filename, "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
+                        logger.log(filename,
+                                   "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
                         continue
                     if any(x in stripped for x in block_end):
                         # found line similar to: {% block ... %}...{% endblock %}
@@ -172,12 +173,17 @@ def check_template_spacing(lines, filename, logger):
         if m:
             m_start = [m.start() for m in re.finditer('{%|{{|{#', line)]
             for index in m_start:
-                if not line.startswith((' ', '- '), index + 2) and not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-'):
-                    logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
+                if (not line.startswith((' ', '- '), index + 2) and
+                        not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-')):
+                    logger.log(filename,
+                               'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
             m_end = [m.start() for m in re.finditer('%}|}}|#}', line)]
             for index in m_end:
-                if not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2)) and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}'):
-                    logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index - 2:index + 2], idx + 1))
+                if (not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2))
+                        and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}')):
+                    logger.log(filename,
+                               'Missing space within "%s" on line %d - not fixed!'
+                               % (line[index - 2:index + 2], idx + 1))
 
 
 def check_files(filename, suffix):
@@ -318,7 +324,10 @@ def check_js_phrases(lines, filename):
             if m.group(1) in phrases:
                 phrases_used.add(m.group(1))
             else:
-                print('Error: %s file at line %s has phrase not defined in /templates/dictionary.js.' % (filename, count))
+                print(
+                    'Error: %s file at line %s has phrase not defined in /templates/dictionary.js.'
+                    % (filename, count)
+                )
                 print('   ', line.lstrip())
         else:
             m = bad_pat.search(line)
