@@ -89,7 +89,8 @@ class Macro(MacroPageLinkListBase):
             try:
                 key, val = [x.strip() for x in arg.split('=')]
             except ValueError:
-                raise ValueError(_('ItemList macro: Argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg))
+                raise ValueError(_('ItemList macro: Argument "%s" does not follow <key>=<val> format '
+                                   '(arguments, if more than one, must be comma-separated).' % arg))
 
             if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
                 raise ValueError(_("ItemList macro: The key's value must be bracketed by matching quotes."))

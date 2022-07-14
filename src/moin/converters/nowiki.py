@@ -36,7 +36,9 @@ class Converter:
 
     def invalid_args(self, elem, all_nowiki_args):
         """Insert an error message into output."""
-        message = _('Defaulting to plain text due to invalid arguments: "{arguments}"').format(arguments=all_nowiki_args[0])
+        message = _(
+            'Defaulting to plain text due to invalid arguments: "{arguments}"'
+        ).format(arguments=all_nowiki_args[0])
         admonition = moin_page.div(attrib={moin_page.class_: 'error'}, children=[moin_page.p(children=[message])])
         elem.append(admonition)
 

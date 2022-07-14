@@ -81,7 +81,8 @@ class Notification:
         if self.action == ACTION_SAVE:
             self.action = ACTION_CREATE if meta is None else ACTION_MODIFY
 
-        kw = dict(fqname=str(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0, item_url=url_for_item(self.fqname))
+        kw = dict(fqname=str(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0,
+                  item_url=url_for_item(self.fqname))
         self.notification_sentence = L_(MESSAGES[self.action], **kw)
 
     def get_content_diff(self):
@@ -136,7 +137,8 @@ class Notification:
         """
         if self.new_data is None or self.data is None:
             return ""
-        diff_rel_url = url_for('frontend.diff', item_name=self.fqname, rev1=self.meta['revid'], rev2=self.new_meta['revid'])
+        diff_rel_url = url_for('frontend.diff', item_name=self.fqname, rev1=self.meta['revid'],
+                               rev2=self.new_meta['revid'])
         return urljoin(domain, diff_rel_url)
 
     def render_templates(self, content_diff, meta_diff):
@@ -188,9 +190,15 @@ def send_notifications(app, fqname, action, data=None, meta=None, new_data=None,
     :param kwargs: optional comment
     """
     if new_meta is None:
-        subscribers = {subscriber for subscriber in get_subscribers(**meta) if subscriber.itemid != flaskg.user.itemid}
+        subscribers = {
+            subscriber for subscriber in get_subscribers(**meta)
+            if subscriber.itemid != flaskg.user.itemid
+        }
     else:
-        subscribers = {subscriber for subscriber in get_subscribers(**new_meta) if subscriber.itemid != flaskg.user.itemid}
+        subscribers = {
+            subscriber for subscriber in get_subscribers(**new_meta)
+            if subscriber.itemid != flaskg.user.itemid
+        }
     if not subscribers:
         return
     notification = Notification(app, fqname, action, data, meta, new_data, new_meta, **kwargs)

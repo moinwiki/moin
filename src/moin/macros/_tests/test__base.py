@@ -55,7 +55,9 @@ class TestMacroBase:
                 return 'test_macro'
 
         macroinlineonlybase_obj = Test_MacroInlineOnlyBase()
-        result = macroinlineonlybase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
+        result = macroinlineonlybase_obj.__call__(
+            'content', 'arguments', 'page_url', 'alternative', context_block=False
+        )
         assert result == 'test_macro'
 
     def test_MacroPageLinkListBase(self):

@@ -103,7 +103,8 @@ class TestUser:
         # Create test user
         name = 'Test User'
         # sha512_crypt passlib hash for '12345':
-        pw_hash = '$6$rounds=1001$y9ObPHKb8cvRCs5G$39IW1i5w6LqXPRi4xqAu3OKv1UOpVKNkwk7zPnidsKZWqi1CrQBpl2wuq36J/s6yTxjCnmaGzv/2.dAmM8fDY/'
+        pw_hash = '$6$rounds=1001$y9ObPHKb8cvRCs5G$39IW1i5w6LqXPRi4xqAu3OKv1UO'\
+                  'pVKNkwk7zPnidsKZWqi1CrQBpl2wuq36J/s6yTxjCnmaGzv/2.dAmM8fDY/'
         self.createUser(name, pw_hash, True)
 
         # Try to "login" with correct password

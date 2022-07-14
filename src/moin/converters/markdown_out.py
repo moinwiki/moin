@@ -163,7 +163,8 @@ class Converter:
         f = getattr(self, n, None)
         if f:
             ret = f(elem)
-            if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th', 'emphasis', 's', 'ins', 'u', 'span', ):
+            if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th',
+                                     'emphasis', 's', 'ins', 'u', 'span', ):
                 attrib = self.attribute_list(elem)
                 if attrib:
                     if ret.endswith('#\n'):

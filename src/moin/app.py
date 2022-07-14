@@ -306,9 +306,12 @@ def teardown_wiki(response):
             pass
     try:
         # whoosh cache performance
-        for cache in (flaskg.storage.parse_acl, flaskg.storage.eval_acl, flaskg.storage.get_acls, flaskg.storage.allows, ):
+        for cache in (flaskg.storage.parse_acl, flaskg.storage.eval_acl,
+                      flaskg.storage.get_acls, flaskg.storage.allows, ):
             if cache.cache_info()[3] > 0:
-                msg = 'cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s' % ((cache.__name__, ) + cache.cache_info())
+                msg = 'cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s' % (
+                    (cache.__name__, ) + cache.cache_info()
+                )
                 logging.debug(msg)
     except AttributeError:
         # moin commands may not have flaskg.storage

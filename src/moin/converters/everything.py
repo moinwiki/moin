@@ -29,7 +29,9 @@ class Converter:
             item_name = rev.item.name or rev.meta['name'][0]
         except IndexError:
             # item is deleted
-            message = _('This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}').format(itemid=rev.item.itemid)
+            message = _(
+                'This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}'
+            ).format(itemid=rev.item.itemid)
             admonition = moin_page.div(attrib={moin_page.class_: 'error'}, children=[moin_page.p(children=[message])])
             body = moin_page.body(children=(admonition, ))
             return moin_page.page(children=(body, ))

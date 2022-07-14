@@ -272,7 +272,8 @@ class Converter(ConverterMacro):
         lines = _Iter(self.block_nowiki_lines(iter_content, len(nowiki_marker)), startno=iter_content.lineno)
         content = '\n'.join(lines)
         # the arguments for wiki, csv, and highlight are diverse, one parser does not fit all
-        # we push everything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
+        # we push everything after {{{ to DOM; nowiki.py can insert error messages or
+        # moinwiki_out can recreate exact input
         all_nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
         # we avoid adjacent text siblings because serializer within tests merges them
         elem = moin_page.nowiki(children=(str(len(nowiki_marker)), all_nowiki_args, content, ))
@@ -324,7 +325,8 @@ class Converter(ConverterMacro):
             if not match:
                 match = self.header_footer_re.match(line)
                 if match:
-                    # this is a header/body/footer separator: create multiple table_body's, html_out will convert to thead, tbody or tfoot
+                    # this is a header/body/footer separator: create multiple table_body's,
+                    # html_out will convert to thead, tbody or tfoot
                     stack.pop()
                     stack.push(moin_page.table_body())
                     continue

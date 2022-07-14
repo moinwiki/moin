@@ -94,7 +94,9 @@ class GroupsBackendTest:
 
         for user in self.expanded_groups['AdminGroup']:
             for permission in ["read", "write", "admin"]:
-                assert acl.may("Admin1", permission), '{0} must have {1} permission because he is member of the AdminGroup'.format(user, permission)
+                assert acl.may(
+                    "Admin1", permission
+                ), '{0} must have {1} permission because he is member of the AdminGroup'.format(user, permission)
 
     def test_backend_acl_deny(self):
         """
@@ -106,7 +108,9 @@ class GroupsBackendTest:
 
         assert "SomeUser" not in flaskg.groups['AdminGroup']
         for permission in ["read", "write"]:
-            assert not acl.may("SomeUser", permission), 'SomeUser must not have {0} permission because he is not listed in the AdminGroup'.format(permission)
+            assert not acl.may(
+                "SomeUser", permission
+            ), 'SomeUser must not have {0} permission because he is not listed in the AdminGroup'.format(permission)
 
         assert 'Admin1' in flaskg.groups['AdminGroup']
         assert not acl.may("Admin1", "admin")

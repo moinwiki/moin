@@ -116,7 +116,8 @@ class NodeVisitor:
         pass
 
     def visit_admonition(self, node):
-        # we do not support generic admonitions per http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
+        # we do not support generic admonitions per
+        # http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
         self.open_moin_page_node(moin_page.admonition())
 
     def depart_admonition(self, node=None):
@@ -880,7 +881,8 @@ class MoinDirectives:
     macro.required_arguments = 1
     macro.optional_arguments = 0
 
-    def table_of_content(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
+    def table_of_content(self, name, arguments, options, content, lineno, content_offset,
+                         block_text, state, state_machine):
         text = ''
         for i in content:
             m = re.search(r':(\w+): (\w+)', i)

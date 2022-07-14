@@ -192,7 +192,8 @@ class ProtectingMiddleware:
         from .indexing import parent_names
         self.meta = meta
         self.fqnames = gen_fqnames(meta)
-        may_read = self.allows(tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
+        may_read = self.allows(tuple(self.user.name), meta.get(ACL, None),
+                               tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
         return may_read
 
     def full_acls(self):
@@ -247,7 +248,8 @@ class ProtectingMiddleware:
         for meta in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
             self.meta = meta
             self.fqnames = gen_fqnames(meta)
-            result = self.allows(tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
+            result = self.allows(tuple(self.user.name), meta.get(ACL, None),
+                                 tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
             if result:
                 yield meta
 

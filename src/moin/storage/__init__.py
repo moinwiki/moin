@@ -21,7 +21,8 @@ We use a layered approach like this::
                                    over key/value pairs
 """
 
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_HELP_COMMON, NAMESPACE_HELP_EN
+from moin.constants.namespaces import (NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS,
+                                       NAMESPACE_HELP_COMMON, NAMESPACE_HELP_EN)
 
 BACKENDS_PACKAGE = 'moin.storage.backends'
 

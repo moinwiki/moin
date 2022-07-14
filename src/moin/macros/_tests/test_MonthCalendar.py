@@ -15,14 +15,15 @@ def test_parseargs_one():
     '''
     checking the handling of explicit and default parameters in parseargs
     '''
-    #                |macro arguments                                      |  |------------- default values -----------------|
-    args = parseargs('item="TEST-CALENDAR",month_offset=-1,fixed_height=true', 'TEST-CALENDAR', 1990, 4, 0, False, False)
+    args = parseargs('item="TEST-CALENDAR",month_offset=-1,fixed_height=true',  # macro arguments
+                     'TEST-CALENDAR', 1990, 4, 0, False, False)  # default values
     assert args == (['TEST-CALENDAR'], 1990, 4, -1, True, False)
 
 
 def test_parseargs_two():
     args = parseargs(
-        'item="WikiWorkingGroup*WikiMacrosSpecialInterestGroup",year=2020,month=3,month_offset=-4,fixed_height=true,anniversary=false',
+        'item="WikiWorkingGroup*WikiMacrosSpecialInterestGroup",'
+        'year=2020,month=3,month_offset=-4,fixed_height=true,anniversary=false',
         'DefaultPageName', 1990, 4, -1, False, True,
     )
     assert args == (

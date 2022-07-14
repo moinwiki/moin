@@ -121,7 +121,11 @@ class BytesStore(BytesMutableStoreBase):
             except IntegrityError:
                 if NAMESPACE_USERPROFILES in self.db_name:
                     # userprofiles namespace does support revisions so we update existing row
-                    self.conn.execute('UPDATE {0} SET value = "{2}" WHERE key = "{1}"'.format(self.table_name, key, value))
+                    self.conn.execute(
+                        'UPDATE {0} SET value = "{2}" WHERE key = "{1}"'.format(
+                            self.table_name, key, value
+                        )
+                    )
                 else:
                     raise
 

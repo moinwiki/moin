@@ -73,7 +73,7 @@ setup_args = dict(
     install_requires=[
         'Babel==2.9.1',  # Babel 2.10.1 breaks quickinstall.py #1239
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
-        'docutils<0.18',  # reST markup processing, see #1141 build fails with 0.18; sphinx 4.3.0 requires docutils<0.18,>=0.14,
+        'docutils<0.18',  # reST markup processing, see #1141; sphinx 4.3.0 requires docutils<0.18,>=0.14
         'Markdown>=3.0.0',  # Markdown markup processing
         'Flask<2.0.0',  # micro framework
         'Flask-Babel>=0.11.1',  # i18n support
@@ -110,8 +110,8 @@ setup_args = dict(
         # 'featurename': ["req1", "req2", ],
         'pillow': ["pillow"],  # successor to PIL; used by image get for scaling/rotating/etc.;
                                # requires special libs/header to be installed before it can be compiled successfully
-        'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth
-                                         # requires special libs/header to be installed before it can be compiled successfully
+        'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth; requires special libs/header
+                                         # to be installed before it can be compiled successfully
                                          # windows binaries available from 3rd parties
         # 'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
     },
@@ -123,7 +123,8 @@ setup_args = dict(
     message_extractors={
         'src': [
             ('moin/templates/**.html', 'jinja2', None),
-            ('moin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be defined here for jQuery i18n plugin
+            ('moin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be
+                                                                   # defined here for jQuery i18n plugin
             ('moin/apps/**/templates/**.html', 'jinja2', None),
             ('moin/themes/**/templates/**.html', 'jinja2', None),
             ('moin/**/_tests/**', 'ignore', None),

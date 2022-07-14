@@ -362,7 +362,8 @@ def itemsize():
         _('Size'),
         _('Item name'),
     ]
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)),
+                 Not(Term(TRASH, True))])
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     rows = [(rev[SIZE], CompositeName(rev[NAMESPACE], NAME_EXACT, rev[NAME][0]))
             for rev in revs]
@@ -395,7 +396,8 @@ def _trashed(namespace):
     results = []
     for meta in flaskg.storage.search_meta(q, limit=None):
         fqname = CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])
-        results.append(trashedEntry(fqname, meta[NAME_OLD], meta[REVID], meta[REV_NUMBER], meta[MTIME], meta[COMMENT], get_editor_info(meta), meta[PARENTID]))
+        results.append(trashedEntry(fqname, meta[NAME_OLD], meta[REVID], meta[REV_NUMBER], meta[MTIME],
+                                    meta[COMMENT], get_editor_info(meta), meta[PARENTID]))
     return results
 
 
@@ -546,9 +548,12 @@ def modify_acl(item_name):
             item._save(meta=meta)
         except AccessDenied:
             # superuser viewed item acl report and tried to change acl but lacked admin permission
-            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=old_acl), "error")
+            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
+                     item_name=fqname.fullname, acl_rule=old_acl), "error")
             return redirect(url_for('.item_acl_report'))
-        flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "info")
+        flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
+                 item_name=fqname.fullname, acl_rule=new_acl), "info")
     else:
-        flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "error")
+        flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
+                 item_name=fqname.fullname, acl_rule=new_acl), "error")
     return redirect(url_for('.item_acl_report'))

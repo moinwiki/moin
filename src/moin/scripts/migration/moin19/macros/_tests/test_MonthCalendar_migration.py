@@ -12,8 +12,10 @@ from moin.utils.tree import moin_page
 @pytest.mark.parametrize('legacy_macro,expected_args', [
     ("<<MonthCalendar()>>", ''),
     ("<<MonthCalendar('TestPage')>>", 'item="TestPage"'),
-    ("<<MonthCalendar('TestPage',1995,3,2,,1,,)>>", 'item="TestPage",year=1995,month=3,month_offset=2,fixed_height=true'),
-    ("<<MonthCalendar('CalendarOne*CalendarTwo',,,-2,,,true)>>", 'item="CalendarOne*CalendarTwo",month_offset=-2,anniversary=true'),
+    ("<<MonthCalendar('TestPage',1995,3,2,,1,,)>>",
+     'item="TestPage",year=1995,month=3,month_offset=2,fixed_height=true'),
+    ("<<MonthCalendar('CalendarOne*CalendarTwo',,,-2,,,true)>>",
+     'item="CalendarOne*CalendarTwo",month_offset=-2,anniversary=true'),
 ])
 def test_macro_conversion(legacy_macro, expected_args):
     converter = ConverterFormat19()

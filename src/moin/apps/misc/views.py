@@ -39,7 +39,8 @@ def sitemap():
         priority = "0.5"
         sitemap += [(fqname, format_timestamp(mtime), changefreq, priority) for fqname in fqnames]
     # add entries for root urls
-    root_mapping = [(namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root)) for namespace, _ in app.cfg.namespace_mapping]
+    root_mapping = [(namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root))
+                    for namespace, _ in app.cfg.namespace_mapping]
     query = Or([And([Term(NAME_EXACT, root), Term(NAMESPACE, namespace)]) for namespace, root in root_mapping])
     for rev in flaskg.storage.search(q=query):
         mtime = rev.meta[MTIME]

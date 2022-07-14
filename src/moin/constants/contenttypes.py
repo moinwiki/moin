@@ -92,7 +92,9 @@ CONTENTTYPE_VIDEO = [
 
 # TODO: is there a source that maps all (or common) file suffixes to media contenttypes as used by /maint/dump_html.py
 CONTENTTYPE_MEDIA = CONTENTTYPE_VIDEO + CONTENTTYPE_AUDIO + CONTENTTYPE_IMAGE
-CONTENTTYPE_MEDIA_SUFFIX = tuple('.svg .png .jpg .jpeg .gif .wave .wav .ogg .oga .ogv.mpeg .mpg .mp3 .webm .mp4'.split())
+CONTENTTYPE_MEDIA_SUFFIX = tuple(
+    '.svg .png .jpg .jpeg .gif .wave .wav .ogg .oga .ogv.mpeg .mpg .mp3 .webm .mp4'.split()
+)
 
 CONTENTTYPE_DRAWING = [
     'application/x-twikidraw',

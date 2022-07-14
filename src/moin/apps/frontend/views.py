@@ -393,7 +393,9 @@ def search(item_name):
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
 
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name)
+        qp = flaskg.storage.query_parser(
+            [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
+        )
         q = qp.parse(query)
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
@@ -714,7 +716,8 @@ def convert_item(item_name):
 
     try:
         if not item.contenttype == form['new_type'].value:
-            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION
+                    and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
                 # expand DOM only when converting to dissimilar item types (moin and creole are similar)
                 dom = item.content._expand_document(dom)
 
@@ -790,7 +793,9 @@ def modify_item(item_name):
 
 
 class TargetChangeForm(BaseChangeForm):
-    target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"), autofocus=True)
+    target = RequiredText.using(label=L_('Target')).with_properties(
+        placeholder=L_("The name of the target item"), autofocus=True
+    )
 
 
 class ValidRevert(Validator):
@@ -1008,7 +1013,8 @@ def ajaxdestroy(item_name, req='destroy'):
         try:
             item = Item.create(itemname)
             if isinstance(item, NonExistent):
-                # we should not try to destroy a nonexistent item, user probably checked a subitem and checked do subitems
+                # we should not try to destroy a nonexistent item,
+                # user probably checked a subitem and checked do subitems
                 response["messages"].append(_("Item '%(bad_name)s' does not exist.", bad_name=item.name))
                 continue
             if req == 'destroy':
@@ -1017,14 +1023,17 @@ def ajaxdestroy(item_name, req='destroy'):
                     subitems = item.get_subitem_revs()
                     # if subitem has alias of unselected sibling or ancester, it will be included
                     subitem_names = [x.meta.revision.names for x in subitems]
-                messages, subitem_names = item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names, ajax=True)
+                messages, subitem_names = item.destroy(
+                    comment=comment, destroy_item=True, subitem_names=subitem_names, ajax=True
+                )
                 log_destroy_action(item, subitem_names, comment)
             else:
                 try:
                     messages, subitem_names = item.delete(comment, do_subitems=do_subitems, ajax=True)
                 except AccessDenied:
                     # some deletes may have succeeded, one failed, there may be unprocessed items
-                    msg = _("Access denied for a subitem of %(bad_name)s, check History for status.", bad_name=itemname)
+                    msg = _("Access denied for a subitem of %(bad_name)s, check History for status.",
+                            bad_name=itemname)
                     response["messages"].append(msg)
             response["messages"] += messages
             response["itemnames"] += subitem_names + itemnames
@@ -1218,7 +1227,8 @@ def jfu_server(item_name):
     base_file_name = os.path.basename(data_file.filename)
     file_name = secure_filename(base_file_name)
     if not file_name == base_file_name:
-        msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ", bad_name=base_file_name, good_name=file_name)
+        msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ",
+                bad_name=base_file_name, good_name=file_name)
     subitem_name = file_name
     data = data_file.stream
     mt = mime_type.MimeType(filename=file_name)
@@ -1226,7 +1236,8 @@ def jfu_server(item_name):
     small_meta = {CONTENTTYPE: contenttype}
     valid = validate_data(small_meta, data)
     if not valid:
-        msg = _("UnicodeDecodeError, upload failed, not a text file, nothing saved: '%(file_name)s'. Try changing the name.", file_name=file_name)
+        msg = _("UnicodeDecodeError, upload failed, not a text file, nothing saved: '%(file_name)s'. "
+                "Try changing the name.", file_name=file_name)
         ret = make_response(jsonify({"name": subitem_name,
                                      "files": [item_name],
                                      "message": msg,
@@ -1414,7 +1425,9 @@ def mychanges():
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
-        metas = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(
+            query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page
+        )
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             # user has entered bad page_num in url
@@ -1468,7 +1481,8 @@ def forwardrefs(item_name):
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_("Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items that are referred by '%(item_name)s'",
+                                      item_name=shorten_item_id(item_name)),
                            fq_names=split_fqname_list(refs),
                            )
 
@@ -1555,7 +1569,9 @@ def history(item_name):
 
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
-        metas = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(
+            query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page
+        )
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             page_num = pages
@@ -1831,7 +1847,9 @@ class RegistrationForm(Form):
     """a simple user registration form"""
     name = 'register'
 
-    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("The login username you want to use"), autofocus=True)
+    username = RequiredText.using(label=L_('Username')).with_properties(
+        placeholder=L_("The login username you want to use"), autofocus=True
+    )
     password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
@@ -2188,7 +2206,8 @@ class UserSettingsNotificationForm(Form):
 
 class UserSettingsQuicklinksForm(Form):
     """
-    No validation is performed as lots of things are valid, existing items, non-existing items, external links, mailto, external wiki links...
+    No validation is performed as lots of things are valid, existing items, non-existing items,
+    external links, mailto, external wiki links ...
     """
 
     form_name = 'usersettings_quicklinks'
@@ -2257,7 +2276,8 @@ def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
-    # wergzeug 1.0.0 dropped support for request.is_xhr, was True if the request was triggered via a JavaScript XMLHttpRequest
+    # werkzeug 1.0.0 dropped support for request.is_xhr,
+    # was True if the request was triggered via a JavaScript XMLHttpRequest
     # TODO: maybe "is_xhr = request.method == 'POST'" would work
     is_xhr = request.accept_mimetypes.best in ("application/json", "text/javascript", )
 
@@ -2336,8 +2356,9 @@ def usersettings():
                             for name in new_names:
                                 if user.search_users(**{NAME_EXACT: name}):
                                     # duplicate name
-                                    response['flash'].append((_("The username '%(name)s' is already in use.", name=name),
-                                                              "error"))
+                                    response['flash'].append(
+                                        (_("The username '%(name)s' is already in use.", name=name), "error")
+                                    )
                                     success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
@@ -2651,7 +2672,8 @@ def similar_names(item_name):
             if rank == wanted_rank:
                 fq_names.append(fqname)
     return render_template("link_list_item_panel.html",
-                           headline=_("Items with similar names to '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items with similar names to '%(item_name)s'",
+                                      item_name=shorten_item_id(item_name)),
                            item=item,
                            item_name=item_name,  # XXX no item
                            fqname=split_fqname(item_name),
@@ -2885,11 +2907,14 @@ def tickets():
         q = None
         # There are two cases when the user uses the search box in the ticket tracker and other
         # when user clicks on Assignee name in the ticket's table to view all tickets assigned to him
-        # E.g of link for second case is  +tickets?assigned_to=username
-        # for first case i.e while we are using search box, variable 'query' (i.e what ever is searched)  should be present either in
-        # TAGS, SUMMARY, CONTENT, ITEMID 'or' ASSIGNED_TO 'and' should be of given status (closed or open).
-        # while in second case we have to get all the results having given status 'and' Assigned_to =  request.args.get(ASSIGNED_TO).
-        # first case we use 'and'  while in second case we use 'or' while adding the assigned_to condition to retrieve the results.
+        # E.g. of link for second case is  +tickets?assigned_to=username .
+        # For the first case, i.e. when using the search box, variable 'query' (i.e. what ever is searched)
+        # should be present either in TAGS, SUMMARY, CONTENT, ITEMID 'or' ASSIGNED_TO 'and' should be
+        # of given status (closed or open).
+        # While in second case we have to get all the results having given status 'and'
+        # Assigned_to = request.args.get(ASSIGNED_TO).
+        # In first case we use 'and' while in second case we use 'or' while adding the assigned_to condition
+        # to retrieve the results.
         if query:
             term2 = Or(term2)
             term1.extend([term2])

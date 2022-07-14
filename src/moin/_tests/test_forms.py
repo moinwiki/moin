@@ -66,13 +66,17 @@ def test_validjson():
     valid_itemid = 'a1924e3d0a34497eab18563299d32178'
     # ('names', 'namespace', 'field', 'value', 'result')
     tests = [(['somename', '@revid'], '', '', 'somename', False),  # item names cannot begin with @
-             # TODO for above? - create item @x, get error message, change name in meta to xx, get an item with names @40x and alias of xx
+             # TODO for above? - create item @x, get error message, change name in meta to xx,
+             # get an item with names @40x and alias of xx
              (['bar', 'ns1'], '', '', 'bar', False),  # item names cannot match namespace names
              (['foo', 'foo', 'bar'], '', '', 'foo', False),  # names in the name list must be unique.
-             (['ns1ns2ns3', 'ns1/subitem'], '', '', 'valid', False),  # Item names must not match with existing namespaces; items cannot be in 2 namespaces
-             (['foobar', 'validname'], '', ITEMID, valid_itemid + '8080', False),  # attempts to change itemid in meta result in "Item(s) named foobar, validname already exist."
+             # Item names must not match with existing namespaces; items cannot be in 2 namespaces
+             (['ns1ns2ns3', 'ns1/subitem'], '', '', 'valid', False),
+             # attempts to change itemid in meta result in "Item(s) named foobar, validname already exist."
+             (['foobar', 'validname'], '', ITEMID, valid_itemid + '8080', False),
              (['barfoo', 'validname'], '', ITEMID, valid_itemid.replace('a', 'y'), False),  # similar to above
-             ([], '', 'itemid', valid_itemid, True),  # deleting all names from the metadata of an existing item will make it nameless, succeeds
+             # deleting all names from the metadata of an existing item will make it nameless, succeeds
+             ([], '', 'itemid', valid_itemid, True),
              (['existingname'], 'users', '', 'existingname', False),  # item already exists
              ]
     for name, namespace, field, value, result in tests:
