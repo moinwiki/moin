@@ -34,8 +34,6 @@ usage (to display a menu of commands):
 """
 
 
-import argparse
-import logging
 import os
 import subprocess
 import sys
@@ -139,17 +137,21 @@ def search_for_phrase(filename):
     files = {
         # filename: (list of phrases)
         # Note: phrases must be lower-case
-        QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location', 'must be deactivated', 'no such option', ),
+        QUICKINSTALL: ('could not find', 'error', 'fail', 'timeout', 'traceback', 'success', 'cache location',
+                       'must be deactivated', 'no such option', ),
         NEWWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         BACKUPWIKI: ('error', 'fail', 'timeout', 'traceback', 'success', ),
         DUMPHTML: ('fail', 'timeout', 'traceback', 'success', 'cannot', 'denied', 'error', ),
         # use of 'error ' below is to avoid matching .../Modules/errors.o....
-        EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version', 'successfully installed', 'finished', ),
-        # ': e' matches lines similar to: src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
+        EXTRAS: ('error ', 'error:', 'error.', 'error,', 'fail', 'timeout', 'traceback', 'active version',
+                 'successfully installed', 'finished', ),
+        # ': e' matches lines similar to:
+        # src/moin/converters\_tests\test_moinwiki_in_out.py:294:5: E303 too many blank lines (3)
         TOX: ('seconds =', 'internalerror', 'error:', 'traceback', ': e', ': f', ' passed, '),
         CODING_STD: ('remove trailing blanks', 'dos line endings', 'unix line endings', 'remove empty lines', ),
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
-        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror', 'exception occurred', ),
+        DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror',
+               'exception occurred', ),
         INDEX: ('error', 'fail', 'timeout', 'traceback', 'success', ),
     }
     ignore_phrases = {TOX: ('interpreternotfound', )}
@@ -183,6 +185,7 @@ def search_for_phrase(filename):
 def wiki_exists():
     """Return true if a wiki exists."""
     return bool(glob.glob('wiki/index/_all_revs_*.toc'))
+
 
 def copy_config_files():
     if not os.path.isfile('wikiconfig.py'):
@@ -259,24 +262,27 @@ class Commands:
     def run_time(self, command):
         seconds = int(timeit.default_timer() - self.tic)
         (t_min, t_sec) = divmod(seconds, 60)
-        (t_hour,t_min) = divmod(t_min, 60)
+        (t_hour, t_min) = divmod(t_min, 60)
         print('{} run time (h:mm:ss) {}:{:0>2}:{:0>2}'.format(command, t_hour, t_min, t_sec))
 
     def cmd_quickinstall(self, *args):
         """create or update a virtual environment with the required packages"""
         if os.path.isdir('.tox'):
             # keep tox test virtualenvs in sync with moin-env-python
-            command = '{0} quickinstall.py --FirstCall {1}{2}tox --recreate --notest'.format(sys.executable, ' '.join(args), SEP)
-            print('Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {0}'.format(QUICKINSTALL))
+            command = '{0} quickinstall.py --FirstCall {1}{2}tox --recreate --notest'.format(
+                sys.executable, ' '.join(args), SEP)
+            print('Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {0}'.format(
+                QUICKINSTALL))
         else:
-            command = '{0} quickinstall.py --FirstCall'.format(sys.executable, ' '.join(args), )
+            command = '{0} quickinstall.py --FirstCall'.format(sys.executable)
             print('Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL))
         with open(QUICKINSTALL, 'w') as messages:
             # we run ourself as a subprocess so output can be captured in a log file
-            result = subprocess.run(command, shell=True, stderr=messages, stdout=messages)
+            subprocess.run(command, shell=True, stderr=messages, stdout=messages)
             # above result will be flagged as error unless all python versions specified in tox.ini are installed:
             # [tox]\n envlist = py{38,39,310},pypy3,flake8
-        print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" to see complete log.\n'.format(QUICKINSTALL, M))
+        print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" '
+              'to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
         self.run_time('Quickinstall')
 
@@ -291,12 +297,13 @@ class Commands:
         if result == 0:
             print('HTML docs successfully created in {0}.'.format(os.path.normpath('docs/_build/html')))
         else:
-            print('Error: creation of HTML docs failed with return code "{0}". Do "{1} log docs" to see complete log.'.format(result, M))
+            print('Error: creation of HTML docs failed with return code "{0}".'
+                  ' Do "{1} log docs" to see complete log.'.format(result, M))
         self.run_time('Docs')
 
     def cmd_extras(self, *args):
         """install optional packages: Pillow, sqlalchemy, ldap, requirements.d"""
-        sp_dir = get_sitepackages_location()
+        get_sitepackages_location()
         packages = ['pillow', 'sqlalchemy', ]
         if not WINDOWS_OS:
             packages.append('python-ldap')
@@ -308,14 +315,16 @@ class Commands:
         print('Output messages written to {0}.'.format(EXTRAS))
         with open(EXTRAS, 'w') as messages:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-        print('\nImportant messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(EXTRAS, M))
+        print('\nImportant messages from {0} are shown below. Do "{1} log extras" to see complete log.'.format(
+            EXTRAS, M))
         search_for_phrase(EXTRAS)
         self.run_time('Extras')
 
     def cmd_interwiki(self, *args):
         """refresh contrib/interwiki/intermap.txt"""
         print('Refreshing {0}...'.format(os.path.normpath('contrib/interwiki/intermap.txt')))
-        command = '{0} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw intermap.txt'.format(sys.executable)
+        command = '{0} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw intermap.txt'.format(
+            sys.executable)
         subprocess.call(command, shell=True)
 
     def cmd_log(self, *args):
@@ -391,7 +400,8 @@ class Commands:
             try:
                 with open(INDEX, 'w') as messages:
                     subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-                print('\nImportant messages from {0} are shown below. Do "{1} log index" to see complete log.'.format(INDEX, M))
+                print('\nImportant messages from {0} are shown below. Do "{1} log index" to see complete log.'.format(
+                    INDEX, M))
                 search_for_phrase(INDEX)
             except KeyboardInterrupt:
                 pass  # eliminates traceback on windows
@@ -436,7 +446,8 @@ class Commands:
             if result == 0:
                 print('Success: wiki was backed up to {0}'.format(filename))
             else:
-                print('Important messages from {0} are shown below. Do "{1} log backup" to see complete log.'.format(BACKUPWIKI, M))
+                print('Important messages from {0} are shown below. Do "{1} log backup" to see complete log.'.format(
+                    BACKUPWIKI, M))
                 search_for_phrase(BACKUPWIKI)
                 print('\nError: attempt to backup wiki failed.')
         else:
@@ -455,7 +466,8 @@ class Commands:
             else:
                 print('\nError: attempt to dump wiki to html files failed.')
             # always show errors because individual items may fail
-            print('Important messages from {0} are shown below. Do "{1} log dump-html" to see complete log.'.format(DUMPHTML, M))
+            print('Important messages from {0} are shown below. Do "{1} log dump-html" to see complete log.'.format(
+                DUMPHTML, M))
             search_for_phrase(DUMPHTML)
         else:
             print('Error: cannot dump wiki because it has not been created.')
@@ -484,7 +496,7 @@ class Commands:
         """run tests, output goes to m-tox.txt"""
         print('Running tests... output written to {0}.'.format(TOX))
         command = 'tox -- {1} > {0} 2>&1'.format(TOX, ' '.join(args))
-        result = subprocess.call(command, shell=True)
+        subprocess.call(command, shell=True)
         print('Important messages from {0} are shown below. Do "{1} log tests" to see complete log.'.format(TOX, M))
         search_for_phrase(TOX)
         self.run_time('Tests')
@@ -498,7 +510,8 @@ class Commands:
     # not on menu, rarely used, similar code was in moin 1.9
     def cmd_dist(self, *args):
         """create distribution archive in dist/"""
-        print('Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(DIST))
+        print('Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(
+            DIST))
         self.cmd_del_wiki(*args)
         command = '{0} setup.py sdist bdist_wheel'.format(sys.executable)
         with open(DIST, 'w') as messages:
@@ -508,7 +521,8 @@ class Commands:
         if result == 0:
             print('Success: a distribution archive was created in {0}.'.format(os.path.normpath('/dist')))
         else:
-            print('Error: create dist failed with return code = {0}. Do "{1} log dist" to see complete log.'.format(result, M))
+            print('Error: create dist failed with return code = {0}. Do "{1} log dist" to see complete log.'.format(
+                result, M))
 
     def cmd_del_all(self, *args):
         """same as running the 4 del-* commands below"""
@@ -533,7 +547,9 @@ class Commands:
         """create a just-in-case backup, then delete all wiki data"""
         command = 'moin save --all-backends --file {0}'.format(JUST_IN_CASE_BACKUP)
         if wiki_exists():
-            print('Creating a backup named {0}; then deleting all wiki data and indexes...'.format(JUST_IN_CASE_BACKUP))
+            print(
+                'Creating a backup named {0}; then deleting all wiki data and indexes...'.format(JUST_IN_CASE_BACKUP)
+            )
             with open(DELWIKI, 'w') as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result != 0:
@@ -609,7 +625,7 @@ class QuickInstall:
         ))
 
     def create_wrapper(self, filename, target):
-        """Create files in the repo root that wrap files in <path-to-virtual-env>\Scripts."""
+        """Create files in the repo root that wrap files in <path-to-virtual-env>\Scripts."""  # noqa
         target = os.path.join(self.dir_venv_bin, target)
         with open(filename, 'w') as f:
             f.write(':: {0}\n\n@call {1} %*\n'.format(WIN_INFO, target))
@@ -698,10 +714,12 @@ if __name__ == '__main__':
 
     if len(args) > 2 and args[-1] == '--help':
         # m and m.bat have trailing --help so "./m" comes across as "python quickinstall.py --help"
-        # if user did "./m <option>" we have "python quickinstall.py <option> --help" then we can delete the --help and do <option>
+        # if user did "./m <option>" we have "python quickinstall.py <option> --help"
+        # then we can delete the --help and do <option>
         args = args[:-1]
 
-    if (os.path.isfile('activate') or os.path.isfile('activate.bat')) and (len(args) == 2 and args[1] in ('-h', '--help')):
+    if (os.path.isfile('activate') or os.path.isfile('activate.bat')) and (
+            len(args) == 2 and args[1] in ('-h', '--help')):
         # user keyed "./m", "./m -h", or "./m --help"
         print(help)
 
