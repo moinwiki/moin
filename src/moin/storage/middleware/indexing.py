@@ -1228,8 +1228,7 @@ class Item(PropertiesMixin):
             logging.warning("data validation skipped because metadata is invalid, see below")
             val = []
             for e in m.children:
-                # this logging is not very helpful, shows "True, []" etc. without the field name
-                logging.warning("{0}, {1}".format(e.valid, e))
+                logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
                 if e.valid is False:
                     val.append(str(e))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
