@@ -120,6 +120,7 @@ class Config(DefaultConfig):
 
     # default passwords are required to be => 8 characters with minimum of 5 unique characters
     # password_checker = None  # no password length or quality checking
+    # from moin.config.default import _default_password_checker
     # password_checker = lambda cfg, name, pw: _default_password_checker(cfg, name, pw, min_length=8, min_different=5)  # default
 
     # optional, configure email, uncomment line below and choose (a) or (b)
@@ -140,7 +141,7 @@ class Config(DefaultConfig):
     # registration_only_by_superuser = True  # disables self-registration, recommended for public wikis on internet
     # registration_hint = 'To request an account, see bottom of <a href="/Home">Home</a> page.'
 
-    # add or remove packages - see https://bitbucket.org/thomaswaldmann/xstatic for info about xstatic
+    # add or remove packages - see https://github.com/xstatic-py/xstatic for info about xstatic
     # it is uncommon to change these because of local customizations
     from xstatic.main import XStatic
     # names below must be package names

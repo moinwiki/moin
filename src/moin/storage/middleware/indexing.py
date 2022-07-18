@@ -93,7 +93,9 @@ INDEXES = [LATEST_REVS, ALL_REVS, ]
 VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
 # TODO: fix tests to create valid metadata
-VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
+# VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
+VALIDATION_HANDLING = VALIDATION_HANDLING_WARN  # TODO: workaround for #1292
+
 
 INDEXER_TIMEOUT = 20.0
 
@@ -1228,8 +1230,7 @@ class Item(PropertiesMixin):
             logging.warning("data validation skipped because metadata is invalid, see below")
             val = []
             for e in m.children:
-                # this logging is not very helpful, shows "True, []" etc. without the field name
-                logging.warning("{0}, {1}".format(e.valid, e))
+                logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
                 if e.valid is False:
                     val.append(str(e))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
