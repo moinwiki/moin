@@ -49,7 +49,7 @@ usually it is even just the small and thus quick latest-revs index.
 """
 
 import os
-import sys
+# import sys  # TODO: workaround for #1292
 import shutil
 import datetime
 import time

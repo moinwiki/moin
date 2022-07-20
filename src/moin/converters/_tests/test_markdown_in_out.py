@@ -94,7 +94,7 @@ class TestConverter:
     data = [
         ('[TOC]\n',
          '[TOC]\n'),
-        # TODO: result changes with Markdown 3.4.1, see #1290 
+        # TODO: result changes with Markdown 3.4.1, see #1290
         ('|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n',
          '|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered{: class="center"}|$12{: class="right"}|Gloves{: class="left"}|\n'),
         # TODO: wrong output, creates indented blockcode, loses fenced code language
