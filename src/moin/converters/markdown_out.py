@@ -126,10 +126,6 @@ class Converter:
                         ret = '\n'
                 if child == '\n' and getattr(elem, 'level', 0):
                     child = child + ' ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
-                if elem.tag.name == 'td':
-                    attrib = self.attribute_list(elem)
-                    if attrib:
-                        child += attrib
                 childrens_output.append('{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
         out = join_char.join(childrens_output)
@@ -164,7 +160,7 @@ class Converter:
         if f:
             ret = f(elem)
             if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th',
-                                     'emphasis', 's', 'ins', 'u', 'span', ):
+                                     'emphasis', 's', 'ins', 'u', 'span', 'table', ):
                 attrib = self.attribute_list(elem)
                 if attrib:
                     if ret.endswith('#\n'):
@@ -460,6 +456,7 @@ class Converter:
         self.status.pop()
         # markdown tables must have headings
         if '----' not in ret:
+            # style: text-align gets lost here
             rows = ret.split('\n')
             header = rows[0][1:-1]  # remove leading and trailing |
             cells = header.split('|')
@@ -472,11 +469,11 @@ class Converter:
         # used for reST to moinwiki conversion, maybe others that generate table head
         separator = []
         for th in elem[0]:
-            if th.attrib.get(moin_page.class_, None) == 'center':
+            if th.attrib.get(moin_page.style, None) == 'text-align: center;':
                 separator.append(':----:')
-            elif th.attrib.get(moin_page.class_, None) == 'left':
+            elif th.attrib.get(moin_page.style, None) == 'text-align: left;':
                 separator.append(':-----')
-            elif th.attrib.get(moin_page.class_, None) == 'right':
+            elif th.attrib.get(moin_page.style, None) == 'text-align: right;':
                 separator.append('-----:')
             else:
                 separator.append('------')
