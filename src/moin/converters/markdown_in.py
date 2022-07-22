@@ -356,11 +356,11 @@ class Converter:
 
     def visit_th(self, element):
         attrib = self.verify_align_style(element.attrib)
-        return self.new_copy(html.th, element, attrib=attrib)
+        return self.new_copy(moin_page.table_cell_head, element, attrib=attrib)
 
     def visit_td(self, element):
         attrib = self.verify_align_style(element.attrib)
-        return self.new_copy(html.td, element, attrib=attrib)
+        return self.new_copy(moin_page.table_cell, element, attrib=attrib)
 
     def visit(self, element):
         # Our element can be converted directly, just by changing the namespace

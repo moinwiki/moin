@@ -160,7 +160,7 @@ class Converter:
         if f:
             ret = f(elem)
             if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th',
-                                     'emphasis', 's', 'ins', 'u', 'span', ):
+                                     'emphasis', 's', 'ins', 'u', 'span', 'table', ):
                 attrib = self.attribute_list(elem)
                 if attrib:
                     if ret.endswith('#\n'):
@@ -456,6 +456,7 @@ class Converter:
         self.status.pop()
         # markdown tables must have headings
         if '----' not in ret:
+            # style: text-align gets lost here
             rows = ret.split('\n')
             header = rows[0][1:-1]  # remove leading and trailing |
             cells = header.split('|')
