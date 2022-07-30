@@ -215,7 +215,7 @@ def action_validator(element, state):
     if not isinstance(v, str):
         return False
     if v not in [keys.ACTION_SAVE, keys.ACTION_REVERT, keys.ACTION_TRASH,
-                 keys.ACTION_COPY, keys.ACTION_RENAME]:
+                 keys.ACTION_COPY, keys.ACTION_RENAME, keys.ACTION_CONVERT]:
         return False
     return True
 

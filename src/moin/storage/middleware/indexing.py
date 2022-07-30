@@ -49,7 +49,7 @@ usually it is even just the small and thus quick latest-revs index.
 """
 
 import os
-# import sys  # TODO: workaround for #1292
+import sys
 import shutil
 import datetime
 import time
@@ -93,9 +93,7 @@ INDEXES = [LATEST_REVS, ALL_REVS, ]
 VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
 # TODO: fix tests to create valid metadata
-# VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
-VALIDATION_HANDLING = VALIDATION_HANDLING_WARN  # TODO: workaround for #1292
-
+VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
 INDEXER_TIMEOUT = 20.0
 
