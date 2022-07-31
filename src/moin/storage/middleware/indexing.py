@@ -121,37 +121,6 @@ def get_indexer(fn, **kw):
     return indexer
 
 
-def get_names(meta):
-    """
-    Get the (list of) names from meta data and deal with misc. bad things that
-    can happen then (while not all code is fixed to do it correctly).
-
-    TODO make sure meta[NAME] is always a list of str
-
-    :param meta: a metadata dictionary that might have a NAME key
-    :return: list of names
-    """
-    msg = "NAME is not a list but %r - fix this! Workaround enabled."
-    names = meta.get(NAME)
-    if names is None:
-        logging.warning(msg % names)
-        names = []
-    elif isinstance(names, bytes):
-        logging.warning(msg % names)
-        names = [names.decode('utf-8'), ]
-    elif isinstance(names, str):
-        logging.warning(msg % names)
-        names = [names, ]
-    elif isinstance(names, tuple):
-        logging.warning(msg % names)
-        names = list(names)
-    elif not isinstance(names, list):
-        raise TypeError("NAME is not a list but %r - fix this!" % names)
-    if not names:
-        names = []
-    return names
-
-
 def parent_names(names):
     """
     Compute list of parent names (same order as in names, but no dupes)
@@ -1045,7 +1014,7 @@ class PropertiesMixin:
 
     @property
     def names(self):
-        return get_names(self.meta)
+        return self.meta[NAME]
 
     @property
     def mtime(self):
