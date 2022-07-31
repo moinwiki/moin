@@ -271,7 +271,7 @@ def join_wiki(wikiurl, wikitail, field, namespace):
     wikitail = url_quote(wikitail, charset=CHARSET, safe='/')
     field = url_quote(field, charset=CHARSET, safe='/')
     namespace = url_quote(namespace, charset=CHARSET, safe='/')
-    if not('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl or '$FIELD' in wikiurl):
+    if not ('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl or '$FIELD' in wikiurl):
         return wikiurl + get_fqname(wikitail, field, namespace)
     if '$PAGE' in wikiurl:
         wikiurl = wikiurl.replace('$PAGE', wikitail)
