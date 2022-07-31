@@ -117,7 +117,7 @@ def register_new_user():
                 emails = user.search_users(email=email)
                 if emails:
                     flash(_("This email already belongs to somebody else."), 'error')
-            if not(users or emails):
+            if not (users or emails):
                 user_profile.save()
                 flash(_("Account for %(username)s created", username=username), "info")
                 form = FormClass.from_defaults()
@@ -541,7 +541,7 @@ def modify_acl(item_name):
         if new_acl in ('Empty', ''):
             meta[ACL] = ''
         elif new_acl == 'None' and ACL in meta:
-            del(meta[ACL])
+            del (meta[ACL])
         else:
             meta[ACL] = new_acl
         try:

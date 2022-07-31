@@ -285,8 +285,9 @@ class Edit_Utils:
                     u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                     if self.rev_number > rev_number:
                         # current user timed out, then other user updated and saved
-                        msg = L_("""Someone else updated '%(item_name)s' after your edit lock timed out. If you click 'Save',
-                                 conflicting changes must be manually merged. Click 'Cancel' to discard changes.""",
+                        msg = L_("""Someone else updated '%(item_name)s' after your edit lock timed out.
+                                 If you click 'Save', conflicting changes must be manually merged.
+                                 Click 'Cancel' to discard changes.""",
                                  item_name=self.item_name)
                     self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                       VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
