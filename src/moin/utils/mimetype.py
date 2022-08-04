@@ -55,6 +55,10 @@ MIMETYPES_MORE = {
     '.mediawiki': 'text/x-mediawiki',
     '.ico': 'image/x-icon',
     '.svg': 'image/svg+xml',
+    # supported compressed archives
+    '.zip': 'application/zip',
+    '.tgz': 'application/x-gtar',
+    '.targz': 'application/x-gtar',
 }
 
 # add all mimetype patterns of pygments
