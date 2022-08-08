@@ -740,7 +740,7 @@ if __name__ == '__main__':
             command()
 
         else:
-            if args == ['quickinstall.py']:
+            if (len(args) == 1 and  args[0].endswith('quickinstall.py')):
                 # user keyed "python quickinstall.py" instead of "./m quickinstall"
                 # run this same script (quickinstall.py) again in a subprocess to create the virtual env
                 command = getattr(commands, 'cmd_quickinstall')
