@@ -73,7 +73,6 @@ class PutItem(Command):
         meta = meta.decode('utf-8')
         meta = json.loads(meta)
         to_kill = [SIZE, HASH_ALGORITHM,  # gets re-computed automatically
-                   DATAID,
                    WIKINAME,  # use target wiki name
                    ]
         for key in to_kill:
@@ -81,6 +80,7 @@ class PutItem(Command):
         if not overwrite:
             # if we remove the REVID, it will create a new one and store under the new one
             meta.pop(REVID, None)
+            meta.pop(DATAID, None)
         query = {ITEMID: meta[ITEMID], NAMESPACE: meta[NAMESPACE]}
         item = app.storage.get_item(**query)
 
