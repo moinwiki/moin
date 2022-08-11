@@ -11,14 +11,14 @@ Upgrading
    So please consider it to be different and incompatible software that tries
    to be compatible in some areas:
 
-       * Server and wiki engine Configuration: expect to review/rewrite it
-       * Wiki content: expect 90% compatibility for existing moin 1.9 content.
+   * Server and wiki engine Configuration: expect to review/rewrite it
+   * Wiki content: expect 90% compatibility for existing moin 1.9 content.
 
-           * The most commonly used simple moin wiki markup (like headlines, lists, bold) has not changed
-           * CamelCase auto links will be converted to explicit [[CamelCase]] links
-           * [[attachment:my.jpg]] will be converted to [[/my.jpg]]
-           * {{attachment:my.jpg}} will be converted to {{/my.jpg}}
-           * expect to change custom macros, parsers, action links, 3rd party extensions
+     * The most commonly used simple moin wiki markup (like headlines, lists, bold) has not changed
+     * CamelCase auto links will be converted to explicit [[CamelCase]] links
+     * [[attachment:my.jpg]] will be converted to [[/my.jpg]]
+     * {{attachment:my.jpg}} will be converted to {{/my.jpg}}
+     * expect to change custom macros, parsers, action links, 3rd party extensions
 
 From moin < 1.9
 ===============
@@ -123,10 +123,6 @@ Testing
 -------
 Review the logs for error messages. Start the moin server and try the "Index" and "History"
 views to see what is included. Check whether your data is complete and rendering correctly.
-
-Links to user's home items and subitems will be broken after the migration and must be
-corrected manually. Links similar to `[[JoeDoe]]` and `[[JoeDoe/SubItem]]` should be
-corrected to `[[users/JoeDoe]]` and `[[users/JoeDoe/SubItem]]` respectively.
 
 If you find issues with data migration from moin 1.9 to 2, please check the
 moin2 issue tracker.
