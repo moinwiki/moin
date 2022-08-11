@@ -1,5 +1,6 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2022 MoinMoin Project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -41,7 +42,7 @@ from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
 from moin.converters import default_registry
 from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
-from moin.utils.tree import moin_page
+from moin.utils.tree import moin_page, xlink
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -97,6 +98,7 @@ class ImportMoin19(Command):
         userid_old2new = {}
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
+        users_itemlist = set()
         global custom_namespaces
         custom_namespaces = namespaces()
 
@@ -114,6 +116,7 @@ class ImportMoin19(Command):
             for user_name in user_names:
                 if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
                     rev.meta['namespace'] = 'users'
+                    users_itemlist.add(rev.meta['name'][0])  # save itemname for link migration
                     break
 
             if USERID in rev.meta:
@@ -148,14 +151,26 @@ class ImportMoin19(Command):
             data_in = data.read().decode(CHARSET19)
             dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
 
+            iri = Iri(scheme='wiki', authority='', path='/' + item_name)
+            dom.set(moin_page.page_href, str(iri))
+            refs_conv(dom)
+
+            # migrate itemlinks to users namespace
+            itemlinks_19 = refs_conv.get_links()
+            itemlinks2chg = []
+            for link in itemlinks_19:
+                if link in users_itemlist:
+                    itemlinks2chg.append(link)
+            if len(itemlinks2chg) > 0:
+                migrate_users_links(dom, itemlinks2chg)
+
             # migrate macros that need update from 1.9 to 2.0
             migrate_macros(dom)  # in-place conversion
 
             out = self.conv_out(dom)
             out = out.encode(CHARSET19)
-            iri = Iri(scheme='wiki', authority='', path='/' + item_name)
-            dom.set(moin_page.page_href, str(iri))
-            refs_conv(dom)
+            if len(itemlinks2chg) > 0:
+                refs_conv(dom)  # refresh changed itemlinks
             meta[ITEMLINKS] = refs_conv.get_links()
             meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
             meta[EXTERNALLINKS] = refs_conv.get_external_links()
@@ -442,6 +457,22 @@ class PageRevision:
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             data = process_categories(meta, data, self.backend.item_category_regex)
         return data
+
+
+def migrate_users_links(dom, itemlinks2chg):
+    """ Walk the DOM tree and change itemlinks to users namespace
+
+    :param dom: the tree to check for elements to migrate
+    :param itemlinks2chg: list of itemlinks to be changed
+    :type dom: emeraldtree.tree.Element
+    """
+
+    for node in dom.iter_elements_tree():
+        if node.tag.name == 'a':
+            path_19 = str(node.attrib[xlink.href].path)
+            if node.attrib[xlink.href].scheme == 'wiki.local' and path_19 in itemlinks2chg:
+                print("    >> Info: Changing link from " + path_19 + " to users/" + path_19)
+                node.attrib[xlink.href].path = 'users/' + path_19
 
 
 def process_categories(meta, data, item_category_regex):
