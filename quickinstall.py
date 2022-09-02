@@ -748,15 +748,8 @@ if __name__ == '__main__':
 
             elif args == ['quickinstall.py', '--FirstCall']:
                 # we are in a subprocess call after "python quickinstall.py" or  "./m quickinstall"
-                orig_stdout = sys.stdout
-                orig_stderr = sys.stderr
-                with open(QUICKINSTALL, 'a') as messages:
-                    sys.stdout = messages
-                    sys.stderr = messages
-                    QuickInstall(os.path.dirname(os.path.realpath(args[0])))()
-                    copy_config_files()
-                    sys.stdout = orig_stdout
-                    sys.stderr = orig_stderr
+                QuickInstall(os.path.dirname(os.path.realpath(args[0])))()
+                copy_config_files()
 
             else:
                 # we have some simple command like "./m css" that does not update virtualenv
