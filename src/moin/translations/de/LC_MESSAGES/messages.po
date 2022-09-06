@@ -1,4 +1,4 @@
-# German translations for MoinMoin.
+﻿# German translations for MoinMoin.
 # Copyright: 2010 Gerhard J. <gerhard.jungwirth3@gmail.com>
 # Copyright: 2011 Julian Brost <julian.brost@googlemail.com>
 # Copyright: 2011-2018 MoinMoin:ThomasWaldmann
@@ -21,16 +21,16 @@ msgstr ""
 
 #: src/moin/forms.py:94 src/moin/forms.py:168
 msgid "No namespace field in the meta."
-msgstr ""
+msgstr "Kein Namespace-Feld in den Metadaten."
 
 #: src/moin/forms.py:98
 msgid "The names in the name list must be unique."
-msgstr ""
+msgstr "Kein Name darf mehrfach in der Namensliste enthalten sein."
 
 #: src/moin/forms.py:105
 #, python-format
-msgid "Item names (%(invalid_names)s) must not start with '@' or '+'"
-msgstr "Item-Namen (%(invalid_names)s) dürfen nicht mit '@' oder '+' anfangen"
+msgid "Item names (%(invalid_names)s) must not start with '@' or '+'."
+msgstr "Item-Namen (%(invalid_names)s) dürfen nicht mit '@' oder '+' anfangen."
 
 #: src/moin/forms.py:112
 #, python-format
@@ -88,7 +88,7 @@ msgstr "Dieses Item existiert nicht."
 
 #: src/moin/forms.py:261
 msgid "This item name is corrupt, delete and recreate."
-msgstr ""
+msgstr "Der Name dieses Items ist beschädigt. Lösch und erstell ihn neu."
 
 #: src/moin/config/default.py:351 src/moin/forms.py:271
 #: src/moin/templates/all.html:6 src/moin/templates/ticket/advanced.html:28
@@ -108,7 +108,7 @@ msgstr "Abonnements"
 #: src/moin/forms.py:282 src/moin/templates/usersettings_forms.html:133
 #: src/moin/themes/basic/templates/layout.html:105
 msgid "Quick Links"
-msgstr ""
+msgstr "Quick Links"
 
 #: src/moin/forms.py:284
 msgid "Search Query"
@@ -203,23 +203,24 @@ msgid "Register New User"
 msgstr "Neuen Benutzer anlegen"
 
 #: src/moin/apps/admin/views.py:114
-msgid "User already exists"
-msgstr ""
+msgid "User already exists."
+msgstr "Benutzer existiert bereits."
 
 #: src/moin/apps/admin/views.py:122
 #, python-format
 msgid "Account for %(username)s created"
-msgstr ""
+msgstr "Der Account für %(username)s wurde erstellt."
 
 #: src/moin/apps/admin/views.py:131
 #, python-format
 msgid "%(username)s has been sent a password recovery email."
-msgstr ""
+msgstr "Eine E-Mail zur Wiederherstellung des Passwortes wurde an" 
+"%(username)s gesendet."
 
 #: src/moin/apps/admin/views.py:133
 #, python-format
 msgid "%(username)s is an invalid user, no email has been sent."
-msgstr ""
+msgstr "%(username)s existiert nicht. Es wurde keine E-Mail versendet."
 
 #: src/moin/apps/admin/templates/admin/index.html:6
 #: src/moin/apps/admin/templates/admin/userbrowser.html:10
@@ -234,23 +235,27 @@ msgstr "Benutzer-Profil von %(username)s: %(email)s %(disabled)s"
 
 #: src/moin/apps/admin/views.py:201
 msgid "{0} \"{1}\" status changed to \"{2}\""
-msgstr ""
+msgstr "{0} \"{1}\" Status geändert zu \"{2}\""
 
 #: src/moin/apps/admin/views.py:203
-msgid "modifying {0}.{1} failed"
-msgstr ""
+msgid "modifying {0}.{1} failed."
+msgstr "Modifizieren von {0}.{1} schlug fehl."
 
 #: src/moin/apps/admin/views.py:221
 msgid "{0} has been sent a password recovery email."
 msgstr ""
+"Eine E-Mail zur Wiederherstellung des Passwortes wurde an" 
+"{0} gesendet."
 
 #: src/moin/apps/admin/views.py:223
 msgid "{0} is an invalid user, no email has been sent."
-msgstr ""
+msgstr "{0} existiert nicht. Es wurde keine E-Mail versendet."
 
 #: src/moin/apps/admin/views.py:225
 msgid "No user name provided, no email sent."
 msgstr ""
+"Es wurde kein Benutzername eingegeben."
+"Daher wurde keine E-Mail versendet."
 
 #: src/moin/apps/admin/templates/admin/index.html:10
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:50
@@ -362,7 +367,7 @@ msgstr "Gruppen-Name"
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:21
 #: src/moin/templates/index.html:139
 msgid "Namespace"
-msgstr ""
+msgstr "Namespace"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:22
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:18
@@ -580,6 +585,8 @@ msgid ""
 "This table shows all settings in this wiki that retain their default "
 "values. "
 msgstr ""
+"Diese Tabelle zeigt alle Einstellungen des Wikis, die dem"
+"Standardwert entsprechen."
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:66
 msgid "Default Setting"
@@ -644,7 +651,7 @@ msgstr "InterWiki-Namen"
 
 #: src/moin/apps/admin/templates/user/index_user.html:25
 msgid "Namespaces"
-msgstr ""
+msgstr "Namespaces"
 
 #: src/moin/apps/admin/templates/user/index_user.html:27
 #: src/moin/templates/index.html:162
@@ -680,11 +687,11 @@ msgstr ""
 
 #: src/moin/apps/frontend/views.py:540 src/moin/apps/frontend/views.py:547
 msgid "This item is deleted."
-msgstr ""
+msgstr "Dieses Item wurde gelöscht."
 
 #: src/moin/apps/frontend/views.py:543
 msgid "This item revision is deleted."
-msgstr ""
+msgstr "Diese Item-Revision wurde gelöscht."
 
 #: src/moin/apps/frontend/views.py:576
 #, python-format
@@ -705,7 +712,7 @@ msgstr "OK"
 
 #: src/moin/apps/frontend/views.py:737
 msgid "Item conversion failed"
-msgstr ""
+msgstr "Item-Konversion schlug fehl"
 
 #: src/moin/apps/frontend/views.py:772
 msgid "Item converted successfully"
@@ -713,7 +720,7 @@ msgstr "Item erfolgreich konvertiert"
 
 #: src/moin/apps/frontend/views.py:799
 msgid "Error: nothing changed. Meta data validation failed."
-msgstr ""
+msgstr "Fehler: Keine Änderungen. Metadateien konnten nicht validiert werden"
 
 #: src/moin/apps/frontend/views.py:806 src/moin/items/__init__.py:344
 msgid "Target"
@@ -744,7 +751,7 @@ msgstr ""
 #: src/moin/apps/frontend/views.py:1044
 #, python-format
 msgid "Access denied processing '%(bad_name)s'."
-msgstr ""
+msgstr "Zugriff verweigert beim Verarbeiten von '%(bad_name)s'."
 
 #: src/moin/apps/frontend/views.py:1233
 #, python-format
@@ -752,29 +759,33 @@ msgid ""
 "File Successfully uploaded and renamed from %(bad_name)s to "
 "%(good_name)s. "
 msgstr ""
+"Datei erfolgreich hochgeladen und von %(bad_name)s zu "
+"%(good_name)s umbenannt."
 
 #: src/moin/apps/frontend/views.py:1247
 #, python-format
 msgid "File Successfully uploaded, existing file overwritten: '%(file_name)s'."
 msgstr ""
+"Datei erfolgreich hochgeladen."
+"Bereits existierende Datei wurde überschrieben: '%(file_name)s'."
 
 #: src/moin/apps/frontend/views.py:1253
 #, python-format
 msgid "Permission denied, upload failed: '%(file_name)s'."
-msgstr ""
+msgstr "Zugriff verweigert, Hochladen fehlgeschlagen: '%(file_name)s'."
 
 #: src/moin/apps/frontend/views.py:1265
 #, python-format
 msgid "File Successfully uploaded: '%(item_name)s'."
-msgstr ""
+msgstr "Datei erfolgreich hochgeladen: '%(item_name)s'."
 
 #: src/moin/apps/frontend/views.py:1288
 msgid "Apply Filter"
-msgstr ""
+msgstr "Filter anwenden"
 
 #: src/moin/apps/frontend/views.py:1362
 msgid "Global Index of All Namespaces"
-msgstr ""
+msgstr "Globaler Index aller Namespaces"
 
 #: src/moin/apps/frontend/views.py:1364
 #, python-format
@@ -789,7 +800,7 @@ msgstr "Subitems '%(item_name)s'"
 #: src/moin/apps/frontend/views.py:1368
 #, python-format
 msgid "Index of %(what)s"
-msgstr ""
+msgstr "Index von %(what)s"
 
 #: src/moin/apps/frontend/views.py:1370
 #, python-format
@@ -822,12 +833,12 @@ msgstr "Globale Historie"
 
 #: src/moin/apps/frontend/views.py:1673
 msgid "Global History of All Namespaces"
-msgstr ""
+msgstr "Globale Historie aller Namespaces"
 
 #: src/moin/apps/frontend/views.py:1675
 #, python-format
 msgid "History of Namespace '%(namespace)s'"
-msgstr ""
+msgstr "Historie des Namespaces '%(namespace)s'"
 
 #: src/moin/apps/frontend/views.py:1773 src/moin/apps/frontend/views.py:1798
 #, python-format
@@ -851,6 +862,8 @@ msgid ""
 "Can't remove the subscription! You are subscribed to this page, but not "
 "by itemid."
 msgstr ""
+"Das Abonnement kann nicht aufgehoben werden! Sie haben diese Seite"
+"abonniert, aber nicht über die Itemid."
 
 #: src/moin/apps/frontend/views.py:1805
 msgid "Please edit the subscription in your settings."
@@ -1046,11 +1059,11 @@ msgstr "Benutzerkonto dauerhaft deaktivieren"
 
 #: src/moin/apps/frontend/views.py:2217
 msgid "Invalid subscription syntax: "
-msgstr ""
+msgstr "Invalider Abonnement-Syntax"
 
 #: src/moin/apps/frontend/views.py:2218
 msgid "Invalid keyword: "
-msgstr ""
+msgstr "Invalides Schlüsselwort"
 
 #: src/moin/apps/frontend/views.py:2219
 msgid "Invalid RE syntax: "
@@ -1070,7 +1083,7 @@ msgstr "Die Anmelde-Namen, die Sie benutzen wollen"
 
 #: src/moin/apps/frontend/views.py:2269
 msgid "Display-Name"
-msgstr ""
+msgstr "Anzeigename"
 
 #: src/moin/apps/frontend/views.py:2270
 msgid "Your display name (informational)"
@@ -1127,7 +1140,7 @@ msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 
 #: src/moin/apps/frontend/views.py:2362
 msgid "A confirmation email has been sent to your newly configured email address."
-msgstr ""
+msgstr "Eine Bestätigungs-E-Mail wurde an ihre neue E-Mail-Adresse gesendet."
 
 #: src/moin/apps/frontend/views.py:2369
 msgid ""
@@ -1212,7 +1225,7 @@ msgstr "Verbindung zum LDAP-Server %(server)s fehlgeschlagen."
 #: src/moin/config/default.py:266
 #, python-format
 msgid "For a password a minimum length of %(min_length)d characters is required."
-msgstr ""
+msgstr "Ein Passwort muss mindestens %(min_length)d Zeichen haben."
 
 #: src/moin/config/default.py:269
 #, python-format
@@ -1220,7 +1233,8 @@ msgid ""
 "For a password a minimum of %(min_different)d different characters is "
 "required."
 msgstr ""
-
+"Ein Passwort muss mindestens %(min_different)d verschiedene Zeichen "
+"beinhalten."
 #: src/moin/config/default.py:276
 msgid ""
 "Password is too easy to guess (password contains name or name contains "
@@ -1369,7 +1383,7 @@ msgstr ""
 
 #: src/moin/constants/contenttypes.py:165
 msgid "Use a semicolon or comma to separate cells."
-msgstr ""
+msgstr "Nutze ein Semikolon oder Komma um Zellen zu trennen."
 
 #: src/moin/constants/contenttypes.py:166
 msgid "If the first row is recognized as a header, the table will be sortable."
@@ -1419,7 +1433,7 @@ msgstr ""
 
 #: src/moin/converters/html_in.py:126
 msgid "Error: malformed HTML: {reason}."
-msgstr ""
+msgstr "Error: fehlerhafte HTML: {reason}."
 
 #: src/moin/converters/html_in.py:132
 msgid "Error: malformed HTML. Try viewing source with Highlight or Modify links."
@@ -1483,7 +1497,7 @@ msgstr ""
 
 #: src/moin/converters/text_csv_in.py:45
 msgid "Error parsing CSV file:"
-msgstr ""
+msgstr "Fehler beim parsen der CSV Datei:"
 
 #: src/moin/items/__init__.py:214
 #, python-format
@@ -1530,7 +1544,7 @@ msgstr "Das Item \"%(name)s\" wurde gelöscht."
 #: src/moin/items/__init__.py:674
 #, python-format
 msgid "The item \"%(name)s\" was renamed to \"%(new_name)s\"."
-msgstr ""
+msgstr "Das Item \"%(name)s\" wurde umbenannt in \"%(new_name)s\"."
 
 #: src/moin/items/__init__.py:657
 #, python-format
@@ -1540,7 +1554,7 @@ msgstr ""
 #: src/moin/items/__init__.py:689
 #, python-format
 msgid "An item named %s already exists in the namespace %s."
-msgstr ""
+msgstr "Ein Item mit Namen %s existiert bereits im Namespace %s."
 
 #: src/moin/items/__init__.py:729 src/moin/items/__init__.py:731
 #: src/moin/items/__init__.py:743
@@ -1712,7 +1726,7 @@ msgstr "Zugewiesen an"
 
 #: src/moin/items/ticket.py:104
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: src/moin/items/ticket.py:108
 msgid "One-line summary"
@@ -1972,7 +1986,7 @@ msgstr "Das Item '%(item_name)s' existiert nicht."
 
 #: src/moin/templates/404.html:21
 msgid "The full path is:"
-msgstr ""
+msgstr "Der volle Pfad ist:"
 
 #: src/moin/templates/ajaxsearch.html:12
 msgid "Please check these tickets if they cover your issue:"
@@ -2048,12 +2062,12 @@ msgstr ""
 #: src/moin/templates/ajaxsearch.html:116
 #, python-format
 msgid "CONTENT: %(content)s"
-msgstr ""
+msgstr "INHALT: %(content)s"
 
 #: src/moin/templates/ajaxsearch.html:125
 #, python-format
 msgid "%(count)d items are not shown because read permission was denied."
-msgstr ""
+msgstr "%(count)d Items werden wegen fehlender Leseberechtigungen nicht angezeigt."
 
 #: src/moin/templates/all.html:3
 msgid "Global Views of All Namespaces"
@@ -2080,7 +2094,7 @@ msgstr ""
 
 #: src/moin/templates/crash.html:9
 msgid "Error ID"
-msgstr ""
+msgstr "Fehler ID"
 
 #: src/moin/templates/crash.html:11
 msgid "Server time"
@@ -2125,7 +2139,7 @@ msgstr ""
 
 #: src/moin/templates/crash.html:38
 msgid "Possible ways to fix the problem:"
-msgstr ""
+msgstr "Folgendes könnte das Problem lösen:"
 
 #: src/moin/templates/crash.html:41
 msgid "Click the History link within Item Views and revert to a prior revision."
@@ -2254,7 +2268,7 @@ msgstr "Content-Type"
 
 #: src/moin/templates/history.html:59 src/moin/templates/mychanges.html:24
 msgid "Comment and/or `Summary`"
-msgstr ""
+msgstr "Kommentar und/oder 'Zusammenfassung'"
 
 #: src/moin/templates/history.html:89
 msgid "Item was deleted and later created as new with same name"
@@ -3138,7 +3152,7 @@ msgstr ""
 #: src/moin/utils/notifications.py:52
 #, python-format
 msgid "The '%(fqname)s' item on '%(wiki_name)s' has been copied by %(user_name)s:"
-msgstr ""
+msgstr "Das '%(fqname)s' Item von '%(wiki_name)s' wurde von %(user_name)s kopiert:"
 
 #: src/moin/utils/notifications.py:53
 #, python-format
