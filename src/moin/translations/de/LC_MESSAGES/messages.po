@@ -1363,11 +1363,11 @@ msgstr "Kommentare verstecken"
 
 #: src/moin/config/default.py:396
 msgid "Transclusions"
-msgstr "Transclusions"
+msgstr "Transklusionen"
 
 #: src/moin/config/default.py:396
 msgid "Show transclusions"
-msgstr "Transclusions anzeigen"
+msgstr "Transklusionen anzeigen"
 
 #: src/moin/config/default.py:580
 msgid "To request an account, see bottom of Home page."
@@ -2846,7 +2846,7 @@ msgstr ""
 
 #: src/moin/templates/usersettings_forms.html:125
 msgid "Appearance"
-msgstr ""
+msgstr "Ansicht"
 
 #: src/moin/templates/usersettings_forms.html:129
 msgid "Change Password"
@@ -2862,7 +2862,7 @@ msgstr "Optionen"
 
 #: src/moin/templates/usersettings_forms.html:145
 msgid "Personal"
-msgstr ""
+msgstr "Personalisierung"
 
 #: src/moin/templates/utils.html:18 src/moin/templates/utils.html:308
 #: src/moin/templates/utils.html:340
@@ -2896,7 +2896,7 @@ msgstr "Alias Namen"
 
 #: src/moin/templates/utils.html:251
 msgid "Page Trail"
-msgstr ""
+msgstr "Zuletzt besuchte Seiten"
 
 #: src/moin/templates/utils.html:313 src/moin/templates/utils.html:345
 #: src/moin/templates/utils.html:363
