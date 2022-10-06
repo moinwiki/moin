@@ -247,7 +247,7 @@ def create_m():
     """Create an 'm.bat or 'm' bash script that will run quickinstall.py using this Python"""
     if WINDOWS_OS:
         with open('m.bat', 'w') as f:
-            f.write(':: {0}\n\n@{1} quickinstall.py %* --help\n'.format(WIN_INFO, sys.executable))
+            f.write(':: {0}\n\n@\"{1}\" quickinstall.py %* --help\n'.format(WIN_INFO, sys.executable))
     else:
         with open('m', 'w') as f:
             f.write('#!/bin/sh\n# {0}\n\n{1} quickinstall.py $* --help\n'.format(NIX_INFO, sys.executable))
@@ -269,12 +269,12 @@ class Commands:
         """create or update a virtual environment with the required packages"""
         if os.path.isdir('.tox'):
             # keep tox test virtualenvs in sync with moin-env-python
-            command = '{0} quickinstall.py --FirstCall {1}{2}tox --recreate --notest'.format(
+            command = '\"{0}\" quickinstall.py --FirstCall {1}{2}tox --recreate --notest'.format(
                 sys.executable, ' '.join(args), SEP)
             print('Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {0}'.format(
                 QUICKINSTALL))
         else:
-            command = '{0} quickinstall.py --FirstCall'.format(sys.executable)
+            command = '\"{0}\" quickinstall.py --FirstCall'.format(sys.executable)
             print('Running quickinstall.py... output messages redirected to {0}'.format(QUICKINSTALL))
         with open(QUICKINSTALL, 'w') as messages:
             # we run ourself as a subprocess so output can be captured in a log file
@@ -628,7 +628,7 @@ class QuickInstall:
         """Create files in the repo root that wrap files in <path-to-virtual-env>\Scripts."""  # noqa
         target = os.path.join(self.dir_venv_bin, target)
         with open(filename, 'w') as f:
-            f.write(':: {0}\n\n@call {1} %*\n'.format(WIN_INFO, target))
+            f.write(':: {0}\n\n@call \"{1}\" %*\n'.format(WIN_INFO, target))
 
     def do_helpers(self):
         """Create small helper scripts or symlinks in repo root, avoid keying the long path to virtual env."""
