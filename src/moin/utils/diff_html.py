@@ -9,7 +9,7 @@
 
 import difflib
 
-from werkzeug.utils import escape
+from markupsafe import escape
 
 
 def indent(line):
@@ -71,12 +71,12 @@ def diff(old, new):
         if charobj.ratio() < 0.5:
             # Insufficient similarity.
             if leftpane:
-                leftresult = """<span>{0}</span>""".format(indent(escape(leftpane)))
+                leftresult = """<span>{0}</span>""".format(indent(str(escape(leftpane))))
             else:
                 leftresult = ''
 
             if rightpane:
-                rightresult = """<span>{0}</span>""".format(indent(escape(rightpane)))
+                rightresult = """<span>{0}</span>""".format(indent(str(escape(rightpane))))
             else:
                 rightresult = ''
         else:
@@ -91,8 +91,8 @@ def diff(old, new):
                 if thismatch[1] - charlast[1] != 0:
                     rightresult += """<span>{0}</span>""".format(indent(
                         escape(rightpane[charlast[1]:thismatch[1]])))
-                leftresult += escape(leftpane[thismatch[0]:thismatch[0] + thismatch[2]])
-                rightresult += escape(rightpane[thismatch[1]:thismatch[1] + thismatch[2]])
+                leftresult += str(escape(leftpane[thismatch[0]:thismatch[0] + thismatch[2]]))
+                rightresult += str(escape(rightpane[thismatch[1]:thismatch[1] + thismatch[2]]))
                 charlast = (thismatch[0] + thismatch[2], thismatch[1] + thismatch[2])
 
         leftpane = '<br>'.join([indent(x) for x in leftresult.splitlines()])
