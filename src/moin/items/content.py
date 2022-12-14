@@ -32,11 +32,11 @@ from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import request, url_for, Response, abort, escape
+from flask import request, url_for, Response, abort
 
 from flatland import Form, String
 
-from jinja2 import Markup
+from markupsafe import Markup, escape
 
 from werkzeug.http import is_resource_modified
 
