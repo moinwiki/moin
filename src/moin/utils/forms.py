@@ -6,7 +6,7 @@
 """
 
 
-from jinja2 import Markup
+from markupsafe import Markup
 import werkzeug.datastructures
 
 from flatland import AdaptationError, Scalar

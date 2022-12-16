@@ -42,7 +42,7 @@ from flask_theme import get_themes_list
 from flatland import Form
 from flatland.validation import Validator
 
-from jinja2 import Markup
+from markupsafe import Markup
 
 import pytz
 from babel import Locale

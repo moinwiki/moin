@@ -32,7 +32,7 @@ from flask import request, Response, redirect, abort, url_for, flash
 from flatland import Form
 from flatland.validation import Validator
 
-from jinja2 import Markup
+from markupsafe import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
 
