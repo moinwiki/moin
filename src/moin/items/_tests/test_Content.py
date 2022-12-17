@@ -10,9 +10,7 @@
 import pytest
 from io import BytesIO
 
-from flask import Markup
-
-from werkzeug.utils import escape
+from markupsafe import Markup, escape
 
 from moin.utils import diff_html
 

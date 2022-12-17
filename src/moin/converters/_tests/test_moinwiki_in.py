@@ -242,6 +242,21 @@ class TestConverter:
         self.do(input, output)
 
     data = [
+        ('||{{cat}}||',
+         '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>'),
+        ('||{{cat|kitty}}||',
+         '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xhtml:alt="kitty" xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>'),
+        ('||{{cat|kitty|width=160}}||',
+         '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xhtml:alt="kitty" xhtml:width="160" xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>'),
+        ('||{{cat||width=160}} text {{cat||width=160}} text [[link]]||',
+         '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xhtml:width="160" xinclude:href="wiki.local:cat?" /> text <xinclude:include xhtml:width="160" xinclude:href="wiki.local:cat?" /> text <a xlink:href="wiki.local:link">link</a></table-cell></table-row></table-body></table></body></page>'),
+    ]
+
+    @pytest.mark.parametrize('input,output', data)
+    def test_table_links(self, input, output):
+        self.do(input, output)
+
+    data = [
         # a class of moin-wiki-table is added to all tables, html_out may create thead and tfoot tags
         ('||||Span||\n\n',
          '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-columns-spanned="2">Span</table-cell></table-row></table-body></table></body></page>'),

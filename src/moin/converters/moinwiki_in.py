@@ -880,7 +880,21 @@ class Converter(ConverterMacro):
                 (?P<cell_args> ([^<])*? )
                 >
             )?
-            (?P<cell_text> .*? )
+            (?P<cell_text>
+                (
+                    (.*?                       # optional text before link or transclusion
+                        (
+                            ((\[\[) | (\{\{))  # start of link or transclusion
+                            .*?
+                            ((\]\]) | (\}\}))  # end of link or transclusion
+                            .*?                # optional text after link or transclusion
+                        )*?                    # there may be multiple links or transclusion within a cell
+                        (?=((\|\|) | $))       # lookahead sees end of cell
+                    )
+                    |
+                    .*?(?=(\|\|) | $)          # simple case, no transclusion or link in cell
+                )*
+            )
             (?=
                 \|\|
                 |

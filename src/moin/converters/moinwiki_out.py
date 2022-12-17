@@ -14,7 +14,7 @@ import urllib.error
 from re import findall, sub
 
 from emeraldtree import ElementTree as ET
-from werkzeug.utils import unescape
+from markupsafe import Markup
 
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.iri import Iri
@@ -513,7 +513,7 @@ class Converter:
                     elem = next(elem_it)
                 ret = "{0}\n{1}\n}}}}}}\n".format(ret, ' '.join(elem.itertext()))
                 return ret
-        return unescape(elem.get(moin_page.alt, '')) + "\n"
+        return Markup.unescape(elem.get(moin_page.alt, '')) + "\n"
 
     def open_moinpage_inline_part(self, elem):
         ret = self.open_moinpage_part(elem)
