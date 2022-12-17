@@ -139,7 +139,7 @@ from werkzeug.utils import redirect
 from flask import url_for, session, request
 from flask import g as flaskg
 from flask import current_app as app
-from jinja2 import Markup
+from markupsafe import Markup
 
 from moin import user
 from moin.i18n import _
