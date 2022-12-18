@@ -42,7 +42,7 @@ from flask import request, abort, redirect, url_for
 from flask import g as flaskg
 from flask import current_app as app
 
-from jinja2 import Markup
+from markupsafe import Markup
 
 from whoosh.query import Term, And
 

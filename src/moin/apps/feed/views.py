@@ -14,7 +14,7 @@ from flask import current_app as app
 from flask import g as flaskg
 
 from feedgen.feed import FeedGenerator
-from jinja2 import Markup
+from markupsafe import Markup
 
 from whoosh.query import Term, And
 
