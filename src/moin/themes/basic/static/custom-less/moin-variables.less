@@ -1,3 +1,10 @@
+
+// https://www.canva.com/colors/color-palettes/foil-covered-sneakers/
+ @theme-col-1: #90ADC6; // Blue Gray
+ @theme-col-2: #E9EAEC; // Pewter
+ @theme-col-3: #FAD02C; // Yellow
+ @theme-col-4: #333652; // Dark Blue
+
 // Links
 // -------------------------
 @link-nonexistent-color: lighten(@brand-danger, 15%);
@@ -6,26 +13,26 @@
 
 // Moin-Inverted Navbar
 //----------------------
-@moin-navbar-inverse-color:                    #00417F;
-@moin-navbar-inverse-bgcolor:                  #00417F;
-@moin-navbar-inverse-textcolor:                lighten(@moin-navbar-inverse-color, 65%);
+@moin-navbar-inverse-color:                    @theme-col-2;
+@moin-navbar-inverse-bgcolor:                  @theme-col-2;
+@moin-navbar-inverse-textcolor:                @theme-col-1;
 
 // Large screen / wide desktop
 @container-large-desktop:   1300px;
 @container-tablet:          728px;
 
 // Darker-Navbar and List heading background
-@navbar-bg: #00417F;
+@navbar-bg: @theme-col-2;
 
 // Search
 // -------------------------
 @searchstats_color:              #808080;
-@search_option_bar_color:        #00417F;
-@search_option_bar_text_color:   #c8ddf1;
+@search_option_bar_color:        white;
+@search_option_bar_text_color:   @theme-col-1;
 
 // Bootstrap
 // -------------------------
-@bootstrap_default_blue:         #428bca;
+@bootstrap_default_blue:         @theme-col-1;
 
 // General colors
 // -------------------------
