@@ -852,7 +852,7 @@ class Converter(ConverterMacro):
             attrib[html.alt] = object_text
         if object_item is not None:
             # img tag
-            query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
+            query = url_encode(query_keys, charset=CHARSET)
             # TODO: moin 1.9 needed this for an attached file; move functionality to scripts/migration/moin/import19.py
             att = 'attachment:'
             if object_item.startswith(att):

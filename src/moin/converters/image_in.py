@@ -40,7 +40,7 @@ class Converter:
                 query_keys.update(url_decode(query.query))
             attrib = arguments.keyword
 
-        query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
+        query = url_encode(query_keys, charset=CHARSET)
 
         attrib.update({
             moin_page.type_: str(self.input_type),

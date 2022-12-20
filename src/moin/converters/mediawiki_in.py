@@ -643,7 +643,7 @@ class Converter(ConverterMacro):
         parsed_args = self.parse_args(link_args[1:])
         query = None
         if parsed_args.keyword:
-            query = url_encode(parsed_args.keyword, charset=CHARSET, encode_keys=True, sort=True)
+            query = url_encode(parsed_args.keyword, charset=CHARSET, sort=True)
         # Take the last of positional parameters as link_text(caption)
         if parsed_args.positional:
             link_text = parsed_args.positional.pop()
@@ -662,7 +662,7 @@ class Converter(ConverterMacro):
                     if 'do' not in args:
                         # by default, we want the item's get url for transclusion of raw data:
                         args['do'] = 'get'
-                    query = url_encode(args, charset=CHARSET, encode_keys=True, sort=True)
+                    query = url_encode(args, charset=CHARSET, sort=True)
                     target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
                     text = object_item
                 else:
