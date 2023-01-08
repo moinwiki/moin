@@ -12,20 +12,12 @@ from ..memory import BytesStore, FileStore
 
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
-def test_create(Store):
+def test_create_and_destroy(Store):
     store = Store()
     assert store._st is None
-
     store.create()
     store.open()
     assert store._st == {}
-
-    return store
-
-
-@pytest.mark.multi(Store=[BytesStore, FileStore])
-def test_destroy(Store):
-    store = test_create(Store)
     store.close()
     store.destroy()
     assert store._st is None

@@ -15,21 +15,15 @@ pytest.importorskip('moin.storage.stores.sqla')  # noqa
 
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
-def test_create(tmpdir, Store):
+def test_create_and_destroy(tmpdir, Store):
     dbfile = tmpdir.join('store.sqlite')
     assert not dbfile.check()
     store = Store('sqlite:///{0!s}'.format(dbfile))
     assert not dbfile.check()
     store.create()
     assert dbfile.check()
-    return store
-
-
-@pytest.mark.multi(Store=[BytesStore, FileStore])
-def test_destroy(tmpdir, Store):
-    store = test_create(tmpdir, Store)
     store.destroy()
-    # XXX: check for dropped table
+    # TODO: check for dropped table
 
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])

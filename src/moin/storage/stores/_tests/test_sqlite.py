@@ -44,14 +44,8 @@ def test_create(tmpdir, Store):
     assert not dbfile.check()
     store.create()
     assert dbfile.check()
-    return store
-
-
-@all_setups
-def test_destroy(tmpdir, Store):
-    store = test_create(tmpdir, Store)
     store.destroy()
-    # XXX: check for dropped table
+    # TODO: check for dropped table
 
 
 @pytest.mark.multi(Store=[BytesStore, FileStore])
