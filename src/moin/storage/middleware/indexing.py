@@ -233,7 +233,10 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     :returns: indexable content, text/plain, unicode object
     """
     if not item_name:
-        item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
+        try:
+            item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
+        except IndexError:
+            item_name = meta[NAMESPACE] + '/' + 'DoesNotExist'
     fqname = split_fqname(item_name)
 
     class PseudoRev:
