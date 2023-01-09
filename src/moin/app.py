@@ -148,8 +148,8 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     app.register_blueprint(serve, url_prefix='/+serve')
     clock.stop('create_app register')
     clock.start('create_app flask-cache')
-    # the 'simple' caching uses a dict and is not thread safe according to the docs.
-    cache = Cache(config={'CACHE_TYPE': 'simple'})
+    # 'SimpleCache' caching uses a dict and is not thread safe according to the docs.
+    cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
     cache.init_app(app)
     app.cache = cache
     clock.stop('create_app flask-cache')
