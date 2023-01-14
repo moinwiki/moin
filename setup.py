@@ -94,7 +94,7 @@ setup_args = dict(
         'sqlalchemy>=1.3.16',  # used by sqla store TODO see: #1014
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
-        'XStatic-Font-Awesome>=4.1.0.0',
+        'XStatic-Font-Awesome==4.7.0.0',  # 6.2.1.0 available
         'XStatic-CKEditor>=3.6.1.2',
         'XStatic-autosize',
         'XStatic-jQuery>=1.8.2',
