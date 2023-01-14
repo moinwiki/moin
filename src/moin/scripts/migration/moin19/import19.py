@@ -468,7 +468,8 @@ def migrate_users_links(dom, itemlinks2chg):
     """
 
     for node in dom.iter_elements_tree():
-        if node.tag.name == 'a':
+        # do not change email nodes, these have type(node.attrib[xlink.href]) == 'string'
+        if node.tag.name == 'a' and not isinstance(node.attrib[xlink.href], str):
             path_19 = str(node.attrib[xlink.href].path)
             if node.attrib[xlink.href].scheme == 'wiki.local' and path_19 in itemlinks2chg:
                 print("    >> Info: Changing link from " + path_19 + " to users/" + path_19)
