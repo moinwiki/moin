@@ -1,15 +1,13 @@
 # Copyright: 2019 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-import time
 import datetime
 import pytz
 
 from flask import g as flaskg
 import flask_babel
 
-from moin.constants.keys import TIMEZONE
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin import i18n
 
 
@@ -24,16 +22,16 @@ def duration(seconds):
     if seconds < 90:
         return _("seconds"), seconds
     if seconds < 5400:  # 1.5 hours
-        return _("minutes"), (seconds+30)//60
+        return _("minutes"), (seconds + 30) // 60
     if seconds < 129600:  # 36 hours
-        return _("hours"), (seconds+1800)//3600
+        return _("hours"), (seconds + 1800) // 3600
     if seconds < 864000:  # 10 days
-        return _("days"), (seconds+43200)//86400
+        return _("days"), (seconds + 43200) // 86400
     if seconds < 4838400:  # 8 weeks
-        return _("weeks"), (seconds+302400)//604800
+        return _("weeks"), (seconds + 302400) // 604800
     if seconds < 63072000:  # 24 months
-        return _("months"), (seconds+1296000)//2592000
-    return _("years"), (seconds+15768000)//31536000
+        return _("months"), (seconds + 1296000) // 2592000
+    return _("years"), (seconds + 15768000) // 31536000
 
 
 def format_date_time(utc_dt=None, fmt='yyyy-MM-dd HH:mm:ss', interval='datetime'):
@@ -51,7 +49,7 @@ def format_date_time(utc_dt=None, fmt='yyyy-MM-dd HH:mm:ss', interval='datetime'
     All other logged-in users will see the usual babel date/time formats based upon
     their time zone and locale.
 
-    See http://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
+    See https://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
     """
     if utc_dt is None:
         utc_dt = datetime.datetime.utcnow()

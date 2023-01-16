@@ -19,15 +19,7 @@ except ImportError:
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, xinclude, html
-from moin.constants.contenttypes import CHARSET
-
-from docutils import nodes, utils, writers, core
-from docutils.parsers.rst import Parser
-from docutils.nodes import reference, literal_block
-from docutils.parsers import rst
-from docutils.parsers.rst import directives, roles
 
 from moin.converters.rst_in import Converter as conv_in
 from moin.converters.rst_out import Converter as conv_out
@@ -137,12 +129,10 @@ class TestConverter:
          'External hyperlinks, like `Python`_.\n\n\n.. _Python: http://www.python.org/\n\n'),
         ('Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n',
          'Internal crossreferences, like `example`_.\n\n.. _example:\n\nThis is an example crossreference target.\n'),
-        (
-        '`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n',
-        '`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n'),
-        (
-        '\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n',
-        '\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
+        ('`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n',
+         '`Python`_ is `my favourite programming language`_.\n\n\n.. _Python: http://www.python.org/\n\n.. _my favourite programming language: http://www.python.org/\n\n'),
+        ('\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n',
+         '\n=======================\nTitles are targets, too\n=======================\n\nImplict references, like `Titles are targets, too`_.\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -173,12 +163,10 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        (
-        '.. image:: png\n   :scale: 50\n   :alt: alternate text png\n   :align: center\n   :height: 100\n   :width: 200\n',
-        '\n.. image:: png\n   :alt: alternate text png\n   :align: center\n   :height: 50\n   :width: 100\n'),
-        (
-        '.. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n   :scale: 50\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
-        '\n.. figure:: png\n   :alt: alternate text png\n   :height: 50\n   :width: 100\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n'),
+        ('.. image:: png\n   :scale: 50\n   :alt: alternate text png\n   :align: center\n   :height: 100\n   :width: 200\n',
+         '\n.. image:: png\n   :alt: alternate text png\n   :align: center\n   :height: 50\n   :width: 100\n'),
+        ('.. figure:: png\n   :alt: alternate text png\n   :height: 100\n   :width: 200\n   :scale: 50\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n',
+         '\n.. figure:: png\n   :alt: alternate text png\n   :height: 50\n   :width: 100\n\n   Moin Logo\n\n   This logo replaced the "MoinMoin Man"\n   logo long ago.\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

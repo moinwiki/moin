@@ -12,20 +12,32 @@ we won't go into details:
   all other software it requires. Also your OS / dist might have a mechanism
   for updating the installed software with security fixes or to future releases.
 
-  E.g. on Debian/Ubuntu Linux: ``apt install moin2``
-- Install from PyPI: ``pip install moin2``
+  E.g. on Debian/Ubuntu Linux
+::
 
-  - Optionally, create a virtual env first for better separation or
-  - use ``pip install --user moin2`` to install into your home directory.
-  - pip will automatically install other python packages moin2 requires,
-    but you maybe have to install required non-python packages yourself.
-  - You will have to care for updates / installing security fixes yourself.
+ apt install moin2
+
+- Install from PyPI:
+::
+
+ pip install moin2
+
+- Install from Test Python Package Index as long as moin2 is not officially released:
+::
+
+  pip install --pre --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple moin
+
+- Optionally, create a virtual env first for better separation or
+- use ``pip install --user moin2`` to install into your home directory.
+- pip will automatically install other python packages moin2 requires,
+  but you maybe have to install required non-python packages yourself.
+- You will have to care for updates / installing security fixes yourself.
 
 After this, you should have a ``moin`` command available, try it:
 
 ::
 
- moin help
+ moin --help
 
 Creating a wiki instance
 ========================
@@ -37,7 +49,7 @@ Let's create a new instance:
 
 ::
 
- moin create-instance INSTANCE-DIRECTORY  # TODO: implement this!
+ moin create-instance --path INSTANCE-DIRECTORY
 
 Change into the new instance directory:
 
@@ -46,23 +58,40 @@ Change into the new instance directory:
  cd INSTANCE-DIRECTORY
 
 You'll find a ``wikiconfig.py`` there to edit. Adapt it as you like,
-you'll find some comments in there.
+you'll find some comments in there. Review and change the settings for::
 
-After configuring, you need to initialize the storage and the index:
+ * sitename
+ * interwikiname
+ * acls
+ * SECRET_KEY
+
+After configuring, you can create an empty wiki by initializing the
+storage and the index:
 
 ::
 
  moin index-create -s -i
 
 If you don't want to start with an empty wiki, but rather play with some
-sample content we provide, load it into your wiki:
+sample content we provide, load it into your wiki and rebuild the indexes:
 
 ::
 
- moin load-sample-content
- # TODO: implement this using code like in:
- # moin load --file contrib/sample/unicode.moin
- # moin index-build
+ moin load-sample
+ moin index-build
+
+Or, if you have a moin 1.9.x wiki, convert it to moin 2:
+
+::
+
+  moin import19 -d <path to 1.9 wiki/data> -s -i
+
+If you want to load English help for editors (replace en with your wiki's preferred language):
+
+::
+
+ moin load-help -n en
+ moin load-help -n common
 
 Run your wiki instance
 ======================
@@ -74,6 +103,8 @@ Now try your new wiki using the builtin python-based web server:
 
 For production, please use a real web server like apache or nginx.
 
+For more information on various wiki admin activities, see `Moin Command Line Interface`.
+
 
 =============================
 Installation (for developers)
@@ -81,25 +112,34 @@ Installation (for developers)
 
 Clone the git repository
 ========================
-If you like to work on the moin2 code, clone the project repository:
+If you like to work on the moin2 code, clone the master project repository
+or see the option below:
 
 ::
 
+ cd <to the parent of your moin repo>
  git clone https://github.com/moinwiki/moin
+ cd moin
 
-If you use github, you can also first fork that project repo to your own
+If you use github, you can also first fork the project repo to your own
 user's github repositories and then clone your forked repo to your local
-development machine. You can easily publish own changes and do pull requests
-that way.
+development machine. You can easily publish your own changes and
+do pull requests that way. If you do fork the project, then an alternative
+to the above command is to clone your fork and add a remote url to the
+master::
+
+ git clone https://github.com/<your name>/moin
+ cd moin
+ git remote add moinwiki https://github.com/moinwiki/moin
 
 Installing
 ==========
-Before you can run moin, you need to install it:
+Before you can run moin, you need to install it.
 
 Using your standard user account, run the following command
 from the project root directory. Replace <python> in the command
-below with the path to a python 3.5+ executable. This is usually
-just "python", but may be "python3", "python3.5", "/opt/pypy/bin/pypy"
+below with the path to a python 3.8+ executable. This is usually
+just "python", but may be "python3", "python3.8", "/opt/pypy/bin/pypy"
 or even <some-other-path-to-python>:
 
 ::
@@ -116,7 +156,9 @@ install the packages in a virtual environment, and compile the translations
 
 The default virtual environment directory name is:
 
- * ../<PROJECT>-venv-<PYTHON>/
+::
+
+ ../<PROJECT>-venv-<PYTHON>/
 
 where <PROJECT> is the name of the project root directory, and <PYTHON>
 is the name of your python interpreter. As noted above, the default
@@ -129,6 +171,11 @@ messages will be extracted and written to the terminal window, and
 finally a message to type "m" to display a menu.
 
 If there are failure messages, see the troubleshooting section below.
+
+Activate the virtual environment::
+
+ activate    # in Windows
+ . activate  # in Unix or Linux
 
 Typing "./m" (or "m" on Windows) will display a menu similar to:
 
@@ -163,22 +210,28 @@ Typing "./m" (or "m" on Windows) will display a menu similar to:
     del-wiki        create a backup, then delete all wiki data
 
 While most of the above menu choices may be executed now, new users should
-do:
+do the following to create a wiki instance and load it with sample data.:
 
 ::
 
- m sample   # in Windows
- ./m sample # in Unix
+ m sample    # in Windows
+ ./m sample  # in Unix or Linux
 
-to create a wiki instance and load it with sample data. Next, run the
-built-in wiki server:
+If you want to load English help for editors (replace en with your wiki's preferred language):
+
+::
+
+ moin load-help -n en
+ moin load-help -n common
+
+Next, run the built-in wiki server:
 
 ::
 
  m run      # in Windows
- ./m run    # in Unix
+ ./m run    # in Unix or Linux
 
-As the server starts, about 20 log messages will be output to the
+As the server starts, a few log messages will be output to the
 terminal window.  Point your browser to http://127.0.0.1:8080, the
 sample Home page will appear and more log messages will be output
 to the terminal window. Do a quick test by accessing some of the
@@ -195,65 +248,46 @@ instructions waiting for you under the Development topic.
 If you plan on using this wiki as a production wiki,
 then before you begin adding or importing data and registering users
 review the configuration options. See the sections on configuration for
-details. Be sure to edit `wikiconfig.py` (or `wikiconfig_editme.py`) and
-change the settings for:
+details. Be sure to edit ``wikiconfig.py`` and change the settings for::
 
+ * sitename
  * interwikiname
+ * acls
  * SECRET_KEY
- * secrets
 
 If you plan on just using moin2 as a desktop wiki (and maybe
-help by reporting bugs), then some logical menu choices are:
+help by reporting bugs), then some logical menu choices are::
 
- * `./m extras` - to install packages required for docs and moin development
- * `./m docs` - to create docs, see User tab, Documentation (local)
- * `./m del-wiki` - get rid of the sample data
- * `./m new-wiki` or `m import19 ...` - no data or moin 1.9 data
- * `./m backup` - backup wiki data as needed or as scheduled
-
-Warning: Backing up data at this point may provide a false sense
-of security because no migration tool has been developed to migrate
-data between moin2 versions.  In its current alpha state, there
-may be code changes that impact the structure of the wiki data or
-indexes. Should this occur, first try rebuilding the indexes with the
-`./m index` command. If that fails, you must start over with an empty
-wiki and copy and paste the contents of all the old wiki
-items into the new wiki. While no such changes are planned,
-they have happened in the past and may happen in the future.
+ ./m extras       # install packages required for docs and moin development
+ ./m docs         # create docs, see User tab, Documentation (local)
+ ./m del-wiki     # get rid of the sample data
+ ./m new-wiki     # create empty wiki or
+ ./m import19 ... # import moin 1.9 data
+ ./m backup       # backup wiki data as needed or as scheduled
 
 If you installed moin2 by cloning the repository,
-then you will likely want to keep your master branch uptodate:
+then you will likely want to keep your master branch up-to-date:
 
 ::
 
-  git checkout master ; git pull mm master
+  git checkout master
+  git pull                 # if you cloned the moinwiki master repo OR
+  git pull moinwiki master # if you cloned your fork and added a remote
 
 After pulling updates, it is best to also rerun the quickinstall process
-to install any changes or new releases to the dependant packages:
+to install any changes or new releases of the dependent packages:
 
 ::
 
- m quickinstall  # in Windows
- ./m run         # in Unix
+ m quickinstall   # in Windows
+ ./m quickinstall # in Unix or Linux
 
 Troubleshooting
 ===============
 
-PyPi down
----------
-Now and then, PyPi might be down or unreachable.
-
-There are mirrors b.pypi.python.org, c.pypi.python.org, d.pypi.python.org
-you can use in such cases. You just need to tell pip to do so:
-
-::
-
- # put this into ~/.pip/pip.conf
- [global]
- index-url = http://c.pypi.python.org/simple
-
 Bad Network Connection
 ----------------------
+
 If you have a poor or limited network connection, you may run into
 trouble with the commands issued by the quickinstall.py script.
 You may see tracebacks from pip, timeout errors, etc. within the output

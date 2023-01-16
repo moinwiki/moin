@@ -23,18 +23,19 @@ from flatland import Form
 
 from whoosh.query import Term, And, Not
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
 from moin.apps.frontend.views import _using_moin_auth
 from moin import user
 from moin.constants.keys import (NAME, ITEMID, SIZE, EMAIL, DISABLED, NAME_EXACT, WIKINAME, TRASH, NAMESPACE,
-                                 NAME_OLD, REVID, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED, ACL, ACTION,
-                                 ACTION_SAVE, PARENTNAMES, SUBSCRIPTIONS)
+                                 NAME_OLD, REVID, REV_NUMBER, MTIME, COMMENT, LATEST_REVS, EMAIL_UNVALIDATED,
+                                 ACL, ACTION, ACTION_SAVE, SUBSCRIPTIONS, PARENTID)
 from moin.constants.namespaces import NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_DEFAULT, NAMESPACE_ALL
-from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS
+from moin.constants.rights import SUPERUSER, ACL_RIGHTS_CONTENTS, READ, WRITE, CREATE, ADMIN, DESTROY
 from moin.security import require_permission, ACLStringIterator
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
+from moin.storage.middleware.indexing import parent_names
 from moin.utils.interwiki import CompositeName
 from moin.utils.crypto import make_uuid
 from moin.datastructures.backends.wiki_groups import WikiGroup
@@ -57,6 +58,7 @@ def index_user():
                            title_name=_("User"),
                            flaskg=flaskg,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
+                           app=app,
                            )
 
 
@@ -115,7 +117,7 @@ def register_new_user():
                 emails = user.search_users(email=email)
                 if emails:
                     flash(_("This email already belongs to somebody else."), 'error')
-            if not(users or emails):
+            if not (users or emails):
                 user_profile.save()
                 flash(_("Account for %(username)s created", username=username), "info")
                 form = FormClass.from_defaults()
@@ -360,9 +362,10 @@ def itemsize():
         _('Size'),
         _('Item name'),
     ]
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)),
+                 Not(Term(TRASH, True))])
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
-    rows = [(rev.meta[SIZE], CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0]))
+    rows = [(rev[SIZE], CompositeName(rev[NAMESPACE], NAME_EXACT, rev[NAME][0]))
             for rev in revs]
     rows = sorted(rows, reverse=True)
     return render_template('user/itemsize.html',
@@ -389,11 +392,12 @@ def _trashed(namespace):
     q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
     if namespace != NAMESPACE_ALL:
         q = And([q, Term(NAMESPACE, namespace), ])
-    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid mtime comment editor')
+    trashedEntry = namedtuple('trashedEntry', 'fqname oldname revid rev_number mtime comment editor parentid')
     results = []
-    for rev in flaskg.storage.search(q, limit=None):
-        meta = rev.meta
-        results.append(trashedEntry(rev.fqname, meta[NAME_OLD], meta[REVID], meta[MTIME], meta[COMMENT], get_editor_info(meta)))
+    for meta in flaskg.storage.search_meta(q, limit=None):
+        fqname = CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])
+        results.append(trashedEntry(fqname, meta[NAME_OLD], meta[REVID], meta[REV_NUMBER], meta[MTIME],
+                                    meta[COMMENT], get_editor_info(meta), meta[PARENTID]))
     return results
 
 
@@ -401,33 +405,24 @@ def _trashed(namespace):
 @require_permission(SUPERUSER)
 def user_acl_report(uid):
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
-    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     theuser = user.User(uid=uid)
     itemwise_acl = []
-    last_item_acl_parts = (None, None, None)
-    last_item_result = {'read': False,
-                        'write': False,
-                        'create': False,
-                        'admin': False,
-                        'destroy': False}
-    for item in all_items:
-        if item.meta.get(NAME):
-            fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
-        else:
-            fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
-        this_rev_acl_parts = (item.meta[NAMESPACE], item.meta.get(PARENTNAMES), item.meta.get(ACL))
-        name_parts = {'name': item.meta.get(NAME),
-                      'namespace': item.meta.get(NAMESPACE),
-                      'itemid': item.meta.get(ITEMID),
-                      'fqname': fqname}
-        if not last_item_acl_parts == this_rev_acl_parts:
-            last_item_acl_parts = this_rev_acl_parts
-            last_item_result = {'read': theuser.may.read(fqname),
-                                'write': theuser.may.write(fqname),
-                                'create': theuser.may.create(fqname),
-                                'admin': theuser.may.admin(fqname),
-                                'destroy': theuser.may.destroy(fqname)}
-        itemwise_acl.append({**name_parts, **last_item_result})
+    for meta in all_metas:
+        fqname = gen_fqnames(meta)
+        acl_parts = {'name': meta.get(NAME),
+                     'namespace': meta.get(NAMESPACE),
+                     'itemid': meta.get(ITEMID),
+                     'fqname': fqname}
+        parentnames = tuple(parent_names(meta[NAME]))
+        usernames = tuple(theuser.name)
+        acl = meta.get(ACL, None)
+        last_item_result = {'read': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], READ),
+                            'write': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], WRITE),
+                            'create': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], CREATE),
+                            'admin': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], ADMIN),
+                            'destroy': flaskg.storage.allows(usernames, acl, parentnames, meta[NAMESPACE], DESTROY)}
+        itemwise_acl.append({**acl_parts, **last_item_result})
     return render_template('admin/user_acl_report.html',
                            title_name=_('User ACL Report'),
                            user_names=theuser.name,
@@ -467,28 +462,24 @@ def item_acl_report():
     If there are multiple names, the first name is used for sorting.
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), ])
-    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
-    for item in all_items:
-        item_namespace = item.meta.get(NAMESPACE)
-        item_id = item.meta.get(ITEMID)
+    for meta in all_metas:
+        item_namespace = meta.get(NAMESPACE)
+        item_id = meta.get(ITEMID)
         if item_namespace:
-            item_name = [item_namespace + '/' + name for name in item.meta.get(NAME)]
+            item_name = [item_namespace + '/' + name for name in meta.get(NAME)]
         else:
-            item_name = item.meta.get(NAME)
-        item_acl = item.meta.get(ACL)
+            item_name = meta.get(NAME)
+        item_acl = meta.get(ACL)
         acl_default = item_acl is None
         if acl_default:
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config['default']
-        if item.meta.get(NAME):
-            fqnames = [CompositeName(item.meta[NAMESPACE], NAME_EXACT, name) for name in item.meta[NAME]]
-        else:
-            fqnames = [CompositeName(item.meta[NAMESPACE], ITEMID, item.meta[ITEMID])]
-        fqname = fqnames[0]
+        fqnames = gen_fqnames(meta)
         items_acls.append({'name': item_name,
-                           'name_old': item.meta.get('name_old', []),
+                           'name_old': meta.get('name_old', []),
                            'itemid': item_id,
                            'fqnames': fqnames,
                            'fqname': fqnames[0],
@@ -519,19 +510,16 @@ def group_acl_report(group_name):
     WikiGroup or ConfigGroup name.
     """
     query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
-    all_items = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
+    all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     group_items = []
-    for item in all_items:
-        acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, item.meta.get(ACL, ''))
+    for meta in all_metas:
+        acl_iterator = ACLStringIterator(ACL_RIGHTS_CONTENTS, meta.get(ACL, ''))
         for modifier, entries, rights in acl_iterator:
             if group_name in entries:
-                if item.meta.get(NAME):
-                    fqname = CompositeName(item.meta.get(NAMESPACE), NAME_EXACT, item.meta.get(NAME)[0])
-                else:
-                    fqname = CompositeName(item.meta.get(NAMESPACE), ITEMID, item.meta.get(ITEMID))
-                group_items.append(dict(name=item.meta.get(NAME),
-                                        itemid=item.meta.get(ITEMID),
-                                        namespace=item.meta.get(NAMESPACE),
+                fqname = gen_fqnames(meta)
+                group_items.append(dict(name=meta.get(NAME),
+                                        itemid=meta.get(ITEMID),
+                                        namespace=meta.get(NAMESPACE),
                                         fqname=fqname,
                                         rights=rights))
     return render_template('admin/group_acl_report.html',
@@ -553,16 +541,19 @@ def modify_acl(item_name):
         if new_acl in ('Empty', ''):
             meta[ACL] = ''
         elif new_acl == 'None' and ACL in meta:
-            del(meta[ACL])
+            del (meta[ACL])
         else:
             meta[ACL] = new_acl
         try:
             item._save(meta=meta)
         except AccessDenied:
             # superuser viewed item acl report and tried to change acl but lacked admin permission
-            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=old_acl), "error")
+            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
+                     item_name=fqname.fullname, acl_rule=old_acl), "error")
             return redirect(url_for('.item_acl_report'))
-        flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "info")
+        flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
+                 item_name=fqname.fullname, acl_rule=new_acl), "info")
     else:
-        flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s", item_name=fqname.fullname, acl_rule=new_acl), "error")
+        flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
+                 item_name=fqname.fullname, acl_rule=new_acl), "error")
     return redirect(url_for('.item_acl_report'))

@@ -5882,6 +5882,17 @@ button.close {
 ul.moin-pull-right {
   float: right !important;
 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding-left: 0.5em;
+  background-color: #E9EAEC;
+  border-radius: 7px;
+  border-bottom: 1px solid #90ADC6;
+}
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
 h3:hover .moin-permalink,
@@ -5896,6 +5907,15 @@ h5:focus .moin-permalink,
 h6:focus .moin-permalink {
   display: inline;
   text-decoration: none;
+}
+h1 {
+  font-size: 1.75em;
+}
+h2 {
+  font-size: 1.5em;
+}
+.btn-primary {
+  background-color: #90ADC6;
 }
 .moin-permalink {
   display: none;
@@ -5916,10 +5936,10 @@ h6:focus .moin-permalink {
   padding: 10px 15px;
   margin-bottom: -1px;
   background-color: #fff;
-  text-align: left;
+  text-align: center;
   padding: 2px 10px;
-  background-color: #c8ddf1;
-  border: 1px solid #c8ddf1;
+  background-color: white;
+  border: 1px solid #E9EAEC;
   width: 100%;
   color: #428bca;
   border: 1px solid #ddd;
@@ -5942,7 +5962,7 @@ h6:focus .moin-permalink {
   margin-right: 5px;
 }
 .moin-user-action-special > a {
-  color: #00417F;
+  color: white;
 }
 .moin-user-action-special:hover,
 .moin-user-action-special:focus,
@@ -5958,7 +5978,7 @@ h6:focus .moin-permalink {
   float: right;
 }
 a.moin-showhide {
-  color: #c8ddf1;
+  color: #90ADC6;
 }
 a:focus.moin-showhide {
   outline-width: 0;
@@ -5967,23 +5987,26 @@ a:focus.moin-showhide {
   margin: 7px 10px;
 }
 .list-group-item {
-  text-align: left;
+  text-align: center;
   padding: 2px 10px;
-  background-color: #c8ddf1;
-  border: 1px solid #c8ddf1;
+  background-color: white;
+  border: 1px solid #E9EAEC;
 }
 .list-group-item > a {
-  color: #00417F;
+  color: white;
+}
+a.list-group-item.wikilink {
+  color: #90ADC6;
 }
 .moin-list-heading {
-  background-color: #00417F;
-  border: 1px solid #00417F;
-  font-variant: small-caps;
-  color: #c8ddf1;
-  border-radius: 4px;
+  background-color: #E9EAEC;
+  border: 1px solid #E9EAEC;
+  color: #90ADC6;
+  margin-bottom: 0.5em;
+  border-radius: 7px;
 }
 .moin-list-heading > a {
-  color: #c8ddf1;
+  color: #90ADC6;
 }
 .moin-nav {
   margin-bottom: 0;
@@ -6061,9 +6084,10 @@ a:focus.moin-showhide {
 .moin-navbar-inverse {
   background-color: #222;
   border-color: #080808;
-  background-color: #00417F;
+  background-color: #E9EAEC;
   padding-left: 0px;
   padding-right: 0px;
+  border-color: #E9EAEC;
 }
 .moin-navbar-inverse .navbar-brand {
   color: #999999;
@@ -6151,19 +6175,24 @@ a:focus.moin-showhide {
   color: #fff;
 }
 .moin-navbar-inverse .navbar-nav > li > a {
-  color: #cce6ff;
+  color: #90ADC6;
 }
 .moin-navbar-inverse .navbar-nav > li > a.active {
   color: #fff;
 }
 .moin-navbar-inverse .navbar-text {
-  color: #cce6ff;
+  color: #90ADC6;
 }
 .moin-navbar-inverse .navbar-text > a {
-  color: #cce6ff;
+  color: #90ADC6;
 }
 .moin-navbar-inverse .navbar-brand {
-  color: #cce6ff;
+  color: #90ADC6;
+}
+.moin-button {
+  background-color: #E9EAEC;
+  color: #333652;
+  border-color: #cccccc;
 }
 .moin-navbar-user > ul.nav > li,
 .moin-navbar-user > ul.nav > li > a {
@@ -6179,12 +6208,12 @@ a:focus.moin-showhide {
 .moin-quicklink {
   position: relative;
   padding: 2px 10px 2px 10px;
-  background-color: #c8ddf1;
-  border: 1px solid #c8ddf1;
+  background-color: #90ADC6;
+  border: 1px solid #90ADC6;
   margin-bottom: -1px;
 }
 .moin-quicklink > a {
-  color: #00417F;
+  color: white;
 }
 .moin-quicklink:last-child {
   margin-bottom: 0;
@@ -6300,7 +6329,7 @@ a:focus.moin-showhide {
   font-weight: normal;
 }
 a.wikilink {
-  color: #00417F;
+  color: white;
 }
 .moin-alias {
   z-index: 500;
@@ -6328,7 +6357,7 @@ a.wikilink {
   padding: 0px;
 }
 ul.moin-breadcrumb ul.moin-alias {
-  background-color: #00417F;
+  background-color: white;
   border-radius: 6px;
 }
 ul.moin-breadcrumb,
@@ -6382,8 +6411,8 @@ body {
 .moin-search-option-bar {
   padding-left: 10px;
   border: 1px solid #555555;
-  background-color: #00417F;
-  color: #c8ddf1;
+  background-color: white;
+  color: #90ADC6;
   border-radius: 5px;
 }
 .moin-search-option-bar > span {

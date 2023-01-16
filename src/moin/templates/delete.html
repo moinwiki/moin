@@ -8,15 +8,24 @@
 {% import "forms.html" as forms %}
 {% extends theme("show.html") %}
 
-{% set title = _("Delete '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+{% if alias_names %}
+    {% set title = _("Delete '%(item_name)s' with alias names %(alias_names)s", item_name=fqname|shorten_fqname, alias_names=alias_names) %}
+{% else %}
+    {% set title = _("Delete '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+{% endif %}
 
 {% block content %}
     <h1>{{ title }}</h1>
-    {{ forms.list_subitems(subitem_names, _("The following subitems will be deleted:")) }}
-    <div class="moin-form">
+    <div class="moin-form-delete">
         {{ gen.form.open(form, method="post", action=url_for('frontend.delete_item', item_name=fqname)) }}
             {{ forms.render_errors(form) }}
-            <dl>
+            {% if subitem_names %}
+                <dl class="moin-delete-box">
+                    {{ forms.render(form['delete_subitems']) }}
+                </dl>
+                {{ forms.list_subitems(subitem_names, action) }}
+            {% endif %}
+            <dl class="moin-delete-comment">
                 {{ forms.render(form['comment']) }}
             </dl>
             {{ forms.render_submit(form) }}

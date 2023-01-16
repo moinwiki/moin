@@ -42,13 +42,13 @@ from flask import request, abort, redirect, url_for
 from flask import g as flaskg
 from flask import current_app as app
 
-from jinja2 import Markup
+from markupsafe import Markup
 
 from whoosh.query import Term, And
 
 from moin.i18n import L_
 from moin.themes import render_template
-from moin.forms import (Form, OptionalText, OptionalMultilineText, SmallNatural, Tags,
+from moin.forms import (Form, OptionalMultilineText, SmallNatural, Tags,
                         Reference, BackReference, SelectSubmit, Text, Search, File)
 from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, ITEMID, CURRENT,
@@ -59,7 +59,7 @@ from moin.constants.itemtypes import ITEMTYPE_TICKET
 from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from moin.items.content import NonExistentContent
 from moin.utils.interwiki import CompositeName
-from moin.constants.forms import *  # noqa
+from moin.constants.forms import WIDGET_SEARCH
 
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
@@ -94,7 +94,8 @@ OptionalUserReference = Reference.to(
 
 class AdvancedSearchForm(Form):
     q = Search
-    summary = Text.using(label=L_("Summary"), optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
+    summary = Text.using(label=L_("Summary"),
+                         optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("Find Tickets"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))
@@ -105,7 +106,8 @@ class AdvancedSearchForm(Form):
 
 
 class TicketMetaForm(Form):
-    summary = Text.using(label=L_("Summary"), optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
+    summary = Text.using(label=L_("Summary"),
+                         optional=False).with_properties(widget=WIDGET_SEARCH, placeholder=L_("One-line summary"))
     effort = Rating.using(label=L_("Effort"))
     difficulty = Rating.using(label=L_("Difficulty"))
     severity = Rating.using(label=L_("Severity"))
@@ -320,7 +322,7 @@ def build_tree(comments, root, comment_tree, indent):
     if comments[root]:
         for comment in comments[root]:
             comment_tree.append((comment, indent + 20))  # where 20, 40,... will become an indented left margin
-            # recursion is used to place comments in order based on comment heirarchy and date
+            # recursion is used to place comments in order based on comment hierarchy and date
             build_tree(comments, comment, comment_tree, indent + 20)
         return comment_tree
     else:
@@ -346,7 +348,7 @@ class Ticket(Contentful):
     submit_template = 'ticket/submit.html'
     modify_template = 'ticket/modify.html'
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         if revid != CURRENT:
             # TODO When requesting a historical version, show a readonly view
             abort(403)
@@ -370,7 +372,8 @@ class Ticket(Contentful):
         elif request.method == 'POST':
             form = Form.from_request(request)
             if form.validate():
-                meta, data, message, data_file = form._dump(self)  # saves new ticket revision if ticket meta has changed
+                # save new ticket revision if ticket meta has changed
+                meta, data, message, data_file = form._dump(self)
                 try:
                     if not is_new and message:
                         # user created a new comment
@@ -412,4 +415,4 @@ class Ticket(Contentful):
                                datetime=datetime.datetime,
                                ordered_comments=ordered_comments,
                                render_comment_data=render_comment_data,
-                              )
+                               )

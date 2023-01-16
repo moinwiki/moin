@@ -13,4 +13,4 @@
 from .signals import *  # noqa
 
 # import all signal handler modules so they install their handlers:
-from . import log
+from . import log  # noqa

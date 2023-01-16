@@ -48,7 +48,7 @@ class TestConverter:
         ('[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
         # moin 1.9 to 2.0 conversion
         ('TestPage', '[[TestPage]]\n'),
-        # (u'../SisterPage', '[[../SisterPage]]\n'),
+        # ('../SisterPage', '[[../SisterPage]]\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

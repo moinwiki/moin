@@ -1,8 +1,15 @@
+{#
+    This template is displayed after user clicks the Highlight link on Item Views.
+    If the revision selected is not the current revision, a navigation panel enables
+    user to view a newer/older revision. If the item or selected revision is
+    deleted, there are informative flash messages.
+#}
+
 {% extends theme("show.html") %}
 
 {% import "utils.html" as utils with context %}
 
-{% set title = _("Syntax highlighting of '%(name)s'", name=item_name) %}
+{% set title = _("Syntax highlighting of %(name)s", name=utils.item_moniker(meta, [fqname])) %}
 
 {% block content %}
     {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.highlight_item', item=item) }}

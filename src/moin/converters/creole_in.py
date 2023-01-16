@@ -434,7 +434,8 @@ class Converter(ConverterMacro):
             element = xinclude.include(attrib=attrib)
         else:
             attrib[xlink.href] = object_url
-            element = moin_page.object(attrib)
+            element = moin_page.object(attrib=attrib,
+                                       children=('Your Browser does not support HTML5 audio/video element.', ))
         stack.top_append(element)
 
     inline_url = r"""

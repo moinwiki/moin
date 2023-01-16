@@ -18,10 +18,9 @@
         {% for e in [
             'summary',
             'tags',
-            'name',
             ] %}
             {{ forms.render(form[e]) }}
         {% endfor %}
     </dl>
-    <div class="hint">{{ _("Tags and names may have embedded blanks, use commas to separate.") }}</div>
+    <div class="hint">{{ _("Tags  may have embedded blanks, use commas to separate.") }}</div>
 {% endmacro %}

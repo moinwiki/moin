@@ -23,6 +23,9 @@ threshold during installation and will be placed in the "tarpit". The
 installation process will run slowly during the later steps but
 will eventually complete.
 
+If you choose a free account, the moin installation will consume about 412 MB of
+the 512 MB quota.
+
 
 STEP 2B - If there is an old moin installation, delete it
 
@@ -43,12 +46,13 @@ It may help to open
 https://moin-20.readthedocs.io/en/latest/admin/install.html#downloading-and-installing
 in a separate browser window or tab. Follow the installation guide:
 
-    git clone https://github.com/moinwiki/moin
+    git clone https://github.com/moinwiki/moin  # or clone your own github repo
     cd moin
     python3.7 quickinstall.py  # or any later version
+    . activate
     ./m extras
     ./m docs
-    ./m sample
+    ./m sample  # or "./m new-wiki" for empty wiki
 
 Do not attempt to run the built-in server (./m run). Because pythonanywhere
 is an external web server, the appropriate section of the moin docs is here:
@@ -88,7 +92,7 @@ should bring you to:
 
 Scroll down to about the middle of the page to the section labeled "Code"
 and edit the section so it looks similar to this, after replacing <AccountName>
-with your account name:
+with your account name (after keying a field, click the checkmark):
 
     Code:
 
@@ -112,7 +116,7 @@ with your account name:
 STEP 4B - Replace the default _pythonanywhere_com_wsgi.py
 
 Click the WSGI configuration file link:
-"/var/www/<AccountName>_pythonanywhere_com_wsgi.cpy"
+"/var/www/<AccountName>_pythonanywhere_com_wsgi.py"
 
 Keep the browser window open as you view the file contents. Switch to your
 favorite file editor that has the file named _pythonanywhere_com_wsgi.py

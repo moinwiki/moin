@@ -9,23 +9,23 @@ See utils.html for more macros.
 #}
 
 {% macro render_errors(field) %}
-    {% if field.errors %}
+    {%- if field.errors %}
         <div>
-            {% for error in field.errors %}
+            {%- for error in field.errors %}
                 <p><span class="moin-error">{{ error }}</span></p>
             {% endfor %}
         </div>
     {% endif %}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro render_submit(form, name=None, value=None) %}
     <div class="moin-float-fix"> {# needed to add vertical whitespace below floated element #}
-        {% if name and value %}
+        {%- if name and value %}
             <input type="hidden" name="{{ name }}" value="{{ value }}" />
         {% endif %}
         {{ gen.input(type='submit', value=form.submit_label, class='moin-button', **kwargs) }}
     </div>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro render(field) %}
     {%- set macro = {
@@ -50,36 +50,36 @@ See utils.html for more macros.
         'readonly_item_link_list': readonly_item_link_list,
     }[field.properties.widget] or stub -%}
     {{ macro(field, *varargs, **kwargs) }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro stub(field) %}
     <fieldset>
         STUB: no widget for {{ field.name }} ({{ field.properties }}) yet
     </fieldset>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro raw_input(field, type=none) %}
     {{ gen.input(field, type=type or field.properties.widget, class=field.properties.class_ or '', **kwargs) }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro annotated_input(field, type=none) %}
-    {% set type = type or field.properties.widget %}
+    {%- set type = type or field.properties.widget %}
     <dt>
-        {% if type == 'checkbox' %}
+        {%- if type == 'checkbox' %}
             {{ _checkbox_label(field) }}
-        {% else %}
+        {%- else %}
             {{ gen.label(field) }}
         {% endif %}
     </dt>
     <dd>
         {{ raw_input(field, type) }}
         {{ render_errors(field) }}
-        {# TODO make the helper more explicit and look better #}
-        {% if field.properties.helper %}
+        {#- TODO make the helper more explicit and look better #}
+        {%- if field.properties.helper %}
             <p>{{ field.properties.helper | e }}</p>
         {% endif %}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro multiline_text(field) %}
     <dt>
@@ -89,50 +89,50 @@ See utils.html for more macros.
         {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, **kwargs) }}
         {{ render_errors(field) }}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro _valued_label(field, value, contents=none) %}
-    {#
+    {#-
         XXX Patch <label>'s `for` attribute with value when element referred to is checkbox or radio.
         See: https://bitbucket.org/jek/flatland/issue/9
     #}
     {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value.replace(' ', '')), contents=contents, **kwargs) }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro _checkbox_label(field) %}
     {{ _valued_label(field, '1', **kwargs) }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro _radio_label(field, value) %}
     {{ _valued_label(field, value, value, **kwargs) }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro inline_checkbox(field) %}
     {{ raw_input(field, 'checkbox') }}
     {{ _checkbox_label(field, class='moin-inline-label') }}
     {{ render_errors(field) }}
-    {% if field.properties.helper is defined %}
+    {%- if field.properties.helper is defined %}
         <span class="helper-text">
             {{ field.properties.helper }}
         </span>
     {% endif %}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro any_integer(field) %}
     {{ annotated_input(field, 'text') }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro small_natural(field) %}
     <dt>
         {{ field['label'] }}
     </dt>
     <dd>
-        {% for i in range(field.properties.lower, field.properties.upper+1) %}
+        {%- for i in range(field.properties.lower, field.properties.upper+1) %}
             {{ gen.input(field, type='radio', value=i|string) }}
             {{ _radio_label(field, value=i|string, class='moin-inline-label') }}
-        {% endfor %}
+        {%- endfor %}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro radio_choice(field) %}
     <dt>
@@ -142,18 +142,18 @@ See utils.html for more macros.
         {%- for id, theme in (field.properties.choices) %}
             {{ gen.input(field, type='radio', value=id) -}}
             {{- _valued_label(field, value=id, contents=theme, class='moin-inline-label') }}
-            {% if not loop.last -%}<br>{% endif -%}
+            {%- if not loop.last -%}<br>{% endif -%}
         {%- endfor %}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro datetime(field) %}
     {{ annotated_input(field, 'text') }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro search(field) %}
     {{ raw_input(field, class='moin-search-query') }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro select(field) %}
     <dt>
@@ -161,27 +161,27 @@ See utils.html for more macros.
     </dt>
     <dd>
         {{ gen.select.open(field) }}
-        {% for value, label in field.properties['choice_specs'] %}
+        {%- for value, label in field.properties['choice_specs'] %}
             {{ gen.option(field, value=value, contents=label or value) }}
         {% endfor %}
         {{ gen.select.close() }}
         {{ render_errors(field) }}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro select_submit(field) %}
-    {% set labels = field.properties.get('labels', {}) %}
-    {% for value in field.valid_values %}
+    {%- set labels = field.properties.get('labels', {}) %}
+    {%- for value in field.valid_values %}
         {{ gen.button(field, type='submit', value=value, contents=labels.get(value, value), id='f_submit_' + value) }}
     {% endfor %}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro multi_select(field) %}
-    {% for value, label, description in field.member_schema.properties['choice_specs'] %}
+    {%- for value, label, description in field.member_schema.properties['choice_specs'] %}
         <li>
             {{ raw_input(field, 'checkbox', value=value) }}
             {{ _valued_label(field, value, label or value, class='moin-inline-label') }}
-            {% if description %}
+            {%- if description %}
                 <span class="helper-text">
                     {{ description }}
                 </span>
@@ -189,74 +189,50 @@ See utils.html for more macros.
         </li>
     {% endfor %}
     {{ render_errors(field) }}
-{% endmacro %}
+{%- endmacro %}
 
 {% macro readonly_string_list(field) %}
     <dt>
         {{ gen.label(field) }}
     </dt>
     <dd>
-        {% for v in field.value %}
-            {# TODO style .moin-string-list-item #}
+        {%- for v in field.value %}
+            {#- TODO style .moin-string-list-item #}
             <span class="moin-string-list-item">{{ v }}</span>
         {% endfor %}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro readonly_item_link_list(field) %}
     <dt>
         {{ field['label'] }}
     </dt>
     <dd>
-        {% for v in field.value %}
-            {# TODO style .moin-item-link-list-item #}
+        {%- for v in field.value %}
+            {#- TODO style .moin-item-link-list-item #}
             <span class="moin-item-link-list-item"><a href="{{ url_for_item(v) }}">{{ v }}</a></span>
         {% endfor %}
     </dd>
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_file_uploader(submit_url) %} {# pages that use this macro must also use file_uploader_scripts macro below #}
-    <div id="file_upload">
-        <div class="upload-form">
-            <form action="{{ submit_url }}" method="POST" enctype="multipart/form-data" class="upload_file">
-                <input type="file" name="data_file" multiple>
-                <button class="moin-button" type="submit">{{ _("Upload") }}</button>
-                <div class="file_upload_label moin-button">{{ _("Upload files") }}</div>
-            </form>
-        </div>
-        <div class="file_upload_overall_progress">
-            <div style="display:none;"></div>
-        </div>
-        <div class="file_upload_buttons">
-            <button class="moin-button file_upload_start" type="button" style="display:none;">{{ _("Start All") }}</button>
-            <button class="moin-button file_upload_cancel" type="button" style="display:none;">{{ _("Cancel All") }}</button>
-        </div>
-        <table class="files">
-            <tr class="file_upload_template" style="display:none;">
-                <td class="file_upload_start"><button class="moin-button" type="button">{{ _("Start") }}</button></td>
-                <td class="file_upload_cancel"><button class="moin-button" type="button">{{ _("Cancel") }}</button></td>
-                <td class="file_name"></td>
-                <td class="file_upload_progress">
-                    <div></div>
-                </td>
-            </tr>
-        </table>
-    </div>
-{% endmacro %}
+ {% macro render_file_uploader(submit_url) %} {# pages that use this macro must also use file_uploader_scripts macro below #}
+    <div id="jfu-file_upload">
+        <input id="jfu-fileupload" type="file" name="file_storage" data-url={{ submit_url }} multiple>
+        <div id="jfu-progress">
+            <p class="jfu-bar" style="width: 0%;"></p>
+         </div>
+     </div>
+ {%- endmacro %}
 
-{% macro file_uploader_styles() %}
-    <link rel="stylesheet" href="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.css') }}">
-{% endmacro %}
+ {% macro file_uploader_scripts() %}
+    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='js/vendor/jquery.ui.widget.js') }}"></script>
+    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='js/jquery.fileupload.js') }}"></script>
+ {%- endmacro %}
 
-{% macro file_uploader_scripts() %}
-    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload.js') }}"></script>
-    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='jquery.fileupload-ui.js') }}"></script>
-{% endmacro %}
-
-{# Show a list of names that will be affected by a recursive action; delete, destroy, rename #}
+{#- Show a list of names that will be affected by a recursive action; delete, destroy, rename #}
 {%- macro list_subitems(subitem_names, action) %}
     {%- if subitem_names %}
-        <div class="moin-subitem-list">{{ action }}</div>
+        <div class="moin-subitem-list">{{ action|safe }}</div>
         <ul>
             {%- for name in subitem_names %}
                 <li>
@@ -265,4 +241,4 @@ See utils.html for more macros.
             {%- endfor %}
         </ul>
     {%- endif %}
-{% endmacro %}
+{%- endmacro %}

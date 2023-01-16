@@ -12,8 +12,8 @@ from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
 from moin.utils.interwiki import CompositeName
 from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
-                                 ADDRESS, TRASH, ITEMID, NAME_EXACT,
-                                 ACTION, ACTION_REVERT)
+                                 ADDRESS, TRASH, ITEMID, NAME_EXACT, SIZE, MTIME,
+                                 REV_NUMBER, NAMESPACE, ACTION, ACTION_REVERT)
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT
@@ -34,8 +34,8 @@ def build_index(basename, relnames):
     Files have no subitems, meta content is reduced to required keys.
     """
     files = [(IndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta))
-            for relname in relnames]
-    return [(IndexEntry(f.relname, f.fullname, {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}))
+             for relname in relnames]
+    return [(IndexEntry(f.relname, f.fullname, {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE, ADDRESS)}))
             for f in files]
 
 
@@ -48,21 +48,42 @@ def build_mixed_index(basename, spec):
     :spec is a list of (relname, hassubitem) tuples.
     """
     files = [(MixedIndexEntry(relname, CompositeName(NAMESPACE_DEFAULT, NAME_EXACT, '/'.join((basename, relname))), Item.create('/'.join((basename, relname))).meta, hassubitem))
-            for relname, hassubitem in spec]
+             for relname, hassubitem in spec]
     return [(MixedIndexEntry(f.relname, f.fullname, {} if f.hassubitems else {key: f.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}, f.hassubitems))
             for f in files]
 
 
+def fix_meta(files, builds):
+    """
+    Fix potential problem of datetimes being slightly different within files and builds metadata.
+    Also fix problem where userid is in files metadata but missing from builds metadata.
+    """
+    fix_files = []
+    fix_builds = []
+    for idx in range(len(files)):
+        fix_file = files[idx]
+        fix_file.meta.pop('mtime', None)
+        fix_file.meta.pop('userid', None)
+        fix_files.append(fix_file)
+    for idx in range(len(builds)):
+        fix_build = builds[idx]
+        fix_build.meta.pop('mtime', None)
+        fix_build.meta.pop('userid', None)
+        fix_builds.append(fix_build)
+    return fix_files, fix_builds
+
+
 class TestItem:
 
-    def _testNonExistent(self):
+    def testNonExistent(self):
         item = Item.create('DoesNotExist')
         assert isinstance(item, NonExistent)
         meta, data = item.meta, item.content.data
         assert meta == {
             ITEMTYPE: ITEMTYPE_NONEXISTENT,
             CONTENTTYPE: CONTENTTYPE_NONEXISTENT,
-            NAME: 'DoesNotExist',
+            NAME: ['DoesNotExist'],
+            NAMESPACE: '',
         }
         assert data == ''
 
@@ -83,7 +104,7 @@ class TestItem:
         assert saved_meta[COMMENT] == comment
         assert saved_data == data
 
-        data = rev1_data = data * 10000
+        data *= 10000
         comment += ' again'
         # save rev 1
         item._save(meta, data, comment=comment)
@@ -120,28 +141,28 @@ class TestItem:
         # TODO: test Item.get_subitem_revs
         dirs, files = baseitem.get_index()
         assert dirs == build_dirs_index(basename, ['cd', 'ij'])
-        assert files == build_index(basename, ['ab', 'gh', 'ij', 'mn'])
 
-        # test Item.get_mixed_index
-        mixed_index = baseitem.get_mixed_index()
-        assert mixed_index == build_mixed_index(basename, [
-            ('ab', False),
-            ('cd', True),
-            ('gh', False),
-            ('ij', True),
-            ('mn', False),
-        ])
+        # after +index converted to table output it shows subitems
+        builds = build_index(basename, ['ab', 'cd/ef', 'gh', 'ij', 'ij/kl', 'mn'])
+        # fix potential problem of datetime and userid being different
+        fix_files, fix_builds = fix_meta(files, builds)
+        assert fix_files == fix_builds
 
         # check filtered index when startswith param is passed
         dirs, files = baseitem.get_index(startswith='a')
         assert dirs == []
-        assert files == build_index(basename, ['ab'])
+        builds = build_index(basename, ['ab'])
+        fix_files, fix_builds = fix_meta(files, builds)
+        assert fix_files == fix_builds
 
         # check filtered index when contenttype_groups is passed
         ctgroups = ["Other Text Items"]
         dirs, files = baseitem.get_index(selected_groups=ctgroups)
         assert dirs == build_dirs_index(basename, ['cd', 'ij'])
-        assert files == build_index(basename, ['ab', 'gh', 'ij'])
+        # mn missing from results because it is image/jpeg, cd was never created
+        builds = build_index(basename, ['ab', 'cd/ef', 'gh', 'ij', 'ij/kl'])
+        fix_files, fix_builds = fix_meta(files, builds)
+        assert fix_files == fix_builds
 
     def test_meta_filter(self):
         name = 'Test_item'
@@ -189,7 +210,6 @@ class TestItem:
         assert item2.name == 'Another name'
         assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item2.content.data == content
-
         assert item1.rev.revid == item2.rev.revid
 
     def test_rename(self):
@@ -218,31 +238,35 @@ class TestItem:
         assert item.meta[COMMENT] == 'renamed'
         assert item.content.data == b'test_data'
 
-    def test_rename_acts_only_in_active_name_in_case_there_are_several_names(self):
+    def test_rename_works_with_multiple_names(self):
         content = "This is page content"
-
-        update_item('Page',
-                    {NAME: ['First',
-                            'Second',
-                            'Third',
-                            ],
-                     CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}, content)
+        meta = {NAME: ['First', 'Second', 'Third', ], CONTENTTYPE: 'text/x.moin.wiki;charset=utf-8'}
+        update_item('Page', meta, content)
 
         item = Item.create('Second')
-        item.rename('New name', comment='renamed')
+        item.rename(['New name', 'First', 'Third'], comment='renamed')
 
         item1 = Item.create('First')
         assert item1.name == 'First'
+        assert 'First' in item1.meta[NAME]
+        assert 'Third' in item1.meta[NAME]
+        assert 'New name' in item1.meta[NAME]
         assert item1.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item1.content.data == content.encode()
 
         item2 = Item.create('New name')
         assert item2.name == 'New name'
+        assert 'First' in item2.meta[NAME]
+        assert 'Third' in item2.meta[NAME]
+        assert 'New name' in item2.meta[NAME]
         assert item2.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item2.content.data == content.encode()
 
         item3 = Item.create('Third')
         assert item3.name == 'Third'
+        assert 'First' in item3.meta[NAME]
+        assert 'Third' in item3.meta[NAME]
+        assert 'New name' in item3.meta[NAME]
         assert item3.meta[CONTENTTYPE] == 'text/x.moin.wiki;charset=utf-8'
         assert item3.content.data == content.encode()
 
@@ -305,7 +329,7 @@ class TestItem:
 
         item = Item.create('Page')
 
-        item.rename('Renamed', comment='renamed')
+        item.rename(['Renamed', 'Other'], comment='renamed')
 
         assert Item.create('Page/Child').meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
         assert Item.create('Renamed/Child').content.data == b'Child of Page'
@@ -334,6 +358,54 @@ class TestItem:
         item = Item.create(name)
         assert item.name == 'Test_Item2'
         # this should be a fresh, new item, NOT the stuff we deleted:
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+    def test_delete_multi_name_multi_subs(self):
+        """
+        Parent name is [aaa,bbbb,ccccc], subs are aaa/aaa, bbbb/bbbb. Deleting ccccc deletes all.
+        """
+        contenttype = 'text/plain;charset=utf-8'
+        data = 'test_data'
+        meta = {'test_key': 'test_value', CONTENTTYPE: contenttype}
+        comment = 'saved it'
+        item = Item.create('aaa')
+        item._save(meta, data, comment=comment)
+
+        # rename
+        item = Item.create('aaa')
+        item.rename(['aaa', 'bbbb', 'ccccc'], comment='renamed')
+
+        # create subs aaa/aaa and bbbb/bbbb
+        asub = Item.create('aaa/aaa')
+        asub._save(meta, data, comment='aaa/aaa created')
+        bsub = Item.create('bbbb/bbbb')
+        bsub._save(meta, data, comment='bbbb/bbbb created')
+
+        # item and its contents before deleting
+        item = Item.create('ccccc')
+        assert item.name == 'ccccc'
+        assert item.meta[COMMENT] == 'renamed'
+        item.delete('deleted ccccc')
+
+        # all three alias names and both subitems are deleted
+        item = Item.create('aaa')
+        assert item.name == 'aaa'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('bbbb')
+        assert item.name == 'bbbb'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('ccccc')
+        assert item.name == 'ccccc'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('aaa/aaa')
+        assert item.name == 'aaa/aaa'
+        assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
+
+        item = Item.create('bbbb/bbbb')
+        assert item.name == 'bbbb/bbbb'
         assert item.meta[CONTENTTYPE] == CONTENTTYPE_NONEXISTENT
 
     def test_revert(self):
@@ -393,22 +465,22 @@ class TestItem:
         assert 'none_test_key' not in item.meta
 
     def test_trash(self):
-        fqname = 'trash_item_test'
+        name = 'trash_item_test'
         contenttype = 'text/plain;charset=utf-8'
         data = 'test_data'
         meta = {CONTENTTYPE: contenttype}
-        item = Item.create(fqname)
+        item = Item.create(name)
         # save rev 0
         item._save(meta, data)
-        item = Item.create(fqname)
+        item = Item.create(name)
         assert not item.meta.get(TRASH)
 
         meta = dict(item.meta)
         meta[NAME] = []
         # save new rev with no names.
-        item._save(meta, data)
-        new_fqname = '@itemid/' + item.meta[ITEMID]
-        item = Item.create(new_fqname)
+        item._save(meta, data, delete=True)
+        new_name = '@itemid/' + item.meta[ITEMID]
+        item = Item.create(new_name)
         assert item.meta[TRASH]
 
         new_meta = {NAME: ['foobar', 'buz'], CONTENTTYPE: contenttype}
@@ -421,7 +493,7 @@ class TestItem:
 
         # Also delete the only name left.
         item.delete('Moving item to trash.')
-        item = Item.create(new_fqname)
+        item = Item.create(new_name)
         assert item.meta[TRASH]
 
 

@@ -9,6 +9,7 @@
 
 import re
 import pickle
+from io import BytesIO
 
 # Set pickle protocol, see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
@@ -33,7 +34,7 @@ g_charToEntity = {
 def TranslateCDATA(text):
     """
         Convert a string to a CDATA-encoded one
-        Copyright (c) 1999-2000 FourThought, http://4suite.com/4DOM
+        Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
     new_string, num_subst = re.subn(g_cdataCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)
@@ -44,7 +45,7 @@ def TranslateCDATA(text):
 def TranslateText(text):
     """
         Convert a string to a PCDATA-encoded one (do minimal encoding)
-        Copyright (c) 1999-2000 FourThought, http://4suite.com/4DOM
+        Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
     new_string, num_subst = re.subn(g_textCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)
@@ -86,5 +87,6 @@ def close_file(f):
     will result an error:
         The process cannot access the file because it is being used by another process.
     """
-    if hasattr(f, 'close') and not f.closed:
+    # some tests reuse BytesIO objects and will fail with I/O operation on closed file.
+    if hasattr(f, 'close') and not f.closed and not isinstance(f, BytesIO):
         f.close()

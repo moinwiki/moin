@@ -10,10 +10,10 @@ MoinMoin - a wiki engine in Python.
 import sys
 import platform
 
-from ._version import version
+from ._version import version  # noqa
 
 project = "MoinMoin"
 
 
-if sys.hexversion < 0x3050000:
-    sys.exit("Error: %s requires Python 3.5+, current version is %s\n" % (project, platform.python_version()))
+if sys.hexversion < 0x3080000:
+    sys.exit("Error: %s requires Python 3.8+, current version is %s\n" % (project, platform.python_version()))

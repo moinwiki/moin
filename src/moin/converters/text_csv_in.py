@@ -10,7 +10,7 @@ import csv
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
 from moin.utils.tree import moin_page
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 from . import default_registry
 from moin.utils.mime import Type, type_moin_document
@@ -27,6 +27,8 @@ class Converter(TableMixin):
 
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
+        # prevent incorrect output when there are multiple trailing blank lines
+        text = text.rstrip()
         content = normalize_split_text(text)
         dialect = csv.Sniffer().sniff(text)
         reader = csv.reader(content, dialect)

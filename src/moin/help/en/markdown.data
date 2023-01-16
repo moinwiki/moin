@@ -1,0 +1,660 @@
+Markdown Syntax
+===============
+
+This page introduces you to the most important elements of the Markdown syntax. For details on the Python implementation of Markdown see <https://python-markdown.github.io/>.
+
+In addition to being supported by moin2, the Markdown markup language is used by issue trackers
+such as those found in Github. So what you learn here can be used to create or
+edit issues on the [moin issue tracker](https://github.com/moinwiki/moin/issues).
+
+If there are error messages on the top of this page they are the result of [examples showing unsupported HTML tags](markdown#unsupported-html-tags). The error messages will not be present if this item has been served from cache; to see the messages click Modify and Save.
+{: #para3 }
+
+Features currently not working with moin's Markdown parser are marked with **MDTODO**.
+
+Table of Contents
+-----------------
+
+The table of contents is a supported extension that is distributed with Python Markdown.
+
+**Markup:**
+
+    [TOC]
+
+**Result:**
+
+[TOC]
+
+Headings
+-
+
+Level 1 and 2 headings may be created by underlining with = and - characters, respectively.
+
+Having equal numbers of characters in the heading and the underline
+looks best in raw text, but having fewer or more = or - characters also works.
+
+Heading levels 3 through 6 must be defined by prefixing the heading with a variable number of # characters indicating the heading level.  Heading levels 1 and 2 may be defined in the same manner. It is customary, but not required, to follow the # characters with a single space character. Another option is to append the appropriate number of # characters after the heading text.
+
+**Markup:**
+
+    Level 1
+    =======
+
+    # Level 1
+
+    Level 2
+    -
+
+    ## Level 2
+
+    ### Level 3
+
+    #### Level 4
+
+    ##### Level 5
+
+    ###### Level 6 ######
+
+
+**Result:**
+
+### Level 3
+
+#### Level 4
+
+##### Level 5
+
+###### Level 6 ######
+
+**NOTE**: Levels 1 and 2 are not shown above to avoid adding
+unwanted entries to the table of contents. See the top of this page
+for an approximate view of a level 1 heading and next section heading
+below for level 2.
+
+Preformatted Code
+-----------------
+
+To show a preformatted block of code, indent all the lines by 4 or more spaces.
+
+**Markup:**
+
+    Begin preformatted code
+
+        First line
+        Second line
+            Third line
+
+    End preformatted code
+
+
+**Result:**
+
+Begin preformatted code
+
+    First line
+    Second line
+        Third line
+
+End preformatted code
+
+## Simple text editing
+
+**Markup:**
+
+    Paragraphs are separated
+    by a blank line.
+
+    To force a line break, end a line
+    with 2 spaces.
+
+**Result:**
+
+Paragraphs are separated
+by a blank line.
+
+To force a line break, end a line
+with 2 spaces.
+
+----
+
+Markdown provides markup for only a few common text augmentations. Less common
+augmentations may be obtained by using HTML tags. See
+[support for inline HTML](markdown#inline-html). Note support for HTML tags
+on other implementations of Markdown such as GitHub and BitBucket is both limited
+and variable.
+
+|**Markup**|**Result**|
+|----------|----------|
+|`*italic*`|*italic*  |
+|`**bold**`|**bold**  |
+|`***bold italics***`|***bold italics***|
+|`_italic_`|_italic_  |
+|`__bold__`|__bold__  |
+|`___bold italics___`|___bold italics___|
+|`<ins>underlined</ins>`|<ins>underlined</ins>|
+|`2<sup>2</sup>`|2<sup>2</sup>|
+|`H<sub>2</sub>O`|H<sub>2</sub>O|
+|`<small>smaller</small>`|<small>smaller</small>|
+|`<del>strike</del>`|<del>strike</del>|
+
+## Linking
+
+Markdown supports two style of links: inline and reference.
+
+### Inline Links
+
+
+The examples below are dependent upon the use of the "help-en" namespace to separate help items from the main wiki content. Some target items may be missing from the default or users namespace.
+
+Within markdown link syntax, namespaces are processed like ordinary parent items:
+
+ * a simple link like `[Sibling]` links to a sibling of the current item
+ * a link beginning with / like `[/rootitem]` links an item in the default namespace root
+ * a relative link like [`../Home]` links to a sibling of a parent item
+ * a link that begins with a namespace like `[users/Home]` links to an item in that namespace
+
+
+Inline links use the form:
+
+    [link text](url "optional title")
+
+|**Markup**|**Result**|
+|----------|----------|
+|`[sibling item](Sibling)`|[sibling item](Sibling)|
+|`[link to item in users namespace](../users/Home)`|[link to item in users namespace](../users/Home)|
+|`[link to item in default namespace](/Home)`|[link to item in default namespace](/Home)|
+|`[toc](markdown#table-of-contents)`|[toc](markdown#table-of-contents)|
+|`[toc](#table-of-contents)`|[toc](#table-of-contents)|
+|`[moinmoin](https://moinmo.in "Go there")`|[moinmoin](https://moinmo.in "Go there")|
+|`[![Image name](../../help-common/logo.png)](Home "click me")`|[![Image name](../../help-common/logo.png)](Home "click me")|
+
+### Reference Links
+Reference links have two parts. Somewhere in the document the link label is defined using a unique id; this has no visible output. Then the reference link uses a form with square brackets rather than parens:
+
+    [id]: url "optional title"
+
+    [link text] [id]
+
+|**Markup**|**Result**|
+|----------|----------|
+|`[apple]: https://www.apple.com/`||
+|`[MoinMoin]: https://moinmo.in/ "go there!"`||
+|`[see Apple stuff][apple]`|[see Apple stuff] [apple]|
+|`[go to MoinMoin][MoinMoin]`|[go to MoinMoin] [MoinMoin]|
+
+[apple]: https://www.apple.com/
+[MoinMoin]: https://moinmo.in/ "go there!"
+
+## Images
+
+Images are similar to links with both an inline and a reference style, but they start with an exclamation point. There are no options to change the default sizes or positions (float left) of images:
+
+|**Markup**|**Result**|
+|----------|----------|
+|`![Alt text](help-common/logo.png "Optional title")`|![Alt text](help-common/logo.png "Optional title")|
+|`![remote image](http://static.moinmo.in/logos/moinmoin.png)`|![remote image](http://static.moinmo.in/logos/moinmoin.png)|
+|`[1]: help-common/logo.png`|to define a reference link place text on separate line, it creates no visible output, example below uses this|
+|`![Alt text](1)`|![Alt text][1]|
+
+[1]: help-common/logo.png  "Optional title attribute"
+
+## Lists
+
+Unordered lists may use *, +, or - characters as bullets.  The character used as a bullet does not effect the display.  The display would be the same if * characters were used everywhere.
+
+**Markup:**
+
+    * apples
+    * oranges
+    * pears
+        - carrot
+        - beet
+            + man
+            + woman
+        - turnip
+    * cherries
+
+
+**Result:**
+
+* apples
+* oranges
+* pears
+    - carrot
+    - beet
+        + man
+        + woman
+    - turnip
+* cherries
+
+
+Ordered lists use numbers and are incremented in regular order. Neither alpha characters nor roman numerals are supported. Although you may use numbers other than 1 with no adverse effect (as shown below), it is a best practice to always start a list with 1.
+
+**Markup:**
+
+    1. apples
+    1. oranges
+    7. pears
+        1. carrot
+        1. beet
+            1. man
+            1. woman
+        1. turnip
+    1. cherries
+
+
+**Result:**
+
+1. apples
+1. oranges
+7. pears
+    1. carrot
+    1. beet
+        1. man
+        1. woman
+    1. turnip
+1. cherries
+
+Lists composed of long paragraphs are easier to read in raw text if the lines are manually wrapped with **optional** hanging indents. If multiple paragraphs are required, separate the paragraphs with blank lines and indent.
+
+**Markup:**
+
+    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+        Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+        viverra nec, fringilla in, laoreet vitae, risus.
+    *   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+        Suspendisse id sem consectetuer libero luctus adipiscing.
+    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+    viverra nec, fringilla in, laoreet vitae, risus.
+    *   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+    viverra nec, fringilla in, laoreet vitae, risus.
+    *   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+    Suspendisse id sem consectetuer libero luctus adipiscing.
+
+
+**Result:**
+
+*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+    viverra nec, fringilla in, laoreet vitae, risus.
+*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+    Suspendisse id sem consectetuer libero luctus adipiscing.
+*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+viverra nec, fringilla in, laoreet vitae, risus.
+*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
+viverra nec, fringilla in, laoreet vitae, risus.
+*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+Suspendisse id sem consectetuer libero luctus adipiscing.
+
+## Horizontal Rules
+
+To create horizontal rules, use 3 or more -, *, or _ on a line. Neither changing the character nor increasing the number of characters will change the width of the rule.
+Putting spaces between the characters also works.
+
+**Markup:**
+
+    ---
+    - - - - - -
+    ******
+    ______
+
+
+**Result:**
+
+---
+
+- - - - - -
+
+******
+
+______
+
+
+## Backslash Escapes
+
+
+Sometimes there is a need to use special characters as literal characters, but Markdown's syntax gets in the way.  Use the backslash character as an escape.
+
+**Markup:**
+
+    *hot*
+
+    333. is a float, 333 is an integer.
+
+    \*hot\*
+
+    333\. is a float, 333 is an integer.
+
+
+**Result:**
+
+*hot*
+
+333. is a float, 333 is an integer.
+
+\*hot\*
+
+333\. is a float, 333 is an integer.
+
+
+## Nested Blockquotes
+
+Advanced blockquotes with nesting are created by starting a line with a > character.
+
+**Markup:**
+
+    > A standard blockquote is indented
+    > > A nested blockquote is indented more
+    > > > You can nest to any depth.
+
+
+**Result:**
+
+> A standard blockquote is indented
+> > A nested blockquote is indented more
+> > > You can nest to any depth.
+
+## Inline HTML
+
+You may embed a subset of HTML tags directly into your markdown documents.
+If there were an official list of allowed tags, it may look like the list below. However, the
+Moin implementation of Markdown uses the html_in converter to convert inline HTML: anything
+permitted within an HTML item will likely also work within a Markdown item.
+
+    <a>              - hyperlink.
+    <b>              - bold, use as last resort <h1>-<h3>, <em>, and <strong> are preferred.
+    <blockquote>     - specifies a section that is quoted from another source.
+    <code>           - defines a piece of computer code.
+    <del>            - delete, used to indicate modifications.
+    <dd>             - describes the item in a <dl> description list.
+    <dl>             - description list.
+    <dt>             - title of an item in a <dl> description list.
+    <em>             - emphasized.
+    <h1>, <h2>, <h3> - headings.
+    <i>              - italic.
+    <img>            - specifies an image tag.
+    <kbd>            - shows keyboard input.
+    <li>             - list item in an ordered list <ol> or an unordered list <ul>.
+    <ol>             - ordered list.
+    <p>              - paragraph.
+    <pre>            - pre-element displayed in a fixed width font and unchanged line breaks.
+    <s>              - strikethrough.
+    <sup>            - superscript text appears 1/2 character above the baseline used for footnotes and other formatting.
+    <sub>            - subscript appears 1/2 character below the baseline.
+    <strong>         - defines important text.
+    <strike>         - strikethrough is deprecated, use <del> instead.
+    <ul>             - unordered list.
+    <br>             - line break.
+    <hr>             - defines a thematic change in the content, usually via a horizontal line.
+
+**Markup:**
+
+    E = MC<sup>2</sup>
+
+    This word is <b>bold</b>.
+
+    This word is <em>italic</em>.
+
+    This word is <strong>bold</strong>.
+
+    This word is <strong style="color:red;background-color:yellow">bold</strong>; colors depend upon configuration settings.
+
+    <img alt="Alt text" src="/+get/help-common/logo.png" title="Optional title" />
+
+**Result:**
+
+E = MC<sup>2</sup>
+
+This word is <b>bold</b>.
+
+This word is <em>italic</em>.
+
+This word is <strong>bold</strong>.
+
+This word is <strong style="color:red;background-color:yellow">bold</strong>; colors depend upon configuration settings.
+
+<img alt="Alt text" src="/+get/help-common/logo.png" title="Optional title" />
+
+**Note:** See top of [html](html) and configuration docs for information on allow_style_attributes.
+
+### Unsupported HTML Tags
+
+**Markup:**
+
+    Unsupported tags within paragraphs are ignored and create no output other than
+    error messages at the top of the page.
+    <script>alert(1);</script>
+    <center>Center</center>
+    End of paragraph.
+
+**Result:**
+
+Unsupported tags within paragraphs are ignored and create no output other than
+error messages at the top of the page.
+<script>alert(1);</script>
+<center>Center</center>
+End of paragraph.
+
+### Malformed HTML Tags
+
+**Markup:**
+
+    Malformed tags within paragraphs are escaped. The `<b>` below has no closing tag.
+    <strong>Hello</strong>
+    <strike>Hello</strike>
+    <b>
+    End of paragraph.
+
+**Result:**
+
+Malformed tags within paragraphs are escaped. The `<b>` below has no closing tag.
+<strong>Hello</strong>
+<strike>Hello</strike>
+<b>
+End of paragraph.
+
+## Extensions
+
+In addition to the TOC extension shown near the top of this page, the following features are installed as part of the "extras" extension.
+
+
+### Tables
+
+All tables must have one heading row. By default table headings are centered and table body cells are aligned left. Use a ":" character on the left, right or both sides of the heading-body separator to change the alignment. Changing the alignment changes both the heading and table body cells.
+
+As shown in the second table below, use of outside borders and neat alignment of the cells do not effect the display. Markup within the table cells is supported.
+
+**Markup:**
+
+    |Tables            |Are            |Very  |Cool    |
+    |------------------|:-------------:|-----:|:-------|
+    |col 2 is          |centered       |$12   |Gloves  |
+    |col 3 is          |right-aligned  |$1600 |Necklace|
+    |col 4 is          |left-aligned   |$100  |Hat     |
+
+    `Tables`            |*Are*            |Very  |Cool
+    ------------|:-------------:|-----:|:-------
+    `col 2 is`|*centered*|$12|Gloves
+    `col 3 is`|*right-aligned*|$1600|Necklace
+    `col 4 is`|*left-aligned*|$100|Hat
+
+
+**Result:**
+
+|Tables            |Are            |Very  |Cool    |
+|------------------|:-------------:|-----:|:-------|
+|col 2 is          |centered       |$12   |Gloves  |
+|col 3 is          |right-aligned  |$1600 |Necklace|
+|col 4 is          |left-aligned   |$100  |Hat     |
+
+`Tables`            |*Are*            |Very  |Cool
+------------|:-------------:|-----:|:-------
+`col 2 is`|*centered*|$12|Gloves
+`col 3 is`|*right-aligned*|$1600|Necklace
+`col 4 is`|*left-aligned*|$100|Hat
+
+### Fenced Code
+
+A second way to display a block of preformatted code is to "fence" the code with lines starting with three tilde (~) or backtick (`) characters.
+
+**Markup:**
+
+    ~~~
+    <html>
+    <body>
+    <p>
+    Test
+    </p>
+    </body>
+    </html>
+    ~~~
+
+**Result:**
+
+~~~
+<html>
+<body>
+<p>
+Test
+</p>
+</body>
+</html>
+~~~
+
+### Syntax Highlighting of Preformatted Code
+
+To highlight code syntax, wrap the code in triple backtick (`) or tilde (~) characters and specify the language on the first line.  Many languages are supported.
+
+**Markup:**
+
+    ``` javascript
+    var s = "JavaScript syntax highlighting";
+    alert(s);
+    ```
+
+    ~~~ {python}
+    def hello():
+       print "Hello World!"
+    ~~~
+
+**Result:**
+
+``` javascript
+var s = "JavaScript syntax highlighting";
+alert(s);
+```
+
+~~~ {python}
+def hello():
+   print "Hello World!"
+~~~
+
+### Smart Strong
+
+The smart strong extension prevents words with embedded double underscores from being converted. e.g.
+`double__underscore__words` is wanted, not `double`**underscore**`words`.
+
+**Markup:**
+
+    Text with double__underscore__words.
+
+    __Strong__ still works.
+
+    __this__works__too__.
+
+**Result:**
+
+Text with double__underscore__words.
+
+__Strong__ still works.
+
+__this__works__too__.
+
+
+
+### Attribute Lists
+
+Attribute lists can be used to define various attributes onto the HTML elements created when a Markdown document is rendered. The general form of an attribute list:
+
+    {: #someid .someclass somekey='some value' }
+
+Prepend a **#** character to a name that defines an ID that can be used in a link. Prepend a **.** character to a name that will define a class used to style the element. Or, use the somekey='some value' form to define any attribute. The two lines below do the same thing:
+
+* `{: .orange .green }`
+* `{: class='orange green" }`
+
+Attribute lists may be either inline or block. Inline attribute lists are defined immediately after the target element. Block attribute lists are defined on a separate line below the block element. Heading lines are an exception in that they are treated as inline elements.
+
+
+**Markup:**
+
+    #### orange heading #### {: .orange }
+
+    A class of green is
+    added to this paragraph.
+    {: class="green"}
+
+    A `{: #para3 }` id was added to the 3rd paragraph on this page,
+    so [click to see 3rd paragraph](#para3).
+
+**Result:**
+
+
+### orange heading #### {: .orange }
+
+A class of green is
+added to this paragraph.
+{: class="green"}
+
+A `{: #para3 }` id was added to the 3rd paragraph on this page,
+so [click to see 3rd paragraph](#para3).
+
+
+### Definition Lists
+
+**Markup:**
+
+    Apple
+    :   Pomaceous fruit of plants of the genus Malus in
+        the family Rosaceae.
+    :   An american computer company.
+
+    Orange
+    :   The fruit of an evergreen tree of the genus Citrus.
+
+**Result:**
+
+Apple
+:   Pomaceous fruit of plants of the genus Malus in
+    the family Rosaceae.
+:   An american computer company.
+
+Orange
+:   The fruit of an evergreen tree of the genus Citrus.
+
+### Footnotes
+
+The syntax for footnotes in Markdown is rather unique. Place any unique label after the characters "[^"  and close the label with a "]". The footnote text may be placed after the reference on a new line using the label, followed by a ":", followed by the footnote text. All footnotes are placed at the bottom of the document under a horizontal rule in the order defined.
+
+**Markup:**
+
+~~~
+Footnotes[^1] have a label[^label] and a definition[^!DEF].
+
+[^1]: This is a footnote
+[^label]: A footnote on "label"
+[^!DEF]: The footnote for definition
+~~~
+
+
+**Result:**
+
+Footnotes[^1] have a label[^label] and a definition[^!DEF].
+
+[^1]: This is a footnote
+[^label]: A footnote on "label"
+[^!DEF]: The footnote for definition

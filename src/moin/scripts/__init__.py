@@ -10,8 +10,6 @@ import sys
 
 from flask_script import Manager, Server, Command
 
-import moin
-
 
 class Help(Command):
     description = 'Quick help'
@@ -68,6 +66,7 @@ def main(default_command='help', wiki_config=None):
     from moin.scripts.maint import serialization
     manager.add_command("save", serialization.Serialize())
     manager.add_command("load", serialization.Deserialize())
+    manager.add_command("load-sample", serialization.LoadSample())
     from moin.scripts.maint.dump_html import Dump
     manager.add_command("dump-html", Dump())
     from moin.scripts.account.create import Create_User
@@ -83,6 +82,8 @@ def main(default_command='help', wiki_config=None):
     from moin.scripts.maint import modify_item
     manager.add_command("item-get", modify_item.GetItem())
     manager.add_command("item-put", modify_item.PutItem())
+    manager.add_command("load-help", modify_item.LoadHelp())
+    manager.add_command("dump-help", modify_item.DumpHelp())
     from moin.scripts.migration.moin19.import19 import ImportMoin19
     manager.add_command("import19", ImportMoin19())
 

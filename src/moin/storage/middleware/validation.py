@@ -215,7 +215,7 @@ def action_validator(element, state):
     if not isinstance(v, str):
         return False
     if v not in [keys.ACTION_SAVE, keys.ACTION_REVERT, keys.ACTION_TRASH,
-                 keys.ACTION_COPY, keys.ACTION_RENAME]:
+                 keys.ACTION_COPY, keys.ACTION_RENAME, keys.ACTION_CONVERT]:
         return False
     return True
 
@@ -260,7 +260,7 @@ def hostname_validator(element, state):
     a hostname (dns name)
     """
     if not state['trusted']:
-        addr = state[keys.ADDRESS]
+        # addr = state[keys.ADDRESS] # TODO
         element.value = None  # TODO: lookup(addr)
         return True
     v = element.value
@@ -417,7 +417,8 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named(keys.MAILTO_AUTHOR).using(optional=True),
     Boolean.named(keys.ISO_8601).using(optional=True),
     List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
-    List.named(keys.SUBSCRIPTIONS).of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
+    List.named(keys.SUBSCRIPTIONS)
+    .of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
     # TODO: DuckDict.named('bookmarks').using(optional=True),
     *common_meta

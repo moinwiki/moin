@@ -7,8 +7,6 @@ MoinMoin errors / exception classes
 
 import sys
 
-from moin.constants.contenttypes import CHARSET
-
 
 class Error(Exception):
     """ Base class for moin moin errors

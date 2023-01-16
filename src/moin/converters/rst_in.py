@@ -18,9 +18,7 @@ import re
 
 import docutils
 from docutils import nodes, utils, writers, core
-from docutils.parsers.rst import Parser
 from docutils.nodes import reference, literal_block
-from docutils.parsers import rst
 from docutils.parsers.rst import directives, roles
 
 try:
@@ -29,7 +27,6 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
@@ -119,7 +116,8 @@ class NodeVisitor:
         pass
 
     def visit_admonition(self, node):
-        # we do not support generic admonitions per http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
+        # we do not support generic admonitions per
+        # http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
         self.open_moin_page_node(moin_page.admonition())
 
     def depart_admonition(self, node=None):
@@ -883,7 +881,8 @@ class MoinDirectives:
     macro.required_arguments = 1
     macro.optional_arguments = 0
 
-    def table_of_content(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
+    def table_of_content(self, name, arguments, options, content, lineno, content_offset,
+                         block_text, state, state_machine):
         text = ''
         for i in content:
             m = re.search(r':(\w+): (\w+)', i)
@@ -920,7 +919,7 @@ class Converter:
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         input = normalize_split_text(text)
-        parser = MoinDirectives()
+        MoinDirectives()
         while True:
             input = '\n'.join(input)
             try:

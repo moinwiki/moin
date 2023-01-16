@@ -14,7 +14,7 @@ import urllib.error
 from re import findall, sub
 
 from emeraldtree import ElementTree as ET
-from werkzeug.utils import unescape
+from markupsafe import Markup
 
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.iri import Iri
@@ -352,10 +352,12 @@ class Converter:
         """
         Return a properly formatted include macro.
 
-        xpointer similar to: u'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
+        xpointer similar to: 'xmlns(page=http://moinmo.in/namespaces/page) page:include(heading(my title) level(2))'
         TODO: xpointer format is ugly, Arguments class would be easier to use here.
 
-        The include moin 2.x macro (per include.py) supports: pages (pagename), sort, items, skipitems, heading, and level.
+        The moin2 include macro (per include.py) supports:
+            pages (pagename), sort, items, skipitems, heading, and level.
+
         If incoming href == '', then there will be a pages value similar to '^^ma' that needs to be unescaped.
         TODO: some 1.9 features have been dropped.
         """
@@ -442,9 +444,11 @@ class Converter:
             else:
                 ret = self.open_children(elem)
         elif self.status[-2] == 'list':  # TODO: still possible? <p> after <li> removed from moinwiki_in
-            if self.last_closed and (
-                self.last_closed != 'list_item' and self.last_closed != 'list_item_header' and
-                self.last_closed != 'list_item_footer' and self.last_closed != 'list_item_label'):
+            if self.last_closed \
+               and (self.last_closed != 'list_item' and
+                    self.last_closed != 'list_item_header' and
+                    self.last_closed != 'list_item_footer' and
+                    self.last_closed != 'list_item_label'):
                 ret = Moinwiki.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)
@@ -509,7 +513,7 @@ class Converter:
                     elem = next(elem_it)
                 ret = "{0}\n{1}\n}}}}}}\n".format(ret, ' '.join(elem.itertext()))
                 return ret
-        return unescape(elem.get(moin_page.alt, '')) + "\n"
+        return Markup.unescape(elem.get(moin_page.alt, '')) + "\n"
 
     def open_moinpage_inline_part(self, elem):
         ret = self.open_moinpage_part(elem)
@@ -570,7 +574,6 @@ class Converter:
         return self.open_moinpage_ins(elem)
 
     def open_moinpage_strong(self, elem):
-        ret = Moinwiki.strong
         return "{0}{1}{2}".format(Moinwiki.strong, self.open_children(elem), Moinwiki.strong)
 
     def open_moinpage_table(self, elem):
@@ -622,8 +625,14 @@ class Converter:
         self.table_rowclass = ''
         return ret + Moinwiki.table_marker + '\n'
 
+    def open_moinpage_th(self, elem):
+        return self.open_moinpage_table_cell_head(self, elem)
+
     def open_moinpage_table_cell_head(self, elem):
         return self.open_moinpage_table_cell(elem)
+
+    def open_moinpage_td(self, elem):
+        return self.open_moinpage_table_cell(self, elem)
 
     def open_moinpage_table_cell(self, elem):
         table_cellclass = elem.attrib.get(moin_page.class_, '')

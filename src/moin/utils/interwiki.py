@@ -50,7 +50,8 @@ def get_fqname(item_name, field, namespace):
     return item_name
 
 
-def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT, endpoint='frontend.show_item', _external=False, regex=''):
+def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
+                 endpoint='frontend.show_item', _external=False, regex=''):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -77,7 +78,7 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT, e
     else:
         try:
             wiki_base_url = app.cfg.interwiki_map[wiki_name]
-        except KeyError as err:
+        except KeyError:
             logging.warning("no interwiki_map entry for {0!r}".format(wiki_name))
             item_name = get_fqname(item_name, field, namespace)
             if wiki_name:
@@ -176,7 +177,7 @@ class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
     def get_root_fqname(self):
         """
         Set value to the item_root of that namespace, and return
-        the new CompisteName.
+        the new CompositeName.
         """
         return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
 
@@ -190,10 +191,10 @@ def split_fqname(url):
     :returns: a namedtuple CompositeName(namespace, field, itemname)
     Examples::
 
-        url: u'ns1/ns2/@itemid/Page' return u'ns1/ns2', u'itemid', u'Page'
-        url: u'@revid/OtherPage' return u'', u'revid', u'OtherPage'
-        url: u'ns1/Page' return u'ns1', u'', u'Page'
-        url: u'ns1/ns2/@notfield' return u'ns1/ns2', u'', u'@notfield'
+        url: 'ns1/ns2/@itemid/Page' return 'ns1/ns2', 'itemid', 'Page'
+        url: '@revid/OtherPage' return '', 'revid', 'OtherPage'
+        url: 'ns1/Page' return 'ns1', '', 'Page'
+        url: 'ns1/ns2/@notfield' return 'ns1/ns2', '', '@notfield'
     """
     if not url:
         return CompositeName('', NAME_EXACT, '')
@@ -216,15 +217,18 @@ def split_interwiki(wikiurl):
         'FrontPage' -> "Self", "", "", "FrontPage"
         'MoinMoin/Page with blanks' -> "MoinMoin", "", "", "Page with blanks"
         'MoinMoin/' -> "MoinMoin", "", "", ""
-        'MoinMoin/@Someid/SomeValue' -> "MoinMoin", "", "Someid", "SomeValue" if Someid field exists or "MoinMoin", "", "", "Someid/SomePage" if not
+        'MoinMoin/@Someid/SomeValue' -> "MoinMoin", "", "Someid", "SomeValue" if Someid field exists or
+                                        "MoinMoin", "", "", "Someid/SomePage" if not
         'MoinMoin/interwikins/AnyPage' -> "MoinMoin", "interwikins", "", "AnyPage"
-        'ns/AnyPage' -> "Self", "ns", "", "AnyPage" if ns namespace exists or "Self", "", "", "ns:AnyPage" if not.
+        'ns/AnyPage' -> "Self", "ns", "", "AnyPage" if ns namespace exists or
+                        "Self", "", "", "ns:AnyPage" if not.
         'ns1/ns2/AnyPage' -> "Self", "ns1/ns2", "", "AnyPage" if ns1/ns2 namespace exists OR
                              "Self", "ns1", "", "ns2/AnyPage" if ns1 namespace exists OR
                              "Self", "", "", "ns1/ns2/AnyPage" else.
-        'MoinMoin/ns/@Somefield/AnyPage' -> "MoinMoin", "ns", "", "@Somefield/AnyPage" if ns namespace exists and field Somefield does not OR
-                                         "MoinMoin", "ns", "Somefield", "AnyPage" if ns namespace and field Somefield exist OR
-                                         "MoinMoin", "", "", "ns/@Somefield/AnyPage" else.
+        'MoinMoin/ns/@Somefield/AnyPage' ->
+            "MoinMoin", "ns", "", "@Somefield/AnyPage" if ns namespace exists and field Somefield does not OR
+            "MoinMoin", "ns", "Somefield", "AnyPage" if ns namespace and field Somefield exist OR
+            "MoinMoin", "", "", "ns/@Somefield/AnyPage" else.
         :param wikiurl: the url to split
         :rtype: tuple
         :returns: (wikiname, namespace, field, pagename)
@@ -267,7 +271,7 @@ def join_wiki(wikiurl, wikitail, field, namespace):
     wikitail = url_quote(wikitail, charset=CHARSET, safe='/')
     field = url_quote(field, charset=CHARSET, safe='/')
     namespace = url_quote(namespace, charset=CHARSET, safe='/')
-    if not('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl or '$FIELD' in wikiurl):
+    if not ('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl or '$FIELD' in wikiurl):
         return wikiurl + get_fqname(wikitail, field, namespace)
     if '$PAGE' in wikiurl:
         wikiurl = wikiurl.replace('$PAGE', wikitail)

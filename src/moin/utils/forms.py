@@ -6,14 +6,13 @@
 """
 
 
-from jinja2 import Markup
+from markupsafe import Markup
 import werkzeug.datastructures
 
 from flatland import AdaptationError, Scalar
 from flatland.out.markup import Generator
-from flatland.schema.util import find_i18n_function
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 
 def label_filter(tagname, attributes, contents, context, bind):

@@ -10,7 +10,7 @@ import re
 ANON = 'anonymous'
 
 # Invalid characters - invisible characters that should not be in page
-# names. Prevent user confusion and wiki abuse, e.g u'\u202aFrontPage'.
+# names. Prevent user confusion and wiki abuse, e.g '\u202aFrontPage'.
 ITEM_INVALID_CHARS_REGEX = re.compile(
     r"""
     \u0000 | # NULL
@@ -31,7 +31,8 @@ CLEAN_INPUT_TRANSLATION_MAP = {
     ord('\r'): ' ',
     ord('\n'): ' ',
 }
-for c in '\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f':
+for c in ('\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11'
+          '\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f'):
     # these chars will be removed
     CLEAN_INPUT_TRANSLATION_MAP[ord(c)] = None
 del c

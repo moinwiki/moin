@@ -346,7 +346,8 @@ The closing pipe symbol at the end of a row is optional.
 Macros
 ======
 
-Macros are extensions to standard Creole markup that allow developers to add extra features. The following is a table of MoinMoin's Creole macros.
+Macros are extensions to standard Creole markup that allow developers to add
+extra features. The following is a table of MoinMoin's Creole macros.
 
 +-------------------------------------------+------------------------------------------------------------+
 | Markup                                    | Comment                                                    |
@@ -371,13 +372,16 @@ Macros are extensions to standard Creole markup that allow developers to add ext
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<Include(ItemOne/SubItem)>>``          | Embeds the contents of ``ItemOne/SubItem`` inline          |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<ItemList()>>``                        | Lists subitems of current item, see notes for options      |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<MailTo(user AT example DOT org,       | If the user is logged in this macro will display           |
 | write me)>>``                             | ``user@example.org``, otherwise it will display the        |
 |                                           | obfuscated email address supplied                          |
 |                                           | (``user AT example DOT org``)                              |
 |                                           | The second parameter containing link text is optional.     |
 +-------------------------------------------+------------------------------------------------------------+
-| ``<<PageNameList()>>``                    | Inserts names of all wiki items                            |
+| ``<<MonthCalendar()>>``                   | Shows a monthly calendar in a table form,                  |
+|                                           | see notes for details                                      |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
 +-------------------------------------------+------------------------------------------------------------+
@@ -385,5 +389,58 @@ Macros are extensions to standard Creole markup that allow developers to add ext
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
-| ``<<Verbatim(`same` __text__)>>``         | Inserts text as entered                                    |
+| ``<<Verbatim(`same` __text__)>>``         | Inserts text as entered, no markup rendering               |
 +-------------------------------------------+------------------------------------------------------------+
+
+Notes
+-----
+
+**Date** and **DateTime** macros accept integer timestamps and ISO 8601 formatted date-times:
+
+    - <<Date(1434563755)>>
+    - <<Date(2002-01-23T12:34:56)>>
+
+**Footnotes** are created by placing the macro within text. By default footnotes are placed at the bottom
+of the page. Explicit placement of footnotes is accomplished by calling the macro without a parameter.
+
+    - text<<FootNote(A macro is enclosed in double angle brackets, and'''may''' have markup.)>> more text
+    - <<FootNote()>>
+
+**FontAwesome** color must be a hex digit color code of either 3 or 6 digits with a leading #: #f00 or #F80000.
+FontAwesome size must be an unsigned decimal integer or float that will adjust the size of the character
+relative to the current font size: 2 or 2.0 will create double the character size, .5 will create a character
+half the current size. Font awesome experts will know about the special "fa" class and the "fa-" name prefixes.
+It is acceptable, but not necessary to provide these. See https://fontawesome.com/v4/cheatsheet/
+
+    - <<FontAwesome(thumbs-up,#f00,2)>> is identical to
+    - <<FontAwesome(fa fa-thumbs-up fa-2x,#FF0000)>>
+
+The **Include** macro <<Include(my.png)>> produces results identical to the transclusion {{my.png}}.
+It is more flexible than a transclusion because it supports multiple parameters and the first parameter may
+be any regrex starting with a `^`. The include macro accepts 3 parameters where the second parameter is a
+heading and the third parameter a heading level between 1 and 6:
+
+    - <<Include(^zi)>> embeds all wiki items starting with `zi`.
+    - <<Include(moin.png,My Favorite icon, 6)>>
+
+The **ItemList** macro accepts multiple named parameters: item, startswith, regex, ordered and display.
+
+    - <<ItemList(item="Foo")>> lists subitems of Foo item
+    - <<ItemList(ordered='True')>> displays ordered list of subitems, default is unordered
+    - <<ItemList(startswith="Foo")>> lists subitems starting with Foo
+    - <<ItemList(regex="Foo$")>> lists subitems ending with Foo
+    - <<ItemList(skiptag="template")>> ignore items with this tag
+    - <<ItemList(display="FullPath")>> default, displays full path to subitems
+    - <<ItemList(display="ChildPath")>> displays last component of the FullPath, including the '/'
+    - <<ItemList(display="ChildName")>> displays subitem name
+    - <<ItemList(display="UnCameled")>> displays "fooBar" as "foo Bar"
+
+The **MonthCalendar** macro accepts multiple named parameters: item, year, month, month_offset,
+fixed_height and anniversary.
+
+    - <<MonthCalendar>>  Calendar of current month for current page
+    - <<MonthCalendar(month_offset=-1)>>  Calendar of last month
+    - <<MonthCalendar(month_offset=+1)>>  Calendar of next month
+    - <<MonthCalendar(item="SampleUser",month=12)>>  Calendar of Page SampleUser, this year's december
+    - <<MonthCalendar(month=12)>>  Calendar of current Page, this year's december
+    - <<MonthCalendar(year=2022,month=12)>>  Calendar of December, 2022

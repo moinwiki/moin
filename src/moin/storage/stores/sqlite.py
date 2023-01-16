@@ -11,12 +11,13 @@ name.
 Optionally, you can use zlib/"gzip" compression.
 """
 
+import os
 import base64
 import zlib
-from sqlite3 import connect, Row
+from sqlite3 import connect, Row, IntegrityError
 
-from . import (BytesMutableStoreBase, FileMutableStoreBase,
-               BytesMutableStoreMixin, FileMutableStoreMixin)
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
+from . import (BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin)
 
 
 class BytesStore(BytesMutableStoreBase):
@@ -55,6 +56,9 @@ class BytesStore(BytesMutableStoreBase):
         self.db_name = db_name
         self.table_name = table_name
         self.compression_level = compression_level
+        db_path = os.path.dirname(self.db_name)
+        if not os.path.exists(db_path):
+            os.makedirs(db_path)
 
     def create(self):
         conn = connect(self.db_name)
@@ -67,7 +71,7 @@ class BytesStore(BytesMutableStoreBase):
             conn.execute('drop table {0}'.format(self.table_name))
 
     def open(self):
-        self.conn = connect(self.db_name)
+        self.conn = connect(self.db_name, check_same_thread=False)
         self.conn.row_factory = Row  # make column access by ['colname'] possible
 
     def close(self):
@@ -112,7 +116,18 @@ class BytesStore(BytesMutableStoreBase):
         value = self._compress(value)
         with self.conn:
             value = base64.b64encode(value).decode()  # a str in base64 encoding
-            self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, value))
+            try:
+                self.conn.execute('insert into {0} values (?, ?)'.format(self.table_name), (key, value))
+            except IntegrityError:
+                if NAMESPACE_USERPROFILES in self.db_name:
+                    # userprofiles namespace does support revisions so we update existing row
+                    self.conn.execute(
+                        'UPDATE {0} SET value = "{2}" WHERE key = "{1}"'.format(
+                            self.table_name, key, value
+                        )
+                    )
+                else:
+                    raise
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):

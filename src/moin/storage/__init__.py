@@ -21,13 +21,16 @@ We use a layered approach like this::
                                    over key/value pairs
 """
 
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
+from moin.constants.namespaces import (NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS,
+                                       NAMESPACE_HELP_COMMON, NAMESPACE_HELP_EN)
 
 BACKENDS_PACKAGE = 'moin.storage.backends'
 
 BACKEND_DEFAULT = 'default'
 BACKEND_USERPROFILES = 'userprofiles'
 BACKEND_USERS = 'users'
+BACKEND_HELP_COMMON = 'help-common'
+BACKEND_HELP_EN = 'help-en'
 
 
 def backend_from_uri(uri):
@@ -54,8 +57,8 @@ def create_mapping(uri, namespaces, backends, acls):
     return namespace_mapping, dict(backend_mapping), acl_mapping
 
 
-def create_simple_mapping(uri='stores:fs:instance',
-                          default_acl=None, userprofiles_acl=None, users_acl=None):
+def create_simple_mapping(uri='stores:fs:instance', default_acl=None, userprofiles_acl=None,
+                          users_acl=None, help_common_acl=None, help_en_acl=None, ):
     """
     When configuring storage, the admin needs to provide a namespace_mapping.
     To ease creation of such a mapping, this function provides sane defaults
@@ -86,19 +89,29 @@ def create_simple_mapping(uri='stores:fs:instance',
         userprofiles_acl = dict(before='All:', default='', after='', hierarchic=False)
     if not users_acl:
         users_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
+    if not help_common_acl:
+        help_common_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
+    if not help_en_acl:
+        help_en_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
         NAMESPACE_USERPROFILES: BACKEND_USERPROFILES,
         NAMESPACE_USERS: BACKEND_USERS,
+        NAMESPACE_HELP_COMMON: BACKEND_HELP_COMMON,
+        NAMESPACE_HELP_EN: BACKEND_HELP_EN,
     }
     backends = {
         BACKEND_DEFAULT: None,
         BACKEND_USERPROFILES: None,
         BACKEND_USERS: None,
+        BACKEND_HELP_COMMON: None,
+        BACKEND_HELP_EN: None,
     }
     acls = {
         NAMESPACE_USERPROFILES: userprofiles_acl,
         NAMESPACE_USERS: users_acl,
         NAMESPACE_DEFAULT: default_acl,
+        NAMESPACE_HELP_COMMON: help_common_acl,
+        NAMESPACE_HELP_EN: help_en_acl,
     }
     return create_mapping(uri, namespaces, backends, acls)

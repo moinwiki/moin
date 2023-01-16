@@ -16,10 +16,9 @@ from flask import current_app as app
 from emeraldtree import ElementTree as ET
 
 from moin import wikiutil
-from moin.i18n import _, L_, N_
-from moin.utils.tree import html, moin_page, xlink, xml, Name, xinclude
+from moin.i18n import _
+from moin.utils.tree import html, moin_page, xlink, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
-from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry, ElementException
@@ -221,7 +220,7 @@ class Converter:
         if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == '':
             # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
             elem[0] = href.path[1:] if href.path else href.fragment
-        # html attibutes are copied by default (html.target, html.class, html.download...
+        # html attributes are copied by default (html.target, html.class, html.download...
         return self.new_copy(html.a, elem, attrib)
 
     def visit_moinpage_admonition(self, elem):
@@ -237,7 +236,7 @@ class Converter:
     def visit_moinpage_audio(self, elem):
         href = elem.get(xlink.href, None)
         attrib = {html.src: href} if href else {}
-        return self.new_copy(html.audio, elem)
+        return self.new_copy(html.audio, elem, attrib)
 
     def visit_moinpage_video(self, elem):
         href = elem.get(xlink.href, None)
@@ -245,6 +244,20 @@ class Converter:
         return self.new_copy(html.video, elem, attrib)
 
     def visit_moinpage_nowiki(self, elem):
+        """
+        Avoid creation of a div used only for its data-lineno attrib.
+        """
+        if elem.attrib.get(html.data_lineno, None) and isinstance(elem[0][0], ET.Element):
+            # {{{#!wiki\ntext\n}}}
+            elem[0][0].attrib[html.data_lineno] = elem.attrib[html.data_lineno]
+            elem[0][0].attrib[moin_page.class_] = elem[0][0].attrib.get(moin_page.class_, "") + " moin-nowiki"
+            return self.do_children(elem)
+        if elem.attrib.get(html.data_lineno, None) and isinstance(elem[0][0], str) and isinstance(elem[0], ET.Element):
+            # {{{\ntext\n}}} OR {{{#!highlight python\ndef xx:\n}}}
+            elem[0].attrib[html.data_lineno] = elem.attrib[html.data_lineno]
+            elem[0].attrib[moin_page.class_] = elem[0].attrib.get(moin_page.class_, "") + " moin-nowiki"
+            return self.do_children(elem)
+        # {{{\n{{{{{\ntext\n}}}}}\n}}}  # data_lineno not available, parent will have class=moin-nowiki
         return self.new_copy(html.div, elem)
 
     def visit_moinpage_blockcode(self, elem):
@@ -470,11 +483,16 @@ class Converter:
             else:
                 # is an object
                 new_elem = html.object(attrib=attrib)
-            # alt attr is invalid within object, audio, and video tags , append alt text as a child
+            # alt attr is invalid within object, audio, and video tags , append alt text to existing child
+            # alt text will be transclusion alt field, item meta summary, or item name
             if new_elem.attrib.get(html.alt):
+                if new_elem.text:
+                    new_elem.append(' - ')
                 new_elem.append(new_elem.attrib.get(html.alt))
                 del new_elem.attrib[html.alt]
             else:
+                if new_elem.text:
+                    new_elem.append(' - ')
                 new_elem.append(alt)
 
         if obj_type == "object" and getattr(href, 'scheme', None):

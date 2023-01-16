@@ -17,7 +17,7 @@ import time
 
 from uuid import uuid4
 
-from passlib.utils import rng, getrandstr, getrandbytes, consteq
+from passlib.utils import rng, getrandstr, consteq
 from passlib.pwd import genword
 
 

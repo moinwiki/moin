@@ -27,7 +27,6 @@ from moin.utils.tree import moin_page, xlink, docbook, xml, html
 from moin.converters.html_out import mark_item_as_transclusion
 
 from . import default_registry
-from ._wiki_macro import ConverterMacro
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 from moin import log
@@ -470,7 +469,7 @@ class Converter:
             # but at this time we won't support it.
             return
         attrib[html.alt] = href
-        attrib[xlink.href] = '+get/' + href
+        attrib[xlink.href] = '/+get/' + href
         format = object_to_show.get('format')
         if format:
             format = format.lower()
@@ -987,7 +986,7 @@ class Converter:
         trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
                               'registered': '\xae',  # u'&reg;',
                               'trade': '\u2122',  # no entity name defined for superscript TM
-        }
+                              }
         trademark_class = element.get('class')
         children = self.do_children(element, depth)
         if trademark_class in trademark_entities:

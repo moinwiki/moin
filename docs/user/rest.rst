@@ -110,17 +110,17 @@ Hyperlinks
 External Links
 --------------
 
-+----------------------------------------------------------------+------------------------------------------------------------+
-|Markup                                                          |Result                                                      |
-+================================================================+============================================================+
-|``http://www.python.org/``                                      |http://www.python.org/                                      |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``External hyperlinks, like `Python <http://www.python.org/>`_``|External hyperlinks, like `Python <http://www.python.org/>`_|
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``External hyperlinks, like Moin_.``                            |External hyperlinks, like Moin_.                            |
-|                                                                |                                                            |
-|``.. _Moin: http://moinmo.in/``                                 |.. _Moin: http://moinmo.in/                                 |
-+----------------------------------------------------------------+------------------------------------------------------------+
++-----------------------------------------------------------------+-------------------------------------------------------------+
+|Markup                                                           |Result                                                       |
++=================================================================+=============================================================+
+|``https://www.python.org/``                                      |https://www.python.org/                                      |
++-----------------------------------------------------------------+-------------------------------------------------------------+
+|``External hyperlinks, like `Python <https://www.python.org/>`_``|External hyperlinks, like `Python <https://www.python.org/>`_|
++----------------------------------------------------------------+--------------------------------------------------------------+
+|``External hyperlinks, like Moin_.``                             |External hyperlinks, like Moin_.                             |
+|                                                                 |                                                             |
+|``.. _Moin: http://moinmo.in/``                                  |.. _Moin: http://moinmo.in/                                  |
++-----------------------------------------------------------------+-------------------------------------------------------------+
 
 Internal Links
 --------------
@@ -339,7 +339,7 @@ Ordered Lists
    (for lists which do not start at "1") and formatting type
    (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
    enumerated lists can be found in the `reStructuredText documentation
-   <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
+   <https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
  - The Moin2 parser requires a blank line between items when changing indentation levels.
  - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.

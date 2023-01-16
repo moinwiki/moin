@@ -15,8 +15,8 @@
 """
 
 
+import os
 import re
-import difflib
 import time
 import uuid
 import mimetypes
@@ -31,41 +31,42 @@ from datetime import timezone
 from collections import namedtuple
 from functools import wraps, partial
 
+from werkzeug.utils import secure_filename
+
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
 from flask import current_app as app
 from flask import g as flaskg
-from flask_babel import format_date, format_datetime
+from flask_babel import format_datetime
 from flask_theme import get_themes_list
 
-from flatland import Form, List
+from flatland import Form
 from flatland.validation import Validator
 
-from jinja2 import Markup
+from markupsafe import Markup
 
 import pytz
 from babel import Locale
 
 from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
-from whoosh.query.qcore import QueryError
+from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
 from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                         Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks, RadioChoice,
                         validate_name, NameNotValidError)
-from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError,
-                        FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm)
+from moin.items import (BaseChangeForm, Item, NonExistent, NameNotUniqueError, MissingParentError,
+                        FieldNotUniqueError, get_itemtype_specific_tags, CreateItemForm, find_matches)
 from moin.items.content import content_registry, conv_serialize
 from moin.items.ticket import AdvancedSearchForm, render_comment_data
-from moin import user, utils
+from moin import user
 from moin.constants.keys import *  # noqa
 from moin.constants.namespaces import *  # noqa
-from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_USERPROFILE
-from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
 from moin.utils import crypto, rev_navigation, close_file, show_time
@@ -76,9 +77,11 @@ from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
 from moin.scripts.migration.moin19.import19 import hash_hexdigest
+from moin.storage.middleware.validation import validate_data
+import moin.utils.mimetype as mime_type
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -117,6 +120,7 @@ Disallow: /+delete/
 Disallow: /+ajaxdelete/
 Disallow: /+ajaxdestroy/
 Disallow: /+ajaxmodify/
+Disallow: /+ajaxsubitems/
 Disallow: /+destroy/
 Disallow: /+create/
 Disallow: /+rename/
@@ -154,7 +158,7 @@ def global_views():
     return render_template('all.html',
                            title_name=_("Global Views"),
                            fqname=CompositeName('all', NAME_EXACT, '')
-                          )
+                           )
 
 
 class LookupForm(Form):
@@ -249,7 +253,7 @@ def lookup():
                                            title_name=title_name,
                                            lookup_form=lookup_form,
                                            results=lookup_results,
-                    )
+                                           )
                     flaskg.clock.stop('lookup render')
                     if not lookup_results:
                         status = 404
@@ -257,7 +261,7 @@ def lookup():
     html = render_template('lookup.html',
                            title_name=title_name,
                            lookup_form=lookup_form,
-    )
+                           )
     return Response(html, status)
 
 
@@ -288,27 +292,37 @@ def add_file_filters(_filter, filetypes):
     :param filetypes: list of selected filetypes
     :returns: the required _filter for the search query
     """
-    if filetypes:
-        alltypes = "all" in filetypes
+    if filetypes and 'all' not in filetypes:
         contenttypes = []
         files_filter = []
-        if alltypes or "markup" in filetypes:
+        if "markup" in filetypes:
             contenttypes.append(CONTENTTYPE_MARKUP)
-        if alltypes or "text" in filetypes:
+        if "text" in filetypes:
             contenttypes.append(CONTENTTYPE_TEXT)
-        if alltypes or "image" in filetypes:
+        if "image" in filetypes:
             contenttypes.append(CONTENTTYPE_IMAGE)
-        if alltypes or "audio" in filetypes:
+        if "audio" in filetypes:
             contenttypes.append(CONTENTTYPE_AUDIO)
-        if alltypes or "video" in filetypes:
+        if "video" in filetypes:
             contenttypes.append(CONTENTTYPE_VIDEO)
-        if alltypes or "drawing" in filetypes:
+        if "drawing" in filetypes:
             contenttypes.append(CONTENTTYPE_DRAWING)
-        if alltypes or "other" in filetypes:
+        if "other" in filetypes:
             contenttypes.append(CONTENTTYPE_OTHER)
         for ctype in contenttypes:
             for itemtype in ctype:
                 files_filter.append(Term("contenttype", itemtype))
+        if 'unknown' in filetypes:
+            known_types = []
+            for known in CONTENTTYPES_MAP.keys():
+                known_types.append(Term("contenttype", known))
+            unknown_types = Not(Or(known_types))
+            if not files_filter:
+                _filter.append(unknown_types)
+                _filter = And(_filter)
+                return _filter
+            else:
+                files_filter.append(unknown_types)
         files_filter = Or(files_filter)
         _filter.append(files_filter)
         _filter = And(_filter)
@@ -321,21 +335,39 @@ def add_facets(facets, time_sorting):
 
     :param facets: current facets
     :param time_sorting: defines the sorting order and can have one of the following 3 values :
-                     1. default - default search
+                     1. default - default search, highest score first
                      2. old - sort old items first
                      3. new - sort new items first
+                     4. name - sort by name
     :returns: required facets for the search query
     """
     if time_sorting == "new":
-        facets.append(sorting.FieldFacet("mtime", reverse=True))
+        facets.append(sorting.FieldFacet(MTIME, reverse=True))
     elif time_sorting == "old":
-        facets.append(sorting.FieldFacet("mtime", reverse=False))
+        facets.append(sorting.FieldFacet(MTIME, reverse=False))
+    elif time_sorting == "name":
+        facets.append(sorting.FieldFacet(NAME_SORT, reverse=False))
     return facets
 
 
 @frontend.route('/+search/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+search', defaults=dict(item_name=''), methods=['GET', 'POST'])
 def search(item_name):
+    """
+    Perform a whoosh search of the index and display the matching items.
+
+    The default search is across all namespaces in the index.
+
+    The Jinja template formatting the output may also display data related to the
+    search such as the whoosh query, filter (if any), hit counts, and additional
+    suggested search terms.
+
+    "Currently" there is no theme generating the '/+search/<itemname:item_name>' link
+    within Item Views. To access, users must key the query link into the browsers URL. The
+    query result is filtered limiting the output to the target item, target subitems
+    and sub-subitems..., and transclusions within those items.
+    Example URL: http://127.0.0.1:8080/+search/OtherTextItems?q=moin
+    """
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get('boolajax') else False
     valid = search_form.validate()
@@ -350,7 +382,7 @@ def search(item_name):
         filetypes = request.args.get('filetypes')
         is_ticket = bool(request.args.get('is_ticket'))
         if filetypes:
-            filetypes = filetypes.split(',')[:-1]  # To remove the extra u'' at the end of the list
+            filetypes = filetypes.split(',')[:-1]  # To remove the extra '' at the end of the list
     else:
         query = search_form['q'].value
         history = bool(request.values.get('history'))
@@ -361,15 +393,15 @@ def search(item_name):
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
 
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser([NAME_EXACT, NAME, SUMMARY, CONTENT, CONTENTNGRAM], idx_name=idx_name)
+        qp = flaskg.storage.query_parser(
+            [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
+        )
         q = qp.parse(query)
-
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
             prefix_name = item_name + '/'
             terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name), ]
-            terms.append(Term(WIKINAME, app.cfg.interwikiname))
 
             show_transclusions = True
             if show_transclusions:
@@ -391,7 +423,6 @@ def search(item_name):
                         transcluded_names.update(transclusions)
                 # XXX Will whoosh cope with such a large filter query?
                 terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
-
             _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
@@ -401,6 +432,7 @@ def search(item_name):
             flaskg.clock.start('search')
             try:
                 results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
+            # this may be an ajax transaction, search.js will handle a full page response
             except QueryError:
                 flash(_("""QueryError: invalid search term: %(search_term)s""", search_term=q), "error")
                 return render_template('search.html',
@@ -408,48 +440,48 @@ def search(item_name):
                                        medium_search_form=search_form,
                                        item_name=item_name,
                                        )
+            except TermNotFound:
+                # name:'moin has bugs'
+                flash(_("""TermNotFound: field is not indexed: %(search_term)s""", search_term=q), "error")
+                return render_template('search.html',
+                                       query=query,
+                                       medium_search_form=search_form,
+                                       item_name=item_name,
+                                       )
             flaskg.clock.stop('search')
             flaskg.clock.start('search suggestions')
-            name_suggestions = [word for word, score in results.key_terms(NAME, docs=20, numterms=10)]
-            content_suggestions = [word for word, score in results.key_terms(CONTENT, docs=20, numterms=10)]
             flaskg.clock.stop('search suggestions')
             flaskg.clock.start('search render')
 
-            lastword = query.split(' ')[-1]
-            word_suggestions = []
-            if len(lastword) > 2:
-                corrector = searcher.corrector(CONTENT)
-                word_suggestions = corrector.suggest(lastword, limit=3)
             if ajax:
                 html = render_template('ajaxsearch.html',
                                        results=results,
-                                       word_suggestions=', '.join(word_suggestions),
-                                       name_suggestions=', '.join(name_suggestions),
-                                       content_suggestions=', '.join(content_suggestions),
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
                                        is_ticket=is_ticket,
                                        whoosh_query=q,
-                )
+                                       whoosh_filter=_filter,
+                                       flaskg=flaskg,
+                                       )
             else:
                 html = render_template('search.html',
                                        results=results,
-                                       name_suggestions=', '.join(name_suggestions),
-                                       content_suggestions=', '.join(content_suggestions),
                                        query=query,
                                        medium_search_form=search_form,
                                        item_name=item_name,
                                        omitted_words=', '.join(omitted_words),
                                        history=history,
                                        whoosh_query=q,
-                )
+                                       whoosh_filter=_filter,
+                                       flaskg=flaskg,
+                                       )
             flaskg.clock.stop('search render')
     else:
         html = render_template('search.html',
                                query=query,
                                medium_search_form=search_form,
                                item_name=item_name,
-        )
+                               )
     return html
 
 
@@ -488,10 +520,25 @@ def presenter(view, add_trail=False, abort404=True):
     return partial(add_presenter, view=view, add_trail=add_trail, abort404=abort404)
 
 
-def flash_if_deleted(item):
-    """Show flash info message when user views a deleted revision."""
-    if TRASH in item.meta and item.meta[TRASH]:
-        flash(_('This item or item revision is deleted.'), "info")
+def flash_if_item_deleted(item_name, rev_id, itemrev):
+    """
+    Show flash info message if target item is deleted, show another message if revision is deleted.
+    Return True if item is deleted or this revision is deleted.
+    """
+    if not rev_id == CURRENT:
+        ret = False
+        current_item = Item.create(item_name, rev_id=CURRENT)
+        if TRASH in current_item.meta and current_item.meta[TRASH]:
+            flash(_('This item is deleted.'), "info")
+            ret = True
+        if TRASH in itemrev.meta and itemrev.meta[TRASH]:
+            flash(_('This item revision is deleted.'), "info")
+            ret = True
+        return ret
+    elif TRASH in itemrev.meta and itemrev.meta[TRASH]:
+        flash(_('This item is deleted.'), "info")
+        return True
+    return False
 
 
 # The first form accepts POST to allow modifying behavior like modify_item.
@@ -508,8 +555,8 @@ def show_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
-        flash_if_deleted(item)
-        result = item.do_show(rev)
+        item_is_deleted = flash_if_item_deleted(item_name, rev, item)
+        result = item.do_show(rev, item_is_deleted=item_is_deleted)
     except AccessDenied:
         abort(403)
     except FieldNotUniqueError:
@@ -521,6 +568,7 @@ def show_item(item_name, rev):
                                headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
                                fqname=fqname,
                                fq_names=fq_names,
+                               item_is_deleted=item_is_deleted,
                                )
     close_file(item.rev.data)
     return result
@@ -540,7 +588,7 @@ def show_dom(item):
         status = 200
     content = render_template('dom.xml',
                               data_xml=Markup(item.content._render_data_xml()),
-    )
+                              )
     return Response(content, status, mimetype='text/xml')
 
 
@@ -561,7 +609,7 @@ def indexable(item_name, rev):
 @presenter('highlight')
 def highlight_item(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    flash_if_deleted(item)
+    item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
     try:
         ret = render_template('highlight.html',
                               item=item, item_name=item.name,
@@ -570,7 +618,8 @@ def highlight_item(item):
                               rev=item.rev,
                               rev_navigation_ids_dates=rev_navigation_ids_dates,
                               meta=item._meta_info(),
-        )
+                              item_is_deleted=item_is_deleted,
+                              )
     except UnicodeDecodeError:
         return _crash(item, None, None)
     close_file(item.meta.revision.data)
@@ -580,7 +629,7 @@ def highlight_item(item):
 @presenter('meta', add_trail=True)
 def show_item_meta(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args['rev'], item.fqname)
-    flash_if_deleted(item)
+    item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
     ret = render_template('meta.html',
                           item=item,
                           item_name=item.name,
@@ -589,7 +638,8 @@ def show_item_meta(item):
                           contenttype=item.contenttype,
                           rev_navigation_ids_dates=rev_navigation_ids_dates,
                           meta=item._meta_info(),
-    )
+                          item_is_deleted=item_is_deleted,
+                          )
     close_file(item.meta.revision.data)
     return ret
 
@@ -659,8 +709,6 @@ def convert_item(item_name):
                                fqname=split_fqname(item_name),
                                )
 
-    namespace = item.rev.meta.revision.namespace or 'default'
-    revno = item.rev.revid
     item.rev.data.seek(0)
     content = item.rev.data.read()
     input_conv = reg.get(Type(item.contenttype), type_moin_document)
@@ -668,7 +716,8 @@ def convert_item(item_name):
 
     try:
         if not item.contenttype == form['new_type'].value:
-            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
+            if not (item.contenttype in CONTENTTYPE_NO_EXPANSION
+                    and form['new_type'].value in CONTENTTYPE_NO_EXPANSION):
                 # expand DOM only when converting to dissimilar item types (moin and creole are similar)
                 dom = item.content._expand_document(dom)
 
@@ -734,21 +783,19 @@ def modify_item(item_name):
         abort(403)
     try:
         ret = item.do_modify()
-    except UnicodeDecodeError:
-        return _crash(item, None, None)
-    except ValueError:
-        # user may have changed or deleted namespace, contenttype, or strict data validation failed in indexing.py
-        flash(_("""Error: nothing changed. Meta data validation failed."""), "error")
+    except ValueError as err:
+        # user may have changed or deleted namespace, contenttype... causing meta data validation failure
+        # or data unicode validation failed
+        flash(str(err), "error")
         return redirect(url_for_item(item_name))
-    try:
-        close_file(item.meta.revision.data)
-    except AttributeError:
-        pass
+    close_file(item.rev.data)
     return ret
 
 
 class TargetChangeForm(BaseChangeForm):
-    target = RequiredText.using(label=L_('Target')).with_properties(placeholder=L_("The name of the target item"), autofocus=True)
+    target = RequiredText.using(label=L_('Target')).with_properties(
+        placeholder=L_("The name of the target item"), autofocus=True
+    )
 
 
 class ValidRevert(Validator):
@@ -776,14 +823,29 @@ class RevertItemForm(BaseChangeForm):
 
 class DeleteItemForm(BaseChangeForm):
     name = 'delete_item'
+    delete_subitems = Checkbox.using(label=L_('Delete all subitems listed below if checked:'))
 
 
 class DestroyItemForm(BaseChangeForm):
     name = 'destroy_item'
+    destroy_subitems = Checkbox.using(label=L_('Destroy all subitems listed below if checked:'))
 
 
 class RenameItemForm(TargetChangeForm):
-    name = 'rename_item'
+    """
+    Validator for a rename form.
+    """
+
+    def validate(self, element, state):
+        """
+        Element is a dict containing keys for 'name' and 'namespace'.
+        state is current itemid.
+        """
+        try:
+            validate_name(element, state)
+            return True
+        except NameNotValidError:
+            return False
 
 
 @frontend.route('/+create', methods=['POST'])
@@ -813,16 +875,17 @@ def revert_item(item_name, rev):
         state = dict(fqname=item.fqname, meta=dict(item.meta))
         if form.validate(state):
             item.revert(form['comment'])
-            close_file(item.meta.revision.data)
-            return redirect(url_for_item(item_name))
+            close_file(item.rev.data)
+            name = CompositeName(item.fqname.namespace, NAME_EXACT, item.name)
+            return redirect(url_for_item(name))
     ret = render_template('revert.html',
                           item=item,
                           fqname=item.fqname,
                           rev_id=rev,
                           form=form,
                           data_rendered=Markup(item.content._render_data()),
-    )
-    close_file(item.meta.revision.data)
+                          )
+    close_file(item.rev.data)
     return ret
 
 
@@ -839,36 +902,40 @@ def rename_item(item_name):
     subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = RenameItemForm.from_defaults()
-        form['target'] = item.name
+        form['target'] = ', '.join(item.names)
         subitems = item.get_subitem_revs()
-        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
+        item_names = tuple(x + '/' for x in item.names)
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
     elif request.method == 'POST':
         form = RenameItemForm.from_flat(request.form)
-        if form.validate():
-            target = form['target'].value
+        target = form['target']
+        targets = [x.strip() for x in str(target).split(',') if x]
+        alt_meta = {}
+        alt_meta[NAME] = targets
+        alt_meta[NAMESPACE] = item.meta[NAMESPACE]
+
+        if form.validate(alt_meta, item.meta[ITEMID]):
             comment = form['comment'].value
-            namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
-            namespaces = namespaces + NAMESPACES_IDENTIFIER
-            if target.split('/', 1)[0] in namespaces:
-                msg = L_("Item name segment (%(invalid_name)s) must not match existing namespaces.", invalid_name=target.split('/', 1)[0])
-                flash(msg, "error")
-            else:
-                try:
-                    fqname = CompositeName(item.fqname.namespace, item.fqname.field, target)
-                    item.rename(target, comment)
-                    close_file(item.meta.revision.data)
-                    # the item was successfully renamed, show it with new name
-                    return redirect(url_for_item(fqname))
-                except NameNotUniqueError as e:
-                    flash(str(e), "error")
+            try:
+                fqname = CompositeName(item.fqname.namespace, item.fqname.field, targets[0])
+                item.rename(targets, comment)
+                close_file(item.meta.revision.data)
+                # the item was successfully renamed, show it with new name or first name if list
+                return redirect(url_for_item(fqname))
+            except NameNotUniqueError as e:
+                flash(str(e), "error")
+            except MissingParentError as e:
+                flash(str(e), "error")
     ret = render_template('rename.html',
                           item=item,
                           item_name=item_name,
+                          item_names=item.names,
                           subitem_names=subitem_names,
                           fqname=item.fqname,
                           form=form,
-                          data_rendered=Markup(item.content._render_data())
-    )
+                          data_rendered=Markup(item.content._render_data()),
+                          len=len,
+                          )
     close_file(item.meta.revision.data)
     return ret
 
@@ -886,26 +953,34 @@ def delete_item(item_name):
     subitem_names = []
     if request.method in ['GET', 'HEAD']:
         form = DeleteItemForm.from_defaults()
-        subitems = item.get_subitem_revs()
-        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
-        close_file(item.rev.data)
+        subitems = list(item.get_subitem_revs())
+        item_names = tuple(x + '/' for x in item.names)
+        subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
+
+        data_rendered = Markup(item.content._render_data())
+        alias_names = set(item.names) - set([item_name])
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
             comment = form['comment'].value
+            do_subitems = form['delete_subitems'].value
             try:
-                item.delete(comment)
+                item.delete(comment, do_subitems=do_subitems)
             except AccessDenied:
                 abort(403)
+            close_file(item.meta.revision.data)
             return redirect(url_for_item(item_name))
-    return render_template('delete.html',
-                           item=item,
-                           item_name=item_name,
-                           subitem_names=subitem_names,
-                           fqname=split_fqname(item_name),
-                           form=form,
-                           data_rendered=Markup(item.content._render_data()),
-    )
+    ret = render_template('delete.html',
+                          item=item,
+                          item_name=item_name,
+                          alias_names=tuple(alias_names),
+                          subitem_names=subitem_names,
+                          fqname=split_fqname(item_name),
+                          form=form,
+                          data_rendered=data_rendered,
+                          )
+    close_file(item.rev.data)
+    return ret
 
 
 @frontend.route('/+ajaxdelete/<itemname:item_name>', methods=['POST'])
@@ -920,33 +995,51 @@ def ajaxdestroy(item_name, req='destroy'):
     """
     Handles both ajax delete and ajax destroy.
 
-    item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+    Incoming item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+
+    Jason response object includes these lists:
+        - itemnames: list of item names and subnames successfully deleted/destroyed in url format
+        - messages: formatted success/fail message for each item processed
     """
     args = request.values.to_dict()
     comment = args.get("comment")
     itemnames = args.get("itemnames")
+    do_subitems = True if args.get("do_subitems") == 'true' else False
     itemnames = json.loads(itemnames)
-    response = {"itemnames": [], "status": []}
-    for itemname in itemnames:
-        response["itemnames"].append(itemname)
-        itemname = urllib.parse.unquote(itemname)  # itemname is url quoted str
+    response = {"itemnames": [], "messages": []}
+    messages = []
+    for itemname_url in itemnames:
+        itemname = urllib.parse.unquote(itemname_url)  # itemname is url quoted str
         try:
             item = Item.create(itemname)
             if isinstance(item, NonExistent):
-                # if we get here there is a bug (or a test?), we should not try to destroy a nonexistent item
-                response["status"].append(False)
+                # we should not try to destroy a nonexistent item,
+                # user probably checked a subitem and checked do subitems
+                response["messages"].append(_("Item '%(bad_name)s' does not exist.", bad_name=item.name))
                 continue
             if req == 'destroy':
-                subitems = item.get_subitem_revs()
-                # XXX this matches what destroy does, but can leave orphans when alias names have subitems
-                subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(itemname + '/')]
-                item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names)
+                subitem_names = []
+                if do_subitems:
+                    subitems = item.get_subitem_revs()
+                    # if subitem has alias of unselected sibling or ancester, it will be included
+                    subitem_names = [x.meta.revision.names for x in subitems]
+                messages, subitem_names = item.destroy(
+                    comment=comment, destroy_item=True, subitem_names=subitem_names, ajax=True
+                )
                 log_destroy_action(item, subitem_names, comment)
             else:
-                item.delete(comment)
-            response["status"].append(True)
+                try:
+                    messages, subitem_names = item.delete(comment, do_subitems=do_subitems, ajax=True)
+                except AccessDenied:
+                    # some deletes may have succeeded, one failed, there may be unprocessed items
+                    msg = _("Access denied for a subitem of %(bad_name)s, check History for status.",
+                            bad_name=itemname)
+                    response["messages"].append(msg)
+            response["messages"] += messages
+            response["itemnames"] += subitem_names + itemnames
         except AccessDenied:
-            response["status"].append(False)
+            response["messages"].append(_("Access denied processing '%(bad_name)s'.", bad_name=itemname))
+    response["itemnames"] = [url_for_item(x) for x in response["itemnames"]]
     return jsonify(response)
 
 
@@ -961,10 +1054,65 @@ def ajaxmodify(item_name):
     return redirect(url_for_item(newitem))
 
 
+@frontend.route('/+ajaxsubitems', methods=['POST'])
+def ajaxsubitems():
+    """
+    Given a list of item names, return lists of alias names, subitem names,
+    selected names (where user has auth to delete or destroy),
+    and rejected names (where user has auth to read, but not delete or destroy).
+
+    Note subitems are not checked for destroy auth.
+    """
+    item_names = request.values.getlist("item_names[]")
+    action_auth = request.values.get("action_auth")
+    all_alias_names = []
+    all_subitem_names = []
+    all_selected_names = []
+    all_rejected_names = []
+    for item_name in item_names:
+        item_name = urllib.parse.unquote(item_name)
+        try:
+            item = Item.create(item_name, rev_id=CURRENT)
+        except AccessDenied:
+            abort(403)  # should never happen
+        if isinstance(item, NonExistent):
+            # user deletes item with alias, then tries to delete same item with other alias
+            all_rejected_names.append(item_name)
+            continue
+        fqname = item.fqname
+        if action_auth == "destroy":
+            if not flaskg.user.may.destroy(fqname):
+                # user can read this item, but not destroy
+                all_rejected_names.append(item_name)
+                continue
+        else:
+            if not flaskg.user.may.write(fqname):
+                # user can read this item, but not delete
+                all_rejected_names.append(item_name)
+                continue
+        alias_names = []
+        subitems = list(item.get_subitem_revs())
+        # TODO: add check for delete/destroy auth, add to rejected names,
+        item_names = tuple(x + '/' for x in item.names)
+        # subitems may have alias names pointing to sibling or parent of user selected items
+        subitem_names = [y for x in subitems for y in x.meta[NAME]]
+        if not [item.name] == item.names:
+            alias_names = [x for x in item.names if not x == item.name]
+        all_alias_names += alias_names
+        all_subitem_names += subitem_names
+        all_selected_names.append(item_name)
+    all_subitem_names = set(all_subitem_names)
+    response = {"subitem_names": list(all_subitem_names),
+                "alias_names": all_alias_names,
+                "selected_names": all_selected_names,
+                "rejected_names": all_rejected_names}
+    return jsonify(response)
+
+
 def log_destroy_action(item, subitem_names, comment, revision=None):
     """Document the destruction of an item or item revision."""
     destroy_info = [('An item has been destroyed', ''),
-                    ('  Names', item.names),
+                    ('  Names', item.meta[NAME]),
                     ('  Old Name', item.meta[NAME_OLD]),
                     ('  Subitem Names', subitem_names),
                     ('  Namespace', item.meta[NAMESPACE]),
@@ -976,7 +1124,7 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
                     ('  Revision Number', item.meta[REV_NUMBER]),
                     ('  Item Size', item.meta[SIZE]),
                     ('  Comment', comment),
-    ]
+                    ]
     if revision:
         destroy_info[0] = ('An item revision has been destroyed', item.meta[REV_NUMBER])
     elif subitem_names:
@@ -988,6 +1136,23 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
 @frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
 @frontend.route('/+destroy/<itemname:item_name>', methods=['GET', 'POST'], defaults=dict(rev=None))
 def destroy_item(item_name, rev):
+    """
+    If incoming item_name has alias names, then destroy processing is different than delete
+    processing. With delete, the alias names survive intact. With destroy, the underlying data
+    and meta files are removed so all alias names are destroyed.
+
+    If the incoming target item `a` is deleted (Trash=True), then it is expected that all subitems
+    of `a` are also deleted. Any subitems of `a` that are found using the metadata NAME_OLD
+    links will be destroyed.
+
+    If an item `a` with an alias `b` is deleted, then it is not possible to destroy `a` because
+    `a` is not in the admin Trash list and there is no means of selecting `a`. However, any subitems
+    of `a` that were deleted will appear in the admin Trash list and may be destroyed individually.
+
+    :param item_name: item name or item ID if item is deleted
+    :param rev: None if all revisions are to be destroyed or revision ID for specific revision
+    :return: if GET rendered template, else POST will redirect to url to create item
+    """
     if rev is None:
         # no revision given
         _rev = CURRENT  # for item creation
@@ -1004,29 +1169,37 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+    item_is_deleted = flash_if_item_deleted(item_name, rev, item)
     subitem_names = []
     alias_names = []
-    if rev is None:
+    if rev is None and item_is_deleted:
+        item_name = item.meta[NAME_OLD][0]
         subitems = item.get_subitem_revs()
-        # XXX this matches what destroy does, but can leave orphans when alias names have subitems
+        subitem_names = [y for x in subitems for y in x.meta[NAME_OLD] if y.startswith(item_name + '/')]
+        if not [item_name] == item.meta[NAME_OLD]:
+            alias_names = [x for x in item.meta[NAME_OLD] if not x == item_name]
+    elif rev is None:
+        subitems = item.get_subitem_revs()
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_name + '/')]
         if not [item.name] == item.names:
             alias_names = [x for x in item.names if not x == item.name]
 
     if request.method in ['GET', 'HEAD']:
         form = DestroyItemForm.from_defaults()
-        close_file(item.rev.data)
     elif request.method == 'POST':
         form = DestroyItemForm.from_flat(request.form)
         if form.validate():
             comment = form['comment'].value
+            do_subitems = form['destroy_subitems'].value
+            if not do_subitems:
+                subitem_names = []
             try:
                 item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
             except AccessDenied:
                 abort(403)
             log_destroy_action(item, subitem_names, comment, revision=rev)
             # show user item is deleted by showing "item does not exist, create it?" page
-            return redirect(url_for_item(fqname.fullname))
+            return redirect(url_for_item(item_name))
     ret = render_template('destroy.html',
                           item=item,
                           item_name=item_name,
@@ -1035,8 +1208,9 @@ def destroy_item(item_name, rev):
                           fqname=fqname,
                           rev_id=rev,
                           form=form,
-                          data_rendered=Markup(item.content._render_data())
-    )
+                          data_rendered=Markup(item.content._render_data()),
+                          item_is_deleted=item_is_deleted,
+                          )
     close_file(item.meta.revision.data)
     close_file(item.rev.data)
     return ret
@@ -1045,12 +1219,33 @@ def destroy_item(item_name, rev):
 @frontend.route('/+jfu-server/<itemname:item_name>', methods=['POST'])
 @frontend.route('/+jfu-server', defaults=dict(item_name=''), methods=['POST'])
 def jfu_server(item_name):
-    """jquery-file-upload server component
     """
-    data_file = request.files.get('data_file')
-    subitem_name = data_file.filename
-    contenttype = data_file.content_type  # guess by browser, based on file name
+    jquery-file-upload server component, returns a json response
+    """
+    msg = ''
+    data_file = request.files.get('file_storage')
+    base_file_name = os.path.basename(data_file.filename)
+    file_name = secure_filename(base_file_name)
+    if not file_name == base_file_name:
+        msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ",
+                bad_name=base_file_name, good_name=file_name)
+    subitem_name = file_name
     data = data_file.stream
+    mt = mime_type.MimeType(filename=file_name)
+    contenttype = mt.content_type(charset='utf-8')
+    small_meta = {CONTENTTYPE: contenttype}
+    valid = validate_data(small_meta, data)
+    if not valid:
+        msg = _("UnicodeDecodeError, upload failed, not a text file, nothing saved: '%(file_name)s'. "
+                "Try changing the name.", file_name=file_name)
+        ret = make_response(jsonify({"name": subitem_name,
+                                     "files": [item_name],
+                                     "message": msg,
+                                     "class": "jfu-failed",
+                                     "contenttype": contenttype_to_class(contenttype),
+                                     }), 200)
+        return ret
+
     if item_name:
         subitem_prefix = item_name + '/'
     else:
@@ -1059,17 +1254,34 @@ def jfu_server(item_name):
     jfu_server_lock.acquire()
     try:
         item = Item.create(item_name)
+        if not isinstance(item, NonExistent):
+            msg += _("File Successfully uploaded, existing file overwritten: '%(file_name)s'.", file_name=file_name)
         revid, size = item.modify({'itemtype': ITEMTYPE_DEFAULT, }, data, contenttype_guessed=contenttype)
         jfu_server_lock.release()
-        item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
-        return jsonify(name=subitem_name,
-                       size=size,
-                       url=url_for('.show_item', item_name=item_name, rev=revid),
-                       contenttype=contenttype_to_class(contenttype),
-        )
     except AccessDenied:
+        # return 200 status with error message
         jfu_server_lock.release()
-        abort(403)
+        msg = _("Permission denied, upload failed: '%(file_name)s'.", file_name=file_name)
+        ret = make_response(jsonify({"name": subitem_name,
+                                     "files": [item_name],
+                                     "message": msg,
+                                     "class": "jfu-failed",
+                                     "contenttype": contenttype_to_class(contenttype),
+                                     }), 200)
+        return ret
+
+    data_file.close()
+    item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
+    if not msg:
+        msg = _("File Successfully uploaded: '%(item_name)s'.", item_name=item_name)
+    ret = make_response(jsonify(name=subitem_name,
+                        files=[item_name],
+                        message=msg,
+                        size=size,
+                        url=url_for('.show_item', item_name=item_name),
+                        contenttype=contenttype_to_class(contenttype),
+                        ), 200)
+    return ret
 
 
 def contenttype_selects_gen():
@@ -1090,6 +1302,10 @@ class IndexForm(Form):
 @frontend.route('/+index/', defaults=dict(item_name=''), methods=['GET', 'POST'])
 @frontend.route('/+index/<itemname:item_name>', methods=['GET', 'POST'])
 def index(item_name):
+    """
+    Generate data for various index reports: global, sub-item, starts with character,
+    or namespace. Identify missing items causing orphan sub-items.
+    """
 
     def name_initial(files, uppercase=False, lowercase=False):
         """
@@ -1122,7 +1338,11 @@ def index(item_name):
     startswith = request.values.get("startswith")
     dirs, files = item.get_index(startswith, selected_groups)
     dirs_fullname = [x.fullname for x in dirs]
-    initials = name_initial(files, uppercase=True)
+    initials = request.values.get("initials")
+    if initials:
+        initials = initials.split(',')
+    else:
+        initials = name_initial(files, uppercase=True)
     fqname = item.fqname
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
@@ -1133,9 +1353,19 @@ def index(item_name):
     used_dirs = set()
     for file_ in files:
         if file_.fullname in dirs_fullname:
-            used_dirs.add(file_[0])
-    all_dirs = set(x[0] for x in dirs)
+            used_dirs.add(file_.fullname)
+    all_dirs = set(x.fullname for x in dirs)
     missing_dirs = all_dirs - used_dirs
+
+    if selected_groups:
+        # there will likely be false missing_dirs caused by filter
+        missing = set()
+        for m_dir in missing_dirs:
+            query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAME_EXACT, m_dir))])
+            metas = tuple(flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=1))
+            if not metas:
+                missing.add(m_dir)
+        missing_dirs = missing
 
     if item_name:
         what = ''
@@ -1168,7 +1398,11 @@ def index(item_name):
                            item=item,
                            title=title,
                            NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
-    )
+                           editors=editor_info_for_reports(),
+                           selected_groups=selected_groups,
+                           str=str,
+                           app=app,
+                           )
 
 
 @frontend.route('/+mychanges')
@@ -1191,26 +1425,28 @@ def mychanges():
     query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
-        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(
+            query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page
+        )
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             # user has entered bad page_num in url
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     my_changes = []
-    for rev in revs:
+    for meta in metas:
         entry = {}
         for key in (MTIME, SIZE, REV_NUMBER, REVID, CONTENTTYPE, ):
-            entry[key] = rev.meta[key]
-        entry[COMMENT] = rev.meta.get(COMMENT, '')
-        entry[FQNAMES] = rev.fqnames
-        entry[PARENTID] = rev.meta.get(PARENTID, '')
-        entry[TRASH] = rev.meta.get(TRASH, False)
-        entry[SUMMARY] = rev.meta.get(SUMMARY, False)
-        entry[NAME_OLD] = rev.meta.get(NAME_OLD, False)
+            entry[key] = meta[key]
+        entry[COMMENT] = meta.get(COMMENT, '')
+        entry[FQNAMES] = gen_fqnames(meta)
+        entry[PARENTID] = meta.get(PARENTID, '')
+        entry[TRASH] = meta.get(TRASH, False)
+        entry[SUMMARY] = meta.get(SUMMARY, False)
+        entry[NAME_OLD] = meta.get(NAME_OLD, False)
         my_changes.append(entry)
 
     return render_template('mychanges.html',
@@ -1220,7 +1456,7 @@ def mychanges():
                            page_num=page_num,
                            pages=pages,
                            url=request.url.split('?')[0],
-    )
+                           )
 
 
 def shorten_item_id(name, length=7):
@@ -1245,9 +1481,10 @@ def forwardrefs(item_name):
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_("Items that are referred by '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items that are referred by '%(item_name)s'",
+                                      item_name=shorten_item_id(item_name)),
                            fq_names=split_fqname_list(refs),
-    )
+                           )
 
 
 def _forwardrefs(item_name):
@@ -1272,7 +1509,7 @@ def _forwardrefs(item_name):
 @frontend.route('/+backrefs/<itemname:item_name>')
 def backrefs(item_name):
     """
-    Returns the list of all items that link or transclude item_name
+    Returns a list of all items that link or transclude item_name.
 
     :param item_name: the name of the current item
     :type item_name: unicode
@@ -1289,12 +1526,12 @@ def backrefs(item_name):
                            fqname=split_fqname(item_name),
                            headline=_("Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
                            fq_names=refs_here,
-    )
+                           )
 
 
 def _backrefs(item_name):
     """
-    Returns a list with all names of items which ref fq_name
+    Returns a list with all names of items which reference item_name.
 
     :param item_name: the name of the item transcluded or linked
     :type item_name: unicode
@@ -1302,8 +1539,8 @@ def _backrefs(item_name):
     """
     q = And([Term(WIKINAME, app.cfg.interwikiname),
              Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])])
-    revs = flaskg.storage.search(q)
-    return {fqname for rev in revs for fqname in rev.fqnames}
+    metas = flaskg.storage.search_meta(q)
+    return {fqname for meta in metas for fqname in meta[FQNAMES]}
 
 
 @frontend.route('/+history/<itemname:item_name>')
@@ -1316,6 +1553,7 @@ def history(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
+    item_is_deleted = flash_if_item_deleted(item_name, CURRENT, item)
     page_num = request.values.get('page_num', 1)
     page_num = max(int(page_num), 1)
     bookmark_time = int(request.values.get('bookmark', 0))
@@ -1331,22 +1569,22 @@ def history(item_name):
 
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
-        revs = flaskg.storage.search_meta_page(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(
+            query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page
+        )
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
 
     # get rid of the content value to save potentially big amounts of memory:
     history = []
-    flaskg.clock.start('runrevs')
-    for rev in revs:
-        entry = dict(rev.meta)
-        entry[FQNAMES] = rev.fqnames
+    for meta in metas:
+        entry = dict(meta)
+        entry[FQNAMES] = gen_fqnames(meta)
         history.append(entry)
-    flaskg.clock.stop('runrevs')
     close_file(item.rev.data)
     trash = item.meta['trash'] if 'trash' in item.meta else False
 
@@ -1369,10 +1607,27 @@ def history(item_name):
                           NAME_EXACT=NAME_EXACT,
                           len=len,
                           trash=trash,
-    )
+                          item_is_deleted=item_is_deleted,
+                          )
     flaskg.clock.stop('renderrevs')
     close_file(item.rev.data)
     return ret
+
+
+def editor_info_for_reports():
+    """
+    Return a {userid:(name, email or False), } dict extracted from the userprofiles namespace.
+
+    This is useful for history and index reports that show the last editor's name and email address.
+    It avoids multiple calls to whoosh for same userid.
+    """
+    query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    metas = flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    editors = {}
+    for meta in metas:
+        email = meta.get(EMAIL, False) if meta.get(MAILTO_AUTHOR, False) else False
+        editors[meta[ITEMID]] = (meta[NAME][0], email)
+    return editors
 
 
 @frontend.route('/<namespace>/+history')
@@ -1402,27 +1657,29 @@ def global_history(namespace):
 
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=idx_name)
-        revs = flaskg.storage.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME],
-               reverse=True, pagenum=page_num, pagelen=results_per_page)
+        metas = flaskg.storage.search_meta_page(query, idx_name=idx_name, sortedby=[MTIME],
+                                                reverse=True, pagenum=page_num,
+                                                pagelen=results_per_page)
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             page_num = pages
     else:
         pages = 1
-        revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=[MTIME], reverse=True, limit=None)
     # Group by date
     history = []
     day_history = namedtuple('day_history', ['day', 'entries'])
     prev_date = '0000-00-00'
     dh = day_history(prev_date, [])  # dummy
-    for rev in revs:
-        rev.meta[MTIME] = int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
-        rev_date = show_time.format_date(rev.meta[MTIME])
+    for meta in metas:
+        meta[MTIME] = int(meta[MTIME].replace(tzinfo=timezone.utc).timestamp())
+        meta[FQNAMES] = gen_fqnames(meta)
+        rev_date = show_time.format_date(meta[MTIME])
         if rev_date == prev_date:
-            dh.entries.append(rev)
+            dh.entries.append(meta)
         else:
             history.append(dh)
-            dh = day_history(rev_date, [rev])
+            dh = day_history(rev_date, [meta])
             prev_date = rev_date
     else:
         history.append(dh)
@@ -1446,7 +1703,7 @@ def global_history(namespace):
                            page_num=page_num,
                            pages=pages,
                            url=request.url.split('?')[0],
-    )
+                           )
 
 
 def _compute_item_sets(wanted=False):
@@ -1458,23 +1715,23 @@ def _compute_item_sets(wanted=False):
     existing = set()
     who_wants = {}
     query = And([Term(WIKINAME, app.cfg.interwikiname),
-            Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
-    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+                 Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     if wanted:
-        for rev in revs:
-            existing |= set(rev.fqnames)
-            linked.update(rev.meta.get(ITEMLINKS, []))
-            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+        for meta in metas:
+            existing |= set(meta[FQNAMES])
+            linked.update(meta.get(ITEMLINKS, []))
+            transcluded.update(meta.get(ITEMTRANSCLUSIONS, []))
             # who_wants needed by wanted_items, may add a few seconds of processing time for larger wikis
-            for name in rev.meta.get(ITEMLINKS, []):
-                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
-            for name in rev.meta.get(ITEMTRANSCLUSIONS, []):
-                who_wants[name] = who_wants.get(name, []) + [rev.fqnames[0].fullname]
+            for name in meta.get(ITEMLINKS, []):
+                who_wants[name] = who_wants.get(name, []) + [meta[FQNAMES][0].fullname]
+            for name in meta.get(ITEMTRANSCLUSIONS, []):
+                who_wants[name] = who_wants.get(name, []) + [meta[FQNAMES][0].fullname]
     else:
-        for rev in revs:
-            existing |= set(rev.fqnames)
-            linked.update(rev.meta.get(ITEMLINKS, []))
-            transcluded.update(rev.meta.get(ITEMTRANSCLUSIONS, []))
+        for meta in metas:
+            existing |= set(meta[FQNAMES])
+            linked.update(meta.get(ITEMLINKS, []))
+            transcluded.update(meta.get(ITEMTRANSCLUSIONS, []))
     return existing, set(split_fqname_list(linked)), set(split_fqname_list(transcluded)), who_wants
 
 
@@ -1545,7 +1802,6 @@ def quicklink_item(item_name):
 def subscribe_item(item_name):
     """ Add/Remove the current wiki item to/from the user's subscriptions """
     u = flaskg.user
-    cfg = app.cfg
     msg = None
     try:
         item = Item.create(item_name)
@@ -1591,7 +1847,9 @@ class RegistrationForm(Form):
     """a simple user registration form"""
     name = 'register'
 
-    username = RequiredText.using(label=L_('Username')).with_properties(placeholder=L_("The login username you want to use"), autofocus=True)
+    username = RequiredText.using(label=L_('Username')).with_properties(
+        placeholder=L_("The login username you want to use"), autofocus=True
+    )
     password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
     password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
     email = YourEmail
@@ -1658,7 +1916,7 @@ def register():
     return render_template(template,
                            title_name=title_name,
                            form=form,
-    )
+                           )
 
 
 @frontend.route('/+verifyemail', methods=['GET'])
@@ -1698,8 +1956,8 @@ class ValidLostPassword(Validator):
     name_or_email_needed_msg = L_('Your user name or your email address is needed.')
 
     def validate(self, element, state):
-        if not(element['username'].valid and element['username'].value or
-               element['email'].valid and element['email'].value):
+        if not (element['username'].valid and element['username'].value or
+                element['email'].valid and element['email'].value):
             return self.note_error(element, state, 'name_or_email_needed_msg')
 
         return True
@@ -1746,7 +2004,7 @@ def lostpass():
     return render_template('lostpass.html',
                            title_name=title_name,
                            form=form,
-    )
+                           )
 
 
 class ValidPasswordRecovery(Validator):
@@ -1762,7 +2020,7 @@ class ValidPasswordRecovery(Validator):
         password = element['password1'].value
         try:
             app.cfg.cache.pwd_context.hash(password)
-        except (ValueError, TypeError) as err:
+        except (ValueError, TypeError):
             return self.note_error(element, state, 'password_problem_msg')
 
         return True
@@ -1807,7 +2065,7 @@ def recoverpass():
     return render_template('recoverpass.html',
                            title_name=title_name,
                            form=form,
-    )
+                           )
 
 
 class ValidLogin(Validator):
@@ -1882,7 +2140,7 @@ def login():
                            title_name=title_name,
                            login_inputs=app.cfg.auth_login_inputs,
                            form=form,
-    )
+                           )
 
 
 @frontend.route('/+logout')
@@ -1922,7 +2180,7 @@ class ValidChangePass(Validator):
                 return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
             app.cfg.cache.pwd_context.hash(password)
-        except (ValueError, TypeError) as err:
+        except (ValueError, TypeError):
             return self.note_error(element, state, 'password_problem_msg')
         return True
 
@@ -1948,8 +2206,10 @@ class UserSettingsNotificationForm(Form):
 
 class UserSettingsQuicklinksForm(Form):
     """
-    No validation is performed as lots of things are valid, existing items, non-existing items, external links, mailto, external wiki links...
+    No validation is performed as lots of things are valid, existing items, non-existing items,
+    external links, mailto, external wiki links ...
     """
+
     form_name = 'usersettings_quicklinks'
     quicklinks = Quicklinks
     submit_label = L_('Save')
@@ -1984,7 +2244,7 @@ class ValidSubscriptions(Validator):
                 continue
             if keyword == ITEMID:
                 continue
-            if keyword not in (NAME, NAMEPREFIX, TAGS, NAMERE, ):
+            if keyword not in (NAME, NAMEPREFIX, TAGS, NAMERE):
                 errors.append(invalid_keyword + subscription)
                 continue
             try:
@@ -2016,7 +2276,8 @@ def usersettings():
     # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _('User Settings')
 
-    # wergzeug 1.0.0 dropped support for request.is_xhr, was True if the request was triggered via a JavaScript XMLHttpRequest
+    # werkzeug 1.0.0 dropped support for request.is_xhr,
+    # was True if the request was triggered via a JavaScript XMLHttpRequest
     # TODO: maybe "is_xhr = request.method == 'POST'" would work
     is_xhr = request.accept_mimetypes.best in ("application/json", "text/javascript", )
 
@@ -2095,8 +2356,9 @@ def usersettings():
                             for name in new_names:
                                 if user.search_users(**{NAME_EXACT: name}):
                                     # duplicate name
-                                    response['flash'].append((_("The username '%(name)s' is already in use.", name=name),
-                                                              "error"))
+                                    response['flash'].append(
+                                        (_("The username '%(name)s' is already in use.", name=name), "error")
+                                    )
                                     success = False
                     if part == 'notification':
                         if (form['email'].value != flaskg.user.email and
@@ -2147,7 +2409,7 @@ def usersettings():
                 response['form'] = render_template('usersettings_ajax.html',
                                                    part=part,
                                                    form=form,
-                )
+                                                   )
                 return jsonify(**response)
             else:
                 # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
@@ -2166,7 +2428,7 @@ def usersettings():
     return render_template('usersettings.html',
                            title_name=title_name,
                            form_objs=forms,
-    )
+                           )
 
 
 @frontend.route('/+bookmark')
@@ -2249,26 +2511,22 @@ def diff(item_name):
     offset = request.values.get('offset', 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get('bookmark', 0))
-    if flaskg.user.valid:
-        results_per_page = flaskg.user.results_per_page
-    else:
-        results_per_page = app.cfg.results_per_page
     terms = [Term(WIKINAME, app.cfg.interwikiname), ]
     terms.extend(Term(term, value) for term, value in fqname.query.items())
     query = And(terms)
-    revs = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+    metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
     close_file(item.rev.data)
     item = flaskg.storage.get_item(**fqname.query)
-    revs = [(int(rev.meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), rev.meta[REVID], rev.meta[ITEMID]) for rev in revs]
-    if not revs:
+    metas = [(int(meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), meta[REVID], meta[ITEMID]) for meta in metas]
+    if not metas:
         abort(404)
     # we do not do diffs across item IDs should an item be deleted and recreated with same name
-    item_id = revs[0][2]
-    rev_ids = [x[1] for x in revs if x[2] == item_id]
+    item_id = metas[0][2]
+    rev_ids = [x[1] for x in metas if x[2] == item_id]
     rev_ids.reverse()
     if bookmark_time:
         # try to find the latest rev1 before user's bookmark <date-time>
-        for mtime, revid, item_id in revs:
+        for mtime, revid, item_id in metas:
             if mtime <= int(bookmark_time):
                 rev1 = revid
                 break
@@ -2280,13 +2538,13 @@ def diff(item_name):
         rev1 = request.values.get('rev1')
         rev2 = request.values.get('rev2')
         if rev1 not in rev_ids:
-            if len(revs) > 1:
-                rev1 = revs[1][1]  # take second newest rev
+            if len(metas) > 1:
+                rev1 = metas[1][1]  # take second newest rev
             else:
-                rev1 = revs[0][1]  # we will compare rev to itself
+                rev1 = metas[0][1]  # we will compare rev to itself
                 flash(_('There is only one revision eligible for diff.'), "info")
         if rev2 not in rev_ids:
-            rev2 = revs[0][1]  # the newest rev we have
+            rev2 = metas[0][1]  # the newest rev we have
     return _diff(item, rev1, rev2, fqname, rev_ids)
 
 
@@ -2307,6 +2565,7 @@ def _common_type(ct1, ct2):
 
 
 def _crash(item, oldrev, newrev):
+    """This is called from several places, need to handle passed message"""
     error_id = uuid.uuid4()
     logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
     return render_template("crash_view.html",
@@ -2317,7 +2576,7 @@ def _crash(item, oldrev, newrev):
                            newrev=newrev,
                            fqname=item.fqname,
                            item=item,
-    )
+                           )
 
 
 def _diff(item, revid1, revid2, fqname, rev_ids):
@@ -2370,7 +2629,7 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
                            item_name=item.name,
                            fqname=item.fqname,
                            diff_html=diff_html,
-    )
+                           )
 
 
 def _diff_raw(item, revid1, revid2):
@@ -2398,7 +2657,7 @@ def similar_names(item_name):
     except AccessDenied:
         abort(403)
     fq_name = split_fqname(item_name)
-    start, end, matches = findMatches(fq_name)
+    start, end, matches = find_matches(fq_name)
     keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
     # 8 item_name
@@ -2413,139 +2672,23 @@ def similar_names(item_name):
             if rank == wanted_rank:
                 fq_names.append(fqname)
     return render_template("link_list_item_panel.html",
-                           headline=_("Items with similar names to '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items with similar names to '%(item_name)s'",
+                                      item_name=shorten_item_id(item_name)),
                            item=item,
                            item_name=item_name,  # XXX no item
                            fqname=split_fqname(item_name),
                            fq_names=fq_names)
 
 
-def findMatches(fq_name, s_re=None, e_re=None):
-    """ Find similar item names.
-
-    :param fq_name: fqname to match
-    :param s_re: start re for wiki matching
-    :param e_re: end re for wiki matching
-    :rtype: tuple
-    :returns: start word, end word, matches dict
-    """
-
-    fq_names = [fqname for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname) for fqname in rev.fqnames
-                if rev.fqname is not None]
-    if fq_name in fq_names:
-        fq_names.remove(fq_name)
-    # Get matches using wiki way, start and end of word
-    start, end, matches = wikiMatches(fq_name, fq_names, start_re=s_re, end_re=e_re)
-    # Get the best 10 close matches
-    close_matches = {}
-    found = 0
-    for fqname in closeMatches(fq_name, fq_names):
-        if fqname not in matches:
-            # Skip fqname already in matches
-            close_matches[fqname] = 8
-            found += 1
-            # Stop after 10 matches
-            if found == 10:
-                break
-    # Finally, merge both dicts
-    matches.update(close_matches)
-    return start, end, matches
-
-
-def wikiMatches(fq_name, fq_names, start_re=None, end_re=None):
-    """
-    Get fqnames that starts or ends with same word as this fq_name.
-
-    Matches are ranked like this:
-        4 - item is subitem of fq_name
-        3 - match both start and end
-        2 - match end
-        1 - match start
-
-    :param fq_name: fqname to match
-    :param fq_names: list of fqnames
-    :param start_re: start word re (compile regex)
-    :param end_re: end word re (compile regex)
-    :rtype: tuple
-    :returns: start, end, matches dict
-    """
-    if start_re is None:
-        start_re = re.compile('([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
-    if end_re is None:
-        end_re = re.compile('([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
-
-    # If we don't get results with wiki words matching, fall back to
-    # simple first word and last word, using spaces.
-    item_name = fq_name.value
-    words = item_name.split()
-    match = start_re.match(item_name)
-    if match:
-        start = match.group(1)
-    else:
-        start = words[0]
-
-    match = end_re.search(item_name)
-    if match:
-        end = match.group(1)
-    else:
-        end = words[-1]
-
-    matches = {}
-    subitem = item_name + '/'
-
-    # Find any matching item names and rank by type of match
-    for fqname in fq_names:
-        name = fqname.value
-        if name.startswith(subitem):
-            matches[fqname] = 4
-        else:
-            if name.startswith(start):
-                matches[fqname] = 1
-            if name.endswith(end):
-                matches[fqname] = matches.get(name, 0) + 2
-
-    return start, end, matches
-
-
-def closeMatches(fq_name, fq_names):
-    """ Get close matches.
-
-    Return all matching fqnames with rank above cutoff value.
-
-    :param fq_name: fqname to match
-    :param fq_names: list of fqnames
-    :rtype: list
-    :returns: list of matching item names, sorted by rank
-    """
-    if not fq_names:
-        return []
-    # Match using case insensitive matching
-    # Make mapping from lower item names to fqnames.
-    lower = {}
-    for fqname in fq_names:
-        name = fqname.value
-        key = name.lower()
-        if key in lower:
-            lower[key].append(fqname)
-        else:
-            lower[key] = [fqname]
-    # Get all close matches
-    item_name = fq_name.value
-    all_matches = difflib.get_close_matches(item_name.lower(), list(lower.keys()),
-                                            n=len(lower), cutoff=0.6)
-
-    # Replace lower names with original names
-    matches = []
-    for name in all_matches:
-        matches.extend(lower[name])
-
-    return matches
-
-
 @frontend.route('/+sitemap/<itemname:item_name>')
 def sitemap(item_name):
     """
-    sitemap view shows item link structure, relative to current item
+    sitemap view shows item link structure relative to item_name.
+
+    * If there are multiple links to same item, only first link to same item is processed.
+    * Missing items are marked as missing in template rendering.
+    * Links to items where current user lacks read authority are generated, but
+       suppressed in template rendering.
     """
     fq_name = split_fqname(item_name)
     try:
@@ -2555,9 +2698,9 @@ def sitemap(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
 
-    backrefs = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
+    backrefs, junk, junk2 = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
-    sitemap = NestedItemListBuilder().recurse_build([fq_name])
+    sitemap, no_read_auth, missing = NestedItemListBuilder().recurse_build([fq_name])
     del sitemap[0]  # don't show current item name as sole toplevel list item
     return render_template('sitemap.html',
                            item=item,
@@ -2565,49 +2708,54 @@ def sitemap(item_name):
                            backrefs=backrefs,
                            sitemap=sitemap,
                            fqname=fq_name,
-    )
+                           no_read_auth=no_read_auth,
+                           missing=missing,
+                           )
 
 
 class NestedItemListBuilder:
     def __init__(self):
         self.children = set()
-        self.numnodes = 0
-        self.maxnodes = 35  # approx. max count of nodes, not strict
+        self.no_read_auth = set()
+        self.missing = set()
 
     def recurse_build(self, fq_names, backrefs=False):
+        """
+        Return a list of fqnames and lists containing more fqnames that represent a sitemap.
+        """
         result = []
-        if self.numnodes < self.maxnodes:
-            for fq_name in fq_names:
-                self.children.add(fq_name)
-                result.append(fq_name)
-                self.numnodes += 1
-                childs = self.childs(fq_name, backrefs=backrefs)
-                if childs:
-                    childs = self.recurse_build(childs, backrefs=backrefs)
-                    result.append(childs)
-        return result
+        for fq_name in fq_names:
+            self.children.add(fq_name)
+            result.append(fq_name)
+            childs = self.childs(fq_name, backrefs=backrefs)
+            if childs:
+                childs, no_read_auth, missing = self.recurse_build(childs, backrefs=backrefs)
+                result.append(childs)
+        return result, self.no_read_auth, self.missing
 
     def childs(self, fq_name, backrefs=False):
-        # does not recurse
+        """
+        Return a sorted list of fqnames that link-to or are linked-by fq_name)
+        """
         try:
             item = flaskg.storage.get_item(**fq_name.query)
-            rev = item[CURRENT]
+            meta = item.item.meta
+            mayread = flaskg.storage.may_read_rev(meta)
         except (AccessDenied, KeyError):
+            return []
+        if item.itemid is None:
+            self.missing.add(fq_name)
+        if not mayread:
+            # user lacks read permission to item already added to self.children
+            # to save time we handle it later in template rendering
+            self.no_read_auth.add(fq_name)
             return []
         if backrefs:
             itemlinks = _backrefs(fq_name.value)
         else:
-            itemlinks = set(split_fqname_list(rev.meta.get(ITEMLINKS, []) + rev.meta.get(ITEMTRANSCLUSIONS, [])))
-        return [child for child in itemlinks if self.is_ok(child)]
-
-    def is_ok(self, child):
-        if child not in self.children:
-            if not flaskg.user.may.read(child):
-                return False
-            if flaskg.storage.get_item(**child.query):
-                self.children.add(child)
-                return True
-        return False
+            itemlinks = set(split_fqname_list(meta.get(ITEMLINKS, []) + meta.get(ITEMTRANSCLUSIONS, [])))
+        # test for child not in self.children prevents loops when 2 or more items link to each other
+        return sorted([child for child in itemlinks if child not in self.children])
 
 
 @frontend.route('/+tags', defaults=dict(namespace=NAMESPACE_DEFAULT), methods=['GET'])
@@ -2622,14 +2770,10 @@ def global_tags(namespace):
     """
     title_name = _('Global Tags')
     if namespace == NAMESPACE_ALL:
-        query = And([Term(WIKINAME, app.cfg.interwikiname), ])
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(HAS_TAG, True)])
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, '')
     else:
-        # TODO: to speed searching on wikis having few items with tags, we need to add an extra field
-        # to schema (HAS_TAGS) as described in
-        # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
-        # and then modify the query below and above
-        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace)])
+        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace), Term(HAS_TAG, True)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
         headline = _("Global Tags")
@@ -2637,11 +2781,11 @@ def global_tags(namespace):
         headline = _("Global Tags in All Namespaces")
     else:
         headline = _("Tags in Namespace '%(namespace)s'", namespace=namespace)
-    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
+    metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     tags_counts = {}
-    for rev in revs:
-        tags = rev.meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(rev.meta[NAME], rev.meta[REVID], tags))
+    for meta in metas:
+        tags = meta.get(TAGS, [])
+        logging.debug("name {0!r} rev {1} tags {2!r}".format(meta[NAME], meta[REVID], tags))
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -2676,12 +2820,13 @@ def tagged_items(tag, namespace):
     """
     show all items' names that have tag <tag> and belong to namespace <namespace>
     """
-    terms = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag), ])
+    terms = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag)])
     if namespace != NAMESPACE_ALL:
-        terms = And([terms, Term(NAMESPACE, namespace), ])
+        terms = And([terms, Term(NAMESPACE, namespace)])
     query = And(terms)
-    revs = flaskg.storage.search(query, limit=None)
-    fq_names = [fq_name for rev in revs for fq_name in rev.fqnames]
+    metas = flaskg.storage.search_meta(query, limit=None)
+    fq_names = [gen_fqnames(meta) for meta in metas]
+    fq_names = [fqn for sublist in fq_names for fqn in sublist]
     return render_template("link_list_no_item_panel.html",
                            headline=_("Items tagged with %(tag)s", tag=tag),
                            item_name=tag,
@@ -2691,14 +2836,14 @@ def tagged_items(tag, namespace):
 @frontend.route('/+template/<path:filename>')
 def template(filename):
     """
-    serve a rendered template from <filename>
+    Serve a rendered template from <filename>
 
     used for (but not limited to) translation of javascript / css / html
     """
     content = render_template(filename)
     ct, enc = mimetypes.guess_type(filename)
     response = make_response((content, 200, {'content-type': ct or 'text/plain;charset=utf-8'}))
-    if ct in ['application/javascript', 'text/css', 'text/html', ]:
+    if ct in ['application/javascript', 'text/css', 'text/html']:
         # this is assuming that:
         # * js / css / html templates rarely change (maybe just on sw updates)
         # * we are using templates for these to translate them, translations rarely change
@@ -2762,11 +2907,14 @@ def tickets():
         q = None
         # There are two cases when the user uses the search box in the ticket tracker and other
         # when user clicks on Assignee name in the ticket's table to view all tickets assigned to him
-        # E.g of link for second case is  +tickets?assigned_to=username
-        # for first case i.e while we are using search box, variable 'query' (i.e what ever is searched)  should be present either in
-        # TAGS, SUMMARY, CONTENT, ITEMID 'or' ASSIGNED_TO 'and' should be of given status (closed or open).
-        # while in second case we have to get all the results having given status 'and' Assigned_to =  request.args.get(ASSIGNED_TO).
-        # first case we use 'and'  while in second case we use 'or' while adding the assigned_to condition to retrieve the results.
+        # E.g. of link for second case is  +tickets?assigned_to=username .
+        # For the first case, i.e. when using the search box, variable 'query' (i.e. what ever is searched)
+        # should be present either in TAGS, SUMMARY, CONTENT, ITEMID 'or' ASSIGNED_TO 'and' should be
+        # of given status (closed or open).
+        # While in second case we have to get all the results having given status 'and'
+        # Assigned_to = request.args.get(ASSIGNED_TO).
+        # In first case we use 'and' while in second case we use 'or' while adding the assigned_to condition
+        # to retrieve the results.
         if query:
             term2 = Or(term2)
             term1.extend([term2])
@@ -2782,7 +2930,7 @@ def tickets():
                                tags=tags,
                                selected_tags=selected_tags,
                                current_timestamp=current_timestamp,
-        )
+                               )
 
 
 @frontend.route('/+tickets/query', methods=['GET', 'POST'])
@@ -2852,12 +3000,11 @@ def comment(item_name):
         item.modify({}, data=data, element='comment', contenttype_guessed='text/x.moin.wiki;charset=utf-8',
                     refers_to=itemid, reply_to=reply_to, author=flaskg.user.name[0])
         item = Item.create(item.name, rev_id=CURRENT)
-        html = render_template('ticket/comment.html',
+        return render_template('ticket/comment.html',
                                comment=item,
                                render_comment_data=render_comment_data,
                                datetime=datetime,
                                )
-        return html
 
 
 @frontend.route('/+new', methods=['GET', 'POST'])

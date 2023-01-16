@@ -105,19 +105,21 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 
     data = [
         # from http://docutils.sourceforge.net/docs/user/rst/quickstart.html#sections; note first header is level 2 because same underlining was used for Chapter 2 Title
-        (
-        'Chapter 1 Title\n===============\n\nSection 1.1 Title\n-----------------\n\nSubsection 1.1.1 Title\n~~~~~~~~~~~~~~~~~~~~~~\n\nSection 1.2 Title\n-----------------\n\nChapter 2 Title\n===============\n',
-        '<page><body><h outline-level="2">Chapter 1 Title</h><h outline-level="3">Section 1.1 Title</h><h outline-level="4">Subsection 1.1.1 Title</h><h outline-level="3">Section 1.2 Title</h><h outline-level="2">Chapter 2 Title</h></body></page>'),
+        ('Chapter 1 Title\n===============\n\nSection 1.1 Title\n-----------------\n\nSubsection 1.1.1 Title\n~~~~~~~~~~~~~~~~~~~~~~\n\nSection 1.2 Title\n-----------------\n\nChapter 2 Title\n===============\n',
+         '<page><body><h outline-level="2">Chapter 1 Title</h><h outline-level="3">Section 1.1 Title</h><h outline-level="4">Subsection 1.1.1 Title</h><h outline-level="3">Section 1.2 Title</h><h outline-level="2">Chapter 2 Title</h></body></page>'),
+
         # from http://docutils.sourceforge.net/docs/user/rst/quickstart.html#document-title-subtitle; note Subtitle and Section Title are level 2
-        (
-        '================\n Document Title\n================\n\n----------\n Subtitle\n----------\n\nSection Title\n=============',
-        '<page><body><h outline-level="1">Document Title</h><h outline-level="2">Subtitle</h><h outline-level="2">Section Title</h></body></page>'),
+        ('================\n Document Title\n================\n\n----------\n Subtitle\n----------\n\nSection Title\n=============',
+         '<page><body><h outline-level="1">Document Title</h><h outline-level="2">Subtitle</h><h outline-level="2">Section Title</h></body></page>'),
+
         # similar to test above; note that H3 is level 2, H4 is level 3, ...
         ('==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\n',
          '<page><body><h outline-level="1">H1</h><h outline-level="2">H2</h><h outline-level="2">H3</h><h outline-level="3">H4</h><h outline-level="4">H5</h><h outline-level="5">H6</h></body></page>'),
+
         # adding a H2a heading using the H2 style underlining results in "normal" heading levels: H1 is a title, h2 and all other headings are sections
         ('==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n\n',
          '<page><body><h outline-level="1">H1</h><h outline-level="2">H2</h><h outline-level="3">H3</h><h outline-level="4">H4</h><h outline-level="5">H5</h><h outline-level="6">H6</h><h outline-level="2">H2a</h></body></page>'),
+
         # when a document starts with a paragraph, then the first heading is rendered as a section level 2 heading
         ('Paragraph\n\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\n',
          '<page><body><p>Paragraph</p><h outline-level="2">H1</h><h outline-level="3">H2</h><h outline-level="4">H3</h><h outline-level="5">H4</h><h outline-level="6">H5</h></body></page>'),
@@ -202,9 +204,8 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
     data = [
         ("+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n",
          '<page><body><table><table-body><table-row><table-cell><p>A</p></table-cell><table-cell><p>B</p></table-cell><table-cell number-rows-spanned="2"><p>D</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>C</p></table-cell></table-row></table-body></table></body></page>'),
-        (
-        "+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n",
-        '<page><body><table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table></body></page>'),
+        ("+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n",
+         '<page><body><table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table></body></page>'),
         ("""+--------------------+-------------------------------------+
 |cell spanning 2 rows|cell in the 2nd column               |
 +                    +-------------------------------------+

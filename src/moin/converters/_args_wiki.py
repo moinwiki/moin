@@ -52,7 +52,8 @@ _parse_rules = r'''
 object_re = re.compile(_parse_rules, re.X | re.U)
 
 # rules for include macro, splits on commas, allows leading ^ and embedded /
-# <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
+# <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending,
+#           items=n, skipitems=n, titlesonly, editlink)>>
 # <<Include(^Prefix..-..-..,,to="^----",sort=descending,items=3)>>
 _include_rules = r'''
 (?:
@@ -85,7 +86,8 @@ def parse(input, parse_re=parse_re):
     ret = Arguments()
     for match in parse_re.finditer(input):
         key = match.group(1)
-        value = (match.group(2) or match.group(3) or match.group(4)).encode('ascii', errors='backslashreplace').decode('unicode-escape')
+        value = ((match.group(2) or match.group(3) or match.group(4))
+                 .encode('ascii', errors='backslashreplace').decode('unicode-escape'))
         if key:
             ret.keyword[key] = value
         else:

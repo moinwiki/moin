@@ -10,7 +10,7 @@ from flask import g as flaskg
 
 from moin.macros._base import MacroInlineBase
 from moin.datastructures.backends import DictDoesNotExistError
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 
 class Macro(MacroInlineBase):

@@ -8,10 +8,8 @@ Convert a non-existent item to the DOM Tree.
 """
 
 
-from emeraldtree import ElementTree as ET
-
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
@@ -32,7 +30,7 @@ class Converter:
         attrib = {
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name, query='do=modify'),
         }
-        a = moin_page.a(attrib=attrib, children=[_("%(item_name)s does not exist. Create it?", item_name=item_name)])
+        a = moin_page.a(attrib=attrib, children=[_("%(item_name)s does not exist. Create it? ", item_name=item_name)])
         body = moin_page.body(children=(a, ))
         return moin_page.page(children=(body, ))
 

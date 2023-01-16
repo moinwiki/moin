@@ -32,11 +32,11 @@ from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import request, url_for, Response, abort, escape
+from flask import request, url_for, Response, abort
 
 from flatland import Form, String
 
-from jinja2 import Markup
+from markupsafe import Markup, escape
 
 from werkzeug.http import is_resource_modified
 
@@ -69,7 +69,7 @@ from moin.constants.contenttypes import (
     GROUP_MARKUP_TEXT, GROUP_OTHER_TEXT, GROUP_IMAGE, GROUP_AUDIO, GROUP_VIDEO,
     GROUP_DRAWING, GROUP_OTHER, CONTENTTYPE_NONEXISTENT, CHARSET
 )
-from moin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, SIZE, TAGS, TEMPLATE,
+from moin.constants.keys import (NAME_EXACT, WIKINAME, CONTENTTYPE, TAGS, TEMPLATE,
                                  HASH_ALGORITHM, ACTION_SAVE, NAMESPACE)
 
 from moin import log
@@ -277,8 +277,7 @@ class Content:
                               {moin_page.namespace: '',
                                xlink.namespace: 'xlink',
                                html.namespace: 'html',
-                              },
-                              'xml')
+                               }, 'xml')
 
     def _render_data_highlight(self):
         # override this in child classes
@@ -295,7 +294,8 @@ class Content:
 
     def get_templates(self, contenttype=None):
         """ create a list of templates (for some specific contenttype) """
-        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE), Term(NAMESPACE, self.item.fqname.namespace)]
+        terms = [Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, TEMPLATE),
+                 Term(NAMESPACE, self.item.fqname.namespace)]
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)
@@ -384,7 +384,6 @@ class Binary(Content):
         if member:  # content = file contained within a archive item revision
             path, filename = os.path.split(member)
             mt = MimeType(filename=filename)
-            content_length = None
             file_to_send = self.get_member(member)
             # force attachment download, so it uses attachment_filename
             # otherwise it will use the itemname from the URL for saving
@@ -398,7 +397,6 @@ class Binary(Content):
                 mt = MimeType(filename=filename)
             else:
                 mt = MimeType(mimestr=mimestr)
-            content_length = rev.meta[SIZE]
             file_to_send = rev.data
         if mimetype:
             content_type = mimetype
@@ -478,7 +476,7 @@ class TarMixin:
                 logging.error("unsupported content object: {0!r}".format(content))
                 raise StorageError("unsupported content object: {0!r}".format(content))
             else:
-                raise NotImplemented
+                raise NotImplementedError
             assert content_length >= 0  # we don't want -1 interpreted as 4G-1
             ti.size = content_length
             tf.addfile(ti, content)
@@ -492,7 +490,7 @@ class TarMixin:
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype}
             with open(temp_fname, 'rb') as data:
-                self.item._save(meta, data, name=self.name, action=ACTION_SAVE, comment='')
+                self.item._save(meta, data, names=self.name, action=ACTION_SAVE, comment='')
             os.remove(temp_fname)
 
 
@@ -1034,7 +1032,6 @@ class DocBook(MarkupItem):
         # After creation of the BytesIO, we are at the end of the file
         # so position is the size the file.
         # and then we should move it back at the beginning of the file
-        content_length = file_to_send.tell()
         file_to_send.seek(0)
         # Important: empty filename keeps flask from trying to autodetect filename,
         # as this would not work for us, because our file's are not necessarily fs files.

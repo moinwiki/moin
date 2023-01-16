@@ -15,12 +15,24 @@ ul.moin-pull-right {
 
 
 h1, h2, h3, h4, h5, h6 {
+  padding-left: 0.5em;
+  background-color: @theme-col-2;
+  border-radius: 7px;
+  border-bottom: 1px solid @theme-col-1;
+
   &:hover, &:focus {
     .moin-permalink {
       display: inline;
       text-decoration: none;
     }
   }
+}
+
+h1 { font-size: 1.75em; }
+h2 { font-size: 1.5em; }
+
+.btn-primary {
+  background-color: @theme-col-1;
 }
 
 .moin-permalink {
@@ -72,21 +84,24 @@ a:focus.moin-showhide {
 }
 
 .list-group-item {
-  text-align: left;
+  text-align: center;
   padding: 2px 10px;
-  background-color: @search_option_bar_text_color;
-  border: 1px solid @search_option_bar_text_color;
+  background-color: white;
+  border: 1px solid @theme-col-2;
   > a {
     color: @search_option_bar_color;
   }
+}
+a.list-group-item.wikilink {
+  color: @theme-col-1;
 }
 
 .moin-list-heading {
   background-color: @navbar-bg;
   border: 1px solid @navbar-bg;
-  font-variant: small-caps;
   color: @search_option_bar_text_color;
-  border-radius: 4px;
+  margin-bottom: 0.5em;
+  border-radius: 7px;
   > a {
     color: @search_option_bar_text_color;
   }
@@ -138,6 +153,7 @@ a:focus.moin-showhide {
   background-color: @moin-navbar-inverse-bgcolor;
   padding-left: 0px;
   padding-right: 0px;
+  border-color: @theme-col-2;
   .navbar-nav {
     > li > a {
       color: @moin-navbar-inverse-textcolor;
@@ -155,6 +171,12 @@ a:focus.moin-showhide {
   .navbar-brand {
     color: @moin-navbar-inverse-textcolor;
   }
+}
+
+.moin-button {
+  background-color: @theme-col-2;
+  color: @theme-col-4;
+  border-color: #cccccc;
 }
 
 .moin-navbar-user > ul.nav > li,

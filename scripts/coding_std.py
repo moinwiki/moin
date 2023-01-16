@@ -25,10 +25,19 @@ import re
 
 
 # file types to be processed
-SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
+# meta and data are for help files, under version control data files have \n line endings
+# /scripts/maint/modify_item.py PutItem will convert \n to \r\n
+SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst meta data".split())
 
 # stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())
+
+# these are media files from help-common namespace
+BINARY_FILES = tuple(".gz.data .zip.data .mp3.data .jpg.data .png.data .mp4.data".split())
+
+# global variables for checking Javascript messages
+phrases = set()
+phrases_used = set()
 
 
 class NoDupsLogger:
@@ -64,6 +73,7 @@ def files_to_ignore():
     """Return a list of files that will not be processed."""
     return os.path.join('moin', '_version.py')
 
+
 def calc_indentation(line):
     """
     Return tuple (length of indentation, line stripped of leading blanks).
@@ -90,7 +100,7 @@ def check_template_indentation(lines, filename, logger):
                      '{% for': ('{% endfor %}', '{%- endfor %}', '{%- endfor -%}', '{% endfor -%}', ),
                      '{% macro': ('{% endmacro %}', '{%- endmacro %}', '{%- endmacro -%}', '{% endmacro -%}', ),
                      '{{ gen.form.open': ('{{ gen.form.close }}', ),
-                    }
+                     }
     ends = ('{% end', '{%- end')
 
     for idx, line in enumerate(lines):
@@ -111,7 +121,8 @@ def check_template_indentation(lines, filename, logger):
                     block_end = block_endings.get(block_start)
                     if not block_end:
                         # should never get here, mismatched indent_after and block_endings
-                        logger.log(filename, "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
+                        logger.log(filename,
+                                   "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
                         continue
                     if any(x in stripped for x in block_end):
                         # found line similar to: {% block ... %}...{% endblock %}
@@ -162,18 +173,26 @@ def check_template_spacing(lines, filename, logger):
         if m:
             m_start = [m.start() for m in re.finditer('{%|{{|{#', line)]
             for index in m_start:
-                if not line.startswith((' ', '- '), index + 2) and not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-'):
-                    logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
+                if (not line.startswith((' ', '- '), index + 2) and
+                        not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-')):
+                    logger.log(filename,
+                               'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
             m_end = [m.start() for m in re.finditer('%}|}}|#}', line)]
             for index in m_end:
-                if not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2)) and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}'):
-                    logger.log(filename, 'Missing space within "%s" on line %d - not fixed!' % (line[index - 2:index + 2], idx + 1))
+                if (not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2))
+                        and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}')):
+                    logger.log(filename,
+                               'Missing space within "%s" on line %d - not fixed!'
+                               % (line[index - 2:index + 2], idx + 1))
 
 
 def check_files(filename, suffix):
     """
     Delete trailing blanks, single linefeed at file end, line ending to be \r\n for bat files and \n for all others.
     """
+    if filename.endswith(BINARY_FILES):
+        return
+
     suffix = suffix.lower()
     if suffix in WIN_SUFFIXES:
         line_end = "\r\n"
@@ -181,13 +200,20 @@ def check_files(filename, suffix):
         line_end = "\n"
     logger = NoDupsLogger()
 
-    # newline="" does not change incoming line endings
-    with open(filename, "r", encoding="utf-8", newline="") as f:
-        lines = f.readlines()
+    try:
+        # newline="" does not change incoming line endings
+        with open(filename, "r", encoding="utf-8", newline="") as f:
+            lines = f.readlines()
+    except UnicodeDecodeError:
+        print('Skipping file due to UnicodeDecodeError:', filename)
+        return
 
     if filename.endswith('.html'):
         check_template_indentation(lines, filename, logger)
         check_template_spacing(lines, filename, logger)
+
+    if filename.endswith('.js'):
+        check_js_phrases(lines, filename)
 
     # now look at file end and get rid of all whitespace-only lines there:
     while lines:
@@ -231,9 +257,94 @@ def file_picker(starting_dir):
         for file in files:
             suffix = file.split(".")[-1]
             if suffix in SELECTED_SUFFIXES:
-                if not file in ignore_files:
+                if file not in ignore_files:
                     filename = os.path.join(root, file)
                     check_files(filename, suffix)
+
+
+def find_js_phrases(starting_dir):
+    """
+    Create a set of phrases defined in /templates/dictionary.js.
+
+    Create warning message if key and value are not equal.
+    """
+    global phrases
+    target = os.path.join(starting_dir, 'moin', 'templates', 'dictionary.js')
+    with open(target, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    # "Cancel": "{{ _("Cancel") }}",
+    pattern = r"""
+        "
+        (?P<key>[,\s]*[\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)
+        "
+        [:\s]*"\{\{\s*_\(
+        "
+        (?P<val>[,\s]*[\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)
+        "
+        \)\s\}\}",*
+        """
+    pattern = re.compile(pattern, re.X)
+
+    for count, line in enumerate(lines, start=1):
+        if "{{" not in line:
+            continue
+        m = pattern.search(line)
+        if m:
+            if not m.group('key') == m.group('val'):
+                print('Error: /templates/dictionary.js dict has mismatched key and value on line', count)
+                print('   ', line.lstrip())
+            phrases.add(m.group('key'))
+        else:
+            print('Warning: /templates/dictionary.js {key: val} are not equal on line', count)
+            print('   ', line.lstrip())
+
+
+def check_js_phrases(lines, filename):
+    """
+    Check incoming js file for i18n phrases similar to: _("Hide comments")
+
+    Print error message if not defined in phrases, else add phrase to used phrases set.
+    """
+    global phrases_used
+    if filename.endswith('jquery.i18n.min.js'):
+        return
+    pattern = re.compile(r"""_\("([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)"\)""")
+    bad_pat = re.compile(r"""_\(([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)\)""")
+    for count, line in enumerate(lines, start=1):
+        if line.lstrip().startswith('// '):
+            continue
+        if line.lstrip().startswith('function '):
+            continue
+        if line.strip() == 'return $.i18n._(text);':
+            continue
+
+        m = pattern.search(line)
+        if m:
+            if m.group(1) in phrases:
+                phrases_used.add(m.group(1))
+            else:
+                print(
+                    'Error: %s file at line %s has phrase not defined in /templates/dictionary.js.'
+                    % (filename, count)
+                )
+                print('   ', line.lstrip())
+        else:
+            m = bad_pat.search(line)
+            if m:
+                # _(variablename)
+                print('Warning: cannot verify i18n phrase defined in %s line %s.' % (filename, count))
+                print('   ', line.lstrip())
+
+
+def unused_phrases():
+    """
+    Print error message it there are unused i18n phrases defined in /templates/dictionary.js.
+    """
+    unused = phrases - phrases_used
+    if unused:
+        for phrase in unused:
+            print('Warning: unused phrase defined in /templates/dictionary.js:', phrase)
 
 
 if __name__ == "__main__":
@@ -242,5 +353,7 @@ if __name__ == "__main__":
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
         starting_dir = os.path.join(starting_dir.split(os.sep + 'scripts')[0], 'src')
-    NoDupsLogger().log("Starting directory is %s" % starting_dir, None)
+    NoDupsLogger().log("Starting directory is %s\n" % starting_dir, None)
+    find_js_phrases(starting_dir)
     file_picker(starting_dir)
+    unused_phrases()

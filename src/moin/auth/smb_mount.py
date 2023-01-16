@@ -11,7 +11,7 @@
 """
 
 
-from moin.auth import BaseAuth, CancelLogin, ContinueLogin
+from moin.auth import BaseAuth, ContinueLogin
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -28,7 +28,7 @@ class SMBMount(BaseAuth):
         server,  # mount.cifs //server/share
         share,  # mount.cifs //server/share
         mountpoint_fn,  # function of username to determine the mountpoint, e.g.:
-                        # lambda username: u'/mnt/wiki/%s' % username
+                        # lambda username: '/mnt/wiki/%s' % username
         dir_user,  # username to get the uid that is used for mount.cifs -o uid=... (e.g. 'www-data')
         domain,  # mount.cifs -o domain=...
         dir_mode='0700',  # mount.cifs -o dir_mode=...

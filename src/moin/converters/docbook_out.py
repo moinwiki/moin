@@ -40,7 +40,7 @@ class Converter:
                    'list-item': docbook.varlistentry,
                    'list-item-label': docbook.term,
                    'quote': docbook.quote,
-    }
+                   }
 
     # We store the standard attributes of an element.
     # Once we have been able to put it into an output element,
@@ -134,7 +134,6 @@ class Converter:
         """
         uri = element.tag.uri
         name = self.namespaces_visit.get(uri, None)
-        print('==== uri = %s, name = %s' % (uri, name))  # @@@@@@@@@@@@@
         if name is not None:
             method_name = 'visit_' + name
             method = getattr(self, method_name, None)

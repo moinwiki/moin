@@ -10,7 +10,14 @@
 {% set title = _("Rename '%(item_name)s'", item_name=item.fqname|shorten_fqname) %}
 {% block content %}
     <h1>{{ title }}</h1>
-    {{ forms.list_subitems(subitem_names, _("The following subitems will be renamed:")) }}
+
+    {% if len(item_names) > 1 %}
+        {{ forms.list_subitems(item_names, _("This item has multiple names:")) }}
+        {{ forms.list_subitems(subitem_names, _("If a parent name of the subitems below is removed, that parent's subitems will become subitems of the first name in the target field:")) }}
+    {% else %}
+        {{ forms.list_subitems(subitem_names, _("The following subitems will be renamed:")) }}
+    {% endif %}
+
     <div class="moin-form">
         {{ gen.form.open(form, method="post", action=url_for('frontend.rename_item', item_name=fqname)) }}
             {{ forms.render_errors(form) }}
@@ -20,6 +27,11 @@
             </dl>
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
+    </div>
+
+    <div class="tip">
+        {{ _('Use commas (,) to separate multiple names in the Target field.') }}
+
     </div>
 
     <h2> {{ _("Meta data of item to be renamed:") }} </h2>

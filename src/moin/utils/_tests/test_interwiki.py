@@ -64,7 +64,7 @@ class TestInterWiki:
                  (('SomePage', 'MoinMoin', '', '', revid, 'frontend.show_item', False), 'http://moinmo.in/+show/+{0}/SomePage'.format(revid)),
                  (('SomeItemID', 'non-existent', 'itemid', '', CURRENT, 'frontend.show_item', False), '/non-existent/@itemid/SomeItemID'),
                  (('SomePage', 'non-existent', '', 'ns1', CURRENT, 'frontend.show_item', False), '/non-existent/ns1/SomePage'),
-                ]
+                 ]
 
         for (item_name, wiki_name, field, namespace, rev, endpoint, _external), url in tests:
             assert url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external) == url
@@ -82,7 +82,7 @@ class TestInterWiki:
                  ('ns1/ns2/ns1/ns2/OtherPage', ('ns1/ns2', 'ns1/ns2/OtherPage')),
                  ('SomePage', ('', 'SomePage')),
                  ('OtherWiki/ns1/OtherPage', ('', 'OtherWiki/ns1/OtherPage')),
-                ]
+                 ]
         for markup, (namespace, pagename) in tests:
             assert _split_namespace(map, markup) == (namespace, pagename)
             namespace, pagename = _split_namespace(map, markup)
@@ -106,7 +106,7 @@ class TestInterWiki:
                  ('OtherWiki/ns1/ns2/OtherPage', ('OtherWiki', 'ns1/ns2', 'name_exact', 'OtherPage')),
                  ('OtherWiki/ns1/ns2/@userid/SomeUserID', ('OtherWiki', 'ns1/ns2', 'userid', 'SomeUserID')),
                  ('OtherWiki/ns3/ns2/@Notfield/OtherPage/foo', ('OtherWiki', '', 'name_exact', 'ns3/ns2/@Notfield/OtherPage/foo')),
-                ]
+                 ]
         for markup, (wikiname, namespace, field, pagename) in tests:
             assert split_interwiki(markup) == (wikiname, namespace, field, pagename)
             wikiname, namespace, field, pagename = split_interwiki(markup)
@@ -127,7 +127,7 @@ class TestInterWiki:
                  (('http://example.org/', 'Aktuelle\xc4nderungen', '', 'ns1\xc4'), 'http://example.org/ns1%C3%84/Aktuelle%C3%84nderungen'),
                  (('http://example.org/$NAMESPACE/$PAGE/show', 'Aktuelle\xc4nderungen', '', 'ns\xc41'), 'http://example.org/ns%C3%841/Aktuelle%C3%84nderungen/show'),
                  (('http://example.org/@$FIELD/$PAGE/show', 'Aktuelle\xc4nderungen', 'itemid', ''), 'http://example.org/@itemid/Aktuelle%C3%84nderungen/show'),
-                ]
+                 ]
         for (baseurl, pagename, field, namespace), url in tests:
             assert join_wiki(baseurl, pagename, field, namespace) == url
 
@@ -140,7 +140,7 @@ class TestInterWiki:
                  ('@tags/SomeTag', ('', 'tags', 'SomeTag')),
                  ('ns1/ns2/@notid', ('ns1/ns2', 'name_exact', '@notid')),
                  ('ns1/ns2/ns3/Thisisapagename/ns4', ('ns1/ns2', 'name_exact', 'ns3/Thisisapagename/ns4')),
-                ]
+                 ]
         for url, (namespace, field, pagename) in tests:
             assert split_fqname(url) == (namespace, field, pagename)
 
@@ -217,6 +217,8 @@ class TestInterWikiMapBackend:
         assert 'PythonInfo' in testiwm.iwmap
         assert 'this' not in testiwm.iwmap
         assert testiwm.iwmap['MoinMoin'] == 'https://moinmo.in/'
+        assert testiwm.iwmap['hg'] == 'https://www.mercurial-scm.org/wiki/'
+        assert testiwm.iwmap['h2g2'] == 'http://h2g2.com/dna/h2g2/'
 
 
 coverage_modules = ['moin.utils.interwiki']

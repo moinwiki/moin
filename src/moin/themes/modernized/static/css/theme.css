@@ -5,60 +5,58 @@
     License: GNU GPL v2 or later, see COPYING for details.
 */
 
-html { height:100%; color:#000; color:var(--font_color); font-family:Helvetica, Arial, sans-serif; }
-body { height:100%; background-color:#e6f2fe; background-color:var(--body_color); }
+html { height:100%; color:var(--font_color); font-family:Helvetica, Arial, sans-serif; }
+body { height:100%; background-color:var(--body_color); }
 #moin-main-wrapper { position:relative; min-height:100%; width:87%; min-width:700px; margin-left:auto; margin-right:auto; margin-top:0; }
 #moin-page { padding:1px 1px 105px 1px; display:table; width:100%; background:#fff; background:var(--page_color); border-radius:9px; }
 #moin-content { padding:.2em 1em 4em 1em; display:table-cell; }
 
 /* links */
 a { text-decoration:none; }
-a:link { color:#00008b; color:var(--link_color); text-decoration:none; }
-a:visited { color:#008b8b; color:var(--visited_color); text-decoration:none; }
-a:visited:hover { color:#1f9ae0; color:var(--hover_color); text-decoration:none; }
+a:link { color:var(--link_color); text-decoration:none; }
+a:visited { color:var(--visited_color); text-decoration:none; }
+a:visited:hover { color:var(--hover_color); text-decoration:none; }
 a:hover,
-a:active { color:#1f9ae0; color:var(--hover_color); text-decoration:underline; }
+a:active { color:var(--hover_color); text-decoration:underline; }
 a.moin-nonexistent:visited,
-a.moin-nonexistent { color:#939393; color:var(--nonexistent_link_color); }
-a.moin-nonexistent:link { color:#939393; color:var(--nonexistent_link_color); }
-a.moin-nonexistent:hover { color:#1f9ae0; color:var(--hover_color); text-decoration:underline; }
+a.moin-nonexistent { color:var(--nonexistent_link_color); }
+a.moin-nonexistent:link { color:var(--nonexistent_link_color); }
+a.moin-nonexistent:hover { color:var(--hover_color); text-decoration:underline; }
 a.moin-nonexistent:visited img,
 a.moin-nonexistent img,
 a.moin-nonexistent:visited object,
-a.moin-nonexistent object { background:#939393; background:var(--nonexistent_link_color);
-    border:3px dashed #737373; border:var(--nonexistent_link_color); }
+a.moin-nonexistent object { background:var(--nonexistent_link_color); border:3px dashed var(--nonexistent_link_color); }
 .current-link { color:inherit !important; }
 
-.moin-error { color:#ff2727; color:var(--error_color); background:#eef1f6; background:var(--table_bg_color); padding:4px; }
-.moin-thead { background-color:#00417f; background-color:var(--panel_color); }
+.moin-error { color:var(--error_color); background:var(--table_bg_color); padding:4px; }
+.moin-thead { background-color:var(--panel_color); }
 .moin-showhide { margin-left:10px; }
-table.navigation { background:#fff; background:var(--page_color); float:right; margin:2px; }
-.moin-disabled { color:#737373; color:var(--footer_color); }
+table.navigation { background:var(--page_color); float:right; margin:2px; }
+.moin-disabled { color:var(--footer_color); }
 
 /* select contenttype dialog */
 #moin-create-table { width:95%; margin-left:auto; margin-right:auto; border:none; }
-#moin-create-table tbody tr th { text-align:center; background:#00417f; background:var(--header_bg_color);
-    color:#fff; color:var(--heading_color); margin:2px; }
-#moin-create-table tbody tr td { text-align:center; background:#fff; background:var(--page_color); }
-#moin-create-table tbody tr td a { color:#00008b; color:var(--link_color); }
+#moin-create-table tbody tr th { text-align:center; background:var(--header_bg_color);
+    color:var(--heading_color); margin:2px; }
+#moin-create-table tbody tr td { text-align:center; background:var(--page_color); }
+#moin-create-table tbody tr td a {color:var(--link_color); }
 
 /* forms */
 label { display:block; font-weight:bold; }
 input[type="submit"],
 input[type="button"],
-button { font-weight:bold; font-size:.75em; background:#aed4fa; background:var(--base_color); padding:4px 15px;
-    border:1px solid #4e7da9; border:var(--border_style); border-radius:6px; cursor:pointer; }
+button { font-weight:bold; font-size:.75em; background:var(--base_color); padding:4px 15px;
+    border:var(--border_style); border-radius:6px; cursor:pointer; }
 input[type="submit"]:hover,
 input[type="button"]:hover,
-button:hover { box-shadow:2px 2px 1px #000; }
+button:hover { box-shadow:2px 2px 1px var(--font_color); }
 input[type="submit"]:active,
 input[type="button"]:active,
 button:active { position:relative; top:1px; }
 input,
-select { padding:3px; background:#fff; background:var(--page_color); border:1px solid #4e7da9; border:var(--border_style);
+select { padding:3px; background:var(--page_color); border:var(--border_style);
     border-radius:2px; }
 input[type="text"] { width:96%; }
-input.blank { border-color:#4e7da9; border-color:var(--border_color); border-width:2px; }
 form[name="delete_item"] dd input,
 form[name="rename_item"] dd input,
 form[name="destroy_item"] dd input { width:100%; }
@@ -66,75 +64,64 @@ form[name="delete_item"] dt,
 form[name="rename_item"] dt,
 form[name="destroy_item"] dt { width:20%; }
 
-#f_data_text { border:1px solid #4e7da9; border:var(--border_style); font-family:monospace;
-    margin:.33em 0; padding:3px; width:100%; }
-#f_comment,
-#f_summary { border:1px solid #4e7da9; border:var(--border_style); display:inline; margin:.33em 0; padding:3px; width:99%; }
-#preview { border:1px solid #4e7da9; border:var(--border_style); padding:10px 30px 20px 30px;
-    background:url("../img/draft.png"); margin-top:.5em; }
-
 .moin-transclusion { max-width:100%; }
 a.moin-conflict:before { content:url("../img/moin-conflict.png"); margin:0 .2em; }
 
 #moin-footer { position:absolute; bottom:0; }
 
-#moin-header { margin:0; padding:7px 0 10px 0; background:#00417f; color:#fff; color:var(--heading_color);
+#moin-header { margin:0; padding:7px 0 10px 0; background:var(--header_bg_color); color:var(--heading_color);
     line-height:1.12em; border-bottom-left-radius:9px; border-bottom-right-radius:9px; }
 
 #moin-logo { float:left; margin:2px 10px 8px 10px; padding:0; font-size:1.4em; line-height:1em; font-weight:bold; }
 #moin-logo img { vertical-align:middle; }
-#moin-logo a { color:#fff; color:var(--heading_color); text-decoration:none; }
-a.moin-sitename { font-size:1.5em; font-weight:bold; color:#fff; color:var(--selected_link_color); line-height:1.5em; }
+#moin-logo a { color:var(--heading_color); text-decoration:none; }
+a.moin-sitename { font-size:1.5em; font-weight:bold; color:var(--selected_link_color); line-height:1.5em; }
 #moin-username { display:block; margin:6px 4px 4px 4px; padding:0; float:right; font-size:.82em; }
-#moin-username a { color:#fff; color:var(--heading_color); }
+#moin-username a { color:var(--heading_color); }
 #moin-username li { display:inline; padding-right:10px; }
-#moin-username input:hover { color:#1f9ae0; color:var(--hover_color); }
-#moin-interwiki a { color:#fff; color:var(--heading_color); }
+#moin-username input:hover { color:var(--hover_color); }
+#moin-interwiki a { color:var(--heading_color); }
 
 /* page trail */
 ul.moin-breadcrumb,
 ul.moin-breadcrumb ul.moin-alias { padding:0; margin:0; margin-bottom:4px; }
-ul.moin-breadcrumb ul.moin-alias { background-color:#e6f2fe; background-color:var(--body_color);
-    border:1px solid #00417f; border:1px solid var(--panel_color); border-radius:6px; z-index:10; }
-ul.moin-breadcrumb li ul.moin-alias li { list-style-type:none; display:block; color; color:var(--font_color); #000; padding:2px 10px; }
-ul.moin-breadcrumb li ul.moin-alias li a { color:#1f9ae0; color:var(--hover_color); }
+ul.moin-breadcrumb ul.moin-alias { background-color:var(--body_color);
+    border:var(--border_style); border-radius:6px; z-index:10; }
+ul.moin-breadcrumb li ul.moin-alias li { list-style-type:none; display:block; color:var(--font_color); padding:2px 10px; }
+ul.moin-breadcrumb li ul.moin-alias li a { color:var(--hover_color); }
 ul.moin-breadcrumb li { position:relative; }
-.moin-breadcrumb a { color:#fff; color:var(--heading_color); }
+.moin-breadcrumb a { color:var(--heading_color); }
 ul.moin-breadcrumb li ul.moin-alias { display:none; position:absolute; }
 ul.moin-breadcrumb li:hover ul.moin-alias { display:block; }
 .moin-breadcrumb > li { display:inline-block; }
 
 /* navibar */
-#moin-navibar { clear:both; display:block; margin:0; padding:0 10px; font-size:.82em; color:#008b8b; color:var(--visited_color); }
-#moin-navibar li { float:left; display:inline; margin:0 2px; padding:2px 5px; border:1px solid #4e7da9; border:var(--border_style);
+#moin-navibar { clear:both; display:block; margin:0; padding:0 10px; font-size:.82em; color:var(--visited_color); list-style-type:none; }
+#moin-navibar li { float:left; margin:0 2px; padding:2px 5px; border:var(--border_style);
     border-bottom:none; white-space:nowrap; font-size:.88em; border-top-left-radius:5px; border-top-right-radius:5px; }
-#moin-navibar li.wikilink { background:#eef1f6; }
-#moin-navibar li.userlink { background:#eef1f6; }
+#moin-navibar li.wikilink { background:var(--table_bg_color); }
+#moin-navibar li.userlink { background:var(--table_bg_color); }
 #moin-navibar a,
-#moin-navibar a:visited { color:#000; color:var(--font_color); text-decoration:none; }
-#moin-navibar li:hover { background:#d8dfe9; }
-#moin-pageline { clear:both; margin:4px 10px; padding:0; width:auto; height:1px;
-    border-bottom:1px solid #fff; border-bottom:1px solid var(--heading_color); border-top:1px solid #fff;
-    border-top:1px solid var(--heading_color); background:var(--heading_color); }
+#moin-navibar a:visited { color:var(--font_color); text-decoration:none; }
+#moin-navibar li:hover { background:var(--navibar_hover_color); }
+.moin-pageline { height:2px; margin:0 10px; clear:both; background:var(--heading_color); }
 
 /* item views */
-.moin-itemviews { clear:both; display:block; margin:0 0 -6px 0; padding:2px 8px; background:#00417f;
-    font-size:.8em; border-radius:9px; color:#fff; color:var(--selected_link_color); }
+.moin-itemviews { clear:both; display:block; margin:0 0 -6px 0; padding:2px 8px; background:var(--header_bg_color);
+    font-size:.8em; border-radius:9px; color:var(--selected_link_color); }
 .moin-itemviews li { display:inline-block; padding:0; margin:4px 6px; line-height:1em; }
 .moin-itemviews a,
-.moin-itemviews a:visited { color:#cfcfcf; color:var(--panel_item_color); }
+.moin-itemviews a:visited { color:var(--panel_item_color); }
 .moin-itemviews a:hover,
-.moin-itemviews a:visited:hover { color:#fff; color:var(--heading_color); }
+.moin-itemviews a:visited:hover { color:var(--heading_color); }
 .moin-itemviews a:hover { text-decoration:underline; }
-.moin-itemviews form,
-.moin-itemviews form div { display:inline; margin:0; }
 .moin-itemviews select { font-size:100%; vertical-align:middle; }
 
 #moin-navibar li.moin-panel-heading,
 li.moin-panel-heading { display:none; }
 
-a.moin-permalink { display:none; cursor:pointer; margin-left:.1em; color:#939393; color:var(--nonexistent_link_color); }
-a.moin-permalink:hover.moin-permalink { color:#1f62ad; color:var(--non-existent_hover_color); }
+a.moin-permalink { display:none; cursor:pointer; margin-left:.1em; color:var(--permalink_color); }
+a.moin-permalink:hover.moin-permalink { color:var(--nonexistent_hover_color); }
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
 h3:hover .moin-permalink,
@@ -172,7 +159,7 @@ h6:hover .moin-permalink { display:inline; text-decoration:none; }
     #moin-content-data { margin:0; padding:0; }
     a,
     a:visited,
-    a.moin-nonexistent { color:#939393; color:var(--nonexistent_link_color); text-decoration:none; }
+    a.moin-nonexistent { color:var(--nonexistent_link_color); text-decoration:none; }
     a.moin-interwiki:before { content:attr(title) ":"; }
     a.moin-interwiki img { display:none; }
     pre { font-size:10pt; }
@@ -185,8 +172,8 @@ h6:hover .moin-permalink { display:inline; text-decoration:none; }
     #moin-timings,
     #moin-credits,
     #moin-interwiki { display:none; }
-    #moin-pageinfo { color:#737373; color:var(--footer_color); font-size:.67em; float:right; }
-    #moin-pageinfo a { color:#737373; color:var(--footer_color); }
+    #moin-pageinfo { color:var(--footer_color); font-size:.67em; float:right; }
+    #moin-pageinfo a { color:var(--footer_color); }
     .moin-subitem-navigation { display:none; }
 }
 

@@ -7,6 +7,7 @@ MoinMoin - PDF input converter
 
 import io
 from datetime import datetime, timedelta
+import logging as stdlogging
 
 from pdfminer3.pdfpage import PDFPage
 from pdfminer3.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -18,6 +19,10 @@ from moin.utils.mime import Type, type_text_plain
 
 from moin import log
 logging = log.getLogger(__name__)
+
+
+# pdfminer3 creates many unwanted info messages
+stdlogging.getLogger("pdfminer3").setLevel(logging.WARNING)
 
 
 LAPARAMS = LAParams()

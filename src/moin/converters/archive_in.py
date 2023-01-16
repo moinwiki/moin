@@ -15,10 +15,12 @@ import zipfile
 from . import default_registry
 from ._table import TableMixin
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.interwiki import CompositeName
+from moin.constants.keys import NAME, NAMESPACE, NAME_EXACT
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -41,7 +43,7 @@ class ArchiveConverter(TableMixin):
 
     def process_name(self, member_name):
         attrib = {
-            xlink.href: Iri(scheme='wiki', authority='', path='/' + self.item_name,
+            xlink.href: Iri(scheme='wiki', authority='', path='/' + self.fullname,
                             query='do=get&member={0}'.format(member_name)),
         }
         return moin_page.a(attrib=attrib, children=[member_name, ])
@@ -53,13 +55,14 @@ class ArchiveConverter(TableMixin):
         return str(size)
 
     def __call__(self, rev, contenttype=None, arguments=None):
-        self.item_name = rev.item.name
+        fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0])
+        self.fullname = fqname.fullname
         try:
             contents = self.list_contents(rev.data)
             contents = [(self.process_size(size),
                          self.process_datetime(dt),
                          self.process_name(name),
-            ) for size, dt, name in contents]
+                         ) for size, dt, name in contents]
             table = self.build_dom_table(contents, head=[_("Size"), _("Timestamp"), _("Name")], cls='zebra')
             body = moin_page.body(children=(table, ))
             return moin_page.page(children=(body, ))

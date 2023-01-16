@@ -26,20 +26,24 @@ from babel import parse_locale
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import session, request, url_for, render_template
+from flask import session, url_for, render_template
 from jinja2.runtime import Undefined
 
 from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from moin.constants.keys import *  # noqa
+from moin.constants.keys import (
+    BOOKMARKS, CONTENTTYPE, CURRENT, DISABLED, EMAIL, EMAIL_UNVALIDATED, ENC_PASSWORD, ITEMID, NAME, NAME_EXACT,
+    NAMEPREFIX, NAMERE, NAMESPACE, RECOVERPASS_KEY, SESSION_KEY, SESSION_TOKEN, TAGS, USEROBJ_ATTRS, WIKINAME
+)
+
 from moin.constants.misc import ANON
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.mail import sendmail
 from moin.utils.interwiki import getInterwikiHome, getInterwikiName
 from moin.utils.crypto import generate_token, valid_token, make_uuid
 from moin.utils.subscriptions import get_matched_subscription_patterns
-from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError, NoSuchRevisionError
+from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -271,6 +275,7 @@ class UserProfile:
         self._meta = dict(rev.meta)
         self._stored = True
         self._changed = False
+        rev.data.close()
 
     def save(self, force=False):
         """

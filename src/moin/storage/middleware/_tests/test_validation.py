@@ -49,7 +49,7 @@ class TestValidation:
                  'contenttype_current': 'text/x.moin.wiki;charset=utf-8',
                  'contenttype_guessed': 'text/plain;charset=utf-8',
                  keys.FQNAME: CompositeName('', '', 'somename'),
-                }
+                 }
 
         m = ContentMetaSchema(meta)
         valid = m.validate(state)
@@ -90,7 +90,7 @@ class TestValidation:
                  keys.WIKINAME: 'ThisWiki',
                  keys.NAMESPACE: '',
                  keys.FQNAME: CompositeName('', '', 'somename')
-                }
+                 }
 
         m = UserMetaSchema(meta)
         valid = m.validate(state)

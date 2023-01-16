@@ -1,5 +1,6 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2022 MoinMoin Project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -9,21 +10,28 @@ MoinMoin - import content and user data from a moin 1.9 compatible storage
 
 
 import os
-import time
 import re
 import codecs
 import hashlib
+import importlib
 from io import BytesIO
 
 from flask import current_app as app
 from flask import g as flaskg
 from flask_script import Command, Option
 
-from ._utils19 import quoteWikinameFS, unquoteWikiname, split_body
+from ._utils19 import unquoteWikiname, split_body
 from ._logfile19 import LogFile
 
+# macro migration "framework"
+from .macro_migration import migrate_macros
+
+# individual macro migrations register with the migrate_macros module
+from .macros import MonthCalendar  # noqa
+from .macros import PageList  # noqa
+
 from moin.constants.keys import *  # noqa
-from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19
+from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
@@ -31,11 +39,10 @@ from moin.utils.mimetype import MimeType
 from moin.utils.crypto import make_uuid
 from moin import security
 from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
-from moin.converters.moinwiki_out import Converter as conv_out
 from moin.converters import default_registry
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
-from moin.utils.tree import moin_page
+from moin.utils.tree import moin_page, xlink
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -68,6 +75,7 @@ FORMAT_TO_CONTENTTYPE = {
 
 last_moin19_rev = {}
 user_names = []
+custom_namespaces = []
 
 
 class ImportMoin19(Command):
@@ -80,50 +88,55 @@ class ImportMoin19(Command):
                required=False, default=False),
         Option('-s', '--storage-create', action='store_true', dest='create_storage',
                required=False, default=False),
+        Option('--markup_out', '-m', type=str, choices=CONTENTTYPE_MARKUP_OUT.keys(),
+               required=False, default='moinwiki'),
     ]
 
-    def run(self, data_dir=None):
+    def run(self, data_dir=None, markup_out=None):
         flaskg.add_lineno_attr = False
         flaskg.item_name2id = {}
         userid_old2new = {}
         indexer = app.storage
         backend = indexer.backend  # backend without indexing
+        users_itemlist = set()
+        global custom_namespaces
+        custom_namespaces = namespaces()
 
         print("\nConverting Users...\n")
-        for rev in UserBackend(os.path.join(data_dir, 'user')):  # assumes user/ below data_dir
-            global user_names
-            user_names.append(rev.meta['name'][0])
-            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
-            backend.store(rev.meta, rev.data)
+        user_dir = os.path.join(data_dir, 'user')
+        if os.path.isdir(user_dir):
+            for rev in UserBackend(user_dir):
+                global user_names
+                user_names.append(rev.meta['name'][0])
+                userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
+                backend.store(rev.meta, rev.data)
 
-        print("\nConverting Pages/Attachments...\n")
+        print("\nConverting Pages and Attachments...\n")
         for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
             for user_name in user_names:
                 if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
                     rev.meta['namespace'] = 'users'
+                    users_itemlist.add(rev.meta['name'][0])  # save itemname for link migration
                     break
+
+            if USERID in rev.meta:
+                try:
+                    rev.meta[USERID] = userid_old2new[rev.meta[USERID]]
+                except KeyError:
+                    # user profile lost, but userid referred by revision
+                    print("Missing userid {0!r}, editor of {1} revision {2}".format(
+                        rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID])
+                    )
+                    del rev.meta[USERID]
             backend.store(rev.meta, rev.data)
             # item_name to itemid xref required for migrating user subscriptions
             flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-        print("\nConverting Revision Editors...\n")
-        for mountpoint, revid in backend:
-            meta, data = backend.retrieve(mountpoint, revid)
-            if USERID in meta:
-                try:
-                    meta[USERID] = userid_old2new[meta[USERID]]
-                except KeyError:
-                    # user profile lost, but userid referred by revision
-                    print("Missing userid {0!r}, editor of {1} revision {2}".format(meta[USERID], meta[NAME][0], revid))
-                    del meta[USERID]
-                backend.store(meta, data)
-            elif meta.get(CONTENTTYPE) == CONTENTTYPE_USER:
-                meta.pop(UID_OLD, None)  # not needed any more
-                backend.store(meta, data)
-
         print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
         self.conv_in = conv_in()
-        self.conv_out = conv_out()
+        self.markup_out = markup_out
+        conv_out = importlib.import_module("moin.converters." + self.markup_out + "_out")
+        self.conv_out = conv_out.Converter()
         reg = default_registry
         refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
         for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
@@ -137,11 +150,27 @@ class ImportMoin19(Command):
             meta, data = backend.retrieve(namespace, revno)
             data_in = data.read().decode(CHARSET19)
             dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
-            out = self.conv_out(dom)
-            out = out.encode(CHARSET19)
+
             iri = Iri(scheme='wiki', authority='', path='/' + item_name)
             dom.set(moin_page.page_href, str(iri))
             refs_conv(dom)
+
+            # migrate itemlinks to users namespace
+            itemlinks_19 = refs_conv.get_links()
+            itemlinks2chg = []
+            for link in itemlinks_19:
+                if link in users_itemlist:
+                    itemlinks2chg.append(link)
+            if len(itemlinks2chg) > 0:
+                migrate_users_links(dom, itemlinks2chg)
+
+            # migrate macros that need update from 1.9 to 2.0
+            migrate_macros(dom)  # in-place conversion
+
+            out = self.conv_out(dom)
+            out = out.encode(CHARSET19)
+            if len(itemlinks2chg) > 0:
+                refs_conv(dom)  # refresh changed itemlinks
             meta[ITEMLINKS] = refs_conv.get_links()
             meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
             meta[EXTERNALLINKS] = refs_conv.get_external_links()
@@ -152,9 +181,10 @@ class ImportMoin19(Command):
             meta[PARENTID] = meta[REVID]
             meta[REVID] = make_uuid()
             meta[REV_NUMBER] = meta[REV_NUMBER] + 1
-            meta[MTIME] = int(time.time())
-            meta[COMMENT] = 'Convert moin 1.9 markup to 2.0'
-            meta[CONTENTTYPE] = 'text/x.moin.wiki;charset=utf-8'
+            # bumping modified time makes global and item history views more useful
+            meta[MTIME] = meta[MTIME] + 1
+            meta[COMMENT] = 'Converted moin 1.9 markup to ' + self.markup_out + ' markup'
+            meta[CONTENTTYPE] = CONTENTTYPE_MARKUP_OUT[self.markup_out]
             del meta['dataid']
             out.seek(0)
             backend.store(meta, out)
@@ -210,8 +240,10 @@ class PageBackend:
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
-                print("    >> Error: {0} is missing file 'current' or 'edit-log'".format(os.path.normcase(os.path.join(pages_dir, f))))
-            except Exception as err:
+                print("    >> Error: {0} is missing file 'current' or 'edit-log'".format(
+                    os.path.normcase(os.path.join(pages_dir, f)))
+                )
+            except Exception:
                 logging.exception(("PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
                 for rev in item.iter_revisions():
@@ -264,7 +296,7 @@ class PageItem:
                 self.acl = page_rev.meta.get(ACL, None)
                 yield page_rev
 
-            except Exception as err:
+            except Exception:
                 logging.exception("PageRevision {0!r} {1!r} raised exception:".format(self.name, fname))
 
     def iter_attachments(self):
@@ -278,7 +310,7 @@ class PageItem:
             try:
                 yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname),
                                          self.editlog, self.acl)
-            except Exception as err:
+            except Exception:
                 logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
 
 
@@ -302,7 +334,7 @@ class PageRevision:
             meta = {MTIME: -1,  # fake, will get 0 in the end
                     NAME: [item_name],  # will get overwritten with name from edit-log
                                         # if we have an entry there
-                   }
+                    }
             try:
                 revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
                 previous_meta = PageRevision(item, revno - 1, revpath).meta
@@ -361,6 +393,26 @@ class PageRevision:
                 meta[TAGS].append(TEMPLATE)
             else:
                 meta[TAGS] = [TEMPLATE]
+        # if this revision matches a custom namespace defined in wikiconfig,
+        # then modify the meta data for namespace and name
+        for custom_namespace in custom_namespaces:
+            if meta['name'][0] == custom_namespace:
+                # cannot have itemname == namespace_name, so we rename. XXX may create an item with duplicate name
+                new_name = app.cfg.root_mapping.get(meta['name'][0], app.cfg.default_root)
+                print("    Converting {0} to namespace:homepage {1}:{2}".format(
+                    meta['name'][0], custom_namespace, new_name)
+                )
+                meta['namespace'] = custom_namespace
+                meta['name'] = [new_name]
+                break
+            if meta['name'][0].startswith(custom_namespace + '/'):
+                # split the namespace from the name
+                print("    Converting {0} to namespace:itemname {1}:{2}".format(
+                    meta['name'][0], custom_namespace, meta['name'][0][len(custom_namespace) + 1:])
+                )
+                meta['namespace'] = custom_namespace
+                meta['name'] = [meta['name'][0][len(custom_namespace) + 1:]]
+                break
         self.meta = {}
         for k, v in meta.items():
             if isinstance(v, list):
@@ -405,6 +457,23 @@ class PageRevision:
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             data = process_categories(meta, data, self.backend.item_category_regex)
         return data
+
+
+def migrate_users_links(dom, itemlinks2chg):
+    """ Walk the DOM tree and change itemlinks to users namespace
+
+    :param dom: the tree to check for elements to migrate
+    :param itemlinks2chg: list of itemlinks to be changed
+    :type dom: emeraldtree.tree.Element
+    """
+
+    for node in dom.iter_elements_tree():
+        # do not change email nodes, these have type(node.attrib[xlink.href]) == 'string'
+        if node.tag.name == 'a' and not isinstance(node.attrib[xlink.href], str):
+            path_19 = str(node.attrib[xlink.href].path)
+            if node.attrib[xlink.href].scheme == 'wiki.local' and path_19 in itemlinks2chg:
+                print("    >> Info: Changing link from " + path_19 + " to users/" + path_19)
+                node.attrib[xlink.href].path = 'users/' + path_19
 
 
 def process_categories(meta, data, item_category_regex):
@@ -505,8 +574,8 @@ class EditLog(LogFile):
                     result[REVERTED_TO] = int(extra)
                 del result[EXTRA]
                 result[ACTION] = ACTION_REVERT
-        userid = result[USERID]
         # TODO
+        # userid = result[USERID]
         # if userid:
         #    result[USERID] = self.idx.user_uuid(old_id=userid, refcount=True)
         return result
@@ -554,7 +623,7 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
                           modifier,
                           ','.join(entries),
                           ','.join(rights)  # iterator has removed invalid rights
-                         ))
+                          ))
     result = ' '.join(result)
     logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
     return result
@@ -688,7 +757,7 @@ class UserRevision:
                 'last_saved',  # renamed to MTIME
                 'email_subscribed_events',  # XXX no support yet
                 'jabber_subscribed_events',  # XXX no support yet
-               ]
+                ]
         for key in kill:
             if key in metadata:
                 del metadata[key]
@@ -735,7 +804,8 @@ class UserRevision:
                 if ":" in subscribed_item:
                     wikiname, subscribed_item = subscribed_item.split(":", 1)
 
-                if subscribed_item.endswith(".*") and len(subscribed_item) > 2 and not any(x in subscribed_item[:-2] for x in RECHARS):
+                if (subscribed_item.endswith(".*") and len(subscribed_item) > 2
+                        and not any(x in subscribed_item[:-2] for x in RECHARS)):
                     subscriptions.append("{0}:{1}:{2}".format(NAMEPREFIX, wikiname, subscribed_item[:-2]))
                 else:
                     subscriptions.append("{0}:{1}:{2}".format(NAMERE, wikiname, subscribed_item))
@@ -759,7 +829,7 @@ class UserBackend:
             if user_re.match(uid):
                 try:
                     rev = UserRevision(self.path, uid)
-                except Exception as err:
+                except Exception:
                     logging.exception("Exception in user item processing {0}".format(uid))
                 else:
                     yield rev
@@ -781,3 +851,18 @@ def hash_hexdigest(content, bufsize=4096):
     else:
         raise ValueError("unsupported content object: {0!r}".format(content))
     return size, HASH_ALGORITHM, str(hash.hexdigest())
+
+
+def namespaces():
+    """
+    Return a list of custom namespaces defined in wikiconfig.
+
+    if create_simple_mapping is used, app.config.namespaces is not defined.
+    """
+    blacklist = ["default", "userprofiles", "users", ""]
+    try:
+        custom_namespaces = [x.rstrip('/') for x in app.cfg.namespaces.keys() if x not in blacklist]
+        custom_namespaces.sort(key=len, reverse=True)
+    except AttributeError:
+        return []
+    return custom_namespaces

@@ -20,8 +20,8 @@
 from flask import request
 
 from moin import user
-from moin.i18n import _, L_, N_
-from moin.auth import BaseAuth, GivenAuth
+from moin.i18n import _
+from moin.auth import BaseAuth
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -31,7 +31,7 @@ class HTTPAuthMoin(BaseAuth):
     """ authenticate via http (basic) auth """
     name = 'http'
 
-    def __init__(self, autocreate=False, realm='MoinMoin', coding='iso-8859-1', **kw):
+    def __init__(self, trusted=True, autocreate=False, realm='MoinMoin', coding='utf-8', **kw):
         super(HTTPAuthMoin, self).__init__(**kw)
         self.autocreate = autocreate
         self.realm = realm

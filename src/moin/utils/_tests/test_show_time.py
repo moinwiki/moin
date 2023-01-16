@@ -6,7 +6,6 @@
 """
 from flask import g as flaskg
 
-import pytest
 from moin.utils import show_time
 
 
@@ -25,7 +24,7 @@ class TestShowTime:
                             (4838401, ('months', 2)),
                             (63071999, ('months', 24)),
                             (126144000, ('years', 4)),
-        )
+                            )
 
         for seconds, expected in seconds_expected:
             result = show_time.duration(seconds)

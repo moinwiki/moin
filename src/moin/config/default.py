@@ -130,7 +130,7 @@ class ConfigFunctionality:
         if self.interwikiname is None:  # admin did not setup a real interwikiname
             raise error.ConfigurationError(
                 "No interwikiname configured! "
-                "You need to set interwikiname = u'YourUniqueStableInterwikiName' in your wiki config.")
+                "You need to set interwikiname = 'YourUniqueStableInterwikiName' in your wiki config.")
 
         secret_key_names = ['security/ticket', ]
 
@@ -191,18 +191,13 @@ configuration for typos before requesting support or reporting a bug.
         Try to decode str using utf-8. If the decode fail, raise FatalError.
 
         Certain config variables should contain unicode values, and
-        should be defined with u'text' syntax. Python decode these if
-        the file have a 'coding' line.
-
-        This will allow utf-8 users to use simple strings using, without
-        using u'string'. Other users will have to use u'string' for
-        these names, because we don't know what is the charset of the
-        config files.
+        should be defined with 'text' syntax. Python will decode these if
+        the file has a 'coding' line.
         """
         charset = 'utf-8'
         message = """
 "%(name)s" configuration variable is a string, but should be
-unicode. Use %(name)s = u"value" syntax for unicode variables.
+unicode. Use %(name)s = "value" syntax for unicode variables.
 
 Also check your "-*- coding -*-" line at the top of your configuration
 file. It should match the actual charset of the configuration file.
@@ -417,7 +412,7 @@ options_no_group_name = {
     'editor': ('Editor', None, (
         ('edit_locking_policy', 'lock', "Editor locking policy: None or 'lock'"),  # 'warn' as in 1.9.x is not supported
         ('edit_lock_time', 10, "Time, in minutes, to hold or renew edit lock at start of edit or preview"),
-        # ('item_license', u'', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
+        # ('item_license', '', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
         # ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
     )),
     # ==========================================================================

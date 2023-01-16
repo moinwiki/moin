@@ -6,14 +6,13 @@ MoinMoin - Blog itemtype
 """
 
 
-import time
 from datetime import datetime
 
 from flask import request, abort
 from flask import g as flaskg
 from flask import current_app as app
 
-from whoosh.query import Term, And, Prefix, DateRange
+from whoosh.query import Term, And, Prefix
 from whoosh.sorting import FunctionFacet
 
 from moin.i18n import L_
@@ -51,7 +50,7 @@ class Blog(Default):
         meta_form = BlogMetaForm
         meta_template = 'blog/modify_main_meta.html'
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         """
         Show a blog item and a list of its blog entries below it.
 
@@ -61,13 +60,12 @@ class Blog(Default):
         # for now it is just one tag=value, later it could be tag=value1&tag=value2&...
         tag = request.values.get('tag')
         prefix = self.name + '/'
-        current_timestamp = int(time.time())
         terms = [Term(WIKINAME, app.cfg.interwikiname),
                  # Only blog entry itemtypes
                  Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY),
                  # Only sub items of this item
                  Prefix(NAME_EXACT, prefix),
-                ]
+                 ]
         if tag:
             terms.append(Term(TAGS, tag))
         query = And(terms)
@@ -92,7 +90,7 @@ class Blog(Default):
                                blog_entry_items=blog_entry_items,
                                tag=tag,
                                item=self,
-                              )
+                               )
 
 
 @register
@@ -114,7 +112,7 @@ class BlogEntry(Default):
                 form['meta_form']['ptime'].set(datetime.utcnow())
             return form
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         blog_item_name = self.name.rsplit('/', 1)[0]
         try:
             blog_item = Item.create(blog_item_name)
@@ -129,4 +127,4 @@ class BlogEntry(Default):
                                blog_item=blog_item,
                                blog_entry_item=self,
                                item=self,
-                              )
+                               )

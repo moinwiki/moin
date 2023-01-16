@@ -39,7 +39,8 @@ def sitemap():
         priority = "0.5"
         sitemap += [(fqname, format_timestamp(mtime), changefreq, priority) for fqname in fqnames]
     # add entries for root urls
-    root_mapping = [(namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root)) for namespace, _ in app.cfg.namespace_mapping]
+    root_mapping = [(namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root))
+                    for namespace, _ in app.cfg.namespace_mapping]
     query = Or([And([Term(NAME_EXACT, root), Term(NAMESPACE, namespace)]) for namespace, root in root_mapping])
     for rev in flaskg.storage.search(q=query):
         mtime = rev.meta[MTIME]
@@ -56,7 +57,7 @@ def urls_names():
 
     This view generates a list of item URLs and item names, so that other wikis
     can implement SisterWiki functionality easily.
-    See: http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
+    See: http://meatballwiki.org/wiki/SisterSitesImplementationGuide
     """
     # XXX we currently also get deleted items, fix this
     fq_names = []

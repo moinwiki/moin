@@ -10,7 +10,7 @@ from io import BytesIO
 
 from flask import url_for
 from flask import g as flaskg
-from werkzeug.datastructures import ImmutableMultiDict, FileStorage
+from werkzeug.datastructures import FileStorage
 
 from moin.apps.frontend import views
 from moin import user
@@ -39,7 +39,10 @@ class TestFrontend:
                 assert rv.headers['Content-Type'] in content_types
                 if method == 'GET':
                     for item in data:
-                        assert item in rv_data
+                        if item == '<!doctype html':  # TODO: remove workaround when Werkzeug >= 2.1.2 is set
+                            assert item in str(rv_data).lower()
+                        else:
+                            assert item in rv_data
         return rv
 
     def _test_view_post(self, viewname, status='302 FOUND', content_types=('text/html; charset=utf-8', ), data=('<html>', '</html>'), form=None, viewopts=None):
@@ -85,9 +88,9 @@ class TestFrontend:
         self._test_view_post('frontend.ajaxmodify', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
 
     def test_jfu_server(self):
-        self._test_view_post('frontend.jfu_server', status='200 OK', data=['{', '}'], form=dict(
-            data_file=FileStorage(BytesIO(b"Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
-        ), viewopts=dict(item_name='WillBeCreated'), content_types=['application/json', ])
+        self._test_view_post('frontend.jfu_server', status='200 OK', content_types=['application/json', ], data=['{', '}'], form=dict(
+            file_storage=FileStorage(BytesIO(b"Hello, world"), filename='C:\\fakepath\\DoesntExist.txt', content_type='text/plain; charset=utf-8'),
+        ), viewopts=dict(item_name='WillBeCreated'))
 
     def test_show_item(self):
         self._test_view('frontend.show_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -175,7 +178,7 @@ class TestFrontend:
         self._test_view('frontend.orphaned_items')
 
     def test_quicklink_item(self):
-        self._test_view('frontend.quicklink_item', status='302 FOUND', viewopts=dict(item_name='DoesntExist'), data=['<!DOCTYPE HTML'])
+        self._test_view('frontend.quicklink_item', status='302 FOUND', viewopts=dict(item_name='DoesntExist'), data=['<!doctype html'])
 
     def test_subscribe_item(self):
         self._test_view('frontend.subscribe_item', status='404 NOT FOUND', viewopts=dict(item_name='DoesntExist'))
@@ -184,7 +187,7 @@ class TestFrontend:
         self._test_view('frontend.register')
 
     def test_verifyemail(self):
-        self._test_view('frontend.verifyemail', status='302 FOUND', data=['<!DOCTYPE HTML'])
+        self._test_view('frontend.verifyemail', status='302 FOUND', data=['<!doctype html'])
 
     def test_lostpass(self):
         self._test_view('frontend.lostpass')
@@ -196,16 +199,16 @@ class TestFrontend:
         self._test_view('frontend.login')
 
     def test_logout(self):
-        self._test_view('frontend.logout', status='302 FOUND', data=['<!DOCTYPE HTML'])
+        self._test_view('frontend.logout', status='302 FOUND', data=['<!doctype html'])
 
     def test_usersettings_notloggedin(self):
         # if a anon user visits usersettings view, he'll get redirected to the login view
-        self._test_view('frontend.usersettings', status='302 FOUND', data=['<!DOCTYPE HTML'])
+        self._test_view('frontend.usersettings', status='302 FOUND', data=['<!doctype html'])
 
     # TODO: implement test_usersettings_loggedin()
 
     def test_bookmark(self):
-        self._test_view('frontend.bookmark', status='302 FOUND', data=['<!DOCTYPE HTML'])
+        self._test_view('frontend.bookmark', status='302 FOUND', data=['<!doctype html'])
 
     def test_diffraw(self):
         # TODO another test with valid rev1 and rev2 url args and an existing item is needed
@@ -218,7 +221,7 @@ class TestFrontend:
 class TestUsersettings:
     reinit_storage = True  # avoid username / email collisions
 
-    @pytest.yield_fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def custom_setup(self, app):
         saved_user = flaskg.user
         flaskg.user = user.User()

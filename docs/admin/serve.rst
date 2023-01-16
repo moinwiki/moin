@@ -80,7 +80,7 @@ so we recommend you read Flask's good deployment documentation.
 Make sure you use `create_app()` as shown above to create the application,
 because you can't import the application from MoinMoin.
 
-Continue reading here: http://flask.pocoo.org/docs/deploying/
+Continue reading here: https://flask.palletsprojects.com/deploying/
 
 In case you run into trouble with deployment of the moin WSGI application,
 you can try a simpler WSGI app first. See `docs/examples/deployment/test.wsgi`.

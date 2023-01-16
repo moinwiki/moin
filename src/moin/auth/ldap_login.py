@@ -19,7 +19,7 @@
 
 
 from moin import user
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.auth import BaseAuth, CancelLogin, ContinueLogin
 
 from moin import log
@@ -44,6 +44,7 @@ class LDAPAuth(BaseAuth):
 
     def __init__(
         self,
+        trusted=True,
         server_uri='ldap://localhost',  # ldap / active directory server URI
                                         # use ldaps://server:636 url for ldaps,
                                         # use  ldap://server for ldap without tls (and set start_tls to 0),
@@ -184,7 +185,7 @@ class LDAPAuth(BaseAuth):
                     'givenname_attribute',
                 ] if getattr(self, attr) is not None]
                 lusers = conn.search_st(self.base_dn, self.scope, filterstr,
-                                     attrlist=attrs, timeout=self.timeout)
+                                        attrlist=attrs, timeout=self.timeout)
                 # we remove entries with dn == None to get the real result list:
                 lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
                 for _dn, _ldap_dict in lusers:
@@ -248,7 +249,7 @@ class LDAPAuth(BaseAuth):
                 logging.debug("creating user object with name {0!r} email {1!r} display name {2!r}".format(
                     username, email, display_name))
 
-            except ldap.INVALID_CREDENTIALS as err:
+            except ldap.INVALID_CREDENTIALS:
                 logging.debug("invalid credentials (wrong password?) for dn {0!r} (username: {1!r})".format(
                     dn, username))
                 return CancelLogin(_("Invalid username or password."))

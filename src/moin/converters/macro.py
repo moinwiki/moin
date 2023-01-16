@@ -12,7 +12,7 @@ from flask import current_app as app
 from emeraldtree import ElementTree as ET
 
 from moin.utils import plugins
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils import iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page

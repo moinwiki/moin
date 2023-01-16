@@ -68,6 +68,8 @@ class TestConverter:
          '<sup>super</sup>script\n'),
         ('<sub>sub</sub>script\n',
          '<sub>sub</sub>script\n'),
+        ('<hr>\n\n<hr>\n\n<hr>\n',
+         '----\n\n----\n\n----\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -93,7 +95,7 @@ class TestConverter:
         ('[TOC]\n',
          '[TOC]\n'),
         ('|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n',
-         '|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered{: class="center"}|$12{: class="right"}|Gloves{: class="left"}|\n'),
+         '|Tables|Are|Very|Cool|\n|------|:----:|-----:|:-----|\n|col 2 is|centered|$12|Gloves|\n'),
         # TODO: wrong output, creates indented blockcode, loses fenced code language
         # fix probably requires replacing site-packages/markdown/extensions/codehilite.py
         ('``` javascript\nvar s = "JavaScript syntax highlighting";\nalert(s);\n```\n',
@@ -120,8 +122,8 @@ class TestConverter:
          'Footnotes[^1] have a label[^label] and a definition[^!DEF].\n'),
         # TODO: test footnote placement succeeds but output is wrong, and other tests will fail due to pytest multithreading
         # fix probably requires replacing site-packages/markdown/extensions/footnotes.py
-        # (u'Footnotes[^a]\n\n[^a]: This is a footnote.\n',
-        #  u'Footnotes<sup>1</sup>\n\n----\n\n1. This is a footnote.\xa0[\u21a9](#fnref:a){: class="footnote-backref" title="Jump back to footnote 1 in the text"}\n'),
+        # ('Footnotes[^a]\n\n[^a]: This is a footnote.\n',
+        #  'Footnotes<sup>1</sup>\n\n----\n\n1. This is a footnote.\xa0[\u21a9](#fnref:a){: class="footnote-backref" title="Jump back to footnote 1 in the text"}\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -172,11 +174,11 @@ class TestConverter:
         ('|A|B|C|\n|-|-|-|\n|1|2|3|\n',
          '|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
         ('|A|B|C|\n|:-|:-:|-:|\n|1|2|3|\n',
-         '|A|B|C|\n|:-----|:----:|-----:|\n|1{: class="left"}|2{: class="center"}|3{: class="right"}|\n'),
+         '|A|B|C|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
         ('A|B|C\n-|-|-\n1|2|3\n',
          '|A|B|C|\n|------|------|------|\n|1|2|3|\n'),
         ('`A`|*B*|_C_\n:-|:-:|-:\n1|2|3\n',
-         '|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1{: class="left"}|2{: class="center"}|3{: class="right"}|\n'),
+         '|`A`|*B*|*C*|\n|:-----|:----:|-----:|\n|1|2|3|\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)

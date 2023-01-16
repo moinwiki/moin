@@ -31,7 +31,7 @@ class LocalConfig(Config):
     sitename = 'My MoinMoin'
 
     # default root, use this to change the name of the default page
-    # default_root = u'Home'  # FrontPage, Main, etc
+    # default_root = 'Home'  # FrontPage, Main, etc
 
     # options for new user registration
     registration_only_by_superuser = True  # if email configured, superuser can do > Admin > Register New User
@@ -44,7 +44,7 @@ class LocalConfig(Config):
     # user_email_verification = True  # less secure, web bots may create many unverified accounts with fake email addresses
 
     # to configure email, uncomment line below and choose (a) or (b)
-    # mail_from = u"wiki <wiki@example.org>"  # the "from:" address [Unicode]
+    # mail_from = "wiki <wiki@example.org>"  # the "from:" address [Unicode]
     # (a) using an SMTP server, e.g. "mail.provider.com" with optional `:port`appendix, which defaults to 25 (set None to disable mail)
     # mail_smarthost = "smtp.example.org"  # 'smtp.gmail.com:587'
     # mail_username = "smtp_username"

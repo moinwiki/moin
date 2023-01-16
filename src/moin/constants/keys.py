@@ -6,7 +6,9 @@ MoinMoin - meta data key / index field name related constants
 """
 
 # metadata keys
-NAME = "name"
+NAME = "name"  # a list of strings, not useful for searching nor sorting, see #364
+NAMES = "names"  # fullnames of item separated by |, useful for indexing/searching/display
+NAME_SORT = "name_sort"  # useful for sorting, slashes removed because of whoosh, see #209
 NAME_OLD = "name_old"
 NAMESPACE = "namespace"
 
@@ -31,8 +33,11 @@ EXTERNALLINKS = "externallinks"
 ITEMLINKS = "itemlinks"
 ITEMTRANSCLUSIONS = "itemtransclusions"
 TAGS = "tags"
-TEMPLATE = 'template'  # a TAGS value identifying an item as a template
+HAS_TAG = "has_tag"
+TEMPLATE = "template"  # a TAGS value identifying an item as a template
 CONTENTNGRAM = "contentngram"
+SUMMARYNGRAM = "summaryngram"
+NAMENGRAM = "namengram"
 
 ACTION = "action"
 ADDRESS = "address"
@@ -161,7 +166,7 @@ FQNAME = 'fqname'
 FQNAMES = 'fqnames'
 # Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
 FIELDS = [
-    NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS
+    NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS,
 ]
 # Fields that can be used as a unique identifier.
 UFIELDS = [

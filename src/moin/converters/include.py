@@ -90,22 +90,21 @@ In the example above, only class="comment" will be applied to detail.csv.
 
 from emeraldtree import ElementTree as ET
 import re
-import types
 import copy
 
 from flask import current_app as app
 from flask import g as flaskg
 
-from whoosh.query import Term, And, Wildcard, Regex
+from whoosh.query import Term, And, Regex
 
-from moin.constants.keys import NAME, NAME_EXACT, WIKINAME
+from moin.constants.keys import NAME_EXACT, WIKINAME
 from moin.items import Item
 from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
 from moin.utils.tree import html, moin_page, xinclude, xlink
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.converters.html_out import mark_item_as_transclusion, Attributes
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 from . import default_registry
 from ._args import Arguments
@@ -132,7 +131,7 @@ class XPointer(list):
     """
     Simple XPointer parser
 
-    parses strings like u'xmlns(page=http://moinmo.in/namespaces/page)page:include(pages(^^pn))'
+    parses strings like 'xmlns(page=http://moinmo.in/namespaces/page)page:include(pages(^^pn))'
     """
 
     tokenizer_rules = r"""
@@ -188,10 +187,6 @@ class XPointer(list):
             stack[-1].extend(top)
 
         if name:
-            if stack:
-                data = ''.join(stack.pop())
-            else:
-                data = None
             self.append(self.Entry(''.join(name), None))
 
 
@@ -257,7 +252,8 @@ class Converter:
                         for entry in xp_include:
                             name, data = entry.name, entry.data_unescape
                             # TODO: These do not include all parameters in moin 1.9 Include macro docs:
-                            # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending, items=n, skipitems=n, titlesonly, editlink)>>
+                            # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending,
+                            #           items=n, skipitems=n, titlesonly, editlink)>>
                             # these are currently unsupported in moin 2.0: from, to, titlesonly, editlink
                             if name == 'pages':  # pages == pagename in moin 1.9
                                 xp_include_pages = data
@@ -314,7 +310,7 @@ class Converter:
                     query = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, xp_include_pages)])
                     reverse = xp_include_sort == 'descending'
                     results = flaskg.storage.search(query, sortedby=NAME_EXACT, reverse=reverse, limit=None)
-                    pagelist = [result.name for result in results]
+                    pagelist = [result.fqname.fullname for result in results]
                     if xp_include_skipitems is not None:
                         pagelist = pagelist[xp_include_skipitems:]
                     if xp_include_items is not None:
@@ -422,7 +418,8 @@ class Converter:
                                     # is usually replaced by container
                                     return [container, new_trans_ptr]
                             else:
-                                # default action for inline transclusions or odd things like circular transclusion error messages
+                                # default action for inline transclusions or odd things like
+                                # circular transclusion error messages
                                 classes = child.attrib.get(html.class_, '').split()
                                 classes += ret.attrib.get(html.class_, '').split()
                                 ret.attrib[html.class_] = ' '.join(classes)

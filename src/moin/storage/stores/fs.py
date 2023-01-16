@@ -11,8 +11,7 @@ import os
 import errno
 import shutil
 
-from . import (BytesMutableStoreBase, FileMutableStoreBase,
-               BytesMutableStoreMixin, FileMutableStoreMixin)
+from . import (BytesMutableStoreBase, FileMutableStoreBase, BytesMutableStoreMixin)
 
 
 class FileStore(FileMutableStoreBase):

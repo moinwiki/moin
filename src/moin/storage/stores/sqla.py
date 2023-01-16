@@ -7,11 +7,14 @@ MoinMoin - sqlalchemy store
 Stores k/v pairs into any database supported by sqlalchemy.
 """
 
+import os
+
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, LargeBinary
 from sqlalchemy.pool import StaticPool
+from sqlalchemy.exc import IntegrityError
 
-from . import (BytesMutableStoreBase, FileMutableStoreBase,
-               BytesMutableStoreMixin, FileMutableStoreMixin)
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
+from . import (BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin)
 
 KEY_LEN = 128
 VALUE_LEN = 1024 * 1024  # 1MB binary data
@@ -46,6 +49,10 @@ class BytesStore(BytesMutableStoreBase):
         self.engine = None
         self.table = None
         self.table_name = table_name
+        if db_uri.startswith('sqlite:///'):
+            db_path = os.path.dirname(self.db_uri.split('sqlite:///')[1])
+            if not os.path.exists(db_path):
+                os.makedirs(db_path)
 
     def open(self):
         db_uri = self.db_uri
@@ -62,7 +69,7 @@ class BytesStore(BytesMutableStoreBase):
         self.table = Table(self.table_name, metadata,
                            Column('key', String(KEY_LEN), primary_key=True),
                            Column('value', LargeBinary(VALUE_LEN)),
-                          )
+                           )
 
     def close(self):
         self.engine.dispose()
@@ -94,7 +101,14 @@ class BytesStore(BytesMutableStoreBase):
             raise KeyError(key)
 
     def __setitem__(self, key, value):
-        self.table.insert().execute(key=key, value=value)
+        try:
+            self.table.insert().execute(key=key, value=value)
+        except IntegrityError:
+            if NAMESPACE_USERPROFILES in self.db_uri:
+                # userprofiles namespace does support revisions so we update existing row
+                self.table.update().execute(key=key, value=value)
+            else:
+                raise
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):

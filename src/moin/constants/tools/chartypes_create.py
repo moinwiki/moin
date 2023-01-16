@@ -14,15 +14,15 @@ def main():
     space = []
     for code in range(1, 65535):
         c = chr(code)
-        str = "\\u{0:04x}".format(code)
+        string = "\\u{0:04x}".format(code)
         if c.isupper():
-            uppercase.append(str)
+            uppercase.append(string)
         elif c.islower():
-            lowercase.append(str)
+            lowercase.append(string)
         elif c.isdigit():
-            digits.append(str)
+            digits.append(string)
         elif c.isspace():
-            space.append(str)
+            space.append(string)
 
     chars_upper = ''.join(uppercase)
     chars_lower = ''.join(lowercase + digits)
@@ -30,13 +30,13 @@ def main():
     chars_spaces = ''.join(space)
 
     print("""
-CHARS_UPPER = u"%(chars_upper)s"
+CHARS_UPPER = "%(chars_upper)s"
 
-CHARS_LOWER = u"%(chars_lower)s"
+CHARS_LOWER = "%(chars_lower)s"
 
-CHARS_DIGITS = u"%(chars_digits)s"
+CHARS_DIGITS = "%(chars_digits)s"
 
-CHARS_SPACES = u"%(chars_spaces)s"
+CHARS_SPACES = "%(chars_spaces)s"
 
 
 """ % locals())

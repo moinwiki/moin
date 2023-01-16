@@ -16,7 +16,7 @@ import sys
 
 # do this early, but not in moin/__init__.py because we need to be able to
 # "import moin" from setup.py even before flask, werkzeug, ... is installed.
-from moin.utils import monkeypatch
+from moin.utils import monkeypatch  # noqa
 
 from flask import Flask, request, session
 from flask import current_app as app
@@ -30,7 +30,6 @@ from whoosh.index import EmptyIndexError
 
 from moin.constants.misc import ANON
 from moin.i18n import i18n_init
-from moin.i18n import _, L_, N_
 from moin.themes import setup_jinja_env, themed_error
 from moin.utils.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
@@ -87,14 +86,13 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
             if not path.exists(flask_config_file):
                 flask_config_file = path.abspath('wikiconfig.py')
                 if not path.exists(flask_config_file):
-                    # we should be here only because wiki admin is performing `moin create-instance`
-                    if 'create-instance' in sys.argv:
+                    # we should be here only because wiki admin is running
+                    # `moin help` or `moin create-instance`
+                    if 'create-instance' in sys.argv or 'help' in sys.argv:
                         config_path = path.dirname(config.__file__)
                         flask_config_file = path.join(config_path, 'wikiconfig.py')
                     else:
                         flask_config_file = None
-            else:
-                logging.warning("Use of wikiconfig_editme.py is deprecated, merge into wikiconfig.py.")
             if flask_config_file:
                 app.config.from_pyfile(path.abspath(flask_config_file))
     if flask_config_dict:
@@ -150,8 +148,8 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     app.register_blueprint(serve, url_prefix='/+serve')
     clock.stop('create_app register')
     clock.start('create_app flask-cache')
-    # the 'simple' caching uses a dict and is not thread safe according to the docs.
-    cache = Cache(config={'CACHE_TYPE': 'simple'})
+    # 'SimpleCache' caching uses a dict and is not thread safe according to the docs.
+    cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
     cache.init_app(app)
     app.cache = cache
     clock.stop('create_app flask-cache')
@@ -200,8 +198,9 @@ def init_backends(app):
     try:
         app.storage.open()
     except EmptyIndexError:
-        # we should be here only because wiki admin is performing `moin create-instance`
-        if 'create-instance' in sys.argv:
+        # we should be here only because wiki admin is running
+        # `moin help` or `moin create-instance`
+        if 'create-instance' in sys.argv or 'help' in sys.argv:
             pass
         else:
             raise
@@ -305,4 +304,17 @@ def teardown_wiki(response):
             flaskg.edit_utils.conn.close()
         except AttributeError:
             pass
+    try:
+        # whoosh cache performance
+        for cache in (flaskg.storage.parse_acl, flaskg.storage.eval_acl,
+                      flaskg.storage.get_acls, flaskg.storage.allows, ):
+            if cache.cache_info()[3] > 0:
+                msg = 'cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s' % (
+                    (cache.__name__, ) + cache.cache_info()
+                )
+                logging.debug(msg)
+    except AttributeError:
+        # moin commands may not have flaskg.storage
+        pass
+
     return response

@@ -16,15 +16,11 @@ Wikis:
 
 Documentation (installation, configuration, user docs, api reference):
 
-* http://readthedocs.org/docs/moin-20/en/latest/
+* https://moin-20.readthedocs.io/en/latest/
 
 Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
 
 * https://github.com/moinwiki/moin
-
-Pastebin (temporary storage - do not use for code review or any long-term need):
-
-* http://rn0.ru/
 
 
 Requirements for development
@@ -33,10 +29,10 @@ Requirements for development
 The `virtualenv` Python package is required.
 The installation process for `virtualenv` varies with your OS and Python distribution.
 Many linux distributions have a package manager that may do the installation.
-Windows users (and perhaps others) may download setuptools from https://pypi.python.org/pypi/setuptools.
+Windows users (and perhaps others) may download setuptools from https://pypi.org/project/setuptools/.
 Once setuptools is installed, do "`easy_install virtualenv`".
 Current ActiveState distributions include virtualenv in the installation bundle.
-If all else fails, try Google.
+If all else fails, try your favorite search engine.
 
 git is required should you wish to contribute patches to the moin2 development effort.
 Even if you do not intend to contribute, git is highly recommended as it
@@ -59,9 +55,15 @@ create your development environment
 
     cd <parent_directory_of_your_future_repo>
     git clone https://github.com/yourname/moin.git
+* cd to repo root::
+
+    cd moin
 * create the virtualenv and download packages::
 
     python quickinstall.py
+* activate virtualenv::
+
+    . activate  # Windows: activate
 * create a wiki instance and load sample data::
 
     ./m sample  # Windows: m sample
@@ -82,7 +84,7 @@ add more tools, exercise tools
 
     ./m tests  # Windows: m tests
 
-* install NodeJS and NPM with Linux package manager; Windows users may download both from http://nodejs.org/download/
+* install NodeJS and NPM with Linux package manager; Windows users may download both from https://nodejs.org/download/
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
@@ -113,13 +115,13 @@ add more tools, exercise tools
   - use mono-spaced font for editing
 * if you are new to git, read about it (https://git-scm.com/book/),
   consider printing a cheatsheet
-* if you want a Python IDE, try http://www.jetbrains.com/pycharm/ Free Community Edition
+* if you want a Python IDE, try https://www.jetbrains.com/pycharm/ Free Community Edition
 * join #moin-dev IRC channel; ask questions, learn what other developers are doing
 
 review configuration options
 ----------------------------
 
-* review https://moin-20.readthedocs.org/en/latest/admin/configure.html
+* review https://moin-20.readthedocs.io/en/latest/admin/configure.html
 * following the instructions in wikiconfig.py, create wikiconfig_local.py and wikiconfig_editme.py
 * configure options by editing wikiconfig_editme.py
 
@@ -188,7 +190,7 @@ review your working solution
 * fix everything you find before requesting feedback from others
 * run tests again "./m tests"
 * check for trailing spaces, line endings, template indentation "./m coding-std"
-* if Javascript files were changed, run http://jslint.com/
+* if Javascript files were changed, run https://www.jslint.com/
 
 publish your change
 -------------------
@@ -246,15 +248,15 @@ to acquire a more in-depth understanding, please read the other docs and code.
 
 WSGI application creation
 -------------------------
-First, the moin Flask application is created; see `MoinMoin.app.create_app`:
+First, the moin Flask application is created; see `moin.app.create_app`:
 
 * load the configuration (app.cfg)
 * register some modules that handle different parts of the functionality
 
-  - MoinMoin.apps.frontend - most of what a normal user uses
-  - MoinMoin.apps.admin - for admins
-  - MoinMoin.apps.feed - feeds, e.g. atom
-  - MoinMoin.apps.serve - serving some configurable static third party code
+  - moin.apps.frontend - most of what a normal user uses
+  - moin.apps.admin - for admins
+  - moin.apps.feed - feeds, e.g. atom
+  - moin.apps.serve - serving some configurable static third party code
 * register before/after request handlers
 * initialize the cache (app.cache)
 * initialize index and storage (app.storage)
@@ -270,13 +272,13 @@ Let's look at how it shows a wiki item:
 
 * the Flask app receives a GET request for /WikiItem
 * Flask's routing rules determine that this request should be served by
-  `MoinMoin.apps.frontend.show_item`.
+  `moin.apps.frontend.show_item`.
 * Flask calls the before request handler of this module, which:
 
   - sets up the user as flaskg.user - an anonymous user or logged in user
   - initializes dicts/groups as flaskg.dicts, flaskg.groups
   - initializes jinja2 environment - templating
-* Flask then calls the handler function `MoinMoin.apps.frontend.show_item`,
+* Flask then calls the handler function `moin.apps.frontend.show_item`,
   which:
 
   - creates an in-memory Item
@@ -295,13 +297,13 @@ Storage
 -------
 Moin supports different stores, like storing directly into files /
 directories, using key/value stores, using an SQL database etc, see
-`MoinMoin.storage.stores`. A store is extremely simple: store a value
+`moin.storage.stores`. A store is extremely simple: store a value
 for a key and retrieve the value using the key + iteration over keys.
 
 A backend is one layer above. It deals with objects that have metadata and
-data, see `MoinMoin.storage.backends`.
+data, see `moin.storage.backends`.
 
-Above that, there is miscellaneous functionality in `MoinMoin.storage.middleware` for:
+Above that, there is miscellaneous functionality in `moin.storage.middleware` for:
 
 * routing by namespace to some specific backend
 * indexing metadata and data + comfortable and fast index-based access,
@@ -322,7 +324,7 @@ input and output mimetypes / contenttypes.
 
 For example, if the contenttype is `text/x-moin-wiki;charset=utf-8`, it will
 find that the input converter handling this is the one defined in
-`converter.moinwiki_in`. It then feeds the data of this item into this
+`converters.moinwiki_in`. It then feeds the data of this item into this
 converter. The converter parses this input and creates an in-memory `dom tree`
 representation from it.
 
@@ -337,13 +339,13 @@ Finally, the dom-tree will reach the output converter, which will transform it
 into the desired output format, such as `text/html`.
 
 This is just one example of a supported transformation. There are quite a few
-converters in `MoinMoin.converter` supporting different input formats,
+converters in `moin.converters` supporting different input formats,
 dom-dom transformations and output formats.
 
 Templates and Themes
 --------------------
 Moin uses jinja2 as its templating engine and Flask-Themes as a flask extension to
-support multiple themes. There is a ``MoinMoin/templates`` directory that contains
+support multiple themes. There is a ``moin/templates`` directory that contains
 a base set of templates designed for the Modernized theme. Other themes may
 override or add to the base templates with a directory named ``themes/<theme_name>/templates``.
 
@@ -354,13 +356,14 @@ also be given directly to the render call.
 Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in
 MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
 ``static/custom-less`` directory.
+::
 
     ./m css  # Windows: m css
 
 Internationalization in MoinMoin's JS
 -------------------------------------
 Any string which has to be translated and used in the JavaScript code, has to be defined
-at ``MoinMoin/templates/dictionary.js``. This dictionary is loaded when the page loads and
+at ``moin/templates/dictionary.js``. This dictionary is loaded when the page loads and
 the translation for any string can be received by passing it as a parameter to the ``_`` function,
 also defined in the same file.
 
@@ -411,11 +414,11 @@ Writing tests
 Writing tests with `pytest` is easy and has little overhead. Just
 use the `assert` statements.
 
-For more information, please read: http://pytest.org/
+For more information, please read: https://docs.pytest.org/
 
 Documentation
 =============
-Sphinx (http://sphinx.pocoo.org/) and reST markup are used for documenting
+Sphinx (https://www.sphinx-doc.org) and reST markup are used for documenting
 moin. Documentation reST source code, example files and some other text files
 are located in the `docs/` directory in the source tree.
 

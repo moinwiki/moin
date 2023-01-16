@@ -19,32 +19,61 @@ initially hidden by CSS, and displayed when the user clicks a button.
     {{ itemviews }}
 {% endblock %}
 
-{% set maxchars = 16 %}
-
 {# Each item entry is formatted by the following macro. The entry includes
-a checkbox, an invisible link used by js for download, a link to the item (CSS
-places a content type icon before the link), and a link to display subitems
-(if the item has subitems). #}
+a checkbox, an invisible link used by js for download, a link to the item
+(CSS places a content type icon before the link), a link to display subitems
+(if the item has subitems), size, number revisions, editor and modified time. #}
 {% macro render_file_entry(e) %}
-    <div>
-        <span class="moin-select-item">
-            <input type="checkbox">
-        </span>
-        {% set mimetype = "application/x.moin.download" %}
-        <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
-        </a>
-        <a href="{{ url_for('.show_item', item_name=e.fullname) }}"
-           class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }} moin-item"
-           title="{{ e.relname }} - {{ e.meta['contenttype']|shorten_ctype }}">
-           {{ e.relname|truncate(maxchars, true, '..') }}
-        </a>
-        {% if e.fullname in dirs_fullname %}
-            <a href="{{ url_for('.index', item_name=e.fullname) }}"
-               title="{{ _("This item has subitems that match your filter.") }}">
-               <i class="fa fa-arrow-down"></i>
+    <tr>
+        <td class="moin-index-icons">
+            <span class="moin-select-item">
+                <input class="moin-item" type="checkbox" value="{{ url_for('.show_item', item_name=e.fullname) }}"/>
+                {% set mimetype = "application/x.moin.download" %}
+                {# invisible link below is used by js to download item #}
+                <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
+                </a>
+            </span>
+            {# invisible span below has css before attribute to show mimetype icon #}
+            <span class="{{ e.meta['contenttype']|contenttype_to_class }} moin-itemtype-{{ e.meta['itemtype'] }}"
+                title="{{ e.meta['contenttype']|shorten_ctype }}">
+            </span>
+            <a href="{{ url_for('frontend.history', item_name=e.fullname) }}">
+                <span class="fa fa-clock-o" title="{{ _('Item History') }}"></span>
             </a>
-        {% endif %}
-    </div>
+        </td>
+        <td>
+            {%- if e.meta.namespace %}
+                {#- we use a leading / to indicate item is not in default namespace #}
+                {%- set name = "/" + str(e.fullname) %}
+            {%- else %}
+                {%- set name = e.fullname %}
+            {%- endif %}
+            {#- hack to make items in default namespace sort first #}
+            <span class="hidden">{{ e.fullname.namespace or "!" }}</span>
+            <a href="{{ url_for('.show_item', item_name=e.fullname) }}">
+               {{ name }}
+            </a>
+            {%- if e.fullname in dirs_fullname %}
+                <a href="{{ url_for('.index', item_name=e.fullname) }}"
+                   title="{{ _("This item has subitems that match your filter.") }}">
+                   <i class="fa fa-arrow-down"></i>
+                </a>
+            {%- endif %}
+        </td>
+        <td class="moin-integer">{{ e.meta.size }}</td>
+        <td class="moin-integer">{{ e.meta.rev_number }}</td>
+        {%- if e.meta.userid %}
+            {%- set editor_name, editor_email = editors[e.meta.userid] %}
+            {%- if editor_email %}
+                <td><a href="mailto:{{ editor_email }}" title="{{ e.meta.address }}">{{ editor_name }}</td>
+            {%- else %}
+                <td><a href="{{ url_for_item(editor_name, wiki_name=app.cfg.user_homewiki, namespace='users') }}" title="{{ e.meta.address }}">{{ editor_name }}</td>
+            {%- endif %}
+        {%- else %}
+            <td>{{ e.meta.address }}</td>
+        {%- endif %}
+        <td>{{ e.meta.mtime|time_datetime }}</td>
+    </tr>
 {% endmacro %}
 
 {% block content %}
@@ -55,14 +84,13 @@ places a content type icon before the link), and a link to display subitems
         <div class="error">
             <p><strong> {{ _("These items have orphan sub-items. Click name to create or arrow to view sub-items.") }} </strong></p>
             {% for dir in missing_dirs %}
-                {% set full_dir = item_name + '/' + dir if item_name else dir %}
                 <p>
-                    <a href="{{ url_for('.show_item', item_name=full_dir) }}"
+                    <a href="{{ url_for('.show_item', item_name=dir.fullname) }}"
                        class="moin-nonexistent moin-item"
-                       title="{{ full_dir }}">
+                       title="{{ dir.fullname }}">
                        {{ dir }}
                     </a>
-                    <a href="{{ url_for('.index', item_name=full_dir) }}"
+                    <a href="{{ url_for('.index', item_name=dir.fullname) }}"
                        title="{{ _("This missing item has subitems that match your filter.") }}">
                        <i class="fa fa-arrow-down"></i>
                     </a>
@@ -78,45 +106,56 @@ places a content type icon before the link), and a link to display subitems
                 {{ _("There are no items or read permission is denied for all.") }}
             </p>
         {% else %}
-            {# display the row of action buttons #}
-            <a href="#" class="moin-select-allitem allitem-toselect moin-button" title="{{ _('Toggle item selections') }}">
-               <i class="fa fa-square-o fa-lg"></i>
-               <span class="moin-select-button-text">{{ _("Select All") }}</span>
-            </a>
-            <a class="moin-button" id="moin-download-trigger" href="#" title="{{ _('Download selected items') }}">
+            {# display the row of action buttons: Select All, Download, Delete, Destroy, Filter, Namespace, New Item #}
+            <span class="moin-select-toggle moin-button" title="{{ _('Toggle item selections') }}">
+               <input type="checkbox" id="moin-select-all"/>
+               <label for="moin-select-all">{{ _("Select All") }}</label>
+            </span>
+            <span class="moin-button" id="moin-download-trigger" title="{{ _('Download selected items') }}">
                <i class="fa fa-download fa-lg"></i>
                {{ _("Download") }}
-            </a>
-            <a class="moin-action-tab moin-button" id="moin-delete-trigger" title="{{ _('Delete selected items') }}"
-               data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}" href="#">
+            </span>
+            <span class="moin-action-tab moin-button" id="moin-delete-trigger" title="{{ _('Delete selected items') }}"
+               data-actionurl="{{ url_for('frontend.ajaxdelete', item_name=item_name) }}">
                <i class="fa fa-minus-circle fa-lg"></i>
                {{ _("Delete") }}
-            </a>
-            <a class="moin-action-tab moin-button" id="moin-destroy-trigger" title="{{ _('Destroy selected items') }}"
-               data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}" href="#">
+            </span>
+            <span class="moin-action-tab moin-button" id="moin-destroy-trigger" title="{{ _('Destroy selected items') }}"
+               data-actionurl="{{ url_for('frontend.ajaxdestroy', item_name=item_name) }}">
                <i class="fa fa-times-circle fa-lg"></i>
                {{ _("Destroy") }}
-            </a>
+            </span>
         {% endif %}
         {% if dirs or files or form.contenttype %}
             {# prior filter action on contenttype may have resulted in no dirs or files #}
-            <a class="moin-ct-toggle moin-button" title="{{ _('Filter items by content type') }}">
+            <span class="moin-ct-toggle moin-button" title="{{ _('Filter items by content type') }}">
                 <i class="fa fa-filter"></i>
                 {{ _("Filter") }}
-            </a>
+            </span>
         {% endif %}
         {# these action buttons have a purpose even when there are no items. #}
-        <a class="moin-ns-toggle moin-button" title="{{ _('Change namespace') }}">
+        <span class="moin-ns-toggle moin-button" title="{{ _('Change namespace') }}">
             <i class="fa fa-list-alt"></i>
             {{ _("Namespace") }}
-        </a>
-        <a class="moin-button" id="moin-create-new-item" href="#" title="{{ _('Open create item dialog') }}" >
+        </span>
+        <span class="moin-newitem-toggle moin-button" id="moin-create-new-item" title="{{ _('Open create item dialog') }}" >
            <i class="fa fa-file-o fa-lg"></i>
            {{ _("New Item") }}
-        </a>
+        </span>
     </div>
 
-    {# Hidden namespace selection popup that is revealed if user clicks namespace button above. #}
+    {% if selected_groups %}
+        <div>
+            <p class="moin-selected-groups">{{ _("Filter is on for these selected groups:") }}</p>
+            <ul>
+                {%- for selection in selected_groups %}
+                    <li class="moin-selected-groups">{{ selection }}</li>
+                {%- endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {# Hidden namespace selection content that is revealed if user clicks namespace button above. #}
     <div class="moin-namespace-selection" style="display: none;">
         <p> {{ _("Click home icon to view namespace home page or click name to view namespace index.") }} </p>
         <ul class="moin-namespaces">
@@ -135,27 +174,52 @@ places a content type icon before the link), and a link to display subitems
         </ul>
     </div>
 
-    {# Hidden filter popup that is revealed if user clicks filter button above. #}
+    {# Hidden filter content that is revealed if user clicks filter button above. #}
     <div class="moin-contenttype-selection" style="display: none;">
         {% set unknown_items_label = _("items having unknown mime types") %}
         {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
-            <ul>
-                {{ forms.render(form['contenttype']) }}
-            </ul>
             <a href="#" class="moin-filter-toggle moin-button">
                 <i class="fa fa-refresh"></i>
                 {{ _("Toggle") }}
             </a>
+            <ul>
+                {{ forms.render(form['contenttype']) }}
+            </ul>
             {{ forms.render_submit(form) }}
         {{ gen.form.close() }}
     </div>
 
-    {# If this is an index of subitems, display links to Global Index and any parent subitems. #}
+    {# Hidden New Item content that is revealed if user clicks New Item button above. #}
+    <div class="moin-newitem-selection" style="display: none;">
+        <br/>
+        <form class="moin-new-item" action={{ url_for('.ajaxmodify') }} method="post">
+            <label for="moin-newitem">{{ _("Item name") }}</label>
+            {% if item_name %}
+                <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
+            {% else %}
+                <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
+            {% endif %}
+            <input class="moin-button" type="submit" value="{{ _("Create") }}"/>
+        </form>
+        <div id="moin-upload-cont">
+            <div class="hint">
+                <p>{{ _("Enter Item name and click Create button above to edit or upload one item.
+                    To upload multiple files click the button below to open a file selection dialog,
+                    or drag and drop multiple files here.") }}
+                </p>
+            </div>
+            {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
+            {{ forms.render_file_uploader(submit_url) }}
+        </div>
+    </div>
+
+    {# If this is an index of subitems, display links to Global Index and all parent subitems. #}
     <div>
         {% if item_name: %}
             <div class="moin-index-path">
-                <i class="fa fa-folder-o"></i>
-                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}" class="moin-bigger">..</a>
+                <a href="{{ url_for('frontend.index') }}" title="{{ _("Global Index") }}">
+                    <i class="fa fa-level-up"></i>
+                </a>
                 <span class="moin-path-separator">{{ ("/") }}</span>
                 {% for i in range(0, item_names|count) %}
                     {% set fullname = item_names[:i+1]|join('/') %}
@@ -172,9 +236,8 @@ places a content type icon before the link), and a link to display subitems
     </div>
 
     <div class='moin-clr'></div>
-
     {% if files or dirs %}
-        {# display row of buttons, first is Show All remainder is first letter of items. #}
+        {# display row of buttons, Show All, followed by first letter of items. #}
         <div id="moin-initials">
             {# one button will be highlighted via the selected class, either Show All or some letter. #}
             {% if not startswith %}
@@ -190,32 +253,52 @@ places a content type icon before the link), and a link to display subitems
             {% endif %}
             {% for initial in initials %}
                 {% if startswith == initial %}
-                    <a class="selected moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                    <a class="selected moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial, initials=','.join(initials)) }}">{{ initial }}</a>
                 {% else %}
-                    <a class="moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial) }}">{{ initial }}</a>
+                    <a class="moin-button" href="{{ url_for('frontend.index', item_name=item_name, startswith=initial, initials=','.join(initials)) }}">{{ initial }}</a>
                 {% endif %}
             {% endfor %}
         </div>
-        {% if files %}
-            {# Finally! this is what user wants to see - the list of items. #}
-            <div class="moin-item-index">
-                {% for e in files %}
-                    {{ render_file_entry(e) }}
-                {% endfor %}
-            </div>
-            <div class="moin-clr"></div>
-        {% endif %}
     {% endif %}
 
+    {# Finally! this is what user wants to see - the list of items. jfu.js needs moin-index class. #}
+    <table class="moin-index moin-sortable">
+        <thead>
+            <tr>
+                <th class="sorter-false moin-num-rows" title='{{ _("Number Items") }}'></th>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Revisions</th>
+                <th>Editor</th>
+                <th>Modified</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in files %}
+                {{ render_file_entry(e) }}
+            {% endfor %}
+        </tbody>
+    </table>
+
     {# initially hidden by CSS, index_action.js displays this as a popup
-    if user clicks on Download, Delete, or Destroy button #}
-    <div id="popup">
+    if user clicks on Delete or Destroy button #}
+    <div id="popup" class="moin-new-item">
         <div id="popup-for-action" class="popup-container">
             <div class="popup-header">
                 <input type="button" class="popup-closer popup-cancel" value="{{ _("X") }}" title="{{ _("Close") }}"/>
                 <span>{{ _("Add optional comment for change log.") }}</span>
             </div>
             <div class="popup-body">
+                <div class="caution">
+                    <p class="popup-selected-names">{{ _("Selected names: ") }}<span class="popup-names"></span></p>
+                    <p class="popup-alias-names">{{ _("Alias names: ") }}<span class="popup-names"></span></p>
+                    <p>
+                        <input type="checkbox" id="moin-do-subitems"/>
+                        <label for="moin-do-subitems">{{ _("Check to remove subitems") }}</label>
+                    </p>
+                    <p class="popup-subitem-names">{{ _("Subitem names: ") }}<span class="popup-names"></span></p>
+                    <p class="popup-rejected-names hidden">{{ _("Rejected names, permission denied: ") }}<span class="popup-names"></span></p>
+                </div>
                 <input type="text" class="popup-comment" placeholder="{{ _("Enter your comment") }}"/>
                 <input type="hidden" class="popup-action" value=""/>
                 <br/>
@@ -223,45 +306,9 @@ places a content type icon before the link), and a link to display subitems
                 <input type="button" class="moin-button popup-cancel" value="{{ _("Cancel") }}"/>
             </div>
         </div>
-        <div id="popup-for-newitem" class="popup-container">
-            <div class="popup-header">
-                <input type="button" class="popup-closer popup-cancel" value="{{ _("X") }}" title="{{ _("Close") }}"/>
-                <span>{{ _("Create new item") }}</span>
-            </div>
-            <div class="popup-body">
-                <form action={{ url_for('.ajaxmodify') }} method="post">
-                    <label for="moin-newitem">{{ _("Item name") }}</label>
-                    {% if item_name %}
-                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" value="{{ item_name }}/" required="required"/>
-                    {% else %}
-                        <input type="text" id="moin-newitem" name="newitem" placeholder="{{ _("Enter item name here") }}" required="required"/>
-                    {% endif %}
-                    <br/>
-                    <input class="moin-button" type="submit" value="{{ _("Create") }}"/>
-                    <input type="button" class="popup-cancel moin-button" value="{{ _("Cancel") }}"/>
-                </form>
-            </div>
-        </div>
     </div>
-
-    {# initially hidden, used by jfu.js (jquery file upload) to display list of recently uploaded items. #}
-    <div id="moin-new-index" class="moin-item-index">
-        <h3 style="display: none;">{{ _("Recently uploaded items") }}</h3>
-        <div class="file_download_template" style="display: none;">
-            <a></a>
-        </div>
-    </div>
-    <div class="moin-index-separator"></div>
-
-    {# The span.moin-drag below is visible on load, the divs below are initially an empty space
-    or hidden. The file upload controls will appear if users drags files to .moin-drag below. #}
-    <div id="moin-upload-cont">
-        {% set submit_url = url_for('.jfu_server', item_name=item_name) %}
-        {{ forms.render_file_uploader(submit_url) }}
-    </div>
-    <span class="moin-drag">{{ _("(Drag and drop multiple files to this white area to upload them.)") }}</span>
+    {# lightbox is used by jquery and css to dim and disable underlying page when above popup is triggered #}
     <div id="lightbox">&nbsp;</div>
-
 {% endblock %}
 
 {% block body_scripts %}
@@ -269,9 +316,4 @@ places a content type icon before the link), and a link to display subitems
     <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
     {{ forms.file_uploader_scripts() }}
-{% endblock %}
-
-{% block head %}
-    {{ super() }}
-    {{ forms.file_uploader_styles() }}
 {% endblock %}

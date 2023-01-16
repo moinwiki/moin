@@ -49,6 +49,7 @@ usually it is even just the small and thus quick latest-revs index.
 """
 
 import os
+import sys
 import shutil
 import datetime
 import time
@@ -59,16 +60,15 @@ from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
-from whoosh.fields import Schema, TEXT, ID, IDLIST, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
+from whoosh.fields import Schema, TEXT, ID, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, PseudoFieldPlugin
 from whoosh.qparser import WordNode
-from whoosh.query import Every, Term
+from whoosh.query import And, Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
-from moin.constants.namespaces import NAMESPACE_DEFAULT
 
 from moin import user
 from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
@@ -81,6 +81,7 @@ from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 from moin.converters import default_registry
 from moin.utils.iri import Iri
+from moin.i18n import _
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -91,7 +92,8 @@ INDEXES = [LATEST_REVS, ALL_REVS, ]
 
 VALIDATION_HANDLING_STRICT = 'strict'
 VALIDATION_HANDLING_WARN = 'warn'
-VALIDATION_HANDLING = VALIDATION_HANDLING_WARN
+# TODO: fix tests to create valid metadata
+VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
 INDEXER_TIMEOUT = 20.0
 
@@ -102,6 +104,8 @@ def get_indexer(fn, **kw):
 
     Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
     indexes to storage. Try several times before failing.
+
+    FIXME: runs into timeout for a non-existing revid
 
     :param fn: the indexer function
     :param **kw: "revid" is required, index name optional
@@ -117,35 +121,38 @@ def get_indexer(fn, **kw):
     return indexer
 
 
-def get_names(meta):
+def parent_names(names):
     """
-    Get the (list of) names from meta data and deal with misc. bad things that
-    can happen then (while not all code is fixed to do it correctly).
+    Compute list of parent names (same order as in names, but no dupes)
 
-    TODO make sure meta[NAME] is always a list of str
-
-    :param meta: a metadata dictionary that might have a NAME key
-    :return: list of names
+    :param names: item NAME from whoosh index, where NAME is a list
+    :return: parent names list
     """
-    msg = "NAME is not a list but %r - fix this! Workaround enabled."
-    names = meta.get(NAME)
-    if names is None:
-        logging.warning(msg % names)
-        names = []
-    elif isinstance(names, bytes):
-        logging.warning(msg % names)
-        names = [names.decode('utf-8'), ]
-    elif isinstance(names, str):
-        logging.warning(msg % names)
-        names = [names, ]
-    elif isinstance(names, tuple):
-        logging.warning(msg % names)
-        names = list(names)
-    elif not isinstance(names, list):
-        raise TypeError("NAME is not a list but %r - fix this!" % names)
-    if not names:
-        names = []
-    return names
+    parents = set()
+    for name in names:
+        parent_tail = name.rsplit('/', 1)
+        if len(parent_tail) == 2:
+            parents.add(parent_tail[0])
+    return parents
+
+
+def search_names(name_prefix, limit=None):
+    """
+    get list of item names beginning with name_prefix
+
+    :param name_prefix: item NAME prefix
+    :param limit: limit number of search results
+    :return: item names list
+    """
+
+    idx_name = LATEST_REVS
+    terms = [Prefix(NAME_EXACT, name_prefix)]
+    terms.append(Term(WIKINAME, app.cfg.interwikiname))
+    q = And(terms)
+    with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
+        results = searcher.search(q, limit=limit)
+        result_names = [result[NAME][0] for result in results]
+    return result_names
 
 
 def backend_to_index(meta, content, schema, wikiname, backend_name):
@@ -173,6 +180,22 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     doc[BACKENDNAME] = backend_name
     if CONTENTNGRAM in schema:
         doc[CONTENTNGRAM] = content
+    if SUMMARYNGRAM in schema and SUMMARY in meta:
+        doc[SUMMARYNGRAM] = meta[SUMMARY]
+    if NAMENGRAM in schema and NAME in meta:
+        doc[NAMENGRAM] = ' '.join(meta[NAME])
+    if doc.get(TAGS, None):
+        # global tags uses this to search for items with tags
+        doc[HAS_TAG] = True
+    if doc.get(NAME, None):
+        if doc.get(NAMESPACE, None):
+            fullnames = [doc[NAMESPACE] + '/' + x for x in doc[NAME]]
+            doc[NAMES] = ' | '.join(fullnames)
+        else:
+            doc[NAMES] = ' | '.join(doc[NAME])
+        doc[NAME_SORT] = doc[NAMES].replace('/', '')
+    else:
+        doc[NAME_SORT] = ""
     return doc
 
 
@@ -211,9 +234,9 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     if not item_name:
         try:
-            item_name = get_names(meta)[0]
+            item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
         except IndexError:
-            item_name = 'DoesNotExist'
+            item_name = meta[NAMESPACE] + '/' + 'DoesNotExist'
     fqname = split_fqname(item_name)
 
     class PseudoRev:
@@ -293,6 +316,8 @@ class IndexingMiddleware:
     def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
+
+        See https://whoosh.readthedocs.io/en/latest/schema.html#built-in-field-types
         """
         self.index_storage = index_storage
         self.backend = backend
@@ -300,17 +325,29 @@ class IndexingMiddleware:
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
+        # field_boosts favor hits on names, tags, summary, comment, content, namengram,
+        # summaryngram and contentngram respectively
+        # when query_parser default search includes [NAMES, NAMENGRAM, TAGS, SUMMARY,
+        # SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT].
+        # Note *NGRAMS are only present in latest_revs index, see below
         common_fields = {
             # wikiname so we can have a shared index in a wiki farm, always check this!
             WIKINAME: ID(stored=True),
             # namespace, so we can have different namespaces within a wiki, always check this!
             NAMESPACE: ID(stored=True),
-            # tokenized NAME from metadata - use this for manual searching from UI
-            NAME: TEXT(stored=True, multitoken_query="and", analyzer=item_name_analyzer(), field_boost=2.0),
+            # since name is a list whoosh will think it is a list of tokens see #364
+            # we store list of names, but do not use for searching
+            NAME: TEXT(stored=True),
+            # string created by joining list of Name strings, we use NAMES for searching
+            NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
+            # names without slashes, slashes cause strange sort sequences
+            NAME_SORT: TEXT(stored=True),
             # unmodified NAME from metadata - use this for precise lookup by the code.
             # also needed for wildcard search, so the original string as well as the query
             # (with the wildcard) is not cut into pieces.
-            NAME_EXACT: ID(field_boost=3.0),
+            NAME_EXACT: ID(field_boost=1.0),
+            # history and mychanges views show old name for deleted items
+            NAME_OLD: TEXT(stored=True),
             # revision id (aka meta id)
             REVID: ID(unique=True, stored=True),
             # sequential revision number for humans: 1, 2, 3...
@@ -321,14 +358,15 @@ class IndexingMiddleware:
             BACKENDNAME: ID(stored=True),
             # MTIME from revision metadata (converted to UTC datetime)
             MTIME: DATETIME(stored=True),
-            # publish time from metadata (converted to UTC datetime)
-            PTIME: DATETIME(stored=True),
             # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
             # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
             # unmodified list of TAGS from metadata
-            TAGS: ID(stored=True),
+            TAGS: KEYWORD(stored=True, commas=True, scorable=True, field_boost=30.0),
+            # search on HAS_TAG improves response time of global tags
+            # https://whoosh.readthedocs.io/en/latest/api/query.html?highlight=#whoosh.query.Every
+            HAS_TAG: BOOLEAN(stored=False),
             LANGUAGE: ID(stored=True),
             # USERID from metadata
             USERID: ID(stored=True),
@@ -341,21 +379,15 @@ class IndexingMiddleware:
             # ACTION from metadata
             ACTION: ID(stored=True),
             # tokenized COMMENT from metadata
-            COMMENT: TEXT(stored=True),
+            COMMENT: TEXT(stored=True, field_boost=30.0),
             # SUMMARY from metadata
-            SUMMARY: TEXT(stored=True),
+            SUMMARY: TEXT(stored=True, field_boost=10.0),
             # DATAID from metadata
             DATAID: ID(stored=True),
             # TRASH from metadata
             TRASH: BOOLEAN(stored=True),
             # data (content), converted to text/plain and tokenized
             CONTENT: TEXT(stored=True, spelling=True),
-            # refers to another item using itemid
-            REFERS_TO: ID(stored=True),
-            # meta field to differentiate elements referring to an item
-            ELEMENT: ID(stored=True),
-            # reply to comment
-            REPLY_TO: ID(stored=True),
         }
 
         latest_revs_fields = {
@@ -367,8 +399,10 @@ class IndexingMiddleware:
             ITEMTRANSCLUSIONS: ID(stored=True),
             # tokenized ACL from metadata
             ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
-            # ngram words, index ngrams of words from main content
-            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6),
+            # index ngrams of words, field_boosts favor hits on name and summary over content
+            CONTENTNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=0.01),
+            SUMMARYNGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=1.0),
+            NAMENGRAM: NGRAMWORDS(minsize=3, maxsize=6, queryor=True, field_boost=1.0),
         }
         latest_revs_fields.update(**common_fields)
 
@@ -378,6 +412,7 @@ class IndexingMiddleware:
             # unique overall! Wrongly declaring it unique would lead to whoosh
             # killing other users from index when update_document() is called!
             EMAIL: ID(stored=True),
+            MAILTO_AUTHOR: BOOLEAN(stored=True),
             DISABLED: BOOLEAN(stored=True),
             LOCALE: ID(stored=True),
             SUBSCRIPTION_IDS: ID(),
@@ -392,6 +427,9 @@ class IndexingMiddleware:
             SEVERITY: NUMERIC(stored=True),
             PRIORITY: NUMERIC(stored=True),
             ASSIGNED_TO: ID(stored=True),
+            REPLY_TO: ID(stored=True),
+            REFERS_TO: ID(stored=True),
+            ELEMENT: ID(stored=True),
             SUPERSEDED_BY: ID(stored=True),
             DEPENDS_ON: ID(stored=True),
             CLOSED: BOOLEAN(stored=True),
@@ -399,6 +437,8 @@ class IndexingMiddleware:
         latest_revs_fields.update(**ticket_fields)
 
         blog_entry_fields = {
+            # blog publish time from metadata (converted to UTC datetime)
+            PTIME: DATETIME(stored=True),
         }
         latest_revs_fields.update(**blog_entry_fields)
 
@@ -410,6 +450,10 @@ class IndexingMiddleware:
         latest_revisions_schema = Schema(**latest_revs_fields)
         all_revisions_schema = Schema(**all_revs_fields)
 
+        # schemas are needed by query parser and for index creation
+        self.schemas[ALL_REVS] = all_revisions_schema
+        self.schemas[LATEST_REVS] = latest_revisions_schema
+
         # Define dynamic fields
         dynamic_fields = [("*_id", ID(stored=True)),
                           ("*_text", TEXT(stored=True)),
@@ -417,16 +461,12 @@ class IndexingMiddleware:
                           ("*_numeric", NUMERIC(stored=True)),
                           ("*_datetime", DATETIME(stored=True)),
                           ("*_boolean", BOOLEAN(stored=True)),
-                         ]
+                          ]
 
         # Adding dynamic fields to schemas
         for glob, field_type in dynamic_fields:
             latest_revisions_schema.add(glob, field_type, glob=True)
             all_revisions_schema.add(glob, field_type, glob=True)
-
-        # schemas are needed by query parser and for index creation
-        self.schemas[ALL_REVS] = all_revisions_schema
-        self.schemas[LATEST_REVS] = latest_revisions_schema
 
         # what fields could whoosh result documents have (no matter whether all revs index
         # or latest revs index):
@@ -878,7 +918,7 @@ class IndexingMiddleware:
         """
         Return item identified by the query (may be a new or existing item).
 
-        :kwargs query: e.g. name_exact=u"Foo" or itemid="..." or ...
+        :kwargs query: e.g. name_exact="Foo" or itemid="..." or ...
                      (must be a unique fieldname=value for the latest-revs index)
         """
         return Item(self, **query)
@@ -887,7 +927,7 @@ class IndexingMiddleware:
         """
         Return item identified by the query (must be a new item).
 
-        :kwargs query: e.g. name_exact=u"Foo" or itemid="..." or ...
+        :kwargs query: e.g. name_exact="Foo" or itemid="..." or ...
                      (must be a unique fieldname=value for the latest-revs index)
         """
         return Item.create(self, **query)
@@ -896,7 +936,7 @@ class IndexingMiddleware:
         """
         Return item identified by query (must be an existing item).
 
-        :kwargs query: e.g. name_exact=u"Foo" or itemid="..." or ...
+        :kwargs query: e.g. name_exact="Foo" or itemid="..." or ...
                      (must be a unique fieldname=value for the latest-revs index)
         """
         return Item.existing(self, **query)
@@ -952,18 +992,11 @@ class PropertiesMixin:
     @property
     def parentnames(self):
         """
-        compute list of parent names (same order as in names, but no dupes)
+        Return list of parent names (same order as in names, but no dupes)
 
         :return: parent names (list of unicode)
         """
-        parent_names = []
-        for name in self.names:
-            parentname_tail = name.rsplit('/', 1)
-            if len(parentname_tail) == 2:
-                parent_name = parentname_tail[0]
-                if parent_name not in parent_names:
-                    parent_names.append(parent_name)
-        return parent_names
+        return parent_names(self.names)
 
     @property
     def fqparentnames(self):
@@ -984,7 +1017,7 @@ class PropertiesMixin:
 
     @property
     def names(self):
-        return get_names(self.meta)
+        return self.meta[NAME]
 
     @property
     def mtime(self):
@@ -1155,7 +1188,7 @@ class Item(PropertiesMixin):
                  'contenttype_guessed': contenttype_guessed,
                  'acl_parent': acl_parent,
                  FQNAME: fqname,
-                }
+                 }
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
             Schema = UserMetaSchema
@@ -1164,12 +1197,16 @@ class Item(PropertiesMixin):
         m = Schema(meta)
         valid = m.validate(state)
         if not valid:
-            logging.warning("metadata validation failed, see below")
+            logging.warning("data validation skipped because metadata is invalid, see below")
+            val = []
             for e in m.children:
-                logging.warning("{0}, {1}".format(e.valid, e))
-            logging.warning("data validation skipped as we have no valid metadata")
+                logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
+                if e.valid is False:
+                    val.append(str(e))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError('metadata validation failed and strict handling requested, see the log for details')
+                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}'.format(
+                    ', '.join(val)
+                )))
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
@@ -1178,11 +1215,14 @@ class Item(PropertiesMixin):
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
         meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
+        # file upload UI does not have a summary field
+        if SUMMARY not in meta:
+            meta[SUMMARY] = ""
 
         if valid and not validate_data(meta, data):  # need valid metadata to validate data
-            logging.warning("data validation failed")
+            logging.warning("data validation failed for item {0} ".format(meta[NAME]))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError('data validation failed and strict handling requested, see the log for details')
+                raise ValueError(_('Error: nothing changed. Data unicode validation failed.'))
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]

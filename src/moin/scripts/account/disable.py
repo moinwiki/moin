@@ -42,9 +42,9 @@ class Disable_User(Command):
         print(" {0:<20} {1!r:<25} {2:<35}".format(u.itemid, u.name, u.email), end=' ')
         if not u.disabled:  # only disable once
             u.disabled = 1
-            u.name = u"{0}-{1}".format(u.name, u.id)
+            u.name = "{0}-{1}".format(u.name, u.id)
             if u.email:
-                u.email = u"{0}-{1}".format(u.email, u.id)
+                u.email = "{0}-{1}".format(u.email, u.id)
             u.subscriptions = []
             u.save()
             print("- disabled.")

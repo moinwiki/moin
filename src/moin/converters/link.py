@@ -12,7 +12,7 @@ from flask import g as flaskg
 
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.wikiutil import AbsItemName
 
@@ -98,7 +98,9 @@ class ConverterBase:
         quoted_current_page_path = current_page_path[1:].quoted
 
         abs_path = AbsItemName(quoted_current_page_path, quoted_path)
-        abs_path = Iri(abs_path).path
+        if quoted_path.startswith('/'):
+            # avoid Iri issue where item name containing a colon is mistaken for scheme:path
+            abs_path = Iri(abs_path).path
         return abs_path
 
 
@@ -157,7 +159,10 @@ class ConverterExternOutput(ConverterBase):
             wn = str(input.authority.host)
             if is_known_wiki(wn):
                 # interwiki link
-                elem.set(moin_page.class_, 'moin-interwiki')
+                if html.class_ in elem.attrib:
+                    elem.set(moin_page.class_, 'moin-interwiki ' + elem.attrib[html.class_])
+                else:
+                    elem.set(moin_page.class_, 'moin-interwiki')
                 wiki_name = wn
         item_name = str(input.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)

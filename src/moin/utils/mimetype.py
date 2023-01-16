@@ -50,9 +50,15 @@ MIMETYPES_MORE = {
     '.dbx': 'application/docbook+xml',
     '.moin': 'text/x.moin.wiki',
     '.creole': 'text/x.moin.creole',
+    '.md': 'text/x.markdown',
+    '.markdown': 'text/x.markdown',
     '.mediawiki': 'text/x-mediawiki',
     '.ico': 'image/x-icon',
     '.svg': 'image/svg+xml',
+    # supported compressed archives
+    '.zip': 'application/zip',
+    '.tgz': 'application/x-gtar',
+    '.targz': 'application/x-gtar',
 }
 
 # add all mimetype patterns of pygments
@@ -73,6 +79,7 @@ MIMETYPES_sanitize_mapping = {
     ('application', 'x-latex'): ('text', 'latex'),
     ('application', 'x-tex'): ('text', 'tex'),
     ('application', 'javascript'): ('text', 'javascript'),
+    ('application', 'x-dos-batch'): ('text', 'bat'),
 }
 
 MIMETYPES_spoil_mapping = {}  # inverse mapping of above

@@ -23,6 +23,7 @@ from io import BytesIO
 from collections import namedtuple
 from operator import attrgetter
 import re
+import difflib
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -31,35 +32,34 @@ from flask import request, Response, redirect, abort, url_for, flash
 from flatland import Form
 from flatland.validation import Validator
 
-from jinja2 import Markup
+from markupsafe import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-from moin.constants.misc import NO_LOCK, LOCKED, LOCK
+from moin.constants.misc import LOCKED, LOCK
 from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.themes import render_template
 from moin.utils import rev_navigation, close_file, show_time
 from moin.utils.edit_locking import Edit_Utils
-from moin.utils.mime import Type
-from moin.utils.interwiki import url_for_item, split_fqname, get_fqname, CompositeName
+from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.registry import RegistryBase
-from moin.utils.clock import timed
 from moin.utils.diff_html import diff as html_diff
 from moin.utils import diff3
-from moin.forms import RequiredText, OptionalText, JSON, Tags, Names
+from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError
 from moin.constants.keys import (
-    NAME, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
-    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT, USERGROUP,
-    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE, IMMUTABLE_KEYS,
-    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
+    NAME, NAMES, NAMENGRAM, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
+    CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
+    HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
+    IMMUTABLE_KEYS, UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS
+    LATEST_REVS, EDIT_ROWS, FQNAMES
 )
+from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL
-from moin.constants.contenttypes import CHARSET, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from moin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 )
@@ -77,6 +77,130 @@ COLS = 80
 ROWS_META = 10
 
 
+def find_matches(fq_name, s_re=None, e_re=None):
+    """ Find similar item names.
+
+    :param fq_name: fqname to match
+    :param s_re: start re for wiki matching
+    :param e_re: end re for wiki matching
+    :rtype: tuple
+    :returns: start word, end word, matches dict
+    """
+    idx_name = LATEST_REVS
+    qp = flaskg.storage.query_parser([NAMES, NAMENGRAM], idx_name=idx_name)
+    q = qp.parse(fq_name.value)
+    metas = flaskg.storage.search_meta(q, idx_name=idx_name, limit=None)
+    fq_names = {fqname for meta in metas for fqname in meta[FQNAMES] if FQNAMES in meta}
+    if fq_name in fq_names:
+        fq_names.remove(fq_name)
+    # Get matches using wiki way, start and end of word
+    start, end, matches = wiki_matches(fq_name, fq_names, start_re=s_re, end_re=e_re)
+    # Get the best 10 close matches
+    close_matches = {}
+    found = 0
+    for fqname in close_match(fq_name, fq_names):
+        if fqname not in matches:
+            # Skip fqname already in matches
+            close_matches[fqname] = 8
+            found += 1
+            # Stop after 10 matches
+            if found == 10:
+                break
+    # Finally, merge both dicts
+    matches.update(close_matches)
+    return start, end, matches
+
+
+def wiki_matches(fq_name, fq_names, start_re=None, end_re=None):
+    """
+    Get fqnames that starts or ends with same word as this fq_name.
+
+    Matches are ranked like this:
+        4 - item is subitem of fq_name
+        3 - match both start and end
+        2 - match end
+        1 - match start
+
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
+    :param start_re: start word re (compile regex)
+    :param end_re: end word re (compile regex)
+    :rtype: tuple
+    :returns: start, end, matches dict
+    """
+    if start_re is None:
+        start_re = re.compile('([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
+    if end_re is None:
+        end_re = re.compile('([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
+
+    # If we don't get results with wiki words matching, fall back to
+    # simple first word and last word, using spaces.
+    item_name = fq_name.value
+    words = item_name.split()
+    match = start_re.match(item_name)
+    if match:
+        start = match.group(1)
+    else:
+        start = words[0]
+
+    match = end_re.search(item_name)
+    if match:
+        end = match.group(1)
+    else:
+        end = words[-1]
+
+    matches = {}
+    subitem = item_name + '/'
+
+    # Find any matching item names and rank by type of match
+    for fqname in fq_names:
+        name = fqname.value
+        if name.startswith(subitem):
+            matches[fqname] = 4
+        else:
+            if name.startswith(start):
+                matches[fqname] = 1
+            if name.endswith(end):
+                matches[fqname] = matches.get(name, 0) + 2
+
+    return start, end, matches
+
+
+def close_match(fq_name, fq_names):
+    """ Get close matches.
+
+    Return all matching fqnames with rank above cutoff value.
+
+    :param fq_name: fqname to match
+    :param fq_names: list of fqnames
+    :rtype: list
+    :returns: list of matching item names, sorted by rank
+    """
+    if not fq_names:
+        return []
+    # Match using case insensitive matching
+    # Make mapping from lower item names to fqnames.
+    lower = {}
+    for fqname in fq_names:
+        name = fqname.value
+        key = name.lower()
+        if key in lower:
+            lower[key].append(fqname)
+        else:
+            lower[key] = [fqname]
+    # Get all close matches
+    item_name = fq_name.value
+    all_matches = difflib.get_close_matches(item_name.lower(), list(lower.keys()),
+                                            n=len(lower), cutoff=0.6)
+
+    # Replace lower names with original names
+    matches = []
+    for name in all_matches:
+        matches.extend(lower[name])
+
+    return matches
+
+
 def _verify_parents(self, new_name, namespace, old_name=''):
     """
     If this is a subitem, verify all parent items exist. Return None if OK, raise error if not OK.
@@ -87,7 +211,10 @@ def _verify_parents(self, new_name, namespace, old_name=''):
         fqname = CompositeName(namespace, NAME_EXACT, root_name)
         parent_item = flaskg.unprotected_storage.get_item(**fqname.query)
         if parent_item.itemid is None:
-            raise MissingParentError(_("Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.", new_name=new_name, parent_name=name_segments[idx]))
+            raise MissingParentError(_(
+                "Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.",
+                new_name=new_name, parent_name=name_segments[idx]
+            ))
 
 
 class RegistryItem(RegistryBase):
@@ -121,8 +248,8 @@ item_registry = RegistryItem()
 
 
 def register(cls):
-    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order),
-                           cls.shown)
+    item_registry.register(RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name,
+                                              cls.description, cls.order), cls.shown)
     return cls
 
 
@@ -210,7 +337,9 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
 
 class BaseChangeForm(Form):
     # autofocus=True causes javascript autoscroll in textarea to fail when using Chrome, Opera, or Maxthon browsers
-    comment = OptionalText.using(label=L_('Comment')).with_properties(placeholder=L_("Comment about your change"), autofocus=False)
+    comment = OptionalText.using(label=L_('Comment')).with_properties(
+        placeholder=L_("Comment about your change"), autofocus=False
+    )
     submit_label = L_('OK')
     preview_label = L_('Preview')
     cancel_label = L_('Cancel')
@@ -229,7 +358,7 @@ def acl_validate(acl_string):
     """
     all_rights = {'read', 'write', 'create', 'destroy', 'admin'}
     acls = str(acl_string)
-    if acls in ('None', 'Empty', ''):  # u'' is not possible if field is required on form
+    if acls in ('None', 'Empty', ''):  # '' is not possible if field is required on form
         return True
     acls = acls.split()
     for acl in acls:
@@ -260,8 +389,13 @@ class ACLValidator(Validator):
 
 
 class BaseMetaForm(Form):
-    # Flatland doesn't distinguish between empty value and nonexistent value, use None for noneexistent and Empty for empty
-    acl = RequiredText.using(label=L_("ACL")).with_properties(placeholder=L_("Access Control List - Use 'None' for default")).validated_by(ACLValidator())
+    # Flatland doesn't distinguish between empty value and nonexistent value,
+    # use None for noneexistent and Empty for empty
+    acl = (
+        RequiredText.using(label=L_("ACL"))
+        .with_properties(placeholder=L_("Access Control List - Use 'None' for default"))
+        .validated_by(ACLValidator())
+    )
     summary = OptionalText.using(label=L_("Summary")).with_properties(placeholder=L_("One-line summary of the item"))
     name = Names
     tags = Tags
@@ -277,8 +411,8 @@ class BaseModifyForm(BaseChangeForm):
         """
         Construct an instance from :item.
 
-        This class method is not supposed to be overriden; subclasses should
-        overrride the _load method instead.
+        This class method is not supposed to be overridden; subclasses should
+        override the _load method instead.
         """
         form = cls.from_defaults()
         form._load(item)
@@ -494,71 +628,150 @@ class Item:
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, name, comment, action, delete=False):
-        self._save(self.meta, self.content.data, name=name, action=action, comment=comment, delete=delete)
-        old_prefix = self.subitem_prefixes[0]
-        old_prefixlen = len(old_prefix)
-        if not delete:
-            new_prefix = name + '/'
-        for child in self.get_subitem_revs():
-            for child_oldname in child.meta[NAME]:
-                if child_oldname.startswith(old_prefix):
-                    if delete:
-                        child_newname = None
-                    else:  # rename
-                        child_newname = new_prefix + child_oldname[old_prefixlen:]
-                    old_fqname = CompositeName(self.fqname.namespace, self.fqname.field, child_oldname)
+    def _rename(self, names, comment, action, delete=False, do_subitems=True, ajax=False):
+        """
+        Process Delete and Rename actions.
+
+        Delete removes all alias names, and at users option (do_subitems=True) all subitems of all aliases.
+        Rename changes subitem names only when the parent name is removed/changed.
+        """
+        messages = []
+        subitem_names = []
+        self._save(self.meta, self.content.data, names=names, action=action, comment=comment, delete=delete)
+        old_name = self.names if len(self.names) > 1 else self.names[0]
+        new_name = names if len(names) > 1 else names[0]
+        if delete:
+            if ajax:
+                messages.append(L_('The item "%(name)s" was deleted.', name=old_name))
+            else:
+                flash(L_('The item "%(name)s" was deleted.', name=old_name), 'info')
+        else:
+            # rename
+            if ajax:
+                messages.append(L_('The item "%(name)s" was renamed to "%(new_name)s".',
+                                   name=old_name, new_name=new_name))
+            else:
+                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".',
+                         name=old_name, new_name=new_name), 'info')
+        removed_names = set(self.meta[NAME]) - set(names)
+        removed_names = tuple(x + '/' for x in removed_names)
+        if removed_names or delete:
+            new_parent = names[0] + '/'  # new prefix that will adopt any orphaned subitems
+            subitems = list(self.get_subitem_revs())
+            for child in subitems:
+                old_name = child.meta[NAME] if len(child.meta[NAME]) > 1 else child.meta[NAME][0]
+                if delete and do_subitems:
+                    child_newname = None
+                    old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child.meta[NAME][0])
                     item = Item.create(old_fqname.fullname)
-                    item._save(item.meta, item.content.data,
-                               name=child_newname, action=action, comment=comment, delete=delete)
+                    item._save(item.meta, item.content.data, names=child_newname, action=action,
+                               comment=comment, delete=delete)
+                    if ajax:
+                        messages.append(L_('The subitem "%(name)s" was deleted.', name=old_name))
+                    else:
+                        flash(L_('The item "%(name)s" was deleted.', name=old_name), 'info')
+                    close_file(item.rev.data)
+                    subitem_names += [x.fullname for x in child.meta.revision.fqnames]
+                else:  # rename
+                    working_name = child.meta[NAME][:]
+                    for child_oldname in child.meta[NAME]:
+                        for removed_name in removed_names:
+                            if child_oldname.startswith(removed_name):
+                                old_prefixlen = len(removed_name)
+                                child_newname = new_parent + child_oldname[old_prefixlen:]  # matched name
+                                working_name = [child_newname if x == child_oldname else x for x in working_name]
+                                old_fqname = CompositeName(self.fqname.namespace, NAME_EXACT, child_oldname)
+                                item = Item.create(old_fqname.fullname)
+                                item._save(item.meta, item.content.data, names=working_name, action=action,
+                                           comment=comment, delete=delete)
+                                new_name = working_name if len(working_name) > 1 else working_name[0]
+                                flash(L_('The item "%(name)s" was renamed to "%(new_name)s".',
+                                         name=old_name, new_name=new_name), 'info')
+                                close_file(item.rev.data)
+        return messages, subitem_names
 
-    def rename(self, name, comment=''):
+    def rename(self, names, comment=''):
         """
-        rename this item to item <name> (replace current name by another name in the NAME list)
+        rename this item to item <names> (replace current names by names in the NAME list)
         """
-        fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
-        if flaskg.storage.get_item(**fqname.query):
-            raise NameNotUniqueError(L_("An item named %s already exists in the namespace %s." % (name, fqname.namespace)))
-        # if this is a subitem, verify all parent items exist
-        _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
-        return self._rename(name, comment, action=ACTION_RENAME)
+        if isinstance(names, str):
+            names = [names]
+        for name in names:
+            if name not in self.names:
+                # verify new names do not exist
+                fqname = CompositeName(self.fqname.namespace, self.fqname.field, name)
+                if flaskg.storage.get_item(**fqname.query):
+                    raise NameNotUniqueError(L_(
+                        "An item named %s already exists in the namespace %s." % (name, fqname.namespace)
+                    ))
+            if '/' in name:
+                # if this is a subitem, verify all parent items exist
+                _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
+        self._rename(names, comment, action=ACTION_RENAME)
 
-    def delete(self, comment=''):
+    def delete(self, comment='', do_subitems=True, ajax=False):
         """
-        delete this item (remove current name from NAME list)
+        delete this item
         """
         item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
-        ret = self._rename(None, comment, action=ACTION_TRASH, delete=True)
-        if [self.name] == self.names:
-            flash(L_('The item "%(name)s" was deleted.', name=self.name), 'info')
-        else:
-            # the item has several names, we deleted only one name
-            name_list = [x for x in self.names if not x == self.name]
-            msg = L_('The item name "%(name)s" was deleted, the item persists with alias names: "%(name_list)s"', name=self.name, name_list=name_list)
-            flash(msg, 'info')
+        ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True, do_subitems=do_subitems, ajax=ajax)
         return ret
 
     def revert(self, comment=''):
-        return self._save(self.meta, self.content.data, action=ACTION_REVERT, comment=comment)
+        meta = dict(self.meta)
+        meta[TRASH] = False
+        if not self.meta[NAME]:
+            meta[NAME] = meta[NAME_OLD]
+        return self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
 
-    def destroy(self, comment='', destroy_item=False, subitem_names=[]):
-        # called from destroy UI/POST
+    def destroy(self, comment='', destroy_item=False, subitem_names=[], ajax=False):
+        """
+        If destroy_item is false destroy current revision; else destroy current item and
+        any items passed in subitem_names.
+
+        If ajax is true, call is from index view, else call is from item actions UI Destroy link.
+
+        Return a list of messages and a list of destroyed names and alias names.
+        """
+        messages = []
+        destroyed_names = self.names
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
         close_file(self.rev.data)
+        old_name = self.names if len(self.names) > 1 else self.names[0]
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
+            if ajax:
+                messages.append(L_('The item "%(name)s" was destroyed.', name=old_name))
+            else:
+                flash(L_('The item "%(name)s" was destroyed.', name=old_name), 'info')
             # destroy all subitems
             for subitem_name in subitem_names:
-                item = Item.create(subitem_name, rev_id=CURRENT)
+                first_name = subitem_name[0] if isinstance(subitem_name, list) else subitem_name
+                item = Item.create(first_name, rev_id=CURRENT)
                 close_file(item.rev.data)
-                item.rev.item.destroy_all_revisions()
-            flash(L_('The item "%(name)s" was destroyed.', name=self.name), 'info')
+                old_name = subitem_name if len(subitem_name) > 1 else subitem_name[0]
+                if flaskg.user.may.destroy(item.fqname):
+                    item.rev.item.destroy_all_revisions()
+                    if ajax:
+                        messages.append(L_('The subitem "%(name)s" was destroyed.', name=old_name))
+                    else:
+                        flash(L_('The item "%(name)s" was destroyed.', name=old_name), 'info')
+                    destroyed_names += item.names
+                else:
+                    if ajax:
+                        messages.append(L_('Error: The subitem "%(name)s" was not destroyed, permission denied.',
+                                           name=old_name))
+                    else:
+                        flash(L_('Error: The subitem "%(name)s" was not destroyed, permission denied.',
+                                 name=old_name), 'info')
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
-            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.', rev_number=self.meta['rev_number'], name=self.name), 'info')
+            flash(L_('Rev Number %(rev_number)s of the item "%(name)s" was destroyed.',
+                     rev_number=self.meta['rev_number'], name=old_name), 'info')
+        return messages, destroyed_names
 
     def modify(self, meta, data, comment='', contenttype_guessed=None, **update_meta):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
@@ -625,17 +838,23 @@ class Item:
         """
         raise NotImplementedError
 
-    def _save(self, meta, data=None, name=None, action=ACTION_SAVE, contenttype_guessed=None, comment=None,
+    def _save(self, meta, data=None, names=None, action=ACTION_SAVE, contenttype_guessed=None, comment=None,
               overwrite=False, delete=False):
+        """
+        Called by rename (delete calls rename), revert, modify (including first save), admin acl changes.
+
+        Destroy is not processed here.
+        Returns new revid and data size (ignored by most callers).
+        """
+        if isinstance(names, str):
+            names = [names]
         backend = flaskg.storage
         storage_item = backend.get_item(**self.fqname.query)
         try:
             currentrev = storage_item.get_revision(CURRENT)
-            rev_id = currentrev.revid
             contenttype_current = currentrev.meta.get(CONTENTTYPE)
         except KeyError:  # XXX was: NoSuchRevisionError:
             currentrev = None
-            rev_id = None
             contenttype_current = None
 
         meta = dict(meta)  # we may get a read-only dict-like, copy it
@@ -648,23 +867,15 @@ class Item:
             elif meta['acl'] == 'Empty':
                 meta['acl'] = ''
 
-        # we store the previous (if different) and current item name into revision metadata
-        # this is useful for rename history and backends that use item uids internally
+        # we store the previous (if different) and current item names into revision metadata
+        # this is useful for deletes, rename history and backends that use item uids internally
         if self.fqname.field == NAME_EXACT:
-            if name is None:
-                name = self.fqname.value
-            oldname = meta.get(NAME)
-            if oldname:
-                if delete or name not in oldname:  # this is a delete or rename
-                    try:
-                        oldname.remove(self.name)
-                    except ValueError:
-                        pass
-                    if not delete:
-                        oldname.append(name)
-                    meta[NAME] = oldname
-            elif not meta.get(ITEMID):
-                meta[NAME] = [name]
+            if names is None:
+                if self.names and not meta.get(NAME):
+                    # many tests do not pass a name
+                    meta[NAME] = self.names
+            else:
+                meta[NAME] = names
         elif self.fqname.field == ITEMID and delete:
             # delete by itemid will display deleted item with flash message
             meta[NAME] = []
@@ -677,13 +888,15 @@ class Item:
 
         if currentrev:
             current_names = currentrev.meta.get(NAME, [])
-            new_names = meta.get(NAME, [])
+            new_names = meta.get(NAME, []) if delete is False else []
             deleted_names = set(current_names) - set(new_names)
             if deleted_names:  # some names have been deleted.
                 meta[NAME_OLD] = current_names
-                # if no names left, then set the trash but not if the item is a ticket (tickets get closed, not deleted)
+                # if no names left, then set the trash
+                # but not if the item is a ticket (tickets get closed, not deleted)
                 if not new_names and (ITEMTYPE not in meta or not meta[ITEMTYPE] == ITEMTYPE_TICKET):
                     meta[TRASH] = True
+                    meta[NAME] = None
             meta[REV_NUMBER] = currentrev.meta.get(REV_NUMBER, 0) + 1
         else:
             meta[REV_NUMBER] = 1
@@ -708,13 +921,14 @@ class Item:
 
         if isinstance(data, bytes):
             data = BytesIO(data)
-        fqname, new_meta = storage_item.store_revision(meta, data, overwrite=overwrite,
-                                             action=str(action),
-                                             contenttype_current=contenttype_current,
-                                             contenttype_guessed=contenttype_guessed,
-                                             return_meta=True,
-                                             return_rev=True,
-                                             )
+        fqname, new_meta = storage_item.store_revision(meta, data,
+                                                       overwrite=overwrite,
+                                                       action=str(action),
+                                                       contenttype_current=contenttype_current,
+                                                       contenttype_guessed=contenttype_guessed,
+                                                       return_meta=True,
+                                                       return_rev=True,
+                                                       )
         if currentrev is None:
             item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta)
         else:
@@ -722,6 +936,8 @@ class Item:
                                data=currentrev.data, meta=currentrev.meta)
         if currentrev is not None:
             close_file(currentrev.data)
+        close_file(data)
+        close_file(new_meta.revision.data)
         return new_meta[REVID], new_meta[SIZE]
 
     def handle_variables(self, data, meta):
@@ -765,7 +981,8 @@ class Item:
             variables['MAILTO'] = "<<MailTo({0})>>".format(obfuscated_email_address)
             variables['EMAIL'] = "<<MailTo({0})>>".format(email)
         else:
-            # penality for not being logged in is a mangled variable, else next user to save item may accidently reveal his email address
+            # penalty for not being logged in is a mangled variable,
+            # else next user to save item may accidentally reveal his email address
             variables['MAILTO'] = "@ EMAIl@"
             variables['EMAIL'] = "@ MAILTO@"
 
@@ -781,8 +998,16 @@ class Item:
         """
         Return the possible prefixes for subitems.
         """
-        names = self.names[0:1] if self.fqname.field == NAME_EXACT else self.names
+        names = self.names
         return [name + '/' if name else '' for name in names]
+
+    @property
+    def name_old_subitem_prefixes(self):
+        """
+        Return the possible prefixes for subitems using name_old value for deleted items.
+        """
+        names = self.meta[NAME_OLD]
+        return [name + '/' for name in names]
 
     def get_prefix_match(self, name, prefixes):
         """
@@ -797,12 +1022,18 @@ class Item:
         Create a list of subitems of this item.
 
         Subitems are in the form of storage Revisions.
+
+        trick: an item of empty name can be considered as "virtual root item"
+        that has all wiki items as sub items, but deleted items have empty names.
+
+        If item is trashed we must query name_old field to avoid processing all items.
         """
         query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, self.fqname.namespace)])
-        # trick: an item of empty name can be considered as "virtual root item"
-        # that has all wiki items as sub items
+
         if self.names:
             query = And([query, Or([Prefix(NAME_EXACT, prefix) for prefix in self.subitem_prefixes])])
+        elif self.meta.get(TRASH, False):
+            query = And([query, Or([Prefix(NAME_OLD, prefix) for prefix in self.name_old_subitem_prefixes])])
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
@@ -831,11 +1062,11 @@ class Item:
         dirs = []
         added_dir_relnames = set()
         for rev in subitems:
-            fullnames = rev.meta[NAME]
+            fullnames = rev[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
                 if prefix is not None:
-                    fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, fullname)
+                    fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, fullname)
                     relname = fullname[len(prefix):]
                     if '/' in relname:
                         # Find the *direct* subitem that is the ancestor of current
@@ -843,17 +1074,19 @@ class Item:
                         # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
                         # 'foo/bar' will be found.
                         direct_relname = relname.partition('/')[0]
-                        direct_relname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_relname)
+                        direct_relname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_relname)
                         if direct_relname_fqname not in added_dir_relnames:
                             added_dir_relnames.add(direct_relname_fqname)
                             direct_fullname = prefix + direct_relname
-                            direct_fullname_fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
-                            fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, direct_fullname)
+                            direct_fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
                             dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
-                    else:
-                        mini_meta = {key: rev.meta[key] for key in (CONTENTTYPE, ITEMTYPE)}
-                        files.append(IndexEntry(relname, fullname_fqname, mini_meta))
-        files.sort()  # files with multiple names are not in sequence
+                mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}
+                if TAGS in rev and rev[TAGS]:
+                    mini_meta[TAGS] = rev[TAGS]
+                mini_meta[USERID] = rev.get(USERID, '')
+                mini_meta[ADDRESS] = rev.get(ADDRESS, '') if app.cfg.show_hosts else ''
+                files.append(IndexEntry(relname, fullname_fqname, mini_meta))
+        files = sorted(files, key=lambda x: x[1])  # default namespace items are on top
         return dirs, files
 
     def build_index_query(self, startswith=None, selected_groups=None, isglobalindex=False):
@@ -903,18 +1136,13 @@ class Item:
         """
         fqname = self.fqname
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
-        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(startswith, selected_groups, isglobalindex)
+        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(
+            startswith, selected_groups, isglobalindex
+        )
         if not fqname.value.startswith(NAMESPACE_ALL + '/') and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
         revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
         return self.make_flat_index(revs, isglobalindex)
-
-    def get_mixed_index(self):
-        dirs, files = self.make_flat_index(self.get_subitem_revs())
-        dirs_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=True)) for e in dirs])
-        index_dict = dict([(e.fullname, MixedIndexEntry(*e, hassubitems=False)) for e in files])
-        index_dict.update(dirs_dict)
-        return sorted(index_dict.values())
 
 
 class Contentful(Item):
@@ -960,7 +1188,7 @@ class Default(Contentful):
                                data_rendered='',
                                )
 
-    def do_show(self, revid):
+    def do_show(self, revid, item_is_deleted=False):
         """
         Display an item. If this is not the current revision, page content will be
         prefaced with links to the next-rev and prior-rev.
@@ -981,16 +1209,23 @@ class Default(Contentful):
                                rev_navigation_ids_dates=rev_navigation_ids_dates,
                                data_rendered=Markup(self.content._render_data()),
                                html_head_meta=html_head_meta,
-                              )
+                               item_is_deleted=item_is_deleted,
+                               )
 
-    def doc_link(self, filename, link_text):
-        """create a link to serve local doc files as help for wiki editors"""
-        if '#' in filename:
-            filename, anchor = filename.split('#')
-        else:
-            anchor = None
-        filename = url_for('serve.files', name='docs', filename=filename, _anchor=anchor)
-        return filename, link_text
+    def doc_link(self, content_name, link_text):
+        """
+        Return a path to a help item in user's preferred language.
+
+        :param content_name: markup name of item being edited: moin, markdown, creole, rst...
+        :param link_text: unchanged or replaced by alert message
+        :return: path to help, link text
+        """
+        query = And([Term(NAMESPACE, "help-" + flaskg.user.language), Term(NAME_EXACT, content_name),
+                     Term(WIKINAME, app.cfg.interwikiname)])
+        results = list(flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None))
+        if results:
+            return "/help-" + flaskg.user.language + "/" + content_name, link_text
+        return "/help-en/" + content_name, _("Alert wiki admin that help items are not loaded")
 
     def meta_changed(self, meta):
         """
@@ -1008,25 +1243,26 @@ class Default(Contentful):
             new_tags = []
         if new_tags != meta.get('tags', None):
             return True
-        new_name = request.values.get('meta_form_name').replace(" ", "").split(',')
-        if new_name != meta.get('name', None):
-            return True
         return False
 
     def do_modify(self):
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
-            abort(403, description=' ' + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
+            abort(403, description=' '
+                  + _('You do not have permission to create the item named "{name}".'.format(name=self.name)))
 
         method = request.method
         if method in ['GET', 'HEAD']:
             if isinstance(self.content, NonExistentContent):
+                start, end, matches = find_matches(self.fqname)
+                similar_names = sorted(matches.keys())
                 return render_template('modify_select_contenttype.html',
                                        fqname=self.fqname,
                                        item_name=self.name,
                                        itemtype=self.itemtype,
                                        group_names=content_registry.group_names,
                                        groups=content_registry.groups,
-                                      )
+                                       similar_names=similar_names,
+                                       )
 
         item = self
         flaskg.edit_utils = edit_utils = Edit_Utils(self)
@@ -1059,7 +1295,7 @@ class Default(Contentful):
             if template_name is None:
                 edit_utils.cursor_close()
                 return self._do_modify_show_templates()
-            # template_name == u'' when user chooses "create item from scratch"
+            # template_name == '' when user chooses "create item from scratch"
             elif template_name:
                 item = Item.create(template_name)
                 form = self.ModifyForm.from_item(item)
@@ -1101,18 +1337,20 @@ class Default(Contentful):
                     old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
                     preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
                     preview_rendered = item.content._render_data(preview=data)
+                    close_file(old_item.rev.data)
                 else:
                     # user clicked OK/Save button, check for conflicts,
                     if 'charset' in self.contenttype:
                         draft, draft_data = edit_utils.get_draft()
                         if draft:
-                            # will always be a draft for normal users, but bot (as in load testing) may post without prior get
+                            # will always be a draft for normal users,
+                            # but bot (as in load testing) may post without prior get
                             u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                             if not rev_id == 'new-item':
                                 original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
-                                original_rev = get_storage_revision(self.fqname, itemtype=self.itemtype, contenttype=original_item.contenttype, rev_id=rev_id)
                                 charset = original_item.contenttype.split('charset=')[1]
-                                original_text = original_rev.data.read().decode(charset)
+                                original_text = original_item.rev.data.read().decode(charset)
+                                close_file(original_item.rev.data)
                             else:
                                 original_text = ''
                             if original_text == data and not self.meta_changed(item.meta):
@@ -1124,14 +1362,16 @@ class Default(Contentful):
                                 return redirect(url_for_item(**self.fqname.split))
 
                             if rev_number < self.meta.get('rev_number', 0):
-                                # we have conflict - someone else has saved item, create and save 3-way diff, give user error message to fix it
+                                # we have conflict - someone else has saved item, create and save 3-way diff,
+                                # give user error message to fix it
                                 saved_item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
                                 charset = saved_item.contenttype.split('charset=')[1]
                                 saved_text = saved_item.content.data.decode(charset)
                                 data3 = diff3.text_merge(original_text, saved_text, data)
                                 data = data3
                                 comment = _("CONFLICT ") + comment or ''
-                                flash(_("An edit conflict has occurred, edit this item again to resolve conflicts."), "error")
+                                flash(_("An edit conflict has occurred, edit this item again to resolve conflicts."),
+                                      "error")
 
                     # save the new revision, unlock, delete draft
                     contenttype_qs = request.values.get('contenttype')
@@ -1151,7 +1391,8 @@ class Default(Contentful):
                         edit_utils.cursor_close()
                         return redirect(url_for_item(**self.fqname.split))
 
-        # prepare to show modify.html form, request is either +Modify GET or Preview (Save and Cancel processing complete)
+        # prepare to show modify.html form, request is either +Modify GET or
+        # Preview (Save and Cancel processing complete)
         help = CONTENTTYPES_HELP_DOCS[self.contenttype]
         if isinstance(help, tuple):
             help = self.doc_link(*help)
@@ -1168,20 +1409,28 @@ class Default(Contentful):
                 u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                 if save_time:
                     # if revno = current: you may recover a saved draft by clicking load draft button
-                    # if revno < current: a old draft is available, loading it will create a conflict that  must be merged manually
+                    # if revno < current: a old draft is available, loading it will create a conflict
+                    # that  must be merged manually
                     interval, number = show_time.duration(time() - save_time)
                     if self.rev.meta.get(REV_NUMBER, 0) == rev_number:
-                        flash(L_("You may recover your draft saved %(number)s %(interval)s ago by clicking the 'Load Draft' button.", number=number, interval=interval, ), 'info')
+                        flash(L_("You may recover your draft saved %(number)s %(interval)s "
+                                 "ago by clicking the 'Load Draft' button.",
+                                 number=number, interval=interval, ), 'info')
                     else:
-                        flash(L_("Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to merge conflicting updates.", number=number, interval=interval, ), 'error')
+                        flash(L_("Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard "
+                                 "or 'Load Draft', then 'Save' to merge conflicting updates.",
+                                 number=number, interval=interval, ), 'error')
 
         if app.cfg.edit_locking_policy == LOCK:
             # we pass lock_duration so javascript can show alert before timer expires
             lock_duration = app.cfg.edit_lock_time * 60
         else:
             lock_duration = None
-        # if request is +modify GET we show modify form, else if POST Preview we show modify form + diff + rendered item
         edit_utils.cursor_close()
+        # enable sidebar themes to show OK, Preview, Cancel buttons that do not scroll off display
+        is_modify_text = True if 'text' in self.contenttype else False
+        # if request is +modify GET we show modify form, else if POST Preview
+        # we show modify form + diff + rendered item
         return render_template('modify.html',
                                fqname=self.fqname,
                                item_name=self.name,
@@ -1194,10 +1443,11 @@ class Default(Contentful):
                                preview_diffs=preview_diffs,
                                preview_rendered=preview_rendered,
                                edit_rows=edit_rows,
+                               is_modify_text=is_modify_text,
                                draft_data=draft_data,
                                lock_duration=lock_duration,
                                tuple=tuple,
-                              )
+                               )
 
 
 @register
@@ -1223,7 +1473,7 @@ class NonExistent(Item):
     def _convert(self, doc):
         abort(404)
 
-    def do_show(self, revid):
+    def do_show(self, revid, **kwargs):
         # First, check if the current user has the required privileges
         if flaskg.user.may.create(self.name):
             content = self._select_itemtype()
@@ -1231,7 +1481,7 @@ class NonExistent(Item):
             content = render_template('show_nonexistent.html',
                                       item_name=self.name,
                                       fqname=self.fqname,
-                                     )
+                                      )
         return Response(content, 404)
 
     def do_modify(self):
@@ -1267,22 +1517,38 @@ class NonExistent(Item):
             return render_template('create_new_item.html',
                                    fqname=self.fqname,
                                    form=form,
-            )
+                                   )
 
+        # verify name meets standards
+        try:
+            validate_name(self.meta, None)
+        except NameNotValidError:
+            # a flash message has already been created
+            form = CreateItemForm().from_defaults()
+            form['target'] = self.fqname.fullname
+            return render_template('create_new_item.html',
+                                   fqname=self.fqname,
+                                   form=form,
+                                   )
+
+        start, end, matches = find_matches(self.fqname)
+        similar_names = sorted(matches.keys())
         return render_template('modify_select_contenttype.html',
                                fqname=self.fqname,
                                item_name=self.name,
                                itemtype='default',  # create a normal wiki item
                                group_names=content_registry.group_names,
                                groups=content_registry.groups,
-                              )
+                               similar_names=similar_names,
+                               )
+
         # dead code, see above
         return render_template('modify_select_itemtype.html',
                                item=self,
                                item_name=self.name,
                                fqname=self.fqname,
                                itemtypes=item_registry.shown_entries,
-                              )
+                               )
 
     def rename(self, name, comment=''):
         # pointless for non-existing items

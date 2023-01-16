@@ -6,16 +6,20 @@ Create sqlite3 data models for edit locking and saving drafts. Expected usage
 is limited to the +modify method in /items/__init__.py for text items.
 
 Moin2 has only two states for the edit_locking_Policy: None and 'lock'.
+None is suitable for single user desktop wikis.
 
 Drafts are always saved when an editor clicks the Preview link.
 Regardless of the edit_locking_policy, warning messages are given to the
-user when conflicts occur.
+user when conflicts occur. Conflicts are caused when a user's edit lock times
+out, a second user obtains the item's edit lock and saves the item with updates, and then
+the first editor saves the item with conflicting updates. Such instances are
+detected and warning messages are flashed and included in the saved item.
 
 There are two small tables within the db saved in /wiki/sql/:
-    * editlock - maintains state of edit locks on text items when locking policy is lock.
+    * editlock - maintains state of edit locks on text items when the locking policy is lock.
         * there will be 1 row for each text item being actively edited or abandoned without a Save or Cancel
         * rows for abandoned edits will be reused if a second user edits the item
-    * editdraft - saves pointers to text draft when user clicks Preview button
+    * editdraft - saves pointers to text draft when user clicks the Preview button
         * there will be 1 row per user who has clicked Modify and has not yet Saved or Cancelled
         * if a user clicks Preview while editing a second item, the users old draft will be
           deleted and the row reused to point to the new draft
@@ -33,7 +37,7 @@ from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
-from moin.i18n import _, L_, N_
+from moin.i18n import L_
 from moin.utils.mime import Type
 from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
 from moin.constants.keys import ITEMID, REVID, REV_NUMBER, NAME
@@ -88,7 +92,7 @@ class Edit_Utils:
         """
         Creates the SQLite3 database and tables used for saving edit drafts and edit locking.
 
-        The edit locking table is created even if locking policy is None. Wiki admin can later
+        The edit locking table is created even if locking policy is None. A wiki admin can later
         change locking policy without affecting saved drafts.
         """
         if not os.path.exists(os.path.join(app.cfg.instance_dir, SQL)):
@@ -97,14 +101,14 @@ class Edit_Utils:
             os.mkdir(os.path.join(app.cfg.instance_dir, PREVIEW))
         con = sqlite3.connect(self.sql_filename)  # opens existing file or creates new file
         cursor = con.cursor()
-        cursor.execute('''CREATE TABLE editlock(item_id TEXT PRIMARY KEY,
+        cursor.execute('''CREATE TABLE editlock(item_id TEXT NOT NULL PRIMARY KEY,
                                                 item_name TEXT,
                                                 user_name TEXT,
                                                 timeout FLOAT
                                                 )
         ''')
         cursor.execute('''
-            CREATE TABLE editdraft(user_name TEXT PRIMARY KEY,
+            CREATE TABLE editdraft(user_name TEXT NOT NULL PRIMARY KEY,
                                    item_id TEXT,
                                    item_name TEXT,
                                    rev_number INTEGER,
@@ -123,7 +127,9 @@ class Edit_Utils:
     def make_draft_name(self, rev_id):
         """Return a file name consisting of rev_id + user_name."""
         keepchars = ('-', '.', '_')
-        return os.path.join(self.preview_path, rev_id + '-' + "".join(c for c in self.user_name if c.isalnum() or c in keepchars).rstrip())
+        return os.path.join(self.preview_path, rev_id + '-' + "".join(
+            c for c in self.user_name if c.isalnum() or c in keepchars
+        ).rstrip())
 
     def get_user_name(self):
         """Return user name or user IP address."""
@@ -165,8 +171,10 @@ class Edit_Utils:
             save_time = int(time.time())
         else:
             save_time = 0  # indicates user is editing item but has not done a preview, no draft has been saved
-        self.cursor.execute('''INSERT INTO editdraft(user_name, item_id, item_name, rev_number, save_time, rev_id)
-                          VALUES(?,?,?,?,?,?)''', (self.user_name, self.item_id, self.item_name, draft_rev_number, save_time, rev_id))
+        self.cursor.execute(
+            '''INSERT INTO editdraft(user_name, item_id, item_name, rev_number, save_time, rev_id)
+                           VALUES(?,?,?,?,?,?)''',
+            (self.user_name, self.item_id, self.item_name, draft_rev_number, save_time, rev_id))
         self.conn.commit()
 
     def get_draft(self):
@@ -175,7 +183,10 @@ class Edit_Utils:
 
         If existing draft is for wrong item, log error and delete.
         """
-        self.cursor.execute('''SELECT user_name, item_id, item_name, rev_number, save_time, rev_id FROM editdraft WHERE user_name=?''', (self.user_name, ))
+        self.cursor.execute(
+            '''SELECT user_name, item_id, item_name, rev_number, save_time, rev_id FROM editdraft
+               WHERE user_name=?''',
+            (self.user_name, ))
         draft = self.cursor.fetchone()
         if draft:
             u_name, i_id, i_name, rev_number, save_time, rev_id = draft
@@ -221,12 +232,16 @@ class Edit_Utils:
     def update_editlock(self):
         """Reset existing editlock, same user or different user is given the item lock."""
         timeout = int(time.time()) + app.cfg.edit_lock_time * 60
-        self.cursor.execute('''UPDATE editlock SET timeout = ?, user_name = ? WHERE item_id = ? ''', (timeout, self.user_name, self.item_id))
+        self.cursor.execute(
+            '''UPDATE editlock SET timeout = ?, user_name = ? WHERE item_id = ? ''',
+            (timeout, self.user_name, self.item_id))
         self.conn.commit()
 
     def get_lock_status(self):
         """Return lock status of item_id, either a row of editlock or None"""
-        self.cursor.execute('''SELECT item_id, item_name, user_name, timeout FROM editlock WHERE item_id=?''', (self.item_id, ))
+        self.cursor.execute(
+            '''SELECT item_id, item_name, user_name, timeout FROM editlock WHERE item_id=?''',
+            (self.item_id, ))
         locked = self.cursor.fetchone()
         return locked
 
@@ -249,16 +264,17 @@ class Edit_Utils:
                 interval, number = show_time.duration(wait_time)
                 if wait_time < 0.0:
                     # some other user's lock has timed out, give one-time alert user about potential future conflict,
-                    msg = L_("""Edit lock for %(user_name)s timed out %(number)s %(interval)s ago, click Cancel to yield more time,
-                             clicking Save may require %(user_name)s to resolve conflicting edits.""",
-                             user_name=u_name, number=number, interval=interval)
+                    msg = L_(
+                        """Edit lock for %(user_name)s timed out %(number)s %(interval)s ago, click Cancel
+                        to yield more time, clicking Save may require %(user_name)s to resolve conflicting edits.""",
+                        user_name=u_name, number=number, interval=interval)
                     self.update_editlock()
                     self.put_draft(None)
                     return LOCKED, msg
                 else:
                     # item is locked by somebody else, make current user wait
                     msg = L_("Item '%(item_name)s' is locked by %(user_name)s. Try again in %(number)s %(interval)s.",
-                          item_name=i_name, user_name=u_name, number=number, interval=interval, )
+                             item_name=i_name, user_name=u_name, number=number, interval=interval, )
                     return NO_LOCK, msg
 
             else:
@@ -269,17 +285,19 @@ class Edit_Utils:
                     u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                     if self.rev_number > rev_number:
                         # current user timed out, then other user updated and saved
-                        msg = L_("""Someone else updated '%(item_name)s' after your edit lock timed out. If you click 'Save',
-                                 conflicting changes must be manually merged. Click 'Cancel' to discard changes.""",
-                              item_name=self.item_name)
+                        msg = L_("""Someone else updated '%(item_name)s' after your edit lock timed out.
+                                 If you click 'Save', conflicting changes must be manually merged.
+                                 Click 'Cancel' to discard changes.""",
+                                 item_name=self.item_name)
                     self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                       VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
                     self.conn.commit()
                     return LOCKED, msg
                 # if no draft, preserve starting rev_number by creating entry without rev_id
                 self.put_draft(None)
-                self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
-                                  VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
+
+                self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout) VALUES(?,?,?,?)''',
+                                    (self.item_id, self.item_name, self.user_name, timeout))
                 self.conn.commit()
         return LOCKED, msg
 
@@ -299,8 +317,10 @@ class Edit_Utils:
                 return
             elif not cancel:
                 # bug: someone else has active edit lock, relock_item() should have been called prior to item save
-                logging.error("User {0} tried to unlock item that was locked by someone else: {1}".format(user_name, i_name))
-                msg = L_("Item '%(item_name)s' is locked by %(user_name)s. Edit lock error, check Item History to verify no changes were lost.",
+                logging.error("User {0} tried to unlock item that was locked by someone else: {1}".format(
+                    user_name, i_name))
+                msg = L_("Item '%(item_name)s' is locked by %(user_name)s. Edit lock error, "
+                         "check Item History to verify no changes were lost.",
                          item_name=i_name, user_name=u_name, )
                 return msg
         if not cancel:

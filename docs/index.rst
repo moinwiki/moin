@@ -25,6 +25,7 @@ Using MoinMoin
    user/markups
    user/templates_metadata
    user/search
+   user/upload
    user/namespaces
    user/subscriptions
 

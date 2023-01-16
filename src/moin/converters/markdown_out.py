@@ -20,10 +20,6 @@ from moin.utils.iri import Iri
 
 from emeraldtree import ElementTree as ET
 
-from re import findall, sub
-
-from werkzeug.utils import unescape
-
 from . import default_registry
 from moin.utils.mime import Type, type_moin_document
 
@@ -130,10 +126,6 @@ class Converter:
                         ret = '\n'
                 if child == '\n' and getattr(elem, 'level', 0):
                     child = child + ' ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
-                if elem.tag.name == 'td':
-                    attrib = self.attribute_list(elem)
-                    if attrib:
-                        child += attrib
                 childrens_output.append('{0}{1}'.format(ret, child))
                 self.last_closed = 'text'
         out = join_char.join(childrens_output)
@@ -167,7 +159,8 @@ class Converter:
         f = getattr(self, n, None)
         if f:
             ret = f(elem)
-            if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th', 'emphasis', 's', 'ins', 'u', 'span', ):
+            if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th',
+                                     'emphasis', 's', 'ins', 'u', 'span', 'table', ):
                 attrib = self.attribute_list(elem)
                 if attrib:
                     if ret.endswith('#\n'):
@@ -380,9 +373,11 @@ class Converter:
             else:
                 ret = self.open_children(elem)
         elif self.status[-2] == 'list':  # TODO: still possible? <p> after <li> removed from moinwiki_in
-            if self.last_closed and (
-                self.last_closed != 'list_item' and self.last_closed != 'list_item_header' and
-                self.last_closed != 'list_item_footer' and self.last_closed != 'list_item_label'):
+            if self.last_closed \
+               and (self.last_closed != 'list_item' and
+                    self.last_closed != 'list_item_header' and
+                    self.last_closed != 'list_item_footer' and
+                    self.last_closed != 'list_item_label'):
                 ret = Markdown.linebreak + self.open_children(elem)
             else:
                 ret = self.open_children(elem)
@@ -393,7 +388,6 @@ class Converter:
 
     def open_moinpage_page(self, elem):
         self.last_closed = None
-        ret = ''
         if len(self.status) > 1:
             self.status.append('text')
             childrens_output = self.open_children(elem)
@@ -453,7 +447,6 @@ class Converter:
         return self.open_moinpage_ins(elem)
 
     def open_moinpage_strong(self, elem):
-        ret = Markdown.strong
         return "{0}{1}{2}".format(Markdown.strong, self.open_children(elem), Markdown.strong)
 
     def open_moinpage_table(self, elem):
@@ -463,6 +456,7 @@ class Converter:
         self.status.pop()
         # markdown tables must have headings
         if '----' not in ret:
+            # style: text-align gets lost here
             rows = ret.split('\n')
             header = rows[0][1:-1]  # remove leading and trailing |
             cells = header.split('|')
@@ -475,11 +469,11 @@ class Converter:
         # used for reST to moinwiki conversion, maybe others that generate table head
         separator = []
         for th in elem[0]:
-            if th.attrib.get(moin_page.class_, None) == 'center':
+            if th.attrib.get(moin_page.style, None) == 'text-align: center;':
                 separator.append(':----:')
-            elif th.attrib.get(moin_page.class_, None) == 'left':
+            elif th.attrib.get(moin_page.style, None) == 'text-align: left;':
                 separator.append(':-----')
-            elif th.attrib.get(moin_page.class_, None) == 'right':
+            elif th.attrib.get(moin_page.style, None) == 'text-align: right;':
                 separator.append('-----:')
             else:
                 separator.append('------')

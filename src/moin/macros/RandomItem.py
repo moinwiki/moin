@@ -10,8 +10,6 @@ TODO: add mimetype param and only show items matching this mimetype
 
 import random
 
-from flask import g as flaskg
-
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.items import Item
@@ -41,8 +39,8 @@ class Macro(MacroPageLinkListBase):
 
             # Filter out items the user may not read.
             try:
-                item = Item.create(item_name)
-                random_item_names.append(item_name)
+                Item.create(item_name.value)
+                random_item_names.append(item_name.value)
                 found += 1
             except AccessDenied:
                 pass

@@ -6,6 +6,7 @@ MoinMoin - backend serialization / deserialization
 """
 
 import sys
+import os
 
 from flask import current_app as app
 from flask_script import Command, Option
@@ -75,13 +76,30 @@ class Serialize(Command):
 
 
 class Deserialize(Command):
-    description = 'Deserialize a file into the backend.'
+    description = 'Deserialize a file into the backend; with options to rename or remove a namespace.'
 
     option_list = [
-        Option('--file', '-f', dest='filename', type=str, required=False,
+        Option('--file', '-f', dest='filename', type=str, required=True,
                help='Filename of the input file.'),
+        Option('--new-ns', '-n', dest='new_ns', type=str, required=False, default=None,
+               help='New namespace name to receive items from the old namespace name.'),
+        Option('--old-ns', '-o', dest='old_ns', type=str, required=False, default=None,
+               help='Old namespace that will be deleted, all items to be restored to new namespace.'),
+        Option('--kill-ns', '-k', dest='kill_ns', type=str, required=False, default=None,
+               help='Namespace name to be deleted, no items within this namespace will be loaded.'),
     ]
 
-    def run(self, filename=None):
+    def run(self, filename=None, new_ns=None, old_ns=None, kill_ns=None):
+        with open_file(filename, "rb") as f:
+            deserialize(f, app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
+
+
+class LoadSample(Command):
+    description = 'Load wiki sample items.'
+
+    def run(self):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(dir_path, '../../contrib/sample-backup.moin')
+        filename = os.path.normpath(filename)
         with open_file(filename, "rb") as f:
             deserialize(f, app.storage.backend)

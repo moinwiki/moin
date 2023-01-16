@@ -17,7 +17,7 @@ from werkzeug.urls import url_encode
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
-from moin.utils.tree import html, moin_page, xlink
+from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
@@ -345,7 +345,7 @@ class Converter(ConverterMacro):
         for line in iter:
             match = self.block_re.match(line)
             it = iter
-            # XXX: Hack to allow nowiki to ignore the list identation
+            # XXX: Hack to allow nowiki to ignore the list indentation
             if match.lastgroup == 'table' or match.lastgroup == 'nowiki':
                 it = iter_content
             self._apply(match, 'block', it, new_stack)
@@ -639,12 +639,11 @@ class Converter(ConverterMacro):
                          link_args='', external_link_url=None, alt_text=''):
         """Handle all kinds of links."""
         link_text = ''
-        link_args_list = []
         # Remove the first pipe/space, example of link_args : |arg1|arg2 or " arg1 arg2"
         parsed_args = self.parse_args(link_args[1:])
         query = None
         if parsed_args.keyword:
-            query = url_encode(parsed_args.keyword, charset=CHARSET, encode_keys=True, sort=True)
+            query = url_encode(parsed_args.keyword, charset=CHARSET, sort=True)
         # Take the last of positional parameters as link_text(caption)
         if parsed_args.positional:
             link_text = parsed_args.positional.pop()
@@ -663,7 +662,7 @@ class Converter(ConverterMacro):
                     if 'do' not in args:
                         # by default, we want the item's get url for transclusion of raw data:
                         args['do'] = 'get'
-                    query = url_encode(args, charset=CHARSET, encode_keys=True, sort=True)
+                    query = url_encode(args, charset=CHARSET, sort=True)
                     target = Iri(scheme='wiki.local', path=object_item, query=query, fragment=None)
                     text = object_item
                 else:

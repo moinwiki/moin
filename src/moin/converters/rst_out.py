@@ -341,9 +341,9 @@ class Converter:
                     if self.last_closed == "p":
                         childrens_output.append('\n\n')
                 elif self.status[-1] == "list":
-                    child =\
-                        re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(
-                            ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                    child = re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' * (
+                        len(''.join(self.list_item_labels)) + len(self.list_item_labels)
+                    ), m.group(1)), child)
                     if self.last_closed == "p":
                         childrens_output.append(
                             '\n' + ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)))
@@ -352,9 +352,9 @@ class Converter:
                         childrens_output.append(self.define_references())
                         childrens_output.append('\n')
                 elif self.status[-2] == "list":
-                    child =\
-                        re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' *
-                               (len(''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), child)
+                    child = re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' * (
+                        len(''.join(self.list_item_labels)) + len(self.list_item_labels)
+                    ), m.group(1)), child)
                 childrens_output.append(child)
                 self.last_closed = 'text'
         self.delete_newlines = delete_newlines
@@ -407,7 +407,6 @@ class Converter:
 
     def open_moinpage_blockcode(self, elem):
         text = ''.join(elem.itertext())
-        max_subpage_lvl = 3
         text = text.replace('\n', '\n  ' +
                             ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)))
         if self.list_level >= 0:
@@ -454,7 +453,6 @@ class Converter:
         return '\n'.join(lines)
 
     def open_moinpage_figcaption(self, elem):
-        ret = self.open_children(elem).split('\n')
         return '\n   {0}\n'.format(self.open_children(elem))
 
     def open_moinpage_emphasis(self, elem):
@@ -615,11 +613,11 @@ class Converter:
         elif self.status[-1] == 'table':
             self.status.append('p')
             if self.last_closed and self.last_closed != 'table_cell' \
-                and self.last_closed != 'table_row' \
-                and self.last_closed != 'table_header' \
-                and self.last_closed != 'table_footer' \
-                and self.last_closed != 'table_body' \
-                and self.last_closed != 'line_break':
+               and self.last_closed != 'table_row' \
+               and self.last_closed != 'table_header' \
+               and self.last_closed != 'table_footer' \
+               and self.last_closed != 'table_body' \
+               and self.last_closed != 'line_break':
                 # and self.last_closed != 'p':
                 ret = ReST.linebreak + self.open_children(elem)
             elif self.last_closed == 'p' or self.last_closed == 'line_break':
@@ -631,9 +629,9 @@ class Converter:
             if self.last_closed and self.last_closed == 'list_item_label':
                 ret = self.open_children(elem)
             elif self.last_closed and self.last_closed != 'list_item' \
-                and self.last_closed != 'list_item_header' \
-                and self.last_closed != 'list_item_footer' \
-                and self.last_closed != 'p':
+                    and self.last_closed != 'list_item_header' \
+                    and self.last_closed != 'list_item_footer' \
+                    and self.last_closed != 'p':
                 ret = (ReST.linebreak + ' ' * (len(''.join(self.list_item_labels)) +
                                                len(self.list_item_labels)) + self.open_children(elem))
             elif self.last_closed and self.last_closed == 'p':
@@ -714,9 +712,9 @@ class Converter:
         self.status.pop()
         table = repr(self.tablec)
         if self.status[-1] == "list":
-            table =\
-                re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(
-                    ' ' * (len(''.join(self.list_item_labels)) + len(self.list_item_labels)), m.group(1)), "\n" + table)
+            table = re.sub(r"\n(.)", lambda m: "\n{0}{1}".format(' ' * (
+                len(''.join(self.list_item_labels)) + len(self.list_item_labels)
+            ), m.group(1)), "\n" + table)
             return table + ReST.p
         return '\n' + table + ReST.linebreak
 
@@ -743,8 +741,6 @@ class Converter:
         return ret
 
     def open_moinpage_table_cell(self, elem):
-        table_cellclass = elem.attrib.get('class', '')
-        table_cellstyle = elem.attrib.get('style', '')
         number_cols_spanned = int(elem.get(moin_page.number_cols_spanned, 1))
         number_rows_spanned = int(elem.get(moin_page.number_rows_spanned, 1))
         self.table[-1].append((number_cols_spanned, number_rows_spanned, [self.open_children(elem)]))

@@ -14,7 +14,7 @@ import time
 import errno
 from stat import S_ISDIR, ST_MODE, S_IMODE
 
-from werkzeug.posixemulation import rename
+from os import replace as rename
 
 from moin import log
 logging = log.getLogger(__name__)

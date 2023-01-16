@@ -13,19 +13,14 @@
 import os
 
 from flask import current_app as app
-from flask import g as flaskg
-from flask import request
 
 import werkzeug
 
 from moin.constants.contenttypes import CHARSET
-from moin.constants.keys import CURRENT
 from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
 from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
-from moin.i18n import _, L_, N_
 from moin.utils.mimetype import MimeType
-from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 
 from moin import log
 logging = log.getLogger(__name__)

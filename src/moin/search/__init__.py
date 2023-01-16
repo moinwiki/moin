@@ -6,9 +6,9 @@ MoinMoin - MoinMoin search package
 """
 
 from moin.i18n import L_
-from moin.forms import Search, InlineCheckbox
+from moin.forms import Search
 
-from flatland import Form, String, Boolean
+from flatland import Form
 from flatland.validation import Validator
 
 

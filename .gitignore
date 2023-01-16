@@ -30,7 +30,8 @@ moin.bat
 m.bat
 activate
 m
-# files created by make.py
+wikiconfig.py
+intermap.txt
 m-*.txt
 # default destination for "m dump-html" output
 HTML/

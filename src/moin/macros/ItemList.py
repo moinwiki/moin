@@ -26,6 +26,8 @@ Parameters:
                False : Display list as an unordered list.  (default)
                True  : Display list as an ordered list.
 
+    skiptag: a tag name, items with tag will be skipped
+
     display: How should the link be displayed?
 
         Options:
@@ -62,7 +64,7 @@ Examples:
 import re
 from flask import request
 from flask import g as flaskg
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils.tree import moin_page
 from moin.utils.interwiki import split_fqname
 from moin.macros._base import MacroPageLinkListBase
@@ -77,6 +79,7 @@ class Macro(MacroPageLinkListBase):
         regex = None
         ordered = False
         display = "FullPath"
+        skiptag = ""
 
         # process input
         args = []
@@ -86,7 +89,8 @@ class Macro(MacroPageLinkListBase):
             try:
                 key, val = [x.strip() for x in arg.split('=')]
             except ValueError:
-                raise ValueError(_('ItemList macro: Argument "%s" does not follow <key>=<val> format (arguments, if more than one, must be comma-separated).' % arg))
+                raise ValueError(_('ItemList macro: Argument "%s" does not follow <key>=<val> format '
+                                   '(arguments, if more than one, must be comma-separated).' % arg))
 
             if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
                 raise ValueError(_("ItemList macro: The key's value must be bracketed by matching quotes."))
@@ -107,6 +111,8 @@ class Macro(MacroPageLinkListBase):
                     raise ValueError(_('ItemList macro: The value must be "True" or "False". (got "%s")' % val))
             elif key == "display":
                 display = val  # let 'create_pagelink_list' throw an exception if needed
+            elif key == "skiptag":
+                skiptag = val
             else:
                 raise KeyError(_('ItemList macro: Unrecognized key "%s".' % key))
 
@@ -123,7 +129,7 @@ class Macro(MacroPageLinkListBase):
                 raise LookupError(_('ItemList macro: The specified item "%s" does not exist.' % item))
 
         # process subitems
-        children = self.get_item_names(item, startswith)
+        children = self.get_item_names(item, startswith=startswith, skiptag=skiptag)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
@@ -131,7 +137,7 @@ class Macro(MacroPageLinkListBase):
                 raise ValueError(_("ItemList macro: Error in regex {0!r}: {1}".format(regex, err)))
             newlist = []
             for child in children:
-                if regex_re.search(child):
+                if regex_re.search(child.fullname):
                     newlist.append(child)
             children = newlist
         if not children:

@@ -14,10 +14,10 @@ import datetime
 import json
 from operator import itemgetter
 
-from flatland import (Element, Form, String, Integer, Boolean, Enum as BaseEnum, Dict, JoinedString, List, Array,
-                      DateTime as _DateTime)
+from flatland import (Form, String, Integer, Boolean, Enum as BaseEnum, JoinedString,  # noqa
+                      List, Array, DateTime as _DateTime)
 from flatland.util import class_cloner, Unspecified
-from flatland.validation import Validator, Present, IsEmail, ValueBetween, URLValidator, Converted, ValueAtLeast
+from flatland.validation import Validator, Present, IsEmail, URLValidator, Converted, ValueAtLeast
 from flatland.exc import AdaptationError
 
 from whoosh.query import Term, Or, Not, And
@@ -26,10 +26,16 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask import flash
 
-from moin.constants.forms import *  # noqa
+from moin.constants.forms import (
+    WIDGET_ANY_INTEGER, WIDGET_CHECKBOX, WIDGET_DATETIME, WIDGET_EMAIL, WIDGET_FILE, WIDGET_HIDDEN,
+    WIDGET_INLINE_CHECKBOX, WIDGET_MULTILINE_TEXT, WIDGET_MULTI_SELECT, WIDGET_PASSWORD, WIDGET_RADIO_CHOICE,
+    WIDGET_READONLY_ITEM_LINK_LIST, WIDGET_READONLY_STRING_LIST, WIDGET_SEARCH, WIDGET_SELECT,
+    WIDGET_SELECT_SUBMIT, WIDGET_SMALL_NATURAL, WIDGET_TEXT
+)
+
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin.utils.forms import FileStorage
 from moin.storage.middleware.validation import uuid_validator
 
@@ -84,8 +90,9 @@ class NameNotValidError(ValueError):
 
 def validate_name(meta, itemid):
     """
-    Check whether the names are valid.
-    Will just return, if they are valid, will raise a NameNotValidError if not.
+    Common validation code for new, renamed and reverted items.
+
+    Will return None if valid, or raise a NameNotValidError if not.
     """
     names = meta.get(NAME)
     current_namespace = meta.get(NAMESPACE)
@@ -95,20 +102,32 @@ def validate_name(meta, itemid):
 
     if len(names) != len(set(names)):
         msg = L_("The names in the name list must be unique.")
-        flash(msg, "error")  # duplicate message at top of form
+        flash(msg, "error")
         raise NameNotValidError(msg)
+
     # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
     invalid_names = [name for name in names if name.startswith(('@', '+'))]
     if invalid_names:
-        msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'", invalid_names=", ".join(invalid_names))
-        flash(msg, "error")  # duplicate message at top of form
+        msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'",
+                 invalid_names=", ".join(invalid_names))
+        flash(msg, "error")
+        raise NameNotValidError(msg)
+
+    # Item names must not contain commas
+    invalid_names = [name for name in names if ',' in name]
+    if invalid_names:
+        msg = L_("Item name (%(invalid_names)s) must not contain ',' characters. "
+                 "Create item with 1 name, use rename to create multiple names.",
+                 invalid_names=", ".join(invalid_names))
+        flash(msg, "error")
         raise NameNotValidError(msg)
 
     namespaces = namespaces + NAMESPACES_IDENTIFIER  # Also dont allow item names to match with identifier namespaces.
     # Item names must not match with existing namespaces.
     invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
     if invalid_names:
-        msg = L_("Item names (%(invalid_names)s) must not match with existing namespaces.", invalid_names=", ".join(invalid_names))
+        msg = L_("Item names (%(invalid_names)s) must not match with existing namespaces.",
+                 invalid_names=", ".join(invalid_names))
         flash(msg, "error")  # duplicate message at top of form
         raise NameNotValidError(msg)
     query = And([Or([Term(NAME, name) for name in names]), Term(NAMESPACE, current_namespace)])
@@ -131,7 +150,8 @@ class ValidName(Validator):
 
     def validate(self, element, state):
         if state is None:
-            # incoming request is from +usersettings#personal; apps/frontend/views.py will validate changes to user names
+            # incoming request is from +usersettings#personal;
+            # apps/frontend/views.py will validate changes to user names
             return True
         try:
             validate_name(state['meta'], state[ITEMID])

@@ -20,7 +20,7 @@ Servers
   - nginx with uwsgi
   - IIS with isapi-wsgi (not recommended - if you must use Windows, but have
     a choice concerning the web server, please use Apache2).
-  - Other WSGI servers, see http://wsgi.org/
+  - Other WSGI servers, see https://wsgi.readthedocs.io/en/latest
 
 * With the help of flup middleware about any other server speaking:
 

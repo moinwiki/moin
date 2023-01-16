@@ -13,9 +13,9 @@ from flask import g as flaskg
 
 from whoosh.query import Term, Or
 
-from moin.constants.keys import (DEFAULT_LOCALE, EMAIL, EMAIL_UNVALIDATED, ITEMID,
-                                 LATEST_REVS, LOCALE, NAME, NAMERE, NAMEPREFIX,
-                                 NAMESPACE, SUBSCRIPTION_IDS, SUBSCRIPTION_PATTERNS, TAGS)
+from moin.constants.keys import (DEFAULT_LOCALE, EMAIL, ITEMID, LATEST_REVS, LOCALE,
+                                 NAME, NAMERE, NAMEPREFIX, NAMESPACE, SUBSCRIPTION_IDS,
+                                 SUBSCRIPTION_PATTERNS, TAGS)
 
 from moin.utils.interwiki import CompositeName
 
@@ -89,7 +89,8 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
             try:
                 namespace, pattern = value.split(":", 1)
             except ValueError:
-                logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+                logging.exception("User {0} has invalid subscription entry: {1}".format(
+                    flaskg.user.name[0], subscription))
                 continue
             if item_namespace == namespace:
                 if keyword == NAMEPREFIX:

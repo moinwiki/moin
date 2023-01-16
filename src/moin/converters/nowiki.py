@@ -15,9 +15,9 @@ import pygments
 from . pygments_in import TreeFormatter
 from pygments.util import ClassNotFound
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.utils.tree import moin_page
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import type_moin_document
 
 from . import default_registry
 from ._args_wiki import parse as parse_arguments
@@ -36,7 +36,9 @@ class Converter:
 
     def invalid_args(self, elem, all_nowiki_args):
         """Insert an error message into output."""
-        message = _('Defaulting to plain text due to invalid arguments: "{arguments}"').format(arguments=all_nowiki_args[0])
+        message = _(
+            'Defaulting to plain text due to invalid arguments: "{arguments}"'
+        ).format(arguments=all_nowiki_args[0])
         admonition = moin_page.div(attrib={moin_page.class_: 'error'}, children=[moin_page.p(children=[message])])
         elem.append(admonition)
 

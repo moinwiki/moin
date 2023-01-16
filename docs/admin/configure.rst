@@ -54,17 +54,17 @@ functionality.
 Directory Structure
 ===================
 
-Shown below are parts of the directory structure after cloning moin or unpacking a release.
+Shown below are parts of the directory structure after cloning moin and running quickinstall.py.
 The default uses the OS file system for storage of wiki data and indexes.
 The directories and files shown are referenced in this section of documentation related to configuration::
 
-    moin/                     # clone root or unpack directory
-        contrib/
-            interwiki/
-                intermap.txt      # interwiki map: created by cloning or unpacking, updated by "./m interwiki"
-        docs/
+    moin/                         # clone root, default name
+        contrib/                  # scripts and docs of interest to developers
+        docs/                     # moin documentation in restructured text (.rst) format
             _build/
                 html/             # local copy of moin documentation, created by running "./m docs" command
+        requirements.d/           # package requirements used by quickinstall.py
+        scripts/                  # misc. scripts of interest to developers
         src/
             moin/                 # large directory containing moin application code
         wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
@@ -72,6 +72,31 @@ The directories and files shown are referenced in this section of documentation 
             index/                # wiki indexes
         wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
         wikiconfig.py             # main configuration file, modify this to add or change features
+        intermap.txt              # interwiki map: copied by quickinstall.py, updated by "./m interwiki"
+
+After installing moin from pypi or unpacking using a package manager, the directory structure will
+look like this::
+
+    myvenv/                 # virtualenv root
+        bin/                # Windows calls this directory Scripts
+        include             # Windows calls this directory Include
+        lib/                # Windows calls this directory Lib, includes moin package
+
+After activating the above venv, `moin create-instance -p <mywiki>` creates the structure below. Multiple
+instances of `mywiki` can be created with different names. `mywiki` may be created as a
+subdirectory of `myvenv` or elsewhere. The `preview` and `sql` subdirectories are created when a
+user edits a wiki item. To run moin using the built-in server, cd to the `<mywiki>` directory
+and execute `moin run`.::
+
+    mywiki/                 # wikiconfig dir, use this as CWD for moin commands
+        wiki/               # the wiki instance; created by `moin create-instance`
+            data/           # wiki data and metadata
+            index/          # wiki indexes
+            preview/        # text item backups are created when user clicks edit Preview button
+            sql/            # sqlite database used for edit locking
+        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
+        wikiconfig.py       # main configuration file, modify this to add or change features
+        intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 
 wikiconfig.py Layout
 ====================
@@ -79,11 +104,11 @@ wikiconfig.py Layout
 A wikiconfig.py looks like this::
 
  # -*- coding: utf-8 -*-
- from MoinMoin.config.default import DefaultConfig
+ from moin.config.default import DefaultConfig
 
  class Config(DefaultConfig):
      # some comment
-     sometext = u'your value'
+     sometext = 'your value'
      somelist = [1, 2, 3]
 
  MOINCFG = Config  # Flask only likes uppercase characters
@@ -104,8 +129,7 @@ Let's go through this line-by-line:
 4. a `#` character defines a comment in your config. This line, as
    well as all other following lines with Config settings, is indented by 4
    blanks, because Python defines blocks by indentation.
-5. define a Config attribute called `sometext` with value u'your value' whereby
-   the `u'...'` means that this is a unicode string.
+5. define a Config attribute called `sometext` with value 'your value'.
 6. define a Config attribute called `somelist` with value [1, 2, 3]; this is
    a list with the numbers 1, 2 and 3 as its elements.
 7. empty line, for better readability
@@ -141,7 +165,7 @@ The user interface or html elements that often need customization are
 defined as macros in the template file `snippets.html`.
 
 If you would like to customize some parts, you have to copy the built-in
-`MoinMoin/templates/snippets.html` file and save it in the `wiki_local` directory so moin
+`src/moin/templates/snippets.html` file and save it in the `wiki_local` directory so moin
 can use your copy instead of the built-in one.
 
 To customize something, you usually have to insert your code between the
@@ -234,7 +258,7 @@ macros to show something else::
     {{ sep }}
     {{ credit('https://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
     {{ sep }}
-    {{ credit('http://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
+    {{ credit('https://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
     {{ end }}
     {% endmacro %}
 
@@ -264,8 +288,8 @@ stylesheets.
 
 See:
 
-* `CSS media types <http://www.w3.org/TR/CSS2/media.html>`_
-* `Alternate Stylesheets <http://www.alistapart.com/articles/alternate/>`_
+* `CSS media types <https://www.w3.org/TR/CSS2/media.html>`_
+* `Alternate Stylesheets <https://alistapart.com/article/alternate/>`_
 
 A good way to test a stylesheet is to first use it as user CSS before
 configuring it for the public.
@@ -295,7 +319,7 @@ Customizing the CMS header may be done as follows. Several restarts of the serve
    and Global Index.
  - If many links are desired, consider using `macro custom_panels`.
  - Test by logging in and setting "Topside CMS Theme" as your preferred theme.
- - After testing, make the cms theme the default theme by adding ``theme_default = u"topside_cms"`` to wikiconfig.
+ - After testing, make the cms theme the default theme by adding ``theme_default = "topside_cms"`` to wikiconfig.
  - Inform your editors to login and set another theme as their preferred theme.
  - If the login link was removed, the login page is available by keying ``+login`` as the page name in the browser URL.
 
@@ -362,7 +386,7 @@ Please note that using the gravatar service has some privacy issues:
 
 XStatic Packages
 ----------------
-`XStatic <http://readthedocs.org/projects/xstatic>`_ is a packaging standard
+`XStatic <https://readthedocs.org/projects/xstatic>`_ is a packaging standard
 to package external static files as a Python package, often third party.
 That way they are easily usable on all operating systems, whether it has a package management
 system or not.
@@ -373,40 +397,40 @@ them into our project.
 
 For MoinMoin we require the following XStatic Packages in setup.py:
 
-* `jquery <http://pypi.python.org/pypi/XStatic-jQuery>`_
+* `jquery <https://pypi.org/project/XStatic-jQuery>`_
   for jquery lib functions loaded in the template file base.html
 
-* `jquery_file_upload <http://pypi.python.org/pypi/XStatic-jQuery-File-Upload>`_
+* `jquery_file_upload <https://pypi.org/project/XStatic-jQuery-File-Upload>`_
   loaded in the template file of index view. It allows to upload many files at once.
 
-* `bootstrap <https://pypi.python.org/pypi/XStatic-Bootstrap>`_
+* `bootstrap <https://pypi.org/project/XStatic-Bootstrap>`_
   used by the basic theme.
 
-* `font_awesome <https://pypi.python.org/pypi/XStatic-Font-Awesome>`_
+* `font_awesome <https://pypi.org/project/XStatic-Font-Awesome>`_
   provides text icons.
 
-* `ckeditor <http://pypi.python.org/pypi/XStatic-CKEditor>`_
+* `ckeditor <https://pypi.org/project/XStatic-CKEditor>`_
   used in template file modify_text_html. A WYSIWYG editor similar to word processing
   desktop editing applications.
 
-* `autosize <https://pypi.python.org/pypi/XStatic-autosize>`_
+* `autosize <https://pypi.org/project/XStatic-autosize>`_
   used by basic theme to adjust textarea on modify view.
 
-* `svgedit_moin <http://pypi.python.org/pypi/XStatic-svg-edit-moin>`_
+* `svgedit_moin <https://pypi.org/project/XStatic-svg-edit-moin>`_
   is loaded at template modify_svg-edit. It is a fast, web-based, Javascript-driven
   SVG editor.
 
-* `twikidraw_moin <http://pypi.python.org/pypi/XStatic-TWikiDraw-moin>`_
+* `twikidraw_moin <https://pypi.org/project/XStatic-TWikiDraw-moin>`_
   a Java applet loaded from template file of modify_twikidraw. It is a simple drawing editor.
 
-* `anywikidraw <http://pypi.python.org/pypi/XStatic-AnyWikiDraw>`_
+* `anywikidraw <https://pypi.org/project/XStatic-AnyWikiDraw>`_
   a Java applet loaded from template file of modify_anywikidraw. It can be used for
   editing drawings and diagrams on items.
 
-* `jquery_tablesorter <https://pypi.python.org/pypi/XStatic-JQuery.TableSorter/2.14.5.1>`_
+* `jquery_tablesorter <https://pypi.org/project/XStatic-JQuery.TableSorter/2.14.5.1>`_
   used to provide client side table sorting.
 
-* `pygments <https://pypi.python.org/pypi/XStatic-Pygments>`_
+* `pygments <https://pypi.org/project/XStatic-Pygments>`_
   used to style code fragments.
 
 
@@ -438,7 +462,7 @@ Adding XStatic Packages
 -----------------------
 
 The following example shows how you can enable the additional package
-`XStatic-MathJax <http://pypi.python.org/pypi/XStatic-MathJax>`_ which is
+`XStatic-MathJax <https://pypi.org/project/XStatic-MathJax>`_ which is
 used for mathml or latex formulas in an item's content.
 
 * install xstatic-mathjax (e.g. using ``pip install xstatic-mathjax``)
@@ -465,13 +489,13 @@ could also write your own theme.
 Caution: developing your own theme means you also have to maintain and update it,
 which normally requires a long-term effort.
 
-To add a new theme, add a new directory under MoinMoin/themes/ where the directory
+To add a new theme, add a new directory under src/moin/themes/ where the directory
 name is the name of your theme. Note the directory structure under the other existing
 themes. Copy an `info.json` file to your theme directory and edit as needed.
-Create a file named theme.css in the MoinMoin/themes/<theme name>/static/css/ directory.
+Create a file named theme.css in the src/moin/themes/<theme name>/static/css/ directory.
 
 To change the layout of the theme header, sidebar and footer, create a templates/ directory and
-copy and modify the files layout.html and show.html from either MoinMoin/templates/ or one
+copy and modify the files layout.html and show.html from either src/moin/templates/ or one
 of the existing theme templates directories.
 
 For many themes, modifying the files noted above will be sufficient. If changes to
@@ -495,7 +519,7 @@ else. The user logs in by filling out the login form with username and
 password, moin compares the password hash against the one stored in the user's
 profile and if both match, the user is authenticated::
 
-    from MoinMoin.auth import MoinAuth
+    from moin.auth import MoinAuth
     auth = [MoinAuth()]  # this is the default!
 
 HTTPAuthMoin
@@ -503,7 +527,7 @@ HTTPAuthMoin
 With HTTPAuthMoin moin does http basic authentication by itself without the help of
 the web server::
 
-    from MoinMoin.auth.http import HTTPAuthMoin
+    from moin.auth.http import HTTPAuthMoin
     auth = [HTTPAuthMoin(autocreate=True)]
 
 If configured like that, moin will request authentication by emitting a
@@ -519,7 +543,7 @@ GivenAuth
 With GivenAuth moin relies on the webserver doing the authentication and giving
 the result to moin, usually via the environment variable REMOTE_USER::
 
-    from MoinMoin.auth import GivenAuth
+    from moin.auth import GivenAuth
     auth = [GivenAuth(autocreate=True, coding='utf-8')]
 
 Using this method has some pros and cons:
@@ -556,7 +580,7 @@ LDAPAuth with single LDAP server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This example shows how to use LDAPAuth with a single LDAP/AD server::
 
-    from MoinMoin.auth.ldap_login import LDAPAuth
+    from moin.auth.ldap_login import LDAPAuth
     ldap_common_arguments = dict(
         # the values shown below are the DEFAULT values (you may remove them if you are happy with them),
         # the examples shown in the comments are typical for Active Directory (AD) or OpenLDAP.
@@ -637,15 +661,15 @@ AuthLog is not a real authenticator in the sense that it authenticates (logs in)
 deauthenticates (logs out) users. It is passively logging informations for
 authentication debugging::
 
-    from MoinMoin.auth import MoinAuth
-    from MoinMoin.auth.log import AuthLog
+    from moin.auth import MoinAuth
+    from moin.auth.log import AuthLog
     auth = [MoinAuth(), AuthLog(), ]
 
 Example logging output::
 
- 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<MoinMoin.user.User at 0x90a0f0c name:u'ThomasWaldmann' valid:1> kw={'username': u'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': u'secret', 'login_username': u'ThomasWaldmann', 'password': u'secret', 'login_submit': u''}
- 2011-02-05 16:35:04,716 INFO MoinMoin.auth.log:22 session: user_obj=<MoinMoin.user.User at 0x90a0f6c name:u'ThomasWaldmann' valid:1> kw={}
- 2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:u'ThomasWaldmann' valid:False> kw={}
+ 2011-02-05 16:35:00,229 INFO MoinMoin.auth.log:22 login: user_obj=<moin.user.User at 0x90a0f0c name:'ThomasWaldmann' valid:1> kw={'username': 'ThomasWaldmann', 'attended': True, 'multistage': None, 'login_password': 'secret', 'login_username': 'ThomasWaldmann', 'password': 'secret', 'login_submit': ''}
+ 2011-02-05 16:35:04,716 INFO MoinMoin.auth.log:22 session: user_obj=<MoinMoin.user.User at 0x90a0f6c name:'ThomasWaldmann' valid:1> kw={}
+ 2011-02-05 16:35:06,294 INFO MoinMoin.auth.log:22 logout: user_obj=<MoinMoin.user.User at 0x92b5d4c name:'ThomasWaldmann' valid:False> kw={}
  2011-02-05 16:35:06,328 INFO MoinMoin.auth.log:22 session: user_obj=None kw={}
 
 **Note:** there is sensitive information like usernames and passwords in this
@@ -661,14 +685,14 @@ and uses them to mount a SMB share as this user.
 SMBMount is only useful for very special applications, e.g. in combination
 with the fileserver storage backend::
 
-    from MoinMoin.auth.smb_mount import SMBMount
+    from moin.auth.smb_mount import SMBMount
 
     smbmounter = SMBMount(
         # you may remove default values if you are happy with them
         # see man mount.cifs for details
         server='smb.example.org',  # (no default) mount.cifs //server/share
         share='FILESHARE',  # (no default) mount.cifs //server/share
-        mountpoint_fn=lambda username: u'/mnt/wiki/%s' % username,  # (no default) function of username to determine the mountpoint
+        mountpoint_fn=lambda username: '/mnt/wiki/%s' % username,  # (no default) function of username to determine the mountpoint
         dir_user='www-data',  # (no default) username to get the uid that is used for mount.cifs -o uid=...
         domain='DOMAIN',  # (no default) mount.cifs -o domain=...
         dir_mode='0700',  # (default) mount.cifs -o dir_mode=...
@@ -680,7 +704,7 @@ with the fileserver storage backend::
 
     auth = [....., smbmounter]  # you need a real auth object in the list before smbmounter
 
-    smb_display_prefix = u"S:"  # where //server/share is usually mounted for your windows users (display purposes only)
+    smb_display_prefix = "S:"  # where //server/share is usually mounted for your windows users (display purposes only)
 
 .. todo::
 
@@ -749,7 +773,7 @@ It **does not** check:
 If you are not satisfied with the default values, you can easily customize the
 checker::
 
-    from MoinMoin.config.default import DefaultConfig, _default_password_checker
+    from moin.config.default import DefaultConfig, _default_password_checker
     password_checker = lambda cfg, name, pw: _default_password_checker(
                            cfg, name, pw, min_length=10, min_different=6)
 
@@ -766,7 +790,8 @@ Password storage
 Moin never stores wiki user passwords in clear text, but uses strong
 cryptographic hashes provided by the "passlib" library, see there for details:
 
-    http://packages.python.org/passlib/.
+    https://passlib.readthedocs.io/en/stable/
+
 
 The passlib docs recommend 3 hashing schemes that have good security:
 sha512_crypt, pbkdf2_sha512 and bcrypt (bcrypt has additional binary/compiled
@@ -829,7 +854,7 @@ Moin has some built in functions that are protected by ACLs:
 
 Example::
 
-    acl_functions = u'YourName:superuser'
+    acl_functions = 'YourName:superuser'
 
 ACLs for contents
 -----------------
@@ -838,9 +863,9 @@ may have ACLs defined in their metadata. Within wikiconfig, ACLs are specified
 per namespace and storage backend (see storage backend docs for details). The
 example below shows an entry for the default namespace::
 
-    default_acl=dict(before=u'SuperUser:read,write,create,destroy,admin',
-                     default=u'TrustedEditorGroup:read,write,create,destroy,admin Known:read,write,create',
-                     after=u'All:read',
+    default_acl=dict(before='SuperUser:read,write,create,destroy,admin',
+                     default='TrustedEditorGroup:read,write,create,destroy,admin Known:read,write,create',
+                     after='All:read',
                      hierarchic=False, ),
 
 As shown above, `before`, `default` and  `after` ACLs are specified. The `default` ACL
@@ -868,7 +893,9 @@ subitems inherit ACLs from their parent items if they don't have an ACL themselv
 Note that while hierarchic ACLs are rather convenient sometimes, they make the
 system more complex. You have to be very careful with permission
 changes happening as a result of changes in the hierarchy, such as when you create,
-rename or delete items.
+rename or delete items. When multiple item names are used the complexity increases
+even more because all parents are searched for ACLs -- if conflicting
+allow/deny ACLs are found allow always wins.
 
 Supported capabilities (rights):
 
@@ -910,7 +937,7 @@ An ACL is processed from left to right, where the first left-side match counts.
 
 Example::
 
-    u"SuperMan,WonderWoman:read,write,create,destroy,admin All:read,write"
+    "SuperMan,WonderWoman:read,write,create,destroy,admin All:read,write"
 
 If "SuperMan" is currently logged in and moin processes this ACL, it will find
 a name match in the first entry. If moin wants to know whether he may destroy,
@@ -958,7 +985,7 @@ it will continue with the next entry.
 
 Example::
 
-    u"+SuperMan:create,destroy,admin -Idiot:write All:read,write"
+    "+SuperMan:create,destroy,admin -Idiot:write All:read,write"
 
 If "SuperMan" is currently logged in and moin wants to know whether he may
 destroy, it'll find a match in the first entry, because the name matches *and* permission
@@ -992,7 +1019,7 @@ having to edit lots of items.
 
 Example::
 
-    u"-NotThisGuy:write Default"
+    "-NotThisGuy:write Default"
 
 This will behave as usual, except that "NotThisGuy" will never be given write
 permission.
@@ -1042,7 +1069,7 @@ Group backend configuration
 The WikiGroups backend is enabled by default so there is no need to add the following to wikiconfig::
 
     def groups(self):
-        from MoinMoin.datastruct import WikiGroups
+        from moin.datastructures import WikiGroups
         return WikiGroups()
 
 To create a WikiGroup that can be used in an ACL rule:
@@ -1067,9 +1094,9 @@ following to wikiconfig creates an EditorGroup and an AdminGroup and prevents
 the use of any WikiGroups::
 
     def groups(self):
-        from MoinMoin.datastruct import ConfigGroups
-        groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
-                  u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
+        from moin.datastructures import ConfigGroups
+        groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1'],
+                  'AdminGroup': ['Admin1', 'Admin2', 'John']}
         return ConfigGroups(groups)
 
 CompositeGroups enable both ConfigGroups and WikiGroups to be used. The example
@@ -1079,9 +1106,9 @@ the EditGroup and AdminGroup defined below will be used should there be WikiGrou
 items with the same names::
 
     def groups(self):
-        from MoinMoin.datastruct import ConfigGroups, WikiGroups, CompositeGroups
-        groups = {u'EditorGroup': [u'AdminGroup', u'John', u'JoeDoe', u'Editor1'],
-                  u'AdminGroup': [u'Admin1', u'Admin2', u'John']}
+        from moin.datastructures import ConfigGroups, WikiGroups, CompositeGroups
+        groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1'],
+                  'AdminGroup': ['Admin1', 'Admin2', 'John']}
         return CompositeGroups(ConfigGroups(groups), WikiGroups())
 
 
@@ -1094,7 +1121,7 @@ use of the GetVal macro.
 The WikiDicts backend is enabled by default so there is no need to add the following to wikiconfig::
 
     def dicts(self):
-        from MoinMoin.datastruct import WikiDicts
+        from moin.datastructures import WikiDicts
         return WikiDicts()
 
 To create a WikiDict that can be used in an GetVal macro:
@@ -1117,11 +1144,11 @@ following to wikiconfig creates a OneDict and a NumbersDict and prevents
 the use of any WikiDicts::
 
     def dicts(self):
-        from MoinMoin.datastruct import ConfigDicts
-        dicts = {u'OneDict': {u'first_key': u'first item',
-                              u'second_key': u'second item'},
-                 u'NumbersDict': {u'1': 'One',
-                                  u'2': 'Two'}}
+        from moin.datastructures import ConfigDicts
+        dicts = {'OneDict': {'first_key': 'first item',
+                              'second_key': 'second item'},
+                 'NumbersDict': {'1': 'One',
+                                  '2': 'Two'}}
         return ConfigDicts(dicts)
 
 CompositeDicts enable both ConfigDicts and WikiDicts to be used. The example
@@ -1131,11 +1158,11 @@ the OneDict and NumbersDict defined below will be used should there be WikiDict
 items with the same names::
 
     def dicts(self):
-        from MoinMoin.datastruct import ConfigDicts, WikiDicts, CompositeDicts
-        dicts = {u'OneDict': {u'first_key': u'first item',
-                              u'second_key': u'second item'},
-                 u'NumbersDict': {u'1': 'One',
-                                  u'2': 'Two'}}
+        from moin import ConfigDicts, WikiDicts, CompositeDicts
+        dicts = {'OneDict': {'first_key': 'first item',
+                              'second_key': 'second item'},
+                 'NumbersDict': {'1': 'One',
+                                  '2': 'Two'}}
         return CompositeDicts(ConfigDicts(dicts),
                               WikiDicts())
 
@@ -1154,20 +1181,25 @@ Setup of storage is rather complex and layered, involving:
 
 create_simple_mapping
 ---------------------
-This is a helper function to make storage setup easier. It helps you to:
+This is a helper function to make storage setup easier when your wiki will be
+using only the predefined namespaces and one kind of backend (OS file system, sqla or sqlite).
+It creates a simple setup that defines storage backends for these namespaces:
 
-* create a simple setup that uses 2 storage backends internally for these
-  namespaces:
+* default - items that define wiki content
+* users - personnal user content
+* userprofiles - user metadata such as timezone, subscriptions, etc.
+* help-en - English language help pages for editors
+* help-common - media items used by help-en
 
-  - default
-  - userprofiles
-* configure ACLs protecting these namespaces
-* setup a router middleware that dispatches to these backends
-* setup a indexing mixin that maintains an index
+For each namespace, the following structures are created:
+
+* configure ACLs protecting the namespaces
+* setup router middleware that dispatches to the namespace backends
+* setup a indexing mixin that maintains an index of all namespaces
 
 Call it as follows::
 
-    from MoinMoin.storage import create_simple_mapping
+    from moin.storage import create_simple_mapping
 
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         uri=...,
@@ -1175,11 +1207,18 @@ Call it as follows::
                          default=...,
                          after=...,
                          hierarchic=..., ),
+        users_acl=dict(before=...,
+                       default=...,
+                       after=...,
+                       hierarchiv=False, ),
         userprofiles_acl=dict(before=...,
                               default=...,
                               after=...,
                               hierarchiv=False, ),
     )
+
+The *_acl variables are dictionaries specifying the ACLs for
+each namespace. See the docs about ACLs.
 
 The `uri` depends on the kind of storage backend and stores you want to use,
 see below. Usually it is a URL-like string in the form of::
@@ -1190,23 +1229,29 @@ see below. Usually it is a URL-like string in the form of::
 specification. `fs` is the type of the store, followed by a specification
 that makes sense for the fs (filesystem) store, i.e. a path with placeholders.
 
-`%(backend)s` placeholder will be replaced by 'default' or 'userprofiles' for
+`%(backend)s` placeholder will be replaced by the namespace for
 the respective backend. `%(kind)s` will be replaced by 'meta' or 'data'
 later.
 
-In this case, the mapping created will look like this:
+The mapping created will look like this:
 
 +----------------+-----------------------------+
 | Namespace      | Filesystem path for storage |
 +----------------+-----------------------------+
 | default        | /srv/mywiki/default/        |
 +----------------+-----------------------------+
+| users          | /srv/mywiki/users/          |
++----------------+-----------------------------+
 | userprofiles   | /srv/mywiki/userprofiles/   |
 +----------------+-----------------------------+
+| help-en        | /srv/mywiki/help-en/        |
++----------------+-----------------------------+
+| help-common    | /srv/mywiki/help-common/    |
++----------------+-----------------------------+
 
-`default_acl` and `userprofiles_acl` are dictionaries specifying the ACLs for
-this part of the namespace (normal content, user profiles).
-See the docs about ACLs.
+If your wiki will be using custom namespaces then you cannot use the
+`create_simple_mapping` method. See the `create_mapping` method in the
+namespaces_ section below.
 
 protecting middleware
 ---------------------
@@ -1247,17 +1292,21 @@ Features:
 
 Configuration::
 
-    from MoinMoin.storage import create_simple_mapping
+    from moin.storage import create_simple_mapping
 
     data_dir = '/srv/mywiki/data'
     namespace_mapping, acl_mapping = create_simple_mapping(
         uri='stores:fs:{0}/%(nsname)s/%(kind)s'.format(data_dir),
-        default_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
-                         default=u'All:read,write,create',
-                         after=u'', ),
-        userprofiles_acl=dict(before=u'WikiAdmin:read,write,create,destroy',
-                              default=u'',
-                              after=u'', ),
+        default_acl=dict(before='WikiAdmin:read,write,create,destroy',
+                         default='All:read,write,create',
+                         after='', ),
+        users_acl=dict(before='WikiAdmin:read,write,create,destroy',
+                       default='All:read,write,create',
+                       after='', ),
+        # userprofiles is for internal use, contains only user metadata, access denied to all
+        userprofiles_acl=dict(before='All:',
+                              default='',
+                              after='', ),
     )
 
 
@@ -1344,80 +1393,110 @@ Features:
   + directories will show up as index items, listing links to their contents
 * might be useful together with SMBMount pseudo-authenticator
 
+.. _namespaces:
 
 namespaces
 ----------
 Moin has support for multiple namespaces. You can configure them per your needs.
 URLs for items within a namespace are similar to sub-items.
-A sample configuration looks like this::
 
-    import os
+To configure custom namespaces, start by adding these imports near the top of
+wikiconfi.py::
 
-    from wikiconfig import *
+    from moin.storage import create_mapping
+    from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 
-    from MoinMoin.storage import create_mapping
-    from MoinMoin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+Next, find the section in wikiconfig.py that looks similar to this::
 
-    class LocalConfig(Config):
-        wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
-        instance_dir = os.path.join(wikiconfig_dir, 'wiki')
-        data_dir = os.path.join(instance_dir, 'data')
+    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
+        uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),  # orig
+        default_acl=dict(before='',
+                         default='All:read,write,create,destroy,admin',
+                         after='',
+                         hierarchic=False, ),
+        users_acl=dict(before='',
+                       default='All:read,write,create,destroy,admin',
+                       after='',
+                       hierarchic=False, ),
+        # userprofiles contain only metadata, no content will be created
+        userprofiles_acl=dict(before='All:',
+                              default='',
+                              after='',
+                              hierarchic=False, ),
+    )
 
-        index_storage = 'FileStorage', (os.path.join(instance_dir, "index"), ), {}
+and replace all of the above with this::
 
-        uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir)
+        uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),  # use file system for storage
+        # uri='stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  # sqlite, 1 table per db
+        # uri='stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir),  # sqlite, 2 tables per db
+        # sqlite via SQLAlchemy
+        # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  #  1 table per db
+        # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir),  # 2 tables per db
+
         namespaces = {
             # maps namespace name -> backend name
-            # first, configure the required, standard namespaces:
-            NAMESPACE_DEFAULT: u'default',
-            NAMESPACE_USERPROFILES: u'userprofiles',
-            # some additional custom namespaces stored in default backend:
-            u'foo/': u'default',
-            u'bar/': u'default',
+            # these 3 standard namespaces are required
+            NAMESPACE_DEFAULT: 'default',
+            NAMESPACE_USERS: 'users',
+            NAMESPACE_USERPROFILES: 'userprofiles',
+            # trailing / below causes foo, and bar to be stored in default backend
+            'foo/': 'default',
+            'bar/': 'default',
             # custom namespace with a backend - note absence of trailing /
-            # u'baz': u'baz',
+            'baz': 'baz',
         }
         backends = {
             # maps backend name -> storage
-            # not implemented; storage type for all backends is set in 'uri' above; issue #566
-            u'default': None,
-            u'userprofiles': None,
+            # feature to use different storage types for each namespace is not implemented so use None below.
+            # the storage type for all backends is set in 'uri' above,
+            # all values in `namespace` dict must be defined as keys in `backends` dict
+            'default': None,
+            'users': None,
+            'userprofiles': None,
             # required for baz namespace defined above
-            # u'baz': None,
+            'baz': None,
         }
         acls = {
             # maps namespace name -> acl configuration dict for that namespace
-            NAMESPACE_USERPROFILES: dict(before=u'',
-                                         default=u'All:read,write,create,destroy,admin',
-                                         after=u'',
+            NAMESPACE_USERPROFILES: dict(before='All:',
+                                         default='',
+                                         after='',
                                          hierarchic=False, ),
-            NAMESPACE_DEFAULT: dict(before=u'',
-                                    default=u'All:read,write,create,destroy,admin',
-                                    after=u'',
+            NAMESPACE_USERS: dict(before='SuperUser:read,write,create,destroy,admin',
+                                    default='All:read,write,create',
+                                    after='',
                                     hierarchic=False, ),
-            u'foo/': dict(before=u'',  # trailing / required because foo is stored in default backend
-                          default=u'All:read,write,create,destroy,admin',
-                          after=u'',
+            NAMESPACE_DEFAULT: dict(before='SuperUser:read,write,create,destroy,admin',
+                                    default='All:read,write,create',
+                                    after='',
+                                    hierarchic=False, ),
+            'foo': dict(before='SuperUser:read,write,create,destroy,admin',
+                          default='All:read,write,create',
+                          after='',
                           hierarchic=False, ),
-            u'bar/': dict(before=u'',
-                          default=u'All:read,write,create,destroy,admin',
-                          after=u'',
+            'bar': dict(before='SuperUser:read,write,create,destroy,admin',
+                          default='All:read,write,create',
+                          after='',
                           hierarchic=False, ),
-            u'baz/': dict(before=u'',
-                          default=u'All:read,write,create,destroy,admin',
-                          after=u'',
+            'baz': dict(before='SuperUser:read,write,create,destroy,admin',
+                          default='All:read,write,create',
+                          after='',
                           hierarchic=False, ),
         }
         namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
 
         # define mapping of namespaces to item_roots (home pages within namespaces).
-        root_mapping = {u'foo': u'fooHome'}
+        root_mapping = {'foo': 'fooHome'}
         # default root, use this value in case a particular namespace key is not present in the above mapping.
-        default_root = u'Home'
+        default_root = 'Home'
 
-    MOINCFG = LocalConfig
-    DEBUG = False
+Edit the above renaming or deleting the lines with foo, bar, and baz and adding the desired custom namespaces.
+Be sure all the names in the `namespaces` dict are also added to the `acls` dict.  All of the values in the
+namespaces dict must be included as keys in the backends dict.
 
+There cannot be an item with the same name as a namespace. Using the example above, if import19 is used
+to convert a moin 1.9 wiki to moin 2.0, then an item `foo` would be renamed to `foo/fooHome`.
 
 .. _mail-configuration:
 
@@ -1435,7 +1514,7 @@ Moin can optionally send E-Mail. Possible uses:
 You need to configure some settings before sending E-Mail can be supported::
 
     # the "from:" address [Unicode]
-    mail_from = u"wiki <wiki@example.org>"
+    mail_from = "wiki <wiki@example.org>"
 
     # a) using an SMTP server, e.g. "mail.provider.com" with optional `:port`
     appendix, which defaults to 25 (set None to disable mail)
@@ -1459,7 +1538,7 @@ If you want to enable admins to receive Python tracebacks, you need to configure
 the following::
 
     # list of admin emails
-    admin_emails = [u"admin <admin@example.org>"]
+    admin_emails = ["admin <admin@example.org>"]
 
     # send tracebacks to admins
     email_tracebacks = True
@@ -1514,7 +1593,7 @@ module of the Python standard library.
 
 The configuration file format is described there:
 
-http://www.python.org/doc/current/library/logging.html#configuring-logging
+https://docs.python.org/3/library/logging.config.html#configuration-file-format
 
 
 There are also some logging configurations in the
@@ -1523,7 +1602,7 @@ There are also some logging configurations in the
 Logging configuration needs to be done very early, usually it will be done
 from your adaptor script, e.g. moin.wsgi::
 
-    from MoinMoin import log
+    from moin import log
     log.load_config('wiki/config/logging/logfile')
 
 You have to fix that path to use a logging configuration matching your

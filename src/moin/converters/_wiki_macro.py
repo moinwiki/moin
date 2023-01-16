@@ -8,14 +8,12 @@ Base class for wiki parser with macro support.
 """
 
 
-from emeraldtree import ElementTree as ET
-
 from moin.utils import iri
 from moin.utils.mime import Type
 from moin.utils.tree import moin_page, xinclude
 from ._args_wiki import parse as parse_arguments
 from ._args_wiki import include_re
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -91,8 +89,6 @@ class ConverterMacro:
             args = str(args).replace('^', '^^').replace('(', '^(').replace(')', '^)')
             xpointer_moin.append(function + '(' + args + ')')
 
-        moin_args = []
-
         if pagename.startswith('^'):
             add_moin_xpointer('pages', pagename)
             if sort:
@@ -167,7 +163,7 @@ class ConverterMacro:
 
     def macro_text(self, text):
         """
-        Should be overriden to format text in some macros according to the
+        Should be overridden to format text in some macros according to the
         input type.
         :returns: Sequence of (ET.Element, unicode)
         """

@@ -6,7 +6,7 @@ MoinMoin - contenttype related constants
 """
 
 from collections import defaultdict
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 
 
 # Charset - we support only 'utf-8'. While older encodings might work,
@@ -35,6 +35,16 @@ CONTENTTYPE_MARKUP = [
     'text/html;charset=utf-8',
     'application/docbook+xml;charset=utf-8',
 ]
+
+CONTENTTYPE_MARKUP_OUT = {
+    'moinwiki': 'text/x.moin.wiki;charset=utf-8',
+    # 'mediawiki': 'text/x-mediawiki;charset=utf-8',  # no output converter
+    # 'creole': 'text/x.moin.creole;charset=utf-8',  # no output converter
+    'markdown': 'text/x-markdown;charset=utf-8',
+    'rst': 'text/x-rst;charset=utf-8',
+    'html': 'text/html;charset=utf-8',
+    'docbook': 'application/docbook+xml;charset=utf-8',
+}
 
 CONTENTTYPE_NO_EXPANSION = [
     # no need to expand transclusions, etc. when converting to/from these types
@@ -82,7 +92,9 @@ CONTENTTYPE_VIDEO = [
 
 # TODO: is there a source that maps all (or common) file suffixes to media contenttypes as used by /maint/dump_html.py
 CONTENTTYPE_MEDIA = CONTENTTYPE_VIDEO + CONTENTTYPE_AUDIO + CONTENTTYPE_IMAGE
-CONTENTTYPE_MEDIA_SUFFIX = tuple('.svg .png .jpg .jpeg .gif .wave .wav .ogg .oga .ogv.mpeg .mpg .mp3 .webm .mp4'.split())
+CONTENTTYPE_MEDIA_SUFFIX = tuple(
+    '.svg .png .jpg .jpeg .gif .wave .wav .ogg .oga .ogv.mpeg .mpg .mp3 .webm .mp4'.split()
+)
 
 CONTENTTYPE_DRAWING = [
     'application/x-twikidraw',
@@ -157,15 +169,16 @@ help_on_csv = ' '.join((
     ext_link("https://en.wikipedia.org/wiki/Comma-separated_values"),
 ))
 
+
 CONTENTTYPES_HELP_DOCS = {
-    # content type: tuple - must defer forming url until wiki root is known
-    'text/x.moin.wiki;charset=utf-8': (('user/moinwiki.html', _("Click for help on Moin Wiki markup."))),
-    'text/x.moin.wiki;format=1.9;charset=utf-8': (('admin/upgrade.html#converting-after-reverting', _("Moinmoin 1.9 format is deprecated, convert to moin 2."))),
-    'text/x-mediawiki;charset=utf-8': (('user/mediawiki.html', _("Click for help on Media Wiki markup."))),
-    'text/x.moin.creole;charset=utf-8': (('user/creolewiki.html', _("Click for help on Creole Wiki markup."))),
-    'text/x-markdown;charset=utf-8': (('user/markdown.html', _("Click for help on Markdown Wiki markup."))),
-    'text/x-rst;charset=utf-8': (('user/rest.html', _("Click for help on reST Wiki markup."))),
-    'application/docbook+xml;charset=utf-8': (('user/docbook.html', _("Click for help on Docbook Wiki markup."))),
+    # content type: tuple - content type, button text; link generated later based on user preferred language
+    'text/x.moin.wiki;charset=utf-8': (('moin', _("Click for help on Moin Wiki markup."))),
+    'text/x.moin.wiki;format=1.9;charset=utf-8': (('moin', _("Moinmoin 1.9 format is deprecated, convert to moin 2."))),
+    'text/x-mediawiki;charset=utf-8': (('mediawiki', _("Click for help on Media Wiki markup."))),
+    'text/x.moin.creole;charset=utf-8': (('creole', _("Click for help on Creole Wiki markup."))),
+    'text/x-markdown;charset=utf-8': (('markdown', _("Click for help on Markdown Wiki markup."))),
+    'text/x-rst;charset=utf-8': (('rst', _("Click for help on reST Wiki markup."))),
+    'application/docbook+xml;charset=utf-8': (('docbook', _("Click for help on Docbook Wiki markup."))),
     # content type: help string
     'text/html;charset=utf-8': ext_link('http://ckeditor.com/'),
     'text/plain;charset=utf-8': help_on_plain_text,

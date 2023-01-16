@@ -5,7 +5,7 @@
 """
 MoinMoin - Markdown input converter
 
-http://daringfireball.net/projects/markdown/
+https://daringfireball.net/projects/markdown/
 """
 
 import re
@@ -35,7 +35,6 @@ from moin.utils.mime import Type, type_moin_document
 from moin import log
 logging = log.getLogger(__name__)
 
-
 html_in_converter = HTML_IN_Converter()
 block_elements = 'p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table'.split()
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
@@ -61,8 +60,6 @@ def postproc_text(markdown, text):
         text = pp.run(text)
 
     if text.startswith('<pre>') or text.startswith('<div class="codehilite"><pre>'):
-        # TODO: with markdown 3.0.0 indented code is somehow escaped twice - see issue #707
-        text = text.replace('&amp;lt;', '&lt;').replace('&amp;gt;', '&gt;').replace('&amp;amp;', '&amp;')
         return text
 
     def fixup(m):
@@ -348,20 +345,20 @@ class Converter:
             return href
         return self.new_copy(moin_page.a, element, attrib)
 
-    def convert_align_to_class(self, attrib):
-        attr = {}
-        alignment = attrib.get('align')
-        if alignment in ('right', 'center', 'left'):
-            attr[moin_page.class_] = alignment
-        return attr
+    def verify_align_style(self, attrib):
+        alignment = attrib.get('style')
+        if alignment and alignment in ('text-align: right;', 'text-align: center;', 'text-align: left;'):
+            attrib = {moin_page.style: attrib.get('style')}
+            return attrib
+        return {}
 
     def visit_th(self, element):
-        attrib = self.convert_align_to_class(element.attrib)
-        return self.new_copy(html.th, element, attrib=attrib)
+        attrib = self.verify_align_style(element.attrib)
+        return self.new_copy(moin_page.table_cell_head, element, attrib=attrib)
 
     def visit_td(self, element):
-        attrib = self.convert_align_to_class(element.attrib)
-        return self.new_copy(html.td, element, attrib=attrib)
+        attrib = self.verify_align_style(element.attrib)
+        return self.new_copy(moin_page.table_cell, element, attrib=attrib)
 
     def visit(self, element):
         # Our element can be converted directly, just by changing the namespace
@@ -406,7 +403,7 @@ class Converter:
         an EmeraldTree object or a list of unicode is returned.
 
         Markdown parser may have set text and tail attributes of ElementTree
-        objects to u"\n" values, omit these.
+        objects to "\n" values, omit these.
 
         Add data-lineno attributes to children if requested.
         """
@@ -542,7 +539,7 @@ class Converter:
         Convert markdown to moin DOM.
 
         data is a pointer to an open file (ProtectedRevision object)
-        contenttype is likely == u'text/x-markdown;charset=utf-8'
+        contenttype is likely == 'text/x-markdown;charset=utf-8'
         arguments is not used
 
         Markdown processing takes place in five steps:

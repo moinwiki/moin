@@ -10,7 +10,7 @@ Usage: <<HighlighterList>>
 import pygments
 
 from moin.macros._base import MacroBlockBase
-from moin.i18n import _, L_, N_
+from moin.i18n import _
 from moin.converters._table import TableMixin
 
 
@@ -20,7 +20,7 @@ class Macro(MacroBlockBase):
                     _('Lexer Aliases'),
                     _('File Patterns'),
                     _('Mimetypes'),
-                   )
+                    )
         rows = list(pygments.lexers.get_all_lexers())
         rows.sort(key=lambda t: tuple(t[0].lower()))
         table = TableMixin()

@@ -11,8 +11,6 @@
 import os
 import urllib.request
 import urllib.parse
-import urllib.error
-import datetime
 
 from json import dumps
 
@@ -21,14 +19,15 @@ from flask import g as flaskg
 from flask import url_for, request
 from flask_theme import get_theme, render_theme_template
 
-from moin.i18n import _, L_, N_
+from moin.i18n import _, L_
 from moin import wikiutil, user
-from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO
+from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS, NAMESPACE_ALL
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
-from moin.utils.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item, CompositeName, split_fqname, get_fqname
+from moin.utils.interwiki import (split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki,
+                                  url_for_item, CompositeName, split_fqname, get_fqname)
 from moin.utils.crypto import cache_key
 from moin.utils.forms import make_generator
 from moin.utils.clock import timed
@@ -92,6 +91,51 @@ class ThemeSupport:
             self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
         else:
             self.wiki_root = ''
+
+    def get_fullname(self, meta):
+        """
+        Convert list of names to list of fullnames: <namespace>/<name> or <name>
+
+        :rtype: tuple
+        :returns: list of item names with namespace prefix or item names if default namespace
+        """
+        fullname = (name if not meta[NAMESPACE] else meta[NAMESPACE] + '/' + name for name in meta[NAME])
+        return fullname
+
+    def field_term(self, field, term):
+        """
+        Convert Whoosh stored bytes term to string, enables display of matching search terms by hit.
+        """
+        try:
+            term = term.decode()
+        except UnicodeDecodeError:
+            try:
+                # Whoosh converts datetime and integers to bytes using custom algorithms to compress bytes
+                # We use the request url to retrieve the terms for mtime and rev_number
+                # The request urls for short form searches and ajax searches are similar to the following:
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022+rev_number%3A2
+                # http://127.0.0.1:5000/+search?q=mtime%3A2022-02&history=false&time_sorting=default&filetypes=all
+                #     %2C&boolajax=true&is_ticket= HTTP/1.1
+                url = request.url
+                url = urllib.parse.unquote(url)
+                args = url.split('?q=')[1]
+                args = args.split('&')[0]
+                if '+' in args:
+                    terms = args.split('+')
+                elif ' ' in args:
+                    terms = args.split()
+                else:
+                    terms = [args]
+                for keyval in terms:
+                    fld, trm = keyval.split(':')
+                    if fld == 'mtime' == field:
+                        return fld, trm
+                    elif fld == 'rev_number' == field:
+                        return fld, trm
+                term = "unknown"
+            except Exception:
+                term = "unknown"
+        return field, term
 
     def get_action_tabs(self, fqname, current_endpoint):
         """
@@ -189,7 +233,6 @@ class ThemeSupport:
                                     label = _('Remove Link')
                                 user_actions.append((endpoint, href, iconcls, label, title, True))
                             elif endpoint == 'frontend.subscribe_item':
-                                from moin.items import Item
                                 if flaskg.user.is_subscribed_to(item.item):
                                     label = _('Unsubscribe')
                                 else:
@@ -263,7 +306,8 @@ class ThemeSupport:
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
         if fqname.field != NAME_EXACT:
-            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]  # flaskg.unprotected_storage.get_item(**fqname.query)
+            # flaskg.unprotected_storage.get_item(**fqname.query)
+            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]
         namespace = segment1_namespace = fqname.namespace
         item_name = fqname.value
         if not item_name:
@@ -300,19 +344,6 @@ class ThemeSupport:
             if item_name:
                 breadcrumbs.append((wiki_name, fqname, href, exists, err))
         return breadcrumbs
-
-    def subitem_index(self, fqname):
-        """
-        Get a list of subitems for the given fqname
-
-        :rtype: list
-        :returns: list of item tuples (item_name, item_title, item_mime_type, has_children)
-        """
-        from moin.items import Item
-        if not isinstance(fqname, CompositeName):
-            fqname = split_fqname(fqname)
-        item = Item.create(fqname.fullname)
-        return item.get_mixed_index()
 
     def userhome(self):
         """
@@ -468,7 +499,17 @@ class ThemeSupport:
         if item_name and parent_item_name:
             return parent_item_name
 
-    # TODO: reimplement on-wiki-page sidebar definition with moin.converters
+    def parentnames(self, names):
+        """
+        Compute list of parent names (same order as in names, but no dupes)
+        Copied from indexing.py
+
+        :param names: item NAME from whoosh index, where NAME is a list
+        :return: parent names (list of unicode)
+        """
+        # must import here to avoid circular import error
+        from moin.storage.middleware.indexing import parent_names
+        return parent_names(names)
 
     # Properties ##############################################################
 

@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'MoinMoin'
-copyright = '2011-2018, The MoinMoin developers'
+copyright = '2011-2022, The MoinMoin developers'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -261,4 +261,9 @@ inheritance_graph_attrs = dict(rankdir="LR", size='"12.0, 16.0"',
 inheritance_node_attrs = dict(shape='box', fontsize=20, height=0.75,
                               color='yellow', style='filled')
 
-autosummary_generate = True
+autosummary_generate = False
+
+# -- Options for Linkcheck -----------------------------------------------------
+
+linkcheck_ignore = ['http://127.0.0.1.*', 'http://localhost.*', 'http:Home.*', 'http:#.*', 'ItemName.*']
+

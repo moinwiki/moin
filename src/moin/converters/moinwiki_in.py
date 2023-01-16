@@ -25,7 +25,6 @@ from ._args import Arguments
 from ._args_wiki import parse as parse_arguments, object_re
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
-from ._table import TableMixin
 from . import default_registry
 
 from moin import log
@@ -273,7 +272,8 @@ class Converter(ConverterMacro):
         lines = _Iter(self.block_nowiki_lines(iter_content, len(nowiki_marker)), startno=iter_content.lineno)
         content = '\n'.join(lines)
         # the arguments for wiki, csv, and highlight are diverse, one parser does not fit all
-        # we push everything after {{{ to DOM; nowiki.py can insert error messages or moinwiki_out can recreate exact input
+        # we push everything after {{{ to DOM; nowiki.py can insert error messages or
+        # moinwiki_out can recreate exact input
         all_nowiki_args = moin_page.nowiki_args(children=(nowiki_interpret, ))
         # we avoid adjacent text siblings because serializer within tests merges them
         elem = moin_page.nowiki(children=(str(len(nowiki_marker)), all_nowiki_args, content, ))
@@ -325,7 +325,8 @@ class Converter(ConverterMacro):
             if not match:
                 match = self.header_footer_re.match(line)
                 if match:
-                    # this is a header/body/footer separator: create multiple table_body's, html_out will convert to thead, tbody or tfoot
+                    # this is a header/body/footer separator: create multiple table_body's,
+                    # html_out will convert to thead, tbody or tfoot
                     stack.pop()
                     stack.push(moin_page.table_body())
                     continue
@@ -486,7 +487,7 @@ class Converter(ConverterMacro):
         for line in iter:
             match = self.block_re.match(line)
             it = iter
-            # XXX: Hack to allow nowiki to ignore the list identation
+            # XXX: Hack to allow nowiki to ignore the list indentation
             if match.lastgroup == 'nowiki':
                 it = iter_content
             self._apply(match, 'block', it, new_stack)
@@ -674,7 +675,7 @@ class Converter(ConverterMacro):
                 )
                 |
                 (
-                    (?P<link_interwiki_site>[A-Z][a-zA-Z]+)
+                    (?P<link_interwiki_site>[a-zA-Z][a-zA-Z0-9]+)
                     :
                     (?P<link_interwiki_item>[^|]+) # accept any item name; will verify link_interwiki_site below
                 )
@@ -702,12 +703,23 @@ class Converter(ConverterMacro):
                          link_text=None, link_args=None,
                          link_interwiki_site=None, link_interwiki_item=None):
         """Handle all kinds of links."""
+        attribs = {}
+        query = []
+        if link_args:
+            link_args = parse_arguments(link_args)  # XXX needs different parsing
+            for key in link_args.keys():
+                if key in ('target', 'title', 'download', 'class', 'accesskey'):
+                    attribs[html(key)] = link_args[key]
+                if key[0] == '&':
+                    query.append('{0}={1}'.format(key[1:], link_args[key]))
+
         if link_interwiki_site:
             if is_known_wiki(link_interwiki_site):
                 link = Iri(scheme='wiki',
                            authority=link_interwiki_site,
                            path='/' + link_interwiki_item)
-                element = moin_page.a(attrib={xlink.href: link})
+                attribs[xlink.href] = link
+                element = moin_page.a(attrib=attribs)
                 stack.push(element)
                 if link_text:
                     self.parse_inline(link_text, stack, self.inlinedesc_re)
@@ -719,15 +731,6 @@ class Converter(ConverterMacro):
                 # assume local language uses ":" inside of words, set link_item and continue
                 link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
 
-        attribs = {}
-        query = []
-        if link_args:
-            link_args = parse_arguments(link_args)  # XXX needs different parsing
-            for key in link_args.keys():
-                if key in ('target', 'title', 'download', 'class', 'accesskey'):
-                    attribs[html(key)] = link_args[key]
-                if key[0] == '&':
-                    query.append('{0}={1}'.format(key[1:], link_args[key]))
         if link_item is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
@@ -794,7 +797,6 @@ class Converter(ConverterMacro):
     """
 
     def inline_nowiki_repl(self, stack, nowiki, nowiki_text=None, nowiki_text_backtick=None):
-        text = None
         if nowiki_text is not None:
             return stack.top_append(moin_page.samp(children=[nowiki_text]))
         # we must pass empty strings for moinwiki in > out conversions (@``DATE@ must not be converted to @DATE@)
@@ -850,7 +852,7 @@ class Converter(ConverterMacro):
             attrib[html.alt] = object_text
         if object_item is not None:
             # img tag
-            query = url_encode(query_keys, charset=CHARSET, encode_keys=True)
+            query = url_encode(query_keys, charset=CHARSET)
             # TODO: moin 1.9 needed this for an attached file; move functionality to scripts/migration/moin/import19.py
             att = 'attachment:'
             if object_item.startswith(att):
@@ -878,7 +880,21 @@ class Converter(ConverterMacro):
                 (?P<cell_args> ([^<])*? )
                 >
             )?
-            (?P<cell_text> .*? )
+            (?P<cell_text>
+                (
+                    (.*?                       # optional text before link or transclusion
+                        (
+                            ((\[\[) | (\{\{))  # start of link or transclusion
+                            .*?
+                            ((\]\]) | (\}\}))  # end of link or transclusion
+                            .*?                # optional text after link or transclusion
+                        )*?                    # there may be multiple links or transclusion within a cell
+                        (?=((\|\|) | $))       # lookahead sees end of cell
+                    )
+                    |
+                    .*?(?=(\|\|) | $)          # simple case, no transclusion or link in cell
+                )*
+            )
             (?=
                 \|\|
                 |

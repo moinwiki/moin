@@ -216,7 +216,8 @@ class Iri(AutoNe):
                     else:
                         new_path = self.path + new_path
 
-            return Iri(scheme=new_scheme, authority=new_authority, path=new_path, query=new_query, fragment=other.fragment)
+            return Iri(scheme=new_scheme, authority=new_authority, path=new_path,
+                       query=new_query, fragment=other.fragment)
 
         if isinstance(other, str):
             return self + Iri(other)
