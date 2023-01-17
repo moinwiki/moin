@@ -100,7 +100,7 @@ class ConverterBase:
         abs_path = AbsItemName(quoted_current_page_path, quoted_path)
         if quoted_path.startswith('/'):
             # avoid Iri issue where item name containing a colon is mistaken for scheme:path
-            abs_path = Iri(abs_path).path
+            abs_path = Iri(path=abs_path).path
         return abs_path
 
 
