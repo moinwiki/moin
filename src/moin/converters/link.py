@@ -164,6 +164,7 @@ class ConverterExternOutput(ConverterBase):
                 else:
                     elem.set(moin_page.class_, 'moin-interwiki')
                 wiki_name = wn
+                elem.set(moin_page.title_, wn)
         item_name = str(input.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, wiki_name=wiki_name, rev=rev, endpoint=endpoint)
