@@ -71,27 +71,27 @@ setup_args = dict(
         'setuptools_scm',  # magically cares for version and packaged files
     ],
     install_requires=[
-        'Babel==2.9.1',  # Babel 2.10.1 breaks quickinstall.py #1239
+        'Babel<2.11.0',  # internationalization support
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
-        'docutils<0.18',  # reST markup processing, see #1141; sphinx 4.3.0 requires docutils<0.18,>=0.14
+        'docutils>=0.18.1',  # reST markup processing
         'Markdown>=3.4.1',  # Markdown markup processing
-        'Flask<2.0.0',  # micro framework
-        'Flask-Babel>=0.11.1',  # i18n support
+        'Flask<2.1.0',  # micro framework
+        'Flask-Babel<3.0.0',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
-        'Flask-Script>=2.0.5',  # scripting support
+        'Flask-Script==2.0.5',  # scripting support
         'Flask-Theme>=0.3.5',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
-        'Jinja2<3.0.0',  # template engine
-        'markupsafe==2.0.1',  # required by jinja2<3.0.0
+        'Jinja2<3.1.0',  # template engine
+        'markupsafe<=2.2.0',  # safe html and xml
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug<2.0.0',  # wsgi toolkit
+        'Werkzeug<2.2.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'setuptools>=51',  # dependency with setuptools_scm
-        'sqlalchemy>=1.3.16',  # used by sqla store TODO see: #1014
+        'sqlalchemy<2.0',  # used by sqla store
         'XStatic>=0.0.2',  # support for static file pypi packages
         'XStatic-Bootstrap==3.1.1.2',
         'XStatic-Font-Awesome>=6.2.1.0',
