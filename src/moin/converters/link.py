@@ -100,7 +100,7 @@ class ConverterBase:
         abs_path = AbsItemName(quoted_current_page_path, quoted_path)
         if quoted_path.startswith('/'):
             # avoid Iri issue where item name containing a colon is mistaken for scheme:path
-            abs_path = Iri(abs_path).path
+            abs_path = Iri(path=abs_path).path
         return abs_path
 
 
@@ -164,6 +164,7 @@ class ConverterExternOutput(ConverterBase):
                 else:
                     elem.set(moin_page.class_, 'moin-interwiki')
                 wiki_name = wn
+                elem.set(moin_page.title_, wn)
         item_name = str(input.path[1:])
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, wiki_name=wiki_name, rev=rev, endpoint=endpoint)
