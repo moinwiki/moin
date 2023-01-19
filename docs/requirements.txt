@@ -1,2 +1,4 @@
 # see #1141 sphinx build failed with docutils==0.18
 docutils>=0.18.1
+sphinx>=5.3.0
+sphinx-rtd-theme==1.1.1
