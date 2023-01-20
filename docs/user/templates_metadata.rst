@@ -10,21 +10,27 @@ Templates
 
 Templates make it easier for users to create new items that
 are similar to many other items.
-Instead of starting from scratch or using a copy, paste, modify technique;
-templates can be created that have the common
-text and structure already completed. A template item must have a
-tag of "template".
+Instead of starting from scratch or using a copy, paste, and modify technique;
+templates that contain the common text and structure can be created. A
+template item must have a tag of "template".
 
 When creating a new item, if there are available templates for
-the selected content type and namespace, then an extra step to the
-create item dialog allows the editor to choose a template.
+the selected content type and namespace, then an extra step added to the
+create item dialog allows the editor to choose a template. If a template is selected, the
+content of the template item will be loaded and copied to the
+modify screen's textarea.
 
 To create a new template, just create an item and add a tag of "template"
 before saving the item. Once created, each user creating a new item in the
 target namespace and content type will be given the option of using any
-of the available templaces.
+of the available templates.
 
-For templates with the MoinWiki markup, Predefined Variables can be used to insert
+Templates may define data for the ACL, Summary, and Tags fields. These values
+will be copied to the modify form within the item creation dialog; note the `template`
+tag will not be copied. Users wanting to create a new template using an old
+template will need to rekey the `template` tag.
+
+For templates with MoinWiki markup, Predefined Variables can be used to insert
 date, time, user name, item name, and others. See Predefined Variables
 in the Moin Wiki markup overview.
 
@@ -32,9 +38,9 @@ The example below is a very simple template for the **users** namespace. Each us
 is encouraged to create a home page using the 4-line moinwiki markup template.
 **@ITEM@** and **@EMAIL@** are predefined variables and will be replaced with
 the item name (the new item name is expected to be the user's name) and the users
-email address (from the current user's settings) when the item is saved.
+email address (copied from the current user's settings) when the item is saved.
 To create a home page, each user begins the creation of a new item in the **users** namespace,
-selects the templace, keys in a nickname and hobbies, and saves the item.::
+selects the template, keys in a nickname and hobbies, and saves the item.::
 
     = @ITEM@ =
     Nickname:
