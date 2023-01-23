@@ -237,12 +237,6 @@ def get_pygments_data_location():
     return subprocess.check_output(command, shell=True).decode()
 
 
-def get_sitepackages_location():
-    """Return the location of the virtualenv site-packages directory."""
-    command = 'python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"'
-    return subprocess.check_output(command, shell=True).decode().strip()
-
-
 def create_m():
     """Create an 'm.bat or 'm' bash script that will run quickinstall.py using this Python"""
     if WINDOWS_OS:
@@ -302,16 +296,13 @@ class Commands:
         self.run_time('Docs')
 
     def cmd_extras(self, *args):
-        """install optional packages: Pillow, sqlalchemy, ldap, requirements.d"""
-        get_sitepackages_location()
-        packages = ['pillow', 'sqlalchemy', ]
+        """install optional packages from requirements.d"""
+        reqs = ['requirements.d/extras.txt', 'requirements.d/development.txt', 'docs/requirements.txt', ]
         if not WINDOWS_OS:
-            packages.append('python-ldap')
-        installer = 'pip install --upgrade '
-        reqs = ['requirements.d/development.txt', 'requirements.d/docs.txt', ]
+            reqs.append('requirements.d/ldap.txt')
         reqs_installer = 'pip install --upgrade -r '
-        command = SEP.join(list(installer + x for x in packages) + list(reqs_installer + x for x in reqs))
-        print('Installing {0}.'.format(', '.join(packages + reqs)))
+        command = SEP.join(list(reqs_installer + x for x in reqs))
+        print('Installing {0}.'.format(', '.join(reqs)))
         print('Output messages written to {0}.'.format(EXTRAS))
         with open(EXTRAS, 'w') as messages:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)

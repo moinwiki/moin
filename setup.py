@@ -110,10 +110,9 @@ setup_args = dict(
         # 'featurename': ["req1", "req2", ],
         'pillow': ["pillow"],  # successor to PIL; used by image get for scaling/rotating/etc.;
                                # requires special libs/header to be installed before it can be compiled successfully
-        'ldap': ["python-ldap>=2.0.0"],  # used by ldap auth; requires special libs/header
-                                         # to be installed before it can be compiled successfully
-                                         # windows binaries available from 3rd parties
-        # 'sqla': ["sqlalchemy>=0.7.1"],  # used by sqla store
+        'ldap': ["python-ldap"],  # used by ldap auth; requires special libs/header
+                                  # to be installed before it can be compiled successfully
+                                  # windows binaries available from 3rd parties
     },
     entry_points=dict(
         console_scripts=['moin = moin.scripts:main'],
