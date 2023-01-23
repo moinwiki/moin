@@ -1,4 +1,4 @@
-# Copyright: 2017 MoinMoin:RogerHaase
+# Copyright: 2017-2023 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -9,10 +9,13 @@ Usage:
     <<FontAwesome(classes)>>
     <<FontAwesome(classes,,size)>>
     <<FontAwesome(classes,color)>>
+
+    <<FontAwesome(regular thumbs-up,red,2)>>
+
 Where:
-    classes: one or more Font Awesome classes less leading "fa-", separated by " ": cog lg
-    color: optional hex color code: #f00 or #ff0000
-    size: optional int or float size in EM units (alternative to FA lg, 2x, 3x, 4x)
+    classes: one or more Font Awesome classes less leading "fa-", separated by " ".
+    color: optional hex color code: #f00 or #ff0000 or HTML color name
+    size: optional int or float size in EM units
 """
 
 
@@ -37,6 +40,8 @@ class Macro(MacroInlineBase):
                 color = 'color: {0}; '.format(color)
             except (ValueError, AssertionError):
                 color = ""
+        else:
+            color = 'color: {0}; '.format(color) if color.isalpha() else ""
 
         if size:
             try:
@@ -50,10 +55,12 @@ class Macro(MacroInlineBase):
         style = color + size
         classes = []
         for font in fonts:
-            f = font if font.startswith('fa-') or font == 'fa' else 'fa-' + font
+            f = font if font.startswith('fa-') else 'fa-' + font
             classes.append(f)
-        if 'fa' not in classes:
-            classes.insert(0, 'fa')
+        if 'fa-solid' not in classes and 'fa-regular' not in classes and 'fa-brands' not in classes:
+            classes.insert(0, 'fa-solid')
+        if 'fa-spin-reverse' in classes and 'fa-spin' not in classes:
+            classes.insert(0, 'fa-spin')
         classes = ' '.join(classes)
 
         attrib = {moin_page.class_: classes}
