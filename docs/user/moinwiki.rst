@@ -839,14 +839,23 @@ of the page. Explicit placement of footnotes is accomplished by calling the macr
     - text<<FootNote(A macro is enclosed in double angle brackets, and'''may''' have markup.)>> more text
     - <<FootNote()>>
 
-**FontAwesome** color must be a hex digit color code of either 3 or 6 digits with a leading #: #f00 or #F80000.
-FontAwesome size must be an unsigned decimal integer or float that will adjust the size of the character
-relative to the current font size: 2 or 2.0 will create double the character size, .5 will create a character
-half the current size. Font awesome experts will know about the special "fa" class and the "fa-" name prefixes.
-It is acceptable, but not necessary to provide these. See https://fontawesome.com/v4/cheatsheet/
+The **FontAwesome** macro displays FontAwesome fonts.  See https://fontawesome.com/search?o=r&m=free
+for the list of fonts available with FontAwesome version 6.
 
-    - <<FontAwesome(thumbs-up,#f00,2)>> is identical to
-    - <<FontAwesome(fa fa-thumbs-up fa-2x,#FF0000)>>
+The **FontAwesome** "name" parameter may include multiple space-separated names.
+The free fonts are divided into 3 groups: solid, regular (outline), and brands. If the name field consists of
+a single font name, then the font from the solid group is displayed. To display a font from the regular group,
+add "regular" to the name field. To display a font from the brands group, add "brands".
+
+The **FontAwesome** color field may be an HTML color name or a hex digit color code with a leading #:
+#f00 or #F80000.
+The size field must be an unsigned decimal integer or float that will adjust the size of the character
+relative to the current font size: 2 or 2.0 will create double the character size, .5 will create a character
+half the current size.
+
+    - <<FontAwesome(thumbs-up,#f00,2)>> is similar to
+    - <<FontAwesome(regular thumbs-up,red,2)>> but different from these spinners
+    - <<FontAwesome(spin spinner,plum,2.5)>> <<FontAwesome(fan spin-reverse,orange,2.5)>>
 
 The **Include** macro <<Include(my.png)>> produces results identical to the transclusion {{my.png}}.
 It is more flexible than a transclusion because it supports multiple parameters and the first parameter may
