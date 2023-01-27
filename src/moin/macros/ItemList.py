@@ -126,7 +126,8 @@ class Macro(MacroPageLinkListBase):
         if item != "":
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
                 message = _('Item does not exist or read access blocked by ACLs: {0}'.format(item))
-                admonition = moin_page.div(attrib={moin_page.class_: 'important'}, children=[moin_page.p(children=[message])])
+                admonition = moin_page.div(attrib={moin_page.class_: 'important'},
+                                           children=[moin_page.p(children=[message])])
                 return admonition
 
         # process subitems
