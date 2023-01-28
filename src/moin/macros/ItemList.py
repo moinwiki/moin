@@ -125,8 +125,10 @@ class Macro(MacroPageLinkListBase):
         # verify item exists and current user has read permission
         if item != "":
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
-                # if user lacks read permission, a 403 error was thrown on line above
-                raise LookupError(_('ItemList macro: The specified item "%s" does not exist.' % item))
+                message = _('Item does not exist or read access blocked by ACLs: {0}'.format(item))
+                admonition = moin_page.div(attrib={moin_page.class_: 'important'},
+                                           children=[moin_page.p(children=[message])])
+                return admonition
 
         # process subitems
         children = self.get_item_names(item, startswith=startswith, skiptag=skiptag)
