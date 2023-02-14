@@ -2109,13 +2109,7 @@ class LoginForm(Form):
 
 @frontend.route('/+login', methods=['GET', 'POST'])
 def login():
-    if flaskg.user.valid:
-        flash(_("You are logged in."), "info")
-        form = LoginForm.from_flat(request.form)
-        nexturl = form['nexturl']
-        return redirect(nexturl)
     title_name = _('Login')
-
     if request.method in ['GET', 'HEAD']:
         form = LoginForm.from_defaults()
         next_url = request.referrer or url_for('.show_root')
@@ -2127,14 +2121,14 @@ def login():
             if hint:
                 flash(hint, "info")
     elif request.method == 'POST':
-        # this is executed when login fails do to bad ID or pw - app.py > def setup_user does successful logins
         form = LoginForm.from_flat(request.form)
         if form.validate():
-            # is this dead code? we have a logged-in, valid user
+            flash(_("You are logged in."), "info")
             nexturl = form['nexturl']
-            return redirect(nexturl)
-        # flash the error messages (if any)
+            return redirect(str(nexturl))
+        # this is executed when login fails due to bad ID or pw - app.py > def setup_user does successful logins
         for msg in flaskg._login_messages:
+            # flash the error messages for failed login
             flash(msg, "error")
     return render_template('login.html',
                            title_name=title_name,
