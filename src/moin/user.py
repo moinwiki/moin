@@ -516,6 +516,10 @@ class User:
         """
         return self.profile[ENC_PASSWORD] == ''
 
+    def disable(self):
+        """ Disable user """
+        self.profile[DISABLED] = True
+
     def save(self, force=False):
         """
         Save user account data to user account file on disk.
