@@ -71,7 +71,7 @@ permissions management, dealing with security, the server software, etc.
 In order to use MoinMoin with another web server, ensure that your web server can talk to the moin WSGI
 application, which you can get using this code::
 
- from MoinMoin.app import create_app
+ from moin.app import create_app
  application = create_app('/path/to/config/wikiconfig.py')
 
 MoinMoin is a Flask application, which is a micro framework for WSGI applications,
