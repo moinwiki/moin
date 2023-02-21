@@ -26,7 +26,7 @@ if moin_code:
 #os.environ['FCGI_FORCE_CGI'] = 'Y' # 'Y' for (slow) CGI, 'N' for FCGI
 
 # Creating the Moin (Flask) WSGI application
-from MoinMoin.app import create_app
+from moin.app import create_app
 application = create_app(wiki_config)
 
 class FixScriptName(object):

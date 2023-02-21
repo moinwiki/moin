@@ -30,7 +30,7 @@ if moin_code:
     sys.path.insert(0, moin_code)
 
 # application is the Flask application
-from MoinMoin.app import create_app
+from moin.app import create_app
 application = create_app(wiki_config)
 
 # please note: if you want to do some wsgi app wrapping, do it like shown below:
