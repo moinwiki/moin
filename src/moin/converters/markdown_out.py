@@ -160,7 +160,7 @@ class Converter:
         if f:
             ret = f(elem)
             if elem.tag.name not in ('separator', 'blockcode', 'code', 'div', 'big', 'small', 'sup', 'sub', 'th',
-                                     'emphasis', 's', 'ins', 'u', 'span', 'table', ):
+                                     'emphasis', 's', 'ins', 'u', 'span', 'table', 'a',):
                 attrib = self.attribute_list(elem)
                 if attrib:
                     if ret.endswith('#\n'):
@@ -176,22 +176,20 @@ class Converter:
         return self.open_children(elem)
 
     def open_moinpage_a(self, elem):
+        """ [link text](url "optional title") """
         href = elem.get(xlink.href, None)
         title = elem.get(html.title_, None)
         if isinstance(href, Iri):
             href = str(href)
         href = href.split('wiki.local:')[-1]
-        ret = href
         text = self.open_children(elem)
-        if text:
-            if title:
-                href = '{0} "{1}"'.format(href, title)
-            return '[{0}]({1})'.format(text, href)
-        if ret.startswith('wiki://'):
-            # interwiki fixup
-            ret = ret[7:]
-            ret = ret.replace('/', ':', 1)
-        return Markdown.a_open + ret + Markdown.a_close
+        if title:
+            href = '{0} "{1}"'.format(href, title)
+        ret = '[{0}]({1})'.format(text, href)
+        cls = elem.get(moin_page.class_)
+        if cls:
+            ret = ret + '{:class="' + cls + '"}'
+        return ret
 
     def open_moinpage_blockcode(self, elem):
         text = ''.join(elem.itertext())

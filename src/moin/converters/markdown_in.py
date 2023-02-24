@@ -13,7 +13,7 @@ from html.entities import name2codepoint
 from collections import deque
 
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
-from ._util import allowed_uri_scheme, decode_data
+from ._util import decode_data
 from moin.utils.iri import Iri
 from moin.converters.html_in import Converter as HTML_IN_Converter
 
@@ -336,13 +336,17 @@ class Converter:
         return ET.Element(moin_page.list, attrib=attrib, children=self.do_children(element))
 
     def visit_a(self, element):
+        """ element.attrib has href, element.tag is 'a', element.text has title"""
         key = xlink('href')
         attrib = {}
+        if element.attrib.get('title'):
+            attrib[html.title_] = element.attrib.get('title')
         href = postproc_text(self.markdown, element.attrib.get("href"))
-        if allowed_uri_scheme(href):
-            attrib[key] = href
-        else:
-            return href
+        iri = Iri(href)
+        # iri has authority, fragment, path, query, scheme = none,none,path,none
+        if iri.scheme is None:
+            iri.scheme = 'wiki.local'
+        attrib[key] = iri
         return self.new_copy(moin_page.a, element, attrib)
 
     def verify_align_style(self, attrib):
@@ -423,7 +427,7 @@ class Converter:
                 r = (r, )
             new.extend(r)
             # copy anything but '\n'
-            if hasattr(child, "tail") and child.tail is not None and child.tail != '\n':
+            if hasattr(child, "tail") and child.tail is not None and child.tail != '\n' and child.tail:
                 new.append(postproc_text(self.markdown, child.tail))
         return new
 
