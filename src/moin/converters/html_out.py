@@ -63,9 +63,11 @@ def mark_item_as_transclusion(elem, href):
     href = str(href)
     # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
     # or "http://Some.Org/SomeThing" for external link
-    wiki_root = request.url_root[len(request.host_url):-1]
     if elem.tag.name in ('object', 'img'):
         logging.error(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href}')
+    else:
+        logging.info(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href}')
+    wiki_root = request.url_root[len(request.host_url):-1]
     if wiki_root:
         href = '/' + wiki_root + href
     href = convert_getlink_to_showlink(href)
