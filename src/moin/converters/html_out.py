@@ -63,12 +63,11 @@ def mark_item_as_transclusion(elem, href):
     href = str(href)
     # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
     # or "http://Some.Org/SomeThing" for external link
-    if elem.tag.name not in ('object', 'img'):
-        # XXX see issue #167: for wikis not running at root, only object and img elements have complete path
-        # if wiki is not running at server root, prefix href with wiki root
-        wiki_root = request.url_root[len(request.host_url):-1]
-        if wiki_root:
-            href = '/' + wiki_root + href
+    wiki_root = request.url_root[len(request.host_url):-1]
+    if elem.tag.name in ('object', 'img'):
+        logging.error(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href}')
+    if wiki_root:
+        href = '/' + wiki_root + href
     href = convert_getlink_to_showlink(href)
     # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
     elem.attrib[html.data_href] = href
