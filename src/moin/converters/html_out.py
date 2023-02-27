@@ -17,6 +17,7 @@ from emeraldtree import ElementTree as ET
 
 from moin import wikiutil
 from moin.i18n import _
+from moin.utils.iri import IriPath
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
 from moin.utils.mime import Type, type_moin_document
@@ -60,16 +61,20 @@ def mark_item_as_transclusion(elem, href):
     On the client side, a Javascript function will wrap the element (or a parent element)
     in a span or div and 2 overlay siblings will be created.
     """
+    orighref = href
     href = str(href)
     # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
+    # not able to reproduce "/wikiroot/SomeObject"
     # or "http://Some.Org/SomeThing" for external link
-    if elem.tag.name in ('object', 'img'):
-        logging.error(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href}')
+    if elem.tag.name in ('object', 'img') and isinstance(orighref, IriPath):
+        # log an error if the logic in master would skip the wiki_root but the new logic would add it
+        logging.error(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href} orighref is {repr(orighref)}')
     else:
-        logging.info(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href}')
-    wiki_root = request.url_root[len(request.host_url):-1]
-    if wiki_root:
-        href = '/' + wiki_root + href
+        logging.info(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href} orighref is {repr(orighref)}')
+    if isinstance(orighref, IriPath):
+        wiki_root = request.url_root[len(request.host_url):-1]
+        if wiki_root:
+            href = '/' + wiki_root + href
     href = convert_getlink_to_showlink(href)
     # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
     elem.attrib[html.data_href] = href
