@@ -63,14 +63,8 @@ def mark_item_as_transclusion(elem, href):
     """
     orighref = href
     href = str(href)
-    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
-    # not able to reproduce "/wikiroot/SomeObject"
+    # href will be "/SomePage" for internal wiki items
     # or "http://Some.Org/SomeThing" for external link
-    if elem.tag.name in ('object', 'img') and isinstance(orighref, IriPath):
-        # log an error if the logic in master would skip the wiki_root but the new logic would add it
-        logging.error(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href} orighref is {repr(orighref)}')
-    else:
-        logging.info(f'mark_item_as_transclusion elem.tag.name is {elem.tag.name} href is {href} orighref is {repr(orighref)}')
     if isinstance(orighref, IriPath):
         wiki_root = request.url_root[len(request.host_url):-1]
         if wiki_root:
