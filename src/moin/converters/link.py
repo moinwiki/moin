@@ -22,11 +22,12 @@ from . import default_registry
 class ConverterBase:
     _tag_xlink_href = xlink.href
     _tag_xinclude_href = xinclude.href
+    _tag_html_data_href = html.data_href
 
-    def handle_wiki_links(self, elem, link):
+    def handle_wiki_links(self, elem, link, to_tag):
         pass
 
-    def handle_wikilocal_links(self, elem, link, page_name):
+    def handle_wikilocal_links(self, elem, link, page_name, to_tag):
         pass
 
     def handle_wiki_transclusions(self, elem, link):
@@ -35,7 +36,7 @@ class ConverterBase:
     def handle_wikilocal_transclusions(self, elem, link, page_name):
         pass
 
-    def handle_external_links(self, elem, link):
+    def handle_external_links(self, elem, link, to_tag):
         pass
 
     def __call__(self, *args, **kw):
@@ -47,7 +48,8 @@ class ConverterBase:
         return self.traverse_tree(*args, **kw)
 
     def traverse_tree(self, elem, page=None, __tag_page_href=moin_page.page_href,
-                      __tag_link=_tag_xlink_href, __tag_include=_tag_xinclude_href):
+                      __tag_link=_tag_xlink_href, __tag_include=_tag_xinclude_href,
+                      __tag_data_href=_tag_html_data_href):
         """
         Traverses the tree and handles each element appropriately
         """
@@ -57,16 +59,18 @@ class ConverterBase:
 
         xlink_href = elem.get(__tag_link)
         xinclude_href = elem.get(__tag_include)
-        if xlink_href:
-            xlink_href = Iri(xlink_href)
-            if xlink_href.scheme == 'wiki.local':
-                self.handle_wikilocal_links(elem, xlink_href, page)
-            elif xlink_href.scheme == 'wiki':
-                self.handle_wiki_links(elem, xlink_href)
-            elif xlink_href.scheme:
-                self.handle_external_links(elem, xlink_href)
+        data_href = elem.get(__tag_data_href)
+        for href, to_tag in (xlink_href, self._tag_xlink_href), (data_href, self._tag_html_data_href):
+            if href:
+                href = Iri(href)
+                if href.scheme == 'wiki.local':
+                    self.handle_wikilocal_links(elem, href, page, to_tag)
+                elif href.scheme == 'wiki':
+                    self.handle_wiki_links(elem, href, to_tag)
+                elif href.scheme:
+                    self.handle_external_links(elem, href, to_tag)
 
-        elif xinclude_href:
+        if not xlink_href and xinclude_href:
             xinclude_href = Iri(xinclude_href)
             if xinclude_href.scheme == 'wiki.local':
                 self.handle_wikilocal_transclusions(elem, xinclude_href, page)
@@ -153,7 +157,7 @@ class ConverterExternOutput(ConverterBase):
         endpoint = do_to_endpoint[do or 'show']
         return endpoint, rev, query
 
-    def handle_wiki_links(self, elem, input):
+    def handle_wiki_links(self, elem, input, to_tag):
         wiki_name = 'Self'
         if input.authority and input.authority.host:
             wn = str(input.authority.host)
@@ -169,9 +173,9 @@ class ConverterExternOutput(ConverterBase):
         endpoint, rev, query = self._get_do_rev(input.query)
         url = url_for_item(item_name, wiki_name=wiki_name, rev=rev, endpoint=endpoint)
         link = Iri(url, query=query, fragment=input.fragment)
-        elem.set(self._tag_xlink_href, link)
+        elem.set(to_tag, link)
 
-    def handle_wikilocal_links(self, elem, input, page):
+    def handle_wikilocal_links(self, elem, input, page, to_tag):
         if input.path:
             # this can be a relative path, make it absolute:
             path = input.path
@@ -188,10 +192,10 @@ class ConverterExternOutput(ConverterBase):
         if not page:
             url = url[1:]
         link = Iri(url, query=query, fragment=input.fragment)
-        elem.set(self._tag_xlink_href, link)
+        elem.set(to_tag, link)
 
-    def handle_external_links(self, elem, input):
-        elem.set(self._tag_xlink_href, input)
+    def handle_external_links(self, elem, input, to_tag):
+        elem.set(to_tag, input)
         # rst_in.py may create a link similar to "http:Home", we check input.authority to verify link is external
         if elem.tag == moin_page.a and input.authority:
             # adding this class enables themes to flag external links with an icon
@@ -225,7 +229,7 @@ class ConverterItemRefs(ConverterBase):
 
         super(ConverterItemRefs, self).__call__(*args, **kw)
 
-    def handle_wikilocal_links(self, elem, input, page):
+    def handle_wikilocal_links(self, elem, input, page, to_tag):
         """
         Adds the link item from the input param to self.links
         :param elem: the element of the link
@@ -253,7 +257,7 @@ class ConverterItemRefs(ConverterBase):
         path = self.absolute_path(path, page.path)
         self.transclusions.add(str(path))
 
-    def handle_external_links(self, elem, input):
+    def handle_external_links(self, elem, input, to_tag):
         """
         Adds the link item from the input param to self.external_links
         :param elem: the element of the link
