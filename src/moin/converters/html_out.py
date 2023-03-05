@@ -11,7 +11,6 @@ Converts an internal document tree into a HTML tree.
 
 import re
 
-from flask import request
 from flask import current_app as app
 from emeraldtree import ElementTree as ET
 from werkzeug.urls import url_encode

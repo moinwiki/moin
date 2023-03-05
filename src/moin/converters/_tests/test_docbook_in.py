@@ -20,6 +20,7 @@ logging = log.getLogger(__name__)
 
 etree = pytest.importorskip('lxml.etree')  # noqa
 
+
 class Base:
     input_namespaces = ns_all = 'xmlns="{0}" xmlns:xlink="{1}"'.format(docbook.namespace, xlink.namespace)
     output_namespaces = {
