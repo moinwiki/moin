@@ -581,6 +581,13 @@ class NodeVisitor:
         if refuri == '':
             # build a link to a heading or an explicitly defined anchor
             refuri = Iri(scheme='wiki.local', fragment=node.attributes['name'].replace(' ', '_'))
+        if isinstance(refuri, str) and refuri.startswith('http'):
+            if '://' not in refuri:
+                refuri = refuri.split(':')[1]
+        iri = Iri(refuri)
+        if iri.scheme is None:
+            iri.scheme = 'wiki.local'
+            refuri = iri
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
 
     def depart_reference(self, node):
