@@ -54,7 +54,7 @@ def convert_getlink_to_showlink(href):
     return href
 
 
-def mark_item_as_transclusion(elem, href):
+def mark_item_as_transclusion(elem, href_or_item):
     """
     Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
     a link to the transcluded item.
@@ -62,9 +62,11 @@ def mark_item_as_transclusion(elem, href):
     On the client side, a Javascript function will wrap the element (or a parent element)
     in a span or div and 2 overlay siblings will be created.
     """
-    if isinstance(href, Item):
+    if isinstance(href_or_item, Item):
         query = url_encode({'do': 'show'}, charset=CHARSET)
-        href = Iri(scheme='wiki', authority='', path='/' + href.fqname.fullname, query=query)
+        href = Iri(scheme='wiki', authority='', path='/' + href_or_item.fqname.fullname, query=query)
+    else:  # isinstance(href_or_item, Iri)
+        href = href_or_item
     elem.attrib[html.data_href] = href
     classes = elem.attrib.get(html.class_, '').split()
     classes.append('moin-transclusion')
