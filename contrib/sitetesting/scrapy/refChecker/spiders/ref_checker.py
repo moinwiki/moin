@@ -1,10 +1,8 @@
 """ref_checker.py spider a site and report on 404 errors for href, src, data, and data-href attribs"""
 
 import csv
-from dataclasses import dataclass, fields
-from enum import Enum
+from dataclasses import dataclass, fields, astuple
 import logging
-from urllib.parse import urlparse
 
 import scrapy
 from scrapy import signals
@@ -15,19 +13,12 @@ from moin.utils.iri import Iri
 logger = logging.getLogger(__name__)
 
 
-class FromType(Enum):
-    A = 'a'
-    DATA_HREF = 'data-href'
-    SRC = 'src'
-    DATA = 'data'
-
-
 @dataclass
 class CrawlResult:
     url: Iri
     from_url: Iri = ''
     from_text: str = ''
-    from_type: FromType = ''
+    from_type: str = ''
     from_history: bool = False
     response_code: int = ''
     response_exc: str = ''
@@ -36,8 +27,6 @@ class CrawlResult:
         self.url = Iri(self.url)
         if self.from_url:
             self.from_url = Iri(self.from_url)
-        if self.from_type:
-            self.from_type = FromType(self.from_type)
         self.from_history = self.from_history == 'True'
         if self.response_code:
             self.response_code = int(self.response_code)
@@ -45,13 +34,8 @@ class CrawlResult:
     def __repr__(self):
         return f'CrawlResult(url={str(self.url)}, from_url="{str(self.from_url)}", ' +\
                f'from_text={repr(self.from_text)}, ' +\
-               f'from_type="{self.from_type.value}", from_history={self.from_history}, ' +\
-               f'response_code={self.response_code}, response_exc="{self.response_exc}"'
-
-    def as_csv_row(self):
-        row = (getattr(self, field.name) for field in fields(self))
-        row = (t.value if isinstance(t, Enum) else str(t) for t in row)
-        return row
+               f'from_type={repr(self.from_type)}, from_history={self.from_history}, ' +\
+               f'response_code={self.response_code}, response_exc="{self.response_exc}")'
 
 
 class RefCheckerSpider(scrapy.Spider):
@@ -81,78 +65,58 @@ class RefCheckerSpider(scrapy.Spider):
             out_csv = csv.writer(fh, lineterminator='\n')
             out_csv.writerow([f.name for f in fields(CrawlResult)])
             for result in self.results:
-                out_csv.writerow(result.as_csv_row())
+                out_csv.writerow(astuple(result))
 
     def parse(self, response, **kwargs):
         """ Main method that parse downloaded pages. """
         # If first response, update domain (to manage redirect cases)
         if not self.domain:
-            parsed_uri = urlparse(response.url)
-            self.domain = parsed_uri.netloc
-
+            parsed_uri = Iri(response.url)
+            self.domain = parsed_uri.authority
         try:
-            my_data = response.meta['my_data']
+            result = response.meta['my_data']
         except KeyError:
-            my_data = {}
-        result = CrawlResult(response.url, **my_data)
+            result = CrawlResult(response.url)
         result.response_code = response.status
         self.results.append(result)
-        is_history = my_data.get('from_history', False)
+        is_history = result.from_history
         if '/+history/' in response.url:
             is_history = True
-
         # Extract domain of current page
-        parsed_uri = urlparse(response.url)
+        parsed_uri = Iri(response.url)
         # Parse new links only:
         #   - if current page is not an extra domain
         #   - for moin pages require html content type
         #   - for dump-html pages follow when there is no content type
         follow = True
-        for no_crawl_path in self.no_crawl_paths:
-            if no_crawl_path in parsed_uri.path:
-                follow = False
-                logging.info(f'not crawling {response.url}')
-                break
-        if (follow and parsed_uri.netloc == self.domain
+        if parsed_uri.path:
+            url_path = parsed_uri.path.fullquoted
+            for no_crawl_path in self.no_crawl_paths:
+                if no_crawl_path in url_path:
+                    follow = False
+                    logging.info(f'not crawling {response.url}')
+                    break
+        if (follow and parsed_uri.authority == self.domain
             and ('Content-Type' not in response.headers
                  or response.headers['Content-Type'] == b'text/html; charset=utf-8')):
-            # Get all the <a> tags exclude breadcrumbs as the from_url on breadcrumbs can be misleading
-            a_selectors = response.xpath("//a[not(../../ul[contains(@class,'moin-breadcrumb')])]")
-            # Loop on each tag
-            for selector in a_selectors:
-                # Extract the link text
-                text = selector.xpath('text()').extract_first()
-                if isinstance(text, str):
-                    text = text.strip().replace('\n', '\\n')
-                # Extract the link href
-                link = selector.xpath('@href').extract_first()
-                if link.startswith('javascript:'):
-                    continue
-                # Create a new Request obj
-                my_data = {'from_url': response.url, 'from_text': text, 'from_type': 'a', 'from_history': is_history}
-                try:
-                    request = response.follow(link, callback=self.parse, errback=self.errback)
-                except Exception as e:
-                    result = CrawlResult(link, **my_data)
-                    result.response_exc = f'unable to create request from {link}: {repr(e)}'
-                    self.results.append(result)
-                    continue
-                request.meta['my_data'] = my_data
-                # Return it thanks to a generator
-                yield request
-            for attrib in ['data-href', 'src', 'data']:
+            for attrib in ['href', 'data-href', 'src', 'data']:
                 attrib_selectors = response.xpath(f'//*[@{attrib}]')
                 for selector in attrib_selectors:
                     link = selector.xpath(f'@{attrib}').extract_first()
-                    my_data = {'from_url': response.url, 'from_type': attrib}
+                    text = selector.xpath('text()').extract_first()
+                    if isinstance(text, str):
+                        text = text.strip().replace('\n', '\\n')
+                    result = CrawlResult(link, response.url, text, attrib, is_history)
+                    if result.url.scheme in {'javascript', 'file'}:
+                        continue
                     try:
                         request = response.follow(link, callback=self.parse, errback=self.errback)
+                        result.url = Iri(request.url)
                     except Exception as e:
-                        result = CrawlResult(link, **my_data)
                         result.response_exc = f'unable to create request from {link}: {repr(e)}'
                         self.results.append(result)
                         continue
-                    request.meta['my_data'] = my_data
+                    request.meta['my_data'] = result
                     yield request
 
     def errback(self, failure):
@@ -160,10 +124,9 @@ class RefCheckerSpider(scrapy.Spider):
             return
         request = failure.request
         try:
-            my_data = request.meta['my_data']
+            result = request.meta['my_data']
         except KeyError:
-            my_data = {}
-        result = CrawlResult(request.url, **my_data)
+            result = CrawlResult(request.url)
         try:
             response = failure.value.response
         except AttributeError:

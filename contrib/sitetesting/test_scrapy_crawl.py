@@ -54,21 +54,24 @@ def test_home_page(crawl_results):
 
 
 def test_200(crawl_results):
-    for r in crawl_results:
-        if r.url.authority == SITE_HOST:
-            if 'Discussion' in r.url.path:
-                assert r.response_code in (200, 404), f'{r.response_code} for {r}'
-            elif 'MissingSubItem' in r.url.path or 'MissingSubitem' in r.url.path or 'MissingPage' in r.url.path:
-                assert r.response_code == 404, f'expected 404, actual {r.response_code} for {r}'
-            elif 'WikiMoinMoin' in r.url.path or 'CzymJestMoinMoin' in r.url.path:
-                pass  # see test_expected_failures
-            else:
-                assert r.response_code == 200, f'{r.response_code} for {r}'
+    for r in [r for r in crawl_results if r.url.authority == SITE_HOST]:
+        if 'Discussion' in r.url.path:
+            assert r.response_code in (200, 404), f'{r.response_code} for {r}'
+        elif 'MissingSubItem' in r.url.path or 'MissingSubitem' in r.url.path or 'MissingPage' in r.url.path:
+            assert r.response_code == 404, f'expected 404, actual {r.response_code} for {r}'
+        elif 'WikiMoinMoin' in r.url.path or 'CzymJestMoinMoin' in r.url.path:
+            pass  # see test_expected_failures
+        else:
+            assert r.response_code == 200, f'{r.response_code} for {r}'
 
 
 @pytest.mark.xfail
 def test_expected_failures(crawl_results):
+    for r in [r for r in crawl_results if r.url.authority == SITE_HOST]:
+        if 'WikiMoinMoin' in r.url.path or 'CzymJestMoinMoin' in r.url.path:
+            assert r.response_code == 200, f'{r.response_code} for {r}'
+
+
+def test_valid_request(crawl_results):
     for r in crawl_results:
-        if r.url.authority == SITE_HOST:
-            if 'WikiMoinMoin' in r.url.path or 'CzymJestMoinMoin' in r.url.path:
-                assert r.response_code == 200, f'{r.response_code} for {r}'
+        assert r.response_code, f'no response code for {r}'
