@@ -124,8 +124,8 @@ class MutableBackend(Backend, MutableBackendBase):
         # XXX Idea: we could check the type the store wants from us:
         # if it is a str/bytes (BytesStore), just use meta "as is",
         # if it is a file (FileStore), wrap it into BytesIO and give that to the store.
+        tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
         if DATAID not in meta:
-            tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
             dataid = make_uuid()
             self.data_store[dataid] = tfw
             meta[DATAID] = dataid
@@ -144,6 +144,9 @@ class MutableBackend(Backend, MutableBackendBase):
             meta[HASH_ALGORITHM] = hash_real
         else:
             dataid = meta[DATAID]
+            self.data_store[dataid] = tfw
+            meta[SIZE] = tfw.size
+            meta[HASH_ALGORITHM] = tfw.hash.hexdigest()
             # we will just asume stuff is correct if you pass it with a data id
             if dataid not in self.data_store:
                 self.data_store[dataid] = data
