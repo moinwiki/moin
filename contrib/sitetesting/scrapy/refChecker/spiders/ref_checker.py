@@ -27,7 +27,8 @@ class CrawlResult:
         self.url = Iri(self.url)
         if self.from_url:
             self.from_url = Iri(self.from_url)
-        self.from_history = self.from_history == 'True'
+        if isinstance(self.from_history, str):  # for parsing csv in test_scrapy_crawl
+            self.from_history = self.from_history == 'True'
         if self.response_code:
             self.response_code = int(self.response_code)
 
@@ -47,9 +48,8 @@ class RefCheckerSpider(scrapy.Spider):
         self.start_urls = [url]
         if isinstance(do_history, str):
             do_history = do_history.lower() == 'true'
+        self.do_history = do_history
         self.no_crawl_paths = ['/MoinWikiMacros/MonthCalendar']  # lots of 404s for the dates
-        if not do_history:
-            self.no_crawl_paths.append('/+history/')
         self.results = []
         self.domain = ''
 
@@ -80,15 +80,17 @@ class RefCheckerSpider(scrapy.Spider):
         result.response_code = response.status
         self.results.append(result)
         is_history = result.from_history
-        if '/+history/' in response.url:
-            is_history = True
         # Extract domain of current page
+        follow = True
         parsed_uri = Iri(response.url)
+        if (url_path := parsed_uri.path) and '+history' in url_path:
+            is_history = True
+        if is_history and not self.do_history:
+            follow = False
         # Parse new links only:
         #   - if current page is not an extra domain
         #   - for moin pages require html content type
         #   - for dump-html pages follow when there is no content type
-        follow = True
         if parsed_uri.path:
             url_path = parsed_uri.path.fullquoted
             for no_crawl_path in self.no_crawl_paths:
@@ -106,17 +108,17 @@ class RefCheckerSpider(scrapy.Spider):
                     text = selector.xpath('text()').extract_first()
                     if isinstance(text, str):
                         text = text.strip().replace('\n', '\\n')
-                    result = CrawlResult(link, response.url, text, attrib, is_history)
-                    if result.url.scheme in {'javascript', 'file'}:
+                    new_result = CrawlResult(link, response.url, text, attrib, is_history)
+                    if new_result.url.scheme in {'javascript', 'file'}:
                         continue
                     try:
                         request = response.follow(link, callback=self.parse, errback=self.errback)
-                        result.url = Iri(request.url)
+                        new_result.url = Iri(request.url)  # response.follow handles relative links
                     except Exception as e:
-                        result.response_exc = f'unable to create request from {link}: {repr(e)}'
-                        self.results.append(result)
+                        new_result.response_exc = f'unable to create request from {link}: {repr(e)}'
+                        self.results.append(new_result)
                         continue
-                    request.meta['my_data'] = result
+                    request.meta['my_data'] = new_result
                     yield request
 
     def errback(self, failure):
