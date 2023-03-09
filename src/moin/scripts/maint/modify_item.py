@@ -14,7 +14,7 @@ from flask import current_app as app
 from flask_script import Command, Option
 from flask import g as flaskg
 
-from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, SIZE, HASH_ALGORITHM, NAMESPACE, WIKINAME
+from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, NAMESPACE, WIKINAME
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 from moin.app import before_wiki
@@ -72,9 +72,7 @@ class PutItem(Command):
             meta = mf.read()
         meta = meta.decode('utf-8')
         meta = json.loads(meta)
-        to_kill = [SIZE, HASH_ALGORITHM,  # gets re-computed automatically
-                   WIKINAME,  # use target wiki name
-                   ]
+        to_kill = [WIKINAME, ]  # use target wiki name
         for key in to_kill:
             meta.pop(key, None)
         if not overwrite:
