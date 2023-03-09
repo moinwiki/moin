@@ -22,9 +22,9 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
-from moin.utils.tree import moin_page, xlink, docbook, xml, html
-from moin.converters.html_out import mark_item_as_transclusion
+from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
 
 from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
@@ -469,7 +469,10 @@ class Converter:
             # but at this time we won't support it.
             return
         attrib[html.alt] = href
-        attrib[xlink.href] = '/+get/' + href
+        if '://' in href:
+            attrib[xlink.href] = Iri(href)
+        else:
+            attrib[xinclude.href] = Iri(scheme='wiki.local', path=href)
         format = object_to_show.get('format')
         if format:
             format = format.lower()
@@ -481,8 +484,7 @@ class Converter:
             attrib[html.class_] = align
 
         # return object tag, html_out.py will convert to img, audio, or video based on type attr
-        ret = ET.Element(moin_page.object, attrib=attrib)
-        ret = mark_item_as_transclusion(ret, href)
+        ret = ET.Element(xinclude.include, attrib=attrib)
         if caption:
             caption = self.new(moin_page.span, attrib={moin_page.class_: 'db-caption'}, children=[caption])
             return self.new(moin_page.span, attrib={}, children=[ret, caption])

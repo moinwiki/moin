@@ -11,14 +11,16 @@ Converts an internal document tree into a HTML tree.
 
 import re
 
-from flask import request
 from flask import current_app as app
 from emeraldtree import ElementTree as ET
+from werkzeug.urls import url_encode
 
 from moin import wikiutil
 from moin.i18n import _
+from moin.items import Item
+from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
-from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CHARSET
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry, ElementException
@@ -52,7 +54,7 @@ def convert_getlink_to_showlink(href):
     return href
 
 
-def mark_item_as_transclusion(elem, href):
+def mark_item_as_transclusion(elem, href_or_item):
     """
     Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
     a link to the transcluded item.
@@ -60,17 +62,11 @@ def mark_item_as_transclusion(elem, href):
     On the client side, a Javascript function will wrap the element (or a parent element)
     in a span or div and 2 overlay siblings will be created.
     """
-    href = str(href)
-    # href will be "/wikiroot/SomeObject" or "/SomePage" for internal wiki items
-    # or "http://Some.Org/SomeThing" for external link
-    if elem.tag.name not in ('object', 'img'):
-        # XXX see issue #167: for wikis not running at root, only object and img elements have complete path
-        # if wiki is not running at server root, prefix href with wiki root
-        wiki_root = request.url_root[len(request.host_url):-1]
-        if wiki_root:
-            href = '/' + wiki_root + href
-    href = convert_getlink_to_showlink(href)
-    # data_href will create an attribute named data-href: any attribute beginning with "data-" passes html5 validation
+    if isinstance(href_or_item, Item):
+        query = url_encode({'do': 'show'}, charset=CHARSET)
+        href = Iri(scheme='wiki', authority='', path='/' + href_or_item.fqname.fullname, query=query)
+    else:  # isinstance(href_or_item, Iri)
+        href = href_or_item
     elem.attrib[html.data_href] = href
     classes = elem.attrib.get(html.class_, '').split()
     classes.append('moin-transclusion')
