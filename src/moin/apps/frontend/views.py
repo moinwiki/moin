@@ -70,7 +70,7 @@ from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
 from moin.utils import crypto, rev_navigation, close_file, show_time
-from moin.utils.crypto import make_uuid
+from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import html, docbook
@@ -79,7 +79,7 @@ from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
-from moin.scripts.migration.moin19.import19 import hash_hexdigest
+# from moin.cli.migration.moin19.import19 import hash_hexdigest
 from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type
 

@@ -78,7 +78,6 @@ setup_args = dict(
         'Flask<2.1.0',  # micro framework
         'Flask-Babel<3.0.0',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
-        'Flask-Script==2.0.5',  # scripting support
         'Flask-Theme>=0.3.5',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'feedgen==0.9.*',  # Atom feed
@@ -115,7 +114,7 @@ setup_args = dict(
                                   # windows binaries available from 3rd parties
     },
     entry_points=dict(
-        console_scripts=['moin = moin.scripts:main'],
+        console_scripts=['moin = moin.cli:cli',],
     ),
 
     # stuff for babel:

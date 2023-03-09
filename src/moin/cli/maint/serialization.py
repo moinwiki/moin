@@ -1,20 +1,28 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - backend serialization / deserialization
+MoinMoin CLI - backend serialization / deserialization
 """
 
 import sys
 import os
+import click
 
 from flask import current_app as app
-from flask_script import Command, Option
+from flask.cli import FlaskGroup
 
 from moin.storage.middleware.serialization import serialize, deserialize
+from moin.app import create_app
 
 from moin import log
 logging = log.getLogger(__name__)
+
+
+@click.group(cls=FlaskGroup, create_app=create_app)
+def cli():
+    pass
 
 
 def open_file(filename, mode):
@@ -39,67 +47,61 @@ def open_file(filename, mode):
     return f
 
 
-class Serialize(Command):
-    description = 'Serialize the backend into a file.'
-
-    option_list = [
-        Option('--file', '-f', dest='filename', type=str, required=False,
-               help='Filename of the output file.'),
-        Option('--backends', '-b', dest='backends', type=str, required=False,
-               help='Backend names to serialize (comma separated).'),
-        Option('--all-backends', '-a', dest='all_backends', action='store_true', default=False,
-               help='Serialize all configured backends.'),
-    ]
-
-    def run(self, filename=None, backends=None, all_backends=False):
-        if filename is None:
-            f = sys.stdout
-        else:
-            f = open(filename, "wb")
-        with f as f:
-            existing_backends = set(app.cfg.backend_mapping)
-            if all_backends:
-                backends = set(app.cfg.backend_mapping)
-            elif backends:
-                backends = set(backends.split(','))
-            if backends:
-                # low level - directly serialize some backend contents -
-                # this does not use the index:
-                if backends.issubset(existing_backends):
-                    for backend_name in backends:
-                        backend = app.cfg.backend_mapping.get(backend_name)
-                        serialize(backend, f)
-                else:
-                    print("Error: Wrong backend name given.")
-                    print("Given Backends: %r" % backends)
-                    print("Configured Backends: %r" % existing_backends)
+@cli.command('save', help='Serialize the backend into a file')
+@click.option('--file', '-f', type=str, required=False,
+              help='Filename of the output file.')
+@click.option('--backends', '-b', type=str, required=False,
+              help='Backend names to serialize (comma separated).')
+@click.option('--all-backends', '-a', default=False,
+              help='Serialize all configured backends.')
+def Serialize(file=None, backends=None, all_backends=False):
+    logging.info("Backup started")
+    if file is None:
+        f = sys.stdout
+    else:
+        f = open(file, "wb")
+    with f as f:
+        existing_backends = set(app.cfg.backend_mapping)
+        if all_backends:
+            backends = set(app.cfg.backend_mapping)
+        elif backends:
+            backends = set(backends.split(','))
+        if backends:
+            # low level - directly serialize some backend contents -
+            # this does not use the index:
+            if backends.issubset(existing_backends):
+                for backend_name in backends:
+                    backend = app.cfg.backend_mapping.get(backend_name)
+                    serialize(backend, f)
+            else:
+                print("Error: Wrong backend name given.")
+                print("Given Backends: %r" % backends)
+                print("Configured Backends: %r" % existing_backends)
+    logging.info("Backup finished")
 
 
-class Deserialize(Command):
-    description = 'Deserialize a file into the backend; with options to rename or remove a namespace.'
-
-    option_list = [
-        Option('--file', '-f', dest='filename', type=str, required=True,
-               help='Filename of the input file.'),
-        Option('--new-ns', '-n', dest='new_ns', type=str, required=False, default=None,
-               help='New namespace name to receive items from the old namespace name.'),
-        Option('--old-ns', '-o', dest='old_ns', type=str, required=False, default=None,
-               help='Old namespace that will be deleted, all items to be restored to new namespace.'),
-        Option('--kill-ns', '-k', dest='kill_ns', type=str, required=False, default=None,
-               help='Namespace name to be deleted, no items within this namespace will be loaded.'),
-    ]
-
-    def run(self, filename=None, new_ns=None, old_ns=None, kill_ns=None):
-        with open_file(filename, "rb") as f:
-            deserialize(f, app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
+@cli.command('load', help='Deserialize a file into the backend; with options to rename or remove a namespace')
+@click.option('--file', '-f', type=str, required=True,
+              help='Filename of the input file.')
+@click.option('--new-ns', '-n', type=str, required=False, default=None,
+              help='New namespace name to receive items from the old namespace name.')
+@click.option('--old-ns', '-o', type=str, required=False, default=None,
+              help='Old namespace that will be deleted, all items to be restored to new namespace.')
+@click.option('--kill-ns', '-k', type=str, required=False, default=None,
+              help='Namespace name to be deleted, no items within this namespace will be loaded.')
+def Deserialize(file=None, new_ns=None, old_ns=None, kill_ns=None):
+    logging.info("Load backup started")
+    with open_file(file, "rb") as f:
+        deserialize(f, app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
+    logging.info("Load Backup finished. You need to run index-build now.")
 
 
-class LoadSample(Command):
-    description = 'Load wiki sample items.'
-
-    def run(self):
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(dir_path, '../../contrib/sample-backup.moin')
-        filename = os.path.normpath(filename)
-        with open_file(filename, "rb") as f:
-            deserialize(f, app.storage.backend)
+@cli.command('load-sample', help='Load wiki sample items')
+def LoadSample():
+    logging.info("Load sample data started")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    filename = os.path.join(dir_path, '../../contrib/sample-backup.moin')
+    filename = os.path.normpath(filename)
+    with open_file(filename, "rb") as f:
+        deserialize(f, app.storage.backend)
+    logging.info("Load sample data finished. You need to run index-build now.")

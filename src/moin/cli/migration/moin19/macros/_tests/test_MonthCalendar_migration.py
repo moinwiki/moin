@@ -1,10 +1,17 @@
+# Copyright: 2022 MoinMoin project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+    MoinMoin - moin.cli.migration.moin19.macros Test MonthCalendar
+"""
+
 import pytest
 
 from moin.converters.moinwiki19_in import ConverterFormat19
 
-from moin.scripts.migration.moin19 import import19
-from moin.scripts.migration.moin19.macro_migration import migrate_macros
-from moin.scripts.migration.moin19.macros import MonthCalendar  # noqa
+from moin.cli.migration.moin19 import import19
+from moin.cli.migration.moin19.macro_migration import migrate_macros
+from moin.cli.migration.moin19.macros import MonthCalendar  # noqa
 
 from moin.utils.tree import moin_page
 

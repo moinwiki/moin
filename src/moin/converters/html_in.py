@@ -37,7 +37,10 @@ class NoDupsFlash:
     def log(self, message, category):
         if message not in self.messages:
             self.messages.add(message)
-            flash(message, category)
+            try:
+                flash(message, category)
+            except RuntimeError:  # CLI call has no valid request context
+                pass
 
 
 class Converter:

@@ -1,9 +1,13 @@
-""" Migration of PageList macro (moin1.9) to new ItemList macro (moin2)
+# Copyright: 2022 MoinMoin Project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin CLI - Migration of PageList macro (moin1.9) to new ItemList macro (moin2)
 """
 
 import re
 
-from moin.scripts.migration.moin19 import macro_migration
+from moin.cli.migration.moin19 import macro_migration
 from moin.utils.tree import moin_page
 
 

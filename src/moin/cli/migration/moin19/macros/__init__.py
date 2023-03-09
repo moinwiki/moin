@@ -2,5 +2,5 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - macro migration
+MoinMoin CLI - macro migration
 """

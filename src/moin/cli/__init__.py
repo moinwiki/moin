@@ -1,97 +1,91 @@
 # Copyright: 2000-2002 Juergen Hermann <jh@web.de>
 # Copyright: 2006,2011 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Extension Script Package
+MoinMoin CLI - Extension Script Package
 """
 
-import sys
+import click
 
-from flask_script import Manager, Server, Command
+from flask.cli import FlaskGroup
+
+from moin.app import create_app
+from moin.cli.maint import create_instance, index, modify_item, set_meta, serialization, reduce_revisions, dump_html
+from moin.cli.account import create, disable, resetpw
+from moin.cli.migration.moin19 import import19
+
+from moin import log
+logging = log.getLogger(__name__)
 
 
-class Help(Command):
-    description = 'Quick help'
-
-    def run(self):
-        # TODO: add more help here as soon as stuff has been migrated from "m" to "moin".
-        print("""\
+def Help():
+    """ Moin initial help"""
+    print("""\
 Quick help / most important commands overview:
 
-moin index-create  # create index (optionally also create empty storage)
+  moin create-instance  # Create wikiconfig and wiki instance directories
 
-moin moin  # run moin's builtin web server
+  moin index-create     # Create empty indexes and storage
 
-moin import19  # import data from moin 1.9
+  moin run              # Run moin's builtin web server
 
-moin index-build  # (re)build index
+  moin import19         # Import wiki data from moin 1.9
 
-For more information please see:
 
-- "moin --help" command output
-- "moin <subcommand> --help" command output
-- docs
+For more information please run:
+
+  moin --help
+
+  moin <subcommand> --help
+
+or read the Docs at https://moin-20.readthedocs.io/
 """)
 
 
-def main(default_command='help', wiki_config=None):
-    """
-    console_script entry point
-    """
-    from moin.app import create_app
-
-    manager = Manager(create_app)
-    manager.add_option('-c', '--config', dest='config', required=False, default=wiki_config)
-    manager.add_option('-i', '--index-create', action='store_true', dest='create_index',
-                       required=False, default=False)
-    manager.add_option('-s', '--storage-create', action='store_true', dest='create_storage',
-                       required=False, default=False)
-
-    manager.add_command("help", Help())
-    manager.add_command("moin", Server(host='127.0.0.1', port=8080))
-    manager.add_command("run", Server(host='127.0.0.1', port=8080))
-
-    from moin.scripts.maint import create_instance
-    manager.add_command("create-instance", create_instance.CreateInstance())
-
-    from moin.scripts.maint import index
-    manager.add_command("index-create", index.IndexCreate())
-    manager.add_command("index-build", index.IndexBuild())
-    manager.add_command("index-update", index.IndexUpdate())
-    manager.add_command("index-destroy", index.IndexDestroy())
-    manager.add_command("index-move", index.IndexMove())
-    manager.add_command("index-optimize", index.IndexOptimize())
-    manager.add_command("index-dump", index.IndexDump())
-    from moin.scripts.maint import serialization
-    manager.add_command("save", serialization.Serialize())
-    manager.add_command("load", serialization.Deserialize())
-    manager.add_command("load-sample", serialization.LoadSample())
-    from moin.scripts.maint.dump_html import Dump
-    manager.add_command("dump-html", Dump())
-    from moin.scripts.account.create import Create_User
-    manager.add_command("account-create", Create_User())
-    from moin.scripts.account.disable import Disable_User
-    manager.add_command("account-disable", Disable_User())
-    from moin.scripts.account.resetpw import Set_Password
-    manager.add_command("account-password", Set_Password())
-    from moin.scripts.maint.reduce_revisions import Reduce_Revisions
-    manager.add_command("maint-reduce-revisions", Reduce_Revisions())
-    from moin.scripts.maint.set_meta import Set_Meta
-    manager.add_command("maint-set-meta", Set_Meta())
-    from moin.scripts.maint import modify_item
-    manager.add_command("item-get", modify_item.GetItem())
-    manager.add_command("item-put", modify_item.PutItem())
-    manager.add_command("load-help", modify_item.LoadHelp())
-    manager.add_command("dump-help", modify_item.DumpHelp())
-    from moin.scripts.migration.moin19.import19 import ImportMoin19
-    manager.add_command("import19", ImportMoin19())
-
-    from moin.scripts.maint.moinshell import MoinShell
-    manager.add_command("shell", MoinShell())
-
-    return manager.run(default_command=default_command)
+# @click.option('--config', required=False, default=None)
+@click.group(cls=FlaskGroup, create_app=create_app, invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
+    """ Moin extensions to the Flask CLI"""
+    logging.debug("invoked_subcommand: %s", ctx.invoked_subcommand)
+    if ctx.invoked_subcommand is None:
+        Help()
 
 
-def fatal(msg):
-    sys.exit(msg)
+@cli.command('help', help='Quick help')
+def _Help():
+    Help()
+
+
+cli.add_command(create_instance.CreateInstance)
+
+cli.add_command(index.IndexCreate)
+cli.add_command(index.IndexBuild)
+cli.add_command(index.IndexUpdate)
+cli.add_command(index.IndexDestroy)
+cli.add_command(index.IndexMove)
+cli.add_command(index.IndexOptimize)
+cli.add_command(index.IndexDump)
+
+cli.add_command(serialization.Serialize)
+cli.add_command(serialization.Deserialize)
+cli.add_command(serialization.LoadSample)
+
+cli.add_command(dump_html.Dump)
+
+cli.add_command(create.CreateUser)
+cli.add_command(disable.DisableUser)
+cli.add_command(resetpw.SetPassword)
+
+cli.add_command(reduce_revisions.ReduceRevisions)
+
+cli.add_command(set_meta.SetMeta)
+
+cli.add_command(modify_item.GetItem)
+cli.add_command(modify_item.PutItem)
+cli.add_command(modify_item.LoadHelp)
+cli.add_command(modify_item.DumpHelp)
+
+cli.add_command(import19.ImportMoin19)

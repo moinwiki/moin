@@ -4,21 +4,19 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - import content and user data from a moin 1.9 compatible storage
-           into the moin2 storage.
+MoinMoin CLI - import content and user data from a moin 1.9 compatible storage into the moin2 storage.
 """
-
 
 import os
 import re
 import codecs
-import hashlib
 import importlib
 from io import BytesIO
+import click
 
+from flask.cli import FlaskGroup
 from flask import current_app as app
 from flask import g as flaskg
-from flask_script import Command, Option
 
 from ._utils19 import unquoteWikiname, split_body
 from ._logfile19 import LogFile
@@ -30,15 +28,16 @@ from .macro_migration import migrate_macros
 from .macros import MonthCalendar  # noqa
 from .macros import PageList  # noqa
 
+from moin.app import create_app
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.storage.error import NoSuchRevisionError
 from moin.utils.mimetype import MimeType
-from moin.utils.crypto import make_uuid
+from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin import security
-from moin.converters.moinwiki19_in import ConverterFormat19 as conv_in
+from moin.converters.moinwiki19_in import ConverterFormat19
 from moin.converters import default_registry
 from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
@@ -46,6 +45,11 @@ from moin.utils.tree import moin_page, xlink
 
 from moin import log
 logging = log.getLogger(__name__)
+
+
+@click.group(cls=FlaskGroup, create_app=create_app)
+def cli():
+    pass
 
 
 UID_OLD = 'old_user_id'  # dynamic field *_id, so we don't have to change schema
@@ -78,125 +82,117 @@ user_names = []
 custom_namespaces = []
 
 
-class ImportMoin19(Command):
-    description = 'Import data from a moin 1.9 wiki.'
+@cli.command('import19', help='Import content and user data from a moin 1.9 wiki')
+@click.option('--data_dir', '-d', type=str, required=True,
+              help='moin 1.9 data_dir (contains pages and users subdirectories).')
+@click.option('--markup_out', '-m', type=click.Choice(CONTENTTYPE_MARKUP_OUT.keys()),
+              required=False, default='moinwiki', help='target markup.')
+def ImportMoin19(data_dir=None, markup_out=None):
+    '''  Import content and user data from a moin wiki with version 1.9 '''
 
-    option_list = [
-        Option('--data_dir', '-d', dest='data_dir', type=str, required=True,
-               help='moin 1.9 data_dir (contains pages and users subdirectories).'),
-        Option('-i', '--index-create', action='store_true', dest='create_index',
-               required=False, default=False),
-        Option('-s', '--storage-create', action='store_true', dest='create_storage',
-               required=False, default=False),
-        Option('--markup_out', '-m', type=str, choices=CONTENTTYPE_MARKUP_OUT.keys(),
-               required=False, default='moinwiki'),
-    ]
+    flaskg.add_lineno_attr = False
+    flaskg.item_name2id = {}
+    userid_old2new = {}
+    indexer = app.storage
+    backend = indexer.backend  # backend without indexing
+    users_itemlist = set()
+    global custom_namespaces
+    custom_namespaces = namespaces()
 
-    def run(self, data_dir=None, markup_out=None):
-        flaskg.add_lineno_attr = False
-        flaskg.item_name2id = {}
-        userid_old2new = {}
-        indexer = app.storage
-        backend = indexer.backend  # backend without indexing
-        users_itemlist = set()
-        global custom_namespaces
-        custom_namespaces = namespaces()
-
-        print("\nConverting Users...\n")
-        user_dir = os.path.join(data_dir, 'user')
-        if os.path.isdir(user_dir):
-            for rev in UserBackend(user_dir):
-                global user_names
-                user_names.append(rev.meta['name'][0])
-                userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
-                backend.store(rev.meta, rev.data)
-
-        print("\nConverting Pages and Attachments...\n")
-        for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
-            for user_name in user_names:
-                if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
-                    rev.meta['namespace'] = 'users'
-                    users_itemlist.add(rev.meta['name'][0])  # save itemname for link migration
-                    break
-
-            if USERID in rev.meta:
-                try:
-                    rev.meta[USERID] = userid_old2new[rev.meta[USERID]]
-                except KeyError:
-                    # user profile lost, but userid referred by revision
-                    print("Missing userid {0!r}, editor of {1} revision {2}".format(
-                        rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID])
-                    )
-                    del rev.meta[USERID]
+    print("\nConverting Users...\n")
+    user_dir = os.path.join(data_dir, 'user')
+    if os.path.isdir(user_dir):
+        for rev in UserBackend(user_dir):
+            global user_names
+            user_names.append(rev.meta['name'][0])
+            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
             backend.store(rev.meta, rev.data)
-            # item_name to itemid xref required for migrating user subscriptions
-            flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-        print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
-        self.conv_in = conv_in()
-        self.markup_out = markup_out
-        conv_out = importlib.import_module("moin.converters." + self.markup_out + "_out")
-        self.conv_out = conv_out.Converter()
-        reg = default_registry
-        refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
-        for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
+    print("\nConverting Pages and Attachments...\n")
+    for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
+        for user_name in user_names:
+            if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
+                rev.meta['namespace'] = 'users'
+                users_itemlist.add(rev.meta['name'][0])  # save itemname for link migration
+                break
+
+        if USERID in rev.meta:
             try:
-                print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
-            except UnicodeEncodeError:
-                print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(
-                      item_name.encode('ascii', errors='replace'), namespace, revno))
-            if namespace == '':
-                namespace = 'default'
-            meta, data = backend.retrieve(namespace, revno)
-            data_in = data.read().decode(CHARSET19)
-            dom = self.conv_in(data_in, CONTENTTYPE_MOINWIKI)
+                rev.meta[USERID] = userid_old2new[rev.meta[USERID]]
+            except KeyError:
+                # user profile lost, but userid referred by revision
+                print("Missing userid {0!r}, editor of {1} revision {2}".format(
+                    rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID])
+                )
+                del rev.meta[USERID]
+        backend.store(rev.meta, rev.data)
+        # item_name to itemid xref required for migrating user subscriptions
+        flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-            iri = Iri(scheme='wiki', authority='', path='/' + item_name)
-            dom.set(moin_page.page_href, str(iri))
-            refs_conv(dom)
+    print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
+    conv_in = ConverterFormat19()
+    conv_out_module = importlib.import_module("moin.converters." + markup_out + "_out")
+    conv_out = conv_out_module.Converter()
+    reg = default_registry
+    refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
+    for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
+        try:
+            print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
+        except UnicodeEncodeError:
+            print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(
+                  item_name.encode('ascii', errors='replace'), namespace, revno))
+        if namespace == '':
+            namespace = 'default'
+        meta, data = backend.retrieve(namespace, revno)
+        data_in = data.read().decode(CHARSET19)
+        dom = conv_in(data_in, CONTENTTYPE_MOINWIKI)
 
-            # migrate itemlinks to users namespace
-            itemlinks_19 = refs_conv.get_links()
-            itemlinks2chg = []
-            for link in itemlinks_19:
-                if link in users_itemlist:
-                    itemlinks2chg.append(link)
-            if len(itemlinks2chg) > 0:
-                migrate_users_links(dom, itemlinks2chg)
+        iri = Iri(scheme='wiki', authority='', path='/' + item_name)
+        dom.set(moin_page.page_href, str(iri))
+        refs_conv(dom)
 
-            # migrate macros that need update from 1.9 to 2.0
-            migrate_macros(dom)  # in-place conversion
+        # migrate itemlinks to users namespace
+        itemlinks_19 = refs_conv.get_links()
+        itemlinks2chg = []
+        for link in itemlinks_19:
+            if link in users_itemlist:
+                itemlinks2chg.append(link)
+        if len(itemlinks2chg) > 0:
+            migrate_users_links(dom, itemlinks2chg)
 
-            out = self.conv_out(dom)
-            out = out.encode(CHARSET19)
-            if len(itemlinks2chg) > 0:
-                refs_conv(dom)  # refresh changed itemlinks
-            meta[ITEMLINKS] = refs_conv.get_links()
-            meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
-            meta[EXTERNALLINKS] = refs_conv.get_external_links()
-            size, hash_name, hash_digest = hash_hexdigest(out)
-            out = BytesIO(out)
-            meta[hash_name] = hash_digest
-            meta[SIZE] = size
-            meta[PARENTID] = meta[REVID]
-            meta[REVID] = make_uuid()
-            meta[REV_NUMBER] = meta[REV_NUMBER] + 1
-            # bumping modified time makes global and item history views more useful
-            meta[MTIME] = meta[MTIME] + 1
-            meta[COMMENT] = 'Converted moin 1.9 markup to ' + self.markup_out + ' markup'
-            meta[CONTENTTYPE] = CONTENTTYPE_MARKUP_OUT[self.markup_out]
-            del meta['dataid']
-            out.seek(0)
-            backend.store(meta, out)
+        # migrate macros that need update from 1.9 to 2.0
+        migrate_macros(dom)  # in-place conversion
 
-        print("\nRebuilding the index...")
-        indexer.close()
-        indexer.destroy()
-        indexer.create()
-        indexer.rebuild()
-        indexer.open()
+        out = conv_out(dom)
+        out = out.encode(CHARSET19)
+        if len(itemlinks2chg) > 0:
+            refs_conv(dom)  # refresh changed itemlinks
+        meta[ITEMLINKS] = refs_conv.get_links()
+        meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
+        meta[EXTERNALLINKS] = refs_conv.get_external_links()
+        size, hash_name, hash_digest = hash_hexdigest(out)
+        out = BytesIO(out)
+        meta[hash_name] = hash_digest
+        meta[SIZE] = size
+        meta[PARENTID] = meta[REVID]
+        meta[REVID] = make_uuid()
+        meta[REV_NUMBER] = meta[REV_NUMBER] + 1
+        # bumping modified time makes global and item history views more useful
+        meta[MTIME] = meta[MTIME] + 1
+        meta[COMMENT] = 'Converted moin 1.9 markup to ' + markup_out + ' markup'
+        meta[CONTENTTYPE] = CONTENTTYPE_MARKUP_OUT[markup_out]
+        del meta['dataid']
+        out.seek(0)
+        backend.store(meta, out)
 
-        print("Finished conversion!")
+    print("\nRebuilding the index...")
+    indexer.close()
+    indexer.destroy()
+    indexer.create()
+    indexer.rebuild()
+    indexer.open()
+
+    print("Finished conversion!")
 
 
 class KillRequested(Exception):
@@ -833,24 +829,6 @@ class UserBackend:
                     logging.exception("Exception in user item processing {0}".format(uid))
                 else:
                     yield rev
-
-
-def hash_hexdigest(content, bufsize=4096):
-    size = 0
-    hash = hashlib.new(HASH_ALGORITHM)
-    if hasattr(content, "read"):
-        while True:
-            buf = content.read(bufsize)
-            hash.update(buf)
-            size += len(buf)
-            if not buf:
-                break
-    elif isinstance(content, bytes):
-        hash.update(content)
-        size = len(content)
-    else:
-        raise ValueError("unsupported content object: {0!r}".format(content))
-    return size, HASH_ALGORITHM, str(hash.hexdigest())
 
 
 def namespaces():
