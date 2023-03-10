@@ -5,7 +5,7 @@ this directory was created via ``scrapy startproject`` command,
 then unneeded files were removed including items.py middlewares.py and pipelines.py
 see https://scrapy.org/ for details on scrapy
 
-normal use is via ``pytest test_scrapy_crawl.py`` in parent direcctory
+normal use is via ``pytest test_scrapy_crawl.py`` in parent directory
 
 for manual execution of the crawl::
 

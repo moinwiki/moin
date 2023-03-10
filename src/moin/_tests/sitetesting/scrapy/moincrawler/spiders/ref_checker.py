@@ -56,21 +56,23 @@ class RefCheckerSpider(scrapy.Spider):
         result.response_code = response.status
         self.results.append(result)
         is_history = result.from_history
-        # Extract domain of current page
+        # Parse new links
+        #   - if current page is not an extra domain
+        #   - if none of self.no_crawl_paths is in the url_path
+        #   - skip +history pages if not self.do_history
+        #   - for moin pages require html content type
+        #   - for dump-html pages follow when there is no content type
         follow = True
         parsed_uri = Iri(response.url)
+        result.url = parsed_uri  # in case of redirect show final url in crawl.csv
         if (url_path := parsed_uri.path) and '+history' in url_path:
             is_history = True
         if is_history and not self.do_history:
             follow = False
-        # Parse new links only:
-        #   - if current page is not an extra domain
-        #   - for moin pages require html content type
-        #   - for dump-html pages follow when there is no content type
         if parsed_uri.path:
-            url_path = parsed_uri.path.fullquoted
+            url_path_str = parsed_uri.path.fullquoted
             for no_crawl_path in self.no_crawl_paths:
-                if no_crawl_path in url_path:
+                if no_crawl_path in url_path_str:
                     follow = False
                     logging.info(f'not crawling {response.url}')
                     break
