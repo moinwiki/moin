@@ -121,11 +121,13 @@ class Config(DefaultConfig):
     # default passwords are required to be => 8 characters with minimum of 5 unique characters
     # password_checker = None  # no password length or quality checking
     # from moin.config.default import _default_password_checker
-    # password_checker = lambda cfg, name, pw: _default_password_checker(cfg, name, pw, min_length=8, min_different=5)  # default
+    # password_checker = lambda cfg, name, pw: \
+    #     _default_password_checker(cfg, name, pw, min_length=8, min_different=5)  # default
 
     # optional, configure email, uncomment line below and choose (a) or (b)
     # mail_from = "wiki <wiki@example.org>"  # the "from:" address [Unicode]
-    # (a) using an SMTP server, e.g. "mail.provider.com" with optional `:port`appendix, which defaults to 25 (set None to disable mail)
+    # (a) using an SMTP server, e.g. "mail.provider.com"
+    # with optional `:port`appendix, which defaults to 25 (set None to disable mail)
     # mail_smarthost = "smtp.example.org"
     # mail_username = "smtp_username"  # if you need to use SMTP AUTH at your mail_smarthost:
     # mail_password = "smtp_password"

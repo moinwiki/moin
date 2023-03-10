@@ -15,9 +15,14 @@ from flask import g as flaskg
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
+from moin.converters import include  # prevent circular import
 from moin.items import Item
 from moin.utils.crypto import random_string
 from moin.utils.interwiki import CompositeName
+
+
+assert include is not None  # prevent flake8 complaint about unused import
+
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you

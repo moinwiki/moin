@@ -1,0 +1,4 @@
+*.log
+crawl.csv
+settings.py
+my_settings.py
