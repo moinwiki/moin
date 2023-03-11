@@ -57,6 +57,7 @@ def app_ctx(cfg):
         destroy_storage=True,  # kill all storage contents at app shutdown
         create_index=True,  # create a fresh index at each app start
         destroy_index=True,  # kill index contents at app shutdown
+        create_backend=True,  # create backend storage
     )
     app = create_app_ext(
         flask_config_dict=dict(SECRET_KEY='foobarfoobar'),

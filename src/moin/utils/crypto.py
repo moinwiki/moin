@@ -20,6 +20,8 @@ from uuid import uuid4
 from passlib.utils import rng, getrandstr, consteq
 from passlib.pwd import genword
 
+from moin.constants.keys import HASH_ALGORITHM
+
 
 def make_uuid():
     return str(uuid4().hex)
@@ -114,3 +116,21 @@ def cache_key(**kw):
     :param kw: keys/values to compute cache key from
     """
     return hashlib.md5(repr(kw).encode()).hexdigest()
+
+
+def hash_hexdigest(content, bufsize=4096):
+    size = 0
+    hash = hashlib.new(HASH_ALGORITHM)
+    if hasattr(content, "read"):
+        while True:
+            buf = content.read(bufsize)
+            hash.update(buf)
+            size += len(buf)
+            if not buf:
+                break
+    elif isinstance(content, bytes):
+        hash.update(content)
+        size = len(content)
+    else:
+        raise ValueError("unsupported content object: {0!r}".format(content))
+    return size, HASH_ALGORITHM, str(hash.hexdigest())

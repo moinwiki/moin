@@ -241,7 +241,6 @@ class Converter:
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
         docbook_str = '\n'.join(content)
-        logging.debug(docbook_str)
 
         # Initalize our attributes
         self.section_depth = 0

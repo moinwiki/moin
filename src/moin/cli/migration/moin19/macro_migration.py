@@ -1,3 +1,10 @@
+# Copyright: 2023 MoinMoin Project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin CLI - import content and user data from a moin 1.9 compatible storage into the moin2 storage.
+"""
+
 from moin.utils.tree import moin_page
 
 

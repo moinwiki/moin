@@ -492,15 +492,17 @@ class IndexingMiddleware:
         Currently we only support the FileStorage.
         """
         kind, cls, params, kw = self.get_storage_params(tmp)
+
         if kind == WHOOSH_FILESTORAGE:
             if create:
                 index_dir = params[0]
                 try:
+                    logging.debug("os.mkdir(%s)", str(index_dir))
                     os.mkdir(index_dir)
-                except:  # noqa
+                except FileExistsError:
+                    logging.debug("os.mkdir() failed: FileExistsError will be ignored.")
                     # ignore exception, we'll get another exception below
                     # in case there are problems with the index_dir
-                    pass
         return cls(*params, **kw)
 
     def open(self):
@@ -1166,8 +1168,8 @@ class Item(PropertiesMixin):
             try:
                 # if we get here outside a request, this won't work:
                 remote_addr = str(request.remote_addr)
-            except:  # noqa
-                pass
+            except RuntimeError:
+                remote_addr = "127.0.0.1"
         if userid is None:
             try:
                 # if we get here outside a request, this won't work:
