@@ -226,7 +226,7 @@ moin2 is a WSGI application and uses:
 
 * flask as framework
 
-  - flask-script for command line scripts
+  - flask cli and click for command line interface
   - flask-babel / babel / pytz for i18n/l10n
   - flask-theme for theme switching
   - flask-caching as cache storage abstraction
