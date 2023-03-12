@@ -20,7 +20,7 @@ Servers
 
 For moin2, you can use any server compatible with WSGI:
 
-* the builtin server (used by the "moin moin" command) is recommended for
+* the builtin server (used by the "moin run" command) is recommended for
   desktop wikis, testing, debugging, development, adhoc-wikis, etc.
 * apache with mod_wsgi is recommended for bigger/busier wikis.
 * other WSGI-compatible servers or middlewares are usable
@@ -30,7 +30,7 @@ For moin2, you can use any server compatible with WSGI:
 
 
 .. caution:: When using the built-in server for public wikis (not recommended), use
-        "moin moin -D -R" to turn off the werkzeug debugger and auto reloader.
+        "moin run --no-debugger --no-reload" to turn off the werkzeug debugger and auto reloader.
         See the Werkzeug docs for more information.
 
 

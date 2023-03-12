@@ -39,8 +39,7 @@ Selective Restore
 To restore all software and configuration files to their original
 place, create an empty wiki first::
 
- moin index-create -s -i  # -s = create new storage
-                          # -i = create new index
+ moin index-create
 
 To load the backup file into your empty wiki, run::
 

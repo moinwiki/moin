@@ -20,10 +20,11 @@ Running the built-in server
 Run the moin built-in server as follows::
 
  # easiest for debugging (single-process, single-threaded server):
- moin moin
+ moin run
 
  # or, if you need another configuration file, ip address, or port:
- moin --config /path/to/wikiconfig.py moin --host 1.2.3.4 --port 7777
+ MOINCFG='/path/to/wikiconfig.py'
+ moin run --host 1.2.3.4 --port 7777
 
 While the moin server is starting up, you will see some log output, for example::
 
@@ -53,12 +54,12 @@ Using the built-in server for production
 ----------------------------------------
 
 .. caution:: Using the built-in server for public wikis is not recommended. Should you
- wish to do so, turn off the werkzeug debugger and auto reloader by passing the
- -d and -r flags. The wikiconfig.py settings of `DEBUG = False` and `TESTING = False` are
- ignored by the built-in server. You must use the -d and -r flags.
+ wish to do so, turn off the werkzeug debugger and auto reloader by passing the --debugger
+ and --reload flags. The wikiconfig.py settings of `DEBUG = False` and `TESTING = False` are
+ ignored by the built-in server.
  See Werkzeug docs for more information.::
 
- moin moin --host 0.0.0.0 --port 80 -D -R
+ moin run --host 0.0.0.0 --port 80 --debugger --reload
 
 
 External Web Server (advanced)

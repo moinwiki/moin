@@ -3,20 +3,19 @@
 Moin Command Line Interface
 ===========================
 
-Moin2 has two command line interfaces. The newer interface, powered
+Moin2 has two command line interfaces. The first interface, powered
 by quickinstall.py and started by the **./m** command (**m** on windows),
-implements the most common functions used by desktop
-users and developers. This CLI is only available when moin is installed
-using git to clone a repository from https://github.com/moinwiki/moin
-or alternative.
+implements the most common functions used by developers.
+This CLI is only available when moin is installed using git to
+clone a repository from https://github.com/moinwiki/moin or alternative.
 
-The older interface, **moin**, is implemented by several Python scripts
-located in the /scripts/ directory. This interface targets wiki migration,
+The second interface, **moin**, is implemented by several Python scripts
+located in the /cli/ directory. This interface targets wiki migration,
 account creation and maintenance, and wiki maintenance.
 
 There is some overlap between the two interfaces. Several of the commands
-within the newer interface are implemented by wrapping one or more of the
-older interface commands to accomplish a task.
+within the first interface are implemented by wrapping one or more of the
+cli interface commands to accomplish a task.
 
 ./m Interface
 -------------
@@ -67,53 +66,42 @@ If you invoke :program:`moin` without any arguments, it will show a short quick 
 
 ::
 
-    usage: moin [-c CONFIG] [-i] [-s] [-?]
-                {help,moin,run,create-instance,index-create,index-build,index-update,index-destroy,index-move,index-optimize
-    ,index-dump,save,load,load-sample,dump-html,account-create,account-disable,account-password,maint-reduce-revisions,maint
-    -set-meta,item-get,item-put,load-help,dump-help,import19,shell,runserver}
-                ...
+    Usage: moin [OPTIONS] COMMAND [ARGS]...
 
-    positional arguments:
-      {help,moin,run,create-instance,index-create,index-build,index-update,index-destroy,index-move,index-optimize,index-dum
-    p,save,load,load-sample,dump-html,account-create,account-disable,account-password,maint-reduce-revisions,maint-set-meta,
-    item-get,item-put,load-help,dump-help,import19,shell,runserver}
-        help
-        moin                Runs the Flask development server i.e. app.run()
-        run                 Runs the Flask development server i.e. app.run()
-        create-instance
-        index-create
-        index-build
-        index-update
-        index-destroy
-        index-move
-        index-optimize
-        index-dump
-        save
-        load
-        load-sample
-        dump-html
-        account-create
-        account-disable
-        account-password
-        maint-reduce-revisions
-        maint-set-meta
-        item-get
-        item-put
-        load-help           Load an entire help namespace from distribution source.
-        dump-help           Save an entire help namespace to the distribution source.
-        import19
-        shell               Runs a Python shell inside Flask application context. :param banner: banner appearing at top
-                            of shell when started :param make_context: a callable returning a dict of variables used in
-                            the shell namespace. By default returns a dict consisting of just the app. :param use_ipython:
-                            use IPython shell if available, ignore if not. The IPython shell can be turned off in command
-                            line by passing the **--no-ipython** flag.
-        runserver           Runs the Flask development server i.e. app.run()
+      Moin extensions to the Flask CLI
 
-    options:
-      -c CONFIG, --config CONFIG
-      -i, --index-create
-      -s, --storage-create
-      -?, --help            show this help message and exit
+    Options:
+      --version  Show the flask version
+      --help     Show this message and exit.
+
+    Commands:
+      account-create          Create a user account
+      account-disable         Disable user accounts
+      account-password        Set user passwords
+      create-instance         Create wikiconfig and wiki instance directories...
+      dump-help               Dump a namespace of user help items to .data...
+      dump-html               Create a static HTML image of this wiki
+      help                    Quick help
+      import19                Import content and user data from a moin 1.9 wiki
+      index-build             Build the indexes
+      index-create            Create empty indexes
+      index-destroy           Destroy the indexes
+      index-dump              Dump the indexes in readable form to stdout
+      index-move              Move the indexes from the temporary to the...
+      index-optimize          Optimize the indexes
+      index-update            Update the indexes
+      item-get                Get an item revision from the wiki
+      item-put                Put an item revision into the wiki
+      load                    Deserialize a file into the backend; with...
+      load-help               Load a directory of help .data and .meta file...
+      load-sample             Load wiki sample items
+      maint-reduce-revisions  Remove all revisions but the last one from all...
+      maint-set-meta          Set meta data of a new revision
+      routes                  Show the routes for the app.
+      run                     Run a development server.
+      save                    Serialize the backend into a file
+      shell                   Run a shell in the app context.
+
 
 See also
 --------

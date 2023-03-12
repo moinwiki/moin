@@ -45,7 +45,7 @@ if os.getcwd() not in sys.path and '' not in sys.path:
 
 def create_app(config=None, create_index=False, create_storage=False):
     """
-    simple wrapper around create_app_ext() for flask-script
+    simple wrapper around create_app_ext()
     """
     return create_app_ext(flask_config_file=config,
                           create_index=create_index,
