@@ -11,7 +11,7 @@ import pytest
 from ..fs import BytesStore, FileStore
 
 
-@pytest.mark.multi(Store=[BytesStore, FileStore])
+@pytest.mark.parametrize('Store', [BytesStore, FileStore])
 def test_create_and_destroy(tmpdir, Store):
     target = tmpdir.join('store')
     assert not target.check()
@@ -23,7 +23,7 @@ def test_create_and_destroy(tmpdir, Store):
     assert not target.check()
 
 
-@pytest.mark.multi(Store=[BytesStore, FileStore])
+@pytest.mark.parametrize('Store', [BytesStore, FileStore])
 def test_from_uri(tmpdir, Store):
     store = Store.from_uri("%s" % tmpdir)
     assert store.path == tmpdir
