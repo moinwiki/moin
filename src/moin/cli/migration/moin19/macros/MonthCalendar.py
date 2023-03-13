@@ -1,13 +1,16 @@
-""" Migration of MonthCalendar macro (moin1.9) to its new syntax (moin2)
+# Copyright: 2022 MoinMoin Project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin CLI - Migration of MonthCalendar macro (moin1.9) to its new syntax (moin2)
 
 The MonthCalendar macro used to have comma-separated non-name-value arguments
 such as <<MonthCalendar('TestCalendar',,,-1,,1)>>, now it has named parameters
 such as <<MonthCalendar(item='TestCalendar', offset=-1, fixed_height=true)>>
 """
-from moin.scripts.migration.moin19 import macro_migration
+from moin.cli.migration.moin19 import macro_migration
 from moin.utils import paramparser
 from moin.utils.tree import moin_page
-
 
 CONTENT_TYPE_MACRO_FORMATTER = "x-moin/macro;name={}"
 MACRO_NAME_MONTH_CALENDAR = "MonthCalendar"

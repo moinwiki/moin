@@ -348,8 +348,7 @@ class Converter:
 
                     self.recurse(page_doc, page_href)
 
-                    # The href needs to be an absolute URI, without the prefix "wiki://"
-                    page_doc = mark_item_as_transclusion(page_doc, p_href.path)
+                    page_doc = mark_item_as_transclusion(page_doc, page)
                     included_elements.append(page_doc)
 
                 if len(included_elements) > 1:

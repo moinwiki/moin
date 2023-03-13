@@ -53,13 +53,8 @@ moin index-create
 -----------------
 Creates an empty but valid index.
 
-**Note:** the moin WSGI application needs an index to successfully start up.
-As the moin index-* script commands are also based on the moin WSGI application,
-this can lead to a chicken and egg problem. To solve this, the moin command has
-a ``-i`` (``--index-create``) option that will trigger index creation on startup.
-
-Additionally, if the storage is also non-existent yet, one might also need
-``-s`` (``--storage-create``) to create an empty storage on startup.
+**Note:** the moin WSGI application needs an index and storage to successfully start up.
+Please see command moin create-instance.
 
 moin index-build
 ----------------
@@ -107,8 +102,7 @@ If your wiki is fresh and empty
 -------------------------------
 Use::
 
-    moin index-create --storage-create --index-create
-    moin index-create -s -i  # same, but shorter
+    moin index-create
 
 Storage and index are now initialized and both empty.
 
@@ -120,7 +114,7 @@ If your wiki has data and is shut down
 If index needs a rebuild for some reason, e.g. index lost, index damaged,
 incompatible upgrade, etc., use::
 
-    moin index-create -i
+    moin index-create
     moin index-build  # can take a while...
 
 
@@ -128,7 +122,7 @@ If your wiki has data and should stay online
 --------------------------------------------
 Use::
 
-     moin index-create -i --tmp
+     moin index-create --tmp
      moin index-build --tmp  # can take a while...
      moin index-update --tmp  # should be quicker, make sure we have 99.x%
      # better shut down the wiki now or at least make sure it is not changed
@@ -164,7 +158,7 @@ wiki configs could look like:
 
 Now do the initial index building::
 
-     moin index-create -i  # create an empty index
+     moin index-create  # create an empty index
      # now add the indexes from both other wikis:
      moin index-build  # with Sales wiki configuration
      moin index-build  # with Engineering wiki configuration

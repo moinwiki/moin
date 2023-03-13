@@ -70,21 +70,21 @@ storage and the index:
 
 ::
 
- moin index-create -s -i
+ moin index-create
 
 If you don't want to start with an empty wiki, but rather play with some
 sample content we provide, load it into your wiki and rebuild the indexes:
 
 ::
 
- moin load-sample
+ moin load-sample # deprecated
  moin index-build
 
 Or, if you have a moin 1.9.x wiki, convert it to moin 2:
 
 ::
 
-  moin import19 -d <path to 1.9 wiki/data> -s -i
+  moin import19 -d <path to 1.9 wiki/data>
 
 If you want to load English help for editors (replace en with your wiki's preferred language):
 
@@ -99,7 +99,7 @@ Now try your new wiki using the builtin python-based web server:
 
 ::
 
- moin moin  # visit the URL it shows in the log output
+ moin run  # visit the URL it shows in the log output
 
 For production, please use a real web server like apache or nginx.
 

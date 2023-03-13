@@ -12,7 +12,7 @@ import pytest
 
 from . import serialize, XMLNS_RE3, TAGSTART_RE
 
-from moin.utils.tree import html, moin_page, xlink, xml, docbook
+from moin.utils.tree import html, moin_page, xlink, xml, docbook, xinclude
 from moin.converters.docbook_in import Converter
 
 from moin import log
@@ -28,11 +28,13 @@ class Base:
         xlink.namespace: 'xlink',
         xml.namespace: 'xml',
         html.namespace: 'html',
+        xinclude.namespace: 'xinclude',
     }
 
     namespaces_xpath = {'xlink': xlink.namespace,
                         'xml': xml.namespace,
-                        'html': html.namespace
+                        'html': html.namespace,
+                        'xinclude': xinclude.namespace,
                         }
 
     input_re = TAGSTART_RE
@@ -349,23 +351,23 @@ class TestConverter(Base):
     data = [
         # Test for image object
         ('<article><para><inlinemediaobject><imageobject><imagedata fileref="test.png"/></imageobject></inlinemediaobject></para></article>',
-         # <page><body><div html:class="db-article"><p><span html:class="db-inlinemediaobject"><object type="image/" html:alt="test.png" html:class="moin-transclusion" html:data-href="test.png" xlink:href="+get/test.png" /></span></p></div></body></page>
-         '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/object[@xlink:href="/+get/test.png"][@type="image/"]'),
+         # <page><body><div html:class="db-article"><p><xinclude:include html:alt="test.png" xinclude:href="wiki.local:test.png" /></p></div></body></page>
+         '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/xinclude:include[@html:alt="test.png"][@xinclude:href="wiki.local:test.png"]'),
 
         # Test for audio object
         ('<article><para><inlinemediaobject><audioobject><audiodata fileref="test.wav"/></audioobject></inlinemediaobject></para></article>',
-         # <page><body><div html:class="db-article"><p><span html:class="db-inlinemediaobject"><object type="audio/" html:alt="test.wav" html:class="moin-transclusion" html:data-href="test.wav" xlink:href="+get/test.wav" /></span></p></div></body></page>
-         '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/object[@xlink:href="/+get/test.wav"][@type="audio/"]'),
+         # <page><body><div html:class="db-article"><p><span html:class="db-inlinemediaobject"><xinclude:include type="audio/" html:alt="test.wav" xinclude:href="wiki.local:test.wav" /></span></p></div></body></page>
+         '/page/body/div/p/span[@html:class="db-inlinemediaobject"]/xinclude:include[@xinclude:href="wiki.local:test.wav"][@type="audio/"]'),
 
         # Test for video object
         ('<article><para><mediaobject><videoobject><videodata fileref="test.avi"/></videoobject></mediaobject></para></article>',
-         # <page><body><div html:class="db-article"><p><div html:class="db-mediaobject"><object type="video/" html:alt="test.avi" html:class="moin-transclusion" html:data-href="test.avi" xlink:href="+get/test.avi" /></div></p></div></body></page>
-         '/page/body/div/p/div[@html:class="db-mediaobject"]/object[@xlink:href="/+get/test.avi"][@type="video/"]'),
+         # <page><body><div html:class="db-article"><p><div html:class="db-mediaobject"><xinclude:include type="video/" html:alt="test.avi" xinclude:href="wiki.local:test.avi" /></div></p></div></body></page>
+         '/page/body/div/p/div[@html:class="db-mediaobject"]/xinclude:include[@xinclude:href="wiki.local:test.avi"][@type="video/"]'),
 
         # Test for image object with different imagedata
         ('<article><mediaobject><imageobject><imagedata fileref="figures/eiffeltower.eps" format="EPS"/></imageobject><imageobject><imagedata fileref="figures/eiffeltower.png" format="PNG"/></imageobject><textobject><phrase>The Eiffel Tower</phrase> </textobject><caption><para>Designed by Gustave Eiffel in 1889, The Eiffel Tower is one of the most widely recognized buildings in the world.</para>  </caption></mediaobject></article>',
-         # <page><body><div html:class="db-article"><div html:class="db-mediaobject"><span><object type="image/png" html:alt="figures/eiffeltower.png" html:class="moin-transclusion" html:data-href="figures/eiffeltower.png" xlink:href="+get/figures/eiffeltower.png" /><span class="db-caption"><p>Designed by Gustave Eiffel in 1889, The Eiffel Tower is one of the most widely recognized buildings in the world.</p></span></span></div></div></body></page>
-         '/page/body/div/div[@html:class="db-mediaobject"]/span/object[@xlink:href="/+get/figures/eiffeltower.png"][@type="image/png"]'),
+         # <page><body><div html:class="db-article"><div html:class="db-mediaobject"><span><xinclude:include type="image/png" html:alt="figures/eiffeltower.png" xinclude:href="wiki.local:figures/eiffeltower.png" /><span class="db-caption"><p>Designed by Gustave Eiffel in 1889, The Eiffel Tower is one of the most widely recognized buildings in the world.</p></span></span></div></div></body></page>
+         '/page/body/div/div[@html:class="db-mediaobject"]/span/xinclude:include[@xinclude:href="wiki.local:figures/eiffeltower.png"][@type="image/png"]'),
     ]
 
     @pytest.mark.parametrize('input,xpath', data)

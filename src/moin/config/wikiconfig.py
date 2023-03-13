@@ -51,9 +51,9 @@ class Config(DefaultConfig):
         pip install moin
         moin create-instance --path <mywiki>
         cd <mywiki>
-        moin index-create -s -i                                 # creates empty wiki, OR
-        moin import19 -s -i --data_dir <path to 1.9 wiki/data>  # import 1.9 data, OR
-        moin index-create; moin load-sample; moin index-build   # creates wiki with sample data
+        moin index-create                                      # creates empty wiki, OR
+        moin import19 --data_dir <path to 1.9 wiki/data>       # import 1.9 data, OR
+        moin index-create; moin load-sample; moin index-build  # creates wiki with sample data
     to create this structure:
 
         <myvenv>/               # virtualenv root, moin installed in site-packages below include/

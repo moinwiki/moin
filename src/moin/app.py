@@ -2,6 +2,7 @@
 # Copyright: 2002-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -14,10 +15,6 @@ import os
 from os import path
 import sys
 
-# do this early, but not in moin/__init__.py because we need to be able to
-# "import moin" from setup.py even before flask, werkzeug, ... is installed.
-from moin.utils import monkeypatch  # noqa
-
 from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
@@ -26,14 +23,16 @@ from flask_caching import Cache
 from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
-from whoosh.index import EmptyIndexError
 
+# do this early, but not in moin/__init__.py because we need to be able to
+# "import moin" from setup.py even before flask, werkzeug, ... is installed.
+from moin.utils import monkeypatch  # noqa
+from moin.utils.clock import Clock
+from moin import auth, user, config
 from moin.constants.misc import ANON
 from moin.i18n import i18n_init
 from moin.themes import setup_jinja_env, themed_error
-from moin.utils.clock import Clock
 from moin.storage.middleware import protecting, indexing, routing
-from moin import auth, user, config
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -46,7 +45,7 @@ if os.getcwd() not in sys.path and '' not in sys.path:
 
 def create_app(config=None, create_index=False, create_storage=False):
     """
-    simple wrapper around create_app_ext() for flask-script
+    simple wrapper around create_app_ext()
     """
     return create_app_ext(flask_config_file=config,
                           create_index=create_index,
@@ -74,7 +73,10 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     """
     clock = Clock()
     clock.start('create_app total')
+    logging.debug("running create_app_ext")
     app = Flask('moin')
+
+    logging.debug("app.request_context: %s", str(app.request_context))
 
     clock.start('create_app load config')
     if flask_config_file:
@@ -88,7 +90,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
                 if not path.exists(flask_config_file):
                     # we should be here only because wiki admin is running
                     # `moin help` or `moin create-instance`
-                    if 'create-instance' in sys.argv or 'help' in sys.argv:
+                    if 'create-instance' in sys.argv or 'help' in sys.argv or '--help' in sys.argv:
                         config_path = path.dirname(config.__file__)
                         flask_config_file = path.join(config_path, 'wikiconfig.py')
                     else:
@@ -179,31 +181,38 @@ def destroy_app(app):
     deinit_backends(app)
 
 
-def init_backends(app):
+def init_backends(app, create_backend=False):
     """
     initialize the backends
     """
     # A ns_mapping consists of several lines, where each line is made up like this:
     # mountpoint, unprotected backend
     # Just initialize with unprotected backends.
+    logging.debug("running init_backends")
     app.router = routing.Backend(app.cfg.namespace_mapping, app.cfg.backend_mapping)
-    if app.cfg.create_storage:
+    if create_backend or getattr(app.cfg, 'create_backend', False):
         app.router.create()
     app.router.open()
     app.storage = indexing.IndexingMiddleware(app.cfg.index_storage, app.router,
                                               wiki_name=app.cfg.interwikiname,
                                               acl_rights_contents=app.cfg.acl_rights_contents)
-    if app.cfg.create_index:
+
+    if 'index-create' in sys.argv:  # makes options -i and -s obsolete
+        app.cfg.create_index = True
+        app.cfg.create_storage = True
+
+    # TODO: remove create_index after full migration to cli
+    logging.debug("create_index: %s index_create: %s create_backend: %s",
+                  getattr(app.cfg, 'create_index', False),
+                  getattr(app.cfg, 'index_create', False), str(create_backend))
+    if create_backend or getattr(app.cfg, 'create_backend', False):  # 2. call of init_backends
         app.storage.create()
-    try:
         app.storage.open()
-    except EmptyIndexError:
-        # we should be here only because wiki admin is running
-        # `moin help` or `moin create-instance`
-        if 'create-instance' in sys.argv or 'help' in sys.argv:
-            pass
-        else:
-            raise
+    if 'create-instance' in sys.argv or 'index-create' in sys.argv or \
+            'help' in sys.argv or '--help' in sys.argv:
+        pass
+    else:
+        app.storage.open()
 
 
 def deinit_backends(app):
@@ -220,6 +229,7 @@ def setup_user():
     Try to retrieve a valid user object from the request, be it
     either through the session or through a login.
     """
+    logging.debug("running setup_user")
     # init some stuff for auth processing:
     flaskg._login_multistage = None
     flaskg._login_multistage_name = None
@@ -257,6 +267,11 @@ def setup_user():
     return userobj
 
 
+def setup_user_anon():
+    """ Setup anonymous user when no request available - CLI """
+    flaskg.user = user.User(name=ANON, auth_method='invalid')
+
+
 def before_wiki():
     """
     Setup environment for wiki requests, start timers.
@@ -267,8 +282,13 @@ def before_wiki():
     flaskg.clock.start('init')
     try:
         flaskg.unprotected_storage = app.storage
+        cli_no_request_ctx = False
+        try:
+            flaskg.user = setup_user()
+        except RuntimeError:  # CLI call has no valid request context, create dummy
+            flaskg.user = user.User(name=ANON, auth_method='invalid')
+            cli_no_request_ctx = True
 
-        flaskg.user = setup_user()
         flaskg.storage = protecting.ProtectingMiddleware(app.storage, flaskg.user, app.cfg.acl_mapping)
 
         flaskg.dicts = app.cfg.dicts()
@@ -277,10 +297,12 @@ def before_wiki():
         flaskg.content_lang = app.cfg.language_default
         flaskg.current_lang = app.cfg.language_default
 
-        setup_jinja_env()
+        if cli_no_request_ctx:  # no request.user_agent if this is pytest or cli
+            flaskg.add_lineno_attr = False
+        else:
+            setup_jinja_env()
+            flaskg.add_lineno_attr = request.user_agent and flaskg.user.edit_on_doubleclick
 
-        # request.user_agent == '' if this is pytest
-        flaskg.add_lineno_attr = request.user_agent and flaskg.user.edit_on_doubleclick
     finally:
         flaskg.clock.stop('init')
 

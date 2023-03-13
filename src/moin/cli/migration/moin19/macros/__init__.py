@@ -1,6 +1,6 @@
-# Copyright: 2006 MoinMoin:ThomasWaldmann
+# Copyright: 2022 MoinMoin
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Maintenance Script Package
+MoinMoin CLI - macro migration
 """
