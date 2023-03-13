@@ -3,7 +3,6 @@
 import os
 import shutil
 from subprocess import run
-import sys
 
 
 def main():
