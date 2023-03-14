@@ -11,7 +11,8 @@ def main():
         os.chdir(os.path.dirname(__file__))
         coms = [
                 ['moin', 'index-create', '-s', '-i'],
-                ['moin', 'load', '--file', '../../../../src/moin/contrib/sample-backup.moin'],
+                ['moin', 'load-help', '-n', 'common'],
+                ['moin', 'load-help', '-n', 'en'],
                 ['moin', 'index-build'],
                 ['moin', 'run', '-p', '9080']
                ]

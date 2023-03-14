@@ -9,6 +9,10 @@ from scrapy import signals
 from scrapy.exceptions import IgnoreRequest
 
 from moin._tests.sitetesting import CrawlResult
+try:
+    from moin._tests.sitetesting import settings
+except ImportError:
+    from moin._tests.sitetesting import default_settings as settings
 
 from moin.utils.iri import Iri
 
@@ -62,6 +66,7 @@ class RefCheckerSpider(scrapy.Spider):
         #   - skip +history pages if not self.do_history
         #   - for moin pages require html content type
         #   - for dump-html pages follow when there is no content type
+        #   - if CRAWL_NAMESPACE is defined do not follow links outside the NAMESPACE
         follow = True
         parsed_uri = Iri(response.url)
         result.url = parsed_uri  # in case of redirect show final url in crawl.csv
@@ -76,6 +81,10 @@ class RefCheckerSpider(scrapy.Spider):
                     follow = False
                     logging.info(f'not crawling {response.url}')
                     break
+            if (settings.CRAWL_NAMESPACE
+                and not url_path_str.startswith(f'{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}')):
+                logger.info(f'not crawling {url_path_str}')
+                follow = False
         if (follow and parsed_uri.authority == self.domain
             and ('Content-Type' not in response.headers
                  or response.headers['Content-Type'] == b'text/html; charset=utf-8')):

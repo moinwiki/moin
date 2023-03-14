@@ -29,11 +29,14 @@ class CrawlResult:
         if self.response_code:
             self.response_code = int(self.response_code)
 
-    def __repr__(self):
-        return f'CrawlResult(url="{str(self.url)}", from_url="{str(self.from_url)}", ' +\
+    def __str__(self):
+        return f'url="{str(self.url)}", from_url="{str(self.from_url)}", ' +\
                f'from_text={repr(self.from_text)}, ' +\
                f'from_type={repr(self.from_type)}, from_history={self.from_history}, ' +\
-               f'response_code={self.response_code}, response_exc="{self.response_exc}")'
+               f'response_code={self.response_code}, response_exc="{self.response_exc}"'
+
+    def __repr__(self):
+        return f'CrawlResult({str(self)})'
 
 
 @dataclass
@@ -57,10 +60,16 @@ class CrawlResultMatch(CrawlResult):
         if url and not url.scheme:
             url_path = url.path.fullquoted if url.path else ''
             return Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                       path=f'{settings.SITE_WIKI_ROOT}{url_path}')
+                       path=f'{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}{url_path}')
         return url
 
     def __post_init__(self):
         super().__post_init__()
         self.url = self._relative_to_absolute(self.url)
         self.from_url = self._relative_to_absolute(self.from_url)
+
+    def __str__(self):
+        return super().__str__() + f' url_path_components={repr(self.url_path_components)}'
+
+    def __repr__(self):
+        return f'CrawlResultMatch({str(self)})'
