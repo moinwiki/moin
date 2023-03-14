@@ -86,26 +86,35 @@ def crawl_results():
                     reason="too slow for github windows build host")
 class TestSiteCrawl:
     EXPECTED_404 = [
-        CrawlResultMatch(url_path_components=['MissingSubItem', 'MissingSubitem', 'MissingPage', 'MissingItem', 'users']),
+        CrawlResultMatch(
+            url_path_components=['MissingSubItem', 'MissingSubitem', 'MissingPage', 'MissingItem', 'users']),
     ]
     KNOWN_ISSUES = [
-        #CrawlResultMatch(url_path_components=['WikiMoinMoin', 'CzymJestMoinMoin']),  # only on sample
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/html'),
+        # CrawlResultMatch(url_path_components=['WikiMoinMoin', 'CzymJestMoinMoin']),  # only on sample
+        CrawlResultMatch(
+            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/html'),
+            from_url='/markdown'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/Sibling'),
                          from_url='/markdown'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/Sibling'),
-                         from_url='/markdown'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/markdown', fragment='unsupported-html-tags'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/markdown', fragment='unsupported-html-tags'),
                          from_url='/markdown'),
         CrawlResultMatch(url='/markdown/Home', from_url='/markdown'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/+get/help-common/logo.png'),
-                         from_url='/markdown'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros/MonthCalendar'),
+        CrawlResultMatch(
+            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/+get/help-common/logo.png'),
+            from_url='/markdown'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros/MonthCalendar'),
                          from_url='/MoinWikiMacros'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros/Icons'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros/Icons'),
                          from_url='/MoinWikiMacros'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/WikiDict'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/WikiDict'),
                          from_url='/MoinWikiMacros'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros', fragment='anchorname'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros', fragment='anchorname'),
                          from_url='/MoinWikiMacros'),
         CrawlResultMatch(url='/StronaGłówna', from_url='/MoinWikiMacros'),
         CrawlResultMatch(url='/rst/Home', from_url='/rst'),
@@ -113,22 +122,28 @@ class TestSiteCrawl:
                          from_url='/html'),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/Home'),
                          from_url='/html'),
-        #CrawlResultMatch(url='http://127.0.0.1:8080/Home', from_url='/html'),  # only on sample
+        # CrawlResultMatch(url='http://127.0.0.1:8080/Home', from_url='/html'),  # only on sample
         CrawlResultMatch(url='http://localhost:8080/Home', from_url='/html'),
         CrawlResultMatch(url='http://127.0.0.1:8080/users/Home', from_url='/html'),
-        #CrawlResultMatch(url="http://zip", from_url="/MoinWikiMacros", from_type='data-href'),  # only on sample
+        # CrawlResultMatch(url="http://zip", from_url="/MoinWikiMacros", from_type='data-href'),  # only on sample
         CrawlResultMatch(url="/creole/subitem", from_url="/creole"),
-        #CrawlResultMatch(url="http://fontawesome.io/icons/"),  # intermittent DNS lookup error
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/Home')),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/+get/audio.mp3'),
+        # CrawlResultMatch(url="http://fontawesome.io/icons/"),  # intermittent DNS lookup error
+        CrawlResultMatch(
+            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/Home')),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/+get/audio.mp3'),
                          from_url='/mediawiki'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/+get/video.mp4'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/+get/video.mp4'),
                          from_url='/mediawiki'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/+get/svg'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/+get/svg'),
                          from_url='/mediawiki'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/+get/png'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/+get/png'),
                          from_url='/mediawiki'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/+get/jpeg'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/+get/jpeg'),
                          from_url='/mediawiki'),
     ]
 
@@ -182,7 +197,6 @@ class TestSiteCrawl:
                 logger.error(f'match {m} not seen')
                 fixed.append((m, None))
         assert len(fixed) == 0, f'{len(fixed)} known issues have been fixed'
-
 
     def test_valid_request(self, crawl_results):
         for r in [r for r in crawl_results if not self.is_known_issue(r)]:

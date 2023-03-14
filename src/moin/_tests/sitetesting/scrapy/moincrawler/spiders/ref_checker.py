@@ -9,6 +9,7 @@ from scrapy import signals
 from scrapy.exceptions import IgnoreRequest
 
 from moin._tests.sitetesting import CrawlResult
+
 try:
     from moin._tests.sitetesting import settings
 except ImportError:
@@ -82,12 +83,12 @@ class RefCheckerSpider(scrapy.Spider):
                     logging.info(f'not crawling {response.url}')
                     break
             if (settings.CRAWL_NAMESPACE
-                and not url_path_str.startswith(f'{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}')):
+                    and not url_path_str.startswith(f'{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}')):
                 logger.info(f'not crawling {url_path_str}')
                 follow = False
         if (follow and parsed_uri.authority == self.domain
-            and ('Content-Type' not in response.headers
-                 or response.headers['Content-Type'] == b'text/html; charset=utf-8')):
+                and ('Content-Type' not in response.headers
+                     or response.headers['Content-Type'] == b'text/html; charset=utf-8')):
             for attrib in ['href', 'data-href', 'src', 'data']:
                 attrib_selectors = response.xpath(f'//*[@{attrib}]')
                 for selector in attrib_selectors:
