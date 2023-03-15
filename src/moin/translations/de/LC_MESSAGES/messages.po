@@ -1,4 +1,4 @@
-﻿# German translations for MoinMoin.
+# German translations for MoinMoin.
 # Copyright: 2010 Gerhard J. <gerhard.jungwirth3@gmail.com>
 # Copyright: 2011 Julian Brost <julian.brost@googlemail.com>
 # Copyright: 2011-2018 MoinMoin:ThomasWaldmann
