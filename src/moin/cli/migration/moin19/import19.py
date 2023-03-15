@@ -188,8 +188,12 @@ def ImportMoin19(data_dir=None, markup_out=None):
     print("\nRebuilding the index...")
     indexer.close()
     indexer.destroy()
+    logging.debug("Create index")
     indexer.create()
+    logging.debug("Rebuild index")
     indexer.rebuild()
+    logging.debug("Optimize index")
+    indexer.optimize_index()
     indexer.open()
 
     print("Finished conversion!")
