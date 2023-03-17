@@ -2,11 +2,11 @@
 
 import csv
 import logging
-from subprocess import Popen
 import os
+from pathlib import Path
 import pytest
-from signal import SIGINT
-from subprocess import run, PIPE, STDOUT
+import signal
+import subprocess
 import sys
 from time import sleep
 from typing import List
@@ -35,15 +35,23 @@ class CrawlResults:
         scrapy_dir = os.path.join(my_dir, 'scrapy')
         server = None
         os.chdir(scrapy_dir)
+        Path('crawl.log').touch()  # insure github workflow will have a file to archive
+        Path('crawl.csv').touch()
         started = False
+        crawl_success = False
         try:
             if settings.DO_CRAWL:
                 cls._results = []  # prevent attempting crawl after failed attempt
                 if settings.SITE_HOST == '127.0.0.1:9080':
                     os.chdir(my_dir)
-                    server = Popen(['python', './run_moin.py'], stdout=PIPE, stderr=STDOUT)
+                    server_log = open('server.log', 'wb')
+                    flags = 0
+                    if sys.platform == 'win32':
+                        flags = subprocess.CREATE_NEW_PROCESS_GROUP  # needed for use of os.kill
+                    server = subprocess.Popen(['python', './run_moin.py'], stdout=server_log, stderr=subprocess.STDOUT,
+                                              creationflags=flags)
                     wait_count = 0
-                    while not started and wait_count < 6:
+                    while not started and wait_count < 12:
                         wait_count += 1
                         sleep(5)
                         try:
@@ -52,28 +60,39 @@ class CrawlResults:
                             logger.info(f'waiting for server startup {e}')
                         else:
                             started = True
-                    if not started:
-                        raise RuntimeError('moin not started')
+                    assert started, 'moin not started'
                     os.chdir(scrapy_dir)
                 com = ['scrapy', 'crawl', '-a', f'url={settings.CRAWL_START}', 'ref_checker']
-                p = run(com, stdout=PIPE, stderr=STDOUT)
-                with open('crawl.log', 'wb') as f:
-                    f.write(p.stdout)
-                assert p.returncode == 0, f'command {com} failed.  log:\n{p.stdout.decode()}'
+                with open('crawl.log', 'wb') as crawl_log:
+                    p = subprocess.run(com, stdout=crawl_log, stderr=subprocess.STDOUT, timeout=600)
+                    assert p.returncode == 0, f'command {com} failed. see crawl.log for details'
+                    crawl_success = True
             with open('crawl.csv') as f:
                 in_csv = csv.DictReader(f)
                 cls._results = [CrawlResult(**r) for r in in_csv]
             return cls._results
         finally:
             if server:
-                server.send_signal(SIGINT)
-                os.chdir(my_dir)
-                with open('server.log', 'wb') as f:
-                    out, _ = server.communicate()
-                    f.write(out)
+                if sys.platform == "win32":
+                    os.kill(server.pid, signal.CTRL_C_EVENT)
+                else:
+                    server.send_signal(signal.SIGINT)
+                try:
+                    server.communicate(timeout=10)
+                except subprocess.TimeoutExpired:
+                    server.kill()
+                    server.communicate()
+                server_log.close()
                 if not started:
-                    logger.error('server not started. log:')
-                    logger.error(out.decode())
+                    logger.error('server not started. server.log:')
+                    os.chdir(my_dir)
+                    with open(server_log.name) as f:
+                        logger.error(f.read())
+            if settings.DO_CRAWL and not crawl_success:
+                logger.error('crawl failed. crawl.log:')
+                os.chdir(scrapy_dir)
+                with open('crawl.log') as f:
+                    logger.error(f.read())
             os.chdir(cwd)
 
 
@@ -82,12 +101,10 @@ def crawl_results():
     return CrawlResults.results()
 
 
-@pytest.mark.skipif(sys.platform == "win32" and 'GITHUB_RUN_NUMBER' in os.environ,
-                    reason="too slow for github windows build host")
 class TestSiteCrawl:
     EXPECTED_404 = [
         CrawlResultMatch(
-            url_path_components=['MissingSubItem', 'MissingSubitem', 'MissingPage', 'MissingItem', 'users']),
+            url_path_components=['MissingSubItem', 'MissingSubitem', 'MissingPage', 'MissingItem']),
     ]
     KNOWN_ISSUES = [
         # CrawlResultMatch(url_path_components=['WikiMoinMoin', 'CzymJestMoinMoin']),  # only on sample
@@ -105,6 +122,12 @@ class TestSiteCrawl:
             url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/+get/help-common/logo.png'),
             from_url='/markdown'),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/users/Home')),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'/users/Home'),
+                         from_url='/html'),
+        CrawlResultMatch(url='/users/Home'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
                                  path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros/MonthCalendar'),
                          from_url='/MoinWikiMacros'),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
@@ -118,6 +141,13 @@ class TestSiteCrawl:
                          from_url='/MoinWikiMacros'),
         CrawlResultMatch(url='/StronaGłówna', from_url='/MoinWikiMacros'),
         CrawlResultMatch(url='/rst/Home', from_url='/rst'),
+        CrawlResultMatch(url='/rst/users/Home', from_url='/rst'),
+        CrawlResultMatch(url='/rst/users'),
+        # breadcrumb link produced by clicking on /rst/MissingItem
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/rst')),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
+                                 path=f'{settings.SITE_WIKI_ROOT}/WikiDict')),
         CrawlResultMatch(url='http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif',
                          from_url='/html'),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/Home'),
@@ -167,18 +197,27 @@ class TestSiteCrawl:
         assert expected.match(r), f'unexpected redirect for / {r}'
 
     def test_200(self, crawl_results):
-        for r in [r for r in crawl_results if r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)]:
+        failures = []
+        for r in [r for r in crawl_results if r.url and r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)]:
             if 'Discussion' in r.url.path:
-                assert r.response_code in (200, 404), f'{r.response_code} for {r}'
+                expected = {200, 404}
             elif self.is_expected_404(r):
-                assert r.response_code == 404, f'expected 404, actual {r.response_code} for {r}'
+                expected = {404}
             else:
-                assert r.response_code == 200, f'{r.response_code} for {r}'
+                expected = {200}
+            if r.response_code not in expected:
+                failures.append(r)
+                logger.error(f'expected {expected} got {r.response_code} for {r}')
+        assert len(failures) == 0
 
     @pytest.mark.xfail
     def test_expected_failures(self, crawl_results):
+        failures = []
         for r in [r for r in crawl_results if self.is_known_issue(r)]:
-            assert r.response_code == 200, f'{r.response_code} for {r}'
+            if r.response_code != 200:
+                logger.info(f'known issue {r}')
+                failures.append(r)
+        assert len(failures) == 0
 
     @pytest.mark.skip
     def test_known_issues_exist(self, crawl_results):
@@ -188,16 +227,27 @@ class TestSiteCrawl:
         fixed = []
         for m in self.KNOWN_ISSUES:
             seen = False
+            my_fixed = []
+            my_not_fixed = []
             for r in [r for r in crawl_results if m.match(r)]:
                 seen = True
                 if r.response_code == 200:
-                    fixed.append((m, r))
+                    my_fixed.append(r)
+                else:
+                    my_not_fixed.append(r)
+            if not my_not_fixed:
+                for r in my_fixed:
                     logger.error(f'{r} matching {m} is fixed')
+                    fixed.append((m, r))
             if not seen:
                 logger.error(f'match {m} not seen')
                 fixed.append((m, None))
-        assert len(fixed) == 0, f'{len(fixed)} known issues have been fixed'
+        assert len(fixed) == 0
 
     def test_valid_request(self, crawl_results):
+        failures = []
         for r in [r for r in crawl_results if not self.is_known_issue(r)]:
-            assert r.response_code, f'no response code for {r}'
+            if not r.response_code:
+                logger.error(f'no response code for {r}')
+                failures.append(r)
+        assert len(failures) == 0

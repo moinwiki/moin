@@ -65,3 +65,12 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Archive sitetesting results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: crawl-${{ matrix.os }}
+        path: |
+          src/moin/_tests/sitetesting/server.log
+          src/moin/_tests/sitetesting/scrapy/crawl.csv
+          src/moin/_tests/sitetesting/scrapy/crawl.log
