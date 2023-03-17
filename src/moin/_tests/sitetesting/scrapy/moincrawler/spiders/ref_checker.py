@@ -44,7 +44,7 @@ class RefCheckerSpider(scrapy.Spider):
     def spider_closed(self):
         for k, c in self.crawler.stats.get_stats().items():
             if k.startswith('spider_exceptions'):
-              self.results.append(CrawlResult(response_exc=f'crawler stats: {k} = {c}'))
+                self.results.append(CrawlResult(response_exc=f'crawler stats: {k} = {c}'))
         with open('crawl.csv', 'w') as fh:
             out_csv = csv.writer(fh, lineterminator='\n')
             out_csv.writerow([f.name for f in fields(CrawlResult)])

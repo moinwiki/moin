@@ -124,7 +124,7 @@ class TestSiteCrawl:
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
                                  path=f'{settings.SITE_WIKI_ROOT}/users/Home')),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                                 path=f'/users/Home'),
+                                 path='/users/Home'),
                          from_url='/html'),
         CrawlResultMatch(url='/users/Home'),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
@@ -198,7 +198,8 @@ class TestSiteCrawl:
 
     def test_200(self, crawl_results):
         failures = []
-        for r in [r for r in crawl_results if r.url and r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)]:
+        for r in [r for r in crawl_results if r.url
+                  and r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)]:
             if 'Discussion' in r.url.path:
                 expected = {200, 404}
             elif self.is_expected_404(r):
