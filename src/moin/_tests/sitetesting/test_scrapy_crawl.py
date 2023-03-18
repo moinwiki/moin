@@ -1,104 +1,16 @@
 """test_response_codes spider local site and show failures for non-200 responses"""
 
-import csv
 import logging
-import os
-from pathlib import Path
 import pytest
-import signal
-import subprocess
-import sys
-from time import sleep
-from typing import List
 
 try:
     from moin._tests.sitetesting import settings
 except ImportError:
     from moin._tests.sitetesting import default_settings as settings
-from moin._tests.sitetesting import CrawlResult, CrawlResultMatch
-from moin._tests import check_connection
+from moin._tests.sitetesting import CrawlResultMatch
 from moin.utils.iri import Iri
 
 logger = logging.getLogger(__name__)
-
-
-class CrawlResults:
-    """singleton class to run and cache the results of the crawl"""
-    _results: List[CrawlResult] = None
-
-    @classmethod
-    def results(cls) -> List[CrawlResult]:
-        if cls._results is not None:
-            return cls._results
-        cwd = os.getcwd()
-        my_dir = os.path.dirname(__file__)
-        scrapy_dir = os.path.join(my_dir, 'scrapy')
-        server = None
-        os.chdir(scrapy_dir)
-        Path('crawl.log').touch()  # insure github workflow will have a file to archive
-        Path('crawl.csv').touch()
-        started = False
-        crawl_success = False
-        try:
-            if settings.DO_CRAWL:
-                cls._results = []  # prevent attempting crawl after failed attempt
-                if settings.SITE_HOST == '127.0.0.1:9080':
-                    os.chdir(my_dir)
-                    server_log = open('server.log', 'wb')
-                    flags = 0
-                    if sys.platform == 'win32':
-                        flags = subprocess.CREATE_NEW_PROCESS_GROUP  # needed for use of os.kill
-                    server = subprocess.Popen(['python', './run_moin.py'], stdout=server_log, stderr=subprocess.STDOUT,
-                                              creationflags=flags)
-                    wait_count = 0
-                    while not started and wait_count < 12:
-                        wait_count += 1
-                        sleep(5)
-                        try:
-                            check_connection(9080)
-                        except Exception as e:
-                            logger.info(f'waiting for server startup {e}')
-                        else:
-                            started = True
-                    assert started, 'moin not started'
-                    os.chdir(scrapy_dir)
-                com = ['scrapy', 'crawl', '-a', f'url={settings.CRAWL_START}', 'ref_checker']
-                with open('crawl.log', 'wb') as crawl_log:
-                    p = subprocess.run(com, stdout=crawl_log, stderr=subprocess.STDOUT, timeout=600)
-                    assert p.returncode == 0, f'command {com} failed. see crawl.log for details'
-                    crawl_success = True
-            with open('crawl.csv') as f:
-                in_csv = csv.DictReader(f)
-                cls._results = [CrawlResult(**r) for r in in_csv]
-            return cls._results
-        finally:
-            if server:
-                if sys.platform == "win32":
-                    os.kill(server.pid, signal.CTRL_C_EVENT)
-                else:
-                    server.send_signal(signal.SIGINT)
-                try:
-                    server.communicate(timeout=10)
-                except subprocess.TimeoutExpired:
-                    server.kill()
-                    server.communicate()
-                server_log.close()
-                if not started:
-                    logger.error('server not started. server.log:')
-                    os.chdir(my_dir)
-                    with open(server_log.name) as f:
-                        logger.error(f.read())
-            if settings.DO_CRAWL and not crawl_success:
-                logger.error('crawl failed. crawl.log:')
-                os.chdir(scrapy_dir)
-                with open('crawl.log') as f:
-                    logger.error(f.read())
-            os.chdir(cwd)
-
-
-@pytest.fixture
-def crawl_results():
-    return CrawlResults.results()
 
 
 class TestSiteCrawl:
