@@ -71,7 +71,7 @@ setup_args = dict(
         'setuptools_scm',  # magically cares for version and packaged files
     ],
     install_requires=[
-        'Babel<2.11.0',  # internationalization support
+        'Babel>=2.10.0',  # internationalization support
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.18.1',  # reST markup processing
         'Markdown>=3.4.1',  # Markdown markup processing

@@ -1,4 +1,5 @@
 # Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
+# Copyright: 2023 MoinMoin Project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -27,14 +28,14 @@ def test_Macro():
     test_time = format_date_time(datetime.utcfromtimestamp(test_time))
     assert test_time == result
 
-    arguments = ['2011-08-07T11:11:11', 'argument2']
+    arguments = ['2023-08-07T11:11:11', 'argument2']
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    expected = 'Aug 7, 2011, 11:11:11 AM'  # comma after year was added in recent CLDR
-    assert result == expected
+    expected = ['Aug 7, 2023, 11:11:11\u202fAM', 'Aug 7, 2023, 11:11:11 AM', ]  # TODO: remove 2nd entry later
+    assert result in expected
 
     flaskg.user.valid = False
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    expected = '2011-08-07 11:11:11z'
+    expected = '2023-08-07 11:11:11z'
     assert result == expected
 
     arguments = ['incorrect_argument']
