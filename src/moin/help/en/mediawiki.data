@@ -584,31 +584,31 @@ Mediawiki supports all the symbols defined in [http://en.wikipedia.org/wiki/List
 
 '''Markup:'''
 
-<pre>text [[File:jpeg|50px]] text [[File:png|center]] text [[File:svg|top]]text</pre>
+<pre>text [[File:help-common/cat.jpg|50px]] text [[File:help-common/logo.png|center]] text [[File:help-common/logo.svg|top]]text</pre>
 
 '''Result:'''
 
-text [[File:jpeg|50px]] text [[File:png|center]] text [[File:svg|top]]text
+text [[File:help-common/cat.jpg|50px]] text [[File:help-common/logo.png|center]] text [[File:help-common/logo.svg|top]]text
 
 === Video ===
 
 '''Markup:'''
 
-<pre>[[File:video.mp4|MY VIDEO]]</pre>
+<pre>[[File:help-common/video.mp4|MY VIDEO]]</pre>
 
 '''Result:'''
 
-[[File:video.mp4|MY VIDEO]]
+[[File:help-common/video.mp4|MY VIDEO]]
 
 === Audio ===
 
 '''Markup:'''
 
-<pre>[[File:audio.mp3]]</pre>
+<pre>[[File:help-common/audio.mp3]]</pre>
 
 '''Result:'''
 
-[[File:audio.mp3]]
+[[File:help-common/audio.mp3]]
 
 == HTML Validation ==
 

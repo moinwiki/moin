@@ -1,6 +1,6 @@
 {
   "action": "SAVE",
-  "address": "None",
+  "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x-irclog;charset=utf-8",
   "dataid": "d78613d30ccb4f02a388b378e01a26ad",
@@ -9,7 +9,7 @@
   "itemlinks": [],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1637601302,
+  "mtime": 1678821740,
   "name": [
     "OtherTextItems/IRC"
   ],
