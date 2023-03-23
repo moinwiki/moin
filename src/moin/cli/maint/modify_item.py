@@ -51,13 +51,13 @@ def _GetItem(name, meta_file, data_file, revid):
     rev = item[revid]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
     with open(meta_file, 'w', encoding='utf-8') as mf:
-        mf.write(meta)
+        mf.write(meta + '\n')
     if 'charset' in rev.meta['contenttype']:
         # input data will have \r\n line endings, output will have platform dependent line endings
         charset = rev.meta['contenttype'].split('charset=')[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
-        lines = '\n'.join(lines)
+        lines = '\n'.join(lines) + '\n'
         with open(data_file, 'w', encoding=charset) as df:
             df.write(lines)
         return
