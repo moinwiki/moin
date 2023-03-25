@@ -239,7 +239,7 @@ Loads I18N texts. If this browser is set to German/Deutsch the macro output will
 
 === GetVal ===
 
-For GetVal to work, there must be either a ConfigDict or WikiDict defined (see config docs). This example depends upon an item named [[WikiDict]] having specific metadata. See configuration docs for details.
+For GetVal to work, there must be either a ConfigDict or WikiDict defined (see config docs). This example depends upon an item named [[help-en/WikiDict]] having specific metadata. See configuration docs for details.
 
 '''Markup:'''
 
@@ -253,7 +253,7 @@ For GetVal to work, there must be either a ConfigDict or WikiDict defined (see c
 
 === Icon ===
 
-The Icon macro displays an icon. The complete list of available icons are listed within [[MoinWikiMacros/Icons]].
+The Icon macro displays an icon. The complete list of available icons are listed within [[/Icons]].
 
 '''Markup:'''
 
@@ -453,7 +453,7 @@ The MonthCalendar macro is for those who need a calendar wiki integration or wan
 <<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
 }}}
 
-For more details see [[MoinWikiMacros/MonthCalendar]]
+For more details see [[/MonthCalendar]]
 
 === RandomItem ===
 

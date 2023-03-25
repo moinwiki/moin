@@ -1,0 +1,27 @@
+= Wiki o jakiejś nazwie =
+
+O czym jest to wiki?
+
+Strony, od których warto zacząć:
+ * OstatnieZmiany: zobacz nad czym ludzie obecnie pracują.
+ * BrudnopisWiki: na pełnym luzie edytuj tę stronę, i eksperymentuj
+ z edytorem stron wiki.
+ * ZnajdźStronę: przeszukaj bazę stron, lub przeglądaj ją na różne sposoby.
+ * SyntaxReference: opis znaczników używanych do tworzenia stron wiki.
+ * NawigacjaSerwisu: otrzymaj ogląd serwera i jego zawartości.
+
+== Jak korzystać z tego serwisu ==
+
+Wiki opiera się na współpracy, każdy może dołożyć swoją cegiełkę:
+ * Zmodyfikuj dowolną stronę wybierając "Edycja" z menu na górze lub na dole strony.
+ * Stwórz odnośnik do innej wpisując zlepione razem słowa (np. BrudnopisWiki),
+ albo {{{["ciąg znaków ograniczony cudzysłowami i nawiasami"]}}}.
+ * Przy pomocy okienka wyszukiwania na górze każdej strony odnajduj strony,
+ w których tytule albo treści występuje określone słowo.
+ * Przeczytaj PomocDlaPoczątkujących aby się zorientować o co tu chodzi,
+ a potem PomocSpisTreści aby dostać się do pozostałych stron pomocy.
+
+Aby dowiedzieć się, czym jest SiećWikiWiki, przeczytaj DlaczegoWikiDziała
+oraz MoinMoin:WikiNature. Zapoznaj się też z MoinMoin:WikiWikiWebFaq.
+
+To wiki jest napędzane przez [[help-en/moin|MoinMoin]].

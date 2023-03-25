@@ -303,6 +303,45 @@ Remove blanks from "] ] >" below:
 <link xlink:href="http://moinmo.in/">MoinMoin rocks</link>
 </para>
 
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="Sibling">Sibling of this page</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="Sibling">Sibling of this page</link>
+</para>
+
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="docbook/SubItem">SubItem of this page</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="docbook/SubItem">SubItem of this page</link>
+</para>
+
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="../Home">wiki_root based path to Home</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="../Home">wiki_root based path to Home</link>
+</para>
+
 </section>
 
 
