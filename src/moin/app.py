@@ -115,9 +115,9 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.stop('create_app load config')
     clock.start('create_app register')
     # register converters
-    from werkzeug.routing import BaseConverter
+    from werkzeug.routing import PathConverter
 
-    class ItemNameConverter(BaseConverter):
+    class ItemNameConverter(PathConverter):
         """Like the default :class:`UnicodeConverter`, but it also matches
         slashes (except at the beginning AND end).
         This is useful for wikis and similar applications::
