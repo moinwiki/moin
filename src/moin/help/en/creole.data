@@ -48,9 +48,16 @@ Features currently not working with moin's Creole parser are marked with **CREOL
 
 
 == Hyperlinks ==
-=== Internal Links ===
 
-The examples below are complicated by the use of the "help-en" namespace to separate these help pages from the main wiki content. Some target pages may be missing from the default namespace.
+Note this item is in the "help-en" namespace. Within link syntax, namespaces are processed like ordinary parent items.
+
+The declaration for a link looks like:
+
+{{{
+    [[url|link text]]
+}}}
+
+=== Internal Links ===
 
 Within MoinWiki and Creole syntax: 
  * a simple link like `[[Home]]` links to an item in the default namespace
@@ -84,29 +91,33 @@ Within MoinWiki and Creole syntax:
 
 === External Links ===
 
+
+
 **Markup:**
 
 {{{
-* http://moinmo.in/
-* [[http://moinmo.in/]]
-* [[http://moinmo.in/|MoinMoin Wiki]]
-* [[http://static.moinmo.in/logos/moinmoin.png]]
-* [[http://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]
+* https://moinmo.in/
+* [[https://moinmo.in/]]
+* [[https://moinmo.in/|MoinMoin Wiki]]
+* [[https://static.moinmo.in/logos/moinmoin.png]]
+* [[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]
 * [[MeatBall:InterWiki|InterWiki page on **MeatBall**]]
 * [[file://///servername/share/full/path/to/file/filename%20with%20spaces.txt|link to file filename with spaces.txt]]
-* [[http://moinmo.in|{{help-common/logo.png}} Go to **moinmo.in**]]
+* [[https://moinmo.in|{{help-common/logo.png}} Go to **moinmo.in**]]
+* [[mailto:joe@doe.com|email me]]
 }}}
 
 **Result:**
 
-* http://moinmo.in/
-* [[http://moinmo.in/]]
-* [[http://moinmo.in/|MoinMoin Wiki]]
-* [[http://static.moinmo.in/logos/moinmoin.png]]
-* [[http://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]
+* https://moinmo.in/
+* [[https://moinmo.in/]]
+* [[https://moinmo.in/|MoinMoin Wiki]]
+* [[https://static.moinmo.in/logos/moinmoin.png]]
+* [[https://static.moinmo.in/logos/moinmoin.png|moinmoin.png]]
 * [[MeatBall:InterWiki|InterWiki page on **MeatBall**]]
 * [[file://///servername/share/full/path/to/file/filename%20with%20spaces.txt|link to file filename with spaces.txt]]
-* [[http://moinmo.in|{{help-common/logo.png}} Go to **moinmo.in**]]
+* [[https://moinmo.in|{{help-common/logo.png}} Go to **moinmo.in**]]
+* [[mailto:joe@doe.com|email me]]
 
 === Images (transclusions) ===
 
@@ -134,14 +145,14 @@ Creole syntax does not provide a means to position or resize images.
 **Markup:**
 
 {{{
- * {{{http://www.example.com}}}
- * ~http://www.example.com/
+ * {{{https://www.example.com}}}
+ * ~https://www.example.com/
 }}}
 
 **Result:**
 
- * {{{http://www.example.com}}}
- * ~http://www.example.com/
+ * {{{https://www.example.com}}}
+ * ~https://www.example.com/
 
 
 == Lists ==
