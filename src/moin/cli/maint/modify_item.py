@@ -21,7 +21,7 @@ from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, NAMESPACE, WIKIN
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
-from moin import log
+from moin import log, help
 
 logging = log.getLogger(__name__)
 
@@ -179,3 +179,17 @@ def DumpHelp(namespace, path_to_help):
         print('Item dumped::', file_.relname)
         count += 1
     print('Success: help namespace {0} saved with {1} items'.format(namespace, count))
+
+
+@cli.command('welcome', help='Load initial welcome page into an empty wiki')
+def LoadWelcome():
+    """
+    Load a welcome page as initial home from distribution source.
+    """
+    logging.info("Load welcome page started")
+    help_path = os.path.dirname(help.__file__)
+    path_to_items = os.path.normpath(os.path.join(help_path, 'welcome'))
+    meta_file = os.path.join(path_to_items, 'Home.meta')
+    data_file = os.path.join(path_to_items, 'Home.data')
+    _PutItem(meta_file, data_file, "true")
+    logging.info("Load welcome finished")

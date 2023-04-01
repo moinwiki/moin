@@ -87,5 +87,6 @@ cli.add_command(modify_item.GetItem)
 cli.add_command(modify_item.PutItem)
 cli.add_command(modify_item.LoadHelp)
 cli.add_command(modify_item.DumpHelp)
+cli.add_command(modify_item.LoadWelcome)
 
 cli.add_command(import19.ImportMoin19)
