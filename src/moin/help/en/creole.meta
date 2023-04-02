@@ -3,42 +3,44 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.creole;charset=utf-8",
-  "dataid": "8dfad4ff60864d179b0a998458ab7ade",
+  "dataid": "97162eebb2f7477e96f0113b738cb060",
   "externallinks": [
+    "https://moinmo.in",
+    "mailto:joe@doe.com",
     "file://///servername/share/full/path/to/file/filename%20with%20spaces.txt",
-    "http://www.wikicreole.org/attach/CheatSheet/creole_cheat_sheet.png",
-    "http://moinmo.in",
-    "http://moinmo.in/",
+    "http://www.xkcd.com/",
+    "https://moinmo.in/",
     "http://static.moinmo.in/logos/moinmoin.png",
-    "http://www.xkcd.com/"
+    "http://www.wikicreole.org/attach/CheatSheet/creole_cheat_sheet.png",
+    "https://static.moinmo.in/logos/moinmoin.png"
   ],
   "itemid": "078502790e624fb7b43f826c240a8c30",
   "itemlinks": [
-    "help-en/MoinWikiMacros",
+    "MoinWikiMacros",
     "help-en/Home",
-    "help-en/Home/subitem",
-    "help-en/creole/MissingSubItem",
-    "Home",
-    "help-en/creole/subitem",
-    "help-en/moin",
+    "creole/MissingSubItem",
+    "creole/subitem",
+    "MissingPage",
+    "moin",
     "users/Home",
-    "MissingPage"
+    "help-en/Home/subitem",
+    "Home"
   ],
   "itemtransclusions": [
     "help-common/logo.svg",
     "help-common/logo.png"
   ],
   "itemtype": "default",
-  "mtime": 1678821743,
+  "mtime": 1680381648,
   "name": [
     "creole"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "dc55a81b287349c9884535eb50e9687e",
-  "sha1": "863061616c18c8eba4a7d28fb0164b0358623d22",
-  "size": 5987,
+  "revid": "a451ade29fa04a2cabe318a20c43c521",
+  "sha1": "4fc9147133e8c041cf965ecc3f3476ddb1162230",
+  "size": 6084,
   "summary": "",
   "tags": [
     "demo",

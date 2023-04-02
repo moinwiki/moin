@@ -428,6 +428,9 @@ h3,
 h4,
 h5,
 h6 { border-bottom: 3px solid var(--border); }
+/* trickery for use in help pages, look-alike h1 and h2 that will not appear in TOC */
+.h1 { font-size: 2em; margin: .67em 0; border-bottom: 5px solid var(--border); padding-bottom: 5px; }
+.h2 { font-size: 1.5em; margin: .75em 0; padding-bottom: 4px; border-bottom: 3px solid var(--border); }
 
 /* heading permalinks */
 .moin-permalink { opacity: .2; padding-left: .3em; }
