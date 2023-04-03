@@ -25,9 +25,8 @@ import re
 
 
 # file types to be processed
-# meta and data are for help files, under version control data files have \n line endings
-# /scripts/maint/modify_item.py PutItem will convert \n to \r\n
-SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst meta data".split())
+# ignore help .meta and .data files; ckeditor uses tabs, markdown uses 2 trailing blanks for line break
+SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
 
 # stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())

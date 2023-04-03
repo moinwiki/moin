@@ -718,4 +718,3 @@ table.calendar { table-layout: fixed; }
 @media print {
     .moin-no-print { display: none; }
 }
-

@@ -38,13 +38,13 @@ jobs:
       matrix:
         include:
             - os: macos-latest
-              python-version: '3.8'
-              toxenv: py38-fuse2
-            - os: windows-latest
               python-version: '3.9'
               toxenv: py38-fuse2
-            - os: ubuntu-latest
+            - os: windows-latest
               python-version: '3.10'
+              toxenv: py38-fuse2
+            - os: ubuntu-latest
+              python-version: '3.11'
               toxenv: py39-fuse3
 
     runs-on: ${{ matrix.os }}

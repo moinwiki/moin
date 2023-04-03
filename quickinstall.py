@@ -404,7 +404,7 @@ class Commands:
         """run built-in wiki server"""
         if wiki_exists():
             if WINDOWS_OS:
-                args += ('--threaded', )
+                args += ('--with-threads', )
             command = 'moin run {0}'.format(' '.join(args))
             try:
                 subprocess.call(command, shell=True)
