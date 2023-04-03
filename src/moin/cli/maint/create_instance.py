@@ -86,10 +86,9 @@ def CreateInstance(full, **kwargs):
 
     if full:
         index.IndexCreate()
-        index.IndexOptimize(tmp=False)
         modify_item.LoadHelp(namespace='en', path_to_help='../../help/')
         modify_item.LoadHelp(namespace='common', path_to_help='../../help/')
         modify_item.LoadWelcome()
         index.IndexOptimize(tmp=False)
         logging.info('Full instance setup finished.')
-        logging.info('Please use "moin run" to run a builtin server.')
+        logging.info('You can now use "moin run" to start the builtin server.')
