@@ -1,0 +1,26 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "482ecc431f434c7b8aff76921f1c2287",
+  "externallinks": [],
+  "itemid": "b35958ca34f047b0924ba38ed652ce15",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1680488360,
+  "name": [
+    "MyPage"
+  ],
+  "name_old": [],
+  "namespace": "",
+  "parentid": "484e73725601407e9f9ab0bcaa151fb6",
+  "rev_number": 2,
+  "revid": "8af3ea5d27b640b3a63098f3053769a6",
+  "sha1": "66edae0cd0411d5474f72e8cb69fa945aeabaa4c",
+  "size": 16,
+  "summary": "",
+  "tags": [],
+  "wikiname": "MyMoinMoin"
+}

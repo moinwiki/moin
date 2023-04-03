@@ -60,7 +60,7 @@ def GetItem(name, meta_file, data_file, revid):
         charset = rev.meta['contenttype'].split('charset=')[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
-        lines = '\n'.join(lines) + '\n'
+        lines = '\n'.join(lines)
         with open(data_file, 'w', encoding=charset) as df:
             df.write(lines)
         return

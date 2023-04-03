@@ -10,14 +10,18 @@
 
 import socket
 from io import BytesIO
+from pathlib import Path
+from typing import Tuple
 
 from flask import g as flaskg
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
+from moin.converters import include  # noqa prevent circular import
 from moin.items import Item
 from moin.utils.crypto import random_string
 from moin.utils.interwiki import CompositeName
+
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you
@@ -85,3 +89,18 @@ def check_connection(port, host='127.0.0.1'):
         s.close()
     except socket.error as err:
         raise Exception("connecting to {0}:{1:d}, error: {2!s}".format(host, port, err))
+
+
+def get_dirs(subdir: str) -> Tuple[Path, Path]:
+    """return Paths for directories used in tests creating artifacts_dir if needed
+
+    :param subdir: subdirectory for artifacts_dir
+    :returns: tuple (moin_dir, artifacts_dir)
+              where moin_dir is Path to moin directory, parent of src
+              and artifacts_dir is Path to moin/_test_artifacts/{subdir}"""
+    my_dir = Path(__file__).parent.resolve()
+    moin_dir = my_dir.parents[2]
+    artifacts_dir = moin_dir / '_test_artifacts' / subdir
+    if not artifacts_dir.exists():
+        artifacts_dir.mkdir()
+    return moin_dir, artifacts_dir
