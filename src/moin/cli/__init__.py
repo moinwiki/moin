@@ -59,14 +59,14 @@ def _Help():
     Help()
 
 
-cli.add_command(create_instance.CreateInstance)
+cli.add_command(create_instance.cli_CreateInstance)
 
-cli.add_command(index.IndexCreate)
+cli.add_command(index.cli_IndexCreate)
 cli.add_command(index.IndexBuild)
 cli.add_command(index.IndexUpdate)
 cli.add_command(index.IndexDestroy)
 cli.add_command(index.IndexMove)
-cli.add_command(index.IndexOptimize)
+cli.add_command(index.cli_IndexOptimize)
 cli.add_command(index.IndexDump)
 
 cli.add_command(serialization.Serialize)
@@ -83,10 +83,10 @@ cli.add_command(reduce_revisions.ReduceRevisions)
 
 cli.add_command(set_meta.SetMeta)
 
-cli.add_command(modify_item.GetItem)
-cli.add_command(modify_item.PutItem)
-cli.add_command(modify_item.LoadHelp)
+cli.add_command(modify_item.cli_GetItem)
+cli.add_command(modify_item.cli_PutItem)
+cli.add_command(modify_item.cli_LoadHelp)
 cli.add_command(modify_item.DumpHelp)
-cli.add_command(modify_item.LoadWelcome)
+cli.add_command(modify_item.cli_LoadWelcome)
 
 cli.add_command(import19.ImportMoin19)

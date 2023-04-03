@@ -21,7 +21,7 @@ from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, NAMESPACE, WIKIN
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
-from moin import log, help
+from moin import log, help as moin_help
 
 logging = log.getLogger(__name__)
 
@@ -39,13 +39,16 @@ def cli():
               help='Filename of file to create for the data.')
 @click.option('--revid', '-r', type=str, required=False, default=CURRENT,
               help='Revision ID of the revision to get (default: current rev).')
-def GetItem(name, meta, data, revid):
+def cli_GetItem(name, meta, data, revid):
     logging.info("Get item started")
-    _GetItem(name, meta, data, revid)
+    GetItem(name, meta, data, revid)
     logging.info("Get item finished")
 
 
-def _GetItem(name, meta_file, data_file, revid):
+def GetItem(name, meta_file, data_file, revid):
+    """
+    Get an item revision from the wiki and save in files
+    """
     fqname = split_fqname(name)
     item = app.storage.get_item(**fqname.query)
     rev = item[revid]
@@ -75,13 +78,16 @@ def _GetItem(name, meta_file, data_file, revid):
               help='Filename of file to read as data.')
 @click.option('--overwrite', '-o', is_flag=True, default=False,
               help='If given, overwrite existing revisions, if requested.')
-def PutItem(meta, data, overwrite):
+def cli_PutItem(meta, data, overwrite):
     logging.info("Put item started")
-    _PutItem(meta, data, overwrite)
+    PutItem(meta, data, overwrite)
     logging.info("Put item finished")
 
 
-def _PutItem(meta_file, data_file, overwrite):
+def PutItem(meta_file, data_file, overwrite):
+    """
+    Put an item revision from file into the wiki
+    """
     flaskg.add_lineno_attr = False
     with open(meta_file, 'rb') as mf:
         meta = mf.read()
@@ -95,6 +101,7 @@ def _PutItem(meta_file, data_file, overwrite):
         meta.pop(REVID, None)
         meta.pop(DATAID, None)
     query = {ITEMID: meta[ITEMID], NAMESPACE: meta[NAMESPACE]}
+    logging.debug("query: {}".format(str(query)))
     item = app.storage.get_item(**query)
 
     # we want \r\n line endings in data out because \r\n is required in form textareas
@@ -121,6 +128,10 @@ def _PutItem(meta_file, data_file, overwrite):
               help='Namespace to be loaded: common, en, etc.')
 @click.option('--path_to_help', '--path', '-p', type=str, default='../../help/',
               help='Override default input directory')
+def cli_LoadHelp(namespace, path_to_help):
+    return LoadHelp(namespace, path_to_help)
+
+
 def LoadHelp(namespace, path_to_help):
     """
     Load an entire help namespace from distribution source.
@@ -143,7 +154,7 @@ def LoadHelp(namespace, path_to_help):
             data_file = f.replace('.meta', '.data')
             meta_file = os.path.join(path_to_items, f)
             data_file = os.path.join(path_to_items, data_file)
-            _PutItem(meta_file, data_file, "true")
+            PutItem(meta_file, data_file, "true")
             print('Item loaded:', item_name)
             count += 1
     print('Success: help namespace {0} loaded successfully with {1} items'.format(namespace, count))
@@ -175,21 +186,25 @@ def DumpHelp(namespace, path_to_help):
         esc_name = file_.relname.replace('/', '%2f')
         meta_file = os.path.abspath(os.path.join(abspath_to_here, path_to_help, namespace, esc_name + '.meta'))
         data_file = os.path.abspath(os.path.join(abspath_to_here, path_to_help, namespace, esc_name + '.data'))
-        _GetItem(str(file_.fullname), meta_file, data_file, CURRENT)
+        GetItem(str(file_.fullname), meta_file, data_file, CURRENT)
         print('Item dumped::', file_.relname)
         count += 1
     print('Success: help namespace {0} saved with {1} items'.format(namespace, count))
 
 
 @cli.command('welcome', help='Load initial welcome page into an empty wiki')
+def cli_LoadWelcome():
+    return LoadWelcome()
+
+
 def LoadWelcome():
     """
     Load a welcome page as initial home from distribution source.
     """
     logging.info("Load welcome page started")
-    help_path = os.path.dirname(help.__file__)
+    help_path = os.path.dirname(moin_help.__file__)
     path_to_items = os.path.normpath(os.path.join(help_path, 'welcome'))
     meta_file = os.path.join(path_to_items, 'Home.meta')
     data_file = os.path.join(path_to_items, 'Home.data')
-    _PutItem(meta_file, data_file, "true")
+    PutItem(meta_file, data_file, "true")
     logging.info("Load welcome finished")
