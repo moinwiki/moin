@@ -1,3 +1,10 @@
+# Copyright: 2023 MoinMoin project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin - moin.cli.maint.index tests
+"""
+
 from pathlib import Path
 
 from moin.cli._tests import run, read_index_dump_latest_revs

@@ -1,3 +1,23 @@
+# Copyright: 2023 MoinMoin project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin - moin.cli pytest fixtures
+
+Common fixtures for tests
+
+fixtures are used for
+
+* management of temporary directory under moin/_test_artifacts
+  which holds the test wiki instance
+* handling dependencies between cli commands
+  for example, index-create requires create-instance
+
+package scope fixtures used for efficiency in load-help and dump-help tests
+each cli command is executed only once
+while the tests are written one each per command
+"""
+
 import os
 import pytest
 import shutil
@@ -40,7 +60,7 @@ def create_instance(artifact_dir):
 
 @pytest.fixture(scope="package")
 def index_create(create_instance):
-    return run(['moin', 'index-create', '-s', '-i'])
+    return run(['moin', 'index-create'])
 
 
 @pytest.fixture(scope="package")
@@ -58,4 +78,4 @@ def create_instance2(artifact_dir2):
 
 @pytest.fixture
 def index_create2(create_instance2):
-    return run(['moin', 'index-create', '-s', '-i'])
+    return run(['moin', 'index-create'])

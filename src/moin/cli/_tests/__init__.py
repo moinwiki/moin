@@ -1,3 +1,10 @@
+# Copyright: 2023 MoinMoin project
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
+"""
+MoinMoin - moin.cli common functions for tests
+"""
+
 from copy import copy
 import datetime  # noqa
 import os
@@ -22,6 +29,8 @@ def read_index_dump_latest_revs(out: str):
 
     :param out: stdout of `moin index-dump --no-truncate` command
     :return: list of dicts with key value pairs from output"""
+    if not isinstance(out, str):
+        raise ValueError('read_index_dump_latest_revs expects str, did you forget to .decode()')
     item = {}
     for line in out.splitlines():
         if not line.strip() or line.startswith(' '):

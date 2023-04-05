@@ -102,5 +102,5 @@ def get_dirs(subdir: str) -> Tuple[Path, Path]:
     moin_dir = my_dir.parents[2]
     artifacts_dir = moin_dir / '_test_artifacts' / subdir
     if not artifacts_dir.exists():
-        artifacts_dir.mkdir()
+        artifacts_dir.mkdir(parents=True)
     return moin_dir, artifacts_dir

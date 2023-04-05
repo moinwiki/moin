@@ -60,7 +60,9 @@ def GetItem(name, meta_file, data_file, revid):
         charset = rev.meta['contenttype'].split('charset=')[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
-        lines = '\n'.join(lines)
+        # add trailing line ending which may have been removed by splitlines,
+        # or add extra trailing line ending which will be removed in _PutItem if file is imported
+        lines = '\n'.join(lines) + '\n'
         with open(data_file, 'w', encoding=charset) as df:
             df.write(lines)
         return
@@ -111,13 +113,15 @@ def PutItem(meta_file, data_file, overwrite):
             data = df.read().decode(charset)
         if '\r\n' not in data and '\n' in data:
             data = data.replace('\n', '\r\n')
-            data = data.encode(charset)
-            buffer = io.BytesIO()
-            buffer.write(data)
-            buffer.seek(0)
-            item.store_revision(meta, buffer, overwrite=overwrite)
-            buffer.close()
-            return
+        data = data.encode(charset)
+        if 0 < len(data) - meta['size'] <= 2:
+            data = data[0:meta['size']]  # potentially truncate trailing newline added by _GetItem
+        buffer = io.BytesIO()
+        buffer.write(data)
+        buffer.seek(0)
+        item.store_revision(meta, buffer, overwrite=overwrite)
+        buffer.close()
+        return
 
     with open(data_file, 'rb') as df:
         item.store_revision(meta, df, overwrite=overwrite)
