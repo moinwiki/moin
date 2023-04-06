@@ -50,7 +50,7 @@ def _GetItem(name, meta_file, data_file, revid):
     item = app.storage.get_item(**fqname.query)
     rev = item[revid]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
-    with open(meta_file, 'w', encoding='utf-8') as mf:
+    with open(meta_file, 'w', encoding='utf-8', newline='\r\n') as mf:
         mf.write(meta + '\n')
     if 'charset' in rev.meta['contenttype']:
         # input data will have \r\n line endings, output will have platform dependent line endings
@@ -58,7 +58,7 @@ def _GetItem(name, meta_file, data_file, revid):
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
         lines = '\n'.join(lines) + '\n'
-        with open(data_file, 'w', encoding=charset) as df:
+        with open(data_file, 'w', encoding=charset, newline='\r\n') as df:
             df.write(lines)
         return
 
