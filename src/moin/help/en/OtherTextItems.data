@@ -1,0 +1,23 @@
+= Other Text Items =
+
+Sample Text items are transcluded below.
+
+== Plain Text ==
+
+{{/PlainText}}
+
+== CSV ==
+
+{{/CSV}}
+
+== Python ==
+
+{{/Python}}
+
+== IRC Log ==
+
+{{/IRC}}
+
+== Diff ==
+
+{{/Diff}}

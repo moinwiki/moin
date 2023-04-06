@@ -1,0 +1,42 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x-mediawiki;charset=utf-8",
+  "dataid": "2d9d25a4be414c8f82cacd305b76f7db",
+  "externallinks": [
+    "http://www.mediawiki.org/wiki/Help:Images",
+    "http://www.mediawiki.org/wiki/Help:Tables",
+    "http://moinmo.in",
+    "http://en.wikipedia.org/wiki/List_of_HTML_entities"
+  ],
+  "itemid": "cb68b5889e344c1994d6c22fd365db04",
+  "itemlinks": [
+    "Home",
+    "help-common/logo.svg",
+    "help-common/logo.png",
+    "help-common/audio.mp3",
+    "help-common/video.mp4",
+    "help-common/cat.jpg"
+  ],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1680798099,
+  "name": [
+    "mediawiki"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "parentid": "4a04eb58a33742caa36d70fc9f64a8b4",
+  "rev_number": 2,
+  "revid": "4bce57f2f5d94c6281d6a215b3538c52",
+  "sha1": "4895df12b8a3cc4a8e59d10e7a4927517984ad91",
+  "size": 18273,
+  "summary": "",
+  "tags": [
+    "parser",
+    "demo",
+    "mediwiki"
+  ],
+  "wikiname": "MyMoinMoin"
+}

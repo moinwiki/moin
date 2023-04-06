@@ -1,0 +1,25 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x-python;charset=utf-8",
+  "dataid": "50ef2e8cadb34146a59c87784e4cb324",
+  "externallinks": [],
+  "itemid": "00922f405a714a02bb483f44e1e6c27c",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1680798114,
+  "name": [
+    "OtherTextItems/Python"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "030c7a40dea4453db13bc45715281000",
+  "sha1": "d8da2821ddd7675cdb8c152926e41d1aa1b0e3e0",
+  "size": 957,
+  "summary": "",
+  "tags": [],
+  "wikiname": "MyMoinMoin"
+}

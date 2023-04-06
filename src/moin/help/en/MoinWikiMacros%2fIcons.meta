@@ -1,0 +1,25 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "fad4c41c96f94b0a8925d56bf4edf261",
+  "externallinks": [],
+  "itemid": "a569c9d030bf46e3bb3c51cec42dfa81",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1680798101,
+  "name": [
+    "MoinWikiMacros/Icons"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "f9b36ac0624a45a28bb1169fc224aa96",
+  "sha1": "980bf53f3c7bbda06ccca0d9581413781302f786",
+  "size": 138,
+  "summary": "",
+  "tags": [],
+  "wikiname": "MyMoinMoin"
+}

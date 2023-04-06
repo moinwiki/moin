@@ -1,0 +1,49 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "93356d79971e41728c1417bb0178bbfb",
+  "externallinks": [],
+  "itemid": "2eded15e9ede48638c4a7022b243c053",
+  "itemlinks": [
+    "help-common/archive.zip",
+    "help-en/html",
+    "help-en/creole",
+    "help-en/mediawiki",
+    "help-en/docbook",
+    "help-en/TemplateSample",
+    "help-en/OtherTextItems",
+    "help-en/moin",
+    "help-en/images",
+    "help-common/archive.tar.gz",
+    "help-common/logo.png",
+    "help-common/logo.svg",
+    "help-common/audio.mp3",
+    "help-common/video.mp4",
+    "help-en/rst",
+    "help-en/MoinWikiMacros",
+    "help-en/markdown",
+    "help-common/kitty.jpg"
+  ],
+  "itemtransclusions": [
+    "help-en/Home/subitem"
+  ],
+  "itemtype": "default",
+  "mtime": 1680798092,
+  "name": [
+    "Home"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "fa15a6d89bf04f1894c029241734a7cb",
+  "sha1": "c6cd68bd36246d55a0f3bece5a98368e4512edf3",
+  "size": 2561,
+  "summary": "",
+  "tags": [
+    "parser",
+    "demo"
+  ],
+  "wikiname": "MyMoinMoin"
+}

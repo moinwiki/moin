@@ -1,0 +1,52 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "4a7789cd3fef4b4c8de5ee2b30061204",
+  "externallinks": [
+    "https://moinmo.in/HelpOnMacros/Include",
+    "https://fontawesome.com/search?o=r&m=free"
+  ],
+  "itemid": "8b76f40497fe4fcf8c37cb90fc89b49b",
+  "itemlinks": [
+    "help-en/MoinWikiMacros/MonthCalendar",
+    "help-en/WikiDict",
+    "help-en/MoinWikiMacros/Icons",
+    "MoinWikiMacros"
+  ],
+  "itemtransclusions": [
+    "help-common/logo.png"
+  ],
+  "itemtype": "default",
+  "mtime": 1680798107,
+  "name": [
+    "MoinWikiMacros"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "parentid": "e5fc5eaaee1f4f74b37b79106af2f6aa",
+  "rev_number": 2,
+  "revid": "f256f4b330cf4d6f9f39089ea6bb374d",
+  "sha1": "37bf98bb321c855c6160c459483d6d10434567e1",
+  "size": 12256,
+  "summary": "",
+  "tags": [
+    "macros",
+    "TableOfContents",
+    "FootNotes",
+    "BR",
+    "Include",
+    "Anchor",
+    "Date",
+    "DateTime",
+    "GetText",
+    "GetVal",
+    "MailTo",
+    "PagenameList",
+    "ItemPageList",
+    "RandomItem",
+    "Verbatim"
+  ],
+  "wikiname": "MyMoinMoin"
+}

@@ -1,0 +1,25 @@
+= Pygments Highlighter List =
+
+Pygments provides highlighted output for many languages. The example below highlights Python code.
+
+'''Markup:'''
+
+{{{{
+{{{#!highlight python
+import os
+def macro_text(self, text):
+    pass
+}}}
+}}}}
+
+'''Result:'''
+
+{{{#!highlight python
+import os
+def macro_text(self, text):
+    pass
+}}}
+
+The table below is a complete list of all the lexers available from Pygments. To use one of these lexers within a moinwiki item, choose an alias name from the second column.
+
+<<HighlighterList>>
