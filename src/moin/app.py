@@ -78,7 +78,10 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
 
     c = get_current_context(silent=True)
     info_name = getattr(c, 'info_name', '')
-    cmd_name = getattr(c.command, 'name', '')
+    if getattr(c, 'command', False):
+        cmd_name = getattr(c.command, 'name', '')
+    else:
+        cmd_name = ''
     logging.debug("info_name: %s cmd_name: %s", info_name, cmd_name)
     # help don't need config or backend and should run independent of a valid wiki instance
     # moin --help results in info_name=moin and cmd_name=cli
