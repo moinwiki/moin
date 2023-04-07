@@ -35,6 +35,7 @@ from flask.cli import FlaskGroup
 
 from moin import config, contrib, log
 from moin.app import create_app
+from moin.cli.maint import index, modify_item
 
 logging = log.getLogger(__name__)
 
@@ -45,32 +46,49 @@ def cli():
 
 
 @cli.command("create-instance", help="Create wikiconfig and wiki instance directories and copy required files")
+@click.option('--full', '-f', required=False, is_flag=True, default=False,
+              help='full setup including index creation and load of help data and welcome page')
 @click.option('--path', '-p', required=False, type=str,
               help='Path to new wikiconfig dir, defaults to CWD if not specified.')
-def CreateInstance(path):
+def cli_CreateInstance(full, path):
+    return CreateInstance(full, path=path)
+
+
+def CreateInstance(full, **kwargs):
     '''
     Create wikiconfig and wiki instance directories and copy required files.
     '''
+    logging.debug('Instance creation started.')
     config_path = os.path.dirname(config.__file__)
     contrib_path = os.path.dirname(contrib.__file__)
+    path = kwargs.get('path', None)
     if not path:
         path = os.getcwd()
     if os.path.exists(path):
-        print('Directory', os.path.abspath(path), 'already exists, using as wikiconfig dir.')
+        logging.info('Directory %s already exists, using as wikiconfig dir.', os.path.abspath(path))
     else:
         os.makedirs(path)
-        print('Directory', os.path.abspath(path), 'created.')
+        logging.info('Directory %s created.', os.path.abspath(path))
 
     if os.path.isfile(os.path.join(path, 'wikiconfig.py')):
-        print('wikiconfig.py already exists, not copied.')
+        logging.info('wikiconfig.py already exists, not copied.')
     else:
         shutil.copy(os.path.join(config_path, 'wikiconfig.py'), path)
 
     if os.path.isfile(os.path.join(path, 'intermap.txt')):
-        print('intermap.txt already exists, not copied.')
+        logging.info('intermap.txt already exists, not copied.')
     else:
         shutil.copy(os.path.join(contrib_path, 'intermap.txt'), path)
     local_path = os.path.join(path, 'wiki_local')
     if not os.path.isdir(local_path):
         os.mkdir(local_path)
-    print('Instance creation finished.')
+    logging.info('Instance creation finished.')
+
+    if full:
+        index.IndexCreate()
+        modify_item.LoadHelp(namespace='en', path_to_help='../../help/')
+        modify_item.LoadHelp(namespace='common', path_to_help='../../help/')
+        modify_item.LoadWelcome()
+        index.IndexOptimize(tmp=False)
+        logging.info('Full instance setup finished.')
+        logging.info('You can now use "moin run" to start the builtin server.')
