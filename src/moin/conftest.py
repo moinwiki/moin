@@ -53,11 +53,8 @@ def app_ctx(cfg):
         namespace_mapping=namespace_mapping,
         backend_mapping=backend_mapping,
         acl_mapping=acl_mapping,
-        create_storage=True,  # create a fresh storage at each app start
-        destroy_storage=True,  # kill all storage contents at app shutdown
-        create_index=True,  # create a fresh index at each app start
-        destroy_index=True,  # kill index contents at app shutdown
-        create_backend=True,  # create backend storage
+        create_backend=True,  # create backend storage and index
+        destroy_backend=True,  # remove index and storage at app shutdown
     )
     app = create_app_ext(
         flask_config_dict=dict(SECRET_KEY='foobarfoobar'),

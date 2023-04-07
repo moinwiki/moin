@@ -19,6 +19,8 @@ from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
 
+from click import get_current_context
+
 from flask_caching import Cache
 from flask_theme import setup_themes
 
@@ -43,13 +45,11 @@ if os.getcwd() not in sys.path and '' not in sys.path:
     sys.path.append(os.getcwd())
 
 
-def create_app(config=None, create_index=False, create_storage=False):
+def create_app(config=None):
     """
     simple wrapper around create_app_ext()
     """
-    return create_app_ext(flask_config_file=config,
-                          create_index=create_index,
-                          create_storage=create_storage)
+    return create_app_ext(flask_config_file=config)
 
 
 def create_app_ext(flask_config_file=None, flask_config_dict=None,
@@ -76,7 +76,17 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     logging.debug("running create_app_ext")
     app = Flask('moin')
 
-    logging.debug("app.request_context: %s", str(app.request_context))
+    c = get_current_context(silent=True)
+    info_name = getattr(c, 'info_name', '')
+    if getattr(c, 'command', False):
+        cmd_name = getattr(c.command, 'name', '')
+    else:
+        cmd_name = ''
+    logging.debug("info_name: %s cmd_name: %s", info_name, cmd_name)
+    # help don't need config or backend and should run independent of a valid wiki instance
+    # moin --help results in info_name=moin and cmd_name=cli
+    if (info_name == 'moin' and cmd_name == 'cli') or info_name == 'help':
+        return app
 
     clock.start('create_app load config')
     if flask_config_file:
@@ -88,9 +98,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
             if not path.exists(flask_config_file):
                 flask_config_file = path.abspath('wikiconfig.py')
                 if not path.exists(flask_config_file):
-                    # we should be here only because wiki admin is running
-                    # `moin help` or `moin create-instance`
-                    if 'create-instance' in sys.argv or 'help' in sys.argv or '--help' in sys.argv:
+                    if info_name == 'create-instance':  # moin CLI
                         config_path = path.dirname(config.__file__)
                         flask_config_file = path.join(config_path, 'wikiconfig.py')
                     else:
@@ -189,6 +197,8 @@ def init_backends(app, create_backend=False):
     # mountpoint, unprotected backend
     # Just initialize with unprotected backends.
     logging.debug("running init_backends")
+    c = get_current_context(silent=True)
+    info_name = getattr(c, 'info_name', '')
     app.router = routing.Backend(app.cfg.namespace_mapping, app.cfg.backend_mapping)
     if create_backend or getattr(app.cfg, 'create_backend', False):
         app.router.create()
@@ -197,30 +207,19 @@ def init_backends(app, create_backend=False):
                                               wiki_name=app.cfg.interwikiname,
                                               acl_rights_contents=app.cfg.acl_rights_contents)
 
-    if 'index-create' in sys.argv:  # makes options -i and -s obsolete
-        app.cfg.create_index = True
-        app.cfg.create_storage = True
-
-    # TODO: remove create_index after full migration to cli
-    logging.debug("create_index: %s index_create: %s create_backend: %s",
-                  getattr(app.cfg, 'create_index', False),
-                  getattr(app.cfg, 'index_create', False), str(create_backend))
+    logging.debug("create_backend: %s ", str(create_backend))
     if create_backend or getattr(app.cfg, 'create_backend', False):  # 2. call of init_backends
         app.storage.create()
         app.storage.open()
-    if 'create-instance' in sys.argv or 'index-create' in sys.argv or \
-            'help' in sys.argv or '--help' in sys.argv:
-        pass
-    else:
+    if info_name not in ['create-instance', 'index-create']:
         app.storage.open()
 
 
 def deinit_backends(app):
     app.storage.close()
     app.router.close()
-    if app.cfg.destroy_index:
+    if app.cfg.destroy_backend:
         app.storage.destroy()
-    if app.cfg.destroy_storage:
         app.router.destroy()
 
 
