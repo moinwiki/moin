@@ -22,7 +22,9 @@ def validate_meta(expected, actual):
 
 def test_load_help(load_help):
     assert load_help[0].returncode == 0
-    assert load_help[1].returncode == 0
+    # TODO enable this in #1378
+    if load_help[1] is not None:
+        assert load_help[1].returncode == 0
 
 
 def test_dump_help(load_help):
