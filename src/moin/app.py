@@ -45,13 +45,11 @@ if os.getcwd() not in sys.path and '' not in sys.path:
     sys.path.append(os.getcwd())
 
 
-def create_app(config=None, create_index=False, create_storage=False):
+def create_app(config=None):
     """
     simple wrapper around create_app_ext()
     """
-    return create_app_ext(flask_config_file=config,
-                          create_index=create_index,
-                          create_storage=create_storage)
+    return create_app_ext(flask_config_file=config)
 
 
 def create_app_ext(flask_config_file=None, flask_config_dict=None,
@@ -206,14 +204,7 @@ def init_backends(app, create_backend=False):
                                               wiki_name=app.cfg.interwikiname,
                                               acl_rights_contents=app.cfg.acl_rights_contents)
 
-    if info_name == 'index-create':  # makes options -i and -s obsolete
-        app.cfg.create_index = True
-        app.cfg.create_storage = True
-
-    # TODO: remove create_index after full migration to cli
-    logging.debug("create_index: %s index_create: %s create_backend: %s",
-                  getattr(app.cfg, 'create_index', False),
-                  getattr(app.cfg, 'index_create', False), str(create_backend))
+    logging.debug("create_backend: %s ", str(create_backend))
     if create_backend or getattr(app.cfg, 'create_backend', False):  # 2. call of init_backends
         app.storage.create()
         app.storage.open()
@@ -224,9 +215,8 @@ def init_backends(app, create_backend=False):
 def deinit_backends(app):
     app.storage.close()
     app.router.close()
-    if app.cfg.destroy_index:
+    if app.cfg.destroy_backend:
         app.storage.destroy()
-    if app.cfg.destroy_storage:
         app.router.destroy()
 
 
