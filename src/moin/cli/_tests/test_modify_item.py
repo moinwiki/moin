@@ -100,7 +100,7 @@ def test_item_rev(index_create2):
 
     *  MyPage-v1 does not have newline at end in storage (size = 16)
     *  MyPage-v2 has newline at end in storage (size = 18)
-    *  in both cases, item-get will write file with os.linesep at end of file"""
+    *  in both cases, item-get will write file with \n at end of file"""
     moin_dir, _ = get_dirs('cli2')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
     put1 = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v1.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
@@ -110,7 +110,7 @@ def test_item_rev(index_create2):
     item_get2 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v2.meta', '-d', 'MyPage-v2.data'])
     assert item_get2.returncode == 0
     with open('MyPage-v2.data', newline='') as f:
-        assert f.read() == f'MyPage version 2{os.linesep}'
+        assert f.read() == 'MyPage version 2\n'
     with open('MyPage-v2.meta') as f:
         v2_meta = json.load(f)
     assert v2_meta['size'] == 18  # newline at end is 2 chars \r\n
@@ -121,13 +121,13 @@ def test_item_rev(index_create2):
     item_get1 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v1.meta', '-d', 'MyPage-v1.data', '-r', v1_revid])
     assert item_get1.returncode == 0
     with open('MyPage-v1.data', newline='') as f:
-        assert f.read() == f'MyPage version 1{os.linesep}'
+        assert f.read() == 'MyPage version 1\n'
     put3 = run(['moin', 'item-put', '-m', 'MyPage-v1.meta', '-d', 'MyPage-v1.data'])
     assert put3.returncode == 0
     item_get1_1 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v1_1.meta', '-d', 'MyPage-v1_1.data'])
     assert item_get1_1.returncode == 0
     with open('MyPage-v1_1.data', newline='') as f:
-        assert f.read() == f'MyPage version 1{os.linesep}'
+        assert f.read() == 'MyPage version 1\n'
     with open('MyPage-v1_1.meta') as f:
         v1_1_meta = json.load(f)
     assert v1_1_meta['revid'] != v1_revid  # validate absence of -o option
