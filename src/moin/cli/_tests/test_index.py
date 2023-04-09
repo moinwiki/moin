@@ -7,11 +7,11 @@ MoinMoin - moin.cli.maint.index tests
 
 from pathlib import Path
 
-from moin.cli._tests import run, read_index_dump_latest_revs
+from moin.cli._tests import run, read_index_dump_latest_revs, assert_p_succcess
 
 
 def test_index_create(index_create):
-    assert index_create.returncode == 0
+    assert_p_succcess(index_create)
     for p in [
               'wiki',
               'wiki/data',
@@ -39,7 +39,7 @@ def test_index_create(index_create):
 
 def test_index_dump(load_help):
     index_dump = run(['moin', 'index-dump', '--no-truncate'])
-    assert index_dump.returncode == 0
+    assert_p_succcess(index_dump)
     items = read_index_dump_latest_revs(index_dump.stdout.decode('cp1252'))
     cats = [i for i in items if 'cat.jpg' in i['name']]
     assert len(cats) == 1

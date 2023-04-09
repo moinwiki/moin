@@ -24,6 +24,15 @@ def run(cmd: List[str]) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, capture_output=True, env=subprocess_environ)
 
 
+def assert_p_succcess(p: subprocess.CompletedProcess):
+    """assert returncode 0 and print logs on error"""
+    try:
+        assert p.returncode == 0
+    except AssertionError:
+        logging.error(f'failure for {p.args} stdout = {p.stdout} stderr = {p.stderr}')
+        raise
+
+
 def read_index_dump_latest_revs(out: str):
     """parse output of moin dump-index yielding the items in latest revs
 

@@ -37,6 +37,7 @@ def artifact_dir():
     _, artifact_dir = get_dirs('cli')
     cwd = os.getcwd()
     os.chdir(artifact_dir)
+    logging.info(f'artifact_dir = {str(artifact_dir)}')
     yield artifact_dir
     os.chdir(cwd)
     shutil.rmtree(artifact_dir)
@@ -48,6 +49,7 @@ def artifact_dir2():
     _, artifact_dir = get_dirs('cli2')
     cwd = os.getcwd()
     os.chdir(artifact_dir)
+    logging.info(f'artifact_dir = {str(artifact_dir)}')
     yield artifact_dir
     os.chdir(cwd)
     shutil.rmtree(artifact_dir)

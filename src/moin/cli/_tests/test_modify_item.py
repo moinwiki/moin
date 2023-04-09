@@ -6,11 +6,10 @@ MoinMoin - moin.cli.maint.modify_item tests
 """
 
 import json
-import os
 from pathlib import Path
 
 from moin._tests import get_dirs
-from moin.cli._tests import run
+from moin.cli._tests import run, assert_p_succcess
 
 
 def validate_meta(expected, actual):
@@ -21,26 +20,26 @@ def validate_meta(expected, actual):
 
 
 def test_load_help(load_help):
-    assert load_help[0].returncode == 0
+    assert_p_succcess(load_help[0])
     # TODO enable this in #1378
     if load_help[1] is not None:
-        assert load_help[1].returncode == 0
+        assert_p_succcess(load_help[1])
 
 
 def test_dump_help(load_help):
     moin_dir, artifact_dir = get_dirs('cli')
-    help_dir = artifact_dir / 'my_help'
+    help_dir = Path('my_help')
     help_common_dir = help_dir / 'common'
     if not help_common_dir.exists():
         help_common_dir.mkdir(parents=True)
-    dash_p = os.path.relpath(help_dir, moin_dir / 'src' / 'moin' / 'cli' / 'maint')
-    dump_help = run(['moin', 'dump-help', '-n', 'common', '-p', dash_p])
-    assert dump_help.returncode == 0
-    data_file_names = help_common_dir.glob('*.data')
-    source_help_dir = moin_dir / 'help' / 'common'
-    expected_data_file_names = source_help_dir.glob('*.data')
-    assert expected_data_file_names, data_file_names
-    for data_file_name in data_file_names:
+    dump_help = run(['moin', 'dump-help', '-n', 'common', '-p', help_dir])
+    assert_p_succcess(dump_help)
+    source_help_dir = moin_dir / 'src' / 'moin' / 'help' / 'common'
+    expected_data_file_names = set([p.name for p in source_help_dir.glob('*.data')])
+    # TODO enable next two lines in #1394
+    # data_file_names = set([p.name for p in help_common_dir.glob('*.data')])
+    # assert expected_data_file_names == data_file_names
+    for data_file_name in expected_data_file_names:
         with open(help_common_dir / data_file_name, 'rb') as f:
             data = f.read()
         with open(source_help_dir / data_file_name, 'rb') as f:
@@ -57,7 +56,7 @@ def test_dump_help(load_help):
 def test_item_get(load_help):
     """extract an item from help and validate data and meta match original files in moin/help"""
     item_get = run(['moin', 'item-get', '-n', 'help-common/cat.jpg', '-m', 'cat.meta', '-d', 'cat.data'])
-    assert item_get.returncode == 0
+    assert_p_succcess(item_get)
     assert Path('cat.data').exists()
     assert Path('cat.meta').exists()
     moin_dir, _ = get_dirs('cli')
@@ -82,13 +81,13 @@ def test_item_put(index_create):
     moin_dir, _ = get_dirs('cli')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
     item_put = run(['moin', 'item-put', '-m', data_dir / 'Home.meta', '-d', data_dir / 'Home.data'])
-    assert item_put.returncode == 0
+    assert_p_succcess(item_put)
     item_put = run(['moin', 'item-put', '-m', data_dir / 'help-common-Home.meta', '-d', data_dir / 'help-common-Home.data'])
-    assert item_put.returncode == 0
+    assert_p_succcess(item_put)
     item_get = run(['moin', 'item-get', '-n', 'Home', '-m', 'Home.meta', '-d', 'Home.data'])
-    assert item_get.returncode == 0
+    assert_p_succcess(item_get)
     item_get = run(['moin', 'item-get', '-n', 'help-common/Home', '-m', 'help-common-Home.meta', '-d', 'help-common-Home.data'])
-    assert item_get.returncode == 0
+    assert_p_succcess(item_get)
 
 
 def test_item_rev(index_create2):
@@ -104,11 +103,11 @@ def test_item_rev(index_create2):
     moin_dir, _ = get_dirs('cli2')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
     put1 = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v1.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
-    assert put1.returncode == 0
+    assert_p_succcess(put1)
     put2 = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data', '-o'])
-    assert put2.returncode == 0
+    assert_p_succcess(put2)
     item_get2 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v2.meta', '-d', 'MyPage-v2.data'])
-    assert item_get2.returncode == 0
+    assert_p_succcess(item_get2)
     with open('MyPage-v2.data', newline='') as f:
         assert f.read() == 'MyPage version 2\n'
     with open('MyPage-v2.meta') as f:
@@ -119,13 +118,13 @@ def test_item_rev(index_create2):
     v1_revid = v1_meta['revid']
     assert v1_meta['size'] == 16
     item_get1 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v1.meta', '-d', 'MyPage-v1.data', '-r', v1_revid])
-    assert item_get1.returncode == 0
+    assert_p_succcess(item_get1)
     with open('MyPage-v1.data', newline='') as f:
         assert f.read() == 'MyPage version 1\n'
     put3 = run(['moin', 'item-put', '-m', 'MyPage-v1.meta', '-d', 'MyPage-v1.data'])
-    assert put3.returncode == 0
+    assert_p_succcess(put3)
     item_get1_1 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v1_1.meta', '-d', 'MyPage-v1_1.data'])
-    assert item_get1_1.returncode == 0
+    assert_p_succcess(item_get1_1)
     with open('MyPage-v1_1.data', newline='') as f:
         assert f.read() == 'MyPage version 1\n'
     with open('MyPage-v1_1.meta') as f:
