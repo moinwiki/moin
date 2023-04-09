@@ -106,12 +106,16 @@ def IndexOptimize(tmp):
 
 @cli.command('index-dump', help='Dump the indexes in readable form to stdout')
 @click.option('--tmp', is_flag=True, required=False, default=False, help='use the temporary location.')
-def IndexDump(tmp):
+@click.option('--truncate/--no-truncate', default=True, help='truncate long entries')
+def IndexDump(tmp, truncate):
     logging.info("Index dump started")
     for idx_name in [LATEST_REVS, ALL_REVS]:
         print(" {0} {1} {2}".format("-" * 10, idx_name, "-" * 60))
         for kvs in app.storage.dump(tmp=tmp, idx_name=idx_name):
             for k, v in kvs:
-                print(k, repr(v)[:70])
+                v = repr(v)
+                if truncate:
+                    v = v[:70]
+                print(k, v)
             print()
     logging.info("Index dump finished")

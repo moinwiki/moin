@@ -53,15 +53,18 @@ def GetItem(name, meta_file, data_file, revid):
     item = app.storage.get_item(**fqname.query)
     rev = item[revid]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
-    with open(meta_file, 'w', encoding='utf-8') as mf:
+    with open(meta_file, 'w', encoding='utf-8', newline='\n') as mf:
         mf.write(meta + '\n')
     if 'charset' in rev.meta['contenttype']:
-        # input data will have \r\n line endings, output will have platform dependent line endings
+        # input data will have \r\n line endings, output will have \n line endings
+        # this setting is friendly with git on windows when autocrlf = input
         charset = rev.meta['contenttype'].split('charset=')[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
+        # add trailing line ending which may have been removed by splitlines,
+        # or add extra trailing line ending which will be removed in _PutItem if file is imported
         lines = '\n'.join(lines) + '\n'
-        with open(data_file, 'w', encoding=charset) as df:
+        with open(data_file, 'w', encoding=charset, newline='\n') as df:
             df.write(lines)
         return
 
@@ -111,13 +114,15 @@ def PutItem(meta_file, data_file, overwrite):
             data = df.read().decode(charset)
         if '\r\n' not in data and '\n' in data:
             data = data.replace('\n', '\r\n')
-            data = data.encode(charset)
-            buffer = io.BytesIO()
-            buffer.write(data)
-            buffer.seek(0)
-            item.store_revision(meta, buffer, overwrite=overwrite)
-            buffer.close()
-            return
+        data = data.encode(charset)
+        if 0 < len(data) - meta['size'] <= 2:
+            data = data[0:meta['size']]  # potentially truncate trailing newline added by _GetItem
+        buffer = io.BytesIO()
+        buffer.write(data)
+        buffer.seek(0)
+        item.store_revision(meta, buffer, overwrite=overwrite)
+        buffer.close()
+        return
 
     with open(data_file, 'rb') as df:
         item.store_revision(meta, df, overwrite=overwrite)
@@ -163,15 +168,18 @@ def LoadHelp(namespace, path_to_help):
 @cli.command('dump-help', help='Dump a namespace of user help items to .data and .meta file pairs')
 @click.option('--namespace', '-n', type=str, required=True,
               help='Namespace to be dumped: common, en, etc.')
-@click.option('--path_to_help', '--path', '-p', type=str, default='../../help/',
-              help='Override default output directory')
+@click.option('--path_to_help', '--path', '-p', type=str,
+              help='Override default output directory'
+                   '(default works in source directory - ../../help/ relative to src/moin/cli/maint)')
 def DumpHelp(namespace, path_to_help):
     """
     Save an entire help namespace to the distribution source.
     """
     logging.info("Dump help started")
     before_wiki()
-    abspath_to_here = os.path.dirname(os.path.abspath(__file__))
+    if path_to_help is None:
+        abspath_to_here = os.path.dirname(os.path.abspath(__file__))
+        path_to_help = os.path.abspath(os.path.join(abspath_to_here, '../../help/'))
     item_name = 'help-' + namespace
     # item_name is a namespace, we create a dummy item so we can get a list of files
     item = Item.create(item_name)
@@ -184,8 +192,8 @@ def DumpHelp(namespace, path_to_help):
         no_alias_dups.append(file_.relname)
         # convert / characters to avoid invalid paths
         esc_name = file_.relname.replace('/', '%2f')
-        meta_file = os.path.abspath(os.path.join(abspath_to_here, path_to_help, namespace, esc_name + '.meta'))
-        data_file = os.path.abspath(os.path.join(abspath_to_here, path_to_help, namespace, esc_name + '.data'))
+        meta_file = os.path.join(path_to_help, namespace, esc_name + '.meta')
+        data_file = os.path.join(path_to_help, namespace, esc_name + '.data')
         GetItem(str(file_.fullname), meta_file, data_file, CURRENT)
         print('Item dumped::', file_.relname)
         count += 1

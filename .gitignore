@@ -35,3 +35,4 @@ intermap.txt
 m-*.txt
 # default destination for "m dump-html" output
 HTML/
+_test_artifacts/
