@@ -1,6 +1,7 @@
 # Copyright: 2005 MoinMoin:NirSoffer
 # Copyright: 2007 MoinMoin:AlexanderSchremmer
 # Copyright: 2008,2011 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -43,7 +44,7 @@ def cfg():
     return wikiconfig.Config
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def app_ctx(cfg):
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
         "stores:memory:",

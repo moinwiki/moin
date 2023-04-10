@@ -1,4 +1,5 @@
 # Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -18,7 +19,7 @@ import pytest
 class TestHTTPAuthMoin:
     """ Test: HTTPAuthMoin """
 
-    @pytest.yield_fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def custom_setup(self):
         class Auth:
             def __init__(self):
