@@ -1,6 +1,6 @@
 {
   "action": "SAVE",
-  "address": "66.241.77.225",
+  "address": "127.0.0.1",
   "comment": "",
   "contenttype": "application/docbook+xml;charset=utf-8",
   "dataid": "b10f6115da1749a7b7e55db518804edb",
@@ -11,18 +11,17 @@
   "itemlinks": [],
   "itemtransclusions": [
     "help-common/audio.mp3",
-    "help-common/logo.png",
-    "help-common/video.mp4"
+    "help-common/video.mp4",
+    "help-common/logo.png"
   ],
   "itemtype": "default",
-  "mtime": 1679587513,
+  "mtime": 1681244966,
   "name": [
     "docbook"
   ],
   "name_old": [],
   "namespace": "help-en",
-  "parentid": "6bcaf007ffc94b949aa44d13c09b29c8",
-  "rev_number": 5,
+  "rev_number": 1,
   "revid": "0783da01757f446195aee7c453d4ccff",
   "sha1": "40b138eaa999dd0bc89a159a8d8377f5ab6e1ef0",
   "size": 12825,
@@ -32,6 +31,5 @@
     "demo",
     "docbook"
   ],
-  "userid": "e5518d0c63d942ae84d53eb02769693f",
   "wikiname": "MyMoinMoin"
 }

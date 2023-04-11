@@ -13,15 +13,15 @@
   "itemlinks": [
     "rst/MissingItem",
     "Home",
-    "help-en/rst/Home",
-    "help-en/rst/users/Home"
+    "help-en/rst/users/Home",
+    "help-en/rst/Home"
   ],
   "itemtransclusions": [
     "help-common/logo.svg",
     "help-common/logo.png"
   ],
   "itemtype": "default",
-  "mtime": 1678821748,
+  "mtime": 1681146787,
   "name": [
     "rst"
   ],
