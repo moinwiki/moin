@@ -5,23 +5,23 @@
   "contenttype": "text/x-rst;charset=utf-8",
   "dataid": "ebd5326e63504cbab47ef02419936fab",
   "externallinks": [
+    "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists",
     "http://www.python.org/",
-    "http://moinmo.in/",
-    "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists"
+    "http://moinmo.in/"
   ],
   "itemid": "412d0e59c79147058ef2e947d1772d5f",
   "itemlinks": [
-    "rst/MissingItem",
+    "help-en/rst/users/Home",
     "Home",
-    "help-en/rst/Home",
-    "help-en/rst/users/Home"
+    "rst/MissingItem",
+    "help-en/rst/Home"
   ],
   "itemtransclusions": [
-    "help-common/logo.svg",
-    "help-common/logo.png"
+    "help-common/logo.png",
+    "help-common/logo.svg"
   ],
   "itemtype": "default",
-  "mtime": 1678821748,
+  "mtime": 1681247601,
   "name": [
     "rst"
   ],

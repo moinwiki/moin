@@ -109,7 +109,7 @@ def test_item_rev(index_create2):
     item_get2 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v2.meta', '-d', 'MyPage-v2.data'])
     assert_p_succcess(item_get2)
     with open('MyPage-v2.data', newline='') as f:
-        assert f.read() == 'MyPage version 2\n'
+        assert f.read() == 'MyPage version 2\r\n'
     with open('MyPage-v2.meta') as f:
         v2_meta = json.load(f)
     assert v2_meta['size'] == 18  # newline at end is 2 chars \r\n
@@ -120,13 +120,13 @@ def test_item_rev(index_create2):
     item_get1 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v1.meta', '-d', 'MyPage-v1.data', '-r', v1_revid])
     assert_p_succcess(item_get1)
     with open('MyPage-v1.data', newline='') as f:
-        assert f.read() == 'MyPage version 1\n'
+        assert f.read() == 'MyPage version 1\r\n'
     put3 = run(['moin', 'item-put', '-m', 'MyPage-v1.meta', '-d', 'MyPage-v1.data'])
     assert_p_succcess(put3)
     item_get1_1 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v1_1.meta', '-d', 'MyPage-v1_1.data'])
     assert_p_succcess(item_get1_1)
     with open('MyPage-v1_1.data', newline='') as f:
-        assert f.read() == 'MyPage version 1\n'
+        assert f.read() == 'MyPage version 1\r\n'
     with open('MyPage-v1_1.meta') as f:
         v1_1_meta = json.load(f)
     assert v1_1_meta['revid'] != v1_revid  # validate absence of -o option

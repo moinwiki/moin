@@ -1,6 +1,6 @@
 {
   "action": "SAVE",
-  "address": "66.241.77.225",
+  "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
   "dataid": "5ae1955d82c4426db99c661b76bfa568",
@@ -9,7 +9,7 @@
   "itemlinks": [],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1679573849,
+  "mtime": 1681247596,
   "name": [
     "docbook/SubItem"
   ],
@@ -21,6 +21,5 @@
   "size": 40,
   "summary": "",
   "tags": [],
-  "userid": "e5518d0c63d942ae84d53eb02769693f",
   "wikiname": "MyMoinMoin"
 }

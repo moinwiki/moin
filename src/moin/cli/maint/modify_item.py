@@ -53,7 +53,7 @@ def GetItem(name, meta_file, data_file, revid):
     item = app.storage.get_item(**fqname.query)
     rev = item[revid]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
-    with open(meta_file, 'w', encoding='utf-8', newline='\n') as mf:
+    with open(meta_file, 'w', encoding='utf-8', newline='\r\n') as mf:
         mf.write(meta + '\n')
     if 'charset' in rev.meta['contenttype']:
         # input data will have \r\n line endings, output will have \n line endings
@@ -64,7 +64,7 @@ def GetItem(name, meta_file, data_file, revid):
         # add trailing line ending which may have been removed by splitlines,
         # or add extra trailing line ending which will be removed in _PutItem if file is imported
         lines = '\n'.join(lines) + '\n'
-        with open(data_file, 'w', encoding=charset, newline='\n') as df:
+        with open(data_file, 'w', encoding=charset, newline='\r\n') as df:
             df.write(lines)
         return
 

@@ -1,6 +1,6 @@
 {
   "action": "SAVE",
-  "address": "66.241.77.225",
+  "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
   "dataid": "1d38c0f2d8054595857cc5396d44e926",
@@ -11,7 +11,7 @@
   ],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1679573438,
+  "mtime": 1681247602,
   "name": [
     "StronaGłówna"
   ],
@@ -24,6 +24,5 @@
   "size": 1344,
   "summary": "",
   "tags": [],
-  "userid": "e5518d0c63d942ae84d53eb02769693f",
   "wikiname": "MyMoinMoin"
 }

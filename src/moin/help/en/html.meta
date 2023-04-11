@@ -1,19 +1,19 @@
 {
   "action": "SAVE",
-  "address": "66.241.77.225",
+  "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/html;charset=utf-8",
   "dataid": "eabb8166bfe84d69b91544555a6dff55",
   "externallinks": [
+    "http://ckeditor.com",
     "http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif",
-    "https://moinmo.in",
-    "http://ckeditor.com"
+    "https://moinmo.in"
   ],
   "itemid": "8e96a433242545039cebf72dfa3b2fc3",
   "itemlinks": [],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1679607547,
+  "mtime": 1681247598,
   "name": [
     "html"
   ],
@@ -30,6 +30,5 @@
     "HTML",
     "ckeditor"
   ],
-  "userid": "e5518d0c63d942ae84d53eb02769693f",
   "wikiname": "MyMoinMoin"
 }
