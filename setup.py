@@ -75,7 +75,7 @@ setup_args = dict(
         'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.18.1',  # reST markup processing
         'Markdown>=3.4.1',  # Markdown markup processing
-        'Flask<2.1.0',  # micro framework
+        'Flask<2.3.0',  # micro framework
         'Flask-Babel<3.0.0',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
         'Flask-Theme>=0.3.5',  # theme support
