@@ -12,23 +12,22 @@
   ],
   "itemid": "cb68b5889e344c1994d6c22fd365db04",
   "itemlinks": [
-    "help-common/video.mp4",
-    "help-common/logo.svg",
-    "help-common/logo.png",
     "Home",
-    "help-common/audio.mp3",
-    "help-common/cat.jpg"
+    "help-common/logo.svg",
+    "help-common/cat.jpg",
+    "help-common/logo.png",
+    "help-common/video.mp4",
+    "help-common/audio.mp3"
   ],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1681247598,
+  "mtime": 1681330278,
   "name": [
     "mediawiki"
   ],
   "name_old": [],
   "namespace": "help-en",
-  "parentid": "4a04eb58a33742caa36d70fc9f64a8b4",
-  "rev_number": 2,
+  "rev_number": 1,
   "revid": "4bce57f2f5d94c6281d6a215b3538c52",
   "sha1": "4895df12b8a3cc4a8e59d10e7a4927517984ad91",
   "size": 18273,
