@@ -137,22 +137,17 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
         weight = 200
 
     app.url_map.converters['itemname'] = ItemNameConverter
-    # register modules, before/after request functions
+
+    # register before/after request functions
+    app.before_request(before_wiki)
+    app.teardown_request(teardown_wiki)
     from moin.apps.frontend import frontend
-    frontend.before_request(before_wiki)
-    frontend.teardown_request(teardown_wiki)
     app.register_blueprint(frontend)
     from moin.apps.admin import admin
-    admin.before_request(before_wiki)
-    admin.teardown_request(teardown_wiki)
     app.register_blueprint(admin, url_prefix='/+admin')
     from moin.apps.feed import feed
-    feed.before_request(before_wiki)
-    feed.teardown_request(teardown_wiki)
     app.register_blueprint(feed, url_prefix='/+feed')
     from moin.apps.misc import misc
-    misc.before_request(before_wiki)
-    misc.teardown_request(teardown_wiki)
     app.register_blueprint(misc, url_prefix='/+misc')
     from moin.apps.serve import serve
     app.register_blueprint(serve, url_prefix='/+serve')
