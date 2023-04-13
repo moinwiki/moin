@@ -38,15 +38,20 @@ class TestConverter:
          '<page><body><p>H<span baseline-shift="sub">2</span>O</p><p>E = mc<span baseline-shift="super">2</span></p></body></page>'),
         ('| Lend us a couple of bob till Thursday.',
          '<page><body><line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block></body></page>'),
-        ('**Text**', '<page><body><p><strong>Text</strong></p></body></page>'),
-        ('*Text*', '<page><body><p><emphasis>Text</emphasis></p></body></page>'),
-        ('``Text``', '<page><body><p><code>Text</code></p></body></page>'),
+        ('**Text**',
+         '<page><body><p><strong>Text</strong></p></body></page>'),
+        ('*Text*',
+         '<page><body><p><emphasis>Text</emphasis></p></body></page>'),
+        ('``Text``',
+         '<page><body><p><code>Text</code></p></body></page>'),
         ("`Text <javascript:alert('xss')>`_",
          '<page><body><p><admonition type="error">Text</admonition></p></body></page>'),
         ('Text\n\n~~~~~\n\nTest',
          '<page><body><p>Text</p><separator xhtml:class="moin-hr3" /><p>Test</p></body></page>'),
-        ('.. comment', '<page><body><div class="comment dashed">comment</div></body></page>'),
-        ('..\n comment', '<page><body><div class="comment dashed">comment</div></body></page>'),
+        ('.. comment',
+         '<page><body><div class="comment dashed">comment</div></body></page>'),
+        ('..\n comment',
+         '<page><body><div class="comment dashed">comment</div></body></page>'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -212,9 +217,9 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         self.do(input, output)
 
     data = [
-        ("+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n",
+        ('+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n',
          '<page><body><table><table-body><table-row><table-cell><p>A</p></table-cell><table-cell><p>B</p></table-cell><table-cell number-rows-spanned="2"><p>D</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>C</p></table-cell></table-row></table-body></table></body></page>'),
-        ("+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n",
+        ('+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n',
          '<page><body><table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table></body></page>'),
         ("""+--------------------+-------------------------------------+
 |cell spanning 2 rows|cell in the 2nd column               |
