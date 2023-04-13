@@ -21,12 +21,18 @@ def conv():
 @pytest.mark.parametrize(
     'input_,output',
     (
-        ('wiki:///Test', '/Test'),
-        ('wiki:///Test:colon', '/Test:colon'),
-        ('wiki:///Test?mode=raw', '/Test?mode=raw'),
-        ('wiki:///Test#anchor', '/Test#anchor'),
-        ('wiki:///Test?mode=raw#anchor', '/Test?mode=raw#anchor'),
-        ('wiki://MoinMoin/Test', 'http://moinmo.in/Test'),
+        ('wiki:///Test',
+         '/Test'),
+        ('wiki:///Test:colon',
+         '/Test:colon'),
+        ('wiki:///Test?mode=raw',
+         '/Test?mode=raw'),
+        ('wiki:///Test#anchor',
+         '/Test#anchor'),
+        ('wiki:///Test?mode=raw#anchor',
+         '/Test?mode=raw#anchor'),
+        ('wiki://MoinMoin/Test',
+         'http://moinmo.in/Test'),
     ),
 )
 def test_wiki(app, conv, input_, output):
@@ -41,18 +47,40 @@ def test_wiki(app, conv, input_, output):
     'input_,page,output',
     (
         # note: result URLs assume test wiki running at /
-        ('wiki.local:', 'wiki:///Root', '/Root'),
-        ('wiki.local:Test', 'wiki:///Root', '/Test'),
-        ('wiki.local:Test:colon', 'wiki:///Root', '/Test:colon'),
-        ('wiki.local:users/Test:colon', 'wiki:///Root', '/users/Test:colon'),
-        ('wiki.local:users:ns/Test:colon', 'wiki:///Root', '/users:ns/Test:colon'),
-        ('wiki.local:Test', 'wiki:///Root/Sub', '/Test'),
-        ('wiki.local:/Test', 'wiki:///Root', '/Root/Test'),
-        ('wiki.local:/Test', 'wiki:///Root/Sub', '/Root/Sub/Test'),
-        ('wiki.local:../Test', 'wiki:///Root', '/Test'),
-        ('wiki.local:../Test', 'wiki:///Root/Sub', '/Root/Test'),
+        ('wiki.local:',
+         'wiki:///Root',
+         '/Root'),
+        ('wiki.local:Test',
+         'wiki:///Root',
+         '/Test'),
+        ('wiki.local:Test:colon',
+         'wiki:///Root',
+         '/Test:colon'),
+        ('wiki.local:users/Test:colon',
+         'wiki:///Root',
+         '/users/Test:colon'),
+        ('wiki.local:users:ns/Test:colon',
+         'wiki:///Root',
+         '/users:ns/Test:colon'),
+        ('wiki.local:Test',
+         'wiki:///Root/Sub',
+         '/Test'),
+        ('wiki.local:/Test',
+         'wiki:///Root',
+         '/Root/Test'),
+        ('wiki.local:/Test',
+         'wiki:///Root/Sub',
+         '/Root/Sub/Test'),
+        ('wiki.local:../Test',
+         'wiki:///Root',
+         '/Test'),
+        ('wiki.local:../Test',
+         'wiki:///Root/Sub',
+         '/Root/Test'),
         # this is a local wiki item with a name happening to have a ":' inside:
-        ('wiki.local:NoInterWiki:Item', 'wiki:///Root', '/NoInterWiki:Item'),
+        ('wiki.local:NoInterWiki:Item',
+         'wiki:///Root',
+         '/NoInterWiki:Item'),
     )
 )
 def test_wikilocal(conv, input_, page, output):
@@ -64,8 +92,10 @@ def test_wikilocal(conv, input_, page, output):
 @pytest.mark.parametrize(
     'input_,output',
     (
-        ('http://moinmo.in/', 'http://moinmo.in/'),
-        ('mailto:foo.bar@example.org', 'mailto:foo.bar@example.org'),
+        ('http://moinmo.in/',
+         'http://moinmo.in/'),
+        ('mailto:foo.bar@example.org',
+         'mailto:foo.bar@example.org'),
     )
 )
 def test_wikiexternal(conv, input_, output):

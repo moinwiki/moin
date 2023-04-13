@@ -62,21 +62,34 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        ('Text', 'Text\n'),
-        ("Text\n\nText\n", 'Text\n\nText\n'),
-        ("**strong**\n", "**strong**\n"),
-        ("*emphasis*\n", "*emphasis*\n"),
+        ('Text',
+         'Text\n'),
+        ('Text\n\nText\n',
+         'Text\n\nText\n'),
+        ('**strong**\n',
+         '**strong**\n'),
+        ('*emphasis*\n',
+         '*emphasis*\n'),
         # extraneous x required below to prevent IndexError, side effect of serializer
-        ("{{{{{x\nblockcode\n}}}}}\n", "{{{{{x\nblockcode\n}}}}}\n"),
-        ("--(stroke)--\n", '--(stroke)--\n'),
-        ("__underline__\n", '__underline__\n'),
-        ("~+larger+~\n", '~+larger+~\n'),
-        ("~-smaller-~\n", '~-smaller-~\n'),
-        ("^super^script\n", '^super^script\n'),
-        (",,sub,,script\n", ',,sub,,script\n'),
-        ("#ANY any", "#ANY any\n"),
+        ('{{{{{x\nblockcode\n}}}}}\n',
+         '{{{{{x\nblockcode\n}}}}}\n'),
+        ('--(stroke)--\n',
+         '--(stroke)--\n'),
+        ('__underline__\n',
+         '__underline__\n'),
+        ('~+larger+~\n',
+         '~+larger+~\n'),
+        ('~-smaller-~\n',
+         '~-smaller-~\n'),
+        ('^super^script\n',
+         '^super^script\n'),
+        (',,sub,,script\n',
+         ',,sub,,script\n'),
+        ('#ANY any',
+         '#ANY any\n'),
         # line blocks
-        ('\n| Lend us a couple of bob till Thursday.\n', '\n| Lend us a couple of bob till Thursday.\n'),
+        ('\n| Lend us a couple of bob till Thursday.\n',
+         '\n| Lend us a couple of bob till Thursday.\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -84,11 +97,16 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        (".. This is a comment", "\n..\n This is a comment\n"),
-        ("..\n This is a comment", "\n..\n This is a comment\n"),
-        ("..\n [and] this!", "\n..\n [and] this!\n"),
-        ("..\n this:: too!", "\n..\n this:: too!\n"),
-        ("..\n |even| this:: !", "\n..\n |even| this:: !\n"),
+        ('.. This is a comment',
+         '\n..\n This is a comment\n'),
+        ('..\n This is a comment',
+         '\n..\n This is a comment\n'),
+        ('..\n [and] this!',
+         '\n..\n [and] this!\n'),
+        ('..\n this:: too!',
+         '\n..\n this:: too!\n'),
+        ('..\n |even| this:: !',
+         '\n..\n |even| this:: !\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -96,13 +114,20 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        (".. macro:: <<TableOfContents()>>", '\n\n.. contents::\n\n'),
-        (".. contents::", '\n\n.. contents::\n\n'),
-        (".. macro:: <<Include(MyPage)>>", '\n.. include:: MyPage\n'),
-        (".. include:: MyPage", '\n.. include:: MyPage\n'),
-        (".. macro:: <<RandomItem()>>", '\n.. macro:: <<RandomItem()>>\n'),
-        (".. macro:: <<RandomItem(5)>>", '\n.. macro:: <<RandomItem(5)>>\n'),
-        (".. macro:: <<Date>>", '\n.. macro:: <<Date()>>\n'),
+        ('.. macro:: <<TableOfContents()>>',
+         '\n\n.. contents::\n\n'),
+        ('.. contents::',
+         '\n\n.. contents::\n\n'),
+        ('.. macro:: <<Include(MyPage)>>',
+         '\n.. include:: MyPage\n'),
+        ('.. include:: MyPage',
+         '\n.. include:: MyPage\n'),
+        ('.. macro:: <<RandomItem()>>',
+         '\n.. macro:: <<RandomItem()>>\n'),
+        ('.. macro:: <<RandomItem(5)>>',
+         '\n.. macro:: <<RandomItem(5)>>\n'),
+        ('.. macro:: <<Date>>',
+         '\n.. macro:: <<Date()>>\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -140,12 +165,12 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        ("- a\n- b\n\n  - aa\n  - ab\n",
-         "\n* a\n* b\n\n  * aa\n  * ab\n"),
-        ("1. a\n#. b\n\n   (A) aa\n   (#) ab\n\n",
-         "\n1. a\n#. b\n\n   A. aa\n   #. ab\n"),
-        ("1. a\n#. b\n\n   (A) aa\n   (#) ab\n",
-         "\n1. a\n#. b\n\n   A. aa\n   #. ab\n"),
+        ('- a\n- b\n\n  - aa\n  - ab\n',
+         '\n* a\n* b\n\n  * aa\n  * ab\n'),
+        ('1. a\n#. b\n\n   (A) aa\n   (#) ab\n\n',
+         '\n1. a\n#. b\n\n   A. aa\n   #. ab\n'),
+        ('1. a\n#. b\n\n   (A) aa\n   (#) ab\n',
+         '\n1. a\n#. b\n\n   A. aa\n   #. ab\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
@@ -154,8 +179,10 @@ class TestConverter:
 
     data = [
         # simple tables are converted to grid tables
-        ('== == ==\na  b  c  \n== == ==\n1  2  3\n== == ==', '\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
-        ('\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n', '\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
+        ('== == ==\na  b  c  \n== == ==\n1  2  3\n== == ==',
+         '\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
+        ('\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n',
+         '\n+-+-+-+\n|a|b|c|\n+=+=+=+\n|1|2|3|\n+-+-+-+\n\n'),
     ]
 
     @pytest.mark.parametrize('input,output', data)
