@@ -1,0 +1,29 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "b80d238853934807b4363c5d50ba9258",
+  "externallinks": [],
+  "itemid": "5d087436424f4c8f8ba53bee850950d8",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "mtime": 1680608488,
+  "name": [
+    "МояСтраница",
+    "MyRussianPage"
+  ],
+  "name_old": [],
+  "namespace": "",
+  "parentid": "87f26ec82b574974846877249969eade",
+  "rev_number": 2,
+  "revid": "ecab984d1cc54337a29ffc61eac3608c",
+  "sha1": "dbdda484855b8c146b498d8fbc96466f58309888",
+  "size": 22,
+  "summary": "тест на использование ру́сского алфави́т",
+  "tags": [
+    "русский"
+  ],
+  "wikiname": "MyMoinMoin"
+}

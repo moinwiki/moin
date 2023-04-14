@@ -8,6 +8,7 @@ MoinMoin CLI - Extension Script Package
 """
 
 import click
+import sys
 
 from flask.cli import FlaskGroup
 
@@ -52,6 +53,7 @@ def cli(ctx):
     logging.debug("invoked_subcommand: %s", ctx.invoked_subcommand)
     if ctx.invoked_subcommand is None:
         Help()
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 @cli.command('help', help='Quick help')
