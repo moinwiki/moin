@@ -40,7 +40,7 @@ def test_index_create(index_create):
 def test_index_dump(load_help):
     index_dump = run(['moin', 'index-dump', '--no-truncate'])
     assert_p_succcess(index_dump)
-    items = read_index_dump_latest_revs(index_dump.stdout.decode('cp1252'))
+    items = read_index_dump_latest_revs(index_dump.stdout.decode())
     cats = [i for i in items if 'cat.jpg' in i['name']]
     assert len(cats) == 1
     cat = cats[0]

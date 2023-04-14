@@ -68,8 +68,7 @@ def index_create(create_instance):
 @pytest.fixture(scope="package")
 def load_help(index_create):
     load_help_common = run(['moin', 'load-help', '-n', 'common'])
-    # load_help_en = run(['moin', 'load-help', '-n', 'en'])  # see https://github.com/moinwiki/moin/issues/1378
-    load_help_en = None
+    load_help_en = run(['moin', 'load-help', '-n', 'en'])
     return load_help_common, load_help_en
 
 

@@ -1,5 +1,6 @@
 = Moin Wiki Macros =
 
+
 With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page.
 
 Features that are not working correctly are marked with '''MOINTODO:'''
@@ -78,14 +79,14 @@ to include a leading namespace will fail.
 
 - - - - end of <Include(^archive)> - - - -
 
-Include a page with a non-ascii name and a heading level 6 inside a comment. Click the "Comments"
+Include a page with a heading level 6 inside a comment. Click the "Comments"
 link inside Item Views to show/hide the inclusion.
 
 {{{{#!wiki comment/dashed
-<<Include(help-en/StronaGłówna,My Favorite Page, 6)>>
+<<Include(help-en/InclusionForMoinWikiMacros,My Favorite Page, 6)>>
 }}}}
 
-- - - - end of <Include(help-en/StronaGłówna,My Favorite Page, 6)> - - - -
+- - - - end of <Include(help-en/InclusionForMoinWikiMacros,My Favorite Page, 6)> - - - -
 }}}
 
 '''Result:'''
@@ -104,14 +105,14 @@ to include a leading namespace will fail.
 
 - - - - end of <Include(^archive)> - - - -
 
-Include a page with a non-ascii name and a heading level 6 inside a comment. Click the "Comments"
+Include a page and a heading level 6 inside a comment. Click the "Comments"
 link inside Item Views to show/hide the inclusion.
 
 {{{{#!wiki comment/dashed
-<<Include(help-en/StronaGłówna,My Favorite Page, 6)>>
+<<Include(help-en/InclusionForMoinWikiMacros,My Favorite Page, 6)>>
 }}}}
 
-- - - - end of <Include(help-en/StronaGłówna,My Favorite Page, 6)> - - - -
+- - - - end of <Include(help-en/InclusionForMoinWikiMacros,My Favorite Page, 6)> - - - -
 
 '''MOINTODO:''' Some of the moin 1.9 parameters documented in [[https://moinmo.in/HelpOnMacros/Include]] are not supported. These include: from, to, sort, items, skipitems, titlesonly, and editlink.
 

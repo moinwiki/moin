@@ -39,13 +39,14 @@ def cli():
               help='Filename of file to create for the data.')
 @click.option('--revid', '-r', type=str, required=False, default=CURRENT,
               help='Revision ID of the revision to get (default: current rev).')
-def cli_GetItem(name, meta, data, revid):
+@click.option('--crlf/--no-crlf', help='use windows line endings in output files')
+def cli_GetItem(name, meta, data, revid, crlf):
     logging.info("Get item started")
-    GetItem(name, meta, data, revid)
+    GetItem(name, meta, data, revid, '\r\n' if crlf else '\n')
     logging.info("Get item finished")
 
 
-def GetItem(name, meta_file, data_file, revid):
+def GetItem(name, meta_file, data_file, revid, newline='\n'):
     """
     Get an item revision from the wiki and save in files
     """
@@ -53,18 +54,19 @@ def GetItem(name, meta_file, data_file, revid):
     item = app.storage.get_item(**fqname.query)
     rev = item[revid]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
-    with open(meta_file, 'w', encoding='utf-8', newline='\n') as mf:
+    with open(meta_file, 'w', encoding='utf-8', newline=newline) as mf:
         mf.write(meta + '\n')
     if 'charset' in rev.meta['contenttype']:
-        # input data will have \r\n line endings, output will have \n line endings
-        # this setting is friendly with git on windows when autocrlf = input
+        # input data will have \r\n line endings, output will have specified endings
+        # those running on windows with git autocrlf=true will want --crlf
+        # those running on linux or with autocrlf=input will want --no-crlf
         charset = rev.meta['contenttype'].split('charset=')[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
         # add trailing line ending which may have been removed by splitlines,
         # or add extra trailing line ending which will be removed in _PutItem if file is imported
         lines = '\n'.join(lines) + '\n'
-        with open(data_file, 'w', encoding=charset, newline='\n') as df:
+        with open(data_file, 'w', encoding=charset, newline=newline) as df:
             df.write(lines)
         return
 
@@ -171,7 +173,8 @@ def LoadHelp(namespace, path_to_help):
 @click.option('--path_to_help', '--path', '-p', type=str,
               help='Override default output directory'
                    '(default works in source directory - ../../help/ relative to src/moin/cli/maint)')
-def DumpHelp(namespace, path_to_help):
+@click.option('--crlf/--no-crlf', help='use windows line endings in output files')
+def DumpHelp(namespace, path_to_help, crlf):
     """
     Save an entire help namespace to the distribution source.
     """
@@ -194,7 +197,7 @@ def DumpHelp(namespace, path_to_help):
         esc_name = file_.relname.replace('/', '%2f')
         meta_file = os.path.join(path_to_help, namespace, esc_name + '.meta')
         data_file = os.path.join(path_to_help, namespace, esc_name + '.data')
-        GetItem(str(file_.fullname), meta_file, data_file, CURRENT)
+        GetItem(str(file_.fullname), meta_file, data_file, CURRENT, '\r\n' if crlf else '\n')
         print('Item dumped::', file_.relname)
         count += 1
     print('Success: help namespace {0} saved with {1} items'.format(namespace, count))

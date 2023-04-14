@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - master
+      - test-github-action
   pull_request:
     branches:
       - master
