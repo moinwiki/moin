@@ -4,6 +4,7 @@
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # Copyright: 2011      MoinMoin:AkashSinha
+# Copyright: 2023      MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -435,11 +436,6 @@ options_no_group_name = {
         ('acl_mapping', None,
          "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. " +
          "E.g.: [('', dict(default='All:read,write,create,admin')), ]."),
-        ('create_storage', False, "Create (initialize) the storage backends before trying to use them."),
-        ('create_index', False, "Create (initialize) the index before trying to use them."),
-        ('destroy_storage', False, "Destroy (empty) the storage backends after using them."),
-        ('destroy_index', False, "Destroy (empty) the index after using it."),
-
         ('mimetypes_to_index_as_empty', [], "List of mimetypes which are indexed as though they were empty."),
     )),
     # ==========================================================================
