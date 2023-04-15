@@ -213,9 +213,13 @@ def LoadWelcome():
     Load a welcome page as initial home from distribution source.
     """
     logging.info("Load welcome page started")
-    help_path = os.path.dirname(moin_help.__file__)
-    path_to_items = os.path.normpath(os.path.join(help_path, 'welcome'))
-    meta_file = os.path.join(path_to_items, 'Home.meta')
-    data_file = os.path.join(path_to_items, 'Home.data')
-    PutItem(meta_file, data_file, "true")
+    name = 'Home'
+    if app.storage.has_item(name):
+        logging.warning('Item with name %s exists and will not be overwritten.', name)
+    else:
+        help_path = os.path.dirname(moin_help.__file__)
+        path_to_items = os.path.normpath(os.path.join(help_path, 'welcome'))
+        meta_file = os.path.join(path_to_items, name + '.meta')
+        data_file = os.path.join(path_to_items, name + '.data')
+        PutItem(meta_file, data_file, "true")
     logging.info("Load welcome finished")
