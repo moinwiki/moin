@@ -3,7 +3,7 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x-rst;charset=utf-8",
-  "dataid": "ebd5326e63504cbab47ef02419936fab",
+  "dataid": "b0b9ada0b78f40c299c85ad1e76e2779",
   "externallinks": [
     "http://www.python.org/",
     "http://moinmo.in/",
@@ -12,25 +12,25 @@
   "itemid": "412d0e59c79147058ef2e947d1772d5f",
   "itemlinks": [
     "rst/MissingItem",
+    "rst/users/Home",
     "Home",
-    "help-en/rst/users/Home",
-    "help-en/rst/Home"
+    "rst/Home"
   ],
   "itemtransclusions": [
     "help-common/logo.svg",
     "help-common/logo.png"
   ],
   "itemtype": "default",
-  "mtime": 1681146787,
+  "mtime": 1681588157,
   "name": [
     "rst"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "b13c5fa6998d45ee94e2b5243702d85e",
-  "sha1": "9f093ed8e3d4bbc28bdbb33e2c34d2e8b97c3f66",
-  "size": 21399,
+  "revid": "6fb6abb5ef34450482f3c98d978b6571",
+  "sha1": "d697b9282380207aab65c607c85bf1bd5b763d38",
+  "size": 21376,
   "summary": "",
   "tags": [
     "parser",
