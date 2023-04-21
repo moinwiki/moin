@@ -28,8 +28,10 @@ def validate_meta(expected, actual, message):
 def test_load_help(load_help):
     assert_p_succcess(load_help[0])
     assert_p_succcess(load_help[1])
-    assert load_help[0].returncode == 0
-    assert load_help[1].returncode == 0
+
+
+def test_welcome(welcome):
+    assert_p_succcess(welcome)
 
 
 def test_dump_help(load_help):

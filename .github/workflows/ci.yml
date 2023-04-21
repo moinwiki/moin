@@ -66,3 +66,10 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Archive test artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-artifacts-${{ matrix.os }}
+        path: |
+          _test_artifacts

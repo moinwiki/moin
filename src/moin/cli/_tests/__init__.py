@@ -10,7 +10,8 @@ import datetime  # noqa
 import os
 import re
 import subprocess
-from typing import List
+import sys
+from typing import List, Union
 from warnings import warn
 
 from moin import log
@@ -18,12 +19,32 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-def run(cmd: List[str]) -> subprocess.CompletedProcess:
-    """run a shell command, capturing output"""
+def run(cmd: List[str], log=None, wait: bool = True, timeout: int = None) \
+        -> Union[subprocess.CompletedProcess, subprocess.Popen]:
+    """run a shell command, redirecting output to log
+    :param cmd: list of strings containing command arguments
+    :param log: open file handle to log file (binary mode) or None in which case output will be captured
+    :param wait: if True return after process is complete, otherwise return immediately after start
+    :param timeout: timeout setting in seconds, can only be used when wait is True
+    :return: CompletedProcess object if wait else Popen object"""
     subprocess_environ = copy(os.environ)
     subprocess_environ['PYTHONIOENCODING'] = 'cp1252'  # simulate windows terminal to ferret out encoding issues
     logging.info(f'running {cmd}')
-    return subprocess.run(cmd, capture_output=True, env=subprocess_environ)
+    if stdout := log:
+        stderr = subprocess.STDOUT
+    else:  # log is None
+        stdout = subprocess.PIPE
+        stderr = subprocess.PIPE
+    kwargs = {}
+    flags = 0
+    if wait:
+        run_func = subprocess.run
+        kwargs['timeout'] = timeout
+    else:
+        run_func = subprocess.Popen
+        if sys.platform == 'win32':
+            flags = subprocess.CREATE_NEW_PROCESS_GROUP  # needed for use of os.kill
+    return run_func(cmd, stdout=stdout, stderr=stderr, creationflags=flags, env=subprocess_environ, **kwargs)
 
 
 def assert_p_succcess(p: subprocess.CompletedProcess):
