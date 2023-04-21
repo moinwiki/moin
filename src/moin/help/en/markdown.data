@@ -3,7 +3,7 @@ Markdown Syntax
 
 This page introduces you to the most important elements of the Markdown syntax. For details on the Python implementation of Markdown see <https://python-markdown.github.io/>.
 
-If there are error messages on the top of this page they are the result of [examples showing unsupported HTML tags](markdown#unsupported-html-tags). The error messages will not be present if this item has been served from cache.
+If there are error messages on the top of this page they are the result of [examples showing unsupported HTML tags](#Unsupported_HTML_Tags). The error messages will not be present if this item has been served from cache.
 {: #para3 }
 
 Table of Contents
@@ -123,7 +123,7 @@ with 2 spaces.
 
 Markdown provides markup for only a few common text augmentations. Less common
 augmentations may be obtained by using HTML tags. See
-[support for inline HTML](markdown#inline-html).
+[support for inline HTML](help-en/markdown#inline-html).
 
 |**Markup**|**Result**|
 |----------|----------|
@@ -163,8 +163,7 @@ Inline links use the form:
 |`[../Home](../Home)`|[../Home](../Home) # sibling link to Home item in help-en namespace|
 |`[../MissingSibling](../MissingSibling)`|[../MissingSibling](../MissingSibling) # missing sibling link|
 |`[creole is a sibling](../creole)`|[creole is a sibling](../creole)|
-|`[toc](markdown#table-of-contents)`|[toc](markdown#table-of-contents) # link to anchor|
-|`[toc](#table-of-contents)`|[toc](#table-of-contents) # link to anchor|
+|`[toc](#Table_of_Contents)`|[toc](#Table_of_Contents) # link to anchor; case-sensitive, blanks replaced with _|
 |`[moinmoin](https://moinmo.in "Go there")`|[moinmoin](https://moinmo.in "Go there")|
 |`[![Image name](help-common/logo.png)](Home "click me")`|[![Image name](help-common/logo.png)](Home "click me") # fancy link using a logo, see Images (Transclusions)|
 |`[write me](mailto:joe@doe.com "now")`|[write me](mailto:joe@doe.com "now")|
@@ -421,7 +420,7 @@ This word is <strong style="color:red;background-color:yellow">bold</strong>; co
 
 <img alt="Alt text" src="/+get/help-common/logo.png" title="Optional title" />
 
-**Note:** See top of [html](html) and configuration docs for information on allow_style_attributes.
+**Note:** See top of [html](../html) and configuration docs for information on allow_style_attributes.
 
 ### Unsupported HTML Tags
 

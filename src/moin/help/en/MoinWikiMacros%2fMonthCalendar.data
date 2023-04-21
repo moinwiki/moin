@@ -66,4 +66,4 @@ Calendar of year 2023 (every month padded to height of 6 rows):
 || `<<MonthCalendar(item="Yearly",month_offset=+1,`<<BR>>`fixed_height=True,anniversary=True)>>`    || <<MonthCalendar(item="Yearly",month_offset=+1,fixed_height=True,anniversary=True)>>                     ||<style="border:none; width:99%"> ||
 ||||||<style="border:none; text-align:left"> This creates calendars of the format Yearly/MM-DD. By leaving out the year, you can set birthdays, and anniversaries in this calendar and not have to re-enter each year. ||
 
-see also: [[MoinWikiMacros]]
+see also: [[help-en/MoinWikiMacros]]

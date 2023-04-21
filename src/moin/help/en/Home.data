@@ -1,5 +1,6 @@
 = Moin2 Help Content =
 
+
 This help content demonstrates a wide variety of moin2 features.
 
 == Test Comment ==
@@ -24,6 +25,8 @@ When the content type of a target item to be edited is one of the parsers listed
    * Chrome, Opera, and Maxthon will not scroll the window; the user may force the window to scroll to the textarea caret by keying the right-arrow on the keyboard.
 
 Because of the way the Markdown parser is constructed, it is frequently not possible to calculate an accurate line number in the text source. This causes auto-scroll to miss the target text. The error can be minimized by consistent use of one blank line between text blocks.
+
+ * [[help-en/moin]]
 
  * [[../moin|Moin Wiki markup item]]
  * [[../creole|Creole Wiki markup item]]

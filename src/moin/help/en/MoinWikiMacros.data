@@ -1,6 +1,5 @@
 = Moin Wiki Macros =
 
-
 With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page.
 
 Features that are not working correctly are marked with '''MOINTODO:'''
@@ -120,7 +119,7 @@ link inside Item Views to show/hide the inclusion.
 
 === Anchor ===
 
-Anchors are created (but invisible of course). Click [[MoinWikiMacros#anchorname|here]] to scroll the window to the anchor following '''Result''' below.
+Anchors are created (but invisible of course). Click [[#anchorname|here]] to scroll the window to the anchor following '''Result''' below.
 
 '''Markup:'''
 
