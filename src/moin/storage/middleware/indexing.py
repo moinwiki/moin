@@ -237,6 +237,8 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
         except IndexError:
             item_name = meta[NAMESPACE] + '/' + 'DoesNotExist'
+    elif item_name and meta.get(NAMESPACE):
+        item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
     fqname = split_fqname(item_name)
 
     class PseudoRev:

@@ -128,36 +128,37 @@ Internal Links
 The examples below use the "help-en" and "help-common" namespaces to separate these help pages from the main wiki content. Some target pages may be missing from the default namespace.
 
 Within the rst syntax:
- * a link like ``http:/Home`` links to an item in the default namespace
- * a link like ``http:Home`` links to a sibling in the current namespace
- * a link that begins with a namespace like ``http:/users/Home`` links to the Home item in the target namespace
- * a link like ``http:rst/subitem`` links to a subitem of the current item
+
+ * a link like ``http:Home`` links to an item in the default namespace
+ * a link like ``http:/subitem`` links to a subitem of the current item
+ * a link that begins with a namespace like ``http:users/Home`` links to the Home item in the target namespace
+ * a link like ``http:../sibling`` links to a sibling of the current item
 
 .. _myanchor:
 
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-|Markup                    |Result                               |Comment                                                     |
-+==========================+=====================================+============================================================+
-| ``http:/Home``           |http:/Home                           |link to a page in the default namespace of this wiki        |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ```Home <http:/Home>`_`` |`Home <http:/Home>`_                 |fancy link to a page in the default namespace of this wiki  |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ``http:Home``            |http:Home                            |link to a page in the current namespace of this wiki        |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ```Home2 <http:Home>`_`` |`Home2 <http:Home>`_                 |fancy link to a page in the current namespace of this wiki  |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ``http:/users/Home``     |http:/users/Home                     |link to a page in a different namespace of this wiki        |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ``http:rst/MissingItem`` |http:rst/MissingItem                 |link to a subitem of this item                              |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ``Headings_``            |Headings_                            |link to heading anchor on this page                         |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ```Internal Links`_``    |`Internal Links`_                    |link to heading with embedded blanks                        |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ``.. _myanchor:``        |                                     |create anchor, real anchor is above this table              |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
-| ``myanchor_``            |myanchor_                            |link to above anchor                                        |
-+--------------------------+-------------------------------------+------------------------------------------------------------+
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+|Markup                       |Result                               |Comment                                                     |
++=============================+=====================================+============================================================+
+| ``http:Home``               |http:Home                            |link to an item in the default namespace of this wiki       |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ```Home2 <http:Home>`_``    |`Home2 <http:Home>`_                 |fancy link to an item in the default namespace of this wiki |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ``http:/subitem``           |http:/subitem                        |link to a subitem of the current item                       |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ```sub <http:/subitem>`_``  |`sub <http:/subitem>`_               |fancy link to a subitem of the current item                 |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ``http:users/Home``         |http:users/Home                      |link to an item in a different namespace of this wiki       |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ``http:../moin``            |http:../moin                         |link to a sibling of this item                              |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ``Headings_``               |Headings_                            |link to Headings anchor on this item                        |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ```Internal Links`_``       |`Internal Links`_                    |link to a heading with embedded blanks                      |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ``.. _myanchor:``           |                                     |create anchor, real anchor is above this table              |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
+| ``myanchor_``               |myanchor_                            |link to above anchor                                        |
++-----------------------------+-------------------------------------+------------------------------------------------------------+
 
 **Notes:**
  - If this page was created by Sphinx, none of the above internal link examples work correctly.

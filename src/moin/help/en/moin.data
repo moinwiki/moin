@@ -135,6 +135,7 @@ icon or message.
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
+ 1. Transclude a subitem: {{/subitem}}
 }}}
 
 '''Result:'''
@@ -144,6 +145,7 @@ icon or message.
  1. Image aligned to middle of text. {{http://static.moinmo.in/logos/moinmoin.png||class=middle}}
  1. Transclude an HTTP web page: <<BR>>{{http://www.xkcd.com/||width=800}}
  1. Transclude an HTTPS web page: <<BR>>{{https://moinmo.in||width=800}}
+ 1. Transclude a subitem: {{/subitem}}
 
 == Blockquotes and Indentations ==
 
