@@ -25,26 +25,13 @@ class TestSiteCrawl:
             url_path_components=['MissingSubItem', 'MissingSubitem', 'MissingPage', 'MissingItem', 'MissingSibling']),
     ]
     KNOWN_ISSUES = [
-        CrawlResultMatch(
-            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path=f'{settings.SITE_WIKI_ROOT}/html'),
-            from_url='/markdown'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                                 path=f'{settings.SITE_WIKI_ROOT}/markdown', fragment='unsupported-html-tags'),
-                         from_url='/markdown'),
         CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
                                  path='/+get/help-common/logo.png'),
                          from_url='/markdown'),  # only with wiki_root
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                                 path=f'{settings.SITE_WIKI_ROOT}/MoinWikiMacros', fragment='anchorname'),
-                         from_url='/MoinWikiMacros'),
-        CrawlResultMatch(url='/rst/Home', from_url='/rst'),
-        CrawlResultMatch(url='/rst/users/Home', from_url='/rst'),
         CrawlResultMatch(url='http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif',
                          from_url='/html'),
-        # next two are intermittant, possible breadcrumb link created by GET /rst/users/Home 404?
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                                 path=f'{settings.SITE_WIKI_ROOT}/rst'), from_text='rst', from_type='href'),
-        CrawlResultMatch(url="/rst/users", from_text='users', from_type='href'),
+        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/users/Home'),
+                         from_url='/html')  # only with wiki_root
         ]
     line_number = 0
     line_buffer = []

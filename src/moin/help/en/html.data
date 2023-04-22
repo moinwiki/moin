@@ -45,7 +45,7 @@
 <p>
 	In order to make your wiki relocatable, use relative hrefs.&nbsp; Use of href starting with &quot;/&quot; will break if the wiki is redeployed under a new wiki_root.</p>
 <p>
-	<a href="../Home">../Home</a></p>
+	<a href="Home">Home</a></p>
 <p>
 	<a href="Sibling">Sibling</a></p>
 <p>
@@ -53,7 +53,7 @@
 <p>
 	To add a link to an item in a namespace, use ../&lt;namespace&gt;/&lt;item name&gt;.</p>
 <p>
-	<a href="../help-common/cat.jpg">../help-common/cat.jpg</a></p>
+	<a href="/users/Home">/users/Home</a></p>
 <h2>
 	External Links</h2>
 <p>
