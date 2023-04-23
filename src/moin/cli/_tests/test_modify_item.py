@@ -28,8 +28,10 @@ def validate_meta(expected, actual, message):
 def test_load_help(load_help):
     assert_p_succcess(load_help[0])
     assert_p_succcess(load_help[1])
-    assert load_help[0].returncode == 0
-    assert load_help[1].returncode == 0
+
+
+def test_welcome(welcome):
+    assert_p_succcess(welcome)
 
 
 def test_dump_help(load_help):
@@ -50,10 +52,6 @@ def test_dump_help(load_help):
         # data_file_names = set([p.name for p in help_subdir_path.glob('*.data')])
         # assert expected_data_file_names == data_file_names
         for data_file_name in expected_data_file_names:
-            # TODO remove next 3 lines - adding new help-en items causes test failure
-            if data_file_name in ['moin%2fsubitem.data', 'rst%2fsubitem.data', ]:
-                print('==== data_file_name = %s' % data_file_name)
-                continue
             with open(help_subdir_path / data_file_name, 'rb') as f:
                 data = f.read()
             with open(source_help_subdir / data_file_name, 'rb') as f:
