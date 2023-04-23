@@ -1,5 +1,6 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -67,9 +68,10 @@ def atom(item_name):
             query = And([query, Term(NAME_EXACT, item_name), ])
         history = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=100)
         for rev in history:
-            name = rev.name
+            name = rev.fqname.fullname
             item = rev.item
             this_revid = rev.meta[REVID]
+            logging.debug("name: %s revid: %s", name, this_revid)
             previous_revid = rev.meta.get(PARENTID)
             this_rev = rev
             try:
@@ -102,9 +104,9 @@ def atom(item_name):
             feed_entry = feed.add_entry()
             feed_entry.id(url_for_item(name, rev=this_revid, _external=True))
             feed_entry.title(feed_title)
-            feed_entry.summary(content)
             feed_entry.author({'name': author.get(NAME, '')})
             feed_entry.link(href=url_for_item(name, rev=this_revid, _external=True))
+            feed_entry.content(content, type='html')
         content = feed.atom_str(pretty=True).decode("utf-8")
         # Hack to add XSLT stylesheet declaration since AtomFeed doesn't allow this
         content = content.split("\n")
