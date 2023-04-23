@@ -14,6 +14,7 @@ import sys
 from typing import List, Union
 from warnings import warn
 
+from moin._tests import get_dirs
 from moin import log
 
 logging = log.getLogger(__name__)
@@ -105,6 +106,8 @@ def _is_eval_safe(s: str) -> bool:
                     pass
                 if DATETIME_RE.fullmatch(s):
                     safe = True
+                if s in {'True', 'False'}:
+                    safe = True
         if not safe:
             return False
     return True
@@ -132,3 +135,8 @@ def read_index_dump_latest_revs(out: str):
             warn(f'invalid line in stdout of moin index-dump: {repr(line.strip())}')
             continue
         item[line[0:space_index]] = eval(v_str)
+
+
+def getBackupPath(backup_name):
+    _, artifact_base_dir = get_dirs('')
+    return artifact_base_dir / backup_name

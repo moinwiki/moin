@@ -29,7 +29,7 @@ from time import sleep
 from typing import List
 
 from moin._tests import check_connection, get_dirs
-from moin.cli._tests import run
+from moin.cli._tests import run, getBackupPath
 from moin.cli._tests.scrapy.moincrawler.items import CrawlResult
 from moin import log
 try:
@@ -86,6 +86,16 @@ def load_help(index_create):
 @pytest.fixture(scope="package")
 def welcome(index_create):
     return run(['moin', 'welcome'])
+
+
+@pytest.fixture(scope="package")
+def save_all(load_help, welcome):
+    return run(['moin', 'save', '-a', '-f', getBackupPath('backup.moin')])
+
+
+@pytest.fixture(scope="package")
+def save_default(welcome):
+    return run(['moin', 'save', '-b', 'default', '-f', getBackupPath('backup_default.moin')])
 
 
 def get_crawl_server_log_path():
@@ -188,7 +198,7 @@ def crawl_results(request, artifact_dir) -> List[CrawlResult]:
 @pytest.fixture(scope="package")
 def server_crawl_log(crawl_results):
     if not settings.DO_CRAWL:
-        logging.warn('using existing server-crawl.log')
+        logging.warning('using existing server-crawl.log')
     return get_crawl_server_log_path()
 
 

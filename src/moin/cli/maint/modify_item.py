@@ -133,8 +133,9 @@ def PutItem(meta_file, data_file, overwrite):
 @cli.command('load-help', help='Load a directory of help .data and .meta file pairs into a wiki namespace')
 @click.option('--namespace', '-n', type=str, required=True,
               help='Namespace to be loaded: common, en, etc.')
-@click.option('--path_to_help', '--path', '-p', type=str, default='../../help/',
-              help='Override default input directory')
+@click.option('--path_to_help', '--path', '-p', type=str,
+              help='Override default output directory'
+                   '(default works in source directory - ../../help/ relative to src/moin/cli/maint)')
 def cli_LoadHelp(namespace, path_to_help):
     return LoadHelp(namespace, path_to_help)
 
@@ -144,8 +145,10 @@ def LoadHelp(namespace, path_to_help):
     Load an entire help namespace from distribution source.
     """
     logging.info("Load help started")
-    abspath_to_here = os.path.dirname(os.path.abspath(__file__))
-    path_to_items = os.path.normpath(os.path.join(abspath_to_here, path_to_help, namespace))
+    if path_to_help is None:
+        abspath_to_here = os.path.dirname(os.path.abspath(__file__))
+        path_to_help = os.path.abspath(os.path.join(abspath_to_here, '../../help/'))
+    path_to_items = os.path.normpath(os.path.join(path_to_help, namespace))
     if not os.path.isdir(path_to_items):
         print('Abort: the {0} directory does not exist'.format(path_to_items))
         return
