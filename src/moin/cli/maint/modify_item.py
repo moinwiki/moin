@@ -26,6 +26,11 @@ from moin import log, help as moin_help
 logging = log.getLogger(__name__)
 
 
+def _get_path_to_help(subdir=''):
+    help_path = os.path.dirname(moin_help.__file__)
+    return os.path.normpath(os.path.join(help_path, subdir))
+
+
 @click.group(cls=FlaskGroup, create_app=create_app)
 def cli():
     pass
@@ -146,8 +151,7 @@ def LoadHelp(namespace, path_to_help):
     """
     logging.info("Load help started")
     if path_to_help is None:
-        abspath_to_here = os.path.dirname(os.path.abspath(__file__))
-        path_to_help = os.path.abspath(os.path.join(abspath_to_here, '../../help/'))
+        path_to_help = _get_path_to_help()
     path_to_items = os.path.normpath(os.path.join(path_to_help, namespace))
     if not os.path.isdir(path_to_items):
         print('Abort: the {0} directory does not exist'.format(path_to_items))
@@ -184,8 +188,7 @@ def DumpHelp(namespace, path_to_help, crlf):
     logging.info("Dump help started")
     before_wiki()
     if path_to_help is None:
-        abspath_to_here = os.path.dirname(os.path.abspath(__file__))
-        path_to_help = os.path.abspath(os.path.join(abspath_to_here, '../../help/'))
+        path_to_help = _get_path_to_help()
     item_name = 'help-' + namespace
     # item_name is a namespace, we create a dummy item so we can get a list of files
     item = Item.create(item_name)
@@ -216,8 +219,7 @@ def LoadWelcome():
     Load a welcome page as initial home from distribution source.
     """
     logging.info("Load welcome page started")
-    help_path = os.path.dirname(moin_help.__file__)
-    path_to_items = os.path.normpath(os.path.join(help_path, 'welcome'))
+    path_to_items = _get_path_to_help('welcome')
     for name in ['Home', 'users-Home']:
         if app.storage.has_item(name):
             logging.warning('Item with name %s exists and will not be overwritten.', name)
