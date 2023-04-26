@@ -85,7 +85,7 @@ setup_args = dict(
         'Jinja2<3.1.0',  # template engine
         'markupsafe<=2.2.0',  # safe html and xml
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug>=2.2.3',  # wsgi toolkit
+        'Werkzeug<2.3.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer3',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
