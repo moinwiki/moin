@@ -215,7 +215,7 @@ msgstr "Der Account für %(username)s wurde erstellt."
 #, python-format
 msgid "%(username)s has been sent a password recovery email."
 msgstr "Eine E-Mail zur Wiederherstellung des Passwortes wurde an" 
-"%(username)s gesendet."
+" %(username)s gesendet."
 
 #: src/moin/apps/admin/views.py:133
 #, python-format
