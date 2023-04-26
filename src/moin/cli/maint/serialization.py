@@ -52,12 +52,12 @@ def open_file(filename, mode):
               help='Filename of the output file.')
 @click.option('--backends', '-b', type=str, required=False,
               help='Backend names to serialize (comma separated).')
-@click.option('--all-backends', '-a', default=False,
+@click.option('--all-backends', '-a', is_flag=True,
               help='Serialize all configured backends.')
 def Serialize(file=None, backends=None, all_backends=False):
     logging.info("Backup started")
     if file is None:
-        f = sys.stdout
+        f = sys.stdout.buffer
     else:
         f = open(file, "wb")
     with f as f:
