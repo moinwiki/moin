@@ -1,5 +1,6 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
 # Copyright: 2010 MoinMoin:MicheleOrru
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -9,6 +10,7 @@
 import tempfile
 import os.path
 import shutil
+import re
 
 import pytest
 from flask import current_app as app
@@ -45,17 +47,17 @@ class TestInterWiki:
                  # FIXME if you set interwiki_map = dict(Self='http://localhost:8080', MoinMoin='http://moinmo.in/', ),
                  # the above line make it fails, it returns http://localhost/+modify/SomePage
                  # (('SomePage', '', '', CURRENT, 'frontend.modify_item', True), 'http://localhost:8080/+modify/SomePage'),
-                 (('SomeRevID', '', 'revid', '', revid, 'frontend.show_item', False), '/+show/+{0}/%40revid/SomeRevID'.format(revid)),
+                 (('SomeRevID', '', 'revid', '', revid, 'frontend.show_item', False), '/+show/+{0}/@revid/SomeRevID'.format(revid)),
                  (('SomePage', '', '', '', revid, 'frontend.show_item_meta', False), '/+meta/+{0}/SomePage'.format(revid)),
                  # Valid namespaces
                  (('SomePage', '', '', 'ns1', CURRENT, 'frontend.show_item', False), '/ns1/SomePage'),
-                 (('SomeTag', '', 'tags', 'ns1', CURRENT, 'frontend.show_item', False), '/ns1/%40tags/SomeTag'),
+                 (('SomeTag', '', 'tags', 'ns1', CURRENT, 'frontend.show_item', False), '/ns1/@tags/SomeTag'),
                  (('SomePage', '', '', 'ns1/ns2', CURRENT, 'frontend.show_item', True), 'http://localhost:8080/ns1/ns2/SomePage'),
                  (('SomePage', '', '', 'ns1', CURRENT, 'frontend.modify_item', False), '/+modify/ns1/SomePage'),
                  (('SomePage', '', '', 'ns1/ns2', CURRENT, 'frontend.show_item_meta', True), 'http://localhost:8080/+meta/ns1/ns2/SomePage'),
                  (('SomePage', '', '', 'ns1', revid, 'frontend.show_item', False), '/+show/+{0}/ns1/SomePage'.format(revid)),
                  (('SomePage', '', '', 'ns1/ns2', revid, 'frontend.show_item_meta', False), '/+meta/+{0}/ns1/ns2/SomePage'.format(revid)),
-                 (('SomeRevID', '', 'revid', 'ns1/ns2', CURRENT, 'frontend.show_item_meta', False), '/+meta/ns1/ns2/%40revid/SomeRevID'),
+                 (('SomeRevID', '', 'revid', 'ns1/ns2', CURRENT, 'frontend.show_item_meta', False), '/+meta/ns1/ns2/@revid/SomeRevID'),
 
                  (('SomePage', 'MoinMoin', '', 'ns1', CURRENT, 'frontend.show_item', False), 'http://moinmo.in/ns1/SomePage'),
                  (('SomePage', 'MoinMoin', '', '', CURRENT, 'frontend.show_item', False), 'http://moinmo.in/SomePage'),
@@ -67,7 +69,8 @@ class TestInterWiki:
                  ]
 
         for (item_name, wiki_name, field, namespace, rev, endpoint, _external), url in tests:
-            assert url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external) == url
+            # Workaround: substitute %40 with @ to allow both Werkzeug versions 2.2. and 2.3 TODO: remove later
+            assert re.sub('%40', '@', url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external)) == url
 
     def test__split_namespace(self):
         map = set()
