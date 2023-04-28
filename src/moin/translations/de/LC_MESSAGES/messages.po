@@ -204,7 +204,7 @@ msgstr "Neuen Benutzer anlegen"
 
 #: src/moin/apps/admin/views.py:114
 msgid "User already exists"
-msgstr "Benutzer existiert bereits.
+msgstr "Benutzer existiert bereits"
 
 #: src/moin/apps/admin/views.py:122
 #, python-format
@@ -240,7 +240,7 @@ msgstr "{0} \"{1}\" Status geändert zu \"{2}\""
 
 #: src/moin/apps/admin/views.py:203
 msgid "modifying {0}.{1} failed"
-msgstr "Ändern von {0}.{1} schlug fehl.""
+msgstr "Ändern von {0}.{1} schlug fehl."
 
 #: src/moin/apps/admin/views.py:221
 msgid "{0} has been sent a password recovery email."
@@ -3104,7 +3104,7 @@ msgid ""
 "'Cancel' to yield more time, clicking 'Save' may require %(user_name)s to"
 " resolve conflicting edits."
 msgstr ""
-"Die Sperre für %(user_name)s ist vor %(number)s %(interval) abgelaufen, klicken "
+"Die Sperre für %(user_name)s ist vor %(number)s %(interval)s abgelaufen, klicken "
 "Sie auf 'Abbrechen', um mehr Zeit zu erhalten. Wenn Sie auf 'Speichern' klicken, "
 "muss %(user_name)s Konflikte zwischen den Bearbeitungen beheben."
 
