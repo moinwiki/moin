@@ -265,8 +265,8 @@ class Edit_Utils:
                 if wait_time < 0.0:
                     # some other user's lock has timed out, give one-time alert user about potential future conflict,
                     msg = L_(
-                        """Edit lock for %(user_name)s timed out %(number)s %(interval)s ago, click Cancel
-                        to yield more time, clicking Save may require %(user_name)s to resolve conflicting edits.""",
+                        "Edit lock for %(user_name)s timed out %(number)s %(interval)s ago, click 'Cancel' "
+                        "to yield more time, clicking 'Save' may require %(user_name)s to resolve conflicting edits.",
                         user_name=u_name, number=number, interval=interval)
                     self.update_editlock()
                     self.put_draft(None)
@@ -285,9 +285,9 @@ class Edit_Utils:
                     u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                     if self.rev_number > rev_number:
                         # current user timed out, then other user updated and saved
-                        msg = L_("""Someone else updated '%(item_name)s' after your edit lock timed out.
-                                 If you click 'Save', conflicting changes must be manually merged.
-                                 Click 'Cancel' to discard changes.""",
+                        msg = L_("Someone else updated '%(item_name)s' after your edit lock timed out. "
+                                 "If you click 'Save', conflicting changes must be manually merged. "
+                                 "Click 'Cancel' to discard changes.",
                                  item_name=self.item_name)
                     self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                       VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
