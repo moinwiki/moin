@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: moin 2.0.0.dev1395+gbbd6ce2e.d20230425\n"
+"Project-Id-Version: moin 2.0.0.dev1410+gbe32f558.d20230430\n"
 "Report-Msgid-Bugs-To: English <moin-user@python.org>\n"
-"POT-Creation-Date: 2023-04-25 16:06+0100\n"
+"POT-Creation-Date: 2023-04-30 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1316,7 +1316,7 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: src/moin/config/default.py:396
+#: src/moin/config/default.py:396 src/moin/templates/dictionary.js:16
 msgid "Hide comments"
 msgstr ""
 
@@ -1324,7 +1324,7 @@ msgstr ""
 msgid "Transclusions"
 msgstr ""
 
-#: src/moin/config/default.py:397
+#: src/moin/config/default.py:397 src/moin/templates/dictionary.js:19
 msgid "Show transclusions"
 msgstr ""
 
@@ -1473,7 +1473,8 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: src/moin/items/__init__.py:345 src/moin/templates/index.html:306
+#: src/moin/items/__init__.py:345 src/moin/templates/dictionary.js:15
+#: src/moin/templates/index.html:306
 #: src/moin/themes/basic/templates/modify.html:91
 msgid "Cancel"
 msgstr ""
@@ -1937,11 +1938,11 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/moin/storage/middleware/indexing.py:1215
+#: src/moin/storage/middleware/indexing.py:1212
 msgid "Error: metadata validation failed, invalid field value(s) = {0}"
 msgstr ""
 
-#: src/moin/storage/middleware/indexing.py:1232
+#: src/moin/storage/middleware/indexing.py:1229
 msgid "Error: nothing changed. Data unicode validation failed."
 msgstr ""
 
@@ -2171,6 +2172,117 @@ msgstr ""
 msgid "Content of item to be destroyed:"
 msgstr ""
 
+#: src/moin/templates/dictionary.js:17
+msgid "Show comments"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:18
+msgid "Hide transclusions"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:20
+msgid "Hide tags"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:21 src/moin/templates/tickets.html:20
+msgid "Show all tags"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:22 src/moin/templates/index.html:112
+msgid "Select All"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:23
+msgid "Deselect All"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:24
+msgid "Your changes will be discarded if you leave this page without saving."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:25
+msgid ""
+"You missed! Double-click on text or to the right of text to auto-scroll "
+"text editor."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:26
+msgid "Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:27
+msgid "Your browser is old. Upgrade to gain auto-scroll page after edit feature."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:28
+msgid "Deleting"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:29
+msgid "Deleting.."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:30
+msgid "Destroying"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:31
+msgid "Destroying.."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:32
+msgid "Items deleted: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:33
+msgid "Items destroyed: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:34
+msgid ", Not authorized, items not deleted: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:35
+msgid ", Not authorized, items not destroyed: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:36
+msgid "Nothing was selected."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:37
+msgid "All changes will be discarded!"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:38 src/moin/templates/modify_text.html:20
+#: src/moin/themes/basic/templates/modify_text.html:4
+msgid "Toggle font width"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:39
+msgid "Download failed, no items were selected."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:40
+msgid "Your saved draft has been loaded."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:41
+msgid "Your edit lock will expire in 1 minute: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:42
+msgid "Add optional comment for Delete change log. "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:43
+msgid "Add optional comment for Destroy change log. "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:44
+msgid "Action complete."
+msgstr ""
+
 #: src/moin/templates/diff.html:10
 #, python-format
 msgid "Diff for '%(item_name)s'"
@@ -2283,10 +2395,6 @@ msgstr ""
 
 #: src/moin/templates/index.html:110
 msgid "Toggle item selections"
-msgstr ""
-
-#: src/moin/templates/index.html:112
-msgid "Select All"
 msgstr ""
 
 #: src/moin/templates/index.html:114
@@ -2533,11 +2641,6 @@ msgstr ""
 msgid "Available template items"
 msgstr ""
 
-#: src/moin/templates/modify_text.html:20
-#: src/moin/themes/basic/templates/modify_text.html:4
-msgid "Toggle font width"
-msgstr ""
-
 #: src/moin/templates/mychanges.html:19
 msgid "Diff"
 msgstr ""
@@ -2659,10 +2762,6 @@ msgstr ""
 #: src/moin/templates/tickets.html:16
 #, python-format
 msgid "Show %(status)s tickets"
-msgstr ""
-
-#: src/moin/templates/tickets.html:20
-msgid "Show all tags"
 msgstr ""
 
 #: src/moin/templates/ticket/advanced.html:6
