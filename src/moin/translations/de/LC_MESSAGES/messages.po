@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MoinMoin 2.0\n"
 "Report-Msgid-Bugs-To: German <moin-user@python.org>\n"
-"POT-Creation-Date: 2023-04-25 16:06+0100\n"
+"POT-Creation-Date: 2023-04-30 09:43+0100\n"
 "PO-Revision-Date: 2018-09-15 23:37+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -862,8 +862,8 @@ msgid ""
 "Can't remove the subscription! You are subscribed to this page, but not "
 "by itemid."
 msgstr ""
-"Das Abonnement kann nicht aufgehoben werden! Sie haben diese "
-"Seite abonniert, aber nicht über die Itemid."
+"Das Abonnement kann nicht aufgehoben werden! Sie haben diese Seite "
+"abonniert, aber nicht über die Itemid."
 
 #: src/moin/apps/frontend/views.py:1820
 msgid "Please edit the subscription in your settings."
@@ -1358,7 +1358,7 @@ msgstr "Dieses Item vollständig zerstören"
 msgid "Comments"
 msgstr "Kommentare"
 
-#: src/moin/config/default.py:396
+#: src/moin/config/default.py:396 src/moin/templates/dictionary.js:16
 msgid "Hide comments"
 msgstr "Kommentare verstecken"
 
@@ -1366,7 +1366,7 @@ msgstr "Kommentare verstecken"
 msgid "Transclusions"
 msgstr "Transklusionen"
 
-#: src/moin/config/default.py:397
+#: src/moin/config/default.py:397 src/moin/templates/dictionary.js:19
 msgid "Show transclusions"
 msgstr "Transklusionen anzeigen"
 
@@ -1517,7 +1517,8 @@ msgstr ""
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/moin/items/__init__.py:345 src/moin/templates/index.html:306
+#: src/moin/items/__init__.py:345 src/moin/templates/dictionary.js:15
+#: src/moin/templates/index.html:306
 #: src/moin/themes/basic/templates/modify.html:91
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -1985,11 +1986,11 @@ msgstr "Such-Anfrage ist zu kurz."
 msgid "Search"
 msgstr "Suche"
 
-#: src/moin/storage/middleware/indexing.py:1215
+#: src/moin/storage/middleware/indexing.py:1212
 msgid "Error: metadata validation failed, invalid field value(s) = {0}"
 msgstr ""
 
-#: src/moin/storage/middleware/indexing.py:1232
+#: src/moin/storage/middleware/indexing.py:1229
 msgid "Error: nothing changed. Data unicode validation failed."
 msgstr ""
 
@@ -2219,6 +2220,117 @@ msgstr ""
 msgid "Content of item to be destroyed:"
 msgstr ""
 
+#: src/moin/templates/dictionary.js:17
+msgid "Show comments"
+msgstr "Kommentare anzeigen"
+
+#: src/moin/templates/dictionary.js:18
+msgid "Hide transclusions"
+msgstr "Transklusionen verstecken"
+
+#: src/moin/templates/dictionary.js:20
+msgid "Hide tags"
+msgstr "Schlagworte verstecken"
+
+#: src/moin/templates/dictionary.js:21 src/moin/templates/tickets.html:20
+msgid "Show all tags"
+msgstr "Alle Schlagworte anzeigen"
+
+#: src/moin/templates/dictionary.js:22 src/moin/templates/index.html:112
+msgid "Select All"
+msgstr "Alle selektieren"
+
+#: src/moin/templates/dictionary.js:23
+msgid "Deselect All"
+msgstr "Auswahl aufheben"
+
+#: src/moin/templates/dictionary.js:24
+msgid "Your changes will be discarded if you leave this page without saving."
+msgstr "Ihre Änderungen werden verworfen, wenn Sie die Seite ohne Speichern verlassen."
+
+#: src/moin/templates/dictionary.js:25
+msgid ""
+"You missed! Double-click on text or to the right of text to auto-scroll "
+"text editor."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:26
+msgid "Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:27
+msgid "Your browser is old. Upgrade to gain auto-scroll page after edit feature."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:28
+msgid "Deleting"
+msgstr "Löschen"
+
+#: src/moin/templates/dictionary.js:29
+msgid "Deleting.."
+msgstr "Löschen..."
+
+#: src/moin/templates/dictionary.js:30
+msgid "Destroying"
+msgstr "Vernichten"
+
+#: src/moin/templates/dictionary.js:31
+msgid "Destroying.."
+msgstr "Vernichten..."
+
+#: src/moin/templates/dictionary.js:32
+msgid "Items deleted: "
+msgstr "Diese Items wurden gelöscht: "
+
+#: src/moin/templates/dictionary.js:33
+msgid "Items destroyed: "
+msgstr "Diese Items wurden vernichtet: "
+
+#: src/moin/templates/dictionary.js:34
+msgid ", Not authorized, items not deleted: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:35
+msgid ", Not authorized, items not destroyed: "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:36
+msgid "Nothing was selected."
+msgstr "Nichts ausgewählt."
+
+#: src/moin/templates/dictionary.js:37
+msgid "All changes will be discarded!"
+msgstr "Alle Änderungen werden verworfen!"
+
+#: src/moin/templates/dictionary.js:38 src/moin/templates/modify_text.html:20
+#: src/moin/themes/basic/templates/modify_text.html:4
+msgid "Toggle font width"
+msgstr ""
+
+#: src/moin/templates/dictionary.js:39
+msgid "Download failed, no items were selected."
+msgstr "Download fehlgeschlagen, keine Items ausgewählt."
+
+#: src/moin/templates/dictionary.js:40
+msgid "Your saved draft has been loaded."
+msgstr ""
+
+#: src/moin/templates/dictionary.js:41
+msgid "Your edit lock will expire in 1 minute: "
+msgstr "Ihre Schreibsperre wird in 1 Minute ablaufen: "
+
+#: src/moin/templates/dictionary.js:42
+msgid "Add optional comment for Delete change log. "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:43
+msgid "Add optional comment for Destroy change log. "
+msgstr ""
+
+#: src/moin/templates/dictionary.js:44
+msgid "Action complete."
+msgstr "Aktion abgeschlossen."
+
 #: src/moin/templates/diff.html:10
 #, python-format
 msgid "Diff for '%(item_name)s'"
@@ -2332,10 +2444,6 @@ msgstr ""
 #: src/moin/templates/index.html:110
 msgid "Toggle item selections"
 msgstr ""
-
-#: src/moin/templates/index.html:112
-msgid "Select All"
-msgstr "Alle selektieren"
 
 #: src/moin/templates/index.html:114
 msgid "Download selected items"
@@ -2586,11 +2694,6 @@ msgstr ""
 msgid "Available template items"
 msgstr "Verfügbare Vorlagen"
 
-#: src/moin/templates/modify_text.html:20
-#: src/moin/themes/basic/templates/modify_text.html:4
-msgid "Toggle font width"
-msgstr ""
-
 #: src/moin/templates/mychanges.html:19
 msgid "Diff"
 msgstr "Diff"
@@ -2712,10 +2815,6 @@ msgstr "Filter:"
 #: src/moin/templates/tickets.html:16
 #, python-format
 msgid "Show %(status)s tickets"
-msgstr ""
-
-#: src/moin/templates/tickets.html:20
-msgid "Show all tags"
 msgstr ""
 
 #: src/moin/templates/ticket/advanced.html:6
@@ -3104,9 +3203,10 @@ msgid ""
 "'Cancel' to yield more time, clicking 'Save' may require %(user_name)s to"
 " resolve conflicting edits."
 msgstr ""
-"Die Sperre für %(user_name)s ist vor %(number)s %(interval)s abgelaufen, klicken "
-"Sie auf 'Abbrechen', um mehr Zeit zu erhalten. Wenn Sie auf 'Speichern' klicken, "
-"muss %(user_name)s Konflikte zwischen den Bearbeitungen beheben."
+"Die Sperre für %(user_name)s ist vor %(number)s %(interval)s abgelaufen, "
+"klicken Sie auf 'Abbrechen', um mehr Zeit zu erhalten. Wenn Sie auf "
+"'Speichern' klicken, muss %(user_name)s Konflikte zwischen den "
+"Bearbeitungen beheben."
 
 #: src/moin/utils/edit_locking.py:276
 #, python-format
@@ -3114,8 +3214,8 @@ msgid ""
 "Item '%(item_name)s' is locked by %(user_name)s. Try again in %(number)s "
 "%(interval)s."
 msgstr ""
-"Item '%(item_name)s' ist durch %(user_name)s gesperrt. Versuchen Sie es in "
-"%(number)s %(interval)s erneut."
+"Item '%(item_name)s' ist durch %(user_name)s gesperrt. Versuchen Sie es "
+"in %(number)s %(interval)s erneut."
 
 #: src/moin/utils/edit_locking.py:288
 #, python-format
@@ -3124,9 +3224,10 @@ msgid ""
 "you click 'Save', conflicting changes must be manually merged. Click "
 "'Cancel' to discard changes."
 msgstr ""
-"Jemand anderes hat '%(item_name)s' geändert nachdem Ihre Schreibsperre abgelaufen "
-"ist. Wenn Sie 'Speichern' klicken, müssen Bearbeitungskonflikte manuell behoben "
-"werden. Klicken Sie auf 'Abbrechen' um die Änderungen zu verwerfen."
+"Jemand anderes hat '%(item_name)s' geändert nachdem Ihre Schreibsperre "
+"abgelaufen ist. Wenn Sie 'Speichern' klicken, müssen "
+"Bearbeitungskonflikte manuell behoben werden. Klicken Sie auf 'Abbrechen'"
+" um die Änderungen zu verwerfen."
 
 #: src/moin/utils/edit_locking.py:322
 #, python-format
@@ -3134,9 +3235,9 @@ msgid ""
 "Item '%(item_name)s' is locked by %(user_name)s. Edit lock error, check "
 "Item History to verify no changes were lost."
 msgstr ""
-"Item '%(item_name)s' ist durch %(user_name)s gesperrt. Fehler der Schreibsperre, "
-"prüfen Sie die Historie um sicherzustellen, dass keine Änderungen verloren "
-"gegangen sind."
+"Item '%(item_name)s' ist durch %(user_name)s gesperrt. Fehler der "
+"Schreibsperre, prüfen Sie die Historie um sicherzustellen, dass keine "
+"Änderungen verloren gegangen sind."
 
 #: src/moin/utils/notifications.py:47
 #, python-format
@@ -3307,3 +3408,4 @@ msgstr "Monate"
 #: src/moin/utils/show_time.py:34
 msgid "years"
 msgstr "Jahre"
+

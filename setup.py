@@ -121,8 +121,8 @@ setup_args = dict(
     message_extractors={
         'src': [
             ('moin/templates/**.html', 'jinja2', None),
-            ('moin/templates/dictionary.js', 'javascript', None),  # all JS translatable strings must be
-                                                                   # defined here for jQuery i18n plugin
+            ('moin/templates/dictionary.js', 'jinja2', None),  # all JS translatable strings must be
+                                                               # defined here for jQuery i18n plugin
             ('moin/apps/**/templates/**.html', 'jinja2', None),
             ('moin/themes/**/templates/**.html', 'jinja2', None),
             ('moin/**/_tests/**', 'ignore', None),
