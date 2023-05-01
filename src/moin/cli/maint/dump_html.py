@@ -146,7 +146,7 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             q = Every()
 
         print('Starting to dump items')
-        for current_rev in app.storage.search(q, limit=None, sortedby="name"):
+        for current_rev in app.storage.search(q, limit=None, sortedby=("namespace", "name")):
             if current_rev.namespace in exclude_ns:
                 # we usually do not copy userprofiles, no one can login to a static wiki
                 continue
