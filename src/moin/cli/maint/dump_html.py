@@ -88,13 +88,14 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
         norm = os.path.normpath
         join = os.path.join
 
+        wiki_root = norm(app.cfg.wikiconfig_dir)
+        moinmoin = os.path.dirname(log.__file__)  # log is imported from moin -> this is src/moin
+        logging.debug("wiki_root dir: %s, moin src dir: %s", wiki_root, moinmoin)
         if '/' in directory:
             # user has specified complete path to root
             html_root = directory
         else:
-            html_root = norm(join(app.cfg.wikiconfig_dir, directory))
-        repo_root = norm(join(app.cfg.wikiconfig_dir))
-        moinmoin = norm(join(app.cfg.wikiconfig_dir, 'src', 'moin'))
+            html_root = norm(join(wiki_root, directory))
 
         # override ACLs with permission to read all items
         for _, acls in app.cfg.acl_mapping:
@@ -109,7 +110,7 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
 
         # create subdirectories and copy static css, icons, images into "static" subdirectory
         shutil.copytree(norm(join(moinmoin, 'static')), norm(join(html_root, 'static')))
-        shutil.copytree(norm(join(repo_root, 'wiki_local')), norm(join(html_root, '+serve/wiki_local')))
+        shutil.copytree(norm(join(wiki_root, 'wiki_local')), norm(join(html_root, '+serve/wiki_local')))
 
         # copy files from xstatic packaging into "+serve" subdirectory
         pkg = app.cfg.pkg
