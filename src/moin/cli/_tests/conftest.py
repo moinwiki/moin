@@ -51,7 +51,7 @@ def artifact_dir():
     logging.info(f'artifact_dir = {str(artifact_dir)}')
     yield artifact_dir
     os.chdir(cwd)
-    shutil.rmtree(artifact_dir)
+    shutil.rmtree(artifact_dir, ignore_errors=True)
 
 
 @pytest.fixture
@@ -63,7 +63,7 @@ def artifact_dir2():
     logging.info(f'artifact_dir = {str(artifact_dir)}')
     yield artifact_dir
     os.chdir(cwd)
-    shutil.rmtree(artifact_dir)
+    shutil.rmtree(artifact_dir, ignore_errors=True)
 
 
 @pytest.fixture(scope="package")
