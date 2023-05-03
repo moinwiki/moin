@@ -139,8 +139,7 @@ def PutItem(meta_file, data_file, overwrite):
 @click.option('--namespace', '-n', type=str, required=True,
               help='Namespace to be loaded: common, en, etc.')
 @click.option('--path_to_help', '--path', '-p', type=str,
-              help='Override default output directory'
-                   '(default works in source directory - ../../help/ relative to src/moin/cli/maint)')
+              help='Override source directory, default is src/moin/help')
 def cli_LoadHelp(namespace, path_to_help):
     return LoadHelp(namespace, path_to_help)
 
@@ -178,8 +177,7 @@ def LoadHelp(namespace, path_to_help):
 @click.option('--namespace', '-n', type=str, required=True,
               help='Namespace to be dumped: common, en, etc.')
 @click.option('--path_to_help', '--path', '-p', type=str,
-              help='Override default output directory'
-                   '(default works in source directory - ../../help/ relative to src/moin/cli/maint)')
+              help='Override output directory, default is src/moin/help')
 @click.option('--crlf/--no-crlf', help='use windows line endings in output files')
 def DumpHelp(namespace, path_to_help, crlf):
     """

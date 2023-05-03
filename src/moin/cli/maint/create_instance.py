@@ -18,7 +18,7 @@ If a wiki_local directory does not exist, it is created.
 
 Next: CD to new instance directory, run this command to initialize storage and index
 
-    moin index-create -s -i
+    moin index-create
 
 Optionally, populate the empty wiki with additional commands
 
@@ -86,8 +86,8 @@ def CreateInstance(full, **kwargs):
 
     if full:
         index.IndexCreate()
-        modify_item.LoadHelp(namespace='en', path_to_help='../../help/')
-        modify_item.LoadHelp(namespace='common', path_to_help='../../help/')
+        modify_item.LoadHelp(namespace='en', path_to_help=None)
+        modify_item.LoadHelp(namespace='common', path_to_help=None)
         modify_item.LoadWelcome()
         index.IndexOptimize(tmp=False)
         logging.info('Full instance setup finished.')
