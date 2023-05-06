@@ -29,6 +29,7 @@ Optionally, populate the empty wiki with additional commands
 
 import os
 import shutil
+import subprocess
 import click
 
 from flask.cli import FlaskGroup
@@ -85,10 +86,23 @@ def CreateInstance(full, **kwargs):
     logging.info('Instance creation finished.')
 
     if full:
-        index.IndexCreate()
-        modify_item.LoadHelp(namespace='en', path_to_help=None)
-        modify_item.LoadHelp(namespace='common', path_to_help=None)
-        modify_item.LoadWelcome()
-        index.IndexOptimize(tmp=False)
-        logging.info('Full instance setup finished.')
-        logging.info('You can now use "moin run" to start the builtin server.')
+        if path != os.getcwd():
+            os.chdir(path)
+        subprocess.call('moin build-instance', shell=True)
+
+
+@cli.command("build-instance", hidden=True)
+def cli_BuildInstance():
+    '''
+    Create and build index, load help data and welcome page.
+    This command is hidden in help. For internal use in "create-instance --full" only!
+    '''
+    logging.info('Build Instance started.')
+    logging.debug('CWD: %s', os.getcwd())
+    index.IndexCreate()
+    modify_item.LoadHelp(namespace='en', path_to_help=None)
+    modify_item.LoadHelp(namespace='common', path_to_help=None)
+    modify_item.LoadWelcome()
+    index.IndexOptimize(tmp=False)
+    logging.info('Full instance setup finished.')
+    logging.info('You can now use "moin run" to start the builtin server.')
