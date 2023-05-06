@@ -206,7 +206,7 @@ def init_backends(app, create_backend=False):
     if create_backend or getattr(app.cfg, 'create_backend', False):  # 2. call of init_backends
         app.storage.create()
         app.storage.open()
-    if info_name not in ['create-instance', 'index-create']:
+    if info_name not in ['create-instance', 'build-instance', 'index-create']:
         app.storage.open()
 
 
