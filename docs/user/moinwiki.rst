@@ -156,7 +156,7 @@ refer to a sibling of the current item.
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[/filename.txt]]``                     | `/filename.txt </filename.txt>`_            | Link to a sub-item called Filename.txt      |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
-| ``[[users/JoeDoe]]``                      | `users/JoeDoe`_                             | Link to a user's home item in user namespace|
+| ``[[users/JoeDoe]]``                      | `users/JoeDoe <users/JoeDoe>`_              | Link to a user's home item in user namespace|
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
 | ``[[AltItem||class="redirect"]]``         | `AltItem is displayed immediately`          | Type /+modify/<item> in address bar to edit |
 +-------------------------------------------+---------------------------------------------+---------------------------------------------+
