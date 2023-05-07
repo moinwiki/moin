@@ -54,12 +54,12 @@ Using the built-in server for production
 ----------------------------------------
 
 .. caution:: Using the built-in server for public wikis is not recommended. Should you
- wish to do so, turn off the werkzeug debugger and auto reloader by passing the --debugger
- and --reload flags. The wikiconfig.py settings of `DEBUG = False` and `TESTING = False` are
+ wish to do so, turn off the werkzeug debugger and auto reloader by passing the --no-debugger
+ and --no-reload flags. The wikiconfig.py settings of `DEBUG = False` and `TESTING = False` are
  ignored by the built-in server.
- See Werkzeug docs for more information.::
+ See Werkzeug docs for more information::
 
- moin run --host 0.0.0.0 --port 80 --debugger --reload
+  moin run --host 0.0.0.0 --port 80 --no-debugger --no-reload
 
 
 External Web Server (advanced)

@@ -13,16 +13,19 @@ we won't go into details:
   for updating the installed software with security fixes or to future releases.
 
   E.g. on Debian/Ubuntu Linux
+
 ::
 
  apt install moin2
 
 - Install from PyPI:
+
 ::
 
  pip install moin2
 
 - Install from Test Python Package Index as long as moin2 is not officially released:
+
 ::
 
   pip install --pre --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple moin

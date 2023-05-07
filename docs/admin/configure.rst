@@ -1217,7 +1217,7 @@ Call it as follows::
                               hierarchiv=False, ),
     )
 
-The *_acl variables are dictionaries specifying the ACLs for
+The `*_acl` variables are dictionaries specifying the ACLs for
 each namespace. See the docs about ACLs.
 
 The `uri` depends on the kind of storage backend and stores you want to use,
