@@ -33,6 +33,13 @@ Please note that this file contains sensitive data like user profiles, wiki
 contents, so store your backups in a safe place that no unauthorized
 individual can access.
 
+Backups require valid metadata to produce files which can be loaded
+in particular, the size attribute must be correct for each revision.
+if bad metadata is found during the backup,
+there will be a warning logged and it is recommended
+to run ``moin validate-metadata -a -f``
+see :ref:`validate-metadata`
+
 Selective Restore
 =================
 

@@ -97,6 +97,7 @@ If you invoke :program:`moin` without any arguments, it will show a short quick 
       load-sample             Load wiki sample items
       maint-reduce-revisions  Remove all revisions but the last one from all...
       maint-set-meta          Set meta data of a new revision
+      maint-validate-metadata Find and optionally fix issues with item metadata
       routes                  Show the routes for the app.
       run                     Run a development server.
       save                    Serialize the backend into a file

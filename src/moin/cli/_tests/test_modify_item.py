@@ -94,12 +94,12 @@ def test_item_put(index_create2):
         page_filename = page.replace('/', '-')
         item_get_fail = run(['moin', 'item-get', '-n', page, '-m', f'{page_filename}.meta', '-d', f'{page_filename}.data'])
         assert item_get_fail.returncode != 0
-        moin_dir, _ = get_dirs('cli')
+        moin_dir, _ = get_dirs('')
         data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
         item_put = run(['moin', 'item-put', '-m', data_dir / f'{page_filename}.meta', '-d', data_dir / f'{page_filename}.data'])
-        assert item_put.returncode == 0
+        assert_p_succcess(item_put)
         item_get = run(['moin', 'item-get', '-n', page, '-m', f'{page_filename}.meta', '-d', f'{page_filename}.data'])
-        assert item_get.returncode == 0
+        assert_p_succcess(item_get)
     index_dump = run(['moin', 'index-dump', '--no-truncate'])
     index_dump_data = read_index_dump_latest_revs(index_dump.stdout.decode())
     my_items = [i for i in index_dump_data if 'МояСтраница' in i['name']]
@@ -150,3 +150,57 @@ def test_item_rev(index_create2):
         v1_1_meta = json.load(f)
     assert v1_1_meta['revid'] != v1_revid  # validate absence of -o option
     assert v1_1_meta['size'] == 16  # validate no newline at end in storage
+
+
+def test_validate_metadata(index_create2):
+    moin_dir, _ = get_dirs('')
+    data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v1.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
+    assert_p_succcess(item_put)
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data', '-o'])
+    assert_p_succcess(item_put)
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
+    assert_p_succcess(validate)
+    outlines = validate.stdout.splitlines()
+    assert 1 == len(outlines)
+    assert b'0 items with invalid metadata found' == outlines[0]
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'Corrupt.meta', '-d', data_dir / 'Corrupt.data', '-o'])
+    assert_p_succcess(item_put)
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'Corrupt2.meta', '-d', data_dir / 'Corrupt2.data', '-o'])
+    assert_p_succcess(item_put)
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'Corrupt3.meta', '-d', data_dir / 'Corrupt3.data', '-o'])
+    assert_p_succcess(item_put)
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
+    assert_p_succcess(validate)
+    outlines = validate.stdout.splitlines()
+    assert 4 == len(outlines)
+    rev_id1 = b'7ed018d7ceda49409e18b8efb914f5ff'  # Corrupt.meta
+    rev_id2 = b'0a2f1b476b6c42be80908b3b799df3fd'  # Corrupt2.meta
+    rev_id3 = b'39c8fe8da0a048c0b7839bf8aa02cd04'  # Corrupt3.meta
+    outlines_by_rev_id = {}
+    for outline in outlines:
+        words = iter(outline.split())
+        for word in words:
+            if word == b'rev_id:':
+                outlines_by_rev_id[next(words)] = outline
+                break
+    assert {rev_id1, rev_id2, rev_id3} == set(outlines_by_rev_id.keys())
+    assert b'size_error name: Home item: cbd6fc46f88740acbc1dca90bb1eb8f3 rev_number: 1 rev_id: 7ed018d7ceda49409e18b8efb914f5ff '\
+           b'meta_size: 8 real_size: 11' == outlines_by_rev_id[rev_id1]
+    assert b'sha1_error name: Page2 item: 9999989aca5e45cc8683432f986a0e50 rev_number: 1 rev_id: 0a2f1b476b6c42be80908b3b799df3fd '\
+           b'meta_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197a0000 '\
+           b'real_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197afbfe' == outlines_by_rev_id[rev_id2]
+    assert b'parentid_error name: Page3 item: 3c7e36466726441faf6d7d266ac224e2 rev_number: 2 rev_id: 39c8fe8da0a048c0b7839bf8aa02cd04 '\
+           b'meta_parentid: 002e5210cc884010b0dd75a1c337032d correct_parentid: None meta_revision_number: 2 correct_revision_number: 1' \
+           == outlines_by_rev_id[rev_id3]
+    assert b'3 items with invalid metadata found' == outlines[3]
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-f'])
+    assert_p_succcess(validate)
+    outlines = validate.stdout.splitlines()
+    assert 2 == len(outlines)
+    assert b'3 items with invalid metadata found and fixed' == outlines[0]
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
+    assert_p_succcess(validate)
+    outlines = validate.stdout.splitlines()
+    assert 1 == len(outlines)
+    assert b'0 items with invalid metadata found' == outlines[0]

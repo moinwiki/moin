@@ -7,9 +7,12 @@
 MoinMoin CLI - get an item revision from the wiki, put it back into the wiki.
 """
 
+from collections import defaultdict
+from dataclasses import dataclass
 import json
 import io
 import os
+from typing import Dict, List
 
 import click
 from flask import current_app as app
@@ -17,7 +20,9 @@ from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from moin.app import create_app, before_wiki
-from moin.constants.keys import CURRENT, ITEMID, REVID, DATAID, NAMESPACE, WIKINAME
+from moin.cli._util import get_backends
+from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
+from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, WIKINAME, REVID, PARENTID, REV_NUMBER, MTIME
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
@@ -205,6 +210,90 @@ def DumpHelp(namespace, path_to_help, crlf):
         print('Item dumped::', file_.relname)
         count += 1
     print('Success: help namespace {0} saved with {1} items'.format(namespace, count))
+
+
+@cli.command('maint-validate-metadata', help='Find and optionally fix issues with item metadata')
+@click.option('--backends', '-b', type=str, required=False,
+              help='Backend names to serialize (comma separated).')
+@click.option('--all-backends', '-a', is_flag=True,
+              help='Serialize all configured backends.')
+@click.option('--verbose/--no-verbose', '-v', default=False,
+              help='Display detailed list of invalid metadata.')
+@click.option('--fix/--no-fix', '-f', default=False,
+              help='Fix invalid data.')
+def cli_ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False):
+    ValidateMetadata(backends, all_backends, verbose, fix)
+
+
+def _fix_if_bad(bad, meta, data, bad_revids, fix, backend):
+    if bad:
+        bad_revids.add(meta[REVID])
+        if fix:
+            backend.store(meta, data)
+
+
+@dataclass
+class RevData:
+    """class for storing data used to correct rev_number and parentid"""
+    rev_id: str
+    rev_number: int
+    mtime: int
+    parent_id: str = None
+    is_bad: bool = False
+
+
+def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False):
+    backends = get_backends(backends, all_backends)
+    bad_revids = set()
+    for backend in backends:
+        revs: Dict[str, List[RevData]] = defaultdict(list)
+        for meta, data, issues in correcting_rev_iter(backend):
+            revs[meta[ITEMID]].append(RevData(meta[REVID], meta.get(REV_NUMBER, -1), meta.get(MTIME, -1),
+                                              meta.get(PARENTID)))
+            bad = len(issues) > 0
+            if verbose:
+                for issue in issues:
+                    print(issue)
+            _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
+        for item_id, rev_datum in revs.items():
+            rev_datum.sort(key=lambda r: (r.rev_number, r.mtime))
+            rev_number = 0
+            prev_rev_data = None
+            for rev_data in rev_datum:
+                rev_number += 1
+                if rev_data.rev_number != rev_number:
+                    rev_data.rev_number = rev_number
+                    rev_data.is_bad = True
+                if prev_rev_data is None:
+                    if rev_data.parent_id:
+                        rev_data.is_bad = True
+                        rev_data.parent_id = None
+                elif rev_data.parent_id != prev_rev_data.rev_id:
+                    rev_data.parent_id = prev_rev_data.rev_id
+                    rev_data.is_bad = True
+                prev_rev_data = rev_data
+            for rev_data in [r for r in rev_datum if r.is_bad]:
+                bad = True
+                meta, data = backend.retrieve(rev_data.rev_id)
+                rev_str = get_rev_str(meta)
+                if verbose:
+                    print(f'parentid_error {rev_str} meta_parentid: {meta.get(PARENTID)} '
+                          f'correct_parentid: {rev_data.parent_id} meta_revision_number: {meta.get(REV_NUMBER)} '
+                          f'correct_revision_number: {rev_data.rev_number}')
+                if rev_data.parent_id:
+                    meta[PARENTID] = rev_data.parent_id
+                else:
+                    try:
+                        del meta[PARENTID]
+                    except KeyError:
+                        pass
+                meta[REV_NUMBER] = rev_data.rev_number
+                _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
+    print(f'{len(bad_revids)} items with invalid metadata found{" and fixed" if fix else ""}')
+    if fix and len(bad_revids):
+        print('item metadata has been updated, you will need to run moin index-destroy; moin index-create; moin '
+              'index-build to update the index')
+    return bad_revids
 
 
 @cli.command('welcome', help='Load initial welcome page into an empty wiki')

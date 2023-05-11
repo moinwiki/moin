@@ -20,8 +20,13 @@ import json
 
 from werkzeug.wsgi import LimitedStream
 
-from moin.constants.keys import NAME, ITEMTYPE, SIZE, NAMESPACE
+from moin.constants.keys import NAME, ITEMTYPE, SIZE, NAMESPACE, REVID, ITEMID, REV_NUMBER, HASH_ALGORITHM
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.storage.backends.stores import Backend
+from moin.storage.backends._util import TrackingFileWrapper
+
+from moin import log
+logging = log.getLogger(__name__)
 
 
 def serialize(backend, dst):
@@ -44,18 +49,58 @@ def serialize_rev(meta, data):
             yield block
 
 
-def serialize_iter(backend):
+def get_rev_str(meta):
+    """return string representing a revision for use in logging"""
+    ns = meta.get(NAMESPACE)
+    name = None
+    names = meta.get(NAME)
+    if names:
+        name = names[0]
+    return f'name: {ns + "/" if ns else ""}{name} item: {meta.get(ITEMID)} rev_number: {meta.get(REV_NUMBER)} ' \
+           f'rev_id: {meta.get(REVID)}'
+
+
+def correcting_rev_iter(backend: Backend):
+    """iterate over the revisions in a store yielding corrected metadata
+    yields tuples of meta, data, issues
+        meta: dict of metadata with corrected size and sha1
+        data: the item data
+        issues: list of str messages describing issues which were corrected"""
     for revid in backend:
+        issues = []
         if isinstance(revid, tuple):
             # router middleware gives tuples and wants both values for retrieve:
             meta, data = backend.retrieve(*revid)
         else:
             # lower level backends have simple revids
             meta, data = backend.retrieve(revid)
-        for data in serialize_rev(meta, data):
-            yield data
+        tfw = TrackingFileWrapper(data)
+        while tfw.read(64 * 1024):
+            pass
+        if tfw.size != meta[SIZE]:
+            issues.append(f'{SIZE}_error {get_rev_str(meta)} meta_size: {meta[SIZE]} real_size: {tfw.size}')
+            meta[SIZE] = tfw.size
+        if (real_hash := tfw.hash.hexdigest()) != meta[HASH_ALGORITHM]:
+            issues.append(f'{HASH_ALGORITHM}_error {get_rev_str(meta)} meta_{HASH_ALGORITHM}: {meta[HASH_ALGORITHM]} '
+                          f'real_{HASH_ALGORITHM}: {real_hash}')
+            meta[HASH_ALGORITHM] = real_hash
+        data.seek(0)
+        yield meta, data, issues
+
+
+def serialize_iter(backend):
+    issues_found = False
+    for meta, data, issues in correcting_rev_iter(backend):
+        if issues:
+            issues_found = True
+            for issue in issues:
+                logging.info(issue)
+        for serialize_data in serialize_rev(meta, data):
+            yield serialize_data
     for data in serialize_rev(None, None):
         yield data
+    if issues_found:
+        logging.warning('metadata issues exist! maint-validate-metadata followed by index rebuild is recommended')
 
 
 def deserialize(src, backend, new_ns=None, old_ns=None, kill_ns=None):

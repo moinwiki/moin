@@ -8,8 +8,6 @@ MoinMoin - moin.cli.maint.serialization tests
 import json
 import os
 from pathlib import Path
-import pytest
-import sys
 
 from moin._tests import get_dirs
 from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs, getBackupPath
@@ -38,7 +36,6 @@ def load(restore_dir, backup_name, artifact_dir, args=None):
         os.chdir(artifact_dir)  # insure we return to archive_dir for other tests
 
 
-@pytest.mark.xfail(sys.platform == "win32", reason='#1402 svg file line ending causes bad size metadata')
 def test_load_all(artifact_dir, save_all):
     restore_dir = Path(artifact_dir / 'restore_all')
     load(restore_dir, 'backup.moin', artifact_dir)
@@ -104,7 +101,6 @@ def test_load_new_ns(artifact_dir, save_default):
         os.chdir(artifact_dir)  # insure we return to archive_dir for other tests
 
 
-@pytest.mark.xfail(reason='#1402 backups are unusable if metadata is corrupted')
 def test_load_corrupt(artifact_dir2, index_create2):
     moin_dir, _ = get_dirs('cli')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
