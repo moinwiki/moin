@@ -113,10 +113,11 @@ def _is_eval_safe(s: str) -> bool:
     return True
 
 
-def read_index_dump_latest_revs(out: str):
-    """parse output of moin dump-index yielding the items in latest revs
+def read_index_dump(out: str, latest=False):
+    """parse output of moin dump-index yielding the items
 
     :param out: stdout of `moin index-dump --no-truncate` command
+    :param latest: if True yield only the latest revs
     :return: list of dicts with key value pairs from output"""
     if not isinstance(out, str):
         raise ValueError('read_index_dump_latest_revs expects str, did you forget to .decode()')
@@ -126,7 +127,7 @@ def read_index_dump_latest_revs(out: str):
             if item:
                 yield item
                 item = {}
-            if 'all_revs' in line:
+            if latest and 'all_revs' in line:
                 break
             continue
         space_index = line.index(' ')
@@ -135,6 +136,11 @@ def read_index_dump_latest_revs(out: str):
             warn(f'invalid line in stdout of moin index-dump: {repr(line.strip())}')
             continue
         item[line[0:space_index]] = eval(v_str)
+
+
+def read_index_dump_latest_revs(out: str):
+    """parse output of moin dump-index yielding the items in latest revs see :py:func:`read_index_dump`"""
+    yield from read_index_dump(out, True)
 
 
 def getBackupPath(backup_name):
