@@ -1233,7 +1233,8 @@ class Item(PropertiesMixin):
         backend = self.backend
         if not overwrite:
             revid = meta.get(REVID)
-            if revid is not None and revid in backend:
+            backend_name = dict(app.cfg.namespace_mapping)[meta.get(NAMESPACE, '')]
+            if revid is not None and (revid in backend or (backend_name, revid) in backend):
                 raise ValueError('need overwrite=True to overwrite existing revisions')
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file

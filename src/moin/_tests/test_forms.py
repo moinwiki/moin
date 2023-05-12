@@ -57,7 +57,7 @@ def test_validjson():
 
     Does not apply to usersettings form.
     """
-    app.cfg.namespace_mapping = [('', 'default_backend'), ('ns1/', 'default_backend'), ('users/', 'other_backend')]
+    app.cfg.namespace_mapping = [('', 'default_backend'), ('ns1', 'default_backend'), ('users', 'other_backend')]
     item = Item.create('users/existingname')
     meta = {NAMESPACE: 'users', CONTENTTYPE: 'text/plain;charset=utf-8'}
     become_trusted()

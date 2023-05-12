@@ -18,12 +18,13 @@ from ast import literal_eval
 import sys
 import click
 from flask import current_app as app
+from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Every
 
 from moin.app import create_app
-from moin.constants.keys import NAME, NAME_EXACT
+from moin.constants.keys import NAME, NAME_EXACT, REVID, REV_NUMBER, PARENTID
 
 from moin import log
 
@@ -45,6 +46,7 @@ def cli():
               help='Only perform the operation on items found by the given query.')
 def SetMeta(key, value, remove, query):
     logging.info("Set meta started")
+    flaskg.add_lineno_attr = False
     if not ((key and value) or (key and remove)) or (key and value and remove):
         sys.exit("You need to either specify a proper key/value pair or "
                  "only a key you want to delete (with -r set).")
@@ -70,5 +72,8 @@ def SetMeta(key, value, remove, query):
         else:
             newmeta[key] = value
             print("Processing {0!r}, setting {1}={2!r}.".format(name, key, value))
+        del newmeta[REVID]
+        newmeta[REV_NUMBER] += 1
+        newmeta[PARENTID] = current_rev.meta[REVID]
         current_rev.item.store_revision(newmeta, current_rev.data)
     logging.info("Set meta finished")
