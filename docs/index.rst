@@ -44,6 +44,7 @@ Administrating MoinMoin
    admin/backup
    admin/index
    admin/password-reset
+   admin/maintenance
    man/moin
 
 Getting Support for and Contributing to MoinMoin

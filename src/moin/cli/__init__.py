@@ -91,5 +91,6 @@ cli.add_command(modify_item.cli_PutItem)
 cli.add_command(modify_item.cli_LoadHelp)
 cli.add_command(modify_item.DumpHelp)
 cli.add_command(modify_item.cli_LoadWelcome)
+cli.add_command(modify_item.cli_ValidateMetadata)
 
 cli.add_command(import19.ImportMoin19)
