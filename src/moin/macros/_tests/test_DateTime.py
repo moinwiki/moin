@@ -25,8 +25,9 @@ def test_Macro():
     result = macro_obj.macro('content', None, 'page_url', 'alternative')
     # get the current time
     test_time = time.time()
-    test_time = format_date_time(datetime.utcfromtimestamp(test_time))
-    assert test_time == result
+    test_times = [test_time, test_time - 1]  # in case our call to time.time happened just after the second rolled over
+    test_times = [format_date_time(datetime.utcfromtimestamp(t)) for t in test_times]
+    assert result in test_times
 
     arguments = ['2023-08-07T11:11:11', 'argument2']
     result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
