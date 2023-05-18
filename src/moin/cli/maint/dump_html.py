@@ -41,6 +41,7 @@ import shutil
 import re
 
 import click
+from flask import g as flaskg
 from flask import current_app as app
 from flask.cli import FlaskGroup
 
@@ -52,13 +53,14 @@ from xstatic.main import XStatic
 
 from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
-from moin.constants.keys import CURRENT, NAME_EXACT, WIKINAME, THEME_NAME
+from moin.constants.keys import CURRENT, NAME_EXACT, WIKINAME, THEME_NAME, LATEST_REVS
 from moin.constants.contenttypes import CONTENTTYPE_MEDIA, CONTENTTYPE_MEDIA_SUFFIX
+from moin.items import Item
 
 from moin import log
 logging = log.getLogger(__name__)
 
-SLASH = '(2f)'
+PARENT_DIR = '../'
 
 
 @click.group(cls=FlaskGroup, create_app=create_app)
@@ -133,7 +135,6 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
         # convert: <img alt="svg" src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg" />
         # to:      <img alt="svg" src="+get/svg" />
         invalid_src = re.compile(r' src="/\+get/\+[0-9a-f]{32}/')
-        valid_src = ' src="+get/'
 
         # get ready to render and copy individual items
         names = []
@@ -147,6 +148,9 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             q = Every()
 
         print('Starting to dump items')
+        used_dirs = get_used_dirs(query=q)
+        # In the filesystem the item cannot have the same name as the directory.
+        # so we append .html to the filename for items in used_dirs.
         for current_rev in app.storage.search(q, limit=None, sortedby=("namespace", "name")):
             if current_rev.namespace in exclude_ns:
                 # we usually do not copy userprofiles, no one can login to a static wiki
@@ -158,10 +162,12 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             try:
                 item_name = current_rev.fqname.fullname
                 rendered = show_item(item_name, CURRENT)
-                # convert / characters in sub-items and namespaces and save names for index
-                file_name = item_name.replace('/', SLASH)
+                if item_name in used_dirs:
+                    file_name = item_name + '.html'
+                else:
+                    file_name = item_name
                 filename = norm(join(html_root, file_name))
-                names.append(file_name)
+                names.append(item_name)  # save item_names for index
             except Forbidden:
                 print('Failed to dump {0}: Forbidden'.format(current_rev.name))
                 continue
@@ -172,26 +178,33 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             if not isinstance(rendered, str):
                 print('Rendering failed for {0} with response {1}'.format(file_name, rendered))
                 continue
-            # make hrefs relative to current folder
-            rendered = rendered.replace('href="/', 'href="')
-            rendered = rendered.replace('src="/static/', 'src="static/')
+            # make hrefs relative to root folder
+            rel_path2root = PARENT_DIR * len(re.findall('/', item_name))
+            rendered = rendered.replace('href="/', 'href="' + rel_path2root)
+            rendered = rendered.replace('src="/static/', 'src="' + rel_path2root + 'static/')
             rendered = rendered.replace('src="/+serve/', 'src="+serve/')
             rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
             # TODO: fix basic theme
             rendered = rendered.replace('<a href="">', '<a href="{0}">'.format(app.cfg.default_root))
             # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
+            valid_src = ' src="{}+get/'.format(rel_path2root)
             rendered = re.sub(invalid_src, valid_src, rendered)
-            # TODO rendered = self.subitems(rendered)
-
+            # correct links inside document
+            for node in used_dirs:
+                node_href = 'href="{}{}"'.format(rel_path2root, node)
+                rendered = rendered.replace(node_href, node_href[:-1] + '.html"')
             # copy raw data for all items to output /+get directory;
             # images are required, text items are of marginal/no benefit
             item = app.storage[current_rev.fqname.fullname]
             rev = item[CURRENT]
-            with open(get_dir + '/' + file_name, 'wb') as f:
+            full_file_name = get_dir + '/' + file_name
+            os.makedirs(os.path.dirname(full_file_name), exist_ok=True)
+            with open(full_file_name, 'wb') as f:
                 shutil.copyfileobj(rev.data, f)
 
             # save rendered items or raw data to dump directory root
             contenttype = item.meta['contenttype'].split(';')[0]
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
             if contenttype in CONTENTTYPE_MEDIA and filename.endswith(CONTENTTYPE_MEDIA_SUFFIX):
                 # do not put a rendered html-formatted file with a name like video.mp4 into root;
                 # browsers want raw data
@@ -211,7 +224,7 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
                     except UnicodeEncodeError:
                         print('Saved file named {0}'.format(filename.encode('ascii', errors='replace')))
 
-            if current_rev.name == app.cfg.default_root:
+            if current_rev.fqname.fullname == app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click
                 for target in [(current_rev.name + '.html'), ('_' + current_rev.name + '.html')]:
                     with open(norm(join(html_root, target)), 'wb') as f:
@@ -236,7 +249,11 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             links = []
             names.sort()
             for name in names:
-                links.append(li.format(name, name.replace(SLASH, '/')))
+                if name in used_dirs:
+                    li_name = name + '.html'
+                else:
+                    li_name = name
+                links.append(li.format(li_name, name))
             name_links = ul.format('\n'.join(links))
             try:
                 part1 = home_page.split(start)[0]
@@ -254,26 +271,21 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
         logging.info("Dump html complete")
 
 
-def subitems(s, target='href="'):
+def get_used_dirs(query):
     """
-    fix links to subitems
-      * <a href="Home/subitem"> becomes <a href="Home(2f)subitem">
-      * do not change href="https://moinmo.in/FrontPage"
-      * do not change href="+serve/font_awesome/css/font-awesome.css"
-      * do not change href="_themes/topside_cms/css/theme.css"
+    get a list of item_names which have subitems (nodes in a tree)
     """
-    len_target = len(target)
-    idx = s.find(target)
-    while idx > 0:
-        idx2 = s.find('"', idx + 6)
-        assert idx2 > idx
-        sub = s[idx + len_target:idx2]
-        if sub and ('://' in sub or sub[0] in '+_#' or sub.startswith('static')):
-            idx = s.find(target, idx2)
-            continue
-        start = s[:idx + len_target]
-        end = s[idx2:]
-        sub = sub.replace('/', SLASH)
-        s = start + sub + end
-        idx = s.find(target, idx2)
-    return s
+    item = Item.create()  # gives toplevel index
+    # revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
+    revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
+    dirs, files = item.make_flat_index(revs, True)
+    # get intersection of dirs and files: items that have subitems
+    used_dir_fullnames = {x.fullname for x in dirs} & {x.fullname for x in files}
+    used_dirs = set()
+    for file_ in used_dir_fullnames:
+        if file_.namespace:
+            used_dirs.add('/'.join((file_.namespace, file_.value)))
+        else:
+            used_dirs.add(file_.value)
+    logging.debug('used_dirs: %s', str(used_dirs))
+    return used_dirs
