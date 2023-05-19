@@ -276,7 +276,6 @@ def get_used_dirs(query):
     get a list of item_names which have subitems (nodes in a tree)
     """
     item = Item.create()  # gives toplevel index
-    # revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
     dirs, files = item.make_flat_index(revs, True)
     # get intersection of dirs and files: items that have subitems
