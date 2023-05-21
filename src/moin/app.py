@@ -295,12 +295,9 @@ def before_wiki():
             flaskg.add_lineno_attr = False
         else:
             setup_jinja_env()
-            flaskg.add_lineno_attr = request.user_agent and flaskg.user.edit_on_doubleclick
-
+            flaskg.add_lineno_attr = request.headers.get('User-Agent', None) and flaskg.user.edit_on_doubleclick
     finally:
         flaskg.clock.stop('init')
-
-    # if return value is not None, it is the final response
 
 
 def teardown_wiki(response):
