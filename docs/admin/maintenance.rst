@@ -35,7 +35,6 @@ The processes below check for and optionally fix the following issues:
 
 * size does not match size of the revision's data in bytes
 * sha1 hash does not match has of the revision's data
-* revision numbers for an item's revision should make an unbroken sequence starting at 1
 * parent id should not be present for revision number 1 of a given item
 * parent id for each revision should be the data id for the previous revision number for that item
 

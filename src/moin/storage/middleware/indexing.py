@@ -1264,6 +1264,17 @@ class Item(PropertiesMixin):
             refcount = len(list(searcher.document_numbers(**query)))
         self.backend.remove(rev.backend_name, revid, destroy_data=refcount == 1)
         self.indexer.remove_revision(revid)
+        my_parent = rev.meta.get(PARENTID)
+        with flaskg.storage.indexer.ix[ALL_REVS].searcher() as searcher:
+            for hit in searcher.search(Term(PARENTID, revid)):
+                doc = hit.fields()
+                with Revision(self, doc[REVID], doc=doc) as child_rev:
+                    child_meta = dict(child_rev.meta)
+                    if my_parent:
+                        child_meta[PARENTID] = my_parent
+                    else:
+                        del child_meta[PARENTID]
+                    self.store_revision(child_meta, child_rev.data, overwrite=True)
 
     def destroy_all_revisions(self):
         """

@@ -9,6 +9,9 @@ from typing import Optional, Set
 
 from flask import current_app as app
 from moin.storage.backends.stores import Backend
+from moin import log
+
+logging = log.getLogger(__name__)
 
 
 def get_backends(backends: Optional[str], all_backends: bool) -> Set[Backend]:
@@ -27,4 +30,5 @@ def get_backends(backends: Optional[str], all_backends: bool) -> Set[Backend]:
             print("Given Backends: %r" % backends)
             print("Configured Backends: %r" % existing_backends)
     else:
+        logging.warning('no backends specified')
         return set()
