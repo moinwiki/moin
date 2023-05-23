@@ -8,7 +8,7 @@ MoinMoin CLI - get an item revision from the wiki, put it back into the wiki.
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 import io
 import os
@@ -23,7 +23,6 @@ from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
 from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, WIKINAME, REVID, PARENTID, REV_NUMBER, MTIME
-from moin.storage.error import NoSuchItemError
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
@@ -231,8 +230,11 @@ def _fix_if_bad(bad, meta, data, bad_revids, fix, backend):
         bad_revids.add(meta[REVID])
         if fix:
             try:
-                item = app.storage.existing_item(revid=meta[REVID])
-            except NoSuchItemError:
+                item = app.storage.get_item(itemid=meta[ITEMID])
+                rev = item.get_revision(meta[REVID])
+                dict(rev.meta)  # force load to validate rev is in index
+            except KeyError:
+                logging.warning(f'bad revision not found in index {get_rev_str(meta)}')
                 backend.store(meta, data)
             else:
                 item.store_revision(meta, data, overwrite=True)
@@ -245,7 +247,7 @@ class RevData:
     rev_number: int
     mtime: int
     parent_id: str = None
-    is_bad: bool = False
+    issues: list[str] = field(default_factory=list)
 
 
 def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False):
@@ -262,26 +264,39 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                 for issue in issues:
                     print(issue)
             _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
-        # fix bad parentid references
+        # fix bad parentid references and repeated or missing revision numbers
         for item_id, rev_datum in revs.items():
             rev_datum.sort(key=lambda r: (r.rev_number, r.mtime))
             prev_rev_data = None
             for rev_data in rev_datum:
                 if prev_rev_data is None:
                     if rev_data.parent_id:
-                        rev_data.is_bad = True
+                        rev_data.issues.append('parentid_error')
                         rev_data.parent_id = None
-                elif rev_data.parent_id != prev_rev_data.rev_id:
-                    rev_data.parent_id = prev_rev_data.rev_id
-                    rev_data.is_bad = True
+                    if rev_data.rev_number == -1:
+                        rev_data.issues.append('revision_number_error')
+                        rev_data.rev_number = 1
+                else:  # prev_rev_data is not None
+                    if rev_data.parent_id != prev_rev_data.rev_id:
+                        rev_data.parent_id = prev_rev_data.rev_id
+                        rev_data.issues.append('parentid_error')
+                    if rev_data.rev_number <= prev_rev_data.rev_number:
+                        rev_data.rev_number = prev_rev_data.rev_number + 1
+                        rev_data.issues.append('revision_number_error')
                 prev_rev_data = rev_data
-            for rev_data in [r for r in rev_datum if r.is_bad]:
+            for rev_data in [r for r in rev_datum if r.issues]:
                 bad = True
                 meta, data = backend.retrieve(rev_data.rev_id)
                 rev_str = get_rev_str(meta)
                 if verbose:
-                    print(f'parentid_error {rev_str} meta_parentid: {meta.get(PARENTID)} '
-                          f'correct_parentid: {rev_data.parent_id} meta_revision_number: {meta.get(REV_NUMBER)}')
+                    for issue in rev_data.issues:
+                        if issue == 'parentid_error':
+                            print(f'{issue} {rev_str} meta_parentid: {meta.get(PARENTID)} '
+                                  f'correct_parentid: {rev_data.parent_id} '
+                                  f'meta_revision_number: {meta.get(REV_NUMBER)}')
+                        else:  # issue == 'revision_number_error'
+                            print(f'{issue} {rev_str} meta_revision_number: {meta.get(REV_NUMBER)} '
+                                  f'correct_revision_number: {rev_data.rev_number}')
                 if rev_data.parent_id:
                     meta[PARENTID] = rev_data.parent_id
                 else:
@@ -289,6 +304,7 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                         del meta[PARENTID]
                     except KeyError:
                         pass
+                meta[REV_NUMBER] = rev_data.rev_number
                 _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
     print(f'{len(bad_revids)} items with invalid metadata found{" and fixed" if fix else ""}')
     return bad_revids

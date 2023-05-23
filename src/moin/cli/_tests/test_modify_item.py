@@ -10,7 +10,7 @@ from pathlib import Path
 
 from moin._tests import get_dirs
 from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs, read_index_dump
-from moin.constants.keys import REVID, PARENTID, SIZE
+from moin.constants.keys import REVID, PARENTID, SIZE, REV_NUMBER, NAMES
 
 
 def validate_meta(expected, actual, message):
@@ -213,3 +213,36 @@ def test_validate_metadata(index_create2):
     assert {rev_id1, rev_id2, rev_id3, rev_id4, rev_id5} == set(metas.keys())
     assert 11 == metas[rev_id1][SIZE]
     assert PARENTID not in metas[rev_id3]
+    # create a repeated revision_number
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data'])
+    assert_p_succcess(item_put)
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
+    assert_p_succcess(validate)
+    outlines = validate.stdout.decode().splitlines()
+    assert '1 items with invalid metadata found and fixed' == outlines[-1]
+    assert 3 == len(outlines)
+    outlines_by_error = {}
+    for outline in outlines[0:2]:
+        words = outline.split()
+        outlines_by_error[words[0]] = outline
+    assert {'parentid_error', 'revision_number_error'} == set(outlines_by_error.keys())
+    index_dump = run(['moin', 'index-dump', '--no-truncate'])
+    rev_numbers = {m[REV_NUMBER]: m for m in read_index_dump(index_dump.stdout.decode()) if m[NAMES] == 'MyPage'}
+    assert {1, 2, 3} == set(rev_numbers.keys())
+    assert rev_numbers[1][REVID] == rev_id4
+    assert rev_numbers[2][REVID] == rev_id5
+
+
+def test_validate_metadata_missing_rev_num(index_create2):
+    moin_dir, _ = get_dirs('')
+    data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data'])
+    assert_p_succcess(item_put)
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data'])
+    assert_p_succcess(item_put)
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
+    assert_p_succcess(validate)
+    index_dump = run(['moin', 'index-dump', '--no-truncate'])
+    print(index_dump.stdout.decode())
+    rev_numbers = {m[REV_NUMBER]: m for m in read_index_dump(index_dump.stdout.decode()) if m[NAMES] == 'MyPage'}
+    assert {1, 2} == set(rev_numbers.keys())
