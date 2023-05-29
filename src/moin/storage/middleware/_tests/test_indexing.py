@@ -17,7 +17,7 @@ from moin.constants.keys import (NAME, NAME_EXACT, SIZE, ITEMID, REVID, DATAID,
                                  HASH_ALGORITHM, CONTENT, COMMENT, LATEST_REVS,
                                  ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX,
                                  CONTENTTYPE, ITEMTYPE, ITEMLINKS, REV_NUMBER,
-                                 PARENTID)
+                                 PARENTID, MTIME)
 
 from moin.constants.namespaces import NAMESPACE_USERS
 
@@ -100,18 +100,26 @@ class TestIndexingMiddleware:
 
     def test_destroy_revision(self):
         item, item_name, revid0, revid1, revid2 = self._store_three_revs()
+        query = Term(NAME_EXACT, item_name)
+        metas = {m[REVID]: m for m in flaskg.storage.search_meta(query, idx_name=ALL_REVS)}
+        rev1_mtime = metas[revid1][MTIME]
         # destroy a non-current revision:
         item.destroy_revision(revid0)
         # check if the revision was destroyed:
-        item = self.imw[item_name]
-        query = Term(NAME_EXACT, item_name)
         metas = {m[REVID]: m for m in flaskg.storage.search_meta(query, idx_name=ALL_REVS)}
         revids = list(metas.keys())
         print("after destroy revid0", revids)
         assert sorted(revids) == sorted([revid1, revid2])
         # validate parent id of remaining revision is updated
         assert PARENTID not in metas[revid1]
+        # validate mtime not updated
+        assert rev1_mtime == metas[revid1][MTIME]
+        # validate revid2 is still the current one
+        metas = {m[REVID]: m for m in flaskg.storage.search_meta(query)}
+        assert 1 == len(metas)
+        assert revid2 in metas
         # destroy a current revision:
+        item = self.imw[item_name]
         item.destroy_revision(revid2)
         # check if the revision was destroyed:
         item = self.imw[item_name]

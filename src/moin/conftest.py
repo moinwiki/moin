@@ -22,7 +22,7 @@ import py
 import moin.log
 import moin
 from moin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
-from moin._tests import wikiconfig
+from moin._tests import wikiconfig, get_open_wiki_files
 from moin.storage import create_simple_mapping
 
 
@@ -70,7 +70,12 @@ def app_ctx(cfg):
 
     teardown_wiki('')
     ctx.pop()
-    destroy_app(app)
+    try:
+        # simulate ERROR PermissionError:
+        # [WinError 32] The process cannot access the file because it is being used by another process
+        assert [] == get_open_wiki_files()
+    finally:
+        destroy_app(app)
 
 
 @pytest.fixture(autouse=True)

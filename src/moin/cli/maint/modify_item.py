@@ -237,7 +237,7 @@ def _fix_if_bad(bad, meta, data, bad_revids, fix, backend):
                 logging.warning(f'bad revision not found in index {get_rev_str(meta)}')
                 backend.store(meta, data)
             else:
-                item.store_revision(meta, data, overwrite=True)
+                item.store_revision(meta, data, overwrite=True, trusted=True)
 
 
 @dataclass

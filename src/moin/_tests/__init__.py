@@ -11,6 +11,7 @@
 import socket
 from io import BytesIO
 from pathlib import Path
+import psutil
 from typing import Tuple
 
 from flask import g as flaskg
@@ -104,3 +105,11 @@ def get_dirs(subdir: str) -> Tuple[Path, Path]:
     if not artifacts_dir.exists():
         artifacts_dir.mkdir(parents=True)
     return moin_dir, artifacts_dir
+
+
+def get_open_wiki_files():
+    proc = psutil.Process()
+    files = [f for f in proc.open_files() if 'wiki' in f.path]
+    for file in files:
+        print(f'open wiki {file}')
+    return files
