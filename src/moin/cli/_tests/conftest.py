@@ -163,8 +163,12 @@ def do_crawl(request, artifact_dir):
         os.chdir(moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'scrapy')
         try:
             com = ['scrapy', 'crawl', '-a', f'url={settings.CRAWL_START}', 'ref_checker']
-            with open(artifact_dir / 'crawl.log', 'wb') as crawl_log:
-                p = run(com, crawl_log, timeout=600)
+            with open(artifact_base_dir / 'crawl.log', 'wb') as crawl_log:
+                try:
+                    p = run(com, crawl_log, timeout=600)
+                except subprocess.TimeoutExpired as e:
+                    crawl_log.write(f'\n{repr(e)}\n'.encode())
+                    raise
             if p.returncode != 0:
                 crawl_success = False
             if not crawl_success:
