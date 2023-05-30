@@ -58,7 +58,7 @@ from moin.constants.keys import (
     LATEST_REVS, EDIT_ROWS, FQNAMES
 )
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
-from moin.constants.namespaces import NAMESPACE_ALL
+from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_USERPROFILES
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from moin.constants.itemtypes import (
     ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
@@ -1062,6 +1062,8 @@ class Item:
         dirs = []
         added_dir_relnames = set()
         for rev in subitems:
+            if rev[NAMESPACE] == NAMESPACE_USERPROFILES:
+                continue
             fullnames = rev[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
