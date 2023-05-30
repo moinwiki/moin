@@ -13,19 +13,21 @@ interests, goals or projects.
 Documentation and Support
 =========================
 
-NOTE: moin2 is not released yet, so much information you find on the wiki
-(and elsewhere) will be about moin 1.x (and NOT applicable to moin2).
+NOTE: moin2 is not released yet.
 
-There is one wiki page collecting all moin2 specific links and info:
+You will find the latest docs at https://moin-20.readthedocs.io/en/latest.
 
-https://moinmo.in/MoinMoin2.0 < READ THIS!
+There is a wiki page collecting all moin2 specific information, links to
+support resources and info about MoinMoin development status and plans:
+https://moinmo.in/MoinMoin2.0
 
 
-Project homepage is at https://moinmo.in/ - there are also links to support
-resources and information about MoinMoin development status and plans.
 
 In general, please make sure that documentation you read on the wiki or
 somewhere else on the web is written for the moin version you are using.
+Much information you find on the wiki (and elsewhere) will be about
+moin 1.9 (and NOT applicable to moin2).
+
 
 For support, please try the documentation, the homepage, the irc channel
 and the mailing list before contacting the MoinMoin authors directly.
