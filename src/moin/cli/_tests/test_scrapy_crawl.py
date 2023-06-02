@@ -13,6 +13,7 @@ try:
 except ImportError:
     from moin.cli._tests import default_settings as settings
 from moin.cli._tests.scrapy.moincrawler.items import CrawlResultMatch
+from moin.cli._tests.conftest import get_crawl_log_path
 from moin.utils.iri import Iri
 from moin import log
 
@@ -51,14 +52,16 @@ class TestSiteCrawl:
         return self._matches_one_of(r, self.EXPECTED_404)
 
     def test_home_page(self, crawl_results):
-        assert len(crawl_results) > 0
-        r = crawl_results[0]
+        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
+        assert len(crawl_results[0]) > 0
+        r = crawl_results[0][0]
         expected = CrawlResultMatch(url='/Home')
         assert expected.match(r), f'unexpected redirect for / {r}'
 
     def test_200(self, crawl_results):
+        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
         failures = []
-        for r in [r for r in crawl_results if r.url
+        for r in [r for r in crawl_results[0] if r.url
                   and r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)]:
             if 'Discussion' in r.url.path:
                 expected = {200, 404}
@@ -73,8 +76,9 @@ class TestSiteCrawl:
 
     @pytest.mark.xfail(reason='issue #1414 - remaining bad links in help')
     def test_expected_failures(self, crawl_results):
+        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
         failures = []
-        for r in [r for r in crawl_results if self.is_known_issue(r)]:
+        for r in [r for r in crawl_results[0] if self.is_known_issue(r)]:
             if r.response_code != 200:
                 logging.info(f'known issue {r}')
                 failures.append(r)
@@ -85,12 +89,13 @@ class TestSiteCrawl:
         """enable this test to check for KNOWN_ISSUES which can be removed
         after removing, be sure to confirm by crawling a host with non-blank SITE_WIKI_ROOT
         as some issues only exist when moin is running behind apache"""
+        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
         fixed = []
         for m in self.KNOWN_ISSUES:
             seen = False
             my_fixed = []
             my_not_fixed = []
-            for r in [r for r in crawl_results if m.match(r)]:
+            for r in [r for r in crawl_results[0] if m.match(r)]:
                 seen = True
                 if r.response_code == 200:
                     my_fixed.append(r)
@@ -106,8 +111,9 @@ class TestSiteCrawl:
         assert len(fixed) == 0
 
     def test_valid_request(self, crawl_results):
+        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
         failures = []
-        for r in [r for r in crawl_results if not self.is_known_issue(r)]:
+        for r in [r for r in crawl_results[0] if not self.is_known_issue(r)]:
             if not r.response_code:
                 logging.error(f'no response code for {r}')
                 failures.append(r)

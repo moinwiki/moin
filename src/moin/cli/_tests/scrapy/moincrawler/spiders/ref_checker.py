@@ -10,6 +10,7 @@ this spider is run via moin.cli._tests.conftest.do_crawl via moin.cli._tests.tes
 
 import csv
 from dataclasses import fields, astuple
+from traceback import print_exc
 
 import scrapy
 from scrapy import signals
@@ -55,17 +56,24 @@ class RefCheckerSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self):
-        _, artifact_base_dir = get_dirs('')
-        for k, c in self.crawler.stats.get_stats().items():  # bubble up spider exceptions into test failures
-            if k.startswith('spider_exceptions'):
-                self.results.append(CrawlResult(response_exc=f'crawler stats: {k} = {c}'))
-        with open(artifact_base_dir / 'crawl.csv', 'w') as fh:
-            out_csv = csv.writer(fh, lineterminator='\n')
-            out_csv.writerow([f.name for f in fields(CrawlResult)])
-            for result in self.results:
-                out_csv.writerow(astuple(result))
+        logging.info('entering spider_closed')
+        try:
+            _, artifact_base_dir = get_dirs('')
+            for k, c in self.crawler.stats.get_stats().items():  # bubble up spider exceptions into test failures
+                if k.startswith('spider_exceptions'):
+                    logging.error(f'spider_exception: {c}')
+                    self.results.append(CrawlResult(response_exc=f'crawler stats: {k} = {c}'))
+            with open(artifact_base_dir / 'crawl.csv', 'w') as fh:
+                out_csv = csv.writer(fh, lineterminator='\n')
+                out_csv.writerow([f.name for f in fields(CrawlResult)])
+                for result in self.results:
+                    out_csv.writerow(astuple(result))
+        except Exception as e:  # noqa
+            logging.error(f'exception in spider_closed {repr(e)}')
+            print_exc()
+            raise
 
-    def parse(self, response, **kwargs):
+    def _parse(self, response, **kwargs):
         """Main method that parses downloaded pages.
 
         requests yielded from this method are added to the crawl queue"""
@@ -135,6 +143,15 @@ class RefCheckerSpider(scrapy.Spider):
                         continue
                     request.meta['my_data'] = new_result
                     yield request
+
+    def parse(self, response, **kwargs):
+        """called by scrapy framework"""
+        try:
+            yield from self._parse(response, **kwargs)
+        except Exception as e:  # noqa
+            logging.error(f'parse exception : {repr(e)}')
+            print_exc()
+            raise
 
     def errback(self, failure):
         """called when request comes back with anything other than a 200 OK response"""
