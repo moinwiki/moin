@@ -566,7 +566,7 @@ class IndexingMiddleware:
                              False - store in LATEST_REVS if this rev MTIME is most recent
                                      overrides async_ parameter to False
         """
-        if force_latest:
+        if not force_latest:
             async_ = False  # must wait for storage in ALL_REVS before check for latest
         doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname, backend_name)
         if async_:
