@@ -53,6 +53,9 @@ class TestSiteCrawl:
 
     def test_home_page(self, crawl_results):
         assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
+        for line in open(get_crawl_log_path(), 'rb'):
+            if b'crawl.csv' in line:
+                logging.info(f'{line} from {get_crawl_log_path()}')
         assert len(crawl_results[0]) > 0
         r = crawl_results[0][0]
         expected = CrawlResultMatch(url='/Home')

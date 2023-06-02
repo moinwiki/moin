@@ -108,6 +108,11 @@ def get_crawl_log_path():
     return artifact_base_dir / 'crawl.log'
 
 
+def get_crawl_csv_path():
+    _, artifact_base_dir = get_dirs('')
+    return artifact_base_dir / 'crawl.csv'
+
+
 @pytest.fixture(scope="package")
 def server(welcome, load_help, artifact_dir):
     run(['moin', 'index-build'])
@@ -158,7 +163,7 @@ def do_crawl(request, artifact_dir):
     # initialize output files
     with open(get_crawl_log_path(), 'w'):
         pass
-    with open(artifact_base_dir / 'crawl.csv', 'w'):
+    with open(get_crawl_csv_path(), 'w'):
         pass
     server_started = True
     crawl_success = True
@@ -173,7 +178,7 @@ def do_crawl(request, artifact_dir):
             com = ['scrapy', 'crawl', '-a', f'url={settings.CRAWL_START}', 'ref_checker']
             with open(get_crawl_log_path(), 'wb') as crawl_log:
                 try:
-                    p = run(com, crawl_log, timeout=600)
+                    p = run(com, crawl_log, timeout=600, env={'MOIN_SCRAPY_CRAWL_CSV': str(get_crawl_csv_path())})
                 except subprocess.TimeoutExpired as e:
                     crawl_log.write(f'\n{repr(e)}\n'.encode())
                     raise
@@ -196,7 +201,8 @@ def crawl_results(request, artifact_dir) -> List[CrawlResult]:
         crawl_success = request.getfixturevalue('do_crawl')
     if crawl_success:
         try:
-            with open(artifact_base_dir / 'crawl.csv') as f:
+            logging.info(f'reading {get_crawl_csv_path()}')
+            with open(get_crawl_csv_path()) as f:
                 in_csv = csv.DictReader(f)
                 return [CrawlResult(**r) for r in in_csv], crawl_success
         except Exception as e:

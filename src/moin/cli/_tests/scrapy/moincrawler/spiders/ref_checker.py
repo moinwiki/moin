@@ -10,6 +10,7 @@ this spider is run via moin.cli._tests.conftest.do_crawl via moin.cli._tests.tes
 
 import csv
 from dataclasses import fields, astuple
+import os
 from traceback import print_exc
 
 import scrapy
@@ -24,6 +25,7 @@ try:
 except ImportError:
     from moin.cli._tests import default_settings as settings
 
+from moin.cli._tests.conftest import get_crawl_csv_path
 from moin.utils.iri import Iri
 from moin import log
 
@@ -63,7 +65,9 @@ class RefCheckerSpider(scrapy.Spider):
                 if k.startswith('spider_exceptions'):
                     logging.error(f'spider_exception: {c}')
                     self.results.append(CrawlResult(response_exc=f'crawler stats: {k} = {c}'))
-            with open(artifact_base_dir / 'crawl.csv', 'w') as fh:
+            crawl_csv_path = os.environ.get('MOIN_SCRAPY_CRAWL_CSV', get_crawl_csv_path())
+            logging.info(f'writing {len(self.results)} to {crawl_csv_path}')
+            with open(crawl_csv_path, 'w') as fh:
                 out_csv = csv.writer(fh, lineterminator='\n')
                 out_csv.writerow([f.name for f in fields(CrawlResult)])
                 for result in self.results:
