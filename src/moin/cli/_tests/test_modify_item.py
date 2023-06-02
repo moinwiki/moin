@@ -236,9 +236,9 @@ def test_validate_metadata(index_create2):
 def test_validate_metadata_missing_rev_num(index_create2):
     moin_dir, _ = get_dirs('')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
-    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data'])
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
     assert_p_succcess(item_put)
-    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data'])
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank2.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
     assert_p_succcess(item_put)
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
     assert_p_succcess(validate)
