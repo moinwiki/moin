@@ -20,16 +20,19 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-def run(cmd: List[str], log=None, wait: bool = True, timeout: int = None) \
+def run(cmd: List[str], log=None, wait: bool = True, timeout: int = None, env=None) \
         -> Union[subprocess.CompletedProcess, subprocess.Popen]:
     """run a shell command, redirecting output to log
     :param cmd: list of strings containing command arguments
     :param log: open file handle to log file (binary mode) or None in which case output will be captured
     :param wait: if True return after process is complete, otherwise return immediately after start
     :param timeout: timeout setting in seconds, can only be used when wait is True
+    :param env: dictionary of environment variables to add to current env for subprocess
     :return: CompletedProcess object if wait else Popen object"""
     subprocess_environ = copy(os.environ)
     subprocess_environ['PYTHONIOENCODING'] = 'cp1252'  # simulate windows terminal to ferret out encoding issues
+    if env:
+        subprocess_environ.update(env)
     logging.info(f'running {cmd}')
     if stdout := log:
         stderr = subprocess.STDOUT

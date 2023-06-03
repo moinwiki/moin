@@ -9,6 +9,8 @@ from io import BytesIO
 
 import pytest
 
+from moin.constants.keys import PARENTID
+
 from ..protecting import ProtectingMiddleware, AccessDenied
 
 from .test_indexing import TestIndexingMiddleware
@@ -112,6 +114,14 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         item = self.imw[PROTECTED]
         with pytest.raises(AccessDenied):
             item.destroy_revision(revid_protected)
+
+    def test_destroy_middle_revision(self):
+        item, item_name, revid0, revid1, revid2 = self._store_three_revs('joe:read,write,destroy')
+        # destroy the middle revision:
+        item.destroy_revision(revid1)
+        with item.get_revision(revid2) as rev:
+            # validate that the parentid of remaining rev was updated
+            assert rev.meta[PARENTID] == revid0
 
     def test_destroy_item(self):
         revid_unprotected, revid_protected = self.make_items('joe:destroy', 'boss:destroy')

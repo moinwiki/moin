@@ -48,6 +48,7 @@ will not access the layers below (like the backend), but just the index files,
 usually it is even just the small and thus quick latest-revs index.
 """
 
+import gc
 import os
 import sys
 import shutil
@@ -554,14 +555,19 @@ class IndexingMiddleware:
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async_=True):
+    def index_revision(self, meta, content, backend_name, async_=True, force_latest=True):
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
         :param meta: metadata dict
         :param content: preprocessed (filtered) indexable content
         :param async_: if True, use the AsyncWriter, otherwise use normal writer
+        :param force_latest: True - unconditionally store this rev in LATEST_REVS
+                             False - store in LATEST_REVS if this rev MTIME is most recent
+                                     overrides async_ parameter to False
         """
+        if not force_latest:
+            async_ = False  # must wait for storage in ALL_REVS before check for latest
         doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname, backend_name)
         if async_:
             writer = AsyncWriter(self.ix[ALL_REVS])
@@ -569,13 +575,21 @@ class IndexingMiddleware:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.update_document(**doc)  # update, because store_revision() may give us an existing revid
-        doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
-        if async_:
-            writer = AsyncWriter(self.ix[LATEST_REVS])
+        if force_latest:
+            is_latest = True
         else:
-            writer = self.ix[LATEST_REVS].writer()
-        with writer as writer:
-            writer.update_document(**doc)
+            with self.ix[ALL_REVS].searcher() as searcher:
+                is_latest = (searcher.search(Term(ITEMID, doc[ITEMID]),
+                                             sortedby=FieldFacet(MTIME, reverse=True),
+                                             limit=1)[0][REVID] == doc[REVID])
+        if is_latest:
+            doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
+            if async_:
+                writer = AsyncWriter(self.ix[LATEST_REVS])
+            else:
+                writer = self.ix[LATEST_REVS].writer()
+            with writer as writer:
+                writer.update_document(**doc)
 
     def remove_revision(self, revid, async_=True):
         """
@@ -1240,7 +1254,8 @@ class Item(PropertiesMixin):
         data.seek(0)  # rewind file
         backend_name, revid = backend.store(meta, data)
         meta[REVID] = revid
-        self.indexer.index_revision(meta, content, backend_name)
+        self.indexer.index_revision(meta, content, backend_name, force_latest=not overwrite)
+        gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
             self._current = get_indexer(self.indexer._document, revid=revid)
         if return_rev:
@@ -1264,6 +1279,17 @@ class Item(PropertiesMixin):
             refcount = len(list(searcher.document_numbers(**query)))
         self.backend.remove(rev.backend_name, revid, destroy_data=refcount == 1)
         self.indexer.remove_revision(revid)
+        my_parent = rev.meta.get(PARENTID)
+        with flaskg.storage.indexer.ix[ALL_REVS].searcher() as searcher:
+            for hit in searcher.search(Term(PARENTID, revid)):
+                doc = hit.fields()
+                with Revision(self, doc[REVID], doc=doc) as child_rev:
+                    child_meta = dict(child_rev.meta)
+                    if my_parent:
+                        child_meta[PARENTID] = my_parent
+                    else:
+                        del child_meta[PARENTID]
+                    self.store_revision(child_meta, child_rev.data, overwrite=True, trusted=True)
 
     def destroy_all_revisions(self):
         """

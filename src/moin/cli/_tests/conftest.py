@@ -103,6 +103,16 @@ def get_crawl_server_log_path():
     return artifact_base_dir / 'server-crawl.log'
 
 
+def get_crawl_log_path():
+    _, artifact_base_dir = get_dirs('')
+    return artifact_base_dir / 'crawl.log'
+
+
+def get_crawl_csv_path():
+    _, artifact_base_dir = get_dirs('')
+    return artifact_base_dir / 'crawl.csv'
+
+
 @pytest.fixture(scope="package")
 def server(welcome, load_help, artifact_dir):
     run(['moin', 'index-build'])
@@ -140,7 +150,7 @@ def server(welcome, load_help, artifact_dir):
         if not started:
             logging.error('server not started. server.log:')
             try:
-                with open(server_log.name) as f:
+                with open(get_crawl_server_log_path()) as f:
                     logging.error(f.read())
             except IOError as e:
                 logging.error(f'{repr(e)} when trying to open server log')
@@ -150,8 +160,11 @@ def server(welcome, load_help, artifact_dir):
 @pytest.fixture(scope="package")
 def do_crawl(request, artifact_dir):
     moin_dir, artifact_base_dir = get_dirs('')
-    (artifact_base_dir / 'crawl.log').touch()  # insure github workflow will have a file to archive
-    (artifact_base_dir / 'crawl.csv').touch()
+    # initialize output files
+    with open(get_crawl_log_path(), 'w'):
+        pass
+    with open(get_crawl_csv_path(), 'w'):
+        pass
     server_started = True
     crawl_success = True
     if settings.SITE_HOST == '127.0.0.1:9080':
@@ -163,13 +176,17 @@ def do_crawl(request, artifact_dir):
         os.chdir(moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'scrapy')
         try:
             com = ['scrapy', 'crawl', '-a', f'url={settings.CRAWL_START}', 'ref_checker']
-            with open(artifact_dir / 'crawl.log', 'wb') as crawl_log:
-                p = run(com, crawl_log, timeout=600)
+            with open(get_crawl_log_path(), 'wb') as crawl_log:
+                try:
+                    p = run(com, crawl_log, timeout=600, env={'MOIN_SCRAPY_CRAWL_CSV': str(get_crawl_csv_path())})
+                except subprocess.TimeoutExpired as e:
+                    crawl_log.write(f'\n{repr(e)}\n'.encode())
+                    raise
             if p.returncode != 0:
                 crawl_success = False
             if not crawl_success:
                 logging.error('crawl failed. crawl.log:')
-                with open('crawl.log') as f:
+                with open(get_crawl_log_path()) as f:
                     logging.error(f.read())
         finally:
             os.chdir(artifact_dir)
@@ -184,15 +201,16 @@ def crawl_results(request, artifact_dir) -> List[CrawlResult]:
         crawl_success = request.getfixturevalue('do_crawl')
     if crawl_success:
         try:
-            with open(artifact_base_dir / 'crawl.csv') as f:
+            logging.info(f'reading {get_crawl_csv_path()}')
+            with open(get_crawl_csv_path()) as f:
                 in_csv = csv.DictReader(f)
-                return [CrawlResult(**r) for r in in_csv]
+                return [CrawlResult(**r) for r in in_csv], crawl_success
         except Exception as e:
             crawl_success = False
             logging.error(f'exception reading crawl.csv {repr(e)}')
     if not crawl_success:
         logging.error('crawl failed')
-        return []
+        return [], crawl_success
 
 
 @pytest.fixture(scope="package")

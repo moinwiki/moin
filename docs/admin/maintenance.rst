@@ -35,9 +35,10 @@ The processes below check for and optionally fix the following issues:
 
 * size does not match size of the revision's data in bytes
 * sha1 hash does not match has of the revision's data
-* revision numbers for an item's revision should make an unbroken sequence starting at 1
 * parent id should not be present for revision number 1 of a given item
 * parent id for each revision should be the data id for the previous revision number for that item
+* every revision should have a revision number
+* an item should not have repeated revision numbers
 
 To check for invalid metadata, run the following command::
 
@@ -47,10 +48,7 @@ To view detailed list of invalid items::
 
  moin maint-validate-metadata --all-backends --verbose
 
-To fix issues, take your wiki offline and add ``--fix`` option to any of the above commands.
+To fix issues, add ``--fix`` option to any of the above commands.
 
 To operate on only a selection of backends, replace ``--all--backends`` option with ``--backends``
 followed by comma separated list of backends to process
-
-If the ``--fix`` finds anything to fix, you must rebuild the index
-with the newly created metadata, see :doc:`index`
