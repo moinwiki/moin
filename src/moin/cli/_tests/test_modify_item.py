@@ -9,7 +9,8 @@ import json
 from pathlib import Path
 
 from moin._tests import get_dirs
-from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs
+from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs, read_index_dump
+from moin.constants.keys import REVID, PARENTID, SIZE, REV_NUMBER, NAMES
 
 
 def validate_meta(expected, actual, message):
@@ -172,35 +173,76 @@ def test_validate_metadata(index_create2):
     assert_p_succcess(item_put)
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
     assert_p_succcess(validate)
-    outlines = validate.stdout.splitlines()
+    outlines = validate.stdout.decode().splitlines()
     assert 4 == len(outlines)
-    rev_id1 = b'7ed018d7ceda49409e18b8efb914f5ff'  # Corrupt.meta
-    rev_id2 = b'0a2f1b476b6c42be80908b3b799df3fd'  # Corrupt2.meta
-    rev_id3 = b'39c8fe8da0a048c0b7839bf8aa02cd04'  # Corrupt3.meta
+    rev_id1 = '7ed018d7ceda49409e18b8efb914f5ff'  # Corrupt.meta
+    rev_id2 = '0a2f1b476b6c42be80908b3b799df3fd'  # Corrupt2.meta
+    rev_id3 = '39c8fe8da0a048c0b7839bf8aa02cd04'  # Corrupt3.meta
+    rev_id4 = '484e73725601407e9f9ab0bcaa151fb6'  # MyPage-v1.meta
+    rev_id5 = 'b0b07c407c3143aabc4d34aac1b1d303'  # MyPage-v2.meta
     outlines_by_rev_id = {}
     for outline in outlines:
         words = iter(outline.split())
         for word in words:
-            if word == b'rev_id:':
+            if word == 'rev_id:':
                 outlines_by_rev_id[next(words)] = outline
                 break
     assert {rev_id1, rev_id2, rev_id3} == set(outlines_by_rev_id.keys())
-    assert b'size_error name: Home item: cbd6fc46f88740acbc1dca90bb1eb8f3 rev_number: 1 rev_id: 7ed018d7ceda49409e18b8efb914f5ff '\
-           b'meta_size: 8 real_size: 11' == outlines_by_rev_id[rev_id1]
-    assert b'sha1_error name: Page2 item: 9999989aca5e45cc8683432f986a0e50 rev_number: 1 rev_id: 0a2f1b476b6c42be80908b3b799df3fd '\
-           b'meta_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197a0000 '\
-           b'real_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197afbfe' == outlines_by_rev_id[rev_id2]
-    assert b'parentid_error name: Page3 item: 3c7e36466726441faf6d7d266ac224e2 rev_number: 2 rev_id: 39c8fe8da0a048c0b7839bf8aa02cd04 '\
-           b'meta_parentid: 002e5210cc884010b0dd75a1c337032d correct_parentid: None meta_revision_number: 2 correct_revision_number: 1' \
+    assert 'size_error name: Home item: cbd6fc46f88740acbc1dca90bb1eb8f3 rev_number: 1 rev_id: 7ed018d7ceda49409e18b8efb914f5ff '\
+           'meta_size: 8 real_size: 11' == outlines_by_rev_id[rev_id1]
+    assert 'sha1_error name: Page2 item: 9999989aca5e45cc8683432f986a0e50 rev_number: 1 rev_id: 0a2f1b476b6c42be80908b3b799df3fd '\
+           'meta_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197a0000 '\
+           'real_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197afbfe' == outlines_by_rev_id[rev_id2]
+    assert 'parentid_error name: Page3 item: 3c7e36466726441faf6d7d266ac224e2 rev_number: 2 rev_id: 39c8fe8da0a048c0b7839bf8aa02cd04 '\
+           'meta_parentid: 002e5210cc884010b0dd75a1c337032d correct_parentid: None meta_revision_number: 2' \
            == outlines_by_rev_id[rev_id3]
-    assert b'3 items with invalid metadata found' == outlines[3]
+    assert '3 items with invalid metadata found' == outlines[3]
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-f'])
     assert_p_succcess(validate)
     outlines = validate.stdout.splitlines()
-    assert 2 == len(outlines)
+    assert 1 == len(outlines)
     assert b'3 items with invalid metadata found and fixed' == outlines[0]
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
     assert_p_succcess(validate)
     outlines = validate.stdout.splitlines()
     assert 1 == len(outlines)
     assert b'0 items with invalid metadata found' == outlines[0]
+    # validate index is updated
+    index_dump = run(['moin', 'index-dump', '--no-truncate'])
+    metas = {m[REVID]: m for m in read_index_dump(index_dump.stdout.decode())}
+    assert {rev_id1, rev_id2, rev_id3, rev_id4, rev_id5} == set(metas.keys())
+    assert 11 == metas[rev_id1][SIZE]
+    assert PARENTID not in metas[rev_id3]
+    # create a repeated revision_number
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data'])
+    assert_p_succcess(item_put)
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
+    assert_p_succcess(validate)
+    outlines = validate.stdout.decode().splitlines()
+    assert '1 items with invalid metadata found and fixed' == outlines[-1]
+    assert 3 == len(outlines)
+    outlines_by_error = {}
+    for outline in outlines[0:2]:
+        words = outline.split()
+        outlines_by_error[words[0]] = outline
+    assert {'parentid_error', 'revision_number_error'} == set(outlines_by_error.keys())
+    index_dump = run(['moin', 'index-dump', '--no-truncate'])
+    rev_numbers = {m[REV_NUMBER]: m for m in read_index_dump(index_dump.stdout.decode()) if m[NAMES] == 'MyPage'}
+    assert {1, 2, 3} == set(rev_numbers.keys())
+    assert rev_numbers[1][REVID] == rev_id4
+    assert rev_numbers[2][REVID] == rev_id5
+
+
+def test_validate_metadata_missing_rev_num(index_create2):
+    moin_dir, _ = get_dirs('')
+    data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
+    assert_p_succcess(item_put)
+    item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank2.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
+    assert_p_succcess(item_put)
+    validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
+    assert_p_succcess(validate)
+    index_dump = run(['moin', 'index-dump', '--no-truncate'])
+    print(index_dump.stdout.decode())
+    rev_numbers = {m[REV_NUMBER]: m for m in read_index_dump(index_dump.stdout.decode()) if m[NAMES] == 'MyPage'}
+    assert {1, 2} == set(rev_numbers.keys())

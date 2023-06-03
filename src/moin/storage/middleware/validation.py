@@ -87,7 +87,7 @@ def userid_validator(element, state):
         if userid is None:
             # unknown user is acceptable
             return True
-    return uuid_validator(element, state)
+    return element.raw is Unset or uuid_validator(element, state)
 
 
 def name_validator(element, state):

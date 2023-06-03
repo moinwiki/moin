@@ -16,7 +16,8 @@ from flask import g as flaskg
 from moin.constants.keys import (NAME, NAME_EXACT, SIZE, ITEMID, REVID, DATAID,
                                  HASH_ALGORITHM, CONTENT, COMMENT, LATEST_REVS,
                                  ALL_REVS, NAMESPACE, NAMERE, NAMEPREFIX,
-                                 CONTENTTYPE, ITEMTYPE, ITEMLINKS, REV_NUMBER)
+                                 CONTENTTYPE, ITEMTYPE, ITEMLINKS, REV_NUMBER,
+                                 PARENTID, MTIME)
 
 from moin.constants.namespaces import NAMESPACE_USERS
 
@@ -82,29 +83,43 @@ class TestIndexingMiddleware:
         assert len(revids) == 1  # we still have the revision, cleared
         assert revid in revids  # it is still same revid
 
-    def test_destroy_revision(self):
+    def _store_three_revs(self, acl=None):
         item_name = 'foo'
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=[item_name, ], mtime=1),
+        rev = item.store_revision(dict(name=[item_name, ], mtime=1, acl=acl),
                                   BytesIO(b'bar'), trusted=True, return_rev=True)
         revid0 = rev.revid
-        rev = item.store_revision(dict(name=[item_name, ], mtime=2),
+        rev = item.store_revision(dict(name=[item_name, ], mtime=2, parentid=revid0, acl=acl),
                                   BytesIO(b'baz'), trusted=True, return_rev=True)
         revid1 = rev.revid
-        rev = item.store_revision(dict(name=[item_name, ], mtime=3),
+        rev = item.store_revision(dict(name=[item_name, ], mtime=3, parentid=revid1, acl=acl),
                                   BytesIO(b'...'), trusted=True, return_rev=True)
         revid2 = rev.revid
         print("revids:", revid0, revid1, revid2)
+        return item, item_name, revid0, revid1, revid2
+
+    def test_destroy_revision(self):
+        item, item_name, revid0, revid1, revid2 = self._store_three_revs()
+        query = Term(NAME_EXACT, item_name)
+        metas = {m[REVID]: m for m in flaskg.storage.search_meta(query, idx_name=ALL_REVS)}
+        rev1_mtime = metas[revid1][MTIME]
         # destroy a non-current revision:
         item.destroy_revision(revid0)
         # check if the revision was destroyed:
-        item = self.imw[item_name]
-        query = Term(NAME_EXACT, item_name)
-        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS)
-        revids = [meta[REVID] for meta in metas]
+        metas = {m[REVID]: m for m in flaskg.storage.search_meta(query, idx_name=ALL_REVS)}
+        revids = list(metas.keys())
         print("after destroy revid0", revids)
         assert sorted(revids) == sorted([revid1, revid2])
+        # validate parent id of remaining revision is updated
+        assert PARENTID not in metas[revid1]
+        # validate mtime not updated
+        assert rev1_mtime == metas[revid1][MTIME]
+        # validate revid2 is still the current one
+        metas = {m[REVID]: m for m in flaskg.storage.search_meta(query)}
+        assert 1 == len(metas)
+        assert revid2 in metas
         # destroy a current revision:
+        item = self.imw[item_name]
         item.destroy_revision(revid2)
         # check if the revision was destroyed:
         item = self.imw[item_name]
@@ -122,6 +137,14 @@ class TestIndexingMiddleware:
         revids = [meta[REVID] for meta in metas]
         print("after destroy revid1", revids)
         assert sorted(revids) == sorted([])
+
+    def test_destroy_middle_revision(self):
+        item, item_name, revid0, revid1, revid2 = self._store_three_revs()
+        # destroy the middle revision:
+        item.destroy_revision(revid1)
+        with item.get_revision(revid2) as rev:
+            # validate that the parentid of remaining rev was updated
+            assert rev.meta[PARENTID] == revid0
 
     def test_destroy_item(self):
         revids = []
