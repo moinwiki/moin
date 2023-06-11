@@ -1,4 +1,4 @@
-/* Topside and topside_cms themes have topbar for small displays and left sidebar for wide displays. */
+/* Topside and topside_cms themes have topbar for narrow displays and left sidebar for wide displays. */
 /* This CSS is imported by topside_cms theme. */
 
 body { font-size: 1em; margin: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
@@ -118,6 +118,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     .moin-subitem-discuss:before { content: "\2514\2500" }
 
     .moin-edit-actions { margin-top: 1em; }
+    /* topside theme hides these buttons on wide screens; alternate buttons are created on sidebar */
     #moin-save-text-button,
     #moin-preview-text-button,
     #moin-cancel-text-button { display: none; }

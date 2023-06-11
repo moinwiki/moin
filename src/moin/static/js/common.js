@@ -87,6 +87,7 @@ MoinMoin.prototype.selected_link = function () {
         list = $('.panel'),
         i,
         j,
+        cls,
         nav_links,
         link;
     for (j = 0; j < list.length; j += 1) {
@@ -94,9 +95,13 @@ MoinMoin.prototype.selected_link = function () {
 
         for (i = 0; i < nav_links.length; i += 1) {
             link = nav_links[i].attributes.href.value;
-
             if (link === selected) {
-                nav_links[i].setAttribute('class', 'current-link');
+                if (nav_links[i].attributes.class) {
+                    cls = nav_links[i].attributes.class.value + ' ' + 'current-link';
+                } else {
+                    cls = 'current-link';
+                }
+                nav_links[i].setAttribute('class', cls);
                 break;
             }
         }
@@ -508,12 +513,12 @@ MoinMoin.prototype.enhanceEdit = function () {
             if (scrollAmount > 0) { textArea.scrollTop = scrollAmount; }
             // html5 compliant browsers, highlight the position of the caret for a second or so
             textArea.setSelectionRange(scrolledText.length, scrolledText.length + 8);
-            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 1000);
-            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 1500);
+            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length + 4); }, 2000);
+            setTimeout(function () {textArea.setSelectionRange(scrolledText.length, scrolledText.length); }, 3000);
         }
     }
 
-    // called after a "show" page loads, scroll page to textarea caret position
+    // called after a "show" page loads after Save, scroll page to textarea caret position
     function scrollPage(lineno) {
         var elem = document.getElementById(TOPID),
             notFound = true,
@@ -591,19 +596,24 @@ MoinMoin.prototype.enhanceEdit = function () {
     if (window.sessionStorage) {
         // Start of processing for "show" pages
         if (document.getElementById('moin-edit-on-doubleclick')) {
-            // this is a "show" page and the edit on doubleclick option is set for this user
+            // this is a "show" or "preview" page and the edit on doubleclick option is set for this user
             modifyButton = $('.moin-modify-button')[0];
             if (modifyButton) {
-                // add doubleclick event handler when user doubleclicks within the content area
+                // add doubleclick event handler when user doubleclicks the rendered content area or draft
                 $('#moin-content').dblclick(function (e) {
-                    // get clicked line number, save, and go to +modify page
                     lineno = findLineNo(e.target);
                     if (lineno > 0 || $("*[data-lineno]").length > 0) {
                         // do only if there were data-lineno attrs - do not give "you missed" message to html or image items
                         sessionStorage.moinDoubleLineNo = lineno;
                     }
-
-                    document.location = modifyButton.href;
+                    if ($('.moin-watermark').length) {
+                        // this is a preview page and user has double-clicked on rendered draft, scroll textarea
+                        scrollTextarea(lineno);
+                        return false;
+                    } else {
+                        // call server for preview
+                        document.location = modifyButton.href;
+                    }
                 });
             }
             if (sessionStorage.moinCaretLineNo) {
@@ -799,11 +809,11 @@ $(document).ready(function () {
     }
 
     // warn user about unsaved changes; if user leaves page with unsaved edits, edit lock remains until timeout
-    $(window).on('beforeunload', function () {
+    window.onbeforeunload = function () {
         if ($('.moin-changed-input').length) {
             return _("All changes will be discarded!");
         }
-    });
+    }
 
     // give user 1 minute warning before edit lock expires
     if ($("#moin-lock_duration").length) {

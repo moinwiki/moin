@@ -74,7 +74,7 @@
     {% if preview_rendered %}
         {# user clicked Preview button, show diff and modified item as draft #}
         {{ utils.diff_table(preview_diffs) }}
-        <div class="moin-watermark">
+        <div class="moin-watermark" id="moin-content-data" >
             {{ preview_rendered | safe }}
         </div>
     {% endif %}
@@ -84,6 +84,7 @@
 {% block options_for_javascript %}
     {%- if user.scroll_page_after_edit -%}
         <br id="moin-scroll-page-after-edit" />
+        <br id="moin-edit-on-doubleclick" />
     {%- endif %}
     {%- if draft_data -%}
         <textarea id="moin-draft-data">{{ draft_data }}</textarea>
