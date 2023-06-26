@@ -781,6 +781,9 @@ class IndexingMiddleware:
         """
         storage = self.get_storage(tmp)
         ix = storage.open_index(idx_name)
+        while not ix.up_to_date():
+            logging.info('waiting for ix.up_to_date()')
+            time.sleep(0.1)
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
