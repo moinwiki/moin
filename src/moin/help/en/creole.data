@@ -2,7 +2,7 @@
 
 <<TableOfContents>>
 
-**Creole** <<FootNote("http://www.wikicreole.org/")>> is a wiki markup language that has a goal of becoming a common wiki syntax that will enable better exchange of content between different wiki engines.
+**Creole** is a wiki markup language that has a goal of becoming a common wiki syntax that will enable better exchange of content between different wiki engines.
 
 This page introduces you to the most important elements of the creole syntax. Under each heading within a shaded box is the verbatim markup followed by the output as rendered by the wiki engine. The display of some of the features depends upon your wiki configuration and choice of theme.
 
@@ -283,9 +283,3 @@ Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed
 **Result:**
 
 Footnotes can be placed by using the macro syntax.<<FootNote(A macro is enclosed in double angle brackets.)>>
-
-
-
-----
-See also [[http://www.wikicreole.org/attach/CheatSheet/creole_cheat_sheet.png|CreoleCheatCheet]] (PNG image)
-----
