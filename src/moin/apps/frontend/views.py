@@ -386,6 +386,13 @@ def search(item_name):
     else:
         query = search_form['q'].value
         history = bool(request.values.get('history'))
+
+    best_match = False
+    # we test for query in case this is a test run
+    if query and query.startswith('\\'):
+        best_match = True
+        query = query[1:]
+
     if valid or ajax:
         # most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
         # this finds such words and reports to the user
@@ -393,9 +400,13 @@ def search(item_name):
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
 
         idx_name = ALL_REVS if history else LATEST_REVS
-        qp = flaskg.storage.query_parser(
-            [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
-        )
+
+        if best_match:
+            qp = flaskg.storage.query_parser([NAMES, NAMENGRAM], idx_name=idx_name)
+        else:
+            qp = flaskg.storage.query_parser(
+                [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
+            )
         q = qp.parse(query)
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
@@ -449,10 +460,11 @@ def search(item_name):
                                        item_name=item_name,
                                        )
             flaskg.clock.stop('search')
-            flaskg.clock.start('search suggestions')
-            flaskg.clock.stop('search suggestions')
-            flaskg.clock.start('search render')
 
+            if best_match and results:
+                return redirect(url_for_item(results[0][NAMES]))
+
+            flaskg.clock.start('search render')
             if ajax:
                 html = render_template('ajaxsearch.html',
                                        results=results,

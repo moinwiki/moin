@@ -20,7 +20,7 @@ Ajax updates will be made whenever a radio button or checkbox is changed.
 Below the search form is the query processed by Whoosh, and Whoosh generated
 suggestions for additional searches by input, item name, and item content.
 
-Finally, the search hits are presented. By default these are ordered by
+Finally, the search hits are presented. These are ordered by
 the whoosh scoring number. Each hit will contain the item name and some
 meta data. If available, the item summary and partial item content with the
 search term highlighted will be shown.
@@ -61,6 +61,21 @@ Explicit alternative (does the same as above)::
 Group terms using ()::
 
   wiki AND NOT (bad OR worse)
+
+Redirect to best match
+======================
+
+If you know the target item name, start the search term with a back-slash character.
+Only the names and namengram fields will be searched. If there is a hit, the browser will be
+redirected to the highest scoring hit.
+
+Examples
+--------
+Search for a specific item name and immediately redirect browser to best match::
+
+  \Home
+  \Home/subitem
+  \users/JoeDoe
 
 Using wildcards
 ===============
