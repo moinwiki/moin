@@ -668,7 +668,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
 
         if size is not None:
             image = image.copy()  # create copy first as thumbnail works in-place
-            image.thumbnail(size, PILImage.ANTIALIAS)
+            image.thumbnail(size, PILImage.LANCZOS)
 
         transpose_func = {
             1: lambda image: image,
