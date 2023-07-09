@@ -416,6 +416,58 @@ use the `assert` statements.
 
 For more information, please read: https://docs.pytest.org/
 
+IDE Setup
+---------
+Most MoinMoin developers use PyCharm, either the Professional
+Edition or the Free Community Edition.  Choose one or the other
+and follow the PyCharm setup instructions.
+
+The screenshots below are from Windows 10, using Python 3.10 and
+PyCharm Community Edition to debug Moin2 code. *nix setup is similar.
+
+Debug a Transaction
+*******************
+
+When setting up the Run/Debug Configurations, it is important to get
+the right values for the Script path, Parameters, Python interpreter,
+and Working directory.  For general debugging of the moin2 code base
+those parameters should be similar to:
+
+.. image:: pycharmA.png
+   :alt: pycharm example
+   :align: left
+
+If the parameters are correct, then the Run dropdown menu will show green
+icons for run and debug. If the only choice under the Run menu is Edit Configuration,
+then one of the parameters is wrong, try again. Note: Py``Charm has a tendency
+to change the Working Directory field when other values are edited. Be sure it
+points to the repo root.
+
+Once the configuration is correct, load a source program, set a break point
+and run the debugger. Point your browser to http://127.0.0.1:5000.
+
+Debug a Moin Script
+*******************
+
+To debug one of the moin commands that are normally executed in a terminal window,
+follow the example below. You can view the list of moin commands by activating
+the virtual environment and doing a "moin --help".
+
+.. image:: pycharmB.png
+   :alt: pycharm example
+   :align: left
+
+Debug a Test
+************
+To debug a test, start by going to the Py``Charm edit configuration view.
+Click the + in the upper left corner to show the popup list of configuration
+types. Choose Tox, and then follow the example below for other field values.
+Note the test starup will be rather slow, be patient.
+
+.. image:: pycharmC.png
+   :alt: pycharm example
+   :align: left
+
 Documentation
 =============
 Sphinx (https://www.sphinx-doc.org) and reST markup are used for documenting
