@@ -49,9 +49,8 @@ def test_dump_help(load_help):
         assert_p_succcess(dump_help)
         source_help_subdir = source_help_dir / help_subdir
         expected_data_file_names = set([p.name for p in source_help_subdir.glob('*.data')])
-        # TODO enable next two lines in #1394
-        # data_file_names = set([p.name for p in help_subdir_path.glob('*.data')])
-        # assert expected_data_file_names == data_file_names
+        data_file_names = set([p.name for p in help_subdir_path.glob('*.data')])
+        assert expected_data_file_names == data_file_names
         for data_file_name in expected_data_file_names:
             with open(help_subdir_path / data_file_name, 'rb') as f:
                 data = f.read()
