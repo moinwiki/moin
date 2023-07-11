@@ -22,7 +22,7 @@ from flask.cli import FlaskGroup
 from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
-from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, WIKINAME, REVID, PARENTID, REV_NUMBER, MTIME
+from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, WIKINAME, REVID, PARENTID, REV_NUMBER, MTIME, NAME
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
@@ -58,11 +58,13 @@ def cli_GetItem(name, meta, data, revid, crlf):
 
 def GetItem(name, meta_file, data_file, revid, newline='\n'):
     """
-    Get an item revision from the wiki and save in files
+    Get an item revision from the wiki and save meta and data in separate files.
+    If this revision has alias names, return a list of all names, else return None.
     """
     fqname = split_fqname(name)
     item = app.storage.get_item(**fqname.query)
     rev = item[revid]
+    alias_names = None if len(rev.meta[NAME]) < 2 else rev.meta[NAME]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
     with open(meta_file, 'w', encoding='utf-8', newline=newline) as mf:
         mf.write(meta + '\n')
@@ -78,12 +80,13 @@ def GetItem(name, meta_file, data_file, revid, newline='\n'):
         lines = '\n'.join(lines) + '\n'
         with open(data_file, 'w', encoding=charset, newline=newline) as df:
             df.write(lines)
-        return
+        return alias_names
 
     data = rev.data.read()
     with open(data_file, 'wb') as df:
         df.write(data)
     logging.info("Get item finished")
+    return alias_names
 
 
 @cli.command('item-put', help='Put an item revision into the wiki')
@@ -187,6 +190,7 @@ def LoadHelp(namespace, path_to_help):
 def DumpHelp(namespace, path_to_help, crlf):
     """
     Save an entire help namespace to the distribution source.
+    Items with alias names must be copied only once.
     """
     logging.info("Dump help started")
     before_wiki()
@@ -195,18 +199,21 @@ def DumpHelp(namespace, path_to_help, crlf):
     item_name = 'help-' + namespace
     # item_name is a namespace, we create a dummy item so we can get a list of files
     item = Item.create(item_name)
+    # get_index is fast, but returns alias names as if they are unique items
     _, files = item.get_index()
     count = 0
     no_alias_dups = []
     for file_ in files:
         if file_.relname in no_alias_dups:
             continue
-        no_alias_dups.append(file_.relname)
         # convert / characters to avoid invalid paths
         esc_name = file_.relname.replace('/', '%2f')
         meta_file = os.path.join(path_to_help, namespace, esc_name + '.meta')
         data_file = os.path.join(path_to_help, namespace, esc_name + '.data')
-        GetItem(str(file_.fullname), meta_file, data_file, CURRENT, '\r\n' if crlf else '\n')
+        alias_names = GetItem(str(file_.fullname), meta_file, data_file, CURRENT, '\r\n' if crlf else '\n')
+        if alias_names:
+            # no harm in adding current name to no_alias_dups
+            no_alias_dups += alias_names
         print('Item dumped::', file_.relname)
         count += 1
     print('Success: help namespace {0} saved with {1} items'.format(namespace, count))
