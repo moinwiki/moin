@@ -1,1 +1,12 @@
-users/Home page
+= users/Home =
+
+Use this namespace to create your user home page using the namespace and your 
+login name as the page name. Example: `users/JoeDoe`
+
+If you are logged in when you create/edit any page 
+there will be a link to your home page near the bottom in the item credits.
+
+You are encouraged to fill your home page with any information about yourself
+that you are willing to share with other wiki users. If the wiki admin wants 
+to encourage some consistency among user home pages there will be a template
+offered in the page creation dialog.
