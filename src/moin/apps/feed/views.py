@@ -21,7 +21,8 @@ from whoosh.query import Term, And
 
 from moin.i18n import _
 from moin.apps.feed import feed
-from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, WIKINAME, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
+from moin.constants.keys import (NAME, NAME_EXACT, NAMESPACE, WIKINAME, COMMENT, MTIME, REVID,
+                                 ALL_REVS, PARENTID, LATEST_REVS)
 from moin.themes import get_editor_info, render_template
 from moin.items import Item
 from moin.utils.crypto import cache_key
