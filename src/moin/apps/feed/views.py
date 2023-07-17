@@ -21,11 +21,12 @@ from whoosh.query import Term, And
 
 from moin.i18n import _
 from moin.apps.feed import feed
-from moin.constants.keys import NAME, NAME_EXACT, WIKINAME, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
+from moin.constants.keys import (NAME, NAME_EXACT, NAMESPACE, WIKINAME, COMMENT, MTIME, REVID,
+                                 ALL_REVS, PARENTID, LATEST_REVS)
 from moin.themes import get_editor_info, render_template
 from moin.items import Item
 from moin.utils.crypto import cache_key
-from moin.utils.interwiki import url_for_item
+from moin.utils.interwiki import url_for_item, split_fqname
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -44,7 +45,8 @@ def atom(item_name):
     '''
     query = Term(WIKINAME, app.cfg.interwikiname)
     if item_name:
-        query = And([query, Term(NAME_EXACT, item_name), ])
+        fqname = split_fqname(item_name)
+        query = And([query, Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace), ])
     revs = list(flaskg.storage.search(query, idx_name=LATEST_REVS, sortedby=[MTIME], reverse=True, limit=1))
     if revs:
         rev = revs[0]
@@ -57,7 +59,7 @@ def atom(item_name):
         if not item_name:
             title = "{0}".format(app.cfg.sitename)
         else:
-            title = "{0} - {1}".format(app.cfg.sitename, item_name)
+            title = "{0} - {1}".format(app.cfg.sitename, fqname)
         feed = FeedGenerator()
         feed.id(request.url)
         feed.title(title)
@@ -65,7 +67,7 @@ def atom(item_name):
         feed.link(href=request.url, rel='self')
         query = Term(WIKINAME, app.cfg.interwikiname)
         if item_name:
-            query = And([query, Term(NAME_EXACT, item_name), ])
+            query = And([query, Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace), ])
         history = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=100)
         for rev in history:
             name = rev.fqname.fullname
@@ -86,7 +88,7 @@ def atom(item_name):
                     content = render_template('atom.html', get='first_revision', rev=this_rev,
                                               content=Markup(hl_item.content._render_data()), revision=this_revid)
             except Exception:
-                logging.exception("content rendering crashed")
+                logging.exception("content rendering crashed on item {0}".format(name))
                 content = _('MoinMoin feels unhappy.')
             author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, '')
