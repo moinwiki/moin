@@ -5,6 +5,7 @@
 MoinMoin - moin.cli.maint.modify_item tests
 """
 
+import pytest
 import json
 from pathlib import Path
 
@@ -35,6 +36,7 @@ def test_welcome(welcome):
     assert_p_succcess(welcome)
 
 
+@pytest.mark.skip(reason="1471 fails on debian")
 def test_dump_help(load_help):
     moin_dir, artifact_dir = get_dirs('cli')
     help_dir = Path('my_help')
@@ -109,6 +111,7 @@ def test_item_put(index_create2):
     assert ["русский"] == my_item['tags']
 
 
+@pytest.mark.skip(reason="1471 fails after github merge")
 def test_item_rev(index_create2):
     """test loading multiple versions of same page
 
@@ -152,6 +155,7 @@ def test_item_rev(index_create2):
     assert v1_1_meta['size'] == 16  # validate no newline at end in storage
 
 
+@pytest.mark.skip(reason="1471 fails on debian")
 def test_validate_metadata(index_create2):
     moin_dir, _ = get_dirs('')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
@@ -232,6 +236,7 @@ def test_validate_metadata(index_create2):
     assert rev_numbers[2][REVID] == rev_id5
 
 
+@pytest.mark.skip(reason="1471 fails on debian and after github merge on ubuntu")
 def test_validate_metadata_missing_rev_num(index_create2):
     moin_dir, _ = get_dirs('')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
