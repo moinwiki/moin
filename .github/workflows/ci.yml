@@ -26,7 +26,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -39,7 +39,7 @@ jobs:
       matrix:
         include:
             - os: macos-latest
-              python-version: '3.9'
+              python-version: '3.8'
               toxenv: py38-fuse2
             - os: windows-latest
               python-version: '3.11'
