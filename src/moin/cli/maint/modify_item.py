@@ -7,6 +7,9 @@
 MoinMoin CLI - get an item revision from the wiki, put it back into the wiki.
 """
 
+# see #1479, remove after dropping support for Python 3.8
+from __future__ import annotations
+
 from collections import defaultdict
 from dataclasses import dataclass, field
 import json
