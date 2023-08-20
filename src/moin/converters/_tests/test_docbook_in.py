@@ -282,7 +282,7 @@ class TestConverter(Base):
         # Normal link, with conversion of all the xlink attributes
         ('<article><para><link xlink:href="http:test" xlink:title="title">link</link></para></article>',
          # <page><body><div html:class="article"><p><a xlink:href="http:test" xlink:title="title">link</a></p></div></body></page>
-         '/page/body/div/p/a[@xlink:href="http:test"][@xlink:title="title"][text()="link"]'),
+         '/page/body/div/p/a[@xlink:href="http:test"][@html:title="title"][text()="link"]'),
         # Old link from DocBook v.4.X for backward compatibility
         ('<article><para><ulink url="http:test">link</ulink></para></article>',
          # <page><body><div html:class="article"><p><a xlink:href="http:test">link</a></p></div></body></page>
@@ -290,7 +290,7 @@ class TestConverter(Base):
         # Normal link, with linkend attribute
         ('<article><para><link linkend="anchor">link</link></para></article>',
          # <page><body><div html:class="article"><p><a xlink:href="#anchor">link</a></p></div></body></page>
-         '/page/body/div/p/a[@xlink:href="#anchor"][text()="link"]'),
+         '/page/body/div/p/a[@xlink:href="wiki.local:#anchor"][text()="link"]'),
         # OLINK
         ('<article><para><olink targetdoc="uri" targetptr="anchor">link</olink></para></article>',
          # <page><body><div html:class="article"><para><a xlink:href="uri#anchor">link</a></para></div></body></page>

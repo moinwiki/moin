@@ -17,6 +17,7 @@ from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
 from moin.i18n import _
+from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 
@@ -386,16 +387,20 @@ class Converter:
         """
         key = xlink('href')
         attrib = {}
+        if element.attrib.get('title'):
+            attrib[html.title_] = element.attrib.get('title')
         href = element.get(html.href)
         if self.base_url:
-            attrib[key] = ''.join([self.base_url, href])
+            href = ''.join([self.base_url, href])
+        if allowed_uri_scheme(href):
+            iri = Iri(href)
         else:
-            if allowed_uri_scheme(href):
-                attrib[key] = href
-            else:
-                # invalid uri schemes like:
-                # <p><a href="javascript:alert('hi')">Test</a></p> are converted to: <p><javascript:alert('hi')"</p>
-                return href
+            # invalid uri schemes like:
+            # <p><a href="javascript:alert('hi')">Test</a></p> are converted to: <p><javascript:alert('hi')"</p>
+            return href
+        if iri.scheme is None:
+            iri.scheme = 'wiki.local'
+        attrib[key] = iri
         return self.new_copy(moin_page.a, element, attrib)
 
     def visit_xhtml_img(self, element):

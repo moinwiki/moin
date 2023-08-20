@@ -683,13 +683,17 @@ class Converter:
         the anchors.
         """
         attrib = {}
-        for key, value in element.attrib.items():
-            if key.uri == xlink and allowed_uri_scheme(value):
-                attrib[key] = value
+        if element.attrib.get(xlink.title_):
+            attrib[html.title_] = element.attrib.get(xlink.title_)
+        href = element.attrib.get(xlink.href)
         linkend = element.get('linkend')
         if linkend:
-            attrib[xlink.href] = ''.join(['#', linkend])
-        return self.new_copy(moin_page.a, element, depth, attrib=attrib)
+            href = ''.join(['#', linkend])
+        iri = Iri(href)
+        if iri.scheme is None:
+            iri.scheme = 'wiki.local'
+        attrib[xlink.href] = iri
+        return self.new_copy(moin_page.a, element, depth, attrib)
 
     def visit_docbook_literallayout(self, element, depth):
         """
