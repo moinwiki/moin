@@ -1,14 +1,14 @@
 <article xmlns='http://docbook.org/ns/docbook' xmlns:xlink='http://www.w3.org/1999/xlink'>
+
 <section>
 <title>A docbook document</title>
 <simpara>
 This page shows the different features of our native DocBook support. A table of contents is automatically
 generated from section titles.
 </simpara>
-
-
 <section>
 <title>Lists</title>
+
 
 <section>
 <title>Itemized List</title>
@@ -291,6 +291,9 @@ Remove blanks from "] ] >" below:
 <section>
 <title>Links</title>
 
+<section>
+<title>External Links</title>
+
 <emphasis role="bold">Markup:</emphasis>
 
 <screen><![CDATA[
@@ -301,49 +304,71 @@ Remove blanks from "] ] >" below:
 
 <para>
 <link xlink:href="http://moinmo.in/">MoinMoin rocks</link>
-</para>
-
-
-<emphasis role="bold">Markup:</emphasis>
-
-<screen><![CDATA[
-<link xlink:href="Sibling">Sibling of this page</link>
-]]></screen>
-
-<emphasis role="bold">Results:</emphasis>
-
-<para>
-<link xlink:href="Sibling">Sibling of this page</link>
-</para>
-
-
-<emphasis role="bold">Markup:</emphasis>
-
-<screen><![CDATA[
-<link xlink:href="docbook/SubItem">SubItem of this page</link>
-]]></screen>
-
-<emphasis role="bold">Results:</emphasis>
-
-<para>
-<link xlink:href="docbook/SubItem">SubItem of this page</link>
-</para>
-
-
-<emphasis role="bold">Markup:</emphasis>
-
-<screen><![CDATA[
-<link xlink:href="../Home">wiki_root based path to Home</link>
-]]></screen>
-
-<emphasis role="bold">Results:</emphasis>
-
-<para>
-<link xlink:href="../Home">wiki_root based path to Home</link>
 </para>
 
 </section>
 
+
+<section>
+<title>Internal Links</title>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="../Sibling">Sibling of this page</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="../Sibling">Sibling of this page</link>
+</para>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="/SubItem">SubItem of this page</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="/SubItem">SubItem of this page</link>
+</para>
+
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link xlink:href="../../Home">wiki_root based path to Home</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link xlink:href="../../Home">wiki_root based path to Home</link>
+</para>
+
+</section>
+
+
+<section>
+<title>Anchor Links</title>
+
+<para>linkend to anchor in this page</para>
+<emphasis role="bold">Markup:</emphasis>
+
+<screen><![CDATA[
+<link linkend="Video_with_caption">linkend to Video with caption</link>
+]]></screen>
+
+<emphasis role="bold">Results:</emphasis>
+
+<para>
+<link linkend="Video_with_caption">linkend to Video with caption</link>
+</para>
+</section>
+
+</section>
 
 
 <section>

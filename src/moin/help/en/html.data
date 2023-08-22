@@ -43,17 +43,20 @@
 <p>
 	To add a link to an item in the default namespace, just use the item name or full http protocol. Add a leading / if the originating item is not in the default namespace. To suppress the leading www icon like the first item below, use a simple link and choose &lt;other&gt; as the link protocol.</p>
 <p>
-	In order to make your wiki relocatable, use relative hrefs.&nbsp; Use of href starting with &quot;/&quot; will break if the wiki is redeployed under a new wiki_root.</p>
+	In order to make your wiki relocatable, use relative hrefs. Use of href starting with &quot;/&quot; will break if the wiki is redeployed under a new wiki_root.</p>
 <p>
 	<a href="Home">Home</a></p>
 <p>
-	<a href="Sibling">Sibling</a></p>
+	<a href="/SubItem">/SubItem</a></p>
 <p>
-	<a href="html/SubItem">html/SubItem</a></p>
+	<a href="help-en/Sibling">help-en/Sibling</a></p>
 <p>
-	To add a link to an item in a namespace, use ../&lt;namespace&gt;/&lt;item name&gt;.</p>
+	<a href="../Sibling">../Sibling</a></p>
 <p>
-	<a href="/users/Home">/users/Home</a></p>
+	To add a link to an item in a namespace, use &lt;namespace&gt;/&lt;item name&gt;.</p>
+<p>
+	<a href="users/Home">users/Home</a></p>
+
 <h2>
 	External Links</h2>
 <p>
