@@ -484,7 +484,56 @@ the local HTML docs that are linked to under the User tab. To generate local doc
 Moin Shell
 ==========
 
-While the make.py utility provides a menu of the most frequently used commands, there may be an occasional need to access the moin shell directly::
+While the make.py utility provides a menu of the most frequently used commands,
+there may be an occasional need to access the moin shell directly::
 
     source <path-to-venv>/bin/activate  # or ". activate"  windows: "activate"
     moin -h                             # show help
+
+Package Release on test.pypi.org
+================================
+
+This procedure for updating test.pypi avoids adding release tags to master branch,
+hoping that someday there will be a real 2.0.0a1. Current state
+of moin 2 is pre-alpha.
+
+Commit or stash all versioned changes. Pull all updates from master repo. Create a release branch.
+Run `./m quickinstall` to update the venv and translations. Run tests.
+Add a tag with the next release number to the release branch::
+
+    git tag 2.0.0a14
+
+Install or upgrade release tools::
+
+    pip install --upgrade setuptools wheel
+    pip install --upgrade twine
+    pip install --upgrade build
+
+Build the distribution and upload to test.pypi.org::
+
+    py -m build > build.log 2>&1  # check build.log for errors
+    py -m twine upload --repository testpypi dist/*
+
+Enter ID and password as requested.
+
+Test Build
+----------
+
+Create a new venv, install moin, create instance, start server, create item, modify and save an item::
+
+    <python> -m venv </path/to/new/virtual/environment>
+    cd </path/to/new/virtual/environment>
+    source bin/activate  # scripts\activate
+    pip install --upgrade pip  # next command fails with pip 9.0.1 and maybe later versions
+    pip install --pre --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple moin
+    moin create-instance --path <path/to/new/wikiconfig/dir>  # path optional, defaults to CWD
+    cd <path/to/new/wikiconfig/dir>  # skip if using default CWD
+    moin index-create
+    moin --help  # prove it works
+    moin run  # empty wiki
+    moin load-sample  # data but no index
+    moin index-build   # data with index
+    moin load-help -n en # load English help
+    moin load-help -n common # load help images
+
+Announce update on #moin, moin-devel@python.org.
