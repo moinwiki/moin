@@ -17,9 +17,10 @@ To use this, please use exactly this line (no less, no more)::
 from babel import Locale
 from contextlib import contextmanager
 
-from flask import current_app, request, _request_ctx_stack
+from flask import current_app, request
 from flask import g as flaskg
 from flask_babel import Babel, gettext, ngettext, lazy_gettext
+from flask.globals import request_ctx
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -90,7 +91,7 @@ def force_locale(locale):
         with force_locale('en_US'):
             send_email(gettext('Hello!'), ...)
     """
-    ctx = _request_ctx_stack.top
+    ctx = request_ctx
     if ctx is None:
         yield
         return
