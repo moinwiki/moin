@@ -1,4 +1,5 @@
 # Copyright: 2008,2009 MoinMoin:BastianBlank
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -144,10 +145,8 @@ class ConverterMacro:
     def macro(self, name, args, text, context_block=False):
         func = getattr(self, '_{0}_repl'.format(name), None)
         if func is not None:
-            logging.debug("builtin macro: %r" % name)
             return func(args, text, context_block)
 
-        logging.debug("extension macro: %r" % name)
         tag = context_block and moin_page.part or moin_page.inline_part
 
         elem = tag(attrib={

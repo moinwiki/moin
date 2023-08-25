@@ -1,4 +1,4 @@
-# Copyright: 2022 MoinMoin Project
+# Copyright: 2023 MoinMoin Project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -11,6 +11,10 @@ such as <<MonthCalendar(item='TestCalendar', offset=-1, fixed_height=true)>>
 from moin.cli.migration.moin19 import macro_migration
 from moin.utils import paramparser
 from moin.utils.tree import moin_page
+
+from moin import log
+logging = log.getLogger(__name__)
+
 
 CONTENT_TYPE_MACRO_FORMATTER = "x-moin/macro;name={}"
 MACRO_NAME_MONTH_CALENDAR = "MonthCalendar"
@@ -80,9 +84,10 @@ def convert_month_calendar_macro_syntax(node):
         # they are not supported by the current
         # MonthCalendar version, so they cannot be migrated
         if parmoffset2:
-            print("    >> MonthCalendar macro parameter 'offset2' cannot be migrated")
+            # TODO: add more details to the log
+            logging.warning("MonthCalendar macro parameter 'offset2' cannot be migrated")
         if parmtemplate:
-            print("    >> MonthCalendar macro parameter 'template' cannot be migrated")
+            logging.warning("MonthCalendar macro parameter 'template' cannot be migrated")
 
         args_after_dict = {
             'item': '"{}"'.format(parmpagename) if parmpagename else None,
