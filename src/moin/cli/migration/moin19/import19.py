@@ -1,6 +1,6 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
-# Copyright: 2022 MoinMoin Project
+# Copyright: 2023 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -76,10 +76,41 @@ FORMAT_TO_CONTENTTYPE = {
     'text/csv': 'text/csv;charset=utf-8',
     'docbook': 'application/docbook+xml;charset=utf-8',
 }
+MIGR_STAT_KEYS = ['revs', 'items', 'users', 'missing_user', 'missing_file', 'del_item']
 
 last_moin19_rev = {}
 user_names = []
 custom_namespaces = []
+migr_warn_max = 10
+
+migr_stat = {key: 0 for key in MIGR_STAT_KEYS}
+
+
+def migr_logging(msg_id, log_msg):
+    '''
+    logging function writes first messages of each type with warning level
+    and the rest with debug level only.
+    TODO: add example of logging.conf
+    '''
+    migr_stat[msg_id] += 1
+    if migr_stat[msg_id] < migr_warn_max:
+        logging.warning(log_msg)
+    elif migr_stat[msg_id] == migr_warn_max:
+        logging.warning("{}: further messages printed to debug log only.".format(msg_id))
+        logging.debug(log_msg)
+    else:
+        logging.debug(log_msg)
+
+
+def migr_statistics():
+    logging.info("Migration statistics:")
+    logging.info("Users     : {0:6d}".format(migr_stat['users']))
+    logging.info("Items     : {0:6d}".format(migr_stat['items']))
+    logging.info("Revisions : {0:6d}".format(migr_stat['revs']))
+
+    for message in ['missing_user', 'missing_file', 'del_item']:
+        if migr_stat[message] > 0:
+            logging.info("Warnings  : {0:6d} - {1}".format(migr_stat[message], message))
 
 
 @cli.command('import19', help='Import content and user data from a moin 1.9 wiki')
@@ -99,7 +130,7 @@ def ImportMoin19(data_dir=None, markup_out=None):
     global custom_namespaces
     custom_namespaces = namespaces()
 
-    print("\nConverting Users...\n")
+    logging.info("PHASE1: Converting Users ...")
     user_dir = os.path.join(data_dir, 'user')
     if os.path.isdir(user_dir):
         for rev in UserBackend(user_dir):
@@ -108,7 +139,7 @@ def ImportMoin19(data_dir=None, markup_out=None):
             userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
             backend.store(rev.meta, rev.data)
 
-    print("\nConverting Pages and Attachments...\n")
+    logging.info("PHASE2: Converting Pages and Attachments ...")
     for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
         for user_name in user_names:
             if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
@@ -121,15 +152,15 @@ def ImportMoin19(data_dir=None, markup_out=None):
                 rev.meta[USERID] = userid_old2new[rev.meta[USERID]]
             except KeyError:
                 # user profile lost, but userid referred by revision
-                print("Missing userid {0!r}, editor of {1} revision {2}".format(
-                    rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID])
-                )
+                migr_logging('missing_user',
+                             'Missing userid {0!r}, editor of {1} revision {2}'.format(
+                                 rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID]))
                 del rev.meta[USERID]
         backend.store(rev.meta, rev.data)
         # item_name to itemid xref required for migrating user subscriptions
         flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
 
-    print("\nConverting last revision of Moin 1.9 items to Moin 2.0")
+    logging.info("PHASE3: Converting last revision of Moin 1.9 items to Moin 2.0 markup ...")
     conv_in = ConverterFormat19()
     conv_out_module = importlib.import_module("moin.converters." + markup_out + "_out")
     conv_out = conv_out_module.Converter()
@@ -137,10 +168,11 @@ def ImportMoin19(data_dir=None, markup_out=None):
     refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
     for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
         try:
-            print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
+            logging.debug('Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
         except UnicodeEncodeError:
-            print('    Processing item "{0}", namespace "{1}", revision "{2}"'.format(
-                  item_name.encode('ascii', errors='replace'), namespace, revno))
+            logging.debug('Processing item "{0}", namespace "{1}", revision "{2}"'.format(
+                item_name.encode('ascii', errors='replace'), namespace, revno))
+        migr_stat['revs'] += 1
         if namespace == '':
             namespace = 'default'
         meta, data = backend.retrieve(namespace, revno)
@@ -185,7 +217,7 @@ def ImportMoin19(data_dir=None, markup_out=None):
         out.seek(0)
         backend.store(meta, out)
 
-    print("\nRebuilding the index...")
+    logging.info("PHASE4: Rebuilding the index ...")
     indexer.close()
     indexer.destroy()
     logging.debug("Create index")
@@ -196,7 +228,8 @@ def ImportMoin19(data_dir=None, markup_out=None):
     indexer.optimize_index()
     indexer.open()
 
-    print("Finished conversion!")
+    logging.info("Finished conversion!")
+    migr_statistics()
 
 
 class KillRequested(Exception):
@@ -240,9 +273,11 @@ class PageBackend:
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
-                print("    >> Error: {0} is missing file 'current' or 'edit-log'".format(
-                    os.path.normcase(os.path.join(pages_dir, f)))
-                )
+                migr_logging('missing_file',
+                             "Missing file 'current' or 'edit-log' for {0}".format(
+                                 os.path.normcase(os.path.join(pages_dir, f)))
+                             )
+
             except Exception:
                 logging.exception(("PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
             else:
@@ -261,9 +296,9 @@ class PageItem:
         self.name = itemname
         self.path = path
         try:
-            print("Processing item {0}".format(itemname))
+            logging.debug("Processing item {0}".format(itemname))
         except UnicodeEncodeError:
-            print("Processing item {0}".format(itemname.encode('ascii', errors='replace')))
+            logging.debug("Processing item {0}".format(itemname.encode('ascii', errors='replace')))
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -274,8 +309,12 @@ class PageItem:
         if backend.deleted_mode == DELETED_MODE_KILL:
             revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
             if not os.path.exists(revpath):
-                print("    >> Deleted item not migrated: {0}, last revision no: {1}".format(itemname, self.current))
+                migr_logging('del_item',
+                             'Deleted item not migrated: {0}, last revision no: {1}'.format(itemname, self.current)
+                             )
                 raise KillRequested('deleted_mode wants killing/ignoring')
+            else:
+                migr_stat['items'] += 1
 
     def iter_revisions(self):
         revisionspath = os.path.join(self.path, 'revisions')
@@ -351,19 +390,19 @@ class PageRevision:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print("    >> Missing edit log data item = {0}, revision = {1}".format(item_name, revno))
+                logging.warning('Missing edit log data: item = {0}, revision = {1}'.format(item_name, revno))
                 if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
                         ACTION: 'SAVE/DELETE',
                     }
                 else:
                     raise NoSuchRevisionError('Item {0!r} has no revision {1} (not even a deleted one)!'.format(
-                                              item.name, revno))
+                        item.name, revno))
         else:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                print("    >> Missing edit log data, name = {0}, revision = {1}".format(item_name, revno))
+                logging.warning('Missing edit log data: name = {0}, revision = {1}'.format(item_name, revno))
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -399,17 +438,15 @@ class PageRevision:
             if meta['name'][0] == custom_namespace:
                 # cannot have itemname == namespace_name, so we rename. XXX may create an item with duplicate name
                 new_name = app.cfg.root_mapping.get(meta['name'][0], app.cfg.default_root)
-                print("    Converting {0} to namespace:homepage {1}:{2}".format(
-                    meta['name'][0], custom_namespace, new_name)
-                )
+                logging.warning("Converting {0} to namespace:homepage {1}:{2}".format(
+                    meta['name'][0], custom_namespace, new_name))
                 meta['namespace'] = custom_namespace
                 meta['name'] = [new_name]
                 break
             if meta['name'][0].startswith(custom_namespace + '/'):
                 # split the namespace from the name
-                print("    Converting {0} to namespace:itemname {1}:{2}".format(
-                    meta['name'][0], custom_namespace, meta['name'][0][len(custom_namespace) + 1:])
-                )
+                logging.warning("Converting {0} to namespace:itemname {1}:{2}".format(
+                    meta['name'][0], custom_namespace, meta['name'][0][len(custom_namespace) + 1:]))
                 meta['namespace'] = custom_namespace
                 meta['name'] = [meta['name'][0][len(custom_namespace) + 1:]]
                 break
@@ -439,12 +476,6 @@ class PageRevision:
             if k not in self.meta:
                 self.meta[k] = ''
         self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
-        try:
-            print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
-                  item_name, meta[REVID], meta[CONTENTTYPE]))
-        except UnicodeEncodeError:
-            print("    Processed revision {0} of item {1}, revid = {2}, contenttype = {3}".format(revno,
-                  item_name.encode('ascii', errors='replace'), meta[REVID], meta[CONTENTTYPE]))
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
@@ -472,7 +503,7 @@ def migrate_users_links(dom, itemlinks2chg):
         if node.tag.name == 'a' and not isinstance(node.attrib[xlink.href], str):
             path_19 = str(node.attrib[xlink.href].path)
             if node.attrib[xlink.href].scheme == 'wiki.local' and path_19 in itemlinks2chg:
-                print("    >> Info: Changing link from " + path_19 + " to users/" + path_19)
+                logging.debug("Changing link from " + path_19 + " to users/" + path_19)
                 node.attrib[xlink.href].path = 'users/' + path_19
 
 
@@ -500,7 +531,8 @@ def process_categories(meta, data, item_category_regex):
                 # unexpected text before and after categories survives, any text between categories is deleted
                 start = matches[0].start()
                 end = matches[-1].end()
-                print('    Converted Categories to Tags: {0}'.format(tags))
+                # TODO: remove these comment lines
+                # print('    Converted Categories to Tags: {0}'.format(tags))
                 rest = categories[:start] + categories[end:]
                 data += '\r\n' + rest.lstrip()
         data = data.rstrip() + '\r\n'
@@ -625,7 +657,8 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
                           ','.join(rights)  # iterator has removed invalid rights
                           ))
     result = ' '.join(result)
-    logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
+    if result != acl_string:
+        logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
     return result
 
 
@@ -721,7 +754,8 @@ class UserRevision:
 
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
-        print("    Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email']))
+        logging.debug("Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email']))
+        migr_stat['users'] += 1
 
         # transfer subscribed_pages to subscription_patterns
         metadata[SUBSCRIPTIONS] = self.migrate_subscriptions(metadata.get('subscribed_pages', []))
@@ -796,7 +830,7 @@ class UserRevision:
         RECHARS = r'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            print("        User is subscribed to {0}".format(subscribed_item))
+            logging.debug('User is subscribed to {0}'.format(subscribed_item))
             if flaskg.item_name2id.get(subscribed_item):
                 subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
             else:
