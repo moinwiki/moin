@@ -195,7 +195,6 @@ Typing "./m" (or "m" on Windows) will display a menu similar to:
     new-wiki        create empty wiki
     sample          create wiki and load sample data
     restore *       create wiki and restore wiki/backup.moin *option, specify file
-    import19 <dir>  import a moin 1.9 wiki/data instance from <dir>
 
     run *           run built-in wiki server *options (--port 8081)
     backup *        roll 3 prior backups and create new backup *option, specify file
@@ -265,7 +264,6 @@ help by reporting bugs), then some logical menu choices are::
  ./m docs         # create docs, see User tab, Documentation (local)
  ./m del-wiki     # get rid of the sample data
  ./m new-wiki     # create empty wiki or
- ./m import19 ... # import moin 1.9 data
  ./m backup       # backup wiki data as needed or as scheduled
 
 If you installed moin2 by cloning the repository,

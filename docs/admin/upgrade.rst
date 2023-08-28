@@ -83,17 +83,18 @@ log for each deleted page.
 
 Importing your moin 1.9 data
 ----------------------------
-Assuming you have no moin2 storage and no index directories created yet, include the
--s and -i options to create the storage and an index.
+Before importing your existing wiki data please ensure you have created an instance
+and index as described in the install section above using commands::
 
-The import19 argument to the `moin` script will read your 1.9 data_dir (pages, attachments and users),
+  moin create-instance
+  moin index-create
+
+The import19 cli subcommand will read your 1.9 data_dir (pages, attachments and users),
 convert the data, write it to your moin2 storage and build the index::
 
-  moin import19 -s -i --data_dir /<path to moin1.9>/wiki/data 1>import19out.log 2>import19err.log
+  moin import19 --data_dir /<path to moin1.9>/wiki/data
 
-If you use the command as given, it will write all stdout and stderr output into two log files.
-Please review them to find out whether the importer had critical issues with your
-data.
+Please review the logfile to find out whether the importer had critical issues with your data.
 
 By default, all items using moin 1.9 markup are converted to moin 2 markup. The converted
 revision will have a timestamp one second later than the last revision's timestamp to preserve
