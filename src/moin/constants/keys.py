@@ -116,6 +116,8 @@ DISABLED = "disabled"
 EMAIL_UNVALIDATED = "email_unvalidated"
 NAMERE = "namere"
 NAMEPREFIX = "nameprefix"
+OIDC = "oidc"
+OIDC_UID = "oidc_uid"
 
 # in which backend is some revision stored?
 BACKENDNAME = "backendname"
@@ -126,6 +128,7 @@ USEROBJ_ATTRS = [
     ISO_8601, MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE,
     EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
     EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIPTIONS, QUICKLINKS, CSS_URL,
+    OIDC, OIDC_UID,
 ]
 
 # keys for blog homepages

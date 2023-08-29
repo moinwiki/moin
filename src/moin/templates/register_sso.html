@@ -1,0 +1,19 @@
+{% extends theme("layout.html") %}
+{% import "forms.html" as forms %}
+
+{% block content %}
+    <h1>{{ _("Create Account using SSO") }}</h1>
+    <p>
+        {{ name }}, You have already been identified by the Identity Provider.  Please continue registration here.
+    </p>
+    <div class="moin-form">
+        {{ gen.form.open(form, method="post", action=url_for('frontend.register_oidc_idp')) }}
+            {{ forms.render_errors(form) }}
+            <dl>
+                {{ forms.render(form['username']) }}
+                {{ forms.render(form['email']) }}
+            </dl>
+            {{ forms.render_submit(form) }}
+        {{ gen.form.close() }}
+    </div>
+{% endblock %}

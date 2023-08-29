@@ -485,6 +485,8 @@ options_no_group_name = {
             LOCALE: None,  # None -> do browser language detection, otherwise just use this locale
             TIMEZONE: None,  # None -> use cfg.timezone_default
             EMAIL_UNVALIDATED: None,
+            OIDC: None,
+            OIDC_UID: None,
         }, 'Default attributes of the user object'),
     )),
     # ==========================================================================

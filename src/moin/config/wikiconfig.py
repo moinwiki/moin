@@ -237,6 +237,7 @@ class Config(DefaultConfig):
     # root_mapping = {'user': 'UserHome'}
     # default root, use this value by default for all namespaces
     default_root = 'Home'
+    sso = False
 
 
 # flask settings require all caps
@@ -256,3 +257,12 @@ SESSION_COOKIE_SAMESITE = 'Lax'  # flask default is None
 # config for flask-cache:
 # CACHE_TYPE = 'filesystem'
 # CACHE_DIR = '/path/to/flask-cache-dir'
+
+# Using + (plus) in the OIDC_REDIRECT_URI works on the python side, i.e. it is encoded
+# correctly into %2B, but sadly Keycloak converts it to ' '.  See
+# https://en.wikipedia.org/wiki/Percent-encoding#The_application/x-www-form-urlencoded_type
+# OIDC_REDIRECT_URI = 'http://localhost:5000/oidc_redirect_uri'
+# OIDC_ISSUER="https://localhost:8080/auth/realms/myfolks"
+# OIDC_CLIENT_ID='example.com/wiki'  # best practice is to use domain name and path here
+# OIDC_CLIENT_SECRET='get this from the idp administrator'
+# OIDC_LOGOUT_URI='todo'

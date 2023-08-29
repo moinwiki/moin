@@ -421,6 +421,8 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     .of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
     List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
     # TODO: DuckDict.named('bookmarks').using(optional=True),
+    String.named(keys.OIDC).using(optional=True),
+    String.named(keys.OIDC_UID).using(optional=True),
     *common_meta
 )
 

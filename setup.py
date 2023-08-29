@@ -107,6 +107,7 @@ setup_args = dict(
     # optional features and their list of requirements
     extras_require={
         # 'featurename': ["req1", "req2", ],
+        'Flask-pyoidc>=3.14.2',  # OIDC SSO support
         'pillow': ["pillow"],  # successor to PIL; used by image get for scaling/rotating/etc.;
                                # requires special libs/header to be installed before it can be compiled successfully
         'ldap': ["python-ldap"],  # used by ldap auth; requires special libs/header
