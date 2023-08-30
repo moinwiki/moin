@@ -4,4 +4,4 @@ pytest
 # we use lxml.etree for xpath-based testing
 lxml
 # for sitetesting
-scrapy
+scrapy>=2.10.1
