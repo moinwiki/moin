@@ -1,0 +1,43 @@
+[DEFAULT]
+# Logfile to create.
+# Make sure the running moin process has create/write rights there.
+logfile=/var/log/moin.cli.log
+
+# Default loglevel, to adjust verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL
+loglevel=DEBUG
+
+[loggers]
+disable_existing_loggers=1
+keys=root
+
+[handlers]
+keys=logfile,console
+
+[formatters]
+keys=logfile,console
+
+[logger_root]
+level=%(loglevel)s
+propagate=0
+handlers=logfile,console
+
+[handler_logfile]
+class=FileHandler
+formatter=logfile
+level=%(loglevel)s
+args=('%(logfile)s', 'a')
+
+[handler_console]
+class=StreamHandler
+level=INFO
+formatter=console
+args=(sys.stdout,)
+
+[formatter_logfile]
+format=%(asctime)s %(levelname)s %(name)s:%(lineno)d %(message)s
+datefmt=
+class=logging.Formatter
+
+[formatter_console]
+format=%(asctime)s %(levelname)s %(message)s
+

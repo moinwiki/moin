@@ -88,9 +88,9 @@ migr_stat = {key: 0 for key in MIGR_STAT_KEYS}
 
 def migr_logging(msg_id, log_msg):
     '''
-    logging function writes first messages of each type with warning level
-    and the rest with debug level only.
-    TODO: add example of logging.conf
+    The logging function writes the first messages of each type
+    with warning level and the rest with debug level only.
+    See docs/examples/config/logging/logfile_cli for logging configuration example
     '''
     migr_stat[msg_id] += 1
     if migr_stat[msg_id] < migr_warn_max:
@@ -531,8 +531,6 @@ def process_categories(meta, data, item_category_regex):
                 # unexpected text before and after categories survives, any text between categories is deleted
                 start = matches[0].start()
                 end = matches[-1].end()
-                # TODO: remove these comment lines
-                # print('    Converted Categories to Tags: {0}'.format(tags))
                 rest = categories[:start] + categories[end:]
                 data += '\r\n' + rest.lstrip()
         data = data.rstrip() + '\r\n'

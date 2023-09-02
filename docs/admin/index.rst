@@ -40,11 +40,11 @@ has one parameter - the index directory::
   the `temporary location`.
 
 
-moin index script reference
-===========================
-You can use the ``moin index-*`` group of script commands to manage indexes.
+moin index subcommand reference
+===============================
+You can use the ``moin index-*`` group of cli subcommands to manage indexes.
 
-Many of the script commands for index management support a `--tmp` option to use
+Many of the cli commands for index management support a `--tmp` option to use
 the temporary index location. This is useful if you want to do index operations
 in parallel to a running wiki which is still using the index at the normal
 index location.
