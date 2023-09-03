@@ -2,7 +2,7 @@
 # setuptools_scm - it includes all git-committed files.
 
 # we want to exclude some committed files/dirs not needed in the sdist:
-exclude .gitattributes .gitignore .travis.yml
+exclude .gitattributes .gitignore
 
 # include translations
 include src/moin/translations/*/LC_MESSAGES/messages.mo
