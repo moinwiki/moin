@@ -6,7 +6,7 @@
     MoinMoin - interwiki support code
 """
 
-from werkzeug.urls import url_quote
+from urllib.parse import quote as url_quote
 
 from flask import current_app as app
 from flask import url_for
@@ -104,7 +104,7 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
                 path = local_url[i + 1:]
                 url = wiki_base_url + path
     if regex:
-        url += '?regex={0}'.format(url_quote(regex, charset=CHARSET))
+        url += '?regex={0}'.format(url_quote(regex, encoding=CHARSET))
     return url
 
 
@@ -268,9 +268,9 @@ def join_wiki(wikiurl, wikitail, field, namespace):
     :rtype: string
     :returns: generated URL of the page in the other wiki
     """
-    wikitail = url_quote(wikitail, charset=CHARSET, safe='/')
-    field = url_quote(field, charset=CHARSET, safe='/')
-    namespace = url_quote(namespace, charset=CHARSET, safe='/')
+    wikitail = url_quote(wikitail, encoding=CHARSET, safe='/')
+    field = url_quote(field, encoding=CHARSET, safe='/')
+    namespace = url_quote(namespace, encoding=CHARSET, safe='/')
     if not ('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl or '$FIELD' in wikiurl):
         return wikiurl + get_fqname(wikitail, field, namespace)
     if '$PAGE' in wikiurl:

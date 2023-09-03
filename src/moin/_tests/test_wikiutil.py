@@ -29,10 +29,16 @@ class TestCleanInput:
 
 class TestAnchorNames:
     @pytest.mark.parametrize('text,expected', [
-        # text, expected output
-        # note: recent werkzeug encodes a "+" to "%2B", giving ".2B" in the end,
+        # old note: recent werkzeug encodes a "+" to "%2B", giving ".2B" in the end,
         #       also "-" to "%2D", giving ".2D".
-        ('\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g.2Dll.2BAN8A3w.2D'),
+        # ('\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g.2Dll.2BAN8A3w.2D'),
+        #                                   ^^^           ^^^
+        # -----------
+        # newer note:
+        # see #1496 'werkzeug.urls.url_quote_plus' is deprecated. Use 'urllib.parse.quote' instead.
+        # Contrary to werkzeug, urllib does not do: 'also "-" to "%2D", giving ".2D".'
+        ('\xf6\xf6ll\xdf\xdf', 'A.2BAPYA9g-ll.2BAN8A3w-'),
+        #                                 ^           ^
         ('level 2', 'level_2'),
         ('level_2', 'level_2'),
         ('', 'A'),
