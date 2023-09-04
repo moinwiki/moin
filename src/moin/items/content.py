@@ -1,10 +1,11 @@
-# Copyright: 2012 MoinMoin:CheerXiao
 # Copyright: 2009 MoinMoin:ThomasWaldmann
 # Copyright: 2009-2011 MoinMoin:ReimarBauer
 # Copyright: 2009 MoinMoin:ChristopherDenter
 # Copyright: 2008,2009 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2012 MoinMoin:CheerXiao
+# Copyright: 2023 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -78,6 +79,8 @@ logging = log.getLogger(__name__)
 
 COLS = 80
 ROWS_DATA = 20
+# ENABLED_CONTENT_TYPES = []  # Allow all content types
+ENABLED_CONTENT_TYPES = ['MoinMoin', 'PDF', 'PNG', 'JPEG',]  # restrict content types
 
 
 class RegistryContent(RegistryBase):
@@ -125,9 +128,11 @@ content_registry = RegistryContent([
 
 
 def register(cls):
-    content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype),
-                                                    cls.default_contenttype_params, cls.display_name,
-                                                    cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
+    if not cls.display_name or len(ENABLED_CONTENT_TYPES) == 0 or cls.display_name in ENABLED_CONTENT_TYPES:
+        logging.debug("register contenttype {0} in group {1}".format(cls.display_name, cls.group))
+        content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype),
+                                                        cls.default_contenttype_params, cls.display_name,
+                                                        cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
     return cls
 
 
