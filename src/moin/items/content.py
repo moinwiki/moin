@@ -79,8 +79,8 @@ logging = log.getLogger(__name__)
 
 COLS = 80
 ROWS_DATA = 20
-# ENABLED_CONTENT_TYPES = []  # Allow all content types
-ENABLED_CONTENT_TYPES = ['MoinMoin', 'PDF', 'PNG', 'JPEG',]  # restrict content types
+ENABLED_CONTENT_TYPES = []  # Allow all content types
+# ENABLED_CONTENT_TYPES = ['MoinMoin', 'PDF', 'PNG', 'JPEG',]  # example: restrict content types
 
 
 class RegistryContent(RegistryBase):
@@ -154,6 +154,7 @@ class Content:
     display_name = None
     group = GROUP_OTHER
     ingroup_order = 0
+    enabled_content_types = ENABLED_CONTENT_TYPES
 
     @classmethod
     def _factory(cls, *args, **kw):
