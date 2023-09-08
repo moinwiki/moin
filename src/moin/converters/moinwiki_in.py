@@ -11,7 +11,7 @@ MoinMoin - Moin Wiki input converter
 import re
 
 from flask import request
-from werkzeug.urls import url_encode
+from urllib.parse import urlencode
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
@@ -855,7 +855,7 @@ class Converter(ConverterMacro):
             attrib[html.alt] = object_text
         if object_item is not None:
             # img tag
-            query = url_encode(query_keys, charset=CHARSET)
+            query = urlencode(query_keys, encoding=CHARSET)
             # TODO: moin 1.9 needed this for an attached file; move functionality to scripts/migration/moin/import19.py
             att = 'attachment:'
             if object_item.startswith(att):

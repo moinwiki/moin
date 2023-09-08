@@ -7,7 +7,8 @@ MoinMoin - Image converter
 Convert image to <object> tag for the DOM Tree.
 """
 
-from werkzeug.urls import url_encode, url_decode
+from werkzeug.urls import url_decode
+from urllib.parse import urlencode
 
 from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri
@@ -40,7 +41,7 @@ class Converter:
                 query_keys.update(url_decode(query.query))
             attrib = arguments.keyword
 
-        query = url_encode(query_keys, charset=CHARSET)
+        query = urlencode(query_keys, encoding=CHARSET)
 
         attrib.update({
             moin_page.type_: str(self.input_type),
