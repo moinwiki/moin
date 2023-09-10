@@ -14,7 +14,7 @@ import os
 
 from flask import current_app as app
 
-import werkzeug
+import urllib
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
@@ -246,7 +246,7 @@ def anchor_name_from_text(text):
     valid ID/name, it will return it without modification (identity
     transformation).
     """
-    quoted = werkzeug.urls.url_quote_plus(text, charset='utf-7', safe=':')
+    quoted = urllib.parse.quote_plus(text, safe=':', encoding='utf-7', )
     res = quoted.replace('%', '.').replace('+', '_')
     if not res[:1].isalpha():
         return 'A{0}'.format(res)
