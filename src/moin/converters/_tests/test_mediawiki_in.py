@@ -182,10 +182,10 @@ Apple
         ('[[File:MyImage.png|arg=http://google.com|caption]]',
          '<page><body><p><object alt="caption" xlink:href="wiki.local:MyImage.png?arg=http%253A%252F%252Fgoogle.com&amp;do=get">caption</object></p></body></page>'),
         ('[[File:Test.png|do=get|arg1=test|arg2=something else]]',
-         '<page><body><p><object alt="Test.png" xlink:href="wiki.local:Test.png?arg1=test&amp;arg2=something+else&amp;do=get">Test.png</object></p></body></page>'),
+         '<page><body><p><object alt="Test.png" xlink:href="wiki.local:Test.png?do=get&amp;arg1=test&amp;arg2=something+else">Test.png</object></p></body></page>'),
         # The do=xxx part is just to test if do in args is being updated correctly, it's invalid otherwise
         ('[[File:Test2.png|do=xxx|caption|arg1=test]]',
-         '<page><body><p><object alt="caption" xlink:href="wiki.local:Test2.png?arg1=test&amp;do=xxx">caption</object></p></body></page>'),
+         '<page><body><p><object alt="caption" xlink:href="wiki.local:Test2.png?do=xxx&amp;arg1=test">caption</object></p></body></page>'),
         ("[[File:myimg.png|'Graph showing width |= k for 5 < k < 10']]",
          '<page><body><p><object alt="Graph showing width |= k for 5 &lt; k &lt; 10" xlink:href="wiki.local:myimg.png?do=get">Graph showing width |= k for 5 &lt; k &lt; 10</object></p></body></page>'),
         ("[[File:myimg.png|arg1='longish caption value with |= to test'|arg2=other|test stuff]]",

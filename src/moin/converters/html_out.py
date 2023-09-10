@@ -13,7 +13,7 @@ import re
 
 from flask import current_app as app
 from emeraldtree import ElementTree as ET
-from werkzeug.urls import url_encode
+from urllib.parse import urlencode
 
 from moin import wikiutil
 from moin.i18n import _
@@ -63,7 +63,7 @@ def mark_item_as_transclusion(elem, href_or_item):
     in a span or div and 2 overlay siblings will be created.
     """
     if isinstance(href_or_item, Item):
-        query = url_encode({'do': 'show'}, charset=CHARSET)
+        query = urlencode({'do': 'show'}, encoding=CHARSET)
         href = Iri(scheme='wiki', authority='', path='/' + href_or_item.fqname.fullname, query=query)
     else:  # isinstance(href_or_item, Iri)
         href = href_or_item
