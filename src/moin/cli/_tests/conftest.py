@@ -115,7 +115,6 @@ def get_crawl_csv_path():
 
 @pytest.fixture(scope="package")
 def server(welcome, load_help, artifact_dir):
-    run(['moin', 'index-build'])
     started = False
     server_log = open(get_crawl_server_log_path(), 'wb')
     server = run(['moin', 'run', '-p', '9080'], server_log, wait=False)
