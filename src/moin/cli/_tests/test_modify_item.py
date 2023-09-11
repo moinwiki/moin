@@ -5,9 +5,9 @@
 MoinMoin - moin.cli.maint.modify_item tests
 """
 
-import pytest
 import json
 from pathlib import Path
+from time import sleep
 
 from moin._tests import get_dirs
 from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs, read_index_dump
@@ -36,7 +36,6 @@ def test_welcome(welcome):
     assert_p_succcess(welcome)
 
 
-@pytest.mark.skip(reason="1471 fails on debian")
 def test_dump_help(load_help):
     moin_dir, artifact_dir = get_dirs('cli')
     help_dir = Path('my_help')
@@ -111,7 +110,6 @@ def test_item_put(index_create2):
     assert ["русский"] == my_item['tags']
 
 
-@pytest.mark.skip(reason="1471 fails after github merge")
 def test_item_rev(index_create2):
     """test loading multiple versions of same page
 
@@ -126,6 +124,7 @@ def test_item_rev(index_create2):
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
     put1 = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v1.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
     assert_p_succcess(put1)
+    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
     put2 = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data', '-o'])
     assert_p_succcess(put2)
     item_get2 = run(['moin', 'item-get', '-n', 'MyPage', '-m', 'MyPage-v2.meta', '-d', 'MyPage-v2.data', '--crlf'])
@@ -155,12 +154,12 @@ def test_item_rev(index_create2):
     assert v1_1_meta['size'] == 16  # validate no newline at end in storage
 
 
-@pytest.mark.skip(reason="1471 fails on debian")
 def test_validate_metadata(index_create2):
     moin_dir, _ = get_dirs('')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
     item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v1.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
     assert_p_succcess(item_put)
+    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
     item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data', '-o'])
     assert_p_succcess(item_put)
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
@@ -170,8 +169,10 @@ def test_validate_metadata(index_create2):
     assert b'0 items with invalid metadata found' == outlines[0]
     item_put = run(['moin', 'item-put', '-m', data_dir / 'Corrupt.meta', '-d', data_dir / 'Corrupt.data', '-o'])
     assert_p_succcess(item_put)
+    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
     item_put = run(['moin', 'item-put', '-m', data_dir / 'Corrupt2.meta', '-d', data_dir / 'Corrupt2.data', '-o'])
     assert_p_succcess(item_put)
+    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
     item_put = run(['moin', 'item-put', '-m', data_dir / 'Corrupt3.meta', '-d', data_dir / 'Corrupt3.data', '-o'])
     assert_p_succcess(item_put)
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v'])
@@ -217,6 +218,7 @@ def test_validate_metadata(index_create2):
     assert 11 == metas[rev_id1][SIZE]
     assert PARENTID not in metas[rev_id3]
     # create a repeated revision_number
+    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
     item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-v2.meta', '-d', data_dir / 'MyPage-v2.data'])
     assert_p_succcess(item_put)
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
@@ -236,12 +238,12 @@ def test_validate_metadata(index_create2):
     assert rev_numbers[2][REVID] == rev_id5
 
 
-@pytest.mark.skip(reason="1471 fails on debian and after github merge on ubuntu")
 def test_validate_metadata_missing_rev_num(index_create2):
     moin_dir, _ = get_dirs('')
     data_dir = moin_dir / 'src' / 'moin' / 'cli' / '_tests' / 'data'
     item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
     assert_p_succcess(item_put)
+    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
     item_put = run(['moin', 'item-put', '-m', data_dir / 'MyPage-vblank2.meta', '-d', data_dir / 'MyPage-v1.data', '-o'])
     assert_p_succcess(item_put)
     validate = run(['moin', 'maint-validate-metadata', '-b', 'default', '-v', '-f'])
