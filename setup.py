@@ -87,7 +87,7 @@ setup_args = dict(
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug<2.4.0',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
-        'pdfminer3',  # pdf -> text/plain conversion
+        'pdfminer.six',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)
         'setuptools>=51',  # dependency with setuptools_scm
         'sqlalchemy<2.0',  # used by sqla store
