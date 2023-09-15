@@ -61,7 +61,6 @@ class TestSiteCrawl:
         expected = CrawlResultMatch(url='/Home')
         assert expected.match(r), f'unexpected redirect for / {r}'
 
-    @pytest.mark.skip
     def test_200(self, crawl_results):
         assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
         failures = []
