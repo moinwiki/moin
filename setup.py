@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright: 2001 by Juergen Hermann <jh@web.de>
 # Copyright: 2001-2018 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import os
@@ -72,17 +73,17 @@ setup_args = dict(
     ],
     install_requires=[
         'Babel>=2.10.0',  # internationalization support
-        'blinker>=1.1',  # event signalling (e.g. for change notification trigger)
+        'blinker>=1.5',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.18.1',  # reST markup processing
         'Markdown>=3.4.1',  # Markdown markup processing
         'Flask<2.3.0',  # micro framework
-        'Flask-Babel<3.0.0',  # i18n support
+        'Flask-Babel>=3.0.0',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support
-        'Flask-Theme>=0.3.5',  # theme support
+        'Flask-Theme>=0.3.6',  # theme support
         'emeraldtree>=0.10.0',  # xml processing
         'feedgen==0.9.*',  # Atom feed
         'flatland>=0.8',  # form handling
-        'Jinja2<3.1.0',  # template engine
+        'Jinja2>=3.1.0',  # template engine
         'markupsafe<=2.2.0',  # safe html and xml
         'pygments>=1.4',  # src code / text file highlighting
         'Werkzeug<2.4.0',  # wsgi toolkit

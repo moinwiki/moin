@@ -6,6 +6,7 @@
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
 # Copyright: 2001 Juergen Hermann <jh@web.de>
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -2296,7 +2297,7 @@ def usersettings():
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
         _timezones_keys = [str(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_('Timezone')).out_of((e, e) for e in _timezones_keys)
-        _supported_locales = [Locale('en')] + app.babel_instance.list_translations()
+        _supported_locales = [Locale('en')] + app.extensions['babel'].instance.list_translations()
         locale = Select.using(label=L_('Locale')).out_of(
             ((str(locale), locale.display_name) for locale in _supported_locales), sort_by=1)
         submit_label = L_('Save')

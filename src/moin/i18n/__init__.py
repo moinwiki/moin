@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -33,9 +34,7 @@ L_ = lazy_gettext
 
 def i18n_init(app):
     """ initialize Flask-Babel """
-    babel = Babel(app)
-    babel.localeselector(get_locale)
-    babel.timezoneselector(get_timezone)
+    Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
 
 def get_locale():
@@ -56,7 +55,7 @@ def get_locale():
         except RuntimeError:  # CLI call has no valid request context
             cli_no_request_ctx = True
 
-        supported_locales = [Locale('en')] + current_app.babel_instance.list_translations()
+        supported_locales = [Locale('en')] + current_app.extensions['babel'].instance.list_translations()
         logging.debug("supported_locales = {0!r}".format(supported_locales))
         supported_languages = [str(locale) for locale in supported_locales]
         logging.debug("supported_languages = {0!r}".format(supported_languages))
@@ -96,16 +95,16 @@ def force_locale(locale):
         yield
         return
     babel = ctx.app.extensions['babel']
-    orig_locale_selector_func = babel.locale_selector_func
+    orig_locale_selector = babel.locale_selector
     orig_attrs = {}
     for key in ('babel_translations', 'babel_locale'):
         orig_attrs[key] = getattr(ctx, key, None)
     try:
-        babel.locale_selector_func = lambda: locale
+        babel.locale_selector = lambda: locale
         for key in orig_attrs:
             setattr(ctx, key, None)
         yield
     finally:
-        babel.locale_selector_func = orig_locale_selector_func
+        babel.locale_selector = orig_locale_selector
         for key, value in orig_attrs.items():
             setattr(ctx, key, value)
