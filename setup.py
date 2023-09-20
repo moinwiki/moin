@@ -68,7 +68,7 @@ setup_args = dict(
         'write_to': os.path.join(basedir, 'src', 'moin', '_version.py'),
     },
     setup_requires=[
-        'setuptools_scm',  # magically cares for version and packaged files
+        'setuptools_scm<8.0.0',  # magically cares for version and packaged files
     ],
     install_requires=[
         'Babel>=2.10.0',  # internationalization support
