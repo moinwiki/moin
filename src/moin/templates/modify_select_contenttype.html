@@ -16,6 +16,7 @@
     </p>
     <table id="moin-create-table" class="zebra">
         {% for group in group_names %}
+        {% if groups[group]|length > 0 %}
             <tr>
                 <th>{{ group }}</th>
             </tr>
@@ -26,6 +27,7 @@
                     {% endfor %}
                 </td>
             </tr>
+        {% endif %}
         {% endfor %}
     </table>
 
