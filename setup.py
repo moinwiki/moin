@@ -76,6 +76,7 @@ setup_args = dict(
         'blinker>=1.5',  # event signalling (e.g. for change notification trigger)
         'docutils>=0.18.1',  # reST markup processing
         'Markdown>=3.4.1',  # Markdown markup processing
+        'mdx_wikilink_plus>=1.4.1',  # Markdown Wikilinks extension
         'Flask<2.3.0',  # micro framework
         'Flask-Babel>=3.0.0',  # i18n support
         'Flask-Caching>=1.2.0',  # caching support

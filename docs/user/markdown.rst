@@ -165,6 +165,22 @@ Inline links use the form: ::
 **reST NOTE**: Links with title attributes and images as links are not supported in reST.
 The internal links above are broken.
 
+Wikilinks
+---------
+
+Wikilinks use the form: ::
+
+    [[PageName]]
+
+===========================================   ===============================================
+ **Markup**                                    **Result**
+===========================================   ===============================================
+ [[Page]]                                      `Page <http:Page>`_
+ [[Page/Subpage]]                              `Subpage <http:Page/Subpage>`_
+===========================================   ===============================================
+
+This features uses the `mdx_wikilink_plus <https://github.com/neurobin/mdx_wikilink_plus>`_ extension.
+
 Reference Links
 ---------------
 

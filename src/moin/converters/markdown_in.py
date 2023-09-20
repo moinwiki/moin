@@ -530,9 +530,18 @@ class Converter:
 
     def __init__(self):
         self.markdown = Markdown(extensions=[
-            ExtraExtension(),
-            CodeHiliteExtension(guess_lang=False),
-        ])
+                ExtraExtension(),
+                CodeHiliteExtension(guess_lang=False),
+                'mdx_wikilink_plus',
+            ],
+            extension_configs={
+                'mdx_wikilink_plus': {
+                    'html_class': None,
+                    'image_class': None,
+                    'label_case': 'none',  # do not automatically CamelCase the label, keep it untouched
+                }
+            },
+        )
 
     @classmethod
     def _factory(cls, input, output, **kw):

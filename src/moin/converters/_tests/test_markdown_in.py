@@ -143,6 +143,16 @@ class TestConverter:
     def test_table(self, input, output):
         self.do(input, output)
 
+    data = [('[[Bracketed]]',
+             '<p><a xlink:href="wiki.local:Bracketed">Bracketed</a></p>'),
+            ('[[Main/sub]]',  # check if label is kept lower case, check if slash in link is detected
+             '<p><a xlink:href="wiki.local:Main/sub">sub</a></p>')]
+
+    @pytest.mark.parametrize('input,output', data)
+    def test_wikilinks(self, input, output):
+        """ Test the Wikilinks extension: https://python-markdown.github.io/extensions/wikilinks/"""
+        self.do(input, output)
+
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
         return self.output_re.sub('', result)
