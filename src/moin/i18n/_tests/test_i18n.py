@@ -1,4 +1,5 @@
 # Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -41,11 +42,11 @@ def test_text():
 def test_force_locale():
     pytest.skip("This test needs to be run with --assert=reinterp or --assert=plain flag")
     app = Flask(__name__)
-    b = babel.Babel(app)
 
-    @b.localeselector
     def select_locale():
         return 'de_DE'
+
+    babel.Babel(app, locale_selector=select_locale)
 
     with app.test_request_context():
         assert str(babel.get_locale()) == 'de_DE'
