@@ -533,6 +533,7 @@ class Converter:
                 ExtraExtension(),
                 CodeHiliteExtension(guess_lang=False),
                 'mdx_wikilink_plus',
+                'admonition',
             ],
             extension_configs={
                 'mdx_wikilink_plus': {

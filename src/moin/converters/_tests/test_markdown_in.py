@@ -153,6 +153,21 @@ class TestConverter:
         """ Test the Wikilinks extension: https://python-markdown.github.io/extensions/wikilinks/"""
         self.do(input, output)
 
+    data = [
+        ('!!! note\n    You should note that the title will be automatically capitalized.',
+         '<div class="admonition note"><p class="admonition-title">Note</p><p>You should note that the title will be automatically capitalized.</p></div>'),
+        ('!!! danger "Don\'t try this at home"\n    ...',
+         '<div class="admonition danger"><p class="admonition-title">Don\'t try this at home</p><p>...</p></div>'),
+        ('!!! important ""\n    This is an admonition box without a title.',
+         '<div class="admonition important"><p>This is an admonition box without a title.</p></div>'),
+        ('!!! danger highlight blink "Don\'t try this at home"\n    ...',
+         '<div class="admonition danger highlight blink"><p class="admonition-title">Don\'t try this at home</p><p>...</p></div>'),
+    ]
+
+    @pytest.mark.parametrize('input,output', data)
+    def test_admonition(self, input, output):
+        self.do(input, output)
+
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
         return self.output_re.sub('', result)
