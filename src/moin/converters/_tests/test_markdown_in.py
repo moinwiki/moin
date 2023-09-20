@@ -134,6 +134,15 @@ class TestConverter:
     def test_image(self, input, output):
         self.do(input, output)
 
+    data = [
+        ('First Header  | Second Header\n------------- | -------------\nContent Cell  | Content Cell\nContent Cell  | Content Cell',
+         '<table><table-header><table-row><table-cell-head>First Header</table-cell-head><table-cell-head>Second Header</table-cell-head></table-row></table-header><table-body><table-row><table-cell>Content Cell</table-cell><table-cell>Content Cell</table-cell></table-row><table-row><table-cell>Content Cell</table-cell><table-cell>Content Cell</table-cell></table-row></table-body></table>'),
+    ]
+
+    @pytest.mark.parametrize('input,output', data)
+    def test_table(self, input, output):
+        self.do(input, output)
+
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
         return self.output_re.sub('', result)
