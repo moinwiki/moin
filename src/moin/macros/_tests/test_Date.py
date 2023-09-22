@@ -63,7 +63,7 @@ class TestMacro:
         expected = '2023-08-07z'
         assert result == expected
 
-        flaskg.user.timezone = 'US/Arizona'
+        flaskg.user.timezone = 'America/Phoenix'
         result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
         expected = '2023-08-07'
         assert result == expected

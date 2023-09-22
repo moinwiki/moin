@@ -57,7 +57,7 @@ class TestShowTime:
         flaskg.user.valid = True
         flaskg.user.locale = 'en'
         flaskg.user.iso_8601 = False
-        flaskg.user.timezone = 'US/Arizona'
+        flaskg.user.timezone = 'America/Phoenix'
         formatted_date = show_time.format_date(utc_dt=0)
         assert formatted_date == 'Dec 31, 1969'
         formatted_time = show_time.format_time(utc_dt=0)
