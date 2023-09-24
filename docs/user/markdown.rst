@@ -717,3 +717,39 @@ Footnotes [1]_ have a label [#label]_ and a definition [#DEF]_.
 .. [#label] A footnote on "label"
 
 .. [#DEF] The footnote for definition
+
+Admonition
+----------
+
+The `Admonition extension <https://python-markdown.github.io/extensions/admonition/>`_ adds `rST-style <http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions>`_ admonitions to Markdown.
+
+**Syntax**: ::
+
+    !!! type "optional explicit title within double quotes"
+        Any number of other indented markdown elements.
+
+        This is the second paragraph.
+
+If you don’t want a title, use a blank string "".
+
+The following types are supported:
+
+* attention
+* caution
+* danger
+* error
+* hint
+* important
+* note
+* tip
+* warning
+
+**Markup**: ::
+
+    !!! note
+    You should note that the title will be automatically capitalized.
+
+**Result**:
+
+.. note::
+   You should note that the title will be automatically capitalized.
