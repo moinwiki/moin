@@ -9,6 +9,7 @@ ODF documents can be created with OpenOffice.org, Libre Office and other softwar
 
 import zipfile
 
+from moin.constants.keys import NAME
 from moin.utils.mime import Type, type_text_plain
 
 from . import default_registry
@@ -30,6 +31,8 @@ class OpenDocumentIndexingConverter:
             text = data.decode('utf-8')
             text = strip_xml(text)
             return text
+        except AttributeError as e:
+            logging.warning("Content of file {} is not seekable. {}".format(rev.meta[NAME], str(e)))
         finally:
             zf.close()
 
