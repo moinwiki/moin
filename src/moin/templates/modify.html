@@ -64,6 +64,17 @@
                 </div>
             {% endif %}
 
+            {% block moin_flash %}
+            {% endblock %}
+
+            {# id -> moin-flash is used to add special alerts for ex. for changes to User Settings via JS, see common.js #}
+            <div id="moin-flash">  {# client side javascript may add messages here #}
+                {% for category, msg in get_flashed_messages(with_categories=true) %}
+                    <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+                {% endfor %}
+            </div>
+            
+
             {#
                 Workaround:
                 For *Draw content, hide submit button, since *Draw

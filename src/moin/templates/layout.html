@@ -56,11 +56,13 @@
             {% block item -%}
                 {# If you want itemviews in your template, extend from show.html, not from here. #}
                 <div id="moin-content">
-                    <div id="moin-flash">  {# client side javascript may add messages here #}
-                        {% for category, msg in get_flashed_messages(with_categories=true) %}
-                            <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
-                        {% endfor %}
-                    </div>
+                    {% block moin_flash %}
+                        <div id="moin-flash">  {# client side javascript may add messages here #}
+                            {% for category, msg in get_flashed_messages(with_categories=true) %}
+                                <p class="moin-flash moin-flash-{{ category }}">{{ msg }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endblock %}
                     {% block content %}
                         {# All content templates should have implement this block. #}
                     {% endblock %}
