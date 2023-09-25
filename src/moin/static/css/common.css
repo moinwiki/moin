@@ -579,12 +579,12 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-form dt { clear: both; float: left; width: 25%; text-align: right; margin-top: .3em; padding-right: 1em; }
 .moin-form dt label.required:after { content: '*'; color: var(--primary); }
 .moin-form button,
-.moin-form input[type="submit"] { clear: both; display: block; margin: auto; }
+.moin-form input[type="submit"] { clear: both; display: block; }
 .moin-form dl  { margin-bottom: 2em; }
 .moin-float-fix { clear: both; padding-top: .75em; }
 .moin-form  input[type="submit"].moin-modify-submit,
 .moin-form .moin-load-draft,
-.moin-form .moin-cancel { clear: none; float: left; margin-right: 3em; margin-bottom: 1em; }
+.moin-form .moin-cancel { margin-bottom: 1em; }
 .moin-form .moin-load-draft { border: 1px solid var(--alert);
     background-color: var(--bg-message); }
 .moin-watermark { background-image: url("../../../static/img/draft.png");
@@ -592,6 +592,9 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 
 .moin-form dd.moin-radio { line-height: 1.5em}
 .moin-form .moin-radio input { width: 1em; }
+
+.moin-form .submit-buttons{ display: flex; column-gap: 8pt; justify-content: end;
+    margin: 8pt 0; } 
 
 #options dd { width: 10%; }
 #options dt { width: 60%; max-width: 40em; }
