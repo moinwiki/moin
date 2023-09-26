@@ -4,6 +4,7 @@
 # Copyright: 2005-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:ChristopherDenter
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -195,8 +196,9 @@ def drawing2fname(drawing):
     # note: do not just check for empty extension or stuff like drawing:foo.bar
     # will fail, instead of being expanded to foo.bar.tdraw
     if ext not in DRAWING_EXTENSIONS:
+        # TODO: check if still valid
         # for backwards compatibility, twikidraw is the default:
-        drawing += '.tdraw'
+        drawing += '.svgdraw'
     return drawing
 
 

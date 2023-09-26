@@ -168,7 +168,7 @@ def testParentItemName():
 def testdrawing2fname():
     # with extension not in DRAWING_EXTENSIONS
     result = wikiutil.drawing2fname('Moin_drawing.txt')
-    expected = 'Moin_drawing.txt.tdraw'
+    expected = 'Moin_drawing.txt.svgdraw'
     assert result == expected
     # with extension in DRAWING_EXTENSIONS
     result = wikiutil.drawing2fname('Moindir.Moin_drawing.jpg')

@@ -153,7 +153,7 @@ class Config(DefaultConfig):
         'font_awesome',
         'ckeditor',
         'autosize',
-        'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
+        'svgedit_moin',
         'jquery_tablesorter',
         'pygments',
     ]
