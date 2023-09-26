@@ -21,7 +21,6 @@
 import os
 import time
 import uuid
-import re
 import base64
 import tarfile
 import zipfile
