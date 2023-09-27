@@ -57,7 +57,8 @@ def ReduceRevisions(query, namespace, test):
         current_revno = current_rev.meta[REV_NUMBER]
         current_full_name = current_namespace + '/' + current_name[0] if current_namespace else current_name
         if test:
-            print("Item named {0!r} selected but not updated, has {1} revisions :".format(current_full_name, current_revno))
+            print("Item named {0!r} selected but not updated, has {1} revisions :".format(current_full_name,
+                                                                                          current_revno))
         else:
             print("Destroying historical revisions of {0!r}:".format(current_full_name))
             has_historical_revision = False
