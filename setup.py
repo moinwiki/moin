@@ -100,8 +100,6 @@ setup_args = dict(
         'XStatic-autosize',
         'XStatic-jQuery>=1.8.2',
         'XStatic-jQuery-File-Upload>=10.31.0',
-        'XStatic-TWikiDraw-moin>=2004.10.23.2',
-        'XStatic-AnyWikiDraw>=0.14.2',
         'XStatic-svg-edit-moin>=2012.11.15.1',
         'XStatic-JQuery.TableSorter>=2.14.5.1',
         'XStatic-Pygments>=1.6.0.1',

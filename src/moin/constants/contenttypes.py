@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -97,8 +98,6 @@ CONTENTTYPE_MEDIA_SUFFIX = tuple(
 )
 
 CONTENTTYPE_DRAWING = [
-    'application/x-twikidraw',
-    'application/x-anywikidraw',
     'application/x-svgdraw',
 ]
 
@@ -135,8 +134,6 @@ CONTENTTYPES_MAP = {
     'video/ogg': 'OGG Video',
     'video/webm': 'WebM Video',
     'video/mp4': 'MP4 Video',
-    'application/x-twikidraw': 'TDRAW',
-    'application/x-anywikidraw': 'ADRAW',
     'application/x-svgdraw': 'SVGDRAW',
     'application/octet-stream': 'Binary File',
     'application/x-tar': 'TAR',
@@ -153,7 +150,7 @@ GROUP_VIDEO = 'Video Items'
 GROUP_DRAWING = 'Drawing Items'
 GROUP_OTHER = 'Other Items'
 
-DRAWING_EXTENSIONS = ['.tdraw', '.adraw', '.svg', '.png', '.jpg', '.jpeg', '.gif', ]
+DRAWING_EXTENSIONS = ['.svg', '.png', '.jpg', '.jpeg', '.gif', ]
 
 
 # help for wiki editors based on content type
@@ -197,8 +194,6 @@ CONTENTTYPES_HELP_DOCS = {
     'video/ogg': help_on_binary,
     'video/webm': help_on_binary,
     'video/mp4': help_on_binary,
-    'application/x-twikidraw': ext_link('http://twiki.org/cgi-bin/view/Plugins/TWikiDrawPlugin'),
-    'application/x-anywikidraw': ext_link('http://anywikidraw.sourceforge.net/'),
     'application/x-svgdraw': ext_link('http://code.google.com/p/svg-edit/'),
     'application/octet-stream': help_on_binary,
     'application/x-tar': help_on_binary,

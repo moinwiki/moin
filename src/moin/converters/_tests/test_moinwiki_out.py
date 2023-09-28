@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2010 MoinMoin:DmitryAndreev
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -105,8 +106,6 @@ class TestConverter(Base):
         self.do(input, output)
 
     data = [
-        ('<page:object xlink:href="drawing:anywikitest.adraw"></page:object>',
-         '{{drawing:anywikitest.adraw}}'),
         ('<page:object xlink:href="http://static.moinmo.in/logos/moinmoin.png" />',
          '{{http://static.moinmo.in/logos/moinmoin.png}}'),
         ('<page:object page:alt="alt text" xlink:href="http://static.moinmo.in/logos/moinmoin.png">alt text</page:object>',

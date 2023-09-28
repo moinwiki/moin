@@ -1,6 +1,7 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:RadomirDopieralski
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -718,8 +719,6 @@ MIMETYPE_TO_CLASS = {
     'application/zip': 'package',
     'application/x-tar': 'package',
     'application/x-gtar': 'package',
-    'application/x-twikidraw': 'drawing',
-    'application/x-anywikidraw': 'drawing',
     'application/x-svgdraw': 'drawing',
 }
 

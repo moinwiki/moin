@@ -21,7 +21,6 @@
 import os
 import time
 import uuid
-import re
 import base64
 import tarfile
 import zipfile
@@ -783,7 +782,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
                 app.cache.set(cid, (headers, data))
             except (IOError, ValueError) as err:
-                logging.exception("error during PILdiff: {0}".format(err.message))
+                logging.exception("error during PILdiff: {0}".format(err))
                 abort(404)  # TODO render user friendly error image
         else:
             # XXX TODO check ACL behaviour
@@ -1120,88 +1119,6 @@ class DrawPNGMap(Draw):
             return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
             return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))
-
-
-class DrawAWDTWDBase(DrawPNGMap):
-    """
-    Shared code between TWikiDraw and AnyWikiDraw
-    """
-    _expected_members = set()
-
-    def handle_post(self):
-        # called from modify UI/POST
-        file_upload = request.files.get('filepath')
-        filename = request.form['filename']
-        basepath, basename = os.path.split(filename)
-        basename, ext = os.path.splitext(basename)
-        filecontent = file_upload.stream
-        content_length = None
-        if ext in ['.svg', '.draw', ]:  # handle AWD (svg) and TWD (draw)
-            filecontent = filecontent.read()  # read file completely into memory
-            filecontent = filecontent.replace("\r", "")
-        elif ext == '.map':
-            filecontent = filecontent.read()  # read file completely into memory
-            filecontent = filecontent.strip()
-        elif ext == '.png':
-            # content_length = file_upload.content_length
-            # XXX gives -1 for wsgiref, gives 0 for werkzeug :(
-            # If this is fixed, we could use the file obj, without reading it into memory completely:
-            filecontent = filecontent.read()
-        self.put_member('drawing' + ext, filecontent, content_length,
-                        expected_members=self._expected_members)
-
-
-@register
-class TWikiDraw(DrawAWDTWDBase):
-    """
-    drawings by TWikiDraw applet. It creates three files which are stored as tar file.
-    """
-    contenttype = 'application/x-twikidraw'
-    display_name = 'TDRAW'
-    _expected_members = {'drawing.draw', 'drawing.map', 'drawing.png'}
-
-    class ModifyForm(Draw.ModifyForm):
-        template = "modify_twikidraw.html"
-
-    def _transform_map(self, image_map, title):
-        mapid = 'ImageMapOf' + self.name  # TODO: make it unique
-        image_map = image_map.replace('%MAPNAME%', mapid)
-        # add alt and title tags to areas
-        image_map = re.sub(r'href\s*=\s*"((?!%TWIKIDRAW%).+?)"',
-                           r'href="\1" alt="\1" title="\1"', image_map)
-        drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.draw', rev=self.rev.revid)
-        image_map = image_map.replace('%TWIKIDRAW%"', '{0}" alt="{1}" title="{2}"'.format(drawing_url, title, title))
-        return mapid, image_map
-
-
-@register
-class AnyWikiDraw(DrawAWDTWDBase):
-    """
-    drawings by AnyWikiDraw applet. It creates three files which are stored as tar file.
-    """
-    contenttype = 'application/x-anywikidraw'
-    display_name = 'ADRAW'
-    _expected_members = {'drawing.svg', 'drawing.map', 'drawing.png'}
-
-    class ModifyForm(Draw.ModifyForm):
-        template = "modify_anywikidraw.html"
-
-        def _load(self, item):
-            super(AnyWikiDraw.ModifyForm, self)._load(item)
-            try:
-                drawing_exists = 'drawing.svg' in item.list_members()
-            except tarfile.TarError:  # item doesn't exist yet
-                drawing_exists = False
-            self.drawing_exists = drawing_exists
-
-    def _transform_map(self, image_map, title):
-        # drawing_url = url_for('frontend.get_item', item_name=self.name, member='drawing.svg', rev=self.rev.revid)
-        mapid = 'ImageMapOf' + self.name  # TODO: make it unique
-        image_map = image_map.replace('id="drawing.svg"', '')
-        image_map = image_map.replace('name="drawing.svg"', 'name="{0}"'.format(mapid))
-        # unxml, because 4.01 concrete will not validate />
-        image_map = image_map.replace('/>', '>')
-        return mapid, image_map
 
 
 @register

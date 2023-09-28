@@ -420,13 +420,6 @@ For MoinMoin we require the following XStatic Packages in setup.py:
   is loaded at template modify_svg-edit. It is a fast, web-based, Javascript-driven
   SVG editor.
 
-* `twikidraw_moin <https://pypi.org/project/XStatic-TWikiDraw-moin>`_
-  a Java applet loaded from template file of modify_twikidraw. It is a simple drawing editor.
-
-* `anywikidraw <https://pypi.org/project/XStatic-AnyWikiDraw>`_
-  a Java applet loaded from template file of modify_anywikidraw. It can be used for
-  editing drawings and diagrams on items.
-
 * `jquery_tablesorter <https://pypi.org/project/XStatic-JQuery.TableSorter/2.14.5.1>`_
   used to provide client side table sorting.
 
@@ -444,7 +437,7 @@ These packages are imported in wikiconfig by::
         'font_awesome',
         'ckeditor',
         'autosize',
-        'svgedit_moin', 'twikidraw_moin', 'anywikidraw',
+        'svgedit_moin',
         'jquery_tablesorter',
         'pygments',
     ]
