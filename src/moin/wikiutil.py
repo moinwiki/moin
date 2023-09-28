@@ -192,12 +192,10 @@ def ParentItemName(itemname):
 #############################################################################
 
 def drawing2fname(drawing):
-    fname, ext = os.path.splitext(drawing)
+    _, ext = os.path.splitext(drawing)
     # note: do not just check for empty extension or stuff like drawing:foo.bar
-    # will fail, instead of being expanded to foo.bar.tdraw
+    # will fail, instead of being expanded to foo.bar.svgdraw
     if ext not in DRAWING_EXTENSIONS:
-        # TODO: check if still valid
-        # for backwards compatibility, twikidraw is the default:
         drawing += '.svgdraw'
     return drawing
 
