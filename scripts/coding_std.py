@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# Copyright: 2012-2018 by MoinMoin:RogerHaase
+# Copyright: 2012-2018 MoinMoin:RogerHaase
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -306,7 +307,7 @@ def check_js_phrases(lines, filename):
     Print error message if not defined in phrases, else add phrase to used phrases set.
     """
     global phrases_used
-    if filename.endswith('jquery.i18n.min.js'):
+    if filename.endswith('jquery.i18n.min.js') or filename.endswith('dictionary.js'):
         return
     pattern = re.compile(r"""_\("([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)"\)""")
     bad_pat = re.compile(r"""_\(([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)\)""")
