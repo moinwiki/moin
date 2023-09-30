@@ -16,18 +16,18 @@
     </p>
     <table id="moin-create-table" class="zebra">
         {% for group in group_names %}
-        {% if groups[group]|length > 0 %}
-            <tr>
-                <th>{{ group }}</th>
-            </tr>
-            <tr>
-                <td> |&nbsp;
-                    {% for e in groups[group] %}
-                        <a href="{{ url_for('frontend.modify_item', item_name=fqname, itemtype=itemtype, contenttype=Type(e.content_type, parameters=e.default_contenttype_params)|string) }}">{{ e.display_name }}</a> &nbsp;|&nbsp;
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endif %}
+            {% if groups[group]|length > 0 %}
+                <tr>
+                    <th>{{ group }}</th>
+                </tr>
+                <tr>
+                    <td> |&nbsp;
+                        {% for e in groups[group] %}
+                            <a href="{{ url_for('frontend.modify_item', item_name=fqname, itemtype=itemtype, contenttype=Type(e.content_type, parameters=e.default_contenttype_params)|string) }}">{{ e.display_name }}</a> &nbsp;|&nbsp;
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
         {% endfor %}
     </table>
 
