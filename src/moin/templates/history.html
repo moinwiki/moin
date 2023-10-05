@@ -21,7 +21,7 @@
             {%- if '/@itemid/' in request.url or '/%40itemid/' in request.url %}
                 <p class="moin-no-print">
                     <a class="moin-button" href="{{ url_for('frontend.history', item_name=history[0].fqnames[0], bookmark=bookmark_time) }}">{{ _("Item Name") }}</a>
-                    Click to show history spanning item delete and recreate.
+                    {{ _("Click to show history spanning item delete and recreate.") }}
                 </p>
             {%- else %}
                 {%- if fqname.namespace %}
@@ -31,7 +31,7 @@
                 {%- endif %}
                 <p class="moin-no-print">
                     <a class="moin-button" href="{{ url_for('frontend.history', item_name=namespace + '@itemid/' + history[0].itemid, bookmark=bookmark_time) }}">{{ _("Item Id") }}</a>
-                    Click to show history spanning item renames.
+                    {{ _("Click to show history spanning item renames.") }}
                 </p>
             {%- endif %}
         {%- endif %}
@@ -168,7 +168,7 @@
                     {%- if bookmark_time %}
                         <tfoot>
                             <tr>
-                                <td colspan="2">Bookmark is set to</td>
+                                <td colspan="2">{{ _("Bookmark is set to") }}</td>
                                 <td>{{ bookmark_time|time_datetime }}</td>
                                 <td colspan="11"></td>
                             </tr>

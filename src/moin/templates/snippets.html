@@ -54,9 +54,9 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 {% macro creditlogos(start='<span id="moin-creditlogos">'|safe, end='</span>'|safe) %}
     {{ start }}
     {{ creditlogo('https://moinmo.in/', url_for('static', filename='logos/moinmoin_powered.png'),
-       'MoinMoin powered', 'This site uses the MoinMoin Wiki software.') }}
+       'MoinMoin powered', _('This site uses the MoinMoin Wiki software.')) }}
     {{ creditlogo('https://moinmo.in/Python', url_for('static', filename='logos/python_powered.png'),
-       'Python powered', 'MoinMoin is written in Python.') }}
+       'Python powered', _('MoinMoin is written in Python.')) }}
     {{ end }}
 {% endmacro %}
 
@@ -68,9 +68,9 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 {# Text links in the footer #}
 {% macro credits(start='<p id="moin-credits">'|safe, end='</p>'|safe, sep='<span>&bull;</span>'|safe) %}
     {{ start }}
-    {{ credit('https://moinmo.in/', 'MoinMoin Powered', 'This site uses the MoinMoin Wiki software.') }}
+    {{ credit('https://moinmo.in/', 'MoinMoin Powered', _('This site uses the MoinMoin Wiki software.')) }}
     {{ sep }}
-    {{ credit('https://moinmo.in/Python', 'Python Powered', 'MoinMoin is written in Python.') }}
+    {{ credit('https://moinmo.in/Python', 'Python Powered', _('MoinMoin is written in Python.')) }}
     {{ sep }}
     {{ credit('https://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
     {{ sep }}
