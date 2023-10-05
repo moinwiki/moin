@@ -366,7 +366,7 @@ options_no_group_name = {
          from the filesystem as url .../+serve/<name>/...
          """),
 
-        ('supplementation_item_names', ['Discussion', ],
+        ('supplementation_item_names', [_('Discussion'), ],
          "List of names of the supplementation (sub)items [Unicode]"),
 
         ('interwiki_preferred', [], "In dialogues, show those wikis at the top of the list [list of Unicode]."),
