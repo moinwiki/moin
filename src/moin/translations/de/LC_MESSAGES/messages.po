@@ -21,7 +21,7 @@ msgstr ""
 
 #: src/moin/forms.py:100 src/moin/forms.py:179
 msgid "No namespace field in the meta."
-msgstr "Kein Namespace-Feld in den Metadaten."
+msgstr "Kein Namensraum-Feld in den Metadaten."
 
 #: src/moin/forms.py:104
 msgid "The names in the name list must be unique."
@@ -42,7 +42,7 @@ msgstr "Item Name (%(invalid_names)s) darf kein Komma ',' enthalten. Benutzen Si
 #: src/moin/forms.py:130
 #, python-format
 msgid "Item names (%(invalid_names)s) must not match with existing namespaces."
-msgstr "Item-Namen (%(invalid_names)s) dürfen nicht mit Namespaces übereinstimmen"
+msgstr "Item-Namen (%(invalid_names)s) dürfen nicht mit Namensräumen übereinstimmen"
 
 #: src/moin/forms.py:141
 #, python-format
@@ -64,7 +64,7 @@ msgstr "Kein ITEMID-Feld"
 #: src/moin/forms.py:183
 #, python-format
 msgid "%(_namespace)s is not a valid namespace."
-msgstr "%(_namespace)s ist kein gültiger Namespace."
+msgstr "%(_namespace)s ist kein gültiger Namensraum."
 
 #: src/moin/forms.py:204
 msgid "E-Mail"
@@ -343,7 +343,7 @@ msgstr "Gruppen-Name"
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:21
 #: src/moin/apps/admin/templates/admin/user_acl_report.html:21 src/moin/templates/index.html:139
 msgid "Namespace"
-msgstr "Namespace"
+msgstr "Namensraum"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:22
 #: src/moin/apps/admin/templates/admin/item_acl_report.html:18
@@ -601,7 +601,7 @@ msgstr "InterWiki-Namen"
 
 #: src/moin/apps/admin/templates/user/index_user.html:25
 msgid "Namespaces"
-msgstr "Namespaces"
+msgstr "Namensräume"
 
 #: src/moin/apps/admin/templates/user/index_user.html:27 src/moin/templates/index.html:162
 msgid "all"
@@ -626,7 +626,7 @@ msgstr "Nachschlagen"
 #: src/moin/apps/frontend/views.py:449
 #, python-format
 msgid "QueryError: invalid search term: %(search_term)s"
-msgstr ""
+msgstr "QueryError: Ungültiger Suchbegriff: %(search_term)s"
 
 #: src/moin/apps/frontend/views.py:457
 #, python-format
@@ -730,12 +730,12 @@ msgstr "Filter anwenden"
 
 #: src/moin/apps/frontend/views.py:1386
 msgid "Global Index of All Namespaces"
-msgstr "Globaler Index aller Namespaces"
+msgstr "Globaler Index aller Namensräume"
 
 #: src/moin/apps/frontend/views.py:1388
 #, python-format
 msgid "Namespace '%(name)s' "
-msgstr "Namespace '%(name)s' "
+msgstr "Namensraum '%(name)s' "
 
 #: src/moin/apps/frontend/views.py:1391
 #, python-format
@@ -776,12 +776,12 @@ msgstr "Globale Historie"
 
 #: src/moin/apps/frontend/views.py:1702
 msgid "Global History of All Namespaces"
-msgstr "Globale Historie aller Namespaces"
+msgstr "Globale Historie aller Namensräume"
 
 #: src/moin/apps/frontend/views.py:1704
 #, python-format
 msgid "History of Namespace '%(namespace)s'"
-msgstr "Historie des Namespaces '%(namespace)s'"
+msgstr "Historie des Namensraums '%(namespace)s'"
 
 #: src/moin/apps/frontend/views.py:1802 src/moin/apps/frontend/views.py:1826
 #, python-format
@@ -994,7 +994,7 @@ msgstr "Invalides Schlüsselwort"
 
 #: src/moin/apps/frontend/views.py:2244
 msgid "Invalid RE syntax: "
-msgstr "Ungültige RE syntax: "
+msgstr "Ungültige Syntax für Regulären Ausdruck:"
 
 #: src/moin/apps/frontend/views.py:2284 src/moin/templates/usersettings.html:19
 msgid "User Settings"
@@ -1089,7 +1089,7 @@ msgstr "Sie müssen sich anmelden, um Lesezeichen verwenden zu können."
 
 #: src/moin/apps/frontend/views.py:2552
 msgid "There is only one revision eligible for diff."
-msgstr "Es gibt nur eine Revision, die für die Differenz Anzeige wählbar ist."
+msgstr "Es gibt nur eine Revision, die für die Differenz-Anzeige wählbar ist."
 
 #: src/moin/apps/frontend/views.py:2683
 #, python-format
@@ -1102,12 +1102,12 @@ msgstr "Globale Schlagworte"
 
 #: src/moin/apps/frontend/views.py:2788
 msgid "Global Tags in All Namespaces"
-msgstr "Globale Schlagworte in allen Namespaces"
+msgstr "Globale Schlagworte in allen Namensräumen"
 
 #: src/moin/apps/frontend/views.py:2790
 #, python-format
 msgid "Tags in Namespace '%(namespace)s'"
-msgstr "Schlagworte im Namespace '%(namespace)s'"
+msgstr "Schlagworte im Namensraum '%(namespace)s'"
 
 #: src/moin/apps/frontend/views.py:2838
 #, python-format
@@ -1346,6 +1346,8 @@ msgstr "Das Include Makro oben hat ein ungültiges Format, erwartet wird sort=as
 #: src/moin/converters/everything.py:32
 msgid "This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}"
 msgstr ""
+"Das gelöschte Item muss wiederhergestellt werden, bevor es angesehen und "
+"heruntergeladen werden kann, ItemID = {itemid}"
 
 #: src/moin/converters/html_in.py:129
 msgid "Error: malformed HTML: {reason}."
@@ -1354,16 +1356,22 @@ msgstr "Error: fehlerhafte HTML: {reason}."
 #: src/moin/converters/html_in.py:135
 msgid "Error: malformed HTML. Try viewing source with Highlight or Modify links."
 msgstr ""
+"Fehler: fehlerhaftes HTML. Versuche den Quelltext mit Highlight oder "
+" Modify links anzusehen."
 
 #: src/moin/converters/html_in.py:269
 #, python-format
 msgid "Tag '%(invalid_tag)s' is not supported; all tag contents are discarded."
 msgstr ""
+"Tag '%(invalid_tag)s' ist nicht unterstützt; alle Tag Inhalte werden "
+"verworfen."
 
 #: src/moin/converters/html_in.py:276
 #, python-format
 msgid "Tag '%(invalid_tag)s' is not known; tag ignored but children are processed."
 msgstr ""
+"Tag '%(invalid_tag)s' ist nicht bekannt; Tag wird ignoriert, aber "
+"Unterelemente werden verarbeitet."
 
 #: src/moin/converters/html_out.py:690
 msgid "Link to this heading"
@@ -1383,7 +1391,7 @@ msgstr "Fehler: keine entsprechenden Items gefunden \"<<Include({0})>>\""
 
 #: src/moin/converters/macro.py:59
 msgid "Error: invalid macro name."
-msgstr "Fehler: ungültiger Macro-Name"
+msgstr "Fehler: ungültiger Makro-Name"
 
 #: src/moin/converters/macro.py:68
 #, python-format
@@ -1405,7 +1413,7 @@ msgstr "%(item_name)s existiert nicht, möchten Sie es jetzt erstellen?"
 
 #: src/moin/converters/nowiki.py:39
 msgid "Defaulting to plain text due to invalid arguments: \"{arguments}\""
-msgstr ""
+msgstr "Falle zurück auf reinen Text wegen falscher Argumente: \"{arguments}\""
 
 #: src/moin/converters/text_csv_in.py:45
 msgid "Error parsing CSV file:"
@@ -1430,7 +1438,7 @@ msgstr "Der ACL String ist ungültig."
 
 #: src/moin/items/__init__.py:396
 msgid "Access Control List - Use 'None' for default"
-msgstr "Access Control List - Benutze 'None' als Default"
+msgstr "Access Control List - Benutze 'None' für Standardverhalten"
 
 #: src/moin/items/__init__.py:399 src/moin/items/ticket.py:97 src/moin/items/ticket.py:109
 #: src/moin/templates/ticket/advanced.html:20 src/moin/templates/ticket/modify.html:52
@@ -1460,7 +1468,7 @@ msgstr "Das Subitem \"%(name)s\" wurde gelöscht."
 #: src/moin/items/__init__.py:705
 #, python-format
 msgid "An item named %s already exists in the namespace %s."
-msgstr "Ein Item mit Namen %s existiert bereits im Namespace %s."
+msgstr "Ein Item mit Namen %s existiert bereits im Namensraum %s."
 
 #: src/moin/items/__init__.py:746 src/moin/items/__init__.py:748 src/moin/items/__init__.py:760
 #, python-format
@@ -1476,11 +1484,12 @@ msgstr "Das Subitem \"%(name)s\" wurde vernichtet."
 #, python-format
 msgid "Error: The subitem \"%(name)s\" was not destroyed, permission denied."
 msgstr ""
+"Fehler: Das Unter-Item \"%(name)s\" wurde nicht zerstört, Zugriffsfehler."
 
 #: src/moin/items/__init__.py:772
 #, python-format
 msgid "Rev Number %(rev_number)s of the item \"%(name)s\" was destroyed."
-msgstr ""
+msgstr "Revision nummer %(rev_number)s des Items \"%(name)s\" wurde zerstört."
 
 #: src/moin/items/__init__.py:1169
 msgid "Wiki item"
@@ -1505,6 +1514,8 @@ msgstr "KONFLIKT "
 #: src/moin/items/__init__.py:1375
 msgid "An edit conflict has occurred, edit this item again to resolve conflicts."
 msgstr ""
+"Ein Bearbeitungskonflikt ist aufgetreten, diese Seite nochmals bearbeiten um "
+"den Konflikt zu beheben."
 
 #: src/moin/items/__init__.py:1418
 #, python-format
@@ -1517,6 +1528,8 @@ msgid ""
 "Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' "
 "to merge conflicting updates."
 msgstr ""
+"'Entwurf laden' klicken, um den Entwurf %(number)s vor %(interval)s "
+"wiederherzustellen."
 
 #: src/moin/items/__init__.py:1462
 msgid "User profile"
@@ -1524,7 +1537,7 @@ msgstr "Benutzer-Profil"
 
 #: src/moin/items/__init__.py:1463
 msgid "User profile item (not implemented yet!)"
-msgstr ""
+msgstr "Nutzerprofil Item (noch nicht implementiert!)"
 
 #: src/moin/items/blog.py:32
 msgid "Supertags (Categories)"
@@ -1711,7 +1724,7 @@ msgstr "Datei-Muster"
 
 #: src/moin/macros/Icon.py:27
 msgid "Icon not rendered, verify name is valid"
-msgstr ""
+msgstr "Icon wird nicht dargestellt, verify name ist gültig"
 
 #: src/moin/macros/ItemList.py:92
 #, python-format
@@ -1719,28 +1732,33 @@ msgid ""
 "ItemList macro: Argument \"%s\" does not follow <key>=<val> format (arguments, if more than one, must be comma-"
 "separated)."
 msgstr ""
+"ItemList Makro: Argument \"%s\" folgt nicht dem Format <key>=<val> "
+"(Argumente, falls mehr als eines, müssen durch ein Komma getrennt werden)."
 
 #: src/moin/macros/ItemList.py:96
 msgid "ItemList macro: The key's value must be bracketed by matching quotes."
 msgstr ""
+"ItemList Makro: Der Wert muss von gleichen Anführungszeichen eingeschlossen "
+"werden."
 
 #: src/moin/macros/ItemList.py:111
 #, python-format
 msgid "ItemList macro: The value must be \"True\" or \"False\". (got \"%s\")"
 msgstr ""
+"ItemList Makro: Der Wert muss \"True\" oder \"False\" sein. (erhielt \"%s\")"
 
 #: src/moin/macros/ItemList.py:117
 #, python-format
 msgid "ItemList macro: Unrecognized key \"%s\"."
-msgstr ""
+msgstr "ItemList Makro: Unbekannter Schlüssel \"%s\"."
 
 #: src/moin/macros/ItemList.py:128
 msgid "Item does not exist or read access blocked by ACLs: {0}"
-msgstr ""
+msgstr "Item existiert nicht, oder Lesezugriff blockiert durch die ACLs: {0}"
 
 #: src/moin/macros/ItemList.py:139
 msgid "ItemList macro: Error in regex {0!r}: {1}"
-msgstr ""
+msgstr "ItemList Makro: Fehler im Regulären Ausdruck {0!r}: {1}"
 
 #: src/moin/macros/ItemList.py:147
 msgid "<ItemList macro: No matching items were found.>"
@@ -1749,6 +1767,8 @@ msgstr "<ItemList Makro: keine passenden Items gefunden.>"
 #: src/moin/macros/MailTo.py:31
 msgid "MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
 msgstr ""
+"MailTo: ungültiges Format, versuche: "
+"<<MailTo(nutzer AT example DOT org, schreib mir)>>"
 
 #: src/moin/macros/MonthCalendar.py:209
 msgid "January"
@@ -1828,7 +1848,7 @@ msgstr "So"
 
 #: src/moin/macros/ShowIcons.py:29
 msgid "Markup"
-msgstr ""
+msgstr "Textauszeichnung (Markup)"
 
 #: src/moin/macros/ShowIcons.py:29
 msgid "Result"
@@ -1836,16 +1856,18 @@ msgstr "Ergebnis"
 
 #: src/moin/macros/_base.py:123
 msgid "\"ItemTitle\" is not implemented yet."
-msgstr ""
+msgstr "\"ItemTitle\" ist noch nicht implementiert."
 
 #: src/moin/macros/_base.py:125
 #, python-format
 msgid "Unrecognized display value \"%s\"."
-msgstr ""
+msgstr "Unbekannter Anzeigewert \"%s\"."
 
 #: src/moin/mail/sendmail.py:53
 msgid "Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."
 msgstr ""
+"Administrator kontaktieren: Kann kein Passwort-Zurücksetzen-E-Mail senden, "
+"weil die E-Mail-Konfiguration unvollständig ist."
 
 #: src/moin/mail/sendmail.py:61
 msgid "No recipients, nothing to do"
@@ -1975,6 +1997,8 @@ msgid ""
 "More details have been logged. The following data will be helpful for the site admin in locating the "
 "corresponding log entries:"
 msgstr ""
+"Mehr Details wurden geloggt. Die folgenden Daten könnten für die "
+"Administration hilfreich sein, um die passenden Log-Einträge zu finden:"
 
 #: src/moin/templates/crash.html:9
 msgid "Error ID"
@@ -2008,6 +2032,7 @@ msgstr "Mögliche Wege, um die Ursache des Problems zu ermitteln:"
 #: src/moin/templates/crash.html:33
 msgid "Click the Highlight link within Item Views to view the raw text data."
 msgstr ""
+"Klicke Link 'Link Hervorheben' in den Item-Ansichten, um den reinen Text zu sehen."
 
 #: src/moin/templates/crash.html:34
 msgid "Click the Meta link within Item Views to check the content type."
@@ -2048,7 +2073,7 @@ msgstr "Neues Item erstellen"
 #: src/moin/templates/delete.html:12
 #, python-format
 msgid "Delete '%(item_name)s' with alias names %(alias_names)s"
-msgstr ""
+msgstr "Lösche '%(item_name)s' mit den Alias Namen %(alias_names)s"
 
 #: src/moin/templates/delete.html:14
 #, python-format
@@ -2057,7 +2082,7 @@ msgstr "'%(item_name)s' löschen"
 
 #: src/moin/templates/delete.html:35
 msgid "Meta data of item to be deleted:"
-msgstr "Meta Daten des zu löschenden Items:"
+msgstr "Metadaten des zu löschenden Items:"
 
 #: src/moin/templates/delete.html:38
 msgid "Content of item to be deleted:"
@@ -2066,7 +2091,7 @@ msgstr "Inhalt des zu löschenden Items:"
 #: src/moin/templates/destroy.html:14
 #, python-format
 msgid "Destroy '%(item_name)s' with alias names %(alias_names)s"
-msgstr ""
+msgstr "Zerstöre '%(item_name)s' mit den Alias Namen %(alias_names)s"
 
 #: src/moin/templates/destroy.html:16
 #, python-format
@@ -2076,23 +2101,23 @@ msgstr "'%(item_name)s' löschen"
 #: src/moin/templates/destroy.html:39
 #, python-format
 msgid "DESTROY %(item_name)s REVISION NUMBER %(rev_number)s"
-msgstr ""
+msgstr "Zerstöre %(item_name)s REVISION NUMMER %(rev_number)s"
 
 #: src/moin/templates/destroy.html:52
 msgid "Meta data of item revision to be destroyed:"
-msgstr ""
+msgstr "Metadaten der zu zerstörenden Item-Revision:"
 
 #: src/moin/templates/destroy.html:54
 msgid "Meta data of item to be destroyed:"
-msgstr ""
+msgstr "Metadaten des zu zerstörenden Items:"
 
 #: src/moin/templates/destroy.html:59
 msgid "Content of item revision to be destroyed:"
-msgstr ""
+msgstr "Inhalt des zu zerstörenden Items:"
 
 #: src/moin/templates/destroy.html:61
 msgid "Content of item to be destroyed:"
-msgstr ""
+msgstr "Inhalt des zu zerstörenden Items:"
 
 #: src/moin/templates/dictionary.js:16
 msgid "Show comments"
@@ -2223,7 +2248,7 @@ msgstr "Anklicken, um die Historie inkl. Item Umbenennungen anzuzeigen."
 
 #: src/moin/templates/history.html:48 src/moin/templates/mychanges.html:20
 msgid "Name or ID ~(Old Name)"
-msgstr ""
+msgstr "Name oder ID ~(Old Name)"
 
 #: src/moin/templates/history.html:58
 msgid "Content Type"
@@ -2235,7 +2260,7 @@ msgstr "Kommentar und/oder 'Zusammenfassung'"
 
 #: src/moin/templates/history.html:89
 msgid "Item was deleted and later created as new with same name"
-msgstr "Item wurde gelöscht und später als neues Item mit demselben Namen neu erstellt"
+msgstr "Item wurde gelöscht und danach neu mit dem selben Namen erstellt"
 
 #: src/moin/templates/history.html:90
 msgid "Item Id Changed"
@@ -2284,6 +2309,8 @@ msgstr "Dieses Item hat Subitems, die dem Filter entsprechen."
 #: src/moin/templates/index.html:85
 msgid "These items have orphan sub-items. Click name to create or arrow to view sub-items."
 msgstr ""
+"Diese Items haben verwaiste Sub-Items. Klick auf den Namen um sie zu "
+"erstellen, oder auf den Pfeil um die Unter-Items zu betrachten."
 
 #: src/moin/templates/index.html:94
 msgid "This missing item has subitems that match your filter."
@@ -2291,7 +2318,7 @@ msgstr "Dieses fehlende Item hat Subitems, die dem Filter entsprechen."
 
 #: src/moin/templates/index.html:106
 msgid "There are no items or read permission is denied for all."
-msgstr ""
+msgstr "Es gibt keine Items, oder der Zugriff auf alle wird verweigert."
 
 #: src/moin/templates/index.html:110
 msgid "Toggle item selections"
@@ -2323,7 +2350,7 @@ msgstr "Filter"
 
 #: src/moin/templates/index.html:137
 msgid "Change namespace"
-msgstr "Namespace auswählen"
+msgstr "Namensraum wechseln"
 
 #: src/moin/templates/index.html:141
 msgid "Open create item dialog"
@@ -2340,7 +2367,7 @@ msgstr ""
 #: src/moin/templates/index.html:160
 msgid "Click home icon to view namespace home page or click name to view namespace index."
 msgstr ""
-"Drücken Sie das Home Symbol um die Startseite des Namespaces anzuzeigen oder Klicken Sie auf den Namen um den "
+"Drücken Sie das Home Symbol um die Startseite des Namespaces anzuzeigen oder klicken Sie auf den Namen um den "
 "Index zu sehen."
 
 #: src/moin/templates/index.html:179
@@ -2433,7 +2460,7 @@ msgstr "Link hinzufügen"
 
 #: src/moin/templates/itemviews.html:98 src/moin/templates/ticket/ticket_macros.html:45 src/moin/themes/__init__.py:238
 msgid "Unsubscribe"
-msgstr "Nicht abonnieren"
+msgstr "Abbestellen"
 
 #: src/moin/templates/itemviews.html:100 src/moin/templates/ticket/ticket_macros.html:47
 #: src/moin/themes/__init__.py:240
@@ -2442,7 +2469,7 @@ msgstr "Abonnieren"
 
 #: src/moin/templates/itemviews.html:124
 msgid "Discuss contents of this item"
-msgstr ""
+msgstr "Inhalt diskutieren"
 
 #: src/moin/templates/layout.html:41 src/moin/themes/topside/templates/layout.html:45
 msgid "Navigation"
@@ -2586,7 +2613,7 @@ msgstr "Wiederherstellen von '%(item_name)s' auf Revisions Nummer '%(rev_number)
 
 #: src/moin/templates/revert.html:23
 msgid "Meta data of item revision to be reverted:"
-msgstr "Meta Daten für Wiederherstellung des Items:"
+msgstr "Metadaten für Wiederherstellung des Items:"
 
 #: src/moin/templates/revert.html:26
 msgid "Content of item revision to be reverted:"
@@ -2739,6 +2766,8 @@ msgstr ""
 #: src/moin/templates/usersettings_forms.html:69
 msgid "Use the \"Add Link\" or \"Remove Link\" controls within Item Views to add or remove quick links."
 msgstr ""
+"Nutze \"Link hinzufügen\" oder \"Link entfernen\" in den Item-Ansichten um "
+"Quick Links hinzuzufügen oder zu entfernen."
 
 #: src/moin/templates/usersettings_forms.html:71
 msgid "To manually add a link to a local wiki item, prefix the item name with the wiki name: MyWiki/myitem"
@@ -2770,7 +2799,7 @@ msgstr "MeinSchlagwort"
 
 #: src/moin/templates/usersettings_forms.html:99
 msgid "MyNameSpace"
-msgstr "MeinNameSpace"
+msgstr "MeinNamensRaum"
 
 #: src/moin/templates/usersettings_forms.html:100
 msgid "My"
@@ -2782,11 +2811,11 @@ msgstr "Item-ID"
 
 #: src/moin/templates/usersettings_forms.html:108
 msgid "Formats for entering subscriptions:"
-msgstr "Formate für das Eintragen von Abonnements:"
+msgstr "Formate um Abonnements einzutragen:"
 
 #: src/moin/templates/usersettings_forms.html:114
 msgid "is created/removed by clicking a Subscribe/Unsubscribe link"
-msgstr "wird zugefügt/gelöscht durch Klicken auf den 'Abonnieren'/'Nicht abonnieren' Link"
+msgstr "wird zugefügt/gelöscht durch Klicken auf den 'Abonnieren'/'Abbestellen' Link"
 
 #: src/moin/templates/usersettings_forms.html:125
 msgid "Appearance"
