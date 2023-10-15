@@ -43,11 +43,7 @@ moin2 installation process. For a list of dependencies, see setup.py.
 
 Clients
 =======
-On the client side, you need:
+On the client side, you need a web browser that supports W3C standards HTML 5, CSS 2.1, and JavaScript:
 
-* a web browser that supports W3C standards HTML 5, CSS 2.1, and JavaScript:
-
-  - any current version of Firefox, Chrome, Opera, Safari, Maxthon, Internet Explorer (IE9 or newer).
-  - use of older Internet Explorer versions is not recommended and not supported.
-
-* a Java browser plugin is required only if you want to use the TWikiDraw or AnyWikiDraw drawing applets.
+* any current version of Firefox, Chrome, Opera, Safari, Maxthon, Internet Explorer (IE9 or newer).
+* use of older Internet Explorer versions is not recommended and not supported.

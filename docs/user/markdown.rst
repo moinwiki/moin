@@ -533,11 +533,11 @@ As shown in the second table below, use of outside borders and neat alignment of
 
 **Markup**: ::
 
-    |Tables            |Are            |Very  |Cool    |
-    |------------------|:-------------:|-----:|:-------|
-    |col 2 is          |centered       |$12   |Gloves  |
-    |col 3 is          |right-aligned  |$1600 |Necklace|
-    |col 4 is          |left-aligned   |$100  |Hat     |
+    | Tables            |Are            |Very  |Cool    |
+    |-------------------|:-------------:|-----:|:-------|
+    | col 2 is          |centered       |$12   |Gloves  |
+    | col 3 is          |right-aligned  |$1600 |Necklace|
+    | col 4 is          |left-aligned   |$100  |Hat     |
 
     `Tables`            |*Are*            |Very  |Cool
     ------------|:-------------:|-----:|:-------
@@ -565,7 +565,7 @@ As shown in the second table below, use of outside borders and neat alignment of
 ================== ================= ======== ==========
 
 
-**reST NOTE**: reST does not support cell alignment.
+**reST NOTE**: reST does not support cell alignment, therefore the last example shown above does not reflect the resulting alignment.
 
 Syntax Highlighting of Preformatted Code
 ----------------------------------------

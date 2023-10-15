@@ -8,7 +8,7 @@
 {% import "forms.html" as forms %}
 
 {% macro meta_editor(form, may_admin) %}
-    <h2>General meta</h2>
+    <h2>{{ _("General meta") }}</h2>
     <dl>
         {% if may_admin %}
             {{ forms.render(form['acl']) }}
@@ -22,5 +22,5 @@
             {{ forms.render(form[e]) }}
         {% endfor %}
     </dl>
-    <div class="hint">{{ _("Tags  may have embedded blanks, use commas to separate.") }}</div>
+    <div class="hint">{{ _("Tags may have embedded blanks, use commas to separate.") }}</div>
 {% endmacro %}

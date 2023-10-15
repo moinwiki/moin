@@ -1,5 +1,6 @@
 # Copyright: 2008 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:DmitryAndreev
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -322,8 +323,6 @@ continuation of no bullet list"""),
          '{{png|my png|&w=100}}\n'),
         ('{{png||width="100"}}',
          '{{png||width="100"}}\n'),
-        ('{{drawing:anywikitest.adraw}}',
-         '{{drawing:anywikitest.adraw}}\n'),
         ('{{http://static.moinmo.in/logos/moinmoin.png}}\n',
          '{{http://static.moinmo.in/logos/moinmoin.png}}\n'),
         ('{{http://static.moinmo.in/logos/moinmoin.png|alt text}}\n',

@@ -1,4 +1,5 @@
 # Copyright: 2005-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -44,8 +45,6 @@ MIMETYPES_MORE = {
     '.wmv': 'video/x-ms-wmv',
     '.wma': 'audio/x-ms-wma',
     '.swf': 'application/x-shockwave-flash',
-    '.awd': 'application/x-anywikidraw',
-    '.twd': 'application/x-twikidraw',
     '.swd': 'application/x-svgdraw',
     '.dbx': 'application/docbook+xml',
     '.moin': 'text/x.moin.wiki',

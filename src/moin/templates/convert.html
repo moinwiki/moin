@@ -14,7 +14,7 @@
         {{ gen.form.open(form, method="post", action=url_for('frontend.convert_item', item_name=fqname)) }}
             {{ forms.render_errors(form) }}
             <dl>
-                <dt>Current Content Type</dt>
+                <dt>{{ _("Current Content Type") }}</dt>
                 <dd> {{ contenttype }} </dd>
                 <br>
                 {# common.js adds a size attribute to following select clause #}
