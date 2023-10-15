@@ -16,9 +16,10 @@ import click
 from flask import current_app as app
 from flask.cli import FlaskGroup
 
-from whoosh.query import Every, Term, And, Regex
+from whoosh.query import Term, And, Regex, Not
 
 from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, REVID, WIKINAME, PARENTID, REV_NUMBER
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.app import create_app, before_wiki
 
 from moin import log
@@ -41,14 +42,14 @@ def cli():
 def ReduceRevisions(query, namespace, test):
     logging.info("Reduce revisions started")
     before_wiki()
-    q = Term(WIKINAME, app.cfg.interwikiname)
+    q = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
     if query or namespace:
         if query:
             q = And([q, Regex(NAME_EXACT, query)])
         if namespace:
             q = And([q, Regex(NAMESPACE, namespace)])
     else:
-        q = Every()
+        q = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
 
     for current_rev in app.storage.search(q, limit=None):
         current_name = current_rev.meta[NAME]
