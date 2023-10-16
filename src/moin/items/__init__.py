@@ -1337,8 +1337,11 @@ class Default(Contentful):
                     old_item = Item.create(self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype)
                     old_text = old_item.content.data
                     old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
-                    preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
-                    preview_rendered = item.content._render_data(preview=data)
+                    if data:
+                        preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
+                        preview_rendered = item.content._render_data(preview=data)
+                    else:  # TODO: make preview button inactive for empty items, see #1539
+                        flash(_("No preview available for empty items."), 'error')
                     close_file(old_item.rev.data)
                 else:
                     # user clicked OK/Save button, check for conflicts,
