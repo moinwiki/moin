@@ -3,6 +3,7 @@
 # Copyright: MoinMoin:FrankieChow, MoinMoin:NirSoffer
 # Copyright: 2005-2012 MoinMoin:ThomasWaldmann
 # Copyright: 2007      MoinMoin:JohannesBerg
+# Copyright: 2023      MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -133,9 +134,10 @@ You also have to give the keyword argument "auth_method" containing the
 name of the authentication method.
 """
 
+from urllib.parse import quote, quote_plus
 from werkzeug.exceptions import abort
-from werkzeug.urls import url_quote, url_quote_plus
 from werkzeug.utils import redirect
+
 from flask import url_for, session, request
 from flask import g as flaskg
 from flask import current_app as app
@@ -411,8 +413,8 @@ def handle_login(userobj, **kw):
         if ret.redirect_to:
             nextstage = get_multistage_continuation_url(authmethod.name)
             url = ret.redirect_to
-            url = url.replace('%return_form', url_quote_plus(nextstage))
-            url = url.replace('%return', url_quote(nextstage))
+            url = url.replace('%return_form', quote_plus(nextstage))
+            url = url.replace('%return', quote(nextstage))
             abort(redirect(url))
         msg = ret.message
         if msg and msg not in flaskg._login_messages:
