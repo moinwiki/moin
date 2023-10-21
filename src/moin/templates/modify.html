@@ -68,6 +68,11 @@
             {{ data_editor(form['content_form'], item_name) }}
             {% set may_admin = user.may.admin(fqname) %}
             {{ meta_editor(form['meta_form'], may_admin) }}
+            {% if fqname.fullname.endswith(('Group', 'Dict')) %}
+                <dl>
+                    {{ forms.render(form['extra_meta_text']) }}
+                </dl>
+            {% endif %}
         {{ gen.form.close() }}
     </div>
 

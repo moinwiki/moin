@@ -54,6 +54,13 @@
                         <div class="col-md-6">
                             {{ basic_meta_editor(form['meta_form']) }}
                         </div>
+                        {% set field = form['extra_meta_text'] %}
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ gen.label(field) }}
+                                {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, class='form-control') }}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
