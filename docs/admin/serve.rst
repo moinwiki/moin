@@ -108,7 +108,7 @@ The following three commands are equivalent as the
 specified options are the defaults. ::
 
     moin dump-html
-    moin dump-html --directoy HTML --theme topside_cms --exclude-ns userprofiles --query .*
+    moin dump-html --directory HTML --theme topside_cms --exclude-ns userprofiles --query .*
     moin dump-html -d HTML -t topside_cms -e userprofiles -q .*
 
 The --directory option may be a relative or absolute path. The default directory,
