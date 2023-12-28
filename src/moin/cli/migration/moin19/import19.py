@@ -76,7 +76,7 @@ FORMAT_TO_CONTENTTYPE = {
     'text/csv': 'text/csv;charset=utf-8',
     'docbook': 'application/docbook+xml;charset=utf-8',
 }
-MIGR_STAT_KEYS = ['revs', 'items', 'users', 'missing_user', 'missing_file', 'del_item']
+MIGR_STAT_KEYS = ['revs', 'items', 'attachments', 'users', 'missing_user', 'missing_file', 'del_item']
 
 last_moin19_rev = {}
 user_names = []
@@ -104,13 +104,14 @@ def migr_logging(msg_id, log_msg):
 
 def migr_statistics():
     logging.info("Migration statistics:")
-    logging.info("Users     : {0:6d}".format(migr_stat['users']))
-    logging.info("Items     : {0:6d}".format(migr_stat['items']))
-    logging.info("Revisions : {0:6d}".format(migr_stat['revs']))
+    logging.info("Users:       {0:6d}".format(migr_stat['users']))
+    logging.info("Items:       {0:6d}".format(migr_stat['items']))
+    logging.info("Revisions:   {0:6d}".format(migr_stat['revs']))
+    logging.info("Attachments: {0:6d}".format(migr_stat['attachments']))
 
     for message in ['missing_user', 'missing_file', 'del_item']:
         if migr_stat[message] > 0:
-            logging.info("Warnings  : {0:6d} - {1}".format(migr_stat[message], message))
+            logging.info("Warnings:    {0:6d} - {1}".format(migr_stat[message], message))
 
 
 @cli.command('import19', help='Import content and user data from a moin 1.9 wiki')
@@ -156,6 +157,7 @@ def ImportMoin19(data_dir=None, markup_out=None):
                              'Missing userid {0!r}, editor of {1} revision {2}'.format(
                                  rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID]))
                 del rev.meta[USERID]
+        migr_stat['revs'] += 1
         backend.store(rev.meta, rev.data)
         # item_name to itemid xref required for migrating user subscriptions
         flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
@@ -172,7 +174,6 @@ def ImportMoin19(data_dir=None, markup_out=None):
         except UnicodeEncodeError:
             logging.debug('Processing item "{0}", namespace "{1}", revision "{2}"'.format(
                 item_name.encode('ascii', errors='replace'), namespace, revno))
-        migr_stat['revs'] += 1
         if namespace == '':
             namespace = 'default'
         meta, data = backend.retrieve(namespace, revno)
@@ -549,7 +550,9 @@ class AttachmentRevision:
                 MTIME: int(os.path.getmtime(attpath)),
                 ACTION: ACTION_SAVE,
             }
+        migr_stat['attachments'] += 1
         meta[NAME] = ['{0}/{1}'.format(item_name, attach_name)]
+        logging.debug('Migrating attachment {0}'.format(meta[NAME]))
         if acl is not None:
             meta[ACL] = acl
         meta[CONTENTTYPE] = str(MimeType(filename=attach_name).content_type())
