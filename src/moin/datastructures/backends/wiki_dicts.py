@@ -11,8 +11,9 @@
 
 from flask import g as flaskg
 
-from moin.constants.keys import CURRENT, SOMEDICT
+from moin.constants.keys import CURRENT, WIKIDICT
 from moin.datastructures.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
+from flask import flash
 
 
 class WikiDict(BaseDict):
@@ -26,9 +27,10 @@ class WikiDict(BaseDict):
         item = flaskg.unprotected_storage[dict_name]
         try:
             rev = item[CURRENT]
-            somedict = rev.meta.get(SOMEDICT, {})
-            return somedict
+            wikidict = rev.meta.get(WIKIDICT, {})
+            return wikidict
         except KeyError:
+            flash('WikiDict "{dict_name}" has invalid syntax within metadata.'.format(dict_name=dict_name))
             raise DictDoesNotExistError(dict_name)
 
 
@@ -43,5 +45,5 @@ class WikiDicts(BaseDictsBackend):
     def _retrieve_items(self, dict_name):
         item = flaskg.unprotected_storage[dict_name]
         rev = item.get_revision(CURRENT)
-        somedict = rev.meta.get(SOMEDICT, {})
-        return somedict
+        wikidict = rev.meta.get(WIKIDICT, {})
+        return wikidict

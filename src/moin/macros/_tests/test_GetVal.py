@@ -9,7 +9,7 @@ import pytest
 from flask import g as flaskg
 
 from moin.macros.GetVal import Macro
-from moin.constants.keys import SOMEDICT
+from moin.constants.keys import WIKIDICT
 from moin._tests import become_trusted, update_item
 
 
@@ -17,9 +17,9 @@ class TestMacro:
     @pytest.fixture
     def test_dict(self):
         become_trusted()
-        somedict = {"One": "1",
+        wikidict = {"One": "1",
                     "Two": "2"}
-        update_item('TestDict', {SOMEDICT: somedict}, "This is a dict item.")
+        update_item('TestDict', {WIKIDICT: wikidict}, "This is a dict item.")
 
         return "TestDict"
 

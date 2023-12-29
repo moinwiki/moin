@@ -1068,16 +1068,12 @@ The WikiGroups backend is enabled by default so there is no need to add the foll
 To create a WikiGroup that can be used in an ACL rule:
 
 * Create a wiki item with a name ending in "Group" (the content of the item is not relevant)
-* Edit the metadata and add an entry for "usergroup" under the heading "Extra Metadata (JSON)"::
+* Edit the metadata and add entries under the heading "Wiki Groups", one entry per line.
+* Leading and trailing spaces are ignored, internal spaces are accepted.::
 
-    {
-      "itemid": "36b6cd973d7e4daa9cfa265dcf751e79",
-      "namespace": "",
-      "usergroup": [
-        "JaneDoe",
-        "JohnDoe"
-      ]
-    }
+    JaneDoe
+    JohnDoe
+    SomeOtherGroup
 
 * Use the new group name in one or more ACL rules.
 
@@ -1120,17 +1116,11 @@ The WikiDicts backend is enabled by default so there is no need to add the follo
 To create a WikiDict that can be used in an GetVal macro:
 
 * Create a wiki item with a name ending in "Dict" (the content of the item is not relevant)
-* Edit the metadata and add an entry for "somedict" under the heading "Extra Metadata (JSON)"::
+* Edit the metadata and add an entry under the heading "Wiki Dict"::
 
-    {
-      "itemid": "332458ceab334991868de8970980494e",
-      "namespace": "",
-      "somedict": {
-        "apple": "red",
-        "banana": "yellow",
-        "pear": "green"
-      }
-    }
+    apple=red
+    banana=yellow
+    pear=green
 
 The ConfigDicts backend uses dicts defined in the configuration file. Adding the
 following to wikiconfig creates a OneDict and a NumbersDict and prevents

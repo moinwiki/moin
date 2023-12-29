@@ -21,8 +21,7 @@ ACL = "acl"
 # keys for storing group and dict information
 # group of user names, e.g. for ACLs:
 USERGROUP = "usergroup"
-# needs more precise name / use case:
-SOMEDICT = "somedict"
+WIKIDICT = "wikidict"
 
 # TODO review plural constants
 CONTENTTYPE = "contenttype"
@@ -66,6 +65,8 @@ DATAID = "dataid"
 WIKINAME = "wikiname"
 CONTENT = "content"
 REFERS_TO = "refers_to"
+# list of metadata fields that editors cannot modify
+# excludes COMMENT, SUMMARY, TAG, USERGROUP and WIKIDICT
 IMMUTABLE_KEYS = [
     ACTION,
     ADDRESS,
@@ -82,6 +83,11 @@ IMMUTABLE_KEYS = [
     SIZE,
     USERID,
     WIKINAME,
+    CONTENTTYPE,
+    ITEMID,
+    ITEMTYPE,
+    NAMESPACE,
+    REV_NUMBER,
 ]
 
 # magic REVID for current revision:
