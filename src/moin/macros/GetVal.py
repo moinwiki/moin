@@ -30,5 +30,5 @@ class Macro(MacroInlineBase):
             raise ValueError(_("GetVal: dict not found: ") + item_name)
         result = d.get(key, '')
         if not result:
-            return _('GetVal macro is invalid, dict missing key: {keyname}').format(keyname=arguments[0])
+            raise ValueError(_('GetVal macro is invalid, {item_name} missing key: {key_name}').format(item_name=item_name,key_name=key))
         return result
