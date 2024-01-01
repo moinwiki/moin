@@ -48,14 +48,17 @@ from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.registry import RegistryBase
 from moin.utils.diff_html import diff as html_diff
 from moin.utils import diff3
-from moin.forms import RequiredText, OptionalText, JSON, Tags, Names, validate_name, NameNotValidError
+from moin.forms import (
+    RequiredText, OptionalText, Tags, Names, validate_name,
+    NameNotValidError, OptionalMultilineText
+)
 from moin.constants.keys import (
     NAME, NAMES, NAMENGRAM, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
-    IMMUTABLE_KEYS, UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
+    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS, FQNAMES
+    LATEST_REVS, EDIT_ROWS, FQNAMES, USERGROUP, WIKIDICT
 )
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_USERPROFILES
@@ -215,6 +218,38 @@ def _verify_parents(self, new_name, namespace, old_name=''):
                 "Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.",
                 new_name=new_name, parent_name=name_segments[idx]
             ))
+
+
+def str_to_dict(strg):
+    """
+    Convert wikidicts from multi-line input form:
+        'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n',
+    To dictionary:
+        {'Last': 'last item', 'text with spaces': 'second item', 'Empty string': '', 'First': 'first item'}
+    """
+    new_dict = {}
+    lines = strg.splitlines()
+    for kv in lines:
+        try:
+            k, v = kv.split('=', 1)
+            new_dict[k] = v
+        except ValueError:
+            flash(_('Invalid line in wikidict meta data; ignored: "%(data)s"}', data=kv), 'error')
+    return new_dict
+
+
+def dict_to_str(dic):
+    """
+    convert dict:
+        {'First': 'first item', 'text with spaces': 'second item', 'Empty string': '', 'Last': 'last item'}
+    to str:
+        'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n'
+    """
+    new_str = []
+    for k, v in dic.items():
+        new_str.append(k + '=' + v)
+    new_str = '\r\n'.join(new_str)
+    return new_str
 
 
 class RegistryItem(RegistryBase):
@@ -790,7 +825,8 @@ class Item:
         ModifyForm.
         """
         meta_form = BaseMetaForm
-        extra_meta_text = JSON.using(label=L_("Extra MetaData (JSON)")).with_properties(rows=ROWS_META, cols=COLS)
+        wikidict = OptionalMultilineText.using(label=L_("Wiki Dict")).with_properties(rows=ROWS_META, cols=COLS)
+        usergroup = OptionalMultilineText.using(label=L_("User Group")).with_properties(rows=ROWS_META, cols=COLS)
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
@@ -805,11 +841,19 @@ class Item:
             # policy to 'duck' suppresses this behavior.
             if 'acl' not in meta:
                 meta['acl'] = "None"
-
             self['meta_form'].set(meta, policy='duck')
-            for k in list(self['meta_form'].field_schema_mapping.keys()) + IMMUTABLE_KEYS:
-                meta.pop(k, None)
-            self['extra_meta_text'].set(item.meta_dict_to_text(meta))
+            if meta[NAME][0].endswith('Dict'):
+                try:
+                    self[WIKIDICT].set(dict_to_str(item.meta[WIKIDICT]))
+                except KeyError:
+                    pass
+            if meta[NAME][0].endswith('Group'):
+                try:
+                    user_group = '\r\n'.join(item.meta[USERGROUP])
+                    self[USERGROUP].set(user_group)
+                except KeyError:
+                    pass
+
             self['content_form']._load(item.content)
 
         def _dump(self, item):
@@ -827,11 +871,10 @@ class Item:
             # e.g. we get PARENTID in here
             meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
             meta.update(self['meta_form'].value)
-            try:
-                meta.update(item.meta_text_to_dict(self['extra_meta_text'].value))
-            except TypeError:
-                # only items with names ending in Group or Dict have extra_meta.test
-                pass
+            if item.name.endswith('Dict'):
+                meta.update({WIKIDICT: str_to_dict(self[WIKIDICT].value)})
+            if item.name.endswith('Group'):
+                meta.update({USERGROUP: self[USERGROUP].value.splitlines()})
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
@@ -873,7 +916,6 @@ class Item:
             # this is treated as a rule which matches nothing
             elif meta['acl'] == 'Empty':
                 meta['acl'] = ''
-
         # we store the previous (if different) and current item names into revision metadata
         # this is useful for deletes, rename history and backends that use item uids internally
         if self.fqname.field == NAME_EXACT:
@@ -1239,7 +1281,7 @@ class Default(Contentful):
     def meta_changed(self, meta):
         """
         Return true if user changed any of the following meta data:
-            comment, ACL, summary, tags, names
+            comment, ACL, summary, tags, names, extra_meta wikidict, usergroup
         """
         if request.values.get(COMMENT):
             return True
@@ -1247,6 +1289,20 @@ class Default(Contentful):
             return True
         if request.values.get('meta_form_summary') != meta.get('summary', None):
             return True
+        if meta[NAME][0].endswith('Group'):
+            try:
+                new = request.values.get(USERGROUP).splitlines()
+            except KeyError:
+                new = None
+            old = meta.get(USERGROUP, None)
+            if new != old:
+                return True
+        if meta[NAME][0].endswith('Dict'):
+            new = request.values.get(WIKIDICT)
+            new = str_to_dict(new)
+            old = meta.get(WIKIDICT, None)
+            if new != old:
+                return True
         new_tags = request.values.get('meta_form_tags').replace(" ", "").split(',')
         if new_tags == [""]:
             new_tags = []
