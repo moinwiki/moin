@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -38,3 +39,6 @@ DESTROY = 'destroy'
 
 # rights that control access to operations on contents
 ACL_RIGHTS_CONTENTS = [READ, PUBREAD, WRITE, CREATE, ADMIN, DESTROY, ]
+
+# special user groups - order is important
+SPECIAL_USERS = ['All', 'Known', 'Trusted', ]
