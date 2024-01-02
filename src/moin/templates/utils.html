@@ -206,7 +206,13 @@
             {%- endif -%}
         </li>
         <li class="list-group-item">Trash: {{ meta['trash'] or False }}</li>
+        {% if 'usergroup' in meta %}
+            <li class="list-group-item">User Group: {{ meta['usergroup'] }}</li>
+        {% endif %}
         <li class="list-group-item">User ID: {{ meta['userid'] }}</li>
+        {% if 'wikidict' in meta %}
+            <li class="list-group-item">Wiki Dict: {{ meta['wikidict'] }}</li>
+        {% endif %}
         <li class="list-group-item">Wiki Name: {{ meta['wikiname'] }}</li>
     </ul>
 {% endmacro %}

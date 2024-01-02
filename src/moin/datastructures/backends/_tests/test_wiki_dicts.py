@@ -11,7 +11,7 @@
 
 from moin.datastructures.backends._tests import DictsBackendTest
 from moin.datastructures.backends import wiki_dicts
-from moin.constants.keys import SOMEDICT
+from moin.constants.keys import WIKIDICT
 from moin._tests import become_trusted, update_item
 
 import pytest
@@ -29,15 +29,15 @@ class TestWikiDictsBackend(DictsBackendTest):
     def custom_setup(self):
         become_trusted()
 
-        somedict = {"First": "first item",
+        wikidict = {"First": "first item",
                     "text with spaces": "second item",
                     'Empty string': '',
                     "Last": "last item"}
-        update_item('SomeTestDict', {SOMEDICT: somedict}, DATA)
+        update_item('SomeTestDict', {WIKIDICT: wikidict}, DATA)
 
-        somedict = {"One": "1",
+        wikidict = {"One": "1",
                     "Two": "2"}
-        update_item('SomeOtherTestDict', {SOMEDICT: somedict}, DATA)
+        update_item('SomeOtherTestDict', {WIKIDICT: wikidict}, DATA)
 
     def test__retrieve_items(self):
         wikidict_obj = wiki_dicts.WikiDicts()

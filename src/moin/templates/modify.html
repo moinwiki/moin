@@ -17,7 +17,7 @@
 
 {% extends theme("show.html") %}
 
-{% from form.meta_template import meta_editor %}
+{% from form.meta_template import meta_editor with context %}
 {# Import macros data_editor and extra_head from content_form's template.
    extra_head is optional, so instead of a simple "import from" we need to do
    this manually #}
@@ -68,11 +68,19 @@
             {{ data_editor(form['content_form'], item_name) }}
             {% set may_admin = user.may.admin(fqname) %}
             {{ meta_editor(form['meta_form'], may_admin) }}
-            {% if fqname.fullname.endswith(('Group', 'Dict')) %}
-                <dl>
-                    {{ forms.render(form['extra_meta_text']) }}
-                </dl>
-            {% endif %}
+
+        {% if item.meta['name'][0].endswith('Group') %}
+            {{ forms.render(form['usergroup']) }}
+            <div class="hint">
+                {{ _('Enter list of user names, one name per line.') }}
+            </div>
+        {% endif %}
+        {% if item.meta['name'][0].endswith('Dict') %}
+            {{ forms.render(form['wikidict']) }}
+            <div class="hint">
+                {{ _('Enter "key=value" strings, one per line, no quotes, no blank lines.') }}
+            </div>
+        {% endif %}
         {{ gen.form.close() }}
     </div>
 
