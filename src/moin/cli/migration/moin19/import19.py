@@ -33,6 +33,7 @@ from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+from moin.constants.rights import SPECIAL_USERS
 from moin.storage.error import NoSuchRevisionError
 from moin.utils.mimetype import MimeType
 from moin.utils.crypto import make_uuid, hash_hexdigest
@@ -77,6 +78,8 @@ FORMAT_TO_CONTENTTYPE = {
     'docbook': 'application/docbook+xml;charset=utf-8',
 }
 MIGR_STAT_KEYS = ['revs', 'items', 'attachments', 'users', 'missing_user', 'missing_file', 'del_item']
+
+special_users_lower = [user.lower() for user in SPECIAL_USERS]
 
 last_moin19_rev = {}
 user_names = []
@@ -652,9 +655,15 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
         if (entries, rights) == (['Default'], []):
             result.append("Default")
         else:
+            entries_valid = []
+            for entry in entries:
+                if entry.lower() in special_users_lower and entry != entry.capitalize():
+                    entries_valid.append(entry.capitalize())
+                else:
+                    entries_valid.append(entry)
             result.append("{0}{1}:{2}".format(
                           modifier,
-                          ','.join(entries),
+                          ','.join(entries_valid),
                           ','.join(rights)  # iterator has removed invalid rights
                           ))
     result = ' '.join(result)
