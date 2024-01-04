@@ -43,16 +43,6 @@ table.navigation { background:var(--page_color); float:right; margin:2px; }
 
 /* forms */
 label { display:block; font-weight:bold; }
-input[type="submit"],
-input[type="button"],
-button { font-weight:bold; font-size:.75em; background:var(--base_color); padding:4px 15px;
-    border:var(--border_style); border-radius:6px; cursor:pointer; }
-input[type="submit"]:hover,
-input[type="button"]:hover,
-button:hover { box-shadow:2px 2px 1px var(--font_color); }
-input[type="submit"]:active,
-input[type="button"]:active,
-button:active { position:relative; top:1px; }
 input,
 select { padding:3px; background:var(--page_color); border:var(--border_style);
     border-radius:2px; }
