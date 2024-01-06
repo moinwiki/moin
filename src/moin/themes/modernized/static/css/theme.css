@@ -47,13 +47,6 @@ input,
 select { padding:3px; background:var(--page_color); border:var(--border_style);
     border-radius:2px; }
 input[type="text"] { width:96%; }
-form[name="delete_item"] dd input,
-form[name="rename_item"] dd input,
-form[name="destroy_item"] dd input { width:100%; }
-form[name="delete_item"] dt,
-form[name="rename_item"] dt,
-form[name="destroy_item"] dt { width:20%; }
-
 .moin-transclusion { max-width:100%; }
 a.moin-conflict:before { content:url("../img/moin-conflict.png"); margin:0 .2em; }
 
