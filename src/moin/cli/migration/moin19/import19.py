@@ -1,6 +1,6 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
-# Copyright: 2023 MoinMoin:UlrichB
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -139,16 +139,16 @@ def ImportMoin19(data_dir=None, markup_out=None):
     if os.path.isdir(user_dir):
         for rev in UserBackend(user_dir):
             global user_names
-            user_names.append(rev.meta['name'][0])
-            userid_old2new[rev.uid] = rev.meta['itemid']  # map old userid to new userid
+            user_names.append(rev.meta[NAME][0])
+            userid_old2new[rev.uid] = rev.meta[ITEMID]  # map old userid to new userid
             backend.store(rev.meta, rev.data)
 
     logging.info("PHASE2: Converting Pages and Attachments ...")
     for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
         for user_name in user_names:
-            if rev.meta['name'][0] == user_name or rev.meta['name'][0].startswith(user_name + '/'):
-                rev.meta['namespace'] = 'users'
-                users_itemlist.add(rev.meta['name'][0])  # save itemname for link migration
+            if rev.meta[NAME][0] == user_name or rev.meta[NAME][0].startswith(user_name + '/'):
+                rev.meta[NAMESPACE] = 'users'
+                users_itemlist.add(rev.meta[NAME][0])  # save itemname for link migration
                 break
 
         if USERID in rev.meta:
@@ -163,7 +163,7 @@ def ImportMoin19(data_dir=None, markup_out=None):
         migr_stat['revs'] += 1
         backend.store(rev.meta, rev.data)
         # item_name to itemid xref required for migrating user subscriptions
-        flaskg.item_name2id[rev.meta['name'][0]] = rev.meta['itemid']
+        flaskg.item_name2id[rev.meta[NAME][0]] = rev.meta[ITEMID]
 
     logging.info("PHASE3: Converting last revision of Moin 1.9 items to Moin 2.0 markup ...")
     conv_in = ConverterFormat19()
@@ -217,7 +217,7 @@ def ImportMoin19(data_dir=None, markup_out=None):
         meta[MTIME] = meta[MTIME] + 1
         meta[COMMENT] = 'Converted moin 1.9 markup to ' + markup_out + ' markup'
         meta[CONTENTTYPE] = CONTENTTYPE_MARKUP_OUT[markup_out]
-        del meta['dataid']
+        del meta[DATAID]
         out.seek(0)
         backend.store(meta, out)
 
@@ -439,20 +439,20 @@ class PageRevision:
         # if this revision matches a custom namespace defined in wikiconfig,
         # then modify the meta data for namespace and name
         for custom_namespace in custom_namespaces:
-            if meta['name'][0] == custom_namespace:
+            if meta[NAME][0] == custom_namespace:
                 # cannot have itemname == namespace_name, so we rename. XXX may create an item with duplicate name
-                new_name = app.cfg.root_mapping.get(meta['name'][0], app.cfg.default_root)
+                new_name = app.cfg.root_mapping.get(meta[NAME][0], app.cfg.default_root)
                 logging.warning("Converting {0} to namespace:homepage {1}:{2}".format(
-                    meta['name'][0], custom_namespace, new_name))
-                meta['namespace'] = custom_namespace
-                meta['name'] = [new_name]
+                    meta[NAME][0], custom_namespace, new_name))
+                meta[NAMESPACE] = custom_namespace
+                meta[NAME] = [new_name]
                 break
-            if meta['name'][0].startswith(custom_namespace + '/'):
+            if meta[NAME][0].startswith(custom_namespace + '/'):
                 # split the namespace from the name
                 logging.warning("Converting {0} to namespace:itemname {1}:{2}".format(
-                    meta['name'][0], custom_namespace, meta['name'][0][len(custom_namespace) + 1:]))
-                meta['namespace'] = custom_namespace
-                meta['name'] = [meta['name'][0][len(custom_namespace) + 1:]]
+                    meta[NAME][0], custom_namespace, meta[NAME][0][len(custom_namespace) + 1:]))
+                meta[NAMESPACE] = custom_namespace
+                meta[NAME] = [meta[NAME][0][len(custom_namespace) + 1:]]
                 break
         self.meta = {}
         for k, v in meta.items():
@@ -466,8 +466,8 @@ class PageRevision:
             self.meta[ACL] = regenerate_acl(acl_line)
 
         for user_name in user_names:
-            if meta['name'][0] == user_name or meta['name'][0].startswith(user_name + '/'):
-                meta['namespace'] = 'users'
+            if meta[NAME][0] == user_name or meta[NAME][0].startswith(user_name + '/'):
+                meta[NAMESPACE] = 'users'
                 break
 
         # match item create process that adds some keys with none-like values
@@ -479,7 +479,7 @@ class PageRevision:
         for k in (COMMENT, SUMMARY):
             if k not in self.meta:
                 self.meta[k] = ''
-        self.meta['wikiname'] = app.cfg.sitename  # old 1.9 sitename is not available
+        self.meta[WIKINAME] = app.cfg.sitename  # old 1.9 sitename is not available
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
@@ -764,7 +764,7 @@ class UserRevision:
 
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
-        logging.debug("Processing user {0} {1} {2}".format(metadata['name'][0], self.uid, metadata['email']))
+        logging.debug("Processing user {0} {1} {2}".format(metadata[NAME][0], self.uid, metadata[EMAIL]))
         migr_stat['users'] += 1
 
         # transfer subscribed_pages to subscription_patterns
@@ -772,7 +772,7 @@ class UserRevision:
 
         # convert bookmarks from usecs (and str) to secs (int)
         metadata[BOOKMARKS] = [(interwiki, int(bookmark) // 1000000)
-                               for interwiki, bookmark in metadata.get('bookmarks', {}).items()]
+                               for interwiki, bookmark in metadata.get(BOOKMARKS, {}).items()]
 
         # stuff we want to get rid of:
         kill = ['aliasname',  # renamed to display_name
