@@ -36,7 +36,7 @@ from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.constants.rights import SPECIAL_USERS
 from moin.storage.error import NoSuchRevisionError
 from moin.utils.mimetype import MimeType
-from moin.utils.crypto import make_uuid, hash_hexdigest
+from moin.utils.crypto import generate_token, make_uuid, hash_hexdigest
 from moin import security
 from moin.converters.moinwiki19_in import ConverterFormat19
 from moin.converters import default_registry
@@ -824,6 +824,11 @@ class UserRevision:
             else:
                 # drop old, unsupported (and also more or less unsafe) hashing scheme
                 del metadata[ENC_PASSWORD]
+
+        if SESSION_TOKEN not in metadata:
+            key, token = generate_token()
+            metadata[SESSION_TOKEN] = token
+            metadata[SESSION_KEY] = key
 
         # TODO quicklinks and subscribed_items - check for non-interwiki elements and convert them to interwiki
 
