@@ -853,7 +853,10 @@ class UserRevision:
                 if ":" in subscribed_item:
                     wikiname, subscribed_item = subscribed_item.split(":", 1)
 
-                if (subscribed_item.endswith(".*") and len(subscribed_item) > 2
+                if not any(x in subscribed_item for x in RECHARS):
+                    subscriptions.append("{0}:{1}:{2}".format(NAME, wikiname, subscribed_item))
+                elif (subscribed_item.endswith(".*") and len(subscribed_item) > 2
+                        and not subscribed_item.endswith("/.*")
                         and not any(x in subscribed_item[:-2] for x in RECHARS)):
                     subscriptions.append("{0}:{1}:{2}".format(NAMEPREFIX, wikiname, subscribed_item[:-2]))
                 else:
