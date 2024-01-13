@@ -562,34 +562,20 @@ class QuickInstall:
         self.do_helpers()
         self.do_install()
         self.do_catalog()
-        sys.stdout.write("\n\nSuccessfully created or updated venv at {0}".format(self.dir_venv))
+        sys.stdout.write("\n\nSuccessfully created or updated venv at {0}\n".format(self.dir_venv))
 
     def do_venv(self):
         venv.create(self.dir_venv, system_site_packages=False, clear=False, symlinks=False, with_pip=True, prompt=None)
 
-    def get_pip_version(self):
-        """Return pip version as a list: [1, 5, 1]"""
-        command = 'pip --version'
-        pip_txt = subprocess.check_output(command, shell=True)
-        # expecting pip_txt similar to "pip 1.4.1 from /bitbucket/moin-2.0..."
-        pip_txt = pip_txt.decode().split()
-        if pip_txt[0] == 'pip':
-            pip_version = [int(x) for x in pip_txt[1].split('.')]
-            return pip_version
-        else:
-            sys.exit("Error: 'pip --version' produced unexpected results: '{0}".format(' '.join(pip_txt)))
-
     def do_install(self):
-        pip_version = self.get_pip_version()
         args = [
             os.path.join(self.dir_venv_bin, 'pip'),
             'install',
             '--upgrade',
+            '--upgrade-strategy=eager',
             '--editable',
             self.dir_source,
         ]
-        if pip_version >= [9, 0]:
-            args += ['--upgrade-strategy=eager', ]
         subprocess.check_call(args)
 
     def do_catalog(self):
