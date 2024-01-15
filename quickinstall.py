@@ -1,16 +1,16 @@
 #!/usr/bin/python3
 # Copyright: 2013 MoinMoin:BastianBlank
 # Copyright: 2013-2018 MoinMoin:RogerHaase
-# Copyright: 2023 MoinMoin:UlrichB
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
 Create a virtual environment and install moin2 and all requirements in development mode.
 
 Usage for installation:
 
-    <python> quickinstall.py (where <python> is any Python 3.8+ executable)
+    <python> quickinstall.py (where <python> is any Python 3.9+ executable)
 
-Requires: Python 3.8+, pip
+Requires: Python 3.9+, pip
 
 The first run of quickinstall.py creates these files or symlink in the repo root:
 
@@ -47,8 +47,8 @@ from collections import Counter
 import venv
 
 
-if sys.hexversion < 0x3080000:
-    sys.exit("Error: MoinMoin requires Python 3.8+, current version is %s\n" % (platform.python_version(), ))
+if sys.hexversion < 0x3090000:
+    sys.exit("Error: MoinMoin requires Python 3.9+, current version is %s\n" % (platform.python_version(), ))
 
 
 WIN_INFO = 'm.bat, activate.bat, and deactivate.bat are created by quickinstall.py'
@@ -272,8 +272,6 @@ class Commands:
         with open(QUICKINSTALL, 'w') as messages:
             # we run ourself as a subprocess so output can be captured in a log file
             subprocess.run(command, shell=True, stderr=messages, stdout=messages)
-            # above result will be flagged as error unless all python versions specified in tox.ini are installed:
-            # [tox]\n envlist = py{38,39,310},pypy3,flake8
         print('\nSearching {0}, important messages are shown below... Do "{1} log quickinstall" '
               'to see complete log.\n'.format(QUICKINSTALL, M))
         search_for_phrase(QUICKINSTALL)
@@ -562,34 +560,20 @@ class QuickInstall:
         self.do_helpers()
         self.do_install()
         self.do_catalog()
-        sys.stdout.write("\n\nSuccessfully created or updated venv at {0}".format(self.dir_venv))
+        sys.stdout.write("\n\nSuccessfully created or updated venv at {0}\n".format(self.dir_venv))
 
     def do_venv(self):
         venv.create(self.dir_venv, system_site_packages=False, clear=False, symlinks=False, with_pip=True, prompt=None)
 
-    def get_pip_version(self):
-        """Return pip version as a list: [1, 5, 1]"""
-        command = 'pip --version'
-        pip_txt = subprocess.check_output(command, shell=True)
-        # expecting pip_txt similar to "pip 1.4.1 from /bitbucket/moin-2.0..."
-        pip_txt = pip_txt.decode().split()
-        if pip_txt[0] == 'pip':
-            pip_version = [int(x) for x in pip_txt[1].split('.')]
-            return pip_version
-        else:
-            sys.exit("Error: 'pip --version' produced unexpected results: '{0}".format(' '.join(pip_txt)))
-
     def do_install(self):
-        pip_version = self.get_pip_version()
         args = [
             os.path.join(self.dir_venv_bin, 'pip'),
             'install',
             '--upgrade',
+            '--upgrade-strategy=eager',
             '--editable',
             self.dir_source,
         ]
-        if pip_version >= [9, 0]:
-            args += ['--upgrade-strategy=eager', ]
         subprocess.check_call(args)
 
     def do_catalog(self):
