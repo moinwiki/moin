@@ -220,21 +220,47 @@ def _verify_parents(self, new_name, namespace, old_name=''):
             ))
 
 
-def str_to_dict(strg):
+def str_to_dict(data):
     """
     Convert wikidicts from multi-line input form:
         'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n',
     To dictionary:
         {'Last': 'last item', 'text with spaces': 'second item', 'Empty string': '', 'First': 'first item'}
+
+    We want to make it easy for users to enter simple "key=val" pairs but store the data in
+    metadata as a dict. Validation with error messages will occur later. Here we use hacks to
+    force bad data into valid {key:value} pairs.
+
+        Missing or too many "=" then do: {' ' + line: line}
+        Duplicate key then do: {' ' + line: line}
+
+    Rather than giving user validation mesages about leading/trailing blanks or empty lines later,
+    we just remove them here and document the corrections with flash messages.
     """
     new_dict = {}
-    lines = strg.splitlines()
-    for kv in lines:
-        try:
-            k, v = kv.split('=', 1)
+    lines = data.splitlines()
+    for key_val in lines:
+        if not key_val == key_val.strip():
+            flash(L_("Removed leading or trailing blanks from WikiDict line: '%(key_val)s'.", key_val=key_val), "info")
+            key_val = key_val.strip()
+        if not key_val:
+            flash(L_("Empty line in Wiki Dict discarded."), "info")
+            continue  #
+        kv = key_val.split('=')
+        if not len(kv) == 2:
+            new_dict[' ' + key_val] = key_val
+            continue
+        k, v = kv
+        if not k == k.strip():
+            flash(L_("Removed leading or trailing blanks from WikiDict key: '%(key_val)s'.", key_val=key_val), "info")
+            k = k.strip()
+        if not v == v.strip():
+            flash(L_("Removed leading or trailing blanks from WikiDict value: '%(key_val)s'.", key_val=key_val), "info")
+            v = v.strip()
+        if k in new_dict:
+            new_dict[' ' + key_val] = key_val
+        else:
             new_dict[k] = v
-        except ValueError:
-            flash(_('Invalid line in wikidict meta data; ignored: "%(data)s"}', data=kv), 'error')
     return new_dict
 
 
@@ -420,7 +446,58 @@ class ACLValidator(Validator):
         if acl_validate(element) is True:
             return True
         flash(L_("The ACL string is invalid."), "error")
-        return self.note_error(element, state, 'acl_fail_msg')
+        return element, state, 'acl_fail_msg'
+
+
+class DictValidator(Validator):
+    """
+    validate wiki dicts
+    """
+    msg = L_("The Wiki Dict is invalid. The format is 'key=value', one per line, no commas.")
+
+    def validate(self, element, state):
+        meta = state['meta']
+        if WIKIDICT in meta:
+            for key, val in meta[WIKIDICT].items():
+                if key[0] == ' ' and key[1:] == val:
+                    # the data is malformed, val has original line in form
+                    msg = L_("Invalid key=value pair: '%(invalid)s'. Nothing saved.", invalid=val)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'msg')
+        return True
+
+
+class GroupValidator(Validator):
+    """
+    validate user groups
+    """
+    group_fail_msg = L_("The User Group list is invalid.")
+
+    def validate(self, element, state):
+        no_dups = set()
+        meta = state['meta']
+        if USERGROUP in meta:
+            names = meta[USERGROUP]
+            for name in names:
+                if not name == name.strip():
+                    msg = L_("Invalid user name, leading or trailing blanks not allowed: '%(invalid)s'. Nothing saved.",
+                             invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                if not name:
+                    msg = L_("Invalid user name, null string not allowed: '%(invalid)s'. Nothing saved.", invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                if ',' in name:
+                    msg = L_("Invalid user name, ',' not allowed: '%(invalid)s'. Nothing saved.", invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                if name in no_dups:
+                    msg = L_("Duplicate user name: '%(invalid)s'. Nothing saved.", invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                no_dups.add(name)
+        return True
 
 
 class BaseMetaForm(Form):
@@ -825,8 +902,12 @@ class Item:
         ModifyForm.
         """
         meta_form = BaseMetaForm
-        wikidict = OptionalMultilineText.using(label=L_("Wiki Dict")).with_properties(rows=ROWS_META, cols=COLS)
-        usergroup = OptionalMultilineText.using(label=L_("User Group")).with_properties(rows=ROWS_META, cols=COLS)
+        wikidict = (OptionalMultilineText.using(label=L_("Wiki Dict")).with_properties(rows=ROWS_META, cols=COLS)
+                    .validated_by(DictValidator())
+                    )
+        usergroup = (OptionalMultilineText.using(label=L_("User Group")).with_properties(rows=ROWS_META, cols=COLS)
+                     .validated_by(GroupValidator())
+                     )
         meta_template = 'modify_meta.html'
 
         def _load(self, item):

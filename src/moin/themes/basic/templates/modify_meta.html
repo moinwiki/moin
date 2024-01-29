@@ -2,9 +2,9 @@
 
 {% macro basic_meta_editor(form) %}
     {% for e in [
+        'name',
         'summary',
         'tags',
-        'name',
         ] %}
         <div class="form-group">
             {{ gen.label(form[e]) }}
