@@ -5905,6 +5905,7 @@ h3:focus .moin-permalink,
 h4:focus .moin-permalink,
 h5:focus .moin-permalink,
 h6:focus .moin-permalink {
+  font-size: 80%;
   display: inline;
   text-decoration: none;
 }
@@ -5918,6 +5919,7 @@ h2 {
   background-color: #90ADC6;
 }
 .moin-permalink {
+  font-size: 80%;
   display: none;
 }
 .moin-permalink:after {

@@ -824,12 +824,11 @@ between *soft security* and *hard security*.
   and infrequently changed may be updated only by selected users while other items that
   are frequently changed may be updated by any user.
 
-Moin's default configuration makes use of *soft security* which is in use by many wikis to
-maximize collaboration among its user community.
+Moin's default configuration makes use of *hard security* to prevent unwanted spam.
+Wiki administrators may soften security by reconfiguring the default ACLs.
 
-Wiki administrators may harden security by reconfiguring the default ACLs. Later, as wiki
-items are created and updated, the default configuration may be overridden by setting
-an ACL on the item.
+As wiki items are created and updated, the default configuration may be overridden
+on specific items by setting an ACL on that item.
 
 Hardening security implies that there will be a registration and login process that enables
 individual users to gain privileges. While wikis with a small user community may function
@@ -910,10 +909,10 @@ In addition to the groups provided by the group backend(s), there are some
 special group names available within ACLs. These names are case-sensitive
 and must be capitalized as shown:
 
-* All - a virtual group containing every user
+* All - a virtual group containing every user, including users who have not logged in
 * Known - a virtual group containing every logged-in user
 * Trusted - a virtual group containing every logged-in user who was logged
-  in by some specific "trusted" authentication method
+  in by some specific "trusted" authentication method other than the default MoinAuth.
 
 
 ACLs - basic syntax
@@ -983,11 +982,16 @@ Example::
 If "SuperMan" is currently logged in and moin wants to know whether he may
 destroy, it'll find a match in the first entry, because the name matches *and* permission
 in question matches. As the prefix is '+', the answer is "yes".
-If moin wants to know whether he may write, the first entry will not match
+
+If moin wants to know whether SuperMan may write, the first entry will not match
 on both sides, so moin will proceed and look at the second entry. It doesn't
 match, so it will look at the third entry. Of course "SuperMan" is a member of
 group "All", so we have a match here. As "write" is listed on the right side,
 the answer will be "yes".
+
+If the rule above did not have a leading + before SuperMan and moin wants to know
+whether SuperMan may write, then the left side matches at the first entry and the
+answer will be "no" because "write" is not listed on the right side.
 
 If "Idiot" is currently logged in and moin wants to know whether he may write,
 it will find no match in the first entry, but the second entry will match. As
@@ -1067,19 +1071,16 @@ The WikiGroups backend is enabled by default so there is no need to add the foll
 
 To create a WikiGroup that can be used in an ACL rule:
 
-* Create a wiki item with a name ending in "Group" (the content of the item is not relevant)
-* Edit the metadata and add an entry for "usergroup" under the heading "Extra Metadata (JSON)"::
+* Create a wiki item with a name ending in "Group" (the content of the item is not relevant).
+* Edit the metadata and add entries under the heading "Wiki Groups", one entry per line.
+* Leading and trailing spaces are ignored, internal spaces are accepted.::
 
-    {
-      "itemid": "36b6cd973d7e4daa9cfa265dcf751e79",
-      "namespace": "",
-      "usergroup": [
-        "JaneDoe",
-        "JohnDoe"
-      ]
-    }
+    JaneDoe
+    JohnDoe
+    SomeOtherGroup
 
 * Use the new group name in one or more ACL rules.
+* For public wikis, it is recommended that a TrustedEditorGroup (or similar name) be created.
 
 
 The ConfigGroups backend uses groups defined in the configuration file. Adding the
@@ -1120,17 +1121,11 @@ The WikiDicts backend is enabled by default so there is no need to add the follo
 To create a WikiDict that can be used in an GetVal macro:
 
 * Create a wiki item with a name ending in "Dict" (the content of the item is not relevant)
-* Edit the metadata and add an entry for "somedict" under the heading "Extra Metadata (JSON)"::
+* Edit the metadata and add an entry under the heading "Wiki Dict"::
 
-    {
-      "itemid": "332458ceab334991868de8970980494e",
-      "namespace": "",
-      "somedict": {
-        "apple": "red",
-        "banana": "yellow",
-        "pear": "green"
-      }
-    }
+    apple=red
+    banana=yellow
+    pear=green
 
 The ConfigDicts backend uses dicts defined in the configuration file. Adding the
 following to wikiconfig creates a OneDict and a NumbersDict and prevents

@@ -1,4 +1,5 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -7,8 +8,7 @@ MoinMoin - Image converter
 Convert image to <object> tag for the DOM Tree.
 """
 
-from werkzeug.urls import url_decode
-from urllib.parse import urlencode
+from urllib.parse import urlencode, parse_qs
 
 from moin.constants.contenttypes import CHARSET
 from moin.utils.iri import Iri
@@ -38,7 +38,7 @@ class Converter:
             query = arguments.keyword.get(xinclude.href)
             if query and query.query:
                 # query.query value is similar to  "w=75" given a transclusion "{{jpeg||&w=75 class="top"}}"
-                query_keys.update(url_decode(query.query))
+                query_keys.update(parse_qs(query.query))
             attrib = arguments.keyword
 
         query = urlencode(query_keys, encoding=CHARSET)

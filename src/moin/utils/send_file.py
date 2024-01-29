@@ -1,5 +1,6 @@
 # Copyright: 2010 by Armin Ronacher (initial implementation)
 # Copyright: 2011 by MoinMoin:ThomasWaldmann (modifications)
+# Copyright: 2023 by MoinMoin project
 # License: BSD (see license of flask)
 
 """
@@ -24,8 +25,8 @@ import mimetypes
 from time import time
 from zlib import adler32
 
+from urllib.parse import quote
 from werkzeug.datastructures import Headers
-from werkzeug.urls import url_quote
 from werkzeug.wsgi import wrap_file
 from flask import current_app, request
 
@@ -38,7 +39,7 @@ def encode_rfc2231(value, coding='UTF-8', lang=''):
     :param coding: the coding (charset) to use. it is a good idea to use 'UTF-8'.
     :param lang: the language to use. defaults to empty string (no language given).
     """
-    return "{0}'{1}'{2}".format(coding, lang, url_quote(value, charset=coding))
+    return "{0}'{1}'{2}".format(coding, lang, quote(value, encoding=coding))
 
 
 def send_file(filename=None, file=None,

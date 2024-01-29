@@ -43,27 +43,10 @@ table.navigation { background:var(--page_color); float:right; margin:2px; }
 
 /* forms */
 label { display:block; font-weight:bold; }
-input[type="submit"],
-input[type="button"],
-button { font-weight:bold; font-size:.75em; background:var(--base_color); padding:4px 15px;
-    border:var(--border_style); border-radius:6px; cursor:pointer; }
-input[type="submit"]:hover,
-input[type="button"]:hover,
-button:hover { box-shadow:2px 2px 1px var(--font_color); }
-input[type="submit"]:active,
-input[type="button"]:active,
-button:active { position:relative; top:1px; }
 input,
 select { padding:3px; background:var(--page_color); border:var(--border_style);
     border-radius:2px; }
 input[type="text"] { width:96%; }
-form[name="delete_item"] dd input,
-form[name="rename_item"] dd input,
-form[name="destroy_item"] dd input { width:100%; }
-form[name="delete_item"] dt,
-form[name="rename_item"] dt,
-form[name="destroy_item"] dt { width:20%; }
-
 .moin-transclusion { max-width:100%; }
 a.moin-conflict:before { content:url("../img/moin-conflict.png"); margin:0 .2em; }
 
@@ -121,13 +104,13 @@ ul.moin-breadcrumb li:hover ul.moin-alias { display:block; }
 li.moin-panel-heading { display:none; }
 
 a.moin-permalink { display:none; cursor:pointer; margin-left:.1em; color:var(--permalink_color); }
-a.moin-permalink:hover.moin-permalink { color:var(--nonexistent_hover_color); }
+a.moin-permalink:hover.moin-permalink { font-size:80%; color:var(--nonexistent_hover_color); }
 h1:hover .moin-permalink,
 h2:hover .moin-permalink,
 h3:hover .moin-permalink,
 h4:hover .moin-permalink,
 h5:hover .moin-permalink,
-h6:hover .moin-permalink { display:inline; text-decoration:none; }
+h6:hover .moin-permalink { font-size:80%; display:inline; text-decoration:none; }
 .moin-permalink:after { content:"\f1dd"; font-family:FontAwesome; }
 
 .moin-search-option-bar { width:75%; padding-left:14px; }

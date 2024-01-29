@@ -1,24 +1,25 @@
 = WikiDict =
 
-MOINTODO: There is no longer a way to add or view arbitrary metadata. This feature must be reworked. One suggestion is to follow moin 1.9 implementation and add data to item content rather than item metadata.
+This item is a WikiDict because the item name ends with "Dict" and it has metadata defined under the "Wiki Dict" heading that visible when this item is edited. 
 
-This item is a WikiDict because it has a "somedict" defined in "extra" metadata:
+To add metadata enter key=value pairs one per line.
 
 {{{
-{
-  "itemid": "932eec2324c3494c9ac8b9dcb2e46359",
-  "namespace": "",
-  "somedict": {
-    "var1": "value1",
-    "var2": "value2",
-    "var3": "value3"
-  }
-}
+    var1=value1
+    var2=value2
+    var3=value3
 }}}
 
 The above is used by the GetVal macro:
 
 {{{
-<<GetVal(help-en/WikiDict, var1)>>
+    <<GetVal(help-en/WikiDict, var1)>>
 }}}
+
 <<GetVal(help-en/WikiDict, var1)>>
+
+Clicking the Meta link under Item Views is an alternative way to view this item's metadata.
+
+{{{
+    Wiki Dict: {'var1': 'value1', 'var2': 'value2', 'var3': 'value3'}
+}}}

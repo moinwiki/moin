@@ -48,14 +48,17 @@ from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.registry import RegistryBase
 from moin.utils.diff_html import diff as html_diff
 from moin.utils import diff3
-from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError
+from moin.forms import (
+    RequiredText, OptionalText, Tags, Names, validate_name,
+    NameNotValidError, OptionalMultilineText
+)
 from moin.constants.keys import (
     NAME, NAMES, NAMENGRAM, NAME_OLD, NAME_EXACT, WIKINAME, MTIME, ITEMTYPE,
     CONTENTTYPE, SIZE, ACTION, ADDRESS, HOSTNAME, USERID, COMMENT,
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
-    IMMUTABLE_KEYS, UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
+    UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS, FQNAMES
+    LATEST_REVS, EDIT_ROWS, FQNAMES, USERGROUP, WIKIDICT
 )
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_USERPROFILES
@@ -215,6 +218,64 @@ def _verify_parents(self, new_name, namespace, old_name=''):
                 "Cannot create or rename item '%(new_name)s' because parent '%(parent_name)s' is missing.",
                 new_name=new_name, parent_name=name_segments[idx]
             ))
+
+
+def str_to_dict(data):
+    """
+    Convert wikidicts from multi-line input form:
+        'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n',
+    To dictionary:
+        {'Last': 'last item', 'text with spaces': 'second item', 'Empty string': '', 'First': 'first item'}
+
+    We want to make it easy for users to enter simple "key=val" pairs but store the data in
+    metadata as a dict. Validation with error messages will occur later. Here we use hacks to
+    force bad data into valid {key:value} pairs.
+
+        Missing or too many "=" then do: {' ' + line: line}
+        Duplicate key then do: {' ' + line: line}
+
+    Rather than giving user validation mesages about leading/trailing blanks or empty lines later,
+    we just remove them here and document the corrections with flash messages.
+    """
+    new_dict = {}
+    lines = data.splitlines()
+    for key_val in lines:
+        if not key_val == key_val.strip():
+            flash(L_("Removed leading or trailing blanks from WikiDict line: '%(key_val)s'.", key_val=key_val), "info")
+            key_val = key_val.strip()
+        if not key_val:
+            flash(L_("Empty line in Wiki Dict discarded."), "info")
+            continue  #
+        kv = key_val.split('=')
+        if not len(kv) == 2:
+            new_dict[' ' + key_val] = key_val
+            continue
+        k, v = kv
+        if not k == k.strip():
+            flash(L_("Removed leading or trailing blanks from WikiDict key: '%(key_val)s'.", key_val=key_val), "info")
+            k = k.strip()
+        if not v == v.strip():
+            flash(L_("Removed leading or trailing blanks from WikiDict value: '%(key_val)s'.", key_val=key_val), "info")
+            v = v.strip()
+        if k in new_dict:
+            new_dict[' ' + key_val] = key_val
+        else:
+            new_dict[k] = v
+    return new_dict
+
+
+def dict_to_str(dic):
+    """
+    convert dict:
+        {'First': 'first item', 'text with spaces': 'second item', 'Empty string': '', 'Last': 'last item'}
+    to str:
+        'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n'
+    """
+    new_str = []
+    for k, v in dic.items():
+        new_str.append(k + '=' + v)
+    new_str = '\r\n'.join(new_str)
+    return new_str
 
 
 class RegistryItem(RegistryBase):
@@ -385,7 +446,58 @@ class ACLValidator(Validator):
         if acl_validate(element) is True:
             return True
         flash(L_("The ACL string is invalid."), "error")
-        return self.note_error(element, state, 'acl_fail_msg')
+        return element, state, 'acl_fail_msg'
+
+
+class DictValidator(Validator):
+    """
+    validate wiki dicts
+    """
+    msg = L_("The Wiki Dict is invalid. The format is 'key=value', one per line, no commas.")
+
+    def validate(self, element, state):
+        meta = state['meta']
+        if WIKIDICT in meta:
+            for key, val in meta[WIKIDICT].items():
+                if key[0] == ' ' and key[1:] == val:
+                    # the data is malformed, val has original line in form
+                    msg = L_("Invalid key=value pair: '%(invalid)s'. Nothing saved.", invalid=val)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'msg')
+        return True
+
+
+class GroupValidator(Validator):
+    """
+    validate user groups
+    """
+    group_fail_msg = L_("The User Group list is invalid.")
+
+    def validate(self, element, state):
+        no_dups = set()
+        meta = state['meta']
+        if USERGROUP in meta:
+            names = meta[USERGROUP]
+            for name in names:
+                if not name == name.strip():
+                    msg = L_("Invalid user name, leading or trailing blanks not allowed: '%(invalid)s'. Nothing saved.",
+                             invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                if not name:
+                    msg = L_("Invalid user name, null string not allowed: '%(invalid)s'. Nothing saved.", invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                if ',' in name:
+                    msg = L_("Invalid user name, ',' not allowed: '%(invalid)s'. Nothing saved.", invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                if name in no_dups:
+                    msg = L_("Duplicate user name: '%(invalid)s'. Nothing saved.", invalid=name)
+                    flash(msg, "error")
+                    return self.note_error(element, state, 'group_fail_msg')
+                no_dups.add(name)
+        return True
 
 
 class BaseMetaForm(Form):
@@ -790,6 +902,12 @@ class Item:
         ModifyForm.
         """
         meta_form = BaseMetaForm
+        wikidict = (OptionalMultilineText.using(label=L_("Wiki Dict")).with_properties(rows=ROWS_META, cols=COLS)
+                    .validated_by(DictValidator())
+                    )
+        usergroup = (OptionalMultilineText.using(label=L_("User Group")).with_properties(rows=ROWS_META, cols=COLS)
+                     .validated_by(GroupValidator())
+                     )
         meta_template = 'modify_meta.html'
 
         def _load(self, item):
@@ -804,10 +922,19 @@ class Item:
             # policy to 'duck' suppresses this behavior.
             if 'acl' not in meta:
                 meta['acl'] = "None"
-
             self['meta_form'].set(meta, policy='duck')
-            for k in list(self['meta_form'].field_schema_mapping.keys()) + IMMUTABLE_KEYS:
-                meta.pop(k, None)
+            if meta[NAME][0].endswith('Dict'):
+                try:
+                    self[WIKIDICT].set(dict_to_str(item.meta[WIKIDICT]))
+                except KeyError:
+                    pass
+            if meta[NAME][0].endswith('Group'):
+                try:
+                    user_group = '\r\n'.join(item.meta[USERGROUP])
+                    self[USERGROUP].set(user_group)
+                except KeyError:
+                    pass
+
             self['content_form']._load(item.content)
 
         def _dump(self, item):
@@ -825,6 +952,10 @@ class Item:
             # e.g. we get PARENTID in here
             meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
             meta.update(self['meta_form'].value)
+            if item.name.endswith('Dict'):
+                meta.update({WIKIDICT: str_to_dict(self[WIKIDICT].value)})
+            if item.name.endswith('Group'):
+                meta.update({USERGROUP: self[USERGROUP].value.splitlines()})
             data, contenttype_guessed = self['content_form']._dump(item.content)
             comment = self['comment'].value
             return meta, data, contenttype_guessed, comment
@@ -866,7 +997,6 @@ class Item:
             # this is treated as a rule which matches nothing
             elif meta['acl'] == 'Empty':
                 meta['acl'] = ''
-
         # we store the previous (if different) and current item names into revision metadata
         # this is useful for deletes, rename history and backends that use item uids internally
         if self.fqname.field == NAME_EXACT:
@@ -1232,7 +1362,7 @@ class Default(Contentful):
     def meta_changed(self, meta):
         """
         Return true if user changed any of the following meta data:
-            comment, ACL, summary, tags, names
+            comment, ACL, summary, tags, names, extra_meta wikidict, usergroup
         """
         if request.values.get(COMMENT):
             return True
@@ -1240,6 +1370,20 @@ class Default(Contentful):
             return True
         if request.values.get('meta_form_summary') != meta.get('summary', None):
             return True
+        if meta[NAME][0].endswith('Group'):
+            try:
+                new = request.values.get(USERGROUP).splitlines()
+            except KeyError:
+                new = None
+            old = meta.get(USERGROUP, None)
+            if new != old:
+                return True
+        if meta[NAME][0].endswith('Dict'):
+            new = request.values.get(WIKIDICT)
+            new = str_to_dict(new)
+            old = meta.get(WIKIDICT, None)
+            if new != old:
+                return True
         new_tags = request.values.get('meta_form_tags').replace(" ", "").split(',')
         if new_tags == [""]:
             new_tags = []
@@ -1337,8 +1481,11 @@ class Default(Contentful):
                     old_item = Item.create(self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype)
                     old_text = old_item.content.data
                     old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
-                    preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
-                    preview_rendered = item.content._render_data(preview=data)
+                    if data:
+                        preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
+                        preview_rendered = item.content._render_data(preview=data)
+                    else:  # TODO: make preview button inactive for empty items, see #1539
+                        flash(_("No preview available for empty items."), 'error')
                     close_file(old_item.rev.data)
                 else:
                     # user clicked OK/Save button, check for conflicts,

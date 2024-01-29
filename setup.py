@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Copyright: 2001 by Juergen Hermann <jh@web.de>
 # Copyright: 2001-2018 MoinMoin:ThomasWaldmann
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 import os
@@ -39,9 +39,10 @@ setup_args = dict(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -87,7 +88,7 @@ setup_args = dict(
         'Jinja2>=3.1.0',  # template engine
         'markupsafe<=2.2.0',  # safe html and xml
         'pygments>=1.4',  # src code / text file highlighting
-        'Werkzeug<2.4.0',  # wsgi toolkit
+        'Werkzeug',  # wsgi toolkit
         'whoosh>=2.7.0',  # needed for indexed search
         'pdfminer.six',  # pdf -> text/plain conversion
         'passlib>=1.6.0',  # strong password hashing (1.6 needed for consteq)

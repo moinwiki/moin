@@ -29,4 +29,7 @@ class Macro(MacroInlineBase):
         except DictDoesNotExistError:
             raise ValueError(_("GetVal: dict not found: ") + item_name)
         result = d.get(key, '')
+        if not result:
+            raise ValueError(_('GetVal macro is invalid, {item_name} missing key: {key_name}').
+                             format(item_name=item_name, key_name=key))
         return result

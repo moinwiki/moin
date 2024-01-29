@@ -3,28 +3,28 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
-  "dataid": "d69dcb7cfc524e2fadaf4322293ae9d5",
+  "dataid": "30cc072ac1e342c8970aa4cb49571b87",
   "externallinks": [],
   "itemid": "932eec2324c3494c9ac8b9dcb2e4635a",
   "itemlinks": [],
   "itemtransclusions": [],
   "itemtype": "default",
-  "mtime": 1681742420,
+  "mtime": 1704050058,
   "name": [
     "WikiDict"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "56f6ff214ca549f0bc8895bd1a11caf0",
-  "sha1": "b89a611ce9754260976617b0720c21e202dba9b7",
-  "size": 613,
-  "somedict": {
+  "revid": "519deb6d2d7747d8979bde44c54d5ee6",
+  "sha1": "d9428a030ba7c34296ed9b8bd4174b91f38d5f06",
+  "size": 606,
+  "summary": "",
+  "tags": [],
+  "wikidict": {
     "var1": "value1",
     "var2": "value2",
     "var3": "value3"
   },
-  "summary": "",
-  "tags": [],
   "wikiname": "MyMoinMoin"
 }
