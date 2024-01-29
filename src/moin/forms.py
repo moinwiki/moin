@@ -153,13 +153,6 @@ class ValidName(Validator):
             # incoming request is from +usersettings#personal;
             # apps/frontend/views.py will validate changes to user names
             return True
-        # Make sure that the other meta is valid before validating the name.
-        # TODO: prove the try below is always redundant and remove it.
-        try:
-            if not element.parent.parent['extra_meta_text'].valid:
-                return False
-        except AttributeError:
-            pass
         try:
             validate_name(state['meta'], state[ITEMID])
         except NameNotValidError as e:
