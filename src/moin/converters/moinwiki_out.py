@@ -1,5 +1,6 @@
 # Copyright: 2008 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:DmitryAndreev
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -20,8 +21,12 @@ from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 
+from moin.macros import modules as macro_modules
 from . import ElementException
 from . import default_registry
+
+from moin import log
+logging = log.getLogger(__name__)
 
 
 class Moinwiki:
@@ -129,6 +134,7 @@ class Converter:
         self.list_item_labels = ['', ]
         self.list_item_label = ''
         self.list_level = 0
+        self.unknown_macro_list = []
 
         # 'text' - default status - <p> = '/n' and </p> = '/n'
         # 'table' - text inside table - <p> = '<<BR>>' and </p> = ''
@@ -495,6 +501,10 @@ class Converter:
         if len(type) == 2:
             if type[0] == "x-moin/macro":
                 name = type[1].split('=')[1]
+                if name not in macro_modules:
+                    logging.debug("Unknown macro {} found.".format(name))
+                    if name not in self.unknown_macro_list:
+                        self.unknown_macro_list.append(name)
                 eol = '\n\n' if elem.tag.name == 'part' else ''
                 if len(elem) and elem[0].tag.name == "arguments":
                     return "{0}<<{1}({2})>>{0}".format(

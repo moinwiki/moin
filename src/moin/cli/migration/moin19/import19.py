@@ -105,7 +105,7 @@ def migr_logging(msg_id, log_msg):
         logging.debug(log_msg)
 
 
-def migr_statistics():
+def migr_statistics(unknown_macros):
     logging.info("Migration statistics:")
     logging.info("Users:       {0:6d}".format(migr_stat['users']))
     logging.info("Items:       {0:6d}".format(migr_stat['items']))
@@ -115,6 +115,9 @@ def migr_statistics():
     for message in ['missing_user', 'missing_file', 'del_item']:
         if migr_stat[message] > 0:
             logging.info("Warnings:    {0:6d} - {1}".format(migr_stat[message], message))
+
+    if len(unknown_macros) > 0:
+        logging.info("Warnings:    {0:6d} - unknown macros {1}".format(len(unknown_macros), str(unknown_macros)[1:-1]))
 
 
 @cli.command('import19', help='Import content and user data from a moin 1.9 wiki')
@@ -233,7 +236,10 @@ def ImportMoin19(data_dir=None, markup_out=None):
     indexer.open()
 
     logging.info("Finished conversion!")
-    migr_statistics()
+    if hasattr(conv_out, 'unknown_macro_list'):
+        migr_statistics(unknown_macros=conv_out.unknown_macro_list)
+    else:
+        migr_statistics([])
 
 
 class KillRequested(Exception):
