@@ -69,6 +69,6 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-artifacts-${{ matrix.os }}
+        name: test-artifacts-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
           _test_artifacts
