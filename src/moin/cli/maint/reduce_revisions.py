@@ -14,11 +14,12 @@ This script removes all revisions but the last one from all selected items.
 import click
 
 from flask import current_app as app
+from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Term, And, Regex, Not
 
-from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, REVID, WIKINAME, PARENTID, REV_NUMBER
+from moin.constants.keys import NAME, NAME_SORT, NAME_EXACT, NAMESPACE, REVID, WIKINAME, PARENTID, REV_NUMBER, MTIME
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.app import create_app, before_wiki
 
@@ -36,7 +37,7 @@ def cli():
 @click.option('--query', '-q', type=str, default='',
               help='Only perform the operation on items found by the given query.')
 @click.option('--namespace', '-n', type=str, default='',
-              help='Limit selection to this namespace.')
+              help='Limit selection to a namespace; use "default" for default namespace.')
 @click.option('--test', '-t', type=bool, default=0,
               help='List selected items, but do not update.')
 def ReduceRevisions(query, namespace, test):
@@ -47,11 +48,13 @@ def ReduceRevisions(query, namespace, test):
         if query:
             q = And([q, Regex(NAME_EXACT, query)])
         if namespace:
-            q = And([q, Regex(NAMESPACE, namespace)])
+            if namespace == 'default':
+                namespace = ''
+            q = And([q, Term(NAMESPACE, namespace)])
     else:
         q = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
 
-    for current_rev in app.storage.search(q, limit=None):
+    for current_rev in app.storage.search(q, limit=None, sortedby=[NAMESPACE, NAME_SORT]):
         current_name = current_rev.meta[NAME]
         current_revid = current_rev.meta[REVID]
         current_namespace = current_rev.meta[NAMESPACE]
@@ -76,6 +79,10 @@ def ReduceRevisions(query, namespace, test):
                         changed = True
                         del meta[PARENTID]
                     if changed:
+                        # By default store_revision and whoosh will replace mtime with current time making
+                        # global history useless.
+                        # Save existing mtime which has time this revision's data was last modified.
+                        flaskg.data_mtime = meta[MTIME]
                         current_rev.item.store_revision(meta, current_rev.data, overwrite=True)
                         print("    (current rev meta data updated)")
                     continue

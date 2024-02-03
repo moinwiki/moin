@@ -515,12 +515,12 @@ When editing is complete run one or more of::
     moin maint-reduce-revisions -q <item-name> -n help-en --test true # lists selected items, no updates
     moin maint-reduce-revisions -q <item-name> -n help-en  # updates selected items
 
-Dump all the help files::
+Dump all the English help files to the version controlled directory::
 
     moin dump-help -n en
 
-The above command may update meta files even though the data files have not changed, see #1533.
-Commit only the target data and meta files. Revert the other meta files.
+The above command may may be useful after updating one or more files. All of the files
+will be rewritten but only the changed files will be highlighted in version control.
 
 Moin Shell
 ==========
