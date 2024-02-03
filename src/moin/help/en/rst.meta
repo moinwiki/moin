@@ -6,15 +6,15 @@
   "dataid": "c7f47fd6eaaa4e518c2bd32d741073f8",
   "externallinks": [
     "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists",
-    "http://www.python.org/",
-    "http://moinmo.in/"
+    "http://moinmo.in/",
+    "http://www.python.org/"
   ],
   "itemid": "412d0e59c79147058ef2e947d1772d5f",
   "itemlinks": [
-    "users/Home",
+    "Home",
     "help-en/moin",
     "help-en/rst/subitem",
-    "Home"
+    "users/Home"
   ],
   "itemtransclusions": [
     "help-common/logo.png",
