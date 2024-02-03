@@ -117,7 +117,11 @@ def PutItem(meta_file, data_file, overwrite):
     to_kill = [WIKINAME, ]  # use target wiki name
     for key in to_kill:
         meta.pop(key, None)
-    if not overwrite:
+    if overwrite:
+        # by default, indexing.py will update meta[MTIME] with current time making global history useless
+        # we preserve the old modified time for use by indexing.py
+        flaskg.data_mtime = meta[MTIME]
+    else:
         # if we remove the REVID, it will create a new one and store under the new one
         meta.pop(REVID, None)
         meta.pop(DATAID, None)
