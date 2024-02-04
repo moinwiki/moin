@@ -5,19 +5,19 @@
   "contenttype": "text/x-mediawiki;charset=utf-8",
   "dataid": "2d9d25a4be414c8f82cacd305b76f7db",
   "externallinks": [
-    "http://www.mediawiki.org/wiki/Help:Images",
     "http://en.wikipedia.org/wiki/List_of_HTML_entities",
     "http://moinmo.in",
+    "http://www.mediawiki.org/wiki/Help:Images",
     "http://www.mediawiki.org/wiki/Help:Tables"
   ],
   "itemid": "cb68b5889e344c1994d6c22fd365db04",
   "itemlinks": [
-    "help-common/logo.svg",
-    "help-common/cat.jpg",
     "Home",
     "help-common/audio.mp3",
-    "help-common/video.mp4",
-    "help-common/logo.png"
+    "help-common/cat.jpg",
+    "help-common/logo.png",
+    "help-common/logo.svg",
+    "help-common/video.mp4"
   ],
   "itemtransclusions": [],
   "itemtype": "default",

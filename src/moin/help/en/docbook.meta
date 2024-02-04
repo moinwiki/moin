@@ -14,9 +14,9 @@
     "help-en/docbook/SubItem"
   ],
   "itemtransclusions": [
-    "help-common/video.mp4",
     "help-common/audio.mp3",
-    "help-common/logo.png"
+    "help-common/logo.png",
+    "help-common/video.mp4"
   ],
   "itemtype": "default",
   "mtime": 1692723284,

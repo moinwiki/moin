@@ -8,11 +8,11 @@
   "itemid": "960fe0fb88284afa9f33e2dcadce25c7",
   "itemlinks": [],
   "itemtransclusions": [
-    "help-en/OtherTextItems/PlainText",
-    "help-en/OtherTextItems/Python",
     "help-en/OtherTextItems/CSV",
     "help-en/OtherTextItems/Diff",
-    "help-en/OtherTextItems/IRC"
+    "help-en/OtherTextItems/IRC",
+    "help-en/OtherTextItems/PlainText",
+    "help-en/OtherTextItems/Python"
   ],
   "itemtype": "default",
   "mtime": 1682085311,

@@ -6,24 +6,24 @@
   "dataid": "07edfa4e597e4ce591b26c284ad648f8",
   "externallinks": [
     "file://///servername/share/full/path/to/file/filename%20with%20spaces.txt",
-    "https://moinmo.in",
-    "https://static.moinmo.in/logos/moinmoin.png",
-    "mailto:joe@doe.com",
+    "http://static.moinmo.in/logos/moinmoin.png",
     "http://www.xkcd.com/",
+    "https://moinmo.in",
     "https://moinmo.in/",
-    "http://static.moinmo.in/logos/moinmoin.png"
+    "https://static.moinmo.in/logos/moinmoin.png",
+    "mailto:joe@doe.com"
   ],
   "itemid": "078502790e624fb7b43f826c240a8c30",
   "itemlinks": [
-    "users/Home",
-    "help-en/Home/subitem",
-    "MissingPage",
     "Home",
+    "MissingPage",
     "help-en/Home",
+    "help-en/Home/subitem",
+    "help-en/MoinWikiMacros",
     "help-en/creole/MissingSubItem",
     "help-en/creole/subitem",
     "help-en/moin",
-    "help-en/MoinWikiMacros"
+    "users/Home"
   ],
   "itemtransclusions": [
     "help-common/logo.png",
