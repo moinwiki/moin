@@ -1,4 +1,4 @@
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -78,8 +78,8 @@ def index_create(create_instance):
 
 @pytest.fixture(scope="package")
 def load_help(index_create):
-    load_help_common = run(['moin', 'load-help', '-n', 'common'])
-    load_help_en = run(['moin', 'load-help', '-n', 'en'])
+    load_help_common = run(['moin', 'load-help', '-n', 'help-common'])
+    load_help_en = run(['moin', 'load-help', '-n', 'help-en'])
     return load_help_common, load_help_en
 
 

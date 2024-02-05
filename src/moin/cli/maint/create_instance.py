@@ -1,5 +1,5 @@
 # Copyright: 2020 MoinMoin:RogerHaase
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -100,8 +100,8 @@ def cli_BuildInstance():
     logging.info('Build Instance started.')
     logging.debug('CWD: %s', os.getcwd())
     index.IndexCreate()
-    modify_item.LoadHelp(namespace='en', path_to_help=None)
-    modify_item.LoadHelp(namespace='common', path_to_help=None)
+    modify_item.LoadHelp(namespace='help-en', path_to_help=None)
+    modify_item.LoadHelp(namespace='help-common', path_to_help=None)
     modify_item.LoadWelcome()
     index.IndexOptimize(tmp=False)
     logging.info('Full instance setup finished.')

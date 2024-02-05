@@ -1,6 +1,6 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2022 MoinMoin:RogerHaase
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -152,7 +152,7 @@ def PutItem(meta_file, data_file, overwrite):
 
 @cli.command('load-help', help='Load a directory of help .data and .meta file pairs into a wiki namespace')
 @click.option('--namespace', '-n', type=str, required=True,
-              help='Namespace to be loaded: common, en, etc.')
+              help='Namespace to be loaded: help-common, help-en, etc.')
 @click.option('--path_to_help', '--path', '-p', type=str,
               help='Override source directory, default is src/moin/help')
 def cli_LoadHelp(namespace, path_to_help):
@@ -190,7 +190,7 @@ def LoadHelp(namespace, path_to_help):
 
 @cli.command('dump-help', help='Dump a namespace of user help items to .data and .meta file pairs')
 @click.option('--namespace', '-n', type=str, required=True,
-              help='Namespace to be dumped: common, en, etc.')
+              help='Namespace to be dumped: help-common, help-en, etc.')
 @click.option('--path_to_help', '--path', '-p', type=str,
               help='Override output directory, default is src/moin/help')
 @click.option('--crlf/--no-crlf', help='use windows line endings in output files')
@@ -203,9 +203,8 @@ def DumpHelp(namespace, path_to_help, crlf):
     before_wiki()
     if path_to_help is None:
         path_to_help = _get_path_to_help()
-    item_name = 'help-' + namespace
-    # item_name is a namespace, we create a dummy item so we can get a list of files
-    item = Item.create(item_name)
+    # Item name is the name of the namespace, create a dummy item to get the list of files
+    item = Item.create(namespace)
     # get_index is fast, but returns alias names as if they are unique items
     _, files = item.get_index()
     count = 0
