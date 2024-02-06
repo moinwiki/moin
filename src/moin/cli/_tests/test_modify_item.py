@@ -1,4 +1,4 @@
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -40,9 +40,9 @@ def test_dump_help(load_help):
     moin_dir, artifact_dir = get_dirs('cli')
     help_dir = Path('my_help')
     source_help_dir = moin_dir / 'src' / 'moin' / 'help'
-    with open(source_help_dir / 'en' / 'Home.data', newline='') as f:
+    with open(source_help_dir / 'help-en' / 'Home.data', newline='') as f:
         crlf_option = '--crlf' if '\r\n' in f.read() else '--no-crlf'
-    for help_subdir in ['common', 'en']:
+    for help_subdir in ['help-common', 'help-en']:
         help_subdir_path = help_dir / help_subdir
         if not help_subdir_path.exists():
             help_subdir_path.mkdir(parents=True)
@@ -75,12 +75,12 @@ def test_item_get(load_help):
     moin_dir, _ = get_dirs('cli')
     with open('cat.meta') as f:
         meta_cat = json.load(f)
-    with open(moin_dir / 'src' / 'moin' / 'help' / 'common' / 'cat.jpg.meta') as f:
+    with open(moin_dir / 'src' / 'moin' / 'help' / 'help-common' / 'cat.jpg.meta') as f:
         meta_cat_expected = json.load(f)
-    validate_meta(meta_cat_expected, meta_cat, f"{moin_dir / 'src' / 'moin' / 'help' / 'common' / 'cat.jpg.meta'} != cat.meta")
+    validate_meta(meta_cat_expected, meta_cat, f"{moin_dir / 'src' / 'moin' / 'help' / 'help-common' / 'cat.jpg.meta'} != cat.meta")
     with open('cat.data', 'rb') as f:
         cat_bytes = f.read()
-    with open(moin_dir / 'src' / 'moin' / 'help' / 'common' / 'cat.jpg.data', 'rb') as f:
+    with open(moin_dir / 'src' / 'moin' / 'help' / 'help-common' / 'cat.jpg.data', 'rb') as f:
         cat_bytes_expected = f.read()
     assert cat_bytes_expected == cat_bytes
 

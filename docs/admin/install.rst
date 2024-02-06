@@ -93,8 +93,8 @@ If you want to load English help for editors (replace en with your wiki's prefer
 
 ::
 
- moin load-help -n en
- moin load-help -n common
+ moin load-help -n help-en
+ moin load-help -n help-common
 
 Run your wiki instance
 ======================
@@ -223,8 +223,8 @@ If you want to load English help for editors (replace en with your wiki's prefer
 
 ::
 
- moin load-help -n en
- moin load-help -n common
+ moin load-help -n help-en
+ moin load-help -n help-common
 
 Next, run the built-in wiki server:
 
