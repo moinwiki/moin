@@ -213,8 +213,10 @@
                     <footer class="navbar moin-footer">
                         {% block footer_hr %}<hr/>{% endblock %}
                         {% block footer_meta %}{% endblock %}
-                        {{ creditlogos }}
-                        {{ credits }}
+                        <div id="moin-credits-container">
+                            {{ credits }}
+                            {{ creditlogos }}
+                        </div>
                         {{ license_info }}
                     </footer>
                 {% endblock %}
