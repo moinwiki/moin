@@ -78,10 +78,10 @@
             {%- block footer %}
                 {% block footer_hr %}<hr/>{% endblock %}
                 {%- block footer_itemviews %}{% endblock %}
-                {{- snippets.creditlogos() }}
                 {%- block footer_meta %}{% endblock %}
                 {{- snippets.credits() }}
                 {{- snippets.license_info() }}
+                {{- snippets.creditlogos() }}
             {%- endblock -%}
         </footer>
         {{- snippets.after_footer() }}

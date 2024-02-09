@@ -379,12 +379,14 @@ div.no-borders,
 
 /* footers */
 #moin-footer { clear: both; margin: 0 0; width: 100%; }
-#moin-pageinfo,
 #moin-wiki-license,
-#moin-credits,
 #moin-version,
 #moin-timings { margin: 10px 20px; text-align: left; font-size: .7em; color: var(--muted); float: left; clear: left; }
-#moin-creditlogos { clear: both; float: right; }
+#moin-pageinfo, #moin-credits { margin: 0 20px; text-align: left; font-size: .7em; color: var(--muted); }
+#moin-creditlogos { display: flex; align-items: end; column-gap: 6pt; }
+#moin-creditlogos a { display: grid; }
+#moin-credits-container { display: flex; width: 100%; justify-content: space-between;
+    align-items: end; margin-bottom: 10pt; }
 
 /* ordered lists */
 ol,
