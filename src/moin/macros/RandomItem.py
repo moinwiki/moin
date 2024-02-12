@@ -1,5 +1,6 @@
 # Copyright: 2000 Juergen Hermann <jh@web.de>
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -13,7 +14,7 @@ import random
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.items import Item
-from moin.macros._base import MacroPageLinkListBase
+from moin.macros._base import MacroPageLinkListBase, get_item_names
 from moin.storage.middleware.protecting import AccessDenied
 
 random.seed()
@@ -26,7 +27,7 @@ class Macro(MacroPageLinkListBase):
         else:
             item_count = 1
 
-        all_item_names = self.get_item_names()
+        all_item_names = get_item_names()
 
         # Now select random item from the full list, and if it exists and
         # we can read it, save.
