@@ -1,4 +1,5 @@
 # Copyright: 2019 MoinMoin:KentWatsen
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -67,7 +68,7 @@ from flask import g as flaskg
 from moin.i18n import _
 from moin.utils.tree import moin_page
 from moin.utils.interwiki import split_fqname
-from moin.macros._base import MacroPageLinkListBase
+from moin.macros._base import MacroPageLinkListBase, get_item_names
 
 
 class Macro(MacroPageLinkListBase):
@@ -131,7 +132,7 @@ class Macro(MacroPageLinkListBase):
                 return admonition
 
         # process subitems
-        children = self.get_item_names(item, startswith=startswith, skiptag=skiptag)
+        children = get_item_names(item, startswith=startswith, skiptag=skiptag)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
