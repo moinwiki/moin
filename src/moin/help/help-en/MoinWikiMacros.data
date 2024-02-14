@@ -443,18 +443,6 @@ Displayed using "UnCameled":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
 
-=== MonthCalendar ===
-
-The MonthCalendar macro is for those who need a calendar wiki integration or want to use MoinMoin as a Personal Information Manager.
-
-'''Markup:'''
-
-{{{
-<<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
-}}}
-
-For more details see [[/MonthCalendar]]
-
 === RandomItem ===
 
 '''Markup:'''
@@ -478,6 +466,34 @@ One random item:
 Five random items:
 
 <<RandomItem(5)>>
+
+=== TitleIndex ===
+
+TitleIndex gives a List of all Itemnames in the current namespace grouped by initials.
+
+'''Markup:'''
+
+{{{
+
+<<TitleIndex()>>
+
+}}}
+
+'''Result:'''
+
+<<TitleIndex()>>
+
+=== MonthCalendar ===
+
+The MonthCalendar macro is for those who need a calendar wiki integration or want to use MoinMoin as a Personal Information Manager.
+
+'''Markup:'''
+
+{{{
+<<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
+}}}
+
+For more details see [[/MonthCalendar]]
 
 === Verbatim ===
 
