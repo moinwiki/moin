@@ -8,17 +8,20 @@ require rebuilding.
 
 This starting configuration will run moin using the built-in server to serve files
 to browsers running on the local PC. The starting security settings below are secure,
-provided superuser and supereditor names are created and any wikigroups are
-created with protective ACLs before allowing public access with a more robust server.
+allowing only read access for anonymous users to any wiki items loaded via CLI commands
+(sample data or help items) and "registration_only_by_superuser = True".
+Edit the "acl_functions" and "acls" variables below to adjust these restrictions.
+Create superuser and supereditor names and wikigroups as required
+before allowing public access with a more robust server.
 
 If this will be a private single-user wiki with no public access, then change the line:
     registration_only_by_superuser = True
 to:
     registration_only_by_superuser = False
 and change several lines containing:
-    ... before='YourSuperEditor:read,write,create,destroy,admin',
+    dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
 to:
-    ... before='All:read,write,create,destroy,admin',
+    dict(before='All:read,write,create,destroy,admin',
 and change:
     edit_locking_policy = 'lock'
 to:
@@ -36,60 +39,9 @@ from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES,
 
 
 class Config(DefaultConfig):
-    """
-    We assume this structure for a git clone scenario used by developers:
 
-        moin/                   # clone root and wikiconfig dir, use this as CWD for ./m or moin commands
-            contrib             # developer tools
-            docs/
-                _build/
-                    html/       # local copy of moin documentation, created by running "./m docs" command
-            src/
-                moin/           # directory containing moin application code
-            wiki/               # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
-                data/           # wiki data and metadata
-                index/          # wiki indexes
-                preview/        # edit backups created when user clicks edit Preview button
-                sql/            # sql database used for edit locking
-            wikiconfig.py       # main configuration file, modify this to add or change features
-            wiki_local/         # use this to store custom CSS, Javascript, templates, logos, etc.
-            intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
-        <moin-venv-python>      # virtual env is created as a sibling to moin/ by default
-            bin/                # Windows calls this directory Scripts
-            include             # Windows calls this directory Include
-            lib/                # Windows calls this directory Lib
-
-
-    OR: To install moin from pypi into a venv, enter this sequence of commands:
-        <python> -m venv <myvenv>
-        cd <path-to-new-myvenv>
-        source bin/activate activate  # Scripts\activate.bat
-        pip install wheel
-        pip install moin
-        moin create-instance --path <mywiki>
-        cd <mywiki>
-        moin index-create                                      # creates empty wiki, OR
-        moin import19 --data_dir <path to 1.9 wiki/data>       # import 1.9 data, OR
-        moin index-create; moin load-sample; moin index-build  # creates wiki with sample data
-        to create this structure:
-
-        <myvenv>/               # virtualenv root, moin installed in site-packages below include/
-            bin/                # Windows calls this directory Scripts
-            include/            # Windows calls this directory Include
-            lib/                # Windows calls this directory Lib
-
-        <mywiki>/               # wikiconfig dir, use this as CWD for moin commands after <myvenv> activated
-            wiki/               # the wiki instance; created by `moin create-instance`
-                data/           # wiki data and metadata
-                index/          # wiki indexes
-                preview/        # backups created when user clicks edit Preview button
-                sql/            # sqlite database used for edit locking
-            wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
-            wikiconfig.py       # main configuration file, modify this to add or change features
-            intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
-
-    If that's not true, adjust these paths
-    """
+    # These paths are usually correct.
+    # See https://moin-20.readthedocs.io/en/latest/admin/configure.html#directory-structure
     wikiconfig_dir = os.path.abspath(os.path.dirname(__file__))
     instance_dir = os.path.join(wikiconfig_dir, 'wiki')
     data_dir = os.path.join(instance_dir, 'data')
@@ -177,7 +129,7 @@ class Config(DefaultConfig):
 
     # Define the super user who will have access to administrative functions like user registration,
     # password reset, disabling users, etc.
-    acl_functions = 'YourSuperUserName,SomeOtherSuperUserName:superuser'
+    acl_functions = 'YOUR-SUPER-USER-NAME:superuser'
     # OR, if you have a large active wiki with many administrators and editors you may want to
     # create a ConfigGroup or a WikiGroup. Group names may be used in place of user names
     # above and in ACL rules defined below. Read about it here:
@@ -221,19 +173,20 @@ class Config(DefaultConfig):
     }
     acls = {
         # maps namespace name -> acl configuration dict for that namespace
-        # One way to customize this is to create a TrustedEditorGroup item with
-        # ACL = "TrustedEditorsGroup:read,write All:",
-        # add a list of user names under the User Group metadata heading. Item content does not matter.
-        # Every user in TrustedEditorGroup will be able to add/delete users.
+        #
+        # One way to customize this for large wikis is to create a TrustedEditorsGroup item with
+        # ACL = "TrustedEditorsGroup:read,write All:"
+        # add a list of user names under the item's User Group metadata heading. Item content does not matter.
+        # Every user in YOUR-TRUSTED-EDITOR-GROUP will be able to add/delete users.
         #
         # most wiki data will be stored in NAMESPACE_DEFAULT
-        NAMESPACE_DEFAULT: dict(before='YourSuperEditor:read,write,create,destroy,admin',
-                                default='TrustedEditorGroup:read,write,create All:read',
+        NAMESPACE_DEFAULT: dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+                                default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
                                 after='',
                                 hierarchic=False, ),
         # user home pages should be stored here
-        NAMESPACE_USERS: dict(before='YourSuperEditor:read,write,create,destroy,admin',
-                              default='TrustedEditorGroup:read,write,create All:read',
+        NAMESPACE_USERS: dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+                              default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
                               after='',
                               # True enables possibility of an admin creating ACL rules for a user's subpages
                               hierarchic=True, ),
@@ -243,12 +196,12 @@ class Config(DefaultConfig):
                                      after='',
                                      hierarchic=False, ),
         # editor help namespacess are optional
-        'help-common': dict(before='YourSuperEditor:read,write,create,destroy,admin',
-                            default='TrustedEditorGroup:read,write,create All:read',
+        'help-common': dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+                            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
                             after='',
                             hierarchic=False, ),
-        'help-en': dict(before='YourSuperEditor:read,write,create,destroy,admin',
-                        default='TrustedEditorGroup:read,write,create All:read',
+        'help-en': dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+                        default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
                         after='',
                         hierarchic=False, ),
     }
