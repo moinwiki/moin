@@ -820,7 +820,7 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowIcons()>>``                       | Displays all icons in /static/img/icons directory          |
 +-------------------------------------------+------------------------------------------------------------+
-| ``<<ShowSmileys()>>``                     | Displays available smileys and the corresponding markdown  |
+| ``<<ShowSmileys()>>``                     | Displays available smileys and the corresponding markup    |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
