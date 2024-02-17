@@ -1,4 +1,5 @@
 # Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -23,14 +24,12 @@ class TestMacroBase:
         """ test for MacroBlockBase class """
         class Test_MacroBlockBase(MacroBlockBase):
             """ inherited class from MacroBlockBase """
-            def __init__(self):
-                self.alt = 'alt returned'
 
         macroblockbase_obj = Test_MacroBlockBase()
-        result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
-        assert result == 'alt returned'
+        with pytest.raises(ValueError):
+            macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', context_block=False)
         with pytest.raises(NotImplementedError):
-            result = macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
+            macroblockbase_obj.__call__('content', 'arguments', 'page_url', 'alternative', 'context_block')
 
     def test_MacroInlineBase(self):
         """ test for MacroInlineBase class """

@@ -80,13 +80,12 @@ class MacroBlockBase(MacroBase):
     """
     Macro base class for block element macros.
 
-    The macro gets only expanded in block context. In inline context the
-    alternative text is used instead.
+    The macro gets only expanded in block context.
     """
     def __call__(self, content, arguments, page_url, alternative, context_block):
         if context_block:
             return self.macro(content, arguments, page_url, alternative)
-        return self.alt
+        raise ValueError(_("Block macros cannot be used inline"))
 
     def macro(self, content, arguments, page_url, alternative):
         raise NotImplementedError
