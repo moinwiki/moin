@@ -798,7 +798,7 @@ def setup_jinja_env():
         'storage': flaskg.storage,
         'clock': flaskg.clock,
         'cfg': app.cfg,
-        'item_name': '@NONAMEGIVEN',  # XXX can we just use '' ?
+        'item_name': request.view_args.get('item_name', ''),
         'url_for_item': url_for_item,
         'get_fqname': get_fqname,
         'get_editor_info': lambda meta: get_editor_info(meta),

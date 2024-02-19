@@ -123,7 +123,9 @@
                         {%- if not_trash and (storage.has_item(supp_name) or user.may.write(supp_name)) %}
                             {% set title = _('Discuss contents of this item') %}
                             <li>
-                                <a class="moin-subitem-discuss" href="{{ url_for('frontend.show_item', item_name=supp_name) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, _(sub_item_name)) }}</a>
+                                <a class="moin-subitem-discuss" href="{{ url_for('frontend.show_item', item_name = supp_name) }}"
+                                    title="{{ title }}" rel="nofollow">{{ a_label(icon_class, _(sub_item_name)) }}
+                                </a>
                             </li>
                         {%- endif %}
                     {%- endif %}
