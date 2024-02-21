@@ -822,6 +822,10 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowSmileys()>>``                     | Displays available smileys and the corresponding markup    |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<ShowUserGroup()>>``                   | Displays metadata defined in usergroup attribute           |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<ShowWikiDict()>>``                    | Displays metadata defined in wikidict attribute            |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TitleIndex()>>``                      | Lists all itemnames for the namespace of the current item, |
