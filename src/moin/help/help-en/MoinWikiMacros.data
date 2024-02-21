@@ -8,6 +8,7 @@ Features that are not working correctly are marked with '''MOINTODO:'''
 
 There are four built-in macros.
 
+
 === TableOfContents ===
 
 The number of levels in the table of contents can be limited by passing an integer parameter.
@@ -22,6 +23,7 @@ The number of levels in the table of contents can be limited by passing an integ
 <<TableOfContents(3)>>
 
 See TOC floated to right.
+
 
 === FootNotes ===
 
@@ -47,6 +49,7 @@ By default footnotes are placed at the bottom of the page. Explicit placement of
 
 Subsequent footnotes<<FootNote(This footnote is placed at bottom of page by default.)>> will be numbered starting with 1 and placed at the bottom of the page by default.
 
+
 === BR - Forced Line Break ===
 
 '''Markup:'''
@@ -58,6 +61,7 @@ Use a BR macro <<BR>>to force a line break.
 '''Result:'''
 
 Use a BR macro <<BR>>to force a line break.
+
 
 === Include ===
 
@@ -117,6 +121,7 @@ link inside Item Views to show/hide the inclusion.
 
 == Extension Macros from MoinMoin/macro/ ==
 
+
 === Anchor ===
 
 Anchors are created (but invisible of course). Click [[#anchorname|here]] to scroll the window to the anchor following '''Result''' below.
@@ -130,6 +135,7 @@ Anchors are created (but invisible of course). Click [[#anchorname|here]] to scr
 '''Result:'''
 
 <<Anchor(anchorname)>>
+
 
 === Date ===
 
@@ -155,6 +161,7 @@ Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 
 Do this after <<Date()>> but before <<Date(2022-01-23T12:34:56)>>.
 
+
 === DateTime ===
 
 '''Markup:'''
@@ -178,6 +185,7 @@ Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
 <<DateTime(2002-01-23T12:34:56)>>
 
 Do this after <<DateTime()>> but before <<DateTime(2022-01-23T12:34:56)>>.
+
 
 === FontAwesome ===
 
@@ -223,6 +231,7 @@ create a character half the current size.
 
         <<FontAwesome(spin spinner,plum,2.5)>> <<FontAwesome(fan spin-reverse,orange,2.5)>>
 
+
 === GetText ===
 
 Loads I18N texts. If this browser is set to German/Deutsch the macro output will be: Einstellungen ("Settings" is included in the translation files).
@@ -236,6 +245,7 @@ Loads I18N texts. If this browser is set to German/Deutsch the macro output will
 '''Result:'''
 
 <<GetText(Settings)>>
+
 
 === GetVal ===
 
@@ -251,6 +261,7 @@ For GetVal to work, there must be either a ConfigDict or WikiDict defined (see c
 
 <<GetVal(help-en/WikiDict,var1)>>
 
+
 === Icon ===
 
 The Icon macro displays an icon. The complete list of available icons are listed within [[/Icons]].
@@ -265,24 +276,6 @@ Here is the moin icon: <<Icon(moin-logo.png)>>
 
 Here is the moin icon: <<Icon(moin-logo.png)>>
 
-=== MailTo ===
-
-The MailTo macro exports different markup when the user is logged in.
-
-'''Markup:'''
-
-{{{
-<<MailTo(user AT example DOT org)>>
-
-<<MailTo(user AT example DOT org, write me)>>
-}}}
-
-'''Result:'''
-
-<<MailTo(user AT example DOT org)>>
-
-<<MailTo(user AT example DOT org, write me)>>
-
 
 === ItemList ===
 
@@ -291,9 +284,7 @@ This section is partitioned into subsections, one for each ItemPageList paramete
 Most of the examples below search for descendents under the top-level "OtherTextItems"
 item, the only sample-wiki item that contains a significant number of descendents.
 
-
 ===== The "item" parameter =====
-
 
 '''Markup:'''
 
@@ -443,6 +434,39 @@ Displayed using "UnCameled":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
 
+
+=== MailTo ===
+
+The MailTo macro exports different markup when the user is logged in.
+
+'''Markup:'''
+
+{{{
+<<MailTo(user AT example DOT org)>>
+
+<<MailTo(user AT example DOT org, write me)>>
+}}}
+
+'''Result:'''
+
+<<MailTo(user AT example DOT org)>>
+
+<<MailTo(user AT example DOT org, write me)>>
+
+
+=== MonthCalendar ===
+
+The MonthCalendar macro is for those who need a calendar wiki integration or want to use MoinMoin as a Personal Information Manager.
+
+'''Markup:'''
+
+{{{
+<<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
+}}}
+
+For more details see [[/MonthCalendar]]
+
+
 === RandomItem ===
 
 '''Markup:'''
@@ -467,6 +491,40 @@ Five random items:
 
 <<RandomItem(5)>>
 
+
+=== ShowUserGroup ===
+
+This macro displays the contents of the metadata defined in the "usergroup" attribute. 
+Because this item has no metadata usergroup attribute, the result shown below 
+represents sample output.
+
+'''Markup:'''
+
+{{{
+    <<ShowUserGroup()>>
+}}}
+
+'''Result:'''
+
+['JillDoe', 'JaneDoeGroup', '+JohnDoe']
+
+=== ShowWikiDict ===
+
+This macro displays the contents of the metadata defined in the "wikidict" attribute. 
+Because this item has no metadata usergroup attribute, the result shown below 
+represents sample output.
+
+'''Markup:'''
+
+{{{
+    <<ShowWikiDict()>>
+}}}
+
+'''Result:'''
+
+{'dog': 'Hund', 'cat': 'Katze'}
+
+
 === TitleIndex ===
 
 TitleIndex gives a List of all Itemnames in the current namespace grouped by initials.
@@ -483,17 +541,6 @@ TitleIndex gives a List of all Itemnames in the current namespace grouped by ini
 
 <<TitleIndex()>>
 
-=== MonthCalendar ===
-
-The MonthCalendar macro is for those who need a calendar wiki integration or want to use MoinMoin as a Personal Information Manager.
-
-'''Markup:'''
-
-{{{
-<<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
-}}}
-
-For more details see [[/MonthCalendar]]
 
 === Verbatim ===
 
