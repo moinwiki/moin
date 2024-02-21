@@ -229,6 +229,12 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
         # bumping modified time makes global and item history views more useful
         meta[MTIME] = meta[MTIME] + 1
         meta[COMMENT] = 'Converted moin 1.9 markup to ' + markup_out + ' markup'
+        if meta[NAME][0].endswith('Group') and meta[USERGROUP]:
+            msg = 'Moin1.x user list moved to User Group metadata; item content ignored. Use ShowUserGroup macro. '
+            meta[COMMENT] = msg + meta[COMMENT]
+        if meta[NAME][0].endswith('Dict') and meta[WIKIDICT]:
+            msg = 'Moin1.x Wiki Dict data moved to Wiki Dict metadata; item content ignored. Use ShowWikiDict macro. '
+            meta[COMMENT] = msg + meta[COMMENT]
         meta[CONTENTTYPE] = CONTENTTYPE_MARKUP_OUT[markup_out]
         del meta[DATAID]
         out.seek(0)
@@ -457,6 +463,11 @@ class PageRevision:
                 meta[TAGS].append(TEMPLATE)
             else:
                 meta[TAGS] = [TEMPLATE]
+        if meta[NAME][0].endswith('Group'):
+            meta[USERGROUP] = self._parse_acl_list(content)
+        if meta[NAME][0].endswith('Dict'):
+            meta[WIKIDICT] = self._parse_wikidict(content)
+
         # if this revision matches a custom namespace defined in wikiconfig,
         # then modify the meta data for namespace and name
         for custom_namespace in custom_namespaces:
@@ -513,6 +524,48 @@ class PageRevision:
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             data = process_categories(meta, data, self.backend.item_category_regex)
         return data
+
+    def _parse_acl_list(self, content):
+        """
+        Return ACL list extracted from item's content
+        """
+        ret = []
+        first_user = True
+        start = 'not a hit yet'
+        lines = content.splitlines()
+        for line in lines:
+            if first_user:
+                parts = line.split('*')
+                if len(parts) == 2 and parts[1].startswith(' '):
+                    # only select lines with consistent indentation
+                    start = parts[0] + '* '
+                    first_user = False
+            if line.startswith(start):
+                parts = line.split('*')
+                if len(parts) == 2 and parts[1].startswith(' '):
+                    username = parts[1].strip()
+                    # link conversion may have enclosed all links with [[...]], maybe a leading +/-: "+[[UserName]]"
+                    if username.startswith('[[') and username.endswith(']]'):
+                        ret.append(username[2:-2])
+                    elif username.startswith('+[[') or username.startswith('-[[') and username.endswith(']]'):
+                        username.replace('[', '')
+                        ret.append(username[:-2])
+                    else:
+                        ret.append(username)
+        return ret
+
+    def _parse_wikidict(self, content):
+        """
+        Return a dict of key, value pairs: {key: val,...}
+        """
+        ret = {}
+        lines = content.splitlines()
+        for line in lines:
+            line = line.strip()
+            parts = line.split(':: ')
+            if len(parts) == 2:
+                ret[parts[0]] = parts[1]
+        return ret
 
 
 def migrate_itemlinks(dom, namespace, itemlinks2chg):

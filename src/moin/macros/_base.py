@@ -9,6 +9,7 @@ MoinMoin - Macro base class
 import re
 from moin.utils import iri
 from moin.items import Item
+from moin.utils.tree import html
 from moin.i18n import _
 from werkzeug.exceptions import abort
 from moin.utils.tree import moin_page, xlink
@@ -59,6 +60,15 @@ def get_item_names(name='', startswith='', kind='files', skiptag=''):
     if kind == "both":
         item_names = list(set(item_names))  # remove duplicates
     return item_names
+
+
+def fail_message(msg, severity='error'):
+    """
+    Return an error message in admonition-like format.
+
+    Severity may be: attention, caution, danger, error, hint, important, note, or tip.
+    """
+    return html.div(attrib={html.class_: '{0} moin-nowiki'.format(severity)}, children=msg)
 
 
 class MacroBase:
