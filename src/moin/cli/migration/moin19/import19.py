@@ -32,7 +32,7 @@ from moin.app import create_app
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
 from moin.constants.rights import SPECIAL_USERS
 from moin.storage.error import NoSuchRevisionError
 from moin.utils.mimetype import MimeType
@@ -125,9 +125,12 @@ def migr_statistics(unknown_macros):
               help='moin 1.9 data_dir (contains pages and users subdirectories).')
 @click.option('--markup_out', '-m', type=click.Choice(CONTENTTYPE_MARKUP_OUT.keys()),
               required=False, default='moinwiki', help='target markup.')
-def ImportMoin19(data_dir=None, markup_out=None):
+@click.option('--namespace', '-n', type=str, required=False, default=NAMESPACE_DEFAULT,
+              help='target namespace, e.g. used for members of a wikifarm.')
+def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
     '''  Import content and user data from a moin wiki with version 1.9 '''
 
+    target_namespace = namespace
     flaskg.add_lineno_attr = False
     flaskg.item_name2id = {}
     userid_old2new = {}
@@ -147,7 +150,8 @@ def ImportMoin19(data_dir=None, markup_out=None):
             backend.store(rev.meta, rev.data)
 
     logging.info("PHASE2: Converting Pages and Attachments ...")
-    for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL, default_markup='wiki'):
+    for rev in PageBackend(data_dir, deleted_mode=DELETED_MODE_KILL,
+                           default_markup='wiki', target_namespace=target_namespace):
         for user_name in user_names:
             if rev.meta[NAME][0] == user_name or rev.meta[NAME][0].startswith(user_name + '/'):
                 rev.meta[NAMESPACE] = 'users'
@@ -190,21 +194,27 @@ def ImportMoin19(data_dir=None, markup_out=None):
         dom.set(moin_page.page_href, str(iri))
         refs_conv(dom)
 
-        # migrate itemlinks to users namespace
+        # migrate itemlinks to users namespace or new target namespace
+        # links to items with the name of a custom namespace and their subitems are kept untouched
         itemlinks_19 = refs_conv.get_links()
-        itemlinks2chg = []
+        user_itemlinks2chg = []
+        namespace_itemlinks2chg = []
         for link in itemlinks_19:
-            if link in users_itemlist:
-                itemlinks2chg.append(link)
-        if len(itemlinks2chg) > 0:
-            migrate_users_links(dom, itemlinks2chg)
+            if link in users_itemlist or link.split('/')[0] in users_itemlist:
+                user_itemlinks2chg.append(link)
+            elif link not in custom_namespaces and link.split('/')[0] not in custom_namespaces:
+                namespace_itemlinks2chg.append(link)
+        if len(user_itemlinks2chg) > 0:
+            migrate_itemlinks(dom,  NAMESPACE_USERS, user_itemlinks2chg)
+        if len(namespace_itemlinks2chg) > 0:
+            migrate_itemlinks(dom, target_namespace, namespace_itemlinks2chg)
 
         # migrate macros that need update from 1.9 to 2.0
         migrate_macros(dom)  # in-place conversion
 
         out = conv_out(dom)
         out = out.encode(CHARSET19)
-        if len(itemlinks2chg) > 0:
+        if len(user_itemlinks2chg) > 0 or len(namespace_itemlinks2chg):
             refs_conv(dom)  # refresh changed itemlinks
         meta[ITEMLINKS] = refs_conv.get_links()
         meta[ITEMTRANSCLUSIONS] = refs_conv.get_transclusions()
@@ -252,6 +262,7 @@ class PageBackend:
     """
     def __init__(self, path, deleted_mode=DELETED_MODE_KEEP,
                  default_markup='wiki',
+                 target_namespace='',
                  item_category_regex=r'(?P<all>Category(?P<key>(?!Template)\S+))'):
         """
         :param path: storage path (data_dir)
@@ -265,11 +276,13 @@ class PageBackend:
                                       keep their attachments. (default)
         :param default_markup: used if a page has no #format line, moin 1.9's default
                                'wiki' and we also use this default here.
+        :param target_namespace : target namespace
         """
         self._path = path
         assert deleted_mode in (DELETED_MODE_KILL, DELETED_MODE_KEEP, )
         self.deleted_mode = deleted_mode
         self.format_default = default_markup
+        self.target_namespace = target_namespace
         self.item_category_regex = re.compile(item_category_regex, re.UNICODE)
 
     def __iter__(self):
@@ -279,7 +292,7 @@ class PageBackend:
         for f in pages:
             itemname = unquoteWikiname(f)
             try:
-                item = PageItem(self, os.path.join(pages_dir, f), itemname)
+                item = PageItem(self, os.path.join(pages_dir, f), itemname, self.target_namespace)
             except KillRequested:
                 pass  # a message was already output
             except (IOError, AttributeError):
@@ -301,11 +314,13 @@ class PageItem:
     """
     moin 1.9 page
     """
-    def __init__(self, backend, path, itemname):
+    def __init__(self, backend, path, itemname, target_namespace):
         self.backend = backend
         self.name = itemname
         self.path = path
+        self.target_namespace = target_namespace
         try:
+
             logging.debug("Processing item {0}".format(itemname))
         except UnicodeEncodeError:
             logging.debug("Processing item {0}".format(itemname.encode('ascii', errors='replace')))
@@ -337,7 +352,7 @@ class PageItem:
         for fname in fnames:
             try:
                 revno = int(fname)
-                page_rev = PageRevision(self, revno, os.path.join(revisionspath, fname))
+                page_rev = PageRevision(self, revno, os.path.join(revisionspath, fname), self.target_namespace)
                 if parent_id:
                     page_rev.meta[PARENTID] = parent_id
                 parent_id = page_rev.meta[REVID]
@@ -367,7 +382,7 @@ class PageRevision:
     """
     moin 1.9 page revision
     """
-    def __init__(self, item, revno, path):
+    def __init__(self, item, revno, path, target_namespace):
         item_name = item.name
         itemid = item.itemid
         editlog = item.editlog
@@ -386,7 +401,7 @@ class PageRevision:
                     }
             try:
                 revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
-                previous_meta = PageRevision(item, revno - 1, revpath).meta
+                previous_meta = PageRevision(item, revno - 1, revpath, target_namespace).meta
                 # if this page revision is deleted, we have no on-page metadata.
                 # but some metadata is required, thus we have to copy it from the
                 # (non-deleted) revision revno-1:
@@ -435,7 +450,7 @@ class PageRevision:
         meta[ITEMID] = itemid
         meta[REVID] = make_uuid()
         meta[REV_NUMBER] = revno
-        meta[NAMESPACE] = NAMESPACE_DEFAULT
+        meta[NAMESPACE] = target_namespace
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         if meta[NAME][0].endswith('Template'):
             if TAGS in meta:
@@ -500,10 +515,11 @@ class PageRevision:
         return data
 
 
-def migrate_users_links(dom, itemlinks2chg):
+def migrate_itemlinks(dom, namespace, itemlinks2chg):
     """ Walk the DOM tree and change itemlinks to users namespace
 
     :param dom: the tree to check for elements to migrate
+    :param namespace: target namespace
     :param itemlinks2chg: list of itemlinks to be changed
     :type dom: emeraldtree.tree.Element
     """
@@ -513,8 +529,8 @@ def migrate_users_links(dom, itemlinks2chg):
         if node.tag.name == 'a' and not isinstance(node.attrib[xlink.href], str):
             path_19 = str(node.attrib[xlink.href].path)
             if node.attrib[xlink.href].scheme == 'wiki.local' and path_19 in itemlinks2chg:
-                logging.debug("Changing link from " + path_19 + " to users/" + path_19)
-                node.attrib[xlink.href].path = 'users/' + path_19
+                logging.debug("Changing link from {} to {}/{}".format(path_19, namespace, path_19))
+                node.attrib[xlink.href].path = '{}/{}'.format(namespace, path_19)
 
 
 def process_categories(meta, data, item_category_regex):
