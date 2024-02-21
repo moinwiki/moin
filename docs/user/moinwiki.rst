@@ -713,7 +713,7 @@ CSS classes for use with the wiki parser, tables, comments, and links
  - Background colors: red, green, blue, yellow, or orange
  - Borders: solid, dashed, or dotted
  - Text-alignment: left, center, right, or justify
- - Admonitions: caution, important, note, tip, warning
+ - Admonitions: attention, caution, danger, error, hint, important, note, tip, warning
  - Tables: moin-sortable, no-borders
  - Comments: comment
  - Position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
