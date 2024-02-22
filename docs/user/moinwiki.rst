@@ -713,7 +713,7 @@ CSS classes for use with the wiki parser, tables, comments, and links
  - Background colors: red, green, blue, yellow, or orange
  - Borders: solid, dashed, or dotted
  - Text-alignment: left, center, right, or justify
- - Admonitions: caution, important, note, tip, warning
+ - Admonitions: attention, caution, danger, error, hint, important, note, tip, warning
  - Tables: moin-sortable, no-borders
  - Comments: comment
  - Position parsers and tables: float-left, float-right, inline, middle, clear-right, clear-left or clear-both
@@ -821,6 +821,10 @@ extra features. The following is a table of MoinMoin's macros.
 | ``<<ShowIcons()>>``                       | Displays all icons in /static/img/icons directory          |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowSmileys()>>``                     | Displays available smileys and the corresponding markup    |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<ShowUserGroup()>>``                   | Displays metadata defined in usergroup attribute           |
++-------------------------------------------+------------------------------------------------------------+
+| ``<<ShowWikiDict()>>``                    | Displays metadata defined in wikidict attribute            |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
