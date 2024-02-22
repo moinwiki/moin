@@ -180,34 +180,39 @@ class Config(DefaultConfig):
         # Every user in YOUR-TRUSTED-EDITOR-GROUP will be able to add/delete users.
         #
         # most wiki data will be stored in NAMESPACE_DEFAULT
-        NAMESPACE_DEFAULT: dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
-                                default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
-                                after='',
-                                hierarchic=False, ),
+        NAMESPACE_DEFAULT: dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            hierarchic=False, ),
         # user home pages should be stored here
-        NAMESPACE_USERS: dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
-                              default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
-                              after='',
-                              # True enables possibility of an admin creating ACL rules for a user's subpages
-                              hierarchic=True, ),
+        NAMESPACE_USERS: dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            # True enables possibility of an admin creating ACL rules for a user's subpages
+            hierarchic=True, ),
         # contains user data that must be kept secret, dis-allow access for all
-        NAMESPACE_USERPROFILES: dict(before='All:',
-                                     default='',
-                                     after='',
-                                     hierarchic=False, ),
+        NAMESPACE_USERPROFILES: dict(
+            before='All:',
+            default='',
+            after='',
+            hierarchic=False, ),
         # editor help namespacess are optional
-        'help-common': dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
-                            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
-                            after='',
-                            hierarchic=False, ),
-        'help-en': dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
-                        default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
-                        after='',
-                        hierarchic=False, ),
+        'help-common': dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            hierarchic=False, ),
+        'help-en': dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            hierarchic=False, ),
     }
     namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
     # define mapping of namespaces to unique item_roots (home pages within namespaces).
-    root_mapping = {'user': 'UserHome'}
+    root_mapping = {'users': 'UserHome', }
     # default root, use this value by default for all namespaces
     default_root = 'Home'
 
@@ -216,7 +221,8 @@ class Config(DefaultConfig):
     from xstatic.main import XStatic
     # names below must be package names
     mod_names = [
-        'jquery', 'jquery_file_upload',
+        'jquery',
+        'jquery_file_upload',
         'bootstrap',
         'font_awesome',
         'ckeditor',
