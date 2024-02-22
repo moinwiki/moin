@@ -139,7 +139,8 @@ Let's go through this line-by-line:
    configuration; usually something for Flask or some Flask extension.
 
 A real-life example of a `wikiconfig.py` can be found in the
-`docs/examples/config/` directory.
+`src/moin/config` directory. This file will be initially copied to your
+wiki path when you create a new wiki and `wikiconfig.py` is missing.
 
 =========================
 Wiki Engine Configuration
@@ -1388,98 +1389,82 @@ namespaces
 Moin has support for multiple namespaces. You can configure them per your needs.
 URLs for items within a namespace are similar to sub-items.
 
-To configure custom namespaces, start by adding these imports near the top of
-wikiconfi.py::
+To configure custom namespaces, find the section in wikiconfig.py that looks similar to this::
 
-    from moin.storage import create_mapping
-    from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
+    namespaces = {
+        # maps namespace name -> backend name
+        # these 3 standard namespaces are required, these have separate backends
+        NAMESPACE_DEFAULT: 'default',
+        NAMESPACE_USERS: 'users',
+        NAMESPACE_USERPROFILES: 'userprofiles',
+        # namespaces for editor help files are optional, if unwanted delete here and in backends and acls
+        'help-common': 'help-common',  # contains media files used by other language helps
+        'help-en': 'help-en',  # replace this with help-de, help-ru, help-pt_BR etc.
+        # define custom namespaces if desired, trailing / below causes foo to be stored in default backend
+        # 'foo/': 'default',
+        # custom namespace with a separate backend - note absence of trailing /
+        # 'bar': 'bar',
+    }
+    backends = {
+        # maps backend name -> storage
+        # the feature to use different storage types for each namespace is not implemented so use None below.
+        # the storage type for all backends is set in 'uri' above,
+        # all values in `namespace` dict must be defined as keys in `backends` dict
+        'default': None,
+        'users': None,
+        'userprofiles': None,
+        # help namespaces are optional
+        'help-common': None,
+        'help-en': None,
+        # required for bar namespace if defined above
+        # 'bar': None,
+    }
+    acls = {
+        # maps namespace name -> acl configuration dict for that namespace
+        #
+        # One way to customize this for large wikis is to create a TrustedEditorsGroup item with
+        # ACL = "TrustedEditorsGroup:read,write All:"
+        # add a list of user names under the item's User Group metadata heading. Item content does not matter.
+        # Every user in YOUR-TRUSTED-EDITOR-GROUP will be able to add/delete users.
+        #
+        # most wiki data will be stored in NAMESPACE_DEFAULT
+        NAMESPACE_DEFAULT: dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            hierarchic=False, ),
+        # user home pages should be stored here
+        NAMESPACE_USERS: dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            # True enables possibility of an admin creating ACL rules for a user's subpages
+            hierarchic=True, ),
+        # contains user data that must be kept secret, dis-allow access for all
+        NAMESPACE_USERPROFILES: dict(
+            before='All:',
+            default='',
+            after='',
+            hierarchic=False, ),
+        # editor help namespacess are optional
+        'help-common': dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            hierarchic=False, ),
+        'help-en': dict(
+            before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+            default='YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read',
+            after='',
+            hierarchic=False, ),
+    }
+    namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
+    # define mapping of namespaces to unique item_roots (home pages within namespaces).
+    root_mapping = {'users': 'UserHome', }
+    # default root, use this value by default for all namespaces
+    default_root = 'Home'
 
-Next, find the section in wikiconfig.py that looks similar to this::
-
-    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
-        uri='stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),  # orig
-        default_acl=dict(before='',
-                         default='All:read,write,create,destroy,admin',
-                         after='',
-                         hierarchic=False, ),
-        users_acl=dict(before='',
-                       default='All:read,write,create,destroy,admin',
-                       after='',
-                       hierarchic=False, ),
-        # userprofiles contain only metadata, no content will be created
-        userprofiles_acl=dict(before='All:',
-                              default='',
-                              after='',
-                              hierarchic=False, ),
-    )
-
-and replace all of the above with this::
-
-        uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir),  # use file system for storage
-        # uri='stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  # sqlite, 1 table per db
-        # uri='stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir),  # sqlite, 2 tables per db
-        # sqlite via SQLAlchemy
-        # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir),  #  1 table per db
-        # uri='stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir),  # 2 tables per db
-
-        namespaces = {
-            # maps namespace name -> backend name
-            # these 3 standard namespaces are required
-            NAMESPACE_DEFAULT: 'default',
-            NAMESPACE_USERS: 'users',
-            NAMESPACE_USERPROFILES: 'userprofiles',
-            # trailing / below causes foo, and bar to be stored in default backend
-            'foo/': 'default',
-            'bar/': 'default',
-            # custom namespace with a backend - note absence of trailing /
-            'baz': 'baz',
-        }
-        backends = {
-            # maps backend name -> storage
-            # feature to use different storage types for each namespace is not implemented so use None below.
-            # the storage type for all backends is set in 'uri' above,
-            # all values in `namespace` dict must be defined as keys in `backends` dict
-            'default': None,
-            'users': None,
-            'userprofiles': None,
-            # required for baz namespace defined above
-            'baz': None,
-        }
-        acls = {
-            # maps namespace name -> acl configuration dict for that namespace
-            NAMESPACE_USERPROFILES: dict(before='All:',
-                                         default='',
-                                         after='',
-                                         hierarchic=False, ),
-            NAMESPACE_USERS: dict(before='SuperUser:read,write,create,destroy,admin',
-                                    default='All:read,write,create',
-                                    after='',
-                                    hierarchic=False, ),
-            NAMESPACE_DEFAULT: dict(before='SuperUser:read,write,create,destroy,admin',
-                                    default='All:read,write,create',
-                                    after='',
-                                    hierarchic=False, ),
-            'foo': dict(before='SuperUser:read,write,create,destroy,admin',
-                          default='All:read,write,create',
-                          after='',
-                          hierarchic=False, ),
-            'bar': dict(before='SuperUser:read,write,create,destroy,admin',
-                          default='All:read,write,create',
-                          after='',
-                          hierarchic=False, ),
-            'baz': dict(before='SuperUser:read,write,create,destroy,admin',
-                          default='All:read,write,create',
-                          after='',
-                          hierarchic=False, ),
-        }
-        namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
-
-        # define mapping of namespaces to item_roots (home pages within namespaces).
-        root_mapping = {'foo': 'fooHome'}
-        # default root, use this value in case a particular namespace key is not present in the above mapping.
-        default_root = 'Home'
-
-Edit the above renaming or deleting the lines with foo, bar, and baz and adding the desired custom namespaces.
+Edit the above renaming or deleting the lines with foo and bar and adding the desired custom namespaces.
 Be sure all the names in the `namespaces` dict are also added to the `acls` dict.  All of the values in the
 namespaces dict must be included as keys in the backends dict.
 

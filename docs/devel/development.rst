@@ -122,8 +122,7 @@ review configuration options
 ----------------------------
 
 * review https://moin-20.readthedocs.io/en/latest/admin/configure.html
-* following the instructions in wikiconfig.py, create wikiconfig_local.py and wikiconfig_editme.py
-* configure options by editing wikiconfig_editme.py
+* configure options by editing wikiconfig.py
 
   * set superuser privileges on at least one username
   * the default configuration options are commonly used, it is likely new bugs can be
