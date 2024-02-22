@@ -66,12 +66,6 @@ setup_args = dict(
     },
     include_package_data=True,
     zip_safe=False,
-    use_scm_version={
-        'write_to': os.path.join('src', 'moin', '_version.py'),
-    },
-    setup_requires=[
-        'setuptools_scm',  # magically cares for version and packaged files
-    ],
     install_requires=[
         'Babel>=2.10.0',  # internationalization support
         'blinker>=1.5',  # event signalling (e.g. for change notification trigger)
