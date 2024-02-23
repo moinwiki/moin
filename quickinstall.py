@@ -578,9 +578,8 @@ class QuickInstall:
 
     def do_catalog(self):
         subprocess.check_call((
-            os.path.join(self.dir_venv_bin, 'python'),
-            os.path.join(self.dir_source, 'setup.py'),
-            'compile_catalog', '--statistics',
+            os.path.join(self.dir_venv_bin, 'pybabel'),
+            'compile', '--statistics',
             # needed in case user runs quickinstall.py with a cwd other than the repo root
             '--directory', os.path.join(os.path.dirname(__file__), 'src', 'moin', 'translations'),
         ))
