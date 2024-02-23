@@ -396,7 +396,7 @@ In many cases, those external static files are maintained by someone else (like 
 javascript library or larger js libraries) and we definitely do not want to merge
 them into our project.
 
-For MoinMoin we require the following XStatic Packages in setup.py:
+For MoinMoin we require the following XStatic Packages in pyproject.toml:
 
 * `jquery <https://pypi.org/project/XStatic-jQuery>`_
   for jquery lib functions loaded in the template file base.html
