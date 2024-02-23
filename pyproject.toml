@@ -113,3 +113,46 @@ write_to = "src/moin/_version.py"
 
 [tool.pytest.ini_options]
 norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    "contrib",
+    ".cache",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".idea",
+    ".ruff_cache",
+    ".tox",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F"]
+
+ignore = ["F405", "E401", "E402", "E501"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+unfixable = []
+
+# Code style violation exceptions:
+# please note that the values are adjusted so that they do not cause failures
+# with existing code. if you want to change them, you should first fix all
+# ruff failures that appear with your change.
+[tool.ruff.lint.per-file-ignores]
+"scripts/coding_std.py" = ["E713"]
+"docs/conf.py" = ["F401"]  # sphinx config, automatically generated
+"src/moin/utils/SubProcess.py" = ["F401", "F821"]  # 3rd party stuff, patched stdlib code
+"src/moin/config/default.py" = ["F401", "F403"]
+"src/moin/datastructures/__init__.py" = ["F401"]
