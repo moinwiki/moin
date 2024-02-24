@@ -528,6 +528,24 @@ class ThemeSupport:
             url = url or url_for('frontend.login')
         return url
 
+    def login_oidc_idp_url(self):
+        """
+        Return URL usable for user login with SSO.
+
+        :rtype: unicode (or None, if no login url is supported)
+        :returns: url for user login
+        """
+        return url_for('frontend.login_oidc_idp') if self.cfg.sso else None
+
+    def register_oidc_idp_url(self):
+        """
+        Return URL usable for user registration with SSO.
+
+        :rtype: unicode (or None, if no login url is supported)
+        :returns: url for user registration
+        """
+        return url_for('frontend.register_oidc_idp') if self.cfg.sso else None
+
     def get_fqnames(self, fqname):
         """
         Return the list of other fqnames associated with the item.

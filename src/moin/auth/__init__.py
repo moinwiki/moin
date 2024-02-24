@@ -278,6 +278,15 @@ class MoinAuth(BaseAuth):
         return Markup(msg)
 
 
+class OidcAuth(BaseAuth):
+    """ This authentication is different from others and doesn't fit the design pattern. """
+    def __init__(self, **kw):
+        super(OidcAuth, self).__init__(**kw)
+
+    name = 'oidc'
+    logout_possible = True
+
+
 class GivenAuth(BaseAuth):
     """ reuse a given authentication, e.g. http basic auth (or any other auth)
         done by the web server, that sets REMOTE_USER environment variable.
@@ -458,6 +467,7 @@ def setup_from_session():
         session_token = session['user.session_token']
         logging.debug("got from session: {0!r} {1!r} {2!r} {3!r}".format(itemid, trusted, auth_method, auth_attribs))
         logging.debug("current auth methods: {0!r}".format(app.cfg.auth_methods))
+        # BCD: Why do we care about auth method?  All that matters is the session_token.
         if auth_method and auth_method in app.cfg.auth_methods:
             userobj = user.User(itemid,
                                 auth_method=auth_method,

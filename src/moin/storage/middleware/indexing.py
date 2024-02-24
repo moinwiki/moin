@@ -420,6 +420,8 @@ class IndexingMiddleware:
             LOCALE: ID(stored=True),
             SUBSCRIPTION_IDS: ID(),
             SUBSCRIPTION_PATTERNS: ID(),
+            OIDC: ID(stored=True),
+            OIDC_UID: ID(stored=True),
         }
         latest_revs_fields.update(**userprofile_fields)
 

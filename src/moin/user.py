@@ -509,6 +509,7 @@ class User:
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
         try:
+            # BCD: A model class should not be touching the session.
             session['user.session_token'] = self.generate_session_token(False)
         except RuntimeError:  # CLI call has no valid session context
             pass

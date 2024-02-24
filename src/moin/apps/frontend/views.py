@@ -34,7 +34,7 @@ from functools import wraps, partial
 
 from werkzeug.utils import secure_filename
 
-from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
+from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify, session
 from flask import current_app as app
 from flask import g as flaskg
 from flask_babel import format_datetime
@@ -47,7 +47,7 @@ from markupsafe import Markup
 
 import pytz
 from babel import Locale
-
+from passlib.pwd import genword
 from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
 from whoosh.query.qcore import QueryError, TermNotFound
@@ -56,6 +56,7 @@ from whoosh.analysis import StandardAnalyzer
 from moin.i18n import _, L_
 from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
+from moin.auth.oidc import oidc
 from moin.forms import (OptionalText, RequiredText, URL, YourEmail,
                         RequiredPassword, Checkbox, InlineCheckbox, Select, Names,
                         Tags, Natural, Hidden, MultiSelect, Enum, Subscriptions, Quicklinks, RadioChoice,
@@ -70,6 +71,7 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
+from moin.user import search_users, User
 from moin.utils import crypto, rev_navigation, close_file, show_time
 from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
@@ -137,9 +139,11 @@ Disallow: /+backrefs/
 Disallow: /+wanteds/
 Disallow: /+orphans/
 Disallow: /+register
+Disallow: /+register_oidc_idp
 Disallow: /+recoverpass
 Disallow: /+usersettings
 Disallow: /+login
+Disallow: /+login_oidc_idp
 Disallow: /+logout
 Disallow: /+bookmark
 Disallow: /+diff/
@@ -1871,6 +1875,17 @@ class RegistrationForm(Form):
     validators = [ValidRegistration()]
 
 
+class RegistrationSsoForm(Form):
+    """a simple user registration form"""
+    name = 'register_sso'
+
+    username = RequiredText.using(label=L_('Username')).with_properties(
+        placeholder=L_("The login username you want to use"), autofocus=True
+    )
+    email = YourEmail
+    submit_label = L_('Register')
+
+
 def _using_moin_auth():
     """Check if MoinAuth is being used for authentication.
 
@@ -1930,6 +1945,87 @@ def register():
                            title_name=title_name,
                            form=form,
                            )
+
+
+@frontend.route('/+register_oidc_idp', methods=['GET', 'POST'])
+@oidc.oidc_auth('idp')
+def register_oidc_idp():
+    """
+    Flow is like this:
+    1. GET /+register_sso
+    2. Decorator will redirect user to IDP *before* this function is called.
+    3. After OIDC authenticates the user, it will redirect the user back to this function.
+    4. If there's no form submission, print the form.  Let the user enter username and email address.
+    5. Second time around the decorator will redirect again, and IDP will redirect back quickly.
+    6. Validate the form submission
+    7. Create the user.
+
+    In the future, when this project wants to support multiple IDPs, it can parameterize
+    the endpoint, e.g. /+register_oidc/idp1, /+register_oidc/idp2, and a generic registration
+    page could have links/buttons for each IDP.  See flask_pyoidc documentation.
+    """
+    return _register_oidc_using_provider('idp')
+
+
+def _register_oidc_using_provider(provider):
+    if app.cfg.registration_only_by_superuser and not getattr(flaskg.user.may, SUPERUSER)():
+        # deny registration to bots
+        abort(404)
+
+    title_name = _('Register')
+    oidc_name = session['userinfo']["given_name"]
+
+    if request.method in ['GET']:
+        return render_template(
+            'register_sso.html',
+            title_name=title_name,
+            form=RegistrationSsoForm.from_defaults(),
+            name=oidc_name,
+        )
+
+    # At this point, it must be a POST because that's all we allow.
+
+    # Validate the form
+    form = RegistrationSsoForm.from_flat(request.form)
+    if not form.validate():
+        return render_template(
+            'register_sso.html',
+            title_name=title_name,
+            form=RegistrationSsoForm,
+            name=oidc_name,
+        )
+
+    # Create the user.
+    user_kwargs = {
+        'username': form['username'].value,
+        'oidc': provider,
+        'oidc_uid': session['userinfo']['sub'],
+        'password': genword(length=32),  # BCD: Password should not be required.
+        'email': form['email'].value,
+        'trusted': True,
+    }
+    # BCD: These should be default values of the user.  Consider using factory that
+    # uses application configuration to generate blank users.
+    if app.cfg.user_email_verification:
+        user_kwargs['is_disabled'] = True
+        user_kwargs['verify_email'] = True
+    msg = user.create_user(**user_kwargs)
+    if msg:
+        flash(msg, "error")
+    else:
+        # TODO: Remove code duplication here.
+        if app.cfg.user_email_verification:
+            u = user.User(auth_username=user_kwargs['username'])
+            is_ok, msg = u.mail_email_verification()
+            if is_ok:
+                flash(_('Account verification required, please see the email we sent to your address.'), "info")
+            else:
+                flash(_('An error occurred while sending the verification email: "%(message)s" '
+                        'Please contact an administrator to activate your account.',
+                        message=msg), "error")
+        else:
+            flash(_('Account created, please log in now.'), "info")
+        return redirect(url_for('.show_root'))
 
 
 @frontend.route('/+verifyemail', methods=['GET'])
@@ -2148,6 +2244,39 @@ def login():
                            login_inputs=app.cfg.auth_login_inputs,
                            form=form,
                            )
+
+
+@frontend.route('/+login_oidc_idp', methods=['GET', 'POST'])
+@oidc.oidc_auth('idp')
+def login_oidc_idp():
+    _login_oidc_using_provider('idp')
+    return redirect(url_for('.show_root'))
+
+
+def _login_oidc_using_provider(provider):
+    info = session['userinfo']
+    users = search_users(**{
+        OIDC: provider,
+        OIDC_UID: info['sub'],
+        DISABLED: False,
+    })
+    if not users:
+        logging.warning('When logging in, no users were found.')
+        flash('User does not exist', 'error')
+        return
+    # TODO: What if user has multiple moin accounts for this oidc sub.
+    user = User(uid=users[0].meta['itemid'])
+    start_session(user, 'oidc', (), True)
+
+
+def start_session(user: User, auth_method, auth_attribs, trusted):
+    """ Regardless of authentication mechanism, this function starts a session. """
+    logging.info(user.itemid + ' has started a sesstion')
+    session['user.itemid'] = user.itemid
+    session['user.trusted'] = trusted  # The user meta document loaded does not have this info.
+    session['user.auth_method'] = auth_method
+    session['user.auth_attribs'] = auth_attribs
+    session['user.session_token'] = user.get_session_token()
 
 
 @frontend.route('/+logout')

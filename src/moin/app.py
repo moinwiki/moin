@@ -153,6 +153,9 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     app.register_blueprint(serve, url_prefix='/+serve')
     clock.stop('create_app register')
     clock.start('create_app flask-cache')
+    if app.cfg['sso']:
+        from moin.auth.oidc import oidc
+        oidc.init_app(app)
     # 'SimpleCache' caching uses a dict and is not thread safe according to the docs.
     cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
     cache.init_app(app)
@@ -237,6 +240,8 @@ def setup_user():
         session.clear()
         userobj = auth.setup_from_session()
 
+    # BCD: This is the wrong place to handle login and logout.
+
     # then handle login/logout forms
     form = request.values.to_dict()
     if 'login_submit' in form:
@@ -247,6 +252,9 @@ def setup_user():
         userobj = auth.handle_logout(userobj)
     else:
         userobj = auth.handle_request(userobj)
+
+    # BCD: Getting the session from the user object (after handling a login even)
+    # is backwards.
 
     # if we still have no user obj, create a dummy:
     if not userobj:

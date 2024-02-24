@@ -482,6 +482,20 @@
                 <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
             </li>
         {%- endif %}
+        {%- set login_idp_url = theme_supp.login_oidc_idp_url() %}
+        {% if login_idp_url %}
+            <li>
+                {# TODO: translate #}
+                <a href="{{ login_idp_url }}" class="moin-login" rel="nofollow">Login with SSO</a>
+            </li>
+        {% endif %}
+        {%- set register_idp_url = theme_supp.register_oidc_idp_url() %}
+        {% if register_idp_url %}
+            <li>
+                {# TODO: translate #}
+                <a href="{{ register_idp_url }}" class="moin-login" rel="nofollow">Register with SSO</a>
+            </li>
+        {% endif %}
     {%- endif %}
 {% endmacro %}
 
