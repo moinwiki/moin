@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: moin 2.0.0.dev1555+g7fcdf824.d20231005\n"
+"Project-Id-Version: moin 2.0.0.dev1608+g628eee43\n"
 "Report-Msgid-Bugs-To: English <moin-user@python.org>\n"
-"POT-Creation-Date: 2023-10-05 22:11+0100\n"
+"POT-Creation-Date: 2023-12-11 15:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.0\n"
 
-#: src/moin/forms.py:100 src/moin/forms.py:179
+#: src/moin/forms.py:100 src/moin/forms.py:186
 msgid "No namespace field in the meta."
 msgstr ""
 
@@ -47,82 +47,82 @@ msgstr ""
 msgid "Item(s) named %(duplicate_names)s already exist."
 msgstr ""
 
-#: src/moin/forms.py:167
+#: src/moin/forms.py:174
 msgid "Invalid JSON."
 msgstr ""
 
-#: src/moin/forms.py:168
+#: src/moin/forms.py:175
 msgid "Itemid not a proper UUID"
 msgstr ""
 
-#: src/moin/forms.py:173
+#: src/moin/forms.py:180
 msgid "No ITEMID field"
 msgstr ""
 
-#: src/moin/forms.py:183
+#: src/moin/forms.py:190
 #, python-format
 msgid "%(_namespace)s is not a valid namespace."
 msgstr ""
 
-#: src/moin/forms.py:204
+#: src/moin/forms.py:211
 msgid "E-Mail"
 msgstr ""
 
-#: src/moin/forms.py:205
+#: src/moin/forms.py:212
 msgid "E-Mail address"
 msgstr ""
 
-#: src/moin/forms.py:207
+#: src/moin/forms.py:214
 msgid "Your E-Mail address"
 msgstr ""
 
-#: src/moin/forms.py:209
+#: src/moin/forms.py:216
 msgid "Password"
 msgstr ""
 
-#: src/moin/forms.py:270
+#: src/moin/forms.py:277
 msgid "This item doesn't exist."
 msgstr ""
 
-#: src/moin/forms.py:272
+#: src/moin/forms.py:279
 msgid "This item name is corrupt, delete and recreate."
 msgstr ""
 
-#: src/moin/config/default.py:352 src/moin/forms.py:282 src/moin/templates/all.html:6
+#: src/moin/config/default.py:352 src/moin/forms.py:289 src/moin/templates/all.html:6
 #: src/moin/templates/ticket/advanced.html:28 src/moin/templates/tickets.html:20 src/moin/templates/tickets.html:62
 msgid "Tags"
 msgstr ""
 
-#: src/moin/forms.py:285
+#: src/moin/forms.py:292
 msgid "Names"
 msgstr ""
 
-#: src/moin/apps/admin/templates/admin/userbrowser.html:18 src/moin/forms.py:289
+#: src/moin/apps/admin/templates/admin/userbrowser.html:18 src/moin/forms.py:296
 #: src/moin/templates/usersettings_forms.html:149
 msgid "Subscriptions"
 msgstr ""
 
-#: src/moin/forms.py:293 src/moin/templates/usersettings_forms.html:133 src/moin/themes/basic/templates/layout.html:105
+#: src/moin/forms.py:300 src/moin/templates/usersettings_forms.html:133 src/moin/themes/basic/templates/layout.html:105
 msgid "Quick Links"
 msgstr ""
 
-#: src/moin/forms.py:295
+#: src/moin/forms.py:302
 msgid "Search Query"
 msgstr ""
 
-#: src/moin/forms.py:345
+#: src/moin/forms.py:352
 msgid "YYYY-MM-DD HH:MM:SS (example: 2013-12-31 23:59:59)"
 msgstr ""
 
-#: src/moin/forms.py:346
+#: src/moin/forms.py:353
 msgid "Please use the following format: YYYY-MM-DD HH:MM:SS"
 msgstr ""
 
-#: src/moin/forms.py:364
+#: src/moin/forms.py:371
 msgid "Invalid Reference."
 msgstr ""
 
-#: src/moin/forms.py:372
+#: src/moin/forms.py:379
 msgid "(None)"
 msgstr ""
 
@@ -538,7 +538,7 @@ msgstr ""
 msgid "Default Setting"
 msgstr ""
 
-#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:14 src/moin/items/__init__.py:1168
+#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:14 src/moin/items/__init__.py:1175
 msgid "Default"
 msgstr ""
 
@@ -916,7 +916,7 @@ msgid "Log in"
 msgstr ""
 
 #: src/moin/apps/frontend/views.py:2125 src/moin/templates/utils.html:476
-#: src/moin/themes/basic/templates/layout.html:172
+#: src/moin/themes/basic/templates/layout.html:172 src/moin/themes/focus/templates/layout.html:68
 msgid "Login"
 msgstr ""
 
@@ -1096,20 +1096,20 @@ msgstr ""
 msgid "Items tagged with %(tag)s"
 msgstr ""
 
-#: src/moin/auth/__init__.py:258 src/moin/auth/ldap_login.py:133
+#: src/moin/auth/__init__.py:260 src/moin/auth/ldap_login.py:133
 msgid "Missing password. Please enter user name and password."
 msgstr ""
 
-#: src/moin/auth/__init__.py:266 src/moin/auth/ldap_login.py:204 src/moin/auth/ldap_login.py:255
+#: src/moin/auth/__init__.py:268 src/moin/auth/ldap_login.py:204 src/moin/auth/ldap_login.py:255
 msgid "Invalid username or password."
 msgstr ""
 
-#: src/moin/auth/__init__.py:273
+#: src/moin/auth/__init__.py:275
 #, python-format
 msgid "If you do not have an account, <a href=\"%(register_url)s\">you can create one now</a>. "
 msgstr ""
 
-#: src/moin/auth/__init__.py:275
+#: src/moin/auth/__init__.py:277
 #, python-format
 msgid "<a href=\"%(recover_url)s\">Forgot your password?</a>"
 msgstr ""
@@ -1166,6 +1166,7 @@ msgid "Discussion"
 msgstr ""
 
 #: src/moin/config/default.py:381 src/moin/templates/blog/utils.html:12 src/moin/templates/show.html:14
+#: src/moin/themes/focus/templates/show.html:14
 msgid "Modify"
 msgstr ""
 
@@ -1402,7 +1403,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: src/moin/items/__init__.py:345 src/moin/templates/index.html:306 src/moin/themes/basic/templates/modify.html:94
+#: src/moin/items/__init__.py:345 src/moin/templates/index.html:306 src/moin/themes/basic/templates/modify.html:101
 msgid "Cancel"
 msgstr ""
 
@@ -1464,47 +1465,55 @@ msgstr ""
 msgid "Rev Number %(rev_number)s of the item \"%(name)s\" was destroyed."
 msgstr ""
 
-#: src/moin/items/__init__.py:1169
+#: src/moin/items/__init__.py:793
+msgid "Extra MetaData (JSON)"
+msgstr ""
+
+#: src/moin/items/__init__.py:1176
 msgid "Wiki item"
 msgstr ""
 
-#: src/moin/items/__init__.py:1230
+#: src/moin/items/__init__.py:1237
 msgid "Alert wiki admin that help items are not loaded"
 msgstr ""
 
-#: src/moin/items/__init__.py:1253
+#: src/moin/items/__init__.py:1260
 msgid "You do not have permission to create the item named \"{name}\"."
 msgstr ""
 
-#: src/moin/items/__init__.py:1359
+#: src/moin/items/__init__.py:1351
+msgid "No preview available for empty items."
+msgstr ""
+
+#: src/moin/items/__init__.py:1369
 msgid "Nothing changed, nothing saved."
 msgstr ""
 
-#: src/moin/items/__init__.py:1374
+#: src/moin/items/__init__.py:1384
 msgid "CONFLICT "
 msgstr ""
 
-#: src/moin/items/__init__.py:1375
+#: src/moin/items/__init__.py:1385
 msgid "An edit conflict has occurred, edit this item again to resolve conflicts."
 msgstr ""
 
-#: src/moin/items/__init__.py:1418
+#: src/moin/items/__init__.py:1428
 #, python-format
 msgid "You may recover your draft saved %(number)s %(interval)s ago by clicking the 'Load Draft' button."
 msgstr ""
 
-#: src/moin/items/__init__.py:1422
+#: src/moin/items/__init__.py:1432
 #, python-format
 msgid ""
 "Your draft saved %(number)s %(interval)s ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' "
 "to merge conflicting updates."
 msgstr ""
 
-#: src/moin/items/__init__.py:1462
+#: src/moin/items/__init__.py:1472
 msgid "User profile"
 msgstr ""
 
-#: src/moin/items/__init__.py:1463
+#: src/moin/items/__init__.py:1473
 msgid "User profile item (not implemented yet!)"
 msgstr ""
 
@@ -2395,29 +2404,35 @@ msgid "Submit"
 msgstr ""
 
 #: src/moin/templates/itemviews.html:21 src/moin/templates/ticket/ticket_macros.html:97
+#: src/moin/themes/focus/templates/itemviews.html:171
 msgid "Item Views"
 msgstr ""
 
 #: src/moin/templates/itemviews.html:86 src/moin/templates/ticket/base.html:26
 #: src/moin/templates/ticket/ticket_macros.html:101 src/moin/themes/__init__.py:234
+#: src/moin/themes/focus/templates/itemviews.html:118 src/moin/themes/focus/templates/itemviews.html:236
 msgid "Remove Link"
 msgstr ""
 
 #: src/moin/templates/itemviews.html:88 src/moin/templates/ticket/base.html:28
 #: src/moin/templates/ticket/ticket_macros.html:103 src/moin/themes/__init__.py:232
+#: src/moin/themes/focus/templates/itemviews.html:120 src/moin/themes/focus/templates/itemviews.html:238
 msgid "Add Link"
 msgstr ""
 
 #: src/moin/templates/itemviews.html:98 src/moin/templates/ticket/ticket_macros.html:45 src/moin/themes/__init__.py:238
+#: src/moin/themes/focus/templates/itemviews.html:130 src/moin/themes/focus/templates/itemviews.html:248
 msgid "Unsubscribe"
 msgstr ""
 
 #: src/moin/templates/itemviews.html:100 src/moin/templates/ticket/ticket_macros.html:47
-#: src/moin/themes/__init__.py:240
+#: src/moin/themes/__init__.py:240 src/moin/themes/focus/templates/itemviews.html:132
+#: src/moin/themes/focus/templates/itemviews.html:250
 msgid "Subscribe"
 msgstr ""
 
-#: src/moin/templates/itemviews.html:124
+#: src/moin/templates/itemviews.html:124 src/moin/themes/focus/templates/itemviews.html:156
+#: src/moin/themes/focus/templates/itemviews.html:274
 msgid "Discuss contents of this item"
 msgstr ""
 
@@ -2447,15 +2462,16 @@ msgid "Metadata of %(item_name)s"
 msgstr ""
 
 #: src/moin/templates/modify.html:28 src/moin/themes/basic/templates/modify.html:13
+#: src/moin/themes/focus/templates/modify.html:28
 #, python-format
 msgid "Modifying '%(item_name)s'"
 msgstr ""
 
-#: src/moin/templates/modify.html:51
+#: src/moin/templates/modify.html:51 src/moin/themes/focus/templates/modify.html:73
 msgid "Load Draft"
 msgstr ""
 
-#: src/moin/templates/modify.html:52
+#: src/moin/templates/modify.html:52 src/moin/themes/focus/templates/modify.html:74
 msgid "Clicking this button will delete draft!"
 msgstr ""
 
@@ -2584,6 +2600,7 @@ msgid "An Ajax transaction is submitted each time a radio or checkbox is clicked
 msgstr ""
 
 #: src/moin/templates/show.html:27 src/moin/themes/basic/templates/show.html:21
+#: src/moin/themes/focus/templates/show.html:29
 #, python-format
 msgid "Summary: %(summary)s"
 msgstr ""
@@ -2799,7 +2816,7 @@ msgstr ""
 msgid "Alias Names"
 msgstr ""
 
-#: src/moin/templates/utils.html:251
+#: src/moin/templates/utils.html:251 src/moin/themes/focus/templates/layout.html:88
 msgid "Page Trail"
 msgstr ""
 
@@ -2832,12 +2849,14 @@ msgid "Line"
 msgstr ""
 
 #: src/moin/templates/utils.html:457 src/moin/templates/utils.html:459 src/moin/themes/basic/templates/layout.html:156
-#: src/moin/themes/basic/templates/layout.html:158
+#: src/moin/themes/basic/templates/layout.html:158 src/moin/themes/focus/templates/layout.html:49
+#: src/moin/themes/focus/templates/layout.html:51
 msgid "Settings"
 msgstr ""
 
 #: src/moin/templates/utils.html:466 src/moin/templates/utils.html:468 src/moin/themes/basic/templates/layout.html:163
-#: src/moin/themes/basic/templates/layout.html:165
+#: src/moin/themes/basic/templates/layout.html:165 src/moin/themes/focus/templates/layout.html:58
+#: src/moin/themes/focus/templates/layout.html:60
 msgid "Logout"
 msgstr ""
 
@@ -2993,6 +3012,10 @@ msgstr ""
 
 #: src/moin/themes/basic/templates/show.html:92
 msgid "Item Actions"
+msgstr ""
+
+#: src/moin/themes/focus/templates/itemviews.html:46
+msgid "More"
 msgstr ""
 
 #: src/moin/utils/edit_locking.py:267

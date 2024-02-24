@@ -3228,3 +3228,6 @@ msgstr "Monate"
 msgid "years"
 msgstr "Jahre"
 
+#: src/moin/themes/focus/templates/itemviews.html:43
+msgid "More"
+msgstr "Mehr"
