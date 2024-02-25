@@ -18,10 +18,10 @@ If this will be a private single-user wiki with no public access, then change th
     registration_only_by_superuser = True
 to:
     registration_only_by_superuser = False
-and change several lines containing:
-    dict(before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
+and change four lines containing:
+    before='YOUR-SUPER-EDITOR:read,write,create,destroy,admin',
 to:
-    dict(before='All:read,write,create,destroy,admin',
+    before='All:read,write,create,destroy,admin',
 and change:
     edit_locking_policy = 'lock'
 to:
