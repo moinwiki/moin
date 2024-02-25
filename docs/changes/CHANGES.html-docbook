@@ -1,9 +1,0 @@
-SoC 2010 : Valentin JANIAUT
-==========================
-
-Version 2.0
-New features:
- * Add support for conversion of unsafe HTML document into the internal DOM tree.
- * Add support HTML 4, with no style support.
- * Add support conversion of a DocBook v5 document into the internal DOM tree.
- * Add support conversion of an internal DOM tree into a DocBook v5 document.

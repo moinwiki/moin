@@ -17,20 +17,26 @@ Fixes
 
 New features
 ~~~~~~~~~~~~
-* Support for Python3.9+
-* Flask
-* Jinja2
-* Xstatic
-* EmeraldTree
-* Flatland
+* Python3.9+
 * Supports moinwiki, markdown, rst, and DocBook markup languages
 * HTML markup support by CKEditor, same version used in moin 1.9.x
 * MediaWiki markup support needs work
 * Editor help docs optional, can be loaded into a wiki namespace
+* New/revised themes: topside, topside-cms, modernized, basic
+* EmeraldTree
+* Flask
+* Flatland
+* FontAwesome
+* Jinja2
+* Jquery
+* Whoosh
+* Xstatic
 
 Missing features from 1.9.x
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * SVG editor
+* LDAP may have missing dependencies depending upon OS flavor
+* WikiDicts have limited function, does not use Babel translations
 
 Other changes
 ~~~~~~~~~~~~~
