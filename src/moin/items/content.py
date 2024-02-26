@@ -340,7 +340,7 @@ class Binary(Content):
         doc of Item._ModifyForm.
         """
         template = 'modify_binary.html'
-        data_file = File.using(optional=True, label=L_('Upload file:'))
+        data_file = File.using(optional=True, label=L_('Replace content with uploaded file:'))
 
         def _load(self, item):
             pass
