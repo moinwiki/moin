@@ -7,6 +7,8 @@ MoinMoin - Macro base class
 """
 
 import re
+
+from moin.constants.keys import CURRENT, CONTENTTYPE
 from moin.utils import iri
 from moin.items import Item
 from moin.utils.tree import html
@@ -60,6 +62,27 @@ def get_item_names(name='', startswith='', kind='files', skiptag=''):
     if kind == "both":
         item_names = list(set(item_names))  # remove duplicates
     return item_names
+
+
+def extract_h1(item_name):
+    """
+    Return the first heading found in the item's content
+    """
+    item = Item.create(item_name, rev_id=CURRENT)
+    contenttype = item.meta[CONTENTTYPE]
+    if 'x.moin.wiki' not in contenttype and 'x.moin.creole' not in contenttype:
+        return _('{item_name} content type is not moinwiki or creole').format(item_name=item_name)
+    item.rev.data.seek(0)
+    content = item.rev.data.read()
+    content = content.decode("utf-8")
+    lines = content.splitlines()
+    for line in lines:
+        line = line.rstrip()
+        if line:
+            if line.startswith('=') and line.endswith('='):
+                title = line.replace('=', '').strip()
+                return title
+    return _('No heading found in item: {item_name}').format(item_name=item_name)
 
 
 def fail_message(msg, severity='error'):
@@ -150,7 +173,7 @@ class MacroPageLinkListBase(MacroBlockBase):
                                   blocks of lowercase characters or numbers and an
                                   uppercase character.
                       skiptag   : skip items with this tag
-                      ItemTitle : Use the title from the first header in the linked page *not implemented
+                      ItemTitle : Use the title from the first header in the linked page
         """
 
         page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
@@ -177,7 +200,7 @@ class MacroPageLinkListBase(MacroBlockBase):
                 tempname = re.sub("([a-z0-9])([A-Z])", r"\g<1> \g<2>", fqname[(index + 1):])  # space before a cap char
                 linkname = re.sub("([a-zA-Z])([0-9])", r"\g<1> \g<2>", tempname)
             elif display == "ItemTitle":
-                raise NotImplementedError(_('"ItemTitle" is not implemented yet.'))
+                linkname = extract_h1(pagename.fullname)
             else:
                 raise KeyError(_('Unrecognized display value "%s".' % display))
 
@@ -200,7 +223,6 @@ class MacroMultiLinkListBase(MacroBlockBase):
 
               namespace: Namespace of items
         """
-
         result_body = []
         initials_linklist = []
         initial_letter = ' '
