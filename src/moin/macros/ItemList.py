@@ -42,8 +42,7 @@ Parameters:
                         blocks of lowercase characters or numbers and an
                         uppercase character.
 
-            ItemTitle : Use the title from the first header in the linked
-                        item [*** NOT IMPLEMENTED YET ***]
+            ItemTitle : Use the title from the first header in the linked item
 
 Notes:
 

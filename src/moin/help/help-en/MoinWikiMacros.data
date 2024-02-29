@@ -394,7 +394,8 @@ Those items containing a vowel as the 3rd-to-last character:
 
 ===== The "display" parameter =====
 
-All of the following examples display just the "PlainText" item.
+All of the following examples display just the "PlainText" item, except for the last example that
+displays the subitems of help-en/creole.
 
 '''Markup:'''
 
@@ -403,7 +404,7 @@ Displayed using "FullPath" (the default, see examples above):
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
 
-Displayed using "FullPath":
+Displayed using "ChildPath":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
 
@@ -414,6 +415,10 @@ Displayed using "ChildName":
 Displayed using "UnCameled":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+
+Displayed using "ItemTitle":
+
+<<ItemList(item="help-en/creole", display="ItemTitle")>>
 }}}
 
 '''Result:'''
@@ -422,7 +427,7 @@ Displayed using "FullPath":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
 
-Displayed using "FullPath":
+Displayed using "ChildPath":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
 
@@ -433,6 +438,10 @@ Displayed using "ChildName":
 Displayed using "UnCameled":
 
 <<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+
+Displayed using "ItemTitle":
+
+<<ItemList(item="help-en/creole", display="ItemTitle")>>
 
 
 === MailTo ===
