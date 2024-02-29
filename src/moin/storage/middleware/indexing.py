@@ -1221,9 +1221,14 @@ class Item(PropertiesMixin):
             logging.warning("data validation skipped because metadata is invalid, see below")
             val = []
             for e in m.children:
-                logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
-                if e.valid is False:
+                if e.name == 'subscriptions':
+                    for sub in e.children:
+                        if sub.valid is False:
+                            val.append('"{}". {}'.format(str(sub), str(sub.errors[0])))
+                            e.valid = False
+                elif e.valid is False:
                     val.append(str(e))
+                logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}'.format(
                     ', '.join(val)
