@@ -18,7 +18,8 @@ language doesn't exist yet`_.
 
 2. Go to the top directory and execute::
 
-       python setup.py update_catalog -l <locale>
+       pybabel update -l <locale> -i src/moin/translations/MoinMoin.pot \
+               -d src/moin/translations/ -w 116
 
    where locale is the short language descriptor of your desired
    language. It should be the name of a folder in MoinMoin/translations.
@@ -59,7 +60,7 @@ language doesn't exist yet`_.
 
 4. Save the messages.po file and execute::
 
-       python setup.py compile_catalog -l <locale>
+       pybabel compile -l <locale> -d src/moin/translations/
 
 
 Guidelines for translators
@@ -83,7 +84,8 @@ the developers, but ...
 
 1. Initialize a new catalog::
 
-       python setup.py init_catalog -l <locale>
+       pybabel init -l <locale> -i src/moin/translations/MoinMoin.pot \
+               -d src/moin/translations/ -w 116
 
 2. Adjust the ``src/moin/translations/<locale>/LC_MESSAGES/messages.po``.
 
@@ -139,7 +141,11 @@ string replacement.
 If you made changes to any gettext() string, please update the .pot file
 using::
 
-    python setup.py extract_messages
+    pybabel extract -F babel.cfg -o src/moin/translations/MoinMoin.pot \
+            -k "_ gettext L_ lazy_gettext N_ ngettext" \
+            --msgid-bugs-address "English <moin-user@python.org>" \
+            --copyright-holder "Moin Core Team, see http://moinmo.in/MoinCoreTeamGroup" \
+            --project "moin" --version "<version>" -w 116 src/
 
 Because this sometimes creates large diffs, just because of a
 change in line numbers, you can of course use this command sparingly.

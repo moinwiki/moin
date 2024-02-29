@@ -38,7 +38,7 @@ Dependencies
 ============
 
 Dependent packages will be automatically downloaded and installed during the
-moin2 installation process. For a list of dependencies, see setup.py.
+moin2 installation process. For a list of dependencies, see pyproject.toml.
 
 
 Clients

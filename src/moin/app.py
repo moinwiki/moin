@@ -26,8 +26,6 @@ from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-# do this early, but not in moin/__init__.py because we need to be able to
-# "import moin" from setup.py even before flask, werkzeug, ... is installed.
 from moin.utils import monkeypatch  # noqa
 from moin.utils.clock import Clock
 from moin import auth, user, config

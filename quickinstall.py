@@ -488,7 +488,7 @@ class Commands:
         print('Deleting wiki data, then creating distribution archive in /dist, output written to {0}.'.format(
             DIST))
         self.cmd_del_wiki(*args)
-        command = '{0} setup.py sdist bdist_wheel'.format(sys.executable)
+        command = 'pip install build ; python -m build'
         with open(DIST, 'w') as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('Summary message from {0} is shown below:'.format(DIST))
@@ -578,9 +578,8 @@ class QuickInstall:
 
     def do_catalog(self):
         subprocess.check_call((
-            os.path.join(self.dir_venv_bin, 'python'),
-            os.path.join(self.dir_source, 'setup.py'),
-            'compile_catalog', '--statistics',
+            os.path.join(self.dir_venv_bin, 'pybabel'),
+            'compile', '--statistics',
             # needed in case user runs quickinstall.py with a cwd other than the repo root
             '--directory', os.path.join(os.path.dirname(__file__), 'src', 'moin', 'translations'),
         ))
