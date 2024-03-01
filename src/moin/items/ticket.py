@@ -188,7 +188,7 @@ class TicketUpdateForm(TicketForm):
                 else:
                     original = meta.get(key)
                     new = value
-                msg = L_('{key} changed from {original} to {new}'.format(key=key, original=original, new=new))
+                msg = L_('{key} changed from {original} to {new}').format(key=key, original=original, new=new)
                 meta_changes.append(' * ' + msg)
         if meta_changes:
             meta_changes = 'Meta updates:\n' + '\n'.join(meta_changes)

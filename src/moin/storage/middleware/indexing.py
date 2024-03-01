@@ -1230,9 +1230,9 @@ class Item(PropertiesMixin):
                     val.append(str(e))
                 logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}'.format(
+                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}').format(
                     ', '.join(val)
-                )))
+                ))
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
