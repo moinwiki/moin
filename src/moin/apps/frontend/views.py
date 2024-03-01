@@ -80,7 +80,6 @@ from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
 from moin.converters import default_registry as reg
-# from moin.cli.migration.moin19.import19 import hash_hexdigest
 from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type
 
@@ -2397,7 +2396,11 @@ def usersettings():
                                                             'verification email failed. Please try again later.'),
                                                           "error"))
                         else:
-                            flaskg.user.save()
+                            try:
+                                flaskg.user.save()
+                            except ValueError as err:
+                                response['flash'].append((str(err), 'error'))
+
             else:
                 # validation failed
                 response['flash'].append((_("Nothing saved."), "error"))
