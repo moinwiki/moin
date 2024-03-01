@@ -218,9 +218,9 @@ def mail_recovery_token():
             if not is_ok:
                 flash(msg, "error")
             else:
-                flash(_("{0} has been sent a password recovery email.".format(username)), "info")
+                flash(_("{0} has been sent a password recovery email.").format(username), "info")
         else:
-            flash(_("{0} is an invalid user, no email has been sent.".format(username)), "error")
+            flash(_("{0} is an invalid user, no email has been sent.").format(username), "error")
     else:
         flash(_("No user name provided, no email sent."), "error")
     return redirect(url_for('.userbrowser'))

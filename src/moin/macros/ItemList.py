@@ -125,7 +125,7 @@ class Macro(MacroPageLinkListBase):
         # verify item exists and current user has read permission
         if item != "":
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
-                message = _('Item does not exist or read access blocked by ACLs: {0}'.format(item))
+                message = _('Item does not exist or read access blocked by ACLs: {0}').format(item)
                 admonition = moin_page.div(attrib={moin_page.class_: 'important'},
                                            children=[moin_page.p(children=[message])])
                 return admonition
@@ -136,7 +136,7 @@ class Macro(MacroPageLinkListBase):
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
             except re.error as err:
-                raise ValueError(_("ItemList macro: Error in regex {0!r}: {1}".format(regex, err)))
+                raise ValueError(_("ItemList macro: Error in regex {0!r}: {1}").format(regex, err))
             newlist = []
             for child in children:
                 if regex_re.search(child.fullname):
