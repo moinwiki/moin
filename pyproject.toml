@@ -156,3 +156,35 @@ unfixable = []
 "src/moin/utils/SubProcess.py" = ["F401", "F821"]  # 3rd party stuff, patched stdlib code
 "src/moin/config/default.py" = ["F401", "F403"]
 "src/moin/datastructures/__init__.py" = ["F401"]
+
+[tool.tox]
+legacy_tox_ini = """
+# tox configuration - if you change anything here, run this to verify:
+# tox --recreate
+
+# run like this:
+# tox
+# tox -e py39
+# tox -- -v -k test_wikiutil
+# tox -- -v
+
+[tox]
+envlist = py{39,310,311,312},ruff
+
+[testenv]
+deps = -rrequirements.d/development.txt
+setenv =
+    # some tests expect a specific order in dicts...
+    PYTHONHASHSEED = 0
+    # needed so that lxml can build from source (e.g. on pypy):
+    CFLAGS = -I/usr/include/libxml2
+commands = pytest -rs --pyargs {posargs:moin}
+
+[testenv:ruff]
+skip_sdist=true
+skip_install=true
+changedir =
+deps =
+    ruff
+commands = ruff check .
+"""
