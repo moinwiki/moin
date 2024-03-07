@@ -65,7 +65,6 @@ BACKUPWIKI = 'm-backup-wiki.txt'
 DUMPHTML = 'm-dump-html.txt'
 EXTRAS = 'm-extras.txt'
 DIST = 'm-create-dist.txt'
-INDEX = 'm-rebuild-index.txt'
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath('wiki/backup.moin')
 SAMPLE_FILENAME = 'src/moin/contrib/sample-backup.moin'
@@ -96,13 +95,11 @@ CMD_LOGS = {
     'dump-html': DUMPHTML,
     'extras': EXTRAS,
     'dist': DIST,
-    'index': INDEX,
 }
 
 
 help = """
-
-usage: "{0} <target>" where <target> is:
+Usage: "{0} <target>" where <target> is:
 
 quickinstall    update virtual environment with required packages
 extras          install packages required for docs and moin development
@@ -114,10 +111,8 @@ new-wiki        create empty wiki
 sample          create wiki and load sample data
 restore *       create wiki and restore wiki/backup.moin *option, specify file
 
-run *           run built-in wiki server *options (--port 8081)
 backup *        roll 3 prior backups and create new backup *option, specify file
 dump-html *     create a static HTML image of wiki *options, see docs
-index           delete and rebuild indexes
 
 css             run lessc to update basic theme CSS files
 tests *         run tests, log output (-v -k my_test)
@@ -128,6 +123,8 @@ del-orig        delete all files matching *.orig
 del-pyc         delete all files matching *.pyc
 del-rej         delete all files matching *.rej
 del-wiki        create a backup, then delete all wiki data
+
+Please refer to 'moin help' to learn more about the CLI for wiki administrators.
 """.format(M)
 
 
@@ -151,7 +148,6 @@ def search_for_phrase(filename):
         DIST: ('creating', 'copying', 'adding', 'hard linking', ),
         DOCS: ('build finished', 'build succeeded', 'traceback', 'failed', 'error', 'usage', 'importerror',
                'exception occurred', ),
-        INDEX: ('error', 'fail', 'timeout', 'traceback', 'success', ),
     }
     ignore_phrases = {TOX: ('interpreternotfound', )}
     # for these file names, display a count of occurrances rather than each found line
@@ -200,11 +196,11 @@ def make_wiki(command, mode='w', msg='\nSuccess: a new wiki has been created.'):
     if wiki_exists() and mode == 'w':
         print('Error: a wiki exists, delete it and try again.')
     else:
+        copy_config_files()
         print('Output messages redirected to {0}.'.format(NEWWIKI))
         with open(NEWWIKI, mode) as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         if result == 0:
-            copy_config_files()
             print(msg)
             return True
         else:
@@ -366,36 +362,6 @@ class Commands:
     def cmd_import19(self, *args):
         """import a moin 1.9 wiki"""
         print("Error: Subcommand import19 not supported. Please use 'moin import19'.")
-
-    def cmd_index(self, *args):
-        """delete and rebuild index"""
-        if wiki_exists():
-            command = 'moin index-create{0} moin index-build'.format(SEP)
-            print('Rebuilding indexes...')
-            try:
-                with open(INDEX, 'w') as messages:
-                    subprocess.call(command, shell=True, stderr=messages, stdout=messages)
-                print('\nImportant messages from {0} are shown below. Do "{1} log index" to see complete log.'.format(
-                    INDEX, M))
-                search_for_phrase(INDEX)
-            except KeyboardInterrupt:
-                pass  # eliminates traceback on windows
-        else:
-            print('Error: a wiki must be created before rebuilding the indexes.')
-        self.run_time('Rebuild index')
-
-    def cmd_run(self, *args):
-        """run built-in wiki server"""
-        if wiki_exists():
-            if WINDOWS_OS:
-                args += ('--with-threads', )
-            command = 'moin run {0}'.format(' '.join(args))
-            try:
-                subprocess.call(command, shell=True)
-            except KeyboardInterrupt:
-                pass  # eliminates traceback on windows
-        else:
-            print('Error: a wiki must be created before running the built-in server.')
 
     def cmd_backup(self, *args):
         """roll 3 prior backups and create new wiki/backup.moin or backup to user specified file"""
