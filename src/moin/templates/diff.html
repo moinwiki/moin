@@ -7,7 +7,7 @@
 
 {% block content %}
     {% block headline %}
-        <h1>{{ _("Diff for '%(item_name)s'", item_name=fqname|shorten_fqname) }}</h1>
+        <h1>{{ _("Diff for '{item_name}'").format(item_name=fqname|shorten_fqname) }}</h1>
     {% endblock %}
     {{ diff_html }}
 {% endblock %}

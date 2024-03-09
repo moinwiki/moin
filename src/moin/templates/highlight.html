@@ -9,7 +9,7 @@
 
 {% import "utils.html" as utils with context %}
 
-{% set title = _("Syntax highlighting of %(name)s", name=utils.item_moniker(meta, [fqname])) %}
+{% set title = _("Syntax highlighting of {name}").format(name=utils.item_moniker(meta, [fqname])) %}
 
 {% block content %}
     {{ utils.rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.highlight_item', item=item) }}

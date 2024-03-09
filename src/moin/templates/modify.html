@@ -25,7 +25,7 @@
 {% set extra_head = content_template.extra_head %}
 {% set data_editor = content_template.data_editor %}
 
-{% set title = _("Modifying '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+{% set title = _("Modifying '{item_name}'").format(item_name=fqname|shorten_fqname) %}
 
 {% block head %}
     {{ super() }}

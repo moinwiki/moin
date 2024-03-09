@@ -35,7 +35,7 @@
     <div style="font-size:0.7em; margin-top:2em;">
         <p>
             {{ _("You received this message because you have subscribed to a wiki
-            item on %(wiki_name)s for change notifications.", wiki_name=wiki_name) }}</p>
+            item on {wiki_name} for change notifications.").format(wiki_name=wiki_name) }}</p>
         <p>
             <strong>
                 <a href="{{ unsubscribe_url }}" style="text-decoration:none; color:#3CA7DD;">

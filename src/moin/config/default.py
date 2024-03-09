@@ -197,8 +197,8 @@ configuration for typos before requesting support or reporting a bug.
         """
         charset = 'utf-8'
         message = """
-"%(name)s" configuration variable is a string, but should be
-unicode. Use %(name)s = "value" syntax for unicode variables.
+"{name}" configuration variable is a string, but should be
+unicode. Use {name} = "value" syntax for unicode variables.
 
 Also check your "-*- coding -*-" line at the top of your configuration
 file. It should match the actual charset of the configuration file.
@@ -221,8 +221,7 @@ file. It should match the actual charset of the configuration file.
                     try:
                         setattr(self, name, str(attr, charset))
                     except UnicodeError:
-                        raise error.ConfigurationError(message %
-                                                       {'name': name})
+                        raise error.ConfigurationError(message.format(name=name))
                 # Look into lists and try to decode strings inside them
                 elif isinstance(attr, list):
                     for i in range(len(attr)):
@@ -231,8 +230,7 @@ file. It should match the actual charset of the configuration file.
                             try:
                                 attr[i] = str(item, charset)
                             except UnicodeError:
-                                raise error.ConfigurationError(message %
-                                                               {'name': name})
+                                raise error.ConfigurationError(message.format(name=name))
 
     def __getitem__(self, item):
         """ Make it possible to access a config object like a dict """
@@ -264,10 +262,10 @@ def _default_password_checker(cfg, username, password,
     """
     # in any case, do a very simple built-in check to avoid the worst passwords
     if len(password) < min_length:
-        return _("For a password a minimum length of %(min_length)d characters is required.",
+        return _("For a password a minimum length of {min_length:d} characters is required.",
                  min_length=min_length)
     if len(set(password)) < min_different:
-        return _("For a password a minimum of %(min_different)d different characters is required.",
+        return _("For a password a minimum of {min_different:d} different characters is required.",
                  min_different=min_different)
 
     username_lower = username.lower()

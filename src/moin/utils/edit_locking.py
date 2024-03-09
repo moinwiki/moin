@@ -1,4 +1,5 @@
 # Copyright: 2019 MoinMoin:RogerHaase
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -265,16 +266,16 @@ class Edit_Utils:
                 if wait_time < 0.0:
                     # some other user's lock has timed out, give one-time alert user about potential future conflict,
                     msg = L_(
-                        "Edit lock for %(user_name)s timed out %(number)s %(interval)s ago, click 'Cancel' "
-                        "to yield more time, clicking 'Save' may require %(user_name)s to resolve conflicting edits.",
-                        user_name=u_name, number=number, interval=interval)
+                        "Edit lock for {user_name} timed out {number} {interval} ago, click 'Cancel' "
+                        "to yield more time, clicking 'Save' may require {user_name} to resolve conflicting edits.").format(
+                            user_name=u_name, number=number, interval=interval)
                     self.update_editlock()
                     self.put_draft(None)
                     return LOCKED, msg
                 else:
                     # item is locked by somebody else, make current user wait
-                    msg = L_("Item '%(item_name)s' is locked by %(user_name)s. Try again in %(number)s %(interval)s.",
-                             item_name=i_name, user_name=u_name, number=number, interval=interval, )
+                    msg = L_("Item '{item_name}' is locked by {user_name}. Try again in {number} {interval}."
+                            ).format(item_name=i_name, user_name=u_name, number=number, interval=interval)
                     return NO_LOCK, msg
 
             else:
@@ -285,10 +286,10 @@ class Edit_Utils:
                     u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                     if self.rev_number > rev_number:
                         # current user timed out, then other user updated and saved
-                        msg = L_("Someone else updated '%(item_name)s' after your edit lock timed out. "
+                        msg = L_("Someone else updated '{item_name}' after your edit lock timed out. "
                                  "If you click 'Save', conflicting changes must be manually merged. "
-                                 "Click 'Cancel' to discard changes.",
-                                 item_name=self.item_name)
+                                 "Click 'Cancel' to discard changes."
+                                ).format(item_name=self.item_name)
                     self.cursor.execute('''INSERT INTO editlock(item_id, item_name, user_name, timeout)
                                       VALUES(?,?,?,?)''', (self.item_id, self.item_name, self.user_name, timeout))
                     self.conn.commit()
@@ -319,9 +320,9 @@ class Edit_Utils:
                 # bug: someone else has active edit lock, relock_item() should have been called prior to item save
                 logging.error("User {0} tried to unlock item that was locked by someone else: {1}".format(
                     user_name, i_name))
-                msg = L_("Item '%(item_name)s' is locked by %(user_name)s. Edit lock error, "
-                         "check Item History to verify no changes were lost.",
-                         item_name=i_name, user_name=u_name, )
+                msg = L_("Item '{item_name}' is locked by {user_name}. Edit lock error, "
+                         "check Item History to verify no changes were lost."
+                        ).format(item_name=i_name, user_name=u_name)
                 return msg
         if not cancel:
             # bug: there should have been a lock_item call prior to unlock call

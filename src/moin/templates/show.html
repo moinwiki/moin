@@ -24,7 +24,7 @@
         {% if item.meta['summary'] %}
             {% block item_summary %}
                 <div class="moin-summary">
-                    {{ _('Summary: %(summary)s', summary=item.meta['summary']) }}
+                    {{ _('Summary: {summary}').format(summary=item.meta['summary']) }}
                 </div>
             {% endblock %}
         {% endif %}

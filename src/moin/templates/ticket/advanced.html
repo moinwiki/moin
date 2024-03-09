@@ -32,12 +32,12 @@
                 {% for result in ticket_results %}
                     <tr>
                         <td>
-                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid']) }}">
+                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: {itemid}').format(itemid=result['itemid']) }}">
                                 {{ result['itemid'][:4] }}
                             </a>
                         </td>
                         <td>
-                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid']) }}">
+                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: {itemid}').format(itemid=result['itemid']) }}">
                                 {{ result['summary'] }}
                             </a>
                         </td>

@@ -8,7 +8,7 @@
 {% import "utils.html" as utils with context %}
 
 {% set summary = history[0].get('summary', None) if history else None %}
-{% set heading = _("History of %(fqname)s", fqname=utils.item_moniker(item.meta, [fqname])) %}
+{% set heading = _("History of {fqname}").format(fqname=utils.item_moniker(item.meta, [fqname])) %}
 {% set first_itemid = history[0].itemid %}
 {% set user_may_write = user.may.write(fqname) %}
 {% set user_may_destroy = user.may.destroy(fqname) %}

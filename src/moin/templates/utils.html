@@ -543,7 +543,7 @@
             <a class="moin-prior-page" href="{{ url }}?page_num={{ page_num-1 }}" title="{{ _("Previous") }}">&laquo;</a>
         {% endif %}
         {% if pages > 1 %}
-            {% set page_number = _("Page %(page_num)s of %(pages)s", page_num=page_num, pages=pages) %}
+            {% set page_number = _("Page {page_num} of {pages}").format(page_num=page_num, pages=pages) %}
             <span class="moin-page-num"> {{ page_number }} </span>
         {% endif %}
         {% if page_num < pages %}

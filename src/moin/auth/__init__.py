@@ -3,7 +3,7 @@
 # Copyright: MoinMoin:FrankieChow, MoinMoin:NirSoffer
 # Copyright: 2005-2012 MoinMoin:ThomasWaldmann
 # Copyright: 2007      MoinMoin:JohannesBerg
-# Copyright: 2023      MoinMoin project
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -271,10 +271,9 @@ class MoinAuth(BaseAuth):
         if app.cfg.registration_only_by_superuser:
             msg = app.cfg.registration_hint + ' '
         else:
-            msg = _('If you do not have an account, <a href="%(register_url)s">you can create one now</a>. ',
-                    register_url=url_for('frontend.register'))
-        msg += _('<a href="%(recover_url)s">Forgot your password?</a>',
-                 recover_url=url_for('frontend.lostpass'))
+            msg = _('If you do not have an account, <a href="{register_url}">you can create one now</a>. '
+                   ).format(register_url=url_for('frontend.register'))
+        msg += _('<a href="{recover_url}">Forgot your password?</a>').format(recover_url=url_for('frontend.lostpass'))
         return Markup(msg)
 
 

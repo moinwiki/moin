@@ -3,7 +3,7 @@
 
 {% set no_entries_msg = _("There are no entries in this blog.") %}
 {% if tag %}
-    {% set no_entries_msg = _("There are no entries in the '%(tag)s' blog category.", tag=tag) %}
+    {% set no_entries_msg = _("There are no entries in the '{tag}' blog category.").format(tag=tag) %}
 {% endif %}
 
 {% block pagepath %}

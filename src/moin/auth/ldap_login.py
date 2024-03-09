@@ -1,5 +1,6 @@
 # Copyright: 2006-2008 MoinMoin:ThomasWaldmann
 # Copyright: 2006 Nick Phillips
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -266,7 +267,7 @@ class LDAPAuth(BaseAuth):
             # method).
             logging.error("LDAP server {0} failed ({1!s}). "
                           "Trying to authenticate with next auth list entry.".format(server, err))
-            return ContinueLogin(user_obj, _("LDAP server %(server)s failed.", server=server))
+            return ContinueLogin(user_obj, _("LDAP server {server} failed.").format(server=server))
 
         except:  # noqa
             logging.exception("caught an exception, traceback follows...")

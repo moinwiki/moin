@@ -10,7 +10,7 @@
 {% else %}
     {% set data_editor = content_template.data_editor %}
 {% endif %}
-{% set title = _("Modifying '%(item_name)s'", item_name=item_name) %}
+{% set title = _("Modifying '{item_name}'").format(item_name=item_name) %}
 
 {% block head %}
     {{ super() }}

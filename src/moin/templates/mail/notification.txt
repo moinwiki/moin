@@ -23,7 +23,6 @@
 {%- endif %}
 
 {{ _("You are receiving this because you have subscribed to a wiki item on
-'%(wiki_name)s' for change notifications.", wiki_name=wiki_name) }}
-{{ _("Item link: %(item_url)s", item_url=item_url) }}
-{{ _("To unsubscribe use: %(unsubscribe_url)s",
-unsubscribe_url=unsubscribe_url) }}
+'{wiki_name}' for change notifications.").format(wiki_name=wiki_name) }}
+{{ _("Item link: {item_url}").format(item_url=item_url) }}
+{{ _("To unsubscribe use: {unsubscribe_url}").format(unsubscribe_url=unsubscribe_url) }}

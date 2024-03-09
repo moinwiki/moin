@@ -6,7 +6,7 @@
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
 # Copyright: 2001 Juergen Hermann <jh@web.de>
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -445,7 +445,7 @@ def search(item_name):
                 results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
             # this may be an ajax transaction, search.js will handle a full page response
             except QueryError:
-                flash(_("""QueryError: invalid search term: %(search_term)s""", search_term=q), "error")
+                flash(_("""QueryError: invalid search term: {search_term}""").format(search_term=q), "error")
                 return render_template('search.html',
                                        query=query,
                                        medium_search_form=search_form,
@@ -453,7 +453,7 @@ def search(item_name):
                                        )
             except TermNotFound:
                 # name:'moin has bugs'
-                flash(_("""TermNotFound: field is not indexed: %(search_term)s""", search_term=q), "error")
+                flash(_("""TermNotFound: field is not indexed: {search_term}""").format(search_term=q), "error")
                 return render_template('search.html',
                                        query=query,
                                        medium_search_form=search_form,
@@ -577,7 +577,7 @@ def show_item(item_name, rev):
         for rev in revs:
             fq_names.extend(rev.fqnames)
         return render_template("link_list_no_item_panel.html",
-                               headline=_("Items with %(field)s %(value)s", field=fqname.field, value=fqname.value),
+                               headline=_("Items with {field} {value}").format(field=fqname.field, value=fqname.value),
                                fqname=fqname,
                                fq_names=fq_names,
                                item_is_deleted=item_is_deleted,
@@ -1027,7 +1027,7 @@ def ajaxdestroy(item_name, req='destroy'):
             if isinstance(item, NonExistent):
                 # we should not try to destroy a nonexistent item,
                 # user probably checked a subitem and checked do subitems
-                response["messages"].append(_("Item '%(bad_name)s' does not exist.", bad_name=item.name))
+                response["messages"].append(_("Item '{bad_name}' does not exist.").format(bad_name=item.name))
                 continue
             if req == 'destroy':
                 subitem_names = []
@@ -1044,13 +1044,13 @@ def ajaxdestroy(item_name, req='destroy'):
                     messages, subitem_names = item.delete(comment, do_subitems=do_subitems, ajax=True)
                 except AccessDenied:
                     # some deletes may have succeeded, one failed, there may be unprocessed items
-                    msg = _("Access denied for a subitem of %(bad_name)s, check History for status.",
-                            bad_name=itemname)
+                    msg = _("Access denied for a subitem of {bad_name}, check History for status."
+                            ).format(bad_name=itemname)
                     response["messages"].append(msg)
             response["messages"] += messages
             response["itemnames"] += subitem_names + itemnames
         except AccessDenied:
-            response["messages"].append(_("Access denied processing '%(bad_name)s'.", bad_name=itemname))
+            response["messages"].append(_("Access denied processing '{bad_name}'.").format(bad_name=itemname))
     response["itemnames"] = [url_for_item(x) for x in response["itemnames"]]
     return jsonify(response)
 
@@ -1239,8 +1239,8 @@ def jfu_server(item_name):
     base_file_name = os.path.basename(data_file.filename)
     file_name = secure_filename(base_file_name)
     if not file_name == base_file_name:
-        msg = _("File Successfully uploaded and renamed from %(bad_name)s to %(good_name)s. ",
-                bad_name=base_file_name, good_name=file_name)
+        msg = _("File Successfully uploaded and renamed from {bad_name} to {good_name}. "
+                ).format(bad_name=base_file_name, good_name=file_name)
     subitem_name = file_name
     data = data_file.stream
     mt = mime_type.MimeType(filename=file_name)
@@ -1248,8 +1248,8 @@ def jfu_server(item_name):
     small_meta = {CONTENTTYPE: contenttype}
     valid = validate_data(small_meta, data)
     if not valid:
-        msg = _("UnicodeDecodeError, upload failed, not a text file, nothing saved: '%(file_name)s'. "
-                "Try changing the name.", file_name=file_name)
+        msg = _("UnicodeDecodeError, upload failed, not a text file, nothing saved: '{file_name}'. "
+                "Try changing the name.").format(file_name=file_name)
         ret = make_response(jsonify({"name": subitem_name,
                                      "files": [item_name],
                                      "message": msg,
@@ -1267,13 +1267,13 @@ def jfu_server(item_name):
     try:
         item = Item.create(item_name)
         if not isinstance(item, NonExistent):
-            msg += _("File Successfully uploaded, existing file overwritten: '%(file_name)s'.", file_name=file_name)
+            msg += _("File Successfully uploaded, existing file overwritten: '{file_name}'.").format(file_name=file_name)
         revid, size = item.modify({'itemtype': ITEMTYPE_DEFAULT, }, data, contenttype_guessed=contenttype)
         jfu_server_lock.release()
     except AccessDenied:
         # return 200 status with error message
         jfu_server_lock.release()
-        msg = _("Permission denied, upload failed: '%(file_name)s'.", file_name=file_name)
+        msg = _("Permission denied, upload failed: '{file_name}'.").format(file_name=file_name)
         ret = make_response(jsonify({"name": subitem_name,
                                      "files": [item_name],
                                      "message": msg,
@@ -1285,7 +1285,7 @@ def jfu_server(item_name):
     data_file.close()
     item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
     if not msg:
-        msg = _("File Successfully uploaded: '%(item_name)s'.", item_name=item_name)
+        msg = _("File Successfully uploaded: '{item_name}'.").format(item_name=item_name)
     ret = make_response(jsonify(name=subitem_name,
                         files=[item_name],
                         message=msg,
@@ -1384,13 +1384,13 @@ def index(item_name):
         if item.fqname.value == NAMESPACE_ALL:
             title = _("Global Index of All Namespaces")
         elif item.meta['namespace']:
-            what = _("Namespace '%(name)s' ", name=item.meta['namespace'])
+            what = _("Namespace '{name}' ").format(name=item.meta['namespace'])
             subitem = item_name[ns_len:]
             if subitem:
-                what = what + _("subitems '%(item_name)s'", item_name=subitem)
-            title = _("Index of %(what)s", what=what)
+                what = what + _("subitems '{item_name}'").format(item_name=subitem)
+            title = _("Index of {what}").format(what=what)
         else:
-            title = _("Index of subitems '%(item_name)s'", item_name=item_name)
+            title = _("Index of subitems '{item_name}'").format(item_name=item_name)
     else:
         title = _("Global Index")
     close_file(item.rev.data)
@@ -1493,8 +1493,8 @@ def forwardrefs(item_name):
     return render_template('link_list_item_panel.html',
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_("Items that are referred by '%(item_name)s'",
-                                      item_name=shorten_item_id(item_name)),
+                           headline=_("Items that are referred by '{item_name}'"
+                                      ).format(item_name=shorten_item_id(item_name)),
                            fq_names=split_fqname_list(refs),
                            )
 
@@ -1536,7 +1536,7 @@ def backrefs(item_name):
                            item=item,
                            item_name=item_name,
                            fqname=split_fqname(item_name),
-                           headline=_("Items which refer to '%(item_name)s'", item_name=shorten_item_id(item_name)),
+                           headline=_("Items which refer to '{item_name}'").format(item_name=shorten_item_id(item_name)),
                            fq_names=refs_here,
                            )
 
@@ -1700,7 +1700,7 @@ def global_history(namespace):
     if namespace == NAMESPACE_ALL:
         title = _("Global History of All Namespaces")
     elif namespace:
-        title = _("History of Namespace '%(namespace)s'", namespace=namespace)
+        title = _("History of Namespace '{namespace}'").format(namespace=namespace)
     else:
         title = _("Global History")
     current_timestamp = int(time.time())
@@ -1798,7 +1798,7 @@ def quicklink_item(item_name):
     u = flaskg.user
     msg = None
     if not u.valid:
-        msg = _("You must login to use this action: %(action)s.", action="quicklink/quickunlink"), "error"
+        msg = _("You must login to use this action: {action}.").format(action="quicklink/quickunlink"), "error"
     elif not flaskg.user.is_quicklinked_to([item_name]):
         if not u.quicklink(item_name):
             msg = _('A quicklink to this page could not be added for you.'), "error"
@@ -1822,7 +1822,7 @@ def subscribe_item(item_name):
     if isinstance(item, NonExistent):
         abort(404, item_name)
     if not u.valid:
-        msg = _("You must login to use this action: %(action)s.", action="subscribe/unsubscribe"), "error"
+        msg = _("You must login to use this action: {action}.").format(action="subscribe/unsubscribe"), "error"
     elif not u.may.read(item_name):
         msg = _("You are not allowed to subscribe to an item you may not read."), "error"
     elif u.is_subscribed_to(item):
@@ -1918,9 +1918,9 @@ def register():
                     if is_ok:
                         flash(_('Account verification required, please see the email we sent to your address.'), "info")
                     else:
-                        flash(_('An error occurred while sending the verification email: "%(message)s" '
-                                'Please contact an administrator to activate your account.',
-                                message=msg), "error")
+                        flash(_('An error occurred while sending the verification email: "{message}" '
+                                'Please contact an administrator to activate your account.'
+                                ).format(message=msg), "error")
                 else:
                     flash(_('Account created, please log in now.'), "info")
                 return redirect(url_for('.show_root'))
@@ -2363,7 +2363,7 @@ def usersettings():
                                 if user.search_users(**{NAME_EXACT: name}):
                                     # duplicate name
                                     response['flash'].append(
-                                        (_("The username '%(name)s' is already in use.", name=name), "error")
+                                        (_("The username '{name}' is already in use.").format(name=name), "error")
                                     )
                                     success = False
                     if part == 'notification':
@@ -2682,8 +2682,8 @@ def similar_names(item_name):
             if rank == wanted_rank:
                 fq_names.append(fqname)
     return render_template("link_list_item_panel.html",
-                           headline=_("Items with similar names to '%(item_name)s'",
-                                      item_name=shorten_item_id(item_name)),
+                           headline=_("Items with similar names to '{item_name}'"
+                                      ).format(item_name=shorten_item_id(item_name)),
                            item=item,
                            item_name=item_name,  # XXX no item
                            fqname=split_fqname(item_name),
@@ -2790,7 +2790,7 @@ def global_tags(namespace):
     elif namespace == NAMESPACE_ALL:
         headline = _("Global Tags in All Namespaces")
     else:
-        headline = _("Tags in Namespace '%(namespace)s'", namespace=namespace)
+        headline = _("Tags in Namespace '{namespace}'").format(namespace=namespace)
     metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     tags_counts = {}
     for meta in metas:
@@ -2838,7 +2838,7 @@ def tagged_items(tag, namespace):
     fq_names = [gen_fqnames(meta) for meta in metas]
     fq_names = [fqn for sublist in fq_names for fqn in sublist]
     return render_template("link_list_no_item_panel.html",
-                           headline=_("Items tagged with %(tag)s", tag=tag),
+                           headline=_("Items tagged with {tag}").format(tag=tag),
                            item_name=tag,
                            fq_names=fq_names)
 

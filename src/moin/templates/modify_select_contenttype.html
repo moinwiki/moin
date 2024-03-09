@@ -10,9 +10,9 @@
 
 {% extends theme("layout.html") %}
 {% block content %}
-    <h1>{{ _("Create new item named '%(name)s'", name=item_name) }}</h1>
+    <h1>{{ _("Create new item named '{name}'").format(name=item_name) }}</h1>
     <p>
-        {{ _("Please select the contenttype of the new %(itemtype)s item.", itemtype=itemtype) }}
+        {{ _("Please select the contenttype of the new {itemtype} item.").format(itemtype=itemtype) }}
     </p>
     <table id="moin-create-table" class="zebra">
         {% for group in group_names %}

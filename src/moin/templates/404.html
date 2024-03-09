@@ -13,7 +13,7 @@
     <div class="error">
         <p>
             <strong>
-                {{ _("The item '%(item_name)s' does not exist.", item_name=item_name) }}
+                {{ _("The item '{item_name}' does not exist.").format(item_name=item_name) }}
             </strong>
         </p>
         {% if path %}
