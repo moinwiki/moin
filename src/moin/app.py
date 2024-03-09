@@ -2,7 +2,7 @@
 # Copyright: 2002-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -25,6 +25,7 @@ from flask_caching import Cache
 from flask_theme import setup_themes
 
 from jinja2 import ChoiceLoader, FileSystemLoader
+from whoosh.index import EmptyIndexError
 
 from moin.utils import monkeypatch  # noqa
 from moin.utils.clock import Clock
@@ -158,7 +159,17 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None,
     clock.stop('create_app flask-cache')
     # init storage
     clock.start('create_app init backends')
-    init_backends(app)
+    try:
+        init_backends(app)
+    except EmptyIndexError:
+        # create-instance has no index at start and index-* subcommands check the index individually
+        if (info_name not in ['create-instance', 'build-instance', ]
+                and not info_name.startswith('index-')):
+            clock.stop('create_app init backends')
+            clock.stop('create_app total')
+            logging.error("Error: Wiki index not found. Try 'moin help' or 'moin --help' to get further information.")
+            raise SystemExit(1)
+        logging.debug("Wiki index not found.")
     clock.stop('create_app init backends')
     clock.start('create_app flask-babel')
     i18n_init(app)
@@ -190,8 +201,6 @@ def init_backends(app, create_backend=False):
     # mountpoint, unprotected backend
     # Just initialize with unprotected backends.
     logging.debug("running init_backends")
-    c = get_current_context(silent=True)
-    info_name = getattr(c, 'info_name', '')
     app.router = routing.Backend(app.cfg.namespace_mapping, app.cfg.backend_mapping)
     if create_backend or getattr(app.cfg, 'create_backend', False):
         app.router.create()
@@ -203,9 +212,7 @@ def init_backends(app, create_backend=False):
     logging.debug("create_backend: %s ", str(create_backend))
     if create_backend or getattr(app.cfg, 'create_backend', False):  # 2. call of init_backends
         app.storage.create()
-        app.storage.open()
-    if info_name not in ['create-instance', 'build-instance', 'index-create']:
-        app.storage.open()
+    app.storage.open()
 
 
 def deinit_backends(app):
