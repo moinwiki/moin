@@ -266,15 +266,15 @@ class Converter:
         # We should ignore this tag
         if element.tag.name in self.ignored_tags:
             # tell user output from obsolete tags like "center" is suppressed
-            msg = _("Tag '%(invalid_tag)s' is not supported; all tag contents are discarded.",
-                    invalid_tag=element.tag.name)
+            msg = _("Tag '{invalid_tag}' is not supported; all tag contents are discarded."
+                    ).format(invalid_tag=element.tag.name)
             self.no_dups_flash.log(msg, "info")
             logging.debug("WARNING : Ignored tag : {0}".format(element.tag.name))
             return
 
         # Otherwise we process children of the unknown element
-        msg = _("Tag '%(invalid_tag)s' is not known; tag ignored but children are processed.",
-                invalid_tag=element.tag.name)
+        msg = _("Tag '{invalid_tag}' is not known; tag ignored but children are processed."
+                ).format(invalid_tag=element.tag.name)
         self.no_dups_flash.log(msg, "info")
         logging.debug("WARNING : Unknown tag : {0}".format(element.tag.name))
         return self.do_children(element)

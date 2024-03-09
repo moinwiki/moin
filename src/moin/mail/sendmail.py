@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: 2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008-2009 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -114,10 +115,9 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             return 0, str(e)
         except (os.error, socket.error) as e:
             logging.exception("smtp mail failed with an exception.")
-            return (0, _("Connection to mailserver '%(server)s' failed: %(reason)s",
-                         server=cfg.mail_smarthost,
-                         reason=str(e)
-                         ))
+            return (0, _("Connection to mailserver '{server}' failed: {reason}"
+                        ).format(server=cfg.mail_smarthost, reason=str(e))
+                   )
     else:
         raise NotImplementedError  # TODO cli sendmail support
 

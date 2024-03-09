@@ -9,7 +9,7 @@
 
 {% import "utils.html" as utils with context %}
 
-{% set title = _("Metadata of %(item_name)s", item_name=utils.item_moniker(meta, [fqname])) %}
+{% set title = _("Metadata of {item_name}").format(item_name=utils.item_moniker(meta, [fqname])) %}
 
 {% block item_summary %}
 {% endblock %}

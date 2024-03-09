@@ -10,7 +10,7 @@
 {% block content %}
     <h1>{{ _("Create new item?") }}</h1>
     <p>
-        {{ _("You can either <a href='%(modifyhref)s'>create the item from scratch</a> or select a template.", modifyhref=url_for('frontend.modify_item', item_name=fqname, itemtype=itemtype, contenttype=contenttype, template='') ) }}
+        {{ _("You can either <a href='{modifyhref}'>create the item from scratch</a> or select a template.").format(modifyhref=url_for('frontend.modify_item', item_name=fqname, itemtype=itemtype, contenttype=contenttype, template='') ) }}
     </p>
     <h2>{{ _("Available template items") }}</h2>
     <ul>

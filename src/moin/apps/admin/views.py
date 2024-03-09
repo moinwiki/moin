@@ -4,6 +4,7 @@
 # Copyright: 2009 MoinMoin:EugeneSyromyatnikov
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2010 MoinMoin:ReimarBauer
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -119,7 +120,7 @@ def register_new_user():
                     flash(_("This email already belongs to somebody else."), 'error')
             if not (users or emails):
                 user_profile.save()
-                flash(_("Account for %(username)s created", username=username), "info")
+                flash(_("Account for {username} created").format(username=username), "info")
                 form = FormClass.from_defaults()
 
                 u = user.User(auth_username=username)
@@ -128,9 +129,9 @@ def register_new_user():
                     if not is_ok:
                         flash(msg, "error")
                     else:
-                        flash(L_("%(username)s has been sent a password recovery email.", username=username), "info")
+                        flash(L_("{username} has been sent a password recovery email.").format(username=username), "info")
                 else:
-                    flash(_("%(username)s is an invalid user, no email has been sent.", username=username), "error")
+                    flash(_("{username} is an invalid user, no email has been sent.").format(username=username), "error")
 
     return render_template('admin/register_new_user.html',
                            title_name=title_name,
@@ -177,7 +178,7 @@ def userprofile(user_name):
     """
     u = user.User(auth_username=user_name)
     if request.method == 'GET':
-        return _("User profile of %(username)s: %(email)s %(disabled)s", username=user_name,
+        return _("User profile of {username}: {email} {disabled}").format(username=user_name,
                  email=u.email, disabled=u.disabled)
 
     if request.method == 'POST':
@@ -548,12 +549,12 @@ def modify_acl(item_name):
             item._save(meta=meta)
         except AccessDenied:
             # superuser viewed item acl report and tried to change acl but lacked admin permission
-            flash(L_("Failed! Not authorized.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
-                     item_name=fqname.fullname, acl_rule=old_acl), "error")
+            flash(L_("Failed! Not authorized.<br>Item: {item_name}<br>ACL: {acl_rule}"
+                     ).format(item_name=fqname.fullname, acl_rule=old_acl), "error")
             return redirect(url_for('.item_acl_report'))
-        flash(L_("Success! ACL saved.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
-                 item_name=fqname.fullname, acl_rule=new_acl), "info")
+        flash(L_("Success! ACL saved.<br>Item: {item_name}<br>ACL: {acl_rule}"
+                 ).format(item_name=fqname.fullname, acl_rule=new_acl), "info")
     else:
-        flash(L_("Nothing changed, invalid ACL.<br>Item: %(item_name)s<br>ACL: %(acl_rule)s",
-                 item_name=fqname.fullname, acl_rule=new_acl), "error")
+        flash(L_("Nothing changed, invalid ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+                 ).format(item_name=fqname.fullname, acl_rule=new_acl), "error")
     return redirect(url_for('.item_acl_report'))

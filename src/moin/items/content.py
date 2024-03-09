@@ -5,7 +5,7 @@
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2012 MoinMoin:CheerXiao
-# Copyright: 2023 MoinMoin:UlrichB
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -371,8 +371,8 @@ class Binary(Content):
                                content=Markup(self._render_data()))
 
     def _convert(self, doc):
-        return _("Impossible to convert the data to the contenttype: %(contenttype)s",
-                 contenttype=request.values.get('contenttype'))
+        return _("Impossible to convert the data to the contenttype: {contenttype}"
+                ).format(contenttype=request.values.get('contenttype'))
 
     def do_get(self, force_attachment=False, mimetype=None):
         hash = self.rev.meta.get(HASH_ALGORITHM)
@@ -1111,11 +1111,11 @@ class DrawPNGMap(Draw):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         png_url = url_for('frontend.get_item', item_name=self.name, member='drawing.png', rev=self.rev.revid)
-        title = _('Edit drawing %(filename)s (opens in new window)', filename=self.name)
+        title = _('Edit drawing {filename} (opens in new window)').format(filename=self.name)
         image_map = self._read_map()
         if image_map:
             mapid, image_map = self._transform_map(image_map, title)
-            title = _('Clickable drawing: %(filename)s', filename=self.name)
+            title = _('Clickable drawing: {filename}').format(filename=self.name)
             return Markup(image_map + '<img src="{0}" alt="{1}" usemap="#{2}" />'.format(png_url, title, mapid))
         else:
             return Markup('<img src="{0}" alt="{1}" />'.format(png_url, title))

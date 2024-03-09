@@ -9,9 +9,9 @@
 {% extends theme("show.html") %}
 
 {% if alias_names %}
-    {% set title = _("Delete '%(item_name)s' with alias names %(alias_names)s", item_name=fqname|shorten_fqname, alias_names=alias_names) %}
+    {% set title = _("Delete '{item_name}' with alias names {alias_names}").format(item_name=fqname|shorten_fqname, alias_names=alias_names) %}
 {% else %}
-    {% set title = _("Delete '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+    {% set title = _("Delete '{item_name}'").format(item_name=fqname|shorten_fqname) %}
 {% endif %}
 
 {% block content %}

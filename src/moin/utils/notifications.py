@@ -1,4 +1,5 @@
 # Copyright: 2013 MoinMoin:AnaBalica
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -44,15 +45,15 @@ def msgs():
     """
     _ = lambda x: x  # noqa
     messages = {
-        ACTION_CREATE: _("The '%(fqname)s' item on '%(wiki_name)s' has been created by %(user_name)s:"),
-        ACTION_MODIFY: _("The '%(fqname)s' item on '%(wiki_name)s' has been modified by %(user_name)s:"),
-        ACTION_RENAME: _("The '%(fqname)s' item on '%(wiki_name)s' has been renamed by %(user_name)s:"),
-        ACTION_COPY: _("The '%(fqname)s' item on '%(wiki_name)s' has been copied by %(user_name)s:"),
-        ACTION_CONVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been converted by %(user_name)s:"),
-        ACTION_REVERT: _("The '%(fqname)s' item on '%(wiki_name)s' has been reverted by %(user_name)s:"),
-        ACTION_TRASH: _("The '%(fqname)s' item on '%(wiki_name)s' has been deleted by %(user_name)s:"),
-        DESTROY_REV: _("The '%(fqname)s' item on '%(wiki_name)s' has one revision destroyed by %(user_name)s:"),
-        DESTROY_ALL: _("The '%(fqname)s' item on '%(wiki_name)s' has been destroyed by %(user_name)s:"),
+        ACTION_CREATE: _("The '{fqname}' item on '{wiki_name}' has been created by {user_name}:"),
+        ACTION_MODIFY: _("The '{fqname}' item on '{wiki_name}' has been modified by {user_name}:"),
+        ACTION_RENAME: _("The '{fqname}' item on '{wiki_name}' has been renamed by {user_name}:"),
+        ACTION_COPY: _("The '{fqname}' item on '{wiki_name}' has been copied by {user_name}:"),
+        ACTION_CONVERT: _("The '{fqname}' item on '{wiki_name}' has been converted by {user_name}:"),
+        ACTION_REVERT: _("The '{fqname}' item on '{wiki_name}' has been reverted by {user_name}:"),
+        ACTION_TRASH: _("The '{fqname}' item on '{wiki_name}' has been deleted by {user_name}:"),
+        DESTROY_REV: _("The '{fqname}' item on '{wiki_name}' has one revision destroyed by {user_name}:"),
+        DESTROY_ALL: _("The '{fqname}' item on '{wiki_name}' has been destroyed by {user_name}:"),
     }
     return messages
 
@@ -83,7 +84,7 @@ class Notification:
 
         kw = dict(fqname=str(fqname), wiki_name=self.wiki_name, user_name=flaskg.user.name0,
                   item_url=url_for_item(self.fqname))
-        self.notification_sentence = L_(MESSAGES[self.action], **kw)
+        self.notification_sentence = L_(MESSAGES[self.action]).format(**kw)
 
     def get_content_diff(self):
         """ Create a content diff for the last item change
@@ -213,7 +214,7 @@ def send_notifications(app, fqname, action, data=None, meta=None, new_data=None,
     for locale in subscribers_locale:
         with force_locale(locale):
             txt_msg, html_msg = notification.render_templates(content_diff, meta_diff)
-            subject = _('[%(moin_name)s] Update of "%(fqname)s" by %(user_name)s',
+            subject = _('[{moin_name}] Update of "{fqname}" by {user_name}').format(
                         moin_name=app.cfg.interwikiname, fqname=str(fqname), user_name=flaskg.user.name0)
             subscribers_emails = [subscriber.email for subscriber in subscribers
                                   if subscriber.locale == locale]

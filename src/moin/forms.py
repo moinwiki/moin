@@ -1,5 +1,6 @@
 # Copyright: 2012 MoinMoin:PavelSviderski
 # Copyright: 2012 MoinMoin:CheerXiao
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -108,17 +109,17 @@ def validate_name(meta, itemid):
     # Item names must not start with '@' or '+', '@something' denotes a field where as '+something' denotes a view.
     invalid_names = [name for name in names if name.startswith(('@', '+'))]
     if invalid_names:
-        msg = L_("Item names (%(invalid_names)s) must not start with '@' or '+'",
-                 invalid_names=", ".join(invalid_names))
+        msg = L_("Item names ({invalid_names}) must not start with '@' or '+'"
+                ).format(invalid_names=", ".join(invalid_names))
         flash(msg, "error")
         raise NameNotValidError(msg)
 
     # Item names must not contain commas
     invalid_names = [name for name in names if ',' in name]
     if invalid_names:
-        msg = L_("Item name (%(invalid_names)s) must not contain ',' characters. "
-                 "Create item with 1 name, use rename to create multiple names.",
-                 invalid_names=", ".join(invalid_names))
+        msg = L_("Item name ({invalid_names}) must not contain ',' characters. "
+                 "Create item with 1 name, use rename to create multiple names."
+                ).format(invalid_names=", ".join(invalid_names))
         flash(msg, "error")
         raise NameNotValidError(msg)
 
@@ -126,8 +127,8 @@ def validate_name(meta, itemid):
     # Item names must not match with existing namespaces.
     invalid_names = [name for name in names if name.split('/', 1)[0] in namespaces]
     if invalid_names:
-        msg = L_("Item names (%(invalid_names)s) must not match with existing namespaces.",
-                 invalid_names=", ".join(invalid_names))
+        msg = L_("Item names ({invalid_names}) must not match with existing namespaces."
+                ).format(invalid_names=", ".join(invalid_names))
         flash(msg, "error")  # duplicate message at top of form
         raise NameNotValidError(msg)
     query = And([Or([Term(NAME, name) for name in names]), Term(NAMESPACE, current_namespace)])
@@ -138,7 +139,7 @@ def validate_name(meta, itemid):
         results = searcher.search(query)
         duplicate_names = {name for result in results for name in result[NAME] if name in names}
         if duplicate_names:
-            msg = L_("Item(s) named %(duplicate_names)s already exist.", duplicate_names=", ".join(duplicate_names))
+            msg = L_("Item(s) named {duplicate_names} already exist.").format(duplicate_names=", ".join(duplicate_names))
             flash(msg, "error")  # duplicate message at top of form
             raise NameNotValidError(msg)
 
@@ -180,7 +181,7 @@ class ValidJSON(Validator):
             return False
         namespaces = [namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping]
         if current_namespace not in namespaces:  # current_namespace must be an existing namespace.
-            self.invalid_namespace_msg = L_("%(_namespace)s is not a valid namespace.", _namespace=current_namespace)
+            self.invalid_namespace_msg = L_("{_namespace} is not a valid namespace.").format(_namespace=current_namespace)
             return False
         return True
 

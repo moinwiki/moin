@@ -14,7 +14,7 @@
 
 {% extends theme("show.html") %}
 
-{% set title = _("SiteMap of '%(item_name)s'", item_name=fqname) %}
+{% set title = _("SiteMap of '{item_name}'").format(item_name=fqname) %}
 
 {% macro showtree(sitemap) %}
     <ul>

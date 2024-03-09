@@ -10,7 +10,7 @@
 {% block content %}
     <h1>{{ _("Item not found, create it now?") }}</h1>
     <p>
-        {{ _("Item '%(fqname)s' does not exist (yet), but you can try creating it now. Please select the type of the item you want to create.", fqname=fqname) }}
+        {{ _("Item '{fqname}' does not exist (yet), but you can try creating it now. Please select the type of the item you want to create.").format(fqname=fqname) }}
     </p>
     <table class="zebra">
         {% for e in itemtypes %}

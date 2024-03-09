@@ -11,9 +11,9 @@
 {% extends theme("show.html") %}
 
 {% if alias_names %}
-    {% set title = _("Destroy '%(item_name)s' with alias names %(alias_names)s", item_name=fqname|shorten_fqname, alias_names=alias_names) %}
+    {% set title = _("Destroy '{item_name}' with alias names {alias_names}").format(item_name=fqname|shorten_fqname, alias_names=alias_names) %}
 {% else %}
-    {% set title = _("Destroy '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+    {% set title = _("Destroy '{item_name}'").format(item_name=fqname|shorten_fqname) %}
 {% endif %}
 
 {% block content %}
@@ -36,7 +36,7 @@
             {{ gen.form.close() }}
         </div>
     {% else %}
-        <h1>{{ _("DESTROY %(item_name)s REVISION NUMBER %(rev_number)s", item_name=utils.item_moniker(item.meta, [fqname]), rev_number=item.meta.rev_number) }}</h1>
+        <h1>{{ _("DESTROY {item_name} REVISION NUMBER {rev_number}").format(item_name=utils.item_moniker(item.meta, [fqname]), rev_number=item.meta.rev_number) }}</h1>
         <div class="moin-form">
             {{ gen.form.open(form, method="post", action=url_for('frontend.destroy_item', item_name=fqname.fullname, rev=rev_id)) }}
                 {{ forms.render_errors(form) }}

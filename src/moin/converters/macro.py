@@ -64,8 +64,8 @@ class Converter:
             # thus, in case of exceptions, we just log the problem and return
             # some standard text.
             logging.exception("Macro {0} raised an exception:".format(name))
-            elem_error.append(_('<<%(macro_name)s: execution failed [%(error_msg)s] (see also the log)>>',
-                              macro_name=name, error_msg=str(e), ))
+            elem_error.append(_('<<{macro_name}: execution failed [{error_msg}] (see also the log)>>'
+                                ).format(macro_name=name, error_msg=str(e)))
 
         if len(elem_body):
             elem.append(elem_body)

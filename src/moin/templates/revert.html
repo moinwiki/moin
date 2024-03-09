@@ -9,7 +9,7 @@
 {% extends theme("layout.html") %}
 
 {% block content %}
-    <h1> {{ _("Revert '%(item_name)s' to Revision Number '%(rev_number)s'",item_name=item.meta['name'] | join('|'), rev_number=item.meta.rev_number) }} </h1>
+    <h1> {{ _("Revert '{item_name}' to Revision Number '{rev_number}'").format(item_name=item.meta['name'] | join('|'), rev_number=item.meta.rev_number) }} </h1>
     <div class="moin-form">
         {{ gen.form.open(form, method="post", action=url_for('frontend.revert_item', item_name=item.fqname, rev=rev_id)) }}
             {{ forms.render_errors(form) }}

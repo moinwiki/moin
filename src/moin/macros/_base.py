@@ -202,7 +202,7 @@ class MacroPageLinkListBase(MacroBlockBase):
             elif display == "ItemTitle":
                 linkname = extract_h1(pagename.fullname)
             else:
-                raise KeyError(_('Unrecognized display value "%s".' % display))
+                raise KeyError(_('Unrecognized display value "{display}".').format(display=display))
 
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])
             item_body = moin_page.list_item_body(children=[pagelink])
@@ -228,10 +228,10 @@ class MacroMultiLinkListBase(MacroBlockBase):
         initial_letter = ' '
 
         if namespace == '':
-            namespace_name = _("Namespace '%(name)s' ", name='default')
+            namespace_name = _("Namespace '{name}' ").format(name='default')
             pos_namespace_cut = 0
         else:
-            namespace_name = _("Namespace '%(name)s' ", name=namespace)
+            namespace_name = _("Namespace '{name}' ").format(name=namespace)
             pos_namespace_cut = len(namespace) + 1
 
         item_list = moin_page.list(attrib={moin_page.item_label_generate: 'unordered'})
@@ -267,7 +267,7 @@ class MacroMultiLinkListBase(MacroBlockBase):
 
         # Add a list of links for each used initial at top and bottom of the index
         initials_begin = moin_page.span(attrib={moin_page.id: "idx-top", moin_page.class_: "moin-align-left"},
-                                        children=[_("Index of %(what)s", what=namespace_name), ])
+                                        children=[_("Index of {what}").format(what=namespace_name), ])
         initials_link_end = moin_page.a(attrib={xlink.href: '#idx-bottom'}, children=['bottom', ])
         initials_linklist.append(initials_link_end)
         initials_links_span = moin_page.span(attrib={moin_page.class_: "moin-align-right"}, children=initials_linklist)

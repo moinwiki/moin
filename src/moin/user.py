@@ -4,6 +4,7 @@
 # Copyright: 2007 MoinMoin:HeinrichWendel
 # Copyright: 2008 MoinMoin:ChristopherDenter
 # Copyright: 2010 MoinMoin:DiogenesAugusto
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -69,9 +70,9 @@ def create_user(username, password, email, validate=True, is_encrypted=False, ve
 
     # Don't allow creating users with invalid names
     if validate and not isValidName(username):
-        return _("""Invalid user name '%(name)s'.
+        return _("""Invalid user name '{name}'.
 Name may contain any Unicode alpha numeric character, with optional one
-space between words. Group page name is not allowed.""", name=username)
+space between words. Group page name is not allowed.""").format(name=username)
 
     # Name required to be unique. Check if name belong to another user.
     if validate and search_users(**{NAME_EXACT: username}):
@@ -84,7 +85,7 @@ space between words. Group page name is not allowed.""", name=username)
     if validate and pw_checker:
         pw_error = pw_checker(username, password)
         if pw_error:
-            return _("Password not acceptable: %(msg)s", msg=pw_error)
+            return _("Password not acceptable: {msg}").format(msg=pw_error)
 
     theuser.set_password(password, is_encrypted)
 
@@ -816,7 +817,7 @@ class User:
         token = self.generate_recovery_token()
 
         if subject is None:
-            subject = _('[%(sitename)s] Your wiki password recovery link', sitename='%(sitename)s')
+            subject = _('[{sitename}] Your wiki password recovery link').format(sitename='{sitename}')
         subject = subject % dict(sitename=self._cfg.sitename or "Wiki")
         if text is None:
             link = url_for('frontend.recoverpass', username=self.name0, token=token, _external=True)
@@ -832,8 +833,7 @@ class User:
         link = url_for('frontend.verifyemail', username=self.name0, token=token, _external=True)
         text = render_template('mail/account_verification.txt', link=link)
 
-        subject = _('[%(sitename)s] Please verify your email address',
-                    sitename=self._cfg.sitename or "Wiki")
+        subject = _('[{sitename}] Please verify your email address').format(sitename=self._cfg.sitename or "Wiki")
         email = self.profile[EMAIL_UNVALIDATED]
         mailok, msg = sendmail.sendmail(subject, text, to=[email], mail_from=self._cfg.mail_from)
         return mailok, msg

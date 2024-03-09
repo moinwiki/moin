@@ -13,7 +13,7 @@
         <form action="{{ url_for('frontend.tickets', selected_tags=list()) }}" method="post" class='moin-ticketsearch-form'>
             <input type="hidden" name="q" value="" >
             <input type="hidden" name="status" value="{{ status_value }}">
-            <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show %(status)s tickets', status=status_value) }}" class="{{ 'moin-button active' if status == status_value  else 'moin-button' }}">
+            <input type="submit" value="{{ status_value.capitalize() }}" title="{{ _('Show {status} tickets').format(status=status_value) }}" class="{{ 'moin-button active' if status == status_value  else 'moin-button' }}">
         </form>
     {% endfor %}
 
@@ -47,7 +47,7 @@
     </div>
 
     {% if results %}
-        <p>{{ _("%(result_len)d Tickets found.", result_len=results|length) }}</p>
+        <p>{{ _("{result_len:d} Tickets found.").format(result_len=results|length) }}</p>
         <table class="zebra moin-sortable" id="ticket-list">
             <thead>
                 <tr>
@@ -66,7 +66,7 @@
                 {% for result in results %}
                     <tr>
                         <td>
-                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: %(itemid)s', itemid=result['itemid']) }}">
+                            <a href="{{ url_for_item(result['itemid'], field='itemid', namespace=result['namespace']) }}" title="{{ _('ITEMID: {itemid}').format(itemid=result['itemid']) }}">
                                 {{ result['summary'] }}
                             </a>
                         </td>
