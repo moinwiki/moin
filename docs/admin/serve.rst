@@ -9,7 +9,7 @@ is suitable for development, debugging, and personal and small group wikis.
 
 It is *not* made for serving bigger loads, but it is easy to use.
 
-Please note that by default the built-in server uses port 8080. As this is
+Please note that by default the built-in server uses port 5000. As this is
 above port 1024, root (Administrator) privileges are not required and we strongly
 recommend that you use a normal, unprivileged user account instead. If you
 are running a desktop wiki or doing moin development, then use your normal
@@ -28,7 +28,9 @@ Run the moin built-in server as follows::
 
 While the moin server is starting up, you will see some log output, for example::
 
- 2016-01-11 13:30:05,394 INFO werkzeug:87  * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
+ INFO werkzeug WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+  * Running on http://127.0.0.1:5000
+ INFO werkzeug Press CTRL+C to quit
 
 Now point your browser at that URL - your moin wiki is running!
 

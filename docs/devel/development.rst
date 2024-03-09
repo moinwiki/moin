@@ -69,8 +69,8 @@ create your development environment
     ./m sample  # Windows: m sample
 * start the built-in server::
 
-    ./m run  # Windows: m run
-* point your browser at http://127.0.0.1:8080/ to access your development wiki
+    moin run
+* point your browser at http://127.0.0.1:5000/ to access your development wiki
 * key ctrl+C to stop the built-in server
 
 add more tools, exercise tools

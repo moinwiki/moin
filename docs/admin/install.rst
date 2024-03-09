@@ -183,8 +183,7 @@ Activate the virtual environment::
 Typing "./m" (or "m" on Windows) will display a menu similar to:
 
 ::
-
-    usage: "./m <target>" where <target> is:
+    Usage: "./m <target>" where <target> is:
 
     quickinstall    update virtual environment with required packages
     extras          install packages required for docs and moin development
@@ -196,10 +195,8 @@ Typing "./m" (or "m" on Windows) will display a menu similar to:
     sample          create wiki and load sample data
     restore *       create wiki and restore wiki/backup.moin *option, specify file
 
-    run *           run built-in wiki server *options (--port 8081)
     backup *        roll 3 prior backups and create new backup *option, specify file
     dump-html *     create a static HTML image of wiki *options, see docs
-    index           delete and rebuild indexes
 
     css             run lessc to update basic theme CSS files
     tests *         run tests, log output (-v -k my_test)
@@ -210,6 +207,8 @@ Typing "./m" (or "m" on Windows) will display a menu similar to:
     del-pyc         delete all files matching *.pyc
     del-rej         delete all files matching *.rej
     del-wiki        create a backup, then delete all wiki data
+
+    Please refer to 'moin help' to learn more about the CLI for wiki administrators.
 
 While most of the above menu choices may be executed now, new users should
 do the following to create a wiki instance and load it with sample data.:
@@ -230,11 +229,10 @@ Next, run the built-in wiki server:
 
 ::
 
- m run      # in Windows
- ./m run    # in Unix or Linux
+ moin run
 
 As the server starts, a few log messages will be output to the
-terminal window.  Point your browser to http://127.0.0.1:8080, the
+terminal window.  Point your browser to http://127.0.0.1:5000, the
 sample Home page will appear and more log messages will be output
 to the terminal window. Do a quick test by accessing some of the
 demo items and do a modify and save. If all goes well, your installation
