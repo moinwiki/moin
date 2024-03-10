@@ -328,7 +328,7 @@ Here is the source code segment from snippets.html::
 
     {# Header/Sidebar for topside_cms theme - see docs for tips on customization #}
     {% macro cms_header() %}
-        <header id="moin-header">
+        <header id="moin-header" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
             {% block header %}
 
                 {% if logo() %}

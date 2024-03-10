@@ -71,7 +71,7 @@
     <div class="container-fluid">
         <div id="moin-main-wrapper" class="row">
 
-            <header class="col-md-2 col-sm-2 col-xs-4 moin-sidebar">
+            <header class="col-md-2 col-sm-2 col-xs-4 moin-sidebar" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
                 <div class="moin-logo">
                     {% if logo %}
                         <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
