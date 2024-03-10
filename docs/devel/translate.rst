@@ -116,23 +116,20 @@ A newly created translation needs a few initial preparations:
 Note for developers
 -------------------
 
-Since we support newstyle gettext there is no need to use the
-``format()``-Method in internationalized Strings anymore. An example
-will explain this: instead of
-``_('Hello %(name)s!') % dict(name='World')`` you can just
-write ``_('Hello %(name)s!', name='World')``.
+We use the ``format()``-Method in internationalized Strings, e.g.
+``_('Hello {name}').format(name='World')``. ``_()`` is an alias for ``gettext()``
 
 If the translatable string contains a variable plural, that means
-the string contains an object which you don't know the exact quantity
-of, then you will have to use
-``ngettext()``. Note that this is not only needed for the decision
+the string contains an object whose exact number you don't know,
+you will have to use ``N_()``, which is an alias for ``ngettext()``.
+Note that this is not only needed for the decision
 between one and more objects, because other languages have other
 and more difficult plurals than English. The usage is
-``ngettext(singular, plural, num, **variables)``. ``**variables``
-enables you to use the newstyle form as explained above.
+``N_(singular, plural, num).format(**variables)``. ``**variables``
+are used to substitute the keys by ``format()`` as explained above.
 
-For example:
-``ngettext("%(number)d file removed from %(directory)s", "%(number)d files removed from %(directory)s", num=n, number=n, directory=directory)``
+Example:
+``N_('{number} file removed from {directory}', '{number} files removed from {directory}', num=n).format(number=n, directory=directory)``
 
 ``n`` has to appear twice because the first gives ngettext() information
 about the exact number and the second is the variable for the format
