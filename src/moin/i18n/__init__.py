@@ -45,26 +45,26 @@ def get_locale():
     if u and u.locale is not None:
         # locale is given in user profile, use it
         locale = u.locale
-        logging.debug("user locale = {0!r}".format(locale))
+        logging.debug(f"user locale = {locale!r}")
     else:
         # try to guess the language from the user accept
         # header the browser transmits. The best match wins.
         cli_no_request_ctx = False
         try:
-            logging.debug("request.accept_languages = {0!r}".format(request.accept_languages))
+            logging.debug(f"request.accept_languages = {request.accept_languages!r}")
         except RuntimeError:  # CLI call has no valid request context
             cli_no_request_ctx = True
 
         supported_locales = [Locale('en')] + current_app.extensions['babel'].instance.list_translations()
-        logging.debug("supported_locales = {0!r}".format(supported_locales))
+        logging.debug(f"supported_locales = {supported_locales!r}")
         supported_languages = [str(locale) for locale in supported_locales]
-        logging.debug("supported_languages = {0!r}".format(supported_languages))
+        logging.debug(f"supported_languages = {supported_languages!r}")
         if not cli_no_request_ctx:
             locale = request.accept_languages.best_match(supported_languages, 'en')
-            logging.debug("best match locale = {0!r}".format(locale))
+            logging.debug(f"best match locale = {locale!r}")
     if not locale:
         locale = current_app.cfg.locale_default
-        logging.debug("default locale = {0!r}".format(locale))
+        logging.debug(f"default locale = {locale!r}")
     return locale
 
 

@@ -44,9 +44,9 @@ def get_fqname(item_name, field, namespace):
     composite name == [NAMESPACE/][@FIELD/]NAME
     """
     if field and field != NAME_EXACT:
-        item_name = '@{0}/{1}'.format(field, item_name)
+        item_name = f'@{field}/{item_name}'
     if namespace:
-        item_name = '{0}/{1}'.format(namespace, item_name)
+        item_name = f'{namespace}/{item_name}'
     return item_name
 
 
@@ -79,13 +79,13 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
         try:
             wiki_base_url = app.cfg.interwiki_map[wiki_name]
         except KeyError:
-            logging.warning("no interwiki_map entry for {0!r}".format(wiki_name))
+            logging.warning(f"no interwiki_map entry for {wiki_name!r}")
             item_name = get_fqname(item_name, field, namespace)
             if wiki_name:
-                url = '{0}/{1}'.format(wiki_name, item_name)
+                url = f'{wiki_name}/{item_name}'
             else:
                 url = item_name
-            url = '/{0}'.format(url)
+            url = f'/{url}'
         else:
             if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
                 # we just want to show latest revision (no special revision given) -
@@ -104,7 +104,7 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
                 path = local_url[i + 1:]
                 url = wiki_base_url + path
     if regex:
-        url += '?regex={0}'.format(url_quote(regex, encoding=CHARSET))
+        url += f'?regex={url_quote(regex, encoding=CHARSET)}'
     return url
 
 
@@ -115,7 +115,7 @@ def get_download_file_name(fqname):
     if fqname.field == NAME_EXACT:
         return fqname.value
     else:
-        return '{0}-{1}'.format(fqname.field, fqname.value)
+        return f'{fqname.field}-{fqname.value}'
 
 
 def _split_namespace(namespaces, url):
@@ -136,7 +136,7 @@ def _split_namespace(namespaces, url):
     tokens_list = url.split('/')
     for token in tokens_list:
         if namespace:
-            token = '{0}/{1}'.format(namespace, token)
+            token = f'{namespace}/{token}'
         if token in namespaces:
             namespace = token
         else:
@@ -290,7 +290,7 @@ def getInterwikiName(item_name):
     :rtype: str
     :returns: wiki_name:item_name
     """
-    return "{0}/{1}".format(app.cfg.interwikiname, item_name)
+    return f"{app.cfg.interwikiname}/{item_name}"
 
 
 def getInterwikiHome(username):
@@ -341,8 +341,7 @@ class InterWikiMap:
                 name, url = line.split(None, 1)
                 self.iwmap[name] = url
             except ValueError:
-                raise ValueError('malformed interwiki map string: {0}'.format(
-                                 line))
+                raise ValueError(f'malformed interwiki map string: {line}')
 
     @staticmethod
     def from_string(ustring):

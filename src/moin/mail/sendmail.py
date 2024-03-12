@@ -55,8 +55,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
                      "because mail configuration is incomplete."))
     mail_from = mail_from or cfg.mail_from
 
-    logging.debug("send mail, from: {0!r}, subj: {1!r}".format(mail_from, subject))
-    logging.debug("send mail, to: {0!r}".format(to))
+    logging.debug(f"send mail, from: {mail_from!r}, subj: {subject!r}")
+    logging.debug(f"send mail, to: {to!r}")
 
     if not to and not cc and not bcc:
         return 1, _("No recipients, nothing to do")
@@ -87,7 +87,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     # Send the message
     if not cfg.mail_sendmail:
         try:
-            logging.debug("trying to send mail (smtp) via smtp server '{0}'".format(cfg.mail_smarthost))
+            logging.debug(f"trying to send mail (smtp) via smtp server '{cfg.mail_smarthost}'")
             host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
             server = smtplib.SMTP(host, int(port))
             try:
@@ -101,7 +101,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
                     logging.debug("could not establish a tls connection to smtp server, continuing without tls")
                 # server.set_debuglevel(1)
                 if cfg.mail_username is not None and cfg.mail_password is not None:
-                    logging.debug("trying to log in to smtp server using account '{0}'".format(cfg.mail_username))
+                    logging.debug(f"trying to log in to smtp server using account '{cfg.mail_username}'")
                     server.login(cfg.mail_username, cfg.mail_password)
                 server.send_message(msg)
             finally:
@@ -142,10 +142,10 @@ def encodeSpamSafeEmail(email_address, obfuscation_text=''):
     address = email_address.lower()
     # uppercase letters will be stripped by decodeSpamSafeEmail
     for word, sign in _transdict.items():
-        address = address.replace(sign, ' {0} '.format(word))
+        address = address.replace(sign, f' {word} ')
     if obfuscation_text.isalpha():
         # is the obfuscation_text alphabetic
-        address = address.replace(' AT ', ' AT {0} '.format(obfuscation_text.upper()))
+        address = address.replace(' AT ', f' AT {obfuscation_text.upper()} ')
 
     return address
 

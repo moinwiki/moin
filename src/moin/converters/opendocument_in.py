@@ -32,7 +32,7 @@ class OpenDocumentIndexingConverter:
             text = strip_xml(text)
             return text
         except AttributeError as e:
-            logging.warning("Content of file {} is not seekable. {}".format(rev.meta[NAME], str(e)))
+            logging.warning(f"Content of file {rev.meta[NAME]} is not seekable. {str(e)}")
         finally:
             zf.close()
 

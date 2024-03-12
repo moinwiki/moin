@@ -126,7 +126,7 @@ def PutItem(meta_file, data_file, overwrite):
         meta.pop(REVID, None)
         meta.pop(DATAID, None)
     query = {ITEMID: meta[ITEMID], NAMESPACE: meta[NAMESPACE]}
-    logging.debug("query: {}".format(str(query)))
+    logging.debug(f"query: {str(query)}")
     item = app.storage.get_item(**query)
 
     # we want \r\n line endings in data out because \r\n is required in form textareas
@@ -168,11 +168,11 @@ def LoadHelp(namespace, path_to_help):
         path_to_help = _get_path_to_help()
     path_to_items = os.path.normpath(os.path.join(path_to_help, namespace))
     if not os.path.isdir(path_to_items):
-        print('Abort: the {0} directory does not exist'.format(path_to_items))
+        print(f'Abort: the {path_to_items} directory does not exist')
         return
     file_list = os.listdir(path_to_items)
     if len(file_list) == 0:
-        print('Abort: the {0} directory is empty'.format(path_to_items))
+        print(f'Abort: the {path_to_items} directory is empty')
         return
     count = 0
     for f in file_list:
@@ -185,7 +185,7 @@ def LoadHelp(namespace, path_to_help):
             PutItem(meta_file, data_file, "true")
             print('Item loaded:', item_name)
             count += 1
-    print('Success: help namespace {0} loaded successfully with {1} items'.format(namespace, count))
+    print(f'Success: help namespace {namespace} loaded successfully with {count} items')
 
 
 @cli.command('dump-help', help='Dump a namespace of user help items to .data and .meta file pairs')
@@ -222,7 +222,7 @@ def DumpHelp(namespace, path_to_help, crlf):
             no_alias_dups += alias_names
         print('Item dumped::', file_.relname)
         count += 1
-    print('Success: help namespace {0} saved with {1} items'.format(namespace, count))
+    print(f'Success: help namespace {namespace} saved with {count} items')
 
 
 @cli.command('maint-validate-metadata', help='Find and optionally fix issues with item metadata')

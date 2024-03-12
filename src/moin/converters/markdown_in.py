@@ -393,10 +393,10 @@ class Converter:
 
         # We should ignore this tag
         if element.tag in self.ignored_tags:
-            logging.info("INFO : Ignored tag : {0}".format(element.tag))
+            logging.info(f"INFO : Ignored tag : {element.tag}")
             return
 
-        logging.info("INFO : Unhandled tag : {0}".format(element.tag))
+        logging.info(f"INFO : Unhandled tag : {element.tag}")
         return
 
     # }}} end of html conversion
@@ -489,7 +489,7 @@ class Converter:
         """
         try:
             # we enclose plain text and span tags with P-tags
-            p_text = html_in_converter('<p>%s</p>' % text)
+            p_text = html_in_converter(f'<p>{text}</p>')
             # discard page and body tags
             return p_text[0][0]
         except AssertionError:

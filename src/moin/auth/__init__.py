@@ -166,7 +166,7 @@ def get_multistage_continuation_url(auth_name, extra_fields={}):
 
     # the url should be absolute so we use _external
     url = url_for('frontend.login', login_submit='1', stage=auth_name, _external=True, **extra_fields)
-    logging.debug("multistage_continuation_url: {0}".format(url))
+    logging.debug(f"multistage_continuation_url: {url}")
     return url
 
 
@@ -216,7 +216,7 @@ class BaseAuth:
     def __init__(self, trusted=False, **kw):
         self.trusted = trusted
         if kw:
-            raise TypeError("got unexpected arguments %r" % kw)
+            raise TypeError(f"got unexpected arguments {kw!r}")
 
     def login(self, user_obj, **kw):
         return ContinueLogin(user_obj)
@@ -226,7 +226,7 @@ class BaseAuth:
 
     def logout(self, user_obj, **kw):
         if self.name and user_obj and user_obj.auth_method == self.name:
-            logging.debug("{0}: logout - invalidating user {1!r}".format(self.name, user_obj.name))
+            logging.debug(f"{self.name}: logout - invalidating user {user_obj.name!r}")
             user_obj.valid = False
         return user_obj, True
 
@@ -254,17 +254,17 @@ class MoinAuth(BaseAuth):
         if not username and not password:
             return ContinueLogin(user_obj)
 
-        logging.debug("{0}: performing login action".format(self.name))
+        logging.debug(f"{self.name}: performing login action")
 
         if username and not password:
             return ContinueLogin(user_obj, _('Missing password. Please enter user name and password.'))
 
         u = user.User(name=username, password=password, auth_method=self.name, trusted=self.trusted)
         if u.valid:
-            logging.debug("{0}: successfully authenticated user {1!r} (valid)".format(self.name, u.name))
+            logging.debug(f"{self.name}: successfully authenticated user {u.name!r} (valid)")
             return ContinueLogin(u)
         else:
-            logging.debug("{0}: could not authenticate user {1!r} (not valid)".format(self.name, username))
+            logging.debug(f"{self.name}: could not authenticate user {username!r} (not valid)")
             return ContinueLogin(user_obj, _("Invalid username or password."))
 
     def login_hint(self):
@@ -356,23 +356,23 @@ class GivenAuth(BaseAuth):
         else:
             auth_username = request.environ.get(self.env_var)
 
-        logging.debug("auth_username = {0!r}".format(auth_username))
+        logging.debug(f"auth_username = {auth_username!r}")
         if auth_username:
             auth_username = self.decode_username(auth_username)
             auth_username = self.transform_username(auth_username)
-            logging.debug("auth_username (after decode/transform) = {0!r}".format(auth_username))
+            logging.debug(f"auth_username (after decode/transform) = {auth_username!r}")
             u = user.User(auth_username=auth_username,
                           auth_method=self.name, auth_attribs=('name', 'password'), trusted=self.trusted)
 
-        logging.debug("u: {0!r}".format(u))
+        logging.debug(f"u: {u!r}")
         if u and self.autocreate:
             logging.debug("autocreating user")
             u.create_or_update()
         if u and u.valid:
-            logging.debug("returning valid user {0!r}".format(u))
+            logging.debug(f"returning valid user {u!r}")
             return u, True  # True to get other methods called, too
         else:
-            logging.debug("returning {0!r}".format(user_obj))
+            logging.debug(f"returning {user_obj!r}")
             return user_obj, True
 
 
@@ -455,8 +455,8 @@ def setup_from_session():
         auth_method = session['user.auth_method']
         auth_attribs = session['user.auth_attribs']
         session_token = session['user.session_token']
-        logging.debug("got from session: {0!r} {1!r} {2!r} {3!r}".format(itemid, trusted, auth_method, auth_attribs))
-        logging.debug("current auth methods: {0!r}".format(app.cfg.auth_methods))
+        logging.debug(f"got from session: {itemid!r} {trusted!r} {auth_method!r} {auth_attribs!r}")
+        logging.debug(f"current auth methods: {app.cfg.auth_methods!r}")
         if auth_method and auth_method in app.cfg.auth_methods:
             userobj = user.User(itemid,
                                 auth_method=auth_method,
@@ -468,5 +468,5 @@ def setup_from_session():
                 userobj.logout_session(False)
                 # We didn't find user in session data.
                 userobj = None
-    logging.debug("session started for user {0!r}".format(userobj))
+    logging.debug(f"session started for user {userobj!r}")
     return userobj

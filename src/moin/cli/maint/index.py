@@ -78,7 +78,7 @@ def IndexDestroy(tmp):
 @click.option('--storage-create', '-s', is_flag=True, required=False, default=False)
 def IndexBuild(tmp, procs, limitmb, **kwargs):
     if not wiki_index_exists():
-        logging.error("{} Run 'moin index-create' first.".format(ERR_NO_INDEX))
+        logging.error(f"{ERR_NO_INDEX} Run 'moin index-create' first.")
         raise SystemExit(1)
     logging.info("Index build started")
     flaskg.add_lineno_attr = False  # no need to add lineno attributes while building indexes
@@ -131,7 +131,7 @@ def IndexDump(tmp, truncate):
         raise SystemExit(1)
     logging.info("Index dump started")
     for idx_name in [LATEST_REVS, ALL_REVS]:
-        print(" {0} {1} {2}".format("-" * 10, idx_name, "-" * 60))
+        print(f" {'-' * 10} {idx_name} {'-' * 60}")
         for kvs in app.storage.dump(tmp=tmp, idx_name=idx_name):
             for k, v in kvs:
                 v = repr(v)

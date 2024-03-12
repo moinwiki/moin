@@ -49,7 +49,7 @@ class LineBuffer:
         self.loglevel = logging.NOTSET
         if forward:
             begin = offset
-            logging.log(self.loglevel, "LineBuffer.init: forward seek {0} read {1}".format(begin, size))
+            logging.log(self.loglevel, f"LineBuffer.init: forward seek {begin} read {size}")
             file.seek(begin)
             lines = file.readlines(size)
         else:
@@ -58,7 +58,7 @@ class LineBuffer:
                 size = offset
             else:
                 begin = offset - size
-            logging.log(self.loglevel, "LineBuffer.init: backward seek {0} read {1}".format(begin, size))
+            logging.log(self.loglevel, f"LineBuffer.init: backward seek {begin} read {size}")
             file.seek(begin)
             lines = file.read(size).splitlines(True)
             if begin != 0:
@@ -119,7 +119,7 @@ class LogFile:
         self.to_end()
         while True:
             try:
-                logging.log(self.loglevel, "LogFile.reverse {0}".format(self.__filename))
+                logging.log(self.loglevel, f"LogFile.reverse {self.__filename}")
                 result = self.previous()
             except StopIteration:
                 return
@@ -131,7 +131,7 @@ class LogFile:
         :rtype: string (error message) or None
         """
         if not os.access(self.__filename, os.W_OK):
-            return "The log '{0}' is not writable!".format(self.__filename)
+            return f"The log '{self.__filename}' is not writable!"
         return None
 
     def __getattr__(self, name):
@@ -162,8 +162,7 @@ class LogFile:
                     f.close()
                     self._input = open(self.__filename, "rb", )
                 else:
-                    logging.error("logfile: {0!r} IOERROR errno {1} ({2})".format(self.__filename,
-                                                                                  err.errno, os.strerror(err.errno)))
+                    logging.error(f"logfile: {self.__filename!r} IOERROR errno {err.errno} ({os.strerror(err.errno)})")
                     raise
             return self._input
         elif name == "_output":
@@ -222,7 +221,7 @@ class LogFile:
         :returns: True if moving more than to the beginning and moving
                  to the end or beyond
         """
-        logging.log(self.loglevel, "LogFile.peek {0}".format(self.__filename))
+        logging.log(self.loglevel, f"LogFile.peek {self.__filename}")
         self.__rel_index += lines
         while self.__rel_index < 0:
             if self.__buffer is self.__buffer2:
@@ -293,7 +292,7 @@ class LogFile:
         result = None
         while result is None:
             while result is None:
-                logging.log(self.loglevel, "LogFile.next {0}".format(self.__filename))
+                logging.log(self.loglevel, f"LogFile.next {self.__filename}")
                 result = self.__next()
             if self.filter and not self.filter(result):
                 result = None
@@ -315,7 +314,7 @@ class LogFile:
         result = None
         while result is None:
             while result is None:
-                logging.log(self.loglevel, "LogFile.previous {0}".format(self.__filename))
+                logging.log(self.loglevel, f"LogFile.previous {self.__filename}")
                 result = self.__previous()
             if self.filter and not self.filter(result):
                 result = None
@@ -323,7 +322,7 @@ class LogFile:
 
     def to_begin(self):
         """moves file position to the begin"""
-        logging.log(self.loglevel, "LogFile.to_begin {0}".format(self.__filename))
+        logging.log(self.loglevel, f"LogFile.to_begin {self.__filename}")
         if self.__buffer1 is None or self.__buffer1.offsets[0] != 0:
             self.__buffer1 = LineBuffer(self._input,
                                         0,
@@ -337,7 +336,7 @@ class LogFile:
 
     def to_end(self):
         """moves file position to the end"""
-        logging.log(self.loglevel, "LogFile.to_end {0}".format(self.__filename))
+        logging.log(self.loglevel, f"LogFile.to_end {self.__filename}")
         self._input.seek(0, 2)  # to end of file
         size = self._input.tell()
         if self.__buffer2 is None or size > self.__buffer2.offsets[-1]:
@@ -368,11 +367,11 @@ class LogFile:
         .seek is much more efficient for moving long distances than .peek.
         raises ValueError if position is invalid
         """
-        logging.log(self.loglevel, "LogFile.seek {0} pos {1}".format(self.__filename, position))
+        logging.log(self.loglevel, f"LogFile.seek {self.__filename} pos {position}")
         if self.__buffer1:
-            logging.log(self.loglevel, "b1 {0!r} {1!r}".format(self.__buffer1.offsets[0], self.__buffer1.offsets[-1]))
+            logging.log(self.loglevel, f"b1 {self.__buffer1.offsets[0]!r} {self.__buffer1.offsets[-1]!r}")
         if self.__buffer2:
-            logging.log(self.loglevel, "b2 {0!r} {1!r}".format(self.__buffer2.offsets[0], self.__buffer2.offsets[-1]))
+            logging.log(self.loglevel, f"b2 {self.__buffer2.offsets[0]!r} {self.__buffer2.offsets[-1]!r}")
         if self.__buffer1 and self.__buffer1.offsets[0] <= position < self.__buffer1.offsets[-1]:
             # position is in .__buffer1
             self.__rel_index = self.__buffer1.offsets.index(position)
