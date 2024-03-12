@@ -114,8 +114,7 @@ def access_denied_decorator(fn):
                     if retry > max_retries:
                         raise
                     if err.errno == errno.EACCES:
-                        logging.warning('{0}({1!r}, {2!r}) -> access denied. retrying...'.format(
-                            fn.__name__, args, kwargs))
+                        logging.warning(f'{fn.__name__}({args!r}, {kwargs!r}) -> access denied. retrying...')
                         time.sleep(0.01)
                         continue
                     raise

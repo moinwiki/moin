@@ -31,7 +31,7 @@ class Converter:
             return cls()
 
     def handle_macro(self, elem, page):
-        logging.debug("handle_macro elem: %r" % elem)
+        logging.debug(f"handle_macro elem: {elem!r}")
         type = elem.get(moin_page.content_type)
         alt = elem.get(moin_page.alt)
 
@@ -40,7 +40,7 @@ class Converter:
 
         type = Type(type)
         if not (type.type == 'x-moin' and type.subtype == 'macro'):
-            logging.debug("not a macro, skipping: %r" % (type, ))
+            logging.debug(f"not a macro, skipping: {type!r}")
             return
 
         name = type.parameters['name']
@@ -56,14 +56,14 @@ class Converter:
             elem_body.append(ret)
 
         except PluginMissingError:
-            elem_error.append('<<%s>> %s' % (name, _('Error: invalid macro name.')))
+            elem_error.append(f"<<{name}>> {_('Error: invalid macro name.')}")
 
         except Exception as e:
             # we do not want that a faulty macro aborts rendering of the page
             # and makes the wiki UI unusable (by emitting a Server Error),
             # thus, in case of exceptions, we just log the problem and return
             # some standard text.
-            logging.exception("Macro {0} raised an exception:".format(name))
+            logging.exception(f"Macro {name} raised an exception:")
             elem_error.append(_('<<{macro_name}: execution failed [{error_msg}] (see also the log)>>'
                                 ).format(macro_name=name, error_msg=str(e)))
 

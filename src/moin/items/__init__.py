@@ -133,9 +133,9 @@ def wiki_matches(fq_name, fq_names, start_re=None, end_re=None):
     :returns: start, end, matches dict
     """
     if start_re is None:
-        start_re = re.compile('([{0}][{1}]+)'.format(CHARS_UPPER, CHARS_LOWER))
+        start_re = re.compile(f'([{CHARS_UPPER}][{CHARS_LOWER}]+)')
     if end_re is None:
-        end_re = re.compile('([{0}][{1}]+)$'.format(CHARS_UPPER, CHARS_LOWER))
+        end_re = re.compile(f'([{CHARS_UPPER}][{CHARS_LOWER}]+)$')
 
     # If we don't get results with wiki words matching, fall back to
     # simple first word and last word, using spaces.
@@ -377,12 +377,12 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
             if item.fqname:
                 fqname = item.fqname
     if not item:  # except NoSuchItemError:
-        logging.debug("No such item: {0!r}".format(fqname))
+        logging.debug(f"No such item: {fqname!r}")
         item = DummyItem(fqname)
         rev = DummyRev(item, itemtype, contenttype)
-        logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(fqname, contenttype))
+        logging.debug(f"Item {fqname!r}, created dummy revision with contenttype {contenttype!r}")
     else:
-        logging.debug("Got item: {0!r}".format(fqname))
+        logging.debug(f"Got item: {fqname!r}")
         try:
             rev = item.get_revision(rev_id)
         except KeyError:  # NoSuchRevisionError:
@@ -390,10 +390,10 @@ def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT
                 rev = item.get_revision(CURRENT)  # fall back to current revision
                 # XXX add some message about invalid revision
             except KeyError:  # NoSuchRevisionError:
-                logging.debug("Item {0!r} has no revisions.".format(fqname))
+                logging.debug(f"Item {fqname!r} has no revisions.")
                 rev = DummyRev(item, itemtype, contenttype)
-                logging.debug("Item {0!r}, created dummy revision with contenttype {1!r}".format(fqname, contenttype))
-        logging.debug("Got item {0!r}, revision: {1!r}".format(fqname, rev_id))
+                logging.debug(f"Item {fqname!r}, created dummy revision with contenttype {contenttype!r}")
+        logging.debug(f"Got item {fqname!r}, revision: {rev_id!r}")
     return rev
 
 
@@ -630,11 +630,11 @@ class Item:
         """
         fqname = split_fqname(name)
         if fqname.field not in UFIELDS:  # Need a unique key to extract stored item.
-            raise FieldNotUniqueError("field {0} is not in UFIELDS".format(fqname.field))
+            raise FieldNotUniqueError(f"field {fqname.field} is not in UFIELDS")
 
         rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
-        logging.debug("Item {0!r}, got contenttype {1!r} from revision meta".format(name, contenttype))
+        logging.debug(f"Item {name!r}, got contenttype {contenttype!r} from revision meta")
         # logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
 
         # XXX Cannot pass item=item to Content.__init__ via
@@ -642,10 +642,10 @@ class Item:
         content = Content.create(contenttype)
 
         itemtype = rev.meta.get(ITEMTYPE) or itemtype or ITEMTYPE_DEFAULT
-        logging.debug("Item {0!r}, got itemtype {1!r} from revision meta".format(name, itemtype))
+        logging.debug(f"Item {name!r}, got itemtype {itemtype!r} from revision meta")
 
         item = item_registry.get(itemtype, fqname, rev=rev, content=content)
-        logging.debug("Item class {0!r} handles {1!r}".format(item.__class__, itemtype))
+        logging.debug(f"Item class {item.__class__!r} handles {itemtype!r}")
 
         content.item = item
         return item
@@ -1085,7 +1085,7 @@ class Item:
         @rtype: string
         @return: new text of wikipage, variables replaced
         """
-        logging.debug("handle_variable data: %r" % data)
+        logging.debug(f"handle_variable data: {data!r}")
         if self.contenttype not in CONTENTTYPE_VARIABLES:
             return data
         if '@' not in data:
@@ -1102,19 +1102,19 @@ class Item:
             'PAGE': item_name,
             'ITEM': item_name,
             'TIMESTAMP': strftime("%Y-%m-%d %H:%M:%S %Z"),
-            'TIME': "<<DateTime(%s)>>" % strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'DATE': "<<Date(%s)>>" % strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'TIME': f"<<DateTime({strftime('%Y-%m-%dT%H:%M:%SZ')})>>",
+            'DATE': f"<<Date({strftime('%Y-%m-%dT%H:%M:%SZ')})>>",
             'ME': flaskg.user.name0,
             'USERNAME': signature,
-            'USER': "-- %s" % signature,
-            'SIG': "-- %s <<DateTime(%s)>>" % (signature, strftime("%Y-%m-%dT%H:%M:%SZ")),
+            'USER': f"-- {signature}",
+            'SIG': f"-- {signature} <<DateTime({strftime('%Y-%m-%dT%H:%M:%SZ')})>>",
         }
 
         email = flaskg.user.profile._meta.get('email', None)
         if email:
             obfuscated_email_address = encodeSpamSafeEmail(email)
-            variables['MAILTO'] = "<<MailTo({0})>>".format(obfuscated_email_address)
-            variables['EMAIL'] = "<<MailTo({0})>>".format(email)
+            variables['MAILTO'] = f"<<MailTo({obfuscated_email_address})>>"
+            variables['EMAIL'] = f"<<MailTo({email})>>"
         else:
             # penalty for not being logged in is a mangled variable,
             # else next user to save item may accidentally reveal his email address
@@ -1123,9 +1123,9 @@ class Item:
 
         for name in variables:
             try:
-                data = data.replace('@{0}@'.format(name), variables[name])
+                data = data.replace(f'@{name}@', variables[name])
             except UnicodeError:
-                logging.warning("handle_variables: UnicodeError! name: %r value: %r" % (name, variables[name]))
+                logging.warning(f"handle_variables: UnicodeError! name: {name!r} value: {variables[name]!r}")
         return data
 
     @property
@@ -1540,7 +1540,7 @@ class Default(Contentful):
                         if app.cfg.edit_locking_policy == LOCK:
                             locked_msg = edit_utils.unlock_item()
                             if locked_msg:
-                                logging.error("Item saved but locked by someone else: {0!r}".format(self.fqname))
+                                logging.error(f"Item saved but locked by someone else: {self.fqname!r}")
                                 flash(locked_msg, "info")
                         edit_utils.cursor_close()
                         return redirect(url_for_item(**self.fqname.split))

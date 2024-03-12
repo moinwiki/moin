@@ -159,7 +159,7 @@ class Converter:
 
         # Check that the tag is supported
         if element.tag.name in self.unsupported_tags:
-            logging.warning("Unsupported tag : {0}".format(element.tag.name))
+            logging.warning(f"Unsupported tag : {element.tag.name}")
             return self.do_children(element)
 
         method_name = 'visit_moinpage_' + element.tag.name.replace('-', '_')
@@ -168,7 +168,7 @@ class Converter:
             return method(element)
 
         # Otherwise we process the children of the unknown element
-        logging.warning("Unknown tag : {0}".format(element.tag.name))
+        logging.warning(f"Unknown tag : {element.tag.name}")
         return self.do_children(element)
 
     def visit_moinpage_a(self, element):
@@ -273,7 +273,7 @@ class Converter:
         # Need more test
         elif depth < self.current_section:
             if self.parent_section != 0:
-                section_tag = 'sect{0}'.format(self.parent_section)
+                section_tag = f'sect{self.parent_section}'
                 section = ET.Element(docbook(section_tag), attrib={},
                                      children=self.section_children[self.current_section])
                 self.section_children[self.parent_section].append(section)
@@ -403,7 +403,7 @@ class Converter:
         title = element.get(html('title'))
         if not title:
             # TODO: Translation
-            title = "Table {0}".format(self.table_counter)
+            title = f"Table {self.table_counter}"
         self.table_counter += 1
         caption = ET.Element(docbook('caption'), attrib={}, children=[title])
         children = [caption]
@@ -418,7 +418,7 @@ class Converter:
         attrib = {}
         rowspan = element.get(moin_page('number-rows-spanned'))
         colspan = element.get(moin_page('number-columns-spanned'))
-        print("rowspan : {0}".format(rowspan))
+        print(f"rowspan : {rowspan}")
         if rowspan:
             attrib[docbook.rowspan] = rowspan
         if colspan:
@@ -466,12 +466,12 @@ class Converter:
                     section = None
                     for k, v in self.section_children:
                         if section:
-                            section_tag = 'sect{0}'.format(k)
+                            section_tag = f'sect{k}'
                             v.append(section)
                             section = ET.Element(docbook(section_tag),
                                                  attrib={}, children=v)
                         else:
-                            section_tag = 'sect{0}'.format(k)
+                            section_tag = f'sect{k}'
                             section = ET.Element(docbook(section_tag),
                                                  attrib={}, children=v)
                     return ET.Element(docbook.article,
@@ -480,7 +480,7 @@ class Converter:
                     c.insert(0, info)
                     return ET.Element(docbook.article, attrib={}, children=c)
 
-        raise RuntimeError('page:page need to contain exactly one page body tag, got {0!r}'.format(element[:]))
+        raise RuntimeError(f'page:page need to contain exactly one page body tag, got {element[:]!r}')
 
     def visit_moinpage_p(self, element):
         """

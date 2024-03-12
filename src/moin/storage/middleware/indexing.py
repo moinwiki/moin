@@ -264,7 +264,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             return self.data.tell(*args, **kw)
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
-        logging.debug("not indexing content of {0!r} as requested by configuration".format(meta[NAME]))
+        logging.debug(f"not indexing content of {meta[NAME]!r} as requested by configuration")
         return ''
 
     rev = PseudoRev(meta, data)
@@ -307,11 +307,11 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             doc = output_conv(doc)
             return doc
         # no way
-        raise TypeError("No converter for {0} --> {1}".format(input_contenttype, output_contenttype))
+        raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
         logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(
                           item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
-        doc = 'ERROR [{0!s}]'.format(e)
+        doc = f'ERROR [{e!s}]'
         return doc
 
 
@@ -485,7 +485,7 @@ class IndexingMiddleware:
             from whoosh.filedb.filestore import FileStorage
             cls = FileStorage
         else:
-            raise ValueError("index_storage = {0!r} is not supported!".format(kind))
+            raise ValueError(f"index_storage = {kind!r} is not supported!")
         return kind, cls, params, kw
 
     def get_storage(self, tmp=False, create=False):
@@ -653,7 +653,7 @@ class IndexingMiddleware:
                 elif mode == 'delete':
                     writer.delete_by_term(REVID, revid)
                 else:
-                    raise ValueError("mode must be 'update', 'add' or 'delete', not '{0}'".format(mode))
+                    raise ValueError(f"mode must be 'update', 'add' or 'delete', not '{mode}'")
 
     def _find_latest_backends_revids(self, index, query=None):
         """
@@ -1121,7 +1121,7 @@ class Item(PropertiesMixin):
         raise NoSuchItemError(repr(query))
 
     def __repr__(self):
-        return '<Item %s>' % (self.name, )
+        return f'<Item {self.name}>'
 
     def __bool__(self):
         """
@@ -1224,11 +1224,11 @@ class Item(PropertiesMixin):
                 if e.name == 'subscriptions':
                     for sub in e.children:
                         if sub.valid is False:
-                            val.append('"{}". {}'.format(str(sub), str(sub.errors[0])))
+                            val.append(f'"{str(sub)}". {str(sub.errors[0])}')
                             e.valid = False
                 elif e.valid is False:
                     val.append(str(e))
-                logging.warning("{0}, {1}, {2}".format(e.valid, e.name, e.raw))
+                logging.warning(f"{e.valid}, {e.name}, {e.raw}")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}').format(
                     ', '.join(val)
@@ -1250,7 +1250,7 @@ class Item(PropertiesMixin):
             meta[SUMMARY] = ""
 
         if valid and not validate_data(meta, data):  # need valid metadata to validate data
-            logging.warning("data validation failed for item {0} ".format(meta[NAME]))
+            logging.warning(f"data validation failed for item {meta[NAME]} ")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError(_('Error: nothing changed. Data unicode validation failed.'))
 
@@ -1379,7 +1379,7 @@ class Revision(PropertiesMixin):
         return self.meta < other.meta
 
     def __repr__(self):
-        return '<Revision %s of Item %s>' % (self.revid[:6], self.name)
+        return f'<Revision {self.revid[:6]} of Item {self.name}>'
 
 
 class Meta(Mapping):
@@ -1430,4 +1430,4 @@ class Meta(Mapping):
         return 0  # XXX
 
     def __repr__(self):
-        return "Meta _doc: {0!r} _meta: {1!r}".format(self._doc, self._meta)
+        return f"Meta _doc: {self._doc!r} _meta: {self._meta!r}"

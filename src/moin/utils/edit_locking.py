@@ -200,7 +200,7 @@ class Edit_Utils:
                         data = data.decode(self.coding)
                         return draft, data
                     except IOError:
-                        logging.error("User {0} failed to load draft for: {1}".format(u_name, i_name))
+                        logging.error(f"User {u_name} failed to load draft for: {i_name}")
                         return draft, None
                 else:
                     return draft, None
@@ -225,7 +225,7 @@ class Edit_Utils:
                 os.remove(draft_name)
             except IOError:
                 # draft file is created only when user does Preview
-                logging.error("IOError when deleting draft named {0} for user {1}".format(draft_name, self.user_name))
+                logging.error(f"IOError when deleting draft named {draft_name} for user {self.user_name}")
         self.cursor.execute('''DELETE FROM editdraft WHERE user_name = ? ''', (self.user_name, ))
         self.conn.commit()
 
@@ -318,12 +318,11 @@ class Edit_Utils:
                 return
             elif not cancel:
                 # bug: someone else has active edit lock, relock_item() should have been called prior to item save
-                logging.error("User {0} tried to unlock item that was locked by someone else: {1}".format(
-                    user_name, i_name))
+                logging.error(f"User {user_name} tried to unlock item that was locked by someone else: {i_name}")
                 msg = L_("Item '{item_name}' is locked by {user_name}. Edit lock error, "
                          "check Item History to verify no changes were lost."
                         ).format(item_name=i_name, user_name=u_name)
                 return msg
         if not cancel:
             # bug: there should have been a lock_item call prior to unlock call
-            logging.error("User {0} tried to unlock item that was not locked: {1}".format(user_name, self.item_name))
+            logging.error(f"User {user_name} tried to unlock item that was not locked: {self.item_name}")

@@ -29,7 +29,7 @@ logging = log.getLogger(__name__)
 try:
     import ldap
 except ImportError as err:
-    logging.error("You need to have python-ldap installed ({0!s}).".format(err))
+    logging.error(f"You need to have python-ldap installed ({err!s}).")
     raise
 
 
@@ -157,28 +157,28 @@ class LDAPAuth(BaseAuth):
                         if value is not None:
                             ldap.set_option(option, value)
 
-                logging.debug("Trying to initialize {0!r}.".format(server))
+                logging.debug(f"Trying to initialize {server!r}.")
                 conn = ldap.initialize(server)
-                logging.debug("Connected to LDAP server {0!r}.".format(server))
+                logging.debug(f"Connected to LDAP server {server!r}.")
 
                 if self.start_tls and server.startswith('ldap:'):
-                    logging.debug("Trying to start TLS to {0!r}.".format(server))
+                    logging.debug(f"Trying to start TLS to {server!r}.")
                     try:
                         conn.start_tls_s()
-                        logging.debug("Using TLS to {0!r}.".format(server))
+                        logging.debug(f"Using TLS to {server!r}.")
                     except (ldap.SERVER_DOWN, ldap.CONNECT_ERROR) as err:
-                        logging.warning("Couldn't establish TLS to {0!r} (err: {1!s}).".format(server, err))
+                        logging.warning(f"Couldn't establish TLS to {server!r} (err: {err!s}).")
                         raise
 
                 # you can use %(username)s and %(password)s here to get the stuff entered in the form:
                 binddn = self.bind_dn % locals()
                 bindpw = self.bind_pw % locals()
                 conn.simple_bind_s(binddn, bindpw)
-                logging.debug("Bound with binddn {0!r}".format(binddn))
+                logging.debug(f"Bound with binddn {binddn!r}")
 
                 # you can use %(username)s here to get the stuff entered in the form:
                 filterstr = self.search_filter % locals()
-                logging.debug("Searching {0!r}".format(filterstr))
+                logging.debug(f"Searching {filterstr!r}")
                 attrs = [getattr(self, attr) for attr in [
                     'email_attribute',
                     'displayname_attribute',
@@ -190,17 +190,16 @@ class LDAPAuth(BaseAuth):
                 # we remove entries with dn == None to get the real result list:
                 lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
                 for _dn, _ldap_dict in lusers:
-                    logging.debug("dn:{0!r}".format(_dn))
+                    logging.debug(f"dn:{_dn!r}")
                     for key, val in _ldap_dict.items():
-                        logging.debug("    {0!r}: {1!r}".format(key, val))
+                        logging.debug(f"    {key!r}: {val!r}")
 
                 result_length = len(lusers)
                 if result_length != 1:
                     if result_length > 1:
-                        logging.warning("Search found more than one ({0}) matches for {1!r}.".format(
-                            result_length, filterstr))
+                        logging.warning(f"Search found more than one ({result_length}) matches for {filterstr!r}.")
                     if result_length == 0:
-                        logging.debug("Search found no matches for {0!r}.".format(filterstr, ))
+                        logging.debug(f"Search found no matches for {filterstr!r}.")
                     if self.report_invalid_credentials:
                         return ContinueLogin(user_obj, _("Invalid username or password."))
                     else:
@@ -208,9 +207,9 @@ class LDAPAuth(BaseAuth):
 
                 dn, ldap_dict = lusers[0]
                 if not self.bind_once:
-                    logging.debug("DN found is {0!r}, trying to bind with pw".format(dn))
+                    logging.debug(f"DN found is {dn!r}, trying to bind with pw")
                     conn.simple_bind_s(dn, password)
-                    logging.debug("Bound with dn {0!r} (username: {1!r})".format(dn, username))
+                    logging.debug(f"Bound with dn {dn!r} (username: {username!r})")
 
                 if self.email_callback is None:
                     if self.email_attribute:
@@ -229,7 +228,7 @@ class LDAPAuth(BaseAuth):
                     sn = ldap_dict.get(self.surname_attribute, [''])[0]
                     gn = ldap_dict.get(self.givenname_attribute, [''])[0]
                     if sn and gn:
-                        display_name = "{0}, {1}".format(sn, gn)
+                        display_name = f"{sn}, {gn}"
                     elif sn:
                         display_name = sn
 
@@ -251,12 +250,11 @@ class LDAPAuth(BaseAuth):
                     username, email, display_name))
 
             except ldap.INVALID_CREDENTIALS:
-                logging.debug("invalid credentials (wrong password?) for dn {0!r} (username: {1!r})".format(
-                    dn, username))
+                logging.debug(f"invalid credentials (wrong password?) for dn {dn!r} (username: {username!r})")
                 return CancelLogin(_("Invalid username or password."))
 
             if u and self.autocreate:
-                logging.debug("calling create_or_update to autocreate user {0!r}".format(u.name))
+                logging.debug(f"calling create_or_update to autocreate user {u.name!r}")
                 u.create_or_update(True)
             return ContinueLogin(u)
 
@@ -265,8 +263,7 @@ class LDAPAuth(BaseAuth):
             # authenticator object in cfg.auth list (there could be some second
             # ldap authenticator that queries a backup server or any other auth
             # method).
-            logging.error("LDAP server {0} failed ({1!s}). "
-                          "Trying to authenticate with next auth list entry.".format(server, err))
+            logging.error(f"LDAP server {server} failed ({err!s}). Trying to authenticate with next auth list entry.")
             return ContinueLogin(user_obj, _("LDAP server {server} failed.").format(server=server))
 
         except:  # noqa

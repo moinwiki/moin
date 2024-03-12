@@ -39,13 +39,13 @@ def get_subscribers(**meta):
     tags = meta.get(TAGS)
     terms = []
     if itemid is not None:
-        terms.extend([Term(SUBSCRIPTION_IDS, "{0}:{1}".format(ITEMID, itemid))])
+        terms.extend([Term(SUBSCRIPTION_IDS, f"{ITEMID}:{itemid}")])
     if namespace is not None:
         if name is not None:
-            terms.extend(Term(SUBSCRIPTION_IDS, "{0}:{1}:{2}".format(NAME, namespace, name_))
+            terms.extend(Term(SUBSCRIPTION_IDS, f"{NAME}:{namespace}:{name_}")
                          for name_ in name)
         if tags is not None:
-            terms.extend(Term(SUBSCRIPTION_IDS, "{0}:{1}:{2}".format(TAGS, namespace, tag))
+            terms.extend(Term(SUBSCRIPTION_IDS, f"{TAGS}:{namespace}:{tag}")
                          for tag in tags)
     query = Or(terms)
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
@@ -83,14 +83,13 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
         try:
             keyword, value = subscription.split(":", 1)
         except ValueError:
-            logging.exception("User {0} has invalid subscription entry: {1}".format(flaskg.user.name[0], subscription))
+            logging.exception(f"User {flaskg.user.name[0]} has invalid subscription entry: {subscription}")
             continue
         if keyword in (NAMEPREFIX, NAMERE, ) and item_namespace is not None and item_names:
             try:
                 namespace, pattern = value.split(":", 1)
             except ValueError:
-                logging.exception("User {0} has invalid subscription entry: {1}".format(
-                    flaskg.user.name[0], subscription))
+                logging.exception(f"User {flaskg.user.name[0]} has invalid subscription entry: {subscription}")
                 continue
             if item_namespace == namespace:
                 if keyword == NAMEPREFIX:
@@ -100,7 +99,7 @@ def get_matched_subscription_patterns(subscription_patterns, **meta):
                     try:
                         pattern = re.compile(pattern, re.U)
                     except re.error:
-                        logging.error("Subscription pattern '{0}' has failed compilation.".format(pattern))
+                        logging.error(f"Subscription pattern '{pattern}' has failed compilation.")
                         continue
                     if any(pattern.search(name) for name in item_names):
                         matched_subscriptions.append(subscription)

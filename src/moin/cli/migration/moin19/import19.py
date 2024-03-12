@@ -99,7 +99,7 @@ def migr_logging(msg_id, log_msg):
     if migr_stat[msg_id] < migr_warn_max:
         logging.warning(log_msg)
     elif migr_stat[msg_id] == migr_warn_max:
-        logging.warning("{}: further messages printed to debug log only.".format(msg_id))
+        logging.warning(f"{msg_id}: further messages printed to debug log only.")
         logging.debug(log_msg)
     else:
         logging.debug(log_msg)
@@ -107,17 +107,17 @@ def migr_logging(msg_id, log_msg):
 
 def migr_statistics(unknown_macros):
     logging.info("Migration statistics:")
-    logging.info("Users:       {0:6d}".format(migr_stat['users']))
-    logging.info("Items:       {0:6d}".format(migr_stat['items']))
-    logging.info("Revisions:   {0:6d}".format(migr_stat['revs']))
-    logging.info("Attachments: {0:6d}".format(migr_stat['attachments']))
+    logging.info(f"Users:       {migr_stat['users']:6d}")
+    logging.info(f"Items:       {migr_stat['items']:6d}")
+    logging.info(f"Revisions:   {migr_stat['revs']:6d}")
+    logging.info(f"Attachments: {migr_stat['attachments']:6d}")
 
     for message in ['missing_user', 'missing_file', 'del_item']:
         if migr_stat[message] > 0:
-            logging.info("Warnings:    {0:6d} - {1}".format(migr_stat[message], message))
+            logging.info(f"Warnings:    {migr_stat[message]:6d} - {message}")
 
     if len(unknown_macros) > 0:
-        logging.info("Warnings:    {0:6d} - unknown macros {1}".format(len(unknown_macros), str(unknown_macros)[1:-1]))
+        logging.info(f"Warnings:    {len(unknown_macros):6d} - unknown macros {str(unknown_macros)[1:-1]}")
 
 
 @cli.command('import19', help='Import content and user data from a moin 1.9 wiki')
@@ -180,7 +180,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
     refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
     for item_name, (revno, namespace) in sorted(last_moin19_rev.items()):
         try:
-            logging.debug('Processing item "{0}", namespace "{1}", revision "{2}"'.format(item_name, namespace, revno))
+            logging.debug(f'Processing item "{item_name}", namespace "{namespace}", revision "{revno}"')
         except UnicodeEncodeError:
             logging.debug('Processing item "{0}", namespace "{1}", revision "{2}"'.format(
                 item_name.encode('ascii', errors='replace'), namespace, revno))
@@ -303,12 +303,11 @@ class PageBackend:
                 pass  # a message was already output
             except (IOError, AttributeError):
                 migr_logging('missing_file',
-                             "Missing file 'current' or 'edit-log' for {0}".format(
-                                 os.path.normcase(os.path.join(pages_dir, f)))
+                             f"Missing file 'current' or 'edit-log' for {os.path.normcase(os.path.join(pages_dir, f))}"
                              )
 
             except Exception:
-                logging.exception(("PageItem {0!r} raised exception:".format(itemname))).encode('utf-8')
+                logging.exception(f"PageItem {itemname!r} raised exception:").encode('utf-8')
             else:
                 for rev in item.iter_revisions():
                     yield rev
@@ -327,9 +326,9 @@ class PageItem:
         self.target_namespace = target_namespace
         try:
 
-            logging.debug("Processing item {0}".format(itemname))
+            logging.debug(f"Processing item {itemname}")
         except UnicodeEncodeError:
-            logging.debug("Processing item {0}".format(itemname.encode('ascii', errors='replace')))
+            logging.debug(f"Processing item {itemname.encode('ascii', errors='replace')}")
         currentpath = os.path.join(self.path, 'current')
         with open(currentpath, 'r') as f:
             self.current = int(f.read().strip())
@@ -338,10 +337,10 @@ class PageItem:
         self.acl = None
         self.itemid = make_uuid()
         if backend.deleted_mode == DELETED_MODE_KILL:
-            revpath = os.path.join(self.path, 'revisions', '{0:08d}'.format(self.current))
+            revpath = os.path.join(self.path, 'revisions', f'{self.current:08d}')
             if not os.path.exists(revpath):
                 migr_logging('del_item',
-                             'Deleted item not migrated: {0}, last revision no: {1}'.format(itemname, self.current)
+                             f'Deleted item not migrated: {itemname}, last revision no: {self.current}'
                              )
                 raise KillRequested('deleted_mode wants killing/ignoring')
             else:
@@ -367,7 +366,7 @@ class PageItem:
                 yield page_rev
 
             except Exception:
-                logging.exception("PageRevision {0!r} {1!r} raised exception:".format(self.name, fname))
+                logging.exception(f"PageRevision {self.name!r} {fname!r} raised exception:")
 
     def iter_attachments(self):
         attachmentspath = os.path.join(self.path, 'attachments')
@@ -381,7 +380,7 @@ class PageItem:
                 yield AttachmentRevision(self.name, attachname, os.path.join(attachmentspath, fname),
                                          self.editlog, self.acl)
             except Exception:
-                logging.exception("AttachmentRevision {0!r}/{1!r} raised exception:".format(self.name, attachname))
+                logging.exception(f"AttachmentRevision {self.name!r}/{attachname!r} raised exception:")
 
 
 class PageRevision:
@@ -406,7 +405,7 @@ class PageRevision:
                                         # if we have an entry there
                     }
             try:
-                revpath = os.path.join(item.path, 'revisions', '{0:08d}'.format(revno - 1))
+                revpath = os.path.join(item.path, 'revisions', f'{revno - 1:08d}')
                 previous_meta = PageRevision(item, revno - 1, revpath, target_namespace).meta
                 # if this page revision is deleted, we have no on-page metadata.
                 # but some metadata is required, thus we have to copy it from the
@@ -421,19 +420,18 @@ class PageRevision:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                logging.warning('Missing edit log data: item = {0}, revision = {1}'.format(item_name, revno))
+                logging.warning(f'Missing edit log data: item = {item_name}, revision = {revno}')
                 if 0 <= revno <= item.current:
                     editlog_data = {  # make something up
                         ACTION: 'SAVE/DELETE',
                     }
                 else:
-                    raise NoSuchRevisionError('Item {0!r} has no revision {1} (not even a deleted one)!'.format(
-                        item.name, revno))
+                    raise NoSuchRevisionError(f'Item {item.name!r} has no revision {revno} (not even a deleted one)!')
         else:
             try:
                 editlog_data = editlog.find_rev(revno)
             except KeyError:
-                logging.warning('Missing edit log data: name = {0}, revision = {1}'.format(item_name, revno))
+                logging.warning(f'Missing edit log data: name = {item_name}, revision = {revno}')
                 if 1 <= revno <= item.current:
                     editlog_data = {  # make something up
                         NAME: [item.name],
@@ -476,8 +474,7 @@ class PageRevision:
             if meta[NAME][0] == custom_namespace:
                 # cannot have itemname == namespace_name, so we rename. XXX may create an item with duplicate name
                 new_name = app.cfg.root_mapping.get(meta[NAME][0], app.cfg.default_root)
-                logging.warning("Converting {0} to namespace:homepage {1}:{2}".format(
-                    meta[NAME][0], custom_namespace, new_name))
+                logging.warning(f"Converting {meta[NAME][0]} to namespace:homepage {custom_namespace}:{new_name}")
                 meta[NAMESPACE] = custom_namespace
                 meta[NAME] = [new_name]
                 break
@@ -584,8 +581,8 @@ def migrate_itemlinks(dom, namespace, itemlinks2chg):
         if node.tag.name == 'a' and not isinstance(node.attrib[xlink.href], str):
             path_19 = str(node.attrib[xlink.href].path)
             if node.attrib[xlink.href].scheme == 'wiki.local' and path_19 in itemlinks2chg:
-                logging.debug("Changing link from {} to {}/{}".format(path_19, namespace, path_19))
-                node.attrib[xlink.href].path = '{}/{}'.format(namespace, path_19)
+                logging.debug(f"Changing link from {path_19} to {namespace}/{path_19}")
+                node.attrib[xlink.href].path = f'{namespace}/{path_19}'
 
 
 def process_categories(meta, data, item_category_regex):
@@ -631,8 +628,8 @@ class AttachmentRevision:
                 ACTION: ACTION_SAVE,
             }
         migr_stat['attachments'] += 1
-        meta[NAME] = ['{0}/{1}'.format(item_name, attach_name)]
-        logging.debug('Migrating attachment {0}'.format(meta[NAME]))
+        meta[NAME] = [f'{item_name}/{attach_name}']
+        logging.debug(f'Migrating attachment {meta[NAME]}')
         if acl is not None:
             meta[ACL] = acl
         meta[CONTENTTYPE] = str(MimeType(filename=attach_name).content_type())
@@ -747,7 +744,7 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
                           ))
     result = ' '.join(result)
     if result != acl_string:
-        logging.debug("regenerate_acl {0!r} -> {1!r}".format(acl_string, result))
+        logging.debug(f"regenerate_acl {acl_string!r} -> {result!r}")
     return result
 
 
@@ -843,7 +840,7 @@ class UserRevision:
 
         # rename aliasname to display_name:
         metadata[DISPLAY_NAME] = metadata.get('aliasname')
-        logging.debug("Processing user {0} {1} {2}".format(metadata[NAME][0], self.uid, metadata[EMAIL]))
+        logging.debug(f"Processing user {metadata[NAME][0]} {self.uid} {metadata[EMAIL]}")
         migr_stat['users'] += 1
 
         # transfer subscribed_pages to subscription_patterns
@@ -924,22 +921,22 @@ class UserRevision:
         RECHARS = r'.^$*+?{\|('
         subscriptions = []
         for subscribed_item in subscribed_items:
-            logging.debug('User is subscribed to {0}'.format(subscribed_item))
+            logging.debug(f'User is subscribed to {subscribed_item}')
             if flaskg.item_name2id.get(subscribed_item):
-                subscriptions.append("{0}:{1}".format(ITEMID, flaskg.item_name2id.get(subscribed_item)))
+                subscriptions.append(f"{ITEMID}:{flaskg.item_name2id.get(subscribed_item)}")
             else:
                 wikiname = ""
                 if ":" in subscribed_item:
                     wikiname, subscribed_item = subscribed_item.split(":", 1)
 
                 if not any(x in subscribed_item for x in RECHARS):
-                    subscriptions.append("{0}:{1}:{2}".format(NAME, wikiname, subscribed_item))
+                    subscriptions.append(f"{NAME}:{wikiname}:{subscribed_item}")
                 elif (subscribed_item.endswith(".*") and len(subscribed_item) > 2
                         and not subscribed_item.endswith("/.*")
                         and not any(x in subscribed_item[:-2] for x in RECHARS)):
-                    subscriptions.append("{0}:{1}:{2}".format(NAMEPREFIX, wikiname, subscribed_item[:-2]))
+                    subscriptions.append(f"{NAMEPREFIX}:{wikiname}:{subscribed_item[:-2]}")
                 else:
-                    subscriptions.append("{0}:{1}:{2}".format(NAMERE, wikiname, subscribed_item))
+                    subscriptions.append(f"{NAMERE}:{wikiname}:{subscribed_item}")
 
         return subscriptions
 
@@ -961,7 +958,7 @@ class UserBackend:
                 try:
                     rev = UserRevision(self.path, uid)
                 except Exception:
-                    logging.exception("Exception in user item processing {0}".format(uid))
+                    logging.exception(f"Exception in user item processing {uid}")
                 else:
                     yield rev
 

@@ -109,7 +109,7 @@ fallback_config = False
 
 def _log_warning(message, category, filename, lineno, file=None, line=None):
     # for warnings, we just want to use the logging system, not stderr or other files
-    msg = "{0}:{1}: {2}: {3}".format(filename, lineno, category.__name__, message)
+    msg = f"{filename}:{lineno}: {category.__name__}: {message}"
     logger = getLogger(__name__)
     # Note: the warning will look like coming from here,
     # but msg contains info about where it really comes from
@@ -135,7 +135,7 @@ def load_config(conf_fname=None):
                 f.close()
             configured = True
             logger = getLogger(__name__)
-            logger.debug('using logging configuration read from "{0}"'.format(conf_fname))
+            logger.debug(f'using logging configuration read from "{conf_fname}"')
             warnings.showwarning = _log_warning
         except Exception as err:  # XXX be more precise
             err_msg = str(err)
@@ -146,13 +146,13 @@ def load_config(conf_fname=None):
         configured = True
         logger = getLogger(__name__)
         if err_msg:
-            logger.warning('load_config for "{0}" failed with "{1}".'.format(conf_fname, err_msg))
+            logger.warning(f'load_config for "{conf_fname}" failed with "{err_msg}".')
         logger.debug('using logging configuration read from built-in fallback in moin.log module!')
         warnings.showwarning = _log_warning
 
     import moin
     code_path = os.path.dirname(moin.__file__)
-    logger.debug('Running %s %s code from %s' % (moin.project, moin.version, code_path))
+    logger.debug(f'Running {moin.project} {moin.version} code from {code_path}')
 
 
 def getLogger(name):
@@ -211,8 +211,7 @@ class EmailHandler(logging.Handler):
         try:
             toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
             log_level = logging.getLevelName(self.level)
-            subject = self.subject if self.subject else '[{0}][{1}] Log message'.format(
-                app.cfg.sitename, log_level)
+            subject = self.subject if self.subject else f'[{app.cfg.sitename}][{log_level}] Log message'
             msg = self.format(record)
             from moin.mail.sendmail import sendmail
             sendmail(subject, msg, to=toaddrs)

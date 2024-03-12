@@ -57,9 +57,9 @@ def atom(item_name):
         cid = None
     if content is None:
         if not item_name:
-            title = "{0}".format(app.cfg.sitename)
+            title = f"{app.cfg.sitename}"
         else:
-            title = "{0} - {1}".format(app.cfg.sitename, fqname)
+            title = f"{app.cfg.sitename} - {fqname}"
         feed = FeedGenerator()
         feed.id(request.url)
         feed.title(title)
@@ -88,7 +88,7 @@ def atom(item_name):
                     content = render_template('atom.html', get='first_revision', rev=this_rev,
                                               content=Markup(hl_item.content._render_data()), revision=this_revid)
             except Exception:
-                logging.exception("content rendering crashed on item {0}".format(name))
+                logging.exception(f"content rendering crashed on item {name}")
                 content = _('MoinMoin feels unhappy.')
             author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, '')
@@ -97,12 +97,12 @@ def atom(item_name):
                 if len(rev_comment) > 80:
                     content = render_template('atom.html', get='comment_cont_merge', comment=rev_comment[79:],
                                               content=Markup(content))
-                    rev_comment = "{0}...".format(rev_comment[:79])
-                feed_title = "{0} - {1}".format(author.get(NAME, ''), rev_comment)
+                    rev_comment = f"{rev_comment[:79]}..."
+                feed_title = f"{author.get(NAME, '')} - {rev_comment}"
             else:
-                feed_title = "{0}".format(author.get(NAME, ''))
+                feed_title = f"{author.get(NAME, '')}"
             if not item_name:
-                feed_title = "{0} - {1}".format(name, feed_title)
+                feed_title = f"{name} - {feed_title}"
             feed_entry = feed.add_entry()
             feed_entry.id(url_for_item(name, rev=this_revid, _external=True))
             feed_entry.title(feed_title)

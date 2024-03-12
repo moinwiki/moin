@@ -127,13 +127,13 @@ class Converter:
         except AssertionError as reason:
             # we suspect user has created or uploaded malformed HTML, try to show input as preformatted code
             msg = _('Error: malformed HTML: {reason}.').format(reason=reason)
-            msg = '<div class="error"><p><strong>%s</strong></p></div>' % msg
+            msg = f'<div class="error"><p><strong>{msg}</strong></p></div>'
             html_str = ''.join(['<html>', msg, '<pre>', html_str, '</pre></html>'])
             try:
                 html_tree = HTML(html_str)
             except ValueError:
                 msg = _('Error: malformed HTML. Try viewing source with Highlight or Modify links.')
-                msg = '<div class="error"><p><strong>%s</strong></p></div>' % msg
+                msg = f'<div class="error"><p><strong>{msg}</strong></p></div>'
                 html_str = ''.join(['<html>', msg, '</html>'])
                 html_tree = HTML(html_str)
 
@@ -269,14 +269,14 @@ class Converter:
             msg = _("Tag '{invalid_tag}' is not supported; all tag contents are discarded."
                     ).format(invalid_tag=element.tag.name)
             self.no_dups_flash.log(msg, "info")
-            logging.debug("WARNING : Ignored tag : {0}".format(element.tag.name))
+            logging.debug(f"WARNING : Ignored tag : {element.tag.name}")
             return
 
         # Otherwise we process children of the unknown element
         msg = _("Tag '{invalid_tag}' is not known; tag ignored but children are processed."
                 ).format(invalid_tag=element.tag.name)
         self.no_dups_flash.log(msg, "info")
-        logging.debug("WARNING : Unknown tag : {0}".format(element.tag.name))
+        logging.debug(f"WARNING : Unknown tag : {element.tag.name}")
         return self.do_children(element)
 
     # TODO: if this is useful, it should be documented. Normally <BASE..> tags are in <HEAD> and

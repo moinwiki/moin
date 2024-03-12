@@ -509,8 +509,8 @@ def add_presenter(wrapped, view, add_trail=False, abort404=True):
     :param add_trail: whether to call flaskg.user.add_trail
     :param abort404: whether to abort(404) for nonexistent items
     """
-    @frontend.route('/+{view}/+<rev>/<itemname:item_name>'.format(view=view))
-    @frontend.route('/+{view}/<itemname:item_name>'.format(view=view), defaults=dict(rev=CURRENT))
+    @frontend.route(f'/+{view}/+<rev>/<itemname:item_name>')
+    @frontend.route(f'/+{view}/<itemname:item_name>', defaults=dict(rev=CURRENT))
     @wraps(wrapped)
     def wrapper(item_name, rev):
         if add_trail:
@@ -1142,7 +1142,7 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
     elif subitem_names:
         destroy_info[0] = ('An item and all item subitems have been destroyed', '')
     for name, val in destroy_info:
-        logging.info('{0}: {1}'.format(name, val))
+        logging.info(f'{name}: {val}')
 
 
 @frontend.route('/+destroy/+<rev>/<itemname:item_name>', methods=['GET', 'POST'])
@@ -2577,7 +2577,7 @@ def _common_type(ct1, ct2):
 def _crash(item, oldrev, newrev):
     """This is called from several places, need to handle passed message"""
     error_id = uuid.uuid4()
-    logging.exception("An exception happened in _render_data (error_id = %s ):" % error_id)
+    logging.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
     return render_template("crash_view.html",
                            server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"),
                            url=request.url,
@@ -2795,7 +2795,7 @@ def global_tags(namespace):
     tags_counts = {}
     for meta in metas:
         tags = meta.get(TAGS, [])
-        logging.debug("name {0!r} rev {1} tags {2!r}".format(meta[NAME], meta[REVID], tags))
+        logging.debug(f"name {meta[NAME]!r} rev {meta[REVID]} tags {tags!r}")
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
@@ -2813,7 +2813,7 @@ def global_tags(namespace):
         def cls(count):
             # return the css class for this tag
             weight = scale * (count - count_min)
-            return "weight{0}".format(int(weight))  # weight0, ..., weight9
+            return f"weight{int(weight)}"  # weight0, ..., weight9
         tags = [(cls(count), tag) for tag, count in tags_counts]
     else:
         tags = []
