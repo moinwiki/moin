@@ -59,7 +59,7 @@ from moin.constants.keys import (
     HASH_ALGORITHM, ITEMID, REVID, DATAID, CURRENT, PARENTID, NAMESPACE,
     UFIELDS_TYPELIST, UFIELDS, TRASH, REV_NUMBER,
     ACTION_SAVE, ACTION_REVERT, ACTION_TRASH, ACTION_RENAME, TAGS, TEMPLATE,
-    LATEST_REVS, EDIT_ROWS, FQNAMES, USERGROUP, WIKIDICT
+    LATEST_REVS, EDIT_ROWS, FQNAMES, USERGROUP, WIKIDICT, LANGUAGE
 )
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_USERPROFILES
@@ -990,6 +990,10 @@ class Item:
             contenttype_current = None
 
         meta = dict(meta)  # we may get a read-only dict-like, copy it
+        if flaskg.user.language:
+            meta[LANGUAGE] = flaskg.user.language
+        else:
+            meta[LANGUAGE] = app.cfg.language_default
 
         if 'acl' in meta:
             # we treat this as nothing specified, so fallback to default

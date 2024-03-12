@@ -458,6 +458,8 @@ class PageRevision:
         meta[REV_NUMBER] = revno
         meta[NAMESPACE] = target_namespace
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        if LANGUAGE not in meta:
+            meta[LANGUAGE] = app.cfg.language_default
         if meta[NAME][0].endswith('Template'):
             if TAGS in meta:
                 meta[TAGS].append(TEMPLATE)
@@ -644,6 +646,8 @@ class AttachmentRevision:
         meta[REVID] = make_uuid()
         meta[REV_NUMBER] = 1
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        if LANGUAGE not in meta:
+            meta[LANGUAGE] = app.cfg.language_default
         meta[WIKINAME] = app.cfg.sitename  # old 1.9 sitename is not available
         for attr in (COMMENT, SUMMARY, ):
             meta[attr] = ""

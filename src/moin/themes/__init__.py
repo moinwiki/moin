@@ -20,6 +20,8 @@ from flask import g as flaskg
 from flask import url_for, request
 from flask_theme import get_theme, render_theme_template
 
+from babel import Locale
+
 from moin.i18n import _, L_
 from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
@@ -84,10 +86,10 @@ class ThemeSupport:
         self.cfg = cfg
         self.user = flaskg.user
         self.storage = flaskg.storage
-        self.ui_lang = 'en'  # XXX
-        self.ui_dir = 'ltr'  # XXX
-        self.content_lang = flaskg.content_lang  # XXX
-        self.content_dir = 'ltr'  # XXX
+        self.ui_lang = cfg.language_default
+        self.ui_dir = cfg.content_dir
+        self.user_lang = flaskg.user.language or self.ui_lang
+        self.user_dir = Locale(self.user_lang).text_direction
         if request.url_root[len(request.host_url):-1]:
             self.wiki_root = '/' + request.url_root[len(request.host_url):-1]
         else:

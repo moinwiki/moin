@@ -15,7 +15,7 @@ MoinMoin - Configuration defaults class
 import re
 import os
 
-from babel import parse_locale
+from babel import Locale, parse_locale
 
 from moin.i18n import _, L_, N_
 from moin import error
@@ -87,7 +87,8 @@ class ConfigFunctionality:
         # to give browser language detection a chance.
         try:
             self.language_default = parse_locale(self.locale_default)[0]
-        except ValueError:
+            self.content_dir = Locale(self.language_default).text_direction
+        except Exception:  # noqa
             raise error.ConfigurationError("Invalid locale_default value (give something like 'en_US').")
 
         # post process

@@ -80,7 +80,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {% macro footer_meta() %}
     {% if rev %}
-        <p id="moin-pageinfo" lang="{{ theme_supp.ui_lang }}" dir="{{ theme_supp.ui_dir }}">
+        <p id="moin-pageinfo">
             {% if cfg.show_interwiki %}
                 {{ cfg.interwikiname }}:
             {% endif %}
@@ -109,7 +109,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# Header/Sidebar for topside_cms theme - see docs for tips on customization #}
 {% macro cms_header() %}
-    <header id="moin-header">
+    <header id="moin-header" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
         {% block header %}
 
             {% if logo() %}

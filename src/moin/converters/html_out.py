@@ -12,8 +12,10 @@ Converts an internal document tree into a HTML tree.
 import re
 
 from flask import current_app as app
+from flask import g as flaskg
 from emeraldtree import ElementTree as ET
 from urllib.parse import urlencode
+from babel import Locale
 
 from moin import wikiutil
 from moin.i18n import _
@@ -22,6 +24,7 @@ from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CHARSET
 from moin.utils.mime import Type, type_moin_document
+from moin.constants.keys import LANGUAGE
 
 from . import default_registry, ElementException
 
@@ -65,6 +68,13 @@ def mark_item_as_transclusion(elem, href_or_item):
     if isinstance(href_or_item, Item):
         query = urlencode({'do': 'show'}, encoding=CHARSET)
         href = Iri(scheme='wiki', authority='', path='/' + href_or_item.fqname.fullname, query=query)
+        if hasattr(href_or_item, 'meta') and LANGUAGE in href_or_item.meta:
+            elem.attrib[html.lang] = href_or_item.meta[LANGUAGE]
+        elif hasattr(flaskg.user, LANGUAGE):
+            elem.attrib[html.lang] = flaskg.user.language
+        else:
+            elem.attrib[html.lang] = app.cfg.language_default
+        elem.attrib[html.dir] = Locale(elem.attrib[html.lang]).text_direction
     else:  # isinstance(href_or_item, Iri)
         href = href_or_item
     elem.attrib[html.data_href] = href

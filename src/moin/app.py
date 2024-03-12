@@ -293,9 +293,6 @@ def before_wiki():
         flaskg.dicts = app.cfg.dicts()
         flaskg.groups = app.cfg.groups()
 
-        flaskg.content_lang = app.cfg.language_default
-        flaskg.current_lang = app.cfg.language_default
-
         if cli_no_request_ctx:  # no request.user_agent if this is pytest or cli
             flaskg.add_lineno_attr = False
         else:
