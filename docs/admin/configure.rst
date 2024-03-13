@@ -58,21 +58,21 @@ Shown below are parts of the directory structure after cloning moin and running 
 The default uses the OS file system for storage of wiki data and indexes.
 The directories and files shown are referenced in this section of documentation related to configuration::
 
-    moin/                         # clone root, default name
-        contrib/                  # scripts and docs of interest to developers
-        docs/                     # moin documentation in restructured text (.rst) format
+    moin/                     # clone root, default name
+        contrib/              # scripts and docs of interest to developers
+        docs/                 # moin documentation in restructured text (.rst) format
             _build/
-                html/             # local copy of moin documentation, created by running "./m docs" command
-        requirements.d/           # package requirements used by quickinstall.py
-        scripts/                  # misc. scripts of interest to developers
+                html/         # local copy of moin documentation, created by running "./m docs" command
+        requirements.d/       # package requirements used by quickinstall.py
+        scripts/              # misc. scripts of interest to developers
         src/
-            moin/                 # large directory containing moin application code
-        wiki/                     # the wiki instance; created by running "./m sample" or "./m new-wiki" commands
-            data/                 # wiki data and metadata
-            index/                # wiki indexes
-        wiki_local/               # a convenient location to store custom CSS, Javascript, templates, logos, etc.
-        wikiconfig.py             # main configuration file, modify this to add or change features
-        intermap.txt              # interwiki map: copied by quickinstall.py, updated by "./m interwiki"
+            moin/             # large directory containing moin application code
+        wiki/                 # the wiki instance; created by running "./m new-wiki" or "moin create-instance" commands
+            data/             # wiki data and metadata
+            index/            # wiki indexes
+        wiki_local/           # a convenient location to store custom CSS, Javascript, templates, logos, etc.
+        wikiconfig.py         # main configuration file, modify this to add or change features
+        intermap.txt          # interwiki map: copied by quickinstall.py, updated by "./m interwiki"
 
 After installing moin from pypi or unpacking using a package manager, the directory structure will
 look like this::

@@ -9,7 +9,7 @@ require rebuilding.
 This starting configuration will run moin using the built-in server to serve files
 to browsers running on the local PC. The starting security settings below are secure,
 allowing only read access for anonymous users to any wiki items loaded via CLI commands
-(sample data or help items) and "registration_only_by_superuser = True".
+(e.g. help items) and "registration_only_by_superuser = True".
 Edit the "acl_functions" and "acls" variables below to adjust these restrictions.
 Create superuser and supereditor names and wikigroups as required
 before allowing public access with a more robust server.

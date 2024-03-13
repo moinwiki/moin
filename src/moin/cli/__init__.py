@@ -1,6 +1,6 @@
 # Copyright: 2000-2002 Juergen Hermann <jh@web.de>
 # Copyright: 2006,2011 MoinMoin:ThomasWaldmann
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -74,7 +74,6 @@ cli.add_command(index.IndexDump)
 
 cli.add_command(serialization.Serialize)
 cli.add_command(serialization.Deserialize)
-cli.add_command(serialization.LoadSample)
 
 cli.add_command(dump_html.Dump)
 
