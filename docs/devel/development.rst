@@ -64,9 +64,9 @@ create your development environment
 * activate virtualenv::
 
     . activate  # Windows: activate
-* create a wiki instance and load sample data::
+* create a wiki instance and load help data and welcome pages::
 
-    ./m sample  # Windows: m sample
+    moin create-instance --full
 * start the built-in server::
 
     moin run
@@ -566,14 +566,14 @@ Create a new venv, install moin, create instance, start server, create item, mod
     source bin/activate  # scripts\activate
     pip install --upgrade pip  # next command fails with pip 9.0.1 and maybe later versions
     pip install --pre --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple moin
+    moin --help  # prove it works
     moin create-instance --path <path/to/new/wikiconfig/dir>  # path optional, defaults to CWD
     cd <path/to/new/wikiconfig/dir>  # skip if using default CWD
     moin index-create
-    moin --help  # prove it works
     moin run  # empty wiki
-    moin load-sample  # data but no index
-    moin index-build   # data with index
+    moin welcome  # load welcome pages (e.g. Home)
     moin load-help -n help-en # load English help
     moin load-help -n help-common # load help images
+    moin run  # wiki with English help and welcome pages
 
 Announce update on #moin, moin-devel@python.org.

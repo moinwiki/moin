@@ -7,7 +7,6 @@ MoinMoin CLI - backend serialization / deserialization
 """
 
 import sys
-import os
 import click
 
 from flask import current_app as app
@@ -84,14 +83,3 @@ def Deserialize(file=None, new_ns=None, old_ns=None, kill_ns=None):
     with open_file(file, "rb") as f:
         deserialize(f, app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
     logging.info("Load Backup finished. You need to run index-build now.")
-
-
-@cli.command('load-sample', help='Load wiki sample items')
-def LoadSample():
-    logging.info("Load sample data started")
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    filename = os.path.join(dir_path, '../../contrib/sample-backup.moin')
-    filename = os.path.normpath(filename)
-    with open_file(filename, "rb") as f:
-        deserialize(f, app.storage.backend)
-    logging.info("Load sample data finished. You need to run index-build now.")
