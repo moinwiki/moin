@@ -259,7 +259,7 @@ macros to show something else::
     {{ sep }}
     {{ credit('https://moinmo.in/GPL', 'GPL licensed', 'MoinMoin is GPL licensed.') }}
     {{ sep }}
-    {{ credit('https://validator.w3.org/check?uri=referer', 'Valid HTML 5', 'Click here to validate this page.') }}
+    {{ credit('https://validator.w3.org/check?uri=referer', 'Valid HTML5', 'Click here to validate this page.') }}
     {{ end }}
     {% endmacro %}
 
