@@ -35,7 +35,8 @@ import os
 from moin.config.default import DefaultConfig
 from moin.utils.interwiki import InterWikiMap
 from moin.storage import create_mapping
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES,NAMESPACE_USERS, \
+    NAMESPACE_HELP_COMMON, NAMESPACE_HELP_EN, NAMESPACE_ALL
 
 
 class Config(DefaultConfig):
@@ -150,11 +151,11 @@ class Config(DefaultConfig):
         NAMESPACE_USERS: 'users',
         NAMESPACE_USERPROFILES: 'userprofiles',
         # namespaces for editor help files are optional, if unwanted delete here and in backends and acls
-        'help-common': 'help-common',  # contains media files used by other language helps
-        'help-en': 'help-en',  # replace this with help-de, help-ru, help-pt_BR etc.
-        # define custom namespaces if desired, trailing / below causes foo to be stored in default backend
-        # 'foo/': 'default',
-        # custom namespace with a separate backend - note absence of trailing /
+        NAMESPACE_HELP_COMMON: 'help-common',  # contains media files used by other language helps
+        NAMESPACE_HELP_EN: 'help-en',  # replace this with help-de, help-ru, help-pt_BR etc.
+        # define custom namespaces using the default backend
+        # 'foo': 'default',
+        # custom namespace with a separate backend (a wiki/data/bar directory will be created)
         # 'bar': 'bar',
     }
     backends = {
@@ -168,7 +169,8 @@ class Config(DefaultConfig):
         # help namespaces are optional
         'help-common': None,
         'help-en': None,
-        # required for bar namespace if defined above
+        # required for foo and bar namespaces as defined above
+        # 'foo': None,
         # 'bar': None,
     }
     acls = {
