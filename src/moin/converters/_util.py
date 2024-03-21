@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -120,7 +121,7 @@ class _Stack:
         """
         Add a custom attribute (data-lineno=nn) that will be used by Javascript to scroll edit textarea.
         """
-        if flaskg and flaskg.add_lineno_attr:
+        if flaskg and getattr(flaskg, 'add_lineno_attr', False):
             if self.last_lineno != self.iter_content.lineno:
                 # avoid adding same lineno to parent and multiple children or grand-children
                 elem.attrib[html.data_lineno] = self.iter_content.lineno

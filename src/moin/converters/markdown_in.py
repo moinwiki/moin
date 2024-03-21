@@ -1,5 +1,6 @@
 # Copyright: 2008-2010 MoinMoin:BastianBlank
 # Copyright: 2012 MoinMoin:AndreasKloeckner
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -599,7 +600,7 @@ class Converter:
 
         # }}} end Markdown 3.0.0 core.py convert method
 
-        add_lineno = bool(flaskg and flaskg.add_lineno_attr)
+        add_lineno = bool(flaskg and getattr(flaskg, 'add_lineno_attr', False))
 
         # run markdown post processors and convert from ElementTree to an EmeraldTree object
         converted = self.do_children(root, add_lineno=add_lineno)

@@ -1,4 +1,5 @@
 # Copyright: 2023 MoinMoin project
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -32,3 +33,19 @@ def get_backends(backends: Optional[str], all_backends: bool) -> Set[Backend]:
     else:
         logging.warning('no backends specified')
         return set()
+
+
+def drop_and_recreate_index(indexer):
+    """Drop index and recreate, rebuild and optimize
+    :param indexer: IndexingMiddleware object
+    """
+    indexer.close()
+    indexer.destroy()
+    logging.debug("Create index")
+    indexer.create()
+    logging.debug("Rebuild index")
+    indexer.rebuild()
+    logging.debug("Optimize index")
+    indexer.optimize_index()
+    indexer.open()
+    logging.info("Rebuild index finished")

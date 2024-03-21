@@ -1,5 +1,6 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2023 MoinMoin project
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -14,7 +15,7 @@ from flask.cli import FlaskGroup
 
 from moin.storage.middleware.serialization import serialize, deserialize
 from moin.app import create_app
-from moin.cli._util import get_backends
+from moin.cli._util import get_backends, drop_and_recreate_index
 
 from moin import log
 logging = log.getLogger(__name__)
@@ -82,4 +83,6 @@ def Deserialize(file=None, new_ns=None, old_ns=None, kill_ns=None):
     logging.info("Load backup started")
     with open_file(file, "rb") as f:
         deserialize(f, app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
-    logging.info("Load Backup finished. You need to run index-build now.")
+    logging.info("Rebuilding the index ...")
+    drop_and_recreate_index(app.storage)
+    logging.info("Load Backup finished.")
