@@ -114,6 +114,7 @@ If your wiki has data and is shut down
 If index needs a rebuild for some reason, e.g. index lost, index damaged,
 incompatible upgrade, etc., use::
 
+    moin index-destroy
     moin index-create
     moin index-build  # can take a while...
 

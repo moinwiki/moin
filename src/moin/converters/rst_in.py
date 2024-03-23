@@ -2,6 +2,7 @@
 # Copyright: 2004 Matthew Gilbert <gilbert AT voxmea DOT net>
 # Copyright: 2004 Alexander Schremmer <alex AT alexanderweb DOT de>
 # Copyright: 2010 MoinMoin:DmitryAndreev
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -92,7 +93,7 @@ class NodeVisitor:
         pass
 
     def open_moin_page_node(self, mointree_element):
-        if flaskg and flaskg.add_lineno_attr:
+        if flaskg and getattr(flaskg, 'add_lineno_attr', False):
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
                 mointree_element.attrib[html.data_lineno] = self.current_lineno

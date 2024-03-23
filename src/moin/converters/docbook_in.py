@@ -1,4 +1,5 @@
 # Copyright: 2010 MoinMoin:ValentinJaniaut
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -57,7 +58,7 @@ class XMLParser(ET.XMLParser):
     """
     def _start_list(self, tag, attrib_in):
         elem = super(XMLParser, self)._start_list(tag, attrib_in)
-        if flaskg and flaskg.add_lineno_attr:
+        if flaskg and getattr(flaskg, 'add_lineno_attr', False):
             elem.attrib[html.data_lineno] = self._parser.CurrentLineNumber
         return elem
 

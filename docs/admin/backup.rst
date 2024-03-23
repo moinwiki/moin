@@ -52,6 +52,4 @@ To load the backup file into your empty wiki, run::
 
  moin load --file backup.moin
 
-Then build an index of the loaded data::
-
- moin index-build
+The index is removed and automatically recreated by the load command.

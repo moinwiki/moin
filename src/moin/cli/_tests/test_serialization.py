@@ -1,4 +1,5 @@
 # Copyright: 2023 MoinMoin project
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -28,8 +29,7 @@ def load(restore_dir, backup_name, artifact_dir, args=None):
     try:
         for command in (['moin', 'create-instance'],
                         ['moin', 'index-create'],
-                        ['moin', 'load', '-f', getBackupPath(backup_name)] + (args if args else []),
-                        ['moin', 'index-build']):
+                        ['moin', 'load', '-f', getBackupPath(backup_name)] + (args if args else []),):
             p = run(command)
             assert_p_succcess(p)
     finally:

@@ -29,6 +29,7 @@ from .macros import MonthCalendar  # noqa
 from .macros import PageList  # noqa
 
 from moin.app import create_app
+from moin.cli._util import drop_and_recreate_index
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER, CHARSET19, CONTENTTYPE_MARKUP_OUT
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
@@ -241,15 +242,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
         backend.store(meta, out)
 
     logging.info("PHASE4: Rebuilding the index ...")
-    indexer.close()
-    indexer.destroy()
-    logging.debug("Create index")
-    indexer.create()
-    logging.debug("Rebuild index")
-    indexer.rebuild()
-    logging.debug("Optimize index")
-    indexer.optimize_index()
-    indexer.open()
+    drop_and_recreate_index(app.storage)
 
     logging.info("Finished conversion!")
     if hasattr(conv_out, 'unknown_macro_list'):
