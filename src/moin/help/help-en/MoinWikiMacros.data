@@ -476,6 +476,21 @@ The MonthCalendar macro is for those who need a calendar wiki integration or wan
 For more details see [[/MonthCalendar]]
 
 
+=== PageTitle ===
+
+Create a H1 look-alike that will not be included in TableOfContents.
+
+'''Markup:'''
+
+{{{
+<<PageTitle(My Page Title)>>
+}}}
+
+'''Result'''
+
+<<PageTitle(My Page Title)>>
+
+
 === RandomItem ===
 
 '''Markup:'''
