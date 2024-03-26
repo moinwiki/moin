@@ -218,6 +218,11 @@ class Config(DefaultConfig):
     # default root, use this value by default for all namespaces
     default_root = 'Home'
 
+    # Enable only selected content types for new items. Default: [] (all types enabled).
+    # contenttype_enabled = ['MoinMoin', 'PDF', 'PNG', 'JPEG']
+    # Disable selected content types for new items. Ignored if contenttype_enabled is set.
+    # contenttype_disabled = ['Binary File', 'TAR', 'TGZ', 'ZIP', 'SVGDRAW', ]
+
     # add or remove packages - see https://github.com/xstatic-py/xstatic for info about xstatic
     # it is uncommon to change these because of local customizations
     from xstatic.main import XStatic

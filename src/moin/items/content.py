@@ -78,8 +78,6 @@ logging = log.getLogger(__name__)
 
 COLS = 80
 ROWS_DATA = 20
-ENABLED_CONTENT_TYPES = []  # Allow all content types
-# ENABLED_CONTENT_TYPES = ['MoinMoin', 'PDF', 'PNG', 'JPEG',]  # example: restrict content types
 
 
 class RegistryContent(RegistryBase):
@@ -127,12 +125,35 @@ content_registry = RegistryContent([
 
 
 def register(cls):
-    if not cls.display_name or len(ENABLED_CONTENT_TYPES) == 0 or cls.display_name in ENABLED_CONTENT_TYPES:
-        logging.debug(f"register contenttype {cls.display_name} in group {cls.group}")
-        content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype),
-                                                        cls.default_contenttype_params, cls.display_name,
-                                                        cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
+    content_registry.register(RegistryContent.Entry(cls._factory, Type(cls.contenttype),
+                                                    cls.default_contenttype_params, cls.display_name,
+                                                    cls.ingroup_order, RegistryContent.PRIORITY_MIDDLE), cls.group)
     return cls
+
+
+def content_registry_enable(contenttype_enabled):
+    """ Remove content types from the registry that are not explicitly enabled
+    """
+    groups_enabled = dict([(g, []) for g in content_registry.group_names])
+    for group in content_registry.group_names:
+        for e in content_registry.groups[group]:
+            if e.display_name and e.display_name in contenttype_enabled:
+                groups_enabled[group].append(e)
+                logging.debug(f"Enable contenttype {e.display_name} in group {group}")
+    content_registry.groups = groups_enabled
+
+
+def content_registry_disable(contenttype_disabled):
+    """ Remove disabled content types from registry
+    """
+    groups_enabled = dict([(g, []) for g in content_registry.group_names])
+    for group in content_registry.group_names:
+        for e in content_registry.groups[group]:
+            if not e.display_name or e.display_name not in contenttype_disabled:
+                groups_enabled[group].append(e)
+            else:
+                logging.debug(f"Disable contenttype {e.display_name} in group {group}")
+    content_registry.groups = groups_enabled
 
 
 def conv_serialize(doc, namespaces, method='polyglot'):
@@ -153,7 +174,6 @@ class Content:
     display_name = None
     group = GROUP_OTHER
     ingroup_order = 0
-    enabled_content_types = ENABLED_CONTENT_TYPES
 
     @classmethod
     def _factory(cls, *args, **kw):
