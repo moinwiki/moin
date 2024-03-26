@@ -5,6 +5,7 @@
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # Copyright: 2011      MoinMoin:AkashSinha
 # Copyright: 2023      MoinMoin project
+# Copyright: 2024      MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -21,6 +22,7 @@ from moin.i18n import _, L_, N_
 from moin import error
 from moin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
 from moin.constants.keys import *
+from moin.items.content import content_registry_enable, content_registry_disable
 from moin import datastructures
 from moin.auth import MoinAuth
 from moin.utils import plugins
@@ -164,6 +166,12 @@ class ConfigFunctionality:
             self.cache.pwd_context = CryptContext(**self.passlib_crypt_context)
         except ValueError as err:
             raise error.ConfigurationError("passlib_crypt_context configuration is invalid [{0}].".format(err))
+
+        if len(self.contenttype_enabled):
+            content_registry_enable(self.contenttype_enabled)
+        elif len(self.contenttype_disabled):
+            content_registry_disable(self.contenttype_disabled)
+
 
     def _config_check(self):
         """ Check namespace and warn about unknown names
@@ -511,6 +519,8 @@ options_no_group_name = {
         # ('refresh', None, "refresh = (minimum_delay_s, targets_allowed) enables use of '#refresh 5 PageName' processing instruction, targets_allowed must be either 'internal' or 'external'"),
         ('siteid', 'MoinMoin', None),  # XXX just default to some existing module name to
                                        # make plugin loader etc. work for now
+        ('contenttype_disabled', [], "List of disabled content types. Ignored if contenttype_enabled is set."),
+        ('contenttype_enabled', [], "List of available content types for new items. Default: [] (all types enabled)."),
     )),
 }
 

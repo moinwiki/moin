@@ -10,7 +10,6 @@ import pytest
 
 from moin._tests import become_trusted, update_item
 from moin.items import Item, NonExistent, IndexEntry, MixedIndexEntry
-from moin.items.content import Content
 from moin.utils.interwiki import CompositeName
 from moin.constants.keys import (ITEMTYPE, CONTENTTYPE, NAME, NAME_OLD, COMMENT,
                                  ADDRESS, TRASH, ITEMID, NAME_EXACT, SIZE, MTIME,
@@ -127,9 +126,6 @@ class TestItem:
         assert saved_meta[COMMENT] == comment
         assert saved_data == b''
 
-    @pytest.mark.skipif(len(Content.enabled_content_types) > 0 and
-                        not all(i in Content.enabled_content_types for i in ['JPEG', 'Plain Text']),
-                        reason="'JPEG' or 'Plain Text' content_type disabled")
     def testIndex(self):
         # create a toplevel and some sub-items
         basename = 'Foo'

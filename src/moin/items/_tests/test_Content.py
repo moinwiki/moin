@@ -26,8 +26,6 @@ from functools import reduce
 class TestContent:
     """ Test for arbitrary content """
 
-    @pytest.mark.skipif(len(Content.enabled_content_types) > 0 and 'PNG' not in Content.enabled_content_types,
-                        reason="'PNG' content_type disabled")
     def testClassFinder(self):
         for contenttype, ExpectedClass in [
                 ('application/x-foobar', Binary),
@@ -73,8 +71,6 @@ class TestTarItems:
     tests for the container items
     """
 
-    @pytest.mark.skipif(len(Content.enabled_content_types) > 0 and 'TAR' not in Content.enabled_content_types,
-                        reason="'TAR' content_type disabled")
     def testCreateContainerRevision(self):
         """
         creates a container and tests the content saved to the container
@@ -92,8 +88,6 @@ class TestTarItems:
         assert tf_names == members
         assert item.content.get_member('example1.txt').read() == filecontent
 
-    @pytest.mark.skipif(len(Content.enabled_content_types) > 0 and 'TAR' not in Content.enabled_content_types,
-                        reason="'TAR' content_type disabled")
     def testRevisionUpdate(self):
         """
         creates two revisions of a container item
@@ -115,8 +109,6 @@ class TestTarItems:
 class TestZipMixin:
     """ Test for zip-like items """
 
-    @pytest.mark.skipif(len(Content.enabled_content_types) > 0 and 'ZIP' not in Content.enabled_content_types,
-                        reason="'ZIP' content_type disabled")
     def test_put_member(self):
         item_name = 'Zip_file'
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype='application/zip')
@@ -164,8 +156,6 @@ class TestTransformableBitmapImage:
             # no PIL
             pass
 
-    @pytest.mark.skipif(len(Content.enabled_content_types) > 0 and 'JPEG' not in Content.enabled_content_types,
-                        reason="'JPEG' content_type disabled")
     def test__render_data_diff_text(self):
         item_name = 'image_Item'
         item = Item.create(item_name)
