@@ -7,36 +7,43 @@ Installing the code
 There are a lot of ways to do this and as this is not moin specific,
 we won't go into details:
 
-- Use your operating system's / distribution's package manager to install the
+- As long as moin2 is in pre-release stages, this is likely your only and best choice.
+  If you use ldap, you will have to install OS dependant packages yourself.
+  You will have to install moin updates and security fixes your self.
+  Create a virtual env first for better separation, then install moin:
+
+::
+
+  <python3> -m venv </path/to/new/virtual/environment>
+  cd </path/to/new/virtual/environment>
+  source bin/activate  # or "scripts\activate" on windows
+  pip install --pre  moin
+
+
+- Or, use your operating system's / distribution's package manager to install the
   moin2 package. This is the recommended method as it will install moin2 and
   all other software it requires. Also your OS / dist might have a mechanism
-  for updating the installed software with security fixes or to future releases.
+  for updating the installed software with security fixes and future releases.
 
   E.g. on Debian/Ubuntu Linux
 
 ::
 
- apt install moin2
+  apt install moin
 
-- Install from PyPI:
-
-::
-
- pip install moin2
-
-- Install from Test Python Package Index as long as moin2 is not officially released:
+- Or, install into a virtual env from PyPI.
+  You will have to install moin updates and security fixes your self.:
 
 ::
 
-  pip install --pre --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple moin
+  <python3> -m venv </path/to/new/virtual/environment>
+  cd </path/to/new/virtual/environment>
+  source bin/activate  # or "scripts\activate" on windows
+  pip install moin
 
-- Optionally, create a virtual env first for better separation or
-- use ``pip install --user moin2`` to install into your home directory.
-- pip will automatically install other python packages moin2 requires,
-  but you maybe have to install required non-python packages yourself.
-- You will have to care for updates / installing security fixes yourself.
 
-After this, you should have a ``moin`` command available, try it:
+
+After installation, you should have a ``moin`` command available, try it:
 
 ::
 
@@ -65,8 +72,13 @@ you'll find some comments in there. Review and change the settings for::
 
  * sitename
  * interwikiname
- * acls
+ * acls - SuperUser and SuperEditor
+ * registration only by superuser
+ * edit locking policy
+ * email configuration
+ * namespaces and backends
  * SECRET_KEY
+ * etc.
 
 After configuring, you can create an empty wiki by initializing the
 storage and the index:
@@ -271,6 +283,39 @@ process to install any new releases of dependent packages:
 
  m quickinstall   # in Windows
  ./m quickinstall # in Unix or Linux
+
+Verifying signed releases
+=========================
+
+Releases are signed with an GPG key and a .asc file is provided for each release.
+
+To verify a signature, the public key needs to be known to GPG.
+There are two moin project co-owners, their public keys may be imported into the
+local keystore from a keyserver with the fingerprints::
+
+  gpg --recv-keys "6D5B EF9A DD20 7580 5747 B70F 9F88 FB52 FAF7 B393"
+  gpg --recv-keys "7AFC F58F A118 9DED 2E86 3C41 3D96 89A8 79BD D615"
+
+If GPG successfully imported the key, the output should include (among other things)::
+
+  gpg: Total number processed: 1
+
+To verify the signature of the moin release, download these files from
+https://github.com/moinwiki/moin/releases::
+
+  moin-2.*.*.tar.gz
+  moin-2.*.*.tar.gz.asc
+
+Then run::
+
+  gpg --verify moin-2.*.*.tar.gz.asc
+
+With a success, the output should look similar to this::
+
+  gpg: assuming signed data in 'dist/moin-2.0.0a1.tar.gz'
+  gpg: Signature made Wed Mar 27 13:54:41 2024 USMST
+  gpg:                using RSA key 7AFCF58FA1189DED2E863C413D9689A879BDD615
+  gpg: Good signature from "RogerHaase (2024-03-11) <haaserd@gmail.com>" [ultimate]
 
 Troubleshooting
 ===============
