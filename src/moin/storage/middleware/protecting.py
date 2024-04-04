@@ -13,7 +13,7 @@ Note: for method / attribute docs, please see the same methods / attributes in
 
 import time
 
-from whoosh.util.cache import lru_cache
+from whoosh.util.cache import lfu_cache
 
 from moin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
 from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAMES, NAME, NAMESPACE
@@ -27,7 +27,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-# max sizes of some lru caches:
+# max sizes of some lfu caches:
 PARSE_CACHE = 100  # ACL string -> ACL object parsing:  acl, default > acls
 EVAL_CACHE = 300  # ACL evaluation for some username / capability:  acl, default_acl, user_name, right > t/f
 LOOKUP_CACHE = 200  # ACL lookup for some itemname:  itemid,fqname > acl
@@ -78,16 +78,16 @@ class ProtectingMiddleware:
         self.valid_rights = ACL_RIGHTS_CONTENTS
         # The ProtectingMiddleware exists just 1 request long, but might have
         # to parse and evaluate huge amounts of ACLs. We avoid doing same stuff
-        # again and again by using some fresh lru caches for each PMW instance.
-        lru_cache_decorator = lru_cache(PARSE_CACHE)
-        self.parse_acl = lru_cache_decorator(self._parse_acl)
-        lru_cache_decorator = lru_cache(EVAL_CACHE)
-        self.eval_acl = lru_cache_decorator(self._eval_acl)
-        lru_cache_decorator = lru_cache(LOOKUP_CACHE)
-        self.get_acls = lru_cache_decorator(self._get_acls)
-        lru_cache_decorator = lru_cache(ACL_CACHE)
-        self.allows = lru_cache_decorator(self._allows)
-        # placeholder to show we are passing meta data around without affecting lru caches
+        # again and again by using some fresh lfu caches for each PMW instance.
+        lfu_cache_decorator = lfu_cache(PARSE_CACHE)
+        self.parse_acl = lfu_cache_decorator(self._parse_acl)
+        lfu_cache_decorator = lfu_cache(EVAL_CACHE)
+        self.eval_acl = lfu_cache_decorator(self._eval_acl)
+        lfu_cache_decorator = lfu_cache(LOOKUP_CACHE)
+        self.get_acls = lfu_cache_decorator(self._get_acls)
+        lfu_cache_decorator = lfu_cache(ACL_CACHE)
+        self.allows = lfu_cache_decorator(self._allows)
+        # placeholder to show we are passing meta data around without affecting lfu caches
         self.meta = None
 
     def _clear_acl_cache(self):
