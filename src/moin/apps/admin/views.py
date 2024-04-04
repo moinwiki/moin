@@ -290,13 +290,13 @@ def wikiconfighelp():
             if len(repr(default)) > max_len_default and isinstance(default, list) and len(default) > 1:
                 txt = ['[']
                 for entry in default:
-                    txt.append('&#013;{0},'.format(repr(entry)))
+                    txt.append(f'&#013;{repr(entry)},')
                 txt.append('&#013;]')
                 return ''.join(txt)
             elif len(repr(default)) > max_len_default and isinstance(default, dict) and len(default) > 1:
                 txt = ['{']
                 for key, val in default.items():
-                    txt.append('&#013;{0}: {1},'.format(repr(key), repr(val)))
+                    txt.append(f'&#013;{repr(key)}: {repr(val)},')
                 txt.append('&#013;}')
                 return ''.join(txt)
             else:

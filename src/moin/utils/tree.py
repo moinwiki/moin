@@ -50,7 +50,7 @@ class Namespace(str):
         return Name(key, self)
 
     def __repr__(self):
-        return '<{0}({1!r})>'.format(self.__class__.__name__, str(self))
+        return f'<{self.__class__.__name__}({str(self)!r})>'
 
     @property
     def namespace(self):

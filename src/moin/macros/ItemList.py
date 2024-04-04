@@ -87,7 +87,7 @@ class Macro(MacroPageLinkListBase):
             args = arguments[0].split(',')
         for arg in args:
             try:
-                key, val = [x.strip() for x in arg.split('=')]
+                key, val = (x.strip() for x in arg.split('='))
             except ValueError:
                 raise ValueError(_('ItemList macro: Argument "{arg}" does not follow <key>=<val> format '
                                    '(arguments, if more than one, must be comma-separated).').format(arg=arg))

@@ -20,7 +20,7 @@ class AuthLog(BaseAuth):
     name = "log"
 
     def __init__(self, **kw):
-        super(AuthLog, self).__init__(**kw)
+        super().__init__(**kw)
 
     def log(self, action, user_obj, kw):
         logging.info(f'{action}: user_obj={user_obj!r} kw={kw!r}')

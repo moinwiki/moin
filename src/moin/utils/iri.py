@@ -20,7 +20,7 @@ def _iriquote_replace(exc):
     if not isinstance(exc, UnicodeDecodeError):
         raise exc
 
-    text = ''.join(('%%%02X' % code for code in exc.object[exc.start:exc.end]))
+    text = ''.join('%%%02X' % code for code in exc.object[exc.start:exc.end])
     return text, exc.end
 
 
@@ -162,7 +162,7 @@ class Iri(AutoNe):
         return NotImplemented
 
     def __repr__(self):
-        return '{0}(scheme={1!r}, authority={2!r}, path={3!r}, query={4!r}, fragment={5!r})'.format(
+        return '{}(scheme={!r}, authority={!r}, path={!r}, query={!r}, fragment={!r})'.format(
             self.__class__.__name__,
             self.scheme,
             self._authority,
@@ -464,7 +464,7 @@ class IriAuthority(AutoNe):
         return False
 
     def __repr__(self):
-        return '{0}(userinfo={1!r}, host={2!r}, port={3!r})'.format(
+        return '{}(userinfo={!r}, host={!r}, port={!r})'.format(
             self.__class__.__name__,
             self._userinfo,
             self._host,
@@ -625,7 +625,7 @@ class IriPath(AutoNe):
         return '/'.join(self._list)
 
     def __repr__(self):
-        return '{0}({1!r})'.format(
+        return '{}({!r})'.format(
             self.__class__.__name__,
             str(self),
         )
@@ -658,7 +658,7 @@ class IriPath(AutoNe):
         return output
 
     def extend(self, value):
-        self._list.extend((IriPathSegment(i) for i in value))
+        self._list.extend(IriPathSegment(i) for i in value)
 
     @property
     def fullquoted(self):
@@ -668,7 +668,7 @@ class IriPath(AutoNe):
         All characters which are illegal in the path part are encoded.
         Used to generate the full IRI.
         """
-        return '/'.join((i.fullquoted for i in self._list))
+        return '/'.join(i.fullquoted for i in self._list)
 
     @property
     def quoted(self):
@@ -678,7 +678,7 @@ class IriPath(AutoNe):
         Only '%' and illegal UTF-8 sequences are encoded. Primarily used to
         have a one-to-one mapping with non-UTF-8 URIs.
         """
-        return '/'.join((i.quoted for i in self._list))
+        return '/'.join(i.quoted for i in self._list)
 
     @property
     def urlquoted(self):
@@ -688,7 +688,7 @@ class IriPath(AutoNe):
         All characters which are illegal in the path part are encoded.
         Used to generate the full URI.
         """
-        return '/'.join((i.urlquoted for i in self._list))
+        return '/'.join(i.urlquoted for i in self._list)
 
 
 class IriPathSegment(_Value):

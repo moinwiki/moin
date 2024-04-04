@@ -18,13 +18,13 @@ class BracketError(Exception):
 class BracketUnexpectedCloseError(BracketError):
     def __init__(self, bracket):
         self.bracket = bracket
-        BracketError.__init__(self, "Unexpected closing bracket {0}".format(bracket))
+        BracketError.__init__(self, f"Unexpected closing bracket {bracket}")
 
 
 class BracketMissingCloseError(BracketError):
     def __init__(self, bracket):
         self.bracket = bracket
-        BracketError.__init__(self, "Missing closing bracket {0}".format(bracket))
+        BracketError.__init__(self, f"Missing closing bracket {bracket}")
 
 
 class ParserPrefix:
@@ -40,7 +40,7 @@ class ParserPrefix:
         return isinstance(other, ParserPrefix) and other.prefix == self.prefix
 
     def __repr__(self):
-        return '<ParserPrefix({0})>'.format(self.prefix.encode('utf-8'))
+        return '<ParserPrefix({})>'.format(self.prefix.encode('utf-8'))
 
 
 def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
@@ -535,7 +535,7 @@ class UnitArgument(IEFArgument):
                 pass
         units = ', '.join(self._units)
         # XXX: how can we translate this?
-        raise ValueError("Invalid unit in value {0} (allowed units: {1})".format(s, units))
+        raise ValueError(f"Invalid unit in value {s} (allowed units: {units})")
 
     def get_default(self):
         return self._default

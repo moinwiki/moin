@@ -24,7 +24,7 @@ from moin.converters.moinwiki_out import Converter as conv_out
 
 class TestConverter:
 
-    input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:xinclude="{3}" xmlns:html="{4}"'.format(
+    input_namespaces = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:xinclude="{}" xmlns:html="{}"'.format(
         moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)
 
     namespaces = {

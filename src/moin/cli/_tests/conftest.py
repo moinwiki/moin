@@ -151,7 +151,7 @@ def server(welcome, load_help, artifact_dir):
             try:
                 with open(get_crawl_server_log_path()) as f:
                     logging.error(f.read())
-            except IOError as e:
+            except OSError as e:
                 logging.error(f'{repr(e)} when trying to open server log')
             yield started
 
@@ -193,7 +193,7 @@ def do_crawl(request, artifact_dir):
 
 
 @pytest.fixture(scope="package")
-def crawl_results(request, artifact_dir) -> List[CrawlResult]:
+def crawl_results(request, artifact_dir) -> list[CrawlResult]:
     _, artifact_base_dir = get_dirs('')
     crawl_success = True
     if settings.DO_CRAWL:

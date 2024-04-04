@@ -345,7 +345,7 @@ def subscription_validator(element, state):
     else:
         element.add_error(
             "Subscription must start with one of the keywords: "
-            "'{0}', '{1}', '{2}', '{3}' or '{4}'.".format(keys.ITEMID,
+            "'{}', '{}', '{}', '{}' or '{}'.".format(keys.ITEMID,
                                                           keys.NAME, keys.TAGS,
                                                           keys.NAMERE,
                                                           keys.NAMEPREFIX))

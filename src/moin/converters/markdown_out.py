@@ -108,7 +108,7 @@ class Converter:
             # add footnote definitions to end of content
             notes = []
             for name, txt in self.footnotes:
-                notes.append('[^{0}]: {1}'.format(name, txt))
+                notes.append(f'[^{name}]: {txt}')
             notes = '\n'.join(notes)
             content += '\n\n' + notes + '\n'
         return content
@@ -126,7 +126,7 @@ class Converter:
                         ret = '\n'
                 if child == '\n' and getattr(elem, 'level', 0):
                     child = child + ' ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
-                childrens_output.append('{0}{1}'.format(ret, child))
+                childrens_output.append(f'{ret}{child}')
                 self.last_closed = 'text'
         out = join_char.join(childrens_output)
         return out
@@ -149,7 +149,7 @@ class Converter:
         attr_list = []
         for key, val in elem.attrib.items():
             if key.name not in ('data-lineno', 'outline-level', 'href', 'item-label-generate', 'baseline-shift'):
-                attr_list.append('{0}="{1}"'.format(key.name, val))
+                attr_list.append(f'{key.name}="{val}"')
         if attr_list:
             return Markdown.attribute_open + ' '.join(attr_list) + Markdown.attribute_close
         return ''
@@ -184,8 +184,8 @@ class Converter:
         href = href.split('wiki.local:')[-1]
         text = self.open_children(elem)
         if title:
-            href = '{0} "{1}"'.format(href, title)
-        ret = '[{0}]({1})'.format(text, href)
+            href = f'{href} "{title}"'
+        ret = f'[{text}]({href})'
         cls = elem.get(moin_page.class_)
         if cls:
             ret = ret + '{:class="' + cls + '"}'
@@ -239,7 +239,7 @@ class Converter:
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
-        return "{0}{1}{2}".format(Markdown.emphasis, childrens_output, Markdown.emphasis)
+        return f"{Markdown.emphasis}{childrens_output}{Markdown.emphasis}"
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -253,7 +253,7 @@ class Converter:
             level = 6
         ret = Markdown.h * level + ' '
         ret += ''.join(elem.itertext())
-        ret += ' {0}\n'.format(Markdown.h * level)
+        ret += f' {Markdown.h * level}\n'
         return '\n' + ret
 
     def open_moinpage_line_break(self, elem):
@@ -272,7 +272,7 @@ class Converter:
         list_start = elem.attrib.get(moin_page.list_start)
         if list_start:
             child_out1, child_out2 = childrens_output.split('.', 1)
-            childrens_output = '{0}.#{1}{2}'.format(child_out1, list_start, child_out2)
+            childrens_output = f'{child_out1}.#{list_start}{child_out2}'
         self.list_item_labels.pop()
         self.list_level -= 1
         self.status.pop()
@@ -280,7 +280,7 @@ class Converter:
             ret_end = ''
         else:
             ret_end = '\n'
-        return "{0}{1}{2}".format(ret, childrens_output, ret_end)
+        return f"{ret}{childrens_output}{ret_end}"
 
     def open_moinpage_list_item(self, elem):
         self.list_item_label = self.list_item_labels[-1] + ' '
@@ -294,9 +294,9 @@ class Converter:
             self.list_item_label = self.list_item_labels[-1] + ' '
             ret = '   ' * (len(''.join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1]))
             if self.last_closed:
-                ret = '\n{0}'.format(ret)
+                ret = f'\n{ret}'
         childrens_output = self.open_children(elem)
-        return "\n{0}{1}".format(ret, childrens_output)
+        return f"\n{ret}{childrens_output}"
 
     def open_moinpage_list_item_body(self, elem):
         ret = ''
@@ -315,7 +315,7 @@ class Converter:
             if class_ == "footnote":
                 self.footnote_number += 1
                 self.footnotes.append((self.footnote_number, self.open_children(elem)))
-                return '[^{0}]'.format(self.footnote_number)
+                return f'[^{self.footnote_number}]'
         # moinwiki footnote placement is ignored; markdown cannot place footnotes in middle of document like moinwiki
         return ''
 
@@ -346,8 +346,8 @@ class Converter:
             alt = elem.attrib.get(html.alt, '')
         title = elem.attrib.get(html.title_, '')
         if title:
-            title = '"{0}"'.format(title)
-        ret = '![{0}]({1} {2})'.format(alt, href, title)
+            title = f'"{title}"'
+        ret = f'![{alt}]({href} {title})'
         ret = ret.replace(' )', ')')
         return ret
 
@@ -400,13 +400,13 @@ class Converter:
     def open_moinpage_body(self, elem):
         class_ = elem.get(moin_page.class_, '').replace(' ', '/')
         if class_:
-            ret = ' {0}\n'.format(class_)
+            ret = f' {class_}\n'
         elif len(self.status) > 2:
             ret = '\n'
         else:
             ret = ''
         childrens_output = self.open_children(elem)
-        return "{0}{1}".format(ret, childrens_output)
+        return f"{ret}{childrens_output}"
 
     def open_moinpage_samp(self, elem):
         # text {{{more text}}} end
@@ -422,14 +422,14 @@ class Converter:
         font_size = elem.get(moin_page.font_size, '')
         baseline_shift = elem.get(moin_page.baseline_shift, '')
         if font_size:
-            return "{0}{1}{2}".format(
+            return "{}{}{}".format(
                 Markdown.larger_open if font_size == "120%" else Markdown.smaller_open,
                 self.open_children(elem),
                 Markdown.larger_close if font_size == "120%" else Markdown.smaller_close)
         if baseline_shift == 'super':
-            return '<sup>{0}</sup>'.format(''.join(elem.itertext()))
+            return '<sup>{}</sup>'.format(''.join(elem.itertext()))
         if baseline_shift == 'sub':
-            return '<sub>{0}</sub>'.format(''.join(elem.itertext()))
+            return '<sub>{}</sub>'.format(''.join(elem.itertext()))
         return ''.join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
@@ -445,7 +445,7 @@ class Converter:
         return self.open_moinpage_ins(elem)
 
     def open_moinpage_strong(self, elem):
-        return "{0}{1}{2}".format(Markdown.strong, self.open_children(elem), Markdown.strong)
+        return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"
 
     def open_moinpage_table(self, elem):
         self.status.append('table')

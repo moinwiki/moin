@@ -70,11 +70,11 @@ def diff(d1, d2, basekeys=None):
                 changes.extend([(DELETE, basekeys, d1), (INSERT, basekeys, d2)])
         else:
             raise TypeError(
-                "Unsupported diff between {0} and {1} data types".format(
+                "Unsupported diff between {} and {} data types".format(
                     type(d1), type(d2)))
     else:
         raise TypeError(
-            "Unsupported diff between {0} and {1} data types".format(
+            "Unsupported diff between {} and {} data types".format(
                 type(d1), type(d2)))
     return changes
 
@@ -88,6 +88,6 @@ def make_text_diff(changes):
     """
     marker = {INSERT: "+", DELETE: "-"}
     for change_type, keys, value in changes:
-        yield "{0} {1}{2}{3}".format(marker[change_type],
+        yield "{} {}{}{}".format(marker[change_type],
                                      ".".join(str(key) for key in keys),
                                      ": " if keys else "", str(value))

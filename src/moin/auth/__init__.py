@@ -237,7 +237,7 @@ class BaseAuth:
 class MoinAuth(BaseAuth):
     """ handle login from moin login form """
     def __init__(self, **kw):
-        super(MoinAuth, self).__init__(**kw)
+        super().__init__(**kw)
 
     login_inputs = ['username', 'password']
     name = 'moin'
@@ -298,7 +298,7 @@ class GivenAuth(BaseAuth):
                  coding='utf-8',  # for decoding REMOTE_USER correctly
                  **kw
                  ):
-        super(GivenAuth, self).__init__(**kw)
+        super().__init__(**kw)
         self.env_var = env_var
         self.user_name = user_name
         self.autocreate = autocreate

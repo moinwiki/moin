@@ -96,9 +96,9 @@ class RegistryContent(RegistryBase):
             return NotImplemented
 
     def __init__(self, group_names):
-        super(RegistryContent, self).__init__()
+        super().__init__()
         self.group_names = group_names
-        self.groups = dict([(g, []) for g in group_names])
+        self.groups = {g: [] for g in group_names}
 
     def register(self, e, group):
         """
@@ -134,7 +134,7 @@ def register(cls):
 def content_registry_enable(contenttype_enabled):
     """ Remove content types from the registry that are not explicitly enabled
     """
-    groups_enabled = dict([(g, []) for g in content_registry.group_names])
+    groups_enabled = {g: [] for g in content_registry.group_names}
     for group in content_registry.group_names:
         for e in content_registry.groups[group]:
             if e.display_name and e.display_name in contenttype_enabled:
@@ -146,7 +146,7 @@ def content_registry_enable(contenttype_enabled):
 def content_registry_disable(contenttype_disabled):
     """ Remove disabled content types from registry
     """
-    groups_enabled = dict([(g, []) for g in content_registry.group_names])
+    groups_enabled = {g: [] for g in content_registry.group_names}
     for group in content_registry.group_names:
         for e in content_registry.groups[group]:
             if not e.display_name or e.display_name not in contenttype_disabled:
@@ -755,7 +755,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _render_data_diff_atom(self, oldrev, newrev):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
-            return super(TransformableBitmapImage, self)._render_data_diff_atom(oldrev, newrev)
+            return super()._render_data_diff_atom(oldrev, newrev)
         url = url_for('frontend.diffraw', _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template('atom.html',
                                oldrev=oldrev, newrev=newrev, get='binary',
@@ -764,7 +764,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
     def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
-            return super(TransformableBitmapImage, self)._render_data_diff(oldrev, newrev)
+            return super()._render_data_diff(oldrev, newrev)
         url = url_for('frontend.diffraw', item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return Markup(f'<img src="{escape(url)}" />')
 
@@ -801,7 +801,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 outfile.close()
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
                 app.cache.set(cid, (headers, data))
-            except (IOError, ValueError) as err:
+            except (OSError, ValueError) as err:
                 logging.exception(f"error during PILdiff: {err}")
                 abort(404)  # TODO render user friendly error image
         else:
@@ -810,7 +810,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         return Response(data, headers=headers)
 
     def _render_data_diff_text(self, oldrev, newrev):
-        return super(TransformableBitmapImage, self)._render_data_diff_text(oldrev, newrev)
+        return super()._render_data_diff_text(oldrev, newrev)
 
 
 @register
@@ -848,14 +848,14 @@ class Text(Binary):
         cols = COLS
 
         def _load(self, item):
-            super(Text.ModifyForm, self)._load(item)
+            super()._load(item)
             data = item.data
             data = item.data_storage_to_internal(data)
             data = item.data_internal_to_form(data)
             self['data_text'] = data
 
         def _dump(self, item):
-            data, contenttype_guessed = super(Text.ModifyForm, self)._dump(item)
+            data, contenttype_guessed = super()._dump(item)
             if data is None:
                 data = self['data_text'].value
                 data = item.data_form_to_internal(data)
@@ -1120,7 +1120,7 @@ class DrawPNGMap(Draw):
         try:
             image_map = mapfile.read()
             mapfile.close()
-        except (IOError, OSError):
+        except OSError:
             image_map = ''
         return image_map
 

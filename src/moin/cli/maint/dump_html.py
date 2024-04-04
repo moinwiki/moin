@@ -104,7 +104,7 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             acls['before'] = 'All:read'
 
         # create an empty output directory after deleting any existing directory
-        print('Creating output directory {0}, starting to copy supporting files'.format(html_root))
+        print(f'Creating output directory {html_root}, starting to copy supporting files')
         if os.path.exists(html_root):
             shutil.rmtree(html_root, ignore_errors=False)
         else:
@@ -169,14 +169,14 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
                 filename = norm(join(html_root, file_name))
                 names.append(item_name)  # save item_names for index
             except Forbidden:
-                print('Failed to dump {0}: Forbidden'.format(current_rev.name))
+                print(f'Failed to dump {current_rev.name}: Forbidden')
                 continue
             except KeyError:
-                print('Failed to dump {0}: KeyError'.format(current_rev.name))
+                print(f'Failed to dump {current_rev.name}: KeyError')
                 continue
 
             if not isinstance(rendered, str):
-                print('Rendering failed for {0} with response {1}'.format(file_name, rendered))
+                print(f'Rendering failed for {file_name} with response {rendered}')
                 continue
             # make hrefs relative to root folder
             rel_path2root = PARENT_DIR * len(re.findall('/', item_name))
@@ -185,13 +185,13 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
             rendered = rendered.replace('src="/+serve/', 'src="+serve/')
             rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
             # TODO: fix basic theme
-            rendered = rendered.replace('<a href="">', '<a href="{0}">'.format(app.cfg.default_root))
+            rendered = rendered.replace('<a href="">', f'<a href="{app.cfg.default_root}">')
             # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
-            valid_src = ' src="{}+get/'.format(rel_path2root)
+            valid_src = f' src="{rel_path2root}+get/'
             rendered = re.sub(invalid_src, valid_src, rendered)
             # correct links inside document
             for node in used_dirs:
-                node_href = 'href="{}{}"'.format(rel_path2root, node)
+                node_href = f'href="{rel_path2root}{node}"'
                 rendered = rendered.replace(node_href, node_href[:-1] + '.html"')
             # copy raw data for all items to output /+get directory;
             # images are required, text items are of marginal/no benefit
@@ -212,17 +212,17 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
                     rev.data.seek(0)
                     shutil.copyfileobj(rev.data, f)
                     try:
-                        print('Saved file named {0} as raw data'.format(filename))
+                        print(f'Saved file named {filename} as raw data')
                     except UnicodeEncodeError:
-                        print('Saved file named {0} as raw data'.format(filename.encode('ascii', errors='replace')))
+                        print('Saved file named {} as raw data'.format(filename.encode('ascii', errors='replace')))
 
             else:
                 with open(filename, 'wb') as f:
                     f.write(rendered.encode('utf8'))
                     try:
-                        print('Saved file named {0}'.format(filename))
+                        print(f'Saved file named {filename}')
                     except UnicodeEncodeError:
-                        print('Saved file named {0}'.format(filename.encode('ascii', errors='replace')))
+                        print('Saved file named {}'.format(filename.encode('ascii', errors='replace')))
 
             if current_rev.fqname.fullname == app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click
@@ -261,12 +261,12 @@ def Dump(directory='HTML', theme='topside_cms', exclude_ns='userprofiles', user=
                 page = part1 + start + name_links + div_end + end + part2
             except IndexError:
                 page = home_page
-                print('Error: failed to find {0} in item named {1}'.format(end, app.cfg.default_root))
+                print(f'Error: failed to find {end} in item named {app.cfg.default_root}')
             for target in ['+index', '_+index.html']:
                 with open(norm(join(html_root, target)), 'wb') as f:
                     f.write(page.encode('utf8'))
         else:
-            print('Error: index pages not created because no home page exists, expected an item named "{0}".'.format(
+            print('Error: index pages not created because no home page exists, expected an item named "{}".'.format(
                 app.cfg.default_root))
         logging.info("Dump html complete")
 

@@ -37,7 +37,7 @@ class Arguments:
         return len(self.positional) + len(self.keyword)
 
     def __repr__(self):
-        return '<{0}({1!r}, {2!r})>'.format(self.__class__.__name__, self.positional, self.keyword)
+        return f'<{self.__class__.__name__}({self.positional!r}, {self.keyword!r})>'
 
     def items(self):
         """
@@ -46,21 +46,17 @@ class Arguments:
         """
         for value in self.positional:
             yield None, value
-        for item in self.keyword.items():
-            yield item
+        yield from self.keyword.items()
 
     def keys(self):
         """
         Return an iterator over all keys from the keyword arguments.
         """
-        for key in self.keyword.keys():
-            yield key
+        yield from self.keyword.keys()
 
     def values(self):
         """
         Return an iterator over all values.
         """
-        for value in self.positional:
-            yield value
-        for value in self.keyword.values():
-            yield value
+        yield from self.positional
+        yield from self.keyword.values()

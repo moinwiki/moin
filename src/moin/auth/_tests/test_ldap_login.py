@@ -154,7 +154,7 @@ class TestTwoLdapServers:
             ldap_env.create_env(slapd_config=self.slapd_config)
             started = ldap_env.start_slapd()
             if not started:
-                pytest.skip("Failed to start {0} process, please see your syslog / log files"
+                pytest.skip("Failed to start {} process, please see your syslog / log files"
                             " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
             ldap_env.load_directory(ldif_content=self.ldif_content)
             self.ldap_envs.append(ldap_env)
@@ -194,7 +194,7 @@ class TestLdapFailover:
             ldap_env.create_env(slapd_config=self.slapd_config)
             started = ldap_env.start_slapd()
             if not started:
-                pytest.skip("Failed to start {0} process, please see your syslog / log files"
+                pytest.skip("Failed to start {} process, please see your syslog / log files"
                             " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
             ldap_env.load_directory(ldif_content=self.ldif_content)
             self.ldap_envs.append(ldap_env)

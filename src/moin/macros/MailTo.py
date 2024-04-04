@@ -38,11 +38,11 @@ class Macro(MacroInlineBase):
         if flaskg.user.valid:
             # decode address and generate mailto: link
             email = decodeSpamSafeEmail(email)
-            result = moin_page.a(attrib={xlink.href: 'mailto:{0}'.format(email)}, children=[text or email])
+            result = moin_page.a(attrib={xlink.href: f'mailto:{email}'}, children=[text or email])
         else:
             # unknown user, maybe even a spambot, so just return text as given in macro args
             if text:
                 text += " "
-            result = moin_page.code(children=[text, "<{0}>".format(email)])
+            result = moin_page.code(children=[text, f"<{email}>"])
 
         return result

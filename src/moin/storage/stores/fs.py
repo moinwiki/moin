@@ -45,8 +45,7 @@ class FileStore(FileMutableStoreBase):
         return os.path.join(self.path, key)
 
     def __iter__(self):
-        for key in os.listdir(self.path):
-            yield key
+        yield from os.listdir(self.path)
 
     def __delitem__(self, key):
         os.remove(self._mkpath(key))
@@ -54,7 +53,7 @@ class FileStore(FileMutableStoreBase):
     def __getitem__(self, key):
         try:
             return open(self._mkpath(key), 'rb')
-        except IOError as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise KeyError(key)
             raise

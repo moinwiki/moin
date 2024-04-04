@@ -328,7 +328,7 @@ class Converter:
                     if p_href in self.stack:
                         # we have a transclusion loop, create an error message showing list of pages forming loop
                         loop = self.stack[self.stack.index(p_href):]
-                        loop = ['{0}'.format(ref.path[1:]) for ref in loop if ref is not None] + [page.name]
+                        loop = [f'{ref.path[1:]}' for ref in loop if ref is not None] + [page.name]
                         msg = 'Error: Transclusion loop via: ' + ', '.join(loop)
                         attrib = {html.class_: 'moin-error'}
                         strong = ET.Element(moin_page.strong, attrib, (msg, ))

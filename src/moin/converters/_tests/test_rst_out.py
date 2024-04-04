@@ -17,7 +17,7 @@ from moin.converters.rst_out import Converter
 
 
 class Base:
-    input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}"'.format(moin_page.namespace, moin_page.namespace, xlink.namespace)
+    input_namespaces = ns_all = f'xmlns="{moin_page.namespace}" xmlns:page="{moin_page.namespace}" xmlns:xlink="{xlink.namespace}"'
     output_namespaces = {
         moin_page.namespace: 'page'
     }

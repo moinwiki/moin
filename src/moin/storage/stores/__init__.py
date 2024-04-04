@@ -119,12 +119,12 @@ class BytesMutableStoreMixin:
         # that's all, nothing more needed
     """
     def __getitem__(self, key):
-        with super(BytesMutableStoreMixin, self).__getitem__(key) as stream:
+        with super().__getitem__(key) as stream:
             return stream.read()
 
     def __setitem__(self, key, value):
         with BytesIO(value) as stream:
-            super(BytesMutableStoreMixin, self).__setitem__(key, stream)
+            super().__setitem__(key, stream)
 
 
 class FileMutableStoreBase(MutableStoreBase):
@@ -147,9 +147,9 @@ class FileMutableStoreMixin:
         # that's all, nothing more needed
     """
     def __getitem__(self, key):
-        value = super(FileMutableStoreMixin, self).__getitem__(key)
+        value = super().__getitem__(key)
         return BytesIO(value)
 
     def __setitem__(self, key, stream):
         value = stream.read()
-        super(FileMutableStoreMixin, self).__setitem__(key, value)
+        super().__setitem__(key, value)

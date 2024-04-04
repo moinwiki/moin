@@ -211,14 +211,14 @@ def assemble_subscription(keyword, value, namespace=None):
     :return: subscription string
     """
     if keyword == ITEMID:
-        subscription = "{0}:{1}".format(ITEMID, value)
+        subscription = f"{ITEMID}:{value}"
     elif keyword in [NAME, TAGS, NAMERE, NAMEPREFIX, ]:
         if namespace is not None:
-            subscription = "{0}:{1}:{2}".format(keyword, namespace, value)
+            subscription = f"{keyword}:{namespace}:{value}"
         else:
-            raise ValueError("The subscription by {0} keyword requires a namespace".format(keyword))
+            raise ValueError(f"The subscription by {keyword} keyword requires a namespace")
     else:
-        raise ValueError("Invalid keyword string: {0}".format(keyword))
+        raise ValueError(f"Invalid keyword string: {keyword}")
     return subscription
 
 
@@ -352,7 +352,7 @@ class User:
         name = getattr(self, NAME, [])
         itemid = getattr(self, ITEMID, None)
 
-        return "<{0}.{1} at {2:#x} name:{3!r} itemid:{4!r} valid:{5!r} trusted:{6!r}>".format(
+        return "<{}.{} at {:#x} name:{!r} itemid:{!r} valid:{!r} trusted:{!r}>".format(
             self.__class__.__module__, self.__class__.__name__, id(self),
             name, itemid, self.valid, self.trusted)
 
@@ -593,10 +593,10 @@ class User:
         subscriptions = set()
         itemid = meta.get(ITEMID)
         if itemid is not None:
-            subscriptions.update(["{0}:{1}".format(ITEMID, itemid)])
-        subscriptions.update("{0}:{1}:{2}".format(NAME, item_namespace, name)
+            subscriptions.update([f"{ITEMID}:{itemid}"])
+        subscriptions.update(f"{NAME}:{item_namespace}:{name}"
                              for name in meta.get(NAME, []))
-        subscriptions.update("{0}:{1}:{2}".format(TAGS, item_namespace, tag)
+        subscriptions.update(f"{TAGS}:{item_namespace}:{tag}"
                              for tag in meta.get(TAGS, []))
         if subscriptions & set(self.subscriptions):
             return True

@@ -25,5 +25,5 @@ class Macro(MacroInlineBase):
             raise ValueError("Missing icon name")
         src = url_for('static', filename='img/icons/' + icon)
         reason = _('Icon not rendered, verify name is valid')
-        alt = '<<Icon({0})>> - {1}'.format(icon, reason)
+        alt = f'<<Icon({icon})>> - {reason}'
         return html.img(attrib={html.src: src, html.alt: alt, html.class_: 'moin-icon-macro'})

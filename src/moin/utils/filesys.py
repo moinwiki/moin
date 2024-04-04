@@ -178,10 +178,10 @@ def copytree(src, dst, symlinks=False):
             else:
                 shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?
-        except (IOError, os.error) as why:
+        except OSError as why:
             errors.append((srcname, dstname, why))
     if errors:
-        raise EnvironmentError(str(errors))
+        raise OSError(str(errors))
 
 
 def wiki_index_exists():

@@ -98,7 +98,7 @@ class _TableArguments:
         args.keyword['style'] = args.keyword.get('style', "") + attr + " "
 
     def hex_color_code_repl(self, args, hex_color_code):
-        self.add_attr_to_style(args, "background-color: #{0};".format(hex_color_code))
+        self.add_attr_to_style(args, f"background-color: #{hex_color_code};")
 
     def vertical_align_top_repl(self, args, vertical_align_top):
         self.add_attr_to_style(args, "vertical-align: top;")
@@ -116,7 +116,7 @@ class _TableArguments:
         self.add_attr_to_style(args, "text-align: right;")
 
     def width_percent_repl(self, args, width_percent):
-        self.add_attr_to_style(args, "width: {0};".format(width_percent))
+        self.add_attr_to_style(args, f"width: {width_percent};")
 
     def syntax_error_repl(self, args, syntax_error):
         args.keyword['error'] = syntax_error
@@ -125,8 +125,8 @@ class _TableArguments:
         args = Arguments()
 
         for match in self._re.finditer(input):
-            data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
-            getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
+            data = {str(k): v for k, v in match.groupdict().items() if v is not None}
+            getattr(self, f'{match.lastgroup}_repl')(args, **data)
 
         return args
 
@@ -711,7 +711,7 @@ class Converter(ConverterMacro):
                 if key in ('target', 'title', 'download', 'class', 'accesskey'):
                     attribs[html(key)] = link_args[key]
                 if key[0] == '&':
-                    query.append('{0}={1}'.format(key[1:], link_args[key]))
+                    query.append(f'{key[1:]}={link_args[key]}')
 
         if link_interwiki_site:
             if is_known_wiki(link_interwiki_site):
@@ -729,7 +729,7 @@ class Converter(ConverterMacro):
                 return
             else:
                 # assume local language uses ":" inside of words, set link_item and continue
-                link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
+                link_item = f'{link_interwiki_site}:{link_interwiki_item}'
 
         if link_item is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
@@ -932,15 +932,15 @@ class Converter(ConverterMacro):
                 if key == 'bgcolor':
                     if no_errors:
                         # avoid overriding error highlighting
-                        add_attr_to_style(element.attrib, 'background-color: {0};'.format(value))
+                        add_attr_to_style(element.attrib, f'background-color: {value};')
                 elif key == 'rowbgcolor':
-                    add_attr_to_style(row.attrib, 'background-color: {0};'.format(value))
+                    add_attr_to_style(row.attrib, f'background-color: {value};')
                 elif key == 'tablebgcolor':
-                    add_attr_to_style(table.attrib, 'background-color: {0};'.format(value))
+                    add_attr_to_style(table.attrib, f'background-color: {value};')
                 elif key == 'width':
-                    add_attr_to_style(element.attrib, 'width: {0};'.format(value))
+                    add_attr_to_style(element.attrib, f'width: {value};')
                 elif key == 'tablewidth':
-                    add_attr_to_style(table.attrib, 'width: {0};'.format(value))
+                    add_attr_to_style(table.attrib, f'width: {value};')
                 elif key == 'caption':
                     table.insert(0, moin_page.caption(children=[value, ]))
                 elif key == 'tableclass':
@@ -975,7 +975,7 @@ class Converter(ConverterMacro):
                     cell_markup = cell_markup.split('<')[1]
                     msg1 = _('Error:')
                     msg2 = _('is invalid within')
-                    cell_text = '[ {0} "{1}" {2} <{3}>&nbsp;]<<BR>>{4}'.format(
+                    cell_text = '[ {} "{}" {} <{}>&nbsp;]<<BR>>{}'.format(
                         msg1, error, msg2, cell_markup, cell_text)
                     if no_errors:
                         add_attr_to_style(element.attrib, 'background-color: pink; color: black;')
@@ -1047,8 +1047,8 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
-        func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
+        data = {str(k): v for k, v in match.groupdict().items() if v is not None}
+        func = f'{prefix}_{match.lastgroup}_repl'
         # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
@@ -1063,7 +1063,7 @@ class Converter(ConverterMacro):
         stack = _Stack(body, iter_content=iter_content)
 
         for line in iter_content:
-            data = dict(((str(k), v) for k, v in self.indent_re.match(line).groupdict().items() if v is not None))
+            data = {str(k): v for k, v in self.indent_re.match(line).groupdict().items() if v is not None}
             self.indent_repl(iter_content, stack, line, **data)
 
         return body

@@ -474,7 +474,7 @@ class Converter:
             for s in findall(r'}+', childrens_output):
                 if max_subpage_lvl <= len(s):
                     max_subpage_lvl = len(s) + 1
-            return '{0}{1}{2}{3}\n'.format(
+            return '{}{}{}{}\n'.format(
                 Moinwiki.verbatim_open * max_subpage_lvl,
                 ret, childrens_output,
                 Moinwiki.verbatim_close * max_subpage_lvl)
@@ -560,7 +560,7 @@ class Converter:
         if class_ == 'comment':
             return f'/* {self.open_children(elem)} */'
         if font_size:
-            return "{0}{1}{2}".format(
+            return "{}{}{}".format(
                 Moinwiki.larger_open if font_size == "120%" else Moinwiki.smaller_open,
                 self.open_children(elem),
                 Moinwiki.larger_close if font_size == "120%" else Moinwiki.smaller_close)

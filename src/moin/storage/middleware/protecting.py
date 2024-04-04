@@ -111,7 +111,7 @@ class ProtectingMiddleware:
             if fqname.namespace == NAMESPACE_ALL:
                 # prevent traceback, /+index/all page has several links to /+index/all
                 return {'default': 'All:', 'hierarchic': False, 'after': '', 'before': ''}
-            raise ValueError('No acl_mapping entry found for item {0!r}'.format(fqname))
+            raise ValueError(f'No acl_mapping entry found for item {fqname!r}')
 
     def _get_acls(self, itemid=None, fqname=None):
         """
@@ -384,7 +384,7 @@ class ProtectedItem:
         """require that at least one of the capabilities is allowed"""
         if not any(self.allows(c) for c in capabilities):
             capability = " or ".join(capabilities)
-            raise AccessDenied("item does not allow user '{0!r}' to '{1!r}' [{2!r}]".format(
+            raise AccessDenied("item does not allow user '{!r}' to '{!r}' [{!r}]".format(
                                self.protector.user.name, capability, self.item.acl))
 
     def iter_revs(self):
@@ -456,7 +456,7 @@ class ProtectedRevision:
         """require that at least one of the capabilities is allowed"""
         if not any(self.allows(c) for c in capabilities):
             capability = " or ".join(capabilities)
-            raise AccessDenied("revision does not allow user '{0!r}' to '{1!r}' [{2!r}]".format(
+            raise AccessDenied("revision does not allow user '{!r}' to '{!r}' [{!r}]".format(
                                self.protector.user.name, capability, self.item.item.acl))
 
     @property

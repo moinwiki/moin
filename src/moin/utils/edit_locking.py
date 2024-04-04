@@ -199,7 +199,7 @@ class Edit_Utils:
                             data = f.read()
                         data = data.decode(self.coding)
                         return draft, data
-                    except IOError:
+                    except OSError:
                         logging.error(f"User {u_name} failed to load draft for: {i_name}")
                         return draft, None
                 else:
@@ -223,7 +223,7 @@ class Edit_Utils:
             draft_name = self.make_draft_name(rev_id)
             try:
                 os.remove(draft_name)
-            except IOError:
+            except OSError:
                 # draft file is created only when user does Preview
                 logging.error(f"IOError when deleting draft named {draft_name} for user {self.user_name}")
         self.cursor.execute('''DELETE FROM editdraft WHERE user_name = ? ''', (self.user_name, ))

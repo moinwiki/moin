@@ -291,7 +291,7 @@ class RegistryItem(RegistryBase):
             return NotImplemented
 
     def __init__(self):
-        super(RegistryItem, self).__init__()
+        super().__init__()
         self.shown_entries = []
 
     def register(self, e, shown):

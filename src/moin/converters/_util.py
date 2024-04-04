@@ -46,7 +46,7 @@ def decode_data(data, contenttype=None):
         data = data.decode(coding)
     if not isinstance(data, str):
         raise TypeError("data must be rev or bytes (requires contenttype with charset) or str, "
-                        "but we got {0!r}".format(data))
+                        "but we got {!r}".format(data))
     return data
 
 

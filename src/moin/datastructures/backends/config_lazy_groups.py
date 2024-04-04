@@ -22,7 +22,7 @@ class ConfigLazyGroup(LazyGroup):
 class ConfigLazyGroups(LazyGroupsBackend):
 
     def __init__(self, groups):
-        super(ConfigLazyGroups, self).__init__()
+        super().__init__()
 
         self._groups = groups
 

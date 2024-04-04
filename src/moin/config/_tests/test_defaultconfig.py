@@ -24,7 +24,7 @@ class TestPasswordChecker:
         ('BBBaaaddd', False),  # not enough different chars
         (username, False),  # username == password
         (username[1:-1], False),  # password in username
-        ("XXX{0}XXX".format(username), False),  # username in password
+        (f"XXX{username}XXX", False),  # username in password
         ('Moin-2007', True),  # this should be OK
     ]
 
@@ -35,7 +35,7 @@ class TestPasswordChecker:
         else:
             for pw, result in self.tests_builtin:
                 pw_error = pw_checker(self.username, pw)
-                print("{0!r}: {1}".format(pw, pw_error))
+                print(f"{pw!r}: {pw_error}")
                 assert result == (pw_error is None)
 
 

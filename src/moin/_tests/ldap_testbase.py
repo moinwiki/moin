@@ -80,7 +80,7 @@ def check_environ():
                 (err.errno == 3 and os.name == 'nt')):
             raise
     if not slapd:
-        return "Can't start {0} (see SLAPD_EXECUTABLE).".format(SLAPD_EXECUTABLE)
+        return f"Can't start {SLAPD_EXECUTABLE} (see SLAPD_EXECUTABLE)."
     return None
 
 
@@ -100,9 +100,9 @@ class Slapd:
         self.proto = proto
         self.ip = ip
         self.port = port
-        self.url = '{0}://{1}:{2}'.format(proto, ip, port)  # can be used for ldap.initialize() call
+        self.url = f'{proto}://{ip}:{port}'  # can be used for ldap.initialize() call
         if service_name == '':
-            self.service_name = '{0}:{1}'.format(executable, port)
+            self.service_name = f'{executable}:{port}'
         else:
             self.service_name = service_name
 
@@ -181,7 +181,7 @@ class LdapEnvironment:
             DB_CONFIG there.
         """
         # create directories
-        self.ldap_dir = tempfile.mkdtemp(prefix='LdapEnvironment-{0}.'.format(self.instance))
+        self.ldap_dir = tempfile.mkdtemp(prefix=f'LdapEnvironment-{self.instance}.')
         self.ldap_db_dir = os.path.join(self.ldap_dir, 'db')
         os.mkdir(self.ldap_db_dir)
 
@@ -256,7 +256,7 @@ try:
             self.ldap_env.create_env(slapd_config=self.slapd_config)
             started = self.ldap_env.start_slapd()
             if not started:
-                pytest.skip("Failed to start {0} process, please see your syslog / log files"
+                pytest.skip("Failed to start {} process, please see your syslog / log files"
                             " (and check if stopping apparmor helps, in case you use it).".format(SLAPD_EXECUTABLE))
             self.ldap_env.load_directory(ldif_content=self.ldif_content)
 

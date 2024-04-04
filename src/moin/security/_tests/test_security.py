@@ -376,13 +376,13 @@ class TestItemAcls:
             # User should have these rights...
             for right in may:
                 can_access = getattr(u.may, right)(itemname)
-                assert can_access, "{0!r} may {1} {2!r} (normal)".format(u.name, right, itemname)
+                assert can_access, f"{u.name!r} may {right} {itemname!r} (normal)"
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
             for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "{0!r} may not {1} {2!r} (normal)".format(u.name, right, itemname)
+                assert not can_access, f"{u.name!r} may not {right} {itemname!r} (normal)"
 
         # check function rights
         u = User(auth_username='SuperUser')
@@ -457,14 +457,14 @@ class TestItemHierachicalAcls:
             # User should have these rights...
             for right in may:
                 can_access = getattr(u.may, right)(itemname)
-                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+                assert can_access, f"{u.name!r} may {right} {itemname!r} (hierarchic)"
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+                assert not can_access, f"{u.name!r} may not {right} {itemname!r} (hierarchic)"
 
 
 class TestItemHierachicalAclsMultiItemNames:
@@ -531,14 +531,14 @@ class TestItemHierachicalAclsMultiItemNames:
             # User should have these rights...
             for right in may:
                 can_access = getattr(u.may, right)(itemname)
-                assert can_access, "{0!r} may {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+                assert can_access, f"{u.name!r} may {right} {itemname!r} (hierarchic)"
 
             # User should NOT have these rights:
             mayNot = [right for right in app.cfg.acl_rights_contents
                       if right not in may]
             for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
-                assert not can_access, "{0!r} may not {1} {2!r} (hierarchic)".format(u.name, right, itemname)
+                assert not can_access, f"{u.name!r} may not {right} {itemname!r} (hierarchic)"
 
 
 # XXX TODO add tests for a user having multiple usernames (one resulting in more permissions than other)

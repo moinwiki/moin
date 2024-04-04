@@ -18,7 +18,7 @@ class ConfigDict(BaseDict):
 class ConfigDicts(BaseDictsBackend):
 
     def __init__(self, dicts):
-        super(ConfigDicts, self).__init__()
+        super().__init__()
 
         self._dicts = dicts
 

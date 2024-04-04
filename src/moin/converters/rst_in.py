@@ -340,7 +340,7 @@ class NodeVisitor:
     def visit_field_name(self, node):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
-        self.open_moin_page_node('{0}:'.format(node.astext()))
+        self.open_moin_page_node(f'{node.astext()}:')
         node.children = []
         self.close_moin_page_node()
 
@@ -486,7 +486,7 @@ class NodeVisitor:
             arguments = moin_page.arguments(children=args)
             self.open_moin_page_node(moin_page.part(
                 children=[arguments],
-                attrib={moin_page.content_type: "x-moin/format;name={0}".format(parser.split(' ')[0])}))
+                attrib={moin_page.content_type: "x-moin/format;name={}".format(parser.split(' ')[0])}))
         else:
             self.open_moin_page_node(moin_page.blockcode())
 
@@ -568,7 +568,7 @@ class NodeVisitor:
 
             self.open_moin_page_node(
                 moin_page.inline_part(
-                    attrib={moin_page.content_type: "x-moin/macro;name={0}".format(macro_name)}))
+                    attrib={moin_page.content_type: f"x-moin/macro;name={macro_name}"}))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
                 self.open_moin_page_node(arguments)
@@ -853,7 +853,7 @@ class MoinDirectives:
             return []
 
         if content:
-            macro = '<<Include({0})>>'.format(content[0])
+            macro = f'<<Include({content[0]})>>'
         else:
             macro = '<<Include()>>'
         ref = reference(macro, refuri=macro)
@@ -878,7 +878,7 @@ class MoinDirectives:
             if content[0].startswith('<<'):
                 macro = content[0]
             else:
-                macro = '<<{0}>>'.format(content[0])
+                macro = f'<<{content[0]}>>'
             ref = reference(macro, refuri=macro)
             ref['name'] = macro
             return [ref]
@@ -897,7 +897,7 @@ class MoinDirectives:
             if m and len(m.groups()) == 2:
                 if m.groups()[0] == 'depth':
                     text = m.groups()[1]
-        macro = '<<TableOfContents({0})>>'.format(text)
+        macro = f'<<TableOfContents({text})>>'
         ref = reference(macro, refuri=macro)
         ref['name'] = macro
         return [ref]
@@ -942,15 +942,15 @@ class Converter:
                         input = [('.. error::\n'
                                   ' ::\n'
                                   '\n'
-                                  '  Parse error on line number {0}:\n'
+                                  '  Parse error on line number {}:\n'
                                   '\n'
-                                  '  {1}\n'
+                                  '  {}\n'
                                   '\n'
                                   '  Go back and try to fix that.\n'
                                   '\n').format(str_num, string_numb.group(2).replace('\n', '\n  '))]
                         continue
                 else:
-                    input = ['.. error::\n ::\n\n  {0}\n\n'.format(str(inst).replace('\n', '\n  '))]
+                    input = ['.. error::\n ::\n\n  {}\n\n'.format(str(inst).replace('\n', '\n  '))]
                 raise inst
             break
         visitor = NodeVisitor()

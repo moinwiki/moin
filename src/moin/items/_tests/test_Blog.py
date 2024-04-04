@@ -110,7 +110,7 @@ class TestBlog(TestView):
                         self.entries[3]['data'],
                         self.entries[0]['data'],
                         self.entries[1]['data'], ]
-        regex = re.compile(r'{0}.*{1}.*{2}.*{3}.*{4}'.format(*ordered_data), re.DOTALL)
+        regex = re.compile(r'{}.*{}.*{}.*{}.*{}'.format(*ordered_data), re.DOTALL)
         self._test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
     def test_filter_by_tag(self):
@@ -135,7 +135,7 @@ class TestBlog(TestView):
         ordered_data = [self.data,
                         self.entries[2]['data'],
                         self.entries[0]['data'], ]
-        regex = re.compile(r'{0}.*{1}.*{2}'.format(*ordered_data), re.DOTALL)
+        regex = re.compile(r'{}.*{}.*{}'.format(*ordered_data), re.DOTALL)
         self._test_view(self.name, req_args={'tag': 'moin'}, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
     def test_filter_by_acls(self):
@@ -156,7 +156,7 @@ class TestBlog(TestView):
         ordered_data = [self.data,
                         self.entries[1]['data'],
                         self.entries[0]['data'], ]
-        regex = re.compile(r'{0}.*{1}.*{2}'.format(*ordered_data), re.DOTALL)
+        regex = re.compile(r'{}.*{}.*{}'.format(*ordered_data), re.DOTALL)
         self._test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
 

@@ -24,7 +24,7 @@ class CompositeGroups(BaseGroupsBackend):
         :param backends: list of group backends which are used to get
                          access to the group definitions.
         """
-        super(CompositeGroups, self).__init__()
+        super().__init__()
         self._backends = backends
 
     def __getitem__(self, group_name):
@@ -66,4 +66,4 @@ class CompositeGroups(BaseGroupsBackend):
         return False
 
     def __repr__(self):
-        return "<{0} backends={1}>".format(self.__class__, self._backends)
+        return f"<{self.__class__} backends={self._backends}>"

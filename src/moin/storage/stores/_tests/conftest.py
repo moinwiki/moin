@@ -20,7 +20,7 @@ constructors = {
     'sqlite:compressed': lambda store, tmpdir: store(
         str(tmpdir.join('store.sqlite')), 'test_table', compression_level=1
     ),
-    'sqla': lambda store, tmpdir: store('sqlite:///{0!s}'.format(tmpdir.join('store.sqlite')), 'test_table'),
+    'sqla': lambda store, tmpdir: store('sqlite:///{!s}'.format(tmpdir.join('store.sqlite')), 'test_table'),
 }
 
 
@@ -45,7 +45,7 @@ def pytest_generate_tests(metafunc):
         argvalues = []
         for storename in STORES:
             for klass in klasses:
-                ids.append('{0}/{1}'.format(storename, klass))
+                ids.append(f'{storename}/{klass}')
                 argvalues.append((storename, klass))
         metafunc.parametrize(argname, argvalues, ids=ids, indirect=True)
 
@@ -66,7 +66,7 @@ def make_store(request, tmpdir):
     klass = getattr(storemodule, kind)
     construct = constructors.get(storename)
     if construct is None:
-        pytest.xfail('don\'t know how to construct {0} store'.format(storename))
+        pytest.xfail(f'don\'t know how to construct {storename} store')
     store = construct(klass, tmpdir)
     store.create()
     store.open()

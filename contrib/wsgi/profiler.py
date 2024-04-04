@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-1 -*-
 """
     MoinMoin - WSGI middlewares for profiling
 
@@ -67,7 +66,7 @@ class ProfilerMiddleware:
 class CProfileMiddleware(ProfilerMiddleware):
     """ A profiler based on the the cProfile module from the standard lib. """
     def __init__(self, app, filename):
-        super(CProfileMiddleware, self).__init__(app)
+        super().__init__(app)
         import cProfile
         self._profile = cProfile.Profile()
         self._filename = filename
@@ -81,7 +80,7 @@ class PycallgraphMiddleware(ProfilerMiddleware):
     """ A call graphing middleware utilizing the pycallgraph 3rd party
     module (available at http://pycallgraph.slowchop.com/). """
     def __init__(self, app, filename):
-        super(PycallgraphMiddleware, self).__init__(app)
+        super().__init__(app)
         import pycallgraph
         pycallgraph.settings['include_stdlib'] = False
         self._filename = filename

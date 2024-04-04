@@ -23,7 +23,7 @@ class ConfigGroups(BaseGroupsBackend):
         :param groups: Dictionary of groups where key is group name,
         and value is list of members of that group.
         """
-        super(ConfigGroups, self).__init__()
+        super().__init__()
 
         self._groups = groups
 

@@ -60,7 +60,7 @@ def diff(oldlines, newlines, **kw):
                 count = 0
             elif count > 6:
                 # remove lines and insert new hunk indicator
-                lines[i - count + 3:i - 3] = ['@@ -{0:d}, +{1:d} @@\n'.format(lcount_old, lcount_new)]
+                lines[i - count + 3:i - 3] = [f'@@ -{lcount_old:d}, +{lcount_new:d} @@\n']
                 i = i - count + 8
                 count = 0
             else:

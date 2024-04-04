@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -22,7 +21,7 @@ etree = pytest.importorskip('lxml.etree')  # noqa
 
 
 class Base:
-    input_namespaces = ns_all = 'xmlns="{0}" xmlns:xlink="{1}"'.format(docbook.namespace, xlink.namespace)
+    input_namespaces = ns_all = f'xmlns="{docbook.namespace}" xmlns:xlink="{xlink.namespace}"'
     output_namespaces = {
         moin_page.namespace: '',
         xlink.namespace: 'xlink',
@@ -54,14 +53,14 @@ class Base:
 
     def do(self, input, xpath_query):
         string_to_parse = self.handle_output(input)
-        logging.debug("After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
+        logging.debug(f"After the DOCBOOK_IN conversion : {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         print('string_to_parse = %s' % string_to_parse)  # provide a clue for failing tests
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 
     def do_nonamespace(self, input, xpath_query):
         string_to_parse = self.handle_output(input, nonamespace=True)
-        logging.debug("After the DOCBOOK_IN conversion : {0}".format(string_to_parse))
+        logging.debug(f"After the DOCBOOK_IN conversion : {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(xpath_query, namespaces=self.namespaces_xpath))
 

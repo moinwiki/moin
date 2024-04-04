@@ -165,7 +165,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
             except KeyError:
                 # user profile lost, but userid referred by revision
                 migr_logging('missing_user',
-                             'Missing userid {0!r}, editor of {1} revision {2}'.format(
+                             'Missing userid {!r}, editor of {} revision {}'.format(
                                  rev.meta[USERID], rev.meta[NAME][0], rev.meta[REVID]))
                 del rev.meta[USERID]
         migr_stat['revs'] += 1
@@ -183,7 +183,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
         try:
             logging.debug(f'Processing item "{item_name}", namespace "{namespace}", revision "{revno}"')
         except UnicodeEncodeError:
-            logging.debug('Processing item "{0}", namespace "{1}", revision "{2}"'.format(
+            logging.debug('Processing item "{}", namespace "{}", revision "{}"'.format(
                 item_name.encode('ascii', errors='replace'), namespace, revno))
         if namespace == '':
             namespace = 'default'
@@ -294,7 +294,7 @@ class PageBackend:
                 item = PageItem(self, os.path.join(pages_dir, f), itemname, self.target_namespace)
             except KillRequested:
                 pass  # a message was already output
-            except (IOError, AttributeError):
+            except (OSError, AttributeError):
                 migr_logging('missing_file',
                              f"Missing file 'current' or 'edit-log' for {os.path.normcase(os.path.join(pages_dir, f))}"
                              )
@@ -302,10 +302,8 @@ class PageBackend:
             except Exception:
                 logging.exception(f"PageItem {itemname!r} raised exception:").encode('utf-8')
             else:
-                for rev in item.iter_revisions():
-                    yield rev
-                for rev in item.iter_attachments():
-                    yield rev
+                yield from item.iter_revisions()
+                yield from item.iter_attachments()
 
 
 class PageItem:
@@ -323,7 +321,7 @@ class PageItem:
         except UnicodeEncodeError:
             logging.debug(f"Processing item {itemname.encode('ascii', errors='replace')}")
         currentpath = os.path.join(self.path, 'current')
-        with open(currentpath, 'r') as f:
+        with open(currentpath) as f:
             self.current = int(f.read().strip())
         editlogpath = os.path.join(self.path, 'edit-log')
         self.editlog = EditLog(editlogpath)
@@ -390,7 +388,7 @@ class PageRevision:
         try:
             with codecs.open(path, 'r', CHARSET19) as f:
                 content = f.read()
-        except (IOError, OSError):
+        except OSError:
             # handle deleted revisions (for all revnos with 0<=revno<=current) here
             # we prepare some values for the case we don't find a better value in edit-log:
             meta = {MTIME: -1,  # fake, will get 0 in the end
@@ -473,7 +471,7 @@ class PageRevision:
                 break
             if meta[NAME][0].startswith(custom_namespace + '/'):
                 # split the namespace from the name
-                logging.warning("Converting {0} to namespace:itemname {1}:{2}".format(
+                logging.warning("Converting {} to namespace:itemname {}:{}".format(
                     meta[NAME][0], custom_namespace, meta[NAME][0][len(custom_namespace) + 1:]))
                 meta[NAMESPACE] = custom_namespace
                 meta[NAME] = [meta[NAME][0][len(custom_namespace) + 1:]]
@@ -693,7 +691,7 @@ class EditLog(LogFile):
         else:
             raise KeyError
         del meta['__rev']
-        meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
+        meta = {k: v for k, v in meta.items() if v}  # remove keys with empty values
         if meta.get(ACTION) == 'SAVENEW':
             # replace SAVENEW with just SAVE
             meta[ACTION] = ACTION_SAVE
@@ -712,7 +710,7 @@ class EditLog(LogFile):
         del meta['__rev']
         del meta[EXTRA]  # we have full name in NAME
         meta[ACTION] = ACTION_SAVE
-        meta = dict([(k, v) for k, v in meta.items() if v])  # remove keys with empty values
+        meta = {k: v for k, v in meta.items() if v}  # remove keys with empty values
         return meta
 
 
@@ -730,7 +728,7 @@ def regenerate_acl(acl_string, acl_rights_valid=ACL_RIGHTS_CONTENTS):
                     entries_valid.append(entry.capitalize())
                 else:
                     entries_valid.append(entry)
-            result.append("{0}{1}:{2}".format(
+            result.append("{}{}:{}".format(
                           modifier,
                           ','.join(entries_valid),
                           ','.join(rights)  # iterator has removed invalid rights

@@ -23,7 +23,7 @@ from werkzeug._internal import _log
 
 class WSGIRequestHandler(werkzeug.serving.WSGIRequestHandler):
     def log(self, type, message, *args):
-        _log(type, "{0} {1}\n".format(self.address_string(), message % args))
+        _log(type, f"{self.address_string()} {message % args}\n")
 
 
 werkzeug.serving.WSGIRequestHandler = WSGIRequestHandler

@@ -33,7 +33,7 @@ class RegistryBase:
         self._entries = []
 
     def __repr__(self):
-        return '<{0}: {1!r}>'.format(self.__class__.__name__, self._entries)
+        return f'<{self.__class__.__name__}: {self._entries!r}>'
 
     def get(self, *args, **kw):
         """

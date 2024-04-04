@@ -54,7 +54,7 @@ class TestImportNameFromPlugin:
     def checkPackage(self, path):
         for item in (path, os.path.join(path, '__init__.py')):
             if not os.path.exists(item):
-                pytest.skip("Missing or wrong permissions: {0}".format(item))
+                pytest.skip(f"Missing or wrong permissions: {item}")
 
     def pluginExists(self):
         return (os.path.exists(self.pluginFilePath('.py')) or
@@ -71,7 +71,7 @@ class TestImportNonExisting(TestImportNameFromPlugin):
     def testNonExisting(self):
         """ pysupport: import nonexistent wiki plugin fail """
         if self.pluginExists():
-            pytest.skip('plugin exists: {0}'.format(self.plugin))
+            pytest.skip(f'plugin exists: {self.plugin}')
         pytest.raises(plugins.PluginMissingError, plugins.importWikiPlugin, app.cfg, 'parser', self.plugin, 'Parser')
 
 
@@ -103,7 +103,7 @@ class TestImportExisting(TestImportNameFromPlugin):
         """ Create test plugin, skiping if plugin exists """
         if self.pluginExists():
             self.shouldDeleteTestPlugin = False
-            pytest.skip("Won't overwrite existing plugin: {0}".format(self.plugin))
+            pytest.skip(f"Won't overwrite existing plugin: {self.plugin}")
         self.key = crypto.random_string(32, 'abcdefg')
         data = '''
 # If you find this file in your wiki plugin directory, you can safely
@@ -111,12 +111,12 @@ class TestImportExisting(TestImportNameFromPlugin):
 import sys, os
 
 class Parser:
-    key = '{0}'
+    key = '{}'
 '''.format(self.key)
         try:
             open(self.pluginFilePath('.py'), 'w').write(data)
         except Exception as err:
-            pytest.skip("Can't create test plugin: {0!s}".format(err))
+            pytest.skip(f"Can't create test plugin: {err!s}")
 
     def deleteTestPlugin(self):
         """ Delete plugin files ignoring missing files errors """

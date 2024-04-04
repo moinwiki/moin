@@ -152,7 +152,7 @@ class LogFile:
                 # Open the file (NOT using codecs.open, it breaks our offset calculation. We decode it later.).
                 # Use binary mode in order to retain \r - otherwise the offset calculation would fail.
                 self._input = open(self.__filename, "rb", )
-            except IOError as err:
+            except OSError as err:
                 if err.errno == errno.ENOENT:  # "file not found"
                     # XXX workaround if edit-log does not exist: just create it empty
                     # if this workaround raises another error, we don't catch
@@ -197,7 +197,7 @@ class LogFile:
         :rtype: Int
         """
         try:
-            f = open(self.__filename, 'r')
+            f = open(self.__filename)
             try:
                 count = 0
                 for line in f:
@@ -205,7 +205,7 @@ class LogFile:
                 return count
             finally:
                 f.close()
-        except (OSError, IOError) as err:
+        except OSError as err:
             if err.errno == errno.ENOENT:
                 return 0
             raise

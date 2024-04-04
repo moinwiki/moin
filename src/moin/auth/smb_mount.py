@@ -38,7 +38,7 @@ class SMBMount(BaseAuth):
         log='/dev/null',  # logfile for mount.cifs output
         **kw
     ):
-        super(SMBMount, self).__init__(**kw)
+        super().__init__(**kw)
         self.server = server
         self.share = share
         self.mountpoint_fn = mountpoint_fn

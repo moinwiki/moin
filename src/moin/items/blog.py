@@ -106,7 +106,7 @@ class BlogEntry(Default):
 
         @classmethod
         def from_item(cls, item):
-            form = super(BlogEntry._ModifyForm, cls).from_item(item)
+            form = super().from_item(item)
             # preload PTIME with the current datetime
             if not form['meta_form']['ptime']:
                 form['meta_form']['ptime'].set(datetime.utcnow())

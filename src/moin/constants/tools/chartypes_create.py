@@ -14,7 +14,7 @@ def main():
     space = []
     for code in range(1, 65535):
         c = chr(code)
-        string = "\\u{0:04x}".format(code)
+        string = f"\\u{code:04x}"
         if c.isupper():
             uppercase.append(string)
         elif c.islower():

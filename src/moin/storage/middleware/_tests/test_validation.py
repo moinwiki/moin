@@ -67,18 +67,18 @@ class TestValidation:
             keys.NAME: ["user name", ],
             keys.NAMESPACE: "userprofiles",
             keys.EMAIL: "foo@example.org",
-            keys.SUBSCRIPTIONS: ["{0}:{1}".format(keys.ITEMID, make_uuid()),
-                                 "{0}::foo".format(keys.NAME),
-                                 "{0}::bar".format(keys.TAGS),
-                                 "{0}::".format(keys.NAMERE),
-                                 "{0}:userprofiles:a".format(keys.NAMEPREFIX),
+            keys.SUBSCRIPTIONS: [f"{keys.ITEMID}:{make_uuid()}",
+                                 f"{keys.NAME}::foo",
+                                 f"{keys.TAGS}::bar",
+                                 f"{keys.NAMERE}::",
+                                 f"{keys.NAMEPREFIX}:userprofiles:a",
                                  ]
         }
 
         invalid_meta = {
             keys.SUBSCRIPTIONS: ["", "unknown_tag:123",
-                                 "{0}:123".format(keys.ITEMID),
-                                 "{0}:foo".format(keys.NAME),
+                                 f"{keys.ITEMID}:123",
+                                 f"{keys.NAME}:foo",
                                  ]
         }
 

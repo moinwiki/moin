@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
 # Copyright: 2005-2013 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
@@ -73,8 +72,8 @@ class ConfigFunctionality:
         self.cache.item_group_regex = re.compile(self.item_group_regex, re.UNICODE)
 
         # the ..._regexact versions only match if nothing is left (exact match)
-        self.cache.item_dict_regexact = re.compile('^{0}$'.format(self.item_dict_regex), re.UNICODE)
-        self.cache.item_group_regexact = re.compile('^{0}$'.format(self.item_group_regex), re.UNICODE)
+        self.cache.item_dict_regexact = re.compile(f'^{self.item_dict_regex}$', re.UNICODE)
+        self.cache.item_group_regexact = re.compile(f'^{self.item_group_regex}$', re.UNICODE)
 
         # compiled functions ACL
         self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
@@ -143,7 +142,7 @@ class ConfigFunctionality:
             if len(self.secrets) < secret_min_length:
                 raise error.ConfigurationError(
                     "The secrets = '...' wiki config setting is a way too short string "
-                    "(minimum length is {0} chars)!".format(secret_min_length))
+                    "(minimum length is {} chars)!".format(secret_min_length))
             # for lazy people: set all required secrets to same value
             secrets = {}
             for key in secret_key_names:
@@ -158,14 +157,14 @@ class ConfigFunctionality:
                     raise ValueError
             except (KeyError, ValueError):
                 raise error.ConfigurationError(
-                    "You must set a (at least {0} chars long) secret string for secrets['{1}']!".format(
+                    "You must set a (at least {} chars long) secret string for secrets['{}']!".format(
                         secret_min_length, secret_key_name))
 
         from passlib.context import CryptContext
         try:
             self.cache.pwd_context = CryptContext(**self.passlib_crypt_context)
         except ValueError as err:
-            raise error.ConfigurationError("passlib_crypt_context configuration is invalid [{0}].".format(err))
+            raise error.ConfigurationError(f"passlib_crypt_context configuration is invalid [{err}].")
 
         if len(self.contenttype_enabled):
             content_registry_enable(self.contenttype_enabled)
@@ -182,13 +181,13 @@ class ConfigFunctionality:
         This check is disabled by default, when enabled, it will show an
         error message with unknown names.
         """
-        unknown = ['"{0}"'.format(name) for name in dir(self)
+        unknown = [f'"{name}"' for name in dir(self)
                    if not name.startswith('_') and
                    name not in DefaultConfig.__dict__ and
                    not isinstance(getattr(self, name), (type(re), type(DefaultConfig)))]
         if unknown:
             msg = """
-Unknown configuration options: {0}.
+Unknown configuration options: {}.
 
 For more information, see configuration docs. Please check your
 configuration for typos before requesting support or reporting a bug.

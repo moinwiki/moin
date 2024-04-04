@@ -68,10 +68,10 @@ def SetMeta(key, value, remove, query):
         newmeta = dict(current_rev.meta)
         if remove:
             newmeta.pop(key)
-            print("Processing {0!r}, removing {1}.".format(name, key))
+            print(f"Processing {name!r}, removing {key}.")
         else:
             newmeta[key] = value
-            print("Processing {0!r}, setting {1}={2!r}.".format(name, key, value))
+            print(f"Processing {name!r}, setting {key}={value!r}.")
         del newmeta[REVID]
         newmeta[REV_NUMBER] += 1
         newmeta[PARENTID] = current_rev.meta[REVID]

@@ -149,7 +149,7 @@ def test_wikiexternal(conv, input_, output):
             ("http://example.org/", "mailto:foo.bar@example.org"),
         ),
         (
-            u"""
+            """
             <ns0:page ns0:page-href="wiki:///Home" xmlns:ns0="http://moinmo.in/namespaces/page" xmlns:ns1="http://www.w3.org/2001/XInclude" xmlns:ns2="http://www.w3.org/1999/xlink">
             <ns0:body>
             <ns0:p>
@@ -160,8 +160,8 @@ def test_wikiexternal(conv, input_, output):
             </ns0:p>
             </ns0:body></ns0:page>
             """,
-            (u"NoInterWiki:Link", ),
-            (u"AlsoNoInterWiki:Transclusion", ),
+            ("NoInterWiki:Link", ),
+            ("AlsoNoInterWiki:Transclusion", ),
             [],
         ),
     ),

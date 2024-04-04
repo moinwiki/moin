@@ -481,7 +481,7 @@ class ThemeSupport:
                         f.close()
                         app.cache.set(cid, sisteritems)
                         logging.info(f"Site: {sistername!r} Status: Updated. Pages: {len(sisteritems)}")
-                    except IOError as err:
+                    except OSError as err:
                         (title, code, msg, headers) = err.args  # code e.g. 304
                         logging.warning(f"Site: {sistername!r} Status: Not updated.")
                         logging.exception("exception was:")

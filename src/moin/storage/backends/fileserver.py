@@ -138,8 +138,8 @@ class Backend(BackendBase):
                 "= Directory contents =",
                 " * [[../]]",
             ]
-            content.extend(" * [[/{0}|{1}/]]".format(name, name) for name in sorted(dirs))
-            content.extend(" * [[/{0}|{1}]]".format(name, name) for name in sorted(files))
+            content.extend(f" * [[/{name}|{name}/]]" for name in sorted(dirs))
+            content.extend(f" * [[/{name}|{name}]]" for name in sorted(files))
             content.append("")
             content = '\r\n'.join(content)
         except OSError as err:
@@ -156,7 +156,7 @@ class Backend(BackendBase):
                 return open(path, 'rb')
             else:
                 return BytesIO(b'')
-        except (OSError, IOError) as e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 raise KeyError(itemname)
             raise

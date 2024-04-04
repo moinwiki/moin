@@ -416,16 +416,16 @@ class TestIndexingMiddleware:
 
     def test_indexing_subscriptions(self):
         item_name = "foo"
-        meta = dict(name=[item_name, ], subscriptions=["{0}::foo".format(NAME),
-                                                       "{0}::.*".format(NAMERE)])
+        meta = dict(name=[item_name, ], subscriptions=[f"{NAME}::foo",
+                                                       f"{NAMERE}::.*"])
         item = self.imw[item_name]
         item.store_revision(meta, BytesIO(item_name.encode('utf-8')))
-        doc1 = self.imw.document(subscription_ids="{0}::foo".format(NAME))
-        doc2 = self.imw.document(subscription_patterns="{0}::.*".format(NAMERE))
+        doc1 = self.imw.document(subscription_ids=f"{NAME}::foo")
+        doc2 = self.imw.document(subscription_patterns=f"{NAMERE}::.*")
         assert doc1 is not None
         assert doc2 is not None
-        doc3 = self.imw.document(subscription_ids="{0}::.*".format(NAMERE))
-        doc4 = self.imw.document(subscription_patterns="{0}::foo".format(NAMEPREFIX))
+        doc3 = self.imw.document(subscription_ids=f"{NAMERE}::.*")
+        doc4 = self.imw.document(subscription_patterns=f"{NAMEPREFIX}::foo")
         assert doc3 is None
         assert doc4 is None
 
@@ -510,7 +510,7 @@ class TestProtectedIndexingMiddleware:
         item_name = 'foo'
         item = self.imw[item_name]
         for i in range(100):
-            item.store_revision(dict(name=[item_name, ], acl='joe:create joe:read'), BytesIO(b'rev number {0}'.format(i)))
+            item.store_revision(dict(name=[item_name, ], acl='joe:create joe:read'), BytesIO(b'rev number {}'.format(i)))
         for r in item.iter_revs():
             # print r.meta
             # print r.data.read()

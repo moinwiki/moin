@@ -39,7 +39,7 @@ class Monitor:
         cur_frames = sys._current_frames()
         for i in cur_frames:
             f = StringIO()
-            print("\nDumping thread (id {0}):".format(i, ), file=f)
+            print(f"\nDumping thread (id {i}):", file=f)
             traceback.print_stack(cur_frames[i], file=f)
             dumpfile.write(f.getvalue())
 

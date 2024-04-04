@@ -68,7 +68,7 @@ Rating = SmallNatural.using(optional=True).with_properties(lower=1, upper=5)
 
 
 def get_itemid_short_summary(rev):
-    return '{itemid} ({summary})'.format(itemid=rev.meta[ITEMID][:4], summary=rev.meta[SUMMARY][:50])
+    return f'{rev.meta[ITEMID][:4]} ({rev.meta[SUMMARY][:50]})'
 
 
 def get_name(rev):
@@ -163,7 +163,7 @@ class TicketUpdateForm(TicketForm):
     submit = SelectSubmit.valued('update', 'update_negate_status')
 
     def _load(self, item):
-        super(TicketUpdateForm, self)._load(item)
+        super()._load(item)
         self['submit'].properties['labels'] = {
             'update': L_('Update ticket'),
             'update_negate_status': (L_('Update & reopen ticket') if item.meta.get('closed')
@@ -214,7 +214,7 @@ def message_markup(message):
     """
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     heading = L_('{author} wrote on {timestamp}:').format(author=flaskg.user.name[0], timestamp=timestamp)
-    message = '{heading}\n\n{message}'.format(heading=heading, message=message)
+    message = f'{heading}\n\n{message}'
     return """{{{{{{#!wiki moin-ticket
 %(message)s
 }}}}}}""" % dict(message=message)

@@ -39,15 +39,15 @@ def DisableUser(name, uid):
         u = user.User(auth_username=name)
 
     if not u.exists():
-        print('This user "{0!r}" does not exists!'.format(u.name))
+        print(f'This user "{u.name!r}" does not exists!')
         return
 
-    print(" {0:<20} {1!r:<25} {2:<35}".format(u.itemid, u.name, u.email), end=' ')
+    print(f" {u.itemid:<20} {u.name!r:<25} {u.email:<35}", end=' ')
     if not u.disabled:  # only disable once
         u.disabled = True
-        u.name = "{0}-{1}".format(u.name, u.itemid)
+        u.name = f"{u.name}-{u.itemid}"
         if u.email:
-            u.email = "{0}-{1}".format(u.email, u.itemid)
+            u.email = f"{u.email}-{u.itemid}"
         u.subscriptions = []
         u.save(force=True)
         logging.info("User %s %s %s - disabled.", u.itemid, u.name, u.email)

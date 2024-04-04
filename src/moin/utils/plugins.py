@@ -71,7 +71,7 @@ def importWikiPlugin(cfg, kind, name, function="execute"):
     modname = plugins.get(name, None)
     if modname is None:
         raise PluginMissingError()
-    moduleName = '{0}.{1}'.format(modname, name)
+    moduleName = f'{modname}.{name}'
     return importNameFromPlugin(moduleName, function)
 
 
@@ -82,7 +82,7 @@ def importBuiltinPlugin(kind, name, function="execute"):
     """
     if name not in builtinPlugins(kind):
         raise PluginMissingError()
-    moduleName = 'moin.{0}.{1}'.format(kind, name)
+    moduleName = f'moin.{kind}.{name}'
     return importNameFromPlugin(moduleName, function)
 
 
@@ -145,7 +145,7 @@ def wikiPlugins(kind, cfg):
                 plugins = pysupport.getPluginModules(packagepath)
                 for p in plugins:
                     if p not in result:
-                        result[p] = '{0}.{1}'.format(modname, kind)
+                        result[p] = f'{modname}.{kind}'
             except AttributeError:
                 pass
         cache[kind] = result
@@ -184,7 +184,7 @@ def searchAndImportPlugin(cfg, type, name, what=None):
         except PluginMissingError:
             pass
     else:
-        raise PluginMissingError("Plugin not found! ({0!r} {1!r} {2!r})".format(type, name, what))
+        raise PluginMissingError(f"Plugin not found! ({type!r} {name!r} {what!r})")
     return plugin
 
 
@@ -203,7 +203,7 @@ def _loadPluginModule(cfg):
     cfg._plugin_modules = []
     for pdir in cfg.plugin_dirs:
         assert isinstance(pdir, str)
-        modname = 'moin_p_{0}'.format(hashlib.new('sha1', pdir.encode()).hexdigest())
+        modname = 'moin_p_{}'.format(hashlib.new('sha1', pdir.encode()).hexdigest())
         if modname not in sys.modules:
             init_path = os.path.join(os.path.abspath(pdir), '__init__.py')
             spec = importlib.util.spec_from_file_location(modname, init_path)
