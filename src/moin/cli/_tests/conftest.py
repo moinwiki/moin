@@ -26,7 +26,6 @@ import signal
 import subprocess
 import sys
 from time import sleep
-from typing import List
 
 from moin._tests import check_connection, get_dirs
 from moin.cli._tests import run, getBackupPath

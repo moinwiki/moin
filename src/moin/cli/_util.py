@@ -6,7 +6,7 @@
 MoinMoin cli._util common functions used in cli
 """
 
-from typing import Optional, Set
+from typing import Optional
 
 from flask import current_app as app
 from moin.storage.backends.stores import Backend

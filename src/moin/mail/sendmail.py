@@ -8,9 +8,7 @@
 """
 
 
-import os
 import smtplib
-import socket
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 

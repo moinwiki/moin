@@ -15,7 +15,6 @@ from dataclasses import dataclass, field
 import json
 import io
 import os
-from typing import Dict, List
 
 import click
 from flask import current_app as app

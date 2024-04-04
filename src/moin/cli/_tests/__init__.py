@@ -11,7 +11,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import List, Union
+from typing import Union
 from warnings import warn
 
 from moin._tests import get_dirs

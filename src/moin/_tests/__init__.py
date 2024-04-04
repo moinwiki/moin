@@ -12,7 +12,6 @@ import socket
 from io import BytesIO
 from pathlib import Path
 import psutil
-from typing import Tuple
 
 from flask import g as flaskg
 

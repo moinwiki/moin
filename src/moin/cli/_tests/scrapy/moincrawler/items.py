@@ -7,7 +7,6 @@ MoinMoin - moin.cli._tests.scrapy.moincrawler.items classes for items gathered i
 scrapy item docs: https://docs.scrapy.org/en/latest/topics/items.html
 """
 from dataclasses import dataclass, fields, field
-from typing import List
 
 from moin.utils.iri import Iri
 try:
