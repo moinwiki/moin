@@ -990,7 +990,7 @@ class Converter:
         <trademark> --> <span class="db-trademark">
         """
         trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
-                              'registered': '\xae',  # u'&reg;',
+                              'registered': '\xae',  # '&reg;',
                               'trade': '\u2122',  # no entity name defined for superscript TM
                               }
         trademark_class = element.get('class')

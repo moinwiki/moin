@@ -247,7 +247,7 @@ class Macro(MacroInlineBase):
                 day_addr = ''
                 day_class = 'cal-emptyday'
                 if not day:
-                    # u'\xa0' is a non-breaking space (just like &nbsp;
+                    # '\xa0' is a non-breaking space (just like &nbsp;
                     # in html) to make sure empty cells have the same
                     # height as rows with content
                     calweek.append(('\xa0', None, 'cal-invalidday'))

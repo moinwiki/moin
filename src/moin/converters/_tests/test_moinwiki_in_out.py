@@ -217,7 +217,7 @@ continuation of no bullet list"""),
          '[[https://moinmo.in/||title="go there!"]]'),
         # interwiki
         # TODO: should this obsolete (1.9.x) form be made to work?
-        # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
+        # ('[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
         ('[[MeatBall:InterWiki]]',
          '[[MeatBall:InterWiki]]'),
         ('[[MeatBall:InterWiki|InterWiki page on MeatBall]]',
