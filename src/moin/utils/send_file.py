@@ -56,8 +56,8 @@ def send_file(filename=None, file=None,
     (for filesystem files some more optimizations may be possible that for
     file-like objects not having a filesystem filename).
     By default it will try to use the WSGI server's file_wrapper support.
-    Alternatively you can set the application's :attr:`~Flask.use_x_sendfile`
-    attribute to ``True`` to directly emit an `X-Sendfile` header.  This
+    Alternatively you can set ``USE_X_SENDFILE = True`` in the application's
+    config to directly emit an `X-Sendfile` header.  This
     however requires support of the underlying webserver for `X-Sendfile`.
 
     send_file will try to guess some stuff for you if you do not provide them:
@@ -151,7 +151,7 @@ def send_file(filename=None, file=None,
         # that correctly). See there for details: http://greenbytes.de/tech/tc2231/
         headers.add('Content-Disposition', 'attachment; filename*={0}'.format(encode_rfc2231(attachment_filename)))
 
-    if current_app.use_x_sendfile and filename:
+    if current_app.config['USE_X_SENDFILE'] and filename:
         if file:
             file.close()
         headers['X-Sendfile'] = filename
