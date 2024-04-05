@@ -16,7 +16,7 @@ import json
 from operator import itemgetter
 
 from flatland import (
-    Form,
+    Form,  # noqa
     String,
     Integer,
     Boolean,
