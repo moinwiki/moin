@@ -45,7 +45,7 @@ dependencies = [
     "Flask-Caching >= 1.2.0",  # caching support
     "Flask-Theme >= 0.3.6",  # theme support
     "emeraldtree >= 0.10.0",  # xml processing
-    "feedgen == 0.9.*",  # Atom feed
+    "feedgen >= 0.9.0",  # Atom feed
     "flatland >= 0.8",  # form handling
     "Jinja2 >= 3.1.0",  # template engine
     "markupsafe <= 2.2.0",  # safe html and xml
