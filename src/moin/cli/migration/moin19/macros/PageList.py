@@ -53,7 +53,7 @@ def convert_page_list_macro_to_item_list(node):
         # strip the "regex:" prefix if necessary
         args_intermediate = re.sub(r'^regex:', '', args_before)
         # wrap argument in new keyword argument "regex"
-        args_after = 'item="",regex="{}"'.format(args_intermediate)
+        args_after = f'item="",regex="{args_intermediate}"'
     else:
         # PageList macros without arguments used to show every
         # available page in the wiki, so it's converted to an
@@ -66,7 +66,7 @@ def convert_page_list_macro_to_item_list(node):
             elem.append(args_after)
 
     # 'alt' attribute
-    new_alt = '<<ItemList({})>>'.format(args_after)
+    new_alt = f'<<ItemList({args_after})>>'
     node.set(moin_page.alt, new_alt)
 
 

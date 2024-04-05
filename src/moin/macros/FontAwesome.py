@@ -37,18 +37,18 @@ class Macro(MacroInlineBase):
             try:
                 int(color[1:], 16)
                 assert len(color) in (4, 7)
-                color = 'color: {0}; '.format(color)
+                color = f'color: {color}; '
             except (ValueError, AssertionError):
                 color = ""
         else:
-            color = 'color: {0}; '.format(color) if color.isalpha() else ""
+            color = f'color: {color}; ' if color.isalpha() else ""
 
         if size:
             try:
                 s = float(size)
                 assert s > 0.1
                 assert s < 99
-                size = 'font-size: {0}em;'.format(size)
+                size = f'font-size: {size}em;'
             except (ValueError, AssertionError):
                 size = ""
 

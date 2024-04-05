@@ -90,7 +90,7 @@ def convert_month_calendar_macro_syntax(node):
             logging.warning("MonthCalendar macro parameter 'template' cannot be migrated")
 
         args_after_dict = {
-            'item': '"{}"'.format(parmpagename) if parmpagename else None,
+            'item': f'"{parmpagename}"' if parmpagename else None,
             'year': parmyear,
             'month': parmmonth,
             'month_offset': parmoffset,
@@ -99,7 +99,7 @@ def convert_month_calendar_macro_syntax(node):
         }
 
         args_after = ','.join(
-            ["{}={}".format(key, args_after_dict[key]) for key in args_after_dict if args_after_dict[key]]
+            [f"{key}={args_after_dict[key]}" for key in args_after_dict if args_after_dict[key]]
         )
 
     for elem in node.iter_elements():
@@ -108,7 +108,7 @@ def convert_month_calendar_macro_syntax(node):
             elem.append(args_after)
 
     # 'alt' attribute
-    new_alt = '<<MonthCalendar({})>>'.format(args_after)
+    new_alt = f'<<MonthCalendar({args_after})>>'
     node.set(moin_page.alt, new_alt)
 
 

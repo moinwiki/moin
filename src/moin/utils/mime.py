@@ -45,26 +45,26 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
         if parameters is not None:
             new_parameters.update(parameters)
 
-        return super(Type, cls).__new__(cls, new_type, new_subtype, new_parameters)
+        return super().__new__(cls, new_type, new_subtype, new_parameters)
 
     def __eq__(self, other):
         if isinstance(other, str):
             return self.__eq__(self.__class__(other))
 
         if isinstance(other, Type):
-            return super(Type, self).__eq__(other)
+            return super().__eq__(other)
 
         return NotImplemented
 
     def __str__(self):
-        ret = ['{0}/{1}'.format(self.type or '*', self.subtype or '*')]
+        ret = ['{}/{}'.format(self.type or '*', self.subtype or '*')]
 
         parameters = sorted(self.parameters.items())
         for key, value in parameters:
             if self.__token_check(value):
-                ret.append('{0}={1}'.format(key, value))
+                ret.append(f'{key}={value}')
             else:
-                ret.append('{0}="{1}"'.format(key, value))
+                ret.append(f'{key}="{value}"')
 
         return ';'.join(ret)
 

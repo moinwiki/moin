@@ -24,7 +24,7 @@ from moin.converters.moinwiki_out import Converter as conv_out
 
 class TestConverter:
 
-    input_namespaces = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:xinclude="{3}" xmlns:html="{4}"'.format(
+    input_namespaces = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:xinclude="{}" xmlns:html="{}"'.format(
         moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)
 
     namespaces = {
@@ -217,7 +217,7 @@ continuation of no bullet list"""),
          '[[https://moinmo.in/||title="go there!"]]'),
         # interwiki
         # TODO: should this obsolete (1.9.x) form be made to work?
-        # (u'[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
+        # ('[[MoinMoin:MoinMoinWiki|MoinMoin Wiki|&action=diff,&rev1=1,&rev2=2]]', '[[MoinMoin:MoinMoinWiki?action=diff,&rev1=1,&rev2=2|MoinMoin Wiki]]\n'),
         ('[[MeatBall:InterWiki]]',
          '[[MeatBall:InterWiki]]'),
         ('[[MeatBall:InterWiki|InterWiki page on MeatBall]]',

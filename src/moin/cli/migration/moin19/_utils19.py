@@ -73,9 +73,9 @@ def add_metadata_to_body(metadata, data):
         # special handling for list metadata
         if isinstance(value, (list, tuple)):
             for line in value:
-                metadata_data += "#{0} {1}\n".format(key, line)
+                metadata_data += f"#{key} {line}\n"
         else:
-            metadata_data += "#{0} {1}\n".format(key, value)
+            metadata_data += f"#{key} {value}\n"
     return metadata_data + data
 
 
@@ -102,7 +102,7 @@ def quoteWikinameFS(wikiname, charset=CHARSET19):
         # Quote and append unsafe stuff
         quoted.append('(')
         for character in needle.group():
-            quoted.append("{0:02x}".format(ord(character)))
+            quoted.append(f"{ord(character):02x}")
         quoted.append(')')
 
     # append rest of string

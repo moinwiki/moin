@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # MoinMoin documentation build configuration file, created by
 # sphinx-quickstart on Fri Oct 29 21:50:06 2010.

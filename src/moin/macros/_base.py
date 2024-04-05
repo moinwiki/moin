@@ -91,7 +91,7 @@ def fail_message(msg, severity='error'):
 
     Severity may be: attention, caution, danger, error, hint, important, note, or tip.
     """
-    return html.div(attrib={html.class_: '{0} moin-nowiki'.format(severity)}, children=msg)
+    return html.div(attrib={html.class_: f'{severity} moin-nowiki'}, children=msg)
 
 
 class MacroBase:
@@ -283,7 +283,7 @@ class MacroNumberPageLinkListBase(MacroBlockBase):
         """ creates an ET with a list of pagelinks from a list of pagenames """
         num_page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
         for num, pagename in num_pagenames:
-            num_code = moin_page.code(children=["{0:6d} ".format(num)])
+            num_code = moin_page.code(children=[f"{num:6d} "])
             # This link can never reach pagelinks
             url = str(iri.Iri(scheme='wiki', authority='', path='/' + pagename))
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[pagename])

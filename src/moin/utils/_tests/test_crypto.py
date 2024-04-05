@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2011-2013 by MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 

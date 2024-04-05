@@ -180,8 +180,7 @@ class Converter:
 
         for child in elem:
             if isinstance(child, ET.Node):
-                for i in self.recurse(child, page):
-                    yield i
+                yield from self.recurse(child, page)
 
     def __call__(self, tree):
         for elem, page in self.recurse(tree, None):

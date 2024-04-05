@@ -15,7 +15,6 @@ from dataclasses import dataclass, field
 import json
 import io
 import os
-from typing import Dict, List
 
 import click
 from flask import current_app as app
@@ -268,7 +267,7 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
     backends = get_backends(backends, all_backends)
     bad_revids = set()
     for backend in backends:
-        revs: Dict[str, List[RevData]] = defaultdict(list)
+        revs: dict[str, list[RevData]] = defaultdict(list)
         for meta, data, issues in correcting_rev_iter(backend):
             revs[meta[ITEMID]].append(RevData(meta[REVID], meta.get(REV_NUMBER, -1), meta.get(MTIME, -1),
                                               meta.get(PARENTID)))

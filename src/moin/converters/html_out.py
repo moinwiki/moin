@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2008 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -304,7 +303,7 @@ class Converter:
             level = 1
         elif level > 6:
             level = 6
-        ret = self.new_copy(html('h{0}'.format(level)), elem)
+        ret = self.new_copy(html(f'h{level}'), elem)
         ret.level = level
         return ret
 
@@ -382,7 +381,7 @@ class Converter:
                     attrib_new[html('class')] = 'moin-nobullet-list'
                 ret = html.ul(attrib=attrib_new)
             else:
-                raise ElementException('page:item-label-generate does not support "{0}"'.format(generate))
+                raise ElementException(f'page:item-label-generate does not support "{generate}"')
         else:
             ret = html.dl(attrib=attrib_new)
 
@@ -532,7 +531,7 @@ class Converter:
                 # transclusion is a block element
                 return self.new_copy(html.div, item, attribs)
 
-        raise RuntimeError('page:page need to contain exactly one page:body tag, got {0!r}'.format(elem[:]))
+        raise RuntimeError(f'page:page need to contain exactly one page:body tag, got {elem[:]!r}')
 
     def visit_moinpage_part(self, elem):
         body = error = None
@@ -602,7 +601,7 @@ class Converter:
             else:
                 attribute = {}
                 key = html('class')
-                attribute[key] = "element-{0}".format(generate)
+                attribute[key] = f"element-{generate}"
                 return self.new_copy(html.span, elem, attribute)
         # If no attributes are handled by our converter, just return span
         return self.new_copy(html.span, elem)
@@ -678,7 +677,7 @@ class SpecialId:
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         if nr == 1:
             return id
-        return id + '-{0}'.format(nr)
+        return id + f'-{nr}'
 
 
 class SpecialPage:
@@ -695,7 +694,7 @@ class SpecialPage:
 
     def add_heading(self, elem, level, id=None):
         elem.append(html.a(attrib={
-            html.href: "#{0}".format(id),
+            html.href: f"#{id}",
             html.class_: "moin-permalink",
             html.title_: _("Link to this heading")
         }))
@@ -743,7 +742,7 @@ class ConverterPage(Converter):
         self._special_stack = [special_root]
         self._id = SpecialId()
 
-        ret = super(ConverterPage, self).__call__(element)
+        ret = super().__call__(element)
 
         special_root.root = ret
 
@@ -787,14 +786,14 @@ class ConverterPage(Converter):
                         if maxlevel != 1:
                             stack_top_append(old_toggle)
                         stack_push(html.ol())
-                        stack_push(html.li({html.id_: 'li{0}'.format(id)}))
+                        stack_push(html.li({html.id_: f'li{id}'}))
                         last_level += 1
                     if need_item:
                         stack.pop()
-                        stack_push(html.li({html.id_: 'li{0}'.format(id)}))
+                        stack_push(html.li({html.id_: f'li{id}'}))
                     togglelink = html.a(attrib={
                         html.href_: "#",
-                        html.onclick_: "$('#li{0} ol').toggle();return false;".format(id),
+                        html.onclick_: f"$('#li{id} ol').toggle();return false;",
                         html.class_: 'moin-showhide',
                     }, children=["[+]", ])
                     elem_a = html.a(attrib={html.href: '#' + id}, children=[text, ])
@@ -807,7 +806,7 @@ class ConverterPage(Converter):
         if elem.get(_tag_moin_page_page_href):
             self._special_stack.append(SpecialPage())
 
-            ret = super(ConverterPage, self).visit(elem)
+            ret = super().visit(elem)
 
             sp = self._special_stack.pop()
             sp.root = ret
@@ -815,10 +814,10 @@ class ConverterPage(Converter):
             self._special_stack[-1].extend(sp)
             return ret
         else:
-            return super(ConverterPage, self).visit(elem)
+            return super().visit(elem)
 
     def visit_moinpage_h(self, elem, _tag_html_id=html.id):
-        elem = super(ConverterPage, self).visit_moinpage_h(elem)
+        elem = super().visit_moinpage_h(elem)
 
         id = elem.get(_tag_html_id)
         if not id:
@@ -864,14 +863,14 @@ class ConverterPage(Converter):
         prefixed_id = '%s-%s' % (self._id.get_id('note-placement'), id)
 
         elem_ref = ET.XML("""
-<html:sup xmlns:html="{0}" html:id="note-{1}-ref" html:class="moin-footnote">
-<html:a html:href="#note-{2}">{3}</html:a>
+<html:sup xmlns:html="{}" html:id="note-{}-ref" html:class="moin-footnote">
+<html:a html:href="#note-{}">{}</html:a>
 </html:sup>
 """.format(html, prefixed_id, prefixed_id, id))
 
         elem_note = ET.XML("""
-<html:p xmlns:html="{0}" html:id="note-{1}">
-<html:sup><html:a html:href="#note-{2}-ref">{3}</html:a></html:sup>
+<html:p xmlns:html="{}" html:id="note-{}">
+<html:sup><html:a html:href="#note-{}-ref">{}</html:a></html:sup>
 </html:p>
 """.format(html, prefixed_id, prefixed_id, id))
 

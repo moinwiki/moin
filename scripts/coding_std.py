@@ -202,7 +202,7 @@ def check_files(filename, suffix):
 
     try:
         # newline="" does not change incoming line endings
-        with open(filename, "r", encoding="utf-8", newline="") as f:
+        with open(filename, encoding="utf-8", newline="") as f:
             lines = f.readlines()
     except UnicodeDecodeError:
         print('Skipping file due to UnicodeDecodeError:', filename)
@@ -270,7 +270,7 @@ def find_js_phrases(starting_dir):
     """
     global phrases
     target = os.path.join(starting_dir, 'moin', 'templates', 'dictionary.js')
-    with open(target, "r", encoding="utf-8") as f:
+    with open(target, encoding="utf-8") as f:
         lines = f.readlines()
 
     # "Cancel": "{{ _("Cancel") }}",

@@ -92,7 +92,7 @@ class LDAPAuth(BaseAuth):
         report_invalid_credentials=True,  # whether to emit "invalid username or password" msg at login time or not
         **kw
     ):
-        super(LDAPAuth, self).__init__(**kw)
+        super().__init__(**kw)
         self.server_uri = server_uri
         self.bind_dn = bind_dn
         self.bind_pw = bind_pw
@@ -246,7 +246,7 @@ class LDAPAuth(BaseAuth):
                                   trusted=self.trusted)
                 u.name = username
                 u.display_name = display_name
-                logging.debug("creating user object with name {0!r} email {1!r} display name {2!r}".format(
+                logging.debug("creating user object with name {!r} email {!r} display name {!r}".format(
                     username, email, display_name))
 
             except ldap.INVALID_CREDENTIALS:

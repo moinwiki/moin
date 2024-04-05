@@ -87,6 +87,6 @@ class TestNotifications:
         rev2 = item.store_revision(dict(name=[self.item_name, ]), BytesIO(b'xx'),
                                    trusted=True, return_rev=True)
         notification = Notification(app, self.fqname, DESTROY_REV, rev1.data, rev1.meta, rev2.data, rev2.meta)
-        assert notification.generate_diff_url(domain) == "{0}{1}".format(
+        assert notification.generate_diff_url(domain) == "{}{}".format(
             domain, url_for('frontend.diff', item_name=self.item_name,
                             rev1=rev1.revid, rev2=rev2.revid))

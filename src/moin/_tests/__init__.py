@@ -12,7 +12,6 @@ import socket
 from io import BytesIO
 from pathlib import Path
 import psutil
-from typing import Tuple
 
 from flask import g as flaskg
 
@@ -69,7 +68,7 @@ def update_item(name, meta, data):
 def create_random_string_list(length=14, count=10):
     """ creates a list of random strings """
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    return ["{0}".format(random_string(length, chars)) for counter in range(count)]
+    return [f"{random_string(length, chars)}" for counter in range(count)]
 
 
 def nuke_item(name):
@@ -88,11 +87,11 @@ def check_connection(port, host='127.0.0.1'):
         s = socket.create_connection((host, port))
         s.shutdown(socket.SHUT_RDWR)
         s.close()
-    except socket.error as err:
-        raise Exception("connecting to {0}:{1:d}, error: {2!s}".format(host, port, err))
+    except OSError as err:
+        raise Exception(f"connecting to {host}:{port:d}, error: {err!s}")
 
 
-def get_dirs(subdir: str) -> Tuple[Path, Path]:
+def get_dirs(subdir: str) -> tuple[Path, Path]:
     """return Paths for directories used in tests creating artifacts_dir if needed
 
     :param subdir: subdirectory for artifacts_dir

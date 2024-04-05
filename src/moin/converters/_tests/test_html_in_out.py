@@ -37,14 +37,14 @@ class Base:
     def handle_input(self, input, args):
         out = self.conv_html_dom(input, **args)
         output = serialize(out, namespaces=self.namespaces)
-        logging.debug("After the HTML_IN conversion : {0}".format(self.output_re.sub('', output)))
+        logging.debug("After the HTML_IN conversion : {}".format(self.output_re.sub('', output)))
         out = self.conv_dom_html(out, **args)
         output = serialize(out, namespaces=self.namespaces)
         return self.output_re.sub('', output)
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
-        logging.debug("After the roundtrip : {0}".format(string_to_parse))
+        logging.debug(f"After the roundtrip : {string_to_parse}")
         print('string_to_parse = %s' % string_to_parse)
         tree = etree.parse(StringIO(string_to_parse))
         assert (tree.xpath(path))

@@ -30,7 +30,7 @@ class WikiDict(BaseDict):
             wikidict = rev.meta.get(WIKIDICT, {})
             return wikidict
         except KeyError:
-            flash('WikiDict "{dict_name}" has invalid syntax within metadata.'.format(dict_name=dict_name))
+            flash(f'WikiDict "{dict_name}" has invalid syntax within metadata.')
             raise DictDoesNotExistError(dict_name)
 
 

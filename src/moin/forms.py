@@ -271,7 +271,7 @@ class SubscriptionsJoinedString(JoinedString):
                     name_ = _("This item doesn't exist.")
                 except AttributeError:
                     name_ = _("This item name is corrupt, delete and recreate.")
-                value = "{0} ({1})".format(value, name_)
+                value = f"{value} ({name_})"
             else:
                 # name::ExampleItem | tags::demo | nameprefix::jp | namere::.* | name:MyNamespace:ExampleItem
                 value = child.u
@@ -318,7 +318,7 @@ class DateTimeUNIX(_DateTime):
                 value = datetime.datetime.utcfromtimestamp(value)
             except ValueError:
                 pass
-        return super(DateTimeUNIX, self).serialize(value)
+        return super().serialize(value)
 
     def adapt(self, value):
         """Coerces value to a native UNIX timestamp.
@@ -333,7 +333,7 @@ class DateTimeUNIX(_DateTime):
                 return value
             except (ValueError, OSError):  # OSError errno 75 "Value too large for defined data type"
                 raise AdaptationError()
-        dt = super(DateTimeUNIX, self).adapt(value)
+        dt = super().adapt(value)
         if isinstance(dt, datetime.datetime):
             # XXX forces circular dependency when it is in the head import block
             from moin.themes import utctimestamp
@@ -391,7 +391,7 @@ class Reference(Select.with_properties(empty_label=L_('(None)')).validated_by(Va
         return choices
 
     def __init__(self, value=Unspecified, **kw):
-        super(Reference, self).__init__(value, **kw)
+        super().__init__(value, **kw)
         # NOTE There is a slight chance of two instances of the same Reference
         # subclass having different set of choices when the storage changes
         # between their initialization.
@@ -406,7 +406,7 @@ class BackReference(ReadonlyItemLinkList):
     """
     def set(self, query, **query_args):
         revs = flaskg.storage.search(query, **query_args)
-        super(BackReference, self).set([rev.meta[NAME] for rev in revs])
+        super().set([rev.meta[NAME] for rev in revs])
 
 
 MultiSelect = Array.with_properties(widget=WIDGET_MULTI_SELECT)

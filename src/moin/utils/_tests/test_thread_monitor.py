@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -41,6 +40,6 @@ class TestMonitor:
         with open(self.src, "w") as f:
             Monitor_test_obj.trigger_dump(f)
         # read the content of first line
-        with open(self.src, "r") as f:
+        with open(self.src) as f:
             f.readline()
             assert 'Dumping thread' in f.readline()

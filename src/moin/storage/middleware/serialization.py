@@ -95,8 +95,7 @@ def serialize_iter(backend):
             issues_found = True
             for issue in issues:
                 logging.info(issue)
-        for serialize_data in serialize_rev(meta, data):
-            yield serialize_data
+        yield from serialize_rev(meta, data)
     for data in serialize_rev(None, None):
         yield data
     if issues_found:

@@ -57,7 +57,7 @@ class XMLParser(ET.XMLParser):
     flaskg.add_lineno_attr may be True.
     """
     def _start_list(self, tag, attrib_in):
-        elem = super(XMLParser, self)._start_list(tag, attrib_in)
+        elem = super()._start_list(tag, attrib_in)
         if flaskg and getattr(flaskg, 'add_lineno_attr', False):
             elem.attrib[html.data_lineno] = self._parser.CurrentLineNumber
         return elem
@@ -990,7 +990,7 @@ class Converter:
         <trademark> --> <span class="db-trademark">
         """
         trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
-                              'registered': '\xae',  # u'&reg;',
+                              'registered': '\xae',  # '&reg;',
                               'trade': '\u2122',  # no entity name defined for superscript TM
                               }
         trademark_class = element.get('class')

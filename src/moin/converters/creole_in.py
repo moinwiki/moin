@@ -348,7 +348,7 @@ class Converter(ConverterMacro):
                 return
             else:
                 # assume local language uses ":" inside of words, set link_item and continue
-                link_item = '{0}:{1}'.format(link_interwiki_site, link_interwiki_item)
+                link_item = f'{link_interwiki_site}:{link_interwiki_item}'
         if link_item is not None:
             att = 'attachment:'  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
@@ -631,8 +631,8 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((k, v) for k, v in match.groupdict().items() if v is not None))
-        getattr(self, '{0}_{1}_repl'.format(prefix, match.lastgroup))(*args, **data)
+        data = {k: v for k, v in match.groupdict().items() if v is not None}
+        getattr(self, f'{prefix}_{match.lastgroup}_repl')(*args, **data)
 
     def parse_block(self, iter_content, arguments):
         attrib = {}

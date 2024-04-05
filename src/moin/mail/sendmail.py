@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008-2009 MoinMoin:ThomasWaldmann
 # Copyright: 2024 MoinMoin:UlrichB
@@ -9,9 +8,7 @@
 """
 
 
-import os
 import smtplib
-import socket
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 
@@ -113,7 +110,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
         except smtplib.SMTPException as e:
             logging.exception("smtp mail failed with an exception.")
             return 0, str(e)
-        except (os.error, socket.error) as e:
+        except OSError as e:
             logging.exception("smtp mail failed with an exception.")
             return (0, _("Connection to mailserver '{server}' failed: {reason}"
                         ).format(server=cfg.mail_smarthost, reason=str(e))

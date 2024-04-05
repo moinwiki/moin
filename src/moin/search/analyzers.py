@@ -156,7 +156,7 @@ class AclTokenizer(Tokenizer):
             for name, permissions in acl.acl:
                 for permission in permissions:
                     sign = "+" if permissions[permission] else "-"
-                    tk.text = "{0}:{1}{2}".format(name, sign, permission)
+                    tk.text = f"{name}:{sign}{permission}"
                     if positions:
                         tk.pos = pos
                         pos += 1

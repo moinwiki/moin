@@ -31,7 +31,7 @@ class Converter:
         attrib = {
             moin_page.type_: str(self.input_type),
             xlink.href: Iri(scheme='wiki', authority='', path='/' + item_name,
-                            query='do=get&rev={0}'.format(rev.revid)),
+                            query=f'do=get&rev={rev.revid}'),
         }
         if arguments and html.alt in arguments:
             attrib[html.alt] = arguments[html.alt]

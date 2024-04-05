@@ -16,7 +16,7 @@ import config
 
 try:
     f = urllib.request.urlopen(config.BASE_URL)
-except IOError:
+except OSError:
     pytestmark = pytest.mark.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
 
 import driver_register

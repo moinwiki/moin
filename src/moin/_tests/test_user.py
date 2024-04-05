@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
 # Copyright: 2009 by ReimarBauer
 # Copyright: 2011-2013 by ThomasWaldmann
@@ -30,7 +29,7 @@ class TestSimple:
         assert not u.exists()
         # create a user
         ret = user.create_user(name, password, email, validate=False)
-        assert ret is None, "create_user returned: {0}".format(ret)
+        assert ret is None, f"create_user returned: {ret}"
         # existing user
         u = user.User(name=name, password=password)
         assert u.name == [name, ]
@@ -263,7 +262,7 @@ class TestUser:
 
     def createUser(self, name, password, pwencoded=False, email=None, validate=False):
         ret = user.create_user(name, password, email, validate=validate, is_encrypted=pwencoded)
-        assert ret is None, "create_user returned: {0}".format(ret)
+        assert ret is None, f"create_user returned: {ret}"
 
 
 class TestGroupName:

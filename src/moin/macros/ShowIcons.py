@@ -30,7 +30,7 @@ class Macro(MacroBlockBase):
         files = [f for f in listdir(icon_dir) if isfile(join(icon_dir, f))]
         rows = []
         for filename in files:
-            markup = '<<Icon({0})>>'.format(filename)
+            markup = f'<<Icon({filename})>>'
             src = url_for('static', filename='img/icons/' + filename)
             # TODO: add alt attribute for img and add a macro test module
             # reason = _('Icon not rendered, verify name is valid')

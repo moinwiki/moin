@@ -249,7 +249,7 @@ def anchor_name_from_text(text):
     quoted = urllib.parse.quote_plus(text, safe=':', encoding='utf-7', )
     res = quoted.replace('%', '.').replace('+', '_')
     if not res[:1].isalpha():
-        return 'A{0}'.format(res)
+        return f'A{res}'
     return res
 
 
@@ -292,7 +292,7 @@ def get_hostname(addr):
         import socket
         try:
             return str(socket.gethostbyaddr(addr)[0], CHARSET)
-        except (socket.error, UnicodeError):
+        except (OSError, UnicodeError):
             pass
 
 

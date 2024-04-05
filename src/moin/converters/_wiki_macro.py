@@ -112,11 +112,11 @@ class ConverterMacro:
             add_moin_xpointer('editlink', '')
 
         if xpointer_moin:
-            xpointer.append('page:include({0})'.format(' '.join(xpointer_moin)))
+            xpointer.append('page:include({})'.format(' '.join(xpointer_moin)))
 
         if xpointer:
             # TODO: Namespace?
-            ns = 'xmlns(page={0}) '.format(moin_page)
+            ns = f'xmlns(page={moin_page}) '
 
             attrib[xinclude.xpointer] = ns + ' '.join(xpointer)
 
@@ -143,7 +143,7 @@ class ConverterMacro:
         return moin_page.table_of_content(attrib=attrib)
 
     def macro(self, name, args, text, context_block=False):
-        func = getattr(self, '_{0}_repl'.format(name), None)
+        func = getattr(self, f'_{name}_repl', None)
         if func is not None:
             return func(args, text, context_block)
 

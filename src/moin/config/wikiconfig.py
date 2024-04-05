@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MoinMoin Wiki Configuration - see https://moin-20.readthedocs.io/en/latest/admin/configure.html
 
@@ -137,7 +136,7 @@ class Config(DefaultConfig):
     # https://moin-20.readthedocs.io/en/latest/admin/configure.html#group-backend-configuration
 
     # File Storage backends are recommended for most wikis
-    uri = 'stores:fs:{0}/%(backend)s/%(kind)s'.format(data_dir)  # use file system for storage
+    uri = f'stores:fs:{data_dir}/%(backend)s/%(kind)s'  # use file system for storage
     # uri = 'stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  # sqlite, 1 table per db
     # uri = 'stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir)  # sqlite, 2 tables per db
     # sqlite via SQLAlchemy

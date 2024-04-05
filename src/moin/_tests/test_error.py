@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2003-2004 by Nir Soffer <nirs AT freeshell DOT org>
 # Copyright: 2007 by MoinMoin:ThomasWaldmann
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.

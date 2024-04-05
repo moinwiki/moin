@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2011 Prashant Kumar <contactprashantat AT gmail DOT com>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 

@@ -25,7 +25,7 @@ class WikiGroup(GreedyGroup):
     def _load_group(self):
         group_name = self.name
         if flaskg.unprotected_storage.has_item(group_name):
-            members, member_groups = super(WikiGroup, self)._load_group()
+            members, member_groups = super()._load_group()
             return members, member_groups
         else:
             raise GroupDoesNotExistError(group_name)

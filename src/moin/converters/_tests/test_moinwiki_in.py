@@ -306,7 +306,7 @@ class TestConverter:
         ('||<99%>Cell||\n',
          '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="width: 99%;">Cell</table-cell></table-row></table-body></table></body></page>'),
         ('||<X>Cell||\n',
-         # u'\xa0' below is equal to &nbsp;
+         # '\xa0' below is equal to &nbsp;
          '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell style="background-color: pink; color: black;">[ Error: "X" is invalid within &lt;X&gt;' +
          '\xa0' + ']<line-break />Cell</table-cell></table-row></table-body></table></body></page>'),
     ]

@@ -217,11 +217,11 @@ class Macro(MacroInlineBase):
             wkend = (0, 6)
             wkdays = (_('Sun'), _('Mon'), _('Tue'), _('Wed'), _('Thu'), _('Fri'), _('Sat'))
 
-        calcaption = "{} {}".format(months[month - 1], year)
+        calcaption = f"{months[month - 1]} {year}"
         calhead = []
 
         # get list of calendar items for given month
-        item_month = "{:s}/{:4d}-{:02d}-".format(parmpagename[0], year, month)
+        item_month = f"{parmpagename[0]:s}/{year:4d}-{month:02d}-"
         date_results = search_names(item_month, limit=100)
 
         r7 = range(7)
@@ -247,10 +247,10 @@ class Macro(MacroInlineBase):
                 day_addr = ''
                 day_class = 'cal-emptyday'
                 if not day:
-                    # u'\xa0' is a non-breaking space (just like &nbsp;
+                    # '\xa0' is a non-breaking space (just like &nbsp;
                     # in html) to make sure empty cells have the same
                     # height as rows with content
-                    calweek.append((u'\xa0', None, 'cal-invalidday'))
+                    calweek.append(('\xa0', None, 'cal-invalidday'))
                 else:
                     # we only process the first calendar (or item name)
                     # mentioned in the macro parameters (in case separate
@@ -258,9 +258,9 @@ class Macro(MacroInlineBase):
                     page = parmpagename[0]
 
                     if anniversary:
-                        link = "{:s}/{:02d}-{:02d}".format(page, month, day)
+                        link = f"{page:s}/{month:02d}-{day:02d}"
                     else:
-                        link = "{:s}/{:4d}-{:02d}-{:02d}".format(page, year, month, day)
+                        link = f"{page:s}/{year:4d}-{month:02d}-{day:02d}"
                     day_addr = link
 
                     if day_addr in date_results:

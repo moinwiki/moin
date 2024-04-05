@@ -166,9 +166,9 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     :param wikiname: interwikiname of this wiki
     :returns: document to put into whoosh index
     """
-    doc = dict([(key, value)
+    doc = {key: value
                 for key, value in meta.items()
-                if key in schema])
+                if key in schema}
     if SUBSCRIPTION_IDS in schema and SUBSCRIPTIONS in meta:
         doc[SUBSCRIPTION_IDS], doc[SUBSCRIPTION_PATTERNS] = backend_subscriptions_to_index(meta[SUBSCRIPTIONS])
     for key in [MTIME, PTIME]:
@@ -309,7 +309,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         # no way
         raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item {0!r} rev {1} contenttype {2}:".format(
+        logging.exception("Exception happened in conversion of item {!r} rev {} contenttype {}:".format(
                           item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
         doc = f'ERROR [{e!s}]'
         return doc
@@ -720,10 +720,10 @@ class IndexingMiddleware:
             # NOTE: self.backend iterator gives (backend_name, revid) tuples, which is NOT
             # the same as (name, revid), thus we do the set operations just on the revids.
             # first update ALL_REVS index:
-            revids_backends = dict((revid, backend_name) for backend_name, revid in self.backend)
+            revids_backends = {revid: backend_name for backend_name, revid in self.backend}
             backend_revids = set(revids_backends)
             with index_all.searcher() as searcher:
-                ix_revids_backends = dict((doc[REVID], doc[BACKENDNAME]) for doc in searcher.all_stored_fields())
+                ix_revids_backends = {doc[REVID]: doc[BACKENDNAME] for doc in searcher.all_stored_fields()}
             revids_backends.update(ix_revids_backends)  # this is needed for stuff that was deleted from storage
             ix_revids = set(ix_revids_backends)
             add_revids = backend_revids - ix_revids
@@ -741,8 +741,8 @@ class IndexingMiddleware:
         try:
             # now update LATEST_REVS index:
             with index_latest.searcher() as searcher:
-                ix_revids = set(doc[REVID] for doc in searcher.all_stored_fields())
-            backend_latest_revids = set(revid for name, revid in backend_latest_backends_revids)
+                ix_revids = {doc[REVID] for doc in searcher.all_stored_fields()}
+            backend_latest_revids = {revid for name, revid in backend_latest_backends_revids}
             upd_revids = backend_latest_revids - ix_revids
             upd_revids = [(revids_backends[revid], revid) for revid in upd_revids]
             self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, upd_revids, 'update')
@@ -901,8 +901,7 @@ class IndexingMiddleware:
         with self.ix[idx_name].searcher() as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
-            for doc in searcher.documents(**kw):
-                yield doc
+            yield from searcher.documents(**kw)
 
     def document(self, idx_name=LATEST_REVS, **kw):
         """
@@ -1134,8 +1133,7 @@ class Item(PropertiesMixin):
         Iterate over Revisions belonging to this item.
         """
         if self:
-            for rev in self.indexer.documents(idx_name=ALL_REVS, itemid=self.itemid):
-                yield rev
+            yield from self.indexer.documents(idx_name=ALL_REVS, itemid=self.itemid)
 
     def __getitem__(self, revid):
         """
@@ -1244,7 +1242,7 @@ class Item(PropertiesMixin):
             del flaskg.data_mtime
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
-        meta = dict([(k, v) for k, v in meta.items() if v not in [None, ]])
+        meta = {k: v for k, v in meta.items() if v not in [None, ]}
         # file upload UI does not have a summary field
         if SUMMARY not in meta:
             meta[SUMMARY] = ""

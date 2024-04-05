@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2008,2009 MoinMoin:BastianBlank
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
@@ -304,7 +303,7 @@ def test_Iri_quote_1():
     assert u.fragment.fullquoted == fragment
     assert u.fragment.quoted == 'fragment_ä%25?#'
     assert u.fragment.urlquoted == 'fragment_%C3%A4%25?%23'
-    assert str(u) == 'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
+    assert str(u) == f'wiki://{authority}{path}?{query}#{fragment}'
 
 
 def test_Iri_quote_2():
@@ -312,7 +311,7 @@ def test_Iri_quote_2():
     path = '/path_ä%25%3F%23'
     query = 'query_ä%25?%23'
     fragment = 'fragment_ä%25?%23'
-    i = 'wiki://{0}{1}?{2}#{3}'.format(authority, path, query, fragment)
+    i = f'wiki://{authority}{path}?{query}#{fragment}'
     u = Iri(i)
     assert str(u) == i
 

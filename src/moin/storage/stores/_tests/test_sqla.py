@@ -18,7 +18,7 @@ pytest.importorskip('moin.storage.stores.sqla')  # noqa
 def test_create_and_destroy(tmpdir, Store):
     dbfile = tmpdir.join('store.sqlite')
     assert not dbfile.check()
-    store = Store('sqlite:///{0!s}'.format(dbfile))
+    store = Store(f'sqlite:///{dbfile!s}')
     assert not dbfile.check()
     store.create()
     assert dbfile.check()

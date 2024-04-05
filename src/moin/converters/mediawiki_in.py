@@ -76,8 +76,8 @@ class _TableArguments:
         args = Arguments()
 
         for match in self._re.finditer(input):
-            data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
-            getattr(self, '{0}_repl'.format(match.lastgroup))(args, **data)
+            data = {str(k): v for k, v in match.groupdict().items() if v is not None}
+            getattr(self, f'{match.lastgroup}_repl')(args, **data)
 
         return args
 
@@ -207,7 +207,7 @@ class Converter(ConverterMacro):
                     preprocessor_status = self.preprocessor.pop()
             elif m.group('text'):
                 self.preprocessor.push(preprocessor_status)
-                self.parse_inline('\n{0}'.format(m.group('text')), stack, self.inline_re)
+                self.parse_inline('\n{}'.format(m.group('text')), stack, self.inline_re)
                 preprocessor_status = self.preprocessor.pop()
         stack.pop_name('table')
 
@@ -916,10 +916,10 @@ class Converter(ConverterMacro):
                         if tag_name not in self.all_tags or re.match(r'.*/\s*$', tag)\
                                 or self.nowiki and (status or tag_name != self.nowiki_tag):
                             if not len(tags):
-                                post_line.append('<{0}>'.format(tag))
+                                post_line.append(f'<{tag}>')
                                 post_line.append(text)
                             else:
-                                tags[-1].text.append('<{0}>'.format(tag))
+                                tags[-1].text.append(f'<{tag}>')
                                 tags[-1].text.append(text)
                         else:
                             if not status:
@@ -933,7 +933,7 @@ class Converter(ConverterMacro):
                                     close_tag = self.Preprocessor_tag()
                                     while tag_name != close_tag.tag_name:
                                         close_tag = tags.pop()
-                                        tmp_line = '<{0}>{1}{2}</{3}>'.format(
+                                        tmp_line = '<{}>{}{}</{}>'.format(
                                             close_tag.tag, ''.join(close_tag.text), tmp_line, close_tag.tag_name)
                                         if not len(tags):
                                             post_line.append(tmp_line)
@@ -964,8 +964,8 @@ class Converter(ConverterMacro):
         """
         Call the _repl method for the last matched group with the given prefix.
         """
-        data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
-        func = '{0}_{1}_repl'.format(prefix, match.lastgroup)
+        data = {str(k): v for k, v in match.groupdict().items() if v is not None}
+        func = f'{prefix}_{match.lastgroup}_repl'
         # logging.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
@@ -985,7 +985,7 @@ class Converter(ConverterMacro):
         for line in iter_content:
             match = self.indent_re.match(line)
             if match:
-                data = dict(((str(k), v) for k, v in match.groupdict().items() if v is not None))
+                data = {str(k): v for k, v in match.groupdict().items() if v is not None}
                 self.indent_repl(iter_content, stack, line, **data)
             else:
                 self.indent_repl(iter_content, stack, line, '', line)

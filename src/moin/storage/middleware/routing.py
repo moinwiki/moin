@@ -81,7 +81,7 @@ class Backend(MutableBackendBase):
             if fq_name.startswith(namespace):
                 item_names = [_fq_name[len(namespace):] for _fq_name in fq_names]
                 return backend_name, item_names, namespace.rstrip(':')
-        raise AssertionError("No backend found for {0!r}. Namespaces: {1!r}".format(fq_name, self.namespaces))
+        raise AssertionError(f"No backend found for {fq_name!r}. Namespaces: {self.namespaces!r}")
 
     def __iter__(self):
         # Note: yields enough information so we can retrieve the revision from
@@ -127,7 +127,7 @@ class Backend(MutableBackendBase):
         backend = self.backends[backend_name]
 
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError('backend {0} is readonly!'.format(backend_name))
+            raise TypeError(f'backend {backend_name} is readonly!')
 
         revid = backend.store(meta, data)
 
@@ -139,5 +139,5 @@ class Backend(MutableBackendBase):
     def remove(self, backend_name, revid, destroy_data):
         backend = self.backends[backend_name]
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError('backend {0} is readonly'.format(backend_name))
+            raise TypeError(f'backend {backend_name} is readonly')
         backend.remove(revid, destroy_data)

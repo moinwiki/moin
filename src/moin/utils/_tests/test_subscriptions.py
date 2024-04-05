@@ -63,11 +63,11 @@ class TestSubscriptions:
         namere = r'.*'
         nameprefix = "fo"
         subscription_lists = [
-            ["{0}:{1}".format(ITEMID, item.meta[ITEMID])],
-            ["{0}:{1}:{2}".format(TAGS, namespace, tag_name)],
-            ["{0}:{1}:{2}".format(NAME, namespace, item_name)],
-            ["{0}:{1}:{2}".format(NAMERE, namespace, namere)],
-            ["{0}:{1}:{2}".format(NAMEPREFIX, namespace, nameprefix)],
+            [f"{ITEMID}:{item.meta[ITEMID]}"],
+            [f"{TAGS}:{namespace}:{tag_name}"],
+            [f"{NAME}:{namespace}:{item_name}"],
+            [f"{NAMERE}:{namespace}:{namere}"],
+            [f"{NAMEPREFIX}:{namespace}:{nameprefix}"],
         ]
         users = [user1, user2, user3]
         expected_names = {user1.name0, user2.name0}
@@ -80,7 +80,7 @@ class TestSubscriptions:
             assert subscribers_names == expected_names
 
         meta = {CONTENTTYPE: 'text/plain;charset=utf-8',
-                ACL: "{0}: All:read,write".format(user1.name0)}
+                ACL: f"{user1.name0}: All:read,write"}
         item._save(meta, comment="")
         item = Item.create(item_name)
         subscribers = get_subscribers(**item.meta)
@@ -91,16 +91,16 @@ class TestSubscriptions:
         patterns = get_matched_subscription_patterns([], **meta)
         assert patterns == []
         non_matching_patterns = [
-            "{0}:{1}:{2}".format(NAMERE, NAMESPACE_USERPROFILES, r".*"),
-            "{0}:{1}:{2}".format(NAMERE, namespace, r"\d+"),
-            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, r"bar"),
+            "{}:{}:{}".format(NAMERE, NAMESPACE_USERPROFILES, r".*"),
+            "{}:{}:{}".format(NAMERE, namespace, r"\d+"),
+            "{}:{}:{}".format(NAMEPREFIX, namespace, r"bar"),
         ]
         patterns = get_matched_subscription_patterns(non_matching_patterns, **meta)
         assert patterns == []
 
         matching_patterns = [
-            "{0}:{1}:{2}".format(NAMERE, namespace, r"fo+"),
-            "{0}:{1}:{2}".format(NAMEPREFIX, namespace, r"fo"),
+            "{}:{}:{}".format(NAMERE, namespace, r"fo+"),
+            "{}:{}:{}".format(NAMEPREFIX, namespace, r"fo"),
         ]
         patterns = get_matched_subscription_patterns(non_matching_patterns + matching_patterns, **meta)
         assert patterns == matching_patterns
@@ -109,17 +109,17 @@ class TestSubscriptions:
         pytest.skip("usually we do no performance tests")
         password = "password"
         subscriptions = [
-            "{0}:{1}".format(ITEMID, self.item.meta[ITEMID]),
-            "{0}:{1}:{2}".format(NAME, self.namespace, self.item_name),
-            "{0}:{1}:{2}".format(TAGS, self.namespace, self.tagname),
-            "{0}:{1}:{2}".format(NAMEPREFIX, self.namespace, "fo"),
-            "{0}:{1}:{2}".format(NAMERE, self.namespace, r"\wo")
+            f"{ITEMID}:{self.item.meta[ITEMID]}",
+            f"{NAME}:{self.namespace}:{self.item_name}",
+            f"{TAGS}:{self.namespace}:{self.tagname}",
+            "{}:{}:{}".format(NAMEPREFIX, self.namespace, "fo"),
+            "{}:{}:{}".format(NAMERE, self.namespace, r"\wo")
         ]
         users = set()
         expected_names = set()
         for i in range(10000):
             i = str(i)
-            user.create_user(username=i, password=password, email="{0}@example.org".format(i),
+            user.create_user(username=i, password=password, email=f"{i}@example.org",
                              validate=False, locale='en')
             user_ = user.User(name=i, password=password)
             users.add(user_)
@@ -131,7 +131,7 @@ class TestSubscriptions:
 
         import time
         for users_, expected_names_ in tests:
-            print("\nTesting {0} subscribers from a total of {1} users".format(
+            print("\nTesting {} subscribers from a total of {} users".format(
                 len(users_), len(users)))
             for subscription in subscriptions:
                 for user_ in users_:
@@ -140,6 +140,6 @@ class TestSubscriptions:
                 t = time.time()
                 subscribers = get_subscribers(**self.item.meta)
                 elapsed_time = time.time() - t
-                print("{0}: {1} s".format(subscription.split(':', 1)[0], elapsed_time))
+                print("{}: {} s".format(subscription.split(':', 1)[0], elapsed_time))
                 subscribers_names = {subscriber.name for subscriber in subscribers}
                 assert subscribers_names == expected_names_

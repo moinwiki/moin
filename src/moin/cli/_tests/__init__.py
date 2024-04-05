@@ -11,7 +11,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import List, Union
+from typing import Union
 from warnings import warn
 
 from moin._tests import get_dirs
@@ -20,7 +20,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-def run(cmd: List[str], log=None, wait: bool = True, timeout: int = None, env=None) \
+def run(cmd: list[str], log=None, wait: bool = True, timeout: int = None, env=None) \
         -> Union[subprocess.CompletedProcess, subprocess.Popen]:
     """run a shell command, redirecting output to log
     :param cmd: list of strings containing command arguments

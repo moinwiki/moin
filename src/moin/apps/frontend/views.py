@@ -95,8 +95,8 @@ def dispatch():
     args = request.values.to_dict()
     endpoint = str(args.pop('endpoint'))
     # filter args given to url_for, so that no unneeded args end up in query string:
-    args = dict([(k, args[k]) for k in args
-                 if app.url_map.is_endpoint_expecting(endpoint, k)])
+    args = {k: args[k] for k in args
+                 if app.url_map.is_endpoint_expecting(endpoint, k)}
     return redirect(url_for(endpoint, **args))
 
 
@@ -970,7 +970,7 @@ def delete_item(item_name):
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
 
         data_rendered = Markup(item.content._render_data())
-        alias_names = set(item.names) - set([item_name])
+        alias_names = set(item.names) - {item_name}
     elif request.method == 'POST':
         form = DeleteItemForm.from_flat(request.form)
         if form.validate():
@@ -1366,7 +1366,7 @@ def index(item_name):
     for file_ in files:
         if file_.fullname in dirs_fullname:
             used_dirs.add(file_.fullname)
-    all_dirs = set(x.fullname for x in dirs)
+    all_dirs = {x.fullname for x in dirs}
     missing_dirs = all_dirs - used_dirs
 
     if selected_groups:

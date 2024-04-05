@@ -7,7 +7,6 @@ MoinMoin - moin.cli._tests.scrapy.moincrawler.items classes for items gathered i
 scrapy item docs: https://docs.scrapy.org/en/latest/topics/items.html
 """
 from dataclasses import dataclass, fields, field
-from typing import List
 
 from moin.utils.iri import Iri
 try:
@@ -49,7 +48,7 @@ class CrawlResultMatch(CrawlResult):
 
     if initialiized with relative url, prepend CRAWL_START for matching
         e.g. '/html' -> 'http:127.0.0.1:9080/help-en/html"""
-    url_path_components: List[str] = field(default_factory=list)  # list of path components to match on
+    url_path_components: list[str] = field(default_factory=list)  # list of path components to match on
 
     def match(self, other: CrawlResult) -> bool:
         """return True if

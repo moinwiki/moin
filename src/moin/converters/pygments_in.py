@@ -73,7 +73,7 @@ if pygments:
                     ('pascal', 'Delphi'),
                 ]
                 for moin_format, pygments_name in moin_pygments:
-                    if Type('x-moin/format;name={0}'.format(moin_format)).issupertype(type_input):
+                    if Type(f'x-moin/format;name={moin_format}').issupertype(type_input):
                         break
                 else:
                     pygments_name = None
@@ -93,7 +93,7 @@ if pygments:
             if lexer is None and contenttype is not None:
                 ct = Type(contenttype)
                 # pygments can't process parameters (like e.g. ...;charset=utf-8):
-                mimetype = '{0}/{1}'.format(ct.type, ct.subtype)
+                mimetype = f'{ct.type}/{ct.subtype}'
 
                 # TODO: fix pygments and remove this workaround for missing mimetypes; see issue #16
                 alias_mimetypes = {'text/x.moin.wiki': 'text/x-trac-wiki',

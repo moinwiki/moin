@@ -32,7 +32,7 @@ class HTTPAuthMoin(BaseAuth):
     name = 'http'
 
     def __init__(self, trusted=True, autocreate=False, realm='MoinMoin', coding='utf-8', **kw):
-        super(HTTPAuthMoin, self).__init__(**kw)
+        super().__init__(**kw)
         self.autocreate = autocreate
         self.realm = realm
         self.coding = coding

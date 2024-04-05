@@ -61,10 +61,10 @@ def ReduceRevisions(query, namespace, test):
         current_revno = current_rev.meta[REV_NUMBER]
         current_full_name = current_namespace + '/' + current_name[0] if current_namespace else current_name
         if test:
-            print("Item named {0!r} selected but not updated, has {1} revisions :".format(current_full_name,
+            print("Item named {!r} selected but not updated, has {} revisions :".format(current_full_name,
                                                                                           current_revno))
         else:
-            print("Destroying historical revisions of {0!r}:".format(current_full_name))
+            print(f"Destroying historical revisions of {current_full_name!r}:")
             has_historical_revision = False
             for rev in current_rev.item.iter_revs():
                 revid = rev.meta[REVID]
@@ -89,9 +89,9 @@ def ReduceRevisions(query, namespace, test):
                 has_historical_revision = True
                 name = rev.meta[NAME]
                 if name == current_name:
-                    print("    Destroying revision {0}".format(revid))
+                    print(f"    Destroying revision {revid}")
                 else:
-                    print("    Destroying revision {0} (named {1!r})".format(revid, name))
+                    print(f"    Destroying revision {revid} (named {name!r})")
                 current_rev.item.destroy_revision(revid)
             if not has_historical_revision:
                 print("    (no historical revisions)")

@@ -141,7 +141,7 @@ class ConverterExternOutput(ConverterBase):
                 if k == 'rev':
                     rev = v
                     continue  # we remove rev=n from qs
-                result.append('{0}={1}'.format(k, v))
+                result.append(f'{k}={v}')
         if result:
             query = separator.join(result)
         else:
@@ -212,7 +212,7 @@ class ConverterItemRefs(ConverterBase):
             return cls()
 
     def __init__(self, **kw):
-        super(ConverterItemRefs, self).__init__(**kw)
+        super().__init__(**kw)
         self.links = set()
         self.transclusions = set()
         self.external_links = set()
@@ -227,7 +227,7 @@ class ConverterItemRefs(ConverterBase):
         self.transclusions = set()
         self.external_links = set()
 
-        super(ConverterItemRefs, self).__call__(*args, **kw)
+        super().__call__(*args, **kw)
 
     def handle_wikilocal_links(self, elem, input, page, to_tag=ConverterBase._tag_xlink_href):
         """

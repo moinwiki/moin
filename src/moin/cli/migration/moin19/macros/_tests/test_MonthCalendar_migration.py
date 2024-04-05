@@ -33,7 +33,7 @@ def test_macro_conversion(legacy_macro, expected_args):
     part = list(body)[0]
 
     assert part.get(moin_page.content_type) == 'x-moin/macro;name=MonthCalendar'
-    assert part.get(moin_page.alt) == '<<MonthCalendar({})>>'.format(expected_args)
+    assert part.get(moin_page.alt) == f'<<MonthCalendar({expected_args})>>'
 
     if len(list(part)) > 0:
         arguments = list(part)[0]

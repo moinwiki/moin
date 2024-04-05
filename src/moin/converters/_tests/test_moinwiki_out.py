@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2010 MoinMoin:DmitryAndreev
 # Copyright: 2023 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
@@ -18,7 +17,7 @@ from moin.converters.moinwiki_out import Converter
 
 
 class Base:
-    input_namespaces = ns_all = 'xmlns="{0}" xmlns:page="{1}" xmlns:xlink="{2}" xmlns:html="{3}"'.format(
+    input_namespaces = ns_all = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:html="{}"'.format(
         moin_page.namespace, moin_page.namespace, xlink.namespace, html.namespace)
     output_namespaces = {
         moin_page.namespace: 'page'

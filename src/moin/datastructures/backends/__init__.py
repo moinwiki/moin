@@ -79,7 +79,7 @@ class BaseGroupsBackend:
         raise NotImplementedError()
 
     def __repr__(self):
-        return "<{0!r} groups={1!r}>".format(self.__class__, list(self))
+        return f"<{self.__class__!r} groups={list(self)!r}>"
 
     def _retrieve_members(self, group_name):
         raise NotImplementedError()
@@ -132,7 +132,7 @@ class LazyGroup(BaseGroup):
     """
 
     def __init__(self, name, backend):
-        super(LazyGroup, self).__init__(name, backend)
+        super().__init__(name, backend)
 
         if name not in backend:
             raise GroupDoesNotExistError(name)
@@ -172,7 +172,7 @@ class GreedyGroup(BaseGroup):
 
     def __init__(self, name, backend):
 
-        super(GreedyGroup, self).__init__(name, backend)
+        super().__init__(name, backend)
         self.members, self.member_groups = self._load_group()
 
     def _load_group(self):
@@ -181,7 +181,7 @@ class GreedyGroup(BaseGroup):
         """
         members_retrieved = set(self._backend._retrieve_members(self.name))
 
-        member_groups = set(member for member in members_retrieved if self._backend.is_group_name(member))
+        member_groups = {member for member in members_retrieved if self._backend.is_group_name(member)}
         members = members_retrieved - member_groups
 
         return members, member_groups
@@ -250,7 +250,7 @@ class GreedyGroup(BaseGroup):
                     yield group_name
 
     def __repr__(self):
-        return "<{0!r} name={1!r} members={2!r} member_groups={3!r}>".format(
+        return "<{!r} name={!r} members={!r} member_groups={!r}>".format(
             self.__class__, self.name, self.members, self.member_groups)
 
 
@@ -275,7 +275,7 @@ class BaseDict(UserDict):
         return self._backend._retrieve_items(self.name)
 
     def __repr__(self):
-        return "<{0!r} name={1!r} items={2!r}>".format(self.__class__, self.name, list(self.data.items()))
+        return f"<{self.__class__!r} name={self.name!r} items={list(self.data.items())!r}>"
 
 
 class BaseDictsBackend:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright: 2003-2004 by Juergen Hermann <jh@web.de>
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
