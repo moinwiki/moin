@@ -26,13 +26,13 @@ class Monitor:
         assert hasattr(sys, "_current_frames")  # make sure we have py >= 2.5
 
     def activate_hook(self):
-        """ Activates the thread monitor hook. Note that this might interfere
-        with any kind of profiler and some debugging extensions. """
+        """Activates the thread monitor hook. Note that this might interfere
+        with any kind of profiler and some debugging extensions."""
         self.enabled = True
 
     def trigger_dump(self, dumpfile=None):
-        """ Triggers the dump of the tracebacks of all threads.
-            If dumpfile is specified, it is used as the output file. """
+        """Triggers the dump of the tracebacks of all threads.
+        If dumpfile is specified, it is used as the output file."""
         if not self.enabled:
             return
         dumpfile = dumpfile or sys.stderr
@@ -44,12 +44,12 @@ class Monitor:
             dumpfile.write(f.getvalue())
 
     def hook_enabled(self):
-        """ Returns true if the thread_monitor hook is enabled. """
+        """Returns true if the thread_monitor hook is enabled."""
         return self.enabled
 
 
 def dump_regularly(seconds):
-    """ Dumps the tracebacks every 'seconds' seconds. """
+    """Dumps the tracebacks every 'seconds' seconds."""
     activate_hook()
 
     def background_dumper(seconds):
@@ -57,7 +57,7 @@ def dump_regularly(seconds):
             sleep(seconds)
             trigger_dump()
 
-    threading.Thread(target=background_dumper, args=(seconds, )).start()
+    threading.Thread(target=background_dumper, args=(seconds,)).start()
 
 
 mon = Monitor()

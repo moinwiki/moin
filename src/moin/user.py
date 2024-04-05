@@ -34,8 +34,25 @@ from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.constants.keys import (
-    BOOKMARKS, CONTENTTYPE, CURRENT, DISABLED, EMAIL, EMAIL_UNVALIDATED, ENC_PASSWORD, ITEMID, NAME, NAME_EXACT,
-    NAMEPREFIX, NAMERE, NAMESPACE, RECOVERPASS_KEY, SESSION_KEY, SESSION_TOKEN, TAGS, USEROBJ_ATTRS, WIKINAME
+    BOOKMARKS,
+    CONTENTTYPE,
+    CURRENT,
+    DISABLED,
+    EMAIL,
+    EMAIL_UNVALIDATED,
+    ENC_PASSWORD,
+    ITEMID,
+    NAME,
+    NAME_EXACT,
+    NAMEPREFIX,
+    NAMERE,
+    NAMESPACE,
+    RECOVERPASS_KEY,
+    SESSION_KEY,
+    SESSION_TOKEN,
+    TAGS,
+    USEROBJ_ATTRS,
+    WIKINAME,
 )
 
 from moin.constants.misc import ANON
@@ -47,6 +64,7 @@ from moin.utils.subscriptions import get_matched_subscription_patterns
 from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -70,16 +88,18 @@ def create_user(username, password, email, validate=True, is_encrypted=False, ve
 
     # Don't allow creating users with invalid names
     if validate and not isValidName(username):
-        return _("""Invalid user name '{name}'.
+        return _(
+            """Invalid user name '{name}'.
 Name may contain any Unicode alpha numeric character, with optional one
-space between words. Group page name is not allowed.""").format(name=username)
+space between words. Group page name is not allowed."""
+        ).format(name=username)
 
     # Name required to be unique. Check if name belong to another user.
     if validate and search_users(**{NAME_EXACT: username}):
         return _("This user name already belongs to somebody else.")
 
     # XXX currently we just support creating with 1 name:
-    theuser.profile[NAME] = [str(username), ]
+    theuser.profile[NAME] = [str(username)]
 
     pw_checker = app.cfg.password_checker
     if validate and pw_checker:
@@ -91,8 +111,7 @@ space between words. Group page name is not allowed.""").format(name=username)
 
     # try to get the email, for new users it is required
     if validate and not email:
-        return _("Please provide your email address. If you lose your"
-                 " login information, you can get it by email.")
+        return _("Please provide your email address. If you lose your" " login information, you can get it by email.")
 
     # Email should be unique - see also MoinMoin/scripts/accounts/moin_usercheck.py
     if validate and email and app.cfg.user_email_unique:
@@ -122,15 +141,15 @@ def update_user_query(**q):
         NAMESPACE: NAMESPACE_USERPROFILES,
         CONTENTTYPE: CONTENTTYPE_USER,
         WIKINAME: app.cfg.interwikiname,  # XXX for now, search only users of THIS wiki
-                                          # maybe add option to not index wiki users
-                                          # separately, but share them in the index also.
+        # maybe add option to not index wiki users
+        # separately, but share them in the index also.
     }
     q.update(USER_QUERY_STDARGS)
     return q
 
 
 def search_users(**q):
-    """ Searches for a users with given query keys/values """
+    """Searches for a users with given query keys/values"""
     # Since item name is a list, it's possible a list have been passed as parameter.
     # No problem, since user always have just one name (TODO: validate single name for user)
     if q.get(NAME_EXACT) and isinstance(q.get(NAME_EXACT), list):
@@ -142,28 +161,28 @@ def search_users(**q):
 
 
 def get_editor(userid, addr, hostname):
-    """ Return a tuple of type id and string or Page object
-        representing the user that did the edit.
+    """Return a tuple of type id and string or Page object
+    representing the user that did the edit.
 
-        The type id is one of 'ip' (DNS or numeric IP), 'email' (email addr),
-        'interwiki' (Interwiki homepage) or 'anon' ('').
+    The type id is one of 'ip' (DNS or numeric IP), 'email' (email addr),
+    'interwiki' (Interwiki homepage) or 'anon' ('').
     """
-    result = 'anon', ''
+    result = "anon", ""
     if app.cfg.show_hosts and hostname:
-        result = 'ip', hostname
+        result = "ip", hostname
     if userid:
         userdata = User(userid)
         if userdata.mailto_author and userdata.email:
-            return 'email', userdata.email
+            return "email", userdata.email
         elif userdata.name:
             interwiki = getInterwikiHome(userdata.name0)
             if interwiki:
-                result = ('interwiki', interwiki)
+                result = ("interwiki", interwiki)
     return result
 
 
 def normalizeName(name):
-    """ Make normalized user name
+    """Make normalized user name
 
     Prevent impersonating another user with names containing leading,
     trailing or multiple whitespace, or using invisible unicode
@@ -183,17 +202,17 @@ def normalizeName(name):
     # We also allow _ in usernames for nicer URLs.
     username_allowedchars = "'@.-_"
     # Strip non alpha numeric characters (except username_allowedchars), keep white space
-    name = ''.join([c for c in name if c.isalnum() or c.isspace() or c in username_allowedchars])
+    name = "".join([c for c in name if c.isalnum() or c.isspace() or c in username_allowedchars])
 
     # Normalize white space. Each name can contain multiple
     # words separated with only one space.
-    name = ' '.join(name.split())
+    name = " ".join(name.split())
 
     return name
 
 
 def isValidName(name):
-    """ Validate user name
+    """Validate user name
 
     :param name: user name, unicode
     """
@@ -202,7 +221,7 @@ def isValidName(name):
 
 
 def assemble_subscription(keyword, value, namespace=None):
-    """ Create a valid subscription string
+    """Create a valid subscription string
 
     :param keyword: the keyword (itemid, name, tags, nameprefix, namere) by which
                     the type of the subscription is determined
@@ -212,7 +231,7 @@ def assemble_subscription(keyword, value, namespace=None):
     """
     if keyword == ITEMID:
         subscription = f"{ITEMID}:{value}"
-    elif keyword in [NAME, TAGS, NAMERE, NAMEPREFIX, ]:
+    elif keyword in [NAME, TAGS, NAMERE, NAMEPREFIX]:
         if namespace is not None:
             subscription = f"{keyword}:{namespace}:{value}"
         else:
@@ -223,7 +242,7 @@ def assemble_subscription(keyword, value, namespace=None):
 
 
 class UserProfile:
-    """ A User Profile"""
+    """A User Profile"""
 
     def __init__(self, **q):
         self._defaults = copy.deepcopy(app.cfg.user_defaults)
@@ -291,16 +310,16 @@ class UserProfile:
             q = {ITEMID: self[ITEMID]}
             q = update_user_query(**q)
             item = get_user_backend().get_item(**q)
-            item.store_revision(self._meta, BytesIO(b''), overwrite=True)
+            item.store_revision(self._meta, BytesIO(b""), overwrite=True)
             self._stored = True
             self._changed = False
 
 
 class User:
-    """ A MoinMoin User """
+    """A MoinMoin User"""
 
     def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):
-        """ Initialize User object
+        """Initialize User object
 
         :param uid: (optional) user ID (user itemid)
         :param name: (optional) user name
@@ -320,8 +339,8 @@ class User:
         self._cfg = app.cfg
         self.valid = False
         self.trusted = trusted
-        self.auth_method = kw.get('auth_method', 'internal')
-        self.auth_attribs = kw.get('auth_attribs', ())
+        self.auth_method = kw.get("auth_method", "internal")
+        self.auth_attribs = kw.get("auth_attribs", ())
 
         # XXX currently we just support creating with 1 name:
         _name = name or auth_username
@@ -340,7 +359,7 @@ class User:
         else:
             self.profile[ITEMID] = make_uuid()
             if _name:
-                self.profile[NAME] = [_name, ]
+                self.profile[NAME] = [_name]
             if password is not None:
                 self.set_password(password)
 
@@ -353,8 +372,8 @@ class User:
         itemid = getattr(self, ITEMID, None)
 
         return "<{}.{} at {:#x} name:{!r} itemid:{!r} valid:{!r} trusted:{!r}>".format(
-            self.__class__.__module__, self.__class__.__name__, id(self),
-            name, itemid, self.valid, self.trusted)
+            self.__class__.__module__, self.__class__.__name__, id(self), name, itemid, self.valid, self.trusted
+        )
 
     def __getattr__(self, name):
         """
@@ -399,16 +418,14 @@ class User:
 
         email = self.email
         if not email:
-            return static_file_url(theme, theme.info.get('default_avatar', 'img/default_avatar.png'))
+            return static_file_url(theme, theme.info.get("default_avatar", "img/default_avatar.png"))
 
         param = {}
-        param['gravatar_id'] = hashlib.md5(email.lower()).hexdigest()
+        param["gravatar_id"] = hashlib.md5(email.lower()).hexdigest()
 
-        param['default'] = static_file_url(theme,
-                                           theme.info.get('default_avatar', 'img/default_avatar.png'),
-                                           True)
+        param["default"] = static_file_url(theme, theme.info.get("default_avatar", "img/default_avatar.png"), True)
 
-        param['size'] = str(size)
+        param["size"] = str(size)
         # TODO: use same protocol of Moin site (might be https instead of http)]
         gravatar_url = "http://www.gravatar.com/avatar.php?"
         gravatar_url += werkzeug.url_encode(param)
@@ -416,7 +433,7 @@ class User:
         return gravatar_url
 
     def create_or_update(self, changed=False):
-        """ Create or update a user profile
+        """Create or update a user profile
 
         :param changed: bool, set this to True if you updated the user profile values
         """
@@ -424,7 +441,7 @@ class User:
             self.save()  # yes, create/update user profile
 
     def exists(self):
-        """ Do we have a user profile for this user?
+        """Do we have a user profile for this user?
 
         :rtype: bool
         :returns: true, if we have a user account
@@ -432,7 +449,7 @@ class User:
         return self.profile.stored
 
     def load_from_id(self, itemid, password=None):
-        """ Load user account data from disk.
+        """Load user account data from disk.
 
         :param password: If not None, then the given password must match the
                          password in the user account file.
@@ -483,8 +500,9 @@ class User:
         try:
             password_correct, recomputed_hash = pwd_context.verify_and_update(password, pw_hash)
         except (ValueError, TypeError) as err:
-            logging.error('in user profile %r, verifying the passlib pw hash raised an Exception [%s]' % (
-                self.name, str(err)))
+            logging.error(
+                "in user profile %r, verifying the passlib pw hash raised an Exception [%s]" % (self.name, str(err))
+            )
         else:
             if recomputed_hash is not None:
                 data[ENC_PASSWORD] = recomputed_hash
@@ -504,13 +522,13 @@ class User:
         """
         if not password:
             # invalidate the pw hash
-            password = ''
+            password = ""
         elif not is_encrypted:
             password = self._cfg.cache.pwd_context.hash(password)
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
         try:
-            session['user.session_token'] = self.generate_session_token(False)
+            session["user.session_token"] = self.generate_session_token(False)
         except RuntimeError:  # CLI call has no valid session context
             pass
 
@@ -518,10 +536,10 @@ class User:
         """
         Check if the password hash of this user is invalid.
         """
-        return self.profile[ENC_PASSWORD] == ''
+        return self.profile[ENC_PASSWORD] == ""
 
     def disable(self):
-        """ Disable user """
+        """Disable user"""
         self.profile[DISABLED] = True
 
     def save(self, force=False):
@@ -540,19 +558,19 @@ class User:
             pass  # XXX UserChangedEvent
 
     def getText(self, text):
-        """ translate a text to the language of this user """
+        """translate a text to the language of this user"""
         return text  # FIXME, was: self._request.getText(text, lang=self.language)
 
     # Bookmarks --------------------------------------------------------------
 
     def _set_bookmark(self, tm):
-        """ Set bookmark timestamp.
+        """Set bookmark timestamp.
 
         :param tm: timestamp (int or None)
         """
         if self.valid:
             if not (tm is None or isinstance(tm, int)):
-                raise ValueError('tm should be int or None')
+                raise ValueError("tm should be int or None")
             if tm is None:
                 self.profile[BOOKMARKS].pop(self._cfg.interwikiname)
             else:
@@ -560,7 +578,7 @@ class User:
             self.save(force=True)
 
     def _get_bookmark(self):
-        """ Get bookmark timestamp.
+        """Get bookmark timestamp.
 
         :rtype: int / None
         :returns: bookmark timestamp or None
@@ -578,13 +596,14 @@ class User:
     # Subscribed Items -------------------------------------------------------
 
     def is_subscribed_to(self, item):
-        """ Check if user is subscribed to the following item
+        """Check if user is subscribed to the following item
 
         :param item: Item object
         :rtype: bool
         :returns: if user is subscribed to the item
         """
         from moin.items import NonExistent
+
         if not self.valid or isinstance(item, (NonExistent, Undefined)):
             return False
 
@@ -594,10 +613,8 @@ class User:
         itemid = meta.get(ITEMID)
         if itemid is not None:
             subscriptions.update([f"{ITEMID}:{itemid}"])
-        subscriptions.update(f"{NAME}:{item_namespace}:{name}"
-                             for name in meta.get(NAME, []))
-        subscriptions.update(f"{TAGS}:{item_namespace}:{tag}"
-                             for tag in meta.get(TAGS, []))
+        subscriptions.update(f"{NAME}:{item_namespace}:{name}" for name in meta.get(NAME, []))
+        subscriptions.update(f"{TAGS}:{item_namespace}:{tag}" for tag in meta.get(TAGS, []))
         if subscriptions & set(self.subscriptions):
             return True
 
@@ -606,7 +623,7 @@ class User:
         return False
 
     def subscribe(self, keyword, value, namespace=None):
-        """ Subscribe to a wiki page.
+        """Subscribe to a wiki page.
 
         The user can subscribe in 5 different ways:
 
@@ -633,7 +650,7 @@ class User:
         return False
 
     def unsubscribe(self, keyword, value, namespace=None, item=None):
-        """ Unsubscribe from a wiki page.
+        """Unsubscribe from a wiki page.
 
         Same as for subscribing, user can also unsubscribe in 5 ways.
         The unsubscribe action doesn't guarantee that user will not receive any
@@ -660,7 +677,7 @@ class User:
     # Quicklinks -------------------------------------------------------------
 
     def is_quicklinked_to(self, pagelist):
-        """ Check if user quicklink matches any page in pagelist.
+        """Check if user quicklink matches any page in pagelist.
 
         :param pagelist: list of pages to check for quicklinks
         :rtype: bool
@@ -678,7 +695,7 @@ class User:
         return False
 
     def quicklink(self, pagename):
-        """ Adds a page to the user quicklinks
+        """Adds a page to the user quicklinks
 
         Add links as interwiki names.
 
@@ -696,7 +713,7 @@ class User:
         return False
 
     def quickunlink(self, pagename):
-        """ Remove a page from user quicklinks
+        """Remove a page from user quicklinks
 
         Remove interwiki name from quicklinks.
 
@@ -716,46 +733,46 @@ class User:
     # Trail ------------------------------------------------------------------
 
     def add_trail(self, item_name):
-        """ Add item name to trail.
+        """Add item name to trail.
 
         :param item_name: the item name (unicode) to add to the trail
         """
         item_name = getInterwikiName(item_name)
-        trail_in_session = session.get('trail', [])
+        trail_in_session = session.get("trail", [])
         trail = trail_in_session[:]
         trail = [i for i in trail if i != item_name]  # avoid dupes
         trail.append(item_name)  # append current item name at end
-        trail = trail[-self._cfg.trail_size:]  # limit trail length
+        trail = trail[-self._cfg.trail_size :]  # limit trail length
         if trail != trail_in_session:
-            session['trail'] = trail
+            session["trail"] = trail
 
     def get_trail(self):
-        """ Return list of recently visited item names.
+        """Return list of recently visited item names.
 
         :rtype: list
         :returns: item names (unicode) in trail
         """
-        return session.get('trail', [])
+        return session.get("trail", [])
 
     # Other ------------------------------------------------------------------
 
     def is_current_user(self):
-        """ Check if this user object is the user doing the current request """
+        """Check if this user object is the user doing the current request"""
         return flaskg.user.itemid == self.itemid
 
     # Sessions ---------------------------------------------------
 
     def logout_session(self, all_browsers=True):
-        """ Terminate session in all browsers unless all_browsers is set to False """
+        """Terminate session in all browsers unless all_browsers is set to False"""
         if all_browsers:
             self.generate_session_token(False)
 
-        for key in ['user.itemid', 'user.trusted', 'user.auth_method', 'user.auth_attribs', 'user.session_token', ]:
+        for key in ["user.itemid", "user.trusted", "user.auth_method", "user.auth_attribs", "user.session_token"]:
             if key in session:
                 del session[key]
 
     def generate_session_token(self, save=True):
-        """ Generate new session token and key pair. Used to validate sessions. """
+        """Generate new session token and key pair. Used to validate sessions."""
         key, token = generate_token()
         self.profile[SESSION_TOKEN] = token
         self.profile[SESSION_KEY] = key
@@ -765,14 +782,14 @@ class User:
         return token
 
     def get_session_token(self):
-        """ Get current session token. If there is no token, generate a new one. """
+        """Get current session token. If there is no token, generate a new one."""
         try:
             return self.profile[SESSION_TOKEN]
         except KeyError:
             return self.generate_session_token()
 
     def validate_session(self, token):
-        """ Check if the session token is valid.
+        """Check if the session token is valid.
 
         Invalid session tokens happen for these cases:
 
@@ -808,8 +825,8 @@ class User:
         return True
 
     def mail_password_recovery(self, cleartext_passwd=None, subject=None, text=None):
-        """ Mail a user who forgot his password a message enabling
-            him to login again.
+        """Mail a user who forgot his password a message enabling
+        him to login again.
         """
         if not self.email:
             return False, "user has no E-Mail address in his profile."
@@ -817,23 +834,23 @@ class User:
         token = self.generate_recovery_token()
 
         if subject is None:
-            subject = _('[{sitename}] Your wiki password recovery link').format(sitename='{sitename}')
+            subject = _("[{sitename}] Your wiki password recovery link").format(sitename="{sitename}")
         subject = subject % dict(sitename=self._cfg.sitename or "Wiki")
         if text is None:
-            link = url_for('frontend.recoverpass', username=self.name0, token=token, _external=True)
-            text = render_template('mail/password_recovery.txt', link=link)
+            link = url_for("frontend.recoverpass", username=self.name0, token=token, _external=True)
+            text = render_template("mail/password_recovery.txt", link=link)
 
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
 
     def mail_email_verification(self):
-        """ Mail a user a link to verify his email address. """
+        """Mail a user a link to verify his email address."""
         token = self.generate_recovery_token()
 
-        link = url_for('frontend.verifyemail', username=self.name0, token=token, _external=True)
-        text = render_template('mail/account_verification.txt', link=link)
+        link = url_for("frontend.verifyemail", username=self.name0, token=token, _external=True)
+        text = render_template("mail/account_verification.txt", link=link)
 
-        subject = _('[{sitename}] Please verify your email address').format(sitename=self._cfg.sitename or "Wiki")
+        subject = _("[{sitename}] Please verify your email address").format(sitename=self._cfg.sitename or "Wiki")
         email = self.profile[EMAIL_UNVALIDATED]
         mailok, msg = sendmail.sendmail(subject, text, to=[email], mail_from=self._cfg.mail_from)
         return mailok, msg

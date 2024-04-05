@@ -12,11 +12,13 @@ from moin.auth.log import AuthLog
 from moin.constants.misc import ANON
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
 class TestAuthLog:
-    """ Test: TestAuthLog """
+    """Test: TestAuthLog"""
+
     def test_login(self):
         authlog_obj = AuthLog()
         result = authlog_obj.login(flaskg.user)

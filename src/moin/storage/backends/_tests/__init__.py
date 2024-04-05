@@ -27,7 +27,7 @@ class BackendTestBase:
 
     def test_getrevision_raises(self):
         with pytest.raises(KeyError):
-            self.be.retrieve('doesnotexist')
+            self.be.retrieve("doesnotexist")
 
     def test_iter(self):
         assert list(self.be) == []
@@ -49,11 +49,11 @@ class MutableBackendTestBase(BackendTestBase):
 
     def test_getrevision_raises(self):
         with pytest.raises(KeyError):
-            self.be.retrieve('doesnotexist')
+            self.be.retrieve("doesnotexist")
 
     def test_store_get_del(self):
-        meta = dict(foo='bar')
-        data = b'baz'
+        meta = dict(foo="bar")
+        data = b"baz"
         metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert m == meta
@@ -65,54 +65,54 @@ class MutableBackendTestBase(BackendTestBase):
 
     def test_store_check_size(self):
         # no size
-        meta = dict(name='foo')
-        data = b'barbaz'
+        meta = dict(name="foo")
+        data = b"barbaz"
         metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[SIZE] == 6
         # correct size
-        meta = dict(name='foo', size=6)
-        data = b'barbaz'
+        meta = dict(name="foo", size=6)
+        data = b"barbaz"
         metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[SIZE] == 6
         # wrong size (less data than size declared in meta)
-        meta = dict(name='foo', size=42)
-        data = b'barbaz'
+        meta = dict(name="foo", size=42)
+        data = b"barbaz"
         with pytest.raises(ValueError):
             metaid = self.be.store(meta, BytesIO(data))
         # wrong size (more data than size declared in meta)
-        meta = dict(name='foo', size=3)
-        data = b'barbaz'
+        meta = dict(name="foo", size=3)
+        data = b"barbaz"
         with pytest.raises(ValueError):
             metaid = self.be.store(meta, BytesIO(data))
 
     def test_store_check_hash(self):
         # no hash
-        meta = dict(name='foo')
-        data = b'barbaz'
+        meta = dict(name="foo")
+        data = b"barbaz"
         metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         hashcode = meta[HASH_ALGORITHM]
         # correct hash
-        meta = dict(name='foo')
+        meta = dict(name="foo")
         meta[HASH_ALGORITHM] = hashcode
-        data = b'barbaz'
+        data = b"barbaz"
         metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[HASH_ALGORITHM] == hashcode
         # wrong data -> hash mismatch
-        meta = dict(name='foo')
+        meta = dict(name="foo")
         meta[HASH_ALGORITHM] = hashcode
-        data = b'brrbrr'
+        data = b"brrbrr"
         with pytest.raises(ValueError):
             metaid = self.be.store(meta, BytesIO(data))
 
     def test_iter(self):
         mds = [  # (metadata items, data str)
-            (dict(name='one'), b'ONE'),
-            (dict(name='two'), b'TWO'),
-            (dict(name='three'), b'THREE'),
+            (dict(name="one"), b"ONE"),
+            (dict(name="two"), b"TWO"),
+            (dict(name="three"), b"THREE"),
         ]
         expected_result = set()
         for m, d in mds:

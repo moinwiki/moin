@@ -18,6 +18,7 @@ from moin.constants.keys import CURRENT, FIELDS, NAME_EXACT, NAMESPACE
 from moin.constants.contenttypes import CHARSET
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -25,7 +26,7 @@ def is_local_wiki(wiki_name):
     """
     check if <wiki_name> is THIS wiki
     """
-    return wiki_name in ['', 'Self', app.cfg.interwikiname, ]
+    return wiki_name in ["", "Self", app.cfg.interwikiname]
 
 
 def is_known_wiki(wiki_name):
@@ -44,14 +45,22 @@ def get_fqname(item_name, field, namespace):
     composite name == [NAMESPACE/][@FIELD/]NAME
     """
     if field and field != NAME_EXACT:
-        item_name = f'@{field}/{item_name}'
+        item_name = f"@{field}/{item_name}"
     if namespace:
-        item_name = f'{namespace}/{item_name}'
+        item_name = f"{namespace}/{item_name}"
     return item_name
 
 
-def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
-                 endpoint='frontend.show_item', _external=False, regex=''):
+def url_for_item(
+    item_name,
+    wiki_name="",
+    field="",
+    namespace="",
+    rev=CURRENT,
+    endpoint="frontend.show_item",
+    _external=False,
+    regex="",
+):
     """
     Compute URL for some local or remote/interwiki item.
 
@@ -68,7 +77,7 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
     Computed URLs are always fully specified.
     """
     if field == NAME_EXACT:
-        field = ''
+        field = ""
     if is_local_wiki(wiki_name):
         item_name = get_fqname(item_name, field, namespace)
         if rev is None or rev == CURRENT:
@@ -82,12 +91,12 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
             logging.warning(f"no interwiki_map entry for {wiki_name!r}")
             item_name = get_fqname(item_name, field, namespace)
             if wiki_name:
-                url = f'{wiki_name}/{item_name}'
+                url = f"{wiki_name}/{item_name}"
             else:
                 url = item_name
-            url = f'/{url}'
+            url = f"/{url}"
         else:
-            if (rev is None or rev == CURRENT) and endpoint == 'frontend.show_item':
+            if (rev is None or rev == CURRENT) and endpoint == "frontend.show_item":
                 # we just want to show latest revision (no special revision given) -
                 # this is the generic interwiki url support, should work for any remote wiki
                 url = join_wiki(wiki_base_url, item_name, field, namespace)
@@ -100,11 +109,11 @@ def url_for_item(item_name, wiki_name='', field='', namespace='', rev=CURRENT,
                 # we know that everything left of the + belongs to script url, but we
                 # just want e.g. +show/42/FooBar to append it to the other wiki's
                 # base URL.
-                i = local_url.index('/+')
-                path = local_url[i + 1:]
+                i = local_url.index("/+")
+                path = local_url[i + 1 :]
                 url = wiki_base_url + path
     if regex:
-        url += f'?regex={url_quote(regex, encoding=CHARSET)}'
+        url += f"?regex={url_quote(regex, encoding=CHARSET)}"
     return url
 
 
@@ -115,7 +124,7 @@ def get_download_file_name(fqname):
     if fqname.field == NAME_EXACT:
         return fqname.value
     else:
-        return f'{fqname.field}-{fqname.value}'
+        return f"{fqname.field}-{fqname.value}"
 
 
 def _split_namespace(namespaces, url):
@@ -132,11 +141,11 @@ def _split_namespace(namespaces, url):
     param url: string
     returns: (namespace, url)
     """
-    namespace = ''
-    tokens_list = url.split('/')
+    namespace = ""
+    tokens_list = url.split("/")
     for token in tokens_list:
         if namespace:
-            token = f'{namespace}/{token}'
+            token = f"{namespace}/{token}"
         if token in namespaces:
             namespace = token
         else:
@@ -147,16 +156,17 @@ def _split_namespace(namespaces, url):
     return namespace, url
 
 
-class CompositeName(namedtuple('CompositeName', 'namespace, field, value')):
+class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
     """
     namedtuple to hold the compositename
     """
+
     @property
     def split(self):
         """
         returns a dict of field_names/field_values
         """
-        return {NAMESPACE: self.namespace, 'field': self.field, 'item_name': self.value}
+        return {NAMESPACE: self.namespace, "field": self.field, "item_name": self.value}
 
     @property
     def fullname(self):
@@ -197,15 +207,15 @@ def split_fqname(url):
         url: 'ns1/ns2/@notfield' return 'ns1/ns2', '', '@notfield'
     """
     if not url:
-        return CompositeName('', NAME_EXACT, '')
-    namespaces = {namespace.rstrip('/') for namespace, _ in app.cfg.namespace_mapping}
+        return CompositeName("", NAME_EXACT, "")
+    namespaces = {namespace.rstrip("/") for namespace, _ in app.cfg.namespace_mapping}
     namespace, url = _split_namespace(namespaces, url)
     field = NAME_EXACT
-    if url.startswith('@'):
-        tokens = url[1:].split('/', 1)
+    if url.startswith("@"):
+        tokens = url[1:].split("/", 1)
         if tokens[0] in FIELDS:
             field = tokens[0]
-            url = tokens[1] if len(tokens) > 1 else ''
+            url = tokens[1] if len(tokens) > 1 else ""
     return CompositeName(namespace, field, url)
 
 
@@ -234,25 +244,25 @@ def split_interwiki(wikiurl):
         :returns: (wikiname, namespace, field, pagename)
     """
     if not isinstance(wikiurl, str):
-        wikiurl = wikiurl.decode('utf-8')
+        wikiurl = wikiurl.decode("utf-8")
     # Base case: no colon in wikiurl
-    if '/' not in wikiurl:
-        return 'Self', '', NAME_EXACT, wikiurl
-    wikiname = field = namespace = ''
-    if not wikiurl.startswith('/'):
+    if "/" not in wikiurl:
+        return "Self", "", NAME_EXACT, wikiurl
+    wikiname = field = namespace = ""
+    if not wikiurl.startswith("/"):
         interwiki_mapping = set()
         for interwiki_name in app.cfg.interwiki_map:
-            interwiki_mapping.add(interwiki_name.split('/')[0])
+            interwiki_mapping.add(interwiki_name.split("/")[0])
         wikiname, item_name = _split_namespace(interwiki_mapping, wikiurl)
         if wikiname:
-            wikiurl = wikiurl[len(wikiname) + 1:]
+            wikiurl = wikiurl[len(wikiname) + 1 :]
         namespace, field, item_name = split_fqname(wikiurl)
         if not wikiname:
-            wikiname = 'Self'
+            wikiname = "Self"
         return wikiname, namespace, field, item_name
     else:
-        namespace, field, item_name = split_fqname(wikiurl.split('/', 1)[1])
-        return 'Self', namespace, field, item_name
+        namespace, field, item_name = split_fqname(wikiurl.split("/", 1)[1])
+        return "Self", namespace, field, item_name
 
 
 def join_wiki(wikiurl, wikitail, field, namespace):
@@ -268,17 +278,17 @@ def join_wiki(wikiurl, wikitail, field, namespace):
     :rtype: string
     :returns: generated URL of the page in the other wiki
     """
-    wikitail = url_quote(wikitail, encoding=CHARSET, safe='/')
-    field = url_quote(field, encoding=CHARSET, safe='/')
-    namespace = url_quote(namespace, encoding=CHARSET, safe='/')
-    if not ('$PAGE' in wikiurl or '$NAMESPACE' in wikiurl or '$FIELD' in wikiurl):
+    wikitail = url_quote(wikitail, encoding=CHARSET, safe="/")
+    field = url_quote(field, encoding=CHARSET, safe="/")
+    namespace = url_quote(namespace, encoding=CHARSET, safe="/")
+    if not ("$PAGE" in wikiurl or "$NAMESPACE" in wikiurl or "$FIELD" in wikiurl):
         return wikiurl + get_fqname(wikitail, field, namespace)
-    if '$PAGE' in wikiurl:
-        wikiurl = wikiurl.replace('$PAGE', wikitail)
-    if '$FIELD' in wikiurl:
-        wikiurl = wikiurl.replace('$FIELD', field)
-    if '$NAMESPACE' in wikiurl:
-        wikiurl = wikiurl.replace('$NAMESPACE', namespace)
+    if "$PAGE" in wikiurl:
+        wikiurl = wikiurl.replace("$PAGE", wikitail)
+    if "$FIELD" in wikiurl:
+        wikiurl = wikiurl.replace("$FIELD", field)
+    if "$NAMESPACE" in wikiurl:
+        wikiurl = wikiurl.replace("$NAMESPACE", namespace)
     return wikiurl
 
 
@@ -309,7 +319,7 @@ def getInterwikiHome(username):
     """
     homewiki = app.cfg.user_homewiki
     if is_local_wiki(homewiki):
-        homewiki = 'Self'
+        homewiki = "Self"
     return homewiki, username
 
 
@@ -320,7 +330,7 @@ class InterWikiMap:
     Provides a set of utilities for parsing and checking a interwiki maps.
     """
 
-    SKIP = '#'
+    SKIP = "#"
 
     def __init__(self, s):
         """
@@ -341,7 +351,7 @@ class InterWikiMap:
                 name, url = line.split(None, 1)
                 self.iwmap[name] = url
             except ValueError:
-                raise ValueError(f'malformed interwiki map string: {line}')
+                raise ValueError(f"malformed interwiki map string: {line}")
 
     @staticmethod
     def from_string(ustring):

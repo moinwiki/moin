@@ -17,13 +17,14 @@ class TrackingFileWrapper:
     After this self.hash and self.size will have the wanted values.
     self.hash is the hash instance, you may want to call self.hash.hexdigest().
     """
-    def __init__(self, realfile, hash_method='sha1'):
+
+    def __init__(self, realfile, hash_method="sha1"):
         self._realfile = realfile
         self._read = realfile.read
         self._hash = hashlib.new(hash_method)
         self._size = 0
         self._finished = False
-        if hasattr(realfile, 'tell'):
+        if hasattr(realfile, "tell"):
             fpos = realfile.tell()
             if fpos:
                 raise ValueError("file needs to be at pos 0")

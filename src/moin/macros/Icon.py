@@ -20,10 +20,10 @@ from moin.i18n import _
 
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
-        icon = arguments[0] if arguments else ''
+        icon = arguments[0] if arguments else ""
         if not icon:
             raise ValueError("Missing icon name")
-        src = url_for('static', filename='img/icons/' + icon)
-        reason = _('Icon not rendered, verify name is valid')
-        alt = f'<<Icon({icon})>> - {reason}'
-        return html.img(attrib={html.src: src, html.alt: alt, html.class_: 'moin-icon-macro'})
+        src = url_for("static", filename="img/icons/" + icon)
+        reason = _("Icon not rendered, verify name is valid")
+        alt = f"<<Icon({icon})>> - {reason}"
+        return html.img(attrib={html.src: src, html.alt: alt, html.class_: "moin-icon-macro"})

@@ -38,35 +38,36 @@ class TestCompositeGroup:
 
         class Config(wikiconfig.Config):
 
-            admin_group = frozenset(['Admin', 'JohnDoe'])
-            editor_group = frozenset(['MainEditor', 'JohnDoe'])
-            fruit_group = frozenset(['Apple', 'Banana', 'Cherry'])
+            admin_group = frozenset(["Admin", "JohnDoe"])
+            editor_group = frozenset(["MainEditor", "JohnDoe"])
+            fruit_group = frozenset(["Apple", "Banana", "Cherry"])
 
-            first_backend_groups = {'AdminGroup': admin_group,
-                                    'EditorGroup': editor_group,
-                                    'FruitGroup': fruit_group}
+            first_backend_groups = {"AdminGroup": admin_group, "EditorGroup": editor_group, "FruitGroup": fruit_group}
 
-            user_group = frozenset(['JohnDoe', 'Bob', 'Joe'])
-            city_group = frozenset(['Bolzano', 'Riga', 'London'])
+            user_group = frozenset(["JohnDoe", "Bob", "Joe"])
+            city_group = frozenset(["Bolzano", "Riga", "London"])
 
             # Suppose, someone hacked second backend and added himself to AdminGroup
-            second_admin_group = frozenset(['TheHacker'])
+            second_admin_group = frozenset(["TheHacker"])
 
-            second_backend_groups = {'UserGroup': user_group,
-                                     'CityGroup': city_group,
-                                     # Here group name clash occurs.
-                                     # AdminGroup is defined in both
-                                     # first_backend and second_backend.
-                                     'AdminGroup': second_admin_group}
+            second_backend_groups = {
+                "UserGroup": user_group,
+                "CityGroup": city_group,
+                # Here group name clash occurs.
+                # AdminGroup is defined in both
+                # first_backend and second_backend.
+                "AdminGroup": second_admin_group,
+            }
 
             def groups(self):
-                return CompositeGroups(ConfigGroups(self.first_backend_groups),
-                                       ConfigGroups(self.second_backend_groups))
+                return CompositeGroups(
+                    ConfigGroups(self.first_backend_groups), ConfigGroups(self.second_backend_groups)
+                )
 
         return Config
 
     def test_getitem(self):
-        raises(GroupDoesNotExistError, lambda: flaskg.groups['NotExistingGroup'])
+        raises(GroupDoesNotExistError, lambda: flaskg.groups["NotExistingGroup"])
 
     def test_clashed_getitem(self):
         """
@@ -74,12 +75,12 @@ class TestCompositeGroup:
         backends. __getitem__ should return the first match (backends are
         considered in the order they are given in the backends list).
         """
-        admin_group = flaskg.groups['AdminGroup']
+        admin_group = flaskg.groups["AdminGroup"]
 
         # TheHacker added himself to the second backend, but that must not be
         # taken into consideration, because AdminGroup is defined in first
         # backend and we only use the first match.
-        assert 'TheHacker' not in admin_group
+        assert "TheHacker" not in admin_group
 
     def test_iter(self):
         all_group_names = list(flaskg.groups)
@@ -89,8 +90,8 @@ class TestCompositeGroup:
         assert len(set(all_group_names)) == len(all_group_names)
 
     def test_contains(self):
-        assert 'UserGroup' in flaskg.groups
-        assert 'not existing group' not in flaskg.groups
+        assert "UserGroup" in flaskg.groups
+        assert "not existing group" not in flaskg.groups
 
 
-coverage_modules = ['moin.datastructures.backends.composite_groups']
+coverage_modules = ["moin.datastructures.backends.composite_groups"]

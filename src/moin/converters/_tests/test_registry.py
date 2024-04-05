@@ -24,38 +24,44 @@ from moin.converters.link import ConverterExternOutput as LinkConverterExternOut
 from moin.converters.link import ConverterItemRefs as LinkConverterItemRefs
 
 
-@pytest.mark.parametrize('type_input,type_output,expected_class', [
-    # *_in converters
-    (type_moin_wiki, type_moin_document, MoinwikiInConverter),
-    (Type('x-moin/format;name=wiki'), type_moin_document, MoinwikiInConverter),
-    # pygments_in can handle this too but html_in should have more priority
-    (Type('text/html'), type_moin_document, HtmlInConverter),
-    # fall back to pygments_in
-    (Type('text/html+jinja'), type_moin_document, PygmentsInConverter),
-    # fallback for any random text/* input types
-    (Type('text/blahblah'), type_moin_document, TextInConverter),
-    # fallback for anything
-    (Type('mua/haha'), type_moin_document, EverythingConverter),
-    # *_out converters
-    (type_moin_document, Type('application/x-xhtml-moin-page'), HtmlOutConverterPage),
-    (type_moin_document, type_moin_wiki, MoinwikiOutConverter),
-    (type_moin_document, Type('x-moin/format;name=wiki'), MoinwikiOutConverter),
-])
+@pytest.mark.parametrize(
+    "type_input,type_output,expected_class",
+    [
+        # *_in converters
+        (type_moin_wiki, type_moin_document, MoinwikiInConverter),
+        (Type("x-moin/format;name=wiki"), type_moin_document, MoinwikiInConverter),
+        # pygments_in can handle this too but html_in should have more priority
+        (Type("text/html"), type_moin_document, HtmlInConverter),
+        # fall back to pygments_in
+        (Type("text/html+jinja"), type_moin_document, PygmentsInConverter),
+        # fallback for any random text/* input types
+        (Type("text/blahblah"), type_moin_document, TextInConverter),
+        # fallback for anything
+        (Type("mua/haha"), type_moin_document, EverythingConverter),
+        # *_out converters
+        (type_moin_document, Type("application/x-xhtml-moin-page"), HtmlOutConverterPage),
+        (type_moin_document, type_moin_wiki, MoinwikiOutConverter),
+        (type_moin_document, Type("x-moin/format;name=wiki"), MoinwikiOutConverter),
+    ],
+)
 def test_converter_finder(type_input, type_output, expected_class):
     conv = default_registry.get(type_input, type_output)
     assert isinstance(conv, expected_class)
 
 
-@pytest.mark.parametrize('kwargs,expected_class', [
-    # DOM converters, which depend on keyword argument to default_registry.get
-    (dict(macros='expandall'), MacroConverter),
-    (dict(includes='expandall'), IncludeConverter),
-    (dict(links='extern'), LinkConverterExternOutput),
-    (dict(items='refs'), LinkConverterItemRefs),
-])
+@pytest.mark.parametrize(
+    "kwargs,expected_class",
+    [
+        # DOM converters, which depend on keyword argument to default_registry.get
+        (dict(macros="expandall"), MacroConverter),
+        (dict(includes="expandall"), IncludeConverter),
+        (dict(links="extern"), LinkConverterExternOutput),
+        (dict(items="refs"), LinkConverterItemRefs),
+    ],
+)
 def test_converter_args(kwargs, expected_class):
     conv = default_registry.get(type_moin_document, type_moin_document, **kwargs)
     assert isinstance(conv, expected_class)
 
 
-coverage_modules = ['moin.converters']
+coverage_modules = ["moin.converters"]

@@ -10,5 +10,6 @@
 
 
 from flask import Blueprint
-feed = Blueprint('feed', __name__)
+
+feed = Blueprint("feed", __name__)
 import moin.apps.feed.views  # noqa

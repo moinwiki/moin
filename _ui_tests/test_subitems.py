@@ -24,10 +24,8 @@ class TestSubitems:
         driver.get(self.base_url + "/" + item_name)
         driver.find_element_by_link_text("Default").click()
         driver.find_element_by_link_text("Wiki (MoinMoin)").click()
-        driver.find_element_by_link_text(
-            "create the item from scratch").click()
-        driver.find_element_by_id("f_content_form_data_text").send_keys(
-            "This is a test item\n")
+        driver.find_element_by_link_text("create the item from scratch").click()
+        driver.find_element_by_id("f_content_form_data_text").send_keys("This is a test item\n")
         driver.find_element_by_id("f_submit").click()
 
     def test_createsubitem(self):
@@ -38,26 +36,23 @@ class TestSubitems:
 
         driver.get(self.base_url + "/" + self.base_item_name)
         driver.find_element_by_link_text("Modify").click()
-        driver.find_element_by_id("f_content_form_data_text").send_keys(
-            "\n[[/" + self.subitem_name + "]]\n")
+        driver.find_element_by_id("f_content_form_data_text").send_keys("\n[[/" + self.subitem_name + "]]\n")
         driver.find_element_by_id("f_submit").click()
         driver.find_element_by_link_text("/" + self.subitem_name).click()
         driver.find_element_by_link_text("Default").click()
         driver.find_element_by_link_text("Wiki (MoinMoin)").click()
         driver.find_element_by_link_text("create the item from scratch").click()
-        driver.find_element_by_id("f_content_form_data_text").send_keys(
-            "This is a test subitem")
+        driver.find_element_by_id("f_content_form_data_text").send_keys("This is a test subitem")
         driver.find_element_by_id("f_submit").click()
-        assert "This is a test subitem" in driver.find_element_by_id(
-            "moin-content-data").text
-        assert driver.title.split(" - ")[0] == self.base_item_name + \
-            "/" + self.subitem_name
+        assert "This is a test subitem" in driver.find_element_by_id("moin-content-data").text
+        assert driver.title.split(" - ")[0] == self.base_item_name + "/" + self.subitem_name
 
     def teardown_class(self):
         """shuts down browser"""
         self.driver.quit()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # This lets us run the test directly, without using pytest
     # This is useful for example for being able to call help, eg
     # 'help(driver)', or 'help(driver.find_element_by_id("f_submit"))'

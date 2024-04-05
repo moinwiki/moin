@@ -13,7 +13,7 @@ _migration_callbacks = {}
 
 
 def migrate_macros(dom):
-    """ Walk the DOM tree and call known migration functions
+    """Walk the DOM tree and call known migration functions
 
     While walking the DOM tree any element of a content type
     with a matching migration callback function will be passed
@@ -24,7 +24,7 @@ def migrate_macros(dom):
     """
 
     for node in dom.iter_elements_tree():
-        if node.tag.name == 'part' or node.tag.name == 'inline-part':
+        if node.tag.name == "part" or node.tag.name == "inline-part":
 
             # if a callback is registered for this content type
             # let it manipulate the DOM node
@@ -33,7 +33,7 @@ def migrate_macros(dom):
 
 
 def register_macro_migration(content_type, migration_callback):
-    """ Register callback for migrating elements of a certain content type
+    """Register callback for migrating elements of a certain content type
 
     Once registered, the migration will walk the DOM tree and use the callback
     function to manipulate elements of the given content type for migration.

@@ -19,6 +19,7 @@ from . import default_registry
 from moin.utils.mime import Type, type_text_plain
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -50,4 +51,4 @@ class PDFIndexingConverter:
             return f.getvalue()
 
 
-default_registry.register(PDFIndexingConverter._factory, Type('application/pdf'), type_text_plain)
+default_registry.register(PDFIndexingConverter._factory, Type("application/pdf"), type_text_plain)

@@ -44,6 +44,7 @@ class NoDupsLogger:
     """
     A simple report logger that suppresses duplicate headings and messages.
     """
+
     def __init__(self):
         self.messages = set()
         self.headings = set()
@@ -71,14 +72,14 @@ def directories_to_ignore(starting_dir):
 
 def files_to_ignore():
     """Return a list of files that will not be processed."""
-    return os.path.join('moin', '_version.py')
+    return os.path.join("moin", "_version.py")
 
 
 def calc_indentation(line):
     """
     Return tuple (length of indentation, line stripped of leading blanks).
     """
-    stripped = line.lstrip(' ')
+    stripped = line.lstrip(" ")
     indentation = len(line) - len(stripped)
     return indentation, stripped
 
@@ -89,19 +90,43 @@ def check_template_indentation(lines, filename, logger):
 
     In simple cases, non-standard indent, non-standard dedent messages tells users which lines to indent.
     """
-    indent_after = ('{% block ', '{% if ', '{% elif ', '{% else ', '{% for ', '{% macro ',
-                    '{%- block ', '{%- if ', '{%- elif ', '{%- else ', '{%- for ', '{%- macro ', '{{ gen.form.open', )
-    indent_before = ('{% endblock ', '{% endif ', '{% endfor ', '{% endmacro', '</',
-                     '{%- endblock ', '{%- endif ', '{%- endfor ', '{%- endmacro', '{{ gen.form.close', )
-    block_endings = {'{% block': ('{% endblock %}', '{%- endblock %}', '{%- endblock -%}', '{% endblock -%}', ),
-                     '{% if': ('{% endif %}', '{%- endif %}', '{%- endif -%}', '{% endif -%}', ),
-                     '{% elif': ('{% endif %}', '{%- endif %}', '{%- endif -%}', '{% endif -%}', ),
-                     '{% else': ('{% endif %}', '{%- endif %}', '{%- endif -%}', '{% endif -%}', ),
-                     '{% for': ('{% endfor %}', '{%- endfor %}', '{%- endfor -%}', '{% endfor -%}', ),
-                     '{% macro': ('{% endmacro %}', '{%- endmacro %}', '{%- endmacro -%}', '{% endmacro -%}', ),
-                     '{{ gen.form.open': ('{{ gen.form.close }}', ),
-                     }
-    ends = ('{% end', '{%- end')
+    indent_after = (
+        "{% block ",
+        "{% if ",
+        "{% elif ",
+        "{% else ",
+        "{% for ",
+        "{% macro ",
+        "{%- block ",
+        "{%- if ",
+        "{%- elif ",
+        "{%- else ",
+        "{%- for ",
+        "{%- macro ",
+        "{{ gen.form.open",
+    )
+    indent_before = (
+        "{% endblock ",
+        "{% endif ",
+        "{% endfor ",
+        "{% endmacro",
+        "</",
+        "{%- endblock ",
+        "{%- endif ",
+        "{%- endfor ",
+        "{%- endmacro",
+        "{{ gen.form.close",
+    )
+    block_endings = {
+        "{% block": ("{% endblock %}", "{%- endblock %}", "{%- endblock -%}", "{% endblock -%}"),
+        "{% if": ("{% endif %}", "{%- endif %}", "{%- endif -%}", "{% endif -%}"),
+        "{% elif": ("{% endif %}", "{%- endif %}", "{%- endif -%}", "{% endif -%}"),
+        "{% else": ("{% endif %}", "{%- endif %}", "{%- endif -%}", "{% endif -%}"),
+        "{% for": ("{% endfor %}", "{%- endfor %}", "{%- endfor -%}", "{% endfor -%}"),
+        "{% macro": ("{% endmacro %}", "{%- endmacro %}", "{%- endmacro -%}", "{% endmacro -%}"),
+        "{{ gen.form.open": ("{{ gen.form.close }}",),
+    }
+    ends = ("{% end", "{%- end")
 
     for idx, line in enumerate(lines):
         indentation, stripped = calc_indentation(line)
@@ -110,19 +135,20 @@ def check_template_indentation(lines, filename, logger):
             # we have found the beginning of a block
             incre = 1
             try:
-                while lines[idx + incre].strip() == '':
+                while lines[idx + incre].strip() == "":
                     incre += 1
                 next_indentation, next_line = calc_indentation(lines[idx + incre])
                 if next_indentation <= indentation:
                     # next non-blank line does not have expected indentation
                     # truncate "{{ gen.form.open(form, ..." to "{{ gen.form.open"; "{%- if ..." to "{% if"
-                    block_start = stripped.replace('-', '').split('(')[0].split(' ')
-                    block_start = ' '.join(block_start[:2])
+                    block_start = stripped.replace("-", "").split("(")[0].split(" ")
+                    block_start = " ".join(block_start[:2])
                     block_end = block_endings.get(block_start)
                     if not block_end:
                         # should never get here, mismatched indent_after and block_endings
-                        logger.log(filename,
-                                   "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1))
+                        logger.log(
+                            filename, "Unexpected block type '%s' discovered at line %d!" % (block_start, idx + 1)
+                        )
                         continue
                     if any(x in stripped for x in block_end):
                         # found line similar to: {% block ... %}...{% endblock %}
@@ -138,7 +164,7 @@ def check_template_indentation(lines, filename, logger):
         elif stripped.startswith(indent_before):
             # we have found the end of a block
             decre = -1
-            while idx + decre >= 0 and lines[idx + decre].strip() == '':
+            while idx + decre >= 0 and lines[idx + decre].strip() == "":
                 decre -= 1
             if idx + decre < 0:
                 # should never get here; file begins with something like {% endblock %} or </div>
@@ -147,15 +173,15 @@ def check_template_indentation(lines, filename, logger):
             prior_indentation, prior_line = calc_indentation(lines[idx + decre])
             if prior_indentation <= indentation:
                 # prior non-blank line does not have expected indentation
-                if stripped.startswith('</'):
-                    tag_open = stripped.split('>')[0].replace('/', '')  # convert </div> to <div, etc.
+                if stripped.startswith("</"):
+                    tag_open = stripped.split(">")[0].replace("/", "")  # convert </div> to <div, etc.
                     if prior_line.startswith(tag_open):
                         # found lines similar to: <td>...\n</td>
                         continue
                 if stripped.startswith(ends):
                     # convert end of block to prior beginning of block by removing "end" and any "-"s
-                    block_end = stripped.split(' %}')[0].split(' -%}')[0].replace('end', '').replace('-', '')
-                    prior_line = prior_line.replace('-', '')
+                    block_end = stripped.split(" %}")[0].split(" -%}")[0].replace("end", "").replace("-", "")
+                    prior_line = prior_line.replace("-", "")
                     if prior_line.startswith(block_end):
                         # found lines similar to: {% block...\n{% endblock %}
                         continue
@@ -166,24 +192,39 @@ def check_template_spacing(lines, filename, logger):
     """
     Create message if there is not a blank afer {{, {%, {#, {{-, {%-, {#- and before }}, %}, #},  -}}, -%}, -#}.
     """
-    pattern = re.compile(r'(\{[{#%])|([}#%]\})')
+    pattern = re.compile(r"(\{[{#%])|([}#%]\})")
     for idx, line in enumerate(lines):
         # log missing spaces in {{-myfunction}}, {#mycomment-#}, {%-myoperator%}
         m = pattern.search(line)
         if m:
-            m_start = [m.start() for m in re.finditer('{%|{{|{#', line)]
+            m_start = [m.start() for m in re.finditer("{%|{{|{#", line)]
             for index in m_start:
-                if (not line.startswith((' ', '- '), index + 2) and
-                        not line.strip() in ('{{', '{%', '{#', '{{-', '{%-', '{#-')):
-                    logger.log(filename,
-                               'Missing space within "%s" on line %d - not fixed!' % (line[index:index + 4], idx + 1))
-            m_end = [m.start() for m in re.finditer('%}|}}|#}', line)]
+                if not line.startswith((" ", "- "), index + 2) and not line.strip() in (
+                    "{{",
+                    "{%",
+                    "{#",
+                    "{{-",
+                    "{%-",
+                    "{#-",
+                ):
+                    logger.log(
+                        filename,
+                        'Missing space within "%s" on line %d - not fixed!' % (line[index : index + 4], idx + 1),
+                    )
+            m_end = [m.start() for m in re.finditer("%}|}}|#}", line)]
             for index in m_end:
-                if (not (line.startswith(' ', index - 1) or line.startswith(' -', index - 2))
-                        and not line.strip() in ('}}', '%}', '#}', '-}}', '-%}', '-#}')):
-                    logger.log(filename,
-                               'Missing space within "%s" on line %d - not fixed!'
-                               % (line[index - 2:index + 2], idx + 1))
+                if not (line.startswith(" ", index - 1) or line.startswith(" -", index - 2)) and not line.strip() in (
+                    "}}",
+                    "%}",
+                    "#}",
+                    "-}}",
+                    "-%}",
+                    "-#}",
+                ):
+                    logger.log(
+                        filename,
+                        'Missing space within "%s" on line %d - not fixed!' % (line[index - 2 : index + 2], idx + 1),
+                    )
 
 
 def check_files(filename, suffix):
@@ -205,14 +246,14 @@ def check_files(filename, suffix):
         with open(filename, encoding="utf-8", newline="") as f:
             lines = f.readlines()
     except UnicodeDecodeError:
-        print('Skipping file due to UnicodeDecodeError:', filename)
+        print("Skipping file due to UnicodeDecodeError:", filename)
         return
 
-    if filename.endswith('.html'):
+    if filename.endswith(".html"):
         check_template_indentation(lines, filename, logger)
         check_template_spacing(lines, filename, logger)
 
-    if filename.endswith('.js'):
+    if filename.endswith(".js"):
         check_js_phrases(lines, filename)
 
     # now look at file end and get rid of all whitespace-only lines there:
@@ -226,7 +267,7 @@ def check_files(filename, suffix):
     with open(filename, "w", encoding="utf-8", newline="") as f:
         for idx, line in enumerate(lines):
             line_length = len(line)
-            line = line.replace('\t', '    ')
+            line = line.replace("\t", "    ")
             if len(line) != line_length:
                 logger.log(filename, "Tab characters replaced with 4 spaces.")
             pep8_line = line.rstrip() + line_end
@@ -269,7 +310,7 @@ def find_js_phrases(starting_dir):
     Create warning message if key and value are not equal.
     """
     global phrases
-    target = os.path.join(starting_dir, 'moin', 'templates', 'dictionary.js')
+    target = os.path.join(starting_dir, "moin", "templates", "dictionary.js")
     with open(target, encoding="utf-8") as f:
         lines = f.readlines()
 
@@ -291,13 +332,13 @@ def find_js_phrases(starting_dir):
             continue
         m = pattern.search(line)
         if m:
-            if not m.group('key') == m.group('val'):
-                print('Error: /templates/dictionary.js dict has mismatched key and value on line', count)
-                print('   ', line.lstrip())
-            phrases.add(m.group('key'))
+            if not m.group("key") == m.group("val"):
+                print("Error: /templates/dictionary.js dict has mismatched key and value on line", count)
+                print("   ", line.lstrip())
+            phrases.add(m.group("key"))
         else:
-            print('Warning: /templates/dictionary.js {key: val} are not equal on line', count)
-            print('   ', line.lstrip())
+            print("Warning: /templates/dictionary.js {key: val} are not equal on line", count)
+            print("   ", line.lstrip())
 
 
 def check_js_phrases(lines, filename):
@@ -307,16 +348,16 @@ def check_js_phrases(lines, filename):
     Print error message if not defined in phrases, else add phrase to used phrases set.
     """
     global phrases_used
-    if filename.endswith('jquery.i18n.min.js') or filename.endswith('dictionary.js'):
+    if filename.endswith("jquery.i18n.min.js") or filename.endswith("dictionary.js"):
         return
     pattern = re.compile(r"""_\("([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)"\)""")
     bad_pat = re.compile(r"""_\(([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)\)""")
     for count, line in enumerate(lines, start=1):
-        if line.lstrip().startswith('// '):
+        if line.lstrip().startswith("// "):
             continue
-        if line.lstrip().startswith('function '):
+        if line.lstrip().startswith("function "):
             continue
-        if line.strip() == 'return $.i18n._(text);':
+        if line.strip() == "return $.i18n._(text);":
             continue
 
         m = pattern.search(line)
@@ -325,16 +366,15 @@ def check_js_phrases(lines, filename):
                 phrases_used.add(m.group(1))
             else:
                 print(
-                    'Error: %s file at line %s has phrase not defined in /templates/dictionary.js.'
-                    % (filename, count)
+                    "Error: %s file at line %s has phrase not defined in /templates/dictionary.js." % (filename, count)
                 )
-                print('   ', line.lstrip())
+                print("   ", line.lstrip())
         else:
             m = bad_pat.search(line)
             if m:
                 # _(variablename)
-                print('Warning: cannot verify i18n phrase defined in %s line %s.' % (filename, count))
-                print('   ', line.lstrip())
+                print("Warning: cannot verify i18n phrase defined in %s line %s." % (filename, count))
+                print("   ", line.lstrip())
 
 
 def unused_phrases():
@@ -344,7 +384,7 @@ def unused_phrases():
     unused = phrases - phrases_used
     if unused:
         for phrase in unused:
-            print('Warning: unused phrase defined in /templates/dictionary.js:', phrase)
+            print("Warning: unused phrase defined in /templates/dictionary.js:", phrase)
 
 
 if __name__ == "__main__":
@@ -352,7 +392,7 @@ if __name__ == "__main__":
         starting_dir = os.path.abspath(sys.argv[1])
     else:
         starting_dir = os.path.abspath(os.path.dirname(__file__))
-        starting_dir = os.path.join(starting_dir.split(os.sep + 'scripts')[0], 'src')
+        starting_dir = os.path.join(starting_dir.split(os.sep + "scripts")[0], "src")
     NoDupsLogger().log("Starting directory is %s\n" % starting_dir, None)
     find_js_phrases(starting_dir)
     file_picker(starting_dir)

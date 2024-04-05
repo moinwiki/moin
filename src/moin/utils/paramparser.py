@@ -33,6 +33,7 @@ class ParserPrefix:
     the possible prefixes for parse_quoted_separated_ext
     and implementing rich equal comparison.
     """
+
     def __init__(self, prefix):
         self.prefix = prefix
 
@@ -40,12 +41,19 @@ class ParserPrefix:
         return isinstance(other, ParserPrefix) and other.prefix == self.prefix
 
     def __repr__(self):
-        return '<ParserPrefix({})>'.format(self.prefix.encode('utf-8'))
+        return "<ParserPrefix({})>".format(self.prefix.encode("utf-8"))
 
 
-def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
-                               brackets=None, seplimit=0, multikey=False,
-                               prefixes=None, quotes='"\''):
+def parse_quoted_separated_ext(
+    args,
+    separator=None,
+    name_value_separator=None,
+    brackets=None,
+    seplimit=0,
+    multikey=False,
+    prefixes=None,
+    quotes="\"'",
+):
     """
     Parses the given string according to the other parameters.
 
@@ -112,23 +120,23 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     assert name_value_separator is None or name_value_separator != separator
     assert name_value_separator is None or len(name_value_separator) == 1
     if not isinstance(args, str):
-        raise TypeError('args must be str')
+        raise TypeError("args must be str")
     max = len(args)
-    result = []         # result list
-    cur = [None]        # current item
-    quoted = None       # we're inside quotes, indicates quote character used
-    skipquote = 0       # next quote is a quoted quote
-    noquote = False     # no quotes expected because word didn't start with one
+    result = []  # result list
+    cur = [None]  # current item
+    quoted = None  # we're inside quotes, indicates quote character used
+    skipquote = 0  # next quote is a quoted quote
+    noquote = False  # no quotes expected because word didn't start with one
     seplimit_reached = False  # number of separators exhausted
     separator_count = 0  # number of separators encountered
-    SPACE = [' ', '\t', ]
-    nextitemsep = [separator]   # used for skipping trailing space
-    SPACE = [' ', '\t', ]
+    SPACE = [" ", "\t"]
+    nextitemsep = [separator]  # used for skipping trailing space
+    SPACE = [" ", "\t"]
     if separator is None:
         nextitemsep = SPACE[:]
         separators = SPACE
     else:
-        nextitemsep = [separator]   # used for skipping trailing space
+        nextitemsep = [separator]  # used for skipping trailing space
         separators = [separator]
     if name_value_separator:
         nextitemsep.append(name_value_separator)
@@ -169,7 +177,7 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
         if skipquote:
             skipquote -= 1
         if separator is not None and not quoted and char in SPACE:
-            spaces = ''
+            spaces = ""
             # accumulate all space
             while char in SPACE and idx < max - 1:
                 spaces += char
@@ -190,18 +198,19 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
             else:
                 if not multikey:
                     if cur[-1] is None:
-                        cur[-1] = ''
+                        cur[-1] = ""
                     cur[-1] += name_value_separator
                 else:
                     cur.append(None)
             noquote = False
         elif not quoted and not seplimit_reached and char in separators:
-            (cur, noquote, separator_count, seplimit_reached,
-             nextitemsep) = additem(result, cur, separator_count, nextitemsep)
+            (cur, noquote, separator_count, seplimit_reached, nextitemsep) = additem(
+                result, cur, separator_count, nextitemsep
+            )
         elif not quoted and not noquote and char in quotes:
             if len(cur) and cur[-1] is None:
                 del cur[-1]
-            cur.append('')
+            cur.append("")
             quoted = char
         elif char == quoted and not skipquote:
             if next == quoted:
@@ -211,15 +220,17 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
         elif not quoted and char in opening:
             while len(cur) and cur[-1] is None:
                 del cur[-1]
-            (cur, noquote, separator_count, seplimit_reached,
-             nextitemsep) = additem(result, cur, separator_count, nextitemsep)
+            (cur, noquote, separator_count, seplimit_reached, nextitemsep) = additem(
+                result, cur, separator_count, nextitemsep
+            )
             bracketstack.append((matchingbracket[char], result))
             result = [char]
         elif not quoted and char in closing:
             while len(cur) and cur[-1] is None:
                 del cur[-1]
-            (cur, noquote, separator_count, seplimit_reached,
-             nextitemsep) = additem(result, cur, separator_count, nextitemsep)
+            (cur, noquote, separator_count, seplimit_reached, nextitemsep) = additem(
+                result, cur, separator_count, nextitemsep
+            )
             cur = []
             if not bracketstack:
                 raise BracketUnexpectedCloseError(char)
@@ -261,24 +272,24 @@ def parse_quoted_separated_ext(args, separator=None, name_value_separator=None,
     return result
 
 
-def parse_quoted_separated(args, separator=',', name_value=True, seplimit=0):
+def parse_quoted_separated(args, separator=",", name_value=True, seplimit=0):
     result = []
     positional = result
     if name_value:
-        name_value_separator = '='
+        name_value_separator = "="
         trailing = []
         keywords = {}
     else:
         name_value_separator = None
 
-    items = parse_quoted_separated_ext(args, separator=separator,
-                                       name_value_separator=name_value_separator,
-                                       seplimit=seplimit)
+    items = parse_quoted_separated_ext(
+        args, separator=separator, name_value_separator=name_value_separator, seplimit=seplimit
+    )
     for item in items:
         if isinstance(item, tuple):
             key, value = item
             if key is None:
-                key = ''
+                key = ""
             keywords[key] = value
             positional = trailing
         else:
@@ -307,19 +318,17 @@ def get_bool(arg, name=None, default=None):
     if arg is None:
         return default
     elif not isinstance(arg, str):
-        raise TypeError('Argument must be None or str')
+        raise TypeError("Argument must be None or str")
     arg = arg.lower()
-    if arg in ['0', 'false', 'no']:
+    if arg in ["0", "false", "no"]:
         return False
-    elif arg in ['1', 'true', 'yes']:
+    elif arg in ["1", "true", "yes"]:
         return True
     else:
         if name:
-            raise ValueError(
-                _('Argument "{name}" must be a boolean value, not "{value}"').format(name=name, value=arg))
+            raise ValueError(_('Argument "{name}" must be a boolean value, not "{value}"').format(name=name, value=arg))
         else:
-            raise ValueError(
-                _('Argument must be a boolean value, not "{value}"').format(value=arg))
+            raise ValueError(_('Argument must be a boolean value, not "{value}"').format(value=arg))
 
 
 def get_int(arg, name=None, default=None):
@@ -339,16 +348,16 @@ def get_int(arg, name=None, default=None):
     if arg is None:
         return default
     elif not isinstance(arg, str):
-        raise TypeError('Argument must be None or str')
+        raise TypeError("Argument must be None or str")
     try:
         return int(arg)
     except ValueError:
         if name:
             raise ValueError(
-                _('Argument "{name}" must be an integer value, not "{value}"').format(name=name, value=arg))
+                _('Argument "{name}" must be an integer value, not "{value}"').format(name=name, value=arg)
+            )
         else:
-            raise ValueError(
-                _('Argument must be an integer value, not "{value}"').format(value=arg))
+            raise ValueError(_('Argument must be an integer value, not "{value}"').format(value=arg))
 
 
 def get_float(arg, name=None, default=None):
@@ -367,16 +376,16 @@ def get_float(arg, name=None, default=None):
     if arg is None:
         return default
     elif not isinstance(arg, str):
-        raise TypeError('Argument must be None or str')
+        raise TypeError("Argument must be None or str")
     try:
         return float(arg)
     except ValueError:
         if name:
             raise ValueError(
-                _('Argument "{name}" must be a floating point value, not "{value}"').format(name=name, value=arg))
+                _('Argument "{name}" must be a floating point value, not "{value}"').format(name=name, value=arg)
+            )
         else:
-            raise ValueError(
-                _('Argument must be a floating point value, not "{value}"').format(value=arg))
+            raise ValueError(_('Argument must be a floating point value, not "{value}"').format(value=arg))
 
 
 def get_complex(arg, name=None, default=None):
@@ -395,18 +404,16 @@ def get_complex(arg, name=None, default=None):
     if arg is None:
         return default
     elif not isinstance(arg, str):
-        raise TypeError('Argument must be None or str')
+        raise TypeError("Argument must be None or str")
     try:
         # allow writing 'i' instead of 'j'
-        arg = arg.replace('i', 'j').replace('I', 'j')
+        arg = arg.replace("i", "j").replace("I", "j")
         return complex(arg)
     except ValueError:
         if name:
-            raise ValueError(
-                _('Argument "{name}" must be a complex value, not "{value}"').format(name=name, value=arg))
+            raise ValueError(_('Argument "{name}" must be a complex value, not "{value}"').format(name=name, value=arg))
         else:
-            raise ValueError(
-                _('Argument must be a complex value, not "{value}"').format(value=arg))
+            raise ValueError(_('Argument must be a complex value, not "{value}"').format(value=arg))
 
 
 def get_str(arg, name=None, default=None):
@@ -425,7 +432,7 @@ def get_str(arg, name=None, default=None):
     if arg is None:
         return default
     elif not isinstance(arg, str):
-        raise TypeError('Argument must be None or str')
+        raise TypeError("Argument must be None or str")
 
     return arg
 
@@ -454,19 +461,25 @@ def get_choice(arg, name=None, choices=[None], default_none=False):
         else:
             return choices[0]
     elif not isinstance(arg, str):
-        raise TypeError('Argument must be None or str')
+        raise TypeError("Argument must be None or str")
     elif arg not in choices:
         if name:
             raise ValueError(
-                _('Argument "{name}" must be one of "{choices}").format(not "{value}"',
+                _(
+                    'Argument "{name}" must be one of "{choices}").format(not "{value}"',
                     name=name,
                     choices='", "'.join([repr(choice) for choice in choices]),
-                    value=arg))
+                    value=arg,
+                )
+            )
         else:
             raise ValueError(
-                _('Argument must be one of "{choices}").format(not "{value}"',
+                _(
+                    'Argument must be one of "{choices}").format(not "{value}"',
                     choices='", "'.join([repr(choice) for choice in choices]),
-                    value=arg))
+                    value=arg,
+                )
+            )
 
     return arg
 
@@ -476,6 +489,7 @@ class IEFArgument:
     Base class for new argument parsers for
     invoke_extension_function.
     """
+
     def __init__(self):
         pass
 
@@ -507,7 +521,8 @@ class UnitArgument(IEFArgument):
     the default unit. NOTE: This doesn't work with a choice
     (tuple or list) argtype.
     """
-    def __init__(self, default, argtype, units=['mm'], defaultunit=None):
+
+    def __init__(self, default, argtype, units=["mm"], defaultunit=None):
         """
         Initialise a UnitArgument giving the default,
         argument type and the permitted units.
@@ -526,14 +541,14 @@ class UnitArgument(IEFArgument):
     def parse_argument(self, s):
         for unit in self._units:
             if s.endswith(unit):
-                ret = (self._type(s[:len(s) - len(unit)]), unit)
+                ret = (self._type(s[: len(s) - len(unit)]), unit)
                 return ret
         if self._defaultunit is not None:
             try:
                 return self._type(s), self._defaultunit
             except ValueError:
                 pass
-        units = ', '.join(self._units)
+        units = ", ".join(self._units)
         # XXX: how can we translate this?
         raise ValueError(f"Invalid unit in value {s} (allowed units: {units})")
 
@@ -547,13 +562,13 @@ class required_arg:
     for a function passed to invoke_extension_function() in
     order to get generic checking that the argument is given.
     """
+
     def __init__(self, argtype):
         """
         Initialise a required_arg
         :param argtype: the type the argument should have
         """
-        if not (argtype in (bool, int, float, complex, str) or
-                isinstance(argtype, (IEFArgument, tuple, list))):
+        if not (argtype in (bool, int, float, complex, str) or isinstance(argtype, (IEFArgument, tuple, list))):
             raise TypeError("argtype must be a valid type")
         self.argtype = argtype
 
@@ -644,7 +659,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
     elif isclass(function):
         f = function.__init__
     else:
-        raise TypeError('function must be a function, method or class')
+        raise TypeError("function must be a function, method or class")
     argnames, varargs, varkw, defaultlist, kwonlyargs, kwonlydefaults, annotations = getfullargspec(f)
 
     # self is implicit!
@@ -671,10 +686,10 @@ def invoke_extension_function(function, args, fixed_args=[]):
     # fill all arguments that weren't given with None
     for idx in range(argc):
         argname = argnames[idx]
-        if argname == '_kwargs':
+        if argname == "_kwargs":
             allow_kwargs = True
             continue
-        if argname == '_trailing_args':
+        if argname == "_trailing_args":
             allow_trailing = True
             continue
         if positional:
@@ -686,14 +701,13 @@ def invoke_extension_function(function, args, fixed_args=[]):
 
     if positional:
         if not allow_trailing:
-            raise ValueError(_('Too many arguments'))
+            raise ValueError(_("Too many arguments"))
         trailing_args.extend(positional)
 
     if trailing_args:
         if not allow_trailing:
-            raise ValueError(_('Cannot have arguments without name following'
-                               ' named arguments'))
-        kwargs['_trailing_args'] = trailing_args
+            raise ValueError(_("Cannot have arguments without name following" " named arguments"))
+        kwargs["_trailing_args"] = trailing_args
 
     # type-convert all keyword arguments to the type
     # that the default value indicates
@@ -703,8 +717,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             # macro's 'argname' argument, so convert that giving the
             # name to the converter so the user is told which argument
             # went wrong (if it does)
-            kwargs[argname] = _convert_arg(kwargs[argname],
-                                           defaults[argname], argname)
+            kwargs[argname] = _convert_arg(kwargs[argname], defaults[argname], argname)
             if kwargs[argname] is None:
                 if isinstance(defaults[argname], required_arg):
                     raise ValueError(_('Argument "{name}" is required').format(name=argname))
@@ -717,7 +730,7 @@ def invoke_extension_function(function, args, fixed_args=[]):
             del kwargs[argname]
 
     if kwargs_to_pass:
-        kwargs['_kwargs'] = kwargs_to_pass
+        kwargs["_kwargs"] = kwargs_to_pass
         if not allow_kwargs:
             raise ValueError(_('No argument named "{name}"').format(name=list(kwargs_to_pass.keys())[0]))
 

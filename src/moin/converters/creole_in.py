@@ -69,11 +69,11 @@ class Converter(ConverterMacro):
         stack.clear()
 
         attrib = {moin_page.outline_level: str(len(head_head))}
-        element = moin_page.h(attrib=attrib, children=(head_text, ))
+        element = moin_page.h(attrib=attrib, children=(head_text,))
         stack.top_append(element)
 
     # Matches an empty (only whitespaces) line.
-    block_line = r'(?P<line> ^ \s* $ )'
+    block_line = r"(?P<line> ^ \s* $ )"
 
     def block_line_repl(self, _iter_content, stack, line):
         stack.clear()
@@ -95,9 +95,9 @@ class Converter(ConverterMacro):
 
         for line in iter_content:
             match = self.list_re.match(line)
-            self._apply(match, 'list', iter_content, stack)
+            self._apply(match, "list", iter_content, stack)
 
-            if match.group('end') is not None:
+            if match.group("end") is not None:
                 # Allow the mainloop to take care of the line after a list.
                 iter_content.push(line)
                 break
@@ -163,9 +163,9 @@ class Converter(ConverterMacro):
         for line in iter_content:
             match = self.nowiki_end_re.match(line)
             if match:
-                if not match.group('escape'):
+                if not match.group("escape"):
                     return
-                line = match.group('rest')
+                line = match.group("rest")
             yield line
 
     def block_nowiki_repl(self, iter_content, stack, nowiki):
@@ -181,7 +181,7 @@ class Converter(ConverterMacro):
 
         # Stop directly if we got an end marker in the first line
         match = self.nowiki_end_re.match(firstline)
-        if match and not match.group('escape'):
+        if match and not match.group("escape"):
             stack.push(moin_page.blockcode())
             return
 
@@ -190,31 +190,31 @@ class Converter(ConverterMacro):
         match = self.nowiki_interpret_re.match(firstline)
 
         if match:
-            name = match.group('nowiki_name')
-            args = match.group('nowiki_args')
+            name = match.group("nowiki_name")
+            args = match.group("nowiki_args")
             if args:
                 args = parse_arguments(args)
 
             # Parse it directly if the type is ourself
-            if not name or name == 'creole':
+            if not name or name == "creole":
                 body = self.parse_block(lines, args)
-                elem = moin_page.page(children=(body, ))
+                elem = moin_page.page(children=(body,))
                 stack.top_append(elem)
 
             else:
                 stack.top_append(self.parser(name, args, lines))
 
         else:
-            elem = moin_page.blockcode(children=(firstline, ))
+            elem = moin_page.blockcode(children=(firstline,))
             stack.top_append(elem)
 
             for line in lines:
-                elem.append('\n')
+                elem.append("\n")
                 elem.append(line)
 
-    block_separator = r'(?P<separator> ^ \s* ---- \s* $ )'
+    block_separator = r"(?P<separator> ^ \s* ---- \s* $ )"
 
-    def block_separator_repl(self, _iter_content, stack, separator, hr_class='moin-hr3'):
+    def block_separator_repl(self, _iter_content, stack, separator, hr_class="moin-hr3"):
         stack.clear()
         stack.top_append(moin_page.separator(attrib={moin_page.class_: hr_class}))
 
@@ -241,7 +241,7 @@ class Converter(ConverterMacro):
                 iter_content.push(line)
                 break
 
-            self.block_table_row(match.group('table'), stack)
+            self.block_table_row(match.group("table"), stack)
 
         stack.clear()
 
@@ -250,58 +250,58 @@ class Converter(ConverterMacro):
         stack.push(element)
 
         for match in self.tablerow_re.finditer(content):
-            self._apply(match, 'tablerow', stack)
+            self._apply(match, "tablerow", stack)
 
         stack.pop()
 
-    block_text = r'(?P<text> .+ )'
+    block_text = r"(?P<text> .+ )"
 
     def block_text_repl(self, _iter_content, stack, text):
-        if stack.top_check('table', 'table-body', 'list'):
+        if stack.top_check("table", "table-body", "list"):
             stack.clear()
 
-        if stack.top_check('body'):
+        if stack.top_check("body"):
             element = moin_page.p()
             stack.push(element)
         # If we are in a paragraph already, don't loose the whitespace
         else:
-            stack.top_append('\n')
+            stack.top_append("\n")
         self.parse_inline(text, stack)
 
-    inline_emph = r'(?P<emph> (?<!:)// )'
+    inline_emph = r"(?P<emph> (?<!:)// )"
     # there must be no : in front of the // avoids italic rendering in urls
     # with unknown protocols
 
     def inline_emph_repl(self, stack, emph):
-        if not stack.top_check('emphasis'):
+        if not stack.top_check("emphasis"):
             stack.push(moin_page.emphasis())
         else:
-            stack.pop_name('emphasis')
+            stack.pop_name("emphasis")
 
-    inline_insert = r'(?P<insert> (?<!:)__ )'
+    inline_insert = r"(?P<insert> (?<!:)__ )"
 
     def inline_insert_repl(self, stack, insert):
         # creole docs suggest u, but ins is consistent with moinwiki and html5 ins/u docs
-        if not stack.top_check('ins'):
+        if not stack.top_check("ins"):
             stack.push(moin_page.ins())
         else:
-            stack.pop_name('ins')
+            stack.pop_name("ins")
 
-    inline_strong = r'(?P<strong> \*\* )'
+    inline_strong = r"(?P<strong> \*\* )"
 
     def inline_strong_repl(self, stack, strong):
-        if not stack.top_check('strong'):
+        if not stack.top_check("strong"):
             stack.push(moin_page.strong())
         else:
-            stack.pop_name('strong')
+            stack.pop_name("strong")
 
-    inline_linebreak = r'(?P<linebreak> \\\\ )'
+    inline_linebreak = r"(?P<linebreak> \\\\ )"
 
     def inline_linebreak_repl(self, stack, linebreak):
         element = moin_page.line_break()
         stack.top_append(element)
 
-    inline_escape = r'(?P<escape> ~ (?P<escaped_char>\S) )'
+    inline_escape = r"(?P<escape> ~ (?P<escaped_char>\S) )"
 
     def inline_escape_repl(self, stack, escape, escaped_char):
         stack.top_append(escaped_char)
@@ -328,16 +328,24 @@ class Converter(ConverterMacro):
             ([|] \s* (?P<link_text>.+?) \s*)?
             \]\]
         )
-    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
+    """ % dict(
+        uri_schemes="|".join(URI_SCHEMES)
+    )
 
-    def inline_link_repl(self, stack, link, link_url=None, link_item=None, link_text=None,
-                         link_interwiki_site=None, link_interwiki_item=None):
+    def inline_link_repl(
+        self,
+        stack,
+        link,
+        link_url=None,
+        link_item=None,
+        link_text=None,
+        link_interwiki_site=None,
+        link_interwiki_item=None,
+    ):
         """Handle all kinds of links."""
         if link_interwiki_site:
             if is_known_wiki(link_interwiki_site):
-                link = Iri(scheme='wiki',
-                           authority=link_interwiki_site,
-                           path='/' + link_interwiki_item)
+                link = Iri(scheme="wiki", authority=link_interwiki_site, path="/" + link_interwiki_item)
                 element = moin_page.a(attrib={xlink.href: link})
                 stack.push(element)
                 if link_text:
@@ -348,17 +356,17 @@ class Converter(ConverterMacro):
                 return
             else:
                 # assume local language uses ":" inside of words, set link_item and continue
-                link_item = f'{link_interwiki_site}:{link_interwiki_item}'
+                link_item = f"{link_interwiki_site}:{link_interwiki_item}"
         if link_item is not None:
-            att = 'attachment:'  # moin 1.9 needed this for an attached file
+            att = "attachment:"  # moin 1.9 needed this for an attached file
             if link_item.startswith(att):
-                link_item = '/' + link_item[len(att):]  # now we have a subitem
+                link_item = "/" + link_item[len(att) :]  # now we have a subitem
             # we have Anchor macro, so we support anchor links despite lack of docs in Creole spec
-            if '#' in link_item:
-                path, fragment = link_item.rsplit('#', 1)
+            if "#" in link_item:
+                path, fragment = link_item.rsplit("#", 1)
             else:
                 path, fragment = link_item, None
-            target = Iri(scheme='wiki.local', path=path, fragment=fragment)
+            target = Iri(scheme="wiki.local", path=path, fragment=fragment)
             text = link_item
         else:
             target = Iri(link_url)
@@ -399,7 +407,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_nowiki_repl(self, stack, nowiki, nowiki_text):
-        stack.top_append(moin_page.code(children=(nowiki_text, )))
+        stack.top_append(moin_page.code(children=(nowiki_text,)))
 
     inline_object = r"""
         (?P<object>
@@ -426,16 +434,17 @@ class Converter(ConverterMacro):
         if object_text:
             attrib[html.alt] = object_text
         if object_page is not None:
-            att = 'attachment:'  # moin 1.9 needed this for an attached file
+            att = "attachment:"  # moin 1.9 needed this for an attached file
             if object_page.startswith(att):
-                object_page = '/' + object_page[len(att):]  # now we have a subitem
-            target = Iri(scheme='wiki.local', path=object_page)
+                object_page = "/" + object_page[len(att) :]  # now we have a subitem
+            target = Iri(scheme="wiki.local", path=object_page)
             attrib[xinclude.href] = target
             element = xinclude.include(attrib=attrib)
         else:
             attrib[xlink.href] = object_url
-            element = moin_page.object(attrib=attrib,
-                                       children=('Your Browser does not support HTML5 audio/video element.', ))
+            element = moin_page.object(
+                attrib=attrib, children=("Your Browser does not support HTML5 audio/video element.",)
+            )
         stack.top_append(element)
 
     inline_url = r"""
@@ -449,7 +458,9 @@ class Converter(ConverterMacro):
             )
             ($ | (?=\s | [,.:;!?()] (\s | $)))
         )
-    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
+    """ % dict(
+        uri_schemes="|".join(URI_SCHEMES)
+    )
 
     def inline_url_repl(self, stack, url, url_target, escaped_url=None):
         """Handle raw urls in text."""
@@ -457,7 +468,7 @@ class Converter(ConverterMacro):
         if not escaped_url:
             # this url is NOT escaped
             attrib = {xlink.href: url_target}
-            element = moin_page.a(attrib=attrib, children=(url_target, ))
+            element = moin_page.a(attrib=attrib, children=(url_target,))
             stack.top_append(element)
         else:
             # this url is escaped, we render it as text
@@ -506,18 +517,18 @@ class Converter(ConverterMacro):
         # type.
         while True:
             cur = stack.top()
-            if cur.tag.name == 'body':
+            if cur.tag.name == "body":
                 break
-            if cur.tag.name == 'list-item-body':
+            if cur.tag.name == "list-item-body":
                 if list_level > cur.list_level:
                     break
-            if cur.tag.name == 'list':
+            if cur.tag.name == "list":
                 if list_level >= cur.list_level and list_type == cur.list_type:
                     break
             stack.pop()
 
-        if cur.tag.name != 'list':
-            generate = list_type == '#' and 'ordered' or 'unordered'
+        if cur.tag.name != "list":
+            generate = list_type == "#" and "ordered" or "unordered"
             attrib = {moin_page.item_label_generate: generate}
             element = moin_page.list(attrib=attrib)
             element.list_level, element.list_type = list_level, list_type
@@ -557,24 +568,15 @@ class Converter(ConverterMacro):
         """
         attrib = {}
         if cell_head:
-            attrib[moin_page.class_] = 'moin-thead'
+            attrib[moin_page.class_] = "moin-thead"
         element = moin_page.table_cell(attrib=attrib)
         stack.push(element)
         self.parse_inline(cell_text.strip(), stack)
-        stack.pop_name('table-cell')
+        stack.pop_name("table-cell")
 
     # Block elements
-    block = (
-        block_line,
-        block_head,
-        block_separator,
-        block_macro,
-        block_nowiki,
-        block_list,
-        block_table,
-        block_text,
-    )
-    block_re = re.compile('|'.join(block), re.X | re.U)
+    block = (block_line, block_head, block_separator, block_macro, block_nowiki, block_list, block_table, block_text)
+    block_re = re.compile("|".join(block), re.X | re.U)
 
     # Inline elements
     inline = (
@@ -589,31 +591,18 @@ class Converter(ConverterMacro):
         inline_insert,
         inline_linebreak,
     )
-    inline_re = re.compile('|'.join(inline), re.X | re.U)
+    inline_re = re.compile("|".join(inline), re.X | re.U)
 
-    inlinedesc = (
-        inline_macro,
-        inline_nowiki,
-        inline_emph,
-        inline_strong,
-        inline_object,
-    )
-    inlinedesc_re = re.compile('|'.join(inlinedesc), re.X | re.U)
+    inlinedesc = (inline_macro, inline_nowiki, inline_emph, inline_strong, inline_object)
+    inlinedesc_re = re.compile("|".join(inlinedesc), re.X | re.U)
 
     # Link description
-    link_desc = (
-        inline_object,
-        inline_linebreak,
-    )
-    link_desc_re = re.compile('|'.join(link_desc), re.X | re.U)
+    link_desc = (inline_object, inline_linebreak)
+    link_desc_re = re.compile("|".join(link_desc), re.X | re.U)
 
     # List items
-    list = (
-        list_end,
-        list_item,
-        list_text,
-    )
-    list_re = re.compile('|'.join(list), re.X | re.U)
+    list = (list_end, list_item, list_text)
+    list_re = re.compile("|".join(list), re.X | re.U)
 
     # Nowiki interpreter
     nowiki_interpret_re = re.compile(nowiki_interpret, re.X)
@@ -632,13 +621,13 @@ class Converter(ConverterMacro):
         Call the _repl method for the last matched group with the given prefix.
         """
         data = {k: v for k, v in match.groupdict().items() if v is not None}
-        getattr(self, f'{prefix}_{match.lastgroup}_repl')(*args, **data)
+        getattr(self, f"{prefix}_{match.lastgroup}_repl")(*args, **data)
 
     def parse_block(self, iter_content, arguments):
         attrib = {}
         if arguments:
             for key, value in arguments.keyword.items():
-                if key in ('style', ):
+                if key in ("style",):
                     attrib[moin_page(key)] = value
 
         body = moin_page.body(attrib=attrib)
@@ -648,7 +637,7 @@ class Converter(ConverterMacro):
         # Please note that the iterator can be modified by other functions
         for line in iter_content:
             match = self.block_re.match(line)
-            self._apply(match, 'block', iter_content, stack)
+            self._apply(match, "block", iter_content, stack)
 
         return body
 
@@ -658,10 +647,10 @@ class Converter(ConverterMacro):
         pos = 0
         for match in inline_re.finditer(text):
             # Handle leading text
-            stack.top_append_ifnotempty(text[pos:match.start()])
+            stack.top_append_ifnotempty(text[pos : match.start()])
             pos = match.end()
 
-            self._apply(match, 'inline', stack)
+            self._apply(match, "inline", stack)
 
         # Handle trailing text
         stack.top_append_ifnotempty(text[pos:])
@@ -678,4 +667,4 @@ class Converter(ConverterMacro):
 
 
 default_registry.register(Converter.factory, type_moin_creole, type_moin_document)
-default_registry.register(Converter.factory, Type('x-moin/format;name=creole'), type_moin_document)
+default_registry.register(Converter.factory, Type("x-moin/format;name=creole"), type_moin_document)

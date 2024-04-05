@@ -26,6 +26,7 @@ from moin.storage.backends.stores import Backend
 from moin.storage.backends._util import TrackingFileWrapper
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -36,11 +37,11 @@ def serialize(backend, dst):
 def serialize_rev(meta, data):
     if meta is None:
         # this is the end!
-        yield struct.pack('!i', 0)
+        yield struct.pack("!i", 0)
     else:
         text = json.dumps(meta, ensure_ascii=False)
-        meta_str = text.encode('utf-8')
-        yield struct.pack('!i', len(meta_str))
+        meta_str = text.encode("utf-8")
+        yield struct.pack("!i", len(meta_str))
         yield meta_str
         while True:
             block = data.read(8192)
@@ -56,8 +57,10 @@ def get_rev_str(meta):
     names = meta.get(NAME)
     if names:
         name = names[0]
-    return f'name: {ns + "/" if ns else ""}{name} item: {meta.get(ITEMID)} rev_number: {meta.get(REV_NUMBER)} ' \
-           f'rev_id: {meta.get(REVID)}'
+    return (
+        f'name: {ns + "/" if ns else ""}{name} item: {meta.get(ITEMID)} rev_number: {meta.get(REV_NUMBER)} '
+        f"rev_id: {meta.get(REVID)}"
+    )
 
 
 def correcting_rev_iter(backend: Backend):
@@ -78,11 +81,13 @@ def correcting_rev_iter(backend: Backend):
         while tfw.read(64 * 1024):
             pass
         if tfw.size != meta[SIZE]:
-            issues.append(f'{SIZE}_error {get_rev_str(meta)} meta_size: {meta[SIZE]} real_size: {tfw.size}')
+            issues.append(f"{SIZE}_error {get_rev_str(meta)} meta_size: {meta[SIZE]} real_size: {tfw.size}")
             meta[SIZE] = tfw.size
         if (real_hash := tfw.hash.hexdigest()) != meta[HASH_ALGORITHM]:
-            issues.append(f'{HASH_ALGORITHM}_error {get_rev_str(meta)} meta_{HASH_ALGORITHM}: {meta[HASH_ALGORITHM]} '
-                          f'real_{HASH_ALGORITHM}: {real_hash}')
+            issues.append(
+                f"{HASH_ALGORITHM}_error {get_rev_str(meta)} meta_{HASH_ALGORITHM}: {meta[HASH_ALGORITHM]} "
+                f"real_{HASH_ALGORITHM}: {real_hash}"
+            )
             meta[HASH_ALGORITHM] = real_hash
         data.seek(0)
         yield meta, data, issues
@@ -99,7 +104,7 @@ def serialize_iter(backend):
     for data in serialize_rev(None, None):
         yield data
     if issues_found:
-        logging.warning('metadata issues exist! maint-validate-metadata followed by index rebuild is recommended')
+        logging.warning("metadata issues exist! maint-validate-metadata followed by index rebuild is recommended")
 
 
 def deserialize(src, backend, new_ns=None, old_ns=None, kill_ns=None):
@@ -109,21 +114,21 @@ def deserialize(src, backend, new_ns=None, old_ns=None, kill_ns=None):
     If new_ns and old_ns are passed, then all items in the old_ns are renamed into the new_ns.
     If kill_ns is passed, then all items in that namespace are not loaded.
     """
-    assert bool(new_ns is None) == bool(old_ns is None), 'new_ns and old_ns are co-dependent options'
+    assert bool(new_ns is None) == bool(old_ns is None), "new_ns and old_ns are co-dependent options"
     while True:
         meta_size_bytes = src.read(4)
         if not len(meta_size_bytes):
             return  # end of file
-        meta_size = struct.unpack('!i', meta_size_bytes)[0]
+        meta_size = struct.unpack("!i", meta_size_bytes)[0]
         if not meta_size:
             continue  # end of store
         meta_str = src.read(meta_size)
-        text = meta_str.decode('utf-8')
+        text = meta_str.decode("utf-8")
         meta = json.loads(text)
         name = meta.get(NAME)
         if isinstance(name, str):
             # if we encounter single names, make a list of names:
-            meta[NAME] = [name, ]
+            meta[NAME] = [name]
         if ITEMTYPE not in meta:
             # temporary hack to upgrade serialized item files:
             meta[ITEMTYPE] = ITEMTYPE_DEFAULT

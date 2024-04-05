@@ -40,15 +40,16 @@ class RefCheckerSpider(scrapy.Spider):
     crawl.csv will be read by test_scrapy_crawl
     original design shamelessly stolen (with permission) from
         https://www.linode.com/docs/guides/use-scrapy-to-extract-data-from-html-tags/"""
-    name = 'ref_checker'
 
-    def __init__(self, url='http://127.0.0.1:8080/', *args, **kwargs):
+    name = "ref_checker"
+
+    def __init__(self, url="http://127.0.0.1:8080/", *args, **kwargs):
         """:param url: start url for crawl, overridden by settings.CRAWL_START in moin.cli.conftest.do_crawl"""
         super().__init__(*args, **kwargs)
         self.start_urls = [url]
-        self.no_crawl_paths = ['/MoinWikiMacros/MonthCalendar']  # lots of 404s for the dates
+        self.no_crawl_paths = ["/MoinWikiMacros/MonthCalendar"]  # lots of 404s for the dates
         self.results = []
-        self.domain = ''
+        self.domain = ""
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -58,22 +59,22 @@ class RefCheckerSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self):
-        logging.info('entering spider_closed')
+        logging.info("entering spider_closed")
         try:
-            _, artifact_base_dir = get_dirs('')
+            _, artifact_base_dir = get_dirs("")
             for k, c in self.crawler.stats.get_stats().items():  # bubble up spider exceptions into test failures
-                if k.startswith('spider_exceptions'):
-                    logging.error(f'spider_exception: {c}')
-                    self.results.append(CrawlResult(response_exc=f'crawler stats: {k} = {c}'))
-            crawl_csv_path = os.environ.get('MOIN_SCRAPY_CRAWL_CSV', get_crawl_csv_path())
-            logging.info(f'writing {len(self.results)} to {crawl_csv_path}')
-            with open(crawl_csv_path, 'w') as fh:
-                out_csv = csv.writer(fh, lineterminator='\n')
+                if k.startswith("spider_exceptions"):
+                    logging.error(f"spider_exception: {c}")
+                    self.results.append(CrawlResult(response_exc=f"crawler stats: {k} = {c}"))
+            crawl_csv_path = os.environ.get("MOIN_SCRAPY_CRAWL_CSV", get_crawl_csv_path())
+            logging.info(f"writing {len(self.results)} to {crawl_csv_path}")
+            with open(crawl_csv_path, "w") as fh:
+                out_csv = csv.writer(fh, lineterminator="\n")
                 out_csv.writerow([f.name for f in fields(CrawlResult)])
                 for result in self.results:
                     out_csv.writerow(astuple(result))
         except Exception as e:  # noqa
-            logging.error(f'exception in spider_closed {repr(e)}')
+            logging.error(f"exception in spider_closed {repr(e)}")
             print_exc()
             raise
 
@@ -82,7 +83,7 @@ class RefCheckerSpider(scrapy.Spider):
 
         requests yielded from this method are added to the crawl queue"""
         try:
-            result = response.meta['my_data']
+            result = response.meta["my_data"]
         except KeyError:
             result = CrawlResult(response.url)
         result.response_code = response.status
@@ -99,41 +100,42 @@ class RefCheckerSpider(scrapy.Spider):
         parsed_uri = Iri(response.url)
         result.url = parsed_uri  # in case of redirect show final url in crawl.csv
         if not (url_path := parsed_uri.path):
-            logging.debug(f'not crawling blank path {response.url}')
+            logging.debug(f"not crawling blank path {response.url}")
             follow = False
-        if 'Content-Type' in response.headers and response.headers['Content-Type'] != b'text/html; charset=utf-8':
+        if "Content-Type" in response.headers and response.headers["Content-Type"] != b"text/html; charset=utf-8":
             logging.debug(f'not crawling Content-Type {response.headers["Content-Type"]} {response.url}')
             follow = False
         # If first response, update domain (to manage redirect cases)
         if not self.domain:
             self.domain = parsed_uri.authority
         if parsed_uri.authority != self.domain:
-            logging.debug(f'not crawling external link {response.url}')
+            logging.debug(f"not crawling external link {response.url}")
             follow = False
         if follow and parsed_uri.path:
-            if '+history' in url_path:
-                logging.debug(f'not crawling history {response.url}')
+            if "+history" in url_path:
+                logging.debug(f"not crawling history {response.url}")
                 follow = False
             url_path_str = parsed_uri.path.fullquoted
             for no_crawl_path in self.no_crawl_paths:
                 if no_crawl_path in url_path_str:
                     follow = False
-                    logging.debug(f'not crawling no_crawl_path {response.url}')
+                    logging.debug(f"not crawling no_crawl_path {response.url}")
                     break
-            if (settings.CRAWL_NAMESPACE
-                    and not url_path_str.startswith(f'{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}')):
+            if settings.CRAWL_NAMESPACE and not url_path_str.startswith(
+                f"{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}"
+            ):
                 logging.debug(f'not crawling outside of CRAWL_NAMESPACE "{settings.CRAWL_NAMESPACE}" {url_path_str}')
                 follow = False
         if follow:
-            for attrib in ['href', 'data-href', 'src', 'data']:
-                attrib_selectors = response.xpath(f'//*[@{attrib}]')
+            for attrib in ["href", "data-href", "src", "data"]:
+                attrib_selectors = response.xpath(f"//*[@{attrib}]")
                 for selector in attrib_selectors:
-                    link = selector.xpath(f'@{attrib}').extract_first()
-                    text = selector.xpath('text()').extract_first()
+                    link = selector.xpath(f"@{attrib}").extract_first()
+                    text = selector.xpath("text()").extract_first()
                     if isinstance(text, str):
-                        text = text.strip().replace('\n', '\\n')
+                        text = text.strip().replace("\n", "\\n")
                     new_result = CrawlResult(link, response.url, text, attrib)
-                    if new_result.url.scheme in {'javascript', 'file', 'mailto'}:
+                    if new_result.url.scheme in {"javascript", "file", "mailto"}:
                         continue
                     try:
                         request = response.follow(link, callback=self.parse, errback=self.errback)
@@ -142,10 +144,10 @@ class RefCheckerSpider(scrapy.Spider):
                         # for badly formed href, append to results with response_exc
                         # so issue will be shown in test failures
                         # but do not yield as we cannot follow this link
-                        new_result.response_exc = f'unable to create request from {link}: {repr(e)}'
+                        new_result.response_exc = f"unable to create request from {link}: {repr(e)}"
                         self.results.append(new_result)
                         continue
-                    request.meta['my_data'] = new_result
+                    request.meta["my_data"] = new_result
                     yield request
 
     def parse(self, response, **kwargs):
@@ -153,7 +155,7 @@ class RefCheckerSpider(scrapy.Spider):
         try:
             yield from self._parse(response, **kwargs)
         except Exception as e:  # noqa
-            logging.error(f'parse exception : {repr(e)}')
+            logging.error(f"parse exception : {repr(e)}")
             print_exc()
             raise
 
@@ -163,7 +165,7 @@ class RefCheckerSpider(scrapy.Spider):
             return
         request = failure.request
         try:
-            result = request.meta['my_data']
+            result = request.meta["my_data"]
         except KeyError:
             result = CrawlResult(request.url)
         try:

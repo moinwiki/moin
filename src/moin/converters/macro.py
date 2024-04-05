@@ -21,13 +21,14 @@ from moin.utils.plugins import PluginMissingError
 from . import default_registry
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
 class Converter:
     @classmethod
     def _factory(cls, input, output, macros=None, **kw):
-        if macros == 'expandall':
+        if macros == "expandall":
             return cls()
 
     def handle_macro(self, elem, page):
@@ -39,18 +40,18 @@ class Converter:
             return
 
         type = Type(type)
-        if not (type.type == 'x-moin' and type.subtype == 'macro'):
+        if not (type.type == "x-moin" and type.subtype == "macro"):
             logging.debug(f"not a macro, skipping: {type!r}")
             return
 
-        name = type.parameters['name']
+        name = type.parameters["name"]
         context_block = elem.tag == moin_page.part
         args = elem[0] if len(elem) else None
         elem_body = context_block and moin_page.body() or moin_page.inline_body()
         elem_error = moin_page.error()
 
         try:
-            cls = plugins.importPlugin(app.cfg, 'macros', name, function='Macro')
+            cls = plugins.importPlugin(app.cfg, "macros", name, function="Macro")
             macro = cls()
             ret = macro((), args, page, alt, context_block)
             elem_body.append(ret)
@@ -64,8 +65,11 @@ class Converter:
             # thus, in case of exceptions, we just log the problem and return
             # some standard text.
             logging.exception(f"Macro {name} raised an exception:")
-            elem_error.append(_('<<{macro_name}: execution failed [{error_msg}] (see also the log)>>'
-                                ).format(macro_name=name, error_msg=str(e)))
+            elem_error.append(
+                _("<<{macro_name}: execution failed [{error_msg}] (see also the log)>>").format(
+                    macro_name=name, error_msg=str(e)
+                )
+            )
 
         if len(elem_body):
             elem.append(elem_body)

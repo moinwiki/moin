@@ -9,7 +9,7 @@ from moin.macros.Verbatim import Macro
 
 
 def test_Macro():
-    arguments = ['test text']
+    arguments = ["test text"]
     macro_obj = Macro()
-    result = macro_obj.macro('content', arguments, 'page_url', 'alternative')
-    assert result == 'test text'
+    result = macro_obj.macro("content", arguments, "page_url", "alternative")
+    assert result == "test text"

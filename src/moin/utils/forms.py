@@ -22,71 +22,72 @@ def label_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-label_filter.tags = {'label'}
+label_filter.tags = {"label"}
 
 
 def button_filter(tagname, attributes, contents, context, bind):
     """Show translated text in clickable buttons and submits."""
     if bind is None:
         return contents
-    if tagname == 'input':
-        if ('value' not in attributes and
-                attributes.get('type') in ['submit', 'reset', ]):
-            attributes['value'] = _(bind.default_value)
-    elif tagname == 'button' and not contents:
+    if tagname == "input":
+        if "value" not in attributes and attributes.get("type") in ["submit", "reset"]:
+            attributes["value"] = _(bind.default_value)
+    elif tagname == "button" and not contents:
         contents = _(bind.default_value)
     return contents
 
 
-button_filter.tags = {'input', 'button'}
+button_filter.tags = {"input", "button"}
 
 
 def required_filter(tagname, attributes, contents, context, bind):
     if bind is not None and not bind.optional:
-        if tagname == 'input':
-            attributes['required'] = 'required'
+        if tagname == "input":
+            attributes["required"] = "required"
     return contents
 
 
-required_filter.tags = {'input', 'label'}
+required_filter.tags = {"input", "label"}
 
 
 def autofocus_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
-        autofocus = bind.properties.get('autofocus')
+        autofocus = bind.properties.get("autofocus")
         if autofocus:
-            attributes['autofocus'] = 'autofocus'
+            attributes["autofocus"] = "autofocus"
     return contents
 
 
-autofocus_filter.tags = {'input', 'textarea', }
+autofocus_filter.tags = {"input", "textarea"}
 
 
 def placeholder_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
-        placeholder = bind.properties.get('placeholder')
+        placeholder = bind.properties.get("placeholder")
         if placeholder:
-            attributes['placeholder'] = placeholder
+            attributes["placeholder"] = placeholder
     return contents
 
 
-placeholder_filter.tags = {'input', 'textarea', }
+placeholder_filter.tags = {"input", "textarea"}
 
 
-def error_filter_factory(class_='moin-error'):
+def error_filter_factory(class_="moin-error"):
     """Returns an HTML generation filter annotating field CSS class on error.
 
     :param class: The css class to apply in case of validation error on a
                   field.  Default: 'error'
     """
+
     def error_filter(tagname, attributes, contents, context, bind):
         if bind is not None and bind.errors:
-            if 'class' in attributes:
-                attributes['class'] = ' '.join([attributes['class'], class_])
+            if "class" in attributes:
+                attributes["class"] = " ".join([attributes["class"], class_])
             else:
-                attributes['class'] = class_
+                attributes["class"] = class_
         return contents
-    error_filter.tags = {'input'}
+
+    error_filter.tags = {"input"}
     return error_filter
 
 
@@ -95,11 +96,13 @@ error_filter = error_filter_factory()
 
 def make_generator():
     """make an html generator"""
-    return Generator(auto_domid=True, auto_for=True, auto_filter=True,
-                     markup_wrapper=Markup,
-                     filters=[label_filter, button_filter,
-                              error_filter,
-                              required_filter, placeholder_filter, autofocus_filter])
+    return Generator(
+        auto_domid=True,
+        auto_for=True,
+        auto_filter=True,
+        markup_wrapper=Markup,
+        filters=[label_filter, button_filter, error_filter, required_filter, placeholder_filter, autofocus_filter],
+    )
 
 
 class FileStorage(Scalar):

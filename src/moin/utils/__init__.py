@@ -19,37 +19,32 @@ PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
 # XML helper functions
 #############################################################################
 
-g_xmlIllegalCharPattern = re.compile('[\x01-\x08\x0B-\x0D\x0E-\x1F\x80-\xFF]')
-g_undoUtf8Pattern = re.compile('\xC2([^\xC2])')
-g_cdataCharPattern = re.compile('[&<\'\"]')
-g_textCharPattern = re.compile('[&<]')
-g_charToEntity = {
-    '&': '&amp;',
-    '<': '&lt;',
-    "'": '&apos;',
-    '"': '&quot;'
-}
+g_xmlIllegalCharPattern = re.compile("[\x01-\x08\x0B-\x0D\x0E-\x1F\x80-\xFF]")
+g_undoUtf8Pattern = re.compile("\xC2([^\xC2])")
+g_cdataCharPattern = re.compile("[&<'\"]")
+g_textCharPattern = re.compile("[&<]")
+g_charToEntity = {"&": "&amp;", "<": "&lt;", "'": "&apos;", '"': "&quot;"}
 
 
 def TranslateCDATA(text):
     """
-        Convert a string to a CDATA-encoded one
-        Copyright (c) 1999-2000 FourThought
+    Convert a string to a CDATA-encoded one
+    Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
     new_string, num_subst = re.subn(g_cdataCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)
-    new_string, num_subst = re.subn(g_xmlIllegalCharPattern, lambda m: '&#x%02X;' % ord(m.group()), new_string)
+    new_string, num_subst = re.subn(g_xmlIllegalCharPattern, lambda m: "&#x%02X;" % ord(m.group()), new_string)
     return new_string
 
 
 def TranslateText(text):
     """
-        Convert a string to a PCDATA-encoded one (do minimal encoding)
-        Copyright (c) 1999-2000 FourThought
+    Convert a string to a PCDATA-encoded one (do minimal encoding)
+    Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
     new_string, num_subst = re.subn(g_textCharPattern, lambda m, d=g_charToEntity: d[m.group()], new_string)
-    new_string, num_subst = re.subn(g_xmlIllegalCharPattern, lambda m: '&#x%02X;' % ord(m.group()), new_string)
+    new_string, num_subst = re.subn(g_xmlIllegalCharPattern, lambda m: "&#x%02X;" % ord(m.group()), new_string)
     return new_string
 
 
@@ -57,24 +52,25 @@ def TranslateText(text):
 # Misc
 #############################################################################
 
+
 def rangelist(numbers):
-    """ Convert a list of integers to a range string in the form
-        '1,2-5,7'.
+    """Convert a list of integers to a range string in the form
+    '1,2-5,7'.
     """
     numbers = sorted(numbers[:])
     numbers.append(999999)
-    pattern = ','
+    pattern = ","
     for i in range(len(numbers) - 1):
-        if pattern[-1] == ',':
+        if pattern[-1] == ",":
             pattern += str(numbers[i])
             if numbers[i] + 1 == numbers[i + 1]:
-                pattern += '-'
+                pattern += "-"
             else:
-                pattern += ','
+                pattern += ","
         elif numbers[i] + 1 != numbers[i + 1]:
-            pattern = pattern + str(numbers[i]) + ','
+            pattern = pattern + str(numbers[i]) + ","
 
-    if pattern[-1] in ',-':
+    if pattern[-1] in ",-":
         return pattern[1:-1]
     return pattern[1:]
 
@@ -88,5 +84,5 @@ def close_file(f):
         The process cannot access the file because it is being used by another process.
     """
     # some tests reuse BytesIO objects and will fail with I/O operation on closed file.
-    if hasattr(f, 'close') and not f.closed and not isinstance(f, BytesIO):
+    if hasattr(f, "close") and not f.closed and not isinstance(f, BytesIO):
         f.close()

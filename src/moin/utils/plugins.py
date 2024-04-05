@@ -22,19 +22,19 @@ from moin.utils.mimetype import MimeType
 
 
 class PluginError(Exception):
-    """ Base class for plugin errors """
+    """Base class for plugin errors"""
 
 
 class PluginMissingError(PluginError):
-    """ Raised when a plugin is not found """
+    """Raised when a plugin is not found"""
 
 
 class PluginAttributeError(PluginError):
-    """ Raised when plugin does not contain an attribtue """
+    """Raised when plugin does not contain an attribtue"""
 
 
 def importPlugin(cfg, kind, name, function="execute"):
-    """ Import wiki or builtin plugin
+    """Import wiki or builtin plugin
 
     Returns <function> attr from a plugin module <name>.
     If <function> attr is missing, raise PluginAttributeError.
@@ -63,7 +63,7 @@ def importPlugin(cfg, kind, name, function="execute"):
 
 
 def importWikiPlugin(cfg, kind, name, function="execute"):
-    """ Import plugin from the wiki data directory
+    """Import plugin from the wiki data directory
 
     See importPlugin docstring.
     """
@@ -71,26 +71,26 @@ def importWikiPlugin(cfg, kind, name, function="execute"):
     modname = plugins.get(name, None)
     if modname is None:
         raise PluginMissingError()
-    moduleName = f'{modname}.{name}'
+    moduleName = f"{modname}.{name}"
     return importNameFromPlugin(moduleName, function)
 
 
 def importBuiltinPlugin(kind, name, function="execute"):
-    """ Import builtin plugin from MoinMoin package
+    """Import builtin plugin from MoinMoin package
 
     See importPlugin docstring.
     """
     if name not in builtinPlugins(kind):
         raise PluginMissingError()
-    moduleName = f'moin.{kind}.{name}'
+    moduleName = f"moin.{kind}.{name}"
     return importNameFromPlugin(moduleName, function)
 
 
 def importNameFromPlugin(moduleName, name):
-    """ Return <name> attr from <moduleName> module,
-        raise PluginAttributeError if name does not exist.
+    """Return <name> attr from <moduleName> module,
+    raise PluginAttributeError if name does not exist.
 
-        If name is None, return the <moduleName> module object.
+    If name is None, return the <moduleName> module object.
     """
     if name is None:
         fromlist = []
@@ -105,14 +105,14 @@ def importNameFromPlugin(moduleName, name):
             raise PluginAttributeError
     else:
         # module now has the toplevel module of <moduleName> (see __import__ docs!)
-        components = moduleName.split('.')
+        components = moduleName.split(".")
         for comp in components[1:]:
             module = getattr(module, comp)
         return module
 
 
 def builtinPlugins(kind):
-    """ Gets a list of modules in moin.'kind'
+    """Gets a list of modules in moin.'kind'
 
     :param kind: what kind of modules we look for
     :rtype: list
@@ -145,7 +145,7 @@ def wikiPlugins(kind, cfg):
                 plugins = pysupport.getPluginModules(packagepath)
                 for p in plugins:
                     if p not in result:
-                        result[p] = f'{modname}.{kind}'
+                        result[p] = f"{modname}.{kind}"
             except AttributeError:
                 pass
         cache[kind] = result
@@ -153,7 +153,7 @@ def wikiPlugins(kind, cfg):
 
 
 def getPlugins(kind, cfg):
-    """ Gets a list of plugin names of kind
+    """Gets a list of plugin names of kind
 
     :param kind: what kind of modules we look for
     :rtype: list
@@ -171,8 +171,7 @@ def getPlugins(kind, cfg):
 
 
 def searchAndImportPlugin(cfg, type, name, what=None):
-    type2classname = {
-    }
+    type2classname = {}
     if what is None:
         what = type2classname[type]
     mt = MimeType(name)
@@ -203,9 +202,9 @@ def _loadPluginModule(cfg):
     cfg._plugin_modules = []
     for pdir in cfg.plugin_dirs:
         assert isinstance(pdir, str)
-        modname = 'moin_p_{}'.format(hashlib.new('sha1', pdir.encode()).hexdigest())
+        modname = "moin_p_{}".format(hashlib.new("sha1", pdir.encode()).hexdigest())
         if modname not in sys.modules:
-            init_path = os.path.join(os.path.abspath(pdir), '__init__.py')
+            init_path = os.path.join(os.path.abspath(pdir), "__init__.py")
             spec = importlib.util.spec_from_file_location(modname, init_path)
             if spec is not None:
                 module = importlib.util.module_from_spec(spec)
@@ -217,7 +216,9 @@ Could not import plugin package "%(path)s":
 
 Make sure your data directory path is correct, check permissions, and
 that the data/plugin directory has an __init__.py file.
-""" % dict(path=pdir)
+""" % dict(
+                    path=pdir
+                )
                 raise error.ConfigurationError(msg)
         if modname not in cfg._plugin_modules:
             cfg._plugin_modules.append(modname)

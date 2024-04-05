@@ -13,4 +13,4 @@ XMLNS_RE = re.compile(r'\s+xmlns(:\S+)?="[^"]+?"')
 XMLNS_RE2 = re.compile(r'(\s+xmlns(:\w+)?="[^"]+?"|xmlns\(\w+=[^)]+?\)\s+)')
 XMLNS_RE3 = re.compile(r'\s+xmlns="[^"]+?"')
 
-TAGSTART_RE = re.compile(r'^(<[a-z:]+)')
+TAGSTART_RE = re.compile(r"^(<[a-z:]+)")

@@ -208,8 +208,11 @@ class GreedyGroup(BaseGroup):
         else:
             groups = flaskg.groups
             for group_name in self.member_groups:
-                if (group_name not in processed_groups and group_name in groups and
-                        groups[group_name].__contains__(member, processed_groups)):
+                if (
+                    group_name not in processed_groups
+                    and group_name in groups
+                    and groups[group_name].__contains__(member, processed_groups)
+                ):
                     return True
 
         return False
@@ -251,7 +254,8 @@ class GreedyGroup(BaseGroup):
 
     def __repr__(self):
         return "<{!r} name={!r} members={!r} member_groups={!r}>".format(
-            self.__class__, self.name, self.members, self.member_groups)
+            self.__class__, self.name, self.members, self.member_groups
+        )
 
 
 class BaseDict(UserDict):

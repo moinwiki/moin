@@ -22,6 +22,7 @@ from . import default_registry
 from .moinwiki_in import Converter
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -75,15 +76,22 @@ class ConverterFormat19(Converter):
           $  # ... or end of line
          )
     """ % {
-        'u': CHARS_UPPER,
-        'l': CHARS_LOWER,
-        'child': re.escape(wikiutil.CHILD_PREFIX),
-        'parent': re.escape(wikiutil.PARENT_PREFIX),
+        "u": CHARS_UPPER,
+        "l": CHARS_LOWER,
+        "child": re.escape(wikiutil.CHILD_PREFIX),
+        "parent": re.escape(wikiutil.PARENT_PREFIX),
     }
 
-    def inline_freelink_repl(self, stack, freelink, freelink_bang=None,
-                             freelink_interwiki_page=None, freelink_interwiki_ref=None,
-                             freelink_page=None, freelink_email=None):
+    def inline_freelink_repl(
+        self,
+        stack,
+        freelink,
+        freelink_bang=None,
+        freelink_interwiki_page=None,
+        freelink_interwiki_ref=None,
+        freelink_page=None,
+        freelink_email=None,
+    ):
         if freelink_bang:
             stack.top_append(freelink)
             return
@@ -91,15 +99,15 @@ class ConverterFormat19(Converter):
         attrib = {}
 
         if freelink_page:
-            if '#' in freelink_page:
-                path, fragment = freelink_page.rsplit('#', 1)
+            if "#" in freelink_page:
+                path, fragment = freelink_page.rsplit("#", 1)
             else:
                 path, fragment = freelink_page, None
-            link = Iri(scheme='wiki.local', path=path, fragment=fragment)
+            link = Iri(scheme="wiki.local", path=path, fragment=fragment)
             text = freelink_page
 
         elif freelink_email:
-            link = 'mailto:' + freelink_email
+            link = "mailto:" + freelink_email
             text = freelink_email
 
         else:
@@ -107,9 +115,7 @@ class ConverterFormat19(Converter):
                 stack.top_append(freelink)
                 return
 
-            link = Iri(scheme='wiki',
-                       authority=freelink_interwiki_ref,
-                       path='/' + freelink_interwiki_page)
+            link = Iri(scheme="wiki", authority=freelink_interwiki_ref, path="/" + freelink_interwiki_page)
             text = freelink_interwiki_page
 
         attrib[xlink.href] = link
@@ -143,7 +149,9 @@ class ConverterFormat19(Converter):
                 )
             )
         )
-    """ % dict(uri_schemes='|'.join(URI_SCHEMES))
+    """ % dict(
+        uri_schemes="|".join(URI_SCHEMES)
+    )
 
     def inline_url_repl(self, stack, url, url_target):
         url = Iri(url_target)
@@ -151,12 +159,9 @@ class ConverterFormat19(Converter):
         element = moin_page.a(attrib=attrib, children=[url_target])
         stack.top_append(element)
 
-    inline = Converter.inline + (
-        inline_freelink,
-        inline_url,
-    )
-    inline_re = re.compile('|'.join(inline), re.X | re.U)
+    inline = Converter.inline + (inline_freelink, inline_url)
+    inline_re = re.compile("|".join(inline), re.X | re.U)
 
 
-default_registry.register(ConverterFormat19.factory, Type('text/x.moin.wiki;format=1.9'), type_moin_document)
-default_registry.register(ConverterFormat19.factory, Type('x-moin/format;name=wiki;format=1.9'), type_moin_document)
+default_registry.register(ConverterFormat19.factory, Type("text/x.moin.wiki;format=1.9"), type_moin_document)
+default_registry.register(ConverterFormat19.factory, Type("x-moin/format;name=wiki;format=1.9"), type_moin_document)

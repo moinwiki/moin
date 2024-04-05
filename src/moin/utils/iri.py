@@ -20,15 +20,15 @@ def _iriquote_replace(exc):
     if not isinstance(exc, UnicodeDecodeError):
         raise exc
 
-    text = ''.join('%%%02X' % code for code in exc.object[exc.start:exc.end])
+    text = "".join("%%%02X" % code for code in exc.object[exc.start : exc.end])
     return text, exc.end
 
 
-codecs.register_error('iriquote', _iriquote_replace)
+codecs.register_error("iriquote", _iriquote_replace)
 
 
 class Iri(AutoNe):
-    __slots__ = '_scheme', '_authority', '_path', '_query', '_fragment'
+    __slots__ = "_scheme", "_authority", "_path", "_query", "_fragment"
 
     overall_rules = r"""
     ^
@@ -92,25 +92,25 @@ class Iri(AutoNe):
         elif _iri:
             match = self._overall_re.match(str(_iri))
             if not match:
-                raise ValueError('Input does not look like an IRI')
+                raise ValueError("Input does not look like an IRI")
 
-            _scheme = match.group('scheme')
+            _scheme = match.group("scheme")
             if _scheme is not None:
                 _scheme = str(_scheme).lower()
 
-            _authority = match.group('authority')
+            _authority = match.group("authority")
             if _authority is not None:
                 _authority = IriAuthority(_authority, _quoted)
 
-            _path = match.group('path')
+            _path = match.group("path")
             if _path is not None:
                 _path = IriPath(_path, _quoted)
 
-            _query = match.group('query')
+            _query = match.group("query")
             if _query is not None:
                 _query = IriQuery(_query, _quoted)
 
-            _fragment = match.group('fragment')
+            _fragment = match.group("fragment")
             if _fragment is not None:
                 _fragment = IriFragment(_fragment, _quoted)
 
@@ -162,24 +162,19 @@ class Iri(AutoNe):
         return NotImplemented
 
     def __repr__(self):
-        return '{}(scheme={!r}, authority={!r}, path={!r}, query={!r}, fragment={!r})'.format(
-            self.__class__.__name__,
-            self.scheme,
-            self._authority,
-            self._path,
-            self._query,
-            self._fragment,
+        return "{}(scheme={!r}, authority={!r}, path={!r}, query={!r}, fragment={!r})".format(
+            self.__class__.__name__, self.scheme, self._authority, self._path, self._query, self._fragment
         )
 
     def __str__(self):
         ret = []
 
         if self.scheme:
-            ret.extend((self.scheme, ':'))
+            ret.extend((self.scheme, ":"))
 
         authority = self._authority
         if authority is not None:
-            ret.extend(('//', authority.fullquoted))
+            ret.extend(("//", authority.fullquoted))
 
         path = self._path
         if path is not None:
@@ -187,13 +182,13 @@ class Iri(AutoNe):
 
         query = self._query
         if query is not None:
-            ret.extend(('?', query.fullquoted))
+            ret.extend(("?", query.fullquoted))
 
         fragment = self._fragment
         if fragment is not None:
-            ret.extend(('#', fragment.fullquoted))
+            ret.extend(("#", fragment.fullquoted))
 
-        return ''.join(ret)
+        return "".join(ret)
 
     def __add__(self, other):
         if isinstance(other, Iri):
@@ -216,8 +211,9 @@ class Iri(AutoNe):
                     else:
                         new_path = self.path + new_path
 
-            return Iri(scheme=new_scheme, authority=new_authority, path=new_path,
-                       query=new_query, fragment=other.fragment)
+            return Iri(
+                scheme=new_scheme, authority=new_authority, path=new_path, query=new_query, fragment=other.fragment
+            )
 
         if isinstance(other, str):
             return self + Iri(other)
@@ -232,6 +228,7 @@ class Iri(AutoNe):
 
     def __set_scheme(self, value):
         self._scheme = str(value).lower()
+
     scheme = property(__get_scheme, __set_scheme, __del_scheme, """Scheme part of the IRI.""")
 
     def __del_authority(self):
@@ -244,6 +241,7 @@ class Iri(AutoNe):
         if value.__class__ is not IriAuthority:
             value = IriAuthority(value, False)
         self._authority = value
+
     authority = property(__get_authority, __set_authority, __del_authority, """Authority part of the IRI.""")
 
     def __del_path(self):
@@ -256,6 +254,7 @@ class Iri(AutoNe):
         if value.__class__ is not IriPath:
             value = IriPath(value, False)
         self._path = value
+
     path = property(__get_path, __set_path, __del_path, """Path part of the IRI.""")
 
     def __del_query(self):
@@ -266,6 +265,7 @@ class Iri(AutoNe):
 
     def __set_query(self, value):
         self._query = IriQuery(value, False)
+
     query = property(__get_query, __set_query, __del_query, """Query part of the IRI.""")
 
     def __del_fragment(self):
@@ -276,19 +276,24 @@ class Iri(AutoNe):
 
     def __set_fragment(self, value):
         self._fragment = IriFragment(value, False)
+
     fragment = property(__get_fragment, __set_fragment, __del_fragment, """Fragment part of the IRI.""")
 
 
 class _Value(str):
-    __slots__ = '_quoted'
+    __slots__ = "_quoted"
 
     # Rules for quoting parts of the IRI.
-    quote_rules_iri = ("""((?:%[0-9a-fA-F]{2})+)|"""
-                       """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
-                       """\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)""")
-    quote_rules_uri = ("""((?:%[0-9a-fA-F]{2})+)|"""
-                       """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
-                       """]+)""")
+    quote_rules_iri = (
+        """((?:%[0-9a-fA-F]{2})+)|"""
+        """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
+        """\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)"""
+    )
+    quote_rules_uri = (
+        """((?:%[0-9a-fA-F]{2})+)|"""
+        """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
+        """]+)"""
+    )
     quote_filter = frozenset()
 
     _quote_re_iri = re.compile(quote_rules_iri)
@@ -330,11 +335,13 @@ class _Value(str):
 
             if t_quoted:
                 if not requote:
-                    t_quoted = t_quoted.replace('%', '%25')
+                    t_quoted = t_quoted.replace("%", "%25")
                 return t_quoted
 
-            return ''.join(char if char in quote_filter else ''.join('%%%02X' % b for b in char.encode('utf-8'))
-                           for char in t_plain)
+            return "".join(
+                char if char in quote_filter else "".join("%%%02X" % b for b in char.encode("utf-8"))
+                for char in t_plain
+            )
 
         re = url and cls._quote_re_uri or cls._quote_re_iri
         return re.sub(subrepl, input)
@@ -353,23 +360,23 @@ class _Value(str):
 
         for match in cls._unquote_re.finditer(s):
             # Handle leading text
-            t = s[pos:match.start()]
+            t = s[pos : match.start()]
             ret1.append(t)
             ret2.append(t)
             pos = match.end()
 
             part = []
-            for item in match.group().split('%')[1:]:
+            for item in match.group().split("%")[1:]:
                 part.append(int(item, 16))
             part = bytes(part)
-            ret1.append(part.decode('utf-8', 'replace'))
-            ret2.append(part.replace(b'%', b'%25').decode('utf-8', 'iriquote'))
+            ret1.append(part.decode("utf-8", "replace"))
+            ret2.append(part.replace(b"%", b"%25").decode("utf-8", "iriquote"))
 
         # Handle trailing text
         t = s[pos:]
         ret1.append(t)
         ret2.append(t)
-        return ''.join(ret1), ''.join(ret2)
+        return "".join(ret1), "".join(ret2)
 
     @property
     def fullquoted(self):
@@ -393,7 +400,7 @@ class _Value(str):
         """
         if self._quoted is not None:
             return self._quoted
-        return self.replace('%', '%25')
+        return self.replace("%", "%25")
 
     @property
     def urlquoted(self):
@@ -453,9 +460,7 @@ class IriAuthority(AutoNe):
         if isinstance(other, str):
             return str(self) == other
         if isinstance(other, IriAuthority):
-            return self._userinfo == other._userinfo and \
-                self._host == other._host and \
-                self.port == other.port
+            return self._userinfo == other._userinfo and self._host == other._host and self.port == other.port
         return NotImplemented
 
     def __bool__(self):
@@ -464,11 +469,8 @@ class IriAuthority(AutoNe):
         return False
 
     def __repr__(self):
-        return '{}(userinfo={!r}, host={!r}, port={!r})'.format(
-            self.__class__.__name__,
-            self._userinfo,
-            self._host,
-            self.port,
+        return "{}(userinfo={!r}, host={!r}, port={!r})".format(
+            self.__class__.__name__, self._userinfo, self._host, self.port
         )
 
     def __str__(self):
@@ -478,31 +480,31 @@ class IriAuthority(AutoNe):
         ret = []
 
         if userinfo is not None:
-            ret.extend((userinfo, '@'))
+            ret.extend((userinfo, "@"))
         if host is not None:
             ret.append(host)
         if self.port is not None:
-            ret.append(':')
+            ret.append(":")
             if self.port:
                 ret.append(str(self.port))
 
-        return ''.join(ret)
+        return "".join(ret)
 
     def _parse(self, iri_authority, quoted):
         match = self._authority_re.match(iri_authority)
 
         if not match:
-            raise ValueError('Input does not look like an IRI authority')
+            raise ValueError("Input does not look like an IRI authority")
 
-        userinfo = match.group('userinfo')
+        userinfo = match.group("userinfo")
         if userinfo is not None:
             self._userinfo = IriAuthorityUserinfo(userinfo, quoted)
 
-        host = match.group('host')
+        host = match.group("host")
         if host is not None:
             self._host = IriAuthorityHost(host, quoted)
 
-        port = match.group('port')
+        port = match.group("port")
         if port is not None:
             if port:
                 self.port = int(port)
@@ -553,6 +555,7 @@ class IriAuthority(AutoNe):
 
     def __set_userinfo(self, value):
         self._userinfo = IriAuthorityUserinfo(value, False)
+
     userinfo = property(__get_userinfo, __set_userinfo, __del_userinfo)
 
     def __del_host(self):
@@ -563,6 +566,7 @@ class IriAuthority(AutoNe):
 
     def __set_host(self, value):
         self._host = IriAuthorityHost(value, False)
+
     host = property(__get_host, __set_host, __del_host)
 
 
@@ -575,7 +579,7 @@ class IriAuthorityHost(_Value):
 
 
 class IriPath(AutoNe):
-    __slots__ = '_list'
+    __slots__ = "_list"
 
     def __init__(self, iri_path=None, _quoted=True):
         self._list = []
@@ -586,7 +590,7 @@ class IriPath(AutoNe):
             elif isinstance(iri_path, (tuple, list)):
                 self._list = [IriPathSegment(i, False) for i in iri_path]
             else:
-                _list = [IriPathSegment(i, _quoted) for i in iri_path.split('/')]
+                _list = [IriPathSegment(i, _quoted) for i in iri_path.split("/")]
                 self._list = self._remove_dots(_list)
 
     def __eq__(self, other):
@@ -613,7 +617,7 @@ class IriPath(AutoNe):
             return self + IriPath(other, False)
 
         if isinstance(other, IriPath):
-            if other._list and other._list[0] == '':
+            if other._list and other._list[0] == "":
                 segments = other._list
             else:
                 segments = self._list[:-1] + other._list
@@ -622,16 +626,13 @@ class IriPath(AutoNe):
         return NotImplemented
 
     def __str__(self):
-        return '/'.join(self._list)
+        return "/".join(self._list)
 
     def __repr__(self):
-        return '{}({!r})'.format(
-            self.__class__.__name__,
-            str(self),
-        )
+        return "{}({!r})".format(self.__class__.__name__, str(self))
 
     def _remove_dots(self, segments):
-        if not segments or segments[0] != '':
+        if not segments or segments[0] != "":
             return segments
 
         empty = segments[0]
@@ -641,10 +642,10 @@ class IriPath(AutoNe):
 
         # Get reversed list with first (empty) element removed
         for i in segments[:0:-1]:
-            if i == '.':
+            if i == ".":
                 if not output:
                     output.insert(0, empty)
-            elif i == '..':
+            elif i == "..":
                 if not output:
                     output.insert(0, empty)
                 remove += 1
@@ -668,7 +669,7 @@ class IriPath(AutoNe):
         All characters which are illegal in the path part are encoded.
         Used to generate the full IRI.
         """
-        return '/'.join(i.fullquoted for i in self._list)
+        return "/".join(i.fullquoted for i in self._list)
 
     @property
     def quoted(self):
@@ -678,7 +679,7 @@ class IriPath(AutoNe):
         Only '%' and illegal UTF-8 sequences are encoded. Primarily used to
         have a one-to-one mapping with non-UTF-8 URIs.
         """
-        return '/'.join(i.quoted for i in self._list)
+        return "/".join(i.quoted for i in self._list)
 
     @property
     def urlquoted(self):
@@ -688,16 +689,16 @@ class IriPath(AutoNe):
         All characters which are illegal in the path part are encoded.
         Used to generate the full URI.
         """
-        return '/'.join(i.urlquoted for i in self._list)
+        return "/".join(i.urlquoted for i in self._list)
 
 
 class IriPathSegment(_Value):
-    quote_filter = frozenset('@:/')
+    quote_filter = frozenset("@:/")
 
 
 class IriQuery(_Value):
-    quote_filter = frozenset('@:/?')
+    quote_filter = frozenset("@:/?")
 
 
 class IriFragment(_Value):
-    quote_filter = frozenset('@:/?')
+    quote_filter = frozenset("@:/?")

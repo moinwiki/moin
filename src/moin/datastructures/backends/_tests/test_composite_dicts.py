@@ -20,19 +20,21 @@ class TestCompositeDict(DictsBackendTest):
     def cfg(self):
         class Config(wikiconfig.Config):
 
-            one_dict = {'SomeTestDict': {'First': 'first item',
-                                         'text with spaces': 'second item',
-                                         'Empty string': '',
-                                         'Last': 'last item'}}
+            one_dict = {
+                "SomeTestDict": {
+                    "First": "first item",
+                    "text with spaces": "second item",
+                    "Empty string": "",
+                    "Last": "last item",
+                }
+            }
 
-            other_dict = {'SomeOtherTestDict': {'One': '1',
-                                                'Two': '2'}}
+            other_dict = {"SomeOtherTestDict": {"One": "1", "Two": "2"}}
 
             def dicts(self):
-                return CompositeDicts(ConfigDicts(self.one_dict),
-                                      ConfigDicts(self.other_dict))
+                return CompositeDicts(ConfigDicts(self.one_dict), ConfigDicts(self.other_dict))
 
         return Config
 
 
-coverage_modules = ['moin.datastructures.backends.composite_dicts']
+coverage_modules = ["moin.datastructures.backends.composite_dicts"]

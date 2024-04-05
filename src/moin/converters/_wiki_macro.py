@@ -17,6 +17,7 @@ from ._args_wiki import include_re
 from moin.i18n import _
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -35,7 +36,7 @@ class ConverterMacro:
         text = args
         text = self.macro_text(text)  # footnotes may have markup, macro_text is likely overridden
         elem_body = moin_page.note_body(children=text)
-        attrib = {moin_page.note_class: 'footnote'}
+        attrib = {moin_page.note_class: "footnote"}
         elem = moin_page.note(attrib=attrib, children=[elem_body])
 
         if context_block:
@@ -54,10 +55,11 @@ class ConverterMacro:
         macro output will be enclosed in a SPAN-tag. converters/include.py will resolve
         HTML 5 validation issues should the macro output block tags within an inline context.
         """
+
         def error_message(msg):
-            txt = moin_page.p(children=(text, ))
-            msg = moin_page.p(children=(msg, ))
-            msg.set(moin_page.class_, 'moin-error')
+            txt = moin_page.p(children=(text,))
+            msg = moin_page.p(children=(msg,))
+            msg.set(moin_page.class_, "moin-error")
             div = moin_page.div(children=(txt, msg))
             return div
 
@@ -73,57 +75,57 @@ class ConverterMacro:
             level = int(args[2])
         except (IndexError, ValueError):
             pass
-        sort = 'sort' in args and args['sort']
-        if sort and sort not in ('ascending', 'descending'):
+        sort = "sort" in args and args["sort"]
+        if sort and sort not in ("ascending", "descending"):
             return error_message(_("Include Macro above has invalid format, expected sort=ascending or descending"))
         # TODO: We need corresponding code in include.py to process items, skipitems, titlesonly, and editlink
-        items = 'items' in args and int(args['items'])
-        skipitems = 'skipitems' in args and int(args['skipitems'])
-        titlesonly = 'titlesonly' in args
-        editlink = 'editlink' in args
+        items = "items" in args and int(args["items"])
+        skipitems = "skipitems" in args and int(args["skipitems"])
+        titlesonly = "titlesonly" in args
+        editlink = "editlink" in args
 
         attrib = {}
         xpointer = []
         xpointer_moin = []
 
         def add_moin_xpointer(function, args):
-            args = str(args).replace('^', '^^').replace('(', '^(').replace(')', '^)')
-            xpointer_moin.append(function + '(' + args + ')')
+            args = str(args).replace("^", "^^").replace("(", "^(").replace(")", "^)")
+            xpointer_moin.append(function + "(" + args + ")")
 
-        if pagename.startswith('^'):
-            add_moin_xpointer('pages', pagename)
+        if pagename.startswith("^"):
+            add_moin_xpointer("pages", pagename)
             if sort:
-                add_moin_xpointer('sort', sort)
+                add_moin_xpointer("sort", sort)
             if items:
-                add_moin_xpointer('items', items)
+                add_moin_xpointer("items", items)
             if skipitems:
-                add_moin_xpointer('skipitems', skipitems)
+                add_moin_xpointer("skipitems", skipitems)
         else:
-            link = iri.Iri(scheme='wiki.local', path=pagename)
+            link = iri.Iri(scheme="wiki.local", path=pagename)
             attrib[xinclude.href] = link
 
         if heading is not None:
-            add_moin_xpointer('heading', heading)
+            add_moin_xpointer("heading", heading)
         if level:
-            add_moin_xpointer('level', str(level))
+            add_moin_xpointer("level", str(level))
         if titlesonly:
-            add_moin_xpointer('titlesonly', '')
+            add_moin_xpointer("titlesonly", "")
         if editlink:
-            add_moin_xpointer('editlink', '')
+            add_moin_xpointer("editlink", "")
 
         if xpointer_moin:
-            xpointer.append('page:include({})'.format(' '.join(xpointer_moin)))
+            xpointer.append("page:include({})".format(" ".join(xpointer_moin)))
 
         if xpointer:
             # TODO: Namespace?
-            ns = f'xmlns(page={moin_page}) '
+            ns = f"xmlns(page={moin_page}) "
 
-            attrib[xinclude.xpointer] = ns + ' '.join(xpointer)
+            attrib[xinclude.xpointer] = ns + " ".join(xpointer)
 
         span_wrap = xinclude.include(attrib=attrib)
         if not context_block:
             return span_wrap
-        attrib = {moin_page.class_: 'moin-p'}
+        attrib = {moin_page.class_: "moin-p"}
         return moin_page.div(attrib=attrib, children=[span_wrap])
 
     def _TableOfContents_repl(self, args, text, context_block):
@@ -143,19 +145,16 @@ class ConverterMacro:
         return moin_page.table_of_content(attrib=attrib)
 
     def macro(self, name, args, text, context_block=False):
-        func = getattr(self, f'_{name}_repl', None)
+        func = getattr(self, f"_{name}_repl", None)
         if func is not None:
             return func(args, text, context_block)
 
         tag = context_block and moin_page.part or moin_page.inline_part
 
-        elem = tag(attrib={
-            moin_page.alt: text,
-            moin_page.content_type: 'x-moin/macro;name=' + name,
-        })
+        elem = tag(attrib={moin_page.alt: text, moin_page.content_type: "x-moin/macro;name=" + name})
 
         if args:
-            elem_arguments = moin_page.arguments(children=(args, ))
+            elem_arguments = moin_page.arguments(children=(args,))
             elem.append(elem_arguments)
 
         return elem
@@ -170,11 +169,11 @@ class ConverterMacro:
 
     # TODO: Merge with macro support somehow.
     def parser(self, name, args, content):
-        if '/' in name:
+        if "/" in name:
             type = Type(name)
         else:
-            type = Type(type='x-moin', subtype='format', parameters={'name': name})
-        logging.debug("parser type: %r" % (type, ))
+            type = Type(type="x-moin", subtype="format", parameters={"name": name})
+        logging.debug("parser type: %r" % (type,))
 
         elem = moin_page.part(attrib={moin_page.content_type: type})
 
@@ -186,7 +185,7 @@ class ConverterMacro:
                 attrib = {}
                 if key:
                     attrib[moin_page.name] = key
-                elem_arg = moin_page.argument(attrib=attrib, children=(value, ))
+                elem_arg = moin_page.argument(attrib=attrib, children=(value,))
                 elem_arguments.append(elem_arg)
 
         if content:

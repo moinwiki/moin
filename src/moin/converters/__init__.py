@@ -30,10 +30,9 @@ class ElementException(RuntimeError):
 
 
 class RegistryConverter(RegistryBase):
-    class Entry(namedtuple('Entry', 'factory type_input type_output priority')):
+    class Entry(namedtuple("Entry", "factory type_input type_output priority")):
         def __call__(self, type_input, type_output, **kw):
-            if (self.type_output.issupertype(type_output) and
-                    self.type_input.issupertype(type_input)):
+            if self.type_output.issupertype(type_output) and self.type_input.issupertype(type_input):
                 return self.factory(type_input, type_output, **kw)
 
         def __lt__(self, other):

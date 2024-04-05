@@ -84,13 +84,17 @@ class Macro(MacroPageLinkListBase):
         # process input
         args = []
         if arguments:
-            args = arguments[0].split(',')
+            args = arguments[0].split(",")
         for arg in args:
             try:
-                key, val = (x.strip() for x in arg.split('='))
+                key, val = (x.strip() for x in arg.split("="))
             except ValueError:
-                raise ValueError(_('ItemList macro: Argument "{arg}" does not follow <key>=<val> format '
-                                   '(arguments, if more than one, must be comma-separated).').format(arg=arg))
+                raise ValueError(
+                    _(
+                        'ItemList macro: Argument "{arg}" does not follow <key>=<val> format '
+                        "(arguments, if more than one, must be comma-separated)."
+                    ).format(arg=arg)
+                )
 
             if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
                 raise ValueError(_("ItemList macro: The key's value must be bracketed by matching quotes."))
@@ -108,7 +112,9 @@ class Macro(MacroPageLinkListBase):
                 elif val == "True":
                     ordered = True
                 else:
-                    raise ValueError(_('ItemList macro: The value must be "True" or "False". (got "{val}")').format(val=val))
+                    raise ValueError(
+                        _('ItemList macro: The value must be "True" or "False". (got "{val}")').format(val=val)
+                    )
             elif key == "display":
                 display = val  # let 'create_pagelink_list' throw an exception if needed
             elif key == "skiptag":
@@ -119,15 +125,16 @@ class Macro(MacroPageLinkListBase):
         # use curr item if not specified
         if item is None:
             item = request.path[1:]
-            if item.startswith('+modify/'):
-                item = item.split('/', 1)[1]
+            if item.startswith("+modify/"):
+                item = item.split("/", 1)[1]
 
         # verify item exists and current user has read permission
         if item != "":
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
-                message = _('Item does not exist or read access blocked by ACLs: {0}').format(item)
-                admonition = moin_page.div(attrib={moin_page.class_: 'important'},
-                                           children=[moin_page.p(children=[message])])
+                message = _("Item does not exist or read access blocked by ACLs: {0}").format(item)
+                admonition = moin_page.div(
+                    attrib={moin_page.class_: "important"}, children=[moin_page.p(children=[message])]
+                )
                 return admonition
 
         # process subitems
@@ -143,7 +150,7 @@ class Macro(MacroPageLinkListBase):
                     newlist.append(child)
             children = newlist
         if not children:
-            empty_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and 'ordered' or 'unordered'})
+            empty_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and "ordered" or "unordered"})
             item_body = moin_page.list_item_body(children=[_("<ItemList macro: No matching items were found.>")])
             item = moin_page.list_item(children=[item_body])
             empty_list.append(item)

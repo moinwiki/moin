@@ -13,6 +13,7 @@ from functools import wraps, partial
 from flask import g as flaskg
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -42,7 +43,7 @@ class Clock:
     def stop(self, timer):
         if timer in self.timers:
             value = time.time() - self.timers[timer].pop()
-            logging.debug(f'timer {timer}({len(self.timers[timer])}): {value * 1000:.2f}ms')
+            logging.debug(f"timer {timer}({len(self.timers[timer])}): {value * 1000:.2f}ms")
             if not self.timers[timer]:
                 del self.timers[timer]
             return value
@@ -62,6 +63,7 @@ def add_timing(f, name=None):
         retval = f(*args, **kw)
         flaskg.clock.stop(name)
         return retval
+
     return wrapper
 
 

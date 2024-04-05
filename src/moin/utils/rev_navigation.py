@@ -18,19 +18,19 @@ def prior_next_revs(revid, fqname):
     return prior, current, and next revids and time stamps else return None * 6.
     """
     try:
-        show_revision = request.view_args['rev'] != CURRENT
+        show_revision = request.view_args["rev"] != CURRENT
     except KeyError:
         # maintenance scripts, such as dump-html, have request.view_args == {}
         show_revision = False
     if show_revision:
-        terms = [Term(WIKINAME, app.cfg.interwikiname), ]
+        terms = [Term(WIKINAME, app.cfg.interwikiname)]
         terms.extend(Term(term, value) for term, value in fqname.query.items())
         query = And(terms)
         revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
         rev_ids = []
         mtimes = []
         for rev in revs:
-            mtimes.append(dict(rev.meta)['mtime'])
+            mtimes.append(dict(rev.meta)["mtime"])
             rev_ids.append(rev.revid)
         prior_rev = next_rev = prior_mtime = next_mtime = None
         current_idx = rev_ids.index(revid)
@@ -42,4 +42,4 @@ def prior_next_revs(revid, fqname):
             prior_rev = rev_ids[current_idx + 1]
             prior_mtime = mtimes[current_idx + 1]
         return (prior_rev, revid, next_rev, prior_mtime, current_mtime, next_mtime)
-    return (None, ) * 6
+    return (None,) * 6

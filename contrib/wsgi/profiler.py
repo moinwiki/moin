@@ -17,19 +17,22 @@
     @copyright: 2008 MoinMoin:FlorianKrupicka,
     @license: GNU GPL, see COPYING for details.
 """
+
 from werkzeug.wsgi import get_current_url
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
 class ProfilerMiddleware:
-    """ Abstract base class for profiling middlewares.
+    """Abstract base class for profiling middlewares.
 
     Concrete implementations of this class should provide implementations
     of `run_profile` and `shutdown`, the latter which should be called by
     the code utilizing the profiler.
     """
+
     def __init__(self, app):
         self.app = app
 
@@ -38,7 +41,7 @@ class ProfilerMiddleware:
         Profile the request. Exceptions encountered during the profile are
         logged before being propagated for further handling.
         """
-        method = environ.get('REQUEST_METHOD', 'GET')
+        method = environ.get("REQUEST_METHOD", "GET")
         url = get_current_url(environ)
         logging.debug("Profiling call for '%s %s'", method, url)
         try:
@@ -51,7 +54,7 @@ class ProfilerMiddleware:
     __call__ = profile
 
     def run_profile(self, app, *args, **kwargs):
-        """ Override in subclasses.
+        """Override in subclasses.
 
         Several profilers available for python use the same call signature,
         therefore simplifying the implementation.
@@ -59,15 +62,17 @@ class ProfilerMiddleware:
         raise NotImplementedError()
 
     def shutdown(self):
-        """ Override in subclasses to clean up when server/script shuts down. """
+        """Override in subclasses to clean up when server/script shuts down."""
         pass
 
 
 class CProfileMiddleware(ProfilerMiddleware):
-    """ A profiler based on the the cProfile module from the standard lib. """
+    """A profiler based on the the cProfile module from the standard lib."""
+
     def __init__(self, app, filename):
         super().__init__(app)
         import cProfile
+
         self._profile = cProfile.Profile()
         self._filename = filename
         self.run_profile = self._profile.runcall
@@ -77,14 +82,16 @@ class CProfileMiddleware(ProfilerMiddleware):
 
 
 class PycallgraphMiddleware(ProfilerMiddleware):
-    """ A call graphing middleware utilizing the pycallgraph 3rd party
-    module (available at http://pycallgraph.slowchop.com/). """
+    """A call graphing middleware utilizing the pycallgraph 3rd party
+    module (available at http://pycallgraph.slowchop.com/)."""
+
     def __init__(self, app, filename):
         super().__init__(app)
         import pycallgraph
-        pycallgraph.settings['include_stdlib'] = False
+
+        pycallgraph.settings["include_stdlib"] = False
         self._filename = filename
-        globs = ['pycallgraph.*', 'unknown.*']
+        globs = ["pycallgraph.*", "unknown.*"]
         f = pycallgraph.GlobbingFilter(exclude=globs, max_depth=9999)
         self._filter = f
         self.pycallgraph = pycallgraph
@@ -100,9 +107,9 @@ class PycallgraphMiddleware(ProfilerMiddleware):
     def shutdown(self):
         fname = self._filename
         pycallgraph = self.pycallgraph
-        if fname.endswith('.png'):
+        if fname.endswith(".png"):
             logging.info("Saving the rendered callgraph to '%s'", fname)
             pycallgraph.make_dot_graph(fname)
-        elif fname.endswith('.dot'):
+        elif fname.endswith(".dot"):
             logging.info("Saving the raw callgraph to '%s'", fname)
             pycallgraph.save_dot(fname)

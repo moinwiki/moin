@@ -25,13 +25,14 @@ from . import BackendBase
 
 from moin.utils.mimetype import MimeType
 
-NAME_SEP = '/'
+NAME_SEP = "/"
 
 
 class Backend(BackendBase):
     """
     exposes part of the filesystem (read-only)
     """
+
     @classmethod
     def from_uri(cls, uri):
         return cls(uri)
@@ -54,7 +55,7 @@ class Backend(BackendBase):
         """
         # XXX unsafe keys?
         try:
-            itemname, mtime = key.rsplit('.', 1)
+            itemname, mtime = key.rsplit(".", 1)
         except ValueError:
             # we only generate revids that look like path.mtime,
             # so if the split does not work, the revid is invalid
@@ -74,7 +75,7 @@ class Backend(BackendBase):
         st = os.stat(path)
         root = self.path
         assert path.startswith(root)
-        relpath = path[len(root) + 1:]
+        relpath = path[len(root) + 1 :]
         # we always want to give NAME_SEP-separated names (not backslash):
         if os.sep == NAME_SEP:
             itemname = relpath
@@ -88,7 +89,7 @@ class Backend(BackendBase):
         we need to get rid of slashes in revids because we put them into URLs
         and it would confuse the URL routing.
         """
-        return url_quote(key, safe='')
+        return url_quote(key, safe="")
 
     def _decode(self, qkey):
         return url_unquote(qkey)
@@ -103,13 +104,13 @@ class Backend(BackendBase):
         meta = {}
         meta[NAME] = itemname
         meta[MTIME] = int(st.st_mtime)  # use int, not float
-        meta[REVID] = str(self._encode('%s.%d' % (meta[NAME], meta[MTIME])))
+        meta[REVID] = str(self._encode("%s.%d" % (meta[NAME], meta[MTIME])))
         meta[ITEMID] = meta[REVID]
-        meta[HASH_ALGORITHM] = ''  # XXX crap, but sendfile needs it for etag
+        meta[HASH_ALGORITHM] = ""  # XXX crap, but sendfile needs it for etag
         if stat.S_ISDIR(st.st_mode):
             # directory
             # we create a virtual wiki page listing links to subitems:
-            ct = 'text/x.moin.wiki;charset=utf-8'
+            ct = "text/x.moin.wiki;charset=utf-8"
             size = 0
         elif stat.S_ISREG(st.st_mode):
             # normal file
@@ -117,7 +118,7 @@ class Backend(BackendBase):
             size = int(st.st_size)  # use int instead of long
         else:
             # symlink, device file, etc.
-            ct = 'application/octet-stream'
+            ct = "application/octet-stream"
             size = 0
         meta[CONTENTTYPE] = ct
         meta[SIZE] = size
@@ -134,14 +135,11 @@ class Backend(BackendBase):
                     dirs.append(name)
                 else:
                     files.append(name)
-            content = [
-                "= Directory contents =",
-                " * [[../]]",
-            ]
+            content = ["= Directory contents =", " * [[../]]"]
             content.extend(f" * [[/{name}|{name}/]]" for name in sorted(dirs))
             content.extend(f" * [[/{name}|{name}]]" for name in sorted(files))
             content.append("")
-            content = '\r\n'.join(content)
+            content = "\r\n".join(content)
         except OSError as err:
             content = str(err)
         return content
@@ -151,11 +149,11 @@ class Backend(BackendBase):
             st = os.stat(path)
             if stat.S_ISDIR(st.st_mode):
                 data = self._make_directory_page(path)
-                return BytesIO(data.encode('utf-8'))
+                return BytesIO(data.encode("utf-8"))
             elif stat.S_ISREG(st.st_mode):
-                return open(path, 'rb')
+                return open(path, "rb")
             else:
-                return BytesIO(b'')
+                return BytesIO(b"")
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise KeyError(itemname)
@@ -168,9 +166,9 @@ class Backend(BackendBase):
         for dirpath, dirnames, filenames in os.walk(self.path):
             key, mtime = self._mkkey(dirpath)
             if 1:  # key:
-                yield self._encode('%s.%d' % (key, mtime))
+                yield self._encode("%s.%d" % (key, mtime))
             for filename in filenames:
-                yield self._encode('%s.%d' % self._mkkey(os.path.join(dirpath, filename)))
+                yield self._encode("%s.%d" % self._mkkey(os.path.join(dirpath, filename)))
 
     def retrieve(self, key):
         key = self._decode(key)

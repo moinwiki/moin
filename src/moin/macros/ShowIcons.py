@@ -24,14 +24,14 @@ from moin.converters._table import TableMixin
 class Macro(MacroBlockBase):
     def macro(self, content, arguments, page_url, alternative):
         my_dir = os.path.abspath(os.path.dirname(__file__))
-        icon_dir = os.path.join(os.path.split(my_dir)[0], 'static', 'img', 'icons')
+        icon_dir = os.path.join(os.path.split(my_dir)[0], "static", "img", "icons")
 
-        headings = (_('Markup'), _('Result'))
+        headings = (_("Markup"), _("Result"))
         files = [f for f in listdir(icon_dir) if isfile(join(icon_dir, f))]
         rows = []
         for filename in files:
-            markup = f'<<Icon({filename})>>'
-            src = url_for('static', filename='img/icons/' + filename)
+            markup = f"<<Icon({filename})>>"
+            src = url_for("static", filename="img/icons/" + filename)
             # TODO: add alt attribute for img and add a macro test module
             # reason = _('Icon not rendered, verify name is valid')
             # alt = '<<Icon({0})>> - {1}'.format(filename, reason)

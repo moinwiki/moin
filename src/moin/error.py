@@ -9,7 +9,7 @@ import sys
 
 
 class Error(Exception):
-    """ Base class for moin moin errors
+    """Base class for moin moin errors
 
     Use this class when you raise errors or create sub classes that
     may be used to display non ASCII error message.
@@ -26,7 +26,7 @@ class Error(Exception):
     """
 
     def __init__(self, message):
-        """ Initialize an error, decode if needed
+        """Initialize an error, decode if needed
 
         :param message: str, bytes or object that supports __str__.
         """
@@ -37,16 +37,16 @@ class Error(Exception):
         self.message = message
 
     def __str__(self):
-        """ Return str error message """
+        """Return str error message"""
         return self.message
 
     def __getitem__(self, item):
-        """ Make it possible to access attributes like a dict """
+        """Make it possible to access attributes like a dict"""
         return getattr(self, item)
 
 
 class CompositeError(Error):
-    """ Base class for exceptions containing an exception
+    """Base class for exceptions containing an exception
 
     Do not use this class but its more specific sub classes.
 
@@ -68,12 +68,12 @@ class CompositeError(Error):
     """
 
     def __init__(self, message):
-        """ Save system exception info before this exception is raised """
+        """Save system exception info before this exception is raised"""
         Error.__init__(self, message)
         self.innerException = sys.exc_info()
 
     def exceptions(self):
-        """ Return a list of all inner exceptions """
+        """Return a list of all inner exceptions"""
         all = [self.innerException]
         while True:
             lastException = all[-1][1]
@@ -85,15 +85,15 @@ class CompositeError(Error):
 
 
 class FatalError(CompositeError):
-    """ Base class for fatal error we can't handle
+    """Base class for fatal error we can't handle
 
     Do not use this class but its more specific sub classes.
     """
 
 
 class ConfigurationError(FatalError):
-    """ Raise when fatal misconfiguration is found """
+    """Raise when fatal misconfiguration is found"""
 
 
 class InternalError(FatalError):
-    """ Raise when internal fatal error is found """
+    """Raise when internal fatal error is found"""

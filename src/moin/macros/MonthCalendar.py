@@ -99,7 +99,7 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
     """
     table = moin_page.table()
     if cls is not None:
-        table.attrib[moin_page('class')] = cls
+        table.attrib[moin_page("class")] = cls
 
     if caption is not None:
         table_caption = moin_page.caption()
@@ -112,7 +112,7 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
         for _idx, cell_tuple in enumerate(head):
             (cell, cell_class) = cell_tuple
             table_cell = moin_page.table_cell(children=[cell])
-            table_cell.attrib[moin_page('class')] = cell_class
+            table_cell.attrib[moin_page("class")] = cell_class
             table_row.append(table_cell)
         table_head.append(table_row)
         table.append(table_head)
@@ -130,14 +130,14 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
             # empty cell
             if not cell_addr:
                 table_cell = moin_page.table_cell(children=[cell])
-                table_cell.attrib[moin_page('class')] = cell_class
+                table_cell.attrib[moin_page("class")] = cell_class
 
             # cell with link to calendar
             else:
-                iri = Iri(scheme='wiki', path='/' + cell_addr)
+                iri = Iri(scheme="wiki", path="/" + cell_addr)
                 table_a = moin_page.a(attrib={xlink.href: iri}, children=[cell])
                 table_cell = moin_page.table_cell(children=[table_a])
-                table_cell.attrib[moin_page('class')] = cell_class
+                table_cell.attrib[moin_page("class")] = cell_class
             table_row.append(table_cell)
         table_body.append(table_row)
     table.append(table_body)
@@ -145,7 +145,7 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
 
 
 def yearmonthplusoffset(year, month, offset):
-    """ calculate new year/month from year/month and offset """
+    """calculate new year/month from year/month and offset"""
     month += offset
     # handle offset and under/overflows - quick and dirty, yes!
     while month < 1:
@@ -158,31 +158,32 @@ def yearmonthplusoffset(year, month, offset):
 
 
 def parseargs(args, defpagename, defyear, defmonth, defoffset, defheight6, defanniversary):
-    """ parse macro arguments """
+    """parse macro arguments"""
     _, args, _ = paramparser.parse_quoted_separated(args)
-    parmpagename = paramparser.get_str(args.get('item'), 'item', defpagename)
-    parmyear = paramparser.get_int(args.get('year'), 'year', defyear)
-    parmmonth = paramparser.get_int(args.get('month'), 'month', defmonth)
-    parmoffset = paramparser.get_int(args.get('month_offset'), 'month_offset', defoffset)
-    parmheight6 = paramparser.get_bool(args.get('fixed_height'), 'fixed_height', defheight6)
-    parmanniversary = paramparser.get_bool(args.get('anniversary'), 'anniversary', defanniversary)
+    parmpagename = paramparser.get_str(args.get("item"), "item", defpagename)
+    parmyear = paramparser.get_int(args.get("year"), "year", defyear)
+    parmmonth = paramparser.get_int(args.get("month"), "month", defmonth)
+    parmoffset = paramparser.get_int(args.get("month_offset"), "month_offset", defoffset)
+    parmheight6 = paramparser.get_bool(args.get("fixed_height"), "fixed_height", defheight6)
+    parmanniversary = paramparser.get_bool(args.get("anniversary"), "anniversary", defanniversary)
 
     # multiple pagenames separated by "*" - split into list of pagenames
-    parmpagename = re.split(r'\*', parmpagename)
+    parmpagename = re.split(r"\*", parmpagename)
 
     return parmpagename, parmyear, parmmonth, parmoffset, parmheight6, parmanniversary
 
 
 class Macro(MacroInlineBase):
-    ''' return a table with a month calendar '''
+    """return a table with a month calendar"""
+
     def macro(self, content, arguments, page_url, alternative):
 
         # find page name of current page
         # to be able to use it as a default page name
         this_page = request.path[1:]
 
-        if this_page.startswith('+modify/'):
-            this_page = this_page.split('/', 1)[1]
+        if this_page.startswith("+modify/"):
+            this_page = this_page.split("/", 1)[1]
 
         # get arguments from the macro if available,
         # arguments will be None for <<MonthCalendar>>
@@ -197,8 +198,9 @@ class Macro(MacroInlineBase):
 
         # parse and check arguments,
         # set default values if necessary
-        parmpagename, parmyear, parmmonth, parmoffset, parmheight6, anniversary = \
-            parseargs(args, this_page, currentyear, currentmonth, 0, False, False)
+        parmpagename, parmyear, parmmonth, parmoffset, parmheight6, anniversary = parseargs(
+            args, this_page, currentyear, currentmonth, 0, False, False
+        )
 
         year, month = yearmonthplusoffset(parmyear, parmmonth, parmoffset)
 
@@ -206,16 +208,27 @@ class Macro(MacroInlineBase):
         monthcal = calendar.monthcalendar(year, month)
 
         # european / US differences
-        months = (_('January'), _('February'), _('March'), _('April'),
-                  _('May'), _('June'), _('July'), _('August'),
-                  _('September'), _('October'), _('November'), _('December'))
+        months = (
+            _("January"),
+            _("February"),
+            _("March"),
+            _("April"),
+            _("May"),
+            _("June"),
+            _("July"),
+            _("August"),
+            _("September"),
+            _("October"),
+            _("November"),
+            _("December"),
+        )
         # Set things up for Monday or Sunday as the first day of the week
         if calendar.firstweekday() == calendar.MONDAY:
             wkend = (5, 6)
-            wkdays = (_('Mon'), _('Tue'), _('Wed'), _('Thu'), _('Fri'), _('Sat'), _('Sun'))
+            wkdays = (_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun"))
         if calendar.firstweekday() == calendar.SUNDAY:
             wkend = (0, 6)
-            wkdays = (_('Sun'), _('Mon'), _('Tue'), _('Wed'), _('Thu'), _('Fri'), _('Sat'))
+            wkdays = (_("Sun"), _("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"))
 
         calcaption = f"{months[month - 1]} {year}"
         calhead = []
@@ -244,13 +257,13 @@ class Macro(MacroInlineBase):
             calweek = []
             for wkday in r7:
                 day = week[wkday]
-                day_addr = ''
-                day_class = 'cal-emptyday'
+                day_addr = ""
+                day_class = "cal-emptyday"
                 if not day:
                     # '\xa0' is a non-breaking space (just like &nbsp;
                     # in html) to make sure empty cells have the same
                     # height as rows with content
-                    calweek.append(('\xa0', None, 'cal-invalidday'))
+                    calweek.append(("\xa0", None, "cal-invalidday"))
                 else:
                     # we only process the first calendar (or item name)
                     # mentioned in the macro parameters (in case separate
@@ -272,5 +285,5 @@ class Macro(MacroInlineBase):
                     calweek.append((str(day), day_addr, day_class))
             calrows.append(calweek)
 
-        ret = build_dom_calendar_table(rows=calrows, head=calhead, caption=calcaption, cls='calendar')
+        ret = build_dom_calendar_table(rows=calrows, head=calhead, caption=calcaption, cls="calendar")
         return ret

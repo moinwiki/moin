@@ -18,10 +18,10 @@ win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
 
 
 class TestRename:
-    """ test filesys.rename* """
+    """test filesys.rename*"""
 
     def setup_method(self, method):
-        self.test_dir = tempfile.mkdtemp('', 'rename_')
+        self.test_dir = tempfile.mkdtemp("", "rename_")
         self.src = os.path.join(self.test_dir, "rename-src")
         self.dst = os.path.join(self.test_dir, "rename-dst")
 
@@ -77,7 +77,7 @@ class TestCopy:
     """test filesys.copytree"""
 
     def setup_method(self, method):
-        self.test_dir = tempfile.mkdtemp('', 'copytree1')
+        self.test_dir = tempfile.mkdtemp("", "copytree1")
         self.src1 = os.path.join(self.test_dir, "copytree-src1")
         self.src2 = os.path.join(self.test_dir, "copytree-src2")
 
@@ -91,18 +91,18 @@ class TestCopy:
         f.close()
 
     def test_copytree(self):
-        self.makefile(self.src1, 'src1')
-        self.makefile(self.src2, 'src2')
-        self.test_dest_dir = self.test_dir + '_copy'
+        self.makefile(self.src1, "src1")
+        self.makefile(self.src2, "src2")
+        self.test_dest_dir = self.test_dir + "_copy"
         filesys.copytree(self.test_dir, self.test_dest_dir)
         # check for the dir contents
         assert sorted(os.listdir(self.test_dir)) == sorted(os.listdir(self.test_dest_dir))
 
     def test_dir_exist(self):
-        """ raise Error if dir already exist """
-        self.test_dest_dir = tempfile.mkdtemp('', 'temp_dir')
+        """raise Error if dir already exist"""
+        self.test_dest_dir = tempfile.mkdtemp("", "temp_dir")
         with pytest.raises(OSError):
             filesys.copytree(self.test_dir, self.test_dest_dir)
 
 
-coverage_modules = ['moin.utils.filesys']
+coverage_modules = ["moin.utils.filesys"]

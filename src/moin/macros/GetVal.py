@@ -16,7 +16,7 @@ from moin.i18n import _
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         try:
-            args = arguments[0].split(',')
+            args = arguments[0].split(",")
             assert len(args) == 2
             item_name = args[0].strip()
             key = args[1].strip()
@@ -28,8 +28,11 @@ class Macro(MacroInlineBase):
             d = flaskg.dicts[item_name]
         except DictDoesNotExistError:
             raise ValueError(_("GetVal: dict not found: ") + item_name)
-        result = d.get(key, '')
+        result = d.get(key, "")
         if not result:
-            raise ValueError(_('GetVal macro is invalid, {item_name} missing key: {key_name}'
-                               ).format(item_name=item_name, key_name=key))
+            raise ValueError(
+                _("GetVal macro is invalid, {item_name} missing key: {key_name}").format(
+                    item_name=item_name, key_name=key
+                )
+            )
         return result

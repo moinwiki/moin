@@ -24,12 +24,13 @@ def main():
         elif c.isspace():
             space.append(string)
 
-    chars_upper = ''.join(uppercase)
-    chars_lower = ''.join(lowercase + digits)
-    chars_digits = ''.join(digits)
-    chars_spaces = ''.join(space)
+    chars_upper = "".join(uppercase)
+    chars_lower = "".join(lowercase + digits)
+    chars_digits = "".join(digits)
+    chars_spaces = "".join(space)
 
-    print("""
+    print(
+        """
 CHARS_UPPER = "%(chars_upper)s"
 
 CHARS_LOWER = "%(chars_lower)s"
@@ -39,8 +40,10 @@ CHARS_DIGITS = "%(chars_digits)s"
 CHARS_SPACES = "%(chars_spaces)s"
 
 
-""" % locals())
+"""
+        % locals()
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

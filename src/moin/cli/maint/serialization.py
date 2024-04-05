@@ -18,6 +18,7 @@ from moin.app import create_app
 from moin.cli._util import get_backends, drop_and_recreate_index
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -40,6 +41,7 @@ def open_file(filename, mode):
         if sys.platform == "win32" and "b" in mode:
             import os
             import msvcrt
+
             msvcrt.setmode(stream.fileno(), os.O_BINARY)
 
         f = stream
@@ -48,13 +50,10 @@ def open_file(filename, mode):
     return f
 
 
-@cli.command('save', help='Serialize the backend into a file')
-@click.option('--file', '-f', type=str, required=False,
-              help='Filename of the output file.')
-@click.option('--backends', '-b', type=str, required=False,
-              help='Backend names to serialize (comma separated).')
-@click.option('--all-backends', '-a', is_flag=True,
-              help='Serialize all configured backends.')
+@cli.command("save", help="Serialize the backend into a file")
+@click.option("--file", "-f", type=str, required=False, help="Filename of the output file.")
+@click.option("--backends", "-b", type=str, required=False, help="Backend names to serialize (comma separated).")
+@click.option("--all-backends", "-a", is_flag=True, help="Serialize all configured backends.")
 def Serialize(file=None, backends=None, all_backends=False):
     logging.info("Backup started")
     if file is None:
@@ -70,15 +69,32 @@ def Serialize(file=None, backends=None, all_backends=False):
     logging.info("Backup finished")
 
 
-@cli.command('load', help='Deserialize a file into the backend; with options to rename or remove a namespace')
-@click.option('--file', '-f', type=str, required=True,
-              help='Filename of the input file.')
-@click.option('--new-ns', '-n', type=str, required=False, default=None,
-              help='New namespace name to receive items from the old namespace name.')
-@click.option('--old-ns', '-o', type=str, required=False, default=None,
-              help='Old namespace that will be deleted, all items to be restored to new namespace.')
-@click.option('--kill-ns', '-k', type=str, required=False, default=None,
-              help='Namespace name to be deleted, no items within this namespace will be loaded.')
+@cli.command("load", help="Deserialize a file into the backend; with options to rename or remove a namespace")
+@click.option("--file", "-f", type=str, required=True, help="Filename of the input file.")
+@click.option(
+    "--new-ns",
+    "-n",
+    type=str,
+    required=False,
+    default=None,
+    help="New namespace name to receive items from the old namespace name.",
+)
+@click.option(
+    "--old-ns",
+    "-o",
+    type=str,
+    required=False,
+    default=None,
+    help="Old namespace that will be deleted, all items to be restored to new namespace.",
+)
+@click.option(
+    "--kill-ns",
+    "-k",
+    type=str,
+    required=False,
+    default=None,
+    help="Namespace name to be deleted, no items within this namespace will be loaded.",
+)
 def Deserialize(file=None, new_ns=None, old_ns=None, kill_ns=None):
     logging.info("Load backup started")
     with open_file(file, "rb") as f:

@@ -14,7 +14,7 @@ from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import IntegrityError
 
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from . import (BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin)
+from . import BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin
 
 KEY_LEN = 128
 VALUE_LEN = 1024 * 1024  # 1MB binary data
@@ -24,6 +24,7 @@ class BytesStore(BytesMutableStoreBase):
     """
     A simple dict-based in-memory store. No persistence!
     """
+
     @classmethod
     def from_uri(cls, uri):
         """
@@ -37,7 +38,7 @@ class BytesStore(BytesMutableStoreBase):
         params = uri.split("::")
         return cls(*params)
 
-    def __init__(self, db_uri=None, table_name='store', verbose=False):
+    def __init__(self, db_uri=None, table_name="store", verbose=False):
         """
         :param db_uri: The database uri that we pass on to SQLAlchemy.
                        May contain user/password/host/port/etc.
@@ -49,8 +50,8 @@ class BytesStore(BytesMutableStoreBase):
         self.engine = None
         self.table = None
         self.table_name = table_name
-        if db_uri.startswith('sqlite:///'):
-            db_path = os.path.dirname(self.db_uri.split('sqlite:///')[1])
+        if db_uri.startswith("sqlite:///"):
+            db_path = os.path.dirname(self.db_uri.split("sqlite:///")[1])
             if not os.path.exists(db_path):
                 os.makedirs(db_path)
 
@@ -59,17 +60,19 @@ class BytesStore(BytesMutableStoreBase):
         if db_uri is None:
             # These are settings that apply only for development / testing only. The additional args are necessary
             # due to some limitations of the in-memory sqlite database.
-            db_uri = 'sqlite:///:memory:'
-            self.engine = create_engine(db_uri, poolclass=StaticPool, connect_args={'check_same_thread': False})
+            db_uri = "sqlite:///:memory:"
+            self.engine = create_engine(db_uri, poolclass=StaticPool, connect_args={"check_same_thread": False})
         else:
             self.engine = create_engine(db_uri, echo=self.verbose, echo_pool=self.verbose)
 
         metadata = MetaData()
         metadata.bind = self.engine
-        self.table = Table(self.table_name, metadata,
-                           Column('key', String(KEY_LEN), primary_key=True),
-                           Column('value', LargeBinary(VALUE_LEN)),
-                           )
+        self.table = Table(
+            self.table_name,
+            metadata,
+            Column("key", String(KEY_LEN), primary_key=True),
+            Column("value", LargeBinary(VALUE_LEN)),
+        )
 
     def close(self):
         self.engine.dispose()

@@ -10,7 +10,8 @@ class Arguments:
     """
     Represent an argument list that may contain positional or keyword args.
     """
-    __slots__ = 'positional', 'keyword'
+
+    __slots__ = "positional", "keyword"
 
     def __init__(self, positional=None, keyword=None):
         self.positional = positional and positional[:] or []
@@ -37,7 +38,7 @@ class Arguments:
         return len(self.positional) + len(self.keyword)
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}({self.positional!r}, {self.keyword!r})>'
+        return f"<{self.__class__.__name__}({self.positional!r}, {self.keyword!r})>"
 
     def items(self):
         """

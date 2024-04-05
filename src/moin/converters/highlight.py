@@ -17,9 +17,9 @@ from . import default_registry
 
 class Converter:
     @classmethod
-    def _factory(cls, input, output, highlight='', regex='', **kw):
-        if highlight == 'highlight':
-            regex = request.args['regex']
+    def _factory(cls, input, output, highlight="", regex="", **kw):
+        if highlight == "highlight":
+            regex = request.args["regex"]
             return cls(regex)
 
     def recurse(self, elem):
@@ -32,11 +32,11 @@ class Converter:
                 # Restrict it to our own namespace for now
                 if elem.tag.uri == moin_page.namespace:
                     for match in re.finditer(self.pattern, child):
-                        text = child[pos:match.start()]
+                        text = child[pos : match.start()]
                         new_childs.append(text)
 
-                        text = child[match.start():match.end()]
-                        attrib = {html.class_: 'moin-highlight'}
+                        text = child[match.start() : match.end()]
+                        attrib = {html.class_: "moin-highlight"}
                         e = moin_page.strong(attrib=attrib, children=[text])
                         new_childs.append(e)
 

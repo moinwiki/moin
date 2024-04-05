@@ -29,9 +29,9 @@ class TestConfigDictsBackend(DictsBackendTest):
     def test__iter__(self):
         ConfigDicts_obj = ConfigDicts(DictsBackendTest.dicts)
         test_keyiterator = ConfigDicts.__iter__(ConfigDicts_obj)
-        expected = ['SomeTestDict', 'SomeOtherTestDict']
+        expected = ["SomeTestDict", "SomeOtherTestDict"]
         for result in test_keyiterator:
             assert result in expected
 
 
-coverage_modules = ['moin.datastructures.backends.config_dicts']
+coverage_modules = ["moin.datastructures.backends.config_dicts"]

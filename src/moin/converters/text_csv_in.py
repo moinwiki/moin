@@ -21,6 +21,7 @@ class Converter(TableMixin):
     Parse the raw text and create a document object
     that can be converted into output using Emitter.
     """
+
     @classmethod
     def _factory(cls, type_input, type_output, **kw):
         return cls()
@@ -37,15 +38,15 @@ class Converter(TableMixin):
         cls = None
         try:
             # fragile function, throws errors when csv file is incorrectly formatted
-            if csv.Sniffer().has_header('\n'.join(content)):
+            if csv.Sniffer().has_header("\n".join(content)):
                 head = rows[0]
                 rows = rows[1:]
-                cls = 'moin-sortable'
+                cls = "moin-sortable"
         except csv.Error as e:
-            head = [_('Error parsing CSV file:'), str(e)]
+            head = [_("Error parsing CSV file:"), str(e)]
         table = self.build_dom_table(rows, head=head, cls=cls)
-        body = moin_page.body(children=(table, ))
-        return moin_page.page(children=(body, ))
+        body = moin_page.body(children=(table,))
+        return moin_page.page(children=(body,))
 
 
-default_registry.register(Converter._factory, Type('text/csv'), type_moin_document)
+default_registry.register(Converter._factory, Type("text/csv"), type_moin_document)

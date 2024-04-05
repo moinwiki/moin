@@ -19,6 +19,7 @@ from moin.utils.iri import Iri
 from moin.converters.html_in import Converter as HTML_IN_Converter
 
 from emeraldtree import ElementTree as ET
+
 try:
     from flask import g as flaskg
 except ImportError:
@@ -34,10 +35,11 @@ from . import default_registry
 from moin.utils.mime import Type, type_moin_document
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 html_in_converter = HTML_IN_Converter()
-block_elements = 'p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table'.split()
+block_elements = "p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table".split()
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 
@@ -54,13 +56,13 @@ def postproc_text(markdown, text):
     if text is None:
         return None
 
-    if text == '[TOC]':
+    if text == "[TOC]":
         return moin_page.table_of_content(attrib={})
 
     for pp in markdown.postprocessors:
         text = pp.run(text)
 
-    if text.startswith('<pre>') or text.startswith('<div class="codehilite"><pre>'):
+    if text.startswith("<pre>") or text.startswith('<div class="codehilite"><pre>'):
         return text
 
     def fixup(m):
@@ -89,52 +91,77 @@ class Converter:
     # {{{ html conversion
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = {'div', 'p', 'strong', 'code', 'quote', 'blockquote'}
+    symmetric_tags = {"div", "p", "strong", "code", "quote", "blockquote"}
 
     # HTML tags to define a list, except dl which is a little bit different
-    list_tags = {'ul', 'ol'}
+    list_tags = {"ul", "ol"}
 
     # HTML tags which can be convert without attributes in a different DOM tag
     simple_tags = {  # Emphasis
-        'em': moin_page.emphasis,
-        'i': moin_page.emphasis,
+        "em": moin_page.emphasis,
+        "i": moin_page.emphasis,
         # Strong
-        'b': moin_page.strong,
-        'strong': moin_page.strong,
+        "b": moin_page.strong,
+        "strong": moin_page.strong,
         # Code and Blockcode
-        'pre': moin_page.blockcode,
-        'tt': moin_page.code,
-        'samp': moin_page.code,
+        "pre": moin_page.blockcode,
+        "tt": moin_page.code,
+        "samp": moin_page.code,
         # Lists
-        'dl': moin_page.list_item,
-        'dt': moin_page.list_item_label,
-        'dd': moin_page.list_item_body,
+        "dl": moin_page.list_item,
+        "dt": moin_page.list_item_label,
+        "dd": moin_page.list_item_body,
         # Table - th and td require special processing for alignment of cell contents
-        'table': moin_page.table,
-        'thead': moin_page.table_header,
-        'tbody': moin_page.table_body,
-        'tr': moin_page.table_row,
+        "table": moin_page.table,
+        "thead": moin_page.table_header,
+        "tbody": moin_page.table_body,
+        "tr": moin_page.table_row,
     }
 
     # HTML Tag which does not have equivalence in the DOM Tree
     # But we keep the information using <span element>
-    inline_tags = {'abbr', 'acronym', 'address', 'dfn', 'kbd'}
+    inline_tags = {"abbr", "acronym", "address", "dfn", "kbd"}
 
     # HTML tags which are completely ignored by our converter.
     # We even do not process children of these elements.
-    ignored_tags = {'applet', 'area', 'button', 'caption', 'center', 'fieldset',
-                    'form', 'frame', 'frameset', 'head', 'iframe', 'input', 'isindex',
-                    'label', 'legend', 'link', 'map', 'menu', 'noframes', 'noscript',
-                    'optgroup', 'option', 'param', 'script', 'select', 'style',
-                    'textarea', 'title', 'var',
-                    }
+    ignored_tags = {
+        "applet",
+        "area",
+        "button",
+        "caption",
+        "center",
+        "fieldset",
+        "form",
+        "frame",
+        "frameset",
+        "head",
+        "iframe",
+        "input",
+        "isindex",
+        "label",
+        "legend",
+        "link",
+        "map",
+        "menu",
+        "noframes",
+        "noscript",
+        "optgroup",
+        "option",
+        "param",
+        "script",
+        "select",
+        "style",
+        "textarea",
+        "title",
+        "var",
+    }
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion
-    standard_attributes = {'title', 'class', 'style'}
+    standard_attributes = {"title", "class", "style"}
 
     # Regular expression to detect an html heading tag
-    heading_re = re.compile('h[1-6]')
+    heading_re = re.compile("h[1-6]")
 
     def new(self, tag, attrib, children):
         """
@@ -169,8 +196,8 @@ class Converter:
         for key, value in element.attrib.items():
             if key in self.standard_attributes:
                 result[moin_page(key)] = value
-            if key == 'id':
-                result[xml('id')] = value
+            if key == "id":
+                result[xml("id")] = value
         return result
 
     def visit_heading(self, element):
@@ -179,7 +206,7 @@ class Converter:
         element in our moin_page namespace
         """
         heading_level = element.tag[1]
-        key = moin_page('outline-level')
+        key = moin_page("outline-level")
         attrib = {}
         attrib[key] = heading_level
         return self.new_copy(moin_page.h, element, attrib)
@@ -188,60 +215,60 @@ class Converter:
         return moin_page.line_break()
 
     def visit_big(self, element):
-        key = moin_page('font-size')
+        key = moin_page("font-size")
         attrib = {}
-        attrib[key] = '120%'
+        attrib[key] = "120%"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_small(self, element):
-        key = moin_page('font-size')
+        key = moin_page("font-size")
         attrib = {}
-        attrib[key] = '85%'
+        attrib[key] = "85%"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_sub(self, element):
-        key = moin_page('baseline-shift')
+        key = moin_page("baseline-shift")
         attrib = {}
-        attrib[key] = 'sub'
+        attrib[key] = "sub"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_sup(self, element):
-        key = moin_page('baseline-shift')
+        key = moin_page("baseline-shift")
         attrib = {}
-        attrib[key] = 'super'
+        attrib[key] = "super"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_u(self, element):
-        key = moin_page('text-decoration')
+        key = moin_page("text-decoration")
         attrib = {}
-        attrib[key] = 'underline'
+        attrib[key] = "underline"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_ins(self, element):
-        key = moin_page('text-decoration')
+        key = moin_page("text-decoration")
         attrib = {}
-        attrib[key] = 'underline'
+        attrib[key] = "underline"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_del(self, element):
-        key = moin_page('text-decoration')
+        key = moin_page("text-decoration")
         attrib = {}
-        attrib[key] = 'line-through'
+        attrib[key] = "line-through"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_s(self, element):
-        key = moin_page('text-decoration')
+        key = moin_page("text-decoration")
         attrib = {}
-        attrib[key] = 'line-through'
+        attrib[key] = "line-through"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_strike(self, element):
-        key = moin_page('text-decoration')
+        key = moin_page("text-decoration")
         attrib = {}
-        attrib[key] = 'line-through'
+        attrib[key] = "line-through"
         return self.new_copy(moin_page.span, element, attrib)
 
-    def visit_hr(self, element, default_class='moin-hr3'):
+    def visit_hr(self, element, default_class="moin-hr3"):
         return self.new_copy(moin_page.separator, element, {moin_page.class_: default_class})
 
     def visit_img(self, element):
@@ -249,14 +276,14 @@ class Converter:
         <img src="URI" /> --> <object xlink:href="URI />
         """
         attrib = {}
-        url = Iri(element.attrib.get('src'))
-        if element.attrib.get('alt'):
-            attrib[html.alt] = element.attrib.get('alt')
-        if element.attrib.get('title'):
-            attrib[html.title_] = element.attrib.get('title')
+        url = Iri(element.attrib.get("src"))
+        if element.attrib.get("alt"):
+            attrib[html.alt] = element.attrib.get("alt")
+        if element.attrib.get("title"):
+            attrib[html.title_] = element.attrib.get("title")
         if url.scheme is None:
             # img tag
-            target = Iri(scheme='wiki.local', path=element.attrib.get("src"), fragment=None)
+            target = Iri(scheme="wiki.local", path=element.attrib.get("src"), fragment=None)
             attrib[xinclude.href] = target
             new_node = xinclude.include(attrib=attrib)
         else:
@@ -269,10 +296,10 @@ class Converter:
         """
         <object data="href"></object> --> <object xlink="href" />
         """
-        key = xlink('href')
+        key = xlink("href")
         attrib = {}
         if self.base_url:
-            attrib[key] = ''.join([self.base_url, element.get(html.data)])
+            attrib[key] = "".join([self.base_url, element.get(html.data)])
         else:
             attrib[key] = element.get(html.data)
 
@@ -287,7 +314,7 @@ class Converter:
         """
         key = html.class_
         attrib = {}
-        attrib[key] = ''.join(['html-', element.tag.name])
+        attrib[key] = "".join(["html-", element.tag.name])
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_li(self, element):
@@ -301,8 +328,7 @@ class Converter:
 
         For <li> element, there is no label
         """
-        list_item_body = ET.Element(moin_page.list_item_body,
-                                    attrib={}, children=self.do_children(element))
+        list_item_body = ET.Element(moin_page.list_item_body, attrib={}, children=self.do_children(element))
         return ET.Element(moin_page.list_item, attrib={}, children=[list_item_body])
 
     def visit_list(self, element):
@@ -330,30 +356,30 @@ class Converter:
         # according to the type of the list
         attrib = {}
         if element.tag == "ul" or element.tag == "dir":
-            attrib[moin_page('item-label-generate')] = 'unordered'
+            attrib[moin_page("item-label-generate")] = "unordered"
         elif element.tag == "ol":
-            attrib[moin_page('item-label-generate')] = 'ordered'
+            attrib[moin_page("item-label-generate")] = "ordered"
 
         return ET.Element(moin_page.list, attrib=attrib, children=self.do_children(element))
 
     def visit_a(self, element):
-        """ element.attrib has href, element.tag is 'a', element.text has title"""
-        key = xlink('href')
+        """element.attrib has href, element.tag is 'a', element.text has title"""
+        key = xlink("href")
         attrib = {}
-        if element.attrib.get('title'):
-            attrib[html.title_] = element.attrib.get('title')
+        if element.attrib.get("title"):
+            attrib[html.title_] = element.attrib.get("title")
         href = postproc_text(self.markdown, element.attrib.get("href"))
         iri = Iri(href)
         # iri has authority, fragment, path, query, scheme = none,none,path,none
         if iri.scheme is None:
-            iri.scheme = 'wiki.local'
+            iri.scheme = "wiki.local"
         attrib[key] = iri
         return self.new_copy(moin_page.a, element, attrib)
 
     def verify_align_style(self, attrib):
-        alignment = attrib.get('style')
-        if alignment and alignment in ('text-align: right;', 'text-align: center;', 'text-align: left;'):
-            attrib = {moin_page.style: attrib.get('style')}
+        alignment = attrib.get("style")
+        if alignment and alignment in ("text-align: right;", "text-align: center;", "text-align: left;"):
+            attrib = {moin_page.style: attrib.get("style")}
             return attrib
         return {}
 
@@ -387,7 +413,7 @@ class Converter:
             return self.visit_heading(element)
 
         # Otherwise we need a specific procedure to handle it
-        method_name = 'visit_' + element.tag
+        method_name = "visit_" + element.tag
         method = getattr(self, method_name, None)
         if method:
             return method(element)
@@ -414,7 +440,7 @@ class Converter:
         """
         new = []
         # copy anything but '\n'
-        if hasattr(element, "text") and element.text is not None and element.text != '\n':
+        if hasattr(element, "text") and element.text is not None and element.text != "\n":
             new.append(postproc_text(self.markdown, element.text))
 
         for child in element:
@@ -425,10 +451,10 @@ class Converter:
                 if add_lineno and self.line_numbers:
                     # the line numbers for the start of each block were counted and saved before preprocessors were run
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
-                r = (r, )
+                r = (r,)
             new.extend(r)
             # copy anything but '\n'
-            if hasattr(child, "tail") and child.tail is not None and child.tail != '\n' and child.tail:
+            if hasattr(child, "tail") and child.tail is not None and child.tail != "\n" and child.tail:
                 new.append(postproc_text(self.markdown, child.tail))
         return new
 
@@ -454,16 +480,16 @@ class Converter:
         line_numbers = deque()
         lineno = 1
         in_blockquote = False
-        blocks = text.split('\n\n')
+        blocks = text.split("\n\n")
         for block in blocks:
             if not block:
                 # bump count because empty blocks will be discarded
                 lineno += 2
                 continue
-            line_count = block.count('\n')
+            line_count = block.count("\n")
 
             # detect and fix the problem of interspersed blank lines within blockquotes
-            if block.startswith('    ') or block.startswith('\n    '):
+            if block.startswith("    ") or block.startswith("\n    "):
                 if in_blockquote:
                     lineno += line_count + 2
                     continue
@@ -471,7 +497,7 @@ class Converter:
             else:
                 in_blockquote = False
 
-            if block.startswith('\n'):
+            if block.startswith("\n"):
                 lineno += 1
                 line_numbers.append(lineno)
                 lineno += line_count + 2 - 1  # -1 is already in count
@@ -490,7 +516,7 @@ class Converter:
         """
         try:
             # we enclose plain text and span tags with P-tags
-            p_text = html_in_converter(f'<p>{text}</p>')
+            p_text = html_in_converter(f"<p>{text}</p>")
             # discard page and body tags
             return p_text[0][0]
         except AssertionError:
@@ -505,7 +531,7 @@ class Converter:
         """
         for idx, child in enumerate(node):
             if isinstance(child, str):
-                if '<' in child:
+                if "<" in child:
                     node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
             else:
                 # do not convert markup within a <pre> tag
@@ -530,17 +556,13 @@ class Converter:
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
-        self.markdown = Markdown(extensions=[
-                ExtraExtension(),
-                CodeHiliteExtension(guess_lang=False),
-                'mdx_wikilink_plus',
-                'admonition',
-            ],
+        self.markdown = Markdown(
+            extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"],
             extension_configs={
-                'mdx_wikilink_plus': {
-                    'html_class': None,
-                    'image_class': None,
-                    'label_case': 'none',  # do not automatically CamelCase the label, keep it untouched
+                "mdx_wikilink_plus": {
+                    "html_class": None,
+                    "image_class": None,
+                    "label_case": "none",  # do not automatically CamelCase the label, keep it untouched
                 }
             },
         )
@@ -577,7 +599,7 @@ class Converter:
         text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
         text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
         text = text.expandtabs(self.markdown.tab_length)
-        text = re.sub(r'(?<=\n) +\n', '\n', text)
+        text = re.sub(r"(?<=\n) +\n", "\n", text)
 
         # save line counts for start of each block, used later for edit autoscroll
         self.count_lines(text)
@@ -600,7 +622,7 @@ class Converter:
 
         # }}} end Markdown 3.0.0 core.py convert method
 
-        add_lineno = bool(flaskg and getattr(flaskg, 'add_lineno_attr', False))
+        add_lineno = bool(flaskg and getattr(flaskg, "add_lineno_attr", False))
 
         # run markdown post processors and convert from ElementTree to an EmeraldTree object
         converted = self.do_children(root, add_lineno=add_lineno)
@@ -617,4 +639,4 @@ class Converter:
 
 
 default_registry.register(Converter._factory, Type("text/x-markdown"), type_moin_document)
-default_registry.register(Converter._factory, Type('x-moin/format;name=markdown'), type_moin_document)
+default_registry.register(Converter._factory, Type("x-moin/format;name=markdown"), type_moin_document)

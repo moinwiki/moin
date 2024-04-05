@@ -20,8 +20,9 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-def run(cmd: list[str], log=None, wait: bool = True, timeout: int = None, env=None) \
-        -> Union[subprocess.CompletedProcess, subprocess.Popen]:
+def run(
+    cmd: list[str], log=None, wait: bool = True, timeout: int = None, env=None
+) -> Union[subprocess.CompletedProcess, subprocess.Popen]:
     """run a shell command, redirecting output to log
     :param cmd: list of strings containing command arguments
     :param log: open file handle to log file (binary mode) or None in which case output will be captured
@@ -30,10 +31,10 @@ def run(cmd: list[str], log=None, wait: bool = True, timeout: int = None, env=No
     :param env: dictionary of environment variables to add to current env for subprocess
     :return: CompletedProcess object if wait else Popen object"""
     subprocess_environ = copy(os.environ)
-    subprocess_environ['PYTHONIOENCODING'] = 'cp1252'  # simulate windows terminal to ferret out encoding issues
+    subprocess_environ["PYTHONIOENCODING"] = "cp1252"  # simulate windows terminal to ferret out encoding issues
     if env:
         subprocess_environ.update(env)
-    logging.info(f'running {cmd}')
+    logging.info(f"running {cmd}")
     if stdout := log:
         stderr = subprocess.STDOUT
     else:  # log is None
@@ -43,10 +44,10 @@ def run(cmd: list[str], log=None, wait: bool = True, timeout: int = None, env=No
     flags = 0
     if wait:
         run_func = subprocess.run
-        kwargs['timeout'] = timeout
+        kwargs["timeout"] = timeout
     else:
         run_func = subprocess.Popen
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             flags = subprocess.CREATE_NEW_PROCESS_GROUP  # needed for use of os.kill
     return run_func(cmd, stdout=stdout, stderr=stderr, creationflags=flags, env=subprocess_environ, **kwargs)
 
@@ -56,13 +57,13 @@ def assert_p_succcess(p: subprocess.CompletedProcess):
     try:
         assert p.returncode == 0
     except AssertionError:
-        logging.error(f'failure for {p.args} stdout = {p.stdout} stderr = {p.stderr}')
+        logging.error(f"failure for {p.args} stdout = {p.stdout} stderr = {p.stderr}")
         raise
 
 
-ARRAY_SPLIT_RE = re.compile(r'[\[\],]')
-DATETIME_RE = re.compile(r'datetime\.datetime\([\d, ]*\)')
-COUNT_SLASHES_RE = re.compile(r'([\\]*)$')
+ARRAY_SPLIT_RE = re.compile(r"[\[\],]")
+DATETIME_RE = re.compile(r"datetime\.datetime\([\d, ]*\)")
+COUNT_SLASHES_RE = re.compile(r"([\\]*)$")
 
 
 def _is_eval_safe(s: str) -> bool:
@@ -75,7 +76,7 @@ def _is_eval_safe(s: str) -> bool:
     []
     123
     datetime.datetime(2023, 4, 17, 22, 52, 43)"""
-    if s.startswith('['):
+    if s.startswith("["):
         words = ARRAY_SPLIT_RE.split(s)
     else:
         words = [s]
@@ -109,7 +110,7 @@ def _is_eval_safe(s: str) -> bool:
                     pass
                 if DATETIME_RE.fullmatch(s):
                     safe = True
-                if s in {'True', 'False'}:
+                if s in {"True", "False"}:
                     safe = True
         if not safe:
             return False
@@ -123,20 +124,20 @@ def read_index_dump(out: str, latest=False):
     :param latest: if True yield only the latest revs
     :return: list of dicts with key value pairs from output"""
     if not isinstance(out, str):
-        raise ValueError('read_index_dump_latest_revs expects str, did you forget to .decode()')
+        raise ValueError("read_index_dump_latest_revs expects str, did you forget to .decode()")
     item = {}
     for line in out.splitlines():
-        if not line.strip() or line.startswith(' '):
+        if not line.strip() or line.startswith(" "):
             if item:
                 yield item
                 item = {}
-            if latest and 'all_revs' in line:
+            if latest and "all_revs" in line:
                 break
             continue
-        space_index = line.index(' ')
-        v_str = line[space_index + 1:].strip()
+        space_index = line.index(" ")
+        v_str = line[space_index + 1 :].strip()
         if not _is_eval_safe(v_str):
-            warn(f'invalid line in stdout of moin index-dump: {repr(line.strip())}')
+            warn(f"invalid line in stdout of moin index-dump: {repr(line.strip())}")
             continue
         item[line[0:space_index]] = eval(v_str)
 
@@ -147,5 +148,5 @@ def read_index_dump_latest_revs(out: str):
 
 
 def getBackupPath(backup_name):
-    _, artifact_base_dir = get_dirs('')
+    _, artifact_base_dir = get_dirs("")
     return artifact_base_dir / backup_name

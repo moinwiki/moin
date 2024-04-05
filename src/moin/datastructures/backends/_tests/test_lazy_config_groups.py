@@ -16,10 +16,12 @@ import pytest
 
 class TestLazyConfigGroups(GroupsBackendTest):
 
-    test_groups = {'EditorGroup': ['John', 'JoeDoe', 'Editor1'],
-                   'AdminGroup': ['Admin1', 'Admin2', 'John'],
-                   'OtherGroup': ['SomethingOther'],
-                   'EmptyGroup': []}
+    test_groups = {
+        "EditorGroup": ["John", "JoeDoe", "Editor1"],
+        "AdminGroup": ["Admin1", "Admin2", "John"],
+        "OtherGroup": ["SomethingOther"],
+        "EmptyGroup": [],
+    }
 
     expanded_groups = test_groups
 
@@ -47,20 +49,23 @@ class TestCompositeAndLazyConfigGroups(GroupsBackendTest):
         class Config(wikiconfig.Config):
 
             def groups(self):
-                config_groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1', 'John'],
-                                 'RecursiveGroup': ['Something', 'OtherRecursiveGroup'],
-                                 'OtherRecursiveGroup': ['RecursiveGroup', 'Anything', 'NotExistingGroup'],
-                                 'ThirdRecursiveGroup': ['ThirdRecursiveGroup', 'Banana'],
-                                 'CheckNotExistingGroup': ['NotExistingGroup']}
+                config_groups = {
+                    "EditorGroup": ["AdminGroup", "John", "JoeDoe", "Editor1", "John"],
+                    "RecursiveGroup": ["Something", "OtherRecursiveGroup"],
+                    "OtherRecursiveGroup": ["RecursiveGroup", "Anything", "NotExistingGroup"],
+                    "ThirdRecursiveGroup": ["ThirdRecursiveGroup", "Banana"],
+                    "CheckNotExistingGroup": ["NotExistingGroup"],
+                }
 
-                lazy_groups = {'AdminGroup': ['Admin1', 'Admin2', 'John'],
-                               'OtherGroup': ['SomethingOther'],
-                               'EmptyGroup': []}
+                lazy_groups = {
+                    "AdminGroup": ["Admin1", "Admin2", "John"],
+                    "OtherGroup": ["SomethingOther"],
+                    "EmptyGroup": [],
+                }
 
-                return CompositeGroups(ConfigGroups(config_groups),
-                                       ConfigLazyGroups(lazy_groups))
+                return CompositeGroups(ConfigGroups(config_groups), ConfigLazyGroups(lazy_groups))
 
         return Config
 
 
-coverage_modules = ['moin.datastructures.backends.config_lazy_groups']
+coverage_modules = ["moin.datastructures.backends.config_lazy_groups"]

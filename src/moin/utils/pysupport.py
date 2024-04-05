@@ -16,6 +16,7 @@ import importlib
 # Module import / Plugins
 #############################################################################
 
+
 def load_package_modules(package_name, package_pathes):
     """
     Load (import) all modules from some package (except those starting with _).
@@ -30,15 +31,14 @@ def load_package_modules(package_name, package_pathes):
     assert isinstance(package_pathes, (list, tuple))
     for path in package_pathes:
         for fname in os.listdir(path):
-            if fname.endswith('.py') and not fname.startswith('_'):
-                module = package_name + '.' + fname[:-3]
+            if fname.endswith(".py") and not fname.startswith("_"):
+                module = package_name + "." + fname[:-3]
                 if module not in sys.modules:
                     importlib.import_module(module)
 
 
 def isImportable(module):
-    """ Check whether a certain module is available.
-    """
+    """Check whether a certain module is available."""
     try:
         __import__(module)
         return 1
@@ -60,8 +60,8 @@ def getPluginModules(packagedir):
 
 
 def getPackageModules(packagefile):
-    """ Return a list of modules for a package, omitting any modules
-        starting with an underscore.
+    """Return a list of modules for a package, omitting any modules
+    starting with an underscore.
     """
     packagedir = os.path.dirname(packagefile)
     dirlist = os.listdir(packagedir)
@@ -72,7 +72,7 @@ def getPackageModules(packagefile):
 
 
 def importName(modulename, name):
-    """ Import name dynamically from module
+    """Import name dynamically from module
 
     Used to do dynamic import of modules and names that you know their
     names only in runtime.
@@ -89,7 +89,7 @@ def importName(modulename, name):
 
 
 def makeThreadSafe(function, lock=None):
-    """ Call with a function you want to make thread safe
+    """Call with a function you want to make thread safe
 
     Call without lock to make the function thread safe using one lock per
     function. Call with existing lock object if you want to make several
@@ -103,6 +103,7 @@ def makeThreadSafe(function, lock=None):
     """
     if lock is None:
         import threading
+
         lock = threading.Lock()
 
     def decorated(*args, **kw):
@@ -119,6 +120,7 @@ class AutoNe:
     """
     Implement __ne__ in terms of __eq__. This is a mixin class.
     """
+
     def __ne__(self, other):
         ret = self.__eq__(other)
         if ret is NotImplemented:

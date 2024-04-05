@@ -23,55 +23,58 @@ class Converter:
     """
     Replace each smiley by the corresponding element in the DOM Tree
     """
+
     smileys = {
         # markup: smiley name
-        'X-(': 'angry',
-        ':D': 'biggrin',
-        '<:(': 'frown',
-        ':o': 'redface',
-        ':(': 'sad',
-        ':)': 'smile',
-        'B)': 'smile2',
-        ':))': 'smile3',
-        ';)': 'smile4',
-        '/!\\': 'alert',
-        '<!>': 'attention',
-        '(!)': 'idea',
-        ':-?': 'tongue',
-        ':\\': 'ohwell',
-        '>:>': 'devil',
-        '|)': 'tired',
-        ':-(': 'sad',
-        ':-)': 'smile',
-        'B-)': 'smile2',
-        ':-))': 'smile3',
-        ';-)': 'smile4',
-        '|-)': 'tired',
-        '(./)': 'checkmark',
-        '{OK}': 'thumbs-up',
-        '{X}': 'icon-error',
-        '{i}': 'icon-info',
-        '{1}': 'prio1',
-        '{2}': 'prio2',
-        '{3}': 'prio3',
-        '{*}': 'star_on',
-        '{o}': 'star_off',
+        "X-(": "angry",
+        ":D": "biggrin",
+        "<:(": "frown",
+        ":o": "redface",
+        ":(": "sad",
+        ":)": "smile",
+        "B)": "smile2",
+        ":))": "smile3",
+        ";)": "smile4",
+        "/!\\": "alert",
+        "<!>": "attention",
+        "(!)": "idea",
+        ":-?": "tongue",
+        ":\\": "ohwell",
+        ">:>": "devil",
+        "|)": "tired",
+        ":-(": "sad",
+        ":-)": "smile",
+        "B-)": "smile2",
+        ":-))": "smile3",
+        ";-)": "smile4",
+        "|-)": "tired",
+        "(./)": "checkmark",
+        "{OK}": "thumbs-up",
+        "{X}": "icon-error",
+        "{i}": "icon-info",
+        "{1}": "prio1",
+        "{2}": "prio2",
+        "{3}": "prio3",
+        "{*}": "star_on",
+        "{o}": "star_off",
     }
 
     smiley_rule = r"""
     (^|(?<=\s))  # we require either beginning of line or some space before a smiley
     (%(smiley)s)  # one of the smileys
     ($|(?=\s))  # we require either ending of line or some space after a smiley
-""" % {'smiley': '|'.join([re.escape(s) for s in smileys])}
+""" % {
+        "smiley": "|".join([re.escape(s) for s in smileys])
+    }
 
     smiley_re = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 
     # We do not process any smiley conversion within these elements.
-    tags_to_ignore = {'code', 'blockcode', 'nowiki', }
+    tags_to_ignore = {"code", "blockcode", "nowiki"}
 
     @classmethod
     def _factory(cls, input, output, icon=None, **kw):
-        if icon == 'smiley':
+        if icon == "smiley":
             return cls()
 
     def __call__(self, content):
@@ -93,7 +96,7 @@ class Converter:
                 if children is None:
                     children = ()
                 elif not isinstance(children, (list, tuple)):
-                    children = (children, )
+                    children = (children,)
                 new_children.extend(children)
             else:
                 # Otherwise, we have a text node, so we convert the smileys
@@ -130,7 +133,7 @@ class Converter:
 
         if smiley_markup in self.smileys:
             smiley_name = self.smileys[smiley_markup]
-            attrib = {moin_page('class'): 'moin-text-icon moin-' + smiley_name}
+            attrib = {moin_page("class"): "moin-text-icon moin-" + smiley_name}
             return ET.Element(moin_page.span, attrib=attrib, children=[smiley_markup])
         else:
             # if the text was not a smiley, just return the markup without any transformations

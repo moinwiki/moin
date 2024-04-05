@@ -20,24 +20,27 @@ from moin.datastructures import GroupDoesNotExistError
 
 class GroupsBackendTest:
 
-    test_groups = {'EditorGroup': ['AdminGroup', 'John', 'JoeDoe', 'Editor1', 'John'],
-                   'AdminGroup': ['Admin1', 'Admin2', 'John'],
-                   'OtherGroup': ['SomethingOther'],
-                   'RecursiveGroup': ['Something', 'OtherRecursiveGroup'],
-                   'OtherRecursiveGroup': ['RecursiveGroup', 'Anything', 'NotExistingGroup'],
-                   'ThirdRecursiveGroup': ['ThirdRecursiveGroup', 'Banana'],
-                   'EmptyGroup': [],
-                   'CheckNotExistingGroup': ['NotExistingGroup']}
+    test_groups = {
+        "EditorGroup": ["AdminGroup", "John", "JoeDoe", "Editor1", "John"],
+        "AdminGroup": ["Admin1", "Admin2", "John"],
+        "OtherGroup": ["SomethingOther"],
+        "RecursiveGroup": ["Something", "OtherRecursiveGroup"],
+        "OtherRecursiveGroup": ["RecursiveGroup", "Anything", "NotExistingGroup"],
+        "ThirdRecursiveGroup": ["ThirdRecursiveGroup", "Banana"],
+        "EmptyGroup": [],
+        "CheckNotExistingGroup": ["NotExistingGroup"],
+    }
 
-    expanded_groups = {'EditorGroup': ['Admin1', 'Admin2', 'John',
-                                       'JoeDoe', 'Editor1'],
-                       'AdminGroup': ['Admin1', 'Admin2', 'John'],
-                       'OtherGroup': ['SomethingOther'],
-                       'RecursiveGroup': ['Anything', 'Something', 'NotExistingGroup'],
-                       'OtherRecursiveGroup': ['Anything', 'Something', 'NotExistingGroup'],
-                       'ThirdRecursiveGroup': ['Banana'],
-                       'EmptyGroup': [],
-                       'CheckNotExistingGroup': ['NotExistingGroup']}
+    expanded_groups = {
+        "EditorGroup": ["Admin1", "Admin2", "John", "JoeDoe", "Editor1"],
+        "AdminGroup": ["Admin1", "Admin2", "John"],
+        "OtherGroup": ["SomethingOther"],
+        "RecursiveGroup": ["Anything", "Something", "NotExistingGroup"],
+        "OtherRecursiveGroup": ["Anything", "Something", "NotExistingGroup"],
+        "ThirdRecursiveGroup": ["Banana"],
+        "EmptyGroup": [],
+        "CheckNotExistingGroup": ["NotExistingGroup"],
+    }
 
     def test_contains(self):
         """
@@ -50,13 +53,13 @@ class GroupsBackendTest:
             for member in members:
                 assert member in groups[group]
 
-        raises(GroupDoesNotExistError, lambda: groups['NotExistingGroup'])
+        raises(GroupDoesNotExistError, lambda: groups["NotExistingGroup"])
 
     def test_contains_group(self):
         groups = flaskg.groups
 
-        assert 'AdminGroup' in groups['EditorGroup']
-        assert 'EditorGroup' not in groups['AdminGroup']
+        assert "AdminGroup" in groups["EditorGroup"]
+        assert "EditorGroup" not in groups["AdminGroup"]
 
     def test_iter(self):
         groups = flaskg.groups
@@ -70,19 +73,19 @@ class GroupsBackendTest:
     def test_get(self):
         groups = flaskg.groups
 
-        assert groups.get('AdminGroup')
-        assert 'NotExistingGroup' not in groups
-        assert groups.get('NotExistingGroup') is None
-        assert groups.get('NotExistingGroup', []) == []
+        assert groups.get("AdminGroup")
+        assert "NotExistingGroup" not in groups
+        assert groups.get("NotExistingGroup") is None
+        assert groups.get("NotExistingGroup", []) == []
 
     def test_groups_with_member(self):
         groups = flaskg.groups
 
-        john_groups = list(groups.groups_with_member('John'))
+        john_groups = list(groups.groups_with_member("John"))
         assert 2 == len(john_groups)
-        assert 'EditorGroup' in john_groups
-        assert 'AdminGroup' in john_groups
-        assert 'ThirdGroup' not in john_groups
+        assert "EditorGroup" in john_groups
+        assert "AdminGroup" in john_groups
+        assert "ThirdGroup" not in john_groups
 
     def test_backend_acl_allow(self):
         """
@@ -92,11 +95,11 @@ class GroupsBackendTest:
         acl_rights = ["AdminGroup:admin,read,write"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
-        for user in self.expanded_groups['AdminGroup']:
+        for user in self.expanded_groups["AdminGroup"]:
             for permission in ["read", "write", "admin"]:
                 assert acl.may(
                     "Admin1", permission
-                ), f'{user} must have {permission} permission because he is member of the AdminGroup'
+                ), f"{user} must have {permission} permission because he is member of the AdminGroup"
 
     def test_backend_acl_deny(self):
         """
@@ -106,20 +109,20 @@ class GroupsBackendTest:
         acl_rights = ["AdminGroup:read,write"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
-        assert "SomeUser" not in flaskg.groups['AdminGroup']
+        assert "SomeUser" not in flaskg.groups["AdminGroup"]
         for permission in ["read", "write"]:
             assert not acl.may(
                 "SomeUser", permission
-            ), f'SomeUser must not have {permission} permission because he is not listed in the AdminGroup'
+            ), f"SomeUser must not have {permission} permission because he is not listed in the AdminGroup"
 
-        assert 'Admin1' in flaskg.groups['AdminGroup']
+        assert "Admin1" in flaskg.groups["AdminGroup"]
         assert not acl.may("Admin1", "admin")
 
     def test_backend_acl_with_all(self):
         acl_rights = ["EditorGroup:read,write,admin All:read"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
 
-        for member in self.expanded_groups['EditorGroup']:
+        for member in self.expanded_groups["EditorGroup"]:
             for permission in ["read", "write", "admin"]:
                 assert acl.may(member, permission)
 
@@ -128,7 +131,7 @@ class GroupsBackendTest:
             assert not acl.may("Someone", permission)
 
     def test_backend_acl_not_existing_group(self):
-        assert 'NotExistingGroup' not in flaskg.groups
+        assert "NotExistingGroup" not in flaskg.groups
 
         acl_rights = ["NotExistingGroup:read,write,admin All:read"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
@@ -138,12 +141,15 @@ class GroupsBackendTest:
 
 class DictsBackendTest:
 
-    dicts = {'SomeTestDict': {'First': 'first item',
-                              'text with spaces': 'second item',
-                              'Empty string': '',
-                              'Last': 'last item'},
-             'SomeOtherTestDict': {'One': '1',
-                                   'Two': '2'}}
+    dicts = {
+        "SomeTestDict": {
+            "First": "first item",
+            "text with spaces": "second item",
+            "Empty string": "",
+            "Last": "last item",
+        },
+        "SomeOtherTestDict": {"One": "1", "Two": "2"},
+    }
 
     def test_getitem(self):
         expected_dicts = self.dicts
@@ -161,15 +167,15 @@ class DictsBackendTest:
         for key in self.dicts:
             assert key in dicts
 
-        assert 'SomeNotExistingDict' not in dicts
+        assert "SomeNotExistingDict" not in dicts
 
     def test_update(self):
         dicts = flaskg.dicts
 
         d = {}
-        d.update(dicts['SomeTestDict'])
+        d.update(dicts["SomeTestDict"])
 
-        assert 'First' in d
+        assert "First" in d
 
     def test_get(self):
         dicts = flaskg.dicts
@@ -177,13 +183,13 @@ class DictsBackendTest:
         for dict_name in self.dicts:
             assert dicts.get(dict_name)
 
-        assert 'SomeNotExistingDict' not in dicts
-        assert dicts.get('SomeNotExistingDict') is None
-        assert dicts.get('SomeNotExistingDict', {}) == {}
+        assert "SomeNotExistingDict" not in dicts
+        assert dicts.get("SomeNotExistingDict") is None
+        assert dicts.get("SomeNotExistingDict", {}) == {}
 
         for dict_name, expected_dict in self.dicts.items():
             test_dict = dicts[dict_name]
             for key, value in expected_dict.items():
-                assert 'SomeNotExistingKey' not in test_dict
-                assert test_dict.get('SomeNotExistingKey') is None
-                assert test_dict.get('SomeNotExistingKey', {}) == {}
+                assert "SomeNotExistingKey" not in test_dict
+                assert test_dict.get("SomeNotExistingKey") is None
+                assert test_dict.get("SomeNotExistingKey", {}) == {}

@@ -17,6 +17,7 @@ from moin.utils.mime import Type, type_moin_document
 from . import default_registry, ElementException
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -24,23 +25,23 @@ class Converter:
     """
     Converter application/x.moin.document -> application/docbook+xml
     """
-    namespaces_visit = {
-        moin_page: 'moinpage'
-    }
 
-    unsupported_tags = {'separator'}
+    namespaces_visit = {moin_page: "moinpage"}
+
+    unsupported_tags = {"separator"}
 
     # Only these admonitions are supported by DocBook 5
-    admonition_tags = {'caution', 'important', 'note', 'tip', 'warning'}
+    admonition_tags = {"caution", "important", "note", "tip", "warning"}
 
     # DOM Tree element which can easily be converted into a DocBook
     # element, without attributes.
-    simple_tags = {'code': docbook.literal,
-                   'emphasis': docbook.emphasis,
-                   'list-item': docbook.varlistentry,
-                   'list-item-label': docbook.term,
-                   'quote': docbook.quote,
-                   }
+    simple_tags = {
+        "code": docbook.literal,
+        "emphasis": docbook.emphasis,
+        "list-item": docbook.varlistentry,
+        "list-item-label": docbook.term,
+        "quote": docbook.quote,
+    }
 
     # We store the standard attributes of an element.
     # Once we have been able to put it into an output element,
@@ -59,10 +60,10 @@ class Converter:
         self.root_section = 10
         # We can define the title of the document
         # using the title keyword in the argument
-        if 'title' in kw:
-            self.title = kw['title']
+        if "title" in kw:
+            self.title = kw["title"]
         else:
-            self.title = 'Untitled'
+            self.title = "Untitled"
 
         return self.visit(element)
 
@@ -80,7 +81,7 @@ class Converter:
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 new.extend(r)
             else:
                 new.append(child)
@@ -94,8 +95,7 @@ class Converter:
             attrib.update(self.standard_attribute)
             self.standard_attribute = {}
         if self.current_section > 0:
-            self.section_children[self.current_section].append(
-                ET.Element(tag, attrib=attrib, children=children))
+            self.section_children[self.current_section].append(ET.Element(tag, attrib=attrib, children=children))
         else:
             return ET.Element(tag, attrib=attrib, children=children)
 
@@ -135,7 +135,7 @@ class Converter:
         uri = element.tag.uri
         name = self.namespaces_visit.get(uri, None)
         if name is not None:
-            method_name = 'visit_' + name
+            method_name = "visit_" + name
             method = getattr(self, method_name, None)
             if method is not None:
                 return method(element)
@@ -162,7 +162,7 @@ class Converter:
             logging.warning(f"Unsupported tag : {element.tag.name}")
             return self.do_children(element)
 
-        method_name = 'visit_moinpage_' + element.tag.name.replace('-', '_')
+        method_name = "visit_moinpage_" + element.tag.name.replace("-", "_")
         method = getattr(self, method_name, None)
         if method:
             return method(element)
@@ -193,7 +193,7 @@ class Converter:
 
         For instance: <caution> --> <admonition type='caution'>
         """
-        tag = element.get(moin_page('type'))
+        tag = element.get(moin_page("type"))
         if tag in self.admonition_tags:
             # Our tag is valid for DocBook 5
             return self.new_copy(docbook(tag), element, attrib={})
@@ -205,8 +205,8 @@ class Converter:
         """
         <blockcode>text</blockcode> --> <screen><![CDATA[text]]></scren>
         """
-        code_str = ''.join(element)
-        children = ''.join(['<![CDATA[', code_str, ']]>'])
+        code_str = "".join(element)
+        children = "".join(["<![CDATA[", code_str, "]]>"])
         return self.new(docbook.screen, attrib={}, children=children)
 
     def visit_moinpage_blockquote(self, element):
@@ -233,14 +233,14 @@ class Converter:
                 <simpara>text</text>
             </blockquote>
         """
-        author = element.get(moin_page('source'))
+        author = element.get(moin_page("source"))
         if not author:
             # TODO: Internationalization
             author = "Unknown"
-        attribution = self.new(docbook('attribution'), attrib={}, children=[author])
+        attribution = self.new(docbook("attribution"), attrib={}, children=[author])
         children = self.do_children(element)
-        para = self.new(docbook('simpara'), attrib={}, children=children)
-        return self.new(docbook('blockquote'), attrib={}, children=[attribution, para])
+        para = self.new(docbook("simpara"), attrib={}, children=children)
+        return self.new(docbook("blockquote"), attrib={}, children=[attribution, para])
 
     def visit_moinpage_h(self, element):
         """
@@ -254,11 +254,11 @@ class Converter:
         A section is closed when we have a new heading with an equal or
         higher level.
         """
-        depth = element.get(moin_page('outline-level'), 1)
+        depth = element.get(moin_page("outline-level"), 1)
         try:
             depth = int(depth)
         except ValueError:
-            raise ElementException('page:outline-level needs to be an integer')
+            raise ElementException("page:outline-level needs to be an integer")
         # We will have a new section
         # under another section
         if depth > self.current_section:
@@ -266,16 +266,17 @@ class Converter:
             self.current_section = int(depth)
             self.section_children[self.current_section] = []
             # NB : Error with docbook.title
-            title = ET.Element(docbook('title'), attrib={}, children=element[0])
+            title = ET.Element(docbook("title"), attrib={}, children=element[0])
             self.section_children[self.current_section].append(title)
 
         # We will close a section before starting a new one
         # Need more test
         elif depth < self.current_section:
             if self.parent_section != 0:
-                section_tag = f'sect{self.parent_section}'
-                section = ET.Element(docbook(section_tag), attrib={},
-                                     children=self.section_children[self.current_section])
+                section_tag = f"sect{self.parent_section}"
+                section = ET.Element(
+                    docbook(section_tag), attrib={}, children=self.section_children[self.current_section]
+                )
                 self.section_children[self.parent_section].append(section)
                 self.current_section = int(depth)
 
@@ -292,27 +293,25 @@ class Converter:
 
         Or a specific function to handle definition list.
         """
-        item_label_generate = element.get(moin_page('item-label-generate'))
-        if 'ordered' == item_label_generate:
+        item_label_generate = element.get(moin_page("item-label-generate"))
+        if "ordered" == item_label_generate:
             attrib = {}
             # Get the list-style-type to define correctly numeration
-            list_style_type = element.get(moin_page('list-style-type'))
-            if 'upper-alpha' == list_style_type:
-                attrib[docbook('numeration')] = 'upperalpha'
-            elif 'upper-roman' == list_style_type:
-                attrib[docbook('numeration')] = 'upperroman'
-            elif 'lower-alpha' == list_style_type:
-                attrib[docbook('numeration')] = 'loweralpha'
-            elif 'lower-roman' == list_style_type:
-                attrib[docbook('numeration')] = 'lowerroman'
+            list_style_type = element.get(moin_page("list-style-type"))
+            if "upper-alpha" == list_style_type:
+                attrib[docbook("numeration")] = "upperalpha"
+            elif "upper-roman" == list_style_type:
+                attrib[docbook("numeration")] = "upperroman"
+            elif "lower-alpha" == list_style_type:
+                attrib[docbook("numeration")] = "loweralpha"
+            elif "lower-roman" == list_style_type:
+                attrib[docbook("numeration")] = "lowerroman"
             else:
-                attrib[docbook('numeration')] = 'arabic'
+                attrib[docbook("numeration")] = "arabic"
 
-            return self.handle_simple_list(docbook.orderedlist,
-                                           element, attrib=attrib)
-        elif 'unordered' == item_label_generate:
-            return self.handle_simple_list(docbook.itemizedlist,
-                                           element, attrib={})
+            return self.handle_simple_list(docbook.orderedlist, element, attrib=attrib)
+        elif "unordered" == item_label_generate:
+            return self.handle_simple_list(docbook.itemizedlist, element, attrib={})
         else:
             return self.new_copy(docbook.variablelist, element, attrib={})
 
@@ -324,7 +323,7 @@ class Converter:
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 items.extend(r)
             else:
                 an_item = ET.Element(docbook.simpara, attrib={}, children=child)
@@ -336,9 +335,9 @@ class Converter:
         <note note-class="footnote"><note-body>text</note-body></note>
           --> <footnote><simpara>text</simpara></footnote>
         """
-        note_class = element.get(moin_page('note-class'))
+        note_class = element.get(moin_page("note-class"))
         # We only convert footnote, we do not convert endnote yet
-        if note_class != 'footnote':
+        if note_class != "footnote":
             return
 
         # We will check the presence of a body
@@ -346,7 +345,7 @@ class Converter:
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.uri == moin_page:
-                    if child.tag.name == 'note-body':
+                    if child.tag.name == "note-body":
                         body = self.do_children(child)
         # We process note only with note-body child
         if not body:
@@ -376,36 +375,29 @@ class Converter:
         mimetype = Type(_type=element.get(moin_page.type_, CONTENTTYPE_NONEXISTENT))
         if href:
             attrib[docbook.fileref] = href
-            if Type('image/').issupertype(mimetype):
-                object_data = self.new(docbook.imagedata, attrib=attrib,
-                                       children=[])
-                object_element = self.new(docbook.imageobject, attrib={},
-                                          children=[object_data])
-            elif Type('video/').issupertype(mimetype):
-                object_data = self.new(docbook.videodata, attrib=attrib,
-                                       children=[])
-                object_element = self.new(docbook.videoobject, attrib={},
-                                          children=[object_data])
-            elif Type('audio/').issupertype(mimetype):
-                object_data = self.new(docbook.audiodata, attrib=attrib,
-                                       children=[])
-                object_element = self.new(docbook.audioobject, attrib={},
-                                          children=[object_data])
+            if Type("image/").issupertype(mimetype):
+                object_data = self.new(docbook.imagedata, attrib=attrib, children=[])
+                object_element = self.new(docbook.imageobject, attrib={}, children=[object_data])
+            elif Type("video/").issupertype(mimetype):
+                object_data = self.new(docbook.videodata, attrib=attrib, children=[])
+                object_element = self.new(docbook.videoobject, attrib={}, children=[object_data])
+            elif Type("audio/").issupertype(mimetype):
+                object_data = self.new(docbook.audiodata, attrib=attrib, children=[])
+                object_element = self.new(docbook.audioobject, attrib={}, children=[object_data])
             else:
                 return
         else:
             return
-        return self.new(docbook.inlinemediaobject, attrib={},
-                        children=[object_element])
+        return self.new(docbook.inlinemediaobject, attrib={}, children=[object_element])
 
     def visit_moinpage_table(self, element):
         # TODO: Attributes conversion
-        title = element.get(html('title'))
+        title = element.get(html("title"))
         if not title:
             # TODO: Translation
             title = f"Table {self.table_counter}"
         self.table_counter += 1
-        caption = ET.Element(docbook('caption'), attrib={}, children=[title])
+        caption = ET.Element(docbook("caption"), attrib={}, children=[title])
         children = [caption]
         children.extend(self.do_children(element))
         return self.new(docbook.table, attrib={}, children=children)
@@ -416,8 +408,8 @@ class Converter:
 
     def visit_moinpage_table_cell(self, element):
         attrib = {}
-        rowspan = element.get(moin_page('number-rows-spanned'))
-        colspan = element.get(moin_page('number-columns-spanned'))
+        rowspan = element.get(moin_page("number-rows-spanned"))
+        colspan = element.get(moin_page("number-columns-spanned"))
         print(f"rowspan : {rowspan}")
         if rowspan:
             attrib[docbook.rowspan] = rowspan
@@ -442,7 +434,7 @@ class Converter:
         for child in element:
             if isinstance(child, ET.Element):
                 # We do not care about <list-item>
-                if child.tag.name != 'list-item':
+                if child.tag.name != "list-item":
                     r = self.visit(child)
                 else:
                     r = self.do_children(child)
@@ -450,37 +442,33 @@ class Converter:
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 list_items.extend(r)
         return ET.Element(docbook_tag, attrib=attrib, children=list_items)
 
     def visit_moinpage_page(self, element):
-        title = ET.Element(docbook('title'), attrib={}, children=[self.title])
+        title = ET.Element(docbook("title"), attrib={}, children=[self.title])
         info = ET.Element(docbook.info, attrib={}, children=[title])
         for item in element:
-            if item.tag.uri == moin_page and item.tag.name == 'body':
+            if item.tag.uri == moin_page and item.tag.name == "body":
                 c = self.do_children(item)
                 if not c:
-                    self.section_children = sorted(self.section_children.items(),
-                                                   reverse=True)
+                    self.section_children = sorted(self.section_children.items(), reverse=True)
                     section = None
                     for k, v in self.section_children:
                         if section:
-                            section_tag = f'sect{k}'
+                            section_tag = f"sect{k}"
                             v.append(section)
-                            section = ET.Element(docbook(section_tag),
-                                                 attrib={}, children=v)
+                            section = ET.Element(docbook(section_tag), attrib={}, children=v)
                         else:
-                            section_tag = f'sect{k}'
-                            section = ET.Element(docbook(section_tag),
-                                                 attrib={}, children=v)
-                    return ET.Element(docbook.article,
-                                      attrib={}, children=[info, section])
+                            section_tag = f"sect{k}"
+                            section = ET.Element(docbook(section_tag), attrib={}, children=v)
+                    return ET.Element(docbook.article, attrib={}, children=[info, section])
                 else:
                     c.insert(0, info)
                     return ET.Element(docbook.article, attrib={}, children=c)
 
-        raise RuntimeError(f'page:page need to contain exactly one page body tag, got {element[:]!r}')
+        raise RuntimeError(f"page:page need to contain exactly one page body tag, got {element[:]!r}")
 
     def visit_moinpage_p(self, element):
         """
@@ -488,12 +476,11 @@ class Converter:
         with a <title> child.
         Otherwise we return a <simpara>.
         """
-        title_attr = element.get(html('title'))
+        title_attr = element.get(html("title"))
         if title_attr:
             print(title_attr)
             children = []
-            title_elem = self.new(docbook('title'), attrib={},
-                                  children=[title_attr])
+            title_elem = self.new(docbook("title"), attrib={}, children=[title_attr])
             children.append(title_elem)
             children.extend(self.do_children(element))
             return self.new(docbook.para, attrib={}, children=children)
@@ -510,11 +497,10 @@ class Converter:
         """
         # Check for the attributes of span
         for key, value in element.attrib.items():
-            if key.name == 'baseline-shift':
-                if value == 'super':
-                    return self.new_copy(docbook.superscript,
-                                         element, attrib={})
-                if value == 'sub':
+            if key.name == "baseline-shift":
+                if value == "super":
+                    return self.new_copy(docbook.superscript, element, attrib={})
+                if value == "sub":
                     return self.new_copy(docbook.subscript, element, attrib={})
 
         return self.new_copy(docbook.phrase, element, attrib={})
@@ -533,4 +519,4 @@ class Converter:
         return self.new_copy(tag_to_return, element, attrib={})
 
 
-default_registry.register(Converter._factory, type_moin_document, Type('application/docbook+xml'))
+default_registry.register(Converter._factory, type_moin_document, Type("application/docbook+xml"))

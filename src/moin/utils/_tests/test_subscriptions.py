@@ -9,8 +9,7 @@ import pytest
 
 from moin import user
 from moin.items import Item
-from moin.constants.keys import (ACL, ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX,
-                                 SUBSCRIPTIONS, TAGS)
+from moin.constants.keys import ACL, ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX, SUBSCRIPTIONS, TAGS
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.utils.subscriptions import get_subscribers, get_matched_subscription_patterns
 
@@ -20,11 +19,11 @@ class TestSubscriptions:
 
     @pytest.fixture
     def item_name(self):
-        return 'foo'
+        return "foo"
 
     @pytest.fixture
     def tag_name(self):
-        return 'XXX'
+        return "XXX"
 
     @pytest.fixture
     def namespace(self):
@@ -32,7 +31,7 @@ class TestSubscriptions:
 
     @pytest.fixture
     def meta(self, tag_name):
-        return {CONTENTTYPE: 'text/plain;charset=utf-8', TAGS: [tag_name]}
+        return {CONTENTTYPE: "text/plain;charset=utf-8", TAGS: [tag_name]}
 
     @pytest.fixture
     def item(self, item_name, meta):
@@ -44,14 +43,14 @@ class TestSubscriptions:
         users = get_subscribers(**item.meta)
         assert users == set()
 
-        name1 = 'baz'
-        password = 'password'
-        email1 = 'baz@example.org'
+        name1 = "baz"
+        password = "password"
+        email1 = "baz@example.org"
         name2 = "bar"
         email2 = "bar@example.org"
         name3 = "barbaz"
         email3 = "barbaz@example.org"
-        user.create_user(username=name1, password=password, email=email1, validate=False, locale='en')
+        user.create_user(username=name1, password=password, email=email1, validate=False, locale="en")
         user1 = user.User(name=name1, password=password)
         user.create_user(username=name2, password=password, email=email2, validate=False)
         user2 = user.User(name=name2, password=password)
@@ -60,7 +59,7 @@ class TestSubscriptions:
         subscribers = get_subscribers(**item.meta)
         assert subscribers == set()
 
-        namere = r'.*'
+        namere = r".*"
         nameprefix = "fo"
         subscription_lists = [
             [f"{ITEMID}:{item.meta[ITEMID]}"],
@@ -79,8 +78,7 @@ class TestSubscriptions:
             subscribers_names = {subscriber.name for subscriber in subscribers}
             assert subscribers_names == expected_names
 
-        meta = {CONTENTTYPE: 'text/plain;charset=utf-8',
-                ACL: f"{user1.name0}: All:read,write"}
+        meta = {CONTENTTYPE: "text/plain;charset=utf-8", ACL: f"{user1.name0}: All:read,write"}
         item._save(meta, comment="")
         item = Item.create(item_name)
         subscribers = get_subscribers(**item.meta)
@@ -113,14 +111,13 @@ class TestSubscriptions:
             f"{NAME}:{self.namespace}:{self.item_name}",
             f"{TAGS}:{self.namespace}:{self.tagname}",
             "{}:{}:{}".format(NAMEPREFIX, self.namespace, "fo"),
-            "{}:{}:{}".format(NAMERE, self.namespace, r"\wo")
+            "{}:{}:{}".format(NAMERE, self.namespace, r"\wo"),
         ]
         users = set()
         expected_names = set()
         for i in range(10000):
             i = str(i)
-            user.create_user(username=i, password=password, email=f"{i}@example.org",
-                             validate=False, locale='en')
+            user.create_user(username=i, password=password, email=f"{i}@example.org", validate=False, locale="en")
             user_ = user.User(name=i, password=password)
             users.add(user_)
             expected_names.add(user_.name0)
@@ -130,9 +127,9 @@ class TestSubscriptions:
         tests = [(users_sliced, expected_names_sliced), (users, expected_names)]
 
         import time
+
         for users_, expected_names_ in tests:
-            print("\nTesting {} subscribers from a total of {} users".format(
-                len(users_), len(users)))
+            print("\nTesting {} subscribers from a total of {} users".format(len(users_), len(users)))
             for subscription in subscriptions:
                 for user_ in users_:
                     user_.profile._meta[SUBSCRIPTIONS] = [subscription]
@@ -140,6 +137,6 @@ class TestSubscriptions:
                 t = time.time()
                 subscribers = get_subscribers(**self.item.meta)
                 elapsed_time = time.time() - t
-                print("{}: {} s".format(subscription.split(':', 1)[0], elapsed_time))
+                print("{}: {} s".format(subscription.split(":", 1)[0], elapsed_time))
                 subscribers_names = {subscriber.name for subscriber in subscribers}
                 assert subscribers_names == expected_names_
