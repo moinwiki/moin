@@ -60,6 +60,7 @@ from moin.constants.forms import (
 from moin.constants.keys import ITEMID, NAME, LATEST_REVS, NAMESPACE, FQNAME
 from moin.constants.namespaces import NAMESPACES_IDENTIFIER
 from moin.i18n import _, L_
+from moin.utils import utcfromtimestamp
 from moin.utils.forms import FileStorage
 from moin.storage.middleware.validation import uuid_validator
 
@@ -363,7 +364,7 @@ class DateTimeUNIX(_DateTime):
         """Serializes value to string."""
         if isinstance(value, int):
             try:
-                value = datetime.datetime.utcfromtimestamp(value)
+                value = utcfromtimestamp(value)
             except ValueError:
                 pass
         return super().serialize(value)
@@ -377,7 +378,7 @@ class DateTimeUNIX(_DateTime):
         if isinstance(value, int):
             try:
                 # check if a value is a correct timestamp
-                dt = datetime.datetime.utcfromtimestamp(value)
+                dt = utcfromtimestamp(value)
                 return value
             except (ValueError, OSError):  # OSError errno 75 "Value too large for defined data type"
                 raise AdaptationError()

@@ -7,6 +7,7 @@
 """
 
 
+from datetime import datetime, timezone
 import re
 import pickle
 from io import BytesIO
@@ -86,3 +87,13 @@ def close_file(f):
     # some tests reuse BytesIO objects and will fail with I/O operation on closed file.
     if hasattr(f, "close") and not f.closed and not isinstance(f, BytesIO):
         f.close()
+
+
+def utcfromtimestamp(timestamp):
+    """Returns a naive datetime instance representing the timestamp in the UTC timezone"""
+    return datetime.fromtimestamp(timestamp, timezone.utc).replace(tzinfo=None)
+
+
+def utcnow():
+    """Returns a naive datetime instance representing the current time in the UTC timezone"""
+    return datetime.now(timezone.utc).replace(tzinfo=None)

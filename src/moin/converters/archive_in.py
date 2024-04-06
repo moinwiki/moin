@@ -16,6 +16,7 @@ from . import default_registry
 from ._table import TableMixin
 
 from moin.i18n import _
+from moin.utils import utcfromtimestamp
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
@@ -98,7 +99,7 @@ class TarConverter(ArchiveConverter):
             for tinfo in tf.getmembers():
                 if tinfo.isfile():
                     # display only normal files, not directories
-                    rows.append((tinfo.size, datetime.utcfromtimestamp(tinfo.mtime), tinfo.name))
+                    rows.append((tinfo.size, utcfromtimestamp(tinfo.mtime), tinfo.name))
             return rows
         except tarfile.TarError as err:
             raise ArchiveException(str(err))

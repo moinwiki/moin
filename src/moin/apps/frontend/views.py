@@ -96,7 +96,7 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
-from moin.utils import crypto, rev_navigation, close_file, show_time
+from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.mime import Type, type_moin_document
@@ -1159,9 +1159,9 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
         ("  Old Name", item.meta[NAME_OLD]),
         ("  Subitem Names", subitem_names),
         ("  Namespace", item.meta[NAMESPACE]),
-        ("  Last Modified Time", format_datetime(datetime.utcfromtimestamp(item.meta[MTIME]))),
+        ("  Last Modified Time", format_datetime(utcfromtimestamp(item.meta[MTIME]))),
         ("  Last Modified By", item.meta[ADDRESS]),
-        ("  Destroyed Time", format_datetime(datetime.utcfromtimestamp(time.time()))),
+        ("  Destroyed Time", format_datetime(utcfromtimestamp(time.time()))),
         ("  Destroyed By", flaskg.user.name),
         ("  Content Type", item.meta[CONTENTTYPE]),
         ("  Revision Number", item.meta[REV_NUMBER]),
@@ -1633,7 +1633,7 @@ def history(item_name):
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
     terms.extend(Term(term, value) for term, value in fqname.query.items())
     if bookmark_time:
-        terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
+        terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
 
     if results_per_page:
@@ -1722,7 +1722,7 @@ def global_history(namespace):
         terms.append(Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)))
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
-        terms.append(DateRange(MTIME, start=datetime.utcfromtimestamp(bookmark_time), end=None))
+        terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
 
     if results_per_page:
