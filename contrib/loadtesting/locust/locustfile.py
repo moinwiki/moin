@@ -75,6 +75,7 @@ wait_time = between(2, 3)
 # sleep time between GET, POST requests in seconds
 sleep_time = 0
 
+
 class LoadTest(HttpUser):
     """
     First, create a Home page in the default and user namespaces.
@@ -98,37 +99,45 @@ class LoadTest(HttpUser):
                 host = host[:-1]
 
             print("==== creating Home and users/Home ====")
-            url = host + "/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-            data = urllib.parse.urlencode({"content_form_data_text": "= users/Home =\n * created by Locust",
-                                           "comment": "",
-                                           "submit": "OK",
-                                           "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
-                                           "meta_form_itemtype": "default",
-                                           "meta_form_acl": "None",
-                                           "meta_form_tags": "None",
-                                           "meta_form_name": "Home",
-                                           "extra_meta_text": '{"namespace": "users","rev_number": 1}',
-                                           })
+            url = (
+                host + "/+modify/users/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+            )
+            data = urllib.parse.urlencode(
+                {
+                    "content_form_data_text": "= users/Home =\n * created by Locust",
+                    "comment": "",
+                    "submit": "OK",
+                    "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
+                    "meta_form_itemtype": "default",
+                    "meta_form_acl": "None",
+                    "meta_form_tags": "None",
+                    "meta_form_name": "Home",
+                    "extra_meta_text": '{"namespace": "users","rev_number": 1}',
+                }
+            )
             data = data.encode("utf-8")
             content = urllib.request.urlopen(url=url, data=data).read()
 
             url = host + "/+modify/Home?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-            data = urllib.parse.urlencode({"content_form_data_text": "= Home =\n * created by Locust",
-                                           "comment": "",
-                                           "submit": "OK",
-                                           "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
-                                           "meta_form_itemtype": "default",
-                                           "meta_form_acl": "None",
-                                           "meta_form_tags": "None",
-                                           "meta_form_name": "Home",
-                                           "extra_meta_text": '{"namespace": "","rev_number": 1}',
-                                           })
+            data = urllib.parse.urlencode(
+                {
+                    "content_form_data_text": "= Home =\n * created by Locust",
+                    "comment": "",
+                    "submit": "OK",
+                    "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
+                    "meta_form_itemtype": "default",
+                    "meta_form_acl": "None",
+                    "meta_form_tags": "None",
+                    "meta_form_name": "Home",
+                    "extra_meta_text": '{"namespace": "","rev_number": 1}',
+                }
+            )
             data = data.encode("utf-8")
             content = urllib.request.urlopen(url=url, data=data).read()
 
     @task(1)
     def user_workflow(self):
-        """Define workflow for each locust """
+        """Define workflow for each locust"""
         self.get_home()
         self.click_login()
         self.click_post_register()
@@ -165,12 +174,16 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
     def click_post_register(self):
-        with self.client.post("/+register",
-                              {"register_username": self.user_name,
-                               "register_password1": "locust123",
-                               "register_password2": "locust123",
-                               "register_email": self.user_email,
-                              }, catch_response=True) as response:
+        with self.client.post(
+            "/+register",
+            {
+                "register_username": self.user_name,
+                "register_password1": "locust123",
+                "register_password2": "locust123",
+                "register_email": self.user_email,
+            },
+            catch_response=True,
+        ) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
@@ -180,12 +193,16 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
     def click_post_login(self):
-        with self.client.post("/+login",
-                              {"login_username": self.user_name,
-                               "login_password": "locust123",
-                               "login_submit": "1",
-                               "login_nexturl": "/Home",
-                              }, catch_response=True) as response:
+        with self.client.post(
+            "/+login",
+            {
+                "login_username": self.user_name,
+                "login_password": "locust123",
+                "login_submit": "1",
+                "login_nexturl": "/Home",
+            },
+            catch_response=True,
+        ) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
@@ -195,26 +212,39 @@ class LoadTest(HttpUser):
             if response.status_code == 404:
                 response.success()
             else:
-                print("%s: Starting wiki not empty, user's home page already exists: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
+                print(
+                    "%s: Starting wiki not empty, user's home page already exists: response.status_code = %s"
+                    % (sys._getframe().f_lineno, response.status_code)
+                )
         # click MoinMoin markup link
-        home_page_get = "/+modify/users/" + self.user_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default"
+        home_page_get = (
+            "/+modify/users/" + self.user_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default"
+        )
         with self.client.get(home_page_get, catch_response=True) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
         # complete form and post
         new_content = "= %s =\n\nMy Home Page created by Locust" % self.user_name
-        home_page_post = "/+modify/users/" + self.user_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-        with self.client.post(home_page_post,
-                              {"content_form_data_text": new_content,
-                               "comment": "my comment",
-                               "submit": "OK",
-                               "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
-                               "meta_form_itemtype": "default",
-                               "meta_form_acl": "None",
-                               "meta_form_tags": "apple, pear",
-                               "meta_form_name": self.user_name,
-                               "extra_meta_text": '{"namespace": "users","rev_number": 1}',
-                              }, catch_response=True) as response:
+        home_page_post = (
+            "/+modify/users/"
+            + self.user_name
+            + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+        )
+        with self.client.post(
+            home_page_post,
+            {
+                "content_form_data_text": new_content,
+                "comment": "my comment",
+                "submit": "OK",
+                "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
+                "meta_form_itemtype": "default",
+                "meta_form_acl": "None",
+                "meta_form_tags": "apple, pear",
+                "meta_form_name": self.user_name,
+                "extra_meta_text": '{"namespace": "users","rev_number": 1}',
+            },
+            catch_response=True,
+        ) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
@@ -224,22 +254,30 @@ class LoadTest(HttpUser):
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
         # click modify link
-        home_page = "/+modify" + self.user_home_page + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+        home_page = (
+            "/+modify"
+            + self.user_home_page
+            + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+        )
         with self.client.get(home_page, catch_response=True) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
         # update the page
-        with self.client.post(home_page,
-                              {"content_form_data_text": test_content % (self.user_name, self.get_time() + " idx=%s" % idx),
-                               "comment": "my homepage comment",
-                               "submit": "OK",
-                               "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
-                               "meta_form_itemtype": "default",
-                               "meta_form_acl": "None",
-                               "meta_form_tags": "apple, pear",
-                               "meta_form_name": self.user_name,
-                               "extra_meta_text": '{"namespace": "users","rev_number":1}',
-                              }, catch_response=True) as response:
+        with self.client.post(
+            home_page,
+            {
+                "content_form_data_text": test_content % (self.user_name, self.get_time() + " idx=%s" % idx),
+                "comment": "my homepage comment",
+                "submit": "OK",
+                "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
+                "meta_form_itemtype": "default",
+                "meta_form_acl": "None",
+                "meta_form_tags": "apple, pear",
+                "meta_form_name": self.user_name,
+                "extra_meta_text": '{"namespace": "users","rev_number":1}',
+            },
+            catch_response=True,
+        ) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
@@ -250,7 +288,10 @@ class LoadTest(HttpUser):
             if response.status_code == 404:
                 response.success()
             else:
-                print("%s: Item already exists, starting wiki not empty: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
+                print(
+                    "%s: Item already exists, starting wiki not empty: response.status_code = %s"
+                    % (sys._getframe().f_lineno, response.status_code)
+                )
         # click MoinMoin markup link
         page_get = "/+modify/" + new_item_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default"
         with self.client.get(page_get, catch_response=True) as response:
@@ -258,18 +299,24 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
         # complete form and post
         new_content = "= %s =\n\nNew Item created by Locust" % new_item_name
-        new_page_post = "/+modify/" + new_item_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-        with self.client.post(new_page_post,
-                              {"content_form_data_text": new_content,
-                               "comment": "yes",
-                               "submit": "OK",
-                               "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
-                               "meta_form_itemtype": "default",
-                               "meta_form_acl": "None",
-                               "meta_form_tags": "lime, orange",
-                               "meta_form_name": new_item_name,
-                               "extra_meta_text": '{"namespace": "","rev_number": 1}',
-                              }, catch_response=True) as response:
+        new_page_post = (
+            "/+modify/" + new_item_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+        )
+        with self.client.post(
+            new_page_post,
+            {
+                "content_form_data_text": new_content,
+                "comment": "yes",
+                "submit": "OK",
+                "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
+                "meta_form_itemtype": "default",
+                "meta_form_acl": "None",
+                "meta_form_tags": "lime, orange",
+                "meta_form_name": new_item_name,
+                "extra_meta_text": '{"namespace": "","rev_number": 1}',
+            },
+            catch_response=True,
+        ) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
@@ -286,18 +333,24 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
         # complete form and post
         new_content = "= %s =\n\nNew Item created by Locust" % new_item_name
-        new_page_post = "/+modify/" + new_item_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
-        with self.client.post(new_page_post,
-                              {"content_form_data_text": test_content % (self.user_name, self.get_time() + " idx=%s" % idx),
-                               "comment": "yes",
-                               "submit": "OK",
-                               "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
-                               "meta_form_itemtype": "default",
-                               "meta_form_acl": "None",
-                               "meta_form_tags": "lime, orange",
-                               "meta_form_name": new_item_name,
-                               "extra_meta_text": '{"namespace": "","rev_number": 1}',
-                              }, catch_response=True) as response:
+        new_page_post = (
+            "/+modify/" + new_item_name + "?contenttype=text%2Fx.moin.wiki%3Bcharset%3Dutf-8&itemtype=default&template="
+        )
+        with self.client.post(
+            new_page_post,
+            {
+                "content_form_data_text": test_content % (self.user_name, self.get_time() + " idx=%s" % idx),
+                "comment": "yes",
+                "submit": "OK",
+                "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
+                "meta_form_itemtype": "default",
+                "meta_form_acl": "None",
+                "meta_form_tags": "lime, orange",
+                "meta_form_name": new_item_name,
+                "extra_meta_text": '{"namespace": "","rev_number": 1}',
+            },
+            catch_response=True,
+        ) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 

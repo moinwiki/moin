@@ -21,22 +21,19 @@ from moin.storage.stores.memory import BytesStore, FileStore
 
 
 contents = [
-    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
-    ('Foo', {NAME: ['Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b'2nd'),
-    ('Subdir', {NAME: ['Subdir', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
-    ('Subdir/Foo', {NAME: ['Subdir/Foo', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
-    ('Subdir/Bar', {NAME: ['Subdir/Bar', ], CONTENTTYPE: 'text/plain;charset=utf-8'}, b''),
+    ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
+    ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b"2nd"),
+    ("Subdir", {NAME: ["Subdir"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
+    ("Subdir/Foo", {NAME: ["Subdir/Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
+    ("Subdir/Bar", {NAME: ["Subdir/Bar"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
 ]
 
 
-scenarios = [
-    ('Simple', ['']),
-    ('Nested', ['', 'Subdir']),
-]
+scenarios = [("Simple", [""]), ("Nested", ["", "Subdir"])]
 
 
 def pytest_generate_tests(metafunc):
-    metafunc.parametrize('source,target', [('Simple', 'Simple'), ], ids=['Simple->Simple', ], indirect=True)
+    metafunc.parametrize("source,target", [("Simple", "Simple")], ids=["Simple->Simple"], indirect=True)
 
 
 @pytest.fixture
@@ -56,16 +53,15 @@ def make_middleware(request, tmpdir):
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)
-    namespaces = [(NAMESPACE_DEFAULT, 'backend')]
-    backends = {'backend': _backend}
+    namespaces = [(NAMESPACE_DEFAULT, "backend")]
+    backends = {"backend": _backend}
     backend = RoutingBackend(namespaces, backends)
     backend.create()
     backend.open()
     request.addfinalizer(backend.destroy)
     request.addfinalizer(backend.close)
 
-    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir / 'foo'), ), {}),
-                            backend=backend)
+    mw = IndexingMiddleware(index_storage=(WHOOSH_FILESTORAGE, (str(tmpdir / "foo"),), {}), backend=backend)
     mw.create()
     mw.open()
     request.addfinalizer(mw.destroy)

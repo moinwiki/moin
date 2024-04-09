@@ -110,6 +110,10 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools_scm]
 write_to = "src/moin/_version.py"
 
+[tool.black]
+line-length = 120
+skip-magic-trailing-comma = true
+
 [tool.pytest.ini_options]
 norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
 

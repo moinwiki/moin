@@ -41,13 +41,13 @@ class TestWikiGroupBackend(GroupsBackendTest):
         Tests renaming of a group item.
         """
         become_trusted()
-        update_item('SomeGroup', {USERGROUP: ["ExampleUser"]}, DATA)
-        assert 'ExampleUser' in flaskg.groups['SomeGroup']
-        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups['AnotherGroup'])
+        update_item("SomeGroup", {USERGROUP: ["ExampleUser"]}, DATA)
+        assert "ExampleUser" in flaskg.groups["SomeGroup"]
+        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups["AnotherGroup"])
 
-        update_item('SomeGroup', {NAME: ['AnotherGroup', ], USERGROUP: ["ExampleUser"]}, DATA)
-        assert 'ExampleUser' in flaskg.groups['AnotherGroup']
-        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups['SomeGroup'])
+        update_item("SomeGroup", {NAME: ["AnotherGroup"], USERGROUP: ["ExampleUser"]}, DATA)
+        assert "ExampleUser" in flaskg.groups["AnotherGroup"]
+        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups["SomeGroup"])
 
     def test_appending_group_item(self):
         """
@@ -57,9 +57,9 @@ class TestWikiGroupBackend(GroupsBackendTest):
         # long list of users
         members = create_random_string_list(length=15, count=1234)
         test_user = create_random_string_list(length=15, count=1)[0]
-        update_item('UserGroup', {USERGROUP: members}, DATA)
-        update_item('UserGroup', {USERGROUP: members + [test_user]}, '')
-        result = test_user in flaskg.groups['UserGroup']
+        update_item("UserGroup", {USERGROUP: members}, DATA)
+        update_item("UserGroup", {USERGROUP: members + [test_user]}, "")
+        result = test_user in flaskg.groups["UserGroup"]
 
         assert result
 
@@ -72,17 +72,17 @@ class TestWikiGroupBackend(GroupsBackendTest):
 
         # long list of users
         members = create_random_string_list()
-        update_item('UserGroup', {USERGROUP: members}, DATA)
+        update_item("UserGroup", {USERGROUP: members}, DATA)
 
         # updates the text with the text_user
         test_user = create_random_string_list(length=15, count=1)[0]
-        update_item('UserGroup', {USERGROUP: [test_user]}, DATA)
-        result = test_user in flaskg.groups['UserGroup']
+        update_item("UserGroup", {USERGROUP: [test_user]}, DATA)
+        result = test_user in flaskg.groups["UserGroup"]
         assert result
 
         # updates the text without test_user
-        update_item('UserGroup', {}, DATA)
-        result = test_user in flaskg.groups['UserGroup']
+        update_item("UserGroup", {}, DATA)
+        result = test_user in flaskg.groups["UserGroup"]
         assert not result
 
     def test_wiki_backend_item_acl_usergroupmember_item(self):
@@ -92,7 +92,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         then add user member to an item group and check acl rights
         """
         become_trusted()
-        update_item('NewGroup', {USERGROUP: ["ExampleUser"]}, DATA)
+        update_item("NewGroup", {USERGROUP: ["ExampleUser"]}, DATA)
 
         acl_rights = ["NewGroup:read,write"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
@@ -100,12 +100,14 @@ class TestWikiGroupBackend(GroupsBackendTest):
         has_rights_before = acl.may("AnotherUser", "read")
 
         # update item - add AnotherUser to a item group NewGroup
-        update_item('NewGroup', {USERGROUP: ["AnotherUser"]}, '')
+        update_item("NewGroup", {USERGROUP: ["AnotherUser"]}, "")
 
         has_rights_after = acl.may("AnotherUser", "read")
 
-        assert not has_rights_before, 'AnotherUser has no read rights because in the beginning he is not a member of a group item NewGroup'
-        assert has_rights_after, 'AnotherUser must have read rights because after appenditem he is member of NewGroup'
+        assert (
+            not has_rights_before
+        ), "AnotherUser has no read rights because in the beginning he is not a member of a group item NewGroup"
+        assert has_rights_after, "AnotherUser must have read rights because after appenditem he is member of NewGroup"
 
 
-coverage_modules = ['moin.datastructures.backends.wiki_groups']
+coverage_modules = ["moin.datastructures.backends.wiki_groups"]

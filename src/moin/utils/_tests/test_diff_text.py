@@ -12,7 +12,7 @@ from moin.utils import diff_text
 class TestDiffText:
 
     def testDiff(self):
-        """ utils.diff_text.diff: test correct diff calculation """
+        """utils.diff_text.diff: test correct diff calculation"""
         in1 = """AAA 001
 AAA 002
 AAA 003
@@ -67,4 +67,4 @@ BBB 003
         assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
 
 
-coverage_modules = ['moin.utils.diff_text']
+coverage_modules = ["moin.utils.diff_text"]

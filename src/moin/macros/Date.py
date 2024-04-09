@@ -24,8 +24,14 @@ class MacroDateTimeBase(MacroInlineBase):
                      YYYY-MM-DD HH:MM:SS (same as above but replacing T separator with " ")
         :returns: UNIX timestamp (UTC)
         """
-        if (len(args) >= 19 and args[4] == '-' and args[7] == '-' and
-                args[10] in 'T ' and args[13] == ':' and args[16] == ':'):
+        if (
+            len(args) >= 19
+            and args[4] == "-"
+            and args[7] == "-"
+            and args[10] in "T "
+            and args[13] == ":"
+            and args[16] == ":"
+        ):
             try:
                 year, month, day = int(args[0:4]), int(args[5:7]), int(args[8:10])
                 hour, minute, second = int(args[11:13]), int(args[14:16]), int(args[17:19])
@@ -33,10 +39,10 @@ class MacroDateTimeBase(MacroInlineBase):
                 tzoffset = 0  # we assume UTC no matter if there is a Z
                 if tz:
                     sign = tz[0]
-                    if sign in '+-\u2212':  # ascii plus, ascii hyphen-minus, unicode minus
+                    if sign in "+-\u2212":  # ascii plus, ascii hyphen-minus, unicode minus
                         tzh, tzm = int(tz[1:3]), int(tz[3:])
                         tzoffset = (tzh * 60 + tzm) * 60
-                        if sign in '-\u2212':  # ascii hyphen-minus, unicode minus
+                        if sign in "-\u2212":  # ascii hyphen-minus, unicode minus
                             tzoffset = -tzoffset
                 tm = year, month, day, hour, minute, second, 0, 0, 0
             except ValueError as err:

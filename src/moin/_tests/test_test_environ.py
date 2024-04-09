@@ -28,11 +28,11 @@ class TestStorageEnvironWithoutConfig:
 
         storage = flaskg.storage
         assert storage
-        assert hasattr(storage, '__getitem__')
+        assert hasattr(storage, "__getitem__")
         itemname = "this item shouldn't exist yet"
         assert not storage.has_item(itemname)
         item = storage[itemname]
-        item.store_revision({NAME: [itemname, ], CONTENTTYPE: 'text/plain;charset=utf-8'}, BytesIO(b''))
+        item.store_revision({NAME: [itemname], CONTENTTYPE: "text/plain;charset=utf-8"}, BytesIO(b""))
         assert storage.has_item(itemname)
 
 

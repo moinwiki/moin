@@ -13,6 +13,7 @@ Moin 1.9 markup to Moin 2.0 markup.
 """
 
 import pytest
+
 # TODO: failing tests are commented out and need to be fixed
 
 from emeraldtree import ElementTree as ET
@@ -27,13 +28,14 @@ from moin.converters.moinwiki_out import Converter as conv_out
 class TestConverter:
 
     input_namespaces = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:xinclude="{}" xmlns:html="{}"'.format(
-        moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace)
+        moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace
+    )
 
     namespaces = {
-        moin_page.namespace: 'page',
-        xlink.namespace: 'xlink',
-        xinclude.namespace: 'xinclude',
-        html.namespace: 'html',
+        moin_page.namespace: "page",
+        xlink.namespace: "xlink",
+        xinclude.namespace: "xinclude",
+        html.namespace: "html",
     }
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
@@ -45,18 +47,18 @@ class TestConverter:
     data = [
         # Note: old style attachments are are supported in moinwiki_in so conversion to moin 2 markup is not necessary
         # TODO: in a perfect world, moinwiki19_in should convert attachments
-        ('[[attachment:filename.txt]]', '[[/filename.txt]]\n'),
+        ("[[attachment:filename.txt]]", "[[/filename.txt]]\n"),
         # moin 1.9 to 2.0 conversion
-        ('TestPage', '[[TestPage]]\n'),
+        ("TestPage", "[[TestPage]]\n"),
         # ('../SisterPage', '[[../SisterPage]]\n'),
     ]
 
-    @pytest.mark.parametrize('input,output', data)
+    @pytest.mark.parametrize("input,output", data)
     def test_link(self, input, output):
         self.do(input, output)
 
     def handle_input(self, input):
-        i = self.input_re.sub(r'\1 ' + self.input_namespaces, input)
+        i = self.input_re.sub(r"\1 " + self.input_namespaces, input)
         return ET.XML(i)
 
     def handle_output(self, elem, **options):
@@ -64,11 +66,11 @@ class TestConverter:
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub('', result)
+        return self.output_re.sub("", result)
 
     def do(self, input, output, args={}, skip=None):
         if skip:
             pytest.skip(skip)
-        out = self.conv_in(input, 'text/x.moin.wiki;format=1.9;charset=utf-8', **args)
+        out = self.conv_in(input, "text/x.moin.wiki;format=1.9;charset=utf-8", **args)
         out = self.conv_out(self.handle_input(self.serialize_strip(out)), **args)
         assert self.handle_output(out) == output

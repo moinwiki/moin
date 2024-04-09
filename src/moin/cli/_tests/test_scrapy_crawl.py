@@ -23,17 +23,21 @@ logging = log.getLogger(__name__)
 class TestSiteCrawl:
     EXPECTED_404 = [
         CrawlResultMatch(
-            url_path_components=['MissingSubItem', 'MissingSubitem', 'MissingPage', 'MissingItem', 'MissingSibling']),
+            url_path_components=["MissingSubItem", "MissingSubitem", "MissingPage", "MissingItem", "MissingSibling"]
+        )
     ]
     KNOWN_ISSUES = [
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                                 path='/+get/help-common/logo.png'),
-                         from_url='/markdown'),  # only with wiki_root
-        CrawlResultMatch(url='http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif',
-                         from_url='/html'),
-        CrawlResultMatch(url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path='/users/Home'),
-                         from_url='/html')  # only with wiki_root
-        ]
+        CrawlResultMatch(
+            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path="/+get/help-common/logo.png"),
+            from_url="/markdown",
+        ),  # only with wiki_root
+        CrawlResultMatch(
+            url="http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif", from_url="/html"
+        ),
+        CrawlResultMatch(
+            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path="/users/Home"), from_url="/html"
+        ),  # only with wiki_root
+    ]
     line_number = 0
     line_buffer = []
     gathered_log_lines = {}
@@ -52,21 +56,24 @@ class TestSiteCrawl:
         return self._matches_one_of(r, self.EXPECTED_404)
 
     def test_home_page(self, crawl_results):
-        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
-        for line in open(get_crawl_log_path(), 'rb'):
-            if b'crawl.csv' in line:
-                logging.info(f'{line} from {get_crawl_log_path()}')
+        assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
+        for line in open(get_crawl_log_path(), "rb"):
+            if b"crawl.csv" in line:
+                logging.info(f"{line} from {get_crawl_log_path()}")
         assert len(crawl_results[0]) > 0
         r = crawl_results[0][0]
-        expected = CrawlResultMatch(url='/Home')
-        assert expected.match(r), f'unexpected redirect for / {r}'
+        expected = CrawlResultMatch(url="/Home")
+        assert expected.match(r), f"unexpected redirect for / {r}"
 
     def test_200(self, crawl_results):
-        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
+        assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
         failures = []
-        for r in [r for r in crawl_results[0] if r.url
-                  and r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)]:
-            if 'Discussion' in r.url.path:
+        for r in [
+            r
+            for r in crawl_results[0]
+            if r.url and r.url.authority == settings.SITE_HOST and not self.is_known_issue(r)
+        ]:
+            if "Discussion" in r.url.path:
                 expected = {200, 404}
             elif self.is_expected_404(r):
                 expected = {404}
@@ -74,16 +81,16 @@ class TestSiteCrawl:
                 expected = {200}
             if r.response_code not in expected:
                 failures.append(r)
-                logging.error(f'expected {expected} got {r.response_code} for {r}')
+                logging.error(f"expected {expected} got {r.response_code} for {r}")
         assert len(failures) == 0
 
-    @pytest.mark.xfail(reason='issue #1414 - remaining bad links in help')
+    @pytest.mark.xfail(reason="issue #1414 - remaining bad links in help")
     def test_expected_failures(self, crawl_results):
-        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
+        assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
         failures = []
         for r in [r for r in crawl_results[0] if self.is_known_issue(r)]:
             if r.response_code != 200:
-                logging.info(f'known issue {r}')
+                logging.info(f"known issue {r}")
                 failures.append(r)
         assert len(failures) == 0
 
@@ -92,7 +99,7 @@ class TestSiteCrawl:
         """enable this test to check for KNOWN_ISSUES which can be removed
         after removing, be sure to confirm by crawling a host with non-blank SITE_WIKI_ROOT
         as some issues only exist when moin is running behind apache"""
-        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
+        assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
         fixed = []
         for m in self.KNOWN_ISSUES:
             seen = False
@@ -106,19 +113,19 @@ class TestSiteCrawl:
                     my_not_fixed.append(r)
             if not my_not_fixed:
                 for r in my_fixed:
-                    logging.error(f'{r} matching {m} is fixed')
+                    logging.error(f"{r} matching {m} is fixed")
                     fixed.append((m, r))
             if not seen:
-                logging.error(f'match {m} not seen')
+                logging.error(f"match {m} not seen")
                 fixed.append((m, None))
         assert len(fixed) == 0
 
     def test_valid_request(self, crawl_results):
-        assert crawl_results[1], f'crawl failed, check {get_crawl_log_path()}'
+        assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
         failures = []
         for r in [r for r in crawl_results[0] if not self.is_known_issue(r)]:
             if not r.response_code:
-                logging.error(f'no response code for {r}')
+                logging.error(f"no response code for {r}")
                 failures.append(r)
         assert len(failures) == 0
 
@@ -149,8 +156,8 @@ class TestSiteCrawl:
             error_count = 0
             while self._next_server_log_line():
                 # when error line is seen, print including traceback block with two leading and two trailing lines
-                start_traceback = ('Traceback' in self.line)
-                is_error = (' ERROR ' in self.line)
+                start_traceback = "Traceback" in self.line
+                is_error = " ERROR " in self.line
                 if is_error or start_traceback:
                     error_count += 1
                 if not is_traceback:
@@ -168,8 +175,8 @@ class TestSiteCrawl:
                 if gather or trailing_line_count:
                     self._gather_current_log_line()
                     if is_traceback:
-                        if not (self.line.startswith(' ') or start_traceback):
+                        if not (self.line.startswith(" ") or start_traceback):
                             is_traceback = False
         for i, server_log_line in self.gathered_log_lines.items():
-            logging.info(f'{server_crawl_log.name} {i}: {server_log_line.strip()}')
-        assert 0 == error_count, f'{error_count} errors in {str(server_crawl_log)}'
+            logging.info(f"{server_crawl_log.name} {i}: {server_log_line.strip()}")
+        assert 0 == error_count, f"{error_count} errors in {str(server_crawl_log)}"

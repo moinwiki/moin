@@ -15,6 +15,7 @@ class TableMixin:
     """
     Mixin to support building a DOM table.
     """
+
     def add_numeric_class(self, cell, table_cell):
         """
         Add numeric class attribute if cell is numeric.
@@ -24,7 +25,7 @@ class TableMixin:
         except (ValueError, TypeError):
             pass
         else:
-            table_cell.attrib[moin_page('class')] = 'moin-integer'
+            table_cell.attrib[moin_page("class")] = "moin-integer"
 
     def build_dom_table(self, rows, head=None, cls=None):
         """
@@ -32,12 +33,12 @@ class TableMixin:
         """
         table = moin_page.table()
         if cls is not None:
-            table.attrib[moin_page('class')] = cls
+            table.attrib[moin_page("class")] = cls
         if head is not None:
             table_head = moin_page.table_header()
             table_row = moin_page.table_row()
             for idx, cell in enumerate(head):
-                table_cell = moin_page.table_cell(children=[cell, ],)
+                table_cell = moin_page.table_cell(children=[cell])
                 if rows and len(rows[0]) == len(head):
                     # add "align: right" to heading cell if cell in first data row is numeric
                     self.add_numeric_class(rows[0][idx], table_cell)
@@ -48,14 +49,19 @@ class TableMixin:
         for row in rows:
             table_row = moin_page.table_row()
             for cell in row:
-                if isinstance(cell, ET.Node) and len(cell) and isinstance(cell[0], str) \
-                   and len(cell[0].split()) == 1 and len(cell[0]) > WORDBREAK_LEN:
+                if (
+                    isinstance(cell, ET.Node)
+                    and len(cell)
+                    and isinstance(cell[0], str)
+                    and len(cell[0].split()) == 1
+                    and len(cell[0]) > WORDBREAK_LEN
+                ):
                     # avoid destroying table layout by applying special styling to cells with long file name hyperlinks
-                    table_cell = moin_page.table_cell(children=[cell, ], attrib={moin_page.class_: 'moin-wordbreak'})
+                    table_cell = moin_page.table_cell(children=[cell], attrib={moin_page.class_: "moin-wordbreak"})
                 elif isinstance(cell, ET.Node):
-                    table_cell = moin_page.table_cell(children=[cell, ])
+                    table_cell = moin_page.table_cell(children=[cell])
                 else:
-                    table_cell = moin_page.table_cell(children=[cell, ],)
+                    table_cell = moin_page.table_cell(children=[cell])
                     self.add_numeric_class(cell, table_cell)
                 table_row.append(table_cell)
             table_body.append(table_row)

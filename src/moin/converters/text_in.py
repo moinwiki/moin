@@ -24,6 +24,7 @@ class Converter:
     Parse the raw text and create a document object
     that can be converted into output using Emitter.
     """
+
     @classmethod
     def _factory(cls, type_input, type_output, **kw):
         return cls()
@@ -34,12 +35,13 @@ class Converter:
         blockcode = moin_page.blockcode()
         for line in content:
             if len(blockcode):
-                blockcode.append('\n')
+                blockcode.append("\n")
             blockcode.append(line.expandtabs())
-        body = moin_page.body(children=(blockcode, ))
-        return moin_page.page(children=(body, ))
+        body = moin_page.body(children=(blockcode,))
+        return moin_page.page(children=(body,))
 
 
 # Assign a lower priority (= bigger number) so that it is tried after pygments_in
-default_registry.register(Converter._factory, Type(type='text'), type_moin_document,
-                          default_registry.PRIORITY_MIDDLE + 1)
+default_registry.register(
+    Converter._factory, Type(type="text"), type_moin_document, default_registry.PRIORITY_MIDDLE + 1
+)

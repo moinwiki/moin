@@ -11,18 +11,18 @@ from moin.cli._tests import run, assert_p_succcess
 
 
 def test_moin(artifact_dir):
-    moin_p = run(['moin'])
+    moin_p = run(["moin"])
     assert_p_succcess(moin_p)
     assert moin_p.stdout.startswith(b"Quick help")
 
 
 def test_moin_help(artifact_dir):
-    moin_p = run(['moin', 'help'])
+    moin_p = run(["moin", "help"])
     assert_p_succcess(moin_p)
     assert moin_p.stdout.startswith(b"Quick help")
 
 
 def test_moin_dash_dash_help(artifact_dir):
-    moin_p = run(['moin', '--help'])
+    moin_p = run(["moin", "--help"])
     assert_p_succcess(moin_p)
     assert moin_p.stdout.startswith(b"Usage: moin")

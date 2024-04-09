@@ -27,7 +27,7 @@ class Macro(MacroMultiLinkListBase):
 
         children = get_item_names(namespace)
         if not children:
-            empty_list = moin_page.list(attrib={moin_page.item_label_generate: 'unordered'})
+            empty_list = moin_page.list(attrib={moin_page.item_label_generate: "unordered"})
             item_body = moin_page.list_item_body(children=[_("<TitleList macro: No matching items were found.>")])
             empty_list.append(moin_page.list_item(children=[item_body]))
             return empty_list

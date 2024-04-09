@@ -50,6 +50,7 @@ class MutableBackendBase(BackendBase):
     """
     same as Backend, but read/write
     """
+
     @abstractmethod
     def create(self):
         """

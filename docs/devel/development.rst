@@ -107,6 +107,9 @@ add more tools, exercise tools
 * create local docs::
 
     ./m docs  # Windows: m docs
+* install the pre-commit hook::
+
+    pre-commit install  # pre-commit is used for code linting / auto-format
 * set options on your favorite editor or IDE
 
   - convert tabs to 4 spaces

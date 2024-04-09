@@ -11,7 +11,7 @@ import pytest
 from ..memory import BytesStore, FileStore
 
 
-@pytest.mark.parametrize('Store', [BytesStore, FileStore])
+@pytest.mark.parametrize("Store", [BytesStore, FileStore])
 def test_create_and_destroy(Store):
     store = Store()
     assert store._st is None
@@ -23,7 +23,7 @@ def test_create_and_destroy(Store):
     assert store._st is None
 
 
-@pytest.mark.parametrize('Store', [BytesStore, FileStore])
+@pytest.mark.parametrize("Store", [BytesStore, FileStore])
 def test_from_uri(Store):
     store = Store.from_uri("mem://")
     assert isinstance(store, Store)

@@ -10,7 +10,7 @@ from collections import namedtuple
 from moin.utils.pysupport import AutoNe
 
 
-class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
+class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
     """
     :ivar type: Type part
     :type type: str
@@ -20,8 +20,9 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
     :type parameters: dict
     """
 
-    __token_allowed = s = frozenset(r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"""
-                                    r"""^_`abcdefghijklmnopqrstuvwxyz{|}~""")
+    __token_allowed = s = frozenset(
+        r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ""" r"""^_`abcdefghijklmnopqrstuvwxyz{|}~"""
+    )
 
     def __new__(cls, _type=None, type=None, subtype=None, parameters=None):
         """
@@ -57,16 +58,16 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
         return NotImplemented
 
     def __str__(self):
-        ret = ['{}/{}'.format(self.type or '*', self.subtype or '*')]
+        ret = ["{}/{}".format(self.type or "*", self.subtype or "*")]
 
         parameters = sorted(self.parameters.items())
         for key, value in parameters:
             if self.__token_check(value):
-                ret.append(f'{key}={value}')
+                ret.append(f"{key}={value}")
             else:
                 ret.append(f'{key}="{value}"')
 
-        return ';'.join(ret)
+        return ";".join(ret)
 
     def __token_check(self, value):
         token_allowed = self.__token_allowed
@@ -77,16 +78,16 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
 
     @classmethod
     def _parse(cls, type):
-        parts = type.split(';')
+        parts = type.split(";")
 
-        type, subtype = parts[0].strip().lower().split('/', 1)
+        type, subtype = parts[0].strip().lower().split("/", 1)
 
-        type = type != '*' and type or ''
-        subtype = subtype != '*' and subtype or ''
+        type = type != "*" and type or ""
+        subtype = subtype != "*" and subtype or ""
         parameters = {}
 
         for param in parts[1:]:
-            key, value = param.strip().split('=', 1)
+            key, value = param.strip().split("=", 1)
             # remove quotes
             if value[0] == '"' and value[-1] == '"':
                 value = value[1:-1]
@@ -116,11 +117,11 @@ class Type(namedtuple('Type', 'type subtype parameters'), AutoNe):
 
 
 # Own types, application type
-type_moin_document = Type(type='application', subtype='x.moin.document')
+type_moin_document = Type(type="application", subtype="x.moin.document")
 
 # Own types, text type
-type_moin_creole = Type(type='text', subtype='x.moin.creole')
-type_moin_wiki = Type(type='text', subtype='x.moin.wiki')
+type_moin_creole = Type(type="text", subtype="x.moin.creole")
+type_moin_wiki = Type(type="text", subtype="x.moin.wiki")
 
 # Generic types, text type
-type_text_plain = Type(type='text', subtype='plain')
+type_text_plain = Type(type="text", subtype="plain")

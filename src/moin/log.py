@@ -117,10 +117,10 @@ def _log_warning(message, category, filename, lineno, file=None, line=None):
 
 
 def load_config(conf_fname=None):
-    """ load logging config from conffile """
+    """load logging config from conffile"""
     global configured
     err_msg = None
-    conf_fname = os.environ.get('MOINLOGGINGCONF', conf_fname)
+    conf_fname = os.environ.get("MOINLOGGINGCONF", conf_fname)
     if conf_fname:
         try:
             conf_fname = os.path.abspath(conf_fname)
@@ -147,20 +147,21 @@ def load_config(conf_fname=None):
         logger = getLogger(__name__)
         if err_msg:
             logger.warning(f'load_config for "{conf_fname}" failed with "{err_msg}".')
-        logger.debug('using logging configuration read from built-in fallback in moin.log module!')
+        logger.debug("using logging configuration read from built-in fallback in moin.log module!")
         warnings.showwarning = _log_warning
 
     import moin
+
     code_path = os.path.dirname(moin.__file__)
-    logger.debug(f'Running {moin.project} {moin.version} code from {code_path}')
+    logger.debug(f"Running {moin.project} {moin.version} code from {code_path}")
 
 
 def getLogger(name):
-    """ wrapper around logging.getLogger, so we can do some more stuff:
+    """wrapper around logging.getLogger, so we can do some more stuff:
 
-        - preprocess logger name
-        - patch loglevel constants into logger object, so it can be used
-          instead of the logging module
+    - preprocess logger name
+    - patch loglevel constants into logger object, so it can be used
+      instead of the logging module
     """
     if not configured:
         load_config()
@@ -171,11 +172,12 @@ def getLogger(name):
 
 
 class EmailHandler(logging.Handler):
-    """ A custom handler class which sends email for each logging event using
+    """A custom handler class which sends email for each logging event using
     wiki mail configuration
     """
-    def __init__(self, toaddrs=[], subject=''):
-        """ Initialize the handler
+
+    def __init__(self, toaddrs=[], subject=""):
+        """Initialize the handler
 
         :param toaddrs: address or a list of email addresses whom to send email
         :param subject: unicode email's subject
@@ -188,13 +190,14 @@ class EmailHandler(logging.Handler):
         self.in_email_handler = False
 
     def emit(self, record):
-        """ Emit a record.
+        """Emit a record.
 
         Send the record to the specified addresses
         """
         # the app config is accessible after logging is initialized, so set the
         # arguments and make the decision to send mail or not here
         from flask import current_app as app
+
         try:
             email_tracebacks = app.cfg.email_tracebacks
         except RuntimeError:
@@ -211,9 +214,10 @@ class EmailHandler(logging.Handler):
         try:
             toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
             log_level = logging.getLevelName(self.level)
-            subject = self.subject if self.subject else f'[{app.cfg.sitename}][{log_level}] Log message'
+            subject = self.subject if self.subject else f"[{app.cfg.sitename}][{log_level}] Log message"
             msg = self.format(record)
             from moin.mail.sendmail import sendmail
+
             sendmail(subject, msg, to=toaddrs)
         finally:
             self.in_email_handler = False

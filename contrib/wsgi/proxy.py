@@ -20,18 +20,18 @@ class ProxyTrust:
         self.proxies = proxies
 
     def __call__(self, environ, start_response):
-        if 'HTTP_X_FORWARDED_FOR' in environ:
-            addrs = environ.pop('HTTP_X_FORWARDED_FOR').split(',')
+        if "HTTP_X_FORWARDED_FOR" in environ:
+            addrs = environ.pop("HTTP_X_FORWARDED_FOR").split(",")
             addrs = [addr.strip() for addr in addrs]
-        elif 'REMOTE_ADDR' in environ:
-            addrs = [environ['REMOTE_ADDR']]
+        elif "REMOTE_ADDR" in environ:
+            addrs = [environ["REMOTE_ADDR"]]
         else:
             addrs = [None]
         result = [addr for addr in addrs if addr not in self.proxies]
         if result:
-            environ['REMOTE_ADDR'] = result[-1]
+            environ["REMOTE_ADDR"] = result[-1]
         elif addrs[-1] is not None:
-            environ['REMOTE_ADDR'] = addrs[-1]
+            environ["REMOTE_ADDR"] = addrs[-1]
         else:
-            del environ['REMOTE_ADDR']
+            del environ["REMOTE_ADDR"]
         return self.app(environ, start_response)

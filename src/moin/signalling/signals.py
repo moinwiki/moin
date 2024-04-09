@@ -12,5 +12,5 @@ from blinker import Namespace, ANY  # noqa
 
 _signals = Namespace()
 
-item_displayed = _signals.signal('item_displayed')
-item_modified = _signals.signal('item_modified')
+item_displayed = _signals.signal("item_displayed")
+item_modified = _signals.signal("item_modified")

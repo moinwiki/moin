@@ -24,6 +24,7 @@ from moin.constants.contenttypes import DRAWING_EXTENSIONS
 from moin.utils.mimetype import MimeType
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -38,20 +39,21 @@ CHILD_PREFIX_LEN = len(CHILD_PREFIX)
 # Data validation / cleanup
 #############################################################################
 
+
 # TODO: use similar code in a flatland validator
 def clean_input(text, max_len=201):
-    """ Clean input:
-        replace CR, LF, TAB by whitespace
-        delete control chars
+    """Clean input:
+    replace CR, LF, TAB by whitespace
+    delete control chars
 
-        :param text: unicode text to clean (if we get str, we decode)
-        :rtype: unicode
-        :returns: cleaned text
+    :param text: unicode text to clean (if we get str, we decode)
+    :rtype: unicode
+    :returns: cleaned text
     """
     # we only have input fields with max 200 chars, but spammers send us more
     length = len(text)
     if length == 0 or length > max_len:
-        return ''
+        return ""
     else:
         if isinstance(text, bytes):
             # the translate() below can ONLY process unicode, thus, if we get
@@ -62,7 +64,7 @@ def clean_input(text, max_len=201):
 
 # TODO: use similar code in a flatland validator
 def normalize_pagename(name, cfg):
-    """ Normalize page name
+    """Normalize page name
 
     Prevent creating page names with invisible characters or funny
     whitespace that might confuse the users or abuse the wiki, or
@@ -75,10 +77,10 @@ def normalize_pagename(name, cfg):
     :returns: decoded and sanitized page name
     """
     # Strip invalid characters
-    name = ITEM_INVALID_CHARS_REGEX.sub('', name)
+    name = ITEM_INVALID_CHARS_REGEX.sub("", name)
 
     # Split to pages and normalize each one
-    pages = name.split('/')
+    pages = name.split("/")
     normalized = []
     for page in pages:
         # Ignore empty or whitespace only pages
@@ -88,18 +90,17 @@ def normalize_pagename(name, cfg):
         # Cleanup group pages.
         # Strip non alpha numeric characters, keep white space
         if isGroupItem(page):
-            page = ''.join([c for c in page
-                            if c.isalnum() or c.isspace()])
+            page = "".join([c for c in page if c.isalnum() or c.isspace()])
 
         # Normalize white space. Each name can contain multiple
         # words separated with only one space. Split handle all
         # 30 unicode spaces (isspace() == True)
-        page = ' '.join(page.split())
+        page = " ".join(page.split())
 
         normalized.append(page)
 
     # Assemble components into full pagename
-    name = '/'.join(normalized)
+    name = "/".join(normalized)
     return name
 
 
@@ -107,8 +108,9 @@ def normalize_pagename(name, cfg):
 # Item types / Item names
 #############################################################################
 
+
 def isGroupItem(itemname):
-    """ Is this a name of group item?
+    """Is this a name of group item?
 
     :param itemname: the item name
     :rtype: bool
@@ -128,12 +130,12 @@ def AbsItemName(context, itemname):
     """
     if itemname.startswith(PARENT_PREFIX):
         while context and itemname.startswith(PARENT_PREFIX):
-            context = '/'.join(context.split('/')[:-1])
+            context = "/".join(context.split("/")[:-1])
             itemname = itemname[PARENT_PREFIX_LEN:]
-        itemname = '/'.join([e for e in [context, itemname, ] if e])
+        itemname = "/".join([e for e in [context, itemname] if e])
     elif itemname.startswith(CHILD_PREFIX):
         if context:
-            itemname = context + '/' + itemname[CHILD_PREFIX_LEN:]
+            itemname = context + "/" + itemname[CHILD_PREFIX_LEN:]
         else:
             itemname = itemname[CHILD_PREFIX_LEN:]
     return itemname
@@ -148,17 +150,17 @@ def RelItemName(context, itemname):
     :rtype: unicode
     :returns: the relative item name
     """
-    if context == '':
+    if context == "":
         # special case, context is some "virtual root" item with name == ''
         # every item is a subitem of this virtual root
         return CHILD_PREFIX + itemname
     elif itemname.startswith(context + CHILD_PREFIX):
         # simple child
-        return itemname[len(context):]
+        return itemname[len(context) :]
     else:
         # some kind of sister/aunt
-        context_frags = context.split('/')   # A, B, C, D, E
-        itemname_frags = itemname.split('/')  # A, B, C, F
+        context_frags = context.split("/")  # A, B, C, D, E
+        itemname_frags = itemname.split("/")  # A, B, C, F
         # first throw away common parents:
         common = 0
         for cf, pf in zip(context_frags, itemname_frags):
@@ -169,7 +171,7 @@ def RelItemName(context, itemname):
         context_frags = context_frags[common:]  # D, E
         itemname_frags = itemname_frags[common:]  # F
         go_up = len(context_frags)
-        return PARENT_PREFIX * go_up + '/'.join(itemname_frags)
+        return PARENT_PREFIX * go_up + "/".join(itemname_frags)
 
 
 def ParentItemName(itemname):
@@ -181,22 +183,23 @@ def ParentItemName(itemname):
     :returns: the parent item name (or empty string for toplevel items)
     """
     if itemname:
-        pos = itemname.rfind('/')
+        pos = itemname.rfind("/")
         if pos > 0:
             return itemname[:pos]
-    return ''
+    return ""
 
 
 #############################################################################
 # Misc
 #############################################################################
 
+
 def drawing2fname(drawing):
     _, ext = os.path.splitext(drawing)
     # note: do not just check for empty extension or stuff like drawing:foo.bar
     # will fail, instead of being expanded to foo.bar.svgdraw
     if ext not in DRAWING_EXTENSIONS:
-        drawing += '.svgdraw'
+        drawing += ".svgdraw"
     return drawing
 
 
@@ -210,30 +213,30 @@ def getUnicodeIndexGroup(name):
     :returns: group letter or None
     """
     c = name[0]
-    if '\uAC00' <= c <= '\uD7AF':  # Hangul Syllables
-        return chr(0xac00 + (int(ord(c) - 0xac00) / 588) * 588)
+    if "\uAC00" <= c <= "\uD7AF":  # Hangul Syllables
+        return chr(0xAC00 + (int(ord(c) - 0xAC00) / 588) * 588)
     else:
         return c.upper()  # we put lower and upper case words into the same index group
 
 
 def is_URL(arg, schemes=URI_SCHEMES):
-    """ Return True if arg is a URL (with a scheme given in the schemes list).
+    """Return True if arg is a URL (with a scheme given in the schemes list).
 
-        Note: there are not that many requirements for generic URLs, basically
-        the only mandatory requirement is the ':' between scheme and rest.
-        Scheme itself could be anything, also the rest (but we only support some
-        schemes, as given in URI_SCHEMES, so it is a bit less ambiguous).
+    Note: there are not that many requirements for generic URLs, basically
+    the only mandatory requirement is the ':' between scheme and rest.
+    Scheme itself could be anything, also the rest (but we only support some
+    schemes, as given in URI_SCHEMES, so it is a bit less ambiguous).
     """
-    if ':' not in arg:
+    if ":" not in arg:
         return False
     for scheme in schemes:
-        if arg.startswith(scheme + ':'):
+        if arg.startswith(scheme + ":"):
             return True
     return False
 
 
 def containsConflictMarker(text):
-    """ Returns true if there is a conflict marker in the text. """
+    """Returns true if there is a conflict marker in the text."""
     return "/!\\ '''Edit conflict" in text
 
 
@@ -246,10 +249,10 @@ def anchor_name_from_text(text):
     valid ID/name, it will return it without modification (identity
     transformation).
     """
-    quoted = urllib.parse.quote_plus(text, safe=':', encoding='utf-7', )
-    res = quoted.replace('%', '.').replace('+', '_')
+    quoted = urllib.parse.quote_plus(text, safe=":", encoding="utf-7")
+    res = quoted.replace("%", ".").replace("+", "_")
     if not res[:1].isalpha():
-        return f'A{res}'
+        return f"A{res}"
     return res
 
 
@@ -273,7 +276,7 @@ def split_anchor(pagename):
           pagename part (and no anchor). Also, we need to append #anchor
           at the END of the generated URL (AFTER the query string).
     """
-    parts = pagename.rsplit('#', 1)
+    parts = pagename.rsplit("#", 1)
     if len(parts) == 2:
         return parts
     else:
@@ -290,6 +293,7 @@ def get_hostname(addr):
     """
     if app.cfg.log_reverse_dns_lookups:
         import socket
+
         try:
             return str(socket.gethostbyaddr(addr)[0], CHARSET)
         except (OSError, UnicodeError):
@@ -315,11 +319,11 @@ def file_headers(filename=None, content_type=None, content_length=None):
         if mt is not None:
             content_type = mt.content_type()
         else:
-            content_type = 'application/octet-stream'
+            content_type = "application/octet-stream"
     else:
         mt = MimeType(mimestr=content_type)
 
-    headers = [('Content-Type', content_type)]
+    headers = [("Content-Type", content_type)]
     if content_length is not None:
-        headers.append(('Content-Length', str(content_length)))
+        headers.append(("Content-Length", str(content_length)))
     return headers

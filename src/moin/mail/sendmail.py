@@ -17,6 +17,7 @@ from flask import current_app as app
 from moin.i18n import _
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -24,7 +25,7 @@ _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
 
 
 def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=None):
-    """ Create and send a text/plain message
+    """Create and send a text/plain message
 
     Return a tuple of success or error indicator and message.
 
@@ -48,8 +49,13 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     """
     cfg = app.cfg
     if not cfg.mail_enabled:
-        return (0, _("Contact administrator: cannot send password recovery e-mail "
-                     "because mail configuration is incomplete."))
+        return (
+            0,
+            _(
+                "Contact administrator: cannot send password recovery e-mail "
+                "because mail configuration is incomplete."
+            ),
+        )
     mail_from = mail_from or cfg.mail_from
 
     logging.debug(f"send mail, from: {mail_from!r}, subj: {subject!r}")
@@ -62,35 +68,35 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
 
     msg.set_content(text)
     if html:
-        msg.add_alternative(html, subtype='html')
+        msg.add_alternative(html, subtype="html")
 
-    msg['From'] = mail_from
+    msg["From"] = mail_from
     if to:
-        msg['To'] = to
+        msg["To"] = to
     if cc:
-        msg['CC'] = cc
-    msg['Subject'] = subject
-    msg['Date'] = formatdate()
-    msg['Message-ID'] = make_msgid()
-    msg['Auto-Submitted'] = 'auto-generated'  # RFC 3834 section 5
+        msg["CC"] = cc
+    msg["Subject"] = subject
+    msg["Date"] = formatdate()
+    msg["Message-ID"] = make_msgid()
+    msg["Auto-Submitted"] = "auto-generated"  # RFC 3834 section 5
 
     if cfg.mail_sendmail:
         if bcc:
             # Set the BCC.  This will be stripped later by sendmail.
-            msg['BCC'] = bcc
+            msg["BCC"] = bcc
         # Set Return-Path so that it isn't set (generally incorrectly) for us.
-        msg['Return-Path'] = mail_from
+        msg["Return-Path"] = mail_from
 
     # Send the message
     if not cfg.mail_sendmail:
         try:
             logging.debug(f"trying to send mail (smtp) via smtp server '{cfg.mail_smarthost}'")
-            host, port = (cfg.mail_smarthost + ':25').split(':')[:2]
+            host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
             server = smtplib.SMTP(host, int(port))
             try:
                 server.ehlo()
                 try:  # try to do TLS
-                    if server.has_extn('starttls'):
+                    if server.has_extn("starttls"):
                         server.starttls()
                         server.ehlo()
                         logging.debug("tls connection to smtp server established")
@@ -112,9 +118,12 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             return 0, str(e)
         except OSError as e:
             logging.exception("smtp mail failed with an exception.")
-            return (0, _("Connection to mailserver '{server}' failed: {reason}"
-                        ).format(server=cfg.mail_smarthost, reason=str(e))
-                   )
+            return (
+                0,
+                _("Connection to mailserver '{server}' failed: {reason}").format(
+                    server=cfg.mail_smarthost, reason=str(e)
+                ),
+            )
     else:
         raise NotImplementedError  # TODO cli sendmail support
 
@@ -122,7 +131,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     return 1, _("Mail sent successfully")
 
 
-def encodeSpamSafeEmail(email_address, obfuscation_text=''):
+def encodeSpamSafeEmail(email_address, obfuscation_text=""):
     """
     Encodes a standard email address to an obfuscated address
 
@@ -139,16 +148,16 @@ def encodeSpamSafeEmail(email_address, obfuscation_text=''):
     address = email_address.lower()
     # uppercase letters will be stripped by decodeSpamSafeEmail
     for word, sign in _transdict.items():
-        address = address.replace(sign, f' {word} ')
+        address = address.replace(sign, f" {word} ")
     if obfuscation_text.isalpha():
         # is the obfuscation_text alphabetic
-        address = address.replace(' AT ', f' AT {obfuscation_text.upper()} ')
+        address = address.replace(" AT ", f" AT {obfuscation_text.upper()} ")
 
     return address
 
 
 def decodeSpamSafeEmail(address):
-    """ Decode obfuscated email address to standard email address
+    """Decode obfuscated email address to standard email address
 
     Decode a spam-safe email address in `address` by applying the
     following rules:
@@ -174,8 +183,8 @@ def decodeSpamSafeEmail(address):
         # is it all-uppercase?
         if word.isalpha() and word == word.upper():
             # strip unknown CAPS words
-            word = _transdict.get(word, '')
+            word = _transdict.get(word, "")
         email.append(word)
 
     # return concatenated parts
-    return ''.join(email)
+    return "".join(email)

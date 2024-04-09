@@ -11,7 +11,7 @@ import os
 import errno
 import shutil
 
-from . import (BytesMutableStoreBase, FileMutableStoreBase, BytesMutableStoreMixin)
+from . import BytesMutableStoreBase, FileMutableStoreBase, BytesMutableStoreMixin
 
 
 class FileStore(FileMutableStoreBase):
@@ -20,6 +20,7 @@ class FileStore(FileMutableStoreBase):
 
     keys are required to be valid filenames.
     """
+
     @classmethod
     def from_uri(cls, uri):
         return cls(uri)
@@ -52,7 +53,7 @@ class FileStore(FileMutableStoreBase):
 
     def __getitem__(self, key):
         try:
-            return open(self._mkpath(key), 'rb')
+            return open(self._mkpath(key), "rb")
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise KeyError(key)

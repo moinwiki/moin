@@ -23,6 +23,7 @@ class Converter:
     """
     Convert an image to the corresponding <object> in the DOM Tree
     """
+
     @classmethod
     def _factory(cls, input, output, **kw):
         return cls(input_type=input)
@@ -32,7 +33,7 @@ class Converter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         item_name = rev.item.name
-        query_keys = {'do': 'get', 'rev': rev.revid}
+        query_keys = {"do": "get", "rev": rev.revid}
         attrib = {}
         if arguments:
             query = arguments.keyword.get(xinclude.href)
@@ -43,19 +44,21 @@ class Converter:
 
         query = urlencode(query_keys, encoding=CHARSET)
 
-        attrib.update({
-            moin_page.type_: str(self.input_type),
-            xlink.href: Iri(scheme='wiki', authority='', path='/' + rev.item.fqname.fullname, query=query),
-        })
+        attrib.update(
+            {
+                moin_page.type_: str(self.input_type),
+                xlink.href: Iri(scheme="wiki", authority="", path="/" + rev.item.fqname.fullname, query=query),
+            }
+        )
         if rev.meta.get(SUMMARY) and html.alt not in attrib:
             attrib[html.alt] = rev.meta[SUMMARY]
 
-        obj = moin_page.object_(attrib=attrib, children=[item_name, ])
-        body = moin_page.body(children=(obj, ))
-        return moin_page.page(children=(body, ))
+        obj = moin_page.object_(attrib=attrib, children=[item_name])
+        body = moin_page.body(children=(obj,))
+        return moin_page.page(children=(body,))
 
 
-default_registry.register(Converter._factory, Type('image/svg+xml'), type_moin_document)
-default_registry.register(Converter._factory, Type('image/png'), type_moin_document)
-default_registry.register(Converter._factory, Type('image/jpeg'), type_moin_document)
-default_registry.register(Converter._factory, Type('image/gif'), type_moin_document)
+default_registry.register(Converter._factory, Type("image/svg+xml"), type_moin_document)
+default_registry.register(Converter._factory, Type("image/png"), type_moin_document)
+default_registry.register(Converter._factory, Type("image/jpeg"), type_moin_document)
+default_registry.register(Converter._factory, Type("image/gif"), type_moin_document)

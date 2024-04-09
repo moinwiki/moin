@@ -11,11 +11,11 @@ import pytest
 
 def test_getitem_raises(store):
     with pytest.raises(KeyError):
-        store['doesnotexist']
+        store["doesnotexist"]
 
 
 def test_setitem_getitem_delitem(store):
-    k, v = 'key', b'value'
+    k, v = "key", b"value"
     store[k] = v
     assert v == store[k]
     del store[k]
@@ -24,7 +24,7 @@ def test_setitem_getitem_delitem(store):
 
 
 def test_setitem_getitem_delitem_binary(store):
-    k, v = 'key', b'\000\001\002'
+    k, v = "key", b"\000\001\002"
     store[k] = v
     assert v == store[k]
     assert len(v) == 3
@@ -34,7 +34,7 @@ def test_setitem_getitem_delitem_binary(store):
 
 
 def test_iter(store):
-    kvs = {('1', b'one'), ('2', b'two'), ('3', b'three'), }
+    kvs = {("1", b"one"), ("2", b"two"), ("3", b"three")}
     for k, v in kvs:
         store[k] = v
     result = set()
@@ -45,9 +45,9 @@ def test_iter(store):
 
 def test_len(store):
     assert len(store) == 0
-    store['foo'] = b'bar'
+    store["foo"] = b"bar"
     assert len(store) == 1
-    del store['foo']
+    del store["foo"]
     assert len(store) == 0
 
 

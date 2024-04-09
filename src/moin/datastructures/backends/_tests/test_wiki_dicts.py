@@ -29,21 +29,17 @@ class TestWikiDictsBackend(DictsBackendTest):
     def custom_setup(self):
         become_trusted()
 
-        wikidict = {"First": "first item",
-                    "text with spaces": "second item",
-                    'Empty string': '',
-                    "Last": "last item"}
-        update_item('SomeTestDict', {WIKIDICT: wikidict}, DATA)
+        wikidict = {"First": "first item", "text with spaces": "second item", "Empty string": "", "Last": "last item"}
+        update_item("SomeTestDict", {WIKIDICT: wikidict}, DATA)
 
-        wikidict = {"One": "1",
-                    "Two": "2"}
-        update_item('SomeOtherTestDict', {WIKIDICT: wikidict}, DATA)
+        wikidict = {"One": "1", "Two": "2"}
+        update_item("SomeOtherTestDict", {WIKIDICT: wikidict}, DATA)
 
     def test__retrieve_items(self):
         wikidict_obj = wiki_dicts.WikiDicts()
-        result = wiki_dicts.WikiDicts._retrieve_items(wikidict_obj, 'SomeOtherTestDict')
-        expected = {'Two': '2', 'One': '1'}
+        result = wiki_dicts.WikiDicts._retrieve_items(wikidict_obj, "SomeOtherTestDict")
+        expected = {"Two": "2", "One": "1"}
         assert result == expected
 
 
-coverage_modules = ['moin.datastructures.backends.wiki_dicts']
+coverage_modules = ["moin.datastructures.backends.wiki_dicts"]

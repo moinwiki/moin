@@ -22,7 +22,7 @@ moin_dir = os.path.dirname(os.path.abspath(__file__))
 if not (moin_dir in sys.path or moin_dir.lower() in sys.path):
     sys.path.insert(0, moin_dir)
 
-wiki_config = moin_dir + '/wikiconfig.py'
+wiki_config = moin_dir + "/wikiconfig.py"
 
 # create the Moin (Flask) WSGI application
 application = create_app(wiki_config)

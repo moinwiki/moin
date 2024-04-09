@@ -24,7 +24,7 @@ def factory_none(arg):
 
 
 def factory_special(arg):
-    if arg == 'a':
+    if arg == "a":
         return 2
 
 
@@ -33,15 +33,15 @@ def test_Registry_get():
 
     r.register(factory_none)
     r.register(factory_special)
-    assert r.get('a') == 2
+    assert r.get("a") == 2
 
     r.register(factory_all)
     assert r.get(None) == 1
-    assert r.get('a') == 2
+    assert r.get("a") == 2
 
     r.register(factory_all2, r.PRIORITY_FIRST)
     assert r.get(None) == 3
-    assert r.get('a') == 3
+    assert r.get("a") == 3
 
 
 def test_Registry_lifecycle():

@@ -11,14 +11,14 @@ import pytest
 
 from ..sqla import BytesStore, FileStore
 
-pytest.importorskip('moin.storage.stores.sqla')  # noqa
+pytest.importorskip("moin.storage.stores.sqla")  # noqa
 
 
-@pytest.mark.parametrize('Store', [BytesStore, FileStore])
+@pytest.mark.parametrize("Store", [BytesStore, FileStore])
 def test_create_and_destroy(tmpdir, Store):
-    dbfile = tmpdir.join('store.sqlite')
+    dbfile = tmpdir.join("store.sqlite")
     assert not dbfile.check()
-    store = Store(f'sqlite:///{dbfile!s}')
+    store = Store(f"sqlite:///{dbfile!s}")
     assert not dbfile.check()
     store.create()
     assert dbfile.check()
@@ -26,7 +26,7 @@ def test_create_and_destroy(tmpdir, Store):
     # TODO: check for dropped table
 
 
-@pytest.mark.parametrize('Store', [BytesStore, FileStore])
+@pytest.mark.parametrize("Store", [BytesStore, FileStore])
 def test_from_uri(tmpdir, Store):
     store = Store.from_uri("sqlite://%s::test_base" % tmpdir)
     assert store.db_uri == "sqlite://%s" % tmpdir

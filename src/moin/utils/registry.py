@@ -20,7 +20,7 @@ class RegistryBase:
     PRIORITY_LAST = 10
     PRIORITY_REALLY_LAST = 20
 
-    class Entry(namedtuple('Entry', 'factory priority')):
+    class Entry(namedtuple("Entry", "factory priority")):
         def __call__(self, *args, **kw):
             return self.factory(*args, **kw)
 
@@ -33,7 +33,7 @@ class RegistryBase:
         self._entries = []
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {self._entries!r}>'
+        return f"<{self.__class__.__name__}: {self._entries!r}>"
 
     def get(self, *args, **kw):
         """

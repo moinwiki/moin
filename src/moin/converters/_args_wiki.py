@@ -11,7 +11,7 @@ from ._args import Arguments
 
 # default parsing rules, splits on blank spaces, see parse() docstring for example
 # input: can be like: a b c d=e f="g h" i='j k' l="\"m\" n" o='\'p\' q'
-_parse_rules = r'''
+_parse_rules = r"""
 (?:
     ([-&\w]+)
     =
@@ -27,12 +27,12 @@ _parse_rules = r'''
     (.*?)
     (?<!\\)'
 )
-'''
+"""
 parse_re = re.compile(_parse_rules, re.X | re.U)
 
 # parsing rules for object keyword parameters, similar to default parsing rules, but
 # input value may have trailing %: width=100%
-_parse_rules = r'''
+_parse_rules = r"""
 (?:
     ([-&\w]+)
     =
@@ -48,14 +48,14 @@ _parse_rules = r'''
     (.*?)
     (?<!\\)'
 )
-'''
+"""
 object_re = re.compile(_parse_rules, re.X | re.U)
 
 # rules for include macro, splits on commas, allows leading ^ and embedded /
 # <<Include(pagename, heading, level, from="regex", to="regex", sort=ascending|descending,
 #           items=n, skipitems=n, titlesonly, editlink)>>
 # <<Include(^Prefix..-..-..,,to="^----",sort=descending,items=3)>>
-_include_rules = r'''
+_include_rules = r"""
 (?:
     ([-&\w]+)
     =
@@ -71,7 +71,7 @@ _include_rules = r'''
     (.*?)
     (?<!\\)'
 )
-'''
+"""
 include_re = re.compile(_include_rules, re.X | re.U)
 
 
@@ -86,8 +86,11 @@ def parse(input, parse_re=parse_re):
     ret = Arguments()
     for match in parse_re.finditer(input):
         key = match.group(1)
-        value = ((match.group(2) or match.group(3) or match.group(4))
-                 .encode('ascii', errors='backslashreplace').decode('unicode-escape'))
+        value = (
+            (match.group(2) or match.group(3) or match.group(4))
+            .encode("ascii", errors="backslashreplace")
+            .decode("unicode-escape")
+        )
         if key:
             ret.keyword[key] = value
         else:
@@ -95,7 +98,7 @@ def parse(input, parse_re=parse_re):
     return ret
 
 
-_unparse_rules = r'''^[-\w]+$'''
+_unparse_rules = r"""^[-\w]+$"""
 _unparse_re = re.compile(_unparse_rules, re.X)
 
 
@@ -108,8 +111,9 @@ def unparse(args):
     :param args: Argument instance
     :returns: argument unicode object
     """
+
     def quote(s):
-        return '"%s"' % s.encode('unicode-escape').decode('ascii')
+        return '"%s"' % s.encode("unicode-escape").decode("ascii")
 
     ret = []
 
@@ -125,6 +129,6 @@ def unparse(args):
             raise ValueError("Invalid keyword string")
         if not _unparse_re.match(value):
             value = quote(value)
-        ret.append(key + '=' + value)
+        ret.append(key + "=" + value)
 
-    return ' '.join(ret)
+    return " ".join(ret)

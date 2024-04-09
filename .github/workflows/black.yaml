@@ -1,0 +1,15 @@
+# https://black.readthedocs.io/en/stable/integrations/github_actions.html#usage
+# see also what we use locally, requirements.d/codestyle.txt - should be the same version here.
+
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: psf/black@stable
+        with:
+            version: "~= 24.0"

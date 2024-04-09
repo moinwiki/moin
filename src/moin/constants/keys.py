@@ -128,10 +128,25 @@ BACKENDNAME = "backendname"
 
 USEROBJ_ATTRS = [
     # User objects proxy these attributes of the UserProfile objects:
-    NAME, DISABLED, ITEMID, DISPLAY_NAME, ENC_PASSWORD, EMAIL,
-    ISO_8601, MAILTO_AUTHOR, SHOW_COMMENTS, RESULTS_PER_PAGE,
-    EDIT_ON_DOUBLECLICK, SCROLL_PAGE_AFTER_EDIT,
-    EDIT_ROWS, THEME_NAME, LOCALE, TIMEZONE, SUBSCRIPTIONS, QUICKLINKS, CSS_URL,
+    NAME,
+    DISABLED,
+    ITEMID,
+    DISPLAY_NAME,
+    ENC_PASSWORD,
+    EMAIL,
+    ISO_8601,
+    MAILTO_AUTHOR,
+    SHOW_COMMENTS,
+    RESULTS_PER_PAGE,
+    EDIT_ON_DOUBLECLICK,
+    SCROLL_PAGE_AFTER_EDIT,
+    EDIT_ROWS,
+    THEME_NAME,
+    LOCALE,
+    TIMEZONE,
+    SUBSCRIPTIONS,
+    QUICKLINKS,
+    CSS_URL,
 ]
 
 # keys for blog homepages
@@ -153,8 +168,8 @@ ELEMENT = "element"
 REPLY_TO = "reply_to"
 
 # index names
-LATEST_REVS = 'latest_revs'
-ALL_REVS = 'all_revs'
+LATEST_REVS = "latest_revs"
+ALL_REVS = "all_revs"
 
 # values for ACTION key
 ACTION_SAVE = "SAVE"
@@ -168,15 +183,11 @@ ACTION_CONVERT = "CONVERT"
 DEFAULT_LOCALE = "en"
 
 # key for composite name
-FQNAME = 'fqname'
-FQNAMES = 'fqnames'
+FQNAME = "fqname"
+FQNAMES = "fqnames"
 # Values that FIELD can take in the composite name: [NAMESPACE/][@FIELD/]NAME
-FIELDS = [
-    NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS,
-]
+FIELDS = [NAME_EXACT, ITEMID, REVID, TAGS, USERID, ITEMLINKS, ITEMTRANSCLUSIONS]
 # Fields that can be used as a unique identifier.
-UFIELDS = [
-    NAME_EXACT, ITEMID, REVID,
-]
+UFIELDS = [NAME_EXACT, ITEMID, REVID]
 # Unique fields that are stored as list.
-UFIELDS_TYPELIST = [NAME_EXACT, ]
+UFIELDS_TYPELIST = [NAME_EXACT]

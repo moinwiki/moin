@@ -14,18 +14,19 @@ from flask import current_app as app
 from moin.apps.serve import serve
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
-@serve.route('/')
+@serve.route("/")
 def index():
     # show what we have (but not where in the filesystem)
     content = "\n".join(app.cfg.serve_files.keys())
-    return Response(content, content_type='text/plain')
+    return Response(content, content_type="text/plain")
 
 
-@serve.route('/<name>/', defaults=dict(filename=''))
-@serve.route('/<name>/<path:filename>')
+@serve.route("/<name>/", defaults=dict(filename=""))
+@serve.route("/<name>/<path:filename>")
 def files(name, filename):
     try:
         base_path = app.cfg.serve_files[name]

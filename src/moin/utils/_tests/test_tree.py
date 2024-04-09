@@ -11,13 +11,13 @@ from moin.utils.tree import Name, Namespace, html, moin_page
 
 
 def test_Name():
-    uri = 'uri:a'
+    uri = "uri:a"
 
-    name = Name('a', uri)
+    name = Name("a", uri)
     assert isinstance(name, ET.QName)
-    assert name.name == 'a'
+    assert name.name == "a"
     assert name.uri == uri
-    assert name == '{uri:a}a'
+    assert name == "{uri:a}a"
 
     element = name()
     assert isinstance(element, ET.Element)
@@ -25,7 +25,7 @@ def test_Name():
 
 
 def test_Namespace():
-    uri = 'uri:a'
+    uri = "uri:a"
 
     namespace = Namespace(uri)
     assert namespace == uri
@@ -33,32 +33,32 @@ def test_Namespace():
 
     name = namespace.a
     assert isinstance(name, Name)
-    assert name.name == 'a'
+    assert name.name == "a"
     assert name.uri == uri
 
-    name = namespace('a')
+    name = namespace("a")
     assert isinstance(name, Name)
-    assert name.name == 'a'
+    assert name.name == "a"
     assert name.uri == uri
 
     name = namespace.outline_level
-    assert name.name == 'outline-level'
+    assert name.name == "outline-level"
     assert name.uri == uri
 
-    name = namespace('outline-level')
-    assert name.name == 'outline-level'
+    name = namespace("outline-level")
+    assert name.name == "outline-level"
     assert name.uri == uri
 
     name = namespace.class_
-    assert name.name == 'class'
+    assert name.name == "class"
     assert name.uri == uri
 
-    name = namespace('class')
-    assert name.name == 'class'
+    name = namespace("class")
+    assert name.name == "class"
     assert name.uri == uri
 
-    name = namespace('class_')
-    assert name.name == 'class_'
+    name = namespace("class_")
+    assert name.name == "class_"
     assert name.uri == uri
 
 

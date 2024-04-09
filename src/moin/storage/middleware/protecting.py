@@ -15,7 +15,7 @@ import time
 
 from whoosh.util.cache import lfu_cache
 
-from moin.constants.rights import (CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS)
+from moin.constants.rights import CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS
 from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAMES, NAME, NAMESPACE
 from moin.constants.namespaces import NAMESPACE_ALL
 
@@ -24,6 +24,7 @@ from moin.utils import close_file
 from moin.utils.interwiki import split_fqname, CompositeName
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -110,8 +111,8 @@ class ProtectingMiddleware:
         else:
             if fqname.namespace == NAMESPACE_ALL:
                 # prevent traceback, /+index/all page has several links to /+index/all
-                return {'default': 'All:', 'hierarchic': False, 'after': '', 'before': ''}
-            raise ValueError(f'No acl_mapping entry found for item {fqname!r}')
+                return {"default": "All:", "hierarchic": False, "after": "", "before": ""}
+            raise ValueError(f"No acl_mapping entry found for item {fqname!r}")
 
     def _get_acls(self, itemid=None, fqname=None):
         """
@@ -135,9 +136,9 @@ class ProtectingMiddleware:
         acl = item.acl
         fqname = item.fqname
         if acl is not None:
-            return [acl, ]
+            return [acl]
         acl_cfg = self._get_configured_acls(fqname)
-        if acl_cfg['hierarchic']:
+        if acl_cfg["hierarchic"]:
             # check parent(s), recursively
             parentids = item.parentids
             if parentids:
@@ -146,10 +147,10 @@ class ProtectingMiddleware:
                     pacls = self.get_acls(parentid, None)
                     acl_list.extend(pacls)
                 return acl_list
-        return [None, ]
+        return [None]
 
-    def _parse_acl(self, acl, default=''):
-        return AccessControlList([acl, ], default=default, valid=self.valid_rights)
+    def _parse_acl(self, acl, default=""):
+        return AccessControlList([acl], default=default, valid=self.valid_rights)
 
     def _eval_acl(self, acl, default_acl, user_name, right):
         aclobj = self.parse_acl(acl, default_acl)
@@ -190,10 +191,12 @@ class ProtectingMiddleware:
         Called by ajaxsearch template, others.
         """
         from .indexing import parent_names
+
         self.meta = meta
         self.fqnames = gen_fqnames(meta)
-        may_read = self.allows(tuple(self.user.name), meta.get(ACL, None),
-                               tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
+        may_read = self.allows(
+            tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ
+        )
         return may_read
 
     def full_acls(self):
@@ -204,12 +207,12 @@ class ProtectingMiddleware:
         fqname = self.fqnames[0]
         itemid = self.meta[ITEMID]
         acl_cfg = self._get_configured_acls(fqname)
-        before_acl = acl_cfg['before']
-        after_acl = acl_cfg['after']
+        before_acl = acl_cfg["before"]
+        after_acl = acl_cfg["after"]
         for item_acl in self.get_acls(itemid, fqname):
             if item_acl is None:
-                item_acl = acl_cfg['default']
-            yield ' '.join([before_acl, item_acl, after_acl])
+                item_acl = acl_cfg["default"]
+            yield " ".join([before_acl, item_acl, after_acl])
 
     def _allows(self, user_names, acls, parentnames, namespace, right):
         """
@@ -224,7 +227,7 @@ class ProtectingMiddleware:
         acl_cfg = self._get_configured_acls(self.fqnames[0])
         for user_name in user_names:
             for full_acl in self.full_acls():
-                allowed = self.eval_acl(full_acl, acl_cfg['default'], user_name, right)
+                allowed = self.eval_acl(full_acl, acl_cfg["default"], user_name, right)
                 if allowed and pchecker(right, allowed, self.meta):
                     return True
         return False
@@ -248,8 +251,9 @@ class ProtectingMiddleware:
         for meta in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
             self.meta = meta
             self.fqnames = gen_fqnames(meta)
-            result = self.allows(tuple(self.user.name), meta.get(ACL, None),
-                                 tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ)
+            result = self.allows(
+                tuple(self.user.name), meta.get(ACL, None), tuple(parent_names(meta[NAME])), meta[NAMESPACE], READ
+            )
             if result:
                 yield meta
 
@@ -292,8 +296,8 @@ class ProtectingMiddleware:
         if usernames is not None and isinstance(usernames, (bytes, str)):
             # we got a single username (maybe bytes), make a list of str:
             if isinstance(usernames, bytes):
-                usernames = usernames.decode('utf-8')
-            usernames = [usernames, ]
+                usernames = usernames.decode("utf-8")
+            usernames = [usernames]
         # TODO Make sure that fqname must be a CompositeName class instance, not unicode or list.
         fqname = fqname[0] if isinstance(fqname, list) else fqname
         if isinstance(fqname, str):
@@ -351,15 +355,15 @@ class ProtectedItem:
         fqname = self.item.fqname
         itemid = self.item.itemid
         acl_cfg = self.protector._get_configured_acls(fqname)
-        before_acl = acl_cfg['before']
-        after_acl = acl_cfg['after']
+        before_acl = acl_cfg["before"]
+        after_acl = acl_cfg["after"]
         for item_acl in self.protector.get_acls(itemid, fqname):
             if item_acl is None:
-                item_acl = acl_cfg['default']
-            yield ' '.join([before_acl, item_acl, after_acl])
+                item_acl = acl_cfg["default"]
+            yield " ".join([before_acl, item_acl, after_acl])
 
     def allows(self, right, user_names=None):
-        """ Check if usernames may have <right> access on this item.
+        """Check if usernames may have <right> access on this item.
 
         :param right: the right to check
         :param user_names: user names to use for permissions check (default is to
@@ -375,7 +379,7 @@ class ProtectedItem:
         acl_cfg = self.protector._get_configured_acls(self.item.fqname)
         for user_name in user_names:
             for full_acl in self.full_acls():
-                allowed = self.protector.eval_acl(full_acl, acl_cfg['default'], user_name, right)
+                allowed = self.protector.eval_acl(full_acl, acl_cfg["default"], user_name, right)
                 if allowed is True and pchecker(right, allowed, self.item):
                     return True
         return False
@@ -384,8 +388,11 @@ class ProtectedItem:
         """require that at least one of the capabilities is allowed"""
         if not any(self.allows(c) for c in capabilities):
             capability = " or ".join(capabilities)
-            raise AccessDenied("item does not allow user '{!r}' to '{!r}' [{!r}]".format(
-                               self.protector.user.name, capability, self.item.acl))
+            raise AccessDenied(
+                "item does not allow user '{!r}' to '{!r}' [{!r}]".format(
+                    self.protector.user.name, capability, self.item.acl
+                )
+            )
 
     def iter_revs(self):
         self.require(READ)
@@ -456,8 +463,11 @@ class ProtectedRevision:
         """require that at least one of the capabilities is allowed"""
         if not any(self.allows(c) for c in capabilities):
             capability = " or ".join(capabilities)
-            raise AccessDenied("revision does not allow user '{!r}' to '{!r}' [{!r}]".format(
-                               self.protector.user.name, capability, self.item.item.acl))
+            raise AccessDenied(
+                "revision does not allow user '{!r}' to '{!r}' [{!r}]".format(
+                    self.protector.user.name, capability, self.item.item.acl
+                )
+            )
 
     @property
     def revid(self):

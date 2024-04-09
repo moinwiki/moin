@@ -12,7 +12,7 @@ from moin.utils import diff3
 class TestDiff3:
 
     def testTextMerge(self):
-        """ utils.diff3.text_merge: test correct merging """
+        """utils.diff3.text_merge: test correct merging"""
         in1 = """AAA 001
 AAA 002
 AAA 003
@@ -83,4 +83,4 @@ AAA 014
         assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()
 
 
-coverage_modules = ['moin.utils.diff3']
+coverage_modules = ["moin.utils.diff3"]

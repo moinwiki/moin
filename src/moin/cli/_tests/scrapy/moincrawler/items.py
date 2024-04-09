@@ -9,6 +9,7 @@ scrapy item docs: https://docs.scrapy.org/en/latest/topics/items.html
 from dataclasses import dataclass, fields, field
 
 from moin.utils.iri import Iri
+
 try:
     from moin.cli._tests import settings
 except ImportError:
@@ -18,12 +19,13 @@ except ImportError:
 @dataclass
 class CrawlResult:
     """class representing result of a GET in the crawl, written to crawl.csv at spider close"""
-    url: Iri = ''
-    from_url: Iri = ''
-    from_text: str = ''  # link text if any
-    from_type: str = ''  # attribute name where this href was found
-    response_code: int = ''
-    response_exc: str = ''  # exeption if any
+
+    url: Iri = ""
+    from_url: Iri = ""
+    from_text: str = ""  # link text if any
+    from_type: str = ""  # attribute name where this href was found
+    response_code: int = ""
+    response_exc: str = ""  # exeption if any
 
     def __post_init__(self):
         if self.url:
@@ -34,12 +36,15 @@ class CrawlResult:
             self.response_code = int(self.response_code)
 
     def __str__(self):
-        return f'url="{str(self.url)}", from_url="{str(self.from_url)}", ' +\
-               f'from_text={repr(self.from_text)}, ' + f'from_type={repr(self.from_type)}, ' +\
-               f'response_code={self.response_code}, response_exc="{self.response_exc}"'
+        return (
+            f'url="{str(self.url)}", from_url="{str(self.from_url)}", '
+            + f"from_text={repr(self.from_text)}, "
+            + f"from_type={repr(self.from_type)}, "
+            + f'response_code={self.response_code}, response_exc="{self.response_exc}"'
+        )
 
     def __repr__(self):
-        return f'CrawlResult({str(self)})'
+        return f"CrawlResult({str(self)})"
 
 
 @dataclass
@@ -48,6 +53,7 @@ class CrawlResultMatch(CrawlResult):
 
     if initialiized with relative url, prepend CRAWL_START for matching
         e.g. '/html' -> 'http:127.0.0.1:9080/help-en/html"""
+
     url_path_components: list[str] = field(default_factory=list)  # list of path components to match on
 
     def match(self, other: CrawlResult) -> bool:
@@ -71,9 +77,12 @@ class CrawlResultMatch(CrawlResult):
     def _relative_to_absolute(url: Iri):
         """prepend CRAWL_START to relative url"""
         if url and not url.scheme:
-            url_path = url.path.fullquoted if url.path else ''
-            return Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST,
-                       path=f'{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}{url_path}')
+            url_path = url.path.fullquoted if url.path else ""
+            return Iri(
+                scheme=settings.SITE_SCHEME,
+                authority=settings.SITE_HOST,
+                path=f"{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}{url_path}",
+            )
         return url
 
     def __post_init__(self):
@@ -82,7 +91,7 @@ class CrawlResultMatch(CrawlResult):
         self.from_url = self._relative_to_absolute(self.from_url)
 
     def __str__(self):
-        return super().__str__() + f' url_path_components={repr(self.url_path_components)}'
+        return super().__str__() + f" url_path_components={repr(self.url_path_components)}"
 
     def __repr__(self):
-        return f'CrawlResultMatch({str(self)})'
+        return f"CrawlResultMatch({str(self)})"

@@ -20,6 +20,7 @@ if not subprocess.mswindows:
     import select
     import errno
 
+
 class Popen(subprocess.Popen):
     def communicate(self, input=None, timeout=None):
         """Interact with process: Send data to stdin.  Read data from
@@ -53,20 +54,19 @@ class Popen(subprocess.Popen):
         return self._communicate(input)
 
     if subprocess.mswindows:
+
         def _communicate(self, input):
-            stdout = None # Return
-            stderr = None # Return
+            stdout = None  # Return
+            stderr = None  # Return
 
             if self.stdout:
                 stdout = []
-                stdout_thread = threading.Thread(target=self._readerthread,
-                                                 args=(self.stdout, stdout))
+                stdout_thread = threading.Thread(target=self._readerthread, args=(self.stdout, stdout))
                 stdout_thread.setDaemon(True)
                 stdout_thread.start()
             if self.stderr:
                 stderr = []
-                stderr_thread = threading.Thread(target=self._readerthread,
-                                                 args=(self.stderr, stderr))
+                stderr_thread = threading.Thread(target=self._readerthread, args=(self.stderr, stderr))
                 stderr_thread.setDaemon(True)
                 stderr_thread.start()
 
@@ -81,8 +81,7 @@ class Popen(subprocess.Popen):
                 stderr_thread.join(self.timeout)
 
             # if the threads are still alive, that means the thread join timed out
-            timed_out = (self.stdout and stdout_thread.isAlive() or
-                         self.stderr and stderr_thread.isAlive())
+            timed_out = self.stdout and stdout_thread.isAlive() or self.stderr and stderr_thread.isAlive()
             if timed_out:
                 self.kill()
             else:
@@ -98,7 +97,7 @@ class Popen(subprocess.Popen):
             # object do the translation: It is based on stdio, which is
             # impossible to combine with select (unless forcing no
             # buffering).
-            if self.universal_newlines and hasattr(file, 'newlines'):
+            if self.universal_newlines and hasattr(file, "newlines"):
                 if stdout:
                     stdout = self._translate_newlines(stdout)
                 if stderr:
@@ -106,13 +105,14 @@ class Popen(subprocess.Popen):
 
             return (stdout, stderr)
 
-    else: # POSIX
+    else:  # POSIX
+
         def _communicate(self, input):
             timed_out = False
             read_set = []
             write_set = []
-            stdout = None # Return
-            stderr = None # Return
+            stdout = None  # Return
+            stderr = None  # Return
 
             if self.stdin:
                 # Flush stdio buffer.  This might block, if the user has
@@ -146,7 +146,7 @@ class Popen(subprocess.Popen):
                     # When select has indicated that the file is writable,
                     # we can write up to PIPE_BUF bytes without risk
                     # blocking.  POSIX defines PIPE_BUF >= 512
-                    chunk = input[input_offset:input_offset + 512]
+                    chunk = input[input_offset : input_offset + 512]
                     bytes_written = os.write(self.stdin.fileno(), chunk)
                     input_offset += bytes_written
                     if input_offset >= len(input):
@@ -169,15 +169,15 @@ class Popen(subprocess.Popen):
 
             # All data exchanged.  Translate lists into strings.
             if stdout is not None:
-                stdout = ''.join(stdout)
+                stdout = "".join(stdout)
             if stderr is not None:
-                stderr = ''.join(stderr)
+                stderr = "".join(stderr)
 
             # Translate newlines, if requested.  We cannot let the file
             # object do the translation: It is based on stdio, which is
             # impossible to combine with select (unless forcing no
             # buffering).
-            if self.universal_newlines and hasattr(file, 'newlines'):
+            if self.universal_newlines and hasattr(file, "newlines"):
                 if stdout:
                     stdout = self._translate_newlines(stdout)
                 if stderr:
@@ -191,16 +191,19 @@ class Popen(subprocess.Popen):
 
 
 def exec_cmd(cmd, input=None, timeout=None):
-    p = Popen(cmd, shell=True,
-              close_fds=not subprocess.mswindows,
-              bufsize=1024,
-              stdin=subprocess.PIPE,
-              stdout=subprocess.PIPE,
-              stderr=subprocess.PIPE)
+    p = Popen(
+        cmd,
+        shell=True,
+        close_fds=not subprocess.mswindows,
+        bufsize=1024,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
     data, errors = p.communicate(input, timeout=timeout)
     return data, errors, p.returncode
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(exec_cmd("python", "import time ; time.sleep(20) ; print 'never!' ;", timeout=10))
     print(exec_cmd("python", "import time ; time.sleep(20) ; print '20s gone' ;"))

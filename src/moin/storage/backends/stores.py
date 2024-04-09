@@ -26,22 +26,23 @@ from moin.utils.crypto import make_uuid
 from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper
 
-STORES_PACKAGE = 'moin.storage.stores'
+STORES_PACKAGE = "moin.storage.stores"
 
 
 class Backend(BackendBase):
     """
     ties together a store for metadata and a store for data, readonly
     """
+
     @classmethod
     def from_uri(cls, uri):
-        store_name_uri = uri.split(':', 1)
+        store_name_uri = uri.split(":", 1)
         if len(store_name_uri) != 2:
             raise ValueError(f"malformed store uri: {uri}")
         store_name, store_uri = store_name_uri
-        module = __import__(STORES_PACKAGE + '.' + store_name, globals(), locals(), ['BytesStore', 'FileStore', ])
-        meta_store_uri = store_uri % dict(kind='meta')
-        data_store_uri = store_uri % dict(kind='data')
+        module = __import__(STORES_PACKAGE + "." + store_name, globals(), locals(), ["BytesStore", "FileStore"])
+        meta_store_uri = store_uri % dict(kind="meta")
+        data_store_uri = store_uri % dict(kind="data")
         return cls(module.BytesStore.from_uri(meta_store_uri), module.FileStore.from_uri(data_store_uri))
 
     def __init__(self, meta_store, data_store):
@@ -64,7 +65,7 @@ class Backend(BackendBase):
         yield from self.meta_store
 
     def _deserialize(self, meta_str):
-        text = meta_str.decode('utf-8')
+        text = meta_str.decode("utf-8")
         meta = json.loads(text)
         return meta
 
@@ -94,6 +95,7 @@ class MutableBackend(Backend, MutableBackendBase):
     """
     same as Backend, but read/write
     """
+
     def create(self):
         self.meta_store.create()
         self.data_store.create()
@@ -104,7 +106,7 @@ class MutableBackend(Backend, MutableBackendBase):
 
     def _serialize(self, meta):
         text = json.dumps(meta, ensure_ascii=False)
-        meta_str = text.encode('utf-8')
+        meta_str = text.encode("utf-8")
         return meta_str
 
     def _store_meta(self, meta):
@@ -132,14 +134,20 @@ class MutableBackend(Backend, MutableBackendBase):
             size_expected = meta.get(SIZE)
             size_real = tfw.size
             if size_expected is not None and size_expected != size_real:
-                raise ValueError("computed data size ({}) does not match data size declared in metadata ({})".format(
-                                 size_real, size_expected))
+                raise ValueError(
+                    "computed data size ({}) does not match data size declared in metadata ({})".format(
+                        size_real, size_expected
+                    )
+                )
             meta[SIZE] = size_real
             hash_expected = meta.get(HASH_ALGORITHM)
             hash_real = tfw.hash.hexdigest()
             if hash_expected is not None and hash_expected != hash_real:
-                raise ValueError("computed data hash ({}) does not match data hash declared in metadata ({})".format(
-                                 hash_real, hash_expected))
+                raise ValueError(
+                    "computed data hash ({}) does not match data hash declared in metadata ({})".format(
+                        hash_real, hash_expected
+                    )
+                )
             meta[HASH_ALGORITHM] = hash_real
         else:
             dataid = meta[DATAID]

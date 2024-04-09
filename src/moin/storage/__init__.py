@@ -21,27 +21,32 @@ We use a layered approach like this::
                                    over key/value pairs
 """
 
-from moin.constants.namespaces import (NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES, NAMESPACE_USERS,
-                                       NAMESPACE_HELP_COMMON, NAMESPACE_HELP_EN)
+from moin.constants.namespaces import (
+    NAMESPACE_DEFAULT,
+    NAMESPACE_USERPROFILES,
+    NAMESPACE_USERS,
+    NAMESPACE_HELP_COMMON,
+    NAMESPACE_HELP_EN,
+)
 
-BACKENDS_PACKAGE = 'moin.storage.backends'
+BACKENDS_PACKAGE = "moin.storage.backends"
 
-BACKEND_DEFAULT = 'default'
-BACKEND_USERPROFILES = 'userprofiles'
-BACKEND_USERS = 'users'
-BACKEND_HELP_COMMON = 'help-common'
-BACKEND_HELP_EN = 'help-en'
+BACKEND_DEFAULT = "default"
+BACKEND_USERPROFILES = "userprofiles"
+BACKEND_USERS = "users"
+BACKEND_HELP_COMMON = "help-common"
+BACKEND_HELP_EN = "help-en"
 
 
 def backend_from_uri(uri):
     """
     create a backend instance for uri
     """
-    backend_name_uri = uri.split(':', 1)
+    backend_name_uri = uri.split(":", 1)
     if len(backend_name_uri) != 2:
         raise ValueError(f"malformed backend uri: {uri}")
     backend_name, backend_uri = backend_name_uri
-    module = __import__(BACKENDS_PACKAGE + '.' + backend_name, globals(), locals(), ['MutableBackend', ])
+    module = __import__(BACKENDS_PACKAGE + "." + backend_name, globals(), locals(), ["MutableBackend"])
     return module.MutableBackend.from_uri(backend_uri)
 
 
@@ -49,16 +54,22 @@ def create_mapping(uri, namespaces, backends, acls):
     namespace_mapping = namespaces.items()
     acl_mapping = acls.items()
     backend_mapping = [
-        (backend_name, backend_from_uri(uri % dict(backend=backend_name, kind="%(kind)s")))
-        for backend_name in backends]
+        (backend_name, backend_from_uri(uri % dict(backend=backend_name, kind="%(kind)s"))) for backend_name in backends
+    ]
     # we need the longest mountpoints first, shortest last (-> '' is very last)
     namespace_mapping = sorted(namespace_mapping, key=lambda x: len(x[0]), reverse=True)
     acl_mapping = sorted(acl_mapping, key=lambda x: len(x[0]), reverse=True)
     return namespace_mapping, dict(backend_mapping), acl_mapping
 
 
-def create_simple_mapping(uri='stores:fs:instance', default_acl=None, userprofiles_acl=None,
-                          users_acl=None, help_common_acl=None, help_en_acl=None, ):
+def create_simple_mapping(
+    uri="stores:fs:instance",
+    default_acl=None,
+    userprofiles_acl=None,
+    users_acl=None,
+    help_common_acl=None,
+    help_en_acl=None,
+):
     """
     When configuring storage, the admin needs to provide a namespace_mapping.
     To ease creation of such a mapping, this function provides sane defaults
@@ -84,15 +95,15 @@ def create_simple_mapping(uri='stores:fs:instance', default_acl=None, userprofil
     """
     # if no acls are given, use something mostly harmless:
     if not default_acl:
-        default_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
+        default_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     if not userprofiles_acl:
-        userprofiles_acl = dict(before='All:', default='', after='', hierarchic=False)
+        userprofiles_acl = dict(before="All:", default="", after="", hierarchic=False)
     if not users_acl:
-        users_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
+        users_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     if not help_common_acl:
-        help_common_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
+        help_common_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     if not help_en_acl:
-        help_en_acl = dict(before='', default='All:read,write,create,admin', after='', hierarchic=False)
+        help_en_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
         NAMESPACE_USERPROFILES: BACKEND_USERPROFILES,

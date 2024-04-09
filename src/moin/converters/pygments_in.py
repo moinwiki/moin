@@ -18,19 +18,21 @@ from moin.utils.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
 if pygments:
+
     class TreeFormatter(pygments.formatter.Formatter):
         def _append(self, type, value, element):
             class_ = STANDARD_TYPES.get(type)
             if class_:
-                value = moin_page.span(attrib={moin_page.class_: class_}, children=(value, ))
+                value = moin_page.span(attrib={moin_page.class_: class_}, children=(value,))
             element.append(value)
 
         def format(self, tokensource, element):
-            lastval = ''
+            lastval = ""
             lasttype = None
 
             for ttype, value in tokensource:
@@ -64,16 +66,16 @@ if pygments:
             # that were supported by special parsers in moin 1.x:
             if pygments_name is None:
                 moin_pygments = [
-                    ('python', 'Python'),
-                    ('diff', 'Diff'),
-                    ('irssi', 'IRC logs'),
-                    ('irc', 'IRC logs'),
-                    ('java', 'Java'),
-                    ('cplusplus', 'C++'),
-                    ('pascal', 'Delphi'),
+                    ("python", "Python"),
+                    ("diff", "Diff"),
+                    ("irssi", "IRC logs"),
+                    ("irc", "IRC logs"),
+                    ("java", "Java"),
+                    ("cplusplus", "C++"),
+                    ("pascal", "Delphi"),
                 ]
                 for moin_format, pygments_name in moin_pygments:
-                    if Type(f'x-moin/format;name={moin_format}').issupertype(type_input):
+                    if Type(f"x-moin/format;name={moin_format}").issupertype(type_input):
                         break
                 else:
                     pygments_name = None
@@ -93,33 +95,36 @@ if pygments:
             if lexer is None and contenttype is not None:
                 ct = Type(contenttype)
                 # pygments can't process parameters (like e.g. ...;charset=utf-8):
-                mimetype = f'{ct.type}/{ct.subtype}'
+                mimetype = f"{ct.type}/{ct.subtype}"
 
                 # TODO: fix pygments and remove this workaround for missing mimetypes; see issue #16
-                alias_mimetypes = {'text/x.moin.wiki': 'text/x-trac-wiki',
-                                   'text/x.moin.creole': 'text/x-trac-wiki',
-                                   'application/docbook+xml': 'application/xml'}
+                alias_mimetypes = {
+                    "text/x.moin.wiki": "text/x-trac-wiki",
+                    "text/x.moin.creole": "text/x-trac-wiki",
+                    "application/docbook+xml": "application/xml",
+                }
                 mimetype = alias_mimetypes[mimetype] if mimetype in alias_mimetypes else mimetype
 
                 try:
                     lexer = pygments.lexers.get_lexer_for_mimetype(mimetype)
                 except pygments.util.ClassNotFound:
-                    lexer = pygments.lexers.get_lexer_for_mimetype('text/plain')
+                    lexer = pygments.lexers.get_lexer_for_mimetype("text/plain")
             self.lexer = lexer
 
         def __call__(self, data, contenttype=None, arguments=None):
             text = decode_data(data, contenttype)
             content = normalize_split_text(text)
-            content = '\n'.join(content)
-            blockcode = moin_page.blockcode(attrib={moin_page.class_: 'highlight'})
+            content = "\n".join(content)
+            blockcode = moin_page.blockcode(attrib={moin_page.class_: "highlight"})
             pygments.highlight(content, self.lexer, TreeFormatter(), blockcode)
-            body = moin_page.body(children=(blockcode, ))
-            return moin_page.page(children=(body, ))
+            body = moin_page.body(children=(blockcode,))
+            return moin_page.page(children=(body,))
 
     from . import default_registry
     from moin.utils.mime import Type, type_moin_document
-    default_registry.register(Converter._factory, Type(type='text'), type_moin_document)
-    default_registry.register(Converter._factory, Type('x-moin/format'), type_moin_document)
+
+    default_registry.register(Converter._factory, Type(type="text"), type_moin_document)
+    default_registry.register(Converter._factory, Type("x-moin/format"), type_moin_document)
 
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
@@ -132,7 +137,7 @@ else:
             blockcode = moin_page.blockcode()
             for line in content:
                 if len(blockcode):
-                    blockcode.append('\n')
+                    blockcode.append("\n")
                 blockcode.append(line.expandtabs())
-            body = moin_page.body(children=(blockcode, ))
-            return moin_page.page(children=(body, ))
+            body = moin_page.body(children=(blockcode,))
+            return moin_page.page(children=(body,))

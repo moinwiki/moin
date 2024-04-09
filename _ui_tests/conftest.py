@@ -27,6 +27,5 @@ def pytest_runtest_makereport(item, call):
     fails, ie whenever the method throws an exception
     """
     if call.excinfo is not None:
-        if driver_register.get_driver() is not None and hasattr(item, 'obj'):
-            driver_register.get_driver().get_screenshot_as_file(
-                str(item.obj).split(" ")[2] + '.png')
+        if driver_register.get_driver() is not None and hasattr(item, "obj"):
+            driver_register.get_driver().get_screenshot_as_file(str(item.obj).split(" ")[2] + ".png")

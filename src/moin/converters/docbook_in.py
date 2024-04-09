@@ -17,6 +17,7 @@ for backward compatibility:
 import re
 
 from emeraldtree import ElementTree as ET
+
 try:
     from flask import g as flaskg
 except ImportError:
@@ -31,6 +32,7 @@ from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -56,9 +58,10 @@ class XMLParser(ET.XMLParser):
     modified _start_list is only needed for the initial construction of the DOM when
     flaskg.add_lineno_attr may be True.
     """
+
     def _start_list(self, tag, attrib_in):
         elem = super()._start_list(tag, attrib_in)
-        if flaskg and getattr(flaskg, 'add_lineno_attr', False):
+        if flaskg and getattr(flaskg, "add_lineno_attr", False):
             elem.attrib[html.data_lineno] = self._parser.CurrentLineNumber
         return elem
 
@@ -67,172 +70,354 @@ class Converter:
     """
     Converter application/docbook+xml -> x.moin.document
     """
+
     # Namespace of our input data
-    docbook_namespace = {
-        docbook.namespace: 'docbook'
-    }
+    docbook_namespace = {docbook.namespace: "docbook"}
 
     # DocBook elements which are completely ignored by our converter
     # We even do not process children of these elements
     ignored_tags = {
         # Info elements
-        'abstract', 'artpagenums', 'annotation',
-        'artpagenums', 'author', 'authorgroup',
-        'authorinitials', 'bibliocoverage', 'biblioid',
-        'bibliomisc', 'bibliomset', 'bibliorelation',
-        'biblioset', 'bibliosource', 'collab', 'confdates',
-        'confgroup', 'confnum', 'confsponsor', 'conftitle',
-        'contractnum', 'contractsponsor', 'copyright',
-        'contrib', 'cover', 'edition', 'editor',
-        'extendedlink', 'issuenum', 'itermset', 'keyword',
-        'keywordset', 'legalnotice', 'org', 'orgname',
-        'orgdiv', 'otheraddr', 'othercredit', 'pagenums',
-        'personblurb', 'printhistory', 'productname',
-        'productnumber', 'pubdate', 'publisher',
-        'publishername', 'releaseinfo', 'revdescription',
-        'revhistory', 'revision', 'revnumber', 'revremark',
-        'seriesvolnums', 'subjectset', 'volumenum',
+        "abstract",
+        "artpagenums",
+        "annotation",
+        "artpagenums",
+        "author",
+        "authorgroup",
+        "authorinitials",
+        "bibliocoverage",
+        "biblioid",
+        "bibliomisc",
+        "bibliomset",
+        "bibliorelation",
+        "biblioset",
+        "bibliosource",
+        "collab",
+        "confdates",
+        "confgroup",
+        "confnum",
+        "confsponsor",
+        "conftitle",
+        "contractnum",
+        "contractsponsor",
+        "copyright",
+        "contrib",
+        "cover",
+        "edition",
+        "editor",
+        "extendedlink",
+        "issuenum",
+        "itermset",
+        "keyword",
+        "keywordset",
+        "legalnotice",
+        "org",
+        "orgname",
+        "orgdiv",
+        "otheraddr",
+        "othercredit",
+        "pagenums",
+        "personblurb",
+        "printhistory",
+        "productname",
+        "productnumber",
+        "pubdate",
+        "publisher",
+        "publishername",
+        "releaseinfo",
+        "revdescription",
+        "revhistory",
+        "revision",
+        "revnumber",
+        "revremark",
+        "seriesvolnums",
+        "subjectset",
+        "volumenum",
         # Other bibliography elements
-        'bibliodiv', 'biblioentry', 'bibliography',
-        'bibliolist', 'bibliomixed', 'biblioref',
-        'bibliorelation', 'citation', 'citerefentry',
-        'citetitle',
+        "bibliodiv",
+        "biblioentry",
+        "bibliography",
+        "bibliolist",
+        "bibliomixed",
+        "biblioref",
+        "bibliorelation",
+        "citation",
+        "citerefentry",
+        "citetitle",
         # Callout elements
-        'callout', 'calloutlist', 'area', 'areaset',
-        'areaspec', 'co', 'imageobjectco',
+        "callout",
+        "calloutlist",
+        "area",
+        "areaset",
+        "areaspec",
+        "co",
+        "imageobjectco",
         # Class information
-        'classname', 'classsynopsis', 'classsynopsisinfo',
-        'constructorsynopsis', 'destructorsynopsis',
-        'fieldsynopsis', 'funcdef', 'funcparams',
-        'funcprototype', 'funcsynopsis',
-        'funcsynopsisinfo', 'function', 'group',
-        'initializer', 'interfacename',
-        'methodname', 'methodparam', 'methodsynopsis',
-        'ooclass', 'ooexception', 'oointerface', 'varargs',
-        'void',
+        "classname",
+        "classsynopsis",
+        "classsynopsisinfo",
+        "constructorsynopsis",
+        "destructorsynopsis",
+        "fieldsynopsis",
+        "funcdef",
+        "funcparams",
+        "funcprototype",
+        "funcsynopsis",
+        "funcsynopsisinfo",
+        "function",
+        "group",
+        "initializer",
+        "interfacename",
+        "methodname",
+        "methodparam",
+        "methodsynopsis",
+        "ooclass",
+        "ooexception",
+        "oointerface",
+        "varargs",
+        "void",
         # GUI elements
-        'guibutton', 'guiicon', 'guilabel',
-        'guimenu', 'guimenuitem', 'guisubmenu',
+        "guibutton",
+        "guiicon",
+        "guilabel",
+        "guimenu",
+        "guimenuitem",
+        "guisubmenu",
         # EBNF Elements
-        'constraint', 'constraintdef', 'lhs', 'rhs',
-        'nonterminal',
+        "constraint",
+        "constraintdef",
+        "lhs",
+        "rhs",
+        "nonterminal",
         # msg elements
-        'msg', 'msgaud', 'msgentry', 'msgexplan',
-        'msginfo', 'msglevel', 'msgmain', 'msgorig',
-        'msgrel', 'msgset', 'msgsub', 'msgtext',
+        "msg",
+        "msgaud",
+        "msgentry",
+        "msgexplan",
+        "msginfo",
+        "msglevel",
+        "msgmain",
+        "msgorig",
+        "msgrel",
+        "msgset",
+        "msgsub",
+        "msgtext",
         # REF entry
-        'refclass', 'refdescriptor', 'refentry',
-        'refentrytitle', 'reference', 'refmeta',
-        'refmiscinfo', 'refname', 'refnamediv',
-        'refpurpose', 'refsect1', 'refsect2', 'refsect3',
-        'refsection', 'refsynopsisdiv',
+        "refclass",
+        "refdescriptor",
+        "refentry",
+        "refentrytitle",
+        "reference",
+        "refmeta",
+        "refmiscinfo",
+        "refname",
+        "refnamediv",
+        "refpurpose",
+        "refsect1",
+        "refsect2",
+        "refsect3",
+        "refsection",
+        "refsynopsisdiv",
         # TOC
-        'toc', 'tocdiv', 'tocentry',
+        "toc",
+        "tocdiv",
+        "tocentry",
         # Index elements
-        'index', 'indexdiv', 'indexentry', 'indexterm',
-        'primary', 'primaryie', 'secondary',
-        'secondaryie', 'see', 'seealso',
-        'tertiary', 'tertiaryie',
+        "index",
+        "indexdiv",
+        "indexentry",
+        "indexterm",
+        "primary",
+        "primaryie",
+        "secondary",
+        "secondaryie",
+        "see",
+        "seealso",
+        "tertiary",
+        "tertiaryie",
         # Other elements
-        'info', 'bridgehead', 'arc', 'titleabbrev',
-        'spanspec', 'xref',
+        "info",
+        "bridgehead",
+        "arc",
+        "titleabbrev",
+        "spanspec",
+        "xref",
     }
 
     # DocBook inline elements which does not have equivalence in the DOM
     # tree, but we keep the information using <span element='tag.name'>
-    inline_tags = {'abbrev', 'address', 'accel', 'acronym', 'alt',
-                   'affiliation', 'city', 'command', 'constant',
-                   'country', 'database', 'date', 'errorcode',
-                   'errorname', 'errortext', 'errortype',
-                   'exceptionname', 'fax', 'filename', 'firstname',
-                   'firstterm', 'foreignphrase', 'hardware', 'holder',
-                   'honorific', 'jobtitle', 'keycap', 'keycode',
-                   'keycombo', 'keysym', 'lineannotation',
-                   'manvolnum', 'mousebutton', 'option', 'optional',
-                   'package', 'person', 'personname', 'phone', 'pob',
-                   'postcode', 'prompt', 'remark', 'replaceable',
-                   'returnvalue', 'shortaffil', 'shortcut', 'state',
-                   'street', 'surname', 'symbol', 'systemitem',
-                   'termdef', 'type', 'uri', 'userinput',
-                   'wordasword', 'varname', 'anchor',
-                   }
+    inline_tags = {
+        "abbrev",
+        "address",
+        "accel",
+        "acronym",
+        "alt",
+        "affiliation",
+        "city",
+        "command",
+        "constant",
+        "country",
+        "database",
+        "date",
+        "errorcode",
+        "errorname",
+        "errortext",
+        "errortype",
+        "exceptionname",
+        "fax",
+        "filename",
+        "firstname",
+        "firstterm",
+        "foreignphrase",
+        "hardware",
+        "holder",
+        "honorific",
+        "jobtitle",
+        "keycap",
+        "keycode",
+        "keycombo",
+        "keysym",
+        "lineannotation",
+        "manvolnum",
+        "mousebutton",
+        "option",
+        "optional",
+        "package",
+        "person",
+        "personname",
+        "phone",
+        "pob",
+        "postcode",
+        "prompt",
+        "remark",
+        "replaceable",
+        "returnvalue",
+        "shortaffil",
+        "shortcut",
+        "state",
+        "street",
+        "surname",
+        "symbol",
+        "systemitem",
+        "termdef",
+        "type",
+        "uri",
+        "userinput",
+        "wordasword",
+        "varname",
+        "anchor",
+    }
 
     # DocBook block element which does not have equivalence in the DOM
     # tree, but we keep the information using <div html:class='tag.name'>
-    block_tags = {'acknowledgements', 'appendix', 'article', 'book',
-                  'caption', 'chapter', 'cmdsynopsis', 'colophon',
-                  'dedication', 'epigraph', 'example', 'figure',
-                  'equation', 'part', 'partintro',
-                  'screenshoot', 'set', 'setindex', 'sidebar',
-                  'simplesect', 'subtitle', 'synopsis',
-                  'synopfragment', 'task', 'taskprerequisites',
-                  'taskrelated', 'tasksummary', 'title',
-                  }
+    block_tags = {
+        "acknowledgements",
+        "appendix",
+        "article",
+        "book",
+        "caption",
+        "chapter",
+        "cmdsynopsis",
+        "colophon",
+        "dedication",
+        "epigraph",
+        "example",
+        "figure",
+        "equation",
+        "part",
+        "partintro",
+        "screenshoot",
+        "set",
+        "setindex",
+        "sidebar",
+        "simplesect",
+        "subtitle",
+        "synopsis",
+        "synopfragment",
+        "task",
+        "taskprerequisites",
+        "taskrelated",
+        "tasksummary",
+        "title",
+    }
 
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
     # admonitions in this list, into the admonition element of the DOM Tree.
-    admonition_tags = {'attention', 'caution', 'danger', 'error', 'hint', 'important', 'note', 'tip', 'warning'}
+    admonition_tags = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
 
     # DocBook can handle three kinds of media: audio, image, video.
     # TODO: a media format attribute is optional, e.g.: <imagedata format="jpeg" fileref="jpeg.jpg"/>
     #     XXX: quality of supported formats list is suspect, see below
     media_tags = {
         # <tagname>: (<formats list>, <child tagname>, <mime type>)
-        'audioobject': (
-            ['x-wav', 'mpeg', 'ogg', 'webm'],  # XXX: none of these are in http://docbook.org/tdg/en/html/audiodata.html
-            'audiodata',
-            'audio/',
+        "audioobject": (
+            ["x-wav", "mpeg", "ogg", "webm"],  # XXX: none of these are in http://docbook.org/tdg/en/html/audiodata.html
+            "audiodata",
+            "audio/",
         ),
-        'imageobject': (
-            ['gif', 'png', 'jpeg', 'jpg', 'svg'],  # selected from http://docbook.org/tdg/en/html/imagedata.html
-            'imagedata',
-            'image/',
+        "imageobject": (
+            ["gif", "png", "jpeg", "jpg", "svg"],  # selected from http://docbook.org/tdg/en/html/imagedata.html
+            "imagedata",
+            "image/",
         ),
-        'videoobject': (
-            ['ogg', 'webm', 'mp4'],  # XXX: none of these are in http://docbook.org/tdg/en/html/videodata.html
-            'videodata',
-            'video/',
-        )
+        "videoobject": (
+            ["ogg", "webm", "mp4"],  # XXX: none of these are in http://docbook.org/tdg/en/html/videodata.html
+            "videodata",
+            "video/",
+        ),
     }
 
     # DocBook tags which can be convert directly to a DOM Tree element
-    simple_tags = {'code': moin_page.code,
-                   'computeroutput': moin_page.code,
-                   'glossdef': moin_page('list-item-body'),
-                   'glossentry': moin_page('list-item'),
-                   'glosslist': moin_page('list'),
-                   'glossterm': moin_page('list-item-label'),
-                   'literal': moin_page.code,
-                   'markup': moin_page.code,
-                   'para': moin_page.p,
-                   'phrase': moin_page.span,
-                   'programlisting': moin_page.blockcode,
-                   'quote': moin_page.quote,
-                   'row': moin_page('table-row'),
-                   'screen': moin_page.blockcode,
-                   'simpara': moin_page.p,
-                   'term': moin_page('list-item-label'),
-                   'listitem': moin_page('list-item-body'),
-                   'thead': moin_page('table-header'),
-                   'tfoot': moin_page('table-footer'),
-                   'tbody': moin_page('table-body'),
-                   'tr': moin_page('table-row'),
-                   'variablelist': moin_page('list'),
-                   'varlistentry': moin_page('list-item'),
-                   }
+    simple_tags = {
+        "code": moin_page.code,
+        "computeroutput": moin_page.code,
+        "glossdef": moin_page("list-item-body"),
+        "glossentry": moin_page("list-item"),
+        "glosslist": moin_page("list"),
+        "glossterm": moin_page("list-item-label"),
+        "literal": moin_page.code,
+        "markup": moin_page.code,
+        "para": moin_page.p,
+        "phrase": moin_page.span,
+        "programlisting": moin_page.blockcode,
+        "quote": moin_page.quote,
+        "row": moin_page("table-row"),
+        "screen": moin_page.blockcode,
+        "simpara": moin_page.p,
+        "term": moin_page("list-item-label"),
+        "listitem": moin_page("list-item-body"),
+        "thead": moin_page("table-header"),
+        "tfoot": moin_page("table-footer"),
+        "tbody": moin_page("table-body"),
+        "tr": moin_page("table-row"),
+        "variablelist": moin_page("list"),
+        "varlistentry": moin_page("list-item"),
+    }
 
     # Other block elements which can be root element.
-    root_tags = {'blockquote', 'formalpara', 'informalequation',
-                 'informalexample', 'informalfigure',
-                 'informalfigure', 'orderedlist', 'sect1', 'sect2',
-                 'sect3', 'sect4', 'sect5', 'section',
-                 'segmentedlist', 'simplelist', 'procedure',
-                 'qandaset',
-                 }
+    root_tags = {
+        "blockquote",
+        "formalpara",
+        "informalequation",
+        "informalexample",
+        "informalfigure",
+        "informalfigure",
+        "orderedlist",
+        "sect1",
+        "sect2",
+        "sect3",
+        "sect4",
+        "sect5",
+        "section",
+        "segmentedlist",
+        "simplelist",
+        "procedure",
+        "qandaset",
+    }
 
     # Regular expression to find section tag.
-    sect_re = re.compile('sect[1-5]')
+    sect_re = re.compile("sect[1-5]")
 
     @classmethod
     def _factory(cls, input, output, **kw):
@@ -241,7 +426,7 @@ class Converter:
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
-        docbook_str = '\n'.join(content)
+        docbook_str = "\n".join(content)
 
         # Initalize our attributes
         self.section_depth = 0
@@ -256,7 +441,7 @@ class Converter:
         # We will create an element tree from the DocBook content
         try:
             # XXX: The XML parser need bytestring.
-            tree = XML(docbook_str.encode('utf-8'))  # using local XML override, not ET.XML
+            tree = XML(docbook_str.encode("utf-8"))  # using local XML override, not ET.XML
         except ET.ParseError as detail:
             return self.error(str(detail))
 
@@ -274,10 +459,10 @@ class Converter:
         """
         Return a DOM Tree containing an error message.
         """
-        error = self.new(moin_page('error'), attrib={}, children=[message])
-        part = self.new(moin_page('part'), attrib={}, children=[error])
-        body = self.new(moin_page('body'), attrib={}, children=[part])
-        return self.new(moin_page('page'), attrib={}, children=[body])
+        error = self.new(moin_page("error"), attrib={}, children=[message])
+        part = self.new(moin_page("part"), attrib={}, children=[error])
+        body = self.new(moin_page("body"), attrib={}, children=[part])
+        return self.new(moin_page("page"), attrib={}, children=[body])
 
     def do_children(self, element, depth):
         """
@@ -292,7 +477,7 @@ class Converter:
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 new_children.extend(r)
             else:
                 # avoid problems in html_out by ignoring unicode '\n', '\n  ', '\n    '
@@ -326,7 +511,7 @@ class Converter:
         """
         result = {}
         for key, value in element.attrib.items():
-            if key.uri == xml and key.name in ['id', 'base', 'lang'] or key.name == 'data-lineno':
+            if key.uri == xml and key.name in ["id", "base", "lang"] or key.name == "data-lineno":
                 result[key] = value
         if result:
             # We clear standard_attribute, if ancestror attribute
@@ -345,7 +530,7 @@ class Converter:
         uri = element.tag.uri
         name = self.docbook_namespace.get(uri, None)
         if name is not None:
-            method_name = 'visit_' + name
+            method_name = "visit_" + name
             method = getattr(self, method_name, None)
             if method is not None:
                 return method(element, depth)
@@ -393,7 +578,7 @@ class Converter:
             return self.visit_docbook_admonition(element, depth)
 
         # We will find the correct method to handle our tag
-        method_name = 'visit_docbook_' + element.tag.name
+        method_name = "visit_docbook_" + element.tag.name
         method = getattr(self, method_name, None)
         if method:
             return method(element, depth)
@@ -412,7 +597,7 @@ class Converter:
         object_data = []
         text_object = []
         caption = []
-        object_element = ''
+        object_element = ""
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name in self.media_tags:  # audioobject, imageobject, videoobject
@@ -422,9 +607,9 @@ class Converter:
                         if isinstance(grand_child, ET.Element) and grand_child.tag.name == data_tag:
                             # capture audiodata, imagedata, or videodata tags
                             object_data.append(grand_child)
-                if child.tag.name == 'caption':
+                if child.tag.name == "caption":
                     caption = self.do_children(child, depth + 1)[0]
-                if child.tag.name == 'textobject':
+                if child.tag.name == "textobject":
                     text_object = child
                 # we ignore objectinfo tags
         return self.visit_data_element(object_element, depth, object_data, text_object, caption)
@@ -445,7 +630,7 @@ class Converter:
                 return self.new(moin_page.p, attrib={}, children=children)
         # We try to determine the best object to show
         for obj in object_data:
-            format = obj.get('format')  # format is optional: <imagedata format="jpeg" fileref="jpeg.jpg"/>
+            format = obj.get("format")  # format is optional: <imagedata format="jpeg" fileref="jpeg.jpg"/>
             if format:
                 format = format.lower()
                 if format in preferred_format:
@@ -463,30 +648,30 @@ class Converter:
             children = self.do_children(text_object, depth + 1)
             return self.new(moin_page.p, attrib={}, children=children)
 
-        href = object_to_show.get('fileref')
+        href = object_to_show.get("fileref")
         if not href:
             # We could probably try to use entityref,
             # but at this time we won't support it.
             return
         attrib[html.alt] = href
-        if '://' in href:
+        if "://" in href:
             attrib[xlink.href] = Iri(href)
         else:
-            attrib[xinclude.href] = Iri(scheme='wiki.local', path=href)
-        format = object_to_show.get('format')
+            attrib[xinclude.href] = Iri(scheme="wiki.local", path=href)
+        format = object_to_show.get("format")
         if format:
             format = format.lower()
-            attrib[moin_page('type')] = ''.join([mimetype, format])
+            attrib[moin_page("type")] = "".join([mimetype, format])
         else:
-            attrib[moin_page('type')] = mimetype
-        align = object_to_show.get('align')
-        if align and align in {'left', 'center', 'right', 'top', 'middle', 'bottom'}:
+            attrib[moin_page("type")] = mimetype
+        align = object_to_show.get("align")
+        if align and align in {"left", "center", "right", "top", "middle", "bottom"}:
             attrib[html.class_] = align
 
         # return object tag, html_out.py will convert to img, audio, or video based on type attr
         ret = ET.Element(xinclude.include, attrib=attrib)
         if caption:
-            caption = self.new(moin_page.span, attrib={moin_page.class_: 'db-caption'}, children=[caption])
+            caption = self.new(moin_page.span, attrib={moin_page.class_: "db-caption"}, children=[caption])
             return self.new(moin_page.span, attrib={}, children=[ret, caption])
         else:
             return ret
@@ -496,10 +681,9 @@ class Converter:
         <tag.name> --> <admonition type='tag.name'>
         """
         attrib = {}
-        key = moin_page('type')
+        key = moin_page("type")
         attrib[key] = element.tag.name
-        return self.new_copy(moin_page.admonition, element,
-                             depth, attrib=attrib)
+        return self.new_copy(moin_page.admonition, element, depth, attrib=attrib)
 
     def visit_docbook_block(self, element, depth):
         """
@@ -510,9 +694,8 @@ class Converter:
         """
         attrib = {}
         key = html.class_
-        attrib[key] = ''.join(['db-', element.tag.name])
-        return self.new_copy(moin_page.div, element,
-                             depth, attrib=attrib)
+        attrib[key] = "".join(["db-", element.tag.name])
+        return self.new_copy(moin_page.div, element, depth, attrib=attrib)
 
     def visit_docbook_blockquote(self, element, depth):
         """
@@ -537,7 +720,7 @@ class Converter:
             else:
                 children.append(child)
         attrib = {}
-        attrib[moin_page('source')] = source[0]
+        attrib[moin_page("source")] = source[0]
         return self.new(moin_page.blockquote, attrib=attrib, children=children)
 
     def visit_docbook_emphasis(self, element, depth):
@@ -550,30 +733,25 @@ class Converter:
         However, it is still semantic, so we call it emphasis and strong.
         """
         for key, value in element.attrib.items():
-            if key.name == 'role' and value == 'bold':
-                return self.new_copy(moin_page.strong, element,
-                                     depth, attrib={})
-        return self.new_copy(moin_page.emphasis, element,
-                             depth, attrib={})
+            if key.name == "role" and value == "bold":
+                return self.new_copy(moin_page.strong, element, depth, attrib={})
+        return self.new_copy(moin_page.emphasis, element, depth, attrib={})
 
     def visit_docbook_entrytbl(self, element, depth):
         """
         Return a table within a table-cell.
         """
-        table_element = self.new_copy(moin_page.table, element,
-                                      depth, attrib={})
-        return self.new(moin_page('table-cell'),
-                        attrib={}, children=[table_element])
+        table_element = self.new_copy(moin_page.table, element, depth, attrib={})
+        return self.new(moin_page("table-cell"), attrib={}, children=[table_element])
 
     def visit_docbook_footnote(self, element, depth):
         """
         <footnote> --> <note note-class="footnote"><note-body>
         """
         attrib = {}
-        key = moin_page('note-class')
+        key = moin_page("note-class")
         attrib[key] = "footnote"
-        children = self.new(moin_page('note-body'), attrib={},
-                            children=self.do_children(element, depth))
+        children = self.new(moin_page("note-body"), attrib={}, children=self.do_children(element, depth))
         if len(children) > 1:
             # must delete lineno because footnote will be placed near end of page and out of sequence
             del children._children[1].attrib[html.data_lineno]
@@ -589,9 +767,9 @@ class Converter:
         """
         for child in element:
             if isinstance(child, ET.Element):
-                if child.tag.name == 'title':
+                if child.tag.name == "title":
                     title_element = child
-                if child.tag.name == 'para':
+                if child.tag.name == "para":
                     para_element = child
 
         if not title_element:
@@ -603,7 +781,7 @@ class Converter:
 
         children = self.do_children(para_element, depth + 1)[0]
         attrib = {}
-        attrib[html('title')] = title_element[0]
+        attrib[html("title")] = title_element[0]
         return self.new(moin_page.p, attrib=attrib, children=children)
 
     def visit_docbook_informalequation(self, element, depth):
@@ -611,27 +789,24 @@ class Converter:
         <informalequation> --> <div html:class="equation">
         """
         attrib = {}
-        attrib[html.class_] = 'db-equation'
-        return self.new_copy(moin_page('div'), element,
-                             depth, attrib=attrib)
+        attrib[html.class_] = "db-equation"
+        return self.new_copy(moin_page("div"), element, depth, attrib=attrib)
 
     def visit_docbook_informalexample(self, element, depth):
         """
         <informalexample> --> <div html:class="example">
         """
         attrib = {}
-        attrib[html.class_] = 'db-example'
-        return self.new_copy(moin_page('div'), element,
-                             depth, attrib=attrib)
+        attrib[html.class_] = "db-example"
+        return self.new_copy(moin_page("div"), element, depth, attrib=attrib)
 
     def visit_docbook_informalfigure(self, element, depth):
         """
         <informalfigure> --> <div html:class="figure">
         """
         attrib = {}
-        attrib[html.class_] = 'db-figure'
-        return self.new_copy(moin_page('div'), element,
-                             depth, attrib=attrib)
+        attrib[html.class_] = "db-figure"
+        return self.new_copy(moin_page("div"), element, depth, attrib=attrib)
 
     def visit_docbook_inline(self, element, depth):
         """
@@ -640,34 +815,30 @@ class Converter:
         """
         key = html.class_
         attrib = {}
-        attrib[key] = ''.join(['db-', element.tag.name])
-        return self.new_copy(moin_page.span, element,
-                             depth, attrib=attrib)
+        attrib[key] = "".join(["db-", element.tag.name])
+        return self.new_copy(moin_page.span, element, depth, attrib=attrib)
 
     def visit_docbook_inlinequation(self, element, depth):
         """
         <inlinequation> --> <span element="equation">
         """
         attrib = {}
-        attrib[moin_page('element')] = 'equation'
-        return self.new_copy(moin_page.span, element,
-                             depth, attrib=attrib)
+        attrib[moin_page("element")] = "equation"
+        return self.new_copy(moin_page.span, element, depth, attrib=attrib)
 
     def visit_docbook_inlinemediaobject(self, element, depth):
         data_element = self.visit_data_object(element, depth)
-        attrib = {html.class_: 'db-inlinemediaobject'}
-        return self.new(moin_page.span, attrib=attrib,
-                        children=[data_element])
+        attrib = {html.class_: "db-inlinemediaobject"}
+        return self.new(moin_page.span, attrib=attrib, children=[data_element])
 
     def visit_docbook_itemizedlist(self, element, depth):
         """
         <itemizedlist> --> <list item-label-generate="unordered">
         """
         attrib = {}
-        key = moin_page('item-label-generate')
-        attrib[key] = 'unordered'
-        return self.visit_simple_list(moin_page.list, attrib,
-                                      element, depth)
+        key = moin_page("item-label-generate")
+        attrib[key] = "unordered"
+        return self.visit_simple_list(moin_page.list, attrib, element, depth)
 
     def visit_docbook_link(self, element, depth):
         """
@@ -687,12 +858,12 @@ class Converter:
         if element.attrib.get(xlink.title_):
             attrib[html.title_] = element.attrib.get(xlink.title_)
         href = element.attrib.get(xlink.href)
-        linkend = element.get('linkend')
+        linkend = element.get("linkend")
         if linkend:
-            href = ''.join(['#', linkend])
+            href = "".join(["#", linkend])
         iri = Iri(href)
         if iri.scheme is None:
-            iri.scheme = 'wiki.local'
+            iri.scheme = "wiki.local"
         attrib[xlink.href] = iri
         return self.new_copy(moin_page.a, element, depth, attrib)
 
@@ -700,28 +871,25 @@ class Converter:
         """
         <literallayout> --> <blockcode html:class="db-literallayout">
         """
-        attrib = {html.class_: 'db-literallayout'}
-        return self.new_copy(moin_page.blockcode, element,
-                             depth, attrib=attrib)
+        attrib = {html.class_: "db-literallayout"}
+        return self.new_copy(moin_page.blockcode, element, depth, attrib=attrib)
 
     def visit_docbook_mediaobject(self, element, depth):
         data_element = self.visit_data_object(element, depth)
-        attrib = {html.class_: 'db-mediaobject'}
-        return self.new(moin_page.div, attrib=attrib,
-                        children=[data_element])
+        attrib = {html.class_: "db-mediaobject"}
+        return self.new(moin_page.div, attrib=attrib, children=[data_element])
 
     def visit_docbook_olink(self, element, depth):
         """
         <olink targetdoc='URI' targetptr='ptr'>
           --> <a xlink:href='URI#ptr'>
         """
-        targetdoc = element.get('targetdoc')
-        targetptr = element.get('targetptr')
+        targetdoc = element.get("targetdoc")
+        targetptr = element.get("targetptr")
         if targetdoc and targetptr and allowed_uri_scheme(targetdoc):
             attrib = {}
-            attrib[xlink.href] = ''.join([targetdoc, '#', targetptr])
-            return self.new_copy(moin_page.a, element,
-                                 depth, attrib=attrib)
+            attrib[xlink.href] = "".join([targetdoc, "#", targetptr])
+            return self.new_copy(moin_page.a, element, depth, attrib=attrib)
 
     def visit_docbook_orderedlist(self, element, depth):
         """
@@ -729,24 +897,25 @@ class Converter:
         See attribute_conversion for more details about the attributes.
         """
         attrib = {}
-        key = moin_page('item-label-generate')
-        attrib[key] = 'ordered'
-        attribute_conversion = {"upperalpha": "upper-alpha",
-                                "loweralpha": "lower-alpha",
-                                "upperroman": "upper-roman",
-                                "lowerroman": "lower-roman"}
-        numeration = element.get('numeration')
+        key = moin_page("item-label-generate")
+        attrib[key] = "ordered"
+        attribute_conversion = {
+            "upperalpha": "upper-alpha",
+            "loweralpha": "lower-alpha",
+            "upperroman": "upper-roman",
+            "lowerroman": "lower-roman",
+        }
+        numeration = element.get("numeration")
         if numeration in attribute_conversion:
-            key = moin_page('list-style-type')
+            key = moin_page("list-style-type")
             attrib[key] = attribute_conversion[numeration]
-        return self.visit_simple_list(moin_page.list, attrib,
-                                      element, depth)
+        return self.visit_simple_list(moin_page.list, attrib, element, depth)
 
     def visit_docbook_sbr(self, element, depth):
         """
         <sbr /> --> <line-break />
         """
-        return self.new(moin_page('line-break'), attrib={}, children={})
+        return self.new(moin_page("line-break"), attrib={}, children={})
 
     def visit_docbook_sect(self, element, depth):
         """
@@ -764,17 +933,17 @@ class Converter:
         TODO: Add div element, with specific id
         """
         self.is_section = True
-        title = ''
+        title = ""
         for child in element:
             if isinstance(child, ET.Element):
                 uri = child.tag.uri
                 name = self.docbook_namespace.get(uri, None)
-                if name == 'docbook' and child.tag.name == 'title':
+                if name == "docbook" and child.tag.name == "title":
                     title = child
                     # Remove the title element to avoid double conversion
                     element.remove(child)
         heading_level = element.tag.name[4]
-        key = moin_page('outline-level')
+        key = moin_page("outline-level")
         attrib = {}
         attrib[key] = heading_level
         return self.new(moin_page.h, attrib=attrib, children=title)
@@ -799,17 +968,17 @@ class Converter:
             self.heading_level = self.heading_level - (self.section_depth - depth)
             self.section_depth = depth
 
-        title = ''
+        title = ""
         result = []
         for child in element:
             if isinstance(child, ET.Element):
                 uri = child.tag.uri
                 name = self.docbook_namespace.get(uri, None)
-                if name == 'docbook' and child.tag.name == 'title':
+                if name == "docbook" and child.tag.name == "title":
                     title = child
                     # Remove the title element to avoid double conversion
                     element.remove(child)
-        key = moin_page('outline-level')
+        key = moin_page("outline-level")
         attrib = {}
         attrib[key] = self.heading_level
         result.append(self.new(moin_page.h, attrib=attrib, children=title))
@@ -829,14 +998,13 @@ class Converter:
         counter = 0
         for child in element:
             if isinstance(child, ET.Element):
-                if child.tag.name == 'seg':
-                    label_tag = ET.Element(moin_page('list-item-label'),
-                                           attrib={}, children=labels[counter % len(labels)])
-                    body_tag = ET.Element(moin_page('list-item-body'),
-                                          attrib={}, children=self.visit(child, depth))
-                    item_tag = ET.Element(moin_page('list-item'),
-                                          attrib={}, children=[label_tag, body_tag])
-                    item_tag = (item_tag, )
+                if child.tag.name == "seg":
+                    label_tag = ET.Element(
+                        moin_page("list-item-label"), attrib={}, children=labels[counter % len(labels)]
+                    )
+                    body_tag = ET.Element(moin_page("list-item-body"), attrib={}, children=self.visit(child, depth))
+                    item_tag = ET.Element(moin_page("list-item"), attrib={}, children=[label_tag, body_tag])
+                    item_tag = (item_tag,)
                     new.extend(item_tag)
                     counter += 1
                 else:
@@ -844,7 +1012,7 @@ class Converter:
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
-                        r = (r, )
+                        r = (r,)
                     new.extend(r)
             else:
                 new.append(child)
@@ -865,22 +1033,22 @@ class Converter:
         for child in element:
             if isinstance(child, ET.Element):
                 r = None
-                if child.tag.name == 'segtitle':
+                if child.tag.name == "segtitle":
                     r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
-                        r = (r, )
+                        r = (r,)
                     labels.extend(r)
                 else:
-                    if child.tag.name == 'seglistitem':
+                    if child.tag.name == "seglistitem":
                         r = self.visit_docbook_seglistitem(child, labels, depth)
                     else:
                         r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
-                        r = (r, )
+                        r = (r,)
                     new.extend(r)
             else:
                 new.append(child)
@@ -892,8 +1060,8 @@ class Converter:
         """
         # TODO: Add support of the type attribute
         attrib = {}
-        key = moin_page('item-label-generate')
-        attrib[key] = 'unordered'
+        key = moin_page("item-label-generate")
+        attrib[key] = "unordered"
         return self.visit_simple_list(moin_page.list, attrib, element, depth)
 
     def visit_docbook_subscript(self, element, depth):
@@ -901,10 +1069,9 @@ class Converter:
         <subscript> --> <span baseline-shift="sub">
         """
         attrib = {}
-        key = moin_page('baseline-shift')
-        attrib[key] = 'sub'
-        return self.new_copy(moin_page.span, element,
-                             depth, attrib=attrib)
+        key = moin_page("baseline-shift")
+        attrib[key] = "sub"
+        return self.new_copy(moin_page.span, element, depth, attrib=attrib)
 
     def visit_docbook_substeps(self, element, depth):
         """
@@ -917,10 +1084,9 @@ class Converter:
         <superscript> --> <span baseline-shift="super">
         """
         attrib = {}
-        key = moin_page('baseline-shift')
-        attrib[key] = 'super'
-        return self.new_copy(moin_page.span, element,
-                             depth, attrib=attrib)
+        key = moin_page("baseline-shift")
+        attrib[key] = "super"
+        return self.new_copy(moin_page.span, element, depth, attrib=attrib)
 
     def visit_docbook_procedure(self, element, depth):
         """
@@ -928,19 +1094,18 @@ class Converter:
         """
         # TODO: See to add Procedure text (if needed)
         attrib = {}
-        key = moin_page('item-label-generate')
-        attrib[key] = 'ordered'
-        return self.visit_simple_list(moin_page.list, attrib,
-                                      element, depth)
+        key = moin_page("item-label-generate")
+        attrib[key] = "ordered"
+        return self.visit_simple_list(moin_page.list, attrib, element, depth)
 
     def visit_docbook_qandaset(self, element, depth):
         """
         See visit_qandaset_* method.
         """
-        default_label = element.get('defaultlabel')
-        if default_label == 'number':
+        default_label = element.get("defaultlabel")
+        if default_label == "number":
             return self.visit_qandaset_number(element, depth)
-        elif default_label == 'qanda':
+        elif default_label == "qanda":
             return self.visit_qandaset_qanda(element, depth)
         else:
             return self.do_children(element, depth)
@@ -957,7 +1122,7 @@ class Converter:
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 list_table_elements.extend(r)
         return ET.Element(moin_page.table, attrib={}, children=list_table_elements)
 
@@ -967,17 +1132,17 @@ class Converter:
           --> <span class="db-tag-class.name">{ns.address}TAG</tag>
         """
         # We get the attributes
-        class_attribute = element.get('class')
-        namespace_attribute = element.get('namespace')
+        class_attribute = element.get("class")
+        namespace_attribute = element.get("namespace")
         # We create the attribute for our final element
         attrib = {}
         children = []
         if class_attribute:
-            attrib[html.class_] = ''.join(['db-tag-', class_attribute])
+            attrib[html.class_] = "".join(["db-tag-", class_attribute])
         else:
-            attrib[html.class_] = 'db-tag'
+            attrib[html.class_] = "db-tag"
         if namespace_attribute:
-            namespace_str = ''.join(['{', namespace_attribute, '}'])
+            namespace_str = "".join(["{", namespace_attribute, "}"])
             children.append(namespace_str)
         children.extend(self.do_children(element, depth))
         return self.new(moin_page.span, attrib=attrib, children=children)
@@ -989,24 +1154,24 @@ class Converter:
         Docbook supports 4 types of trademark: copyright, registered, trade (mark), and service (mark).
         <trademark> --> <span class="db-trademark">
         """
-        trademark_entities = {'copyright': '\xa9 ',  # '&copy; ',
-                              'registered': '\xae',  # '&reg;',
-                              'trade': '\u2122',  # no entity name defined for superscript TM
-                              }
-        trademark_class = element.get('class')
+        trademark_entities = {
+            "copyright": "\xa9 ",  # '&copy; ',
+            "registered": "\xae",  # '&reg;',
+            "trade": "\u2122",  # no entity name defined for superscript TM
+        }
+        trademark_class = element.get("class")
         children = self.do_children(element, depth)
         if trademark_class in trademark_entities:
-            if trademark_class == 'copyright':
+            if trademark_class == "copyright":
                 children.insert(0, trademark_entities[trademark_class])
             else:
                 children.append(trademark_entities[trademark_class])
-        elif trademark_class == 'service':
+        elif trademark_class == "service":
             # no entity name nor entity number defined for superscript SM
-            sup_attrib = {moin_page('baseline-shift'): 'super'}
-            service_mark = self.new(moin_page.span, attrib=sup_attrib,
-                                    children=['SM'])
+            sup_attrib = {moin_page("baseline-shift"): "super"}
+            service_mark = self.new(moin_page.span, attrib=sup_attrib, children=["SM"])
             children.append(service_mark)
-        attrib = {html.class_: 'db-trademark'}
+        attrib = {html.class_: "db-trademark"}
         return self.new(moin_page.span, attrib=attrib, children=children)
 
     def visit_docbook_entry(self, element, depth):
@@ -1014,8 +1179,8 @@ class Converter:
         <entry> --> <table-cell>
         """
         attrib = {}
-        rowspan = element.get('morerows')
-        colspan = element.get('morecols')
+        rowspan = element.get("morerows")
+        colspan = element.get("morecols")
         try:
             if rowspan:
                 attrib[moin_page.number_rows_spanned] = str(1 + int(rowspan))
@@ -1023,22 +1188,20 @@ class Converter:
                 attrib[moin_page.number_columns_spanned] = str(1 + int(colspan))
         except ValueError:
             pass
-        return self.new_copy(moin_page.table_cell,
-                             element, depth, attrib=attrib)
+        return self.new_copy(moin_page.table_cell, element, depth, attrib=attrib)
 
     def visit_docbook_td(self, element, depth):
         """
         <td> --> <table-cell>
         """
         attrib = {}
-        rowspan = element.get('rowspan')
-        colspan = element.get('colspan')
+        rowspan = element.get("rowspan")
+        colspan = element.get("colspan")
         if rowspan:
             attrib[moin_page.number_rows_spanned] = rowspan
         if colspan:
             attrib[moin_page.number_columns_spanned] = colspan
-        return self.new_copy(moin_page.table_cell,
-                             element, depth, attrib=attrib)
+        return self.new_copy(moin_page.table_cell, element, depth, attrib=attrib)
 
     def visit_docbook_ulink(self, element, depth):
         """
@@ -1052,7 +1215,7 @@ class Converter:
         # The namespace does not always work, so we will try to retrive the attribute whatever
         if not href:
             for key, value in element.attrib.items():
-                if key.name == 'url' and allowed_uri_scheme(value):
+                if key.name == "url" and allowed_uri_scheme(value):
                     href = value
         key = xlink.href
         attrib[key] = href
@@ -1073,18 +1236,18 @@ class Converter:
         items = []
         for child in element:
             if isinstance(child, ET.Element):
-                if child.tag.name == 'question' or child.tag.name == 'answer':
+                if child.tag.name == "question" or child.tag.name == "answer":
                     r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
-                        r = (r, )
+                        r = (r,)
                     items.extend(r)
             else:
                 items.append(child)
 
-        item_body = ET.Element(moin_page('list-item-body'), attrib={}, children=items)
-        return ET.Element(moin_page('list-item'), attrib={}, children=[item_body])
+        item_body = ET.Element(moin_page("list-item-body"), attrib={}, children=items)
+        return ET.Element(moin_page("list-item"), attrib={}, children=[item_body])
 
     def visit_qandaset_number(self, element, depth):
         """
@@ -1092,23 +1255,23 @@ class Converter:
           --> <list item-label-generate='ordered'>
         """
         attrib = {}
-        key = moin_page('item-label-generate')
-        attrib[key] = 'ordered'
+        key = moin_page("item-label-generate")
+        attrib[key] = "ordered"
         items = []
         for child in element:
             if isinstance(child, ET.Element):
-                if child.tag.name == 'qandaentry':
+                if child.tag.name == "qandaentry":
                     r = self.visit_qandaentry_number(child, depth)
                 else:
                     r = self.visit(child, depth)
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
-                items.extend(r, )
+                    r = (r,)
+                items.extend(r)
             else:
                 items.append(child)
-        return ET.Element(moin_page('list'), attrib=attrib, children=items)
+        return ET.Element(moin_page("list"), attrib=attrib, children=items)
 
     def visit_qandaentry_qanda(self, element, depth):
         """
@@ -1132,21 +1295,21 @@ class Converter:
             if isinstance(child, ET.Element):
                 r = ()
                 item_label = None
-                if child.tag.name == 'question':
-                    item_label = ET.Element(moin_page('list-item-label'), attrib={}, children="Q:")
-                elif child.tag.name == 'answer':
-                    item_label = ET.Element(moin_page('list-item-label'), attrib={}, children="A:")
+                if child.tag.name == "question":
+                    item_label = ET.Element(moin_page("list-item-label"), attrib={}, children="Q:")
+                elif child.tag.name == "answer":
+                    item_label = ET.Element(moin_page("list-item-label"), attrib={}, children="A:")
                 else:
                     r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
-                        r = (r, )
+                        r = (r,)
                     items.extend(r)
                 if item_label is not None:
-                    item_body = ET.Element(moin_page('list-item-body'), attrib={}, children=self.visit(child, depth))
+                    item_body = ET.Element(moin_page("list-item-body"), attrib={}, children=self.visit(child, depth))
                     r = (item_label, item_body)
-                    list_item = ET.Element(moin_page('list-item'), attrib={}, children=r)
+                    list_item = ET.Element(moin_page("list-item"), attrib={}, children=r)
                     items.append(list_item)
             else:
                 items.append(child)
@@ -1160,18 +1323,18 @@ class Converter:
         for child in element:
             if isinstance(child, ET.Element):
                 r = ()
-                if child.tag.name == 'qandaentry':
+                if child.tag.name == "qandaentry":
                     r = self.visit_qandaentry_qanda(child, depth)
                 else:
                     r = self.visit(child, depth)
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 items.extend(r)
             else:
                 items.append(child)
-        return ET.Element(moin_page('list'), attrib={}, children=items)
+        return ET.Element(moin_page("list"), attrib={}, children=items)
 
     def visit_simple_list(self, moin_page_tag, attrib, element, depth):
         """
@@ -1180,23 +1343,22 @@ class Converter:
 
         Here we handle the conversion of such of list.
         """
-        list_item_tags = {'listitem', 'step', 'stepalternatives', 'member'}
+        list_item_tags = {"listitem", "step", "stepalternatives", "member"}
         items = []
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name in list_item_tags:
                     children = self.visit(child, depth)
-                    list_item_body = ET.Element(moin_page('list-item-body'), attrib={}, children=children)
-                    tag = ET.Element(moin_page('list-item'), attrib={},
-                                     children=[list_item_body])
-                    tag = (tag, )
+                    list_item_body = ET.Element(moin_page("list-item-body"), attrib={}, children=children)
+                    tag = ET.Element(moin_page("list-item"), attrib={}, children=[list_item_body])
+                    tag = (tag,)
                     items.extend(tag)
                 else:
                     r = self.visit(child, depth)
                     if r is None:
                         r = ()
                     elif not isinstance(r, (list, tuple)):
-                        r = (r, )
+                        r = (r,)
                     items.extend(r)
             else:
                 items.append(child)
@@ -1225,9 +1387,9 @@ class Converter:
         children.append(self.visit(element, depth))
         # We show the table of content only if it is not empty
         if self.is_section:
-            children.insert(0, self.new(moin_page('table-of-content'), attrib={}, children={}))
+            children.insert(0, self.new(moin_page("table-of-content"), attrib={}, children={}))
         body = self.new(moin_page.body, attrib={}, children=children)
         return self.new(moin_page.page, attrib=attrib, children=[body])
 
 
-default_registry.register(Converter._factory, Type('application/docbook+xml'), type_moin_document)
+default_registry.register(Converter._factory, Type("application/docbook+xml"), type_moin_document)

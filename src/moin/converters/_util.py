@@ -39,14 +39,15 @@ def decode_data(data, contenttype=None):
     if not isinstance(data, (bytes, str)):
         data = data.data.read()
     if isinstance(data, bytes):
-        coding = 'utf-8'
+        coding = "utf-8"
         if contenttype is not None:
             ct = Type(contenttype)
-            coding = ct.parameters.get('charset', coding)
+            coding = ct.parameters.get("charset", coding)
         data = data.decode(coding)
     if not isinstance(data, str):
-        raise TypeError("data must be rev or bytes (requires contenttype with charset) or str, "
-                        "but we got {!r}".format(data))
+        raise TypeError(
+            "data must be rev or bytes (requires contenttype with charset) or str, " "but we got {!r}".format(data)
+        )
     return data
 
 
@@ -54,8 +55,8 @@ def normalize_split_text(text):
     """
     normalize line endings, split text into a list of lines
     """
-    text = text.replace('\r\n', '\n')
-    lines = text.split('\n')
+    text = text.replace("\r\n", "\n")
+    lines = text.split("\n")
     return lines
 
 
@@ -121,7 +122,7 @@ class _Stack:
         """
         Add a custom attribute (data-lineno=nn) that will be used by Javascript to scroll edit textarea.
         """
-        if flaskg and getattr(flaskg, 'add_lineno_attr', False):
+        if flaskg and getattr(flaskg, "add_lineno_attr", False):
             if self.last_lineno != self.iter_content.lineno:
                 # avoid adding same lineno to parent and multiple children or grand-children
                 elem.attrib[html.data_lineno] = self.iter_content.lineno
@@ -161,5 +162,5 @@ class _Stack:
         """
         Check if the top of the stack name and attrib matches the parameters.
         """
-        attrib = kwargs.get('attrib', {})
+        attrib = kwargs.get("attrib", {})
         return self._list[-1].name in names and set(attrib.items()).issubset(set(self._list[-1].elem.attrib.items()))

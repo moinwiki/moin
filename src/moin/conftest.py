@@ -28,14 +28,14 @@ from moin.storage import create_simple_mapping
 
 # exclude some directories from pytest test discovery, pathes relative to this file
 collect_ignore = [
-    'static',  # same
-    '../wiki',  # no tests there
-    '../instance',  # tw likes to use this for wiki data (non-revisioned)
+    "static",  # same
+    "../wiki",  # no tests there
+    "../instance",  # tw likes to use this for wiki data (non-revisioned)
 ]
 
 # Logging for tests to avoid useless output like timing information on stderr on test failures
 Moindir = py.path.local(moin.__file__).dirname
-config_file = Moindir + '/_tests/test_logging.conf'
+config_file = Moindir + "/_tests/test_logging.conf"
 moin.log.load_config(config_file)
 
 
@@ -46,10 +46,7 @@ def cfg():
 
 @pytest.fixture
 def app_ctx(cfg):
-    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping(
-        "stores:memory:",
-        cfg.default_acl
-    )
+    namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping("stores:memory:", cfg.default_acl)
     more_config = dict(
         namespace_mapping=namespace_mapping,
         backend_mapping=backend_mapping,
@@ -57,18 +54,14 @@ def app_ctx(cfg):
         create_backend=True,  # create backend storage and index
         destroy_backend=True,  # remove index and storage at app shutdown
     )
-    app = create_app_ext(
-        flask_config_dict=dict(SECRET_KEY='foobarfoobar'),
-        moin_config_class=cfg,
-        **more_config
-    )
-    ctx = app.test_request_context('/', base_url="http://localhost:8080/")
+    app = create_app_ext(flask_config_dict=dict(SECRET_KEY="foobarfoobar"), moin_config_class=cfg, **more_config)
+    ctx = app.test_request_context("/", base_url="http://localhost:8080/")
     ctx.push()
     before_wiki()
 
     yield app, ctx
 
-    teardown_wiki('')
+    teardown_wiki("")
     ctx.pop()
     try:
         # simulate ERROR PermissionError:

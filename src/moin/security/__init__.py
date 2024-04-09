@@ -28,6 +28,7 @@ def require_permission(permission):
 
     if the permission is not granted, abort with 403
     """
+
     def wrap(f):
         @wraps(f)
         def wrapped_f(*args, **kw):
@@ -35,7 +36,9 @@ def require_permission(permission):
             if not has_permission():
                 abort(403)
             return f(*args, **kw)
+
         return wrapped_f
+
     return wrap
 
 
@@ -64,20 +67,22 @@ class DefaultSecurityPolicy:
                 # This call will return correct permissions by checking ACLs:
                 return super(MySecPol, self).read(itemname)
     """
+
     def __init__(self, user):
         self.names = user.name
 
     def read(self, itemname):
         """read permission is special as we have 2 kinds of read capabilities:
 
-           * READ - gives permission to read, unconditionally
-           * PUBREAD - gives permission to read, when published
+        * READ - gives permission to read, unconditionally
+        * PUBREAD - gives permission to read, when published
         """
-        return (flaskg.storage.may(itemname, rights.READ, usernames=self.names) or
-                flaskg.storage.may(itemname, rights.PUBREAD, usernames=self.names))
+        return flaskg.storage.may(itemname, rights.READ, usernames=self.names) or flaskg.storage.may(
+            itemname, rights.PUBREAD, usernames=self.names
+        )
 
     def __getattr__(self, attr):
-        """ Shortcut to handle all known ACL rights.
+        """Shortcut to handle all known ACL rights.
 
         if attr is a valid acl right, return a checking function for it.
         Else raise an AttributeError.
@@ -89,6 +94,7 @@ class DefaultSecurityPolicy:
         if attr in app.cfg.acl_rights_contents:
             return lambda itemname: flaskg.storage.may(itemname, attr, usernames=self.names)
         if attr in app.cfg.acl_rights_functions:
+
             def multiuser_may():
                 # TODO: if "may" would accept multiple names, we could get rid of this
                 may = app.cfg.cache.acl_functions.may
@@ -96,6 +102,7 @@ class DefaultSecurityPolicy:
                     if may(name, attr):
                         return True
                 return False
+
             return multiuser_may
         raise AttributeError(attr)
 
@@ -176,9 +183,8 @@ class AccessControlList(AutoNe):
 
     special_users = ["All", "Known", "Trusted"]  # order is important
 
-    def __init__(self, lines=[], default='', valid=None):
-        """ Initialize an ACL, starting from <nothing>.
-        """
+    def __init__(self, lines=[], default="", valid=None):
+        """Initialize an ACL, starting from <nothing>."""
         assert valid is not None
         self.acl_rights_valid = valid
         self.default = default
@@ -193,13 +199,13 @@ class AccessControlList(AutoNe):
             self.acl_lines = None
 
     def has_acl(self):
-        """ Checks whether we have a real acl here. """
+        """Checks whether we have a real acl here."""
         # self.acl == None means that there is NO acl.
         # self.acl == [] means that there is a empty acl.
         return self.acl is not None
 
     def _addLine(self, aclstring, remember=1):
-        """ Add another ACL line
+        """Add another ACL line
 
         This can be used in multiple subsequent calls to process longer lists.
 
@@ -213,7 +219,7 @@ class AccessControlList(AutoNe):
         # Iterate over entries and rights, parsed by acl string iterator
         acliter = ACLStringIterator(self.acl_rights_valid, aclstring)
         for modifier, entries, _rights in acliter:
-            if entries == ['Default']:
+            if entries == ["Default"]:
                 self._addLine(self.default, remember=0)
             else:
                 for entry in entries:
@@ -223,20 +229,20 @@ class AccessControlList(AutoNe):
                         # + add right with value of 1
                         # - add right with value of 0
                         for right in _rights:
-                            rightsdict[right] = (modifier == '+')
+                            rightsdict[right] = modifier == "+"
                     else:
                         # All rights from acl_rights_valid are added to the
                         # dict, user rights with value of 1, and other with
                         # value of 0
                         for right in self.acl_rights_valid:
-                            rightsdict[right] = (right in _rights)
+                            rightsdict[right] = right in _rights
                     self.acl.append((entry, rightsdict))
 
     def may(self, name, dowhat):
-        """ May <name> <dowhat>? Returns boolean answer.
+        """May <name> <dowhat>? Returns boolean answer.
 
-            Note: this just checks THIS ACL, the before/default/after ACL must
-                  be handled elsewhere, if needed.
+        Note: this just checks THIS ACL, the before/default/after ACL must
+              be handled elsewhere, if needed.
         """
         groups = flaskg.groups
         allowed = None
@@ -266,19 +272,19 @@ class AccessControlList(AutoNe):
         return rightsdict.get(dowhat)
 
     def _special_Known(self, name, dowhat, rightsdict):
-        """ check if user <name> is known to us,
-            that means that there is a valid user account present.
-            works for subscription emails.
+        """check if user <name> is known to us,
+        that means that there is a valid user account present.
+        works for subscription emails.
         """
         if user.search_users(**{NAME_EXACT: name}):  # is a user with this name known?
             return rightsdict.get(dowhat)
         return None
 
     def _special_Trusted(self, name, dowhat, rightsdict):
-        """ check if user <name> is the current user AND is has logged in using
-            an authentication method that set the trusted attribute.
-            Does not work for subsription emails that should be sent to <user>,
-            as the user is not logged in in that case.
+        """check if user <name> is the current user AND is has logged in using
+        an authentication method that set the trusted attribute.
+        Does not work for subsription emails that should be sent to <user>,
+        as the user is not logged in in that case.
         """
         if flaskg.user.name == name and flaskg.user.trusted:
             return rightsdict.get(dowhat)
@@ -289,7 +295,7 @@ class AccessControlList(AutoNe):
 
 
 class ACLStringIterator:
-    """ Iterator for acl string
+    """Iterator for acl string
 
     Parse acl string and return the next entry on each call to next.
     Implements the Iterator protocol.
@@ -302,7 +308,7 @@ class ACLStringIterator:
     """
 
     def __init__(self, rights, aclstring):
-        """ Initialize acl iterator
+        """Initialize acl iterator
 
         :param rights: the acl rights to consider when parsing
         :param aclstring: string to parse
@@ -312,11 +318,11 @@ class ACLStringIterator:
         self.finished = 0
 
     def __iter__(self):
-        """ Required by the Iterator protocol """
+        """Required by the Iterator protocol"""
         return self
 
     def __next__(self):
-        """ Return the next values from the acl string
+        """Return the next values from the acl string
 
         When the iterator is finished and you try to call next, it
         raises a StopIteration. The iterator finishes as soon as the
@@ -326,43 +332,43 @@ class ACLStringIterator:
         :returns: values for one item in an acl string
         """
         # Handle finished state, required by iterator protocol
-        if self.rest == '':
+        if self.rest == "":
             self.finished = 1
         if self.finished:
             raise StopIteration
 
         # Get optional modifier [+|-]entries:rights
-        modifier = ''
-        if self.rest[0] in ('+', '-'):
+        modifier = ""
+        if self.rest[0] in ("+", "-"):
             modifier, self.rest = self.rest[0], self.rest[1:]
 
         # Handle the Default meta acl
-        if self.rest.startswith('Default ') or self.rest == 'Default':
+        if self.rest.startswith("Default ") or self.rest == "Default":
             self.rest = self.rest[8:]
-            entries, rights = ['Default'], []
+            entries, rights = ["Default"], []
 
         # Handle entries:rights pairs
         else:
             # Get entries
             try:
-                entries, self.rest = self.rest.split(':', 1)
+                entries, self.rest = self.rest.split(":", 1)
             except ValueError:
                 self.finished = 1
                 raise StopIteration("Can't parse rest of string")
-            if entries == '':
+            if entries == "":
                 entries = []
             else:
                 # TODO strip each entry from blanks?
-                entries = entries.split(',')
+                entries = entries.split(",")
 
             # Get rights
             try:
-                rights, self.rest = self.rest.split(' ', 1)
+                rights, self.rest = self.rest.split(" ", 1)
                 # Remove extra white space after rights fragment,
                 # allowing using multiple spaces between items.
                 self.rest = self.rest.lstrip()
             except ValueError:
-                rights, self.rest = self.rest, ''
-            rights = [r for r in rights.split(',') if r in self.rights]
+                rights, self.rest = self.rest, ""
+            rights = [r for r in rights.split(",") if r in self.rights]
 
         return modifier, entries, rights

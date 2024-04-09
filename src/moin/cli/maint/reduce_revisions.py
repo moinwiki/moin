@@ -24,6 +24,7 @@ from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.app import create_app, before_wiki
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -32,14 +33,18 @@ def cli():
     pass
 
 
-@cli.command("maint-reduce-revisions",
-             help="Remove all revisions but the last one from all selected items.")
-@click.option('--query', '-q', type=str, default='',
-              help='Only perform the operation on items found by the given query.')
-@click.option('--namespace', '-n', type=str, default='',
-              help='Limit selection to a namespace; use "default" for default namespace.')
-@click.option('--test', '-t', type=bool, default=0,
-              help='List selected items, but do not update.')
+@cli.command("maint-reduce-revisions", help="Remove all revisions but the last one from all selected items.")
+@click.option(
+    "--query", "-q", type=str, default="", help="Only perform the operation on items found by the given query."
+)
+@click.option(
+    "--namespace",
+    "-n",
+    type=str,
+    default="",
+    help='Limit selection to a namespace; use "default" for default namespace.',
+)
+@click.option("--test", "-t", type=bool, default=0, help="List selected items, but do not update.")
 def ReduceRevisions(query, namespace, test):
     logging.info("Reduce revisions started")
     before_wiki()
@@ -48,8 +53,8 @@ def ReduceRevisions(query, namespace, test):
         if query:
             q = And([q, Regex(NAME_EXACT, query)])
         if namespace:
-            if namespace == 'default':
-                namespace = ''
+            if namespace == "default":
+                namespace = ""
             q = And([q, Term(NAMESPACE, namespace)])
     else:
         q = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
@@ -59,10 +64,11 @@ def ReduceRevisions(query, namespace, test):
         current_revid = current_rev.meta[REVID]
         current_namespace = current_rev.meta[NAMESPACE]
         current_revno = current_rev.meta[REV_NUMBER]
-        current_full_name = current_namespace + '/' + current_name[0] if current_namespace else current_name
+        current_full_name = current_namespace + "/" + current_name[0] if current_namespace else current_name
         if test:
-            print("Item named {!r} selected but not updated, has {} revisions :".format(current_full_name,
-                                                                                          current_revno))
+            print(
+                "Item named {!r} selected but not updated, has {} revisions :".format(current_full_name, current_revno)
+            )
         else:
             print(f"Destroying historical revisions of {current_full_name!r}:")
             has_historical_revision = False

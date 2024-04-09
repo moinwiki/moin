@@ -24,14 +24,16 @@ from moin.i18n import _
 from moin.auth import BaseAuth
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
 class HTTPAuthMoin(BaseAuth):
-    """ authenticate via http (basic) auth """
-    name = 'http'
+    """authenticate via http (basic) auth"""
 
-    def __init__(self, trusted=True, autocreate=False, realm='MoinMoin', coding='utf-8', **kw):
+    name = "http"
+
+    def __init__(self, trusted=True, autocreate=False, realm="MoinMoin", coding="utf-8", **kw):
         super().__init__(**kw)
         self.autocreate = autocreate
         self.realm = realm
@@ -49,15 +51,16 @@ class HTTPAuthMoin(BaseAuth):
         auth = request.authorization
         if auth and auth.username and auth.password is not None:
             logging.debug(f"http basic auth, received username: {auth.username!r} password: {auth.password!r}")
-            u = user.User(name=auth.username, password=auth.password,
-                          auth_method=self.name, auth_attribs=[], trusted=self.trusted)
+            u = user.User(
+                name=auth.username, password=auth.password, auth_method=self.name, auth_attribs=[], trusted=self.trusted
+            )
             logging.debug(f"user: {u!r}")
 
         if not u or not u.valid:
             from werkzeug import Response
             from werkzeug.exceptions import abort
-            response = Response(_('Please log in first.'), 401,
-                                {'WWW-Authenticate': f'Basic realm="{self.realm}"'})
+
+            response = Response(_("Please log in first."), 401, {"WWW-Authenticate": f'Basic realm="{self.realm}"'})
             abort(response)
 
         logging.debug(f"u: {u!r}")

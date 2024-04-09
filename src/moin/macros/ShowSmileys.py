@@ -17,11 +17,11 @@ from moin.converters.smiley import Converter
 class Macro(MacroBlockBase):
     def macro(self, content, arguments, page_url, alternative):
         smileys = Converter.smileys
-        headings = (_('Markup'), _('Result'), _('Name'))
+        headings = (_("Markup"), _("Result"), _("Name"))
         rows = []
         for key in smileys.keys():
             icon_name = smileys[key]
-            src = url_for('static', filename='img/icons/' + icon_name + ".png")
+            src = url_for("static", filename="img/icons/" + icon_name + ".png")
             rows.append((key, html.img(attrib={html.src: src, html.alt: icon_name}), icon_name))
         table = TableMixin()
         ret = table.build_dom_table(rows, head=headings)

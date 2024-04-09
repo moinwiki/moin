@@ -85,14 +85,15 @@ from moin.utils.iri import Iri
 from moin.i18n import _
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
-WHOOSH_FILESTORAGE = 'FileStorage'
-INDEXES = [LATEST_REVS, ALL_REVS, ]
+WHOOSH_FILESTORAGE = "FileStorage"
+INDEXES = [LATEST_REVS, ALL_REVS]
 
-VALIDATION_HANDLING_STRICT = 'strict'
-VALIDATION_HANDLING_WARN = 'warn'
+VALIDATION_HANDLING_STRICT = "strict"
+VALIDATION_HANDLING_WARN = "warn"
 # TODO: fix tests to create valid metadata
 VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
@@ -118,7 +119,7 @@ def get_indexer(fn, **kw):
             break
         time.sleep(2)
         if time.time() > until:
-            raise KeyError(kw.get('revid', '') + ' - server overload or corrupt index')
+            raise KeyError(kw.get("revid", "") + " - server overload or corrupt index")
     return indexer
 
 
@@ -131,7 +132,7 @@ def parent_names(names):
     """
     parents = set()
     for name in names:
-        parent_tail = name.rsplit('/', 1)
+        parent_tail = name.rsplit("/", 1)
         if len(parent_tail) == 2:
             parents.add(parent_tail[0])
     return parents
@@ -166,9 +167,7 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     :param wikiname: interwikiname of this wiki
     :returns: document to put into whoosh index
     """
-    doc = {key: value
-                for key, value in meta.items()
-                if key in schema}
+    doc = {key: value for key, value in meta.items() if key in schema}
     if SUBSCRIPTION_IDS in schema and SUBSCRIPTIONS in meta:
         doc[SUBSCRIPTION_IDS], doc[SUBSCRIPTION_PATTERNS] = backend_subscriptions_to_index(meta[SUBSCRIPTIONS])
     for key in [MTIME, PTIME]:
@@ -184,24 +183,24 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     if SUMMARYNGRAM in schema and SUMMARY in meta:
         doc[SUMMARYNGRAM] = meta[SUMMARY]
     if NAMENGRAM in schema and NAME in meta:
-        doc[NAMENGRAM] = ' '.join(meta[NAME])
+        doc[NAMENGRAM] = " ".join(meta[NAME])
     if doc.get(TAGS, None):
         # global tags uses this to search for items with tags
         doc[HAS_TAG] = True
     if doc.get(NAME, None):
         if doc.get(NAMESPACE, None):
-            fullnames = [doc[NAMESPACE] + '/' + x for x in doc[NAME]]
-            doc[NAMES] = ' | '.join(fullnames)
+            fullnames = [doc[NAMESPACE] + "/" + x for x in doc[NAME]]
+            doc[NAMES] = " | ".join(fullnames)
         else:
-            doc[NAMES] = ' | '.join(doc[NAME])
-        doc[NAME_SORT] = doc[NAMES].replace('/', '')
+            doc[NAMES] = " | ".join(doc[NAME])
+        doc[NAME_SORT] = doc[NAMES].replace("/", "")
     else:
         doc[NAME_SORT] = ""
     return doc
 
 
 def backend_subscriptions_to_index(subscriptions):
-    """ Split subscriptions list to subscription_ids and subscription_patterns lists
+    """Split subscriptions list to subscription_ids and subscription_patterns lists
     which match the fields of the whoosh schema
 
     :param subscriptions: user subscriptions meta
@@ -211,10 +210,10 @@ def backend_subscriptions_to_index(subscriptions):
     subscription_ids = []
     subscription_patterns = []
     for subscription in subscriptions:
-        keyword = subscription.split(':')[0]
-        if keyword in (ITEMID, NAME, TAGS, ):
+        keyword = subscription.split(":")[0]
+        if keyword in (ITEMID, NAME, TAGS):
             subscription_ids.append(subscription)
-        elif keyword in (NAMERE, NAMEPREFIX, ):
+        elif keyword in (NAMERE, NAMEPREFIX):
             subscription_patterns.append(subscription)
     return subscription_ids, subscription_patterns
 
@@ -235,11 +234,11 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     """
     if not item_name:
         try:
-            item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
+            item_name = meta[NAMESPACE] + "/" + meta[NAME][0]
         except IndexError:
-            item_name = meta[NAMESPACE] + '/' + 'DoesNotExist'
+            item_name = meta[NAMESPACE] + "/" + "DoesNotExist"
     elif item_name and meta.get(NAMESPACE):
-        item_name = meta[NAMESPACE] + '/' + meta[NAME][0]
+        item_name = meta[NAMESPACE] + "/" + meta[NAME][0]
     fqname = split_fqname(item_name)
 
     class PseudoRev:
@@ -252,6 +251,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
                 def __init__(self, fqname):
                     self.fqname = fqname
                     self.name = fqname.value
+
             self.item = PseudoItem(fqname)
 
         def read(self, *args, **kw):
@@ -265,7 +265,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
         logging.debug(f"not indexing content of {meta[NAME]!r} as requested by configuration")
-        return ''
+        return ""
 
     rev = PseudoRev(meta, data)
     try:
@@ -274,7 +274,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         # different output than for normal rendering), esp. for the non-markup
         # content types (images, etc.).
         input_contenttype = meta[CONTENTTYPE]
-        output_contenttype = 'text/plain'
+        output_contenttype = "text/plain"
         type_input_contenttype = Type(input_contenttype)
         type_output_contenttype = Type(output_contenttype)
         reg = default_registry
@@ -287,7 +287,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         # otherwise try via DOM as intermediate format (this is useful if
         # input type is markup, to get rid of the markup):
         input_conv = reg.get(type_input_contenttype, type_moin_document)
-        refs_conv = reg.get(type_moin_document, type_moin_document, items='refs')
+        refs_conv = reg.get(type_moin_document, type_moin_document, items="refs")
         output_conv = reg.get(type_moin_document, type_output_contenttype)
         if input_conv and output_conv:
             doc = input_conv(rev, input_contenttype)
@@ -297,7 +297,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
             # transclusions.
             if is_new:
                 # we only can modify new, uncommitted revisions, not stored revs
-                i = Iri(scheme='wiki', authority='', path='/' + item_name)
+                i = Iri(scheme="wiki", authority="", path="/" + item_name)
                 doc.set(moin_page.page_href, str(i))
                 refs_conv(doc)
                 # side effect: we update some metadata:
@@ -309,9 +309,12 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         # no way
         raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
-        logging.exception("Exception happened in conversion of item {!r} rev {} contenttype {}:".format(
-                          item_name, meta.get(REVID, 'new'), meta.get(CONTENTTYPE, '')))
-        doc = f'ERROR [{e!s}]'
+        logging.exception(
+            "Exception happened in conversion of item {!r} rev {} contenttype {}:".format(
+                item_name, meta.get(REVID, "new"), meta.get(CONTENTTYPE, "")
+            )
+        )
+        doc = f"ERROR [{e!s}]"
         return doc
 
 
@@ -441,13 +444,11 @@ class IndexingMiddleware:
 
         blog_entry_fields = {
             # blog publish time from metadata (converted to UTC datetime)
-            PTIME: DATETIME(stored=True),
+            PTIME: DATETIME(stored=True)
         }
         latest_revs_fields.update(**blog_entry_fields)
 
-        all_revs_fields = {
-            ITEMID: ID(stored=True),
-        }
+        all_revs_fields = {ITEMID: ID(stored=True)}
         all_revs_fields.update(**common_fields)
 
         latest_revisions_schema = Schema(**latest_revs_fields)
@@ -458,13 +459,14 @@ class IndexingMiddleware:
         self.schemas[LATEST_REVS] = latest_revisions_schema
 
         # Define dynamic fields
-        dynamic_fields = [("*_id", ID(stored=True)),
-                          ("*_text", TEXT(stored=True)),
-                          ("*_keyword", KEYWORD(stored=True)),
-                          ("*_numeric", NUMERIC(stored=True)),
-                          ("*_datetime", DATETIME(stored=True)),
-                          ("*_boolean", BOOLEAN(stored=True)),
-                          ]
+        dynamic_fields = [
+            ("*_id", ID(stored=True)),
+            ("*_text", TEXT(stored=True)),
+            ("*_keyword", KEYWORD(stored=True)),
+            ("*_numeric", NUMERIC(stored=True)),
+            ("*_datetime", DATETIME(stored=True)),
+            ("*_boolean", BOOLEAN(stored=True)),
+        ]
 
         # Adding dynamic fields to schemas
         for glob, field_type in dynamic_fields:
@@ -481,8 +483,9 @@ class IndexingMiddleware:
         if kind == WHOOSH_FILESTORAGE:
             # index_storage = 'FileStorage', (index_dir, ), {}
             if tmp:
-                params[0] += '.temp'
+                params[0] += ".temp"
             from whoosh.filedb.filestore import FileStorage
+
             cls = FileStorage
         else:
             raise ValueError(f"index_storage = {kind!r} is not supported!")
@@ -579,9 +582,12 @@ class IndexingMiddleware:
             is_latest = True
         else:
             with self.ix[ALL_REVS].searcher() as searcher:
-                is_latest = (searcher.search(Term(ITEMID, doc[ITEMID]),
-                                             sortedby=FieldFacet(MTIME, reverse=True),
-                                             limit=1)[0][REVID] == doc[REVID])
+                is_latest = (
+                    searcher.search(Term(ITEMID, doc[ITEMID]), sortedby=FieldFacet(MTIME, reverse=True), limit=1)[0][
+                        REVID
+                    ]
+                    == doc[REVID]
+                )
         if is_latest:
             doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
             if async_:
@@ -626,14 +632,15 @@ class IndexingMiddleware:
                     with self.ix[ALL_REVS].searcher() as searcher:
                         doc = searcher.document(revid=latest_backend_revid[1])
                         content = doc[CONTENT]
-                    doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname,
-                                           backend_name=latest_backend_revid[0])
+                    doc = backend_to_index(
+                        meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name=latest_backend_revid[0]
+                    )
                     writer.update_document(**doc)
                 else:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
                     writer.delete_document(docnum_remove)
 
-    def _modify_index(self, index, schema, wikiname, revids, mode='add', procs=1, limitmb=256):
+    def _modify_index(self, index, schema, wikiname, revids, mode="add", procs=1, limitmb=256):
         """
         modify index contents - add, update, delete the indexed documents for all given revids
 
@@ -642,15 +649,15 @@ class IndexingMiddleware:
         """
         with index.writer(procs=procs, limitmb=limitmb) as writer:
             for backend_name, revid in revids:
-                if mode in ['add', 'update', ]:
+                if mode in ["add", "update"]:
                     meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
                     doc = backend_to_index(meta, content, schema, wikiname, backend_name)
-                if mode == 'update':
+                if mode == "update":
                     writer.update_document(**doc)
-                elif mode == 'add':
+                elif mode == "add":
                     writer.add_document(**doc)
-                elif mode == 'delete':
+                elif mode == "delete":
                     writer.delete_by_term(REVID, revid)
                 else:
                     raise ValueError(f"mode must be 'update', 'add' or 'delete', not '{mode}'")
@@ -669,9 +676,10 @@ class IndexingMiddleware:
             result = searcher.search(query, groupedby=ITEMID, sortedby=FieldFacet(MTIME, reverse=True))
             by_item = result.groups(ITEMID)
             # values in v list are in same relative order as in results, so latest MTIME is first:
-            latest_backends_revids = [(searcher.stored_fields(v[0])[BACKENDNAME],
-                                      searcher.stored_fields(v[0])[REVID])
-                                      for v in by_item.values()]
+            latest_backends_revids = [
+                (searcher.stored_fields(v[0])[BACKENDNAME], searcher.stored_fields(v[0])[REVID])
+                for v in by_item.values()
+            ]
         return latest_backends_revids
 
     def rebuild(self, tmp=False, procs=1, limitmb=256):
@@ -688,7 +696,7 @@ class IndexingMiddleware:
         try:
             # build an index of all we have (so we know what we have)
             all_revids = self.backend  # the backend is an iterator over all revids
-            self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, 'add', procs, limitmb)
+            self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, "add", procs, limitmb)
             latest_backends_revids = self._find_latest_backends_revids(index)
         finally:
             index.close()
@@ -696,8 +704,9 @@ class IndexingMiddleware:
         # now build the index of the latest revisions:
         index = storage.open_index(LATEST_REVS)
         try:
-            self._modify_index(index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, 'add',
-                               procs, limitmb)
+            self._modify_index(
+                index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, "add", procs, limitmb
+            )
         finally:
             index.close()
 
@@ -731,8 +740,8 @@ class IndexingMiddleware:
             changed = add_revids or del_revids
             add_revids = [(revids_backends[revid], revid) for revid in add_revids]
             del_revids = [(revids_backends[revid], revid) for revid in del_revids]
-            self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, add_revids, 'add')
-            self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, del_revids, 'delete')
+            self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, add_revids, "add")
+            self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, del_revids, "delete")
 
             backend_latest_backends_revids = set(self._find_latest_backends_revids(index_all))
         finally:
@@ -745,8 +754,8 @@ class IndexingMiddleware:
             backend_latest_revids = {revid for name, revid in backend_latest_backends_revids}
             upd_revids = backend_latest_revids - ix_revids
             upd_revids = [(revids_backends[revid], revid) for revid in upd_revids]
-            self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, upd_revids, 'update')
-            self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, del_revids, 'delete')
+            self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, upd_revids, "update")
+            self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, del_revids, "delete")
         finally:
             index_latest.close()
         return changed
@@ -782,14 +791,14 @@ class IndexingMiddleware:
         storage = self.get_storage(tmp)
         ix = storage.open_index(idx_name)
         while not ix.up_to_date():
-            logging.info('waiting for ix.up_to_date()')
+            logging.info("waiting for ix.up_to_date()")
             time.sleep(0.1)
         try:
             with ix.searcher() as searcher:
                 for doc in searcher.all_stored_fields():
                     name = doc.pop(NAME, "")
                     content = doc.pop(CONTENT, "")
-                    yield [(NAME, name), ] + sorted(doc.items()) + [(CONTENT, content), ]
+                    yield [(NAME, name)] + sorted(doc.items()) + [(CONTENT, content)]
         finally:
             ix.close()
 
@@ -808,8 +817,9 @@ class IndexingMiddleware:
 
         def userid_pseudo_field_factory(fieldname):
             """generate a translator function, that searches for the userid
-               in the given fieldname when provided with the username
+            in the given fieldname when provided with the username
             """
+
             def userid_pseudo_field(node):
                 username = node.text
                 users = user.search_users(**{NAME_EXACT: username})
@@ -819,13 +829,19 @@ class IndexingMiddleware:
                     node.set_fieldname(fieldname)
                     return node
                 return node
+
             return userid_pseudo_field
-        qp.add_plugin(PseudoFieldPlugin(dict(
-            # username:JoeDoe searches for revisions modified by JoeDoe
-            username=userid_pseudo_field_factory(USERID),
-            # assigned:JoeDoe searches for tickets assigned to JoeDoe
-            assigned=userid_pseudo_field_factory(ASSIGNED_TO),
-        )))
+
+        qp.add_plugin(
+            PseudoFieldPlugin(
+                dict(
+                    # username:JoeDoe searches for revisions modified by JoeDoe
+                    username=userid_pseudo_field_factory(USERID),
+                    # assigned:JoeDoe searches for tickets assigned to JoeDoe
+                    assigned=userid_pseudo_field_factory(ASSIGNED_TO),
+                )
+            )
+        )
         return qp
 
     def search(self, q, idx_name=LATEST_REVS, **kw):
@@ -929,7 +945,7 @@ class IndexingMiddleware:
         """
         Return item with <name> (may be a new or existing item).
         """
-        if name.startswith('@itemid/'):
+        if name.startswith("@itemid/"):
             return Item(self, **{ITEMID: name[8:]})
         fqname = split_fqname(name)
         return Item(self, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
@@ -966,6 +982,7 @@ class PropertiesMixin:
     """
     PropertiesMixin offers methods to find out some additional information from meta.
     """
+
     @property
     def name(self):
         if self._name and self._name in self.names:
@@ -981,7 +998,7 @@ class PropertiesMixin:
 
     @property
     def namespace(self):
-        return self.meta.get(NAMESPACE, '')
+        return self.meta.get(NAMESPACE, "")
 
     def _fqname(self, name=None):
         """
@@ -1079,6 +1096,7 @@ class Item(PropertiesMixin):
 
     def _set_itemid(self, value):
         self._current[ITEMID] = value
+
     itemid = property(_get_itemid, _set_itemid)
 
     @property
@@ -1120,7 +1138,7 @@ class Item(PropertiesMixin):
         raise NoSuchItemError(repr(query))
 
     def __repr__(self):
-        return f'<Item {self.name}>'
+        return f"<Item {self.name}>"
 
     def __bool__(self):
         """
@@ -1155,19 +1173,23 @@ class Item(PropertiesMixin):
         content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
-    def store_revision(self, meta, data, overwrite=False,
-                       trusted=False,  # True for loading a serialized representation or other trusted sources
-                       name=None,  # TODO name we decoded from URL path
-                       action=ACTION_SAVE,
-                       remote_addr=None,
-                       userid=None,
-                       wikiname=None,
-                       contenttype_current=None,
-                       contenttype_guessed=None,
-                       acl_parent=None,
-                       return_rev=False,
-                       fqname=None,
-                       ):
+    def store_revision(
+        self,
+        meta,
+        data,
+        overwrite=False,
+        trusted=False,  # True for loading a serialized representation or other trusted sources
+        name=None,  # TODO name we decoded from URL path
+        action=ACTION_SAVE,
+        remote_addr=None,
+        userid=None,
+        wikiname=None,
+        contenttype_current=None,
+        contenttype_guessed=None,
+        acl_parent=None,
+        return_rev=False,
+        fqname=None,
+    ):
         """
         Store a revision into the backend, write metadata and data to it.
 
@@ -1195,19 +1217,20 @@ class Item(PropertiesMixin):
                 pass
         if wikiname is None:
             wikiname = app.cfg.interwikiname
-        state = {'trusted': trusted,
-                 NAME: [name],
-                 ACTION: action,
-                 ADDRESS: remote_addr,
-                 USERID: userid,
-                 WIKINAME: wikiname,
-                 NAMESPACE: None,
-                 ITEMID: self.itemid,  # real itemid or None
-                 'contenttype_current': contenttype_current,
-                 'contenttype_guessed': contenttype_guessed,
-                 'acl_parent': acl_parent,
-                 FQNAME: fqname,
-                 }
+        state = {
+            "trusted": trusted,
+            NAME: [name],
+            ACTION: action,
+            ADDRESS: remote_addr,
+            USERID: userid,
+            WIKINAME: wikiname,
+            NAMESPACE: None,
+            ITEMID: self.itemid,  # real itemid or None
+            "contenttype_current": contenttype_current,
+            "contenttype_guessed": contenttype_guessed,
+            "acl_parent": acl_parent,
+            FQNAME: fqname,
+        }
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
             Schema = UserMetaSchema
@@ -1219,7 +1242,7 @@ class Item(PropertiesMixin):
             logging.warning("data validation skipped because metadata is invalid, see below")
             val = []
             for e in m.children:
-                if e.name == 'subscriptions':
+                if e.name == "subscriptions":
                     for sub in e.children:
                         if sub.valid is False:
                             val.append(f'"{str(sub)}". {str(sub.errors[0])}')
@@ -1228,21 +1251,21 @@ class Item(PropertiesMixin):
                     val.append(str(e))
                 logging.warning(f"{e.valid}, {e.name}, {e.raw}")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(_('Error: metadata validation failed, invalid field value(s) = {0}').format(
-                    ', '.join(val)
-                ))
+                raise ValueError(
+                    _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
+                )
 
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
         # just update the meta dict with the validated stuff:
         meta.update(dict(m.value.items()))
-        if hasattr(flaskg, 'data_mtime'):
+        if hasattr(flaskg, "data_mtime"):
             # this is maint-reduce-revisions OR item-put CL process, restore saved time of item's last update
             meta[MTIME] = flaskg.data_mtime
             del flaskg.data_mtime
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
-        meta = {k: v for k, v in meta.items() if v not in [None, ]}
+        meta = {k: v for k, v in meta.items() if v not in [None]}
         # file upload UI does not have a summary field
         if SUMMARY not in meta:
             meta[SUMMARY] = ""
@@ -1250,16 +1273,16 @@ class Item(PropertiesMixin):
         if valid and not validate_data(meta, data):  # need valid metadata to validate data
             logging.warning(f"data validation failed for item {meta[NAME]} ")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(_('Error: nothing changed. Data unicode validation failed.'))
+                raise ValueError(_("Error: nothing changed. Data unicode validation failed."))
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
         backend = self.backend
         if not overwrite:
             revid = meta.get(REVID)
-            backend_name = dict(app.cfg.namespace_mapping)[meta.get(NAMESPACE, '')]
+            backend_name = dict(app.cfg.namespace_mapping)[meta.get(NAMESPACE, "")]
             if revid is not None and (revid in backend or (backend_name, revid) in backend):
-                raise ValueError('need overwrite=True to overwrite existing revisions')
+                raise ValueError("need overwrite=True to overwrite existing revisions")
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
         backend_name, revid = backend.store(meta, data)
@@ -1313,6 +1336,7 @@ class Revision(PropertiesMixin):
     """
     An existing revision (exists in the backend).
     """
+
     def __init__(self, item, revid, doc=None, name=None):
         is_current = revid == CURRENT
         if doc is None:
@@ -1377,7 +1401,7 @@ class Revision(PropertiesMixin):
         return self.meta < other.meta
 
     def __repr__(self):
-        return f'<Revision {self.revid[:6]} of Item {self.name}>'
+        return f"<Revision {self.revid[:6]} of Item {self.name}>"
 
 
 class Meta(Mapping):

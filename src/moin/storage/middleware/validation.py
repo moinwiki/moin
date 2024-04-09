@@ -35,7 +35,7 @@ from moin.utils.mime import Type
 
 class DuckDict(Dict):
     # in duck mode, keys unknown to the schema will not cause errors
-    policy = 'duck'
+    policy = "duck"
 
 
 def uuid_validator(element, state):
@@ -58,7 +58,7 @@ def itemid_validator(element, state):
     """
     an itemid is a uuid that identifies an item
     """
-    if not state['trusted'] or element.raw is Unset:
+    if not state["trusted"] or element.raw is Unset:
         fqname = state[keys.FQNAME]
         itemid = fqname.value if fqname and fqname.field == keys.ITEMID else state.get(keys.ITEMID)
         if itemid is None:
@@ -81,7 +81,7 @@ def userid_validator(element, state):
     """
     a userid is a uuid that identifies a user (profile)
     """
-    if not state['trusted']:
+    if not state["trusted"]:
         userid = state[keys.USERID]
         element.set(userid)
         if userid is None:
@@ -101,11 +101,11 @@ def name_validator(element, state):
         return False
     if v != v.strip():
         return False
-    if v.startswith('+'):  # used for views, like /+meta/<itemname>
+    if v.startswith("+"):  # used for views, like /+meta/<itemname>
         return False
-    if v.startswith('/') or v.endswith('/'):
+    if v.startswith("/") or v.endswith("/"):
         return False
-    if '//' in v:  # empty ancestor name is invalid
+    if "//" in v:  # empty ancestor name is invalid
         return False
     return True
 
@@ -162,9 +162,9 @@ def contenttype_validator(element, state):
     a supported content type
     """
     if element.raw is Unset:
-        ct = state.get('contenttype_current')
+        ct = state.get("contenttype_current")
         if ct is None:
-            ct = state.get('contenttype_guessed')
+            ct = state.get("contenttype_guessed")
             if ct is None:
                 ct = CONTENTTYPE_DEFAULT
         element.set(ct)
@@ -172,16 +172,16 @@ def contenttype_validator(element, state):
     if not isinstance(v, str):
         return False
     ct = Type(v)
-    if ct.type not in ['text', 'image', 'audio', 'video', 'application', ]:
+    if ct.type not in ["text", "image", "audio", "video", "application"]:
         return False
     if not ct.subtype:
         return False
-    if ct.type == 'text':
-        charset = ct.parameters.get('charset')
+    if ct.type == "text":
+        charset = ct.parameters.get("charset")
         if charset is None:
             # we must have the charset, otherwise decoding is impossible
             return False
-        if charset.lower() not in ['ascii', 'utf-8', ]:
+        if charset.lower() not in ["ascii", "utf-8"]:
             # currently we do not recode
             return False
     return True
@@ -191,7 +191,7 @@ def mtime_validator(element, state):
     """
     a modification time (UNIX timestamp)
     """
-    if not state['trusted'] or element.raw is Unset:
+    if not state["trusted"] or element.raw is Unset:
         now = int(time.time())
         element.set(now)
     v = element.value
@@ -209,13 +209,19 @@ def action_validator(element, state):
     """
     an action
     """
-    if not state['trusted']:
+    if not state["trusted"]:
         element.value = state[keys.ACTION]
     v = element.value
     if not isinstance(v, str):
         return False
-    if v not in [keys.ACTION_SAVE, keys.ACTION_REVERT, keys.ACTION_TRASH,
-                 keys.ACTION_COPY, keys.ACTION_RENAME, keys.ACTION_CONVERT]:
+    if v not in [
+        keys.ACTION_SAVE,
+        keys.ACTION_REVERT,
+        keys.ACTION_TRASH,
+        keys.ACTION_COPY,
+        keys.ACTION_RENAME,
+        keys.ACTION_CONVERT,
+    ]:
         return False
     return True
 
@@ -226,7 +232,7 @@ def acl_validator(element, state):
     """
     if element.raw is Unset:
         return True
-    if state['trusted']:
+    if state["trusted"]:
         if element.value is None:
             return False
         return True
@@ -259,7 +265,7 @@ def hostname_validator(element, state):
     """
     a hostname (dns name)
     """
-    if not state['trusted']:
+    if not state["trusted"]:
         # addr = state[keys.ADDRESS] # TODO
         element.value = None  # TODO: lookup(addr)
         return True
@@ -273,7 +279,7 @@ def address_validator(element, state):
     """
     an IP address
     """
-    if not state['trusted']:
+    if not state["trusted"]:
         element.value = state[keys.ADDRESS]
     v = element.value
     if not isinstance(v, str):
@@ -286,7 +292,7 @@ def size_validator(element, state):
     a content size
     """
     v = element.value
-    if not state['trusted'] and v is None:
+    if not state["trusted"] and v is None:
         # untrusted size gets overwritten by the real value
         # in the storage code, so everything is acceptable.
         return True
@@ -304,7 +310,7 @@ def hash_validator(element, state):
     a content hash
     """
     v = element.value
-    if not state['trusted'] and v is None:
+    if not state["trusted"] and v is None:
         # untrusted hash gets overwritten by the real value
         # in the storage code, so everything is acceptable.
         return True
@@ -329,10 +335,10 @@ def subscription_validator(element, state):
         element.add_error("Subscription must contain colon delimiters.")
         return False
 
-    if keyword in (keys.ITEMID, ):
+    if keyword in (keys.ITEMID,):
         value_element = String(value)
         valid = uuid_validator(value_element, state)
-    elif keyword in (keys.NAME, keys.TAGS, keys.NAMERE, keys.NAMEPREFIX, ):
+    elif keyword in (keys.NAME, keys.TAGS, keys.NAMERE, keys.NAMEPREFIX):
         try:
             namespace, value = value.split(":", 1)
         except ValueError:
@@ -345,16 +351,14 @@ def subscription_validator(element, state):
     else:
         element.add_error(
             "Subscription must start with one of the keywords: "
-            "'{}', '{}', '{}', '{}' or '{}'.".format(keys.ITEMID,
-                                                          keys.NAME, keys.TAGS,
-                                                          keys.NAMERE,
-                                                          keys.NAMEPREFIX))
+            "'{}', '{}', '{}', '{}' or '{}'.".format(keys.ITEMID, keys.NAME, keys.TAGS, keys.NAMERE, keys.NAMEPREFIX)
+        )
         return False
 
     value_element = String(value)
     if keyword == keys.TAGS:
         valid = tag_validator(value_element, state)
-    elif keyword in (keys.NAME, keys.NAMEPREFIX, ):
+    elif keyword in (keys.NAME, keys.NAMEPREFIX):
         valid = name_validator(value_element, state)
     elif keyword == keys.NAMERE:
         try:
@@ -381,24 +385,25 @@ common_meta = (
     String.named(keys.COMMENT).validated_by(comment_validator),
     String.named(keys.ADDRESS).validated_by(address_validator),
     String.named(keys.HOSTNAME).validated_by(hostname_validator).using(optional=True),
-    List.named(keys.TAGS).of(String.named('tag').validated_by(tag_validator)).using(optional=True),
+    List.named(keys.TAGS).of(String.named("tag").validated_by(tag_validator)).using(optional=True),
 )
 
-ContentMetaSchema = DuckDict.named('ContentMetaSchema').of(
+ContentMetaSchema = DuckDict.named("ContentMetaSchema").of(
     String.named(keys.CONTENTTYPE).validated_by(contenttype_validator),
     String.named(keys.USERID).validated_by(userid_validator),
     Integer.named(keys.SIZE).validated_by(size_validator),
     String.named(keys.HASH_ALGORITHM).validated_by(hash_validator),
     String.named(keys.DATAID).validated_by(uuid_validator).using(optional=True),
     # markup items may have this:
-    List.named(keys.ITEMLINKS).of(String.named('itemlink').validated_by(wikiname_validator)).using(optional=True),
-    List.named(keys.ITEMTRANSCLUSIONS).of(String.named('itemtransclusion').validated_by(wikiname_validator)).using(
-        optional=True),
+    List.named(keys.ITEMLINKS).of(String.named("itemlink").validated_by(wikiname_validator)).using(optional=True),
+    List.named(keys.ITEMTRANSCLUSIONS)
+    .of(String.named("itemtransclusion").validated_by(wikiname_validator))
+    .using(optional=True),
     # TODO: CONTENT validation? can we do it here?
-    *common_meta
+    *common_meta,
 )
 
-UserMetaSchema = DuckDict.named('UserMetaSchema').of(
+UserMetaSchema = DuckDict.named("UserMetaSchema").of(
     String.named(keys.CONTENTTYPE).validated_by(user_contenttype_validator),
     String.named(keys.EMAIL).using(optional=True),
     String.named(keys.ENC_PASSWORD).using(optional=True),
@@ -416,12 +421,13 @@ UserMetaSchema = DuckDict.named('UserMetaSchema').of(
     Boolean.named(keys.SCROLL_PAGE_AFTER_EDIT).using(optional=True),
     Boolean.named(keys.MAILTO_AUTHOR).using(optional=True),
     Boolean.named(keys.ISO_8601).using(optional=True),
-    List.named(keys.QUICKLINKS).of(String.named('quicklinks')).using(optional=True),
+    List.named(keys.QUICKLINKS).of(String.named("quicklinks")).using(optional=True),
     List.named(keys.SUBSCRIPTIONS)
-    .of(String.named('subscription').validated_by(subscription_validator)).using(optional=True),
-    List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named('email_subscribed_event')).using(optional=True),
+    .of(String.named("subscription").validated_by(subscription_validator))
+    .using(optional=True),
+    List.named(keys.EMAIL_SUBSCRIBED_EVENTS).of(String.named("email_subscribed_event")).using(optional=True),
     # TODO: DuckDict.named('bookmarks').using(optional=True),
-    *common_meta
+    *common_meta,
 )
 
 
@@ -434,10 +440,10 @@ def validate_data(meta, data):
     :return: validation ok [bool]
     """
     ct = Type(meta[keys.CONTENTTYPE])
-    if ct.type != 'text':
+    if ct.type != "text":
         return True  # we can't validate non-text mimetypes, so assume it is ok
-    coding = ct.parameters['charset'].lower()
-    if coding not in ['ascii', 'utf-8', ]:
+    coding = ct.parameters["charset"].lower()
+    if coding not in ["ascii", "utf-8"]:
         return True  # checking 8bit encodings this way is pointless, decoding never raises
     text_bytes = data.read()
     data.seek(0)  # rewind, so it can be read again

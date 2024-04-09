@@ -12,8 +12,8 @@ from moin.constants.contenttypes import CHARSET19
 
 
 # Precompiled patterns for file name [un]quoting
-UNSAFE = re.compile(r'[^a-zA-Z0-9_]+')
-QUOTED = re.compile(r'\(([a-fA-F0-9]+)\)')
+UNSAFE = re.compile(r"[^a-zA-Z0-9_]+")
+QUOTED = re.compile(r"\(([a-fA-F0-9]+)\)")
 
 
 def split_body(body):
@@ -27,35 +27,35 @@ def split_body(body):
     """
     pi = {}
     comments = []
-    while body.startswith('#'):
+    while body.startswith("#"):
         try:
-            line, body = body.split('\n', 1)  # extract first line
-            line = line.rstrip('\r')
+            line, body = body.split("\n", 1)  # extract first line
+            line = line.rstrip("\r")
         except ValueError:
             line = body
-            body = ''
+            body = ""
 
         # end parsing on empty (invalid) PI
         if line == "#":
-            body = line + '\n' + body
+            body = line + "\n" + body
             break
 
-        if line[1] == '#':  # two hash marks are a comment
-            comments.append(line + '\n')
+        if line[1] == "#":  # two hash marks are a comment
+            comments.append(line + "\n")
         else:
-            verb, args = (line[1:] + ' ').split(' ', 1)  # split at the first blank
+            verb, args = (line[1:] + " ").split(" ", 1)  # split at the first blank
             pi.setdefault(verb.lower(), []).append(args.strip())
 
     for key, value in pi.items():
-        if key in ['acl', ]:
+        if key in ["acl"]:
             # join the list of values to a single value
-            pi[key] = ' '.join(value)
+            pi[key] = " ".join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
             pi[key] = value[-1]  # use the last value to copy 1.9 parsing behaviour
 
     if comments:
-        body = ''.join(comments) + body
+        body = "".join(comments) + body
 
     return pi, body
 
@@ -64,7 +64,7 @@ def add_metadata_to_body(metadata, data):
     """
     Adds the processing instructions to the data.
     """
-    meta_keys = [NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE, ]
+    meta_keys = [NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE]
 
     metadata_data = ""
     for key, value in metadata.items():
@@ -97,21 +97,22 @@ def quoteWikinameFS(wikiname, charset=CHARSET19):
     location = 0
     for needle in UNSAFE.finditer(filename):
         # append leading safe stuff
-        quoted.append(filename[location:needle.start()])
+        quoted.append(filename[location : needle.start()])
         location = needle.end()
         # Quote and append unsafe stuff
-        quoted.append('(')
+        quoted.append("(")
         for character in needle.group():
             quoted.append(f"{ord(character):02x}")
-        quoted.append(')')
+        quoted.append(")")
 
     # append rest of string
     quoted.append(filename[location:])
-    return ''.join(quoted)
+    return "".join(quoted)
 
 
 class InvalidFileNameError(Exception):
-    """ Called when we find an invalid file name """
+    """Called when we find an invalid file name"""
+
     pass
 
 
@@ -130,16 +131,16 @@ def unquoteWikiname(filename, charset=CHARSET19):
     start = 0
     for needle in QUOTED.finditer(filename):
         # append leading unquoted stuff
-        parts.append(filename[start:needle.start()].encode(charset))
+        parts.append(filename[start : needle.start()].encode(charset))
         start = needle.end()
         # Append quoted stuff
         group = needle.group(1)
         # Filter invalid filenames
-        if (len(group) % 2 != 0):
+        if len(group) % 2 != 0:
             raise InvalidFileNameError(filename)
         try:
             for i in range(0, len(group), 2):
-                byte = group[i:i + 2]
+                byte = group[i : i + 2]
                 parts.append(bytes.fromhex(byte))
         except ValueError:
             # byte not in hex, e.g 'xy'
@@ -149,7 +150,7 @@ def unquoteWikiname(filename, charset=CHARSET19):
     if start == 0:
         wikiname = filename.encode(charset)
     else:
-        parts.append(filename[start:len(filename)].encode(charset))
-        wikiname = b''.join(parts)
+        parts.append(filename[start : len(filename)].encode(charset))
+        wikiname = b"".join(parts)
 
     return wikiname.decode(charset)

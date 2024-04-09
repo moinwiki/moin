@@ -9,7 +9,7 @@ import urllib.request, urllib.parse, urllib.error
 
 import pytest
 
-pytest.importorskip('selenium')
+pytest.importorskip("selenium")
 webdriver = selenium.webdriver  # noqa
 
 import config
@@ -17,7 +17,7 @@ import config
 try:
     f = urllib.request.urlopen(config.BASE_URL)
 except OSError:
-    pytestmark = pytest.mark.skip('The UI tests need a wiki server running on %s' % config.BASE_URL)
+    pytestmark = pytest.mark.skip("The UI tests need a wiki server running on %s" % config.BASE_URL)
 
 import driver_register
 
@@ -41,7 +41,7 @@ def generate_random_word(length):
     """
     generates a random string containing numbers, of length 'length'
     """
-    word = str(random.randint(10 ** (length - 1), 10 ** length))
+    word = str(random.randint(10 ** (length - 1), 10**length))
     return word
 
 

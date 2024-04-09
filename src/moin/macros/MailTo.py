@@ -22,7 +22,7 @@ class Macro(MacroInlineBase):
         where 2nd parameter is optional.
         """
         if arguments:
-            arguments = arguments[0].split(',')
+            arguments = arguments[0].split(",")
         try:
             assert len(arguments) > 0 and len(arguments) < 3
             email = arguments[0]
@@ -33,12 +33,12 @@ class Macro(MacroInlineBase):
         try:
             text = arguments[1]
         except IndexError:
-            text = ''
+            text = ""
 
         if flaskg.user.valid:
             # decode address and generate mailto: link
             email = decodeSpamSafeEmail(email)
-            result = moin_page.a(attrib={xlink.href: f'mailto:{email}'}, children=[text or email])
+            result = moin_page.a(attrib={xlink.href: f"mailto:{email}"}, children=[text or email])
         else:
             # unknown user, maybe even a spambot, so just return text as given in macro args
             if text:

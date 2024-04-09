@@ -36,6 +36,7 @@ from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -46,10 +47,10 @@ class NodeVisitor:
 
     def __init__(self):
         self.current_node = moin_page.body()
-        self.root = moin_page.page(children=(self.current_node, ))
+        self.root = moin_page.page(children=(self.current_node,))
         self.path = [self.root, self.current_node]
         self.header_size = 1
-        self.status = ['document']
+        self.status = ["document"]
         self.footnotes = dict()
         self.last_lineno = 0
         self.current_lineno = 0
@@ -61,7 +62,7 @@ class NodeVisitor:
         self.unknown_visit.
         """
         node_name = node.__class__.__name__
-        method = getattr(self, 'visit_' + node_name, self.unknown_visit)
+        method = getattr(self, "visit_" + node_name, self.unknown_visit)
         if isinstance(node.line, int):
             self.current_lineno = node.line
         return method(node)
@@ -73,7 +74,7 @@ class NodeVisitor:
         self.unknown_departure.
         """
         node_name = node.__class__.__name__
-        method = getattr(self, 'depart_' + node_name, self.unknown_departure)
+        method = getattr(self, "depart_" + node_name, self.unknown_departure)
         return method(node)
 
     def unknown_visit(self, node):
@@ -93,7 +94,7 @@ class NodeVisitor:
         pass
 
     def open_moin_page_node(self, mointree_element):
-        if flaskg and getattr(flaskg, 'add_lineno_attr', False):
+        if flaskg and getattr(flaskg, "add_lineno_attr", False):
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
                 mointree_element.attrib[html.data_lineno] = self.current_lineno
@@ -126,48 +127,48 @@ class NodeVisitor:
 
     # see http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions
     def visit_attention(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'attention'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "attention"}))
 
     depart_attention = depart_admonition
 
     def visit_caution(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'caution'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "caution"}))
 
     depart_caution = depart_admonition
 
     def visit_danger(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'danger'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "danger"}))
 
     depart_danger = depart_admonition
 
     def visit_error(self, node):
         # this is used to process parsing errors as well as user error admonitions
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'error'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "error"}))
 
     depart_error = depart_admonition
 
     def visit_hint(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'hint'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "hint"}))
 
     depart_hint = depart_admonition
 
     def visit_important(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'important'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "important"}))
 
     depart_important = depart_admonition
 
     def visit_note(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'note'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "note"}))
 
     depart_note = depart_admonition
 
     def visit_tip(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'tip'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "tip"}))
 
     depart_tip = depart_admonition
 
     def visit_warning(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'warning'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "warning"}))
 
     depart_warning = depart_admonition
 
@@ -178,15 +179,14 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_attribution(self, node):
-        attrib = {html.class_: 'moin-rst-attribution'}
+        attrib = {html.class_: "moin-rst-attribution"}
         self.open_moin_page_node(moin_page.p(attrib=attrib))
 
     def depart_attribution(self, node):
         self.close_moin_page_node()
 
     def visit_bullet_list(self, node):
-        self.open_moin_page_node(moin_page.list(
-            attrib={moin_page.item_label_generate: 'unordered'}))
+        self.open_moin_page_node(moin_page.list(attrib={moin_page.item_label_generate: "unordered"}))
 
     def depart_bullet_list(self, node):
         self.close_moin_page_node()
@@ -272,7 +272,7 @@ class NodeVisitor:
         """
         Create moinwiki style hidden comment rather than html style: <!-- a comment -->
         """
-        attrib = {moin_page.class_: 'comment dashed'}
+        attrib = {moin_page.class_: "comment dashed"}
         self.open_moin_page_node(moin_page.div(attrib=attrib))
 
     def depart_comment(self, node):
@@ -287,12 +287,10 @@ class NodeVisitor:
     def visit_entry(self, node):
         # process a table cell <td> tag
         new_element = moin_page.table_cell()
-        if 'morerows' in node.attributes:
-            new_element.set(moin_page.number_rows_spanned,
-                            repr(int(node['morerows']) + 1))
-        if 'morecols' in node.attributes:
-            new_element.set(moin_page.number_columns_spanned,
-                            repr(int(node['morecols']) + 1))
+        if "morerows" in node.attributes:
+            new_element.set(moin_page.number_rows_spanned, repr(int(node["morerows"]) + 1))
+        if "morecols" in node.attributes:
+            new_element.set(moin_page.number_columns_spanned, repr(int(node["morecols"]) + 1))
         self.open_moin_page_node(new_element)
 
     def depart_entry(self, node):
@@ -300,15 +298,14 @@ class NodeVisitor:
 
     def visit_enumerated_list(self, node):
         enum_style = {
-            'arabic': None,
-            'loweralpha': 'lower-alpha',
-            'upperalpha': 'upper-alpha',
-            'lowerroman': 'lower-roman',
-            'upperroman': 'upper-roman',
+            "arabic": None,
+            "loweralpha": "lower-alpha",
+            "upperalpha": "upper-alpha",
+            "lowerroman": "lower-roman",
+            "upperroman": "upper-roman",
         }
-        new_node = moin_page.list(
-            attrib={moin_page.item_label_generate: 'ordered'})
-        type = enum_style.get(node['enumtype'], None)
+        new_node = moin_page.list(attrib={moin_page.item_label_generate: "ordered"})
+        type = enum_style.get(node["enumtype"], None)
         if type:
             new_node.set(moin_page.list_style_type, type)
         self.open_moin_page_node(new_node)
@@ -329,7 +326,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_field_list(self, node):
-        attrib = {html.class_: 'moin-rst-fieldlist'}
+        attrib = {html.class_: "moin-rst-fieldlist"}
         self.open_moin_page_node(moin_page.table(attrib=attrib))
         self.open_moin_page_node(moin_page.table_body())
 
@@ -340,7 +337,7 @@ class NodeVisitor:
     def visit_field_name(self, node):
         self.open_moin_page_node(moin_page.table_cell())
         self.open_moin_page_node(moin_page.strong())
-        self.open_moin_page_node(f'{node.astext()}:')
+        self.open_moin_page_node(f"{node.astext()}:")
         node.children = []
         self.close_moin_page_node()
 
@@ -361,14 +358,13 @@ class NodeVisitor:
         pass
 
     def visit_footnote(self, node):
-        self.status.append('footnote')
+        self.status.append("footnote")
 
     def depart_footnote(self, node):
         self.status.pop()
 
     def visit_footnote_reference(self, node):
-        self.open_moin_page_node(moin_page.note(
-            attrib={moin_page.note_class: 'footnote'}))
+        self.open_moin_page_node(moin_page.note(attrib={moin_page.note_class: "footnote"}))
         new_footnote = moin_page.note_body()
         self.open_moin_page_node(new_footnote)
         self.footnotes[node.children[-1]] = new_footnote
@@ -388,36 +384,36 @@ class NodeVisitor:
         """
         Processes images and other transcluded objects.
         """
-        whitelist = ['width', 'height', 'alt', ]
+        whitelist = ["width", "height", "alt"]
         attrib = {}
         for key in whitelist:
             if node.get(key):
                 attrib[html(key)] = node.get(key)
 
         # there is no 'scale' attribute, hence absent from whitelist, handled separately
-        if node.get('scale'):
-            scaling_factor = int(node.get('scale')) / 100.0
-            for key in ('width', 'height'):
+        if node.get("scale"):
+            scaling_factor = int(node.get("scale")) / 100.0
+            for key in ("width", "height"):
                 if html(key) in attrib:
                     attrib[html(key)] = int(int(attrib[html(key)]) * scaling_factor)
 
         # "align" parameter is invalid in HTML5. Convert it to a class defined in userstyles.css.
         userstyles = {
-            'left': 'left',
-            'center': 'center',
-            'right': 'right',
-            'top': 'top',  # rst parser creates error messages for top, bottom, and middle
-            'bottom': 'bottom',
-            'middle': 'middle',
+            "left": "left",
+            "center": "center",
+            "right": "right",
+            "top": "top",  # rst parser creates error messages for top, bottom, and middle
+            "bottom": "bottom",
+            "middle": "middle",
         }
-        alignment = userstyles.get(node.get('align'))
+        alignment = userstyles.get(node.get("align"))
         if alignment:
             attrib[html.class_] = alignment
 
-        url = Iri(node['uri'])
+        url = Iri(node["uri"])
         if url.scheme is None:
             # img
-            target = Iri(scheme='wiki.local', path=node['uri'], fragment=None)
+            target = Iri(scheme="wiki.local", path=node["uri"], fragment=None)
             attrib[xinclude.href] = target
             new_node = xinclude.include(attrib=attrib)
         else:
@@ -437,7 +433,7 @@ class NodeVisitor:
         pass
 
     def visit_label(self, node):
-        if self.status[-1] == 'footnote':
+        if self.status[-1] == "footnote":
             self.footnote_lable = node.astext()
         node.children = []
 
@@ -474,7 +470,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_literal_block(self, node):
-        parser = node.get('parser', '')
+        parser = node.get("parser", "")
         if parser:
             named_args = re.findall(r"(\w+)=(\w+)", parser)
             simple_args = re.findall(r"(?:\s)\w+(?:\s|$)", parser)
@@ -484,9 +480,12 @@ class NodeVisitor:
             for name, value in named_args:
                 args.append(moin_page.argument(attrib={moin_page.name: name}, children=[value]))
             arguments = moin_page.arguments(children=args)
-            self.open_moin_page_node(moin_page.part(
-                children=[arguments],
-                attrib={moin_page.content_type: "x-moin/format;name={}".format(parser.split(' ')[0])}))
+            self.open_moin_page_node(
+                moin_page.part(
+                    children=[arguments],
+                    attrib={moin_page.content_type: "x-moin/format;name={}".format(parser.split(" ")[0])},
+                )
+            )
         else:
             self.open_moin_page_node(moin_page.blockcode())
 
@@ -494,7 +493,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_option_list(self, node):
-        attrib = {html.class_: 'moin-rst-optionlist'}
+        attrib = {html.class_: "moin-rst-optionlist"}
         self.open_moin_page_node(moin_page.table(attrib=attrib))
         self.open_moin_page_node(moin_page.table_body())
 
@@ -518,7 +517,7 @@ class NodeVisitor:
     depart_description = depart_option
 
     def visit_paragraph(self, node):
-        if self.status[-1] == 'footnote':
+        if self.status[-1] == "footnote":
             footnote_node = self.footnotes.get(self.footnote_lable, None)
             if footnote_node:
                 footnote_node.append(node.astext())
@@ -527,7 +526,7 @@ class NodeVisitor:
             self.open_moin_page_node(moin_page.p())
 
     def depart_paragraph(self, node):
-        if self.status[-1] == 'footnote':
+        if self.status[-1] == "footnote":
             pass
         else:
             self.close_moin_page_node()
@@ -539,11 +538,11 @@ class NodeVisitor:
         pass
 
     def visit_reference(self, node):
-        refuri = node.get('refuri', '')
-        if refuri.startswith('<<') and refuri.endswith('>>'):  # moin macro
-            macro_name = refuri[2:-2].split('(')[0]
+        refuri = node.get("refuri", "")
+        if refuri.startswith("<<") and refuri.endswith(">>"):  # moin macro
+            macro_name = refuri[2:-2].split("(")[0]
             if macro_name == "TableOfContents":
-                arguments = refuri[2:-2].split('(')[1][:-1].split(',')
+                arguments = refuri[2:-2].split("(")[1][:-1].split(",")
                 node = moin_page.table_of_content()
                 self.open_moin_page_node(node)
                 if arguments and arguments[0]:
@@ -552,23 +551,25 @@ class NodeVisitor:
             if macro_name == "Include":
                 # include macros are expanded by include.py similar to transclusions
                 # rst include handles only wiki pages and does not support additional arguments like moinwiki
-                arguments = refuri[2:-2].split('(')[1][:-1].split(',')
-                link = Iri(scheme='wiki.local', path=arguments)
-                node = xinclude.include(attrib={
-                    xinclude.href: link,
-                    moin_page.alt: refuri,
-                    moin_page.content_type: 'x-moin/macro;name=' + macro_name,
-                })
+                arguments = refuri[2:-2].split("(")[1][:-1].split(",")
+                link = Iri(scheme="wiki.local", path=arguments)
+                node = xinclude.include(
+                    attrib={
+                        xinclude.href: link,
+                        moin_page.alt: refuri,
+                        moin_page.content_type: "x-moin/macro;name=" + macro_name,
+                    }
+                )
                 self.open_moin_page_node(node)
                 return
             try:
-                arguments = refuri[2:-2].split('(')[1][:-1]
+                arguments = refuri[2:-2].split("(")[1][:-1]
             except IndexError:
-                arguments = ''  # <<DateTime>>
+                arguments = ""  # <<DateTime>>
 
             self.open_moin_page_node(
-                moin_page.inline_part(
-                    attrib={moin_page.content_type: f"x-moin/macro;name={macro_name}"}))
+                moin_page.inline_part(attrib={moin_page.content_type: f"x-moin/macro;name={macro_name}"})
+            )
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
                 self.open_moin_page_node(arguments)
@@ -579,15 +580,15 @@ class NodeVisitor:
         if not allowed_uri_scheme(refuri):
             self.visit_error(node)
             return
-        if refuri == '':
+        if refuri == "":
             # build a link to a heading or an explicitly defined anchor
-            refuri = Iri(scheme='wiki.local', fragment=node.attributes['name'].replace(' ', '_'))
-        if isinstance(refuri, str) and refuri.startswith('http'):
-            if '://' not in refuri:
-                refuri = refuri.split(':')[1]
+            refuri = Iri(scheme="wiki.local", fragment=node.attributes["name"].replace(" ", "_"))
+        if isinstance(refuri, str) and refuri.startswith("http"):
+            if "://" not in refuri:
+                refuri = refuri.split(":")[1]
         iri = Iri(refuri)
         if iri.scheme is None:
-            iri.scheme = 'wiki.local'
+            iri.scheme = "wiki.local"
             refuri = iri
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
 
@@ -637,34 +638,28 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_subscript(self, node):
-        self.open_moin_page_node(
-            moin_page.span(
-                attrib={moin_page.baseline_shift: 'sub'}))
+        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "sub"}))
 
     def depart_subscript(self, node):
         self.close_moin_page_node()
 
     def visit_subtitle(self, node):
         self.header_size += 1
-        self.open_moin_page_node(
-            moin_page.h(
-                attrib={moin_page.outline_level: repr(self.header_size)}))
+        self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
     def depart_subtitle(self, node):
         self.header_size -= 1
         self.close_moin_page_node()
 
     def visit_superscript(self, node):
-        self.open_moin_page_node(
-            moin_page.span(
-                attrib={moin_page.baseline_shift: 'super'}))
+        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "super"}))
 
     def depart_superscript(self, node):
         self.close_moin_page_node()
 
     def visit_system_message(self, node):
         # we have encountered a parsing error, insert an error message
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: 'error'}))
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: "error"}))
 
     def depart_system_message(self, node):
         self.close_moin_page_node()
@@ -687,7 +682,7 @@ class NodeVisitor:
 
         .. _example:
         """
-        anchor = node.get('refid')
+        anchor = node.get("refid")
         if anchor:
             self.open_moin_page_node(moin_page.span(attrib={moin_page.id: anchor}))
             self.close_moin_page_node()
@@ -727,9 +722,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_title(self, node):
-        self.open_moin_page_node(
-            moin_page.h(
-                attrib={moin_page.outline_level: repr(self.header_size)}))
+        self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
     def depart_title(self, node):
         self.close_moin_page_node()
@@ -746,7 +739,7 @@ class NodeVisitor:
     def depart_title_reference(self, node):
         pass
 
-    def visit_transition(self, node, default_class='moin-hr3'):
+    def visit_transition(self, node, default_class="moin-hr3"):
         # TODO: add to rst_out
         attrib = {html.class_: default_class}
         self.open_moin_page_node(moin_page.separator(attrib=attrib))
@@ -790,9 +783,9 @@ def walkabout(node, visitor):
 
 class Writer(writers.Writer):
 
-    supported = ('moin-x-document', )
-    config_section = 'MoinMoin writer'
-    config_section_dependencies = ('writers', )
+    supported = ("moin-x-document",)
+    config_section = "MoinMoin writer"
+    config_section_dependencies = ("writers",)
     output = None
     visitor_attributes = []
 
@@ -811,24 +804,24 @@ class MoinDirectives:
     def __init__(self):
 
         # include MoinMoin pages
-        directives.register_directive('include', self.include)
+        directives.register_directive("include", self.include)
 
         # used for MoinMoin macros
-        directives.register_directive('macro', self.macro)
+        directives.register_directive("macro", self.macro)
 
         # used for MoinMoin tables of content
-        directives.register_directive('contents', self.table_of_content)
+        directives.register_directive("contents", self.table_of_content)
 
         # used for MoinMoin parsers
-        directives.register_directive('parser', self.parser)
+        directives.register_directive("parser", self.parser)
 
         # disallow a few directives in order to prevent XSS
         # for directive in ('meta', 'include', 'raw'):
-        for directive in ('meta', 'raw'):
+        for directive in ("meta", "raw"):
             directives.register_directive(directive, None)
 
         # disable the raw role
-        roles._roles['raw'] = None
+        roles._roles["raw"] = None
 
         # As a quick fix for infinite includes we only allow a fixed number of
         # includes per page
@@ -838,8 +831,7 @@ class MoinDirectives:
     # Handle the include directive rather than letting the default docutils
     # parser handle it. This allows the inclusion of MoinMoin pages instead of
     # something from the filesystem.
-    def include(self, name, arguments, options, content, lineno,
-                content_offset, block_text, state, state_machine):
+    def include(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
         # content contains the included file name
 
         # TODO: i18n for errors
@@ -849,13 +841,13 @@ class MoinDirectives:
             self.num_includes += 1
         else:
             lines = ["**Maximum number of allowed includes exceeded**"]
-            state_machine.insert_input(lines, 'MoinDirectives')
+            state_machine.insert_input(lines, "MoinDirectives")
             return []
 
         if content:
-            macro = f'<<Include({content[0]})>>'
+            macro = f"<<Include({content[0]})>>"
         else:
-            macro = '<<Include()>>'
+            macro = "<<Include()>>"
         ref = reference(macro, refuri=macro)
         return [ref]
 
@@ -875,12 +867,12 @@ class MoinDirectives:
         # content contains macro to be called
         if len(content):
             # Allow either with or without brackets
-            if content[0].startswith('<<'):
+            if content[0].startswith("<<"):
                 macro = content[0]
             else:
-                macro = f'<<{content[0]}>>'
+                macro = f"<<{content[0]}>>"
             ref = reference(macro, refuri=macro)
-            ref['name'] = macro
+            ref["name"] = macro
             return [ref]
         return
 
@@ -889,17 +881,18 @@ class MoinDirectives:
     macro.required_arguments = 1
     macro.optional_arguments = 0
 
-    def table_of_content(self, name, arguments, options, content, lineno, content_offset,
-                         block_text, state, state_machine):
-        text = ''
+    def table_of_content(
+        self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine
+    ):
+        text = ""
         for i in content:
-            m = re.search(r':(\w+): (\w+)', i)
+            m = re.search(r":(\w+): (\w+)", i)
             if m and len(m.groups()) == 2:
-                if m.groups()[0] == 'depth':
+                if m.groups()[0] == "depth":
                     text = m.groups()[1]
-        macro = f'<<TableOfContents({text})>>'
+        macro = f"<<TableOfContents({text})>>"
         ref = reference(macro, refuri=macro)
-        ref['name'] = macro
+        ref["name"] = macro
         return [ref]
 
     table_of_content.has_content = table_of_content.content = True
@@ -909,7 +902,7 @@ class MoinDirectives:
 
     def parser(self, name, arguments, options, content, lineo, content_offset, block_text, state, state_machine):
         block = literal_block()
-        block['parser'] = content[0]
+        block["parser"] = content[0]
         block.children = [nodes.Text("\n".join(content[1:]))]
         return [block]
 
@@ -929,28 +922,33 @@ class Converter:
         input = normalize_split_text(text)
         MoinDirectives()
         while True:
-            input = '\n'.join(input)
+            input = "\n".join(input)
             try:
                 docutils_tree = core.publish_doctree(source=input)
             except utils.SystemMessage as inst:
-                string_numb = re.match(re.compile(r'<string>:([0-9]*):\s*\(.*?\)\s*(.*)',
-                                                  re.X | re.U | re.M | re.S), str(inst))
+                string_numb = re.match(
+                    re.compile(r"<string>:([0-9]*):\s*\(.*?\)\s*(.*)", re.X | re.U | re.M | re.S), str(inst)
+                )
                 if string_numb:
                     str_num = string_numb.group(1)
-                    input = input.split('\n')
+                    input = input.split("\n")
                     if str_num:
-                        input = [('.. error::\n'
-                                  ' ::\n'
-                                  '\n'
-                                  '  Parse error on line number {}:\n'
-                                  '\n'
-                                  '  {}\n'
-                                  '\n'
-                                  '  Go back and try to fix that.\n'
-                                  '\n').format(str_num, string_numb.group(2).replace('\n', '\n  '))]
+                        input = [
+                            (
+                                ".. error::\n"
+                                " ::\n"
+                                "\n"
+                                "  Parse error on line number {}:\n"
+                                "\n"
+                                "  {}\n"
+                                "\n"
+                                "  Go back and try to fix that.\n"
+                                "\n"
+                            ).format(str_num, string_numb.group(2).replace("\n", "\n  "))
+                        ]
                         continue
                 else:
-                    input = ['.. error::\n ::\n\n  {}\n\n'.format(str(inst).replace('\n', '\n  '))]
+                    input = [".. error::\n ::\n\n  {}\n\n".format(str(inst).replace("\n", "\n  "))]
                 raise inst
             break
         visitor = NodeVisitor()
@@ -959,7 +957,5 @@ class Converter:
         return ret
 
 
-default_registry.register(Converter.factory,
-                          Type('text/x-rst'), type_moin_document)
-default_registry.register(Converter.factory,
-                          Type('x-moin/format;name=rst'), type_moin_document)
+default_registry.register(Converter.factory, Type("text/x-rst"), type_moin_document)
+default_registry.register(Converter.factory, Type("x-moin/format;name=rst"), type_moin_document)

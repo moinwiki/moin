@@ -19,12 +19,13 @@ class Converter:
     """
     Converter application/x.moin.document -> text/plain
     """
+
     @classmethod
     def factory(cls, input, output, **kw):
         return cls()
 
     def __call__(self, root):
-        return '\n'.join(root.itertext())
+        return "\n".join(root.itertext())
 
 
 default_registry.register(Converter.factory, type_moin_document, type_text_plain)

@@ -28,11 +28,12 @@ from moin.constants.keys import LANGUAGE
 from . import default_registry, ElementException
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
 # strings not allowed in style attributes
-SUSPECT = {'/*', '/>', '\\', '`', 'script', '&#', 'http', 'expression', 'behavior', }
+SUSPECT = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
 
 
 def style_attr_filter(style):
@@ -42,17 +43,17 @@ def style_attr_filter(style):
     if app.cfg.allow_style_attributes:
         s = "".join(style.strip().lower().split())
         if any(x in s for x in SUSPECT):
-            return ' /*style suppressed, failed test for suspect strings*/ '
+            return " /*style suppressed, failed test for suspect strings*/ "
         return style
-    return ''
+    return ""
 
 
 def convert_getlink_to_showlink(href):
     """
     If the incoming transclusion reference is within this domain, then remove "+get/<revision number>/".
     """
-    if href.startswith('/'):
-        return re.sub(r'\+get/\+[0-9a-fA-F]+/', '', href)
+    if href.startswith("/"):
+        return re.sub(r"\+get/\+[0-9a-fA-F]+/", "", href)
     return href
 
 
@@ -65,9 +66,9 @@ def mark_item_as_transclusion(elem, href_or_item):
     in a span or div and 2 overlay siblings will be created.
     """
     if isinstance(href_or_item, Item):
-        query = urlencode({'do': 'show'}, encoding=CHARSET)
-        href = Iri(scheme='wiki', authority='', path='/' + href_or_item.fqname.fullname, query=query)
-        if hasattr(href_or_item, 'meta') and LANGUAGE in href_or_item.meta:
+        query = urlencode({"do": "show"}, encoding=CHARSET)
+        href = Iri(scheme="wiki", authority="", path="/" + href_or_item.fqname.fullname, query=query)
+        if hasattr(href_or_item, "meta") and LANGUAGE in href_or_item.meta:
             elem.attrib[html.lang] = href_or_item.meta[LANGUAGE]
         elif hasattr(flaskg.user, LANGUAGE):
             elem.attrib[html.lang] = flaskg.user.language
@@ -77,15 +78,16 @@ def mark_item_as_transclusion(elem, href_or_item):
     else:  # isinstance(href_or_item, Iri)
         href = href_or_item
     elem.attrib[html.data_href] = href
-    classes = elem.attrib.get(html.class_, '').split()
-    classes.append('moin-transclusion')
-    elem.attrib[html.class_] = ' '.join(classes)
+    classes = elem.attrib.get(html.class_, "").split()
+    classes.append("moin-transclusion")
+    elem.attrib[html.class_] = " ".join(classes)
     return elem
 
 
 class Attribute:
-    """ Adds the attribute with the HTML namespace to the output. """
-    __slots__ = 'key'
+    """Adds the attribute with the HTML namespace to the output."""
+
+    __slots__ = "key"
 
     def __init__(self, key):
         self.key = html(key)
@@ -95,17 +97,15 @@ class Attribute:
 
 
 class Attributes:
-    namespaces_valid_output = frozenset([
-        html,
-    ])
+    namespaces_valid_output = frozenset([html])
 
-    visit_class = Attribute('class')
-    visit_number_columns_spanned = Attribute('colspan')
-    visit_number_rows_spanned = Attribute('rowspan')
-    visit_style = Attribute('style')
-    visit_title = Attribute('title')
-    visit_id = Attribute('id')
-    visit_type = Attribute('type')  # IE8 needs <object... type="image/svg+xml" ...> to display svg images
+    visit_class = Attribute("class")
+    visit_number_columns_spanned = Attribute("colspan")
+    visit_number_rows_spanned = Attribute("rowspan")
+    visit_style = Attribute("style")
+    visit_title = Attribute("title")
+    visit_id = Attribute("id")
+    visit_type = Attribute("type")  # IE8 needs <object... type="image/svg+xml" ...> to display svg images
 
     def __init__(self, element):
         self.element = element
@@ -135,8 +135,8 @@ class Attributes:
             if key.uri == moin_page:
                 # We never have _ in attribute names, so ignore them instead of
                 # create ambigues matches.
-                if '_' not in key.name:
-                    n = 'visit_' + key.name.replace('-', '_')
+                if "_" not in key.name:
+                    n = "visit_" + key.name.replace("-", "_")
                     f = getattr(self, n, None)
                     if f is not None:
                         f(value, new)
@@ -144,11 +144,11 @@ class Attributes:
                 new[key] = value
             # We convert xml:id
             elif key.uri == xml.namespace:
-                if key.name == 'id' or key.name == 'lang':
+                if key.name == "id" or key.name == "lang":
                     new[ET.QName(key.name, html.namespace)] = value
             elif key.uri is None:
-                if self.default_uri_input and '_' not in key.name:
-                    n = 'visit_' + key.name.replace('-', '_')
+                if self.default_uri_input and "_" not in key.name:
+                    n = "visit_" + key.name.replace("-", "_")
                     f = getattr(self, n, None)
                     if f is not None:
                         f(value, new_default)
@@ -166,12 +166,10 @@ class Converter:
     Converter application/x.moin.document -> application/x.moin.document
     """
 
-    namespaces_visit = {
-        moin_page: 'moinpage',
-    }
+    namespaces_visit = {moin_page: "moinpage"}
 
     # Inline tags which can be directly converted into an HTML element
-    direct_inline_tags = {'abbr', 'address', 'dfn', 'kbd'}
+    direct_inline_tags = {"abbr", "address", "dfn", "kbd"}
 
     def __call__(self, element):
         return self.visit(element)
@@ -184,7 +182,7 @@ class Converter:
                 if r is None:
                     r = ()
                 elif not isinstance(r, (list, tuple)):
-                    r = (r, )
+                    r = (r,)
                 new.extend(r)
             else:
                 new.append(child)
@@ -200,7 +198,7 @@ class Converter:
         uri = elem.tag.uri
         name = self.namespaces_visit.get(uri, None)
         if name is not None:
-            n = 'visit_' + name
+            n = "visit_" + name
             f = getattr(self, n, None)
             if f is not None:
                 return f(elem)
@@ -209,7 +207,7 @@ class Converter:
         return self.new_copy(elem.tag, elem)
 
     def visit_moinpage(self, elem):
-        n = 'visit_moinpage_' + elem.tag.name.replace('-', '_')
+        n = "visit_moinpage_" + elem.tag.name.replace("-", "_")
         f = getattr(self, n, None)
         if f:
             return f(elem)
@@ -222,7 +220,7 @@ class Converter:
         href = elem.get(xlink.href)
         if href:
             attrib[html.href] = href
-        if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == '':
+        if len(elem) == 1 and isinstance(elem[0], str) and elem[0] == "":
             # input similar to [[#Heading]] will create an invisible link like <a href="#Heading></a> unless we fix it
             elem[0] = href.path[1:] if href.path else href.fragment
         # html attributes are copied by default (html.target, html.class, html.download...
@@ -298,12 +296,12 @@ class Converter:
         try:
             level = int(level)
         except ValueError:
-            raise ElementException('page:outline-level needs to be an integer')
+            raise ElementException("page:outline-level needs to be an integer")
         if level < 1:
             level = 1
         elif level > 6:
             level = 6
-        ret = self.new_copy(html(f'h{level}'), elem)
+        ret = self.new_copy(html(f"h{level}"), elem)
         ret.level = level
         return ret
 
@@ -312,9 +310,9 @@ class Converter:
 
         for item in elem:
             if item.tag.uri == moin_page:
-                if item.tag.name == 'inline-body':
+                if item.tag.name == "inline-body":
                     body = item
-                elif item.tag.name == 'error':
+                elif item.tag.name == "error":
                     error = item
 
         if body:
@@ -324,14 +322,14 @@ class Converter:
             if len(error):
                 ret = html.span(children=error)
             else:
-                ret = html.span(children=('Error', ))
-            ret.set(html.class_, 'moin-error')
+                ret = html.span(children=("Error",))
+            ret.set(html.class_, "moin-error")
             return ret
 
         # XXX: Move handling of namespace-less attributes into emeraldtree
-        alt = elem.get(moin_page.alt, elem.get('alt'))
+        alt = elem.get(moin_page.alt, elem.get("alt"))
         if alt:
-            return html.span(children=(alt, ))
+            return html.span(children=(alt,))
 
         return html.span()
 
@@ -343,7 +341,7 @@ class Converter:
         return html.br()
 
     def visit_moinpage_line_blk(self, elem):
-        return self.new_copy(html.div, elem, attrib={html.class_: 'moin-line-blk'})
+        return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-blk"})
 
     def visit_moinpage_line_block(self, elem):
         """
@@ -352,33 +350,33 @@ class Converter:
         | roses are red,
         | violets are blue,
         """
-        return self.new_copy(html.div, elem, attrib={html.class_: 'moin-line-block'})
+        return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-block"})
 
     def visit_moinpage_list(self, elem):
         attrib = Attributes(elem)
         attrib_new = attrib.convert()
-        generate = attrib.get('item-label-generate')
+        generate = attrib.get("item-label-generate")
 
         if generate:
-            if generate == 'ordered':
-                style = attrib.get('list-style-type')
+            if generate == "ordered":
+                style = attrib.get("list-style-type")
                 if style:
-                    if style == 'upper-alpha':
-                        attrib_new[html('class')] = 'moin-upperalpha-list'
-                    elif style == 'upper-roman':
-                        attrib_new[html('class')] = 'moin-upperroman-list'
-                    elif style == 'lower-roman':
-                        attrib_new[html('class')] = 'moin-lowerroman-list'
-                    elif style == 'lower-alpha':
-                        attrib_new[html('class')] = 'moin-loweralpha-list'
-                start_number = attrib.get('list-start')
+                    if style == "upper-alpha":
+                        attrib_new[html("class")] = "moin-upperalpha-list"
+                    elif style == "upper-roman":
+                        attrib_new[html("class")] = "moin-upperroman-list"
+                    elif style == "lower-roman":
+                        attrib_new[html("class")] = "moin-lowerroman-list"
+                    elif style == "lower-alpha":
+                        attrib_new[html("class")] = "moin-loweralpha-list"
+                start_number = attrib.get("list-start")
                 if start_number:
-                    attrib_new[html('start')] = start_number
+                    attrib_new[html("start")] = start_number
                 ret = html.ol(attrib_new)
-            elif generate == 'unordered':
-                style = attrib.get('list-style-type')
-                if style and style == 'no-bullet':
-                    attrib_new[html('class')] = 'moin-nobullet-list'
+            elif generate == "unordered":
+                style = attrib.get("list-style-type")
+                if style and style == "no-bullet":
+                    attrib_new[html("class")] = "moin-nobullet-list"
                 ret = html.ul(attrib=attrib_new)
             else:
                 raise ElementException(f'page:item-label-generate does not support "{generate}"')
@@ -387,16 +385,16 @@ class Converter:
 
         for item in elem:
             if isinstance(item, ET.Element):
-                if item.tag.uri == moin_page and item.tag.name == 'list-item':
+                if item.tag.uri == moin_page and item.tag.name == "list-item":
                     if not generate:
                         for label in item:
                             if isinstance(label, ET.Element):
-                                if label.tag.uri == moin_page and label.tag.name == 'list-item-label':
+                                if label.tag.uri == moin_page and label.tag.name == "list-item-label":
                                     ret_label = self.new_copy(html.dt, label)
                                     ret.append(ret_label)
                     for body in item:
                         if isinstance(body, ET.Element):
-                            if body.tag.uri == moin_page and body.tag.name == 'list-item-body':
+                            if body.tag.uri == moin_page and body.tag.name == "list-item-body":
                                 if generate:
                                     ret_body = self.new_copy(html.li, body)
                                 else:
@@ -418,9 +416,9 @@ class Converter:
         ret = html.dl(attrib=attrib_new)
         for item in elem:
             if isinstance(item, ET.Element) and item.tag.uri == moin_page:
-                if item.tag.name == 'list-item-label':
+                if item.tag.name == "list-item-label":
                     ret.append(self.new_copy(html.dt, item))
-                elif item.tag.name == 'list-item-body':
+                elif item.tag.name == "list-item-body":
                     ret.append(self.new_copy(html.dd, item))
         return ret
 
@@ -428,11 +426,11 @@ class Converter:
         """
         Returns the type of an object as a str, one of the following: img, video, audio, object
         """
-        if Type('image/').issupertype(mimetype):
+        if Type("image/").issupertype(mimetype):
             return "img"
-        elif Type('video/').issupertype(mimetype):
+        elif Type("video/").issupertype(mimetype):
             return "video"
-        elif Type('audio/').issupertype(mimetype):
+        elif Type("audio/").issupertype(mimetype):
             return "audio"
         else:
             # Nothing else worked...try using <object>
@@ -448,10 +446,10 @@ class Converter:
         href = elem.get(xlink.href, None)
         attrib = {}
 
-        whitelist = ['width', 'height', 'alt', 'class', 'data-href', 'style', 'title']
+        whitelist = ["width", "height", "alt", "class", "data-href", "style", "title"]
         for key in elem.attrib:
             if key.name in whitelist:
-                if key.name == 'style':
+                if key.name == "style":
                     attrib[key] = style_attr_filter(elem.attrib[key])
                 else:
                     attrib[key] = elem.attrib[key]
@@ -472,7 +470,7 @@ class Converter:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
         alt = convert_getlink_to_showlink(str(href))
-        alt = re.sub(r'^/', '', alt)
+        alt = re.sub(r"^/", "", alt)
 
         if obj_type == "img":
             # Images must have alt attribute in html5, but if user did not specify then default to url
@@ -483,7 +481,7 @@ class Converter:
         else:
             if obj_type != "object":
                 # Non-objects like video and audio have the "controls" attribute
-                attrib[html.controls] = 'controls'
+                attrib[html.controls] = "controls"
                 new_elem = self.new_copy(getattr(html, obj_type), elem, attrib)
             else:
                 # is an object
@@ -492,15 +490,15 @@ class Converter:
             # alt text will be transclusion alt field, item meta summary, or item name
             if new_elem.attrib.get(html.alt):
                 if new_elem.text:
-                    new_elem.append(' - ')
+                    new_elem.append(" - ")
                 new_elem.append(new_elem.attrib.get(html.alt))
                 del new_elem.attrib[html.alt]
             else:
                 if new_elem.text:
-                    new_elem.append(' - ')
+                    new_elem.append(" - ")
                 new_elem.append(alt)
 
-        if obj_type == "object" and getattr(href, 'scheme', None):
+        if obj_type == "object" and getattr(href, "scheme", None):
             # items similar to {{http://moinmo.in}} are marked here, other objects are marked in include.py
             return mark_item_as_transclusion(new_elem, href)
         return new_elem
@@ -510,20 +508,20 @@ class Converter:
 
     def visit_moinpage_page(self, elem):
         for item in elem:
-            if item.tag.uri == moin_page and item.tag.name == 'body':
+            if item.tag.uri == moin_page and item.tag.name == "body":
                 # if this is a transcluded page, we must pass the class and data-href attribs
                 attribs = elem.attrib.copy()
                 if moin_page.page_href in attribs:
                     del attribs[moin_page.page_href]
                 if attribs and len(item) == 1:
 
-                    if item[0].tag.name in ('object', 'a'):
+                    if item[0].tag.name in ("object", "a"):
                         # png, jpg, gif are objects here, will be changed to img when they are processed
                         # transclusion is a single inline element "My pet {{bird.jpg}} flys." or
                         # "[[SomePage|{{Logo.png}}]]"
                         return self.new_copy(html.span, item, attribs)
 
-                    elif item[0].tag.name == 'p':
+                    elif item[0].tag.name == "p":
                         # transclusion is a single p-tag that can be coerced to inline  "Yes, we have {{no}} bananas."
                         new_span = html.span(children=item[0][:])
                         return self.new_copy(html.span, new_span, attribs)
@@ -531,34 +529,34 @@ class Converter:
                 # transclusion is a block element
                 return self.new_copy(html.div, item, attribs)
 
-        raise RuntimeError(f'page:page need to contain exactly one page:body tag, got {elem[:]!r}')
+        raise RuntimeError(f"page:page need to contain exactly one page:body tag, got {elem[:]!r}")
 
     def visit_moinpage_part(self, elem):
         body = error = None
 
         for item in elem:
             if item.tag.uri == moin_page:
-                if item.tag.name == 'body':
+                if item.tag.name == "body":
                     body = item
-                elif item.tag.name == 'error':
+                elif item.tag.name == "error":
                     error = item
 
         if body:
             # returning a Div styled like a P avoids HTML validation errors
-            return self.new_copy(html.div, item, attrib={html.class_: 'moin-p'})
+            return self.new_copy(html.div, item, attrib={html.class_: "moin-p"})
 
         elif error:
             if len(error):
                 ret = html.p(children=error)
             else:
-                ret = html.p(children=('Error', ))
-            ret.set(html.class_, 'moin-error')
+                ret = html.p(children=("Error",))
+            ret.set(html.class_, "moin-error")
             return ret
 
         # XXX: Move handling of namespace-less attributes into emeraldtree
-        alt = elem.get(moin_page.alt, elem.get('alt'))
+        alt = elem.get(moin_page.alt, elem.get("alt"))
         if alt:
-            return html.p(children=(alt, ))
+            return html.p(children=(alt,))
 
         return html.p()
 
@@ -576,31 +574,31 @@ class Converter:
         # Check for the attributes of span
         attrib = Attributes(elem)
         # Check for the baseline-shift (subscript or superscript)
-        generate = attrib.get('baseline-shift')
+        generate = attrib.get("baseline-shift")
         if generate:
-            if generate == 'sub':
+            if generate == "sub":
                 return self.new_copy(html.sub, elem)
-            elif generate == 'super':
+            elif generate == "super":
                 return self.new_copy(html.sup, elem)
-        generate = attrib.get('font-size')
+        generate = attrib.get("font-size")
         if generate:
-            if generate == '85%':
+            if generate == "85%":
                 attribute = {}
-                key = html('class')
-                attribute[key] = 'moin-small'
+                key = html("class")
+                attribute[key] = "moin-small"
                 return self.new_copy(html.span, elem, attribute)
-            elif generate == '120%':
+            elif generate == "120%":
                 attribute = {}
-                key = html('class')
-                attribute[key] = 'moin-big'
+                key = html("class")
+                attribute[key] = "moin-big"
                 return self.new_copy(html.span, elem, attribute)
-        generate = attrib.get('element')
+        generate = attrib.get("element")
         if generate:
             if generate in self.direct_inline_tags:
                 return self.new_copy(html(generate), elem)
             else:
                 attribute = {}
-                key = html('class')
+                key = html("class")
                 attribute[key] = f"element-{generate}"
                 return self.new_copy(html.span, elem, attribute)
         # If no attributes are handled by our converter, just return span
@@ -615,11 +613,11 @@ class Converter:
     def visit_moinpage_table(self, elem):
         attrib = Attributes(elem).convert()
         ret = html.table(attrib=attrib)
-        caption = 1 if elem[0].tag.name == 'caption' else 0
+        caption = 1 if elem[0].tag.name == "caption" else 0
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if len(elem) > 1 + caption and html('class') in attrib and 'moin-wiki-table' in attrib[html('class')]:
+                if len(elem) > 1 + caption and html("class") in attrib and "moin-wiki-table" in attrib[html("class")]:
                     # moinwiki tables require special handling because
                     # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
                     if idx == 0 + caption:
@@ -630,16 +628,15 @@ class Converter:
                         tag = html.tfoot
                     else:
                         tag = html.caption if (caption and idx == 0) else html.tbody
-                elif item.tag.name == 'table-body':
+                elif item.tag.name == "table-body":
                     tag = html.tbody
-                elif item.tag.name == 'table-header':
+                elif item.tag.name == "table-header":
                     tag = html.thead
-                elif item.tag.name == 'table-footer':
+                elif item.tag.name == "table-footer":
                     tag = html.tfoot
-                elif item.tag.name == 'caption':
+                elif item.tag.name == "caption":
                     tag = html.caption
-            elif item.tag.uri == html and \
-                    item.tag.name in ('tbody', 'thead', 'tfoot'):
+            elif item.tag.uri == html and item.tag.name in ("tbody", "thead", "tfoot"):
                 tag = item.tag
             if tag is not None:
                 ret.append(self.new_copy(tag, item))
@@ -677,7 +674,7 @@ class SpecialId:
         nr = self._ids[id] = self._ids.get(id, 0) + 1
         if nr == 1:
             return id
-        return id + f'-{nr}'
+        return id + f"-{nr}"
 
 
 class SpecialPage:
@@ -693,11 +690,9 @@ class SpecialPage:
         self._footnotes = []
 
     def add_heading(self, elem, level, id=None):
-        elem.append(html.a(attrib={
-            html.href: f"#{id}",
-            html.class_: "moin-permalink",
-            html.title_: _("Link to this heading")
-        }))
+        elem.append(
+            html.a(attrib={html.href: f"#{id}", html.class_: "moin-permalink", html.title_: _("Link to this heading")})
+        )
         self._headings.append((elem, level, id))
 
     def add_toc(self, elem, maxlevel):
@@ -756,13 +751,17 @@ class ConverterPage(Converter):
                 headings_list = [h[1] for h in headings]
                 if headings_list:
                     maxlevel = max(headings_list)
-                headtogglelink = html.a(attrib={
-                    html.class_: 'moin-showhide',
-                    html.href_: '#',
-                    html.onclick_: "$('.moin-table-of-contents ol').toggle();return false;",
-                }, children=['[+]', ])
-                elem_h = html.div(attrib={html.class_: 'moin-table-of-contents-heading'},
-                                  children=[_('Contents'), headtogglelink])
+                headtogglelink = html.a(
+                    attrib={
+                        html.class_: "moin-showhide",
+                        html.href_: "#",
+                        html.onclick_: "$('.moin-table-of-contents ol').toggle();return false;",
+                    },
+                    children=["[+]"],
+                )
+                elem_h = html.div(
+                    attrib={html.class_: "moin-table-of-contents-heading"}, children=[_("Contents"), headtogglelink]
+                )
                 elem.append(elem_h)
                 stack = [elem]
 
@@ -777,7 +776,7 @@ class ConverterPage(Converter):
                 old_toggle = ""
                 for elem, level, id in headings:
                     need_item = last_level >= level
-                    text = ''.join(elem.itertext())
+                    text = "".join(elem.itertext())
                     while last_level > level:
                         stack.pop()
                         stack.pop()
@@ -786,17 +785,20 @@ class ConverterPage(Converter):
                         if maxlevel != 1:
                             stack_top_append(old_toggle)
                         stack_push(html.ol())
-                        stack_push(html.li({html.id_: f'li{id}'}))
+                        stack_push(html.li({html.id_: f"li{id}"}))
                         last_level += 1
                     if need_item:
                         stack.pop()
-                        stack_push(html.li({html.id_: f'li{id}'}))
-                    togglelink = html.a(attrib={
-                        html.href_: "#",
-                        html.onclick_: f"$('#li{id} ol').toggle();return false;",
-                        html.class_: 'moin-showhide',
-                    }, children=["[+]", ])
-                    elem_a = html.a(attrib={html.href: '#' + id}, children=[text, ])
+                        stack_push(html.li({html.id_: f"li{id}"}))
+                    togglelink = html.a(
+                        attrib={
+                            html.href_: "#",
+                            html.onclick_: f"$('#li{id} ol').toggle();return false;",
+                            html.class_: "moin-showhide",
+                        },
+                        children=["[+]"],
+                    )
+                    elem_a = html.a(attrib={html.href: "#" + id}, children=[text])
                     stack_top_append(elem_a)
                     old_toggle = togglelink
         return ret
@@ -821,11 +823,11 @@ class ConverterPage(Converter):
 
         id = elem.get(_tag_html_id)
         if not id:
-            id = self._id.gen_text(''.join(elem.itertext()))
+            id = self._id.gen_text("".join(elem.itertext()))
             elem.set(_tag_html_id, id)
         try:
             # do not create duplicate anchors to this heading when converting from one markup to another
-            if not elem[-1].attrib[html.class_] == 'moin-permalink':
+            if not elem[-1].attrib[html.class_] == "moin-permalink":
                 self._special_stack[-1].add_heading(elem, elem.level, id)
         except (AttributeError, KeyError):
             self._special_stack[-1].add_heading(elem, elem.level, id)
@@ -848,31 +850,39 @@ class ConverterPage(Converter):
 
             footnotes_div = self.create_footnotes(top)
             top.remove_footnotes()
-            self._id.zero_id('note')
+            self._id.zero_id("note")
             # bump note-placement counter to insure unique footnote ids
-            self._id.gen_id('note-placement')
+            self._id.gen_id("note-placement")
             return footnotes_div
 
         body = None
         for child in elem:
             if child.tag.uri == moin_page:
-                if child.tag.name == 'note-body':
+                if child.tag.name == "note-body":
                     body = self.do_children(child)
 
-        id = self._id.gen_id('note')
-        prefixed_id = '%s-%s' % (self._id.get_id('note-placement'), id)
+        id = self._id.gen_id("note")
+        prefixed_id = "%s-%s" % (self._id.get_id("note-placement"), id)
 
-        elem_ref = ET.XML("""
+        elem_ref = ET.XML(
+            """
 <html:sup xmlns:html="{}" html:id="note-{}-ref" html:class="moin-footnote">
 <html:a html:href="#note-{}">{}</html:a>
 </html:sup>
-""".format(html, prefixed_id, prefixed_id, id))
+""".format(
+                html, prefixed_id, prefixed_id, id
+            )
+        )
 
-        elem_note = ET.XML("""
+        elem_note = ET.XML(
+            """
 <html:p xmlns:html="{}" html:id="note-{}">
 <html:sup><html:a html:href="#note-{}-ref">{}</html:a></html:sup>
 </html:p>
-""".format(html, prefixed_id, prefixed_id, id))
+""".format(
+                html, prefixed_id, prefixed_id, id
+            )
+        )
 
         elem_note.extend(body)
         top.add_footnote(elem_note)
@@ -887,7 +897,7 @@ class ConverterPage(Converter):
             level = 6
 
         attribs = elem.attrib.copy()
-        attribs[html.class_] = 'moin-table-of-contents'
+        attribs[html.class_] = "moin-table-of-contents"
         elem = html.div(attrib=attribs)
 
         self._special_stack[-1].add_toc(elem, level)
@@ -900,4 +910,4 @@ class ConverterDocument(ConverterPage):
     """
 
 
-default_registry.register(ConverterPage._factory, type_moin_document, Type('application/x-xhtml-moin-page'))
+default_registry.register(ConverterPage._factory, type_moin_document, Type("application/x-xhtml-moin-page"))

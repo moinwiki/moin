@@ -28,40 +28,40 @@ class Macro(MacroInlineBase):
         args = arguments[0] if arguments else ""
         if not args:
             raise ValueError("Missing font name")
-        args = args.split(',')
+        args = args.split(",")
         fonts = args[0].split()
         color = args[1].strip() if len(args) > 1 else ""
         size = args[2].strip() if len(args) > 2 else ""
 
-        if color.startswith('#'):
+        if color.startswith("#"):
             try:
                 int(color[1:], 16)
                 assert len(color) in (4, 7)
-                color = f'color: {color}; '
+                color = f"color: {color}; "
             except (ValueError, AssertionError):
                 color = ""
         else:
-            color = f'color: {color}; ' if color.isalpha() else ""
+            color = f"color: {color}; " if color.isalpha() else ""
 
         if size:
             try:
                 s = float(size)
                 assert s > 0.1
                 assert s < 99
-                size = f'font-size: {size}em;'
+                size = f"font-size: {size}em;"
             except (ValueError, AssertionError):
                 size = ""
 
         style = color + size
         classes = []
         for font in fonts:
-            f = font if font.startswith('fa-') else 'fa-' + font
+            f = font if font.startswith("fa-") else "fa-" + font
             classes.append(f)
-        if 'fa-solid' not in classes and 'fa-regular' not in classes and 'fa-brands' not in classes:
-            classes.insert(0, 'fa-solid')
-        if 'fa-spin-reverse' in classes and 'fa-spin' not in classes:
-            classes.insert(0, 'fa-spin')
-        classes = ' '.join(classes)
+        if "fa-solid" not in classes and "fa-regular" not in classes and "fa-brands" not in classes:
+            classes.insert(0, "fa-solid")
+        if "fa-spin-reverse" in classes and "fa-spin" not in classes:
+            classes.insert(0, "fa-spin")
+        classes = " ".join(classes)
 
         attrib = {moin_page.class_: classes}
         if style:

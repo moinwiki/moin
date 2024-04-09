@@ -25,4 +25,4 @@ class TestConfigGroupsBackend(GroupsBackendTest):
         return Config
 
 
-coverage_modules = ['moin.datastructures.backends.config_groups']
+coverage_modules = ["moin.datastructures.backends.config_groups"]

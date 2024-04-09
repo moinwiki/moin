@@ -23,7 +23,7 @@ def get_backends(backends: Optional[str], all_backends: bool) -> set[Backend]:
         return set(app.cfg.backend_mapping.values())
     if backends:
         existing_backends = set(app.cfg.backend_mapping)
-        backends = set(backends.split(','))
+        backends = set(backends.split(","))
         if backends.issubset(existing_backends):
             return {app.cfg.backend_mapping.get(backend_name) for backend_name in backends}
         else:
@@ -31,7 +31,7 @@ def get_backends(backends: Optional[str], all_backends: bool) -> set[Backend]:
             print("Given Backends: %r" % backends)
             print("Configured Backends: %r" % existing_backends)
     else:
-        logging.warning('no backends specified')
+        logging.warning("no backends specified")
         return set()
 
 

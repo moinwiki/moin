@@ -18,6 +18,7 @@ class StoreBase(Mapping):
     """
     A simple read-only key/value store.
     """
+
     @classmethod
     @abstractmethod
     def from_uri(cls, uri):
@@ -80,6 +81,7 @@ class MutableStoreBase(StoreBase, MutableMapping):
     """
     A simple read/write key/value store.
     """
+
     def create(self):
         """
         create an empty store
@@ -118,6 +120,7 @@ class BytesMutableStoreMixin:
     class BytesStore(BytesMutableStoreMixin, FileStore, BytesMutableStoreBase):
         # that's all, nothing more needed
     """
+
     def __getitem__(self, key):
         with super().__getitem__(key) as stream:
             return stream.read()
@@ -146,6 +149,7 @@ class FileMutableStoreMixin:
     class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase)
         # that's all, nothing more needed
     """
+
     def __getitem__(self, key):
         value = super().__getitem__(key)
         return BytesIO(value)

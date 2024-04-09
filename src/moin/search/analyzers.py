@@ -12,9 +12,9 @@ from moin.security import AccessControlList
 
 
 class MimeTokenizer(Tokenizer):
-    """ Content type tokenizer """
+    """Content type tokenizer"""
 
-    def __call__(self, value, start_pos=0, positions=False, mode='', **kwargs):
+    def __call__(self, value, start_pos=0, positions=False, mode="", **kwargs):
         """
         This tokenizer is used for both indexing and queries. Queries are simple, usually return the input value as is.
 
@@ -38,7 +38,7 @@ class MimeTokenizer(Tokenizer):
         """
         tk = Token()
         tk.pos = 0
-        if mode == 'query':
+        if mode == "query":
             # 1 term expected, but contenttype:'moin utf-8' is valid
             val = value.split()
             for v in val:
@@ -49,22 +49,22 @@ class MimeTokenizer(Tokenizer):
             tk.text = value
             # text/x.moin.wiki;charset=utf-8
             yield tk
-            if '/' not in value:
+            if "/" not in value:
                 # unsupported contenttype
                 return
-            major, minor = value.split('/')
+            major, minor = value.split("/")
             # text, x.moin.wiki;charset=utf-8
             tk.text = major
             # text
             yield tk
-            if ';' in minor:
-                parameters = minor.split(';')
+            if ";" in minor:
+                parameters = minor.split(";")
                 # x.moin.wiki, charset=utf-8
                 for par in parameters[1:]:
                     tk.text = par
                     # charset=utf-8
                     yield tk
-                    key, val = par.split('=')
+                    key, val = par.split("=")
                     # charset, utf-8
                     tk.text = key
                     # charset
@@ -73,43 +73,43 @@ class MimeTokenizer(Tokenizer):
                     # utf-8
                     yield tk
                 minor = parameters[0]  # x.moin.wiki
-            if minor == 'mpeg':
+            if minor == "mpeg":
                 # 'audio/mpeg' most people expect mp3
-                tk.text = 'mp3'
+                tk.text = "mp3"
                 yield tk
-            if minor == 'jpeg':
+            if minor == "jpeg":
                 # 'image/jpeg' most people expect jpg
-                tk.text = 'jpg'
+                tk.text = "jpg"
                 yield tk
-            if minor == 'x.moin.wiki':
+            if minor == "x.moin.wiki":
                 # moin is valid for moin and creole, use this to get just moin
-                tk.text = 'moinwiki'
+                tk.text = "moinwiki"
                 yield tk
             tk.text = minor
             # x.moin.wiki
             yield tk
-            if '.' in minor:
-                min = minor.split('.')
+            if "." in minor:
+                min = minor.split(".")
                 # x, moin, wiki
                 for m in min:
                     tk.text = m
                     yield tk
-            if '-' in minor:
+            if "-" in minor:
                 # x-markdown
-                min = minor.split('-')
+                min = minor.split("-")
                 for m in min:
                     tk.text = m
                     yield tk
-            if '+' in minor:
+            if "+" in minor:
                 # svg+xml
-                min = minor.split('+')
+                min = minor.split("+")
                 for m in min:
                     tk.text = m
                     yield tk
 
 
 class AclTokenizer(Tokenizer):
-    """ Access control list tokenizer """
+    """Access control list tokenizer"""
 
     def __init__(self, acl_rights_contents):
         """
@@ -117,7 +117,7 @@ class AclTokenizer(Tokenizer):
         """
         self._acl_rights_contents = acl_rights_contents
 
-    def __call__(self, value, start_pos=0, positions=False, mode='', **kwargs):
+    def __call__(self, value, start_pos=0, positions=False, mode="", **kwargs):
         """
         Calls AccessControlList for tokenization
 
@@ -171,8 +171,8 @@ def item_name_analyzer():
 
     Output: "some", "item", "name"; "Some", "Item", "Sub", "Item"; "GSOC", "2011"
     """
-    iwf = MultiFilter(index=IntraWordFilter(mergewords=True, mergenums=True),
-                      query=IntraWordFilter(mergewords=False, mergenums=False)
-                      )
+    iwf = MultiFilter(
+        index=IntraWordFilter(mergewords=True, mergenums=True), query=IntraWordFilter(mergewords=False, mergenums=False)
+    )
     analyzer = RegexTokenizer(r"\S+") | iwf | LowercaseFilter()
     return analyzer

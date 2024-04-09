@@ -36,20 +36,27 @@ def cli():
     pass
 
 
-@cli.command('maint-set-meta', help='Set meta data of a new revision')
-@click.option('--key', '-k', required=False, type=str,
-              help="The key you want to set/change in the new revision")
-@click.option('--value', '-v', type=str, help='The value to set for the given key.')
-@click.option('--remove', '-r', is_flag=True, required=False, default=False,
-              help='If you want to delete the key given, add this flag.')
-@click.option('--query', '-q', type=str, default='',
-              help='Only perform the operation on items found by the given query.')
+@cli.command("maint-set-meta", help="Set meta data of a new revision")
+@click.option("--key", "-k", required=False, type=str, help="The key you want to set/change in the new revision")
+@click.option("--value", "-v", type=str, help="The value to set for the given key.")
+@click.option(
+    "--remove",
+    "-r",
+    is_flag=True,
+    required=False,
+    default=False,
+    help="If you want to delete the key given, add this flag.",
+)
+@click.option(
+    "--query", "-q", type=str, default="", help="Only perform the operation on items found by the given query."
+)
 def SetMeta(key, value, remove, query):
     logging.info("Set meta started")
     flaskg.add_lineno_attr = False
     if not ((key and value) or (key and remove)) or (key and value and remove):
-        sys.exit("You need to either specify a proper key/value pair or "
-                 "only a key you want to delete (with -r set).")
+        sys.exit(
+            "You need to either specify a proper key/value pair or " "only a key you want to delete (with -r set)."
+        )
 
     if not remove:
         try:
@@ -58,7 +65,7 @@ def SetMeta(key, value, remove, query):
             sys.exit("You need to specify a valid Python literal as the argument")
 
     if query:
-        qp = app.storage.query_parser([NAME_EXACT, ])
+        qp = app.storage.query_parser([NAME_EXACT])
         q = qp.parse(query)
     else:
         q = Every()

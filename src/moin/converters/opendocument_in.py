@@ -16,6 +16,7 @@ from . import default_registry
 from .xml_in import strip_xml
 
 from moin import log
+
 logging = log.getLogger(__name__)
 
 
@@ -28,7 +29,7 @@ class OpenDocumentIndexingConverter:
         zf = zipfile.ZipFile(rev, "r")  # rev is file-like
         try:
             data = zf.read("content.xml")
-            text = data.decode('utf-8')
+            text = data.decode("utf-8")
             text = strip_xml(text)
             return text
         except AttributeError as e:

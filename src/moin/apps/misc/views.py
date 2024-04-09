@@ -21,11 +21,12 @@ from moin.constants.keys import MTIME, NAME_EXACT, NAMESPACE
 from moin.themes import render_template
 
 
-@misc.route('/sitemap')
+@misc.route("/sitemap")
 def sitemap():
     """
     Google (and others) XML sitemap
     """
+
     def format_timestamp(t):
         tm = time.gmtime(t)
         return time.strftime("%Y-%m-%dT%H:%M:%S+00:00", tm)
@@ -39,18 +40,20 @@ def sitemap():
         priority = "0.5"
         sitemap += [(fqname, format_timestamp(mtime), changefreq, priority) for fqname in fqnames]
     # add entries for root urls
-    root_mapping = [(namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root))
-                    for namespace, _ in app.cfg.namespace_mapping]
+    root_mapping = [
+        (namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root))
+        for namespace, _ in app.cfg.namespace_mapping
+    ]
     query = Or([And([Term(NAME_EXACT, root), Term(NAMESPACE, namespace)]) for namespace, root in root_mapping])
     for rev in flaskg.storage.search(q=query):
         mtime = rev.meta[MTIME]
         sitemap.append((rev.meta[NAMESPACE], format_timestamp(mtime), "hourly", "1.0"))
     sitemap.sort()
-    content = render_template('misc/sitemap.xml', sitemap=sitemap)
-    return Response(content, mimetype='text/xml')
+    content = render_template("misc/sitemap.xml", sitemap=sitemap)
+    return Response(content, mimetype="text/xml")
 
 
-@misc.route('/urls_names')
+@misc.route("/urls_names")
 def urls_names():
     """
     List of all item URLs and names, e.g. for sisteritems.
@@ -63,5 +66,5 @@ def urls_names():
     fq_names = []
     for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
         fq_names += [fqname for fqname in rev.fqnames]
-    content = render_template('misc/urls_names.txt', fq_names=fq_names)
-    return Response(content, mimetype='text/plain')
+    content = render_template("misc/urls_names.txt", fq_names=fq_names)
+    return Response(content, mimetype="text/plain")

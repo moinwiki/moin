@@ -47,6 +47,7 @@ def random_string(length, allowed_chars=None):
 
 # password recovery token
 
+
 def generate_token(key=None, stamp=None):
     """
     generate a pair of a secret key and a crypto token.
@@ -89,7 +90,7 @@ def valid_token(key, token, timeout=2 * 60 * 60):
     :rtype: bool
     :returns: token is valid and not timed out
     """
-    parts = token.split('-')
+    parts = token.split("-")
     if len(parts) != 2:
         return False
     try:
@@ -103,6 +104,7 @@ def valid_token(key, token, timeout=2 * 60 * 60):
 
 
 # miscellaneous
+
 
 def cache_key(**kw):
     """
