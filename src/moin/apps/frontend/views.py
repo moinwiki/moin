@@ -46,7 +46,6 @@ from flatland.validation import Validator
 from markupsafe import Markup
 
 import pytz
-from babel import Locale
 
 from whoosh import sorting
 from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
@@ -2363,9 +2362,9 @@ def usersettings():
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
         _timezones_keys = [str(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_("Timezone")).out_of((e, e) for e in _timezones_keys)
-        _supported_locales = [Locale("en")] + app.extensions["babel"].instance.list_translations()
+        _supported_locales = app.extensions["babel"].instance.list_translations()
         locale = Select.using(label=L_("Locale")).out_of(
-            ((str(locale), locale.display_name) for locale in _supported_locales), sort_by=1
+            [("auto", "---")] + [(str(locale), locale.display_name) for locale in _supported_locales], sort_by=1
         )
         submit_label = L_("Save")
 
@@ -2447,6 +2446,8 @@ def usersettings():
                         user_old_email = flaskg.user.email
                         d = dict(form.value)
                         for k, v in d.items():
+                            if k == "locale" and v == "auto":
+                                v = None  # None means "auto-detect language from http headers"
                             flaskg.user.profile[k] = v
                         if (
                             part == "notification"
