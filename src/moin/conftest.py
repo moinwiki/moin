@@ -2,6 +2,7 @@
 # Copyright: 2007 MoinMoin:AlexanderSchremmer
 # Copyright: 2008,2011 MoinMoin:ThomasWaldmann
 # Copyright: 2023 MoinMoin project
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -16,6 +17,7 @@ Tests that require a certain configuration, like section_numbers = 1, must
 use a Config class to define the required configuration within the test class.
 """
 
+import gc
 import pytest
 import py
 
@@ -64,11 +66,11 @@ def app_ctx(cfg):
     teardown_wiki("")
     ctx.pop()
     try:
-        # simulate ERROR PermissionError:
-        # [WinError 32] The process cannot access the file because it is being used by another process
-        assert [] == get_open_wiki_files()
-    finally:
         destroy_app(app)
+    except PermissionError:  # [WinError 32] ... the file is being used by another process
+        gc.collect()  # triggers close of index files
+        destroy_app(app)
+    assert len(get_open_wiki_files()) < 1
 
 
 @pytest.fixture(autouse=True)
