@@ -1,7 +1,6 @@
 # Copyright: 2019 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-import datetime
 import pytz
 
 from flask import g as flaskg
@@ -9,6 +8,7 @@ import flask_babel
 
 from moin.i18n import _
 from moin import i18n
+from moin.utils import utcfromtimestamp, utcnow
 
 
 def duration(seconds):
@@ -52,9 +52,9 @@ def format_date_time(utc_dt=None, fmt="yyyy-MM-dd HH:mm:ss", interval="datetime"
     See https://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
     """
     if utc_dt is None:
-        utc_dt = datetime.datetime.utcnow()
+        utc_dt = utcnow()
     elif isinstance(utc_dt, (float, int)):
-        utc_dt = datetime.datetime.utcfromtimestamp(utc_dt)
+        utc_dt = utcfromtimestamp(utc_dt)
 
     if not flaskg.user.valid:
         # users who are not logged-in get moin version of ISO 8601: 2019-07-15 07:08:09z

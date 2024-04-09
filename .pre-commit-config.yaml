@@ -1,10 +1,9 @@
 repos:
- -   repo: https://github.com/psf/black
-     rev: 24.3.0
-     hooks:
-     -   id: black
- -   repo: https://github.com/pycqa/flake8
-     rev: 6.1.0
-     hooks:
-     -   id: flake8
-         files: '(src|_ui_tests|contrib|scripts|quickinstall.py)'
+- repo: https://github.com/psf/black
+  rev: 24.3.0
+  hooks:
+  - id: black
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.3.5
+  hooks:
+  - id: ruff

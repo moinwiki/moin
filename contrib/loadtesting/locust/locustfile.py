@@ -4,7 +4,7 @@
 import sys
 import argparse
 import urllib.request, urllib.error, urllib.parse
-from datetime import datetime
+from datetime import datetime, timezone
 from time import time
 
 from locust import HttpLocust, Locust, TaskSet, HttpUser, task, SequentialTaskSet, between, User, events
@@ -360,4 +360,4 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
     def get_time(self):
-        return datetime.utcfromtimestamp(time()).isoformat()[:-7].replace("T", " ")
+        return datetime.fromtimestamp(time(), tz=timezone.utc).isoformat()[:19].replace("T", " ")

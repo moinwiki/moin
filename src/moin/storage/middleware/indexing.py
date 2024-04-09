@@ -52,7 +52,6 @@ import gc
 import os
 import sys
 import shutil
-import datetime
 import time
 
 from collections.abc import Mapping
@@ -76,8 +75,8 @@ from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenize
 from moin.themes import utctimestamp
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
+from moin.utils import utcfromtimestamp
 from moin.utils.interwiki import split_fqname, CompositeName
-
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 from moin.converters import default_registry
@@ -173,7 +172,7 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
     for key in [MTIME, PTIME]:
         if key in doc:
             # we have UNIX UTC timestamp (int), whoosh wants datetime
-            doc[key] = datetime.datetime.utcfromtimestamp(doc[key])
+            doc[key] = utcfromtimestamp(doc[key])
     doc[NAME_EXACT] = doc[NAME]
     doc[WIKINAME] = wikiname
     doc[CONTENT] = content

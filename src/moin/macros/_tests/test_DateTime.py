@@ -7,13 +7,13 @@ Test for macros.DateTime
 """
 
 import time
-from datetime import datetime
 
 from flask import g as flaskg
 
 import pytest
 
 from moin.macros.DateTime import Macro
+from moin.utils import utcfromtimestamp
 from moin.utils.show_time import format_date_time
 
 
@@ -26,7 +26,7 @@ def test_Macro():
     # get the current time
     test_time = time.time()
     test_times = [test_time, test_time - 1]  # in case our call to time.time happened just after the second rolled over
-    test_times = [format_date_time(datetime.utcfromtimestamp(t)) for t in test_times]
+    test_times = [format_date_time(utcfromtimestamp(t)) for t in test_times]
     assert result in test_times
 
     arguments = ["2023-08-07T11:11:11", "argument2"]
