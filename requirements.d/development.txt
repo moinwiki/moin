@@ -5,3 +5,4 @@ pytest
 lxml
 # for sitetesting
 scrapy>=2.10.1
+pre-commit
