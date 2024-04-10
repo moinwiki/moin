@@ -1,6 +1,7 @@
 # Copyright: 2011 MoinMoin:RonnyPfannschmidt
 # Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:MichaelMayorov
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -96,30 +97,19 @@ VALIDATION_HANDLING_WARN = "warn"
 # TODO: fix tests to create valid metadata
 VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
-INDEXER_TIMEOUT = 20.0
 
-
-def get_indexer(fn, **kw):
+def get_doc(fn, revid, **kwargs):
     """
-    Return a valid indexer or raise a KeyError.
-
-    Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
-    indexes to storage. Try several times before failing.
-
-    FIXME: runs into timeout for a non-existing revid
+    Return a valid doc for given revid or raise a KeyError.
 
     :param fn: the indexer function
-    :param **kw: "revid" is required, index name optional
+    :param revid: revison to search
+    :param kwargs: idx_name, name of index used for searching (optional)
     """
-    until = time.time() + INDEXER_TIMEOUT
-    while True:
-        indexer = fn(**kw)
-        if indexer is not None:
-            break
-        time.sleep(2)
-        if time.time() > until:
-            raise KeyError(kw.get("revid", "") + " - server overload or corrupt index")
-    return indexer
+    doc = fn(revid=revid, **kwargs)
+    if doc is None:
+        raise KeyError(f"Internal Error: revid={revid} not found.")
+    return doc
 
 
 def parent_names(names):
@@ -1289,7 +1279,7 @@ class Item(PropertiesMixin):
         self.indexer.index_revision(meta, content, backend_name, force_latest=not overwrite)
         gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
-            self._current = get_indexer(self.indexer._document, revid=revid)
+            self._current = get_doc(self.indexer._document, revid=revid)
         if return_rev:
             return Revision(self, revid)
 
@@ -1342,7 +1332,7 @@ class Revision(PropertiesMixin):
             if is_current:
                 doc = item._current
             else:
-                doc = get_indexer(item.indexer._document, idx_name=ALL_REVS, revid=revid)
+                doc = get_doc(item.indexer._document, idx_name=ALL_REVS, revid=revid)
 
         if is_current:
             revid = doc.get(REVID)
