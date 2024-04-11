@@ -18,7 +18,7 @@ Note: if we say "reset a password" (to use a commonly used term), we mean to
 "invalidate the password hash" (so that no password exists that validates
 against that hash). MoinMoin does not keep user passwords in cleartext.
 
-The files we refer to below are located in docs/examples/password-reset/...
+The files we refer to below are located in contrib/password-reset/...
 
 
 Resetting one or few password(s)

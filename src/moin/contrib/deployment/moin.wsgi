@@ -18,9 +18,9 @@
 """
 
 # hint: use None as value if the code already is in sys.path
-moin_code = None # '/path/to/code'
+moin_code = None  # '/path/to/code'
 
-wiki_config = '/path/to/config/wikiconfig.py'
+wiki_config = "/path/to/config/wikiconfig.py"
 
 import sys, os
 
@@ -31,8 +31,8 @@ if moin_code:
 
 # application is the Flask application
 from moin.app import create_app
+
 application = create_app(wiki_config)
 
 # please note: if you want to do some wsgi app wrapping, do it like shown below:
-#application.wsgi_app = somewrapper(application.wsgi_app)
-
+# application.wsgi_app = somewrapper(application.wsgi_app)

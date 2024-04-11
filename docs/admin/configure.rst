@@ -564,7 +564,8 @@ username (like with german umlauts or accented characters). If moin does not
 crash (log a Unicode Error), you have likely found the correct coding.
 
 For users configuring GivenAuth on Apache, an example virtual host configuration
-file is included with MoinMoin in `docs/examples/deployment/moin-http-basic-auth.conf`.
+is included at `/contrib/deployment/moin-http-basic-auth.conf`
+
 
 LDAPAuth
 --------
@@ -1517,7 +1518,7 @@ the following::
     email_tracebacks = True
 
 
-Please also check the logging configuration example in `docs/examples/config/logging/email`.
+Please also check the logging configuration example in `/contrib/logging/email`.
 
 User E-Mail Address Verification
 --------------------------------
@@ -1570,13 +1571,13 @@ https://docs.python.org/3/library/logging.config.html#configuration-file-format
 
 
 There are also some logging configurations in the
-`docs/examples/config/logging/` directory.
+`contrib/logging/` directory.
 
 Logging configuration needs to be done very early, usually it will be done
 from your adaptor script, e.g. moin.wsgi::
 
     from moin import log
-    log.load_config('wiki/config/logging/logfile')
+    log.load_config('contrib/logging/logfile')
 
 You have to fix that path to use a logging configuration matching your
 needs (use an absolute path).

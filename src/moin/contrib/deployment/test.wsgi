@@ -41,7 +41,7 @@ import sys
 try:
     __file__
 except NameError:
-    __file__ = '?'
+    __file__ = "?"
 
 html_template = """\
 <html>
@@ -68,31 +68,32 @@ row_template = "  <tr><td>%s</td><td>%r</td></tr>"
 
 
 def application(environ, start_response):
-    """ The WSGI test application """
+    """The WSGI test application"""
     # emit status / headers
     status = "200 OK"
-    headers = [('Content-Type', 'text/html'), ]
+    headers = [("Content-Type", "text/html")]
     start_response(status, headers)
 
     # assemble and return content
     content = html_template % {
-        'python_version': sys.version,
-        'platform': sys.platform,
-        'abs_path': os.path.abspath('.'),
-        'filename': __file__,
-        'python_path': repr(sys.path),
-        'wsgi_env': '\n'.join([row_template % item for item in environ.items()]),
+        "python_version": sys.version,
+        "platform": sys.platform,
+        "abs_path": os.path.abspath("."),
+        "filename": __file__,
+        "python_path": repr(sys.path),
+        "wsgi_env": "\n".join([row_template % item for item in environ.items()]),
     }
     return [content.encode()]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # this runs when script is started directly from commandline
     try:
         # create a simple WSGI server and run the application
         from wsgiref import simple_server
+
         print("Running test application - point your browser at http://localhost:8080/ ...")
-        httpd = simple_server.WSGIServer(('', 8080), simple_server.WSGIRequestHandler)
+        httpd = simple_server.WSGIServer(("", 8080), simple_server.WSGIRequestHandler)
         httpd.set_app(application)
         httpd.serve_forever()
     except ImportError:

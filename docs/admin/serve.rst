@@ -86,7 +86,8 @@ because you can't import the application from MoinMoin.
 Continue reading here: https://flask.palletsprojects.com/deploying/
 
 In case you run into trouble with deployment of the moin WSGI application,
-you can try a simpler WSGI app first. See `docs/examples/deployment/test.wsgi`.
+you can try a simpler WSGI app first. An example file is included at
+`/contrib/deployment/test.wsgi`.
 
 As long as you can't make `test.wsgi` work, the problem is not with
 moin, but rather with your web server and WSGI app deployment method.
