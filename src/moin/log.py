@@ -29,7 +29,7 @@
     Or, modify your server adaptor script (e.g. moin.cgi) to do this::
 
         from moin import log
-        log.load_config('wiki/config/logging/logfile') # XXX please fix this path!
+        log.load_config('contrib/logging/logfile') # XXX please fix this path!
 
     You have to fix that path to use a logging configuration matching your
     needs (we provide some examples in the path given there, it is relative to

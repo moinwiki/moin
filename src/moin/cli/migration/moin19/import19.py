@@ -95,7 +95,7 @@ def migr_logging(msg_id, log_msg):
     """
     The logging function writes the first messages of each type
     with warning level and the rest with debug level only.
-    See docs/examples/config/logging/logfile_cli for logging configuration example
+    See contrib/logging/logfile_cli for logging configuration example
     """
     migr_stat[msg_id] += 1
     if migr_stat[msg_id] < migr_warn_max:
