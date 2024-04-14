@@ -564,7 +564,7 @@ username (like with german umlauts or accented characters). If moin does not
 crash (log a Unicode Error), you have likely found the correct coding.
 
 For users configuring GivenAuth on Apache, an example virtual host configuration
-is included at `/contrib/deployment/moin-http-basic-auth.conf`
+is included at `contrib/deployment/moin-http-basic-auth.conf`
 
 
 LDAPAuth
@@ -1518,7 +1518,7 @@ the following::
     email_tracebacks = True
 
 
-Please also check the logging configuration example in `/contrib/logging/email`.
+Please also check the logging configuration example in `contrib/logging/email`.
 
 User E-Mail Address Verification
 --------------------------------

@@ -16,7 +16,7 @@ Selective Backup
 ================
 If you want a backup of MoinMoin and your data, then backup the following:
 
-* your data, ususlly everything under wiki/
+* your data, usually everything under wiki/
 * moin configuration, e.g. wikiconfig.py
 * logging configuration, e.g. logging.conf
 * moin deployment script, e.g. moin.wsgi
