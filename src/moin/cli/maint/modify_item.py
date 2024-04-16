@@ -7,9 +7,6 @@
 MoinMoin CLI - get an item revision from the wiki, put it back into the wiki.
 """
 
-# see #1479, remove after dropping support for Python 3.8
-from __future__ import annotations
-
 from collections import defaultdict
 from dataclasses import dataclass, field
 import json
@@ -24,6 +21,7 @@ from flask.cli import FlaskGroup
 from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, WIKINAME, REVID, PARENTID, REV_NUMBER, MTIME, NAME
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
@@ -275,6 +273,9 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                 for issue in issues:
                     print(issue)
             _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
+        # Skipping checks for userprofiles, as revision numbers and parentids are not used here
+        if backend == app.cfg.backend_mapping[NAMESPACE_USERPROFILES]:
+            continue
         # fix bad parentid references and repeated or missing revision numbers
         for item_id, rev_datum in revs.items():
             rev_datum.sort(key=lambda r: (r.rev_number, r.mtime))
