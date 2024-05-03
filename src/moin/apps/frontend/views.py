@@ -1491,7 +1491,12 @@ def mychanges():
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
         metas = flaskg.storage.search_meta_page(
-            query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page
+            query,
+            idx_name=ALL_REVS,
+            sortedby=[MTIME, REV_NUMBER],
+            reverse=True,
+            pagenum=page_num,
+            pagelen=results_per_page,
         )
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
@@ -1499,7 +1504,9 @@ def mychanges():
             page_num = pages
     else:
         pages = 1
-        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(
+            query, idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None
+        )
 
     my_changes = []
     for meta in metas:
@@ -1638,14 +1645,21 @@ def history(item_name):
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
         metas = flaskg.storage.search_meta_page(
-            query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, pagenum=page_num, pagelen=results_per_page
+            query,
+            idx_name=ALL_REVS,
+            sortedby=[MTIME, REV_NUMBER],
+            reverse=True,
+            pagenum=page_num,
+            pagelen=results_per_page,
         )
         pages = (len_revs + results_per_page - 1) // results_per_page
         if page_num > pages:
             page_num = pages
     else:
         pages = 1
-        metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+        metas = flaskg.storage.search_meta(
+            query, idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None
+        )
 
     # get rid of the content value to save potentially big amounts of memory:
     history = []
@@ -2605,7 +2619,7 @@ def diff(item_name):
     terms = [Term(WIKINAME, app.cfg.interwikiname)]
     terms.extend(Term(term, value) for term, value in fqname.query.items())
     query = And(terms)
-    metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
+    metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None)
     close_file(item.rev.data)
     item = flaskg.storage.get_item(**fqname.query)
     metas = [(int(meta[MTIME].replace(tzinfo=timezone.utc).timestamp()), meta[REVID], meta[ITEMID]) for meta in metas]
