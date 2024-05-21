@@ -8,7 +8,7 @@ MoinMoin GetVal macro - gets a value for a specified key from a dict.
 
 from flask import g as flaskg
 
-from moin.macros._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase, fail_message
 from moin.datastructures.backends import DictDoesNotExistError
 from moin.i18n import _
 
@@ -21,18 +21,23 @@ class Macro(MacroInlineBase):
             item_name = args[0].strip()
             key = args[1].strip()
         except (IndexError, AssertionError):
-            raise ValueError(_("GetVal: invalid parameters, try <<GetVal(DictName, key)>>"))
+            err_msg = _("Invalid parameters, try <<GetVal(DictName, key)>>")
+            return fail_message(err_msg, alternative)
+
         if not flaskg.user.may.read(str(item_name)):
-            raise ValueError(_("GetVal: permission to read denied: ") + item_name)
+            err_msg = _("Permission to read was denied: {item_name}").format(item_name=item_name)
+            return fail_message(err_msg, alternative)
+
         try:
             d = flaskg.dicts[item_name]
         except DictDoesNotExistError:
-            raise ValueError(_("GetVal: dict not found: ") + item_name)
+            err_msg = _("WikiDict not found: {item_name}").format(item_name=item_name)
+            return fail_message(err_msg, alternative)
+
         result = d.get(key, "")
         if not result:
-            raise ValueError(
-                _("GetVal macro is invalid, {item_name} missing key: {key_name}").format(
-                    item_name=item_name, key_name=key
-                )
+            err_msg = _("Macro is invalid, {item_name} is missing key: {key_name}").format(
+                item_name=item_name, key_name=key
             )
+            return fail_message(err_msg, alternative)
         return result

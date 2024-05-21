@@ -10,7 +10,7 @@ or the obfuscated display passed as the first macro argument).
 from flask import g as flaskg
 
 from moin.utils.tree import moin_page, xlink
-from moin.macros._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase, fail_message
 from moin.mail.sendmail import decodeSpamSafeEmail
 from moin.i18n import _
 
@@ -28,8 +28,8 @@ class Macro(MacroInlineBase):
             email = arguments[0]
             assert len(email) >= 5
         except (AttributeError, AssertionError):
-            raise ValueError(_("MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"))
-
+            err_msg = _("Invalid format, try: <<MailTo(user AT example DOT org, write me)>>")
+            return fail_message(err_msg, alternative)
         try:
             text = arguments[1]
         except IndexError:

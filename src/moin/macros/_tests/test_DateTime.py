@@ -10,8 +10,6 @@ import time
 
 from flask import g as flaskg
 
-import pytest
-
 from moin.macros.DateTime import Macro
 from moin.utils import utcfromtimestamp
 from moin.utils.show_time import format_date_time
@@ -40,8 +38,10 @@ def test_Macro():
     assert result == expected
 
     arguments = ["incorrect_argument"]
-    with pytest.raises(ValueError):
-        macro_obj.macro("content", arguments, "page_url", "alternative")
+    result = macro_obj.macro("content", arguments, "page_url", "alternative")
+    attr = list(result.attrib.values())
+    # expecting error message with class of 'error nowiki'
+    assert "error" in attr[0]
 
     # the following are different ways to specify the same moment
     expected = "2019-10-07 18:30:00z"

@@ -20,14 +20,17 @@ Where:
 
 
 from moin.utils.tree import moin_page
-from moin.macros._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase, fail_message
+from moin.i18n import _
 
 
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         args = arguments[0] if arguments else ""
         if not args:
-            raise ValueError("Missing font name")
+            err_msg = _("Missing font name, syntax is <<FontAwesome(name,color,size)>>")
+            return fail_message(err_msg, alternative)
+
         args = args.split(",")
         fonts = args[0].split()
         color = args[1].strip() if len(args) > 1 else ""
