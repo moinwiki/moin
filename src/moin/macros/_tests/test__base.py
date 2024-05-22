@@ -8,6 +8,7 @@ MoinMoin - Tests for moin.macros._base
 
 import pytest
 from moin.macros._base import MacroBase, MacroBlockBase, MacroInlineBase, MacroInlineOnlyBase, MacroPageLinkListBase
+from moin.utils.tree import html
 
 
 class TestMacroBase:
@@ -27,8 +28,8 @@ class TestMacroBase:
             """inherited class from MacroBlockBase"""
 
         macroblockbase_obj = Test_MacroBlockBase()
-        with pytest.raises(ValueError):
-            macroblockbase_obj.__call__("content", "arguments", "page_url", "alternative", context_block=False)
+        result = macroblockbase_obj.__call__("content", "arguments", "page_url", "alternative", context_block=False)
+        assert "error" in result.attrib[html.class_]
         with pytest.raises(NotImplementedError):
             macroblockbase_obj.__call__("content", "arguments", "page_url", "alternative", "context_block")
 

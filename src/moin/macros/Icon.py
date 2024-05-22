@@ -14,7 +14,7 @@ and relies on client browser to render image based on its size.
 from flask import url_for
 
 from moin.utils.tree import html
-from moin.macros._base import MacroInlineBase
+from moin.macros._base import MacroInlineBase, fail_message
 from moin.i18n import _
 
 
@@ -22,8 +22,9 @@ class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         icon = arguments[0] if arguments else ""
         if not icon:
-            raise ValueError("Missing icon name")
+            msg = _("Icon macro failed due to missing icon name.")
+            return fail_message(msg, alternative)
         src = url_for("static", filename="img/icons/" + icon)
-        reason = _("Icon not rendered, verify name is valid")
+        reason = _("Icon not rendered, invalid name")
         alt = f"<<Icon({icon})>> - {reason}"
         return html.img(attrib={html.src: src, html.alt: alt, html.class_: "moin-icon-macro"})

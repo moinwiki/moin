@@ -85,13 +85,24 @@ def extract_h1(item_name):
     return _("No heading found in item: {item_name}").format(item_name=item_name)
 
 
-def fail_message(msg, severity="error"):
+def fail_message(msg, alternative, severity="error"):
     """
     Return an error message in admonition-like format.
 
-    Severity may be: attention, caution, danger, error, hint, important, note, or tip.
+    :param msg: error message
+    :param alternative: full text of macro as passed in MacroBase __call__
+    :param Severity: attention, caution, danger, error, hint, important, note, or tip
+    :returns: formatted text of macro, error message
     """
-    return html.div(attrib={html.class_: f"{severity} moin-nowiki"}, children=msg)
+    if severity not in "attention caution danger error hint important note tip".split():
+        severity = "error"
+        msg = (
+            _("Invalid severity, must be one of: ") + "attention, caution, danger, error, hint, important, note, or tip"
+        )
+
+    altern = html.p(children=[html.strong(children=[alternative])])
+    message = html.p(children=[msg])
+    return html.div(attrib={html.class_: f"{severity} moin-nowiki"}, children=[altern, message])
 
 
 class MacroBase:
@@ -119,7 +130,8 @@ class MacroBlockBase(MacroBase):
     def __call__(self, content, arguments, page_url, alternative, context_block):
         if context_block:
             return self.macro(content, arguments, page_url, alternative)
-        raise ValueError(_("Block macros cannot be used inline"))
+        err_msg = _("Block macros cannot be used inline")
+        return fail_message(err_msg, alternative)
 
     def macro(self, content, arguments, page_url, alternative):
         raise NotImplementedError
@@ -153,12 +165,14 @@ class MacroInlineOnlyBase(MacroBase):
 
 
 class MacroPageLinkListBase(MacroBlockBase):
-    def create_pagelink_list(self, pagenames, ordered=False, display="FullPath"):
+    def create_pagelink_list(self, pagenames, alternative, ordered=False, display="FullPath"):
         """Creates an ET with a list of pagelinks from a list of pagenames.
 
         Parameters:
 
           pagenames: a list of pages, each being like a flask request.path[1:]
+
+          alternative: full text of macro call
 
           ordered: Should the list be ordered or unordered list (<ol> or <ul>)?
 
@@ -205,7 +219,8 @@ class MacroPageLinkListBase(MacroBlockBase):
             elif display == "ItemTitle":
                 linkname = extract_h1(pagename.fullname)
             else:
-                raise KeyError(_('Unrecognized display value "{display}".').format(display=display))
+                err_msg = _('Unrecognized display value "{display}".').format(display=display)
+                return fail_message(err_msg, alternative)
 
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])
             item_body = moin_page.list_item_body(children=[pagelink])

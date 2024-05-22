@@ -25,8 +25,10 @@ class TestMacro:
     def test_Macro(self, test_dict):
         macro_obj = Macro()
         arguments = [test_dict]
-        with pytest.raises(ValueError):
-            macro_obj.macro("content", arguments, "page_url", "alternative")
+        result = macro_obj.macro("content", arguments, "page_url", "alternative")
+        attr = list(result.attrib.values())
+        # expecting error message with class of 'error nowiki'
+        assert "error" in attr[0]
 
         if not flaskg.user.may.read(arguments[0]):
             with pytest.raises(ValueError):
