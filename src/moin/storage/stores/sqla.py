@@ -52,7 +52,7 @@ class BytesStore(BytesMutableStoreBase):
         self.table_name = table_name
         if db_uri.startswith("sqlite:///"):
             db_path = os.path.dirname(self.db_uri.split("sqlite:///")[1])
-            if not os.path.exists(db_path):
+            if db_path and not os.path.exists(db_path):
                 os.makedirs(db_path)
 
     def open(self):
@@ -65,11 +65,10 @@ class BytesStore(BytesMutableStoreBase):
         else:
             self.engine = create_engine(db_uri, echo=self.verbose, echo_pool=self.verbose)
 
-        metadata = MetaData()
-        metadata.bind = self.engine
+        self.metadata = MetaData()
         self.table = Table(
             self.table_name,
-            metadata,
+            self.metadata,
             Column("key", String(KEY_LEN), primary_key=True),
             Column("value", LargeBinary(VALUE_LEN)),
         )
@@ -80,38 +79,48 @@ class BytesStore(BytesMutableStoreBase):
 
     def create(self):
         self.open()
-        self.table.create()
+        with self.engine.connect() as conn:
+            with conn.begin():
+                self.metadata.create_all(conn)
         self.close()
 
     def destroy(self):
         self.open()
-        self.table.drop()
+        with self.engine.connect() as conn:
+            with conn.begin():
+                self.metadata.drop_all(conn)
         self.close()
 
     def __iter__(self):
-        rows = select([self.table.c.key]).execute().fetchall()
-        for row in rows:
-            yield row[0]
+        with self.engine.connect() as conn:
+            rows = conn.execute(select(self.table.c.key))
+            for row in rows:
+                yield row[0]
 
     def __delitem__(self, key):
-        self.table.delete().where(self.table.c.key == key).execute()
+        with self.engine.connect() as conn:
+            with conn.begin():
+                conn.execute(self.table.delete().where(self.table.c.key == key))
 
     def __getitem__(self, key):
-        value = select([self.table.c.value], self.table.c.key == key).execute().fetchone()
-        if value is not None:
-            return value[0]
-        else:
-            raise KeyError(key)
+        with self.engine.connect() as conn:
+            value = conn.execute(select(self.table.c.value).where(self.table.c.key == key)).fetchone()
+            if value is not None:
+                return value[0]
+            else:
+                raise KeyError(key)
 
     def __setitem__(self, key, value):
-        try:
-            self.table.insert().execute(key=key, value=value)
-        except IntegrityError:
-            if NAMESPACE_USERPROFILES in self.db_uri:
-                # userprofiles namespace does support revisions so we update existing row
-                self.table.update().execute(key=key, value=value)
-            else:
-                raise
+        with self.engine.connect() as conn:
+            with conn.begin():
+                try:
+                    conn.execute(self.table.insert().values(key=key, value=value))
+                except IntegrityError:
+                    if NAMESPACE_USERPROFILES in self.db_uri:
+                        # userprofiles namespace does support revisions so we update existing row
+                        conn.execute(self.table.update().values(key=key, value=value))
+                    else:
+                        raise
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
