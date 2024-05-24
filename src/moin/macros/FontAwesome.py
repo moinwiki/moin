@@ -26,12 +26,11 @@ from moin.i18n import _
 
 class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
-        args = arguments[0] if arguments else ""
-        if not args:
+        if not arguments:
             err_msg = _("Missing font name, syntax is <<FontAwesome(name,color,size)>>")
             return fail_message(err_msg, alternative)
 
-        args = args.split(",")
+        args = arguments[0].split(",")
         fonts = args[0].split()
         color = args[1].strip() if len(args) > 1 else ""
         size = args[2].strip() if len(args) > 2 else ""

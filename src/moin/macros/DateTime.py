@@ -27,5 +27,5 @@ class Macro(MacroDateTimeBase):
                 tm = self.parse_time(tm)
             return show_time.format_date_time(tm)
         except (AttributeError, OSError, AssertionError, ValueError, OverflowError):
-            err_msg = _("Invalid input parameter: null, float, int, or ISO 8601 formats are accepted.")
+            err_msg = _("Invalid input parameter: None, float, int, or ISO 8601 formats are accepted.")
             return fail_message(err_msg, alternative)

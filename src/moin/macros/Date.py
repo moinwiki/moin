@@ -20,7 +20,7 @@ class MacroDateTimeBase(MacroInlineBase):
         Parse a time specification argument for usage by Date and DateTime macro.
         Not all ISO 8601 format variations are accepted as input.
 
-        :param args: float/int UNIX timestamp or null or ISO 8601 formatted date time:
+        :param args: float/int UNIX timestamp or None or ISO 8601 formatted date time:
                      YYYY-MM-DDTHH:MM:SS (plus optional Z or z for UTC, or +/-HHMM) or
                      YYYY-MM-DD HH:MM:SS (same as above but replacing T separator with " ")
         :returns: UNIX timestamp (UTC) or raises one of AttributeError, OSError, AssertionError, ValueError, OverflowError
@@ -70,5 +70,5 @@ class Macro(MacroDateTimeBase):
                 tm = self.parse_time(tm)
             return show_time.format_date(tm)
         except (AttributeError, OSError, AssertionError, ValueError, OverflowError):
-            err_msg = _("Invalid input parameter: null, float, int, or ISO 8601 formats are accepted.")
+            err_msg = _("Invalid input parameter: None, float, int, or ISO 8601 formats are accepted.")
             return fail_message(err_msg, alternative)
