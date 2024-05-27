@@ -95,10 +95,7 @@ def fail_message(msg, alternative, severity="error"):
     :returns: formatted text of macro, error message
     """
     if severity not in "attention caution danger error hint important note tip".split():
-        severity = "error"
-        msg = (
-            _("Invalid severity, must be one of: ") + "attention, caution, danger, error, hint, important, note, or tip"
-        )
+        raise ValueError
 
     altern = html.p(children=[html.strong(children=[alternative])])
     message = html.p(children=[msg])
