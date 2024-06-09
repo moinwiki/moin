@@ -1,6 +1,7 @@
 # Copyright: 2011 MoinMoin:RonnyPfannschmidt
 # Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:MichaelMayorov
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -48,7 +49,6 @@ will not access the layers below (like the backend), but just the index files,
 usually it is even just the small and thus quick latest-revs index.
 """
 
-import gc
 import os
 import sys
 import shutil
@@ -1287,7 +1287,6 @@ class Item(PropertiesMixin):
         backend_name, revid = backend.store(meta, data)
         meta[REVID] = revid
         self.indexer.index_revision(meta, content, backend_name, force_latest=not overwrite)
-        gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
             self._current = get_indexer(self.indexer._document, revid=revid)
         if return_rev:
