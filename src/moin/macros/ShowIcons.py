@@ -10,8 +10,6 @@ using the Icon macro:
 
 
 import os
-from os import listdir
-from os.path import isfile, join
 
 from flask import url_for
 
@@ -27,15 +25,13 @@ class Macro(MacroBlockBase):
         icon_dir = os.path.join(os.path.split(my_dir)[0], "static", "img", "icons")
 
         headings = (_("Markup"), _("Result"))
-        files = [f for f in listdir(icon_dir) if isfile(join(icon_dir, f))]
         rows = []
-        for filename in files:
-            markup = f"<<Icon({filename})>>"
-            src = url_for("static", filename="img/icons/" + filename)
-            # TODO: add alt attribute for img and add a macro test module
-            # reason = _('Icon not rendered, verify name is valid')
-            # alt = '<<Icon({0})>> - {1}'.format(filename, reason)
-            rows.append((markup, html.img(attrib={html.src: src, html.alt: filename})))
+        with os.scandir(icon_dir) as files:
+            for file in files:
+                if not file.name.startswith(".") and file.is_file():
+                    markup = f"<<Icon({file.name})>>"
+                    src = url_for("static", filename="img/icons/" + file.name)
+                    rows.append((markup, html.img(attrib={html.src: src, html.alt: file.name})))
         table = TableMixin()
-        ret = table.build_dom_table(rows, head=headings)
+        ret = table.build_dom_table(sorted(rows), head=headings)
         return ret
