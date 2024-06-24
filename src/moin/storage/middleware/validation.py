@@ -1,4 +1,5 @@
 # Copyright: 2011,2012 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -104,6 +105,23 @@ def name_validator(element, state):
     if v.startswith("+"):  # used for views, like /+meta/<itemname>
         return False
     if v.startswith("/") or v.endswith("/"):
+        return False
+    if "//" in v:  # empty ancestor name is invalid
+        return False
+    return True
+
+
+def itemlink_validator(element, state):
+    """an itemlink"""
+    if element.raw is Unset:
+        element.set(state[keys.NAME])
+    v = element.value
+    if not isinstance(v, str):
+        return False
+    if v != v.strip():
+        return False
+    if v.startswith("/") or v.endswith("/"):
+        element.add_error("Itemlink may not start or end with '/'.")
         return False
     if "//" in v:  # empty ancestor name is invalid
         return False
@@ -395,7 +413,7 @@ ContentMetaSchema = DuckDict.named("ContentMetaSchema").of(
     String.named(keys.HASH_ALGORITHM).validated_by(hash_validator),
     String.named(keys.DATAID).validated_by(uuid_validator).using(optional=True),
     # markup items may have this:
-    List.named(keys.ITEMLINKS).of(String.named("itemlink").validated_by(wikiname_validator)).using(optional=True),
+    List.named(keys.ITEMLINKS).of(String.named("itemlink").validated_by(itemlink_validator)).using(optional=True),
     List.named(keys.ITEMTRANSCLUSIONS)
     .of(String.named("itemtransclusion").validated_by(wikiname_validator))
     .using(optional=True),

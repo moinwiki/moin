@@ -1,6 +1,7 @@
 # Copyright: 2011 MoinMoin:RonnyPfannschmidt
 # Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2011 MoinMoin:MichaelMayorov
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -1241,10 +1242,10 @@ class Item(PropertiesMixin):
             logging.warning("data validation skipped because metadata is invalid, see below")
             val = []
             for e in m.children:
-                if e.name == "subscriptions":
-                    for sub in e.children:
-                        if sub.valid is False:
-                            val.append(f'"{str(sub)}". {str(sub.errors[0])}')
+                if e.name in ["itemlinks", "subscriptions"]:
+                    for child in e.children:
+                        if child.valid is False:
+                            val.append(f'"{str(child)}". {str(child.errors[0])}')
                             e.valid = False
                 elif e.valid is False:
                     val.append(str(e))
