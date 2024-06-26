@@ -1,4 +1,5 @@
 # Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -10,6 +11,7 @@ special wiki links.
 
 from flask import g as flaskg
 
+from moin.constants.misc import VALID_ITEMLINK_VIEWS
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri
 from moin.utils.mime import type_moin_document
@@ -182,18 +184,27 @@ class ConverterExternOutput(ConverterBase):
         elem.set(to_tag, link)
 
     def handle_wikilocal_links(self, elem, input, page, to_tag=ConverterBase._tag_xlink_href):
+        view_name = ""
         if input.path:
-            # this can be a relative path, make it absolute:
-            path = input.path
+            item_name = str(input.path)
+            # Remove view from item_name before searching
+            if item_name.startswith("+"):
+                view_name = item_name.split("/")[0]
+                if view_name in VALID_ITEMLINK_VIEWS:
+                    item_name = item_name.split(f"{view_name}/")[1]
             if page:
-                path = self.absolute_path(path, page.path)
-            item_name = str(path)
+                # this can be a relative path, make it absolute:
+                item_name = str(self.absolute_path(Iri(path=item_name).path, page.path))
             if not flaskg.storage.has_item(item_name):
                 # XXX these index accesses slow down the link converter quite a bit
                 elem.set(moin_page.class_, "moin-nonexistent")
         else:
             item_name = str(page.path[1:]) if page else ""
         endpoint, rev, query = self._get_do_rev(input.query)
+
+        if view_name == "+meta":  # TODO: add other views
+            endpoint = "frontend.show_item_meta"
+
         url = url_for_item(item_name, rev=rev, endpoint=endpoint)
         if not page:
             url = url[1:]

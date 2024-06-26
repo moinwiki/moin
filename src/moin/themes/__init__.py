@@ -1,7 +1,7 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:RadomirDopieralski
 # Copyright: 2010 MoinMoin:DiogenesAugusto
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -26,6 +26,7 @@ from moin.i18n import _, L_
 from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
+from moin.constants.misc import VALID_ITEMLINK_VIEWS
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
@@ -590,6 +591,20 @@ class ThemeSupport:
         :returns: whether item pointed to by the link exists or not
         """
         return self.storage.has_item(itemname)
+
+    def itemlink_exists(self, itemlink):
+        """
+        Check whether the item pointed to by the given itemlink exists or not
+
+        :rtype: boolean
+        :returns: whether item pointed to by the link exists or not
+        """
+        item_name = itemlink
+        if itemlink.startswith("+"):
+            view_name = itemlink.split("/")[0]
+            if view_name in VALID_ITEMLINK_VIEWS:
+                item_name = itemlink.split(f"{view_name}/")[1]
+        return self.storage.has_item(item_name)
 
     def variables_css(self):
         """
