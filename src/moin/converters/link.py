@@ -9,6 +9,7 @@ Expands all links in an internal Moin document, including interwiki and
 special wiki links.
 """
 
+from flask import current_app as app
 from flask import g as flaskg
 
 from moin.constants.misc import VALID_ITEMLINK_VIEWS
@@ -202,8 +203,9 @@ class ConverterExternOutput(ConverterBase):
             item_name = str(page.path[1:]) if page else ""
         endpoint, rev, query = self._get_do_rev(input.query)
 
-        if view_name == "+meta":  # TODO: add other views
-            endpoint = "frontend.show_item_meta"
+        if view_name in app.view_endpoints.keys():
+            # Other views will be shown with class moin-nonexistent as non-existent links
+            endpoint = app.view_endpoints[view_name]
 
         url = url_for_item(item_name, rev=rev, endpoint=endpoint)
         if not page:
