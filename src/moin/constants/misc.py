@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -69,3 +70,6 @@ URI_SCHEMES = [
 NO_LOCK = 0  # false, someone else holds lock for current item
 LOCKED = 1  # true, current user has obtained or renewed lock
 LOCK = "lock"
+
+# Valid views allowed for itemlinks
+VALID_ITEMLINK_VIEWS = ["+meta", "+history", "+download", "+highlight"]
