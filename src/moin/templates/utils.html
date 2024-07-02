@@ -153,7 +153,7 @@
         <li class="list-group-item">Item Links:&nbsp;
             {%- if meta['itemlinks'] -%}
                 {%- for item in meta['itemlinks']|sort -%}
-                    <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                    <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.itemlink_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
                     {%- if not loop.last %}, {% endif -%}
                 {%- endfor -%}
             {%- else -%}
