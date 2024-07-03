@@ -21,7 +21,7 @@ See utils.html for more macros.
 {% macro render_submit(form, name=None, value=None) %}
     <div class="moin-float-fix"> {# needed to add vertical whitespace below floated element #}
         {%- if name and value %}
-            <input type="hidden" name="{{ name }}" value="{{ value }}" />
+            <input type="hidden" name="{{ name }}" value="{{ value }}">
         {% endif %}
         {{ gen.input(type='submit', value=form.submit_label, class='moin-button', **kwargs) }}
     </div>

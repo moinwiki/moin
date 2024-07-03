@@ -52,7 +52,7 @@
                             {%- if history[0].trash %}
                                 <th class="moin-button-diff"><span class="moin-button moin-button-disabled">Diff</span></th>
                             {%- else %}
-                                <th class="moin-button-diff"><input class="moin-button" type="submit" value="Diff" /></th>
+                                <th class="moin-button-diff"><input class="moin-button" type="submit" value="Diff"></th>
                             {%- endif %}
                             <th>{{ _("Editor") }}</th>
                             <th>{{ _("Content Type") }}</th>
@@ -74,8 +74,8 @@
                                     {%- if doc.itemid == first_itemid %}
                                         <div class="moin-hist-rev">
                                             {%- if len(history) > 1 and not history[0].trash and not doc.trash %}
-                                                <input type="radio" name="rev1" value="{{ doc.revid }}" {{ checker['check1'] }} />
-                                                <input type="radio" name="rev2" value="{{ doc.revid }}" {{ checker['check2'] }} />
+                                                <input type="radio" name="rev1" value="{{ doc.revid }}" {{ checker['check1'] }}>
+                                                <input type="radio" name="rev2" value="{{ doc.revid }}" {{ checker['check2'] }}>
                                                 {%- if checker['check1'] %}
                                                     {%- if checker.update({'check1': ''}) %}{% endif %}
                                                 {%- elif checker['check2'] %}

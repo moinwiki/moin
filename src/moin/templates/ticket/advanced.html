@@ -7,7 +7,7 @@
 {% block content %}
     <h1>{{ _("Advanced Search") }}</h1>
     <p>
-        <input type="search" name="meta_summary" value="" class="moin-search-query" placeholder="Search Tickets" required="required" />
+        <input type="search" name="meta_summary" value="" class="moin-search-query" placeholder="Search Tickets" required="required">
     </p>
     <div id="finalresults">
         {% include "ajaxsearch.html" %}
@@ -103,7 +103,7 @@
 
 {% block head %}
     {{ super() }}
-    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}">
 {% endblock %}
 
 {% block body_scripts %}
