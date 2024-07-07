@@ -10,7 +10,7 @@
 
 {% macro extra_head() %}
     <script type="text/javascript" src="{{ url_for('serve.files', name='ckeditor', filename='ckeditor.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('serve.files', name='ckeditor', filename='contents.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('serve.files', name='ckeditor', filename='contents.css') }}">
     {#- prevent ckeditor css from making body font-size 12px #}
     <style>body {font-size: 1em;}</style>
 {% endmacro %}

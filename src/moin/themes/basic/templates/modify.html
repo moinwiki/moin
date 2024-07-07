@@ -91,7 +91,7 @@
             </div>
             {#
             {{ gen.textarea(form['meta_text'], lang='en', dir='ltr', rows=rows_meta, cols=cols) }}
-            <br />
+            <br>
             {{ forms.render_errors(form['meta_text']) }}
             #}
             {% if not form['content_form'].is_draw %}
@@ -122,7 +122,7 @@
 
 {% block options_for_javascript %}
     {%- if user.scroll_page_after_edit -%}
-        <br id="moin-scroll-page-after-edit" />
+        <br id="moin-scroll-page-after-edit">
     {%- endif %}
     <input id="moin-item-name" value="{{ fqname }}" >
 {% endblock %}

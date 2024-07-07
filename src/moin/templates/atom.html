@@ -18,10 +18,10 @@
 {%- if get == 'xml' -%}
     <?xml-stylesheet type="text/xsl" href="{{ theme_static('atom.xslt') }}"?>
 {%- elif get == 'comment_cont_merge' -%}
-    <p style="font-size: 1.2em">…{{ comment }}</p> <br /> {{ content }}
+    <p style="font-size: 1.2em">…{{ comment }}</p> <br> {{ content }}
 {%- elif get == 'first_revision' -%}
     {{ content }}
-    <br />
+    <br>
     <table class="moin-diff">
         <tr>
             <td class="moin-diff-header" style="width: 100%;">
@@ -32,7 +32,7 @@
     {{ atom_style() }}
 {%- elif get == 'binary' -%}
     {{ content }}
-    <br />
+    <br>
     <table class="moin-diff">
         <tr>
             <td class="moin-diff-header" style="width: 50%;">

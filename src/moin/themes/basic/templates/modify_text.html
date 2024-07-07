@@ -4,5 +4,5 @@
     <input type="button" onclick="moinFontChange()" value="{{ _('Toggle font width') }}" class="moin-button moin-textarea-font" >
     {{ gen.textarea(form['data_text'], rows=form.rows|string, cols=form.cols|string, class="moin-edit-content", **kwargs) }}
     {{ base_editor(form) }}
-    <br />
+    <br>
 {% endmacro %}

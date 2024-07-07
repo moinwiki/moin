@@ -29,8 +29,8 @@
                     </td>
                     <td>
                         <form action="{{ url_for('admin.userprofile', user_name=u.name[0]) }}" method="POST">
-                            <input type="hidden" name="key" value="disabled" />
-                            <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}" />
+                            <input type="hidden" name="key" value="disabled">
+                            <input type="hidden" name="val" value="{{ u.disabled and "0" or "1" }}">
                             {%- set cls = "fa-solid fa-user-plus fa-lg moin-button-less" if u.disabled else "fa fa-user-times fa-lg moin-button-less" %}
                             {%- set title = _("Enable user") if u.disabled else _("Disable user") %}
                             <button type="submit" class="{{ cls }}" title="{{ title }}">&nbsp;
@@ -39,7 +39,7 @@
                     </td>
                     <td>
                         <form action="{{ url_for('admin.mail_recovery_token') }}" method="POST">
-                            <input type="hidden" name="username" value="{{ u.name[0] }}" />
+                            <input type="hidden" name="username" value="{{ u.name[0] }}">
                             <button type="submit" class="fa fa-envelope fa-lg moin-button-less" title="{{ _('Mail password reset') }}">&nbsp;
                             </button>
                         </form>

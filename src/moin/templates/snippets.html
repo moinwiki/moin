@@ -13,9 +13,9 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 {# link to favicon inside <head> #}
 {% macro favicon() -%}
     {# default moin favicon #}
-    <link rel="icon" href="{{ url_for('static', filename='logos/favicon.ico') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='logos/favicon.ico') }}">
     {# for custom favicon, uncomment line below and place favicon file in wiki_local #}
-    {# <link rel="icon" href="{{ url_for('serve.files', name='wiki_local', filename='favicon.ico') }}" /> #}
+    {# <link rel="icon" href="{{ url_for('serve.files', name='wiki_local', filename='favicon.ico') }}"> #}
 {%- endmacro %}
 
 {# Additional HTML tags inside <head> #}
@@ -47,7 +47,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
 
 {# Helper macro to create image links #}
 {% macro creditlogo(link, logo, alt, title) %}
-    <a href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}" /></a>
+    <a href="{{ link }}" title="{{ title }}"><img src="{{ logo }}" alt="{{ alt }}"></a>
 {% endmacro %}
 
 {# Image links in the footer #}

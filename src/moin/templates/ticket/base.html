@@ -6,7 +6,7 @@
 
 {% block head %}
     {{ super() }}
-    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}" />
+    <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/ticket.css') }}">
 {% endblock %}
 
 {% set exists = item.fqname and storage.get_item(**item.fqname.query) %}

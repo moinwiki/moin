@@ -100,13 +100,13 @@
 
 {% block options_for_javascript %}
     {%- if user.scroll_page_after_edit -%}
-        <br id="moin-scroll-page-after-edit" />
+        <br id="moin-scroll-page-after-edit">
     {%- endif %}
     {%- if draft_data -%}
         <textarea id="moin-draft-data">{{ draft_data }}</textarea>
     {%- endif %}
     {%- if lock_duration -%}
-        <input id="moin-lock_duration" value="{{ lock_duration }}" />
+        <input id="moin-lock_duration" value="{{ lock_duration }}">
     {%- endif %}
-    <input id="moin-item-name" value="{{ fqname }}" />
+    <input id="moin-item-name" value="{{ fqname }}">
 {% endblock %}
