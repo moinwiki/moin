@@ -2447,6 +2447,14 @@ def usersettings():
                                         (_("The username '{name}' is already in use.").format(name=name), "error")
                                     )
                                     success = False
+                                if not user.normalizeName(name) == name:
+                                    response["flash"].append(
+                                        (
+                                            _("The username '{name}' contains invalid characters").format(name=name),
+                                            "error",
+                                        )
+                                    )
+                                    success = False
                     if part == "notification":
                         if (
                             form["email"].value != flaskg.user.email
