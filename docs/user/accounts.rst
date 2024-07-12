@@ -65,8 +65,10 @@ Name
  Alias names are only useful at login.
 
 Display-Name
- The display name can be used to override your username, so you will still log in using your username
- but your display name will be displayed to other users and in your history page.
+ The display name can be used if a wiki's custom auth method creates cryptic user names.
+ You will still login using your username or alias, but your display-name will be used
+ instead of your name to create your home page in the users namespace. Links in history pages
+ and footers will use your display-name.
 
 Timezone
  Setting this value will display edit times converted to your local time zone. For

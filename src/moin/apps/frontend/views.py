@@ -2455,6 +2455,18 @@ def usersettings():
                                         )
                                     )
                                     success = False
+                        if form[DISPLAY_NAME]:
+                            display_name = str(form[DISPLAY_NAME])
+                            if not user.normalizeName(display_name) == display_name:
+                                response["flash"].append(
+                                    (
+                                        _("The displayname '{name}' contains invalid characters").format(
+                                            name=display_name
+                                        ),
+                                        "error",
+                                    )
+                                )
+                                success = False
                     if part == "notification":
                         if (
                             form["email"].value != flaskg.user.email
