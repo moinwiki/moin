@@ -84,7 +84,7 @@ See https://moin-20.readthedocs.org/en/latest/admin/configure.html#using-a-custo
             {% if cfg.show_interwiki %}
                 {{ cfg.interwikiname }}:
             {% endif %}
-            {{ item_name }} (rev {{ rev.revid | shorten_id }}),
+            {{ item_name }} (rev {{ rev.meta['rev_number'] }}),
             {{ _("modified") }} {{ rev.meta['mtime']|time_datetime }}
             {{ _("by") }} {{ utils.editor_info(rev.meta) }}
             {% if rev.meta['tags'] %}

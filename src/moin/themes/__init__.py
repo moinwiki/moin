@@ -17,7 +17,7 @@ from json import dumps
 
 from flask import current_app as app
 from flask import g as flaskg
-from flask import url_for, request
+from flask import url_for, request, session, flash
 from flask_theme import get_theme, render_theme_template
 
 from babel import Locale
@@ -26,7 +26,7 @@ from moin.i18n import _, L_
 from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
-from moin.constants.misc import VALID_ITEMLINK_VIEWS
+from moin.constants.misc import VALID_ITEMLINK_VIEWS, FLASH_REPEAT
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
@@ -102,6 +102,10 @@ class ThemeSupport:
             self.wiki_root = "/" + request.url_root[len(request.host_url) : -1]
         else:
             self.wiki_root = ""
+        if FLASH_REPEAT in session:
+            for msg, level in session[FLASH_REPEAT]:
+                flash(msg, level)
+            del session[FLASH_REPEAT]
 
     def get_fullname(self, meta):
         """
@@ -655,7 +659,7 @@ def get_editor_info(meta, external=False):
     if userid:
         u = user.User(userid)
         name = u.name0
-        text = name
+        text = u.display_name or name
         display_name = u.display_name or name
         if title:
             # we already have some address info

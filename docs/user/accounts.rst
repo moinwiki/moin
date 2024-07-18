@@ -54,7 +54,7 @@ wiki experience, each of these sub-pages are listed below:
 Personal Settings
 -----------------
 
-Personal settings include wiki language and locale, username and alias.
+Personal settings include wiki language and locale, name, alias and display-name.
 
 Name
  Your username, as it will appear on the login form, the history pages of wiki items
@@ -65,8 +65,10 @@ Name
  Alias names are only useful at login.
 
 Display-Name
- The display name can be used to override your username, so you will still log in using your username
- but your display name will be displayed to other users and in your history page.
+ If your wiki has a custom auth method that creates cryptic user names, then
+ the display-name can be created as an alternative. You will still login using your username
+ or alias. The display-name will appear as links in history pages and the footer of items you have edited.
+ Use your display-name to create your home page in the users namespace.
 
 Timezone
  Setting this value will display edit times converted to your local time zone. For

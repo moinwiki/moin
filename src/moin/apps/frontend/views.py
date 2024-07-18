@@ -34,7 +34,7 @@ from functools import wraps, partial
 
 from werkzeug.utils import secure_filename
 
-from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify
+from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify, session
 from flask import current_app as app
 from flask import g as flaskg
 from flask_babel import format_datetime
@@ -95,6 +95,7 @@ from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
+from moin.constants.misc import FLASH_REPEAT
 from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
@@ -2366,12 +2367,36 @@ def usersettings():
     # TODO: maybe "is_xhr = request.method == 'POST'" would work
     is_xhr = request.accept_mimetypes.best in ("application/json", "text/javascript")
 
+    class ValidUserSettingsPersonal(Validator):
+        """Validator for settings personal change, name, display-name"""
+
+        def validate(self, element, state):
+            invalid_id_in_use_msg = L_("This name is already in use: ")
+            invalid_character_msg = L_("The Display-Name contains invalid characters: ")
+            invalid_character_message = L_("The Username contains invalid characters: ")
+            errors = []
+            if set(form["name"].value) != set(flaskg.user.name):
+                new_names = set(form["name"].value) - set(flaskg.user.name)
+                for name in new_names:
+                    if user.search_users(**{NAME_EXACT: name}):
+                        # duplicate name
+                        errors.append(invalid_id_in_use_msg + name)
+                if not user.normalizeName(name) == name:
+                    errors.append(invalid_character_message + name)
+            display_name = form[DISPLAY_NAME].value
+            if display_name:
+                if not user.normalizeName(display_name) == display_name:
+                    errors.append(invalid_character_msg + display_name)
+            if errors:
+                return self.note_error(element, state, message=", ".join(errors))
+            return True
+
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         form_name = "usersettings_personal"
         name = Names.using(label=L_("Usernames")).with_properties(placeholder=L_("The login usernames you want to use"))
         display_name = OptionalText.using(label=L_("Display-Name")).with_properties(
-            placeholder=L_("Your display name (informational)")
+            placeholder=L_("Your display name (optional, rarely used)")
         )
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
         _timezones_keys = [str(tz) for tz in pytz.common_timezones]
@@ -2381,6 +2406,8 @@ def usersettings():
             [("auto", "---")] + [(str(locale), locale.display_name) for locale in _supported_locales], sort_by=1
         )
         submit_label = L_("Save")
+
+        validators = [ValidUserSettingsPersonal()]
 
     class UserSettingsUIForm(Form):
         form_name = "usersettings_ui"
@@ -2437,24 +2464,6 @@ def usersettings():
                     flaskg.user.save()
                     response["flash"].append((_("Your password has been changed."), "info"))
                 else:
-                    if part == "personal":
-                        if set(form["name"].value) != set(flaskg.user.name):
-                            new_names = set(form["name"].value) - set(flaskg.user.name)
-                            for name in new_names:
-                                if user.search_users(**{NAME_EXACT: name}):
-                                    # duplicate name
-                                    response["flash"].append(
-                                        (_("The username '{name}' is already in use.").format(name=name), "error")
-                                    )
-                                    success = False
-                                if not user.normalizeName(name) == name:
-                                    response["flash"].append(
-                                        (
-                                            _("The username '{name}' contains invalid characters").format(name=name),
-                                            "error",
-                                        )
-                                    )
-                                    success = False
                     if part == "notification":
                         if (
                             form["email"].value != flaskg.user.email
@@ -2513,9 +2522,12 @@ def usersettings():
             else:
                 # validation failed
                 response["flash"].append((_("Nothing saved."), "error"))
+
             if not response["flash"]:
                 # if no flash message was added until here, we add a generic success message
-                response["flash"].append((_("Your changes have been saved."), "info"))
+                msg = _("Your changes have been saved.")
+                response["flash"].append((msg, "info"))
+                repeat_flash_msg(msg, "info")
 
             if response["redirect"] is not None or not is_xhr:
                 # if we redirect or it is no XHR request, we just flash() the messages normally
@@ -2542,6 +2554,15 @@ def usersettings():
             forms[p] = FormClass.from_object(flaskg.user)
 
     return render_template("usersettings.html", title_name=title_name, form_objs=forms)
+
+
+def repeat_flash_msg(msg, level):
+    """
+    Add a flash message to flask session. The message will be re-flashed by the next transaction.
+    """
+    if FLASH_REPEAT not in session:
+        session[FLASH_REPEAT] = []
+    session[FLASH_REPEAT].append((msg, level))
 
 
 @frontend.route("/+bookmark")
