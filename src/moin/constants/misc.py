@@ -73,3 +73,8 @@ LOCK = "lock"
 
 # Valid views allowed for itemlinks
 VALID_ITEMLINK_VIEWS = ["+meta", "+history", "+download", "+highlight"]
+
+# Transient attribute added/removed to/from flask session. Used when a User Settings
+# form creates a flash message but then redirects the page making the flash message a
+# very short flash message.
+FLASH_REPEAT = "flash_repeat"

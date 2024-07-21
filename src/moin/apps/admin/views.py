@@ -31,6 +31,7 @@ from moin.apps.frontend.views import _using_moin_auth
 from moin import user
 from moin.constants.keys import (
     NAME,
+    DISPLAY_NAME,
     ITEMID,
     SIZE,
     EMAIL,
@@ -180,6 +181,7 @@ def userbrowser():
     user_accounts = []
     for rev in revs:
         user_names = rev.meta[NAME]
+        display_name = rev.meta.get(DISPLAY_NAME, "")
         user_groups = member_groups.get(user_names[0], [])
         for name in user_names[1:]:
             user_groups = user_groups + member_groups.get(name, [])
@@ -188,6 +190,7 @@ def userbrowser():
             dict(
                 uid=rev.meta[ITEMID],
                 name=user_names,
+                display_name=display_name,
                 fqname=CompositeName(NAMESPACE_USERS, NAME_EXACT, rev.name),
                 email=rev.meta[EMAIL] if EMAIL in rev.meta else rev.meta[EMAIL_UNVALIDATED],
                 disabled=rev.meta[DISABLED],

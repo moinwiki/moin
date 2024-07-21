@@ -292,11 +292,14 @@ def _default_password_checker(cfg, username, password, min_length=8, min_differe
     """
     # in any case, do a very simple built-in check to avoid the worst passwords
     if len(password) < min_length:
-        return _("For a password a minimum length of {min_length:d} characters is required.", min_length=min_length)
+        return _(
+            "For a password a minimum length of {min_length} characters is required.".format(min_length=min_length)
+        )
     if len(set(password)) < min_different:
         return _(
-            "For a password a minimum of {min_different:d} different characters is required.",
-            min_different=min_different,
+            "For a password a minimum of {min_different:d} different characters is required.".format(
+                min_different=min_different
+            )
         )
 
     username_lower = username.lower()
