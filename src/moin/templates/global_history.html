@@ -30,6 +30,9 @@
 {% block content %}
     <h1>{{ title }}</h1>
     <div class='moin-clr'></div>
+        <div class="moin-history-rss">
+          <a href="/+feed/atom"><img alt="[RSS]" height="16" src="/static/img/icons/moin-rss.png" title="[RSS]" width="16"></a>
+        </div>
         {{ utils.page_links(page_num, pages, url) }}
         {# make columns line up by creating one long table styled to look like one table per day  #}
         <table id="moin-global-history">

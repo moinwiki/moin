@@ -615,6 +615,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-nameless-item,
 .moin-history-name-old { font-style: italic; }
 .moin-history-name-old:hover { cursor: pointer; }
+.moin-history-rss { float: right; margin: 0 7px 0 14px; height: 0; position: relative; top: 9px; }
 
 /* item history */
 
