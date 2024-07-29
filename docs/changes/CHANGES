@@ -17,7 +17,7 @@ Fixes
 * mass source code changes using pyupgrade to upgrade syntax to 3.9
 * removed unused imports
 * create SECURITY.md
-* generate readthedocs content using python 3.10
+* generate readthedocs content using Python 3.10
 * remove use of obsolete setuptools
 * change use of whoosh lru cache to lfu cache
 * update Flask and Werkzeug to >3.0.0
@@ -26,18 +26,18 @@ Fixes
 * mass source code changes after integrating "black" code auto-formater
 * supress false "unused import" when importing flatland.Form
 * replace deprecated datetime.utc* calls
-* add language auto-detect to user peraonal settings
+* add language auto-detect to user personal settings
 * readthedocs now has access to docs/examples
 * fix maint-validate-metadata to skip userprofiles backend
 * Add REV_NUMBER in sort for history view replacing mtime
-* Fix CI workflow to test with all supported python versions, run py39 with ubuntu 22.04
+* Fix CI workflow to test with all supported python versions, run py39 with Ubuntu 22.04
 * add support for SQLAlchemy 2.0
 * macros with user editing errors should not fill log with tracebacks
 * cleanup redundant icon directories
 * add itemlinks validator replacing wikilinks validator where needed
-* itemlinks beginning with + were incorrectly given non-existant class (+meta/Home)
+* itemlinks beginning with + were incorrectly given non-existent class (+meta/Home)
 * remove trailing /> from void elements to comply with W3C standard
-* add validity check if user changes name/alias/display-name in UserSettings>Presonal
+* add validity check if user changes name/alias/display-name in UserSettings>Personal
 * add test to prove icons from CSS URLs is a subset of files in icon dir
 
 Version 2.0.0alpha 2024-03-27
