@@ -336,6 +336,55 @@ class Content:
         """
         return []
 
+    def _render_data_slide(self, preview=None):
+        try:
+            from moin.converters import default_registry as reg
+
+            doc = self.internal_representation(preview=preview)
+            doc = self._expand_document(doc)
+
+            slide_pages = []
+            before_first_header = True
+            for elem1 in doc:
+                single_slide = []
+                for element in elem1:
+                    if element.tag.name == "h" and element.get(moin_page("outline-level")) in ["1", "2"]:
+                        if before_first_header:
+                            before_first_header = False  # ignore everything before
+                        else:
+                            slide_pages.append(single_slide)
+                        single_slide = []
+                    single_slide.append(element)
+                slide_pages.append(single_slide)
+            print(f"{len(slide_pages)} slides found.")
+
+            flaskg.clock.start("conv_dom_html")
+            html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"))
+
+            slide_content = []
+            attrib = {moin_page.class_: "moin-slides"}
+            for slide in slide_pages:
+                slide_content.append(moin_page.div(attrib=attrib, children=slide))
+
+            body = moin_page.body(children=slide_content)
+            root = moin_page.page(children=[body])
+            doc = html_conv(root)
+            rendered_data = conv_serialize(doc, {html.namespace: ""})
+            flaskg.clock.stop("conv_dom_html")
+
+        except Exception:
+            # we really want to make sure that invalid data or a malfunctioning
+            # converter does not crash the item view (otherwise a user might
+            # not be able to fix it from the UI).
+            error_id = uuid.uuid4()
+            logging.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
+            rendered_data = [
+                render_template(
+                    "crash.html", server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"), url=request.url, error_id=error_id
+                )
+            ]
+        return rendered_data
+
     def get_templates(self, contenttype=None):
         """create a list of templates (for some specific contenttype)"""
         terms = [

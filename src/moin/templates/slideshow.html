@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block layout %}
+
+    {% if data_rendered %}
+        <link media="all" rel="stylesheet" href="{{ url_for('static', filename='css/projection.css') }}">
+        <div><span id="Start"></span></div>
+          <div id="moin-content-data">
+            {{ data_rendered }}
+          </div>
+        <div><span id="End"></span></div>
+    {% endif %}
+
+    <!-- Next and previous buttons -->
+    <a class="prev" onclick="prevSlide()">&#10094;</a>
+    <a class="next" onclick="nextSlide()">&#10095;</a>
+
+    <!-- navigation to first or last slide or exit slideshow -->
+    <div class="navi-container">
+      <span class="slide-nav" onclick="showSlide(1)" title="First slide"><i class="fa-solid fa-backward-fast"></i></span>
+      <span class="slide-nav"><a class="slide-nav" title="Exit slideshow" href="/{{full_name}}">
+          <i class="fa-solid fa-right-from-bracket"></i></a></span>
+      <span class="slide-nav" onclick="lastSlide()" title="Last slide"><i class="fa-solid fa-forward-fast"></i></span>
+    </div>
+
+    <script>
+      let slideNo = 1;
+      let slides = document.getElementsByClassName("moin-slides");
+      showSlide(slideNo);
+
+      function nextSlide() {
+        if (slideNo < slides.length) {
+        showSlide(slideNo += 1);
+        }
+      }
+
+      function prevSlide() {
+        if (slideNo > 1) {
+        showSlide(slideNo -= 1);
+        }
+      }
+
+      function lastSlide() {
+        showSlide(slides.length);
+      }
+
+      function showSlide(n) {
+        let i;
+        slideNo = n;
+        for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+        slides[slideNo - 1].style.display = "block";
+      }
+    </script>
+{% endblock %}
