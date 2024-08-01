@@ -72,7 +72,7 @@ LOCKED = 1  # true, current user has obtained or renewed lock
 LOCK = "lock"
 
 # Valid views allowed for itemlinks
-VALID_ITEMLINK_VIEWS = ["+meta", "+history", "+download", "+highlight"]
+VALID_ITEMLINK_VIEWS = ["+meta", "+history", "+download", "+highlight", "+slideshow"]
 
 # Transient attribute added/removed to/from flask session. Used when a User Settings
 # form creates a flash message but then redirects the page making the flash message a

@@ -1,0 +1,88 @@
+/*  projection.css - MoinMoin Slide Styles
+
+Copyright (c) 2003 by Juergen Hermann
+Copyright (c) 2024 by MoinMoin project
+*/
+
+html { line-height: 1.8em; }
+
+body, b, em, a, span, div, p, td { font-size: 18pt; }
+
+h1 { font-size: 24pt; padding-top: 24px;  color: #33F; text-align: left; }
+h2 { font-size: 22pt; padding-top: 24px;  color: #33F; }
+h3 { font-size: 20pt; }
+h4 { font-size: 18pt; }
+h5 { font-size: 16pt; }
+h6 { font-size: 14pt; }
+
+tt, pre { font-size: 14pt; }
+sup, sub { font-size: 10pt; }
+
+#moin-content-data { padding-left: 50px; margin: 0 2%; }
+
+@media print {
+  h1 { padding-top: 50px; }
+  h2 { page-break-before: always; padding-top: 50px; }
+  h3, h4 { page-break-after: avoid; }
+  pre, blockquote { page-break-inside: avoid; }
+}
+
+* {box-sizing:border-box}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* navigation container */
+.navi-container {
+  position: fixed;
+  bottom: 15px;
+  text-align: center;
+  margin: 0;
+  left: 50%;
+}
+
+/* Next and previous slide button */
+.prev, .next {
+  cursor: pointer;
+  position: fixed;
+  top: 50%;
+  width: auto;
+  padding: 0 20px 40% 20px;
+  color: lightgray;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Move the "next" button to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+a.prev:hover, a.next:hover {
+  color: darkgray;
+  text-decoration: none;
+  font-size: 24px;
+}
+
+/* navigation */
+a.slide-nav, .slide-nav {
+  font-size: 18px;
+  padding: 0 7px;
+  color: lightgray;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block;
+  transition: 0.6s ease;
+}
+
+.active, .slide-nav:hover {
+  color: darkgray;
+}

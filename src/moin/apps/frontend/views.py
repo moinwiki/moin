@@ -685,6 +685,23 @@ def content_item(item_name, rev):
     return render_template("content.html", item_name=item.name, data_rendered=Markup(item.content._render_data()))
 
 
+@frontend.route("/+slideshow/<itemname:item_name>", defaults=dict(rev=CURRENT))
+def slide_item(item_name, rev):
+    """same as show_item, but we only show the content"""
+    fqname = split_fqname(item_name)
+    item_displayed.send(app, fqname=fqname)
+    try:
+        item = Item.create(item_name, rev_id=rev)
+    except AccessDenied:
+        abort(403)
+    if isinstance(item, NonExistent):
+        abort(404, item_name)
+    data_rendered = Markup(item.content._render_data_slide())
+    return render_template(
+        "slideshow.html", item_name=item.name, full_name=fqname.fullname, data_rendered=data_rendered
+    )
+
+
 @presenter("get")
 def get_item(item):
     return item.content.do_get()
