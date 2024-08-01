@@ -1,12 +1,47 @@
-MoinMoin Version History
-========================
+MoinMoin 2 Version History
+==========================
 
 Please note: It is recommended that existing wiki's be upgraded to the
 latest moin 1.9.x release before converting to Moin 2. However, this may
 not be a necessary step as the 1.9.x file structure has not changed recently.
 
-Version 2.0.0alpha
-------------------
+Version 2.0.0b1 2024-??-??
+----------------------------
+This is an unstable beta release not suitable for a production wiki,
+test carefully and report new issues and feature requests on the issue tracker:
+https://github.com/moinwiki/moin/issues.
+
+Fixes
+~~~~~
+* added config option to enable or disable contenttypes
+* mass source code changes using pyupgrade to upgrade syntax to 3.9
+* removed unused imports
+* create SECURITY.md
+* update .readthedocs.yaml to generate readthedocs content using Python 3.10
+* remove use of obsolete setuptools
+* change use of whoosh lru cache to lfu cache
+* update Flask and Werkzeug to >=3.0.0
+* upgrade feedgen (atom feed lib) to >= 1.0.0
+* removed parentid to fix welcome/users_home_meta
+* mass source code changes after integrating "black" code auto-formater
+* supress false "unused import" when importing flatland.Form
+* replace deprecated datetime.utc* calls
+* add language auto-detect to user personal settings
+* readthedocs now has access to docs/examples
+* fix maint-validate-metadata to skip userprofiles backend
+* Add REV_NUMBER in sort for history view replacing mtime
+* Fix CI workflow to test with all supported python versions, run py39 with Ubuntu 22.04
+* add support for SQLAlchemy >=2.0.0
+* macros with user editing errors should not fill log with tracebacks
+* cleanup redundant icon directories
+* add itemlinks validator replacing wikilinks validator where needed
+* itemlinks beginning with + were incorrectly given non-existent class (+meta/Home)
+* remove trailing /> from void elements to comply with W3C standard
+* add validity check if user changes name/alias/display-name in UserSettings>Personal
+* add test to prove icons from CSS URLs is a subset of files in icon dir
+
+Version 2.0.0a1 2024-03-27
+-----------------------------
 This is an unstable alpha release not suitable for a production wiki,
 test carefully and report new issues and feature requests on the issue tracker:
 https://github.com/moinwiki/moin/issues.
@@ -37,6 +72,9 @@ Missing features from 1.9.x
 * SVG editor
 * LDAP may have missing dependencies depending upon OS flavor
 * WikiDicts have limited function, does not use Babel translations
+* language support limited to English, German, Portuguese (Brasil), Russian
+* no contributed themes
+* no contributed macros
 
 Other changes
 ~~~~~~~~~~~~~
