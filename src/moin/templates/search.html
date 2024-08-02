@@ -32,13 +32,13 @@
             <a href="/+serve/docs/user/search.html">Local docs</a> or
             <a href="https://moin-20.readthedocs.io/en/latest/user/search.html">Internet docs.</a>
         </div>
-        <div class="moin-search-option-bar"><p class="fa fa-chevron-down"> {{ _("Search Options") }}</p></div>
+        <p class="moin-search-option-bar"><i class="fa fa-chevron-down"></i> {{ _("Search Options") }}</p>
         <div class="moin-searchoptions hidden">
             <table>
-                <tr>
-                    <th width="20%">Revisions</td>
-                    <th width="20%">Sort By</td>
-                    <th width="60%" colspan="3">Content Types</td>
+                <tr class="moin-searchopt-tab">
+                    <th>Revisions</th>
+                    <th>Sort By</th>
+                    <th colspan="3">Content Types</th>
                 </tr>
                 <tr>
                     <td>
@@ -70,9 +70,7 @@
             </table>
             <div class="hint">{{ _("An Ajax transaction is submitted each time a radio or checkbox is clicked.") }}</div>
         </div>
-        <p>
             {{ forms.render_errors(medium_search_form) }}
-        </p>
     {{ gen.form.close() }}
     <div id="finalresults">
         {%- include "ajaxsearch.html" %}
