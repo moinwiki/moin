@@ -5,7 +5,7 @@ Please note: It is recommended that existing wiki's be upgraded to the
 latest moin 1.9.x release before converting to Moin 2. However, this may
 not be a necessary step as the 1.9.x file structure has not changed recently.
 
-Version 2.0.0b1 2024-??-??
+Version 2.0.0b1 2024-08-07
 ----------------------------
 This is an unstable beta release not suitable for a production wiki,
 test carefully and report new issues and feature requests on the issue tracker:
@@ -39,6 +39,13 @@ Fixes
 * remove trailing /> from void elements to comply with W3C standard
 * add validity check if user changes name/alias/display-name in UserSettings>Personal
 * add test to prove icons from CSS URLs is a subset of files in icon dir
+* add RSS link to global history
+* fix search-options font and fix HTML validation errors
+* update and add German translations
+
+New features
+~~~~~~~~~~~~
+* add slideshow macro and view
 
 Version 2.0.0a1 2024-03-27
 -----------------------------
@@ -73,6 +80,7 @@ Missing features from 1.9.x
 * LDAP may have missing dependencies depending upon OS flavor
 * WikiDicts have limited function, does not use Babel translations
 * language support limited to English, German, Portuguese (Brasil), Russian
+* some macros have not been converted
 * no contributed themes
 * no contributed macros
 
