@@ -826,6 +826,8 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowWikiDict()>>``                    | Displays metadata defined in wikidict attribute            |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<SlideShow()>>``                       | Displays a link to start a slideshow for the current item  |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<TableOfContents(2)>>``                | Shows a table of contents up to level 2                    |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<TitleIndex()>>``                      | Lists all itemnames for the namespace of the current item, |
@@ -895,6 +897,11 @@ fixed_height and anniversary.
     - <<MonthCalendar(item="SampleUser",month=12)>>  Calendar of Page SampleUser, this year's december
     - <<MonthCalendar(month=12)>>  Calendar of current Page, this year's december
     - <<MonthCalendar(year=2022,month=12)>>  Calendar of December, 2022
+
+The **SlideShow** macro creates a link to start a presentation for the current item. The slides
+are separated by level 1 and 2 headings. The text before the first heading is ignored. Navigation
+within the slideshow can be controlled via corresponding buttons at the edge or bottom of the
+browser screen or using the left and right arrow keys.
 
 
 Smileys and Icons
