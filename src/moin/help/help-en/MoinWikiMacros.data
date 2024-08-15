@@ -548,6 +548,28 @@ represents sample output.
 
 {'dog': 'Hund', 'cat': 'Katze'}
 
+=== SlideShow ===
+
+A slideshow can be defined on a single wiki page, with the slides separated by level 1 and 2 headings.
+The text before the first heading is ignored. The macro creates a link to start the presentation.
+
+Navigating through the slides works by various means:
+
+ * Use the left and right arrow keys to move to the previous and next slide
+ * Alternatively, you can click on the gray navigation links on the left and right edges of the screen
+ * There are icons at the bottom to switch to the first or last slide and to exit presentation mode
+ * Use the up and down arrow keys to scroll up and down within the content if it does not fit in the browser window
+ * The browser's built-in zoom function can be used to adjust the size of the presentation to your needs
+
+'''Markup:'''
+
+{{{
+    <<SlideShow()>>
+}}}
+
+'''Result:'''
+
+  <<SlideShow()>>
 
 === TitleIndex ===
 
