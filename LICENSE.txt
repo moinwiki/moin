@@ -2,7 +2,7 @@ MoinMoin's Copyright and License
 ================================
 
 Copyright (c) 2000-2006 by Juergen Hermann <jh@web.de>
-Copyright (c) 2006-2012 The MoinMoin development team, see
+Copyright (c) 2006-2024 The MoinMoin development team, see
                         http://moinmo.in/MoinCoreTeamGroup
 
 MoinMoin is free software: you can redistribute it and/or modify
@@ -12,11 +12,8 @@ the Free Software Foundation, either version 2 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-See docs/licenses/COPYING for details.
-
+along with this program.  If not, see http://www.gnu.org/licenses/ and
+https://moin-20.readthedocs.io/en/latest/intro/license.html for details.
