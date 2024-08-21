@@ -40,7 +40,7 @@ AltLinux http://altlinux.org/
 AltLinuxEn http://en.altlinux.org/
 hg https://www.mercurial-scm.org/wiki/
 
-## Updated 2004-11-19 from http://www.usemod.com/cgi-bin/mb.pl?InterMapTxt
+## Updated 2004-11-19 from http://www.usemod.org/cgi-bin/mb.pl?InterMapTxt
 ## Please modify the upper part of this page only
 
 AbbeNormal http://ourpla.net/cgi/pikie?
@@ -75,7 +75,7 @@ JuraWiki https://jurawiki.de/
 LinuxWiki https://linuxwiki.org/
 LiveJournal http://www.livejournal.com/users/$PAGE/
 LyricWiki http://lyricwiki.org/
-MeatBall http://www.usemod.com/cgi-bin/mb.pl?
+MeatBall http://meatballwiki.org/wiki/
 MetaWiki http://sunir.org/apps/meta.pl?
 MetaWikiPedia http://meta.wikipedia.org/wiki/
 MoinMaster https://master.moinmo.in/
@@ -96,7 +96,7 @@ ThoughtStorms http://www.nooranch.com/synaesmedia/wiki/wiki.cgi?
 TWiki http://twiki.org/cgi-bin/view/
 UPC http://www.upcdatabase.com/item/
 Unreal http://wiki.beyondunreal.com/wiki/
-UseMod http://www.usemod.com/cgi-bin/wiki.pl?
+UseMod http://www.usemod.org/cgi-bin/wiki.pl?
 WebSeitzWiki http://webseitz.fluxent.com/wiki/
 Wiki http://c2.com/cgi/wiki?
 WikiPedia https://en.wikipedia.org/wiki/

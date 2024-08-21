@@ -489,7 +489,7 @@ class ThemeSupport:
             url, link_text, title = self.split_navilink(text)
             items.append(("userlink", url, link_text, title))
 
-        # Add sister pages (see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide )
+        # Add sister pages (see http://meatballwiki.org/wiki/?SisterSitesImplementationGuide )
         for sistername, sisterurl in self.cfg.sistersites:
             if is_local_wiki(sistername):
                 items.append(("sisterwiki current", sisterurl, sistername, ""))
