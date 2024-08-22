@@ -82,7 +82,6 @@ MoinMaster https://master.moinmo.in/
 MoinMoin https://moinmo.in/
 OddMuse http://www.oddmuse.org/
 OpenWiki http://openwiki.com/ow.asp?
-Parawiki http://www.parawiki.org/index.php/
 PersonalTelco http://www.personaltelco.net/index.cgi/
 PythonInfo https://wiki.python.org/moin/
 PythonWiki http://wiki.python.de/
