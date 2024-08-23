@@ -1305,11 +1305,9 @@ class Item:
                     fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, fullname)
                     relname = fullname[len(prefix) :]
                     if "/" in relname:
-                        # Find the *direct* subitem that is the ancestor of current
-                        # (indirect) subitem. e.g. suppose when the index root is
-                        # 'foo', and current item (`rev`) is 'foo/bar/lorem/ipsum',
-                        # 'foo/bar' will be found.
-                        direct_relname = relname.partition("/")[0]
+                        # Search for the ancestor of current item. E.g. assuming the index root is 'foo' and
+                        # the current item (`rev`) is 'foo/bar/lorem/ipsum', 'foo/bar/lorem' will be found.
+                        direct_relname = relname.rpartition("/")[0]
                         direct_relname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_relname)
                         if direct_relname_fqname not in added_dir_relnames:
                             added_dir_relnames.add(direct_relname_fqname)
