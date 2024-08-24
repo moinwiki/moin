@@ -1,5 +1,5 @@
 # Copyright: 2015-2017 MoinMoin:RogerHaase
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -54,7 +54,12 @@ from xstatic.main import XStatic
 from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
 from moin.constants.keys import CURRENT, NAME_EXACT, WIKINAME, THEME_NAME, LATEST_REVS
-from moin.constants.contenttypes import CONTENTTYPE_MEDIA, CONTENTTYPE_MEDIA_SUFFIX
+from moin.constants.contenttypes import (
+    CONTENTTYPE_MEDIA,
+    CONTENTTYPE_MEDIA_SUFFIX,
+    CONTENTTYPE_OTHER,
+    CONTENTTYPE_OTHER_SUFFIX,
+)
 from moin.items import Item
 
 from moin import log
@@ -221,7 +226,9 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             # save rendered items or raw data to dump directory root
             contenttype = item.meta["contenttype"].split(";")[0]
             os.makedirs(os.path.dirname(filename), exist_ok=True)
-            if contenttype in CONTENTTYPE_MEDIA and filename.endswith(CONTENTTYPE_MEDIA_SUFFIX):
+            if contenttype in (CONTENTTYPE_MEDIA + CONTENTTYPE_OTHER) and filename.endswith(
+                CONTENTTYPE_MEDIA_SUFFIX + CONTENTTYPE_OTHER_SUFFIX
+            ):
                 # do not put a rendered html-formatted file with a name like video.mp4 into root;
                 # browsers want raw data
                 with open(filename, "wb") as f:

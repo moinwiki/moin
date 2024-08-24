@@ -1,5 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
-# Copyright: 2023 MoinMoin project
+# Copyright: 2023-2024 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -108,6 +108,8 @@ CONTENTTYPE_OTHER = [
     "application/zip",
     "application/pdf",
 ]
+
+CONTENTTYPE_OTHER_SUFFIX = tuple(".tar .tgz .zip .pdf ".split())
 
 CONTENTTYPES_MAP = {
     "text/x.moin.wiki;charset=utf-8": "Moinmoin",
