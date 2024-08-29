@@ -17,8 +17,11 @@
     <!-- navigation to first or last slide or exit slideshow -->
     <div class="navi-container">
       <span class="slide-nav" onclick="showSlide(1)" title="First slide"><i class="fa-solid fa-backward-fast"></i></span>
-      <span class="slide-nav"><a class="slide-nav" title="Exit slideshow" href="/{{full_name}}">
-          <i class="fa-solid fa-right-from-bracket"></i></a></span>
+      <span class="slide-nav">
+        <a class="slide-nav" title="Exit slideshow" href="{{ url_for('frontend.show_item', item_name=item_name) }}">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+      </span>
       <span class="slide-nav" onclick="lastSlide()" title="Last slide"><i class="fa-solid fa-forward-fast"></i></span>
     </div>
 
