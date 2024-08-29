@@ -697,9 +697,7 @@ def slide_item(item_name, rev):
     if isinstance(item, NonExistent):
         abort(404, item_name)
     data_rendered = Markup(item.content._render_data_slide())
-    return render_template(
-        "slideshow.html", item_name=item.name, full_name=fqname.fullname, data_rendered=data_rendered
-    )
+    return render_template("slideshow.html", item_name=item.name, data_rendered=data_rendered)
 
 
 @presenter("get")
