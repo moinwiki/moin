@@ -224,7 +224,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
         for link in itemlinks_19:
             if link in users_itemlist or link.split("/")[0] in users_itemlist:
                 user_itemlinks2chg.append(link)
-            elif link not in custom_namespaces and link.split("/")[0] not in custom_namespaces:
+            elif target_namespace and link not in custom_namespaces and link.split("/")[0] not in custom_namespaces:
                 namespace_itemlinks2chg.append(link)
         if len(user_itemlinks2chg) > 0:
             migrate_itemlinks(dom, NAMESPACE_USERS, user_itemlinks2chg)
