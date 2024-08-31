@@ -9,8 +9,8 @@
 {% set before_footer = snippets.before_footer() %}
 {% set after_footer = snippets.after_footer() %}
 {% set license_info = snippets.license_info() %}
-{% set creditlogos = snippets.creditlogos() %}
 {% set credits = snippets.credits() %}
+{% set creditlogos = snippets.creditlogos() %}
 
 {% block layout %}
 
@@ -74,8 +74,10 @@
                 {% block footer_hr %}<hr>{% endblock %}
                 {% block footer_itemviews %}{% endblock %}
                 {% block footer_meta %}{% endblock %}
-                {{ creditlogos }}
-                {{ credits }}
+                <div id="moin-credits-container">
+                    {{ credits }}
+                    {{ creditlogos }}
+                </div>
                 {{ license_info }}
             {% endblock %}
         </footer>

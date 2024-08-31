@@ -8,7 +8,7 @@
 html { height:100%; color:var(--font_color); font-family:Helvetica, Arial, sans-serif; }
 body { height:100%; background-color:var(--body_color); }
 #moin-main-wrapper { position:relative; min-height:100%; width:87%; min-width:700px; margin-left:auto; margin-right:auto; margin-top:0; }
-#moin-page { padding:1px 1px 105px 1px; display:table; width:100%; background:#fff; background:var(--page_color); border-radius:9px; }
+#moin-page { box-sizing: border-box; padding:1px 1px 105px 1px; display:table; width:100%; background:#fff; background:var(--page_color); border-radius:9px; }
 #moin-content { padding:.2em 1em 4em 1em; display:table-cell; }
 
 /* links */
@@ -51,14 +51,15 @@ input[type="text"] { width:96%; }
 a.moin-conflict:before { content:url("../img/moin-conflict.png"); margin:0 .2em; }
 
 #moin-footer { position:absolute; bottom:0; }
+#moin-footer .moin-itemviews { margin-bottom: 10pt; }
 
 #moin-header { margin:0; padding:7px 0 10px 0; background:var(--header_bg_color); color:var(--heading_color);
     line-height:1.12em; border-bottom-left-radius:9px; border-bottom-right-radius:9px; }
 
-#moin-logo { float:left; margin:2px 10px 8px 10px; padding:0; font-size:1.4em; line-height:1em; font-weight:bold; }
+#moin-logo { display: inline-block; margin:2px 10px 8px 10px; padding:0; font-size:1.4em; line-height:1em; font-weight:bold; }
 #moin-logo img { vertical-align:middle; }
 #moin-logo a { color:var(--heading_color); text-decoration:none; }
-a.moin-sitename { font-size:1.5em; font-weight:bold; color:var(--selected_link_color); line-height:1.5em; }
+a.moin-sitename { display: inline-block; font-size:1.5em; font-weight:bold; color:var(--selected_link_color); line-height:1.5em; }
 #moin-username { display:block; margin:6px 4px 4px 4px; padding:0; float:right; font-size:.82em; }
 #moin-username a { color:var(--heading_color); }
 #moin-username li { display:inline; padding-right:10px; }
@@ -68,6 +69,7 @@ a.moin-sitename { font-size:1.5em; font-weight:bold; color:var(--selected_link_c
 /* page trail */
 ul.moin-breadcrumb,
 ul.moin-breadcrumb ul.moin-alias { padding:0; margin:0; margin-bottom:4px; }
+ul.moin-breadcrumb, a.moin-sitename { padding-left: 10px; }
 ul.moin-breadcrumb ul.moin-alias { background-color:var(--body_color);
     border:var(--border_style); border-radius:6px; z-index:10; }
 ul.moin-breadcrumb li ul.moin-alias li { list-style-type:none; display:block; color:var(--font_color); padding:2px 10px; }
