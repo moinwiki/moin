@@ -274,8 +274,9 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 #moin-long-searchform div { margin: 0; }
 #moin-long-searchform .moin-search-query { width: 90%; margin-left: 0; }
 .moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor: pointer;  color: var(--link); }
-.moin-searchopt-tab > th:nth-child(1), th:nth-child(2) { width: 20%; }
-.moin-searchopt-tab th:nth-child(3) { width: 60%; }
+.moin-searchopt-tab > th:nth-child(1),
+.moin-searchopt-tab > th:nth-child(2) { width: 20%; }
+.moin-searchopt-tab > th:nth-child(3) { width: 60%; }
 .moin-search-hit-info { display: inline; }
 .moin-search-hits { font-weight: bold; }
 .moin-search-results { font-size: .92em; }
