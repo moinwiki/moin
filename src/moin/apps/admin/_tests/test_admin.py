@@ -1,4 +1,5 @@
 # Copyright: 2011 Sam Toyer
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details
 
 """
@@ -18,9 +19,9 @@ import pytest
         ({"endpoint": "admin.userprofile", "user_name": "DoesntExist"}, "403 FORBIDDEN", ("<html>", "</html>")),
         ({"endpoint": "admin.wikiconfig"}, "403 FORBIDDEN", ("<html>", "</html>")),
         ({"endpoint": "admin.wikiconfighelp"}, "403 FORBIDDEN", ("<html>", "</html>")),
-        ({"endpoint": "admin.interwikihelp"}, "200 OK", ("<html>", "</html>")),
-        ({"endpoint": "admin.highlighterhelp"}, "200 OK", ("<html>", "</html>")),
-        ({"endpoint": "admin.itemsize"}, "200 OK", ("<html>", "</html>")),
+        ({"endpoint": "admin.interwikihelp"}, "403 FORBIDDEN", ("<html>", "</html>")),
+        ({"endpoint": "admin.highlighterhelp"}, "403 FORBIDDEN", ("<html>", "</html>")),
+        ({"endpoint": "admin.itemsize"}, "403 FORBIDDEN", ("<html>", "</html>")),
     ),
 )
 def test_admin(app, url_for_args, status, data):
