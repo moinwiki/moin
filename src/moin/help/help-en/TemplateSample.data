@@ -1,10 +1,16 @@
 = Template Sample =
 
-Templates are a tool for adding boilerplate text and meta data to new items. They are useful when a wiki will have many pages with a similar format.
+Templates are a tool for adding boilerplate text and meta data to new items.
+They are useful when a wiki will have many pages with a similar format.
 
-Under MoinMoin 2, any item having the tag `template` is a template. Under MoinMoin 1.9.x, any page ending in `Template` was a template.
+Under MoinMoin 2, any item having the tag 'template' is a template.
+Under MoinMoin 1.9.x, any page ending in 'Template' was a template.
 
-Templates are specific to a content type. This template can only be used to create new `text/x.moin.wiki` items. To use this template, create a new moin wiki item and choose the link with the template's name rather than the `create this item from scratch` link.
+Templates are specific to a content type and namespace.
+This template can only be used to create new 'text/x.moin.wiki' items in namespace help-en.
+To use a template, create a new moin wiki item and choose the link with a template's name rather than the 'create this item from scratch' link.
+
+Please be aware that the ACL, the summary and the tags are also copied from the template.
 
 ## Templates may have hidden instructions for editors:
 ## If you are in the process of creating a new item using this template,
