@@ -325,7 +325,11 @@ def teardown_wiki(response):
     """
     logging.debug("running teardown_wiki")
     try:
-        flaskg.clock.stop("total")
+        if request:
+            request_path = request.path
+        else:
+            request_path = ""
+        flaskg.clock.stop("total", comment=request_path)
         del flaskg.clock
     except AttributeError:
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.

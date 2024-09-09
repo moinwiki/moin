@@ -1,5 +1,6 @@
 # Copyright: 2001-2003 Juergen Hermann <jh@web.de>
 # Copyright: 2003-2006 MoinMoin:ThomasWaldmann
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -22,11 +23,12 @@ class Clock:
     Helper class for measuring the time needed to run code.
 
     Usage:
-        flaskg.clock.start('mytimer')
+        flaskg.clock.start("mytimer")
         # do something
-        flaskg.clock.stop('mytimer')
+        flaskg.clock.stop("mytimer", comment="add this to the log message")
+        # the optional comment field is added to the log message
         # or if you want to use its value later
-        timerval = flaskg.clock.stop('mytimer')
+        timerval = flaskg.clock.stop("mytimer")
 
     Starting a timer multiple times is supported but the
     one started last has to be stopped first.
@@ -40,10 +42,10 @@ class Clock:
             self.timers[timer] = []
         self.timers[timer].append(time.time())
 
-    def stop(self, timer):
+    def stop(self, timer, comment=""):
         if timer in self.timers:
             value = time.time() - self.timers[timer].pop()
-            logging.debug(f"timer {timer}({len(self.timers[timer])}): {value * 1000:.2f}ms")
+            logging.debug(f"timer {timer}({len(self.timers[timer])}): {value * 1000:.2f}ms {comment}")
             if not self.timers[timer]:
                 del self.timers[timer]
             return value
