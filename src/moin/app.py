@@ -13,6 +13,7 @@ Use create_app(config) to create the WSGI application (using Flask).
 
 import os
 from os import path
+import re
 import sys
 
 from flask import Flask, request, session
@@ -292,6 +293,10 @@ def before_wiki():
     """
     Setup environment for wiki requests, start timers.
     """
+    if request and is_static_content(request.path):
+        logging.debug(f"skipping before_wiki for {request.path}")
+        return
+
     logging.debug("running before_wiki")
     flaskg.clock = Clock()
     flaskg.clock.start("total")
@@ -323,19 +328,22 @@ def teardown_wiki(response):
     """
     Teardown environment of wiki requests, stop timers.
     """
+    if request:
+        request_path = request.path
+        if is_static_content(request_path):
+            return response
+    else:
+        request_path = ""
+
     logging.debug("running teardown_wiki")
-    try:
-        flaskg.clock.stop("total")
-        del flaskg.clock
-    except AttributeError:
-        # can happen if teardown_wiki() is called twice, e.g. by unit tests.
-        pass
+
     if hasattr(flaskg, "edit_utils"):
         # if transaction fails with sql file locked, we try to free it here
         try:
             flaskg.edit_utils.conn.close()
         except AttributeError:
             pass
+
     try:
         # whoosh cache performance
         for cache in (
@@ -353,4 +361,22 @@ def teardown_wiki(response):
         # moin commands may not have flaskg.storage
         pass
 
+    try:
+        flaskg.clock.stop("total", comment=request_path)
+        del flaskg.clock
+    except AttributeError:
+        # can happen if teardown_wiki() is called twice, e.g. by unit tests.
+        pass
+
     return response
+
+
+def is_static_content(request_path):
+    """
+    Check if content is static and does not need usual wiki handling
+    """
+
+    if request_path.startswith(("/static/", "/+serve/", "/+template/")) or re.match(r"/_themes/\w+/css/", request_path):
+        return True
+    else:
+        return False
