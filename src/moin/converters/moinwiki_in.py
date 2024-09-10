@@ -2,6 +2,7 @@
 # Copyright: 2006-2008 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:ReimarBauer
 # Copyright: 2008-2010 MoinMoin:BastianBlank
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -646,10 +647,9 @@ class Converter(ConverterMacro):
     """
 
     def inline_strike_repl(self, stack, strike, strike_begin=None):
+        """Ignore the closing stroke tag if no opening tag found"""
         if strike_begin is not None:
             stack.push(moin_page.del_())
-        else:
-            stack.pop()
 
     inline_subscript = r"""
         (?P<subscript>
