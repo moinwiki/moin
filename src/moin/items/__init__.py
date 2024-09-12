@@ -1760,7 +1760,7 @@ class NonExistent(Item):
 
     def do_show(self, revid, **kwargs):
         # First, check if the current user has the required privileges
-        if flaskg.user.may.create(self.name):
+        if flaskg.user.may.create(self.fqname):
             content = self._select_itemtype()
         else:
             content = render_template("show_nonexistent.html", item_name=self.name, fqname=self.fqname)
