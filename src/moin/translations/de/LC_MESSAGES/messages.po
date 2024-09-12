@@ -2540,10 +2540,6 @@ msgstr "Geben Sie die Liste der Benutzer-Namen einzeln pro Zeile ein."
 msgid "Enter \"key=value\" strings, one per line, no quotes, no blank lines."
 msgstr "Geben Sie \"Schlüssel=Wert\" Paare ein, einzeln pro Zeile, keine Anführungszeichen, keine leeren Zeilen."
 
-#: src/moin/templates/modify_meta.html:11
-msgid "General meta"
-msgstr "Allgemeine Metadaten"
-
 #: src/moin/templates/modify_meta.html:26
 msgid "Tags may have embedded blanks, use commas to separate."
 msgstr "Schlagworte können Leerzeichen enthalten, benutzen Sie Kommas zum trennen."

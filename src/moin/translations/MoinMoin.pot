@@ -2504,10 +2504,6 @@ msgstr ""
 msgid "Enter \"key=value\" strings, one per line, no quotes, no blank lines."
 msgstr ""
 
-#: src/moin/templates/modify_meta.html:11
-msgid "General meta"
-msgstr ""
-
 #: src/moin/templates/modify_meta.html:26
 msgid "Tags may have embedded blanks, use commas to separate."
 msgstr ""
