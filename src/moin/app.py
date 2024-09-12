@@ -75,6 +75,7 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None, moin_config_c
     clock.start("create_app total")
     logging.debug("running create_app_ext")
     app = Flask("moin")
+    app.url_map.strict_slashes = False  # see issue 1737
 
     c = get_current_context(silent=True)
     info_name = getattr(c, "info_name", "")
