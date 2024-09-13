@@ -531,7 +531,8 @@ class Converter:
         """
         for idx, child in enumerate(node):
             if isinstance(child, str):
-                if "<" in child:
+                # search for HTML tags
+                if re.search("<[^ ].*?>", child):
                     node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
             else:
                 # do not convert markup within a <pre> tag
