@@ -45,29 +45,14 @@
                POSTs originate from their respective applets.
             #}
             {% if not form['content_form'].is_draw %}
-                <div>
-                    {% set warning = "" %}
-                    {% if draft_data %}
-                        <button class="moin-button moin-load-draft" type="button" >{{ _("Load Draft") }}</button>
-                        {% set warning = _("Clicking this button will delete draft!") %}
-                    {% endif %}
-                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label,
-                        class='moin-button moin-modify-submit', title=warning) }}
-                    {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
-                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
-                        title=warning) }}
-                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
-                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
-                        title=warning) }}
-                </div>
-                <dl>
-                    {{ forms.render(form['comment']) }}
-                </dl>
+                {% if draft_data %}
+                    <button class="moin-button moin-load-draft" type="button" >{{ _("Load Draft") }}</button>
+                    {% set warning = _("Clicking this button will delete draft!") %}
+                {% endif %}
             {% endif %}
             {{ utils.help_on_editing(help) }}
             {{ data_editor(form['content_form'], item_name) }}
             {% set may_admin = user.may.admin(fqname) %}
-            {{ meta_editor(form['meta_form'], may_admin) }}
 
             {% if item.meta['name'][0].endswith('Group') %}
                 <dl>
@@ -83,6 +68,42 @@
                 </dl>
                 <div class="hint">
                     {{ _('Enter "key=value" strings, one per line, no quotes, no blank lines.') }}
+                </div>
+            {% endif %}
+
+            {#
+                Workaround:
+                For *Draw content, hide form['comment'], since *Draw
+                POSTs originate from their respective applets.
+            #}
+            {% if not form['content_form'].is_draw %}
+            <dl>
+                {{ forms.render(form['comment']) }}
+            </dl>
+            {% endif %}
+
+            {{ meta_editor(form['meta_form'], may_admin) }}
+
+            {% block moin_flash %}
+            {% endblock %}
+
+            {#
+                Workaround:
+                For *Draw content, hide submit button, since *Draw
+                POSTs originate from their respective applets.
+            #}
+            {% if not form['content_form'].is_draw %}
+                
+                <div class="submit-buttons">
+                    {% set warning = "" %}
+                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning) }}
+                    {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
+                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning) }}
+                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label,
+                        class='moin-button moin-modify-submit', title=warning) }}
                 </div>
             {% endif %}
         {{ gen.form.close() }}

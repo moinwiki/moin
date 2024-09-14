@@ -8,7 +8,6 @@
 {% import "forms.html" as forms %}
 
 {% macro meta_editor(form, may_admin) %}
-    <h2>{{ _("General meta") }}</h2>
     <dl>
         {% if may_admin %}
             {{ forms.render(form['acl']) }}
