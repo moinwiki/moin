@@ -182,6 +182,17 @@ class TestConverter:
     def test_admonition(self, input, output):
         self.do(input, output)
 
+    data = [
+        ("one < two", "<p>one &lt; two</p>"),
+        ("[[one]] < two", '<p><a xlink:href="wiki.local:one">one</a> &lt; two</p>'),
+        ("pre <strong>bold</strong> post", "<div><p>pre <strong>bold</strong> post</p></div>"),
+    ]
+
+    @pytest.mark.parametrize("input,output", data)
+    def test_embedded_markup(self, input, output):
+        """Test embedded markup in markdown"""
+        self.do(input, output)
+
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
         return self.output_re.sub("", result)
