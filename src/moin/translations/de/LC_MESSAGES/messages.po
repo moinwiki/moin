@@ -2443,11 +2443,11 @@ msgstr "Kommentar zum Änderungslog zufügen (optional)."
 
 #: src/moin/templates/index.html:293
 msgid "Selected names: "
-msgstr "Auswahl"
+msgstr "Auswahl: "
 
 #: src/moin/templates/index.html:294
 msgid "Alias names: "
-msgstr "Alias Namen:"
+msgstr "Alias Namen: "
 
 #: src/moin/templates/index.html:297
 msgid "Check to remove subitems"
@@ -2455,11 +2455,11 @@ msgstr "Auswählen um Subitems zu löschen"
 
 #: src/moin/templates/index.html:299
 msgid "Subitem names: "
-msgstr "Subitem-Name"
+msgstr "Subitem-Namen: "
 
 #: src/moin/templates/index.html:300
 msgid "Rejected names, permission denied: "
-msgstr "Unzulässge Namen, keine Berechtigung: "
+msgstr "Unzulässige Namen, keine Berechtigung: "
 
 #: src/moin/templates/index.html:302
 msgid "Enter your comment"

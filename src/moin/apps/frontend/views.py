@@ -1071,8 +1071,8 @@ def ajaxdestroy(item_name, req="destroy"):
                 # user probably checked a subitem and checked do subitems
                 response["messages"].append(_("Item '{bad_name}' does not exist.").format(bad_name=item.name))
                 continue
+            subitem_names = []
             if req == "destroy":
-                subitem_names = []
                 if do_subitems:
                     subitems = item.get_subitem_revs()
                     # if subitem has alias of unselected sibling or ancester, it will be included
@@ -1094,7 +1094,6 @@ def ajaxdestroy(item_name, req="destroy"):
             response["itemnames"] += subitem_names + itemnames
         except AccessDenied:
             response["messages"].append(_("Access denied processing '{bad_name}'.").format(bad_name=itemname))
-    response["itemnames"] = [url_for_item(x) for x in response["itemnames"]]
     return jsonify(response)
 
 
@@ -1148,11 +1147,17 @@ def ajaxsubitems():
         alias_names = []
         subitems = list(item.get_subitem_revs())
         # TODO: add check for delete/destroy auth, add to rejected names,
-        item_names = tuple(x + "/" for x in item.names)
         # subitems may have alias names pointing to sibling or parent of user selected items
-        subitem_names = [y for x in subitems for y in x.meta[NAME]]
+
+        if fqname.namespace:
+            namespace_prefix = f"{fqname.namespace}/"  # used to build fullname for aliases and subitems
+        else:
+            namespace_prefix = ""
+
+        subitem_names = [f"{namespace_prefix}{y}" for x in subitems for y in x.meta[NAME]]
+
         if not [item.name] == item.names:
-            alias_names = [x for x in item.names if not x == item.name]
+            alias_names = [f"{namespace_prefix}{x}" for x in item.names if not x == item.name]
         all_alias_names += alias_names
         all_subitem_names += subitem_names
         all_selected_names.append(item_name)

@@ -27,7 +27,7 @@ $("document").ready(function () {
     function get_checked() {
         var checked_names = [];
         $("input.moin-item:checked").each(function () {
-            var itemname = $(this).attr("value").slice(1);
+            var itemname = $(this).attr("value");
             checked_names.push(itemname);
         });
         return checked_names;
@@ -106,7 +106,7 @@ $("document").ready(function () {
             url;
         // create an array of selected item names
         $("input.moin-item:checked").each(function () {
-            var itemname = $(this).attr("value").slice(1);
+            var itemname = $(this).attr("value");
             links.push(itemname);
         });
         // remove any flash messages, display "deleting..." or "destroying..." flash msg while process is in progress
@@ -125,7 +125,7 @@ $("document").ready(function () {
             comment: comment,
             do_subitems: $("#moin-do-subitems").is(":checked") ? "true" : "false"
         }, function (data) {
-            // incoming itemnames is url-encoded list of item names (including alias names) successfully deleted/destroyed
+            // incoming itemnames is list of item names (including alias names) successfully deleted/destroyed
             var itemnames = data.itemnames,
                 idx;
             // display success/fail flash messages created by server for each selected item and subitem
