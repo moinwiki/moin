@@ -1511,7 +1511,7 @@ class Default(Contentful):
         return False
 
     def do_modify(self):
-        if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.name):
+        if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.fqname):
             abort(
                 403,
                 description=" "
@@ -1554,7 +1554,7 @@ class Default(Contentful):
             if not locked == LOCKED:
                 # edit locking policy is True and someone else has file locked
                 edit_utils.cursor_close()
-                return redirect(url_for_item(self.name))
+                return redirect(url_for_item(self.fqname))
         elif method in ["GET", "HEAD"]:
             # if there is not a draft row, create one to aid in conflict detection
             edit_utils.put_draft(None, overwrite=False)
@@ -1569,7 +1569,7 @@ class Default(Contentful):
                 item = Item.create(template_name)
                 form = self.ModifyForm.from_item(item)
                 # replace template name with new item name and remove TEMPLATE tag
-                form["meta_form"]["name"] = self.names[0]
+                form["meta_form"]["name"] = self.name
                 form["meta_form"]["tags"].remove(TEMPLATE)
             else:
                 form = self.ModifyForm.from_item(item)
@@ -1619,7 +1619,9 @@ class Default(Contentful):
                             # but bot (as in load testing) may post without prior get
                             u_name, i_id, i_name, rev_number, save_time, rev_id = draft
                             if not rev_id == "new-item":
-                                original_item = Item.create(self.name, rev_id=rev_id, contenttype=self.contenttype)
+                                original_item = Item.create(
+                                    self.fqname.fullname, rev_id=rev_id, contenttype=self.contenttype
+                                )
                                 charset = original_item.contenttype.split("charset=")[1]
                                 original_text = original_item.rev.data.read().decode(charset)
                                 close_file(original_item.rev.data)
@@ -1636,14 +1638,16 @@ class Default(Contentful):
                             if rev_number < self.meta.get("rev_number", 0):
                                 # we have conflict - someone else has saved item, create and save 3-way diff,
                                 # give user error message to fix it
-                                saved_item = Item.create(self.name, rev_id=CURRENT, contenttype=self.contenttype)
+                                saved_item = Item.create(
+                                    self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype
+                                )
                                 charset = saved_item.contenttype.split("charset=")[1]
                                 saved_text = saved_item.content.data.decode(charset)
                                 data3 = diff3.text_merge(original_text, saved_text, data)
                                 data = data3
                                 comment = _("CONFLICT ") + comment or ""
                                 flash(
-                                    _("An edit conflict has occurred, edit this item again to resolve conflicts."),
+                                    _("An edit conflict has occurred. Modify this item again to resolve conflicts."),
                                     "error",
                                 )
 
@@ -1768,7 +1772,7 @@ class NonExistent(Item):
 
     def do_modify(self):
         # First, check if the current user has the required privileges
-        if not flaskg.user.may.create(self.name):
+        if not flaskg.user.may.create(self.fqname):
             abort(403)
         return self._select_itemtype()
 
@@ -1778,13 +1782,11 @@ class NonExistent(Item):
         creating a new item:
 
             Default - Wiki item
-            User profile - User profile item (not implemented yet!)
             Blog - Blog item
             Blog entry - Blog entry item
             Ticket - Ticket item
 
-        Blogs and Tickets are broken, why User Profile is here is an undocumented mystery (it is
-        probably no longer required).
+        Blogs and Tickets are broken.
 
         If you want to work on tickets or blogs, create a new branch and revert the change
         made on or about 2017-07-04:

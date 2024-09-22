@@ -66,7 +66,7 @@ class Edit_Utils:
     def __init__(self, item):
         self.item = item
         self.user_name = self.get_user_name()
-        self.item_name = ",".join(item.names)
+        self.item_name = item.fqname.fullname
         # new items will not have rev_number, revid, nor itemid
         self.rev_number = item.meta.get(REV_NUMBER, 0)
         self.rev_id = item.meta.get(REVID, "new-item")
@@ -298,8 +298,7 @@ class Edit_Utils:
                         # current user timed out, then other user updated and saved
                         msg = L_(
                             "Someone else updated '{item_name}' after your edit lock timed out. "
-                            "If you click 'Save', conflicting changes must be manually merged. "
-                            "Click 'Cancel' to discard changes."
+                            "Conflicting changes must be manually merged. "
                         ).format(item_name=self.item_name)
                     self.cursor.execute(
                         """INSERT INTO editlock(item_id, item_name, user_name, timeout)
