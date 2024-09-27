@@ -75,7 +75,8 @@ def index():
 
 
 @admin.route("/user")
-@require_permission(SUPERUSER)
+# wip - see #1734, this fix breaks the user view from the navigation bar.
+# @require_permission(SUPERUSER)
 def index_user():
     return render_template(
         "user/index_user.html",
