@@ -19,7 +19,7 @@ from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import TAGS
 
 
-def get_item_names(name="", startswith="", kind="files", skiptag=""):
+def get_item_names(name="", startswith="", kind="files", skiptag="", tag=''):
     """
     For the specified item, return the fullname of matching descendents.
 
@@ -39,6 +39,8 @@ def get_item_names(name="", startswith="", kind="files", skiptag=""):
 
         skiptag: skip items having this tag
 
+        tag: only include items having this tag
+
     Output:
 
        A List of descendent items using their "fullname" value
@@ -53,11 +55,17 @@ def get_item_names(name="", startswith="", kind="files", skiptag=""):
         for item in files:
             if skiptag and TAGS in item.meta and skiptag in item.meta[TAGS]:
                 continue
+            if tag:
+                if not TAGS in item.meta or tag not in item.meta[TAGS]:
+                    continue
             item_names.append(item.fullname)
     if kind == "dirs" or kind == "both":
         for item in dirs:
             if skiptag and skiptag in item.meta[TAGS]:
                 continue
+            if tag:
+                if not TAGS in item.meta or tag not in item.meta[TAGS]:
+                    continue
             item_names.append(item.fullname)
     if kind == "both":
         item_names = list(set(item_names))  # remove duplicates
