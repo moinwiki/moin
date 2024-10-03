@@ -19,7 +19,7 @@ from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import TAGS
 
 
-def get_item_names(name="", startswith="", kind="files", skiptag="", tag=''):
+def get_item_names(name="", startswith="", kind="files", skiptag="", tag=""):
     """
     For the specified item, return the fullname of matching descendents.
 
