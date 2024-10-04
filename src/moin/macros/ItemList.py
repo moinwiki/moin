@@ -82,7 +82,7 @@ class Macro(MacroPageLinkListBase):
         display = "FullPath"
         skiptag = ""
         tag = ""
-      
+
         # process input
         args = []
         if arguments:
