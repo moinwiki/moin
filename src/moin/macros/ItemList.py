@@ -141,7 +141,7 @@ class Macro(MacroPageLinkListBase):
                 return fail_message(err_msg, alternative)
 
         # process subitems
-        children = self.get_item_names(item, startswith=startswith, skiptag=skiptag, tag=tag)
+        children = get_item_names(item, startswith=startswith, skiptag=skiptag, tag=tag)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)
