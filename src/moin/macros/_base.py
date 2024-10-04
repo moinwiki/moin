@@ -56,7 +56,7 @@ def get_item_names(name="", startswith="", kind="files", skiptag="", tag=""):
             if skiptag and TAGS in item.meta and skiptag in item.meta[TAGS]:
                 continue
             if tag:
-                if not TAGS in item.meta or tag not in item.meta[TAGS]:
+                if TAGS not in item.meta or tag not in item.meta[TAGS]:
                     continue
             item_names.append(item.fullname)
     if kind == "dirs" or kind == "both":
