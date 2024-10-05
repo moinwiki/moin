@@ -29,6 +29,8 @@ Parameters:
 
     skiptag: a tag name, items with tag will be skipped
 
+    tag: only include items that have been tagged with this name
+
     display: How should the link be displayed?
 
         Options:
@@ -79,6 +81,7 @@ class Macro(MacroPageLinkListBase):
         ordered = False
         display = "FullPath"
         skiptag = ""
+        tag = ""
 
         # process input
         args = []
@@ -119,6 +122,8 @@ class Macro(MacroPageLinkListBase):
                 display = val  # let 'create_pagelink_list' throw an exception if needed
             elif key == "skiptag":
                 skiptag = val
+            elif key == "tag":
+                tag = val
             else:
                 err_msg = _('Unrecognized key "{key}".').format(key=key)
                 return fail_message(err_msg, alternative)
@@ -136,7 +141,7 @@ class Macro(MacroPageLinkListBase):
                 return fail_message(err_msg, alternative)
 
         # process subitems
-        children = get_item_names(item, startswith=startswith, skiptag=skiptag)
+        children = get_item_names(item, startswith=startswith, skiptag=skiptag, tag=tag)
         if regex:
             try:
                 regex_re = re.compile(regex, re.IGNORECASE)

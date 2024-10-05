@@ -429,6 +429,7 @@ The **ItemList** macro accepts multiple named parameters: item, startswith, rege
     - <<ItemList(ordered='True')>> displays ordered list of subitems, default is unordered
     - <<ItemList(startswith="Foo")>> lists subitems starting with Foo
     - <<ItemList(regex="Foo$")>> lists subitems ending with Foo
+    - <<ItemList(tag="template")>> only include items with this tag
     - <<ItemList(skiptag="template")>> ignore items with this tag
     - <<ItemList(display="FullPath")>> default, displays full path to subitems
     - <<ItemList(display="ChildPath")>> displays last component of the FullPath, including the '/'
