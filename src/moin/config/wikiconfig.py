@@ -263,6 +263,7 @@ SESSION_COOKIE_SECURE = False  # flask default is False
 SESSION_COOKIE_HTTPONLY = True  # flask default is True
 SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
 # SESSION_COOKIE_NAME = 'session'
+# from datetime import timedelta  # next line requires this
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
 # USE_X_SENDFILE = False
 # LOGGER_NAME = 'MoinMoin'
