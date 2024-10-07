@@ -1266,7 +1266,7 @@ def destroy_item(item_name, rev):
     ret = render_template(
         "destroy.html",
         item=item,
-        item_name=item_name,
+        item_name=item_name if item.meta[NAME] else item.meta[NAME_OLD][0],
         subitem_names=subitem_names,
         alias_names=alias_names,
         fqname=fqname,

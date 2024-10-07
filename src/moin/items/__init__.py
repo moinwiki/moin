@@ -916,7 +916,10 @@ class Item:
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
         close_file(self.rev.data)
-        old_name = self.names if len(self.names) > 1 else self.names[0]
+        if self.names:
+            old_name = self.names if len(self.names) > 1 else self.names[0]
+        else:
+            old_name = self.meta[NAME_OLD][0]
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
