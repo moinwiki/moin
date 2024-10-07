@@ -11,9 +11,9 @@
 {% extends theme("show.html") %}
 
 {% if alias_names %}
-    {% set title = _("Destroy '{item_name}' with alias names {alias_names}").format(item_name=fqname|shorten_fqname, alias_names=alias_names) %}
+    {% set title = _("Destroy '{item_name}' with alias names {alias_names}").format(item_name=item_name, alias_names=alias_names) %}
 {% else %}
-    {% set title = _("Destroy '{item_name}'").format(item_name=fqname|shorten_fqname) %}
+    {% set title = _("Destroy '{item_name}'").format(item_name=item_name) %}
 {% endif %}
 
 {% block content %}
