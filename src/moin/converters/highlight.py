@@ -1,4 +1,5 @@
 # Copyright: 2008 MoinMoin:BastianBlank
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -52,7 +53,8 @@ class Converter:
             elem[:] = new_childs
 
     def __init__(self, regex):
-        self.pattern = re.compile(regex)
+        """treat each word separately and ignore case sensitivity"""
+        self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
     def __call__(self, tree):
         self.recurse(tree)
