@@ -1097,7 +1097,11 @@ def ajaxdestroy(item_name, req="destroy"):
             if isinstance(item, NonExistent):
                 # we should not try to destroy a nonexistent item,
                 # user probably checked a subitem and checked do subitems
-                response["messages"].append(_("Item '{bad_name}' does not exist.").format(bad_name=item.name))
+                response["messages"].append(
+                    _("Item '{bad_name}' does not exist or you do not have permission to access it.").format(
+                        bad_name=item.name
+                    )
+                )
                 continue
             subitem_names = []
             if req == "destroy":
