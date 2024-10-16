@@ -15,6 +15,7 @@ from flask import current_app as app
 from whoosh.query import Term, And, Prefix
 from whoosh.sorting import FunctionFacet
 
+from moin.apps.frontend.views import get_item_permissions
 from moin.i18n import L_
 from moin.themes import render_template
 from moin.forms import Text, Tags, DateTime
@@ -87,6 +88,7 @@ class Blog(Default):
 
         revs = flaskg.storage.search(query, sortedby=ptime_sort_facet, reverse=True, limit=None)
         blog_entry_items = [Item.create(rev.name, rev_id=rev.revid) for rev in revs]
+        item_may = get_item_permissions(self.name, self)
         return render_template(
             "blog/main.html",
             item_name=self.name,
@@ -95,6 +97,7 @@ class Blog(Default):
             blog_entry_items=blog_entry_items,
             tag=tag,
             item=self,
+            may=item_may,
         )
 
 
@@ -126,6 +129,7 @@ class BlogEntry(Default):
         if not isinstance(blog_item, Blog):
             # The parent item of this blog entry item is not a Blog item.
             abort(403)
+        item_may = get_item_permissions(blog_item_name, blog_item)
         return render_template(
             "blog/entry.html",
             item_name=self.name,
@@ -133,4 +137,5 @@ class BlogEntry(Default):
             blog_item=blog_item,
             blog_entry_item=self,
             item=self,
+            may=item_may,
         )

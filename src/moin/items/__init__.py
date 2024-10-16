@@ -1436,7 +1436,7 @@ class Default(Contentful):
             data_rendered="",
         )
 
-    def do_show(self, revid, item_is_deleted=False):
+    def do_show(self, revid, item_is_deleted=False, item_may=None):
         """
         Display an item. If this is not the current revision, page content will be
         prefaced with links to the next-rev and prior-rev.
@@ -1459,6 +1459,7 @@ class Default(Contentful):
             data_rendered=Markup(self.content._render_data()),
             html_head_meta=html_head_meta,
             item_is_deleted=item_is_deleted,
+            may=item_may,
         )
 
     def doc_link(self, content_name, link_text):
@@ -1513,7 +1514,7 @@ class Default(Contentful):
             return True
         return False
 
-    def do_modify(self):
+    def do_modify(self, item_may=None):
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.fqname):
             abort(
                 403,
@@ -1737,6 +1738,7 @@ class Default(Contentful):
             draft_data=draft_data,
             lock_duration=lock_duration,
             tuple=tuple,
+            may=item_may,
         )
 
 
