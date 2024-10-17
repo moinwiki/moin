@@ -565,6 +565,17 @@ def flash_if_item_deleted(item_name, rev_id, itemrev):
     return False
 
 
+def get_item_permissions(fqname, item):
+    """
+    get users permissions for item
+    Return a dict with permission type and permission
+    """
+    permission_list = ["write", "create", "destroy"]
+    user = flaskg.user.may.names
+    item_may = dict([(key, flaskg.storage.may(fqname, key, usernames=user, item=item)) for key in permission_list])
+    return item_may
+
+
 # The first form accepts POST to allow modifying behavior like modify_item.
 # The second form only accepts GET since modifying a historical revision is not allowed.
 @frontend.route("/<itemname:item_name>", defaults=dict(rev=CURRENT), methods=["GET", "POST"])
@@ -579,7 +590,8 @@ def show_item(item_name, rev):
         item = Item.create(item_name, rev_id=rev)
         flaskg.user.add_trail(item_name)
         item_is_deleted = flash_if_item_deleted(item_name, rev, item)
-        result = item.do_show(rev, item_is_deleted=item_is_deleted)
+        item_may = get_item_permissions(fqname, item)
+        result = item.do_show(rev, item_is_deleted=item_is_deleted, item_may=item_may)
     except AccessDenied:
         abort(403)
     except FieldNotUniqueError:
@@ -633,6 +645,7 @@ def indexable(item_name, rev):
 def highlight_item(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args["rev"], item.fqname)
     item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
+    item_may = get_item_permissions(item.fqname, item)
     try:
         ret = render_template(
             "highlight.html",
@@ -644,6 +657,7 @@ def highlight_item(item):
             rev_navigation_ids_dates=rev_navigation_ids_dates,
             meta=item._meta_info(),
             item_is_deleted=item_is_deleted,
+            may=item_may,
         )
     except UnicodeDecodeError:
         return _crash(item, None, None)
@@ -655,6 +669,7 @@ def highlight_item(item):
 def show_item_meta(item):
     rev_navigation_ids_dates = rev_navigation.prior_next_revs(request.view_args["rev"], item.fqname)
     item_is_deleted = flash_if_item_deleted(item.fqname.fullname, item.rev.meta[REVID], item)
+    item_may = get_item_permissions(item.fqname, item)
     ret = render_template(
         "meta.html",
         item=item,
@@ -665,6 +680,7 @@ def show_item_meta(item):
         rev_navigation_ids_dates=rev_navigation_ids_dates,
         meta=item._meta_info(),
         item_is_deleted=item_is_deleted,
+        may=item_may,
     )
     close_file(item.meta.revision.data)
     return ret
@@ -742,10 +758,16 @@ def convert_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    item_may = get_item_permissions(item_name, item)
     form = ConvertForm.from_flat(request.form)
     if request.method in ["GET", "HEAD"]:
         return render_template(
-            "convert.html", item=item, form=form, contenttype=item.contenttype, fqname=split_fqname(item_name)
+            "convert.html",
+            item=item,
+            form=form,
+            contenttype=item.contenttype,
+            fqname=split_fqname(item_name),
+            may=item_may,
         )
 
     item.rev.data.seek(0)
@@ -831,8 +853,9 @@ def modify_item(item_name):
         abort(403)
     if not flaskg.user.may.write(item_name):
         abort(403)
+    item_may = get_item_permissions(item_name, item)
     try:
-        ret = item.do_modify()
+        ret = item.do_modify(item_may=item_may)
     except ValueError as err:
         # user may have changed or deleted namespace, contenttype... causing meta data validation failure
         # or data unicode validation failed
@@ -951,6 +974,7 @@ def rename_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    item_may = get_item_permissions(item_name, item)
     subitem_names = []
     if request.method in ["GET", "HEAD"]:
         form = RenameItemForm.from_defaults()
@@ -988,6 +1012,7 @@ def rename_item(item_name):
         form=form,
         data_rendered=Markup(item.content._render_data()),
         len=len,
+        may=item_may,
     )
     close_file(item.meta.revision.data)
     return ret
@@ -1003,6 +1028,7 @@ def delete_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    item_may = get_item_permissions(item_name, item)
     subitem_names = []
     if request.method in ["GET", "HEAD"]:
         form = DeleteItemForm.from_defaults()
@@ -1032,6 +1058,7 @@ def delete_item(item_name):
         fqname=split_fqname(item_name),
         form=form,
         data_rendered=data_rendered,
+        may=item_may,
     )
     close_file(item.rev.data)
     return ret
@@ -1232,6 +1259,7 @@ def destroy_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+    item_may = get_item_permissions(fqname, item)
     item_is_deleted = flash_if_item_deleted(item_name, rev, item)
     subitem_names = []
     alias_names = []
@@ -1274,6 +1302,7 @@ def destroy_item(item_name, rev):
         form=form,
         data_rendered=Markup(item.content._render_data()),
         item_is_deleted=item_is_deleted,
+        may=item_may,
     )
     close_file(item.meta.revision.data)
     close_file(item.rev.data)
@@ -1411,6 +1440,7 @@ def index(item_name):
         item = Item.create(item_name)  # when item_name='', it gives toplevel index
     except AccessDenied:
         abort(403)
+    item_may = get_item_permissions(item_name, item)
 
     # request.args is a MultiDict instance, which degenerates into a normal
     # single-valued dict on most occasions (making the first value the *only*
@@ -1488,6 +1518,7 @@ def index(item_name):
         selected_groups=selected_groups,
         str=str,
         app=app,
+        may=item_may,
     )
 
 
@@ -1572,12 +1603,14 @@ def forwardrefs(item_name):
     :returns: a page with all the items linked from this item
     """
     refs = _forwardrefs(item_name)
+    item_may = get_item_permissions(item_name, None)
     return render_template(
         "link_list_item_panel.html",
         item_name=item_name,
         fqname=split_fqname(item_name),
         headline=_("Items that are referred by '{item_name}'").format(item_name=shorten_item_id(item_name)),
         fq_names=split_fqname_list(refs),
+        may=item_may,
     )
 
 
@@ -1614,6 +1647,7 @@ def backrefs(item_name):
     except AccessDenied:
         abort(403)
     refs_here = _backrefs(item_name)
+    item_may = get_item_permissions(item_name, None)
     return render_template(
         "link_list_item_panel.html",
         item=item,
@@ -1621,6 +1655,7 @@ def backrefs(item_name):
         fqname=split_fqname(item_name),
         headline=_("Items which refer to '{item_name}'").format(item_name=shorten_item_id(item_name)),
         fq_names=refs_here,
+        may=item_may,
     )
 
 
@@ -1650,6 +1685,7 @@ def history(item_name):
         abort(404, item_name)
 
     item_is_deleted = flash_if_item_deleted(item_name, CURRENT, item)
+    item_may = get_item_permissions(item_name, item)
     page_num = request.values.get("page_num", 1)
     page_num = max(int(page_num), 1)
     bookmark_time = int(request.values.get("bookmark", 0))
@@ -1712,6 +1748,7 @@ def history(item_name):
         len=len,
         trash=trash,
         item_is_deleted=item_is_deleted,
+        may=item_may,
     )
     flaskg.clock.stop("renderrevs")
     close_file(item.rev.data)
@@ -2808,6 +2845,7 @@ def similar_names(item_name):
     except AccessDenied:
         abort(403)
     fq_name = split_fqname(item_name)
+    item_may = get_item_permissions(fq_name, item)
     start, end, matches = find_matches(fq_name)
     keys = sorted(matches.keys())
     # TODO later we could add titles for the misc ranks:
@@ -2829,6 +2867,7 @@ def similar_names(item_name):
         item_name=item_name,  # XXX no item
         fqname=split_fqname(item_name),
         fq_names=fq_names,
+        may=item_may,
     )
 
 
@@ -2849,6 +2888,7 @@ def sitemap(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
+    item_may = get_item_permissions(item_name, item)
 
     backrefs, junk, junk2 = NestedItemListBuilder().recurse_build([fq_name], backrefs=True)
     del backrefs[0]  # don't show current item name as sole toplevel list item
@@ -2863,6 +2903,7 @@ def sitemap(item_name):
         fqname=fq_name,
         no_read_auth=no_read_auth,
         missing=missing,
+        may=item_may,
     )
 
 

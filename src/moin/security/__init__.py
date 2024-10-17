@@ -3,6 +3,7 @@
 # Copyright: 2003 Gustavo Niemeyer
 # Copyright: 2005 Oliver Graf
 # Copyright: 2007 Alexander Schremmer
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -71,17 +72,17 @@ class DefaultSecurityPolicy:
     def __init__(self, user):
         self.names = user.name
 
-    def read(self, itemname):
+    def read(self, itemname, item=None):
         """read permission is special as we have 2 kinds of read capabilities:
 
         * READ - gives permission to read, unconditionally
         * PUBREAD - gives permission to read, when published
         """
-        return flaskg.storage.may(itemname, rights.READ, usernames=self.names) or flaskg.storage.may(
-            itemname, rights.PUBREAD, usernames=self.names
+        return flaskg.storage.may(itemname, rights.READ, usernames=self.names, item=item) or flaskg.storage.may(
+            itemname, rights.PUBREAD, usernames=self.names, item=item
         )
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr, item=None):
         """Shortcut to handle all known ACL rights.
 
         if attr is a valid acl right, return a checking function for it.

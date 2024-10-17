@@ -10,8 +10,6 @@
 {% set summary = history[0].get('summary', None) if history else None %}
 {% set heading = _("History of {fqname}").format(fqname=utils.item_moniker(item.meta, [fqname])) %}
 {% set first_itemid = history[0].itemid %}
-{% set user_may_write = user.may.write(fqname) %}
-{% set user_may_destroy = user.may.destroy(fqname) %}
 
 {% block content %}
     {%- if history %}
@@ -125,7 +123,7 @@
                                         <span class="fa fa-download"></span>
                                     </a>
                                 </td>
-                                {%- if user_may_write and not doc.trash -%}
+                                {%- if may.write and not doc.trash -%}
                                     {%- if loop.first %}
                                         <td>
                                             <a href="{{ url_for('frontend.delete_item', item_name=fqname) }}" title="{{ _('delete item') }}">
@@ -145,7 +143,7 @@
                                 {%- else %}
                                     <td></td>
                                 {%- endif %}
-                                {%- if user_may_destroy -%}
+                                {%- if may.destroy -%}
                                     {%- if loop.first %}
                                         <td>
                                             <a href="{{ url_for('frontend.destroy_item', item_name=fqname) }}" title="{{ _('destroy all revisions') }}">

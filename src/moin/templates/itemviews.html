@@ -51,7 +51,7 @@
                 </li>
             {%- endif %}
 
-            {%- if endpoint == 'frontend.modify_item' and user.may.write(fqname) and not_trash %}
+            {%- if endpoint == 'frontend.modify_item' and may.write and not_trash %}
                 <li>
                     <a class="moin-modify-button" href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
@@ -59,7 +59,7 @@
 
             {%- if endpoint in [
                 'frontend.rename_item', 'frontend.delete_item',
-            ] and user.may.write(fqname) and not_trash %}
+            ] and may.write and not_trash %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
@@ -67,13 +67,13 @@
 
             {%- if endpoint in [
                 'frontend.convert_item',
-            ] and user.may.write(fqname) and item and theme_supp.is_markup_or_text(item.contenttype) and not_trash %}
+            ] and may.write and item and theme_supp.is_markup_or_text(item.contenttype) and not_trash %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
             {%- endif %}
 
-            {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(fqname) %}
+            {%- if endpoint == 'frontend.destroy_item' and may.destroy %}
                 <li>
                     <a href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </li>
