@@ -1419,6 +1419,7 @@ class Default(Contentful):
                     itemtype=self.itemtype,
                     contenttype=self.contenttype,
                     template="",
+                    may=None,
                 )
             )
         return render_template(
@@ -1434,6 +1435,7 @@ class Default(Contentful):
             last_rev_id=rev_ids and rev_ids[-1],
             meta_rendered="",
             data_rendered="",
+            may=None,
         )
 
     def do_show(self, revid, item_is_deleted=False, item_may=None):
