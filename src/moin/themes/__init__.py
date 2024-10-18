@@ -349,7 +349,7 @@ class ThemeSupport:
             current_item += segment
             fq_current = CompositeName(namespace, NAME_EXACT, current_item)
             fq_segment = CompositeName(segment1_namespace, NAME_EXACT, segment)
-            breadcrumbs.append((fq_segment, fq_current, bool(self.storage.get_item(**fq_current.query))))
+            breadcrumbs.append((fq_segment, fq_current, True))
             current_item += "/"
             segment1_namespace = ""
         return breadcrumbs
@@ -370,12 +370,9 @@ class ThemeSupport:
             err = not is_known_wiki(wiki_name)
             href = url_for_item(wiki_name=wiki_name, **fqname.split)
             if is_local_wiki(wiki_name):
-                exists = bool(self.storage.get_item(**fqname.query))
                 wiki_name = ""  # means "this wiki" for the theme code
-            else:
-                exists = True  # we can't detect existance of remote items
             if item_name:
-                breadcrumbs.append((wiki_name, fqname, href, exists, err))
+                breadcrumbs.append((wiki_name, fqname, href, True, err))
         return breadcrumbs
 
     def userhome(self):

@@ -92,7 +92,7 @@ from moin.items.ticket import AdvancedSearchForm, render_comment_data
 from moin import user
 from moin.constants.keys import *  # noqa
 from moin.constants.namespaces import *  # noqa
-from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_NONEXISTENT
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
 from moin.constants.misc import FLASH_REPEAT
@@ -524,14 +524,14 @@ def add_presenter(wrapped, view, add_trail=False, abort404=True):
     @frontend.route(f"/+{view}/<itemname:item_name>", defaults=dict(rev=CURRENT))
     @wraps(wrapped)
     def wrapper(item_name, rev):
-        if add_trail:
-            flaskg.user.add_trail(item_name)
         try:
             item = Item.create(item_name, rev_id=rev)
         except AccessDenied:
             abort(403)
         if abort404 and isinstance(item, NonExistent):
             abort(404, item_name)
+        if add_trail:
+            flaskg.user.add_trail(item_name)
         return wrapped(item)
 
     return wrapper
@@ -588,7 +588,8 @@ def show_item(item_name, rev):
         return redirect(url_for_item(fqname))
     try:
         item = Item.create(item_name, rev_id=rev)
-        flaskg.user.add_trail(item_name)
+        if item.itemtype != ITEMTYPE_NONEXISTENT:
+            flaskg.user.add_trail(item_name)
         item_is_deleted = flash_if_item_deleted(item_name, rev, item)
         item_may = get_item_permissions(fqname, item)
         result = item.do_show(rev, item_is_deleted=item_is_deleted, item_may=item_may)
