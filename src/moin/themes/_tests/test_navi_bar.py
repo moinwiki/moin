@@ -45,9 +45,9 @@ class TestNaviBar:
 
     def test_location_breadcrumbs(self, theme):
         test_result = ThemeSupport.location_breadcrumbs(theme, "some/place/test_item")
-        test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
-        test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
-        test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
+        test_segment_name_1, test_item_name_1 = test_result[0]
+        test_segment_name_2, test_item_name_2 = test_result[1]
+        test_segment_name_3, test_item_name_3 = test_result[2]
 
         assert test_segment_name_1.namespace == ""
         assert test_item_name_1.namespace == ""
@@ -59,9 +59,9 @@ class TestNaviBar:
         assert test_item_name_3.value == "some/place/test_item"
 
         test_result = ThemeSupport.location_breadcrumbs(theme, "users/some/place/test_item")
-        test_segment_name_1, test_item_name_1, test_item_exists_1 = test_result[0]
-        test_segment_name_2, test_item_name_2, test_item_exists_2 = test_result[1]
-        test_segment_name_3, test_item_name_3, test_item_exists_3 = test_result[2]
+        test_segment_name_1, test_item_name_1 = test_result[0]
+        test_segment_name_2, test_item_name_2 = test_result[1]
+        test_segment_name_3, test_item_name_3 = test_result[2]
 
         assert test_segment_name_1.namespace == "users"
         assert test_item_name_1.namespace == "users"

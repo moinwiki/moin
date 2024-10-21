@@ -217,10 +217,10 @@ class TestUser:
         assert result == expected
 
         # item name added to trail
-        theUser.add_trail("item_added")
+        theUser.add_trail("item_added", [])
         theUser = user.User(name=name, password=password)
         result = theUser.get_trail()
-        expected = ["MoinTest/item_added"]
+        expected = [("MoinTest/item_added", [])]
         assert result == expected
 
     # Sessions -------------------------------------------------------
