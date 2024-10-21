@@ -332,14 +332,13 @@ class ThemeSupport:
         namespace as a prefix.
 
         :rtype: list
-        :returns: location breadcrumbs items in tuple (segment_name, fq_name, exists)
+        :returns: location breadcrumbs items in tuple (segment_name, fq_name)
         """
         breadcrumbs = []
         current_item = ""
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
         if fqname.field != NAME_EXACT:
-            # flaskg.unprotected_storage.get_item(**fqname.query)
             return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]
         namespace = segment1_namespace = fqname.namespace
         item_name = fqname.value
@@ -349,7 +348,7 @@ class ThemeSupport:
             current_item += segment
             fq_current = CompositeName(namespace, NAME_EXACT, current_item)
             fq_segment = CompositeName(segment1_namespace, NAME_EXACT, segment)
-            breadcrumbs.append((fq_segment, fq_current, True))
+            breadcrumbs.append((fq_segment, fq_current))
             current_item += "/"
             segment1_namespace = ""
         return breadcrumbs
@@ -364,7 +363,7 @@ class ThemeSupport:
         user = self.user
         breadcrumbs = []
         trail = user.get_trail()
-        for interwiki_item_name in trail:
+        for interwiki_item_name, aliases in trail:
             wiki_name, namespace, field, item_name = split_interwiki(interwiki_item_name)
             fqname = CompositeName(namespace, field, item_name)
             err = not is_known_wiki(wiki_name)
@@ -372,7 +371,7 @@ class ThemeSupport:
             if is_local_wiki(wiki_name):
                 wiki_name = ""  # means "this wiki" for the theme code
             if item_name:
-                breadcrumbs.append((wiki_name, fqname, href, True, err))
+                breadcrumbs.append((wiki_name, fqname, href, aliases, err))
         return breadcrumbs
 
     def userhome(self):
@@ -557,17 +556,6 @@ class ThemeSupport:
         if self.cfg.auth_have_login:
             url = url or url_for("frontend.login")
         return url
-
-    def get_fqnames(self, fqname):
-        """
-        Return the list of other fqnames associated with the item.
-        """
-        if fqname.field != NAME_EXACT:
-            return []
-        item = self.storage.get_item(**fqname.query)
-        fqnames = item.fqnames
-        fqnames.remove(fqname)
-        return fqnames or []
 
     def get_namespaces(self, ns=None):
         """

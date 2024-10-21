@@ -531,7 +531,7 @@ def add_presenter(wrapped, view, add_trail=False, abort404=True):
         if abort404 and isinstance(item, NonExistent):
             abort(404, item_name)
         if add_trail:
-            flaskg.user.add_trail(item_name)
+            flaskg.user.add_trail(item_name, aliases=item.meta.revision.fqnames)
         return wrapped(item)
 
     return wrapper
@@ -589,7 +589,7 @@ def show_item(item_name, rev):
     try:
         item = Item.create(item_name, rev_id=rev)
         if item.itemtype != ITEMTYPE_NONEXISTENT:
-            flaskg.user.add_trail(item_name)
+            flaskg.user.add_trail(item_name, aliases=item.meta.revision.fqnames)
         item_is_deleted = flash_if_item_deleted(item_name, rev, item)
         item_may = get_item_permissions(fqname, item)
         result = item.do_show(rev, item_is_deleted=item_is_deleted, item_may=item_may)
