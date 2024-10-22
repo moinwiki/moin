@@ -68,13 +68,13 @@ def IndexDestroy(tmp):
 
 
 @cli.command("index-build", help="Build the indexes")
-@click.option("--procs", "-p", required=False, type=int, default=1, help="Number of processors the writer will use.")
+@click.option("--procs", "-p", required=False, type=int, default=None, help="Number of processors the writer will use.")
 @click.option(
     "--limitmb",
     "-l",
     required=False,
     type=int,
-    default=10,
+    default=None,
     help="Maximum memory (in megabytes) each index-writer will use for the indexing pool.",
 )
 @click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")

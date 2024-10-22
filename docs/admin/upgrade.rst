@@ -120,6 +120,14 @@ home pages and subpages will be converted to the "users" directory. The data fro
 directory will be converted to the "userprofiles" directory. The "userprofiles" directory
 contains data used internally and should always be protected from any access by ACLs.
 
+If you are importing a large wiki with more than 1000 entries or revisions, the index building
+part of the import will be time-consuming. You can use the following options to speed up the process::
+
+ --procs <number of processors> --limitmb <memory in mb for each process>
+
+Choose the values according to your available hardware resources. The defaults are 1 process and 256 mb memory.
+See the `Whoosh Tips for speeding up batch indexing docs <https://whoosh.readthedocs.io/en/latest/batch.html>`_ for details.
+
 Testing
 -------
 Review the logs for error messages. Start the moin server and try the "Index" and "History"
