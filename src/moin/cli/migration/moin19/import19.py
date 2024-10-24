@@ -142,7 +142,16 @@ def migr_statistics(unknown_macros):
     default=NAMESPACE_DEFAULT,
     help="target namespace, e.g. used for members of a wikifarm.",
 )
-def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
+@click.option("--procs", "-p", required=False, type=int, default=1, help="Number of processors the writer will use.")
+@click.option(
+    "--limitmb",
+    "-l",
+    required=False,
+    type=int,
+    default=256,
+    help="Maximum memory (in megabytes) each index-writer will use for the indexing pool.",
+)
+def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, limitmb=None):
     """Import content and user data from a moin wiki with version 1.9"""
 
     target_namespace = namespace
@@ -263,7 +272,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None):
         backend.store(meta, out)
 
     logging.info("PHASE4: Rebuilding the index ...")
-    drop_and_recreate_index(app.storage)
+    drop_and_recreate_index(app.storage, procs=procs, limitmb=limitmb, multisegment=True)
 
     logging.info("Finished conversion!")
     if hasattr(conv_out, "unknown_macro_list"):

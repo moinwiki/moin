@@ -638,14 +638,19 @@ class IndexingMiddleware:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
                     writer.delete_document(docnum_remove)
 
-    def _modify_index(self, index, schema, wikiname, revids, mode="add", procs=1, limitmb=256):
+    def _modify_index(self, index, schema, wikiname, revids, mode="add", procs=None, limitmb=None, multisegment=False):
         """
         modify index contents - add, update, delete the indexed documents for all given revids
 
         Note: mode == 'add' is faster but you need to make sure to not create duplicate
               documents in the index.
         """
-        with index.writer(procs=procs, limitmb=limitmb) as writer:
+        if procs is None:
+            procs = 1
+        if limitmb is None:
+            limitmb = 256
+        logging.info(f"Using options procs={procs}, limitmb={limitmb}, multisegment={multisegment}")
+        with index.writer(procs=procs, limitmb=limitmb, multisegment=multisegment) as writer:
             for backend_name, revid in revids:
                 if mode in ["add", "update"]:
                     meta, data = self.backend.retrieve(backend_name, revid)
@@ -680,7 +685,7 @@ class IndexingMiddleware:
             ]
         return latest_backends_revids
 
-    def rebuild(self, tmp=False, procs=1, limitmb=256):
+    def rebuild(self, tmp=False, procs=None, limitmb=None, multisegment=False):
         """
         Add all items/revisions from the backends of this wiki to the index
         (which is expected to have no items/revisions from this wiki yet).
@@ -694,7 +699,16 @@ class IndexingMiddleware:
         try:
             # build an index of all we have (so we know what we have)
             all_revids = self.backend  # the backend is an iterator over all revids
-            self._modify_index(index, self.schemas[ALL_REVS], self.wikiname, all_revids, "add", procs, limitmb)
+            self._modify_index(
+                index,
+                self.schemas[ALL_REVS],
+                self.wikiname,
+                all_revids,
+                "add",
+                procs=procs,
+                limitmb=limitmb,
+                multisegment=multisegment,
+            )
             latest_backends_revids = self._find_latest_backends_revids(index)
         finally:
             index.close()
@@ -703,7 +717,14 @@ class IndexingMiddleware:
         index = storage.open_index(LATEST_REVS)
         try:
             self._modify_index(
-                index, self.schemas[LATEST_REVS], self.wikiname, latest_backends_revids, "add", procs, limitmb
+                index,
+                self.schemas[LATEST_REVS],
+                self.wikiname,
+                latest_backends_revids,
+                "add",
+                procs=procs,
+                limitmb=limitmb,
+                multisegment=multisegment,
             )
         finally:
             index.close()
