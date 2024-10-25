@@ -9,6 +9,7 @@ MoinMoin CLI - import content and user data from a moin 1.9 compatible storage i
 
 import os
 import re
+import sys
 import codecs
 import importlib
 from io import BytesIO
@@ -272,13 +273,20 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
         backend.store(meta, out)
 
     logging.info("PHASE4: Rebuilding the index ...")
-    drop_and_recreate_index(app.storage, procs=procs, limitmb=limitmb, multisegment=True)
+    msg = ""
+    try:
+        drop_and_recreate_index(app.storage, procs=procs, limitmb=limitmb, multisegment=True)
+    except Exception:
+        logging.exception("Index build failed. You can try to destroy, create and rebuild the index manually")
+        msg = " with errors"
 
-    logging.info("Finished conversion!")
+    logging.info(f"Finished conversion{msg}.")
     if hasattr(conv_out, "unknown_macro_list"):
         migr_statistics(unknown_macros=conv_out.unknown_macro_list)
     else:
         migr_statistics([])
+    if msg:
+        sys.exit(1)
 
 
 class KillRequested(Exception):
