@@ -2818,7 +2818,8 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
     except Exception:
         return _crash(item, oldrev, newrev)
 
-    return render_template("diff.html", item_name=item.name, fqname=item.fqname, diff_html=diff_html)
+    item_may = get_item_permissions(item.fqname, item)
+    return render_template("diff.html", item_name=item.name, fqname=item.fqname, diff_html=diff_html, may=item_may)
 
 
 def _diff_raw(item, revid1, revid2):
