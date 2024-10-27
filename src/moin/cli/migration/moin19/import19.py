@@ -143,6 +143,14 @@ def migr_statistics(unknown_macros):
     default=NAMESPACE_DEFAULT,
     help="target namespace, e.g. used for members of a wikifarm.",
 )
+@click.option(
+    "--latest-rev-only",
+    "-r",
+    is_flag=True,
+    required=False,
+    default=False,
+    help="Import only the latest revision of each item.",
+)
 @click.option("--procs", "-p", required=False, type=int, default=1, help="Number of processors the writer will use.")
 @click.option(
     "--limitmb",
@@ -152,7 +160,7 @@ def migr_statistics(unknown_macros):
     default=256,
     help="Maximum memory (in megabytes) each index-writer will use for the indexing pool.",
 )
-def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, limitmb=None):
+def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, limitmb=None, latest_rev_only=False):
     """Import content and user data from a moin wiki with version 1.9"""
 
     target_namespace = namespace
@@ -176,7 +184,11 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
 
     logging.info("PHASE2: Converting Pages and Attachments ...")
     for rev in PageBackend(
-        data_dir, deleted_mode=DELETED_MODE_KILL, default_markup="wiki", target_namespace=target_namespace
+        data_dir,
+        deleted_mode=DELETED_MODE_KILL,
+        default_markup="wiki",
+        target_namespace=target_namespace,
+        latest_rev_only=latest_rev_only,
     ):
         for user_name in user_names:
             if rev.meta[NAME][0] == user_name or rev.meta[NAME][0].startswith(user_name + "/"):
@@ -305,6 +317,7 @@ class PageBackend:
         default_markup="wiki",
         target_namespace="",
         item_category_regex=r"(?P<all>Category(?P<key>(?!Template)\S+))",
+        latest_rev_only=False,
     ):
         """
         :param path: storage path (data_dir)
@@ -319,6 +332,7 @@ class PageBackend:
         :param default_markup: used if a page has no #format line, moin 1.9's default
                                'wiki' and we also use this default here.
         :param target_namespace : target namespace
+        :param latest_rev_only: import only the latest revision of each item
         """
         self._path = path
         assert deleted_mode in (DELETED_MODE_KILL, DELETED_MODE_KEEP)
@@ -326,6 +340,7 @@ class PageBackend:
         self.format_default = default_markup
         self.target_namespace = target_namespace
         self.item_category_regex = re.compile(item_category_regex, re.UNICODE)
+        self.latest_rev_only = latest_rev_only
 
     def __iter__(self):
         pages_dir = os.path.join(self._path, "pages")
@@ -334,7 +349,13 @@ class PageBackend:
         for f in pages:
             itemname = unquoteWikiname(f)
             try:
-                item = PageItem(self, os.path.join(pages_dir, f), itemname, self.target_namespace)
+                item = PageItem(
+                    self,
+                    os.path.join(pages_dir, f),
+                    itemname,
+                    self.target_namespace,
+                    latest_rev_only=self.latest_rev_only,
+                )
             except KillRequested:
                 pass  # a message was already output
             except (OSError, AttributeError):
@@ -355,11 +376,12 @@ class PageItem:
     moin 1.9 page
     """
 
-    def __init__(self, backend, path, itemname, target_namespace):
+    def __init__(self, backend, path, itemname, target_namespace, latest_rev_only=False):
         self.backend = backend
         self.name = itemname
         self.path = path
         self.target_namespace = target_namespace
+        self.latest_rev_only = latest_rev_only
         try:
 
             logging.debug(f"Processing item {itemname}")
@@ -388,10 +410,18 @@ class PageItem:
         except OSError:
             fnames = []
         parent_id = None
+        if self.latest_rev_only and f"{self.current:08d}" in fnames:
+            fnames = [f"{self.current:08d}"]  # process only the current revision
         for fname in fnames:
             try:
                 revno = int(fname)
-                page_rev = PageRevision(self, revno, os.path.join(revisionspath, fname), self.target_namespace)
+                page_rev = PageRevision(
+                    self,
+                    revno,
+                    os.path.join(revisionspath, fname),
+                    self.target_namespace,
+                    latest_rev_only=self.latest_rev_only,
+                )
                 if parent_id:
                     page_rev.meta[PARENTID] = parent_id
                 parent_id = page_rev.meta[REVID]
@@ -428,7 +458,7 @@ class PageRevision:
     moin 1.9 page revision
     """
 
-    def __init__(self, item, revno, path, target_namespace):
+    def __init__(self, item, revno, path, target_namespace, latest_rev_only=False):
         item_name = item.name
         itemid = item.itemid
         editlog = item.editlog
@@ -493,7 +523,10 @@ class PageRevision:
         meta[SIZE] = size
         meta[ITEMID] = itemid
         meta[REVID] = make_uuid()
-        meta[REV_NUMBER] = revno
+        if latest_rev_only:
+            meta[REV_NUMBER] = 1
+        else:
+            meta[REV_NUMBER] = revno
         meta[NAMESPACE] = target_namespace
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         if LANGUAGE not in meta:

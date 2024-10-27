@@ -89,8 +89,10 @@ and index as described in the install section above using commands::
   moin create-instance
   moin index-create
 
-The import19 cli subcommand will read your 1.9 data_dir (pages, attachments and users),
-convert the data, write it to your moin2 storage and build the index::
+The import19 cli subcommand needs your 1.9 data directory with pages, attachments and users.
+Usually you set up moin2 on a new current operating system and copy the old data directory to
+a temporary location. The utility will read the moin1.9 data, convert it and write it to
+your moin2 storage and build the index::
 
   moin import19 --data_dir /<path to moin1.9>/wiki/data
 
@@ -110,6 +112,10 @@ convert the last revision of all pages with moin wiki markup to markdown::
 
  -m markdown
 
+With the `--latest-rev-only` option, you can omit the history of the pages and only import the
+latest revision of each item into the new wiki. This is particularly useful for testing the
+migration to moin2.
+
 The import19 process will create a wiki directory structure different from moin 1.9.
 There will be three namespaces under /wiki/data: "default", "userprofiles", and "users".
 Each namespace will have "data" and "meta" subdirectories. Additional custom namespaces can
@@ -127,6 +133,10 @@ part of the import will be time-consuming. You can use the following options to 
 
 Choose the values according to your available hardware resources. The defaults are 1 process and 256 mb memory.
 See the `Whoosh Tips for speeding up batch indexing docs <https://whoosh.readthedocs.io/en/latest/batch.html>`_ for details.
+
+Use the following command to get an overview of all available options::
+
+ moin import19 --help
 
 Testing
 -------
