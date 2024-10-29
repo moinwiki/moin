@@ -72,6 +72,21 @@ def get_item_names(name="", startswith="", kind="files", skiptag="", tag=""):
     return item_names
 
 
+def valid_item_name(name):
+    """return False if item_name not valid"""
+    if not isinstance(name, str):
+        return False
+    if name != name.strip():
+        return False
+    if name[0] in ["+", ".", "/"]:  # allow only absolute path
+        return False
+    if name.startswith("/") or name.endswith("/"):
+        return False
+    if "//" in name:  # empty ancestor name is invalid
+        return False
+    return True
+
+
 def extract_h1(item_name):
     """
     Return the first heading found in the item's content

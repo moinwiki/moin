@@ -516,6 +516,30 @@ Five random items:
 <<RandomItem(5)>>
 
 
+=== RandomQuote ===
+
+This macro randomly selects a quote from a list in the specified item (default: FortuneCookies in the current namespace).
+
+'''Markup:'''
+
+{{{
+A random Quote:
+
+Quote 1.: <<RandomQuote()>>
+
+Quote 2.: <<RandomQuote(help-en/FortuneCookies)>>
+
+}}}
+
+'''Result:'''
+
+Two random quotes:
+
+ Quote 1.: <<RandomQuote()>>
+
+ Quote 2.: <<RandomQuote(help-en/FortuneCookies)>>
+
+
 === ShowUserGroup ===
 
 This macro displays the contents of the metadata defined in the "usergroup" attribute. 
