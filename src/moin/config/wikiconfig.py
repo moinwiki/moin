@@ -144,11 +144,11 @@ class Config(DefaultConfig):
 
     # File Storage backends are recommended for most wikis
     uri = f"stores:fs:{data_dir}/%(backend)s/%(kind)s"  # use file system for storage
-    # uri = 'stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  # sqlite, 1 table per db
-    # uri = 'stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir)  # sqlite, 2 tables per db
+    # uri_sql_1 = 'stores:sqlite:{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  # sqlite, 1 table per db
+    # uri_sql_2 = 'stores:sqlite:{0}/mywiki_%(backend)s.db::%(kind)s'.format(data_dir)  # sqlite, 2 tables per db
     # sqlite via SQLAlchemy
-    # uri = 'stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  #  1 table per db
-    # uri = 'stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir)  # 2 tables per db
+    # uri_sqla_1 = 'stores:sqla:sqlite:///{0}/mywiki_%(backend)s_%(kind)s.db'.format(data_dir)  # 1 table per db
+    # uri_sqla_2 = 'stores:sqla:sqlite:///{0}/mywiki_%(backend)s.db:%(kind)s'.format(data_dir)  # 2 tables per db
 
     namespaces = {
         # maps namespace name -> backend name
@@ -166,18 +166,16 @@ class Config(DefaultConfig):
     }
     backends = {
         # maps backend name -> storage
-        # the feature to use different storage types for each namespace is not implemented so use None below.
-        # the storage type for all backends is set in 'uri' above,
-        # all values in `namespace` dict must be defined as keys in `backends` dict
-        "default": None,
-        "users": None,
-        "userprofiles": None,
+        # all values in `namespaces` dict must be defined as keys in `backends` dict
+        "default": uri,
+        "users": uri,
+        "userprofiles": uri,
         # help namespaces are optional
-        "help-common": None,
-        "help-en": None,
+        "help-common": uri,
+        "help-en": uri,
         # required for foo and bar namespaces as defined above
-        # 'foo': None,
-        # 'bar': None,
+        # 'foo': uri,
+        # 'bar': uri,
     }
     acls = {
         # maps namespace name -> acl configuration dict for that namespace
@@ -218,6 +216,9 @@ class Config(DefaultConfig):
             hierarchic=False,
         ),
     }
+
+    # TODO If there is a future change that requires wiki admins to merge this wikiconfig with the customized wikiconfig
+    # then remove the "uri" parameter in create mapping below and in storage/__init__.py.
     namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls)
     # define mapping of namespaces to unique item_roots (home pages within namespaces).
     root_mapping = {"users": "UserHome"}

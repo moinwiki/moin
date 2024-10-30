@@ -53,8 +53,10 @@ def backend_from_uri(uri):
 def create_mapping(uri, namespaces, backends, acls):
     namespace_mapping = namespaces.items()
     acl_mapping = acls.items()
+    # TODO "or uri" can be removed in the future, see TODO in config/wikiconfig.py
     backend_mapping = [
-        (backend_name, backend_from_uri(uri % dict(backend=backend_name, kind="%(kind)s"))) for backend_name in backends
+        (backend_name, backend_from_uri((backends[backend_name] or uri) % dict(backend=backend_name, kind="%(kind)s")))
+        for backend_name in backends
     ]
     # we need the longest mountpoints first, shortest last (-> '' is very last)
     namespace_mapping = sorted(namespace_mapping, key=lambda x: len(x[0]), reverse=True)
