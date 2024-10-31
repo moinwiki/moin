@@ -1,4 +1,5 @@
 # Copyright: 2009 MoinMoin:BastianBlank
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -8,6 +9,9 @@ MoinMoin - Arguments support for wiki formats
 import re
 
 from ._args import Arguments
+from moin import log
+
+logging = log.getLogger(__name__)
 
 # default parsing rules, splits on blank spaces, see parse() docstring for example
 # input: can be like: a b c d=e f="g h" i='j k' l="\"m\" n" o='\'p\' q'
@@ -86,6 +90,9 @@ def parse(input, parse_re=parse_re):
     ret = Arguments()
     for match in parse_re.finditer(input):
         key = match.group(1)
+        if (match.group(2) or match.group(3) or match.group(4)) is None:
+            logging.debug(f"No value supplied for {key} attribute, ignored.")
+            continue
         value = (
             (match.group(2) or match.group(3) or match.group(4))
             .encode("ascii", errors="backslashreplace")
