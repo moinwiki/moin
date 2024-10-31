@@ -818,6 +818,9 @@ extra features. The following is a table of MoinMoin's macros.
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<RandomItem(3)>>``                     | Inserts names of 3 random items                            |
 +-------------------------------------------+------------------------------------------------------------+
+| ``<<RandomQuote(Itemname)>>``             | Select a random quote from the given item,                 |
+|                                           | or from FortuneCookies if omitted.                         |
++-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowIcons()>>``                       | Displays all icons in /static/img/icons directory          |
 +-------------------------------------------+------------------------------------------------------------+
 | ``<<ShowSmileys()>>``                     | Displays available smileys and the corresponding markup    |

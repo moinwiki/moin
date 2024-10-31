@@ -1,0 +1,28 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "1ae8372681474a6bafc162078dc6679d",
+  "externallinks": [
+    "https://moin-20.readthedocs.io/en/latest/admin/install.html"
+  ],
+  "itemid": "237f55f536a14767b5b0f4942a8bb1d8",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "language": "en",
+  "mtime": 1730226097,
+  "name": [
+    "FortuneCookies"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "2ee6b5b42d304ebcab3e7874df973aa7",
+  "sha1": "8ceccfe52b6914aeb48eef5acef9163ac074ec6c",
+  "size": 407,
+  "summary": "",
+  "tags": [],
+  "wikiname": "MyMoinMoin"
+}
