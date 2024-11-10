@@ -5,6 +5,7 @@
 # Copyright: 2007 MoinMoin:ReimarBauer
 # Copyright: 2008 MoinMoin:ChristopherDenter
 # Copyright: 2023 MoinMoin project
+# Copyright: 2024 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -187,6 +188,21 @@ def ParentItemName(itemname):
         if pos > 0:
             return itemname[:pos]
     return ""
+
+
+def AllParentNames(itemname):
+    """
+    Return a list of all parent and grandparent names for the given item_name
+
+    :param itemname: the absolute item name (unicode)
+    :rtype: list
+    :returns: a list of all parent item names (or empty string for toplevel items)
+    """
+    name_segments = itemname.split("/")
+    result_names = []
+    for idx in range(len(name_segments) - 1, 0, -1):
+        result_names.append("/".join(name_segments[:idx]))
+    return result_names
 
 
 #############################################################################

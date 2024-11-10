@@ -13,6 +13,7 @@ import sys
 import codecs
 import importlib
 from io import BytesIO
+
 import click
 
 from flask.cli import FlaskGroup
@@ -45,6 +46,7 @@ from moin.converters import default_registry
 from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
+from moin.wikiutil import ParentItemName, AllParentNames
 
 from moin import log
 
@@ -80,13 +82,14 @@ FORMAT_TO_CONTENTTYPE = {
     "text/csv": "text/csv;charset=utf-8",
     "docbook": "application/docbook+xml;charset=utf-8",
 }
-MIGR_STAT_KEYS = ["revs", "items", "attachments", "users", "missing_user", "missing_file", "del_item"]
+MIGR_STAT_KEYS = ["revs", "items", "attachments", "parents", "users", "missing_user", "missing_file", "del_item"]
 
 special_users_lower = [user.lower() for user in SPECIAL_USERS]
 
 last_moin19_rev = {}
 user_names = []
 custom_namespaces = []
+item_last = {"parent_name": "", "item_name": "", "namespace": ""}
 migr_warn_max = 10
 
 migr_stat = {key: 0 for key in MIGR_STAT_KEYS}
@@ -110,10 +113,12 @@ def migr_logging(msg_id, log_msg):
 
 def migr_statistics(unknown_macros):
     logging.info("Migration statistics:")
-    logging.info(f"Users:       {migr_stat['users']:6d}")
-    logging.info(f"Items:       {migr_stat['items']:6d}")
-    logging.info(f"Revisions:   {migr_stat['revs']:6d}")
-    logging.info(f"Attachments: {migr_stat['attachments']:6d}")
+    logging.info(f"Users:          {migr_stat['users']:6d}")
+    logging.info(f"Items:          {migr_stat['items']:6d}")
+    logging.info(f"Revisions:      {migr_stat['revs']:6d}")
+    logging.info(f"Attachments:    {migr_stat['attachments']:6d}")
+    if migr_stat["parents"]:
+        logging.info(f"Parents added:  {migr_stat['parents']:6d}")
 
     for message in ["missing_user", "missing_file", "del_item"]:
         if migr_stat[message] > 0:
@@ -121,6 +126,38 @@ def migr_statistics(unknown_macros):
 
     if len(unknown_macros) > 0:
         logging.info(f"Warnings:    {len(unknown_macros):6d} - unknown macros {str(unknown_macros)[1:-1]}")
+
+
+def check_parents(item_name, namespace):
+    """Check if all parents and grandparents exist, return list of missing parent names"""
+    global item_last
+    missing_parents = set()
+    parent = ParentItemName(item_name)
+    if (
+        parent != ""
+        and parent != item_last["parent_name"]
+        and (item_name != item_last["item_name"] or namespace != item_last["namespace"])
+    ):
+        for name in AllParentNames(item_name):
+            if name not in last_moin19_rev.keys() or last_moin19_rev[name][1] != namespace:
+                missing_parents.add((namespace, name))
+    item_last = {"parent_name": parent, "item_name": item_name, "namespace": namespace}
+    return missing_parents
+
+
+def add_missing_parents(missing_parents):
+    """Add all missing parent items with a Moin item that only contains a comment."""
+    for namespace, name in sorted(missing_parents):
+        query = {NAME_EXACT: name, NAMESPACE: namespace}
+        item = app.storage.get_item(**query)
+        item.meta[COMMENT] = "created by import19"
+        item.meta[CONTENTTYPE] = "text/x.moin.wiki;charset=utf-8"
+        item.meta[ITEMTYPE] = ITEMTYPE_DEFAULT
+        item.meta[REV_NUMBER] = 1
+        item.meta[LANGUAGE] = app.cfg.language_default
+        data = b"## created by import19"
+        item.store_revision(item.meta, BytesIO(data), overwrite=False)
+        logging.debug(f"missing parent added for namespace: {namespace} name: {name}")
 
 
 @cli.command("import19", help="Import content and user data from a moin 1.9 wiki")
@@ -172,6 +209,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
     users_itemlist = set()
     global custom_namespaces
     custom_namespaces = namespaces()
+    missing_parents = set()
 
     logging.info("PHASE1: Converting Users ...")
     user_dir = os.path.join(data_dir, "user")
@@ -228,6 +266,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
                     item_name.encode("ascii", errors="replace"), namespace, revno
                 )
             )
+        missing_parents.update(check_parents(item_name, namespace))
         if namespace == "":
             namespace = "default"
         meta, data = backend.retrieve(namespace, revno)
@@ -284,7 +323,13 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
         out.seek(0)
         backend.store(meta, out)
 
-    logging.info("PHASE4: Rebuilding the index ...")
+    logging.info("PHASE4: Adding missing parents ...")
+
+    if len(missing_parents):
+        add_missing_parents(missing_parents)
+        migr_stat["parents"] = len(missing_parents)
+
+    logging.info("PHASE5: Rebuilding the index ...")
     msg = ""
     try:
         drop_and_recreate_index(app.storage, procs=procs, limitmb=limitmb, multisegment=True)
