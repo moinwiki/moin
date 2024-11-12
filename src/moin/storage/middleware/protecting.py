@@ -132,13 +132,34 @@ class ProtectingMiddleware:
             q = fqname.query
         else:
             raise ValueError("need itemid or fqname")
-        item = self.get_item(**q)
-        acl = item.acl
-        fqname = item.fqname
-        if acl is not None:
-            return [acl]
-        acl_cfg = self._get_configured_acls(fqname)
-        if acl_cfg["hierarchic"]:
+
+        meta_available = False
+        if self.meta:
+            """use meta data if available to avoid index query"""
+            meta_keys = [*self.meta.keys()]
+            if (
+                itemid
+                and fqname
+                and FQNAMES in meta_keys
+                and ITEMID in meta_keys
+                and itemid == self.meta[ITEMID]
+                and fqname == self.meta[FQNAMES][0]
+            ):
+                meta_available = True
+                if ACL in meta_keys:
+                    acl = self.meta[ACL]
+                    return [acl]
+
+        item = None
+        if not meta_available or self._get_configured_acls(fqname)["hierarchic"]:
+            """self.meta is not valid or namespace uses hierarchic acls and we need item parentids"""
+            item = self.get_item(**q)
+            acl = item.acl
+            fqname = item.fqname
+            if acl is not None:
+                return [acl]
+
+        if self._get_configured_acls(fqname)["hierarchic"]:
             # check parent(s), recursively
             parentids = item.parentids
             if parentids:
