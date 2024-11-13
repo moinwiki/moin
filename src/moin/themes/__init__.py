@@ -339,7 +339,7 @@ class ThemeSupport:
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
         if fqname.field != NAME_EXACT:
-            return [(fqname, fqname, bool(self.storage.get_item(**fqname.query)))]
+            return [(fqname, fqname)]
         namespace = segment1_namespace = fqname.namespace
         item_name = fqname.value
         if not item_name:
@@ -358,7 +358,7 @@ class ThemeSupport:
         Assemble the path breadcrumbs (a.k.a.: trail)
 
         :rtype: list
-        :returns: path breadcrumbs items in tuple (wiki_name, item_name, url, exists, err)
+        :returns: path breadcrumbs items in tuple (wiki_name, item_name, url, aliases, err)
         """
         user = self.user
         breadcrumbs = []
