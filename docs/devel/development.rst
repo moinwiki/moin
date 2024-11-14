@@ -107,9 +107,7 @@ add more tools, exercise tools
 * create local docs::
 
     ./m docs  # Windows: m docs
-* install the pre-commit hook::
 
-    pre-commit install  # pre-commit is used for code linting / auto-format
 * set options on your favorite editor or IDE
 
   - convert tabs to 4 spaces
@@ -120,6 +118,29 @@ add more tools, exercise tools
   consider printing a cheatsheet
 * if you want a Python IDE, try https://www.jetbrains.com/pycharm/ Free Community Edition
 * join #moin-dev IRC channel; ask questions, learn what other developers are doing
+
+install pre-commit hooks
+------------------------
+Setup Black and Ruff pre-commit hooks::
+
+    pre-commit install  # pre-commit is used for code linting / auto-format
+
+Black and Ruff will inspect your changes as part of Git commit processing. If your code
+change violates Black's coding standards (a changed line of code is > 120 characters) Black will
+update the file and fail the commit. Your repo will have 2 versions of the offending file:
+the staged file with your changes and an unstaged version with Black's corrections.
+
+To fix, unstage the file to merge your channges into Black's version, then restage the
+file and rerun commit.
+
+If Ruff finds an error, it will create an error message and fail the commit. In this case,
+unstage the offending file, fix the error, restage the file and rerun commit.
+
+Note that these same checks are made as part of GitHub push-merge processing.
+If there is an error the merge will fail. Fix the error, restage the file, and commit.
+
+Read more about Black at https://black.readthedocs.io/en/stable/index.html.
+Read more about Ruff at https://github.com/astral-sh/ruff?tab=readme-ov-file#ruff.
 
 review configuration options
 ----------------------------
