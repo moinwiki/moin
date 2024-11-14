@@ -594,7 +594,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-form .moin-radio input { width: 1em; }
 
 .moin-form .submit-buttons{ display: flex; column-gap: 8pt; justify-content: end;
-    margin: 8pt 0; } 
+    margin: 8pt 0; }
 
 #options dd { width: 10%; }
 #options dt { width: 60%; max-width: 40em; }
