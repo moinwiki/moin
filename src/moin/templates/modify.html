@@ -77,9 +77,9 @@
                 POSTs originate from their respective applets.
             #}
             {% if not form['content_form'].is_draw %}
-            <dl>
-                {{ forms.render(form['comment']) }}
-            </dl>
+                <dl>
+                    {{ forms.render(form['comment']) }}
+                </dl>
             {% endif %}
 
             {{ meta_editor(form['meta_form'], may_admin) }}
@@ -93,7 +93,7 @@
                 POSTs originate from their respective applets.
             #}
             {% if not form['content_form'].is_draw %}
-                
+
                 <div class="submit-buttons">
                     {% set warning = "" %}
                     {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
