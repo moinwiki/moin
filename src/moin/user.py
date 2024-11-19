@@ -762,8 +762,19 @@ class User:
         trail_session = session.get("trail", [])
         trail = []
         for entry in trail_session:
-            aliases = [CompositeName(*alias) for alias in entry[1]]
-            trail.append((entry[0], aliases))
+            if isinstance(entry, tuple) and len(entry) == 2:
+                item_name = entry[0]
+                try:
+                    aliases = [CompositeName(*alias) for alias in entry[1]]
+                except TypeError:
+                    aliases = []
+            elif isinstance(entry, str):  # old style
+                item_name = entry
+                aliases = []
+            else:
+                logging.warning(f"Invalid page trail entry, type is {type(entry)}.")
+                continue
+            trail.append((item_name, aliases))
         return trail
 
     # Other ------------------------------------------------------------------
