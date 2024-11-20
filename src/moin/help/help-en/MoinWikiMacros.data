@@ -366,30 +366,30 @@ the "startswith" parameter is more efficient than the equivalent "regex" express
 {{{
 Those items containing the string "Text" anywhere in the full path name:
 
-<<ItemList(item="OtherTextItems", regex="Text")>>
+<<ItemList(item="help-en/OtherTextItems", regex="Text")>>
 
 Those items containing the string "Text" only in the descendent's name:
 
-<<ItemList(item="OtherTextItems", regex="^.*/.*Text")>>
+<<ItemList(item="help-en/OtherTextItems", regex="^.*/.*Text")>>
 
 Those items containing a vowel as the 3rd-to-last character:
 
-<<ItemList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
+<<ItemList(item="help-en/OtherTextItems", regex="(?i)[aeiou].{2}$")>>
 }}}
 
 '''Result:'''
 
 Those items containing the string "Text" anywhere in the full path name:
 
-<<ItemList(item="OtherTextItems", regex="Text")>>
+<<ItemList(item="help-en/OtherTextItems", regex="Text")>>
 
 Those items containing the string "Text" only in the descendent's name:
 
-<<ItemList(item="OtherTextItems", regex="^.*/.*Text")>>
+<<ItemList(item="help-en/OtherTextItems", regex="^.*/.*Text")>>
 
 Those items containing a vowel as the 3rd-to-last character:
 
-<<ItemList(item="OtherTextItems", regex="(?i)[aeiou].{2}$")>>
+<<ItemList(item="help-en/OtherTextItems", regex="(?i)[aeiou].{2}$")>>
 
 
 ===== The "display" parameter =====
@@ -402,19 +402,19 @@ displays the subitems of help-en/creole.
 {{{
 Displayed using "FullPath" (the default, see examples above):
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="FullPath")>>
 
 Displayed using "ChildPath":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="ChildPath")>>
 
 Displayed using "ChildName":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="ChildName")>>
 
 Displayed using "UnCameled":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="UnCameled")>>
 
 Displayed using "ItemTitle":
 
@@ -425,19 +425,19 @@ Displayed using "ItemTitle":
 
 Displayed using "FullPath":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="FullPath")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="FullPath")>>
 
 Displayed using "ChildPath":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildPath")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="ChildPath")>>
 
 Displayed using "ChildName":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="ChildName")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="ChildName")>>
 
 Displayed using "UnCameled":
 
-<<ItemList(item="OtherTextItems", regex="PlainText", display="UnCameled")>>
+<<ItemList(item="help-en/OtherTextItems", regex="PlainText", display="UnCameled")>>
 
 Displayed using "ItemTitle":
 

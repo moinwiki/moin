@@ -222,7 +222,7 @@ class MacroPageLinkListBase(MacroBlockBase):
             url = str(iri.Iri(scheme="wiki", authority="", path="/" + fqname))
 
             if display == "FullPath":
-                linkname = pagename
+                linkname = fqname
             elif display == "ChildPath":
                 index = fqname.rfind("/")
                 if index == -1:
