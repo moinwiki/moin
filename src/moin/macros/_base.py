@@ -239,7 +239,7 @@ class MacroPageLinkListBase(MacroBlockBase):
             elif display == "ItemTitle":
                 linkname = extract_h1(pagename.fullname)
             else:
-                err_msg = _('Unrecognized display value "{display}".').format(display=display)
+                err_msg = _('Unrecognized "display" value "{display}".').format(display=display)
                 return fail_message(err_msg, alternative)
 
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])

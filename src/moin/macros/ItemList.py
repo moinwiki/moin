@@ -69,6 +69,7 @@ from flask import g as flaskg
 from moin.i18n import _
 from moin.utils.interwiki import split_fqname
 from moin.macros._base import MacroPageLinkListBase, get_item_names, fail_message
+from moin.converters._args_wiki import parse as parse_arguments
 
 
 class Macro(MacroPageLinkListBase):
@@ -83,50 +84,42 @@ class Macro(MacroPageLinkListBase):
         skiptag = ""
         tag = ""
 
-        # process input
-        args = []
+        # process arguments
         if arguments:
-            args = arguments[0].split(",")
-        for arg in args:
-            try:
-                key, val = (x.strip() for x in arg.split("="))
-            except ValueError:
-                err_msg = _(
-                    'ItemList macro: Argument "{arg}" does not follow <key>=<val> format '
-                    "(arguments, if more than one, must be comma-separated)."
-                ).format(arg=arg)
-                return fail_message(err_msg, alternative)
+            args = parse_arguments(arguments[0])
 
-            if len(val) < 2 or (val[0] != "'" and val[0] != '"') and val[-1] != val[0]:
-                err_msg = _("The key's value must be bracketed by matching quotes.")
-                return fail_message(err_msg, alternative)
-
-            val = val[1:-1]  # strip out the doublequote characters
-
-            if key == "item":
-                item = val
-            elif key == "startswith":
-                startswith = val
-            elif key == "regex":
-                regex = val
-            elif key == "ordered":
-                if val == "False":
-                    ordered = False
-                elif val == "True":
-                    ordered = True
-                else:
-                    err_msg = _('The value must be "True" or "False". (got "{val}")').format(val=val)
+            for key, val in args.items():
+                if not key and val:
+                    err_msg = _(
+                        'ItemList macro: Argument "{arg}" does not follow <key>=<val> format '
+                        "(arguments, if more than one, must be comma-separated)."
+                    ).format(arg=val)
                     return fail_message(err_msg, alternative)
-
-            elif key == "display":
-                display = val  # let 'create_pagelink_list' throw an exception if needed
-            elif key == "skiptag":
-                skiptag = val
-            elif key == "tag":
-                tag = val
-            else:
-                err_msg = _('Unrecognized key "{key}".').format(key=key)
-                return fail_message(err_msg, alternative)
+                if key == "item":
+                    item = val
+                elif key == "startswith":
+                    startswith = val
+                elif key == "regex":
+                    regex = val
+                elif key == "ordered":
+                    if val == "False":
+                        ordered = False
+                    elif val == "True":
+                        ordered = True
+                    else:
+                        err_msg = _('The value for "{key}" must be "True" or "False", got "{val}".').format(
+                            key=key, val=val
+                        )
+                        return fail_message(err_msg, alternative)
+                elif key == "display":
+                    display = val  # let 'create_pagelink_list' throw an exception if needed
+                elif key == "skiptag":
+                    skiptag = val
+                elif key == "tag":
+                    tag = val
+                else:
+                    err_msg = _('Unrecognized key "{key}".').format(key=key)
+                    return fail_message(err_msg, alternative)
 
         # use curr item if not specified
         if item is None:
