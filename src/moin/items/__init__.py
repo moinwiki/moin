@@ -1357,7 +1357,7 @@ class Item:
 
         return query
 
-    def get_index(self, startswith=None, selected_groups=None):
+    def get_index(self, startswith=None, selected_groups=None, regex=None):
         """
         Get index enties for descendents of the matching items
 
@@ -1378,7 +1378,7 @@ class Item:
         )
         if not fqname.value.startswith(NAMESPACE_ALL + "/") and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
-        revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None)
+        revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None, regex=regex)
         return self.make_flat_index(revs, isglobalindex)
 
 

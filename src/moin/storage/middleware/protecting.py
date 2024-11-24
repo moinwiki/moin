@@ -192,7 +192,7 @@ class ProtectingMiddleware:
             if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
-    def search_meta(self, q, idx_name=LATEST_REVS, **kw):
+    def search_meta(self, q, idx_name=LATEST_REVS, regex=None, **kw):
         """
         Yield an item's metadata, skipping any items where read permission is denied.
 
@@ -200,7 +200,7 @@ class ProtectingMiddleware:
         of the items in namespace subject to query restrictions. This is useful for reports
         such as Global Index, Global Tags, Wanted Items, Orphaned Items, etc.
         """
-        for meta in self.indexer.search_meta(q, idx_name, **kw):
+        for meta in self.indexer.search_meta(q, idx_name, regex=regex, **kw):
             meta[FQNAMES] = gen_fqnames(meta)
             result = self.may_read_rev(meta)
             if result:
