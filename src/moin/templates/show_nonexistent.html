@@ -1,7 +1,7 @@
 {% extends theme("layout.html") %}
 {% block content %}
-    <h1>{{ _("Item not found") }}</h1>
+    <h1>{{ _("Item not found or access denied") }}</h1>
     <p>
-        {{ _("Item '{name}' does not exist.").format(name=item_name) }}
+        {{ _("Item '{name}' does not exist or you do not have permission to access it.").format(name=item_name) }}
     </p>
 {% endblock %}

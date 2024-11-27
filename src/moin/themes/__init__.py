@@ -73,8 +73,10 @@ def render_template(template, **context):
 def themed_error(e):
     item_name = request.view_args.get("item_name", "")
     if e.code == 403:
-        title = L_("Access Denied")
-        description = L_("You are not allowed to access this resource.")
+        title = L_("Item not found or access denied")
+        description = L_("Item '{name}' does not exist or you do not have permission to access it.").format(
+            name=item_name
+        )
         if e.description.startswith(" "):
             # leading blank indicates supplemental info, not standard werkzeug message
             description += e.description
