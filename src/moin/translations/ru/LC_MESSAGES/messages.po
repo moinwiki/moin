@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moin 2.0\n"
 "Report-Msgid-Bugs-To: Russian <moin-user@lists.sourceforge.net>\n"
-"POT-Creation-Date: 2024-11-27 09:14+0100\n"
+"POT-Creation-Date: 2024-11-29 17:35+0100\n"
 "PO-Revision-Date: 2011-12-04 17:55+0400\n"
 "Last-Translator: S Kinder <skinder0@gmail.com>\n"
 "Language: ru\n"
@@ -475,9 +475,8 @@ msgid "User name"
 msgstr "Имя пользователя"
 
 #: src/moin/apps/admin/templates/admin/userbrowser.html:15
-#, fuzzy
 msgid "Display name"
-msgstr "Показать метаданные"
+msgstr ""
 
 #: src/moin/apps/admin/templates/admin/userbrowser.html:16
 msgid "Email address"
@@ -961,9 +960,8 @@ msgid "User Settings"
 msgstr ""
 
 #: src/moin/apps/frontend/views.py:2436
-#, fuzzy
 msgid "This name is already in use: "
-msgstr "Этот адрес электронной почты уже кем-то используется"
+msgstr ""
 
 #: src/moin/apps/frontend/views.py:2437
 msgid "The Display-Name contains invalid characters: "
@@ -1335,6 +1333,10 @@ msgstr ""
 
 #: src/moin/converters/include.py:321
 msgid "Error: no items found matching \"<<Include({0})>>\""
+msgstr ""
+
+#: src/moin/converters/macro.py:60
+msgid "Error: invalid macro name."
 msgstr ""
 
 #: src/moin/converters/macro.py:69
@@ -1733,33 +1735,29 @@ msgstr ""
 msgid "Icon not rendered, invalid name"
 msgstr ""
 
-#: src/moin/macros/ItemList.py:94
+#: src/moin/macros/ItemList.py:93
 msgid ""
 "ItemList macro: Argument \"{arg}\" does not follow <key>=<val> format (arguments, if more than one, must be "
 "comma-separated)."
 msgstr ""
 
-#: src/moin/macros/ItemList.py:101
-msgid "The key's value must be bracketed by matching quotes."
+#: src/moin/macros/ItemList.py:110
+msgid "The value for \"{key}\" must be \"True\" or \"False\", got \"{val}\"."
 msgstr ""
 
-#: src/moin/macros/ItemList.py:118
-msgid "The value must be \"True\" or \"False\". (got \"{val}\")"
-msgstr ""
-
-#: src/moin/macros/ItemList.py:128
+#: src/moin/macros/ItemList.py:121
 msgid "Unrecognized key \"{key}\"."
 msgstr ""
 
-#: src/moin/macros/ItemList.py:140 src/moin/macros/RandomQuote.py:53
+#: src/moin/macros/ItemList.py:133 src/moin/macros/RandomQuote.py:53
 msgid "Item does not exist or read access blocked by ACLs: {0}"
 msgstr ""
 
-#: src/moin/macros/ItemList.py:149
+#: src/moin/macros/ItemList.py:142
 msgid "Error in regex {0!r}: {1}"
 msgstr ""
 
-#: src/moin/macros/ItemList.py:158
+#: src/moin/macros/ItemList.py:151
 msgid "No matching items were found"
 msgstr ""
 
@@ -1892,7 +1890,7 @@ msgid "Block macros cannot be used inline"
 msgstr ""
 
 #: src/moin/macros/_base.py:242
-msgid "Unrecognized display value \"{display}\"."
+msgid "Unrecognized \"display\" value \"{display}\"."
 msgstr ""
 
 #: src/moin/mail/sendmail.py:54
@@ -3176,79 +3174,4 @@ msgstr ""
 #: src/moin/utils/show_time.py:34
 msgid "years"
 msgstr ""
-
-#~ msgid "Item '{bad_name}' does not exist."
-#~ msgstr ""
-
-#~ msgid "Your display name (informational)"
-#~ msgstr ""
-
-#~ msgid "The username '{name}' is already in use."
-#~ msgstr ""
-
-#~ msgid "For a password a minimum length of {min_length:d} characters is required."
-#~ msgstr ""
-
-#~ msgid "Error: invalid macro name."
-#~ msgstr ""
-
-#~ msgid "An edit conflict has occurred, edit this item again to resolve conflicts."
-#~ msgstr ""
-
-#~ msgid "GetVal: invalid parameters, try <<GetVal(DictName, key)>>"
-#~ msgstr ""
-
-#~ msgid "GetVal: permission to read denied: "
-#~ msgstr ""
-
-#~ msgid "GetVal: dict not found: "
-#~ msgstr ""
-
-#~ msgid "GetVal macro is invalid, {item_name} missing key: {key_name}"
-#~ msgstr ""
-
-#~ msgid "Icon not rendered, verify name is valid"
-#~ msgstr ""
-
-#~ msgid "ItemList macro: The key's value must be bracketed by matching quotes."
-#~ msgstr ""
-
-#~ msgid "ItemList macro: The value must be \"True\" or \"False\". (got \"{val}\")"
-#~ msgstr ""
-
-#~ msgid "ItemList macro: Unrecognized key \"{key}\"."
-#~ msgstr ""
-
-#~ msgid "ItemList macro: Error in regex {0!r}: {1}"
-#~ msgstr ""
-
-#~ msgid "<ItemList macro: No matching items were found.>"
-#~ msgstr ""
-
-#~ msgid "MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
-#~ msgstr ""
-
-#~ msgid "TitleList macro does not have any arguments."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Someone else updated '{item_name}' after your edit lock timed"
-#~ " out. If you click 'Save', conflicting changes must be "
-#~ "manually merged. Click 'Cancel' to discard changes."
-#~ msgstr ""
-
-#~ msgid "The item '{item_name}' does not exist."
-#~ msgstr ""
-
-#~ msgid "Item '{name}' does not exist."
-#~ msgstr ""
-
-#~ msgid "Item not found"
-#~ msgstr ""
-
-#~ msgid "Access Denied"
-#~ msgstr ""
-
-#~ msgid "You are not allowed to access this resource."
-#~ msgstr "Вам запрещен доступ к этому ресурсу"
 
