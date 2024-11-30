@@ -133,20 +133,15 @@ class Macro(MacroPageLinkListBase):
                 err_msg = _("Item does not exist or read access blocked by ACLs: {0}").format(item)
                 return fail_message(err_msg, alternative)
 
-        # process subitems
-        children = get_item_names(item, startswith=startswith, skiptag=skiptag, tag=tag)
         if regex:
             try:
-                regex_re = re.compile(regex, re.IGNORECASE)
+                re.compile(regex, re.IGNORECASE)
             except re.error as err:
                 err_msg = _("Error in regex {0!r}: {1}").format(regex, err)
                 return fail_message(err_msg, alternative)
 
-            newlist = []
-            for child in children:
-                if regex_re.search(child.fullname):
-                    newlist.append(child)
-            children = newlist
+        children = get_item_names(item, startswith=startswith, skiptag=skiptag, tag=tag, regex=regex)
+
         if not children:
             return fail_message(_("No matching items were found"), alternative, severity="attention")
 

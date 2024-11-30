@@ -51,6 +51,7 @@ usually it is even just the small and thus quick latest-revs index.
 
 import gc
 import os
+import re
 import sys
 import shutil
 import time
@@ -889,14 +890,18 @@ class IndexingMiddleware:
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_meta(self, q, idx_name=LATEST_REVS, **kw):
+    def search_meta(self, q, idx_name=LATEST_REVS, regex=None, **kw):
         """
         Search with query q, yield Revision metadata from index.
         """
         with self.ix[idx_name].searcher() as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
+            if regex:
+                regex_re = re.compile(regex, re.IGNORECASE)
             for hit in searcher.search(q, **kw):
+                if regex and not regex_re.search(hit[NAME][0]):
+                    continue
                 meta = hit.fields()
                 yield meta
 

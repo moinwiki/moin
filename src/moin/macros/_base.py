@@ -19,7 +19,7 @@ from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import TAGS
 
 
-def get_item_names(name="", startswith="", kind="files", skiptag="", tag=""):
+def get_item_names(name="", startswith="", kind="files", skiptag="", tag="", regex=None):
     """
     For the specified item, return the fullname of matching descendents.
 
@@ -49,7 +49,7 @@ def get_item_names(name="", startswith="", kind="files", skiptag="", tag=""):
         item = Item.create(name)
     except AccessDenied:
         abort(403)
-    dirs, files = item.get_index(startswith)
+    dirs, files = item.get_index(startswith, regex=regex)
     item_names = []
     if not kind or kind == "files" or kind == "both":
         for item in files:
@@ -213,8 +213,7 @@ class MacroPageLinkListBase(MacroBlockBase):
                   ItemTitle : Use the title from the first header in the linked page
         """
 
-        page_list = moin_page.list(attrib={moin_page.item_label_generate: ordered and "ordered" or "unordered"})
-
+        children = []
         for pagename in pagenames:
 
             fqname = pagename.fullname
@@ -245,7 +244,10 @@ class MacroPageLinkListBase(MacroBlockBase):
             pagelink = moin_page.a(attrib={xlink.href: url}, children=[linkname])
             item_body = moin_page.list_item_body(children=[pagelink])
             item = moin_page.list_item(children=[item_body])
-            page_list.append(item)
+            children.append(item)
+        page_list = moin_page.list(
+            attrib={moin_page.item_label_generate: ordered and "ordered" or "unordered"}, children=children
+        )
 
         return page_list
 
