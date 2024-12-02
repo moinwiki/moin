@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: moin 2.0.0a\n"
+"Project-Id-Version: moin 2.0.0b\n"
 "Report-Msgid-Bugs-To: English <moin-user@python.org>\n"
-"POT-Creation-Date: 2024-11-27 09:14+0100\n"
+"POT-Creation-Date: 2024-11-29 17:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1329,6 +1329,10 @@ msgstr ""
 msgid "Error: no items found matching \"<<Include({0})>>\""
 msgstr ""
 
+#: src/moin/converters/macro.py:60
+msgid "Error: invalid macro name."
+msgstr ""
+
 #: src/moin/converters/macro.py:69
 msgid "<<{macro_name}: execution failed [{error_msg}] (see also the log)>>"
 msgstr ""
@@ -1725,33 +1729,29 @@ msgstr ""
 msgid "Icon not rendered, invalid name"
 msgstr ""
 
-#: src/moin/macros/ItemList.py:94
+#: src/moin/macros/ItemList.py:93
 msgid ""
 "ItemList macro: Argument \"{arg}\" does not follow <key>=<val> format (arguments, if more than one, must be "
 "comma-separated)."
 msgstr ""
 
-#: src/moin/macros/ItemList.py:101
-msgid "The key's value must be bracketed by matching quotes."
+#: src/moin/macros/ItemList.py:110
+msgid "The value for \"{key}\" must be \"True\" or \"False\", got \"{val}\"."
 msgstr ""
 
-#: src/moin/macros/ItemList.py:118
-msgid "The value must be \"True\" or \"False\". (got \"{val}\")"
-msgstr ""
-
-#: src/moin/macros/ItemList.py:128
+#: src/moin/macros/ItemList.py:121
 msgid "Unrecognized key \"{key}\"."
 msgstr ""
 
-#: src/moin/macros/ItemList.py:140 src/moin/macros/RandomQuote.py:53
+#: src/moin/macros/ItemList.py:133 src/moin/macros/RandomQuote.py:53
 msgid "Item does not exist or read access blocked by ACLs: {0}"
 msgstr ""
 
-#: src/moin/macros/ItemList.py:149
+#: src/moin/macros/ItemList.py:142
 msgid "Error in regex {0!r}: {1}"
 msgstr ""
 
-#: src/moin/macros/ItemList.py:158
+#: src/moin/macros/ItemList.py:151
 msgid "No matching items were found"
 msgstr ""
 
@@ -1884,7 +1884,7 @@ msgid "Block macros cannot be used inline"
 msgstr ""
 
 #: src/moin/macros/_base.py:242
-msgid "Unrecognized display value \"{display}\"."
+msgid "Unrecognized \"display\" value \"{display}\"."
 msgstr ""
 
 #: src/moin/mail/sendmail.py:54
