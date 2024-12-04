@@ -65,7 +65,6 @@ def _Help():
 
 
 cli.add_command(create_instance.cli_CreateInstance)
-cli.add_command(create_instance.cli_BuildInstance)
 
 cli.add_command(index.cli_IndexCreate)
 cli.add_command(index.IndexBuild)
