@@ -29,7 +29,6 @@ Optionally, populate the empty wiki with additional commands
 
 import os
 import shutil
-import subprocess
 import click
 
 from flask.cli import FlaskGroup
@@ -66,10 +65,14 @@ def CreateInstance(full, **kwargs):
     """
     Create wikiconfig and wiki instance directories and copy required files.
     """
+    path = kwargs.get("path", None)
+    if full and path:
+        logging.error("The parameter full and path are mutually exclusive.")
+        return False
     logging.debug("Instance creation started.")
     config_path = os.path.dirname(config.__file__)
     contrib_path = os.path.dirname(contrib.__file__)
-    path = kwargs.get("path", None)
+
     if not path:
         path = os.getcwd()
     if os.path.exists(path):
@@ -93,19 +96,14 @@ def CreateInstance(full, **kwargs):
     logging.info("Instance creation finished.")
 
     if full:
-        if path != os.getcwd():
-            os.chdir(path)
-        subprocess.call("moin build-instance", shell=True)
+        build_instance()
 
 
-@cli.command("build-instance", hidden=True)
-def cli_BuildInstance():
+def build_instance():
     """
     Create and build index, load help data and welcome page.
-    This command is hidden in help. For internal use in "create-instance --full" only!
     """
     logging.info("Build Instance started.")
-    logging.debug("CWD: %s", os.getcwd())
     if index.IndexCreate():
         modify_item.LoadHelp(namespace="help-en", path_to_help=None)
         modify_item.LoadHelp(namespace="help-common", path_to_help=None)
