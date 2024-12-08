@@ -202,7 +202,7 @@ def _loadPluginModule(cfg):
     cfg._plugin_modules = []
     for pdir in cfg.plugin_dirs:
         assert isinstance(pdir, str)
-        modname = "moin_p_{}".format(hashlib.new("sha1", pdir.encode()).hexdigest())
+        modname = "moin_p_{}".format(hashlib.new("sha1", pdir.encode(), usedforsecurity=False).hexdigest())
         if modname not in sys.modules:
             init_path = os.path.join(os.path.abspath(pdir), "__init__.py")
             spec = importlib.util.spec_from_file_location(modname, init_path)
