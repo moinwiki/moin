@@ -156,7 +156,6 @@ unfixable = []
 [tool.ruff.lint.per-file-ignores]
 "scripts/coding_std.py" = ["E713"]
 "docs/conf.py" = ["F401"]  # sphinx config, automatically generated
-"src/moin/utils/SubProcess.py" = ["F401", "F821"]  # 3rd party stuff, patched stdlib code
 "src/moin/config/default.py" = ["F401", "F403"]
 "src/moin/datastructures/__init__.py" = ["F401"]
 
