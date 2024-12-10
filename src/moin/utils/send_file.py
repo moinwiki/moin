@@ -140,12 +140,15 @@ def send_file(
         # be extra careful as some file-like objects (like zip members) have a seek
         # and tell methods, but they just raise some exception (e.g. UnsupportedOperation)
         # instead of really doing what they are supposed to do (or just be missing).
+        seek_successful = False
         try:
             file.seek(0, 2)  # seek to EOF
+            seek_successful = True
             fsize = file.tell()  # tell position
-            file.seek(0, 0)  # seek to start of file
         except Exception as e:
             logging.warning(f"Exception in send_file: {e}, data file {file.name.rsplit('/', maxsplit=1)[1]}")
+        if seek_successful:
+            file.seek(0, 0)  # seek to start of file
 
     if fsize is not None:
         headers.add("Content-Length", fsize)
