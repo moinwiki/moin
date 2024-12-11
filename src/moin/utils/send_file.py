@@ -31,6 +31,11 @@ from werkzeug.wsgi import wrap_file
 from flask import current_app, request
 
 
+from moin import log
+
+logging = log.getLogger(__name__)
+
+
 def encode_rfc2231(value, coding="UTF-8", lang=""):
     """
     Encode a value according to RFC2231/5987.
@@ -127,24 +132,24 @@ def send_file(
     # We must compute size the smart way rather than letting
     # werkzeug turn our iterable into an in-memory sequence
     # See `_ensure_sequence` in werkzeug/wrappers.py
+    fsize = None
     if filename:
         fsize = os.path.getsize(filename)
+
     elif file and hasattr(file, "seek") and hasattr(file, "tell"):
-        fsize = None
         # be extra careful as some file-like objects (like zip members) have a seek
         # and tell methods, but they just raise some exception (e.g. UnsupportedOperation)
         # instead of really doing what they are supposed to do (or just be missing).
+        seek_successful = False
         try:
             file.seek(0, 2)  # seek to EOF
-            try:
-                fsize = file.tell()  # tell position
-            except Exception:
-                pass
+            seek_successful = True
+            fsize = file.tell()  # tell position
+        except Exception as e:
+            logging.warning(f"Exception in send_file: {e}, data file {file.name.rsplit('/', maxsplit=1)[1]}")
+        if seek_successful:
             file.seek(0, 0)  # seek to start of file
-        except Exception:
-            pass
-    else:
-        fsize = None
+
     if fsize is not None:
         headers.add("Content-Length", fsize)
 
