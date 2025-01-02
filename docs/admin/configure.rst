@@ -377,6 +377,11 @@ service. To enable it, add or uncomment this line in wikiconfig::
 
     user_use_gravatar = True
 
+If a user is not registered with gravar.com, a default image can be specified using
+the parameter user_gravatar_default_img, this can be a publicly available URL or a
+keyword “mp”, “identicon”, “monsterid”, “wavatar”, “retro” or “robohash”, the default
+value is “blank” (see https://docs.gravatar.com/api/avatars/images/ for details).
+
 Please note that using the gravatar service has some privacy issues:
 
 * to register your image for your email at gravatar.com, you need to give them

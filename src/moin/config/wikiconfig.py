@@ -97,6 +97,9 @@ class Config(DefaultConfig):
 
     # read about PRIVACY ISSUES in docs before uncommenting the line below to use gravatars
     # user_use_gravatar = True
+    # user_gravatar_default_img = "blank"  # or "mp", "identicon", "monsterid", "wavatar", "retro", "robohash".
+    # you can also supply a publicly available image URL with user_gravatar_default_img,
+    # see https://docs.gravatar.com/api/avatars/images/ for details
 
     # read about SECURITY ISSUES in docs before uncommenting the line below allowing users
     # to edit style attributes in HTML and Markdown items

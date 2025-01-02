@@ -20,7 +20,6 @@
 
 import copy
 import hashlib
-import werkzeug
 from io import BytesIO
 
 from babel import parse_locale
@@ -29,6 +28,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import session, url_for, render_template
 from jinja2.runtime import Undefined
+from urllib.parse import urlencode
 
 from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
@@ -411,24 +411,22 @@ class User:
         if not app.cfg.user_use_gravatar:
             return None
 
-        from moin.themes import get_current_theme
-        from flask_theme import static_file_url
-
-        theme = get_current_theme()
+        if app.cfg.user_gravatar_default_img:
+            default = app.cfg.user_gravatar_default_img
+        else:
+            default = "blank"
 
         email = self.email
+
         if not email:
-            return static_file_url(theme, theme.info.get("default_avatar", "img/default_avatar.png"))
+            logging.warning(f"User {self.name0} has no valid email, cannot create an avatar.")
+            return None
 
-        param = {}
-        param["gravatar_id"] = hashlib.md5(email.lower()).hexdigest()
+        email_encoded = email.lower().encode("utf-8")
+        email_hash = hashlib.sha256(email_encoded).hexdigest()
 
-        param["default"] = static_file_url(theme, theme.info.get("default_avatar", "img/default_avatar.png"), True)
-
-        param["size"] = str(size)
-        # TODO: use same protocol of Moin site (might be https instead of http)]
-        gravatar_url = "http://www.gravatar.com/avatar.php?"
-        gravatar_url += werkzeug.url_encode(param)
+        query_params = urlencode({"d": default, "s": str(size)})
+        gravatar_url = f"https://www.gravatar.com/avatar/{email_hash}?{query_params}"
 
         return gravatar_url
 
