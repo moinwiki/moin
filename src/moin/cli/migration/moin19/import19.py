@@ -553,6 +553,8 @@ class PageRevision:
                         MTIME: int(os.path.getmtime(path)),
                         ACTION: ACTION_SAVE,
                     }
+                else:
+                    raise NoSuchRevisionError(f"Item {item.name!r} has no revision {revno}.")
             meta, data = split_body(content)
         meta.update(editlog_data)
         format = meta.pop("format", self.backend.format_default)
