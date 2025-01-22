@@ -1237,7 +1237,7 @@ class Item(PropertiesMixin):
             try:
                 # if we get here outside a request, this won't work:
                 userid = flaskg.user.valid and flaskg.user.itemid or None
-            except:  # noqa
+            except AttributeError:
                 pass
         if wikiname is None:
             wikiname = app.cfg.interwikiname
