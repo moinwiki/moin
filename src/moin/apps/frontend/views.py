@@ -138,41 +138,41 @@ def robots():
         """\
 User-agent: *
 Crawl-delay: 20
-Disallow: /+convert/
-Disallow: /+dom/
-Disallow: /+download/
-Disallow: /+modify/
-Disallow: /+content/
-Disallow: /+delete/
+Disallow: /+admin/
 Disallow: /+ajaxdelete/
 Disallow: /+ajaxdestroy/
 Disallow: /+ajaxmodify/
 Disallow: /+ajaxsubitems/
-Disallow: /+destroy/
-Disallow: /+create/
-Disallow: /+rename/
-Disallow: /+revert/
-Disallow: /+index/
-Disallow: /+jfu-server/
-Disallow: /+sitemap/
-Disallow: /+similar_names/
-Disallow: /+quicklink/
-Disallow: /+subscribe/
-Disallow: /+forwardrefs/
 Disallow: /+backrefs/
-Disallow: /+wanteds/
-Disallow: /+orphans/
-Disallow: /+register
-Disallow: /+recoverpass
-Disallow: /+usersettings
-Disallow: /+login
-Disallow: /+logout
 Disallow: /+bookmark
+Disallow: /+content/
+Disallow: /+convert/
+Disallow: /+create/
+Disallow: /+delete/
+Disallow: /+destroy/
 Disallow: /+diff/
 Disallow: /+diffraw/
-Disallow: /+search
 Disallow: /+dispatch/
-Disallow: /+admin/
+Disallow: /+dom/
+Disallow: /+download/
+Disallow: /+forwardrefs/
+Disallow: /+index/
+Disallow: /+jfu-server/
+Disallow: /+login
+Disallow: /+logout
+Disallow: /+modify/
+Disallow: /+orphans/
+Disallow: /+quicklink/
+Disallow: /+recoverpass
+Disallow: /+register
+Disallow: /+rename/
+Disallow: /+revert/
+Disallow: /+search
+Disallow: /+similar_names/
+Disallow: /+sitemap/
+Disallow: /+subscribe/
+Disallow: /+usersettings
+Disallow: /+wanteds/
 Allow: /
 """,
         mimetype="text/plain",
@@ -185,6 +185,14 @@ def global_views():
     Provides a link to all the global views.
     """
     return render_template("all.html", title_name=_("Global Views"), fqname=CompositeName("all", NAME_EXACT, ""))
+
+
+@frontend.route("/+blank")
+def show_blank():
+    """
+    Show a blank page, e.g. as a result of a password reset. Usually an additional flash message is also shown.
+    """
+    return render_template("blank.html", title_name="MoinWiki")
 
 
 class LookupForm(Form):
@@ -2068,7 +2076,7 @@ def register():
                         )
                 else:
                     flash(_("Account created, please log in now."), "info")
-                return redirect(url_for(".show_root"))
+                return redirect(url_for(".show_blank"))
 
     return render_template(template, title_name=title_name, form=form)
 
@@ -2132,7 +2140,6 @@ class PasswordLostForm(Form):
 
 @frontend.route("/+lostpass", methods=["GET", "POST"])
 def lostpass():
-    # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _("Lost Password")
 
     if not _using_moin_auth():
@@ -2156,7 +2163,7 @@ def lostpass():
                 if not is_ok:
                     flash(msg, "error")
             flash(_("If this account exists, you will be notified."), "info")
-            return redirect(url_for(".show_root"))
+            return redirect(url_for(".show_blank"))
     return render_template("lostpass.html", title_name=title_name, form=form)
 
 
@@ -2201,7 +2208,6 @@ class PasswordRecoveryForm(Form):
 
 @frontend.route("/+recoverpass", methods=["GET", "POST"])
 def recoverpass():
-    # TODO use ?next=next_location check if target is in the wiki and not outside domain
     title_name = _("Recover Password")
 
     if not _using_moin_auth():
@@ -2218,7 +2224,7 @@ def recoverpass():
                 flash(_("Your password has been changed, you can log in now."), "info")
             else:
                 flash(_("Your token is invalid!"), "error")
-            return redirect(url_for(".show_root"))
+            return redirect(url_for(".show_blank"))
     return render_template("recoverpass.html", title_name=title_name, form=form)
 
 
