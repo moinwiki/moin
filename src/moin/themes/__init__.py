@@ -40,7 +40,6 @@ from moin.utils.interwiki import (
     split_fqname,
     get_fqname,
 )
-from moin.utils.crypto import cache_key
 from moin.utils.forms import make_generator
 from moin.utils.clock import timed
 from moin.utils.mime import Type
@@ -458,8 +457,6 @@ class ThemeSupport:
         """
         if not isinstance(fqname, CompositeName):
             fqname = split_fqname(fqname)
-        item_name = fqname.value
-        current = item_name
         # Process config navi_bar
         items = []
         for cls, endpoint, args, link_text, title in self.cfg.navi_bar:
@@ -481,42 +478,10 @@ class ThemeSupport:
             elif endpoint == "admin.index" and not getattr(flaskg.user.may, SUPERUSER)():
                 continue
             items.append((cls, url_for(endpoint, **args), link_text, title))
-
         # Add user links to wiki links.
         for text in self.user.quicklinks:
             url, link_text, title = self.split_navilink(text)
             items.append(("userlink", url, link_text, title))
-
-        # Add sister pages (see http://meatballwiki.org/wiki/?SisterSitesImplementationGuide )
-        for sistername, sisterurl in self.cfg.sistersites:
-            if is_local_wiki(sistername):
-                items.append(("sisterwiki current", sisterurl, sistername, ""))
-            else:
-                cid = cache_key(usage="SisterSites", sistername=sistername)
-                sisteritems = app.cache.get(cid)
-                if sisteritems is None:
-                    uo = urllib.request.URLopener()
-                    uo.version = "MoinMoin SisterItem list fetcher 1.0"
-                    try:
-                        sisteritems = {}
-                        f = uo.open(sisterurl)
-                        for line in f:
-                            line = line.strip()
-                            try:
-                                item_url, item_name = line.split(" ", 1)
-                                sisteritems[item_name.decode("utf-8")] = item_url
-                            except Exception:
-                                pass  # ignore invalid lines
-                        f.close()
-                        app.cache.set(cid, sisteritems)
-                        logging.info(f"Site: {sistername!r} Status: Updated. Pages: {len(sisteritems)}")
-                    except OSError as err:
-                        (title, code, msg, headers) = err.args  # code e.g. 304
-                        logging.warning(f"Site: {sistername!r} Status: Not updated.")
-                        logging.exception("exception was:")
-                if current in sisteritems:
-                    url = sisteritems[current]
-                    items.append(("sisterwiki", url, sistername, ""))
         return items
 
     def parent_item(self, item_name):

@@ -452,7 +452,6 @@ options_no_group_name = {
                 "List of names of the supplementation (sub)items [Unicode]",
             ),
             ("interwiki_preferred", [], "In dialogues, show those wikis at the top of the list [list of Unicode]."),
-            ("sistersites", [], "list of tuples: (<WikiName>, <sisterpagelist_fetch_url>)"),
             ("trail_size", 5, "Number of items in the trail of recently visited items"),
             (
                 "item_views",
