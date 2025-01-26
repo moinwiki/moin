@@ -27,7 +27,7 @@ from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
 from moin.constants.misc import VALID_ITEMLINK_VIEWS, FLASH_REPEAT
-from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_ALL
+from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
 from moin.utils.interwiki import (
@@ -524,20 +524,21 @@ class ThemeSupport:
             url = url or url_for("frontend.login")
         return url
 
-    def get_namespaces(self, ns=None):
+    def get_namespaces(self):
         """
-        Return the list of tuples (composite name, namespace) referring to namespaces other
-        than the current namespace.
+        Return a sorted list of tuples (namespace name, fq name of ns home item).
+
+        The special userprofiles NS is omitted because it can never be selected
+        by a wiki user.
         """
-        if ns is not None and ns.value == "~":
-            ns = ""
         namespace_root_mapping = []
         for namespace, _unused in app.cfg.namespace_mapping:
+            if namespace == NAMESPACE_USERPROFILES:
+                continue
             namespace = namespace.rstrip("/")
-            if ns is None or namespace != ns:
-                fq_namespace = CompositeName(namespace, NAME_EXACT, "")
-                namespace_root_mapping.append((namespace or "~", fq_namespace.get_root_fqname()))
-        return namespace_root_mapping
+            fq_namespace = CompositeName(namespace, NAME_EXACT, "")
+            namespace_root_mapping.append((namespace or "~", fq_namespace.get_root_fqname()))
+        return sorted(namespace_root_mapping)
 
     def item_exists(self, itemname):
         """
