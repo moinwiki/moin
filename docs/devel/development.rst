@@ -121,26 +121,36 @@ add more tools, exercise tools
 
 install pre-commit hooks
 ------------------------
-Setup Black and Ruff pre-commit hooks::
 
-    pre-commit install  # pre-commit is used for code linting / auto-format
+Some tools will inspect your changes as part of Git commit processing.
 
-Black and Ruff will inspect your changes as part of Git commit processing. If your code
+* Black formats Python code to make it consistent and readable according to PEP 8 guidelines.
+* Ruff is a linter that detects style issues, errors and potential problems.
+* Bandit analyzes the code for possible security vulnerabilities and potential risks.
+
+Setup pre-commit hooks::
+
+    pre-commit install
+
+If your code
 change violates Black's coding standards (a changed line of code is > 120 characters) Black will
 update the file and fail the commit. Your repo will have 2 versions of the offending file:
 the staged file with your changes and an unstaged version with Black's corrections.
 
-To fix, unstage the file to merge your channges into Black's version, then restage the
+To fix, unstage the file to merge your changes into Black's version, then restage the
 file and rerun commit.
 
-If Ruff finds an error, it will create an error message and fail the commit. In this case,
-unstage the offending file, fix the error, restage the file and rerun commit.
+If Ruff or Bandit find errors, they will create error messages and cause the commit to fail. In this case,
+unstage the offending file, fix the errors, restage the file and rerun commit.
 
 Note that these same checks are made as part of GitHub push-merge processing.
 If there is an error the merge will fail. Fix the error, restage the file, and commit.
 
-Read more about Black at https://black.readthedocs.io/en/stable/index.html.
-Read more about Ruff at https://github.com/astral-sh/ruff?tab=readme-ov-file#ruff.
+Read more about
+
+* Black at https://black.readthedocs.io/en/stable/index.html
+* Ruff at https://github.com/astral-sh/ruff?tab=readme-ov-file#ruff
+* Bandit at https://bandit.readthedocs.io/en/latest/
 
 review configuration options
 ----------------------------

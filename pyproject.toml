@@ -159,6 +159,10 @@ unfixable = []
 "src/moin/config/default.py" = ["F401", "F403"]
 "src/moin/datastructures/__init__.py" = ["F401"]
 
+[tool.bandit]
+exclude_dirs = ["quickinstall.py", "*/_tests/*"]
+skips = ["B101", "B105", "B106", "B307", "B311", "B403", "B608"]
+
 [tool.tox]
 legacy_tox_ini = """
 # tox configuration - if you change anything here, run this to verify:
