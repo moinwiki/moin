@@ -1,0 +1,45 @@
+# Bandit is a tool designed to find common security issues in Python code
+# this is a customized copy from https://github.com/PyCQA/bandit-action
+# original author: '@PyCQA'
+#
+# Target for code check is src/moin, test modules are exclude in config file
+# All alerts are logged in the GitHub UI on the Security tab, Code Scanning (choose your branch)
+
+name: Bandit
+
+on:
+  push:
+    branches:
+      - master
+      - test-github-action
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  bandit_check:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install Bandit
+        shell: bash
+        run: pip install bandit[sarif]
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Bandit
+        shell: bash
+        run: bandit -c pyproject.toml -r src/moin -f sarif -o results.sarif || true
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
