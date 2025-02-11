@@ -6,7 +6,7 @@
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
 # Copyright: 2001 Juergen Hermann <jh@web.de>
-# Copyright: 2023-2024 MoinMoin:UlrichB
+# Copyright: 2023-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -291,6 +291,39 @@ def lookup():
                     return Response(html, status)
     html = render_template("lookup.html", title_name=title_name, lookup_form=lookup_form)
     return Response(html, status)
+
+
+@frontend.route("/+cspreport/log", methods=["POST"])
+def cspreport():
+    """
+    content security policy report receiver
+    """
+    if request.content_type not in ["application/csp-report"]:
+        abort(400, f"Invalid content type '{request.content_type}'.")
+    if not limit_csp_reports():
+        try:
+            csp_report = json.loads(request.data.decode("UTF-8"))["csp-report"]
+            logging.warning(f"{request.remote_addr} {request.content_type}: {csp_report}")
+        except json.JSONDecodeError as e:
+            logging.error(f"Got CSP report with invalid JSON syntax: {e}")
+    return Response("", 204)
+
+
+def limit_csp_reports():
+    """
+    Check number of reports logged today, if limit is set and reached return True
+    """
+    if app.cfg.content_security_policy_limit_per_day > 0:
+        app.csp_count += 1
+        current_date = datetime.now().strftime("%Y%m%d")
+        if app.csp_last_date != current_date:  # reset counter on a new day
+            app.csp_last_date = current_date
+            app.csp_count = 1
+        if app.csp_count == app.cfg.content_security_policy_limit_per_day:
+            logging.warning("Last csp report today, skipping further reports, limit reached.")
+        if app.csp_count <= app.cfg.content_security_policy_limit_per_day:
+            return False
+    return True
 
 
 def _compute_item_transclusions(item_name):
@@ -3223,6 +3256,21 @@ def comment(item_name):
 def new():
     # TODO: Implement creation of blog entries and ticket items
     raise NotImplementedError
+
+
+@frontend.after_request
+def add_security_headers(resp):
+    return add_csp_headers(resp)
+
+
+def add_csp_headers(resp):
+    if app.cfg.content_security_policy:
+        resp.headers["Content-Security-Policy"] = app.cfg.content_security_policy
+    if app.cfg.content_security_policy_report_only:
+        resp.headers["Content-Security-Policy-Report-Only"] = (
+            f"{app.cfg.content_security_policy_report_only} report-uri {url_for('frontend.cspreport')}; "
+        )
+    return resp
 
 
 @frontend.errorhandler(404)

@@ -4,7 +4,7 @@
 # Copyright: 2009 MoinMoin:EugeneSyromyatnikov
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2010 MoinMoin:ReimarBauer
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -27,7 +27,7 @@ from whoosh.query import Term, And, Not
 from moin.i18n import _, L_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
-from moin.apps.frontend.views import _using_moin_auth
+from moin.apps.frontend.views import _using_moin_auth, add_csp_headers
 from moin import user
 from moin.constants.keys import (
     NAME,
@@ -621,3 +621,8 @@ def modify_acl(item_name):
             "error",
         )
     return redirect(url_for(".item_acl_report"))
+
+
+@admin.after_request
+def add_security_headers(resp):
+    return add_csp_headers(resp)

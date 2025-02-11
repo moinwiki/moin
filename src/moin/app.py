@@ -2,7 +2,7 @@
 # Copyright: 2002-2011 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:FlorianKrupicka
 # Copyright: 2010 MoinMoin:DiogenesAugusto
-# Copyright: 2023-2024 MoinMoin:UlrichB
+# Copyright: 2023-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -190,6 +190,9 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None, moin_config_c
         app.jinja_env.loader = ChoiceLoader([FileSystemLoader(app.cfg.template_dirs), app.jinja_env.loader])
     app.register_error_handler(403, themed_error)
     clock.stop("create_app flask-theme")
+    # create global counter to limit content security policy reports, prevent spam
+    app.csp_count = 0
+    app.csp_last_date = ""
     clock.stop("create_app total")
     del clock
     return app
@@ -294,7 +297,7 @@ def before_wiki():
     """
     Setup environment for wiki requests, start timers.
     """
-    if request and is_static_content(request.path):
+    if request and (is_static_content(request.path) or request.path == "+cspreport/log"):
         logging.debug(f"skipping before_wiki for {request.path}")
         return
 
