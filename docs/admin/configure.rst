@@ -1126,6 +1126,25 @@ items with the same names::
         return CompositeDicts(ConfigDicts(dicts),
                               WikiDicts())
 
+
+Content security policy (CSP)
+=============================
+
+MoinMoin offers a basic functionality for setting CSP headers and logging CSP reports
+from client browsers. The behavior can be configured with the options
+“content_security_policy” and “content_security_policy_report_only”.
+
+If one of these options is set to "", the corresponding header is not set.
+In the default configuration, no policy is set or enforced, but a header is added
+to report CSP violations in the log. To debug the settings, we recommend using the
+developer tools in your browser.
+
+With the option “content_security_policy_limit_per_day”, admins can limit the number
+of reports in the log per day to avoid log overflow.
+
+The CSP configuration depends on the individual wiki landscape and the capabilities
+of web browsers vary. For details see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP.
+
 Storage
 =======
 MoinMoin supports storage backends as different ways of storing wiki items.
