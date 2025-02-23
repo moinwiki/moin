@@ -388,7 +388,7 @@ div.no-borders,
 #moin-creditlogos a { display: grid; }
 #moin-credits-container { display: flex; width: 100%; justify-content: space-between;
     align-items: end; margin-bottom: 10pt; }
-#moin-options-for-javascript {display: none}
+#moin-options-for-javascript {display: none; }
 
 /* ordered lists */
 ol,
