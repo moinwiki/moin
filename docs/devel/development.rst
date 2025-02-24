@@ -5,22 +5,23 @@ Development
 Useful Resources
 ================
 
-IRC channels on chat.freenode.net (quick communication and discussion):
-
-* #moin-dev  (core development topics)
-* #moin  (user support, extensions)
-
-Wikis:
-
-* https://moinmo.in/  (production wiki, using moin 1.9)
+If you have any questions about MoinWiki you can use the following resources:
 
 Documentation (installation, configuration, user docs, api reference):
 
 * https://moin-20.readthedocs.io/en/latest/
 
-Repository, Issue tracker (bugs, proposals, todo), Code Review, etc.:
+Repository, Issue tracker (bugs, proposals, todo), Code Review, Discussions, etc.:
 
 * https://github.com/moinwiki/moin
+
+Wiki:
+
+* https://moinmo.in/MoinMoin2.0  (production wiki, using moin 1.9)
+
+IRC channel on libera.chat (quick communication and discussion):
+
+* #moin  (Web Chat: https://web.libera.chat/?#moin)
 
 
 Requirements for development
@@ -44,7 +45,7 @@ You can also find GUI clients there.
 Typical development workflow
 ============================
 
-This is the typical workflow for anyone that wants to contribute to the development of Moin2.
+This is the typical workflow for anyone who wants to contribute to the development of Moin2.
 
 create your development environment
 -----------------------------------
