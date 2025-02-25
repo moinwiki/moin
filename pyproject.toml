@@ -7,7 +7,7 @@ maintainers = [
     {name="Thomas Waldmann", email="tw@waldmann-edv.de"},
 ]
 description = "MoinMoin is an easy to use, full-featured and extensible wiki software package"
-readme = {file="README.rst", content-type="text/x-rst"}
+readme = {file="README.md", content-type="text/markdown"}
 requires-python = ">=3.9"
 keywords = ["wiki", "web"]
 classifiers = [
