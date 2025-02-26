@@ -821,6 +821,20 @@ $(document).ready(function () {
             alert(_("Your edit lock will expire in 1 minute: ") + $('#moin-item-name').val())}, (($("#moin-lock_duration").val() - 60) * 1000));
     }
 
+    // convert FontAwesome data-style color & font-size attributes to css attr,
+    // cannot do style in macros/FontAwesome.py because CSP flags inline style attributes
+    var styl;
+    var elements = $('[data-style]');
+    elements.each(function() {
+        styl = $(this).data('style').split(",");
+        if (styl.length > 0) {
+            $(this).css('color', styl[0]);
+        }
+        if (styl.length > 1) {
+            $(this).css('font-size', styl[1] + "em");
+        }
+    });
+
     moinFontChangeOnReady();
 
     $('textarea.moin-autosize').autosize();

@@ -19,7 +19,7 @@ Where:
 """
 
 
-from moin.utils.tree import moin_page
+from moin.utils.tree import html, moin_page
 from moin.macros._base import MacroInlineBase, fail_message
 from moin.i18n import _
 
@@ -39,22 +39,15 @@ class Macro(MacroInlineBase):
             try:
                 int(color[1:], 16)
                 assert len(color) in (4, 7)
-                color = f"color: {color}; "
             except (ValueError, AssertionError):
                 color = ""
-        else:
-            color = f"color: {color}; " if color.isalpha() else ""
-
         if size:
             try:
                 s = float(size)
                 assert s > 0.1
                 assert s < 99
-                size = f"font-size: {size}em;"
             except (ValueError, AssertionError):
                 size = ""
-
-        style = color + size
         classes = []
         for font in fonts:
             f = font if font.startswith("fa-") else "fa-" + font
@@ -66,6 +59,5 @@ class Macro(MacroInlineBase):
         classes = " ".join(classes)
 
         attrib = {moin_page.class_: classes}
-        if style:
-            attrib[moin_page.style] = style
+        attrib[html.data_style] = ",".join((color, size))
         return moin_page.span(attrib=attrib)
