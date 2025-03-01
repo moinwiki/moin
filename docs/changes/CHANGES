@@ -5,6 +5,88 @@ Please note: It is recommended that existing wiki's be upgraded to the
 latest moin 1.9.x release before converting to Moin 2. However, this may
 not be a necessary step as the 1.9.x file structure has not changed recently.
 
+Version 2.0.0b2 2025-03-01
+----------------------------
+This is an unstable beta release not suitable for a production wiki,
+test carefully and report new issues and feature requests on the issue tracker:
+https://github.com/moinwiki/moin/issues.
+
+Fixes
+~~~~~
+* updated docs for Python 3.12 pkg_resources workaround
+* add docs and key control to SlideShow macro
+* removed spam links in contrib/intermap.txt
+* fixed bug when creating list of dirs returned by make_flat_index
+* ignore empty table attributes within moinwiki_in converter
+* fix "moin dump-html" to dump raw data for pdf, tar, and other items
+* fix "moin import19" to migrate links only if target namespace is specified
+* SlideShow macro uses url_for
+* improve footer layout
+* fix CSS for Show Wiki Configuration
+* moin import19 handles namespace attachments
+* restrict all admin views to superuser, partially backed off
+* remove ACL form help-en/TemplateSample
+* add request.path to clock total timer message
+* skip before_wiki and teardown_wiki for static content
+* ignore closing stroke tag if no opening tag found within moinwiki_in converter
+* change position and order of Submit buttons
+* remove "General meta" from modify view
+* set url_map.strict_slashes to False
+* creating items now uses current namespace ACL
+* stricter detection of embedded markup on markdown_in converter
+* fix convert_to_indexable for items in a namespace
+* fix delete/destroy from index view
+* fix several namespace bugs where wrong item names were used
+* bump Xstatic_Bootstrap to 4.5.3.1 fixing potential XSS attacks
+* add tag parameter to ItemList macro
+* wikiconfig.py configuration PERMANENT_SESSION_LIFETIME requres datetime import
+* eliminate traceback when destroying a deleted item
+* highlight search results: treat each word separately and ignore case
+* move 'user.may.write' call from template to views.py
+* fix traceback: add may permission in _do_modify_show_templates
+* deactivate exists checks for page trail and do not show non-existent items
+* performance: add aliases to trail and remove exists check
+* import19: Add procs and limitmb options to increase performance
+* import19: add exception handling for drop_and_recreate_index
+* add missing attribute 'may' to diff.html template
+* import19: add option latest-rev-only
+* _args_wiki parse: ignore keys with empty value
+* support different storage types for each namespace
+* import19: add missing parents
+* update intermap.txt removing dead links, spam; change to https when possible
+* performance: _get_acls: use meta data if available to avoid index query
+* fix traceback when viewing item with @itemid
+* update development docs with more info about "pre-commit install"
+* page_trail: add type checks
+* fix search result highlighting for itemlist macro
+* fix itemlist arguments in help-en/MoinWikiMacros
+* itemList: use _args_wiki parser
+* same messages for not found and access denied
+* itemList performance: mv regex handling to search_meta
+* update, cleanup translations, add few German translations
+* remove subprocess call from create_instance
+* remove smb_mount module and docs
+* add usedforsecurity False in hash functions
+* rework of the send_file exception handling
+* remove obsolete SubProcess.py
+* send_file: seek to the beginning of the file in any case
+* use new gravatar hash routine
+* remove obsolete profile.py
+* fix UnboundLocalError in import19
+* show blank page after passwort reset
+* remove sistersite feature.
+* do not show USERPROFILES ns within a list of selectable namespaces
+* add pre-commit for bandit security scan, add to github workflow
+* add CSP header and receiver
+* correct hit count display when ajax search options use whoosh filters
+* fix CSP warning, remove inline style on moin-options-for-javascript
+* rename and update README, add CONTRIBUTING.md
+
+New features
+~~~~~~~~~~~~
+* Add RandomQuote macro
+
+
 Version 2.0.0b1 2024-08-07
 ----------------------------
 This is an unstable beta release not suitable for a production wiki,
