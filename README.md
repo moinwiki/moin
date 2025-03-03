@@ -1,7 +1,7 @@
 MoinMoin - a lightweight open source wiki engine
 ================================================
 
-<img src="src/moin/static/logos/moinmoin.svg" alt="MoinMoin Logo" width="120" align="right">
+<img src="https://github.com/moinwiki/moin/blob/master/src/moin/static/logos/moinmoin.svg?raw=true" alt="MoinMoin Logo" width="120" align="right">
 
 MoinMoin is an easy to use, full-featured and extensible wiki software package
 written in Python. You can run it on all common operating systems (Windows,
@@ -43,7 +43,7 @@ Contributing
 
 You're welcome to help us make MoinMoin even better! Whether you have experience
 with Python, HTML or CSS or are just starting out, there are many ways you
-can contribute - please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+can contribute - please see [CONTRIBUTING](https://github.com/moinwiki/moin/blob/master/CONTRIBUTING.md).
 
 
 Acknowledgements
