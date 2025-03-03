@@ -119,7 +119,7 @@
                 {%- for sub_item_name in cfg.supplementation_item_names %}
                     {%- set current_sub = item_name.rsplit('/', 1)[-1] %}
                     {%- if not current_sub in cfg.supplementation_item_names %}
-                        {%- set supp_name = '%s/%s/%s' % (fqname.namespace, item_name, sub_item_name) %}
+                        {%- set supp_name = '%s/%s' % (fqname, sub_item_name) %}
                         {%- if not_trash and (storage.has_item(supp_name) or user.may.write(supp_name)) %}
                             {% set title = _('Discuss contents of this item') %}
                             <li>
