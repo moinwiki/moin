@@ -574,7 +574,8 @@ Package Release on pypi.org and Github Releases
 
 * Commit or stash all versioned changes.
 * Pull all updates from master repo.
-* Run `./m quickinstall` to update the venv and translations.
+* Run `./m quickinstall` and `./m extras` to update the venv and translations.
+* Update Development Status, etc. in pyproject.toml
 * Run tests.
 * Add a signed, annotated tag with the next release number to master branch::
 
@@ -585,6 +586,8 @@ Package Release on pypi.org and Github Releases
     pip install --upgrade setuptools wheel
     pip install --upgrade twine
     pip install --upgrade build
+
+* Delete all old releases from the moin/dist directory, else twine will upload them in the next step.
 
 * Build the distribution and upload to pypi.org::
 
@@ -608,8 +611,7 @@ Create a new venv, install moin, create instance, start server, create item, mod
     cd <path/to/new/wikiconfig/dir>  # skip if using default CWD
     moin index-create
 
-    moin run  # empty wiki, or do
-    moin welcome  # load welcome pages (e.g. Home)
+    moin welcome  # load welcome page (e.g. Home)
     moin load-help -n help-en # load English help
     moin load-help -n help-common # load help images
     moin run  # wiki with English help and welcome pages
@@ -621,26 +623,36 @@ Push the signed, annotated tag created above to github master::
 
     git push moinwiki 2.0.0a1
 
-Create an ASCII-format detached signature named moin-2.0.0a1.tar.gz.asc::
+Create an ASCII-format detached signature named moin-2.0.0a1.tar.gz.asc.
+Windows developers should use Git-Bash to work around #1723.::
 
     cd dist
     gpg --detach-sign -a moin-2.0.0a1.tar.gz
     cd ..
 
-Follow the instructions here to update GitHub; drag & drop moin-2.0.0a1.tar.gz
+Follow the instructions in the url below to update GitHub; drag & drop moin-2.0.0a1.tar.gz
 and moin-2.0.0a1.tar.gz.asc to upload files area. These files serve as
 a backup for the release sdist and the signature, so anybody can
 verify the sdist is authentic::
 
     https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
 
-Test the GitHub Release package::
+Test the GitHub package release::
 
     <python> -m venv </path/to/new/virtual/environment>
     cd </path/to/new/virtual/environment>
     source bin/activate  # or "scripts\activate" on windows
     pip install git+https://github.com/moinwiki/moin@2.0.0a1
     moin --help  # prove it works
+    # update wikiconfig.py  # default allows read-only, admins may load data
+    moin create-instance --path <path/to/new/wikiconfig/dir>  # path optional, defaults to CWD
+    cd <path/to/new/wikiconfig/dir>  # skip if using default CWD
+    moin index-create
+
+    moin welcome  # load welcome page (e.g. Home)
+    moin load-help -n help-en # load English help
+    moin load-help -n help-common # load help images
+    moin run  # wiki with English help and welcome pages
 
 Announce update on #moin, moin-devel@python.org, moin-user@python.org::
 
