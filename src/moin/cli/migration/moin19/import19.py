@@ -28,6 +28,7 @@ from .macro_migration import migrate_macros
 
 # individual macro migrations register with the migrate_macros module
 from .macros import MonthCalendar  # noqa
+from .macros import FullSearch  # noqa
 from .macros import PageList  # noqa
 
 from moin.app import create_app
@@ -726,13 +727,24 @@ def process_categories(meta, data, item_category_regex):
             matches = list(item_category_regex.finditer(categories))
             if matches:
                 data = data[:-end]  # remove the ---- line from the content
-                tags = [_m.group("all") for _m in matches]
+                tags = []
+                # remove the closing bracket if the category is written as a link
+                for m in matches:
+                    tag = m.group("all")
+                    if tag[-2:] == "]]":
+                        tags.append(tag[:-2])
+                    else:
+                        tags.append(tag)
                 meta.setdefault(TAGS, []).extend(tags)
                 # remove everything between first and last category from the content
                 # unexpected text before and after categories survives, any text between categories is deleted
                 start = matches[0].start()
                 end = matches[-1].end()
-                rest = categories[:start] + categories[end:]
+                # remove the opening bracket if the category is written as a link
+                if start >= 2 and categories[start - 2 : start] == "[[":
+                    rest = categories[: start - 2] + categories[end:]
+                else:
+                    rest = categories[:start] + categories[end:]
                 data += "\r\n" + rest.lstrip()
         data = data.rstrip() + "\r\n"
     return data
