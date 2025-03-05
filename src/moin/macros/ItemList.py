@@ -127,8 +127,10 @@ class Macro(MacroPageLinkListBase):
             if item.startswith("+modify/"):
                 item = item.split("/", 1)[1]
 
+        if item == "/":
+            item = ""
         # verify item exists and current user has read permission
-        if item != "":
+        elif item != "":
             if not flaskg.storage.get_item(**(split_fqname(item).query)):
                 err_msg = _("Item does not exist or read access blocked by ACLs: {0}").format(item)
                 return fail_message(err_msg, alternative)
