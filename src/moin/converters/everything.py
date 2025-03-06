@@ -37,7 +37,7 @@ class Converter:
             body = moin_page.body(children=(admonition,))
             return moin_page.page(children=(body,))
         attrib = {xlink.href: Iri(scheme="wiki", authority="", path="/" + item_name, query=f"do=get&rev={rev.revid}")}
-        a = moin_page.a(attrib=attrib, children=[f"Download {item_name}."])
+        a = moin_page.a(attrib=attrib, children=[_("Download {item_name}.").format(item_name=item_name)])
         body = moin_page.body(children=(a,))
         return moin_page.page(children=(body,))
 
