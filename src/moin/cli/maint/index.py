@@ -12,7 +12,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask.cli import FlaskGroup
 
-from moin.app import create_app, init_backends
+from moin.app import create_app
 from moin.constants.keys import LATEST_REVS, ALL_REVS, LATEST_META
 from moin.utils.filesys import wiki_index_exists
 
@@ -49,7 +49,7 @@ def IndexCreate(**kwargs):
         logging.error("Error: wiki index exists. Please check and destroy index before running index-create")
         return False
     logging.info("Index creation started")
-    init_backends(app, create_backend=True)
+    app.init_backends(create_backend=True)
     tmp = kwargs.get("tmp")
     app.storage.create(tmp=tmp)
     logging.info("Index creation finished")
