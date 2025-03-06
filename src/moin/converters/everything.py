@@ -27,7 +27,7 @@ class Converter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         try:
-            item_name = rev.item.name or rev.meta["name"][0]
+            item_name = rev.item.fqname.fullname or rev.meta["name"][0]
         except IndexError:
             # item is deleted
             message = _(
