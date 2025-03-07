@@ -215,21 +215,21 @@ develop a working solution
 review your working solution
 ----------------------------
 
+* do "pre-commit run" to check for style and security issues using Black, Ruff, and Bandit
+* do "./m coding-std" to check for coding errors (trailing spaces, template indentation and spacing)
 * use git diff, git status - read everything you changed - slowly, look for
   things that can be improved
 
   - if you have TortoiseGIT, use those graphical tools to review changes
 * look for poor variable names, spelling errors in comments, accidental addition
   or deletion of blank lines, complex code without comments, missing/extra spaces
-* fix everything you find before requesting feedback from others
-* run tests again "./m tests"
-* check for trailing spaces, line endings, template indentation "./m coding-std"
 * if Javascript files were changed, run https://www.jslint.com/
+* run tests again "./m tests"
+* do some final testing - edit an item and save, etc.
 
 publish your change
 -------------------
 
-* do some final testing - practically and using the unit tests
 * commit your changes to your local repo, use a concise commit comment
   describing the change
 
