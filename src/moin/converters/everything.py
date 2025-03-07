@@ -27,7 +27,7 @@ class Converter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         try:
-            item_name = rev.item.name or rev.meta["name"][0]
+            item_name = rev.item.fqname.fullname or rev.meta["name"][0]
         except IndexError:
             # item is deleted
             message = _(
@@ -37,7 +37,7 @@ class Converter:
             body = moin_page.body(children=(admonition,))
             return moin_page.page(children=(body,))
         attrib = {xlink.href: Iri(scheme="wiki", authority="", path="/" + item_name, query=f"do=get&rev={rev.revid}")}
-        a = moin_page.a(attrib=attrib, children=[f"Download {item_name}."])
+        a = moin_page.a(attrib=attrib, children=[_("Download {item_name}.").format(item_name=item_name)])
         body = moin_page.body(children=(a,))
         return moin_page.page(children=(body,))
 
