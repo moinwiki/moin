@@ -53,6 +53,7 @@ from moin.constants.contenttypes import (
 )
 from moin.items import Item
 from moin.utils import get_xstatic_module_path_map
+from moin.storage.middleware.indexing import Revision
 
 logging = log.getLogger(__name__)
 
@@ -212,14 +213,14 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
                 node_href = f'href="{rel_path2root}{node}"'
                 rendered = rendered.replace(node_href, node_href[:-1] + '.html"')
 
-            # copy raw data for all items to output /+get directory;
-            # images are required, text items are of marginal/no benefit
             item = current_app.storage[current_rev.fqname.fullname]
             rev = item[CURRENT]
-            full_file_name = get_dir + "/" + file_name
+
+            # copy raw data for all items to output /+get directory;
+            # images are required, text items are of marginal/no benefit
+            full_file_name = os.path.join(get_dir, file_name)
             os.makedirs(os.path.dirname(full_file_name), exist_ok=True)
-            with open(full_file_name, "wb") as f:
-                shutil.copyfileobj(rev.data, f)
+            create_raw_data_file(full_file_name, rev)
 
             # save rendered items or raw data to dump directory root
             contenttype = item.meta[CONTENTTYPE].split(";")[0]
@@ -229,21 +230,9 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             ):
                 # do not put a rendered html-formatted file with a name like video.mp4 into root;
                 # browsers want raw data
-                with open(filename, "wb") as f:
-                    rev.data.seek(0)
-                    shutil.copyfileobj(rev.data, f)
-                    try:
-                        print(f"Saved file named {filename} as raw data")
-                    except UnicodeEncodeError:
-                        print("Saved file named {} as raw data".format(filename.encode("ascii", errors="replace")))
-
+                create_raw_data_file(filename, rev)
             else:
-                with open(filename, "wb") as f:
-                    f.write(rendered.encode("utf8"))
-                    try:
-                        print(f"Saved file named {filename}")
-                    except UnicodeEncodeError:
-                        print("Saved file named {}".format(filename.encode("ascii", errors="replace")))
+                create_html_file(filename, rendered)
 
             if current_rev.fqname.fullname == current_app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click
@@ -252,46 +241,8 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
                         f.write(rendered.encode("utf8"))
                 home_page = rendered  # save a copy for creation of index page
 
-        if home_page:
-            # create an index page by replacing the content of the home page with a list of items
-            # work around differences in basic and modernized theme layout
-            # TODO: this is likely to break as new themes are added
-            if theme == "basic":
-                start = '<div class="moin-content flex-row" role="main">'  # basic
-                end = '<footer class="navbar moin-footer">'
-                div_end = "</div>"
-            else:
-                start = '<div id="moin-content">'  # modernized , topside, topside cms
-                end = '<footer id="moin-footer">'
-                div_end = "</div></div>"
-            # build a page named "+index" containing links to all wiki items
-            ul = "<h1>Index</h1><ul>{0}</ul>"
-            li = '<li><a href="{0}">{1}</a></li>'
-            links = []
-            names.sort()
-            for name in names:
-                if name in used_dirs:
-                    li_name = name + ".html"
-                else:
-                    li_name = name
-                links.append(li.format(li_name, name))
-            name_links = ul.format("\n".join(links))
-            try:
-                part1 = home_page.split(start)[0]
-                part2 = home_page.split(end)[1]
-                page = part1 + start + name_links + div_end + end + part2
-            except IndexError:
-                page = home_page
-                print(f"Error: failed to find {end} in item named {current_app.cfg.default_root}")
-            for target in ["+index", "_+index.html"]:
-                with open(norm(join(html_root, target)), "wb") as f:
-                    f.write(page.encode("utf8"))
-        else:
-            print(
-                'Error: index pages not created because no home page exists, expected an item named "{}".'.format(
-                    current_app.cfg.default_root
-                )
-            )
+        create_index_page(home_page, theme, names, used_dirs, html_root, current_app.cfg.default_root)
+
         logging.info("Dump html complete")
 
 
@@ -316,3 +267,63 @@ def get_used_dirs(query):
             used_dirs.add(file_.value)
     logging.debug("used_dirs: %s", str(used_dirs))
     return used_dirs
+
+
+def create_raw_data_file(filename, rev: Revision):
+    with open(filename, "wb") as f:
+        rev.data.seek(0)
+        shutil.copyfileobj(rev.data, f)
+        try:
+            print(f"Saved file named {filename} as raw data")
+        except UnicodeEncodeError:
+            print("Saved file named {} as raw data".format(filename.encode("ascii", errors="replace")))
+
+
+def create_html_file(filename, content):
+    with open(filename, "wb") as f:
+        f.write(content.encode("utf8"))
+        try:
+            print(f"Saved file named {filename}")
+        except UnicodeEncodeError:
+            print("Saved file named {}".format(filename.encode("ascii", errors="replace")))
+
+
+def create_index_page(home_page, theme, names, used_dirs, html_root, wiki_root):
+    if home_page:
+        # create an index page by replacing the content of the home page with a list of items
+        # work around differences in basic and modernized theme layout
+        # TODO: this is likely to break as new themes are added
+        if theme == "basic":
+            start = '<div class="moin-content" role="main">'  # basic
+            end = '<footer class="navbar moin-footer">'
+            div_end = "</div>"
+        else:
+            start = '<div id="moin-content">'  # modernized , topside, topside cms
+            end = '<footer id="moin-footer">'
+            div_end = "</div></div>"
+        # build a page named "+index" containing links to all wiki items
+        ul = "<h1>Index</h1><ul>{0}</ul>"
+        li = '<li><a href="{0}">{1}</a></li>'
+        links = []
+        names.sort()
+        for name in names:
+            if name in used_dirs:
+                li_name = name + ".html"
+            else:
+                li_name = name
+            links.append(li.format(li_name, name))
+        name_links = ul.format("\n".join(links))
+        try:
+            part1 = home_page.split(start)[0]
+            part2 = home_page.split(end)[1]
+            page = part1 + start + name_links + div_end + end + part2
+        except IndexError:
+            page = home_page
+            print(f"Error: failed to find {end} in item named {wiki_root}")
+        for target in ["+index", "_+index.html"]:
+            with open(os.path.normpath(os.path.join(html_root, target)), "wb") as f:
+                f.write(page.encode("utf8"))
+    else:
+        print(
+            'Error: index pages not created because no home page exists, expected an item named "{}".'.format(wiki_root)
+        )
