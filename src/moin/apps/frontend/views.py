@@ -2766,8 +2766,8 @@ def diff(item_name):
                 rev1 = revid
                 break
         else:
-            rev1 = revs[-1][1]  # if we didn't find a rev, we just take oldest rev we have
-        rev2 = revs[0][1]  # and compare it with the current revision
+            rev1 = metas[-1][1]  # if we didn't find a rev, we just take oldest rev we have
+        rev2 = metas[0][1]  # and compare it with the current revision
     else:
         # otherwise we try get the 2 revids directly
         rev1 = request.values.get("rev1")
