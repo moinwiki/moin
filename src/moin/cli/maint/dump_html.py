@@ -157,6 +157,8 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         # to:      <img alt="svg" src="+get/svg" />
         invalid_src = re.compile(r' src="/\+get/\+[0-9a-f]{32}/')
 
+        invalid_href = re.compile(r' href="/\+get/\+[0-9a-f]{32}/')
+
         # get ready to render and copy individual items
         names = []
         home_page = None
@@ -173,9 +175,11 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         # In the filesystem the item cannot have the same name as the directory.
         # so we append .html to the filename for items in used_dirs.
         for current_rev in app.storage.search(q, limit=None, sortedby=("namespace", "name")):
+
             if current_rev.namespace in exclude_ns:
                 # we usually do not copy userprofiles, no one can login to a static wiki
                 continue
+
             if not current_rev.name:
                 # TODO: we skip nameless tickets, but named tickets and comments are processed with ugly names
                 continue
@@ -199,21 +203,28 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             if not isinstance(rendered, str):
                 print(f"Rendering failed for {file_name} with response {rendered}")
                 continue
+
+            # remove item ID from: href="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/example.drawio"
+            rendered = re.sub(invalid_href, ' href="/+get/', rendered)
+
+            # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
+            rendered = re.sub(invalid_src, ' src="/+get/', rendered)
+
             # make hrefs relative to root folder
             rel_path2root = PARENT_DIR * len(re.findall("/", item_name))
             rendered = rendered.replace('href="/', 'href="' + rel_path2root)
             rendered = rendered.replace('src="/static/', 'src="' + rel_path2root + "static/")
             rendered = rendered.replace('src="/+serve/', 'src="+serve/')
             rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
+
             # TODO: fix basic theme
             rendered = rendered.replace('<a href="">', f'<a href="{app.cfg.default_root}">')
-            # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
-            valid_src = f' src="{rel_path2root}+get/'
-            rendered = re.sub(invalid_src, valid_src, rendered)
+
             # correct links inside document
             for node in used_dirs:
                 node_href = f'href="{rel_path2root}{node}"'
                 rendered = rendered.replace(node_href, node_href[:-1] + '.html"')
+
             # copy raw data for all items to output /+get directory;
             # images are required, text items are of marginal/no benefit
             item = app.storage[current_rev.fqname.fullname]
