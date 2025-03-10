@@ -5,9 +5,34 @@
 MoinMoin - moin.cli.maint.dump_html tests
 """
 
+import pytest
+
 from pathlib import Path
 
 from moin.cli._tests import assert_p_succcess, run
+from moin.cli.maint.dump_html import fixup_item_content
+
+
+@pytest.mark.parametrize(
+    "item_name, input, expected",
+    [
+        # raw data link with text content
+        (
+            "page1",
+            '<a href="/+get/+f896c691fd9b42cab5884f911e43777e/magic">Pure magic</a>',
+            '<a href="+get/magic.raw" download="magic">Pure magic</a>',
+        ),
+        # raw data link to video content
+        (
+            "demo/page2",
+            '<video controls="controls" src="/+get/+f896c691fd9b42cab5884f911e43777e/help-common/video.mp4">Unsupported</video>',
+            '<video controls="controls" src="../+get/help-common/video.mp4" download="video.mp4">Unsupported</video>',
+        ),
+    ],
+)
+def test_fixup_item_links(item_name: str, input: str, expected: str) -> None:
+    output = fixup_item_content(item_name, input)
+    assert output == expected
 
 
 def create_instance():
