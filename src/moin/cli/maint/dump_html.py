@@ -123,7 +123,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
 
         # create subdirectories and copy static css, icons, images into "static" subdirectory
         shutil.copytree(norm(join(moinmoin, "static")), norm(join(html_root, "static")))
-        shutil.copytree(norm(join(wiki_root, "wiki_local")), norm(join(html_root, "+serve/wiki_local")))
+        shutil.copytree(norm(get_wiki_local_dir()), norm(join(html_root, "+serve/wiki_local")))
 
         # copy files from xstatic packaging into "+serve" subdirectory
         xstatic_dirs = ["font_awesome"]
@@ -293,6 +293,10 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
                 )
             )
         logging.info("Dump html complete")
+
+
+def get_wiki_local_dir() -> str:
+    return current_app.cfg.wiki_local_dir
 
 
 def get_used_dirs(query):
