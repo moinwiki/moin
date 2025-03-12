@@ -2512,9 +2512,9 @@ def usersettings():
 
     class UserSettingsUIForm(Form):
         form_name = "usersettings_ui"
-        theme_name = RadioChoice.using(label=L_("Theme name")).with_properties(
-            choices=((str(t.identifier), t.name) for t in get_themes_list())
-        )
+        available_themes = [(str(t.identifier), t.name) for t in get_themes_list()]
+        available_themes.insert(0, ("", _("(System Default)")))
+        theme_name = RadioChoice.using(label=L_("Theme name"), optional=True).with_properties(choices=available_themes)
         css_url = URL.using(label=L_("User CSS URL"), optional=True).with_properties(
             placeholder=L_("Give the URL of your custom CSS (optional)")
         )
