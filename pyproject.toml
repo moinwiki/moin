@@ -84,24 +84,23 @@ ldap = ["python-ldap"]  # used by ldap auth; requires special libs/header
 moin = "moin.cli:cli"
 
 [tool.setuptools]
-# See also the MANIFEST.in file.
-# We want to install all the files in the package directories...
-include-package-data = true
+include-package-data = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["_tests"]
+exclude = ["*._tests", "*._tests.*"]
+namespaces = true
 
 [tool.setuptools.package-data]
-"moin.translations" = ["MoinMoin.pot", "*.po", ]
-"moin.static" = ["*", ]
-"moin.themes.modernized" = ["*", ]
-"moin.themes.basic" = ["*", ]
-"moin.themes.topside" = ["*", ]
-"moin.themes.topside_cms" = ["*", ]
-"moin.templates" = ["*.html", "*.xml", ]
-"moin.apps.admin.templates" = ["*.html", ]
-"moin.apps.misc.templates" = ["*.html", "*.txt", ]
+"moin.translations" = ["MoinMoin.pot", "*/LC_MESSAGES/*.po"]
+"moin.static" = ["**"]
+"moin.themes.modernized" = ["**"]
+"moin.themes.basic" = ["**"]
+"moin.themes.topside" = ["**"]
+"moin.themes.topside_cms" = ["**"]
+"moin.templates" = ["**/*.html", "**/*.js", "**/*.txt", "**/*.xml"]
+"moin.apps.admin.templates" = ["**/*.html", "**/*.txt", "**/*.xml"]
+"moin.apps.misc.templates" = ["**/*.html", "**/*.txt", "**/*.xml"]
 
 [build-system]
 requires = ["setuptools", "setuptools_scm[toml] >= 6.2"]
@@ -116,7 +115,6 @@ skip-magic-trailing-comma = true
 
 [tool.pytest.ini_options]
 norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
-
 
 [tool.ruff]
 line-length = 120
