@@ -281,3 +281,4 @@ SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
 # config for flask-cache:
 # CACHE_TYPE = 'filesystem'
 # CACHE_DIR = '/path/to/flask-cache-dir'
+# THEME_PATHS = os.path.join(Config.instance_dir, "themes")
