@@ -493,6 +493,14 @@ name is the name of your theme. Note the directory structure under the other exi
 themes. Copy an `info.json` file to your theme directory and edit as needed.
 Create a file named theme.css in the src/moin/themes/<theme name>/static/css/ directory.
 
+MoinMoin uses `Flask-theme <https://pypi.org/project/flask-theme/>`_ for loading themes.
+As mentioned in the `theme loader section <https://flask-theme.readthedocs.io/en/latest/#theme-loaders>`_,
+you can configure additional directories that Flask-theme searches for themes by setting
+the THEME_PATHS configuration.
+Here is an example how you would set THEME_PATHS in wikiconfig::
+
+    THEME_PATHS = os.path.join(Config.instance_dir, "themes")
+
 To change the layout of the theme header, sidebar and footer, create a templates/ directory and
 copy and modify the files layout.html and show.html from either src/moin/templates/ or one
 of the existing theme templates directories.
