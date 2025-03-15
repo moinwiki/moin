@@ -94,7 +94,7 @@ and execute `moin run`.::
             index/          # wiki indexes
             preview/        # text item backups are created when user clicks edit Preview button
             sql/            # sqlite database used for edit locking
-        wiki-local/         # store custom CSS, Javascript, templates, logos, etc. here
+        wiki_local/         # store custom CSS, Javascript, templates, logos, etc. here
         wikiconfig.py       # main configuration file, modify this to add or change features
         intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 

@@ -1120,7 +1120,7 @@ def ajaxdestroy(item_name, req="destroy"):
 
     Incoming item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
 
-    Jason response object includes these lists:
+    Json response object includes these lists:
         - itemnames: list of item names and subnames successfully deleted/destroyed in url format
         - messages: formatted success/fail message for each item processed
     """
