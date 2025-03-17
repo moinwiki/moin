@@ -634,7 +634,6 @@ class PageRevision:
         for k in (COMMENT, SUMMARY):
             if k not in self.meta:
                 self.meta[k] = ""
-        self.meta[WIKINAME] = app.cfg.sitename  # old 1.9 sitename is not available
         global last_moin19_rev
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
@@ -779,7 +778,6 @@ class AttachmentRevision:
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         if LANGUAGE not in meta:
             meta[LANGUAGE] = app.cfg.language_default
-        meta[WIKINAME] = app.cfg.sitename  # old 1.9 sitename is not available
         for attr in (COMMENT, SUMMARY):
             meta[attr] = ""
         for attr in (EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, NAME_OLD, TAGS):

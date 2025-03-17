@@ -76,16 +76,7 @@ from moin.constants.contenttypes import (
     CONTENTTYPE_NONEXISTENT,
     CHARSET,
 )
-from moin.constants.keys import (
-    NAME_EXACT,
-    WIKINAME,
-    CONTENTTYPE,
-    TAGS,
-    TEMPLATE,
-    HASH_ALGORITHM,
-    ACTION_SAVE,
-    NAMESPACE,
-)
+from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_ALGORITHM, ACTION_SAVE, NAMESPACE
 
 from moin import log
 
@@ -387,11 +378,7 @@ class Content:
 
     def get_templates(self, contenttype=None):
         """create a list of templates (for some specific contenttype)"""
-        terms = [
-            Term(WIKINAME, app.cfg.interwikiname),
-            Term(TAGS, TEMPLATE),
-            Term(NAMESPACE, self.item.fqname.namespace),
-        ]
+        terms = [Term(TAGS, TEMPLATE), Term(NAMESPACE, self.item.fqname.namespace)]
         if contenttype is not None:
             terms.append(Term(CONTENTTYPE, contenttype))
         query = And(terms)

@@ -45,7 +45,7 @@ from flask import g as flaskg
 from flask import current_app as app
 from flask.cli import FlaskGroup
 
-from whoosh.query import Every, Term, And, Regex
+from whoosh.query import Every, Regex
 
 from werkzeug.exceptions import Forbidden
 
@@ -53,7 +53,7 @@ from xstatic.main import XStatic
 
 from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
-from moin.constants.keys import CURRENT, NAME_EXACT, WIKINAME, THEME_NAME, LATEST_REVS
+from moin.constants.keys import CURRENT, NAME_EXACT, THEME_NAME, LATEST_REVS
 from moin.constants.contenttypes import (
     CONTENTTYPE_MEDIA,
     CONTENTTYPE_MEDIA_SUFFIX,
@@ -166,7 +166,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         os.makedirs(get_dir)
 
         if query:
-            q = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, query)])
+            q = Regex(NAME_EXACT, query)
         else:
             q = Every()
 

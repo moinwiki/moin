@@ -43,7 +43,6 @@ class TestValidation:
             keys.USERID: make_uuid(),
             keys.HASH_ALGORITHM: "b9064b9a5efd8c6cef2d38a8169a0e1cbfdb41ba",
             keys.SIZE: 0,
-            keys.WIKINAME: "ThisWiki",
             keys.NAMESPACE: "",
             "rev_parent": rev,
             "acl_parent": "All:read",
@@ -85,7 +84,6 @@ class TestValidation:
             keys.ACTION: keys.ACTION_SAVE,
             keys.HOSTNAME: "localhost",
             keys.ADDRESS: "127.0.0.1",
-            keys.WIKINAME: "ThisWiki",
             keys.NAMESPACE: "",
             keys.FQNAME: CompositeName("", "", "somename"),
         }

@@ -56,7 +56,6 @@ from moin.constants.keys import (
     NAMENGRAM,
     NAME_OLD,
     NAME_EXACT,
-    WIKINAME,
     MTIME,
     ITEMTYPE,
     CONTENTTYPE,
@@ -1265,7 +1264,7 @@ class Item:
 
         If item is trashed we must query name_old field to avoid processing all items.
         """
-        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, self.fqname.namespace)])
+        query = Term(NAMESPACE, self.fqname.namespace)
 
         if self.names:
             query = And([query, Or([Prefix(NAME_EXACT, prefix) for prefix in self.subitem_prefixes])])
@@ -1373,9 +1372,7 @@ class Item:
         """
         fqname = self.fqname
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
-        query = Term(WIKINAME, app.cfg.interwikiname) & self.build_index_query(
-            startswith, selected_groups, isglobalindex
-        )
+        query = self.build_index_query(startswith, selected_groups, isglobalindex)
         if not fqname.value.startswith(NAMESPACE_ALL + "/") and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
         revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None, regex=regex)
@@ -1472,13 +1469,7 @@ class Default(Contentful):
         :param link_text: unchanged or replaced by alert message
         :return: path to help, link text
         """
-        query = And(
-            [
-                Term(NAMESPACE, "help-" + flaskg.user.language),
-                Term(NAME_EXACT, content_name),
-                Term(WIKINAME, app.cfg.interwikiname),
-            ]
-        )
+        query = And([Term(NAMESPACE, "help-" + flaskg.user.language), Term(NAME_EXACT, content_name)])
         results = list(flaskg.storage.search_meta(query, idx_name=LATEST_REVS, limit=None))
         if results:
             return "/help-" + flaskg.user.language + "/" + content_name, link_text

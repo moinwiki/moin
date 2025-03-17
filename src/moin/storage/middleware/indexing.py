@@ -66,7 +66,7 @@ from whoosh.fields import Schema, TEXT, ID, NUMERIC, DATETIME, KEYWORD, BOOLEAN,
 from whoosh.writing import AsyncWriter
 from whoosh.qparser import QueryParser, MultifieldParser, RegexPlugin, PseudoFieldPlugin
 from whoosh.qparser import WordNode
-from whoosh.query import And, Every, Prefix, Term
+from whoosh.query import Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
 from moin.constants.keys import *  # noqa
@@ -149,23 +149,20 @@ def search_names(name_prefix, limit=None):
     """
 
     idx_name = LATEST_REVS
-    terms = [Prefix(NAME_EXACT, name_prefix)]
-    terms.append(Term(WIKINAME, app.cfg.interwikiname))
-    q = And(terms)
+    q = Prefix(NAME_EXACT, name_prefix)
     with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
         results = searcher.search(q, limit=limit)
         result_names = [result[NAME][0] for result in results]
     return result_names
 
 
-def backend_to_index(meta, content, schema, wikiname, backend_name):
+def backend_to_index(meta, content, schema, backend_name):
     """
     Convert backend metadata/data to a whoosh document.
 
     :param meta: revision meta from moin backend
     :param content: revision data converted to indexable content
     :param schema: whoosh schema
-    :param wikiname: interwikiname of this wiki
     :returns: document to put into whoosh index
     """
     doc = {key: value for key, value in meta.items() if key in schema}
@@ -176,7 +173,6 @@ def backend_to_index(meta, content, schema, wikiname, backend_name):
             # we have UNIX UTC timestamp (int), whoosh wants datetime
             doc[key] = utcfromtimestamp(doc[key])
     doc[NAME_EXACT] = doc[NAME]
-    doc[WIKINAME] = wikiname
     doc[CONTENT] = content
     doc[BACKENDNAME] = backend_name
     if CONTENTNGRAM in schema:
@@ -318,7 +314,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
 
 class IndexingMiddleware:
-    def __init__(self, index_storage, backend, wiki_name=None, acl_rights_contents=[], **kw):
+    def __init__(self, index_storage, backend, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
 
@@ -326,7 +322,6 @@ class IndexingMiddleware:
         """
         self.index_storage = index_storage
         self.backend = backend
-        self.wikiname = wiki_name
         self.ix = {}  # open indexes
         self.schemas = {}  # existing schemas
 
@@ -336,8 +331,6 @@ class IndexingMiddleware:
         # SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT].
         # Note *NGRAMS are only present in latest_revs index, see below
         common_fields = {
-            # wikiname so we can have a shared index in a wiki farm, always check this!
-            WIKINAME: ID(stored=True),
             # namespace, so we can have different namespaces within a wiki, always check this!
             NAMESPACE: ID(stored=True),
             # since name is a list whoosh will think it is a list of tokens see #364
@@ -570,7 +563,7 @@ class IndexingMiddleware:
         """
         if not force_latest:
             async_ = False  # must wait for storage in ALL_REVS before check for latest
-        doc = backend_to_index(meta, content, self.schemas[ALL_REVS], self.wikiname, backend_name)
+        doc = backend_to_index(meta, content, self.schemas[ALL_REVS], backend_name)
         if async_:
             writer = AsyncWriter(self.ix[ALL_REVS])
         else:
@@ -588,7 +581,7 @@ class IndexingMiddleware:
                     == doc[REVID]
                 )
         if is_latest:
-            doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name)
+            doc = backend_to_index(meta, content, self.schemas[LATEST_REVS], backend_name)
             if async_:
                 writer = AsyncWriter(self.ix[LATEST_REVS])
             else:
@@ -632,14 +625,14 @@ class IndexingMiddleware:
                         doc = searcher.document(revid=latest_backend_revid[1])
                         content = doc[CONTENT]
                     doc = backend_to_index(
-                        meta, content, self.schemas[LATEST_REVS], self.wikiname, backend_name=latest_backend_revid[0]
+                        meta, content, self.schemas[LATEST_REVS], backend_name=latest_backend_revid[0]
                     )
                     writer.update_document(**doc)
                 else:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
                     writer.delete_document(docnum_remove)
 
-    def _modify_index(self, index, schema, wikiname, revids, mode="add", procs=None, limitmb=None, multisegment=False):
+    def _modify_index(self, index, schema, revids, mode="add", procs=None, limitmb=None, multisegment=False):
         """
         modify index contents - add, update, delete the indexed documents for all given revids
 
@@ -656,7 +649,7 @@ class IndexingMiddleware:
                 if mode in ["add", "update"]:
                     meta, data = self.backend.retrieve(backend_name, revid)
                     content = convert_to_indexable(meta, data, is_new=False)
-                    doc = backend_to_index(meta, content, schema, wikiname, backend_name)
+                    doc = backend_to_index(meta, content, schema, backend_name)
                 if mode == "update":
                     writer.update_document(**doc)
                 elif mode == "add":
@@ -703,7 +696,6 @@ class IndexingMiddleware:
             self._modify_index(
                 index,
                 self.schemas[ALL_REVS],
-                self.wikiname,
                 all_revids,
                 "add",
                 procs=procs,
@@ -720,7 +712,6 @@ class IndexingMiddleware:
             self._modify_index(
                 index,
                 self.schemas[LATEST_REVS],
-                self.wikiname,
                 latest_backends_revids,
                 "add",
                 procs=procs,
@@ -760,8 +751,8 @@ class IndexingMiddleware:
             changed = add_revids or del_revids
             add_revids = [(revids_backends[revid], revid) for revid in add_revids]
             del_revids = [(revids_backends[revid], revid) for revid in del_revids]
-            self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, add_revids, "add")
-            self._modify_index(index_all, self.schemas[ALL_REVS], self.wikiname, del_revids, "delete")
+            self._modify_index(index_all, self.schemas[ALL_REVS], add_revids, "add")
+            self._modify_index(index_all, self.schemas[ALL_REVS], del_revids, "delete")
 
             backend_latest_backends_revids = set(self._find_latest_backends_revids(index_all))
         finally:
@@ -774,8 +765,8 @@ class IndexingMiddleware:
             backend_latest_revids = {revid for name, revid in backend_latest_backends_revids}
             upd_revids = backend_latest_revids - ix_revids
             upd_revids = [(revids_backends[revid], revid) for revid in upd_revids]
-            self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, upd_revids, "update")
-            self._modify_index(index_latest, self.schemas[LATEST_REVS], self.wikiname, del_revids, "delete")
+            self._modify_index(index_latest, self.schemas[LATEST_REVS], upd_revids, "update")
+            self._modify_index(index_latest, self.schemas[LATEST_REVS], del_revids, "delete")
         finally:
             index_latest.close()
         return changed
@@ -1207,7 +1198,6 @@ class Item(PropertiesMixin):
         action=ACTION_SAVE,
         remote_addr=None,
         userid=None,
-        wikiname=None,
         contenttype_current=None,
         contenttype_guessed=None,
         acl_parent=None,
@@ -1239,15 +1229,12 @@ class Item(PropertiesMixin):
                 userid = flaskg.user.valid and flaskg.user.itemid or None
             except AttributeError:
                 pass
-        if wikiname is None:
-            wikiname = app.cfg.interwikiname
         state = {
             "trusted": trusted,
             NAME: [name],
             ACTION: action,
             ADDRESS: remote_addr,
             USERID: userid,
-            WIKINAME: wikiname,
             NAMESPACE: None,
             ITEMID: self.itemid,  # real itemid or None
             "contenttype_current": contenttype_current,

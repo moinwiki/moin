@@ -17,22 +17,11 @@ from flask import g as flaskg
 from feedgen.feed import FeedGenerator
 from markupsafe import Markup
 
-from whoosh.query import Term, And
+from whoosh.query import Term, And, Every
 
 from moin.i18n import _
 from moin.apps.feed import feed
-from moin.constants.keys import (
-    NAME,
-    NAME_EXACT,
-    NAMESPACE,
-    WIKINAME,
-    COMMENT,
-    MTIME,
-    REVID,
-    ALL_REVS,
-    PARENTID,
-    LATEST_REVS,
-)
+from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
 from moin.themes import get_editor_info, render_template
 from moin.items import Item
 from moin.utils.crypto import cache_key
@@ -54,10 +43,10 @@ def atom(item_name):
     - First item is always rendered fully
     - Revision meta(id, size and comment) is shown for parent and current revision
     """
-    query = Term(WIKINAME, app.cfg.interwikiname)
+    query = Every()
     if item_name:
         fqname = split_fqname(item_name)
-        query = And([query, Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace)])
+        query = And([Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace)])
     revs = list(flaskg.storage.search(query, idx_name=LATEST_REVS, sortedby=[MTIME], reverse=True, limit=1))
     if revs:
         rev = revs[0]
@@ -76,9 +65,9 @@ def atom(item_name):
         feed.title(title)
         feed.link(href=request.host_url)
         feed.link(href=request.url, rel="self")
-        query = Term(WIKINAME, app.cfg.interwikiname)
+        query = Every()
         if item_name:
-            query = And([query, Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace)])
+            query = And([Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace)])
         history = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=100)
         for rev in history:
             name = rev.fqname.fullname

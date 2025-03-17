@@ -256,10 +256,9 @@ def lookup():
                     term = Term(key, value)
                 terms.append(term)
         if terms:
-            LookupEntry = namedtuple("LookupEntry", "name revid wikiname")
+            LookupEntry = namedtuple("LookupEntry", "name revid")
             name = lookup_form[NAME].value
             name_exact = lookup_form[NAME_EXACT].value or ""
-            terms.append(Term(WIKINAME, app.cfg.interwikiname))
             q = And(terms)
             with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
                 flaskg.clock.start("lookup")
@@ -269,7 +268,7 @@ def lookup():
                 for result in results:
                     analyzer = item_name_analyzer()
                     lookup_results += [
-                        LookupEntry(n, result[REVID], result[WIKINAME])
+                        LookupEntry(n, result[REVID])
                         for n in result[NAME]
                         if not name or name.lower() in analyze(analyzer, n)
                         if n.startswith(name_exact)
@@ -1522,7 +1521,7 @@ def index(item_name):
         # there will likely be false missing_dirs caused by filter
         missing = set()
         for m_dir in missing_dirs:
-            query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAME_EXACT, m_dir))])
+            query = Term(NAME_EXACT, m_dir)
             metas = tuple(flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=1))
             if not metas:
                 missing.add(m_dir)
@@ -1585,7 +1584,7 @@ def mychanges():
     page_num = request.values.get("page_num", 1)
     page_num = max(int(page_num), 1)
 
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(USERID, flaskg.user.itemid)])
+    query = Term(USERID, flaskg.user.itemid)
     if results_per_page:
         len_revs = flaskg.storage.search_results_size(query, idx_name=ALL_REVS)
         metas = flaskg.storage.search_meta_page(
@@ -1670,7 +1669,6 @@ def _forwardrefs(item_name):
     """
     fqname = split_fqname(item_name)
     q = fqname.query
-    q[WIKINAME] = app.cfg.interwikiname
     rev = flaskg.storage.document(**q)
     if rev is None:
         refs = []
@@ -1713,9 +1711,7 @@ def _backrefs(item_name):
     :type item_name: unicode
     :returns: the list of all items which ref fq_name
     """
-    q = And(
-        [Term(WIKINAME, app.cfg.interwikiname), Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])]
-    )
+    q = Or([Term(ITEMTRANSCLUSIONS, item_name), Term(ITEMLINKS, item_name)])
     metas = flaskg.storage.search_meta(q)
     return {fqname for meta in metas for fqname in meta[FQNAMES]}
 
@@ -1739,8 +1735,7 @@ def history(item_name):
         results_per_page = flaskg.user.results_per_page
     else:
         results_per_page = app.cfg.results_per_page
-    terms = [Term(WIKINAME, app.cfg.interwikiname)]
-    terms.extend(Term(term, value) for term, value in fqname.query.items())
+    terms = [Term(term, value) for term, value in fqname.query.items()]
     if bookmark_time:
         terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
     query = And(terms)
@@ -1808,7 +1803,7 @@ def editor_info_for_reports():
     This is useful for history and index reports that show the last editor's name and email address.
     It avoids multiple calls to whoosh for same userid.
     """
-    query = And([Term(WIKINAME, app.cfg.interwikiname), (Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    query = Term(NAMESPACE, NAMESPACE_USERPROFILES)
     metas = flaskg.unprotected_storage.search_meta(query, idx_name=LATEST_REVS, limit=None)
     editors = {}
     for meta in metas:
@@ -1830,13 +1825,12 @@ def global_history(namespace):
 
     page_num = request.values.get("page_num", 1)
     page_num = max(int(page_num), 1)
-    terms = [Term(WIKINAME, app.cfg.interwikiname)]
     fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, "")
     if namespace != NAMESPACE_ALL:
-        terms.append(Term(NAMESPACE, namespace))
+        terms = [Term(NAMESPACE, namespace)]
         fqname = split_fqname(namespace)
     else:
-        terms.append(Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)))
+        terms = [Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))]
     bookmark_time = flaskg.user.bookmark
     if bookmark_time is not None:
         terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
@@ -1902,9 +1896,7 @@ def _compute_item_sets(wanted=False):
     transcluded = set()
     existing = set()
     who_wants = {}
-    query = And(
-        [Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))]
-    )
+    query = And([Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
     metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     if wanted:
         for meta in metas:
@@ -2746,8 +2738,7 @@ def diff(item_name):
     offset = request.values.get("offset", 0)
     offset = max(int(offset), 0)
     bookmark_time = int(request.values.get("bookmark", 0))
-    terms = [Term(WIKINAME, app.cfg.interwikiname)]
-    terms.extend(Term(term, value) for term, value in fqname.query.items())
+    terms = [Term(term, value) for term, value in fqname.query.items()]
     query = And(terms)
     metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS, sortedby=[MTIME, REV_NUMBER], reverse=True, limit=None)
     close_file(item.rev.data)
@@ -3009,10 +3000,10 @@ def global_tags(namespace):
     """
     title_name = _("Global Tags")
     if namespace == NAMESPACE_ALL:
-        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(HAS_TAG, True)])
+        query = Term(HAS_TAG, True)
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, "")
     else:
-        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(NAMESPACE, namespace), Term(HAS_TAG, True)])
+        query = And([Term(NAMESPACE, namespace), Term(HAS_TAG, True)])
         fqname = split_fqname(namespace)
     if namespace == NAMESPACE_DEFAULT:
         headline = _("Global Tags")
@@ -3056,7 +3047,7 @@ def tagged_items(tag, namespace):
     """
     show all items' names that have tag <tag> and belong to namespace <namespace>
     """
-    terms = And([Term(WIKINAME, app.cfg.interwikiname), Term(TAGS, tag)])
+    terms = Term(TAGS, tag)
     if namespace != NAMESPACE_ALL:
         terms = And([terms, Term(NAMESPACE, namespace)])
     query = And(terms)

@@ -142,15 +142,6 @@ def tag_validator(element, state):
     return True
 
 
-def wikiname_validator(element, state):
-    """
-    a wikiname (name of the wiki site)
-    """
-    if element.raw is Unset:
-        element.set(state[keys.WIKINAME])
-    return name_validator(element, state)
-
-
 def namespace_validator(element, state):
     """
     a namespace (part of a wiki site)
@@ -393,7 +384,6 @@ common_meta = (
     String.named(keys.ITEMID).validated_by(itemid_validator),
     String.named(keys.REVID).validated_by(revid_validator),
     String.named(keys.PARENTID).validated_by(uuid_validator).using(optional=True),
-    String.named(keys.WIKINAME).using(strip=False).validated_by(wikiname_validator),
     String.named(keys.NAMESPACE).using(strip=False).validated_by(namespace_validator),
     List.named(keys.NAME).of(String.using(strip=False).validated_by(name_validator)).using(optional=True),
     List.named(keys.NAME_OLD).of(String.using(strip=False).validated_by(name_validator)).using(optional=True),
@@ -415,7 +405,7 @@ ContentMetaSchema = DuckDict.named("ContentMetaSchema").of(
     # markup items may have this:
     List.named(keys.ITEMLINKS).of(String.named("itemlink").validated_by(itemlink_validator)).using(optional=True),
     List.named(keys.ITEMTRANSCLUSIONS)
-    .of(String.named("itemtransclusion").validated_by(wikiname_validator))
+    .of(String.named("itemtransclusion").validated_by(name_validator))
     .using(optional=True),
     # TODO: CONTENT validation? can we do it here?
     *common_meta,

@@ -45,7 +45,7 @@ def sitemap():
         root_fqnames.append(CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0]))
 
     sitemap = []
-    for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
+    for rev in flaskg.storage.documents():
         fqnames = rev.fqnames
         mtime = rev.meta[MTIME]
         # default for content items:
@@ -74,7 +74,7 @@ def urls_names():
     """
     # XXX we currently also get deleted items, fix this
     fq_names = []
-    for rev in flaskg.storage.documents(wikiname=app.cfg.interwikiname):
+    for rev in flaskg.storage.documents():
         fq_names += [fqname for fqname in rev.fqnames]
     content = render_template("misc/urls_names.txt", fq_names=fq_names)
     return Response(content, mimetype="text/plain")
