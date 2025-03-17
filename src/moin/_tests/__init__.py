@@ -12,6 +12,7 @@ import socket
 from io import BytesIO
 from pathlib import Path
 import psutil
+import re
 
 from flask import g as flaskg
 
@@ -108,8 +109,11 @@ def get_dirs(subdir: str) -> tuple[Path, Path]:
 
 
 def get_open_wiki_files():
+    """check if any files in wiki/data or wiki/index are in use"""
     proc = psutil.Process()
-    files = [f for f in proc.open_files() if "wiki" in f.path]
-    for file in files:
-        print(f"open wiki {file}")
+    files = [f for f in proc.open_files() if re.search("/cli/wiki/", f.path)]
+    if files:
+        print(f"Process {proc.pid} {proc.name} has open files:")
+        for file in files:
+            print(f"    {file.path}")
     return files
