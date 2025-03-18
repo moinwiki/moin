@@ -47,7 +47,5 @@
     "parser",
     "demo",
     "moinwiki"
-  ],
-  "trash": false,
-  "wikiname": "MyMoinMoin"
+  ]
 }

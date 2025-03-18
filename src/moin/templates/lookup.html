@@ -33,19 +33,11 @@
             <div class="lookupresults">
                 <table>
                     {% for result in results %}
-                        {% if result['wikiname'] == cfg.interwikiname %}
-                            <tr>
-                                <td class="moin-wordbreak">{{ loop.index }}
-                                    <a href="{{ url_for_item(item_name=result.name, wiki_name='Self', rev=result.revid) }}"><b>{{ result.name }}</b></a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td class="moin-wordbreak">{{ loop.index }}
-                                    <a class="moin-interwiki" href="{{ url_for_item(item_name=result.name, wiki_name=result.wikiname, rev=result.revid) }}"><b>{{ "%s:%s" % (result.wikiname, result.name) }}</b></a>
-                                </td>
-                            </tr>
-                        {% endif %}
+                        <tr>
+                            <td class="moin-wordbreak">{{ loop.index }}
+                                <a href="{{ url_for_item(item_name=result.name, wiki_name='Self', rev=result.revid) }}"><b>{{ result.name }}</b></a>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </table>
             </div>

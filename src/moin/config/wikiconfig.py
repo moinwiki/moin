@@ -67,8 +67,6 @@ class Config(DefaultConfig):
     template_dirs = [os.path.join(wikiconfig_dir, "wiki_local")]
 
     # it is required that you set interwikiname to a unique, stable and non-empty name.
-    # Changing interwikiname on an existing wiki requires rebuilding the index.
-    #     moin index-destroy; moin index-create; moin index-rebuild
     interwikiname = "MyMoinMoin"
     # load the interwiki map from intermap.txt
     try:

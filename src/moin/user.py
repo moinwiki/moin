@@ -52,7 +52,6 @@ from moin.constants.keys import (
     SESSION_TOKEN,
     TAGS,
     USEROBJ_ATTRS,
-    WIKINAME,
 )
 
 from moin.constants.misc import ANON
@@ -140,7 +139,6 @@ def update_user_query(**q):
     USER_QUERY_STDARGS = {
         NAMESPACE: NAMESPACE_USERPROFILES,
         CONTENTTYPE: CONTENTTYPE_USER,
-        WIKINAME: app.cfg.interwikiname,  # XXX for now, search only users of THIS wiki
         # maybe add option to not index wiki users
         # separately, but share them in the index also.
     }

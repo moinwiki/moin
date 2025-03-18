@@ -40,7 +40,6 @@ import datetime
 
 from flask import request, abort, redirect, url_for
 from flask import g as flaskg
-from flask import current_app as app
 
 from markupsafe import Markup
 
@@ -75,7 +74,6 @@ from moin.constants.keys import (
     SUMMARY,
     ELEMENT,
     NAMESPACE,
-    WIKINAME,
     REFERS_TO,
     CONTENT,
     ACTION_TRASH,
@@ -245,7 +243,7 @@ def message_markup(message):
 def check_itemid(self):
     # once a ticket has both name and itemid, use itemid
     if self.meta.get(ITEMID) and self.meta.get(NAME):
-        query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, self.meta[NAME])])
+        query = Term(REFERS_TO, self.meta[NAME])
         revs = flaskg.storage.search(query, limit=None)
         prefix = self.meta[NAME][0] + "/"
         for rev in revs:  # TODO: if this is not dead code add a comment how to get here
@@ -287,7 +285,7 @@ def get_files(self):
     else:
         refers_to = self.fqname.value
         prefix = self.fqname.value + "/"
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, "file")])
+    query = And([Term(REFERS_TO, refers_to), Term(ELEMENT, "file")])
     revs = flaskg.storage.search(query, limit=None)
     files = []
     for rev in revs:
@@ -304,7 +302,7 @@ def get_comments(self):
     Return a list of roots (comments to original ticket) and a dict of comments (comments to comments).
     """
     refers_to = self.meta[ITEMID]
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Term(REFERS_TO, refers_to), Term(ELEMENT, "comment")])
+    query = And([Term(REFERS_TO, refers_to), Term(ELEMENT, "comment")])
     revs = flaskg.storage.search(query, sortedby=[MTIME], limit=None)
     comments = dict()  # {rev: [],...} comments to a comment
     lookup = dict()  # {itemid: rev,...}

@@ -19,7 +19,7 @@ from flask.cli import FlaskGroup
 
 from whoosh.query import Term, And, Regex, Not
 
-from moin.constants.keys import NAME, NAME_SORT, NAME_EXACT, NAMESPACE, REVID, WIKINAME, PARENTID, REV_NUMBER, MTIME
+from moin.constants.keys import NAME, NAME_SORT, NAME_EXACT, NAMESPACE, REVID, PARENTID, REV_NUMBER, MTIME
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.app import create_app, before_wiki
 
@@ -48,7 +48,7 @@ def cli():
 def ReduceRevisions(query, namespace, test):
     logging.info("Reduce revisions started")
     before_wiki()
-    q = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    q = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
     if query or namespace:
         if query:
             q = And([q, Regex(NAME_EXACT, query)])

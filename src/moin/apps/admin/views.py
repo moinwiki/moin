@@ -37,7 +37,6 @@ from moin.constants.keys import (
     EMAIL,
     DISABLED,
     NAME_EXACT,
-    WIKINAME,
     TRASH,
     NAMESPACE,
     NAME_OLD,
@@ -391,9 +390,7 @@ def interwikihelp():
 def itemsize():
     """display a table with item sizes"""
     headings = [_("Size"), _("Item name")]
-    query = And(
-        [Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))]
-    )
+    query = And([Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
     rows = [(rev[SIZE], CompositeName(rev[NAMESPACE], NAME_EXACT, rev[NAME][0])) for rev in revs]
     rows = sorted(rows, reverse=True)
@@ -414,7 +411,7 @@ def trash(namespace):
 
 
 def _trashed(namespace):
-    q = And([Term(WIKINAME, app.cfg.interwikiname), Term(TRASH, True)])
+    q = Term(TRASH, True)
     if namespace != NAMESPACE_ALL:
         q = And([q, Term(NAMESPACE, namespace)])
     trashedEntry = namedtuple("trashedEntry", "fqname oldname revid rev_number mtime comment editor parentid")
@@ -439,7 +436,7 @@ def _trashed(namespace):
 @admin.route("/user_acl_report/<uid>", methods=["GET"])
 @require_permission(SUPERUSER)
 def user_acl_report(uid):
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
     all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     theuser = user.User(uid=uid)
     itemwise_acl = []
@@ -504,7 +501,7 @@ def item_acl_report():
     Item names are prefixed with the namespace, if there is a non-default namespace.
     If there are multiple names, the first name is used for sorting.
     """
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
     all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
     for meta in all_metas:
@@ -558,7 +555,7 @@ def group_acl_report(group_name):
     Display a table of items and permissions, where the ACL rule specifies any
     WikiGroup or ConfigGroup name.
     """
-    query = And([Term(WIKINAME, app.cfg.interwikiname), Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))])
+    query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
     all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     group_items = []
     for meta in all_metas:

@@ -92,12 +92,11 @@ from emeraldtree import ElementTree as ET
 import re
 import copy
 
-from flask import current_app as app
 from flask import g as flaskg
 
-from whoosh.query import Term, And, Regex
+from whoosh.query import Regex
 
-from moin.constants.keys import NAME_EXACT, WIKINAME
+from moin.constants.keys import NAME_EXACT
 from moin.items import Item
 from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
@@ -308,7 +307,7 @@ class Converter:
 
                 elif xp_include_pages:
                     # we have regex of pages to include:  <<Include(^qqq)>>
-                    query = And([Term(WIKINAME, app.cfg.interwikiname), Regex(NAME_EXACT, xp_include_pages)])
+                    query = Regex(NAME_EXACT, xp_include_pages)
                     reverse = xp_include_sort == "descending"
                     results = flaskg.storage.search(query, sortedby=NAME_EXACT, reverse=reverse, limit=None)
                     pagelist = [result.fqname.fullname for result in results]

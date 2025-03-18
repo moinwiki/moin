@@ -6,10 +6,9 @@
 """
 
 from flask import g as flaskg
-from flask import current_app as app
 from flask import request
 from whoosh.query import Term, And
-from moin.constants.keys import ALL_REVS, CURRENT, MTIME, WIKINAME
+from moin.constants.keys import ALL_REVS, CURRENT, MTIME
 
 
 def prior_next_revs(revid, fqname):
@@ -23,8 +22,7 @@ def prior_next_revs(revid, fqname):
         # maintenance scripts, such as dump-html, have request.view_args == {}
         show_revision = False
     if show_revision:
-        terms = [Term(WIKINAME, app.cfg.interwikiname)]
-        terms.extend(Term(term, value) for term, value in fqname.query.items())
+        terms = [Term(term, value) for term, value in fqname.query.items()]
         query = And(terms)
         revs = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=None)
         rev_ids = []

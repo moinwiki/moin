@@ -10,7 +10,6 @@ from datetime import datetime
 
 from flask import request, abort
 from flask import g as flaskg
-from flask import current_app as app
 
 from whoosh.query import Term, And, Prefix
 from whoosh.sorting import FunctionFacet
@@ -20,7 +19,7 @@ from moin.i18n import L_
 from moin.themes import render_template
 from moin.forms import Text, Tags, DateTime
 from moin.storage.middleware.protecting import AccessDenied
-from moin.constants.keys import NAME_EXACT, WIKINAME, ITEMTYPE, MTIME, PTIME, TAGS
+from moin.constants.keys import NAME_EXACT, ITEMTYPE, MTIME, PTIME, TAGS
 from moin.items import Item, Default, register, BaseMetaForm
 from moin.utils.interwiki import split_fqname
 
@@ -63,13 +62,8 @@ class Blog(Default):
         # for now it is just one tag=value, later it could be tag=value1&tag=value2&...
         tag = request.values.get("tag")
         prefix = self.name + "/"
-        terms = [
-            Term(WIKINAME, app.cfg.interwikiname),
-            # Only blog entry itemtypes
-            Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY),
-            # Only sub items of this item
-            Prefix(NAME_EXACT, prefix),
-        ]
+        # Only blog entry itemtypes and sub items of this item
+        terms = [Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY), Prefix(NAME_EXACT, prefix)]
         if tag:
             terms.append(Term(TAGS, tag))
         query = And(terms)

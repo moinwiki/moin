@@ -12,7 +12,7 @@
                 <h4>{{ _("Please check these tickets if they cover your issue:") }}</h4>
                 <table>
                     {% for result in results %}
-                        {% if result['wikiname'] == cfg.interwikiname and result['itemtype'] == 'ticket' %}
+                        {% if result['itemtype'] == 'ticket' %}
                             <tr>
                                 <td>
                                     <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}">

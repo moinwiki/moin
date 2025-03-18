@@ -22,7 +22,7 @@ from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, WIKINAME, REVID, PARENTID, REV_NUMBER, MTIME, NAME
+from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, REVID, PARENTID, REV_NUMBER, MTIME, NAME
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
@@ -116,9 +116,6 @@ def PutItem(meta_file, data_file, overwrite):
         meta = mf.read()
     meta = meta.decode("utf-8")
     meta = json.loads(meta)
-    to_kill = [WIKINAME]  # use target wiki name
-    for key in to_kill:
-        meta.pop(key, None)
     if overwrite:
         # by default, indexing.py will update meta[MTIME] with current time making global history useless
         # we preserve the old modified time for use by indexing.py

@@ -200,8 +200,6 @@ The following table includes fields that may be useful for searching.
 +-------------------------+-------------------------------------------------------+
 | ``username``            | submitter user name, e.g. JoeDoe                      |
 +-------------------------+-------------------------------------------------------+
-| ``wikiname``            | wiki name, e.g. ITWiki, EngineeringWiki, SalesWiki    |
-+-------------------------+-------------------------------------------------------+
 
 ** These fields exist only in the current revisions index, see Notes below.
 
@@ -220,10 +218,6 @@ Search items with an item ACL that explicitly gives Joe read rights::
 
   acl:Joe:+read
 
-Limiting search to a specific wiki, for example in a wiki farm's shared index::
-
-  wikiname:SomeWiki  # requires correct caps
-
 Notes
 =====
 
@@ -233,10 +227,9 @@ button under the Search Options link is selected. The larger indexes all
 revisions of all items including revisions of deleted items. As noted in the table
 above the larger index omits several fields to save space.
 
-By default, all namespaces and all wikinames are searched, including the userprofiles
-index. Because the userprofiles index is normally read restricted, hits will be
-blocked and included as `n items are not shown because read permission was denied` at
-the bottom of the page.
+By default, all namespaces are searched, including the userprofiles index. Because
+the userprofiles index is normally read restricted, hits will be blocked and included
+as `n items are not shown because read permission was denied` at the bottom of the page.
 
 Items with transcluded content do not contain the transcluded content within the
 item's index. An item containing "foo" within its content and trancluding an item with
