@@ -108,8 +108,11 @@ def get_dirs(subdir: str) -> tuple[Path, Path]:
 
 
 def get_open_wiki_files():
+    """check if any files in wiki/data or wiki/index are in use"""
     proc = psutil.Process()
-    files = [f for f in proc.open_files() if "wiki" in f.path]
-    for file in files:
-        print(f"open wiki {file}")
+    files = []
+    for file in proc.open_files():
+        if Path(file.path).match("*/wiki/data/*") or Path(file.path).match("*/wiki/index/*"):
+            print(f"Wiki file open: {file.path}")
+            files.append(file)
     return files
