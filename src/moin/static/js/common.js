@@ -323,6 +323,36 @@ MoinMoin.prototype.toggleSubtree = function (item) {
 };
 
 
+MoinMoin.prototype.displayFlashMessages = function (messages) {
+    for (i = 0; i < messages.length; i += 1) {
+        f = $(document.createElement('p'));
+        f.html(messages[i][0]);
+        f.addClass('moin-flash');
+        f.addClass('moin-flash-javascript');
+        f.addClass('moin-flash-' + messages[i][1]);
+        $(f).click(function () {
+            this.remove();
+        });
+        $('#moin-flash').append(f);
+    }
+}
+
+// remove all flash messages previously added via javascript
+MoinMoin.prototype.clearFlashMessages = function () {
+    $('#moin-flash .moin-flash-javascript').remove();
+}
+
+MoinMoin.prototype.saveFlashMessages = function (messages) {
+    localStorage.setItem("moin-flash-messages", JSON.stringify(messages))
+}
+
+MoinMoin.prototype.restoreFlashMessages = function () {
+    messages = JSON.parse(localStorage.getItem("moin-flash-messages") || "[]")
+    localStorage.removeItem("moin-flash-messages")
+    this.clearFlashMessages()
+    this.displayFlashMessages(messages)
+}
+
 // User Settings page enhancements - make long multi-form page appear as a shorter page
 // with a row of tabs at the top or side that may be clicked to select a form.
 MoinMoin.prototype.enhanceUserSettings = function () {
@@ -421,19 +451,9 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             clearInterval(buttonDotAnimation);
             // if the response indicates a redirect, set the new location
             if (data.redirect) {
+                MoinMoin.prototype.saveFlashMessages(data.flash)
                 location.href = data.redirect;
                 return;
-            }
-            // remove all flash messages previously added via javascript
-            $('#moin-flash .moin-flash-javascript').remove();
-            // add new flash messages from the response
-            for (i = 0; i < data.flash.length; i += 1) {
-                f = $(document.createElement('p'));
-                f.html(data.flash[i][0]);
-                f.addClass('moin-flash');
-                f.addClass('moin-flash-javascript');
-                f.addClass('moin-flash-' + data.flash[i][1]);
-                $('#moin-flash').append(f);
             }
             // get the new form element from the response
             newform = $(data.form);
@@ -445,9 +465,13 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             // replace the old form with the new one
             form.replaceWith(newform);
             if (ev.currentTarget.id === 'usersettings_ui' ||  ev.currentTarget.id === 'usersettings_personal') {
+                MoinMoin.prototype.saveFlashMessages(data.flash)
                 // theme or language may have changed, show user the new theme/language
                 location.reload(true);
+                return;
             }
+            // show any flash messages received with the server response
+            MoinMoin.prototype.displayFlashMessages(data.flash)
         }, 'json');
         return false;
     }
@@ -848,4 +872,5 @@ $(document).ready(function () {
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
 
+    moin.restoreFlashMessages();
 });
