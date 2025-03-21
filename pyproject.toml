@@ -160,7 +160,7 @@ unfixable = []
 "src/moin/datastructures/__init__.py" = ["F401"]
 
 [tool.bandit]
-exclude_dirs = ["quickinstall.py", "*/_tests/*"]
+exclude_dirs = ["quickinstall.py", "*/_tests/*", "*/_ui_tests/*"]
 skips = ["B101", "B105", "B106", "B307", "B311", "B403", "B608"]
 
 [tool.tox]
