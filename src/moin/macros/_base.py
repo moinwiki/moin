@@ -49,7 +49,7 @@ def get_item_names(name="", startswith="", kind="files", skiptag="", tag="", reg
         item = Item.create(name)
     except AccessDenied:
         abort(403)
-    dirs, files = item.get_index(startswith, regex=regex)
+    dirs, files = item.get_index(startswith, regex=regex, short=True)
     item_names = []
     if not kind or kind == "files" or kind == "both":
         for item in files:
