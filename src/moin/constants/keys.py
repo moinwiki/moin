@@ -170,6 +170,7 @@ REPLY_TO = "reply_to"
 # index names
 LATEST_REVS = "latest_revs"
 ALL_REVS = "all_revs"
+LATEST_IDX = "latest_idx"
 
 # values for ACTION key
 ACTION_SAVE = "SAVE"

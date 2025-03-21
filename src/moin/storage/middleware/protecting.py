@@ -153,7 +153,7 @@ class ProtectingMiddleware:
         item = None
         if not meta_available or self._get_configured_acls(fqname)["hierarchic"]:
             """self.meta is not valid or namespace uses hierarchic acls and we need item parentids"""
-            item = self.get_item(**q)
+            item = self.get_item(short=True, **q)
             acl = item.acl
             fqname = item.fqname
             if acl is not None:
@@ -301,8 +301,8 @@ class ProtectingMiddleware:
         item = self.indexer[name]
         return ProtectedItem(self, item)
 
-    def get_item(self, **query):
-        item = self.indexer.get_item(**query)
+    def get_item(self, short=False, **query):
+        item = self.indexer.get_item(short=short, **query)
         return ProtectedItem(self, item)
 
     def create_item(self, **query):
@@ -326,7 +326,7 @@ class ProtectingMiddleware:
         if item:
             item = ProtectedItem(self, item)
         else:
-            item = self.get_item(**fqname.query)
+            item = self.get_item(short=True, **fqname.query)
         allowed = item.allows(capability, user_names=usernames)
         return allowed
 
