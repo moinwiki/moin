@@ -1566,7 +1566,8 @@ Sample logging configurations can also be found in the `contrib/logging/` direct
 
 Logging must be configured very early during startup. There are two common ways to do this:
 
-**1. Using the environment variable `MOINLOGGINGCONF`**
+environment variable `MOINLOGGINGCONF`
+======================================
 
 You can create a custom logging configuration file and specify its path using the `MOINLOGGINGCONF` environment variable:
 
@@ -1602,7 +1603,8 @@ Example `logging.conf` to enable debug-level logging:
     [formatter_simple]
     format=%(asctime)s - %(levelname)s - %(name)s - %(message)s
 
-**2. Manual configuration in your server adaptor script**
+configuration in adaptor script
+===============================
 
 Alternatively, you can load the logging configuration explicitly at the beginning of your adaptor script (e.g. `moin.wsgi`):
 
