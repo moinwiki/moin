@@ -467,7 +467,7 @@ options_no_group_name = {
                     ("frontend.index", L_("Subitems"), L_("Subitems Index"), False),
                     ("special.supplementation", None, None, False),
                     ("frontend.rename_item", L_("Rename"), L_("Rename this item"), True),
-                    ("frontend.highlight_item", L_("Highlight"), L_("Show with Syntax-Highlighting"), True),
+                    ("frontend.highlight_item", L_("Markup"), L_("Show markup with Syntax-Highlighting"), True),
                     ("frontend.show_item_meta", L_("Meta"), L_("Display Metadata"), True),
                     ("frontend.sitemap", L_("Site Map"), L_("Local Site Map of this item"), True),
                     ("frontend.similar_names", L_("Similar"), L_("Items with similar names"), False),

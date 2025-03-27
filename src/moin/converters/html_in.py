@@ -162,7 +162,7 @@ class Converter:
             try:
                 html_tree = HTML(html_str)
             except ValueError:
-                msg = _("Error: malformed HTML. Try viewing source with Highlight or Modify links.")
+                msg = _("Error: malformed HTML. Try viewing source with Markup or Modify links.")
                 msg = f'<div class="error"><p><strong>{msg}</strong></p></div>'
                 html_str = "".join(["<html>", msg, "</html>"])
                 html_tree = HTML(html_str)
