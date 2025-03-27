@@ -2006,7 +2006,8 @@ def subscribe_item(item_name):
             msg = _("You could not get subscribed to this item."), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for_item(item_name))
+    next_url = request.referrer or url_for_item(item_name)
+    return redirect(next_url)
 
 
 class ValidRegistration(Validator):
