@@ -2617,26 +2617,25 @@ def usersettings():
                 # validation failed
                 response["flash"].append((_("Nothing saved."), "error"))
 
+            # if no flash message was added until here, we add a generic success message
             if not response["flash"]:
-                # if no flash message was added until here, we add a generic success message
                 msg = _("Your changes have been saved.")
                 response["flash"].append((msg, "info"))
-                repeat_flash_msg(msg, "info")
 
-            if response["redirect"] is not None or not is_xhr:
-                # if we redirect or it is no XHR request, we just flash() the messages normally
-                for f in response["flash"]:
-                    flash(*f)
-
+            # if it is a XHR request, render the part from the usersettings_ajax.html template
+            # and send the response encoded as an JSON object;
+            # the client side is responsible for displaying any flash messages
             if is_xhr:
-                # if it is a XHR request, render the part from the usersettings_ajax.html template
-                # and send the response encoded as an JSON object
                 response["form"] = render_template("usersettings_ajax.html", part=part, form=form)
                 return jsonify(**response)
-            else:
-                # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
-                if response["redirect"] is not None:
-                    return redirect(response["redirect"])
+
+            # if no XHR request, we just flash() the messages normally
+            for f in response["flash"]:
+                flash(*f)
+
+            # if there is a redirect pending, use a normal HTTP redirect
+            if response["redirect"] is not None:
+                return redirect(response["redirect"])
 
             # if the view did not return until here, we add the current form to the forms dict
             # and continue with rendering the normal template
