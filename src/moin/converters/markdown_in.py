@@ -519,8 +519,9 @@ class Converter:
             p_text = html_in_converter(f"<p>{text}</p>")
             # discard page and body tags
             return p_text[0][0]
-        except AssertionError:
+        except (AssertionError, IndexError) as ex:
             # malformed tags, will be escaped so user can see and fix
+            logging.debug(f"Caught exception in embedded_markup: {ex}")
             return text
 
     def convert_embedded_markup(self, node):

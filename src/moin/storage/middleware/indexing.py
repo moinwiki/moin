@@ -1256,7 +1256,7 @@ class Item(PropertiesMixin):
                 if e.name in ["itemlinks", "subscriptions"]:
                     for child in e.children:
                         if child.valid is False:
-                            val.append(f'"{str(child)}". {str(child.errors[0])}')
+                            val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
                             e.valid = False
                 elif e.valid is False:
                     val.append(str(e))
