@@ -389,6 +389,27 @@ def add_file_filters(_filter, filetypes):
     return _filter
 
 
+def add_namespaces(_namespaces, namespaces):
+    """
+    Add user selected namespaces to the search query.
+
+    :param _namespaces: the current list of namespaces, usually []
+    :param namespaces: list of user selected namespaces
+    :returns: an Or list of namespaces enclosed within an And
+    """
+    name_spaces = []
+    valid_ns = app.cfg.namespace_mapping
+    for ns in namespaces:
+        if ns in valid_ns:
+            name_spaces.append(Term("namespace", ns))
+        else:
+            if ns == NAMESPACE_UI_DEFAULT:
+                name_spaces.append(Term("namespace", ""))
+    name_spaces = Or(name_spaces)
+    _namespaces = And(namespaces)
+    return _namespaces
+
+
 def add_facets(facets, time_sorting):
     """
     Adds various facets for the search features.
@@ -416,7 +437,7 @@ def search(item_name):
     """
     Perform a whoosh search of the index and display the matching items.
 
-    The default search is across all namespaces in the index.
+    The default search is across all namespaces in the index and includes trash.
 
     The Jinja template formatting the output may also display data related to the
     search such as the whoosh query, filter (if any), hit counts, and additional
@@ -433,6 +454,10 @@ def search(item_name):
     valid = search_form.validate()
     time_sorting = False
     filetypes = []
+    namespaces = []
+    trash = True  # show deleted items
+    best_match = False
+    terms = []
     if ajax:
         query = request.args.get("q")
         history = request.args.get("history") == "true"
@@ -440,25 +465,28 @@ def search(item_name):
         if time_sorting == "default":
             time_sorting = False
         filetypes = request.args.get("filetypes")
+        namespaces = request.args.get("namespaces")
+        trash = request.args.get("trash")
         is_ticket = bool(request.args.get("is_ticket"))
+        # remove the extra ',' at the end of the filetyes and namespaces strings
         if filetypes:
-            filetypes = filetypes.split(",")[:-1]  # To remove the extra '' at the end of the list
+            filetypes = filetypes.split(",")[:-1]
+        if namespaces:
+            namespaces = namespaces.split(",")[:-1]
     else:
-        query = search_form["q"].value
-        history = bool(request.values.get("history"))
-
-    best_match = False
-    # we test for query in case this is a test run
-    if query and query.startswith("\\"):
-        best_match = True
-        query = query[1:]
+        # not ajax, the form has only the search string q as keyed by the user
+        query = search_form["q"].value or ""
+        history = False  # show only current revisionss
+        # redirect to best matched item if user keys leading \ in q string
+        if query.startswith("\\"):
+            best_match = True
+            query = query[1:]
 
     if valid or ajax:
         # most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
         # this finds such words and reports to the user
         analyzer = StandardAnalyzer()
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
-
         idx_name = ALL_REVS if history else LATEST_REVS
 
         if best_match:
@@ -468,11 +496,17 @@ def search(item_name):
                 [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
             )
         q = qp.parse(query)
+        if trash == "false":
+            q = And([q, Not(Term(TRASH, True))])
+
+        if namespaces:
+            ns_terms = [Term(NAMESPACE, ns) for ns in namespaces]
+            q = And([q, Or(ns_terms)])
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
             prefix_name = item_name + "/"
-            terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)]
+            terms.append([Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)])
 
             show_transclusions = True
             if show_transclusions:
@@ -493,7 +527,7 @@ def search(item_name):
                         transclusions = _compute_item_transclusions(name)
                         transcluded_names.update(transclusions)
                 # XXX Will whoosh cope with such a large filter query?
-                terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
+                terms.append([Term(NAME_EXACT, tname) for tname in transcluded_names])
             _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:

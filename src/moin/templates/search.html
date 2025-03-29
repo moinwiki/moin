@@ -32,13 +32,15 @@
             <a href="/+serve/docs/user/search.html">Local docs</a> or
             <a href="https://moin-20.readthedocs.io/en/latest/user/search.html">Internet docs.</a>
         </div>
-        <p class="moin-search-option-bar"><i class="fa fa-chevron-down"></i> {{ _("Search Options") }}</p>
+        <p class="moin-search-option-bar"><i class="fa fa-chevron-down"></i> {{ _("More Search Options") }}</p>
         <div class="moin-searchoptions hidden">
-            <table>
+            <table class="moin-search-options-table">
                 <tr class="moin-searchopt-tab">
                     <th>Revisions</th>
                     <th>Sort By</th>
-                    <th colspan="3">Content Types</th>
+                    <th>Content Types</th>
+                    <th>Namespace</th>
+                    <th>Trash</th>
                 </tr>
                 <tr>
                     <td>
@@ -55,16 +57,21 @@
                         <label><input type="checkbox" name="itemtype" value="markup"> Markup Text</label><br>
                         <label><input type="checkbox" name="itemtype" value="text"> Other Text</label><br>
                         <label><input type="checkbox" name="itemtype" value="image"> Image</label><br>
-                    </td>
-                    <td>
                         <label><input type="checkbox" name="itemtype" value="audio"> Audio</label><br>
                         <label><input type="checkbox" name="itemtype" value="video"> Video</label><br>
                         <label><input type="checkbox" name="itemtype" value="drawing"> Drawing</label><br>
-                    </td>
-                    <td>
                         <label><input type="checkbox" name="itemtype" value="other"> Other</label><br>
                         <label><input type="checkbox" name="itemtype" value="unknown"> Unknown</label><br>
-                        <label><input type="checkbox" name="itemtype" value="all" checked="checked"> All</label><br>
+                        {# <label><input type="checkbox" name="itemtype" value="all" checked="checked"> All</label><br> #}
+                    </td>
+                    <td>
+                        {%- for namespace, root in theme_supp.get_namespaces() %}
+                            <label><input type="checkbox" name="namespace" value="{{namespace}}"> {{namespace}}</label><br>
+                        {%- endfor -%}
+                    </td>
+                    <td>
+                        <label><input type="radio" name="trash" value="include" checked="checked"> Include</label><br>
+                        <label><input type="radio" name="trash" value="exclude"> Exclude</label><br>
                     </td>
                 </tr>
             </table>
