@@ -6,6 +6,7 @@ MoinMoin - namespaces related constants
 """
 
 NAMESPACE_DEFAULT = ""
+NAMESPACE_UI_DEFAULT = "~"  # use this when showing default namespace placeholder within UI
 NAMESPACE_USERPROFILES = "userprofiles"
 NAMESPACE_USERS = "users"
 NAMESPACE_HELP_COMMON = "help-common"
