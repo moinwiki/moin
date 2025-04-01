@@ -5,7 +5,7 @@
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2012 MoinMoin:CheerXiao
-# Copyright: 2023-2024 MoinMoin:UlrichB
+# Copyright: 2023-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -845,7 +845,11 @@ class TransformableBitmapImage(RenderableBitmapImage):
             return super()._render_data_diff_atom(oldrev, newrev)
         url = url_for("frontend.diffraw", _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template(
-            "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=Markup(f'<img src="{escape(url)}" />')
+            "atom.html",
+            oldrev=oldrev,
+            newrev=newrev,
+            get="binary",
+            content=Markup(f'<img src="{escape(url)}" />'),  # nosec B704
         )
 
     def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
@@ -853,7 +857,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             # no PIL, we can't do anything, we just call the base class method
             return super()._render_data_diff(oldrev, newrev)
         url = url_for("frontend.diffraw", item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
-        return Markup(f'<img src="{escape(url)}" />')
+        return Markup(f'<img src="{escape(url)}" />')  # nosec B704
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -1242,9 +1246,11 @@ class DrawPNGMap(Draw):
         if image_map:
             mapid, image_map = self._transform_map(image_map, title)
             title = _("Clickable drawing: {filename}").format(filename=self.name)
-            return Markup(image_map + f'<img src="{png_url}" alt="{title}" usemap="#{mapid}" />')
+            return Markup(
+                image_map + f'<img src="{escape(png_url)}" alt="{escape(title)}" usemap="#{escape(mapid)}" />'
+            )  # nosec B704
         else:
-            return Markup(f'<img src="{png_url}" alt="{title}" />')
+            return Markup(f'<img src="{escape(png_url)}" alt="{escape(title)}" />')  # nosec B704
 
 
 @register
@@ -1273,4 +1279,4 @@ class SvgDraw(Draw):
         # of items and also rendering them with the code in base class could work
         drawing_url = url_for("frontend.get_item", item_name=self.name, member="drawing.svg", rev=self.rev.revid)
         png_url = url_for("frontend.get_item", item_name=self.name, member="drawing.png", rev=self.rev.revid)
-        return Markup(f'<img src="{png_url}" alt="{drawing_url}" />')
+        return Markup(f'<img src="{escape(png_url)}" alt="{escape(drawing_url)}" />')  # nosec B704
