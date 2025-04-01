@@ -66,12 +66,12 @@
                     </td>
                     <td>
                         {%- for namespace, root in theme_supp.get_namespaces() %}
-                            <label><input type="checkbox" name="namespace" value="{{namespace}}"> {{namespace}}</label><br>
+                            <label><input type="checkbox" name="namespace" value="{{ namespace }}"> {{ namespace }}</label><br>
                         {%- endfor -%}
                     </td>
                     <td>
-                        <label><input type="radio" name="trash" value="include" checked="checked"> Include</label><br>
-                        <label><input type="radio" name="trash" value="exclude"> Exclude</label><br>
+                        <label><input type="radio" name="trash" value="exclude" checked="checked"> Exclude</label><br>
+                        <label><input type="radio" name="trash" value="include" > Include</label><br>
                     </td>
                 </tr>
             </table>

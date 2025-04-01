@@ -389,27 +389,6 @@ def add_file_filters(_filter, filetypes):
     return _filter
 
 
-def add_namespaces(_namespaces, namespaces):
-    """
-    Add user selected namespaces to the search query.
-
-    :param _namespaces: the current list of namespaces, usually []
-    :param namespaces: list of user selected namespaces
-    :returns: an Or list of namespaces enclosed within an And
-    """
-    name_spaces = []
-    valid_ns = app.cfg.namespace_mapping
-    for ns in namespaces:
-        if ns in valid_ns:
-            name_spaces.append(Term("namespace", ns))
-        else:
-            if ns == NAMESPACE_UI_DEFAULT:
-                name_spaces.append(Term("namespace", ""))
-    name_spaces = Or(name_spaces)
-    _namespaces = And(namespaces)
-    return _namespaces
-
-
 def add_facets(facets, time_sorting):
     """
     Adds various facets for the search features.
@@ -455,7 +434,7 @@ def search(item_name):
     time_sorting = False
     filetypes = []
     namespaces = []
-    trash = True  # show deleted items
+    trash = request.args.get("trash", "false")
     best_match = False
     terms = []
     if ajax:
@@ -466,13 +445,13 @@ def search(item_name):
             time_sorting = False
         filetypes = request.args.get("filetypes")
         namespaces = request.args.get("namespaces")
-        trash = request.args.get("trash")
         is_ticket = bool(request.args.get("is_ticket"))
         # remove the extra ',' at the end of the filetyes and namespaces strings
         if filetypes:
             filetypes = filetypes.split(",")[:-1]
         if namespaces:
             namespaces = namespaces.split(",")[:-1]
+            namespaces = ["" if ns == NAMESPACE_UI_DEFAULT else ns for ns in namespaces]
     else:
         # not ajax, the form has only the search string q as keyed by the user
         query = search_form["q"].value or ""

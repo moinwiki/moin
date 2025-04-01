@@ -7,10 +7,12 @@ Entering search queries
 
 To start a search, enter a query into the short query input field and type
 enter or click the search icon. By default, the names, summary, tags, content, namengram,
-summaryngram, and contentngram fields are searched.
+summaryngram, and contentngram fields of each item's last revisions are searched.
+Deleted items (trash) are excluded.
 
 The search results view provides a form for refining the search through
-ajax updates. A transaction is started each time a character is added or removed
+ajax updates. Click the `More Search Options` link to see the form.
+A transaction is started each time a character is added or removed
 in the search field. If keying is rapid, it is possible that results will
 processed out of order. The `Whoosh query` shows the last term processed.
 
