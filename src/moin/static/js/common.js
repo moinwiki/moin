@@ -916,7 +916,7 @@ $(document).ready(function () {
         }
     });
 
-    $('textarea.moin-autosize').autosize();
+    $('textarea.moin-autosize').each(function(){autosize(this)});
 
     showAllOptions();
 
