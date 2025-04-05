@@ -1,0 +1,536 @@
+@use "variables" as *;
+
+@import "notice";
+
+/* start of bootstrap.scss */
+@import "bootstrap";
+/* end of bootstrap.scss */
+
+/* start of basic theme custom css for moin2 */
+
+ul.moin-pull-right {
+  @include float-right;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  padding-left: 0.5em;
+  background-color: $theme-col-2;
+  border-radius: 7px;
+  border-bottom: 1px solid $theme-col-1;
+
+  &:hover, &:focus {
+    .moin-permalink {
+      font-size:80%;
+      display: inline;
+      text-decoration: none;
+    }
+  }
+}
+
+h1 { font-size: 1.75em; }
+h2 { font-size: 1.5em; }
+.moin-pagetitle { font-size: 1.75em;
+  font-weight: normal;
+  padding-left: 0.5em;
+  background-color: $theme-col-2;
+  border-radius: 7px;
+  border-bottom: 1px solid $theme-col-1;
+}
+
+.btn-primary {
+  background-color: $theme-col-1;
+}
+
+.navbar {
+  padding: 0px 0px;
+}
+
+.navbar, .navbar-nav {
+  display: flex;
+}
+
+.moin-permalink {
+  font-size:80%;
+  display: none;
+}
+
+.moin-permalink:after {
+  content: "\f1dd";
+  font-family: FontAwesome;
+}
+
+.moin-logo {
+  @extend .text-center;
+  position: relative;
+  padding-top: 23px;
+  padding-bottom: 23px;
+}
+
+.moin-user-action-special {
+  @extend .list-group-item;
+  width: 100%;
+  color: $link-color;
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    color: $link-hover-color;
+    background-color: $list-group-hover-bg;
+    border: 1px solid $list-group-border-color;
+  }
+  border: 1px solid $list-group-border-color;
+  border-radius: 0;
+  padding: 5px 15px;
+}
+
+.moin-viewoptions, .moin-itemactions, .moin-useractions {
+  float: right;
+}
+
+a.moin-showhide {
+  color: $search_option_bar_text_color;
+}
+a:focus.moin-showhide {
+  outline-width: 0;
+}
+
+.list-group-item-heading {
+  margin: 7px 10px;
+}
+
+.list-group-item {
+  text-align: left;
+  padding: 2px 10px;
+  background-color: white;
+  border: 1px solid $theme-col-2;
+  > a {
+    color: $search_option_bar_color;
+  }
+  &.active {
+    background-color: #428bca;
+    border-color: #428bca;
+  }
+}
+a.list-group-item.wikilink {
+  color: $theme-col-1;
+}
+
+.moin-list-heading {
+  background-color: $navbar-bg;
+  border: 1px solid $navbar-bg;
+  color: $search_option_bar_text_color;
+  margin-bottom: 0.5em;
+  border-radius: 7px;
+  > a {
+    color: $search_option_bar_text_color;
+  }
+}
+
+.moin-nav {
+  @extend .nav;
+  margin-bottom: 20px;  // override bottom-margin nav-tabs
+}
+
+.moin-shadow  > li > a {
+  @include form-control-focus(); // adds shadow onfocus
+}
+
+.moin-nonexistent {
+  color: $link-nonexistent-color !important;
+  &:hover {
+    color: $link-nonexistent-hover-color;
+  }
+}
+
+#app {
+  padding: 0px;
+}
+
+.moin-sidebar {
+  margin-left: 15px;
+  margin-right: 15px;
+  width: 12rem;
+}
+
+.moin-sidebar-panels {
+  overflow: hidden;
+}
+
+.moin-sidebar-panels a {
+  white-space: nowrap;
+}
+
+.moin-sidebar-panels .moin-showhide a {
+  white-space: normal;
+}
+
+.moin-sidebar-panels a .hidden-sm,
+.moin-sidebar-panels a .hidden-xs {
+  display: inline !important;
+}
+
+.moin-sidebar-panels .moin-sidebar-form {
+  padding-bottom: 10px;
+}
+
+$navbar-inverse-color:   lighten($gray-light, 15%);
+$navbar-inverse-bg:      #222;
+$navbar-inverse-border:  darken($navbar-inverse-bg, 10%);
+
+.navbar-inverse {
+  background-color: $navbar-inverse-bg;
+  border-color: $navbar-inverse-border;
+}
+
+.moin-navbar-inverse {
+  @extend .navbar-inverse;
+  background-color: $moin-navbar-inverse-bgcolor;
+  padding-left: 0px;
+  padding-right: 0px;
+  border-color: $theme-col-2;
+  .navbar-nav {
+    > li > a {
+      color: $moin-navbar-inverse-textcolor;
+    }
+    > li > a.active {
+      color: $navbar-inverse-link-hover-color;
+    }
+  }
+  .navbar-text {
+    color: $moin-navbar-inverse-textcolor;
+    > a {
+      color: $moin-navbar-inverse-textcolor;
+    }
+  }
+  .navbar-brand {
+    color: $moin-navbar-inverse-textcolor;
+  }
+  .navbar-toggle {
+    border-color: #333;
+    > .icon-bar {
+      background-color: #fff;
+    }
+  }
+}
+
+.moin-button {
+  background-color: $theme-col-2;
+  color: $theme-col-4;
+  border-color: #cccccc;
+}
+
+.moin-navbar-user > ul.nav > li,
+.moin-navbar-user > ul.nav > li  > a {
+  display: inline;
+}
+
+.moin-navbar-user > ul.nav > li  > a {
+  padding: 10px 10px;
+}
+
+.moin-navbar-user > ul.nav {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  flex-direction: row;
+}
+
+.moin-footer {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.moin-footer > hr {
+  align-self: stretch;
+}
+
+.moin-quicklink {
+  position: relative;
+  padding: 2px 10px 2px 10px;
+  background-color: $search_option_bar_text_color;
+  border: 1px solid $search_option_bar_text_color;
+  margin-bottom: -1px;
+
+  > a {
+    color: $search_option_bar_color;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+    @include border-bottom-radius($border-radius);
+  }
+
+  // Hover state
+  &:hover,
+  &:focus {
+    background-color: $list-group-hover-bg;
+  }
+}
+
+.moin-quicklink-label {
+  display: block;
+  &:hover,
+  &:focus {
+    color: #90adc6;
+    text-decoration: none;
+  }
+}
+
+.moin-quicklink-delete {
+  position: absolute;
+  left: 80%;
+  top: 25%;
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.comment {
+  color: $text-color;
+  background-color: lighten($link-color, 40%);
+}
+
+.navbar-form {
+  // todo
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+
+// added to stretch across the whole width, which is reduced by navbar.scss's navbar-form
+.moin-navbar-form {
+  @extend .navbar-form;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.navbar-header {
+  @include clearfix();
+}
+
+.moin-navbar-header {
+  @extend .navbar-header;
+  display: flex;
+  align-items: center;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.moin-navbar-header > button {
+  float: left;
+}
+
+.moin-toggle-comments-button, .moin-transclusions-button {
+  font-weight: normal;
+}
+
+a.moin-toggle-comments-tooltip, a.moin-transclusions-tooltip {
+  color: $theme-col-1;
+}
+
+a.wikilink {
+  color: $search_option_bar_color;
+}
+.moin-alias {
+  z-index: 500;
+}
+
+ul.moin-breadcrumb {
+  @extend .breadcrumb;
+  display: inline-flex !important;
+  align-self: self-start;
+  align-items: center;
+  padding-inline-start: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding: 0px 8px 0px 8px;
+  > li {
+    &+li:before {
+      content: "\0020"; // Unicode space which is non-collapsing
+      padding: 0px;
+    }
+  }
+}
+ul.moin-breadcrumb ul.moin-alias {
+  background-color: $search_option_bar_color;
+  border-radius: 6px;
+}
+ul.moin-breadcrumb ul.moin-alias {
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+}
+ul.moin-breadcrumb li ul.moin-alias li {
+  padding: 2px 10px;
+  color: $white;
+  list-style-type: none;
+  display: block;
+}
+ul.moin-breadcrumb li ul.moin-alias li a {
+  display: inline-block;
+  color: $white;
+}
+ul.moin-breadcrumb li {
+  position: relative;
+}
+ul.moin-breadcrumb li ul.moin-alias {
+  display: none;
+  position: absolute;
+}
+ul.moin-breadcrumb li:hover ul.moin-alias {
+  display: block;
+}
+
+ul > li.moin-panel-heading {
+  display: none;
+}
+
+.moin-thead {
+    background-color: silver;
+}
+
+html, body {
+  height: 100%;
+}
+
+.moin-error {
+  color: #ff2727;
+  background: #d6d5d0;
+  padding: 4px;
+  margin: 1em;
+  text-align: center;
+  list-style-type: none;
+  border-radius: 5px;
+}
+.moin-content {
+  padding-bottom: 10%;
+}
+.moin-search-option-bar {
+  padding-left: 10px;
+  border: 1px solid $gray;
+  background-color: $search_option_bar_color;
+  color: $search_option_bar_text_color;
+  border-radius: 5px;
+  > span {
+    float: right;
+    padding: 10px;
+  }
+}
+.container-fluid {
+  min-height: 100%;
+  position: relative;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+.menu .submenu {
+  display: none;
+  margin-bottom: 0px;
+}
+.menu:hover .submenu {
+  display: block;
+}
+.moin-index-actions {
+  padding-left: 0;
+  .navbar-collapse {
+    padding-left: 0;
+  }
+}
+
+#editor > textarea {
+  width: 100%;
+}
+
+img {
+  vertical-align: bottom;  // moin std is bottom, bootstrap sets to middle
+}
+
+#moin-content {
+  font-size: 16px;  // bootstrap sets body font-size to 14px, set to 16 for large displays
+}
+
+.navbar-toggle {
+  position: relative;
+  float: left;
+  margin-right: 15px;
+  padding: 9px 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  display: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+.navbar-toggle .icon-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 1px;
+}
+.navbar-toggle .icon-bar + .icon-bar {
+  margin-top: 4px;
+}
+
+@media (max-width: $screen-xs-max) {
+  .navbar-toggle {
+    display: inline;
+  }
+  .hidden-xs {
+    display: none;
+  }
+}
+@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+  .hidden-sm {
+    display: none;
+  }
+}
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+  .hidden-md {
+    display: none;
+  }
+}
+@media (min-width: $screen-lg-min) {
+  .hidden-lg {
+    display: none;
+  }
+}
+
+/* Support for extra small viewports */
+@media screen and (max-width: $screen-sm-min) {
+  .moin-navbar-user > ul.nav > li > a {
+    padding: 10px 7px;
+  }
+  div.moin-navbar-user {
+    margin-right: 15px;
+  }
+  .moin-nav > li > a {
+    padding: 10px 10px;
+  }
+  .navbar-brand {
+    padding: 15px 5px;
+  }
+  #moin-content {
+    font-size: 14px;
+  }
+  #moin-main-wrapper {
+    position: relative;
+  }
+
+  /* Set sidebar width and shift off canvas */
+  .moin-sidebar {
+    top: 0;
+    width: 25%;
+    display: none;
+  }
+
+  /* When user toggles button (see basic.js) show/hide sidebar */
+  .moin-sidebar.showsidebar {
+    display: block;
+  }
+}

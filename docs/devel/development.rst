@@ -89,10 +89,10 @@ add more tools, exercise tools
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
-* install lessc ("less" below is not a typo)::
+* install sass::
 
-    sudo npm install less -g  # Windows: npm install less -g
-    lessc --version"  # show version number to prove it works
+    sudo npm install -g sass  # Windows: npm install -g sass
+    sass --version"  # show version number to prove it works
 * regenerate CSS files::
 
     ./m css  # Windows: m css
@@ -388,8 +388,8 @@ values it can use. In addition to this general environment, parameters can
 also be given directly to the render call.
 
 Each theme has a ``static/css`` directory. Stylesheets for the Basic theme in
-MoinMoin are compiled using the source ``theme.less`` file in the Basic theme's
-``static/custom-less`` directory.
+MoinMoin are compiled using the source ``theme.scss`` file in the Basic theme's
+``custom`` directory.
 ::
 
     ./m css  # Windows: m css
