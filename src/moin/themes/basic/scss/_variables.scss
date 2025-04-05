@@ -1,0 +1,59 @@
+@use "sass:color";
+
+// https://www.canva.com/colors/color-palettes/foil-covered-sneakers/
+$theme-col-1:  #90ADC6; // Blue Gray
+$theme-col-2:  #E9EAEC; // Pewter
+$theme-col-3:  #FAD02C; // Yellow
+$theme-col-4:  #333652; // Dark Blue
+
+$gray-dark:    #333652;
+$gray:         #555555;
+$gray-light:   #555555;
+
+$brand-danger: #d9534f;
+
+$text-color:   $gray-dark;
+
+// Links
+// -------------------------
+$link-nonexistent-color: color.scale($brand-danger, $lightness: 15%);
+$link-nonexistent-hover-color: $brand-danger;
+
+// Moin-Inverted Navbar
+//----------------------
+$moin-navbar-inverse-color:                    $theme-col-2;
+$moin-navbar-inverse-bgcolor:                  $theme-col-2;
+$moin-navbar-inverse-textcolor:                $theme-col-1;
+
+$navbar-inverse-link-hover-color:              $theme-col-1;
+
+// Large screen / wide desktop
+$container-large-desktop:   1300px;
+$container-tablet:          728px;
+
+// Darker-Navbar and List heading background
+$navbar-bg: $theme-col-2;
+
+// Search
+// -------------------------
+$searchstats_color:              #808080;
+$search_option_bar_color:        white;
+$search_option_bar_text_color:   $theme-col-1;
+
+// Bootstrap
+// -------------------------
+$bootstrap_default_blue:         $theme-col-1;
+
+// General colors
+// -------------------------
+$white:                          #ffffff;
+
+// Media queries breakpoints
+// -------------------------
+$screen-xs-min:                  480px;
+$screen-xs-max:                  767px;
+$screen-sm-min:                  768px;
+$screen-sm-max:                  991px;
+$screen-md-min:                  992px;
+$screen-md-max:                 1199px;
+$screen-lg-min:                 1200px;

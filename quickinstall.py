@@ -112,7 +112,7 @@ restore *       create wiki and restore wiki/backup.moin *option, specify file
 backup *        roll 3 prior backups and create new backup *option, specify file
 dump-html *     create a static HTML image of wiki *options, see docs
 
-css             run lessc to update basic theme CSS files
+css             run sass to update basic theme CSS files
 tests *         run tests, log output (-v -k my_test)
 coding-std      correct scripts that taint the repository with trailing spaces..
 
@@ -453,18 +453,14 @@ class Commands:
         self.run_time("HTML Dump")
 
     def cmd_css(self, *args):
-        """run lessc to update basic theme CSS files"""
-        bootstrap_loc = get_bootstrap_data_location().strip() + "/less"
+        """run sass to update basic theme CSS files"""
+        bootstrap_loc = get_bootstrap_data_location().strip() + "/scss"
         pygments_loc = get_pygments_data_location().strip() + "/css"
-        basic_loc = "src/moin/themes/basic/static/custom-less"
+        basic_loc = "src/moin/themes/basic"
 
-        print("Running lessc to update Basic theme CSS files...")
-        if WINDOWS_OS:
-            data_loc = f"{bootstrap_loc};{pygments_loc}"
-        else:
-            data_loc = f"{bootstrap_loc}:{pygments_loc}"
-        include = "--include-path=" + data_loc
-        command = f"cd {basic_loc}{SEP}lessc {include} theme.less ../css/theme.css"
+        print("Running sass to update Basic theme CSS files...")
+        includes = f"--load-path={bootstrap_loc} --load-path={pygments_loc}"
+        command = f"cd {basic_loc}{SEP} sass --verbose {includes} scss/theme.scss static/css/theme.css"
         result = subprocess.call(command, shell=True)
         if result == 0:
             print("Success: Basic theme CSS files updated.")
