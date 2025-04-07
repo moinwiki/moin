@@ -11,7 +11,7 @@ import os
 
 from werkzeug.test import Client
 
-from moin.wsgiapp import application
+from moin.app import create_app
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "tests"))
 
@@ -19,19 +19,19 @@ RUNS = 100
 RUNS_MARKER = RUNS // 10
 DOTS_MARKER = RUNS_MARKER // 5
 
-PAGES = ("FrontPage", "HelpOnMoinWikiSyntax", "RecentChanges")
+PAGES = ("Home", "help-en/moin", "+index/all")
 
-client = Client(application)
+client = Client(create_app())
 
 for page in PAGES:
     print('=== Run with page "%s" ===' % page)
     print("Running %i WSGI-requests:" % RUNS)
     timing = time.time()
     for run in range(RUNS):
-        appiter, status, headers = client.get("/%s" % page)
-        # result = ''.join(appiter)
+        response = client.get(f"/{page}")
+        assert response.status_code == 200
         if (run + 1) % RUNS_MARKER == 0:
-            sys.stdout.write("%i" % (run + 1))
+            sys.stdout.write(f"{run + 1}")
         elif (run + 1) % DOTS_MARKER == 0:
             sys.stdout.write(".")
     timing = time.time() - timing
