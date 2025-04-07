@@ -90,18 +90,6 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["_tests"]
-
-[tool.setuptools.package-data]
-"moin.translations" = ["MoinMoin.pot", "*.po", ]
-"moin.static" = ["*", ]
-"moin.themes.modernized" = ["*", ]
-"moin.themes.basic" = ["*", ]
-"moin.themes.topside" = ["*", ]
-"moin.themes.topside_cms" = ["*", ]
-"moin.templates" = ["*.html", "*.xml", ]
-"moin.apps.admin.templates" = ["*.html", ]
-"moin.apps.misc.templates" = ["*.html", "*.txt", ]
 
 [build-system]
 requires = ["setuptools", "setuptools_scm[toml] >= 6.2"]
@@ -116,7 +104,6 @@ skip-magic-trailing-comma = true
 
 [tool.pytest.ini_options]
 norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
-
 
 [tool.ruff]
 line-length = 120
