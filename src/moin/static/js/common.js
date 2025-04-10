@@ -7,6 +7,7 @@
 function MoinMoin() {
     "use strict";
 }
+
 // Utility function to add a message to moin flash area. Message can be removed by clicking on it.
 MoinMoin.prototype.MOINFLASHINFO = "moin-flash moin-flash-info";
 MoinMoin.prototype.MOINFLASHWARNING = "moin-flash moin-flash-warning";
@@ -19,13 +20,11 @@ MoinMoin.prototype.moinFlashMessage = function (classes, message) {
     });
 };
 
-
 // if /template/dictionary.js has not been loaded, untranslated strings will be returned by _(...)
 function _(text) {
     "use strict";
     return $.i18n._(text);
 }
-
 
 // return true if browser localStorage is available
 function localStorageAvailable() {
@@ -41,34 +40,6 @@ function localStorageAvailable() {
     }
 }
 
-// executed when user clicks button to toggle modify textarea between fixed/variable width fonts
-function moinFontChange() {
-    "use strict";
-    $(".moin-edit-content").toggleClass("moin-fixed-width");
-    if (localStorageAvailable()) {
-        if ($(".moin-edit-content").hasClass("moin-fixed-width")) {
-            localStorage.setItem("moin-textarea-font", "moin-fixed-width");
-        } else {
-            localStorage.setItem("moin-textarea-font", "");
-        }
-    }
-}
-
-// executed on page ready, change textarea font to last saved value fixed/proportional
-function moinFontChangeOnReady() {
-    "use strict";
-    if ($(".moin-edit-content")) {
-        if (localStorageAvailable()) {
-            if (localStorage.getItem("moin-textarea-font") === "moin-fixed-width") {
-                $(".moin-edit-content").addClass("moin-fixed-width");
-            } else {
-                $(".moin-edit-content").removeClass("moin-fixed-width");
-            }
-        }
-    }
-}
-
-
 // executed on page ready, if this is a modify view add action to Cancel button
 function cancelEdit() {
     "use strict";
@@ -79,6 +50,60 @@ function cancelEdit() {
     });
 }
 
+// Initial user settings
+MoinMoin.prototype.userSettings = {
+    'user-actions-collapsed': true,
+    'view-options-collapsed': true,
+    'item-actions-collapsed': true
+};
+
+MoinMoin.prototype.loadUserSettings = function () {
+    if (localStorageAvailable()) {
+        let jsonData = localStorage.getItem("moin-user-settings");
+        if (jsonData) {
+            this.userSettings = JSON.parse(jsonData);
+        }
+    }
+}
+
+MoinMoin.prototype.saveUserSettings = function () {
+    if (localStorageAvailable()) {
+        localStorage.setItem("moin-user-settings", JSON.stringify(this.userSettings));
+    }
+}
+
+MoinMoin.prototype.applyUserSettings = function () {
+
+    if (this.userSettings['user-actions-collapsed']) {
+        $('#moin-user-actions').addClass('hidden');
+        $('.moin-useractions > i').removeClass('fa-rotate-90');
+    } else {
+        $('#moin-user-actions').removeClass('hidden');
+        $('.moin-useractions > i').addClass('fa-rotate-90');
+    }
+
+    if (this.userSettings['view-options-collapsed']) {
+        $('#moin-view-options').addClass('hidden');
+        $('.moin-viewoptions > i').removeClass('fa-rotate-90');
+    } else {
+        $('#moin-view-options').removeClass('hidden');
+        $('.moin-viewoptions > i').addClass('fa-rotate-90');
+    }
+
+    if (this.userSettings['item-actions-collapsed']) {
+        $('#moin-item-actions').addClass('hidden');
+        $('.moin-itemactions > i').removeClass('fa-rotate-90');
+    } else {
+        $('#moin-item-actions').removeClass('hidden');
+        $('.moin-itemactions > i').addClass('fa-rotate-90');
+    }
+
+    if (this.userSettings["textarea-use-fixed-width-font"]) {
+        $(".moin-edit-content").addClass("moin-fixed-width");
+    } else {
+        $(".moin-edit-content").removeClass("moin-fixed-width");
+    }
+}
 
 // Highlight currently selected link in side panel. Executed on page load
 MoinMoin.prototype.selected_link = function () {
@@ -760,6 +785,9 @@ $(document).ready(function () {
     "use strict";
     var moin = new MoinMoin();
 
+    moin.loadUserSettings()
+    moin.applyUserSettings();
+
     moin.diffScroll();
     moin.selected_link();
     moin.initTransclusionOverlays();
@@ -781,26 +809,41 @@ $(document).ready(function () {
         moin.toggleSubtree(this);
     });
 
-    $('.moin-useractions').click(function () {
+    $('.moin-useractions').click(function (event) {
+        event.preventDefault();
         $('#moin-user-actions').toggleClass('hidden');
         $('.moin-useractions > i').toggleClass('fa-rotate-90');
-        return false;
+        moin.userSettings['user-actions-collapsed'] = $('#moin-user-actions').hasClass('hidden');
+        moin.saveUserSettings();
     });
 
-    $('.moin-viewoptions').click(function () {
+    $('.moin-viewoptions').click(function (event) {
+        event.preventDefault();
         $('#moin-view-options').toggleClass('hidden');
         $('.moin-viewoptions > i').toggleClass('fa-rotate-90');
-        return false;
+        moin.userSettings['view-options-collapsed'] = $('#moin-view-options').hasClass('hidden');
+        moin.saveUserSettings();
     });
 
-    $('.moin-itemactions').click(function () {
+    $('.moin-itemactions').click(function (event) {
+        event.preventDefault();
         $('#moin-item-actions').toggleClass('hidden');
         $('.moin-itemactions > i').toggleClass('fa-rotate-90');
-        return false;
+        moin.userSettings['item-actions-collapsed'] = $('#moin-item-actions').hasClass('hidden');
+        moin.saveUserSettings();
+    });
+
+    // executed when user clicks button to toggle modify textarea between fixed/variable width fonts
+    $('#moin-toggle-fixed-font-button').on('click', function (event) {
+        event.preventDefault();
+        $(".moin-edit-content").toggleClass("moin-fixed-width");
+        moin.userSettings['textarea-use-fixed-width-font'] = $(".moin-edit-content").hasClass("moin-fixed-width");
+        moin.saveUserSettings();
     });
 
     moin.enhanceUserSettings();
     moin.enhanceEdit();
+
     $('.moin-sortable').tablesorter();
 
     $('#moin-modify').on('change keyup keydown', 'input, textarea, select', function (e) {
@@ -858,8 +901,6 @@ $(document).ready(function () {
             $(this).css('font-size', styl[1] + "em");
         }
     });
-
-    moinFontChangeOnReady();
 
     $('textarea.moin-autosize').autosize();
 
