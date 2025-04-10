@@ -17,7 +17,7 @@
 {% macro data_editor(form, item_name) %}
     {% set textarea_rows = '1' if edit_rows == '0' else edit_rows %}
     {% set cls = 'moin-edit-content moin-autosize' if edit_rows == '0' else 'moin-edit-content' %}
-    <input type="button" onclick="moinFontChange()" value="{{ _('Toggle font width') }}" class="moin-button moin-textarea-font" >
+    <input type="button" id="moin-toggle-fixed-font-button" value="{{ _('Toggle font width') }}" class="moin-button moin-textarea-font" >
     {{ gen.textarea(form['data_text'], rows=textarea_rows|string, class=cls, **kwargs) }}
     {{ base_editor(form) }}
     <br>
