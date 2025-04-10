@@ -126,6 +126,7 @@
 {% macro meta_info(meta) %}
     {#- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list #}
     <table class="moin-item-metadata">
+        <tr><th>{{ _('Key') }}</th><th>{{ _('Value') }}</th></tr>
         {%- if user.may.admin(fqname) %}
             {%- set acl = meta['acl'] or '(None)' %}
             <tr><td>ACL:</td><td>{{ acl }}</td></tr>
