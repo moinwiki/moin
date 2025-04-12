@@ -32,6 +32,7 @@ import shutil
 import click
 
 from flask.cli import FlaskGroup
+from flask.ctx import AppContext
 
 from moin import config, contrib, log
 from moin.app import create_app
@@ -96,7 +97,8 @@ def CreateInstance(full, **kwargs):
     logging.info("Instance creation finished.")
 
     if full:
-        build_instance()
+        with AppContext(create_app()):
+            build_instance()
 
 
 def build_instance():
