@@ -6,11 +6,16 @@
     General helper functions that are not directly wiki related.
 """
 
+from __future__ import annotations
 
-from datetime import datetime, timezone
-import re
 import pickle
+import re
+from datetime import datetime, timezone
+from importlib import import_module
 from io import BytesIO
+from moin.error import ConfigurationError
+from xstatic.main import XStatic
+
 
 # Set pickle protocol, see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
@@ -97,3 +102,20 @@ def utcfromtimestamp(timestamp):
 def utcnow():
     """Returns a naive datetime instance representing the current time in the UTC timezone"""
     return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+def get_xstatic_module_path_map(
+    module_names: list[str], root_url: str = "/static", provider: str = "local", protocol: str = "http"
+) -> dict[str, str]:
+    path_map: dict[str, str] = {}
+    for name in module_names:
+        module_name = f"xstatic.pkg.{name}"
+        try:
+            module = import_module(module_name)
+        except ModuleNotFoundError as exc:
+            raise ConfigurationError(
+                f'The python module "{module_name}" could not be found - check your configuration'
+            ) from exc
+        xs = XStatic(module, root_url, provider, protocol)
+        path_map[xs.name] = xs.base_dir  # type: ignore
+    return path_map

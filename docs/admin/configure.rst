@@ -435,7 +435,6 @@ For MoinMoin we require the following XStatic Packages in pyproject.toml:
 
 These packages are imported in wikiconfig by::
 
-    from xstatic.main import XStatic
     # names below must be package names
     mod_names = [
         'jquery', 'jquery_file_upload',
@@ -447,11 +446,7 @@ These packages are imported in wikiconfig by::
         'jquery_tablesorter',
         'pygments',
     ]
-    pkg = __import__('xstatic.pkg', fromlist=mod_names)
-    for mod_name in mod_names:
-        mod = getattr(pkg, mod_name)
-        xs = XStatic(mod, root_url='/static', provider='local', protocol='http')
-        serve_files[xs.name] = xs.base_dir
+    serve_files.update(get_xstatic_module_path_map(mod_names))
 
 In a template file you access the files of such a package by its module name::
 
