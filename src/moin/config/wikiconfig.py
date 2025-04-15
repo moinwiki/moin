@@ -99,6 +99,9 @@ class Config(DefaultConfig):
     # you can also supply a publicly available image URL with user_gravatar_default_img,
     # see https://docs.gravatar.com/api/avatars/images/ for details
 
+    # to deactivate the discussion feature uncomment the following line
+    # supplementation_item_names = []
+
     # read about SECURITY ISSUES in docs before uncommenting the line below allowing users
     # to edit style attributes in HTML and Markdown items
     # allow_style_attributes = True
