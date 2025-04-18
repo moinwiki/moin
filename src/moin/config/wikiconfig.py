@@ -32,6 +32,7 @@ Done!
 
 import os
 from moin.config.default import DefaultConfig
+from moin.utils import get_xstatic_module_path_map
 from moin.utils.interwiki import InterWikiMap
 from moin.storage import create_mapping
 from moin.constants.namespaces import (
@@ -243,7 +244,6 @@ class Config(DefaultConfig):
 
     # add or remove packages - see https://github.com/xstatic-py/xstatic for info about xstatic
     # it is uncommon to change these because of local customizations
-    from xstatic.main import XStatic
 
     # names below must be package names
     mod_names = [
@@ -257,11 +257,7 @@ class Config(DefaultConfig):
         "jquery_tablesorter",
         "pygments",
     ]
-    pkg = __import__("xstatic.pkg", fromlist=mod_names)
-    for mod_name in mod_names:
-        mod = getattr(pkg, mod_name)
-        xs = XStatic(mod, root_url="/static", provider="local", protocol="http")
-        serve_files[xs.name] = xs.base_dir
+    serve_files.update(get_xstatic_module_path_map(mod_names))
 
 
 # flask settings require all caps
