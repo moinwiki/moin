@@ -36,3 +36,7 @@ m-*.txt
 # default destination for "m dump-html" output
 HTML/
 _test_artifacts/
+# some files not to be ignored
+!/src/moin/contrib/intermap.txt
+!/src/moin/_tests/wikiconfig.py
+!/src/moin/config/wikiconfig.py
