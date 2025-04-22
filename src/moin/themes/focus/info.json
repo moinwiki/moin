@@ -1,0 +1,10 @@
+{
+    "identifier":   "focus",
+    "application":  "moin",
+    "name":         "Focus Theme",
+    "description":  "Focus Theme offers a clean interface with a sidebar which contains global actions and a top bar which contains actions that affect the current page.",
+    "author":       "Christoph Klassen",
+    "website":      "http://moinmo.in/",
+    "license":      "see MoinMoin license",
+    "doctype":      "html5"
+}
