@@ -1,0 +1,310 @@
+:root {
+    --accent: #2269db;
+    --accent-hover: #4382e7;
+    --accent-light: #83b2ff;
+    --accent-lighter: #e5edfd;
+    --link: #2269db;
+    --negative: #cc4343;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../fonts/JetBrainsMono-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html { background-color: white; }
+html * { box-sizing: border-box; }
+html, body { max-width: 100vw; max-height: 100vh; overflow-x: hidden;}
+h1, h2, h3, h4, h5, h6 { border-bottom: none; }
+h2 { margin-top: 1.6em; margin-bottom: 0.5em; }
+.clickable-header { cursor: pointer; }
+input[type="checkbox"] { appearance: none; border: 2pt solid #242424;
+    height: 12pt; width: 12pt; transition: background-color 80ms linear; }
+input[type="checkbox"]:checked { background-color: var(--accent-light); }
+
+#moin-main-wrapper { display: flex; }
+.moin-logo { text-align: start; }
+.moin-sitename { display: flex; margin-top: 4pt; margin-bottom: 10pt;
+    font-size: 1.4rem; font-weight: 600; white-space: normal; }
+#moin-username, #moin-navibar { display: flex; flex-direction: column; row-gap: 6pt; margin-bottom: 8pt; }
+#moin-username a, #moin-navibar a { width: 90%; display: block; padding: 4pt; border-radius: 2pt; }
+#moin-username a:hover, #moin-navibar a:hover,
+#top-bar a:hover, .moin-breadcrumb a:hover { background-color: #d6d6d6bd }
+#moin-navibar .wikilink { display: flex; align-items: center; }
+
+#moin-searchform { float: none; display: flex; width: 90%; margin-bottom: 14pt;
+    margin-right: 4pt; }
+#moin-searchform input.moin-search-query { border: none;
+    border-bottom: 1pt solid #242424; border-radius: 0pt; width: 90%; }
+#moin-search-submit { min-width: 0pt;
+    background: url("../icons/magnifying-glass-solid.svg") center center no-repeat; }
+#moin-navibar .wikilink a { display: flex; column-gap: 4pt; align-items: center;}
+#moin-navibar .wikilink i, #moin-username i { font-size: 14pt; }
+.fa.global-history { height: 16pt; width: 16pt;
+    background: url("../icons/globe-rotate-left-solid.svg") center center no-repeat; }
+
+#moin-page { min-width: 0pt; }
+
+header { min-width: 140pt; min-height: 100vh; margin-right: 18pt; padding: 8pt;
+    box-shadow: 2pt 0pt 10pt 2pt rgba(0, 0, 0, 0.1); }
+header ol, header ul { padding-left: 0pt; }
+header li::marker { display: none; }
+header a { word-break: break-all; white-space: inherit; }
+#moin-searchform input.moin-search-query:focus { background-color: #ecf2fd;
+    border-bottom: 1pt solid var(--accent); outline: none; }
+
+#top-bar { width: 100%; height: 32pt; overflow-x: auto; padding: 10pt 0;
+    margin-right: 10pt; z-index: 1000; }
+#top-bar ol, #top-bar ul { list-style-type: none; }
+#top-bar ul { display: flex; column-gap: 10pt; padding-left: 0pt; }
+#top-bar .moin-itemviews.panel { display: flex; column-gap: 10pt; padding-left: 0pt; }
+#top-bar .moin-itemviews.panel.mobile { display: none; }
+#top-bar a { padding: 4pt; border-radius: 2pt; }
+
+#top-bar .moin-panel-heading { display: none; }
+#top-bar a { white-space: nowrap; }
+header a, header a:link, header a:visited,
+#top-bar a, #top-bar a:visited { color: #242424; }
+
+#top-bar-menu label { padding: 4pt; border-radius: 2pt; }
+#top-bar-menu label:hover { background-color: #d6d6d6bd; cursor: pointer; }
+#top-bar-menu #top-bar-menu-content {
+    display: flex;
+    flex-direction: column;
+    row-gap: 7pt;
+    min-width: 120pt;
+    padding: 6pt 4pt;
+    margin-top: 4pt;
+    align-items: stretch;
+    z-index: 10;
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: transform 80ms linear;
+}
+#top-bar-menu-switch { display: none; }
+#top-bar-menu-switch:checked ~ #top-bar-menu-content {
+    transform: scaleY(1);
+    box-shadow: 0pt 2pt 4pt 2pt rgba(0, 0, 0, 0.25);
+}
+#top-bar-menu-switch:checked ~ #top-bar-menu-label i{
+    transition: transform 80ms linear;
+}
+#top-bar-menu-switch:checked ~ #top-bar-menu-label i {
+    transform: rotate(-180deg);
+}
+#top-bar-menu-content a { display: block; width: 100%; }
+
+#top-bar, #top-bar-menu-content { position: fixed; background-color: white; }
+
+.moin-breadcrumb { margin: 14pt 0; }
+.moin-breadcrumb .moin-panel-heading { font-size: 1.1rem; margin-bottom: 4pt; }
+.moin-breadcrumb ul { list-style-type: circle; padding-left: 16pt; }
+.moin-breadcrumb ul li { margin-bottom: 4pt; }
+.moin-breadcrumb a { padding: 4pt; border-radius: 2pt; display: block; width: 90%; }
+
+#moin-footer { display: flex; flex-direction: column; width: unset;
+    margin-top: 40pt; margin-bottom: 4pt; padding-right: 10pt; }
+#moin-pageinfo, #moin-wiki-license,
+#moin-credits, #moin-version, #moin-timings {
+    float: none;
+    margin: 0pt;
+}
+#moin-credits-container { display: flex; align-items: end; justify-content: space-between;
+    column-gap: 20pt; }
+
+#moin-content { min-height: 80vh; margin-top: 36pt; }
+#moin-content-data { max-width: 1100pt; margin-right: 18pt; }
+#moin-content-data .moin-permalink { display: none; position: relative;}
+#moin-content-data .moin-permalink::after { display: inline-block;
+    color: var(--accent); position: absolute; bottom: -4pt; }
+
+.moin-flash { border-radius: 2pt; margin-right: 18pt; }
+.moin-flash-info { background-color: #e4f2ff; border: 1pt solid var(--accent-light); }
+.moin-flash-info::before { font-family: FontAwesome; content: "\f05a"; color: #415e79; }
+.moin-flash-warning { background-color: #ffe4e4; border: 1pt solid #ff8181; }
+.moin-flash-warning::before { font-family: FontAwesome; content: "\f071"; color: #a71818; }
+.moin-flash::after { color: #424242; right: 2px; cursor: pointer; }
+
+.moin-button, a.moin-button:link { background-color: white; border: 2pt solid var(--accent);
+    border-radius: 2pt; height: 24pt; width: fit-content; min-width: 60pt;
+    padding: 0pt 6pt; margin: .5em 0pt; box-shadow: none; }
+.moin-button:hover, .moin-button:focus, a.moin-button:link:hover { color: white; background-color: var(--accent-hover);
+    border-color: var(--accent-hover); box-shadow: none; }
+.moin-button:hover a { color: white; }
+.moin-button.negative { border-color: var(--negative); }
+.moin-button.negative:hover { color: white; background-color: var(--negative); }
+#moin-save-text-button,
+#popup .popup-submit { color: white; background-color: var(--accent); }
+#moin-save-text-button:hover,
+#popup .popup-submit:hover { background-color: var(--accent-hover); }
+
+#moin-modify { width: 1100pt; max-width: 95%; }
+#moin-modify textarea, #moin-modify dd input { width: 100%; }
+#moin-modify .submit-buttons { width: fit-content; position: sticky; background-color: white;
+    padding: 8pt 12pt; margin-left: auto; box-shadow: 0pt 0pt 6pt 2pt rgba(0, 0, 0, 0.2);
+    margin-top: 22pt; bottom: 20pt; }
+#moin-modify form { position: relative; }
+.moin-form input[type="submit"].moin-modify-submit,
+.moin-form .moin-load-draft, .moin-form .moin-cancel {
+    float: none;
+    clear: none;
+    margin: unset;
+}
+.moin-form dd input[type="checkbox"] { width: 12pt; }
+.moin-edit-help { float: unset; padding: 0pt; }
+.moin-edit-help.moin-button { display: block; }
+.moin-edit-help a { height: 100%; width: 100%; display: flex; align-items: center;
+    padding: 0pt 6pt; }
+.moin-form .submit-buttons { display: flex; column-gap: 8pt; justify-content: end;
+    margin: 12pt 0;
+    float: right;
+    flex-direction: row-reverse;
+}
+.moin-form button, .moin-form input[type="submit"] { clear: none; margin: unset; }
+.moin-form button, .moin-button, .moin-form input[type="submit"] { display: flex;
+    align-items: center; justify-content: center; }
+
+.moin-edit-content { font-family: "JetBrains Mono", monospace; font-variant-ligatures: none;
+    margin-top: 6pt; }
+
+#moin-modify input[type="file"] { color: #383838; font-size: 0.9rem; cursor: pointer; }
+
+.moin-form dl { margin-top: 8pt; margin-bottom: 6pt; }
+
+div.hint, div.tip { min-height: unset; margin-top: 0pt; margin-left: 1pt; padding: 0pt;
+    border: none; font-size: 0.9rem; color: #383838; }
+div.hint::before { font-family: FontAwesome; content: "\f0eb"; padding: 0pt;
+    margin-right: 4pt; }
+div.tip::before { font-family: FontAwesome; content: "\f0eb"; padding: 0pt;
+    margin-right: 4pt; }
+div.caution::before { font-family: FontAwesome; content: "\f071"; padding: 0pt;
+    margin-right: 4pt; }
+
+#popup { border: none; box-shadow: 0pt 0pt 4pt 4pt #2b2b2b3d; }
+.popup-header { background: white; color: #242424; }
+.popup-closer.popup-cancel { padding: 4px 7px; font-family: FontAwesome;
+    content: "\58"; background-color: white; color: #242424; border-radius: 2pt; }
+.popup-closer.popup-cancel:hover { background-color: #e0e0e0; }
+#popup .popup-selected-names { margin-top: 0pt; }
+#popup .caution { margin: 10pt 0pt; }
+#popup .popup-submit { float: right; }
+
+div.attention > ol, div.attention > ul, div.attention > p, div.caution > ol,
+div.caution > ul, div.caution > p, div.danger > ol, div.danger > ul, div.danger > p,
+div.error > ol, div.error > ul, div.error > p, div.hint > ol, div.hint > ul,
+div.hint > p, div.important > ol, div.important > ul, div.important > p, div.note > ol,
+div.note > ul, div.note > p, div.tip > ol, div.tip > ul, div.tip > p, div.warning > ol,
+div.warning > ul, div.warning > p { padding-left: 30pt; }
+
+.moin-tabs { margin-bottom: 20pt; border-bottom: 1pt solid #d9d9d9; }
+.moin-tab-titles { border: none; padding-left: 0pt; display: flex; flex-wrap: wrap-reverse;
+    row-gap: 4pt; column-gap: 6pt; }
+.moin-tab-titles li { padding: 0pt; margin: 0pt; border: none; }
+.moin-tab-titles a { border-radius: 0pt; border: none; background-color: white; }
+.moin-tabs .moin-tab-titles a { display: flex; text-align: center;
+    white-space: nowrap; height: fit-content; padding: 6pt 5pt; color: #242424;
+    border-radius: 2pt; }
+.moin-tabs .moin-tab-titles a:hover { background-color: #e0e0e0; }
+.moin-tab-titles a.moin-current-tab { background-color: #b3b3b3; margin: 0pt; }
+.moin-tab-titles a.moin-current-tab:hover { background-color: #b3b3b3; cursor: default; }
+
+#moin-modify br { display: none; }
+
+#moin-usersettings .moin-float-fix { display: flex; justify-content: end; }
+#usersettings_ui { width: fit-content; }
+#moin-usersettings form { width: fit-content; margin: 0 auto; }
+#moin-usersettings dt { float: none; width: unset; padding-right: 0pt; }
+#moin-usersettings .moin-form dl { display: grid; width: fit-content;
+    grid: auto-flow / max-content max-content; column-gap: 14pt; }
+#moin-usersettings .moin-form dd { width: unset; }
+#moin-usersettings .moin-form dd input[type="text"],
+#moin-usersettings .moin-form dd input[type="password"],
+#moin-usersettings .moin-form dd input[type="email"] { width: 100%; }
+#quicklinks textarea, #subscriptions textarea { width: 100%; }
+#quicklinks div.tip, #subscriptions div.tip { width: unset; }
+
+.moin-tags a, .moin-tags a:visited { display: inline-block; padding: 4pt; color: #242424; border-radius: 2pt;
+    min-width: 40pt; }
+.moin-tags a:link:hover, .moin-tags a:visited:hover { color: white; background-color: var(--accent-hover) }
+
+#moin-global-history tr td { border: none; }
+.moin-history-day-banner { background-color: var(--accent-lighter); }
+
+#moin-content table > thead { background-color: var(--accent-lighter); }
+tr > th { background-color: var(--accent-lighter); }
+
+#moin-initials { display: flex; flex-wrap: wrap; column-gap: 4pt; row-gap: 4pt;
+    width: 100%; margin: 1em 0pt; }
+#moin-initials a { min-width: 20pt; height: fit-content; border: 2pt solid var(--accent) }
+#moin-initials a:hover { color: white; background-color: var(--accent-hover);
+    border: 2pt solid var(--accent-hover) }
+#moin-initials a.selected,
+#moin-initials a.selected:hover { color: black; background-color: #b3b3b3; border: 2pt solid #b3b3b3;
+    cursor: default; }
+
+.moin-index-menu { display: flex; flex-wrap: wrap; column-gap: 6pt; row-gap: 6pt; }
+.moin-index-menu i, .moin-contenttype-selection i { margin-right: 3pt; }
+.moin-index-menu .moin-select-toggle { padding: 0pt; margin-right: 4pt; border: none; }
+.moin-index-menu .moin-select-toggle.moin-button:hover { background-color: white; color: black; }
+.moin-index-menu .moin-select-toggle.moin-button label { display: flex; justify-content: center;
+    align-items: center; height: 100%; cursor: pointer; }
+.moin-index-menu input[type="checkbox"] { height: 14pt; width: 14pt; margin-right: 4pt; }
+
+.moin-contenttype-selection form,
+.moin-namespace-selection,
+.moin-newitem-selection { border: none; }
+.moin-newitem-selection div.hint > p { padding: 0pt; margin: 12pt 0pt; }
+.moin-newitem-selection .moin-new-item,
+.moin-newitem-selection #jfu-fileupload { margin-left: 0pt; }
+
+.moin-new-item .moin-button[type="submit"] { color: white; background-color: var(--accent); }
+.moin-new-item .moin-button[type="submit"]:hover { background-color: var(--accent-hover); }
+
+.moin-mime-text::before { font-family: FontAwesome; content: "\f15c"; }
+.moin-mime-image::before { font-family: FontAwesome; content: "\f03e"; }
+.moin-mime-package::before { font-family: FontAwesome; content: "\f187"; }
+.moin-mime-video::before { font-family: FontAwesome; content: "\f03d"; }
+.moin-mime-application::before { font-family: FontAwesome; content: "\e4e5"; }
+.moin-mime-audio::before { font-family: FontAwesome; content: "\f025"; }
+
+#moin-create-table tbody tr th { border: none; }
+#moin-create-table tbody tr > td { display: flex; flex-wrap: wrap; row-gap: 6pt;
+    padding-left: 4pt; margin-bottom: 16pt; border: none; }
+
+.zebra tbody tr:nth-child(2n), .zebra > tr:nth-child(2n+1) { background-color: unset; }
+
+@media (max-width: 700pt) {
+    #moin-main-wrapper { flex-direction: column; }
+    header { min-height: unset; margin-right: 0pt; }
+    header a { white-space: initial; }
+    .moin-sitename { font-size: 1.2rem; }
+    #moin-content { padding: 0pt 8pt; }
+
+    #moin-username, #moin-navibar { flex-direction: row; flex-wrap: wrap; }
+    #moin-username a, #moin-navibar a { display: flex; column-gap: 6pt; white-space: nowrap; }
+    #moin-username a span{ white-space: pre; }
+
+    #moin-content-data { margin-right: 0pt; }
+
+    #top-bar { height: fit-content; }
+    #top-bar .moin-itemviews.panel.mobile { display: flex; }
+    #top-bar .moin-itemviews.panel.desktop { display: none; }
+    #top-bar .fa { display: none; }
+    #top-bar, #top-bar-menu-content { position: relative; }
+    #usersettings_ui, #moin-usersettings form { width: unset; }
+    #moin-usersettings dl { column-gap: 10pt; row-gap: 6pt; max-width: 100vw; }
+    #moin-usersettings dt { max-width: 44vw; }
+    #moin-usersettings .moin-float-fix { padding: 0pt 4pt; }
+    #moin-usersettings .moin-form dd { max-width: 48vw; }
+    .moin-form dt { text-align: start; }
+    #moin-pageinfo { margin-bottom: 10pt; }
+    #moin-footer { padding: 0pt 8pt; }
+
+    .fa.global-history { height: 22pt; width: 22pt; }
+}
+
+@media (min-width: 1000pt) {
+    #moin-page { margin: 0pt auto; }
+}
