@@ -3060,10 +3060,9 @@ def tagged_items(tag, namespace):
     """
     show all items' names that have tag <tag> and belong to namespace <namespace>
     """
-    terms = Term(TAGS, tag)
+    query = Term(TAGS, tag)
     if namespace != NAMESPACE_ALL:
-        terms = And([terms, Term(NAMESPACE, namespace)])
-    query = And(terms)
+        query = And([query, Term(NAMESPACE, namespace)])
     metas = flaskg.storage.search_meta(query, limit=None)
     fq_names = [gen_fqnames(meta) for meta in metas]
     fq_names = [fqn for sublist in fq_names for fqn in sublist]
