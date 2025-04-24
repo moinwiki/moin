@@ -31,6 +31,11 @@
 
     {% else %}
         {# when user keys changes into long search form, updates to whoosh_query indicates conclusion of queued searches #}
+        {% if subitem_target %}
+            <div class="moin-search-scope">
+                <em>Searching within {{ subitem_target }} and subitems for: “{{ query }}”</em>
+            </div>
+        {% endif %}
         <p class="moin-suggestions"> {{ _("Whoosh query:") }}
             <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
         </p>
@@ -97,7 +102,7 @@
                                 {%- if result['tags'] %}
                                     <p class="moin-found-text">{{ _("TAGS: {content}").format(content=result['tags']|safe) }}</p>
                                 {%- endif %}
-                                {%- if content and result.highlights('content') %}
+                                {%- if result.highlights('content') %}
                                     <p class="moin-found-text">{{ _("CONTENT: {content}").format(content=result.highlights('content')|safe) }}</p>
                                 {%- endif %}
                             {%- else %}
