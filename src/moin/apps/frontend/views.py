@@ -416,6 +416,8 @@ def parse_scoped_query(query):
     For example, '>Lectures design patterns' becomes ('Lectures', 'design patterns').
     If no scope is found, returns (None, query).
     """
+    if not query:
+        return None, None
     if query.startswith(">"):
         parts = query[1:].split(None, 1)
         if len(parts) == 2:
