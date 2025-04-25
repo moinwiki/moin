@@ -83,7 +83,7 @@ from moin.constants.keys import (
     TAGS,
     TEMPLATE,
     LATEST_REVS,
-    LATEST_IDX,
+    LATEST_META,
     EDIT_ROWS,
     FQNAMES,
     USERGROUP,
@@ -1372,10 +1372,7 @@ class Item:
              - one for "dirs" (direct descendents that also contain descendents)
         """
         fqname = self.fqname
-        if short:
-            idx_name = LATEST_IDX
-        else:
-            idx_name = LATEST_REVS
+        idx_name = LATEST_META if short else LATEST_REVS
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
         query = self.build_index_query(startswith, selected_groups, isglobalindex)
         if not fqname.value.startswith(NAMESPACE_ALL + "/") and fqname.value != NAMESPACE_ALL:

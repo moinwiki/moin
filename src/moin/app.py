@@ -169,16 +169,8 @@ def create_app_ext(flask_config_file=None, flask_config_dict=None, moin_config_c
     clock.stop("create_app flask-cache")
     # init storage
     clock.start("create_app init backends")
-    try:
-        init_backends(app)
-    except EmptyIndexError:
-        # create-instance has no index at start and index-* subcommands check the index individually
-        if info_name not in ["create-instance", "build-instance"] and not info_name.startswith("index-"):
-            clock.stop("create_app init backends")
-            clock.stop("create_app total")
-            logging.error("Error: Wiki index not found. Try 'moin help' or 'moin --help' to get further information.")
-            raise SystemExit(1)
-        logging.debug("Wiki index not found.")
+    # start init_backends
+    _init_backends(app, info_name, clock)
     clock.stop("create_app init backends")
     clock.start("create_app flask-babel")
     i18n_init(app)
@@ -210,6 +202,32 @@ def get_endpoints(app):
 
 def destroy_app(app):
     deinit_backends(app)
+
+
+def _init_backends(app, info_name, clock):
+    """
+    initialize the backends with exception handling
+    """
+    try:
+        init_backends(app)
+    except EmptyIndexError:
+        # create-instance has no index at start and index-* subcommands check the index individually
+        if info_name not in ["create-instance", "build-instance"] and not info_name.startswith("index-"):
+            missing_indexes = app.storage.missing_index_check()
+            if missing_indexes == "all":
+                logging.error(
+                    "Error: all wiki indexes missing. Try 'moin help' or 'moin --help' to get further information."
+                )
+            elif missing_indexes == "'latest_meta'":  # TODO: remove this check after 6-12 month
+                logging.error(
+                    "Error: Wiki index 'latest_meta' missing. Please see https://github.com/moinwiki/moin/pull/1877"
+                )
+            else:
+                logging.error(f"Error: Wiki index {missing_indexes} missing, please check.")
+            clock.stop("create_app init backends")
+            clock.stop("create_app total")
+            raise SystemExit(1)
+        logging.debug("Wiki index not found.")
 
 
 def init_backends(app, create_backend=False):

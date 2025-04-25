@@ -91,7 +91,7 @@ logging = log.getLogger(__name__)
 
 
 WHOOSH_FILESTORAGE = "FileStorage"
-INDEXES = [LATEST_REVS, ALL_REVS, LATEST_IDX]
+INDEXES = [LATEST_REVS, ALL_REVS, LATEST_META]
 
 VALIDATION_HANDLING_STRICT = "strict"
 VALIDATION_HANDLING_WARN = "warn"
@@ -148,7 +148,7 @@ def search_names(name_prefix, limit=None):
     :return: item names list
     """
 
-    idx_name = LATEST_IDX
+    idx_name = LATEST_META
     q = Prefix(NAME_EXACT, name_prefix)
     with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
         results = searcher.search(q, limit=limit)
@@ -446,56 +446,37 @@ class IndexingMiddleware:
         all_revs_fields = {ITEMID: ID(stored=True)}
         all_revs_fields.update(**common_fields)
 
-        # very short index for queries like has_item
-        latest_idx_fields = {
+        # Small index for the latest revisions, used for queries such as has_item, authorization checks and
+        # the +index route. This index has no content or *NGRAMS, which improves query speed for large wikis
+        latest_meta_fields = {
             # ITEMID from metadata - as there is only latest rev of same item here, it is unique
             ITEMID: ID(unique=True, stored=True),
-            # namespace, so we can have different namespaces within a wiki, always check this!
             NAMESPACE: ID(stored=True),
-            # since name is a list whoosh will think it is a list of tokens see #364
-            # we store list of names, but do not use for searching
             NAME: TEXT(stored=True),
-            # string created by joining list of Name strings, we use NAMES for searching
             NAMES: TEXT(stored=True, multitoken_query="or", analyzer=item_name_analyzer(), field_boost=30.0),
-            # unmodified NAME from metadata - use this for precise lookup by the code.
-            # also needed for wildcard search, so the original string as well as the query
-            # (with the wildcard) is not cut into pieces.
             NAME_EXACT: ID(field_boost=1.0),
-            # backend name (which backend is this rev stored in?)
-            BACKENDNAME: ID(stored=True),
-            # tokenized ACL from metadata
-            ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
-            # fields for route +index --------------------------------------------
-            # revision id (aka meta id)
             REVID: ID(unique=True, stored=True),
-            # sequential revision number for humans: 1, 2, 3...
             REV_NUMBER: NUMERIC(stored=True),
-            # parent revision id
             PARENTID: ID(stored=True),
-            # MTIME from revision metadata (converted to UTC datetime)
+            BACKENDNAME: ID(stored=True),
             MTIME: DATETIME(stored=True),
-            # ITEMTYPE from metadata, always matched exactly hence ID
             ITEMTYPE: ID(stored=True),
-            # tokenized CONTENTTYPE from metadata
             CONTENTTYPE: TEXT(stored=True, multitoken_query="and", analyzer=MimeTokenizer()),
-            # USERID from metadata
             USERID: ID(stored=True),
-            # ADDRESS from metadata
             ADDRESS: ID(stored=True),
-            # HOSTNAME from metadata
             HOSTNAME: ID(stored=True),
-            # SIZE from metadata
             SIZE: NUMERIC(stored=True),
+            ACL: TEXT(analyzer=AclTokenizer(acl_rights_contents), multitoken_query="and", stored=True),
         }
 
         latest_revisions_schema = Schema(**latest_revs_fields)
         all_revisions_schema = Schema(**all_revs_fields)
-        latest_index_schema = Schema(**latest_idx_fields)
+        latest_index_schema = Schema(**latest_meta_fields)
 
         # schemas are needed by query parser and for index creation
         self.schemas[ALL_REVS] = all_revisions_schema
         self.schemas[LATEST_REVS] = latest_revisions_schema
-        self.schemas[LATEST_IDX] = latest_index_schema
+        self.schemas[LATEST_META] = latest_index_schema
 
         # Define dynamic fields
         dynamic_fields = [
@@ -557,6 +538,15 @@ class IndexingMiddleware:
         storage = self.get_storage()
         for name in INDEXES:
             self.ix[name] = storage.open_index(name)
+
+    def missing_index_check(self):
+        """
+        check existence of all indexes.
+        return: "all" or string with list of missing indexes
+        """
+        storage = self.get_storage()
+        missing_indexes = [name for name in INDEXES if not storage.index_exists(name)]
+        return "all" if len(missing_indexes) == len(INDEXES) else str(missing_indexes)[1:-1]
 
     def close(self):
         """
@@ -628,7 +618,7 @@ class IndexingMiddleware:
                     == doc[REVID]
                 )
         if is_latest:
-            for idx_name in [LATEST_REVS, LATEST_IDX]:
+            for idx_name in [LATEST_REVS, LATEST_META]:
                 doc = backend_to_index(meta, content, self.schemas[idx_name], backend_name)
                 if async_:
                     writer = AsyncWriter(self.ix[idx_name])
@@ -679,7 +669,7 @@ class IndexingMiddleware:
             writer = self.ix[ALL_REVS].writer()
         with writer as writer:
             writer.delete_by_term(REVID, revid)
-        for idx_name in [LATEST_REVS, LATEST_IDX]:
+        for idx_name in [LATEST_REVS, LATEST_META]:
             self.remove_index_revision(revid, async_=async_, idx_name=idx_name)
 
     def _modify_index(self, index, schema, revids, mode="add", procs=None, limitmb=None, multisegment=False):
@@ -757,7 +747,7 @@ class IndexingMiddleware:
             index.close()
 
         # now build the indexes for latest revisions:
-        for idx_name in [LATEST_REVS, LATEST_IDX]:
+        for idx_name in [LATEST_REVS, LATEST_META]:
             index = storage.open_index(idx_name)
             try:
                 self._modify_index(
@@ -809,8 +799,8 @@ class IndexingMiddleware:
         finally:
             index_all.close()
 
-        # update LATEST_REVS and LATEST_IDX
-        for idx_name in [LATEST_REVS, LATEST_IDX]:
+        # update LATEST_REVS and LATEST_META
+        for idx_name in [LATEST_REVS, LATEST_META]:
             index_latest = storage.open_index(idx_name)
             try:
                 with index_latest.searcher() as searcher:
@@ -1003,7 +993,7 @@ class IndexingMiddleware:
         Return a document matching the kw args (internal use only).
         """
         if short:
-            idx_name = LATEST_IDX
+            idx_name = LATEST_META
         with self.ix[idx_name].searcher() as searcher:
             return searcher.document(**kw)
 
@@ -1186,7 +1176,7 @@ class Item(PropertiesMixin):
         """
         parent_ids = set()
         for parent_name in self.parentnames:
-            rev = self.indexer._document(idx_name=LATEST_IDX, **{NAME_EXACT: parent_name})
+            rev = self.indexer._document(idx_name=LATEST_META, **{NAME_EXACT: parent_name})
             if rev:
                 parent_ids.add(rev[ITEMID])
         return parent_ids

@@ -585,9 +585,8 @@ def add_presenter(wrapped, view, add_trail=False, abort404=True):
             abort(404, item_name)
         if add_trail:
             flaskg.user.add_trail(item_name, aliases=item.meta.revision.fqnames)
-        if rev == CURRENT:
-            """if view has been called with default rev=CURRENT we can avoid an index query in flash_if_item_deleted"""
-            item.is_current = CURRENT
+        """if view has been called with default rev=CURRENT we can avoid an index query in flash_if_item_deleted"""
+        item.is_current = rev == CURRENT
         return wrapped(item)
 
     return wrapper
@@ -605,7 +604,7 @@ def flash_if_item_deleted(item_name, rev_id, itemrev):
     Show flash info message if target item is deleted, show another message if revision is deleted.
     Return True if item is deleted or this revision is deleted.
     """
-    rev_id = getattr(itemrev, "is_current", rev_id)
+    rev_id = CURRENT if getattr(itemrev, "is_current", False) else rev_id
     if not rev_id == CURRENT:
         ret = False
         current_item = Item.create(item_name, rev_id=CURRENT)
