@@ -125,17 +125,18 @@
 {# display meta info in delete, destroy, rename, revert and meta view. #}
 {% macro meta_info(meta) %}
     {#- Bootstrap classes list-group and list-group-item used to display the metadata info in an unordered list #}
-    <ul class="list-group">
+    <table class="moin-item-metadata">
+        <tr><th>{{ _('Key') }}</th><th>{{ _('Value') }}</th></tr>
         {%- if user.may.admin(fqname) %}
             {%- set acl = meta['acl'] or '(None)' %}
-            <li class="list-group-item">ACL: {{ acl }}</li>
+            <tr><td>ACL</td><td>{{ acl }}</td></tr>
         {%- endif %}
-        <li class="list-group-item">Action: {{ meta['action'] }}</li>
-        <li class="list-group-item">Address: {{ meta['address'] }}</li>
-        <li class="list-group-item">Comment: '{{ meta['comment'] }}'</li>
-        <li class="list-group-item">Content Type: {{ meta['contenttype']|shorten_ctype }} [{{ meta['contenttype'] }}]</li>
-        <li class="list-group-item">Data ID: {{ meta['dataid'] }}</li>
-        <li class="list-group-item">External Links:&nbsp;
+        <tr><td>Action</td><td>{{ meta['action'] }}</td></tr>
+        <tr><td>Address</td><td>{{ meta['address'] }}</td></tr>
+        <tr><td>Comment</td><td>{{ meta['comment'] }}</td></tr>
+        <tr><td>Content Type</td><td>{{ meta['contenttype']|shorten_ctype }} [{{ meta['contenttype'] }}]</td></tr>
+        <tr><td>Data ID</td><td>{{ meta['dataid'] }}</td></tr>
+        <tr><td>External Links</td><td>
             {%- if meta['externallinks'] -%}
                 {%- for item in meta['externallinks']|sort -%}
                     <a href="{{ item|safe }}">{{ item }}</a>
@@ -144,13 +145,15 @@
             {%- else -%}
                 (None)
             {%- endif -%}
-        </li>
+        </td></tr>
         {% if meta.get('has_tag') %}
             {# has_tag should not exist in metadata file, belongs only in whoosh index #}
-            <li class="list-group-item">Has Tag ERROR: {{ meta['has_tag'] }}</li>
+            <tr><td>Has Tag ERROR</td><td>{{ meta['has_tag'] }}</td></tr>
         {% endif %}
-        <li class="list-group-item">Item ID: {{ meta['itemid'] }}</li>
-        <li class="list-group-item">Item Links:&nbsp;
+        <tr><td>Item ID</td><td>{{ meta['itemid'] }}</td></tr>
+        <tr>
+            <td>Item Links</td>
+            <td>
             {%- if meta['itemlinks'] -%}
                 {%- for item in meta['itemlinks']|sort -%}
                     <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.itemlink_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
@@ -159,8 +162,11 @@
             {%- else -%}
                 (None)
             {%- endif -%}
-        </li>
-        <li class="list-group-item">Item Transclusions:&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>Item Transclusions</td>
+            <td>
             {%- if meta['itemtransclusions'] -%}
                 {%- for item in meta['itemtransclusions']|sort -%}
                     <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
@@ -169,34 +175,39 @@
             {%- else -%}
                 (None)
             {%- endif -%}
-        </li>
-        <li class="list-group-item">Item Type: {{ meta['itemtype'] }}</li>
-        <li class="list-group-item">Language: {{ meta['language'] }}</li>
-        <li class="list-group-item">Modified Time: {{ meta['mtime']|time_datetime }}</li>
-        <li class="list-group-item">Name:&nbsp;
+            </td>
+        </tr>
+        <tr><td>Item Type</td><td>{{ meta['itemtype'] }}</td></tr>
+        <tr><td>Language</td><td>{{ meta['language'] }}</td></tr>
+        <tr><td>Modified Time</td><td>{{ meta['mtime']|time_datetime }}</td></tr>
+        <tr><td>Name</td><td>
             {%- if meta['name'] -%}
                 {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) -%}
                 {{ names|safe }}
             {%- else -%}
                 (None)
             {%- endif -%}
-        </li>
-        <li class="list-group-item">Old Name:&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>Old Name</td>
+            <td>
             {%- if meta['name_old'] -%}
                 {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) -%}
                 {{ names|safe }}
             {%- else -%}
                 (None)
             {%- endif -%}
-        </li>
-        <li class="list-group-item">Namespace: '{{ meta['namespace'] }}'</li>
-        <li class="list-group-item">Parent Revision ID: {{ meta['parentid'] }}</li>
-        <li class="list-group-item">Revision ID: {{ meta['revid'] }}</li>
-        <li class="list-group-item">Revision Number: {{ meta['rev_number'] }}</li>
-        <li class="list-group-item">SHA1: {{ meta['sha1'] }}</li>
-        <li class="list-group-item">Size: {{ meta['size']|filesizeformat }}</li>
-        <li class="list-group-item">Summary: '{{ meta['summary'] }}'</li>
-        <li class="list-group-item">Tags:&nbsp;
+            </td>
+        </tr>
+        <tr><td>Namespace</td><td>{{ meta['namespace'] }}</td></tr>
+        <tr><td>Parent Revision ID</td><td>{{ meta['parentid'] }}</td></tr>
+        <tr><td>Revision ID</td><td>{{ meta['revid'] }}</tr>
+        <tr><td>Revision Number</td><td>{{ meta['rev_number'] }}</td></tr>
+        <tr><td>SHA1</td><td>{{ meta['sha1'] }}</td></tr>
+        <tr><td>Size</td><td>{{ meta['size']|filesizeformat }}</td></tr>
+        <tr><td>Summary</td><td>{{ meta['summary'] }}</td></tr>
+        <tr><td>Tags</td><td>
             {%- if meta['tags'] -%}
                 {%- for tag in meta['tags'] -%}
                     {{ tag }} {%- if not loop.last %}, {% endif -%}
@@ -204,16 +215,16 @@
             {%- else -%}
                 (None)
             {%- endif -%}
-        </li>
-        <li class="list-group-item">Trash: {{ meta['trash'] or False }}</li>
+        </td></tr>
+        <tr><td>Trash</td><td>{{ meta['trash'] or False }}</td></tr>
         {% if 'usergroup' in meta %}
-            <li class="list-group-item">User Group: {{ meta['usergroup'] }}</li>
+            <tr><td>User Group</td><td>{{ meta['usergroup'] }}</td></tr>
         {% endif %}
-        <li class="list-group-item">User ID: {{ meta['userid'] }}</li>
+        <tr><td>User ID</td><td>{{ meta['userid'] }}</td></tr>
         {% if 'wikidict' in meta %}
-            <li class="list-group-item">Wiki Dict: {{ meta['wikidict'] }}</li>
+            <tr><td>Wiki Dict</td><td>{{ meta['wikidict'] }}</td></tr>
         {% endif %}
-    </ul>
+    </table>
 {% endmacro %}
 
 {%- macro alias_list(alias) -%}

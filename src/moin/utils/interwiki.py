@@ -16,6 +16,7 @@ from collections import namedtuple
 
 from moin.constants.keys import CURRENT, FIELDS, NAME_EXACT, NAMESPACE
 from moin.constants.contenttypes import CHARSET
+from moin.constants.namespaces import NAMESPACE_USERS
 
 from moin import log
 
@@ -320,7 +321,7 @@ def getInterwikiHome(username):
     homewiki = app.cfg.user_homewiki
     if is_local_wiki(homewiki):
         homewiki = "Self"
-    return homewiki, username
+    return homewiki, get_fqname(username, NAME_EXACT, NAMESPACE_USERS)
 
 
 class InterWikiMap:

@@ -416,7 +416,7 @@ def search(item_name):
     """
     Perform a whoosh search of the index and display the matching items.
 
-    The default search is across all namespaces in the index.
+    The default search is across all namespaces in the index and includes trash.
 
     The Jinja template formatting the output may also display data related to the
     search such as the whoosh query, filter (if any), hit counts, and additional
@@ -433,6 +433,10 @@ def search(item_name):
     valid = search_form.validate()
     time_sorting = False
     filetypes = []
+    namespaces = []
+    trash = request.args.get("trash", "false")
+    best_match = False
+    terms = []
     if ajax:
         query = request.args.get("q")
         history = request.args.get("history") == "true"
@@ -440,25 +444,28 @@ def search(item_name):
         if time_sorting == "default":
             time_sorting = False
         filetypes = request.args.get("filetypes")
+        namespaces = request.args.get("namespaces")
         is_ticket = bool(request.args.get("is_ticket"))
+        # remove the extra ',' at the end of the filetyes and namespaces strings
         if filetypes:
-            filetypes = filetypes.split(",")[:-1]  # To remove the extra '' at the end of the list
+            filetypes = filetypes.split(",")[:-1]
+        if namespaces:
+            namespaces = namespaces.split(",")[:-1]
+            namespaces = ["" if ns == NAMESPACE_UI_DEFAULT else ns for ns in namespaces]
     else:
-        query = search_form["q"].value
-        history = bool(request.values.get("history"))
-
-    best_match = False
-    # we test for query in case this is a test run
-    if query and query.startswith("\\"):
-        best_match = True
-        query = query[1:]
+        # not ajax, the form has only the search string q as keyed by the user
+        query = search_form["q"].value or ""
+        history = False  # show only current revisionss
+        # redirect to best matched item if user keys leading \ in q string
+        if query.startswith("\\"):
+            best_match = True
+            query = query[1:]
 
     if valid or ajax:
         # most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
         # this finds such words and reports to the user
         analyzer = StandardAnalyzer()
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
-
         idx_name = ALL_REVS if history else LATEST_REVS
 
         if best_match:
@@ -468,11 +475,17 @@ def search(item_name):
                 [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
             )
         q = qp.parse(query)
+        if trash == "false":
+            q = And([q, Not(Term(TRASH, True))])
+
+        if namespaces:
+            ns_terms = [Term(NAMESPACE, ns) for ns in namespaces]
+            q = And([q, Or(ns_terms)])
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
         if item_name:  # Only search this item and subitems
             prefix_name = item_name + "/"
-            terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)]
+            terms.append([Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)])
 
             show_transclusions = True
             if show_transclusions:
@@ -493,7 +506,7 @@ def search(item_name):
                         transclusions = _compute_item_transclusions(name)
                         transcluded_names.update(transclusions)
                 # XXX Will whoosh cope with such a large filter query?
-                terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
+                terms.append([Term(NAME_EXACT, tname) for tname in transcluded_names])
             _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
@@ -2010,7 +2023,8 @@ def subscribe_item(item_name):
             msg = _("You could not get subscribed to this item."), "error"
     if msg:
         flash(*msg)
-    return redirect(url_for_item(item_name))
+    next_url = request.referrer or url_for_item(item_name)
+    return redirect(next_url)
 
 
 class ValidRegistration(Validator):
@@ -2620,26 +2634,25 @@ def usersettings():
                 # validation failed
                 response["flash"].append((_("Nothing saved."), "error"))
 
+            # if no flash message was added until here, we add a generic success message
             if not response["flash"]:
-                # if no flash message was added until here, we add a generic success message
                 msg = _("Your changes have been saved.")
                 response["flash"].append((msg, "info"))
-                repeat_flash_msg(msg, "info")
 
-            if response["redirect"] is not None or not is_xhr:
-                # if we redirect or it is no XHR request, we just flash() the messages normally
-                for f in response["flash"]:
-                    flash(*f)
-
+            # if it is a XHR request, render the part from the usersettings_ajax.html template
+            # and send the response encoded as an JSON object;
+            # the client side is responsible for displaying any flash messages
             if is_xhr:
-                # if it is a XHR request, render the part from the usersettings_ajax.html template
-                # and send the response encoded as an JSON object
                 response["form"] = render_template("usersettings_ajax.html", part=part, form=form)
                 return jsonify(**response)
-            else:
-                # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
-                if response["redirect"] is not None:
-                    return redirect(response["redirect"])
+
+            # if no XHR request, we just flash() the messages normally
+            for f in response["flash"]:
+                flash(*f)
+
+            # if there is a redirect pending, use a normal HTTP redirect
+            if response["redirect"] is not None:
+                return redirect(response["redirect"])
 
             # if the view did not return until here, we add the current form to the forms dict
             # and continue with rendering the normal template
@@ -3051,10 +3064,9 @@ def tagged_items(tag, namespace):
     """
     show all items' names that have tag <tag> and belong to namespace <namespace>
     """
-    terms = Term(TAGS, tag)
+    query = Term(TAGS, tag)
     if namespace != NAMESPACE_ALL:
-        terms = And([terms, Term(NAMESPACE, namespace)])
-    query = And(terms)
+        query = And([query, Term(NAMESPACE, namespace)])
     metas = flaskg.storage.search_meta(query, limit=None)
     fq_names = [gen_fqnames(meta) for meta in metas]
     fq_names = [fqn for sublist in fq_names for fqn in sublist]

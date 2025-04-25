@@ -15,7 +15,15 @@ import re
 import pytest
 from flask import current_app as app
 
-from moin.utils.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, _split_namespace, split_fqname
+from moin.utils.interwiki import (
+    split_interwiki,
+    join_wiki,
+    InterWikiMap,
+    url_for_item,
+    _split_namespace,
+    split_fqname,
+    getInterwikiHome,
+)
 from moin._tests import wikiconfig
 from moin.constants.keys import CURRENT
 from moin.app import before_wiki
@@ -205,6 +213,9 @@ class TestInterWiki:
         ]
         for url, (namespace, field, pagename) in tests:
             assert split_fqname(url) == (namespace, field, pagename)
+
+    def test_get_interwiki_home(self):
+        assert getInterwikiHome("frodo") == ("Self", "users/frodo")
 
 
 class TestInterWikiMapBackend:

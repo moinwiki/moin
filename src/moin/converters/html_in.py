@@ -16,6 +16,8 @@ from flask import flash
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
+from markupsafe import escape
+
 from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
@@ -158,11 +160,11 @@ class Converter:
             # we suspect user has created or uploaded malformed HTML, try to show input as preformatted code
             msg = _("Error: malformed HTML: {reason}.").format(reason=reason)
             msg = f'<div class="error"><p><strong>{msg}</strong></p></div>'
-            html_str = "".join(["<html>", msg, "<pre>", html_str, "</pre></html>"])
+            html_str = "".join(["<html>", msg, "<pre>", escape(html_str), "</pre></html>"])
             try:
                 html_tree = HTML(html_str)
             except ValueError:
-                msg = _("Error: malformed HTML. Try viewing source with Highlight or Modify links.")
+                msg = _("Error: malformed HTML. Try viewing source with Markup or Modify links.")
                 msg = f'<div class="error"><p><strong>{msg}</strong></p></div>'
                 html_str = "".join(["<html>", msg, "</html>"])
                 html_tree = HTML(html_str)

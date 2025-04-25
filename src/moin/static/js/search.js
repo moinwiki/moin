@@ -16,10 +16,6 @@ $(document).ready(function(){
     // user friendly browsers may retain form state after a reload, we want form defaults
     // select the first radio buttons; Latest in Revisions and Highest Score in Sort By
     $("input[type=radio]:first").attr("checked", true);
-    // select the last checkbox All in Content Types
-    $("input[type=checkbox]:checked").removeAttr("checked");
-    $("input[type=checkbox]:last").prop("checked", true)
-
     // kill form action on pressing Enter, all transactions are ajax
     $('#moin-long-searchform').submit(function(e){
         e.preventDefault();
@@ -36,12 +32,12 @@ $(document).ready(function(){
     $('.moin-loginsettings').addClass('navbar-right');
 
     // execute ajax transaction and replace old ajaxsearch.html content with updated ajaxsearch.html results
-    function ajaxify(query, allrevs, time_sorting, filetypes, is_ticket) {
+    function ajaxify(query, allrevs, time_sorting, filetypes, namespaces, trash, is_ticket) {
         var wiki_root = $('#moin-wiki-root').val();
         $.ajax({
             type: "GET",
             url: wiki_root + "/+search",
-            data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, boolajax: true, is_ticket: is_ticket }
+            data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, namespaces: namespaces, trash: trash, boolajax: true, is_ticket: is_ticket }
         }).done(function(data) {
             if (data.search(/doctype/i) > 0) {
                 // this is a full page with a flash error message, replace everything
@@ -66,16 +62,24 @@ $(document).ready(function(){
     // detects change in search text field, or is called by function above. Collects form data and passes it to `ajaxify` function above
     $('.moin-search-query').keyup(function() {
         var allrev, time_sorting;
-        var filetypes= '';
-        var is_ticket = '';
+        var filetypes = "";
+        var namespaces = "";
+        var trash = "";
+        var is_ticket = "";
         if( $('input[name="meta_summary"]').length ){
             is_ticket = true;
         }
         allrev = $('[name="history"]:checked').val() === "all";
+        trash = $('[name="trash"]:checked').val() === "include";
         time_sorting = $('[name="modified_time"]:checked').val();
         $('[name="itemtype"]:checked').each(function() {
             filetypes += $(this).val() + ',';
         });
-        ajaxify($(this).val(), allrev, time_sorting, filetypes, is_ticket);
+
+        $('[name="namespace"]:checked').each(function() {
+            namespaces += $(this).val() + ',';
+        });
+
+        ajaxify($(this).val(), allrev, time_sorting, filetypes, namespaces, trash, is_ticket);
     });
 });
