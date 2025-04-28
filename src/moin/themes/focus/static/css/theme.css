@@ -308,3 +308,18 @@ tr > th { background-color: var(--accent-lighter); }
 @media (min-width: 1000pt) {
     #moin-page { margin: 0pt auto; }
 }
+
+@media print {
+    html, body { max-height: unset; }
+    #moin-header, #top-bar, #moin-footer, #moin-flash {
+        display: none;
+    }
+    #moin-content, h1 {
+        margin-top: 0;
+    }
+
+    @page {
+        size: A4;
+        margin: 27mm 16mm 27mm 16mm;
+    }
+}
