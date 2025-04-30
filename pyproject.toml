@@ -55,16 +55,16 @@ dependencies = [
     "pdfminer.six",  # pdf -> text/plain conversion
     "passlib >= 1.6.0",  # strong password hashing (1.6 needed for consteq)
     "sqlalchemy >= 2.0",  # used by sqla store
-    "XStatic >= 0.0.2",  # support for static file pypi packages
-    "XStatic-Bootstrap >=4.5.3.1",
-    "XStatic-Font-Awesome >= 6.2.1.0",
-    "XStatic-CKEditor >= 3.6.1.2",
-    "XStatic-autosize",
-    "XStatic-jQuery >= 1.8.2",
-    "XStatic-jQuery-File-Upload >= 10.31.0",
-    "XStatic-svg-edit-moin >= 2012.11.15.1",
-    "XStatic-JQuery.TableSorter >= 2.14.5.1",
-    "XStatic-Pygments >= 1.6.0.1",
+    "XStatic >= 0.0.2, < 2.0.0",  # support for static file pypi packages
+    "XStatic-Bootstrap >=4.5.3.1, <= 4.5.3.1",
+    "XStatic-Font-Awesome >= 6.2.1.0, <= 6.2.1.1",
+    "XStatic-CKEditor >= 3.6.1.2, <= 3.6.4.0",
+    "XStatic-autosize <= 1.17.2.1",
+    "XStatic-jQuery >= 1.8.2, <= 3.5.1.1",
+    "XStatic-jQuery-File-Upload >= 10.31.0, <= 10.31.0.1",
+    "XStatic-svg-edit-moin >= 2012.11.15.1, <= 2012.11.27.1",
+    "XStatic-JQuery.TableSorter >= 2.14.5.1, <= 2.14.5.2",
+    "XStatic-Pygments >= 1.6.0.1, <= 2.9.0.1",
 ]
 
 [project.optional-dependencies]
