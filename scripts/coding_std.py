@@ -27,7 +27,7 @@ import re
 
 # file types to be processed
 # ignore help .meta and .data files; ckeditor uses tabs, markdown uses 2 trailing blanks for line break
-SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst".split())
+SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst scss".split())
 
 # stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())

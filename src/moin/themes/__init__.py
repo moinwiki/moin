@@ -303,25 +303,25 @@ class ThemeSupport:
 
     def get_endpoint_iconmap(self):
         icon = {
-            "frontend.quicklink_item": "fa fa-star-o",
-            "frontend.subscribe_item": "fa fa-envelope-o",
+            "frontend.quicklink_item": "fa fa-star",
+            "frontend.subscribe_item": "fa fa-envelope",
             "frontend.index": "fa fa-list-alt",
             "frontend.sitemap": "fa fa-sitemap",
             "frontend.rename_item": "fa fa-i-cursor",
-            "frontend.delete_item": "fa fa-trash-o",
+            "frontend.delete_item": "fa fa-trash",
             "frontend.destroy_item": "fa fa-fire",
             "frontend.convert_item": "fa fa-clone",
             "frontend.similar_names": "fa fa-search-minus",
             "frontend.download_item": "fa fa-download",
-            "frontend.copy_item": "fa fa-comment-o",
-            "special.supplementation": "fa fa-comments-o",
+            "frontend.copy_item": "fa fa-comment",
+            "special.supplementation": "fa fa-comments",
             "frontend.show_item": "fa fa-eye",
             "frontend.modify_item": "fa fa-pencil",
             "frontend.history": "fa fa-history",
             "frontend.show_item_meta": "fa fa-table",
             "frontend.highlight_item": "fa fa-code",
             "frontend.backrefs": "fa fa-share",
-            "special.comments": "fa fa-comment-o",
+            "special.comments": "fa fa-comment",
             "special.transclusions": "fa fa-object-group",
         }
         return icon
