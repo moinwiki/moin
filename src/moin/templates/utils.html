@@ -114,7 +114,7 @@
     {% if help %}
         {% if isinstance(help, tuple) %}
             {# display nice button with link to internal help: moinwiki, creole, markdown... #}
-            <span class="moin-edit-help moin-button"><a href="{{ help[0] }}">{{ help[1] }}</a></span>
+            <span class="moin-edit-help"><a href="{{ help[0] }}">{{ help[1] }}</a></span>
         {% else %}
             {# no help, one sentence help, or link to help in external site: CSV, images, binary... #}
             <span class="moin-edit-no-help"> {{ help|safe }} </span>
