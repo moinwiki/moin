@@ -155,8 +155,7 @@ header a, header a:link, header a:visited,
 .moin-form dd input[type="checkbox"] { width: 12pt; }
 .moin-edit-help { float: unset; padding: 0pt; }
 .moin-edit-help.moin-button { display: block; }
-.moin-edit-help a { height: 100%; width: 100%; display: flex; align-items: center;
-    padding: 0pt 6pt; }
+.moin-edit-help a { height: 100%; width: 100%; }
 .moin-form .submit-buttons { display: flex; column-gap: 8pt; justify-content: end;
     margin: 12pt 0;
     float: right;

@@ -682,7 +682,7 @@ figcaption { font-weight: bold; }
 .moin-edit-no-help:before { content: url("../img/icons/icon-info.png"); padding-right: 1em; }
 .moin-autosize { min-height: 10em; }
 .moin-edit-help { float: right; }
-.moin-edit-help a { color: var(--primary); }
+.moin-edit-help a { text-decoration: revert; color: var(--primary); }
 /* ckeditor hides textarea, this prevents editor help link overlaying ckeditor controls */
 #cke_f_content_form_data_text { clear: both; }
 
