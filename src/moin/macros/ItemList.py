@@ -131,7 +131,7 @@ class Macro(MacroPageLinkListBase):
             item = ""
         # verify item exists and current user has read permission
         elif item != "":
-            if not flaskg.storage.get_item(**(split_fqname(item).query)):
+            if not flaskg.storage.get_item(short=True, **(split_fqname(item).query)):
                 err_msg = _("Item does not exist or read access blocked by ACLs: {0}").format(item)
                 return fail_message(err_msg, alternative)
 
