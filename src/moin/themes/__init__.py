@@ -610,26 +610,33 @@ def get_editor_info(meta, external=False):
 
     userid = meta.get(USERID)
     if userid:
-        u = user.User(userid)
-        name = u.name0
-        text = u.display_name or name
-        display_name = u.display_name or name
-        if title:
-            # we already have some address info
-            title = f"{display_name} @ {title}"
-        else:
-            title = display_name
-        if u.mailto_author and u.email:
-            email = u.email
-            css = "editor mail"
-        else:
-            homewiki = app.cfg.user_homewiki
-            if is_local_wiki(homewiki):
-                css = "editor homepage local"
+        try:
+            u = user.User(userid)
+            name = u.name0
+            text = u.display_name or name
+            display_name = u.display_name or name
+            if title:
+                # we already have some address info
+                title = f"{display_name} @ {title}"
             else:
-                css = "editor homepage interwiki"
-            uri = url_for_item(name, wiki_name=homewiki, _external=external, namespace=NAMESPACE_USERS)
-
+                title = display_name
+            if u.mailto_author and u.email:
+                email = u.email
+                css = "editor mail"
+            else:
+                homewiki = app.cfg.user_homewiki
+                if is_local_wiki(homewiki):
+                    css = "editor homepage local"
+                else:
+                    css = "editor homepage interwiki"
+                uri = url_for_item(name, wiki_name=homewiki, _external=external, namespace=NAMESPACE_USERS)
+        except Exception:
+            # Fall back to default values if user profile loading fails
+            name = "Unknown"
+            text = "anonymous"
+            title = "Unknown User"
+            css = "editor unknown"
+            
     result = dict(name=name, text=text, css=css, title=title)
     if uri:
         result["uri"] = uri
