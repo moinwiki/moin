@@ -274,7 +274,9 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 #moin-long-searchform div { margin: 0; }
 #moin-long-searchform .moin-search-query { width: 90%; margin-left: 0; }
 .moin-search-option-bar { font-size: 1.25em; font-weight: bold; cursor: pointer;  color: var(--link); }
-.moin-search-options-table td { vertical-align: top; }
+.moin-searchopt-tab > th:nth-child(1),
+.moin-searchopt-tab > th:nth-child(2) { width: 20%; }
+.moin-searchopt-tab > th:nth-child(3) { width: 60%; }
 .moin-search-hit-info { display: inline; }
 .moin-search-hits { font-weight: bold; }
 .moin-search-results { font-size: .92em; }
@@ -283,6 +285,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .moin-suggestion-terms { font-size: .92em; font-weight: normal; color: var(--muted); }
 .moin-search-name { font-weight: bold; font-size: 1.25em; padding-right: 1em; }
 .moin-search-match { margin-top: 1.5em; margin-bottom: .2em; }
+.moin-search-scope { margin-bottom: 1em; font-size: 0.95em; color: #555; }
 
 /* misc moin css keywords */
 .moin-wordbreak { word-break: break-all; word-wrap: break-word; }
