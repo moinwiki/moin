@@ -32,10 +32,11 @@ from whoosh.index import EmptyIndexError
 from moin.utils import monkeypatch  # noqa
 from moin.utils.clock import Clock
 from moin import auth, user, config
-from moin.constants.misc import ANON, VALID_ITEMLINK_VIEWS
+from moin.constants.misc import ANON
 from moin.i18n import i18n_init
 from moin.themes import setup_jinja_env, themed_error
 from moin.storage.middleware import protecting, indexing, routing
+from moin.wikiutil import WikiLinkAnalyzer
 
 from moin import log
 
@@ -168,7 +169,9 @@ def create_app_ext(
 
     app.register_blueprint(serve, url_prefix="/+serve")
 
-    app.view_endpoints = get_endpoints(app)
+    # create wiki link analyzer after having registered all routes
+    app.link_analyzer = WikiLinkAnalyzer(app)
+
     clock.stop("create_app register")
     clock.start("create_app flask-cache")
     # 'SimpleCache' caching uses a dict and is not thread safe according to the docs.
@@ -197,16 +200,6 @@ def create_app_ext(
     clock.stop("create_app total")
     del clock
     return app
-
-
-def get_endpoints(app):
-    """Get dict with views and related endpoints allowed as itemlink"""
-    view_endpoints = {}
-    for rule in app.url_map.iter_rules():
-        view = rule.rule.split("/")[1]
-        if view in VALID_ITEMLINK_VIEWS and rule.rule == f"/{view}/<itemname:item_name>":
-            view_endpoints[view] = rule.endpoint
-    return view_endpoints
 
 
 def destroy_app(app):

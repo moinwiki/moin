@@ -16,7 +16,6 @@ from flask import g as flaskg
 
 from emeraldtree.ElementTree import Element
 
-from moin.constants.misc import VALID_ITEMLINK_VIEWS
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri, IriPath
 from moin.utils.mime import type_moin_document
@@ -189,27 +188,28 @@ class ConverterExternOutput(ConverterBase):
         elem.set(to_tag, link)
 
     def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri | None, to_tag=ConverterBase._tag_xlink_href):
-        view_name = ""
+        endpoint = "frontend.show_item"
         if input.path:
             item_name = str(input.path)
-            # Remove view from item_name before searching
-            if item_name.startswith("+"):
-                view_name = item_name.split("/")[0]
-                if view_name in VALID_ITEMLINK_VIEWS:
-                    item_name = item_name.split(f"{view_name}/")[1]
-            if page:
-                # this can be a relative path, make it absolute:
-                item_name = str(self.absolute_path(Iri(path=item_name).path, page.path))
-            if not flaskg.storage.has_item(item_name):
-                # XXX these index accesses slow down the link converter quite a bit
+            info = app.link_analyzer(item_name)
+            if not info.is_valid:
                 elem.set(moin_page.class_, "moin-nonexistent")
+            elif not info.is_global and info.item_name:
+                endpoint = info.endpoint
+                if endpoint == "frontend.show_item":
+                    # item_name can be a relative path, make it absolute:
+                    if page:
+                        item_name = str(self.absolute_path(IriPath(item_name), page.path))
+                else:
+                    item_name = info.item_name
+                if not flaskg.storage.has_item(item_name):
+                    # XXX these index accesses slow down the link converter quite a bit
+                    elem.set(moin_page.class_, "moin-nonexistent")
         else:
+            # link to current item
             item_name = str(page.path[1:]) if page else ""
-        endpoint, rev, query = self._get_do_rev(input.query)
 
-        if view_name in app.view_endpoints.keys():
-            # Other views will be shown with class moin-nonexistent as non-existent links
-            endpoint = app.view_endpoints[view_name]
+        _, rev, query = self._get_do_rev(input.query)
 
         url = url_for_item(item_name, rev=rev, endpoint=endpoint)
         if not page:
@@ -261,10 +261,15 @@ class ConverterItemRefs(ConverterBase):
         :param page: the iri of the page where the link is
         """
         path = input.path
-        if not path or ":" in path:
+        if not path:
             return
-
-        path = self.absolute_path(path, page.path)
+        info = app.link_analyzer(str(path))
+        if not info.is_valid or info.is_global or not info.item_name:
+            return
+        if info.endpoint == "frontend.show_item":
+            path = self.absolute_path(IriPath(input.path), page.path)
+        else:
+            path = IriPath(info.item_name)
         self.links.add(str(path))
 
     def handle_wikilocal_transclusions(self, elem: Element, input: Iri, page):

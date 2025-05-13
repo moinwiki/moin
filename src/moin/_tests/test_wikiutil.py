@@ -6,13 +6,15 @@
     MoinMoin - moin.wikiutil Tests
 """
 
+from __future__ import annotations
 
 import pytest
 
 from flask import current_app as app
-
 from moin.constants.chartypes import CHARS_SPACES
 from moin import wikiutil
+from moin.wikiutil import WikiLinkAnalyzer, WikiLinkInfo
+from typing import cast
 
 
 class TestCleanInput:
@@ -250,6 +252,27 @@ def testfile_headers():
     # filename is none and content type has a value
     result = wikiutil.file_headers(None, "text/plain")
     expected = [("Content-Type", "text/plain")]
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "url,expected",
+    [
+        # internal item links
+        ("users/roland", WikiLinkInfo(True, "frontend.show_item", "users/roland")),
+        ("+index/all", WikiLinkInfo(True, "frontend.index", "all", True)),
+        ("+history/users/roland", WikiLinkInfo(True, "frontend.history", "users/roland")),
+        # internal global link (not linking to a wiki item)
+        ("all", WikiLinkInfo(True, "frontend.global_views", None, True)),
+        # link without matching moin route
+        ("+invalid/help", WikiLinkInfo(False)),
+        # external link
+        ("http://google.com/hello", WikiLinkInfo(False)),
+    ],
+)
+def test_classify_link(url, expected):
+    link_analyzer = cast(WikiLinkAnalyzer, app.link_analyzer)
+    result = link_analyzer(url)
     assert result == expected
 
 

@@ -26,7 +26,7 @@ from moin.i18n import _, L_
 from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
-from moin.constants.misc import VALID_ITEMLINK_VIEWS, FLASH_REPEAT, ICON_MAP
+from moin.constants.misc import FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
@@ -525,7 +525,7 @@ class ThemeSupport:
         """
         return self.storage.has_item(itemname)
 
-    def itemlink_exists(self, itemlink):
+    def itemlink_exists(self, itemlink: str):
         """
         Check whether the item pointed to by the given itemlink exists or not
 
@@ -533,11 +533,14 @@ class ThemeSupport:
         :returns: whether item pointed to by the link exists or not
         """
         item_name = itemlink
-        if itemlink.startswith("+"):
-            view_name = itemlink.split("/")[0]
-            if view_name in VALID_ITEMLINK_VIEWS:
-                item_name = itemlink.split(f"{view_name}/")[1]
-        return self.storage.has_item(item_name)
+        info = app.link_analyzer(item_name)
+        if not info.is_valid:
+            return False
+        if info.is_global:
+            return True
+        if info.item_name:
+            item_name = info.item_name
+        return self.item_exists(item_name)
 
     def variables_css(self):
         """
