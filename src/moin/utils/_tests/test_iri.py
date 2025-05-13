@@ -429,3 +429,14 @@ def test_IriPath_5():
     assert u[0] == ""
     assert u[1] == "test2"
     assert str(u) == "/test2"
+
+
+def test_IriPath_6():
+    i = "+index/all"
+    u = IriPath(i)
+    assert len(u) == 2
+    assert u[0] == "+index"
+    assert u[1] == "all"
+    assert str(u) == "+index/all"
+    assert "+index" in u
+    assert "all" in u

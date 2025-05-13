@@ -601,9 +601,11 @@ class IriPath(AutoNe):
                 self._list = iri_path._list[:]
             elif isinstance(iri_path, (tuple, list)):
                 self._list = [IriPathSegment(i, False) for i in iri_path]
-            else:
+            elif isinstance(iri_path, str):
                 _list = [IriPathSegment(i, _quoted) for i in iri_path.split("/")]
                 self._list = self._remove_dots(_list)
+            else:
+                raise TypeError("Got argument 'iri_path' of invalid type: { type(iri_path) }")
 
     def __eq__(self, other: Any):
         if isinstance(other, str):
