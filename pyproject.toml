@@ -55,6 +55,7 @@ dependencies = [
     "pdfminer.six",  # pdf -> text/plain conversion
     "passlib >= 1.6.0",  # strong password hashing (1.6 needed for consteq)
     "sqlalchemy >= 2.0",  # used by sqla store
+    "typing_extensions >= 4.12.2",
     "XStatic >= 0.0.2, < 2.0.0",  # support for static file pypi packages
     "XStatic-Bootstrap >=4.5.3.1, <= 4.5.3.1",
     "XStatic-Font-Awesome >= 6.2.1.0, <= 6.2.1.1",

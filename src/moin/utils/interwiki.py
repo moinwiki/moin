@@ -6,6 +6,9 @@
     MoinMoin - interwiki support code
 """
 
+from __future__ import annotations
+
+from typing_extensions import LiteralString
 from urllib.parse import quote as url_quote
 
 from flask import current_app as app
@@ -40,7 +43,7 @@ def is_known_wiki(wiki_name):
     return wiki_name in app.cfg.interwiki_map
 
 
-def get_fqname(item_name, field, namespace):
+def get_fqname(item_name: str, field: LiteralString, namespace: str):
     """
     Compute composite name from item_name, field, namespace
     composite name == [NAMESPACE/][@FIELD/]NAME
@@ -53,14 +56,14 @@ def get_fqname(item_name, field, namespace):
 
 
 def url_for_item(
-    item_name,
-    wiki_name="",
-    field="",
-    namespace="",
-    rev=CURRENT,
-    endpoint="frontend.show_item",
-    _external=False,
-    regex="",
+    item_name: str,
+    wiki_name: str = "",
+    field: str = "",
+    namespace: str = "",
+    rev: str | None = CURRENT,
+    endpoint: str = "frontend.show_item",
+    _external: bool = False,
+    regex: str = "",
 ):
     """
     Compute URL for some local or remote/interwiki item.
@@ -193,7 +196,7 @@ class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
         return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
 
 
-def split_fqname(url):
+def split_fqname(url: str) -> CompositeName:
     """
     Split a fully qualified url into namespace, field and pagename
     url -> [NAMESPACE/][@FIELD/]NAME

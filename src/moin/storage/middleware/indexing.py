@@ -49,6 +49,8 @@ will not access the layers below (like the backend), but just the index files,
 usually it is even just the small and thus quick latest-revs index.
 """
 
+from __future__ import annotations
+
 import gc
 import os
 import re
@@ -75,6 +77,7 @@ from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin import user
 from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from moin.themes import utctimestamp
+from moin.storage.middleware.routing import Backend
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 from moin.utils import utcfromtimestamp
@@ -86,6 +89,8 @@ from moin.utils.iri import Iri
 from moin.i18n import _
 
 from moin import log
+
+from typing import Any
 
 logging = log.getLogger(__name__)
 
@@ -317,7 +322,7 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
 
 
 class IndexingMiddleware:
-    def __init__(self, index_storage, backend, acl_rights_contents=[], **kw):
+    def __init__(self, index_storage: tuple, backend: Backend, acl_rights_contents=[], **kw):
         """
         Store params, create schemas.
 
@@ -325,8 +330,8 @@ class IndexingMiddleware:
         """
         self.index_storage = index_storage
         self.backend = backend
-        self.ix = {}  # open indexes
-        self.schemas = {}  # existing schemas
+        self.ix: dict[str, Any] = {}  # open indexes
+        self.schemas: dict[str, Schema] = {}  # existing schemas
 
         # field_boosts favor hits on names, tags, summary, comment, content, namengram,
         # summaryngram and contentngram respectively
@@ -997,7 +1002,7 @@ class IndexingMiddleware:
         with self.ix[idx_name].searcher() as searcher:
             return searcher.document(**kw)
 
-    def has_item(self, name):
+    def has_item(self, name: str):
         if name.startswith("@itemid/"):
             item = Item(self, short=True, **{ITEMID: name[8:]})
         else:
@@ -1005,7 +1010,7 @@ class IndexingMiddleware:
             item = Item(self, short=True, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
         return bool(item)
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str):
         """
         Return item with <name> (may be a new or existing item).
         """
@@ -1128,7 +1133,7 @@ class PropertiesMixin:
 
 
 class Item(PropertiesMixin):
-    def __init__(self, indexer, latest_doc=None, short=False, **query):
+    def __init__(self, indexer: IndexingMiddleware, latest_doc=None, short=False, **query):
         """
         :param indexer: indexer middleware instance
         :param latest_doc: if caller already has a latest-revs index whoosh document
@@ -1397,7 +1402,7 @@ class Revision(PropertiesMixin):
     An existing revision (exists in the backend).
     """
 
-    def __init__(self, item, revid, doc=None, name=None):
+    def __init__(self, item: Item, revid: str, doc=None, name=None):
         is_current = revid == CURRENT
         if doc is None:
             if is_current:

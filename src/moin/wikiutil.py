@@ -12,11 +12,12 @@
     MoinMoin - Wiki Utility Functions
 """
 
+from __future__ import annotations
+
 import os
+import urllib
 
 from flask import current_app as app
-
-import urllib
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
@@ -120,7 +121,7 @@ def isGroupItem(itemname):
     return app.cfg.cache.item_group_regexact.search(itemname) is not None
 
 
-def AbsItemName(context, itemname):
+def AbsItemName(context: str, itemname: str) -> str:
     """
     Return the absolute item name for a (possibly) relative item name.
 
