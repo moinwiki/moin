@@ -83,6 +83,7 @@ from moin.constants.keys import (
     TAGS,
     TEMPLATE,
     LATEST_REVS,
+    LATEST_META,
     EDIT_ROWS,
     FQNAMES,
     USERGROUP,
@@ -1186,7 +1187,6 @@ class Item:
         @rtype: string
         @return: new text of wikipage, variables replaced
         """
-        logging.debug(f"handle_variable data: {data!r}")
         if self.contenttype not in CONTENTTYPE_VARIABLES:
             return data
         if "@" not in data:
@@ -1196,6 +1196,7 @@ class Item:
         if TEMPLATE in meta["tags"]:
             return data
 
+        logging.debug(f"handle_variable data: {data!r}")  # log only if necessary
         item_name = request.path.split("/", 2)[-1]
         signature = flaskg.user.name0 if flaskg.user.valid else request.remote_addr
 
@@ -1356,7 +1357,7 @@ class Item:
 
         return query
 
-    def get_index(self, startswith=None, selected_groups=None, regex=None):
+    def get_index(self, startswith=None, selected_groups=None, regex=None, short=False):
         """
         Get index enties for descendents of the matching items
 
@@ -1371,11 +1372,12 @@ class Item:
              - one for "dirs" (direct descendents that also contain descendents)
         """
         fqname = self.fqname
+        idx_name = LATEST_META if short else LATEST_REVS
         isglobalindex = not fqname.value or fqname.value == NAMESPACE_ALL
         query = self.build_index_query(startswith, selected_groups, isglobalindex)
         if not fqname.value.startswith(NAMESPACE_ALL + "/") and fqname.value != NAMESPACE_ALL:
             query = Term(NAMESPACE, fqname.namespace) & query
-        revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=NAME_EXACT, limit=None, regex=regex)
+        revs = flaskg.storage.search_meta(query, idx_name=idx_name, sortedby=NAME_EXACT, limit=None, regex=regex)
         return self.make_flat_index(revs, isglobalindex)
 
 

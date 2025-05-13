@@ -585,6 +585,8 @@ def add_presenter(wrapped, view, add_trail=False, abort404=True):
             abort(404, item_name)
         if add_trail:
             flaskg.user.add_trail(item_name, aliases=item.meta.revision.fqnames)
+        """if view has been called with default rev=CURRENT we can avoid an index query in flash_if_item_deleted"""
+        item.is_current = rev == CURRENT
         return wrapped(item)
 
     return wrapper
@@ -602,6 +604,7 @@ def flash_if_item_deleted(item_name, rev_id, itemrev):
     Show flash info message if target item is deleted, show another message if revision is deleted.
     Return True if item is deleted or this revision is deleted.
     """
+    rev_id = CURRENT if getattr(itemrev, "is_current", False) else rev_id
     if not rev_id == CURRENT:
         ret = False
         current_item = Item.create(item_name, rev_id=CURRENT)
@@ -1503,13 +1506,13 @@ def index(item_name):
     # request.args is a MultiDict instance, which degenerates into a normal
     # single-valued dict on most occasions (making the first value the *only*
     # value for a specific key) unless explicitly told to expose multiple
-    # values, eg. calling items with multi=True. See Werkzeug documentation for
+    # values, e.g. calling items with multi=True. See Werkzeug documentation for
     # more.
 
     form = IndexForm.from_flat(request.args.items(multi=True))
     selected_groups = form["contenttype"].value
     startswith = request.values.get("startswith")
-    dirs, files = item.get_index(startswith, selected_groups)
+    dirs, files = item.get_index(startswith, selected_groups, short=True)
     dirs_fullname = [x.fullname for x in dirs]
     initials = request.values.get("initials")
     if initials:

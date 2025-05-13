@@ -16,6 +16,7 @@ from warnings import warn
 
 from moin._tests import get_dirs
 from moin import log
+from moin.constants.keys import ALL_REVS, LATEST_META
 
 logging = log.getLogger(__name__)
 
@@ -131,7 +132,9 @@ def read_index_dump(out: str, latest=False):
             if item:
                 yield item
                 item = {}
-            if latest and "all_revs" in line:
+            if latest and ALL_REVS in line:
+                break
+            if LATEST_META in line:
                 break
             continue
         space_index = line.index(" ")
