@@ -200,7 +200,7 @@ class EmailHandler(logging.Handler):
 
         try:
             email_tracebacks = app.cfg.email_tracebacks
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             # likely: RuntimeError: working outside of application context
             # if we get that, we can't access the cfg and can't send mail anyway.
             email_tracebacks = False
@@ -210,7 +210,9 @@ class EmailHandler(logging.Handler):
 
         if self.in_email_handler:
             return
+
         self.in_email_handler = True
+
         try:
             toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
             log_level = logging.getLevelName(self.level)

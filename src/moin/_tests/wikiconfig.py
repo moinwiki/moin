@@ -31,6 +31,7 @@ class Config(DefaultConfig):
     interwikiname = "MoinTest"
     interwiki_map = dict(Self="http://localhost:8080/", MoinMoin="http://moinmo.in/")
     interwiki_map[interwikiname] = "http://localhost:8080/"
+    email_tracebacks = False
 
     passlib_crypt_context = dict(
         schemes=["sha512_crypt"],
