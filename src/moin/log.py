@@ -51,12 +51,15 @@
     will do the logging.
 """
 
-from io import StringIO
-import os
+from __future__ import annotations
+
 import logging
 import logging.config
 import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
+import os
 import warnings
+
+from io import StringIO
 
 # This is the "last resort" fallback logging configuration for the case
 # that load_config() is either not called at all or with a non-working
@@ -156,7 +159,7 @@ def load_config(conf_fname=None):
     logger.debug(f"Running {moin.project} {moin.version} code from {code_path}")
 
 
-def getLogger(name):
+def getLogger(name: str | None):
     """wrapper around logging.getLogger, so we can do some more stuff:
 
     - preprocess logger name

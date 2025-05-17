@@ -9,12 +9,16 @@ Expands all links in an internal Moin document, including interwiki and
 special wiki links.
 """
 
+from __future__ import annotations
+
 from flask import current_app as app
 from flask import g as flaskg
 
+from emeraldtree.ElementTree import Element
+
 from moin.constants.misc import VALID_ITEMLINK_VIEWS
 from moin.utils.interwiki import is_known_wiki, url_for_item
-from moin.utils.iri import Iri
+from moin.utils.iri import Iri, IriPath
 from moin.utils.mime import type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.wikiutil import AbsItemName
@@ -27,19 +31,19 @@ class ConverterBase:
     _tag_xinclude_href = xinclude.href
     _tag_html_data_href = html.data_href
 
-    def handle_wiki_links(self, elem, link, to_tag=_tag_xlink_href):
+    def handle_wiki_links(self, elem: Element, link: Iri, to_tag=_tag_xlink_href):
         pass
 
-    def handle_wikilocal_links(self, elem, link, page_name, to_tag=_tag_xlink_href):
+    def handle_wikilocal_links(self, elem: Element, link: Iri, page_name: Iri | None, to_tag=_tag_xlink_href):
         pass
 
-    def handle_wiki_transclusions(self, elem, link):
+    def handle_wiki_transclusions(self, elem: Element, link: Iri):
         pass
 
-    def handle_wikilocal_transclusions(self, elem, link, page_name):
+    def handle_wikilocal_transclusions(self, elem: Element, link: Iri, page_name):
         pass
 
-    def handle_external_links(self, elem, link, to_tag=_tag_xlink_href):
+    def handle_external_links(self, elem: Element, link: Iri, to_tag=_tag_xlink_href):
         pass
 
     def __call__(self, *args, **kw):
@@ -52,8 +56,8 @@ class ConverterBase:
 
     def traverse_tree(
         self,
-        elem,
-        page=None,
+        elem: Element,
+        page: Iri | None = None,
         __tag_page_href=moin_page.page_href,
         __tag_link=_tag_xlink_href,
         __tag_include=_tag_xinclude_href,
@@ -95,7 +99,7 @@ class ConverterBase:
 
         return elem
 
-    def absolute_path(self, path, current_page_path):
+    def absolute_path(self, path: IriPath, current_page_path: IriPath) -> IriPath:
         """
         Converts a relative iri path into an absolute one
 
@@ -166,7 +170,7 @@ class ConverterExternOutput(ConverterBase):
         endpoint = do_to_endpoint[do or "show"]
         return endpoint, rev, query
 
-    def handle_wiki_links(self, elem, input, to_tag=ConverterBase._tag_xlink_href):
+    def handle_wiki_links(self, elem: Element, input: Iri, to_tag=ConverterBase._tag_xlink_href):
         wiki_name = "Self"
         if input.authority and input.authority.host:
             wn = str(input.authority.host)
@@ -184,7 +188,7 @@ class ConverterExternOutput(ConverterBase):
         link = Iri(url, query=query, fragment=input.fragment)
         elem.set(to_tag, link)
 
-    def handle_wikilocal_links(self, elem, input, page, to_tag=ConverterBase._tag_xlink_href):
+    def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri | None, to_tag=ConverterBase._tag_xlink_href):
         view_name = ""
         if input.path:
             item_name = str(input.path)
@@ -213,7 +217,7 @@ class ConverterExternOutput(ConverterBase):
         link = Iri(url, query=query, fragment=input.fragment)
         elem.set(to_tag, link)
 
-    def handle_external_links(self, elem, input, to_tag=ConverterBase._tag_xlink_href):
+    def handle_external_links(self, elem: Element, input: Iri, to_tag=ConverterBase._tag_xlink_href):
         elem.set(to_tag, input)
         # rst_in.py may create a link similar to "http:Home", we check input.authority to verify link is external
         if elem.tag == moin_page.a and input.authority:
@@ -233,9 +237,9 @@ class ConverterItemRefs(ConverterBase):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.links = set()
-        self.transclusions = set()
-        self.external_links = set()
+        self.links: set[str] = set()
+        self.transclusions: set[str] = set()
+        self.external_links: set[str] = set()
 
     def __call__(self, *args, **kw):
         """
@@ -249,7 +253,7 @@ class ConverterItemRefs(ConverterBase):
 
         super().__call__(*args, **kw)
 
-    def handle_wikilocal_links(self, elem, input, page, to_tag=ConverterBase._tag_xlink_href):
+    def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri, to_tag=ConverterBase._tag_xlink_href):
         """
         Adds the link item from the input param to self.links
         :param elem: the element of the link
@@ -263,7 +267,7 @@ class ConverterItemRefs(ConverterBase):
         path = self.absolute_path(path, page.path)
         self.links.add(str(path))
 
-    def handle_wikilocal_transclusions(self, elem, input, page):
+    def handle_wikilocal_transclusions(self, elem: Element, input: Iri, page):
         """
         Adds the transclusion item from input argument to self.transclusions
         :param elem: the element of the transclusion
@@ -277,7 +281,7 @@ class ConverterItemRefs(ConverterBase):
         path = self.absolute_path(path, page.path)
         self.transclusions.add(str(path))
 
-    def handle_external_links(self, elem, input, to_tag=ConverterBase._tag_xlink_href):
+    def handle_external_links(self, elem, input: Iri, to_tag=ConverterBase._tag_xlink_href):
         """
         Adds the link item from the input param to self.external_links
         :param elem: the element of the link

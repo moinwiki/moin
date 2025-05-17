@@ -7,10 +7,12 @@ MoinMoin - Generic? IRI implementation
 Implements the generic IRI form as defined in RFC 3987.
 """
 
+from __future__ import annotations
 
 import codecs
 import re
 from moin.utils.pysupport import AutoNe
+from typing import Any
 
 
 def _iriquote_replace(exc):
@@ -29,6 +31,12 @@ codecs.register_error("iriquote", _iriquote_replace)
 
 class Iri(AutoNe):
     __slots__ = "_scheme", "_authority", "_path", "_query", "_fragment"
+
+    _scheme: str | None
+    _authority: IriAuthority | None
+    _path: IriPath | None
+    _query: IriQuery | None
+    _fragment: IriFragment | None
 
     overall_rules = r"""
     ^
@@ -247,7 +255,7 @@ class Iri(AutoNe):
     def __del_path(self):
         self._path = None
 
-    def __get_path(self):
+    def __get_path(self) -> IriPath | None:
         return self._path
 
     def __set_path(self, value):
@@ -282,6 +290,8 @@ class Iri(AutoNe):
 
 class _Value(str):
     __slots__ = "_quoted"
+
+    _quoted: str | None
 
     # Rules for quoting parts of the IRI.
     quote_rules_iri = (
@@ -581,6 +591,8 @@ class IriAuthorityHost(_Value):
 class IriPath(AutoNe):
     __slots__ = "_list"
 
+    _list: list[IriPathSegment]
+
     def __init__(self, iri_path=None, _quoted=True):
         self._list = []
 
@@ -593,7 +605,7 @@ class IriPath(AutoNe):
                 _list = [IriPathSegment(i, _quoted) for i in iri_path.split("/")]
                 self._list = self._remove_dots(_list)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         if isinstance(other, str):
             return str(self) == other
         if isinstance(other, IriPath):

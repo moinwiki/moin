@@ -745,7 +745,7 @@ def show_item_meta(item):
 
 @frontend.route("/+content/+<rev>/<itemname:item_name>")
 @frontend.route("/+content/<itemname:item_name>", defaults=dict(rev=CURRENT))
-def content_item(item_name, rev):
+def content_item(item_name: str, rev: str):
     """same as show_item, but we only show the content"""
     fqname = split_fqname(item_name)
     item_displayed.send(app, fqname=fqname)
