@@ -5,13 +5,16 @@
 MoinMoin - moin.cli common functions for tests
 """
 
-from copy import copy
+from __future__ import annotations
+
 import datetime  # noqa
 import os
 import re
 import subprocess
 import sys
-from typing import Union
+
+from copy import copy
+from typing import Any, IO, Sequence
 from warnings import warn
 
 from moin._tests import get_dirs
@@ -22,8 +25,12 @@ logging = log.getLogger(__name__)
 
 
 def run(
-    cmd: list[str], log=None, wait: bool = True, timeout: int = None, env=None
-) -> Union[subprocess.CompletedProcess, subprocess.Popen]:
+    cmd: Sequence[str | os.PathLike],
+    log: int | IO[Any] | None = None,
+    wait: bool = True,
+    timeout: int | None = None,
+    env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess | subprocess.Popen:
     """run a shell command, redirecting output to log
     :param cmd: list of strings containing command arguments
     :param log: open file handle to log file (binary mode) or None in which case output will be captured

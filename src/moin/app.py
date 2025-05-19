@@ -11,11 +11,13 @@ MoinMoin - wsgi application setup and related code
 Use create_app(config) to create the WSGI application (using Flask).
 """
 
+from __future__ import annotations
+
 import os
-from os import path
 import re
 import sys
 
+from os import path, PathLike
 from flask import Flask, request, session
 from flask import current_app as app
 from flask import g as flaskg
@@ -38,6 +40,8 @@ from moin.storage.middleware import protecting, indexing, routing
 
 from moin import log
 
+from typing import Any
+
 logging = log.getLogger(__name__)
 
 
@@ -46,14 +50,20 @@ if os.getcwd() not in sys.path and "" not in sys.path:
     sys.path.append(os.getcwd())
 
 
-def create_app(config=None):
+def create_app(config: str | PathLike[str] | None = None) -> Flask:
     """
     simple wrapper around create_app_ext()
     """
     return create_app_ext(flask_config_file=config)
 
 
-def create_app_ext(flask_config_file=None, flask_config_dict=None, moin_config_class=None, warn_default=True, **kwargs):
+def create_app_ext(
+    flask_config_file: str | PathLike[str] | None = None,
+    flask_config_dict: dict[str, Any] | None = None,
+    moin_config_class: type | None = None,
+    warn_default: bool = True,
+    **kwargs,
+) -> Flask:
     """
     Factory for moin wsgi apps
 
@@ -263,7 +273,7 @@ def deinit_backends(app):
         app.router.destroy()
 
 
-def setup_user():
+def setup_user() -> user.User:
     """
     Try to retrieve a valid user object from the request, be it
     either through the session or through a login.
