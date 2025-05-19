@@ -42,7 +42,7 @@ the menu::
     dump-html *     create a static HTML image of wiki *options, see docs
     index           delete and rebuild indexes
 
-    css             run lessc to update basic theme CSS files
+    css             run sass to update basic theme CSS files
     tests *         run tests, log output (-v -k my_test)
     coding-std      correct scripts that taint the repository with trailing spaces..
 

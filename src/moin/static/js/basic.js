@@ -14,6 +14,6 @@ $(document).ready(function () {
     }
     // Support for extra small viewports, sidebar is initially hidden by CSS, made visible when user clicks button
     $('#hideshowsidebar').click(function() {
-        $('#moin-main-wrapper').toggleClass('showsidebar');
+        $('.moin-sidebar').toggleClass('showsidebar');
     });
 });
