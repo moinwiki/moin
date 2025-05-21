@@ -114,7 +114,7 @@ class ConverterBase:
         # starts from 1 because 0 is always / for the current page
         quoted_current_page_path = current_page_path[1:].quoted
 
-        abs_path = AbsItemName(quoted_current_page_path, quoted_path)
+        abs_path = IriPath(AbsItemName(quoted_current_page_path, quoted_path))
         if quoted_path.startswith("/"):
             # avoid Iri issue where item name containing a colon is mistaken for scheme:path
             abs_path = Iri(path=abs_path).path
