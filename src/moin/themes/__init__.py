@@ -26,7 +26,7 @@ from moin.i18n import _, L_
 from moin import wikiutil, user
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
-from moin.constants.misc import VALID_ITEMLINK_VIEWS, FLASH_REPEAT
+from moin.constants.misc import VALID_ITEMLINK_VIEWS, FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
@@ -178,10 +178,8 @@ class ThemeSupport:
             "frontend.similar_names",
         ]
 
-        if self.user.may.write(fqname):
+        if self.user.may.write(fqname):  # TODO: use new may function
             navtabs_endpoints.append("frontend.modify_item")
-
-        icon = self.get_endpoint_iconmap()
 
         navtabs = []
         spl_active = [("frontend.history", "frontend.diff")]
@@ -191,7 +189,7 @@ class ThemeSupport:
                 if not check_exists or exists:
                     if endpoint in navtabs_endpoints:
 
-                        iconcls = icon[endpoint]
+                        iconcls = ICON_MAP[endpoint]
                         linkcls = None
 
                         if endpoint == "special.comments":
@@ -247,15 +245,13 @@ class ThemeSupport:
         item_navigation = []
         item_actions = []
 
-        icon = self.get_endpoint_iconmap()
-
         for endpoint, label, title, check_exists in app.cfg.item_views:
             if endpoint not in app.cfg.endpoints_excluded:
                 if not check_exists or item:
                     if endpoint in user_actions_endpoints:
                         if flaskg.user.valid:
                             href = url_for(endpoint, item_name=fqname)
-                            iconcls = icon[endpoint]
+                            iconcls = ICON_MAP[endpoint]
                             # endpoint = iconcls = label = None
 
                             if endpoint == "frontend.quicklink_item":
@@ -273,7 +269,7 @@ class ThemeSupport:
 
                     elif endpoint in item_actions_endpoints:
 
-                        iconcls = icon[endpoint]
+                        iconcls = ICON_MAP[endpoint]
 
                         href = url_for(endpoint, item_name=fqname)
                         item_actions.append((endpoint, href, iconcls, label, title, True))
@@ -281,7 +277,7 @@ class ThemeSupport:
                     # Special Supplementation defined only for named items
                     elif endpoint in item_navigation_endpoints and fqname.field == NAME_EXACT:
 
-                        iconcls = icon[endpoint]
+                        iconcls = ICON_MAP[endpoint]
 
                         if endpoint == "special.supplementation":
                             for sub_item_name in app.cfg.supplementation_item_names:
@@ -302,29 +298,8 @@ class ThemeSupport:
         return user_actions, item_navigation, item_actions
 
     def get_endpoint_iconmap(self):
-        icon = {
-            "frontend.quicklink_item": "fa fa-star-o",
-            "frontend.subscribe_item": "fa fa-envelope-o",
-            "frontend.index": "fa fa-list-alt",
-            "frontend.sitemap": "fa fa-sitemap",
-            "frontend.rename_item": "fa fa-i-cursor",
-            "frontend.delete_item": "fa fa-trash-o",
-            "frontend.destroy_item": "fa fa-fire",
-            "frontend.convert_item": "fa fa-clone",
-            "frontend.similar_names": "fa fa-search-minus",
-            "frontend.download_item": "fa fa-download",
-            "frontend.copy_item": "fa fa-comment-o",
-            "special.supplementation": "fa fa-comments-o",
-            "frontend.show_item": "fa fa-eye",
-            "frontend.modify_item": "fa fa-pencil",
-            "frontend.history": "fa fa-history",
-            "frontend.show_item_meta": "fa fa-table",
-            "frontend.highlight_item": "fa fa-code",
-            "frontend.backrefs": "fa fa-share",
-            "special.comments": "fa fa-comment-o",
-            "special.transclusions": "fa fa-object-group",
-        }
-        return icon
+        """kept for compatibility reasons, may be used in custom templates"""
+        return ICON_MAP
 
     def location_breadcrumbs(self, fqname):
         """
@@ -477,11 +452,12 @@ class ThemeSupport:
                     link_text = f"{fqname.namespace}/{link_text}"
             elif endpoint == "admin.index" and not getattr(flaskg.user.may, SUPERUSER)():
                 continue
-            items.append((cls, url_for(endpoint, **args), link_text, title))
+            iconcls = ICON_MAP[endpoint]
+            items.append((cls, url_for(endpoint, **args), link_text, title, iconcls))
         # Add user links to wiki links.
         for text in self.user.quicklinks:
             url, link_text, title = self.split_navilink(text)
-            items.append(("userlink", url, link_text, title))
+            items.append(("userlink", url, link_text, title, ""))
         return items
 
     def parent_item(self, item_name):

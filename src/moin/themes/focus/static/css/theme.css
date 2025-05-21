@@ -42,8 +42,6 @@ input[type="checkbox"]:checked { background-color: var(--accent-light); }
     background: url("../icons/magnifying-glass-solid.svg") center center no-repeat; }
 #moin-navibar .wikilink a { display: flex; column-gap: 4pt; align-items: center;}
 #moin-navibar .wikilink i, #moin-username i { font-size: 14pt; }
-.fa.global-history { height: 16pt; width: 16pt;
-    background: url("../icons/globe-rotate-left-solid.svg") center center no-repeat; }
 
 #moin-page { min-width: 0pt; }
 

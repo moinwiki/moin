@@ -65,7 +65,10 @@
                         {%- set login_url = theme_supp.login_url() %}
                         {%- if login_url %}
                             <div>
-                                <a href="{{ login_url }}" class="moin-login" rel="nofollow">{{ _('Login') }}</a>
+                                <a href="{{ login_url }}" class="moin-login" rel="nofollow" title="{{ _('Login') }}">
+                                    <i class="fa fa-sign-in"> </i>
+                                    <span>{{ _('Login') }}</span>
+                                </a>
                             </div>
                         {%- endif %}
                     {%- endif %}
@@ -126,26 +129,11 @@
 
                 {% if navibar_items %}
                     <div id="moin-navibar" class="panel" data-expanded_quicklinks_size="{{ cfg.expanded_quicklinks_size }}">
-                        {% for cls, url, text, title in navibar_items %}
+                        {% for cls, url, text, title, iconcls in navibar_items %}
                             <div class="{{ cls }}">
                                 <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}title="{{ url|safe }}"{% endif %}>
-                                    {% if url == "/Home" %}
-                                        <i class="fa fa-house"></i>
-                                    {% endif %}
-                                    {% if url == "/+history" %}
-                                        <i class="fa global-history"></i>
-                                    {% endif %}
-                                    {% if url == "/+tags" %}
-                                        <i class="fa fa-tag"></i>
-                                    {% endif %}
-                                    {% if url == "/+index/" %}
-                                        <i class="fa fa-table-list"></i>
-                                    {% endif %}
-                                    {%- set wiki_href, display_name, title, exists = theme_supp.userhome() %}
-                                    {% if url == ("/+" + display_name + "/user") %}
-                                        <i class="fa fa-user"></i>
-                                    {% endif %}
-                                    {{ text }}
+                                    <i class="{{ iconcls }}"></i>
+                                    <span>{{ text }}</span>
                                 </a>
                             </div>
                         {% endfor %}
