@@ -78,3 +78,32 @@ VALID_ITEMLINK_VIEWS = ["+meta", "+history", "+download", "+highlight", "+slides
 # form creates a flash message but then redirects the page making the flash message a
 # very short flash message.
 FLASH_REPEAT = "flash_repeat"
+
+# Iconclass to endpoint mapping used in navibars
+ICON_MAP = {
+    "admin.index_user": "fa fa-user",
+    "frontend.backrefs": "fa fa-share",
+    "frontend.convert_item": "fa fa-clone",
+    "frontend.copy_item": "fa fa-comment",
+    "frontend.delete_item": "fa fa-trash",
+    "frontend.destroy_item": "fa fa-fire",
+    "frontend.download_item": "fa fa-download",
+    "frontend.global_history": "fa fa-history",
+    "frontend.global_index": "fa fa-list-alt",
+    "frontend.global_tags": "fa fa-tag",
+    "frontend.highlight_item": "fa fa-code",
+    "frontend.history": "fa fa-history",
+    "frontend.index": "fa fa-list-alt",
+    "frontend.modify_item": "fa fa-pencil",
+    "frontend.quicklink_item": "fa fa-star",
+    "frontend.rename_item": "fa fa-i-cursor",
+    "frontend.show_item": "fa fa-eye",
+    "frontend.show_item_meta": "fa fa-table",
+    "frontend.similar_names": "fa fa-search-minus",
+    "frontend.sitemap": "fa fa-sitemap",
+    "frontend.subscribe_item": "fa fa-envelope",
+    "frontend.tags": "fa fa-tag",
+    "special.comments": "fa fa-comment",
+    "special.supplementation": "fa fa-comments",
+    "special.transclusions": "fa fa-object-group",
+}

@@ -39,7 +39,7 @@
                 {% if navibar_items %}
                     <ul id="moin-navibar" class="panel" data-expanded_quicklinks_size="{{ cfg.expanded_quicklinks_size }}">
                         <li class="moin-panel-heading">{{ _('Navigation') }}</li>
-                        {% for cls, url, text, title in navibar_items %}
+                        {% for cls, url, text, title, itemcls in navibar_items %}
                             <li class="{{ cls }}">
                                 <a href="{{ url }}" {% if title %}title="{{ title }} : {{ url|safe }}"{% else %}title="{{ url|safe }}"{% endif %}>{{ text }}</a>
                             </li>
