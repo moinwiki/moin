@@ -151,34 +151,39 @@ unfixable = []
 exclude_dirs = ["quickinstall.py", "*/_tests/*", "*/_ui_tests/*"]
 skips = ["B101", "B105", "B106", "B307", "B311", "B403", "B608"]
 
-[tool.tox]
-legacy_tox_ini = """
 # tox configuration - if you change anything here, run this to verify:
 # tox --recreate
 
 # run like this:
 # tox
-# tox -e py39
+# tox run -e py39
 # tox -- -v -k test_wikiutil
 # tox -- -v
 
-[tox]
-envlist = py{39,310,311,312},ruff
+[tool.tox]
+requires = ["tox>=4.21"]
+envlist = ["3.9", "3.10", "3.11", "3.12", "ruff"]
 
-[testenv]
-deps = -rrequirements.d/development.txt
-setenv =
-    # some tests expect a specific order in dicts...
-    PYTHONHASHSEED = 0
-    # needed so that lxml can build from source (e.g. on pypy):
-    CFLAGS = -I/usr/include/libxml2
-commands = pytest -rs --pyargs {posargs:moin}
+[tool.tox.env_run_base]
+description = "Run tests under {base_python}"
+deps = [
+    "-r requirements.d/development.txt"
+]
+commands = [
+    ["pytest", "-rs", "--pyargs", { replace="posargs", default=["moin"], extend=true }]
+]
 
-[testenv:ruff]
-skip_sdist=true
-skip_install=true
-changedir =
-deps =
-    ruff
-commands = ruff check .
-"""
+[tool.tox.env_run_base.set_env]
+# some tests expect a specific order in dicts...
+PYTHONHASHSEED = "0"
+# needed so that lxml can build from source (e.g. on pypy):
+CFLAGS = "-I/usr/include/libxml2"
+
+[tool.tox.env.ruff]
+description = "Run the ruff linter on the moin sources"
+deps = ["ruff"]
+package = "skip"
+change_dir = ""
+commands = [
+    ["ruff", "check", "."]
+]
