@@ -5,8 +5,81 @@ Please note: It is recommended that existing wiki's be upgraded to the
 latest moin 1.9.x release before converting to Moin 2. However, this may
 not be a necessary step as the 1.9.x file structure has not changed recently.
 
+Version 2.0.0b3 2025-05-24
+--------------------------
+This is an unstable beta release not suitable for a production wiki,
+test carefully and report new issues and feature requests on the issue tracker:
+https://github.com/moinwiki/moin/issues.
+
+After installing this release as a upgrade on an existing moin2 wiki be sure to::
+* copy or merge src/moin/config/wikiconfig.py into the root version of wikiconfig.py.
+* rebuild the Whoosh indexes
+  * moin index-destroy
+  * moin index-create
+  * moin index-build
+
+Fixes
+~~~~~
+* Fix duplicate namespace in discussion link (#1847)
+* updated docs for package releases
+* Add FullSearch macro migration for moin1.9 categories
+* markupsafe was pinned to <= 2.2.0, change to >= 3.0.2
+* Fix handling of namespace root items in +misc/sitemap
+* Fix download link for binary content (missing namespace)
+* Localize download link text
+* add "pre-commit run" to development.rst docs
+* Fix undefined name 'revs' in diff view
+* Fix dump-html: remove item id of links to binary data (#1742)
+* remove exists check from itemviews template to improve performance
+* User settings: support setting the theme name to 'system default' (#1532)
+* Document use of THEME_PATHS in moin wiki
+* Remove WIKINAME from schema and queries
+* Improve the check in get_open_wiki_files()
+* User settings: fix handling of flash messages (#1872)
+* ajaxsearch: add check whether content exists
+* bandit configuration: exclude ui tests
+* docs: improve logging configuration docs with MOINLOGGINGCONF and debug example
+* docs: convert logging section titles to headings for Read the Docs navigation
+* Make use of Referrer request header value (if available) when redirecting from subscribe (#1841)
+* Replace text "Highlight" with "Markup" (#1860)
+* Fix index out range error (list with validation errors might be empty)
+* Escape html content placed into <pre> section (avoid running again into the same error)
+* Fix IndexError in markdown converter (triggered by mismatching tags in html content)
+* Make getInterwikiHome() return a fqname
+* search query: add some more clickable options, fixes #60
+* sanitize Markup() input and ignore bandit B704
+* adapt wsgi bench script
+* Simplify packaging of moin by removing useless or misleading packaging instructions
+* Render item metadata as a table
+* Add table header to metadata view
+* Metadata view: remove the ugly quotes around some values
+* Metadata view: remove the colons in column 'Keys'
+* Execute wiki creation in it's own app context
+* wikiconfig.py: Add comment on deactivation of discussion feature
+* .gitignore: mark some files as not to be ignored
+* run black on src/moin/_tests/wikiconfig.py
+* Fix build of query in tagged_items() if namespace is 'all'
+* Refactoring of 3rd index code, rename index, add handling of missing indexes
+* Move code to determine xstatic module paths from wikiconfig.py to moin.utils
+* Persist view state (expanded/collapsed) of sidebar elements in browser local storage
+* Improve print layout for focus theme
+* pin xstatic packages to legacy versions
+* Set email_tracebacks to false in the wikiconfig.py used for test execution.
+* Catch AttributeError in EmailHandler.emit()
+* Add type hints
+* Replace ugly static moin png with prettier one from help-common
+* IriPath improvements: better argument type checking and add test case for argument of type str
+* Fix ConverterBase.absolute_path: return an instance of IriPath
+* Focus: fix itemview icons, remove globe-rotate-left-solid, add login icon
+* Replace magnifying-glass-solid with free version
+
+New features
+~~~~~~~~~~~~
+* added new theme 'focus'
+
+
 Version 2.0.0b2 2025-03-01
-----------------------------
+--------------------------
 This is an unstable beta release not suitable for a production wiki,
 test carefully and report new issues and feature requests on the issue tracker:
 https://github.com/moinwiki/moin/issues.
