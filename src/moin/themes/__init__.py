@@ -189,7 +189,7 @@ class ThemeSupport:
                 if not check_exists or exists:
                     if endpoint in navtabs_endpoints:
 
-                        iconcls = ICON_MAP[endpoint]
+                        iconcls = ICON_MAP[endpoint] if endpoint in ICON_MAP else ""
                         linkcls = None
 
                         if endpoint == "special.comments":
@@ -251,7 +251,7 @@ class ThemeSupport:
                     if endpoint in user_actions_endpoints:
                         if flaskg.user.valid:
                             href = url_for(endpoint, item_name=fqname)
-                            iconcls = ICON_MAP[endpoint]
+                            iconcls = ICON_MAP[endpoint] if endpoint in ICON_MAP else ""
                             # endpoint = iconcls = label = None
 
                             if endpoint == "frontend.quicklink_item":
@@ -269,7 +269,7 @@ class ThemeSupport:
 
                     elif endpoint in item_actions_endpoints:
 
-                        iconcls = ICON_MAP[endpoint]
+                        iconcls = ICON_MAP[endpoint] if endpoint in ICON_MAP else ""
 
                         href = url_for(endpoint, item_name=fqname)
                         item_actions.append((endpoint, href, iconcls, label, title, True))
@@ -277,7 +277,7 @@ class ThemeSupport:
                     # Special Supplementation defined only for named items
                     elif endpoint in item_navigation_endpoints and fqname.field == NAME_EXACT:
 
-                        iconcls = ICON_MAP[endpoint]
+                        iconcls = ICON_MAP[endpoint] if endpoint in ICON_MAP else ""
 
                         if endpoint == "special.supplementation":
                             for sub_item_name in app.cfg.supplementation_item_names:
@@ -452,7 +452,7 @@ class ThemeSupport:
                     link_text = f"{fqname.namespace}/{link_text}"
             elif endpoint == "admin.index" and not getattr(flaskg.user.may, SUPERUSER)():
                 continue
-            iconcls = ICON_MAP[endpoint]
+            iconcls = ICON_MAP[endpoint] if endpoint in ICON_MAP else ""
             items.append((cls, url_for(endpoint, **args), link_text, title, iconcls))
         # Add user links to wiki links.
         for text in self.user.quicklinks:
