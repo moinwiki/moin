@@ -81,6 +81,7 @@ FLASH_REPEAT = "flash_repeat"
 
 # Iconclass to endpoint mapping used in navibars
 ICON_MAP = {
+    "admin.index": "fa fa-cog",
     "admin.index_user": "fa fa-user",
     "frontend.backrefs": "fa fa-share",
     "frontend.convert_item": "fa fa-clone",
