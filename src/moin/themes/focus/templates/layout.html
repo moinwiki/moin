@@ -16,18 +16,25 @@
     <script src="/_themes/focus/js/main.js"></script>
     <div id="moin-main-wrapper">
         {{ before_header }}
-        <header id="moin-header">
+        <header id="moin-header" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
             {% block header %}
-                {% if logo %}
-                    <div id="moin-logo">
-                        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ logo }}</a>
+                <div id="moin-header-top">
+                    <div id="moin-logo-sitename">
+                        {% if logo %}
+                            <div id="moin-logo">
+                                <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">{{ logo }}</a>
+                            </div>
+                        {% endif %}
+                        {% if cfg.sitename %}
+                            <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                                {{ cfg.sitename }}
+                            </a>
+                        {% endif %}
                     </div>
-                {% endif %}
-                {% if cfg.sitename %}
-                    <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
-                        {{ cfg.sitename }}
-                    </a>
-                {% endif %}
+                    <button type="button" id="toggle-header" title="Toggle menu" class="navbar-toggle">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
                 <div id="moin-username">
                     {%- if user.valid -%}
                         {%- set avatar = user.avatar(20) %}
@@ -86,7 +93,6 @@
                     - if an item is not in the default namespace, the namespace will be prefixed to the item name
                     - last item on page trail must show individual links to all parent items
                 #}
-                <!--{{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}-->
                 <div class="moin-breadcrumb">
                     <div class="moin-panel-heading"><i>{{ _('Page Trail') }}</i></div>
                     {%- set trail_items = theme_supp.path_breadcrumbs() %}
@@ -97,7 +103,6 @@
                                 <li>
                                     {{ utils.page_trail_link(wiki_name, fqname) }}
                                     {{ utils.alias_list(aliases) }}
-                                    <!--<i class="fa fa-angle-double-right fa-fw"></i>-->
                                 </li>
                             {%- endif %}
                             {%- if loop.last %}

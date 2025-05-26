@@ -47,15 +47,37 @@ window.onload = function () {
 
     // Close menu in top bar when user clicks on something else
     const topbarMenu = document.getElementById('top-bar-menu')
-
-    topbarMenu.addEventListener('click', (event) => {
-        event.stopPropagation()
-    })
+    if (topbarMenu) {
+        topbarMenu.addEventListener('click', (event) => {
+            event.stopPropagation()
+        })
+    }
 
     document.body.addEventListener('click', () => {
         const topbarMenuSwitch = document.getElementById('top-bar-menu-switch')
-        if (topbarMenuSwitch.checked) {
-            topbarMenuSwitch.click()
+        if (topbarMenuSwitch?.checked) {
+            topbarMenuSwitch?.click()
         }
+    })
+
+    const toggleVisibility = (element, visibleClass) => {
+        if (element) {
+            if (element.style.display === "none" || element.style.display === "") {
+                element.style.display = visibleClass ?? "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+    }
+
+    document.querySelector("#toggle-header")?.addEventListener("click", () => {
+        const userName = document.querySelector("#moin-username")
+        const search = document.querySelector("#moin-searchform")
+        const navibar = document.querySelector("#moin-navibar")
+        const breadcrumb = document.querySelector(".moin-breadcrumb")
+        toggleVisibility(userName, "flex")
+        toggleVisibility(search, "flex")
+        toggleVisibility(navibar, "flex")
+        toggleVisibility(breadcrumb)
     })
 }
