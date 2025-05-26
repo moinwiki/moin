@@ -12,6 +12,7 @@ html * { box-sizing: border-box; }
 html, body { max-width: 100vw; max-height: 100vh; overflow-x: hidden;}
 h1, h2, h3, h4, h5, h6 { border-bottom: none; }
 h2 { margin-top: 1.6em; margin-bottom: 0.5em; }
+table tr td { border: none; }
 .clickable-header { cursor: pointer; }
 input[type="checkbox"] { appearance: none; border: 2pt solid #242424;
     height: 12pt; width: 12pt; transition: background-color 80ms linear; }
@@ -219,7 +220,7 @@ div.warning > ul, div.warning > p { padding-left: 30pt; }
     min-width: 40pt; }
 .moin-tags a:link:hover, .moin-tags a:visited:hover { color: white; background-color: var(--accent-hover) }
 
-#moin-global-history tr td { border: none; }
+.moin-history-end-of-day { border-top: none; }
 .moin-history-day-banner { background-color: var(--accent-lighter); }
 
 #moin-content table > thead { background-color: var(--accent-lighter); }
