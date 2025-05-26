@@ -7,13 +7,6 @@
     --negative: #cc4343;
 }
 
-@font-face {
-    font-family: 'JetBrains Mono';
-    src: url('../fonts/JetBrainsMono-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}
-
 html { background-color: white; }
 html * { box-sizing: border-box; }
 html, body { max-width: 100vw; max-height: 100vh; overflow-x: hidden;}
@@ -163,7 +156,7 @@ header a, header a:link, header a:visited,
 .moin-form button, .moin-button, .moin-form input[type="submit"] { display: flex;
     align-items: center; justify-content: center; }
 
-.moin-edit-content { font-family: "JetBrains Mono", monospace; font-variant-ligatures: none;
+.moin-edit-content { font-family: monospace; font-variant-ligatures: none;
     margin-top: 6pt; }
 
 #moin-modify input[type="file"] { color: #383838; font-size: 0.9rem; cursor: pointer; }
