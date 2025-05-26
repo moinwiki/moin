@@ -3,8 +3,8 @@
     changes to a text item, or create a new wiki item.
 
     Based upon content type, the data_editor macro that is passed will generate a
-    file upload option and/or a text editor, or specialized drawing tools to
-    create/modify twikidraw, anywikidraw, svgdraw items.
+    file upload option and/or a text editor, or specialized a drawing tool to
+    create/modify svgdraw items.
 
     If a new item, this page is displayed after the user navigates through a series of web pages to:
         * select item type (modify_select_itemtype.html), user may select default, ticket, blog
@@ -17,7 +17,7 @@
 
 {% extends theme("show.html") %}
 
-{% from form.meta_template import meta_editor %}
+{% from form.meta_template import meta_editor with context %}
 {# Import macros data_editor and extra_head from content_form's template.
    extra_head is optional, so instead of a simple "import from" we need to do
    this manually #}
@@ -25,7 +25,7 @@
 {% set extra_head = content_template.extra_head %}
 {% set data_editor = content_template.data_editor %}
 
-{% set title = _("Modifying '%(item_name)s'", item_name=fqname|shorten_fqname) %}
+{% set title = _("Modifying '{item_name}'").format(item_name=fqname|shorten_fqname) %}
 
 {% block head %}
     {{ super() }}
@@ -93,13 +93,13 @@
 
 {% block options_for_javascript %}
     {%- if user.scroll_page_after_edit -%}
-        <br id="moin-scroll-page-after-edit" />
+        <br id="moin-scroll-page-after-edit">
     {%- endif %}
     {%- if draft_data -%}
         <textarea id="moin-draft-data">{{ draft_data }}</textarea>
     {%- endif %}
     {%- if lock_duration -%}
-        <input id="moin-lock_duration" value="{{ lock_duration }}" />
+        <input id="moin-lock_duration" value="{{ lock_duration }}">
     {%- endif %}
-    <input id="moin-item-name" value="{{ fqname }}" />
+    <input id="moin-item-name" value="{{ fqname }}">
 {% endblock %}
