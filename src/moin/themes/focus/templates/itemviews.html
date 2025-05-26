@@ -100,7 +100,7 @@
                 </div>
             {%- endif %}
 
-            {%- if endpoint == 'frontend.destroy_item' and user.may.destroy(fqname) %}
+            {%- if endpoint == 'frontend.destroy_item' and may.destroy %}
                 <div>
                     <a href="{{ url_for(endpoint, item_name = fqname) }}" title="{{ title }}" rel="nofollow">{{ a_label(icon_class, label) }}</a>
                 </div>
