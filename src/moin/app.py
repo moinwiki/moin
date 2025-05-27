@@ -14,7 +14,6 @@ Use create_app(config) to create the WSGI application (using Flask).
 from __future__ import annotations
 
 import os
-import re
 import sys
 
 from os import path, PathLike
@@ -408,7 +407,7 @@ def is_static_content(request_path):
     Check if content is static and does not need usual wiki handling
     """
 
-    if request_path.startswith(("/static/", "/+serve/", "/+template/")) or re.match(r"/_themes/\w+/css/", request_path):
+    if request_path.startswith(("/static/", "/+serve/", "/+template/", "/_themes/")):
         return True
     else:
         return False
