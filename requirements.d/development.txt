@@ -1,4 +1,4 @@
-tox
+tox>=4.21.0
 psutil
 pytest
 # we use lxml.etree for xpath-based testing
