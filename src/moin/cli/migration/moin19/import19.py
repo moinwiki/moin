@@ -1,6 +1,6 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2008-2011 MoinMoin:ThomasWaldmann
-# Copyright: 2023-2024 MoinMoin:UlrichB
+# Copyright: 2023-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -948,7 +948,7 @@ class UserRevision:
         # stuff we want to have stored as boolean:
         bool_defaults = [  # taken from cfg.checkbox_defaults
             (SHOW_COMMENTS, "False"),
-            (EDIT_ON_DOUBLECLICK, "True"),
+            (EDIT_ON_DOUBLECLICK, "False"),
             (SCROLL_PAGE_AFTER_EDIT, "True"),
             (WANT_TRIVIAL, "False"),
             (MAILTO_AUTHOR, "False"),

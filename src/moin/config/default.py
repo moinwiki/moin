@@ -4,7 +4,7 @@
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # Copyright: 2011      MoinMoin:AkashSinha
 # Copyright: 2023      MoinMoin project
-# Copyright: 2024      MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -576,7 +576,7 @@ options_no_group_name = {
                     CSS_URL: None,
                     ISO_8601: False,
                     MAILTO_AUTHOR: False,
-                    EDIT_ON_DOUBLECLICK: True,
+                    EDIT_ON_DOUBLECLICK: False,
                     SCROLL_PAGE_AFTER_EDIT: True,
                     SHOW_COMMENTS: False,
                     WANT_TRIVIAL: False,
