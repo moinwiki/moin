@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -26,7 +27,7 @@ class OpenDocumentIndexingConverter:
         return cls()
 
     def __call__(self, rev, contenttype=None, arguments=None):
-        zf = zipfile.ZipFile(rev, "r")  # rev is file-like
+        zf = zipfile.ZipFile(rev.data, "r")  # rev is file-like
         try:
             data = zf.read("content.xml")
             text = data.decode("utf-8")
