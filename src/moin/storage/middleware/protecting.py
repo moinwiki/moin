@@ -12,6 +12,8 @@ Note: for method / attribute docs, please see the same methods / attributes in
       IndexingMiddleware class.
 """
 
+from __future__ import annotations
+
 import time
 
 from whoosh.util.cache import lfu_cache
@@ -24,6 +26,13 @@ from moin.security import AccessControlList
 from moin.utils import close_file
 from moin.utils.interwiki import split_fqname, CompositeName
 from moin import log
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from moin.config import AclConfig
+    from moin.storage.middleware.indexing import IndexingMiddleware
+    from moin.user import User
 
 logging = log.getLogger(__name__)
 
@@ -64,7 +73,7 @@ def pchecker(right, allowed, item):
 class ProtectingMiddleware:
     from .indexing import parent_names
 
-    def __init__(self, indexer, user, acl_mapping):
+    def __init__(self, indexer: IndexingMiddleware, user: User, acl_mapping: list[tuple[str, AclConfig]]):
         """
         This object is created at the start of a transaction. It is accessed via flaskg.storage.
 

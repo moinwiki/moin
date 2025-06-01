@@ -5,12 +5,17 @@
 MoinMoin - protecting middleware tests
 """
 
+from __future__ import annotations
+
 from io import BytesIO
 
 import pytest
 
+from moin.config import AclConfig
 from moin.constants.keys import PARENTID
+from moin.user import User
 
+from ..indexing import IndexingMiddleware
 from ..protecting import ProtectingMiddleware, AccessDenied
 
 from .test_indexing import TestIndexingMiddleware
@@ -22,12 +27,15 @@ UNPROTECTED_CONTENT = b"unprotected content"
 PROTECTED_CONTENT = b"protected content"
 
 acl_mapping = [
-    ("", dict(before="", default="joe:read,write,create,admin All:read,write,create", after="", hierarchic=False)),
-    ("users", dict(before="", default="joe:read,write,create,admin All:read,write,create", after="", hierarchic=False)),
+    ("", AclConfig(before="", default="joe:read,write,create,admin All:read,write,create", after="", hierarchic=False)),
+    (
+        "users",
+        AclConfig(before="", default="joe:read,write,create,admin All:read,write,create", after="", hierarchic=False),
+    ),
 ]
 
 
-class FakeUser:
+class FakeUser(User):
     """
     fake user object, just to give user.name
     """
@@ -41,8 +49,9 @@ class FakeUser:
 
 
 class TestProtectingMiddleware(TestIndexingMiddleware):
+
     @pytest.fixture(autouse=True)
-    def protected_imw(self, imw):
+    def protected_imw(self, imw: IndexingMiddleware):
         self.imw = ProtectingMiddleware(imw, FakeUser("joe"), acl_mapping=acl_mapping)
         return self.imw
 

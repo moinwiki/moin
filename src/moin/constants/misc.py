@@ -6,6 +6,8 @@
 MoinMoin - misc. constants not fitting elsewhere
 """
 
+from __future__ import annotations
+
 import re
 
 ANON = "anonymous"
@@ -26,7 +28,7 @@ ITEM_INVALID_CHARS_REGEX = re.compile(
     re.UNICODE | re.VERBOSE,
 )
 
-CLEAN_INPUT_TRANSLATION_MAP = {
+CLEAN_INPUT_TRANSLATION_MAP: dict[int, str | None] = {
     # these chars will be replaced by blanks
     ord("\t"): " ",
     ord("\r"): " ",

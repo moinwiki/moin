@@ -5,6 +5,8 @@
 MoinMoin - indexing middleware tests
 """
 
+from __future__ import annotations
+
 from io import BytesIO
 import hashlib
 
@@ -43,6 +45,11 @@ from moin.utils.interwiki import split_fqname
 from moin.auth import GivenAuth
 from moin._tests import wikiconfig, update_item
 
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from moin.storage.middleware.indexing import IndexingMiddleware
+
 
 def dumper(indexer, idx_name):
     print("*** %s ***" % idx_name)
@@ -56,8 +63,8 @@ class TestIndexingMiddleware:
     reinit_storage = True  # cleanup after each test method
 
     @pytest.fixture(autouse=True)
-    def imw(self):
-        self.imw = flaskg.unprotected_storage
+    def _imw(self):
+        self.imw = cast(IndexingMiddleware, flaskg.unprotected_storage)
         return self.imw
 
     def test_nonexisting_item(self):

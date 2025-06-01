@@ -22,7 +22,7 @@ def label_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-label_filter.tags = {"label"}
+label_filter.tags = {"label"}  # type: ignore[attr-defined]  # function attribute
 
 
 def button_filter(tagname, attributes, contents, context, bind):
@@ -37,7 +37,7 @@ def button_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-button_filter.tags = {"input", "button"}
+button_filter.tags = {"input", "button"}  # type: ignore[attr-defined]  # function attribute
 
 
 def required_filter(tagname, attributes, contents, context, bind):
@@ -47,7 +47,7 @@ def required_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-required_filter.tags = {"input", "label"}
+required_filter.tags = {"input", "label"}  # type: ignore[attr-defined]  # function attribute
 
 
 def autofocus_filter(tagname, attributes, contents, context, bind):
@@ -58,7 +58,7 @@ def autofocus_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-autofocus_filter.tags = {"input", "textarea"}
+autofocus_filter.tags = {"input", "textarea"}  # type: ignore[attr-defined]  # function attribute
 
 
 def placeholder_filter(tagname, attributes, contents, context, bind):
@@ -69,7 +69,7 @@ def placeholder_filter(tagname, attributes, contents, context, bind):
     return contents
 
 
-placeholder_filter.tags = {"input", "textarea"}
+placeholder_filter.tags = {"input", "textarea"}  # type: ignore[attr-defined]  # function attribute
 
 
 def error_filter_factory(class_="moin-error"):
@@ -87,7 +87,7 @@ def error_filter_factory(class_="moin-error"):
                 attributes["class"] = class_
         return contents
 
-    error_filter.tags = {"input"}
+    error_filter.tags = {"input"}  # type: ignore[attr-defined]  # function attribute
     return error_filter
 
 

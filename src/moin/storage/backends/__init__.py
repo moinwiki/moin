@@ -70,7 +70,7 @@ class MutableBackendBase(BackendBase):
         """
 
     @abstractmethod
-    def remove(self, metaid):
+    def remove(self, metaid, destroy_data=False):
         """
         delete meta, data related to metaid from the backend
         """

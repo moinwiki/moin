@@ -13,10 +13,14 @@ Directories create a virtual directory item, listing the files in that
 directory.
 """
 
+from __future__ import annotations
+
+from typing import Any, override
+
 import os
 import errno
 import stat
-from io import BytesIO
+from io import BytesIO, BufferedReader
 from urllib.parse import quote as url_quote
 from urllib.parse import unquote as url_unquote
 
@@ -33,6 +37,7 @@ class Backend(BackendBase):
     exposes part of the filesystem (read-only)
     """
 
+    @override
     @classmethod
     def from_uri(cls, uri):
         return cls(uri)
@@ -43,13 +48,15 @@ class Backend(BackendBase):
         """
         self.path = str(path)
 
+    @override
     def open(self):
         pass
 
+    @override
     def close(self):
         pass
 
-    def _mkpath(self, key):
+    def _mkpath(self, key) -> tuple[str, str]:
         """
         key -> itemname, absolute path (strip mtime)
         """
@@ -68,7 +75,7 @@ class Backend(BackendBase):
             relpath = itemname.replace(NAME_SEP, os.sep)
         return itemname, os.path.join(self.path, relpath)
 
-    def _mkkey(self, path):
+    def _mkkey(self, path) -> tuple[str, int]:
         """
         absolute path -> itemname, mtime
         """
@@ -94,14 +101,14 @@ class Backend(BackendBase):
     def _decode(self, qkey):
         return url_unquote(qkey)
 
-    def _get_meta(self, itemname, path):
+    def _get_meta(self, itemname, path) -> dict[str, Any]:
         try:
             st = os.stat(path)
         except OSError as e:
             if e.errno == errno.ENOENT:
                 raise KeyError(itemname)
             raise
-        meta = {}
+        meta: dict[str, Any] = {}
         meta[NAME] = itemname
         meta[MTIME] = int(st.st_mtime)  # use int, not float
         meta[REVID] = str(self._encode("%s.%d" % (meta[NAME], meta[MTIME])))
@@ -124,7 +131,7 @@ class Backend(BackendBase):
         meta[SIZE] = size
         return meta
 
-    def _make_directory_page(self, path):
+    def _make_directory_page(self, path: str) -> str:
         try:
             dirs = []
             files = []
@@ -144,7 +151,7 @@ class Backend(BackendBase):
             content = str(err)
         return content
 
-    def _get_data(self, itemname, path):
+    def _get_data(self, itemname: str, path: str) -> BufferedReader | BytesIO:
         try:
             st = os.stat(path)
             if stat.S_ISDIR(st.st_mode):
@@ -159,6 +166,7 @@ class Backend(BackendBase):
                 raise KeyError(itemname)
             raise
 
+    @override
     def __iter__(self):
         # note: instead of just yielding the relative <path>, yield <path>.<mtime>,
         # so if the file is updated, the revid will change (and the indexer's
@@ -170,7 +178,8 @@ class Backend(BackendBase):
             for filename in filenames:
                 yield self._encode("%s.%d" % self._mkkey(os.path.join(dirpath, filename)))
 
-    def retrieve(self, key):
+    @override
+    def retrieve(self, key) -> tuple[Any, Any]:
         key = self._decode(key)
         itemname, path = self._mkpath(key)
         meta = self._get_meta(itemname, path)

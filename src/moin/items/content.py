@@ -18,6 +18,8 @@
     Each class in this module corresponds to a contenttype value.
 """
 
+from __future__ import annotations
+
 import os
 import time
 import uuid
@@ -178,9 +180,9 @@ class Content:
     """
 
     # placeholder values for registry entry properties
-    contenttype = None
+    contenttype: str | None = None
     default_contenttype_params = {}
-    display_name = None
+    display_name: str | None = None
     group = GROUP_OTHER
     ingroup_order = 0
 
@@ -194,7 +196,7 @@ class Content:
         logging.debug(f"Content class {content.__class__!r} handles {contenttype!r}")
         return content
 
-    def __init__(self, contenttype, item=None):
+    def __init__(self, contenttype: str, item=None):
         # We need to keep the exact contenttype since contents may be handled
         # by a Content subclass with wildcard contenttype (eg. an unknown
         # contenttype some/type gets handled by Binary)

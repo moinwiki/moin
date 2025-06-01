@@ -134,6 +134,8 @@ You also have to give the keyword argument "auth_method" containing the
 name of the authentication method.
 """
 
+from __future__ import annotations
+
 from urllib.parse import quote, quote_plus
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
@@ -211,9 +213,9 @@ class MultistageRedirectLogin(LoginReturn):
 
 
 class BaseAuth:
-    name = None
-    login_inputs = []
-    logout_possible = False
+    name: str | None = None
+    login_inputs: list[str] = []
+    logout_possible: bool = False
 
     def __init__(self, trusted=False, **kw):
         self.trusted = trusted
