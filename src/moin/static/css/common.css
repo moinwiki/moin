@@ -296,13 +296,15 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .moin-link-list li { padding: 2px 0 2px 0; }
 
 /* item ACL report */
-.moin-acl-report { width: 100%; border-collapse: collapse; }
-.moin-acl-heading > div { border: 1px solid var(--border); background-color: var(--bg-heading);
+.moin-acl-report { width: 100%; border-collapse: collapse; display: table; }
+.moin-acl-heading { display: table-row; }
+.moin-acl-heading > div { display: table-cell; border: 1px solid var(--border); background-color: var(--bg-heading);
     text-align: left; color: var(--primary); padding: .3em .4em; vertical-align: middle; font-weight: bold; width: 50%; }
-.moin-acl-name-cell { border: 1px solid var(--border); vertical-align: top; position:relative;
+.moin-acl-form { display: table-row; }
+.moin-acl-name-cell { display: table-cell; border: 1px solid var(--border); vertical-align: top; position:relative;
     padding: .3em .4em; word-break: break-all; }
 .moin-acl-name-cell > input { position:absolute; bottom: 0; right: 0; }
-.moin-acl-rule-cell { border: 1px solid var(--border); }
+.moin-acl-rule-cell { display: table-cell; border: 1px solid var(--border); }
 .moin-acl-rule-cell textarea { border: 0; min-height: 3em; }
 .moin-acl-default .moin-acl-string { color: var(--muted); background-color: var(--bg-code);}
 .moin-acl-rule-cell .moin-acl-edit-disable { color: var(--disabled); }

@@ -504,6 +504,7 @@ def item_acl_report():
     query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
     all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
+    number_modified_acls = 0
     for meta in all_metas:
         item_namespace = meta.get(NAMESPACE)
         item_id = meta.get(ITEMID)
@@ -517,6 +518,9 @@ def item_acl_report():
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config["default"]
+                    break
+        else:
+            number_modified_acls += 1
         fqnames = gen_fqnames(meta)
         items_acls.append(
             {
@@ -536,6 +540,7 @@ def item_acl_report():
         "admin/item_acl_report.html",
         title_name=_("Item ACL Report"),
         number_items=len(items_acls),
+        number_modified_acls=number_modified_acls,
         items_acls=items_acls,
     )
 
