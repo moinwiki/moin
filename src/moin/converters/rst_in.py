@@ -814,7 +814,6 @@ class WikiReferences(transforms.Transform):
 
     def apply(self) -> None:
         for node in self.document.findall(nodes.reference):
-            print(node.resolved, node)
             # Skip resolved references, unresolvable references, and references with matching target:
             if node.resolved or "refname" not in node or self.document.nameids.get(node["refname"]):
                 continue
