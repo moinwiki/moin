@@ -92,17 +92,18 @@ Text formatting
 
 The following is a table of inline markup that can be used to format text in Moin.
 
-+----------------------------------------+------------------------------------+
-|Markup                                  |Result                              |
-+========================================+====================================+
-|``**Bold Text**``                       |**Bold text**                       |
-+----------------------------------------+------------------------------------+
-|``*Italic*``                            |*Italic*                            |
-+----------------------------------------+------------------------------------+
-|````Inline Literals````                 |``Inline Literals``                 |
-+----------------------------------------+------------------------------------+
-|``***nested markup is not supported***``|***nested markup is not supported***|
-+----------------------------------------+------------------------------------+
+======================================== ====================================
+Markup                                   Result
+======================================== ====================================
+``**Bold Text**``                        **Bold text**
+                                         
+``*Italic*``                             *Italic*
+                                         
+````Inline Literals````                  ``Inline Literals``
+                                         
+``***nested markup is not supported***`` ***nested markup is not supported***
+======================================== ====================================
+
 
 Hyperlinks
 ==========
@@ -110,22 +111,25 @@ Hyperlinks
 External Links
 --------------
 
-+----------------------------------------------------------------+------------------------------------------------------------+
-|Markup                                                          |Result                                                      |
-+================================================================+============================================================+
-|``http://www.python.org/``                                      |http://www.python.org/                                      |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``External hyperlinks, like `Python <http://www.python.org/>`_``|External hyperlinks, like `Python <http://www.python.org/>`_|
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``External hyperlinks, like Moin_.``                            |External hyperlinks, like Moin_.                            |
-|                                                                |                                                            |
-|``.. _Moin: http://moinmo.in/``                                 |.. _Moin: http://moinmo.in/                                 |
-+----------------------------------------------------------------+------------------------------------------------------------+
+================================================================  =====================================================
+Markup                                                            Result
+================================================================  =====================================================
+``http://www.python.org/``                                        http://www.python.org/
+
+``External hyperlinks, like `Python <http://www.python.org/>`_``  External hyperlinks, like
+                                                                  `Python <http://www.python.org/>`_
+
+``External hyperlinks, like Moin_.``                              External hyperlinks, like Moin_.
+
+``.. _Moin: http://moinmo.in/``                                   .. _Moin: http://moinmo.in/
+================================================================  =====================================================
 
 Internal Links
 --------------
 
-The examples below use the "help-en" and "help-common" namespaces to separate these help pages from the main wiki content. Some target pages may be missing from the default namespace.
+The examples below use the "help-en" and "help-common" namespaces 
+to separate these help pages from the main wiki content.
+Some target pages may be missing from the default namespace.
 
 Within the rst syntax:
 
@@ -136,29 +140,29 @@ Within the rst syntax:
 
 .. _myanchor:
 
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-|Markup                       |Result                               |Comment                                                     |
-+=============================+=====================================+============================================================+
-| ``http:Home``               |http:Home                            |link to an item in the default namespace of this wiki       |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ```Home2 <http:Home>`_``    |`Home2 <http:Home>`_                 |fancy link to an item in the default namespace of this wiki |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ``http:/subitem``           |http:/subitem                        |link to a subitem of the current item                       |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ```sub <http:/subitem>`_``  |`sub <http:/subitem>`_               |fancy link to a subitem of the current item                 |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ``http:users/Home``         |http:users/Home                      |link to an item in a different namespace of this wiki       |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ``http:../moin``            |http:../moin                         |link to a sibling of this item                              |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ``Headings_``               |Headings_                            |link to Headings anchor on this item                        |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ```Internal Links`_``       |`Internal Links`_                    |link to a heading with embedded blanks                      |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ``.. _myanchor:``           |                                     |create anchor, real anchor is above this table              |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
-| ``myanchor_``               |myanchor_                            |link to above anchor                                        |
-+-----------------------------+-------------------------------------+------------------------------------------------------------+
+============================  ============================  ===========================================================
+Markup                        Result                        Comment
+============================  ============================  ===========================================================
+ ``http:Home``                http:Home                     link to an item in the default namespace of this wiki
+
+ ```Home2 <http:Home>`_``     `Home2 <http:Home>`_          fancy link to an item in the default namespace of this wiki
+
+ ``http:/subitem``            http:/subitem                 link to a subitem of the current item
+
+ ```sub <http:/subitem>`_``   `sub <http:/subitem>`_        fancy link to a subitem of the current item
+
+ ``http:users/Home``          http:users/Home               link to an item in a different namespace of this wiki
+
+ ``http:../moin``             http:../moin                  link to a sibling of this item
+
+ ``Headings_``                Headings_                     link to Headings anchor on this item
+
+ ```Internal Links`_``        `Internal Links`_             link to a heading with embedded blanks
+
+ ``.. _myanchor:``                                          create anchor, real anchor is above this table
+
+ ``myanchor_``                myanchor_                     link to above anchor
+============================  ============================  ===========================================================
 
 **Notes:**
  - If this page was created by Sphinx, none of the above internal link examples work correctly.
