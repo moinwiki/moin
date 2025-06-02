@@ -1,21 +1,21 @@
 ===============================
-ReST (ReStructured Text) Markup
+reST (reStructuredText) Markup
 ===============================
 
 ..
  This document is duplicated within Moin2 as `/docs/user/rest.rst` and
  `contrib/sample/rst.data`. Please update both.
 
-Depending upon your source, this document may have been created by
-the Moin2 ReST parser (Docutils) or the Sphinx ReST parser. These parsers
-have slight differences in the rendering of ReST markup, some of those differences
+Depending on your source, this document may have been created by
+the Moin2 reST parser (Docutils) or the Sphinx reST parser. These parsers
+have slight differences in the rendering of reST markup. Some of those differences
 are noted below.
 
-The purpose of this document is to define the features of the Moin2 ReST (Docutils)
-parser. The Sphinx extensions to ReST markup that are not supported
+The purpose of this document is to define the features of the Moin2 reST (Docutils)
+parser. The Sphinx extensions to reST markup that are not supported
 by the Docutils parser are not included here.
 
-See the the Docutils Restructured Text documentation for more information.
+See the Docutils reStructuredText documentation for more information.
 
 Headings
 ========
@@ -166,7 +166,8 @@ Markup                        Result                        Comment
 
 **Notes:**
  - If this page was created by Sphinx, none of the above internal link examples work correctly.
- - The ".. _myanchor:" directive must begin in column one.
+ - The block level "target" ``.. _myanchor:`` sets an anchor for the following element.
+   Inline targets set the anchor on the text content which is also used as label.
  - Section titles (or headings) automatically generate hyperlink targets (the title
    text is used as the hyperlink name).
 
@@ -361,7 +362,7 @@ Ordered Lists
    (for lists which do not start at "1") and formatting type
    (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
    enumerated lists can be found in the `reStructuredText documentation
-   <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
+   <https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
  - One or more blank lines are required before and after reStructuredText lists.
  - The Moin2 parser requires a blank line between items when changing indentation levels.
  - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
@@ -413,7 +414,7 @@ Field lists are part of an extension syntax for directives usually intended for 
 Option lists
 ============
 
-Option lists are intended to document Unix or DOS command line options.
+Option lists are intended to document Unix or DOS command-line options.
 
 **Markup**::
 
@@ -457,7 +458,7 @@ Backslash Escapes
 =================
 
 Sometimes there is a need to use special characters as literal characters,
-but ReST's syntax gets in the way. Use the backslash character as an escape.
+but reST's syntax gets in the way. Use the backslash character as an escape.
 
 **Markup**::
 
@@ -480,8 +481,8 @@ but ReST's syntax gets in the way. Use the backslash character as an escape.
 333\. is a float, 333 is an integer.
 
 **Notes**:
- - The Moin2 ReST parser changes the 333. to a 1. and inserts an error message into the document.
- - The Sphinx ReST parser begins an ordered list with 333. The visual effect is a dedented line.
+ - The Moin2 reST parser changes the 333. to a 1. and inserts an error message into the document.
+ - The Sphinx reST parser begins an ordered list with 333. The visual effect is a dedented line.
 
 Tables
 ======
@@ -553,8 +554,8 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  | C                              |
  +--------------------------------+
 
-One difference between the Sphinx and Moin ReST parsers is demonstrated below.
-With the Spinx parser, grid table column widths can be expanded by adding spaces.
+One difference between the Sphinx and Moin reST parsers is demonstrated below.
+With the Sphinx parser, grid table column widths can be expanded by adding spaces.
 
 **Markup**::
 
@@ -569,9 +570,9 @@ With the Spinx parser, grid table column widths can be expanded by adding spaces
  +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 **Notes:**
- - The Moin2 ReST parser does not add the <colgroup><col width="9%"><col width="91%">
+ - The Moin2 reST parser does not add the <colgroup><col width="9%"><col width="91%">
    HTML markup added by the Sphinx parser (the width attribute generates an HTML
-   validation error), nor does it use Javascript to adjust the width of tables.
+   validation error), nor does it use JavaScript to adjust the width of tables.
  - Under Moin2, tables and table cells will be of minimal width
    (unless there is CSS styling to set tables larger).
 
@@ -582,7 +583,7 @@ Admonitions are used to draw the reader's attention to an important paragraph.
 There are nine admonition types: attention, caution, danger, error, hint,
 important, note, tip, and warning.
 
-The ReST parser uses "error" admonitions to highlight some ReST syntax errors.
+The reST parser uses "error" admonitions to highlight some reST syntax errors.
 
 **Markup**::
 
@@ -632,7 +633,7 @@ Comments link within item views.
 Literal Blocks
 ==============
 
-Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
+Literal blocks are used to show text as is; i.e., no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**::

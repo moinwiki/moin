@@ -92,17 +92,18 @@ Text formatting
 
 The following is a table of inline markup that can be used to format text in Moin.
 
-+----------------------------------------+------------------------------------+
-|Markup                                  |Result                              |
-+========================================+====================================+
-|``**Bold Text**``                       |**Bold text**                       |
-+----------------------------------------+------------------------------------+
-|``*Italic*``                            |*Italic*                            |
-+----------------------------------------+------------------------------------+
-|````Inline Literals````                 |``Inline Literals``                 |
-+----------------------------------------+------------------------------------+
-|``***nested markup is not supported***``|***nested markup is not supported***|
-+----------------------------------------+------------------------------------+
+======================================== ====================================
+Markup                                   Result
+======================================== ====================================
+``**Bold Text**``                        **Bold text**
+                                         
+``*Italic*``                             *Italic*
+                                         
+````Inline Literals````                  ``Inline Literals``
+                                         
+``***nested markup is not supported***`` ***nested markup is not supported***
+======================================== ====================================
+
 
 Hyperlinks
 ==========
@@ -110,42 +111,62 @@ Hyperlinks
 External Links
 --------------
 
-+-----------------------------------------------------------------+-------------------------------------------------------------+
-|Markup                                                           |Result                                                       |
-+=================================================================+=============================================================+
-|``https://www.python.org/``                                      |https://www.python.org/                                      |
-+-----------------------------------------------------------------+-------------------------------------------------------------+
-|``External hyperlinks, like `Python <https://www.python.org/>`_``|External hyperlinks, like `Python <https://www.python.org/>`_|
-+----------------------------------------------------------------+--------------------------------------------------------------+
-|``External hyperlinks, like Moin_.``                             |External hyperlinks, like Moin_.                             |
-|                                                                 |                                                             |
-|``.. _Moin: http://moinmo.in/``                                  |.. _Moin: http://moinmo.in/                                  |
-+-----------------------------------------------------------------+-------------------------------------------------------------+
+================================================================  =====================================================
+Markup                                                            Result
+================================================================  =====================================================
+``http://www.python.org/``                                        http://www.python.org/
+
+``External hyperlinks, like `Python <http://www.python.org/>`_``  External hyperlinks, like
+                                                                  `Python <http://www.python.org/>`_
+
+``External hyperlinks, like Moin_.``                              External hyperlinks, like Moin_.
+
+``.. _Moin: http://moinmo.in/``                                   .. _Moin: http://moinmo.in/
+================================================================  =====================================================
 
 Internal Links
 --------------
 
+The examples below use the "help-en" and "help-common" namespaces to separate these help pages from the main wiki content.
+Some target pages may be missing from the default namespace.
+
+Within the rst syntax:
+
+ * a link like ``http:Home`` links to an item in the default namespace
+ * a link like ``http:/subitem`` links to a subitem of the current item
+ * a link that begins with a namespace like ``http:users/Home`` links to the Home item in the target namespace
+ * a link like ``http:../sibling`` links to a sibling of the current item
+
 .. _myanchor:
 
-+----------------------------------------------------------------+------------------------------------------------------------+
-|Markup                                                          |Result                                                      |
-+================================================================+============================================================+
-|``http:Home`` link to a page in this wiki                       |http:Home link to a page in this wiki                       |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|```Home <http:Home>`_`` link to a page in this wiki             |`Home <http:Home>`_ link to a page in this wiki             |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``Headings_`` link to heading anchor on this page               |Headings_ link to heading anchor on this page               |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|```Internal Links`_`` link to heading with embedded blanks      |`Internal Links`_ link to heading with embedded blanks      |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``.. _myanchor:`` create anchor, real anchor is above this table|create anchor, real anchor is above this table              |
-+----------------------------------------------------------------+------------------------------------------------------------+
-|``myanchor_`` link to above anchor                              |myanchor_ link to above anchor                              |
-+----------------------------------------------------------------+------------------------------------------------------------+
+============================  ============================  ===========================================================
+Markup                        Result                        Comment
+============================  ============================  ===========================================================
+ ``http:Home``                http:Home                     link to an item in the default namespace of this wiki
+
+ ```Home2 <http:Home>`_``     `Home2 <http:Home>`_          fancy link to an item in the default namespace of this wiki
+
+ ``http:/subitem``            http:/subitem                 link to a subitem of the current item
+
+ ```sub <http:/subitem>`_``   `sub <http:/subitem>`_        fancy link to a subitem of the current item
+
+ ``http:users/Home``          http:users/Home               link to an item in a different namespace of this wiki
+
+ ``http:../moin``             http:../moin                  link to a sibling of this item
+
+ ``Headings_``                Headings_                     link to Headings anchor on this item
+
+ ```Internal Links`_``        `Internal Links`_             link to a heading with embedded blanks
+
+ ``.. _myanchor:``                                          create anchor, real anchor is above this table
+
+ ``myanchor_``                myanchor_                     link to above anchor
+============================  ============================  ===========================================================
 
 **Notes:**
  - If this page was created by Sphinx, none of the above internal link examples work correctly.
- - The ".. _myanchor:" directive must begin in column one.
+ - The block level "target" ``.. _myanchor:`` sets an anchor for the following element.
+   Inline targets set the anchor on the text content which is also used as label.
  - Section titles (or headings) automatically generate hyperlink targets (the title
    text is used as the hyperlink name).
 
@@ -161,11 +182,11 @@ several images declared successively without any positioning will display in a h
 
     Before text.
 
-    .. image:: png
-       :height: 100
+    .. image:: help-common/logo.svg
+       :height: 200
        :width: 200
-       :scale: 50
-       :alt: alternate text png
+       :scale: 100
+       :alt: alternate text logo.svg
        :align: center
 
     After text.
@@ -174,18 +195,18 @@ several images declared successively without any positioning will display in a h
 
 Before text.
 
-.. image:: png
-   :height: 100
+.. image:: help-common/logo.svg
+   :height: 200
    :width: 200
-   :scale: 50
-   :alt: alternate text png
+   :scale: 100
+   :alt: alternate text logo.svg
    :align: center
 
 After text.
 
 **Notes:**
- - The Sphinx parser does not have an image named "png" so the alternate text
-   will be displayed.
+ - The Sphinx parser does not have an image named "logo.svg" so the alternate text
+   will be displayed above.
 
 Figures
 =======
@@ -198,11 +219,11 @@ will display in a column.
 
     Before text.
 
-    .. figure:: png
+    .. figure:: help-common/logo.png
        :height: 100
        :width: 200
        :scale: 50
-       :alt: alternate text png
+       :alt: alternate text logo.png
 
        Moin Logo
 
@@ -213,13 +234,14 @@ will display in a column.
 
 **Result**:
 
+
 Before text.
 
-.. figure:: png
+.. figure:: help-common/logo.png
    :height: 100
    :width: 200
    :scale: 50
-   :alt: alternate text png
+   :alt: alternate text logo.png
 
    Moin Logo
 
