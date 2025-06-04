@@ -18,7 +18,7 @@ Works with docutils version 0.5 (2008-06-25) or higher.
 import re
 
 import docutils
-from docutils import nodes, utils, writers, core
+from docutils import core, nodes, transforms, utils, writers
 from docutils.nodes import reference, literal_block
 from docutils.parsers.rst import directives, roles
 
@@ -31,6 +31,7 @@ except ImportError:
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
+from moin.wikiutil import normalize_pagename
 
 from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
@@ -781,7 +782,54 @@ def walkabout(node, visitor):
     return stop
 
 
+class Parser(docutils.parsers.rst.Parser):
+    """reStructuredText parser for the MoinMoin wiki.
+
+    Registers a "transform__" for hyperlink references
+    without matching target__.
+
+    __ https://docutils.sourceforge.io/docs/api/transforms.html
+    """
+
+    config_section = "MoinMoin parser"
+    config_section_dependencies = ("parsers", "restructuredtext parser")
+
+    def get_transforms(self):
+        """Add WikiReferences to the registered transforms."""
+        return super().get_transforms() + [WikiReferences]
+
+
+class WikiReferences(transforms.Transform):
+    """Resolve references without matching target as local wiki references.
+
+    Set the "refuri" attribute to refer to a local wiki item.
+    The value is derived from the node's text content with
+    `moin.wikiutil.normalize_pagename()`.
+
+    Cf. https://docutils.sourceforge.io/docs/api/transforms.html#docinfo.
+    """
+
+    default_priority = 775
+    # Apply between `InternalTargets` (660) and `DanglingReferences` (850)
+
+    def apply(self) -> None:
+        for node in self.document.findall(nodes.reference):
+            # Skip resolved references, unresolvable references, and references with matching target:
+            if node.resolved or "refname" not in node or self.document.nameids.get(node["refname"]):
+                continue
+            # Get the name from the link text (the "refname" attribute is lowercased).
+            wikiname = normalize_pagename(node.astext(), None)  # second arg is ignored
+            # Skip references whose "refname" attribute differs from the wikiname (exept for case):
+            if normalize_pagename(node["refname"], None) != wikiname.lower():
+                continue
+            # Resolve the reference:
+            node["refuri"] = wikiname
+            del node["refname"]
+            node.resolved = True
+
+
 class Writer(writers.Writer):
+    # Ignored! In moin 2.0, the conversion does not use a Writer component.
 
     supported = ("moin-x-document",)
     config_section = "MoinMoin writer"
@@ -924,7 +972,7 @@ class Converter:
         while True:
             input = "\n".join(input)
             try:
-                docutils_tree = core.publish_doctree(source=input)
+                docutils_tree = core.publish_doctree(source=input, source_path="rST input", parser=Parser())
             except utils.SystemMessage as inst:
                 string_numb = re.match(
                     re.compile(r"<string>:([0-9]*):\s*\(.*?\)\s*(.*)", re.X | re.U | re.M | re.S), str(inst)

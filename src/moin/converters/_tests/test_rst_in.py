@@ -219,6 +219,14 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             '<page><body><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="example" /><p>text</p></body></page>',
         ),
         (
+            "A reference_ with no matching target links to a local Wiki item.",
+            '<page><body><p>A <a xlink:href="wiki.local:reference">reference</a> with no matching target links to a local Wiki item.</p></body></page>',
+        ),
+        (
+            "`Whitespace   is\nnormalized & Case is KEPT.`_",
+            '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20Case%20is%20KEPT.">Whitespace   is\nnormalized &amp; Case is KEPT.</a></p></body></page>',
+        ),
+        (
             "http://www.python.org/",
             '<page><body><p><a xlink:href="http://www.python.org/">http://www.python.org/</a></p></body></page>',
         ),
