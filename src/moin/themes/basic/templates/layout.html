@@ -68,10 +68,10 @@
 {% endmacro %}
 
 {% block layout %}
-    <div class="container-fluid">
-        <div id="moin-main-wrapper" class="row">
+    <div id="app" class="container-fluid d-flex flex-row">
+        <div id="moin-main-wrapper" class="d-flex flex-grow-1">
 
-            <header class="col-md-2 col-sm-2 col-xs-4 moin-sidebar" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
+            <header class="moin-sidebar flex-grow-0" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
                 <div class="moin-logo">
                     {% if logo %}
                         <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
@@ -117,75 +117,74 @@
                 </div> {# moin-sidebar-panels #}
             </header> {# moin-sidebar #}
 
-            <div class="col-md-10 col-sm-9 col-xs-12">
+            <div class="container-fluid d-flex flex-column">
                 {{ before_header }}
                 <nav class="navbar moin-navbar-inverse">
-                    <div class="row">
-                        <div class="col-md-3 col-sm-5 col-xs-8">
-                            <div class="moin-navbar-header">
 
-                                <button type="button" id="hideshowsidebar" class="navbar-toggle">
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
+                    <div class="col-md-3 col-sm-5 col-xs-8">
+                        <div class="moin-navbar-header">
 
-                                {% if cfg.sitename %}
-                                    <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
-                                        {{ cfg.sitename }}
-                                    </a>
-                                {% endif %}
+                            <button type="button" id="hideshowsidebar" class="navbar-toggle">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
 
-                            </div>
+                            {% if cfg.sitename %}
+                                <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                                    {{ cfg.sitename }}
+                                </a>
+                            {% endif %}
+
                         </div>
-
-                        <div class="col-md-6 col-sm-4 col-xs-4 moin-loginsettings">
-                            <div class="moin-navbar-user">
-                                <ul class="nav navbar-nav moin-pull-right">
-                                    {% if user.valid -%}
-                                        {% set avatar = user.avatar(20) %}
-                                        {% if avatar %}
-                                            <li><img id="moin-avatar" src="{{ avatar }}"></li>
-                                        {%- endif %}
-                                        {% if user.name -%}
-                                            {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
-                                            <li>
-                                                {{ hyperlink(wiki_href, title, exists, aliasname, "fa fa-user fa-inverse", None) }}
-                                            </li>
-                                            {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
-                                                <li title="{{ _('Settings') }}">
-                                                    {{ hyperlink(url_for('frontend.usersettings'), None, True,
-                                                        _('Settings'), "fa fa-cog fa-inverse", None) }}
-                                                </li>
-                                            {%- endif %}
-                                        {%- endif %}
-                                        {% if user.auth_method in cfg.auth_can_logout %}
-                                            <li title="{{ _('Logout') }}">
-                                                {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
-                                                        _('Logout'), "fa fa-sign-out fa-inverse", None) }}
-                                            </li>
-                                        {% endif %}
-                                    {% else %}
-
-                                        {% if login_url %}
-                                            <li>
-                                                {{ hyperlink(login_url, None, True, _('Login'), None, None) }}
-                                            </li>
-                                        {% endif %}
-                                    {%- endif %}
-                                </ul>
-                            </div>
-                        </div>
-                        {% if search_form %}
-                            {{ make_search_form("col-sm-3 hidden-xs", "moin-navbar-form") }}
-                        {% endif %}
                     </div>
+
+                    <div class="col-md-6 col-sm-4 col-xs-4 moin-loginsettings">
+                        <div class="moin-navbar-user">
+                            <ul class="nav navbar-nav moin-pull-right">
+                                {% if user.valid -%}
+                                    {% set avatar = user.avatar(20) %}
+                                    {% if avatar %}
+                                        <li><img id="moin-avatar" src="{{ avatar }}"></li>
+                                    {%- endif %}
+                                    {% if user.name -%}
+                                        {% set wiki_href, aliasname, title, exists = theme_supp.userhome() %}
+                                        <li>
+                                            {{ hyperlink(wiki_href, title, exists, aliasname, "fa fa-user fa-inverse", None) }}
+                                        </li>
+                                        {% if 'frontend.usersettings' not in cfg.endpoints_excluded -%}
+                                            <li title="{{ _('Settings') }}">
+                                                {{ hyperlink(url_for('frontend.usersettings'), None, True,
+                                                    _('Settings'), "fa fa-cog fa-inverse", None) }}
+                                            </li>
+                                        {%- endif %}
+                                    {%- endif %}
+                                    {% if user.auth_method in cfg.auth_can_logout %}
+                                        <li title="{{ _('Logout') }}">
+                                            {{ hyperlink(url_for('frontend.logout', logout_submit=1), None, True,
+                                                    _('Logout'), "fa fa-sign-out fa-inverse", None) }}
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+
+                                    {% if login_url %}
+                                        <li>
+                                            {{ hyperlink(login_url, None, True, _('Login'), None, None) }}
+                                        </li>
+                                    {% endif %}
+                                {%- endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% if search_form %}
+                        {{ make_search_form("col-sm-3 hidden-xs", "moin-navbar-form") }}
+                    {% endif %}
                 </nav> {# navbar moin-navbar-inverse #}
 
                 {{ after_header }}
                 {{ utils.breadcrumbs(theme_supp.path_breadcrumbs, title_name) }}
 
-                <div class="moin-content" role="main">
+                <div class="moin-content flex-row" role="main">
                     {# id -> moin-flash is used to add special alerts for ex. for changes to User Settings via JS, see common.js #}
                     <div id="moin-flash">
                         {% for category, msg in get_flashed_messages(with_categories=true) %}
