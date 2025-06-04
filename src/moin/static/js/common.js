@@ -339,7 +339,6 @@ MoinMoin.prototype.QuicklinksExpander = function () {
 };
 
 
-
 // When a page has subitems, this toggles the subtrees in the Subitems sidebar.
 MoinMoin.prototype.toggleSubtree = function (item) {
     "use strict";
@@ -805,6 +804,14 @@ $(document).ready(function () {
         this.remove();
     });
 
+    // toggle item_acl_report show all items or show items with modified acls
+    $('.moin-show-hide-acls').click(function (event) {
+        event.preventDefault();
+        $('.moin-show-hide-acls').toggleClass('hidden');
+        $('form.moin-acl-default').toggleClass('hidden');
+    });
+
+    // XXX dead code?
     $('.expander').click(function () {
         moin.toggleSubtree(this);
     });

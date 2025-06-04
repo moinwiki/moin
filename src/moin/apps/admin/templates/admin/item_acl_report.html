@@ -9,14 +9,22 @@
 
 {% block content %}
     <h1>{{ _("Item ACLs") }}</h1>
+    {# javascript will toggle show/hide views below #}
+    <div class="moin-show-hide-acls">
+        {% set button_text = _("Showing all items") %}
+        <input value="{{ button_text }}" class="moin-button" type="button">
+        <div class="moin-acl-count">{{ _("Number items:") }} {{ number_items }}</div>
+    </div>
+    <div class="moin-show-hide-acls hidden">
+        {% set button_alt_text = _("Showing items with modified ACLs") %}
+        <input value="{{ button_alt_text }}" class="moin-button" type="button">
+        <div class="moin-acl-count">{{ _("Number items:") }} {{ number_modified_acls }}</div>
+    </div>
 
-    {% set button_text = _("Show/Hide items with default ACLs") %}
-    <input onclick="$('.moin-acl-default').toggle()" value="{{ button_text }}" class="moin-button" type="button">
-    <div class="moin-acl-count moin-acl-default">{{ _("Number items:") }} {{ number_items }}</div>
-    <div style="display: table;" class="moin-acl-report">
-        <div style="display: table-row;" class="moin-acl-heading">
-            <div style="display: table-cell;">{{ _("Item Names") }}</div>
-            <div style="display: table-cell;">{{ _("ACL") }}</div>
+    <div class="moin-acl-report">
+        <div class="moin-acl-heading">
+            <div>{{ _("Item Names") }}</div>
+            <div>{{ _("ACL") }}</div>
         </div>
         {% for item in items_acls %}
             {# we mark items using default ACLs with a special class so we can show/hide same with the click of a button #}
@@ -25,12 +33,12 @@
             {% else %}
                 {% set default_style = "" %}
             {% endif %}
-            <form style="display: table-row;" class="{{ default_style }} moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
-                <div style="display: table-cell;" class="moin-acl-name-cell">
+            <form class="{{ default_style }} moin-acl-form" action="{{ url_for('admin.modify_acl', item_name=item['fqname']) }}" method="POST">
+                <div class="moin-acl-name-cell">
                     {{ utils.item_moniker(item, item.fqnames) }}
                     <input class="moin-button" type="submit" value="{{ _("Save") }}"/>
                 </div>
-                <div style="display: table-cell;" class="moin-acl-rule-cell">
+                <div class="moin-acl-rule-cell">
                     <textarea class="moin-acl-string" name="{{ item['fqname'] }}">{{ item['acl'] }}</textarea>
                 </div>
             </form>
