@@ -184,8 +184,8 @@ class ThemeSupport:
         navtabs = []
         spl_active = [("frontend.history", "frontend.diff")]
 
-        for endpoint, label, title, check_exists in app.cfg.item_views:
-            if endpoint not in app.cfg.endpoints_excluded:
+        for endpoint, label, title, check_exists in self.cfg.item_views:
+            if endpoint not in self.cfg.endpoints_excluded:
                 if not check_exists or exists:
                     if endpoint in navtabs_endpoints:
 
@@ -245,8 +245,8 @@ class ThemeSupport:
         item_navigation = []
         item_actions = []
 
-        for endpoint, label, title, check_exists in app.cfg.item_views:
-            if endpoint not in app.cfg.endpoints_excluded:
+        for endpoint, label, title, check_exists in self.cfg.item_views:
+            if endpoint not in self.cfg.endpoints_excluded:
                 if not check_exists or item:
                     if endpoint in user_actions_endpoints:
                         if flaskg.user.valid:
@@ -280,9 +280,9 @@ class ThemeSupport:
                         iconcls = ICON_MAP[endpoint] if endpoint in ICON_MAP else ""
 
                         if endpoint == "special.supplementation":
-                            for sub_item_name in app.cfg.supplementation_item_names:
+                            for sub_item_name in self.cfg.supplementation_item_names:
                                 current_sub = fqname.value.rsplit("/", 1)[-1]
-                                if current_sub not in app.cfg.supplementation_item_names:
+                                if current_sub not in self.cfg.supplementation_item_names:
                                     supp_name = f"{fqname.value}/{sub_item_name}"
                                     if flaskg.storage.has_item(supp_name) or flaskg.user.may.write(supp_name):
                                         subitem_exists = self.storage.has_item(supp_name)
@@ -438,7 +438,7 @@ class ThemeSupport:
             if endpoint == "frontend.show_root":
                 endpoint = "frontend.show_item"
                 root_fqname = fqname.get_root_fqname()
-                default_root = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
+                default_root = self.cfg.root_mapping.get(NAMESPACE_DEFAULT, self.cfg.default_root)
                 args["item_name"] = root_fqname.fullname if fqname.namespace != NAMESPACE_ALL else default_root
                 # override link_text to show untranslated <default_root> itemname or <namespace>/<default_root>
                 link_text = args["item_name"]
@@ -508,7 +508,7 @@ class ThemeSupport:
         by a wiki user.
         """
         namespace_root_mapping = []
-        for namespace, _unused in app.cfg.namespace_mapping:
+        for namespace, _unused in self.cfg.namespace_mapping:
             if namespace == NAMESPACE_USERPROFILES:
                 continue
             namespace = namespace.rstrip("/")
