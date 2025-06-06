@@ -18,7 +18,7 @@ Works with docutils version 0.5 (2008-06-25) or higher.
 import re
 
 import docutils
-from docutils import core, nodes, transforms, utils, writers
+from docutils import core, nodes, transforms, utils
 from docutils.nodes import reference, literal_block
 from docutils.parsers.rst import directives, roles
 
@@ -826,21 +826,6 @@ class WikiReferences(transforms.Transform):
             node["refuri"] = wikiname
             del node["refname"]
             node.resolved = True
-
-
-class Writer(writers.Writer):
-    # Ignored! In moin 2.0, the conversion does not use a Writer component.
-
-    supported = ("moin-x-document",)
-    config_section = "MoinMoin writer"
-    config_section_dependencies = ("writers",)
-    output = None
-    visitor_attributes = []
-
-    def translate(self):
-        self.visitor = visitor = NodeVisitor()
-        walkabout(self.document, visitor)
-        self.output = visitor.tree()
 
 
 class MoinDirectives:
