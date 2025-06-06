@@ -25,43 +25,5 @@
       <span class="slide-nav" onclick="lastSlide()" title="Last slide"><i class="fa-solid fa-forward-fast"></i></span>
     </div>
 
-    <script>
-      let slideNo = 1;
-      let slides = document.getElementsByClassName("moin-slides");
-      showSlide(slideNo);
-
-      document.addEventListener("keydown", (event) => {
-          if (event.code === "ArrowLeft") {
-              prevSlide();
-          }
-          if (event.code === "ArrowRight") {
-              nextSlide();
-          }
-      });
-
-      function nextSlide() {
-          if (slideNo < slides.length) {
-              showSlide((slideNo += 1));
-          }
-      }
-
-      function prevSlide() {
-          if (slideNo > 1) {
-              showSlide((slideNo -= 1));
-          }
-      }
-
-      function lastSlide() {
-          showSlide(slides.length);
-      }
-
-      function showSlide(n) {
-          let i;
-          slideNo = n;
-          for (i = 0; i < slides.length; i++) {
-              slides[i].style.display = "none";
-          }
-          slides[slideNo - 1].style.display = "block";
-      }
-    </script>
+    <script src="{{ url_for('static', filename='js/slideshow.js') }}"></script>
 {% endblock %}
