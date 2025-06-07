@@ -154,50 +154,52 @@
         <tr>
             <td>Item Links</td>
             <td>
-            {%- if meta['itemlinks'] -%}
-                {%- for item in meta['itemlinks']|sort -%}
-                    <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.itemlink_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
-                    {%- if not loop.last %}, {% endif -%}
-                {%- endfor -%}
-            {%- else -%}
-                (None)
-            {%- endif -%}
+                {%- if meta['itemlinks'] -%}
+                    {%- for item in meta['itemlinks']|sort -%}
+                        <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.itemlink_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                        {%- if not loop.last %}, {% endif -%}
+                    {%- endfor -%}
+                {%- else -%}
+                    (None)
+                {%- endif -%}
             </td>
         </tr>
         <tr>
             <td>Item Transclusions</td>
             <td>
-            {%- if meta['itemtransclusions'] -%}
-                {%- for item in meta['itemtransclusions']|sort -%}
-                    <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
-                    {%- if not loop.last %}, {% endif -%}
-                {%- endfor -%}
-            {%- else -%}
-                (None)
-            {%- endif -%}
+                {%- if meta['itemtransclusions'] -%}
+                    {%- for item in meta['itemtransclusions']|sort -%}
+                        <a href="{{ url_for('frontend.show_item', item_name=item) }}" {% if not theme_supp.item_exists(item) %}class="moin-nonexistent"{% endif %}>{{ item }}</a>
+                        {%- if not loop.last %}, {% endif -%}
+                    {%- endfor -%}
+                {%- else -%}
+                    (None)
+                {%- endif -%}
             </td>
         </tr>
         <tr><td>Item Type</td><td>{{ meta['itemtype'] }}</td></tr>
         <tr><td>Language</td><td>{{ meta['language'] }}</td></tr>
         <tr><td>Modified Time</td><td>{{ meta['mtime']|time_datetime }}</td></tr>
-        <tr><td>Name</td><td>
-            {%- if meta['name'] -%}
-                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) -%}
-                {{ names|safe }}
-            {%- else -%}
-                (None)
-            {%- endif -%}
+        <tr>
+            <td>Name</td>
+            <td>
+                {%- if meta['name'] -%}
+                    {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name']) -%}
+                    {{ names|safe }}
+                {%- else -%}
+                    (None)
+                {%- endif -%}
             </td>
         </tr>
         <tr>
             <td>Old Name</td>
             <td>
-            {%- if meta['name_old'] -%}
-                {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) -%}
-                {{ names|safe }}
-            {%- else -%}
-                (None)
-            {%- endif -%}
+                {%- if meta['name_old'] -%}
+                    {%- set names = ' <i class="fa fa-circle moin-tiny"></i> '.join(meta['name_old']) -%}
+                    {{ names|safe }}
+                {%- else -%}
+                    (None)
+                {%- endif -%}
             </td>
         </tr>
         <tr><td>Namespace</td><td>{{ meta['namespace'] }}</td></tr>
