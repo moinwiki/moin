@@ -504,6 +504,7 @@ def item_acl_report():
     query = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
     all_metas = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAMESPACE, NAME], limit=None)
     items_acls = []
+    number_modified_acls = 0
     for meta in all_metas:
         item_namespace = meta.get(NAMESPACE)
         item_id = meta.get(ITEMID)
@@ -517,6 +518,9 @@ def item_acl_report():
             for namespace, acl_config in app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config["default"]
+                    break
+        else:
+            number_modified_acls += 1
         fqnames = gen_fqnames(meta)
         items_acls.append(
             {
@@ -536,6 +540,7 @@ def item_acl_report():
         "admin/item_acl_report.html",
         title_name=_("Item ACL Report"),
         number_items=len(items_acls),
+        number_modified_acls=number_modified_acls,
         items_acls=items_acls,
     )
 
@@ -585,38 +590,46 @@ def modify_acl(item_name):
     meta = dict(item.meta)
     old_acl = meta.get(ACL, "")
     new_acl = request.form.get(fqname.fullname)
-    is_valid = acl_validate(new_acl)
-    if is_valid:
-        if new_acl in ("Empty", ""):
-            meta[ACL] = ""
-        elif new_acl == "None" and ACL in meta:
-            del meta[ACL]
-        else:
-            meta[ACL] = new_acl
-        try:
-            item._save(meta=meta)
-        except AccessDenied:
-            # superuser viewed item acl report and tried to change acl but lacked admin permission
-            flash(
-                L_("Failed! Not authorized.<br>Item: {item_name}<br>ACL: {acl_rule}").format(
-                    item_name=fqname.fullname, acl_rule=old_acl
-                ),
-                "error",
-            )
-            return redirect(url_for(".item_acl_report"))
+    if old_acl == new_acl:
         flash(
-            L_("Success! ACL saved.<br>Item: {item_name}<br>ACL: {acl_rule}").format(
-                item_name=fqname.fullname, acl_rule=new_acl
-            ),
-            "info",
-        )
-    else:
-        flash(
-            L_("Nothing changed, invalid ACL.<br>Item: {item_name}<br>ACL: {acl_rule}").format(
+            L_("Nothing changed, nothing saved. Item: {item_name} ACL: {acl_rule}").format(
                 item_name=fqname.fullname, acl_rule=new_acl
             ),
             "error",
         )
+    else:
+        is_valid = acl_validate(new_acl)
+        if is_valid:
+            if new_acl in ("Empty", ""):
+                meta[ACL] = ""
+            elif new_acl == "None" and ACL in meta:
+                del meta[ACL]
+            else:
+                meta[ACL] = new_acl
+            try:
+                item._save(meta=meta)
+            except AccessDenied:
+                # superuser viewed item acl report and tried to change acl but lacked admin permission
+                flash(
+                    L_("Failed! Not authorized. Item: {item_name} ACL: {acl_rule}").format(
+                        item_name=fqname.fullname, acl_rule=old_acl
+                    ),
+                    "error",
+                )
+                return redirect(url_for(".item_acl_report"))
+            flash(
+                L_("Success! ACL saved. Item: {item_name} ACL: {acl_rule}").format(
+                    item_name=fqname.fullname, acl_rule=new_acl
+                ),
+                "info",
+            )
+        else:
+            flash(
+                L_("Failed! Invalid ACL syntax. Item: {item_name} ACL: {acl_rule}").format(
+                    item_name=fqname.fullname, acl_rule=new_acl
+                ),
+                "error",
+            )
     return redirect(url_for(".item_acl_report"))
 
 
