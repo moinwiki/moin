@@ -6,12 +6,12 @@
     {% if navtabs %}
         <ul class="nav nav-tabs moin-nav moin-shadow">
             {% for endpoint, href, maincls, iconcls, linkcls, title, label in navtabs %}
-            <li class="nav-item">
-                <a class="nav-link{% if maincls %} {{ maincls }}{% endif %}{% if linkcls %} {{ linkcls }}{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
-                    <span class="{{ iconcls }}"></span>
-                    <span class="hidden-sm hidden-xs">{{ label }}</span>
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if maincls %} {{ maincls }}{% endif %}{% if linkcls %} {{ linkcls }}{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">
+                        <span class="{{ iconcls }}"></span>
+                        <span class="hidden-sm hidden-xs">{{ label }}</span>
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     {% endif %}

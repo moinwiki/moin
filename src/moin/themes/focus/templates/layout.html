@@ -98,35 +98,35 @@
                     {%- set trail_items = theme_supp.path_breadcrumbs() %}
                     {%- if trail_items %}
                         <ul>
-                        {%- for wiki_name, fqname, item_href, aliases, err in trail_items %}
-                            {%- if not loop.last %}
-                                <li>
-                                    {{ utils.page_trail_link(wiki_name, fqname) }}
-                                    {{ utils.alias_list(aliases) }}
-                                </li>
-                            {%- endif %}
-                            {%- if loop.last %}
-                                <li>
-                                    {%- for segment_name, segment_path in theme_supp.location_breadcrumbs(fqname) -%}
-                                        {%- if not loop.last %}
-                                            <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {%- if not exists -%}class="moin-nonexistent"{%- endif -%}>
-                                                {{ segment_name|shorten_fqname }}
-                                            </a>
-                                        {%- else %}
-                                            <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
-                                                {{ segment_name|shorten_fqname }}
-                                            </a>
-                                        {%- endif %}
-                                    {%- endfor %}
-                                    {{ utils.alias_list(aliases) }}
-                                </li>
-                                {%- if title_name %}
-                                    <div>
-                                        {{ title_name }}
-                                    </div>
+                            {%- for wiki_name, fqname, item_href, aliases, err in trail_items %}
+                                {%- if not loop.last %}
+                                    <li>
+                                        {{ utils.page_trail_link(wiki_name, fqname) }}
+                                        {{ utils.alias_list(aliases) }}
+                                    </li>
                                 {%- endif %}
-                            {%- endif %}
-                        {%- endfor %}
+                                {%- if loop.last %}
+                                    <li>
+                                        {%- for segment_name, segment_path in theme_supp.location_breadcrumbs(fqname) -%}
+                                            {%- if not loop.last %}
+                                                <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {%- if not exists -%}class="moin-nonexistent"{%- endif -%}>
+                                                    {{ segment_name|shorten_fqname }}
+                                                </a>
+                                            {%- else %}
+                                                <a href="{{ url_for('frontend.show_item', item_name=segment_path) }}" {% if not exists %}class="moin-nonexistent"{% endif %}>
+                                                    {{ segment_name|shorten_fqname }}
+                                                </a>
+                                            {%- endif %}
+                                        {%- endfor %}
+                                        {{ utils.alias_list(aliases) }}
+                                    </li>
+                                    {%- if title_name %}
+                                        <div>
+                                            {{ title_name }}
+                                        </div>
+                                    {%- endif %}
+                                {%- endif %}
+                            {%- endfor %}
                         </ul>
                     {%- endif %}
                 </div>
