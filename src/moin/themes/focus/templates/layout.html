@@ -13,7 +13,6 @@
 {% set credits = snippets.credits() %}
 
 {% block layout %}
-    <script src="/_themes/focus/js/main.js"></script>
     <div id="moin-main-wrapper">
         {{ before_header }}
         <header id="moin-header" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
@@ -182,4 +181,9 @@
 
 
     </div>
+{% endblock %}
+
+{% block body_scripts %}
+    {{ super() }}
+    <script src="/_themes/focus/js/main.js"></script>
 {% endblock %}

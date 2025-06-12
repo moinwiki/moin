@@ -1,4 +1,5 @@
 window.onload = function () {
+    "use strict";
     const headers = []
     const h1 = document.querySelectorAll("#moin-content-data h1")
     const h2 = document.querySelectorAll("#moin-content-data h2")
