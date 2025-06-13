@@ -1,3 +1,6 @@
+# Copyright: 2025 MoinMoin contributors
+# License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
+
 """
     MoinMoin - moin.views Tests
 """
@@ -24,4 +27,4 @@ class TestParseScopedQuery:
     def test_parse_scoped_query_empty(self):
         scope, actual_query = parse_scoped_query("")
         assert scope is None
-        assert actual_query == ""
+        assert actual_query is None
