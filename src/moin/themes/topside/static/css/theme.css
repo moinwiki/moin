@@ -78,7 +78,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
     #moin-footer { background-image: url("../../../static/img/white-clouds.jpg");
         background-position-y: bottom;
-        border-top: 1px solid #D7E9FD; padding: 8pt 5% 10pt 5%; }
+        border-top: 1px solid #D7E9FD; padding: 8pt 5% 10pt 5%; width: 100vw; }
 
     #moin-pageinfo,
     #moin-wiki-license,
@@ -87,12 +87,6 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     #moin-timings { color: #444; float: none; clear: left; }
     #moin-footer .moin-itemviews  { margin: 5px 0; padding: 0; }
     #moin-creditlogos { margin-right: 5%; padding: 0; }
-}
-
-@media screen and (max-width: 950px) {
-    /* no room for text, show only icons for username and itemviews */
-    ul#moin-username span { display: none; }
-    ul.moin-itemviews span { display: none; }
 }
 
 @media screen and (max-width: 1400px) {
@@ -107,10 +101,20 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     #moin-footer #moin-creditlogos { grid-row: 2 / span 2; grid-column: 2; margin-right: 0; }
 }
 
+@media screen and (max-width: 1024px) {
+    #moin-footer { width: 100vw; }
+}
+
+@media screen and (max-width: 950px) {
+    /* no room for text, show only icons for username and itemviews */
+    ul#moin-username span { display: none; }
+    ul.moin-itemviews span { display: none; }
+}
+
 @media screen and (max-width: 900px) {
     #moin-content { margin: 0 2%; padding-bottom: 16em; }
     #moin-header ul { margin: .1em 2% .4em 2%; }
-    #moin-footer { grid-template-rows: auto auto auto;
+    #moin-footer { grid-template-rows: auto auto auto; width: 100vw;
         grid-template-columns: 1fr 1fr; row-gap: 6pt; }
     #moin-footer .moin-itemviews  { margin: 5px 0; display: flex; column-gap: 6pt;
         row-gap: 10pt; flex-wrap: wrap; grid-column: 1 / span 2; }
