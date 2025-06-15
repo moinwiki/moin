@@ -410,13 +410,30 @@ def add_facets(facets, time_sorting):
     return facets
 
 
+def parse_scoped_query(query):
+    """
+    Parses a scoped query starting with '>' into (scope, actual_query).
+    For example, '>Lectures design patterns' becomes ('Lectures', 'design patterns').
+    If no scope is found, returns (None, query).
+    """
+    if not query:
+        return None, None
+    if query.startswith(">"):
+        parts = query[1:].split(None, 1)
+        if len(parts) == 2:
+            return parts[0], parts[1]
+        elif len(parts) == 1:
+            return parts[0], ""
+    return None, query
+
+
 @frontend.route("/+search/<itemname:item_name>", methods=["GET", "POST"])
 @frontend.route("/+search", defaults=dict(item_name=""), methods=["GET", "POST"])
 def search(item_name):
     """
     Perform a whoosh search of the index and display the matching items.
 
-    The default search is across all namespaces in the index and includes trash.
+    The default search is across all namespaces in the index.
 
     The Jinja template formatting the output may also display data related to the
     search such as the whoosh query, filter (if any), hit counts, and additional
@@ -433,10 +450,6 @@ def search(item_name):
     valid = search_form.validate()
     time_sorting = False
     filetypes = []
-    namespaces = []
-    trash = request.args.get("trash", "false")
-    best_match = False
-    terms = []
     if ajax:
         query = request.args.get("q")
         history = request.args.get("history") == "true"
@@ -444,28 +457,28 @@ def search(item_name):
         if time_sorting == "default":
             time_sorting = False
         filetypes = request.args.get("filetypes")
-        namespaces = request.args.get("namespaces")
         is_ticket = bool(request.args.get("is_ticket"))
-        # remove the extra ',' at the end of the filetyes and namespaces strings
         if filetypes:
-            filetypes = filetypes.split(",")[:-1]
-        if namespaces:
-            namespaces = namespaces.split(",")[:-1]
-            namespaces = ["" if ns == NAMESPACE_UI_DEFAULT else ns for ns in namespaces]
+            filetypes = filetypes.split(",")[:-1]  # To remove the extra '' at the end of the list
     else:
-        # not ajax, the form has only the search string q as keyed by the user
-        query = search_form["q"].value or ""
-        history = False  # show only current revisionss
-        # redirect to best matched item if user keys leading \ in q string
-        if query.startswith("\\"):
-            best_match = True
-            query = query[1:]
+        query = search_form["q"].value
+        history = bool(request.values.get("history"))
+
+    best_match = False
+    # we test for query in case this is a test run
+    if query and query.startswith("\\"):
+        best_match = True
+        query = query[1:]
+
+    # detect prefix and extract target item
+    subitem_target, query = parse_scoped_query(query)
 
     if valid or ajax:
         # most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
         # this finds such words and reports to the user
         analyzer = StandardAnalyzer()
         omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
+
         idx_name = ALL_REVS if history else LATEST_REVS
 
         if best_match:
@@ -475,39 +488,57 @@ def search(item_name):
                 [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
             )
         q = qp.parse(query)
-        if trash == "false":
-            q = And([q, Not(Term(TRASH, True))])
-
-        if namespaces:
-            ns_terms = [Term(NAMESPACE, ns) for ns in namespaces]
-            q = And([q, Or(ns_terms)])
         _filter = []
         _filter = add_file_filters(_filter, filetypes)
-        if item_name:  # Only search this item and subitems
-            prefix_name = item_name + "/"
-            terms.append([Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)])
 
-            show_transclusions = True
-            if show_transclusions:
-                # XXX Search subitems and all transcluded items (even recursively),
-                # still looks like a hack. Imaging you have "foo" on main page and
-                # "bar" on transcluded one. Then you search for "foo AND bar".
-                # Such stuff would only work if we expand transcluded items
-                # at indexing time (and we currently don't).
-                with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-                    subq = Or([Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)])
-                    subq = And([subq, Every(ITEMTRANSCLUSIONS)])
-                    flaskg.clock.start("search subitems with transclusions")
-                    results = searcher.search(subq, limit=None)
-                    flaskg.clock.stop("search subitems with transclusions")
-                    transcluded_names = set()
-                    for hit in results:
-                        name = hit[NAME]
-                        transclusions = _compute_item_transclusions(name)
-                        transcluded_names.update(transclusions)
-                # XXX Will whoosh cope with such a large filter query?
-                terms.append([Term(NAME_EXACT, tname) for tname in transcluded_names])
-            _filter = Or(terms)
+        # if the user specified a subitem target
+        if subitem_target:
+            # if they also specified an item name from the URL
+            if item_name:
+                # display a note that the subitem will override the item
+                flash("Note: Subitem target in query overrides the item in the URL.")
+            # update the item_name to be the subitem_target
+            item_name = subitem_target
+
+        if item_name:  # Only search this item and subitems
+            full_name = None
+
+            # search for the full item name (i.e. "Home/Readings" for "Readings")
+            with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+                all_items = searcher.search(Every(), limit=None)
+                for hit in all_items:
+                    hit_name = hit[NAME][0]
+                    if hit_name.endswith("/" + item_name) or hit_name == item_name:
+                        full_name = hit_name
+                        break
+
+            if full_name:
+                # flash(f"Searching within {item_name} and its subitems for {query}.")
+
+                prefix_name = full_name + "/"
+                terms = [Term(NAME_EXACT, full_name), Prefix(NAME_EXACT, prefix_name)]
+
+                show_transclusions = True
+                if show_transclusions:
+                    # XXX Search subitems and all transcluded items (even recursively),
+                    # still looks like a hack. Imaging you have "foo" on main page and
+                    # "bar" on transcluded one. Then you search for "foo AND bar".
+                    # Such stuff would only work if we expand transcluded items
+                    # at indexing time (and we currently don't).
+                    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
+                        subq = Or([Term(NAME_EXACT, full_name), Prefix(NAME_EXACT, prefix_name)])
+                        subq = And([subq, Every(ITEMTRANSCLUSIONS)])
+                        flaskg.clock.start("search subitems with transclusions")
+                        results = searcher.search(subq, limit=None)
+                        flaskg.clock.stop("search subitems with transclusions")
+                        transcluded_names = set()
+                        for hit in results:
+                            name = hit[NAME]
+                            transclusions = _compute_item_transclusions(name)
+                            transcluded_names.update(transclusions)
+                    # XXX Will whoosh cope with such a large filter query?
+                    terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
+                _filter = Or(terms)
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
             # terms is set to retrieve list of terms which matched, in the searchtemplate, for highlight.
@@ -540,6 +571,8 @@ def search(item_name):
                     whoosh_query=q,
                     whoosh_filter=_filter,
                     flaskg=flaskg,
+                    subitem_target=subitem_target,
+                    query=query,
                 )
             else:
                 html = render_template(
@@ -553,6 +586,7 @@ def search(item_name):
                     whoosh_query=q,
                     whoosh_filter=_filter,
                     flaskg=flaskg,
+                    subitem_target=subitem_target,
                 )
             flaskg.clock.stop("search render")
     else:
@@ -2022,8 +2056,7 @@ def subscribe_item(item_name):
             msg = _("You could not get subscribed to this item."), "error"
     if msg:
         flash(*msg)
-    next_url = request.referrer or url_for_item(item_name)
-    return redirect(next_url)
+    return redirect(url_for_item(item_name))
 
 
 class ValidRegistration(Validator):
@@ -2633,25 +2666,26 @@ def usersettings():
                 # validation failed
                 response["flash"].append((_("Nothing saved."), "error"))
 
-            # if no flash message was added until here, we add a generic success message
             if not response["flash"]:
+                # if no flash message was added until here, we add a generic success message
                 msg = _("Your changes have been saved.")
                 response["flash"].append((msg, "info"))
+                repeat_flash_msg(msg, "info")
 
-            # if it is a XHR request, render the part from the usersettings_ajax.html template
-            # and send the response encoded as an JSON object;
-            # the client side is responsible for displaying any flash messages
+            if response["redirect"] is not None or not is_xhr:
+                # if we redirect or it is no XHR request, we just flash() the messages normally
+                for f in response["flash"]:
+                    flash(*f)
+
             if is_xhr:
+                # if it is a XHR request, render the part from the usersettings_ajax.html template
+                # and send the response encoded as an JSON object
                 response["form"] = render_template("usersettings_ajax.html", part=part, form=form)
                 return jsonify(**response)
-
-            # if no XHR request, we just flash() the messages normally
-            for f in response["flash"]:
-                flash(*f)
-
-            # if there is a redirect pending, use a normal HTTP redirect
-            if response["redirect"] is not None:
-                return redirect(response["redirect"])
+            else:
+                # if it is not a XHR request but there is an redirect pending, we use a normal HTTP redirect
+                if response["redirect"] is not None:
+                    return redirect(response["redirect"])
 
             # if the view did not return until here, we add the current form to the forms dict
             # and continue with rendering the normal template
