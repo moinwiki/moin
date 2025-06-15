@@ -141,6 +141,19 @@ Search for something like wiki, willi, wi, ...::
   r"w.*i"
 
 
+Searching an item's subitems
+============================
+To limit the search to an item's sub-items, use a leading `>`, followed by the
+item's name, followed by the search arguments.
+
+Examples
+--------
+Wild cards, regular expressions, etc. may be used in the search arguments::
+
+  >colors blue
+  >users/JohnDoe red*
+  >home red OR blue OR green
+
 Searching in specific fields
 ============================
 
