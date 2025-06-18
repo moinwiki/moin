@@ -433,7 +433,7 @@ def search(item_name):
     """
     Perform a whoosh search of the index and display the matching items.
 
-    The default search is across all namespaces in the index.
+    The default search is across all namespaces in the index and excludes trash.
 
     The Jinja template formatting the output may also display data related to the
     search such as the whoosh query, filter (if any), hit counts, and additional
@@ -496,7 +496,7 @@ def search(item_name):
             # if they also specified an item name from the URL
             if item_name:
                 # display a note that the subitem will override the item
-                flash("Note: Subitem target in query overrides the item in the URL.")
+                flash(_("Note: Subitem target in query overrides the item in the URL."), "info")
             # update the item_name to be the subitem_target
             item_name = subitem_target
 
@@ -507,14 +507,16 @@ def search(item_name):
             with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
                 all_items = searcher.search(Every(), limit=None)
                 for hit in all_items:
-                    hit_name = hit[NAME][0]
+                    try:
+                        hit_name = hit[NAME][0]
+                    except IndexError:
+                        # deleted items have no names, e.g. []
+                        continue
                     if hit_name.endswith("/" + item_name) or hit_name == item_name:
                         full_name = hit_name
                         break
 
             if full_name:
-                # flash(f"Searching within {item_name} and its subitems for {query}.")
-
                 prefix_name = full_name + "/"
                 terms = [Term(NAME_EXACT, full_name), Prefix(NAME_EXACT, prefix_name)]
 
