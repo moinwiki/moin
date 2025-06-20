@@ -177,6 +177,10 @@ class TestConverter:
             '<page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
         ),
         (
+            " . Item",
+            '<page><body><list item-label-generate="unordered" list-style-type="no-bullet"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
+        ),
+        (
             " 1. Item",
             '<page><body><list item-label-generate="ordered"><list-item><list-item-body>Item</list-item-body></list-item></list></body></page>',
         ),
@@ -211,6 +215,10 @@ class TestConverter:
         (
             " * List 1\n 1. List 2",
             '<page><body><list item-label-generate="unordered"><list-item><list-item-body>List 1</list-item-body></list-item></list><list item-label-generate="ordered"><list-item><list-item-body>List 2</list-item-body></list-item></list></body></page>',
+        ),
+        (
+            " * --(A::B)--",
+            '<page><body><list item-label-generate="unordered"><list-item><list-item-body><del>A::B</del></list-item-body></list-item></list></body></page>',
         ),
     ]
 
