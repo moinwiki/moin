@@ -650,6 +650,8 @@ class Converter(ConverterMacro):
         """Ignore the closing stroke tag if no opening tag found"""
         if strike_begin is not None:
             stack.push(moin_page.del_())
+        elif strike == ")--" and stack and stack.top_check("del"):
+            stack.pop()
 
     inline_subscript = r"""
         (?P<subscript>
