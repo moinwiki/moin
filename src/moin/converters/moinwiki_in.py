@@ -374,10 +374,10 @@ class Converter(ConverterMacro):
         ^
         (?P<indent> \s* )
         (?P<list_begin>
-            (?P<list_definition>
-                (?P<list_definition_text> .*? )
-                ::
-            )
+            (?P<list_bullet> \* )
+            \s*
+            |
+            (?P<list_none> \. )
             \s*
             |
             (?P<list_numbers> [0-9]+\. (\#(?P<list_start_number>[0-9]+))?)
@@ -389,10 +389,10 @@ class Converter(ConverterMacro):
             (?P<list_roman> [iI]\. (\#(?P<list_start_roman>[0-9]+))?)
             \s+
             |
-            (?P<list_bullet> \* )
-            \s*
-            |
-            (?P<list_none> \. )
+            (?P<list_definition>
+                (?P<list_definition_text> .*? )
+                ::
+            )
             \s*
         )?
         (?P<text> .*? )
