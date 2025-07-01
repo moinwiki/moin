@@ -43,12 +43,10 @@ from moin.constants.namespaces import NAMESPACE_USERS
 from moin.utils.interwiki import split_fqname
 
 from moin.auth import GivenAuth
+from moin.storage.middleware.indexing import IndexingMiddleware
 from moin._tests import wikiconfig, update_item
 
-from typing import TYPE_CHECKING, cast
-
-if TYPE_CHECKING:
-    from moin.storage.middleware.indexing import IndexingMiddleware
+from typing import cast
 
 
 def dumper(indexer, idx_name):

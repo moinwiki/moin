@@ -13,9 +13,9 @@ import pytest
 
 from moin.config import AclConfig
 from moin.constants.keys import PARENTID
+from moin.storage.middleware.indexing import IndexingMiddleware
 from moin.user import User
 
-from ..indexing import IndexingMiddleware
 from ..protecting import ProtectingMiddleware, AccessDenied
 
 from .test_indexing import TestIndexingMiddleware
@@ -51,8 +51,8 @@ class FakeUser(User):
 class TestProtectingMiddleware(TestIndexingMiddleware):
 
     @pytest.fixture(autouse=True)
-    def protected_imw(self, imw: IndexingMiddleware):
-        self.imw = ProtectingMiddleware(imw, FakeUser("joe"), acl_mapping=acl_mapping)
+    def protected_imw(self, _imw: IndexingMiddleware):
+        self.imw = ProtectingMiddleware(_imw, FakeUser("joe"), acl_mapping=acl_mapping)
         return self.imw
 
     def _dummy(self):
