@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import json
 
-from typing import override
+from typing_extensions import override
 
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
 from moin.utils.crypto import make_uuid
