@@ -226,6 +226,11 @@ class WikiLinkAnalyzer:
     This class helps analyzing wiki internal links (don't use it for external links).
     A MapAdapter instance is used to identify a route matching the provided link.
     WikiLinkInfo members returned provide details about an analyzed link.
+
+    Note: "item_name" may contain a colon character. In method inline_link_repl of class
+          Converter (moinwiki_in.py) it is assumed that if no interwiki name matching the
+          item name part before the colon does exist, the item name refers to a local
+          wiki page.
     """
 
     __slots__ = "map_adapter"
@@ -234,7 +239,7 @@ class WikiLinkAnalyzer:
         self.map_adapter: MapAdapter = app.url_map.bind("127.0.0.1")  # address is irrelevant
 
     def __call__(self, link: str) -> WikiLinkInfo:
-        if not link or ":" in link:
+        if not link:
             return WikiLinkInfo(False)
         try:
             # find moin rule matching link and the corresponding variable mappings
