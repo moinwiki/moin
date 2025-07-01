@@ -4,16 +4,15 @@
 from __future__ import annotations
 
 from typing import Any, Protocol, TypedDict
+from typing_extensions import TypeAlias
 
-type NamespaceMapping = list[tuple[str, str]]
+NamespaceMapping: TypeAlias = list[tuple[str, str]]
 
-type BackendMapping = dict[str, Any]
+BackendMapping: TypeAlias = dict[str, Any]
 
-type AclMapping = list[tuple[str, AclConfig]]
+ItemViews: TypeAlias = list[tuple[str, str, str, bool]]
 
-type ItemViews = list[tuple[str, str, str, bool]]
-
-type NaviBarEntries = list[tuple[str, str, dict[str, Any], str, str]]
+NaviBarEntries: TypeAlias = list[tuple[str, str, dict[str, Any], str, str]]
 
 
 class AclConfig(TypedDict):
@@ -21,6 +20,9 @@ class AclConfig(TypedDict):
     default: str
     after: str
     hierarchic: bool
+
+
+AclMapping: TypeAlias = list[tuple[str, AclConfig]]
 
 
 class WikiConfigProtocol(Protocol):
