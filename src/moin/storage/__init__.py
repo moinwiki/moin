@@ -21,6 +21,8 @@ We use a layered approach like this::
                                    over key/value pairs
 """
 
+from __future__ import annotations
+
 from moin.constants.namespaces import (
     NAMESPACE_DEFAULT,
     NAMESPACE_USERPROFILES,
@@ -28,6 +30,7 @@ from moin.constants.namespaces import (
     NAMESPACE_HELP_COMMON,
     NAMESPACE_HELP_EN,
 )
+from moin.config import AclConfig
 
 BACKENDS_PACKAGE = "moin.storage.backends"
 
@@ -38,7 +41,7 @@ BACKEND_HELP_COMMON = "help-common"
 BACKEND_HELP_EN = "help-en"
 
 
-def backend_from_uri(uri):
+def backend_from_uri(uri: str):
     """
     create a backend instance for uri
     """
@@ -50,17 +53,15 @@ def backend_from_uri(uri):
     return module.MutableBackend.from_uri(backend_uri)
 
 
-def create_mapping(uri, namespaces, backends, acls):
-    namespace_mapping = namespaces.items()
-    acl_mapping = acls.items()
+def create_mapping(uri: str, namespaces: dict[str, str], backends: dict[str, str], acls: dict[str, AclConfig]):
     # TODO "or uri" can be removed in the future, see TODO in config/wikiconfig.py
     backend_mapping = [
         (backend_name, backend_from_uri((backends[backend_name] or uri) % dict(backend=backend_name, kind="%(kind)s")))
         for backend_name in backends
     ]
     # we need the longest mountpoints first, shortest last (-> '' is very last)
-    namespace_mapping = sorted(namespace_mapping, key=lambda x: len(x[0]), reverse=True)
-    acl_mapping = sorted(acl_mapping, key=lambda x: len(x[0]), reverse=True)
+    namespace_mapping = sorted(namespaces.items(), key=lambda x: len(x[0]), reverse=True)
+    acl_mapping = sorted(acls.items(), key=lambda x: len(x[0]), reverse=True)
     return namespace_mapping, dict(backend_mapping), acl_mapping
 
 

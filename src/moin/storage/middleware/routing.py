@@ -8,17 +8,24 @@ MoinMoin - namespaces middleware
 Routes requests to different backends depending on the namespace.
 """
 
+from __future__ import annotations
+
 from moin.constants.keys import NAME, BACKENDNAME, NAMESPACE
 
 from moin.storage.backends import MutableBackendBase
 
+from typing import TYPE_CHECKING
 
-class Backend(MutableBackendBase):
+if TYPE_CHECKING:
+    from moin.config import BackendMapping, NamespaceMapping
+
+
+class Backend:
     """
     namespace dispatcher, behaves readonly for readonly mounts
     """
 
-    def __init__(self, namespaces, backends):
+    def __init__(self, namespaces: NamespaceMapping, backends: BackendMapping):
         """
         Initialize.
 
@@ -68,7 +75,7 @@ class Backend(MutableBackendBase):
         for backend in self.backends.values():
             backend.close()
 
-    def _get_backend(self, fq_names):
+    def _get_backend(self, fq_names: list[str]):
         """
         For a given fully-qualified itemname (i.e. something like ns:itemname)
         find the backend it belongs to, the itemname without namespace
@@ -91,7 +98,7 @@ class Backend(MutableBackendBase):
             for revid in backend:  # TODO maybe directly yield the backend?
                 yield (backend_name, revid)
 
-    def retrieve(self, backend_name, revid):
+    def retrieve(self, backend_name: str, revid):
         backend = self.backends[backend_name]
         meta, data = backend.retrieve(revid)
         return meta, data

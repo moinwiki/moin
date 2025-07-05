@@ -35,7 +35,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-Subscriber = namedtuple("Subscriber", [ITEMID, NAME, EMAIL, LOCALE])
+Subscriber = namedtuple("Subscriber", [ITEMID, NAME, EMAIL, LOCALE])  # type: ignore[misc]
 
 
 def get_subscribers(**meta):

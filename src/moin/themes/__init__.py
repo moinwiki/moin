@@ -8,6 +8,9 @@
     MoinMoin - Theme Support
 """
 
+from __future__ import annotations
+
+from typing import cast, TYPE_CHECKING
 
 import os
 import urllib.request
@@ -23,13 +26,14 @@ from flask_theme import get_theme, render_theme_template
 from babel import Locale
 
 from moin.i18n import _, L_
-from moin import wikiutil, user
+from moin import wikiutil
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
 from moin.constants.misc import FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.search import SearchForm
+from moin.user import User
 from moin.utils.interwiki import (
     split_interwiki,
     getInterwikiHome,
@@ -46,6 +50,10 @@ from moin.utils.mime import Type
 from moin.utils import show_time
 
 from moin import log
+
+if TYPE_CHECKING:
+    from moin.config import WikiConfigProtocol
+    from moin.storage.middleware.protecting import ProtectingMiddleware
 
 logging = log.getLogger(__name__)
 
@@ -91,10 +99,10 @@ class ThemeSupport:
     Support code for template feeding.
     """
 
-    def __init__(self, cfg):
+    def __init__(self, cfg: WikiConfigProtocol):
         self.cfg = cfg
-        self.user = flaskg.user
-        self.storage = flaskg.storage
+        self.user = cast(User, flaskg.user)
+        self.storage = cast("ProtectingMiddleware", flaskg.storage)
         self.ui_lang = cfg.language_default
         self.ui_dir = cfg.content_dir
         self.user_lang = flaskg.user.language or self.ui_lang
@@ -423,7 +431,7 @@ class ThemeSupport:
         return href, title, wiki_name
 
     @timed()
-    def navibar(self, fqname):
+    def navibar(self, fqname: CompositeName | str):
         """
         Assemble the navibar
 
@@ -493,7 +501,7 @@ class ThemeSupport:
         :rtype: unicode (or None, if no login url is supported)
         :returns: url for user login
         """
-        url = None
+        url: str | None = None
         if self.cfg.auth_login_inputs == ["special_no_input"]:
             url = url_for("frontend.login", login=1)
         if self.cfg.auth_have_login:
@@ -507,7 +515,7 @@ class ThemeSupport:
         The special userprofiles NS is omitted because it can never be selected
         by a wiki user.
         """
-        namespace_root_mapping = []
+        namespace_root_mapping: list[tuple[str, CompositeName]] = []
         for namespace, _unused in self.cfg.namespace_mapping:
             if namespace == NAMESPACE_USERPROFILES:
                 continue
@@ -516,7 +524,7 @@ class ThemeSupport:
             namespace_root_mapping.append((namespace or "~", fq_namespace.get_root_fqname()))
         return sorted(namespace_root_mapping)
 
-    def item_exists(self, itemname):
+    def item_exists(self, itemname: str):
         """
         Check whether the item pointed to by the given itemname exists or not
 
@@ -589,7 +597,7 @@ def get_editor_info(meta, external=False):
 
     userid = meta.get(USERID)
     if userid:
-        u = user.User(userid)
+        u = User(userid)
         name = u.name0
         text = u.display_name or name
         display_name = u.display_name or name
@@ -621,7 +629,7 @@ def get_assigned_to_info(meta):
     display_name = ""
     userid = meta.get(ASSIGNED_TO)
     if userid:
-        u = user.User(userid)
+        u = User(userid)
         display_name = u.display_name or u.name0
     return display_name
 

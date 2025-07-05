@@ -70,7 +70,8 @@ for name, short, patterns, mime in pygments.lexers.get_all_lexers():
                 continue
             MIMETYPES_MORE[pattern[1:]] = mime[0]
 
-[mimetypes.add_type(mimetype, ext, True) for ext, mimetype in sorted(MIMETYPES_MORE.items())]
+for ext, mimetype in sorted(MIMETYPES_MORE.items()):
+    mimetypes.add_type(mimetype, ext, True)
 
 MIMETYPES_sanitize_mapping = {
     # this stuff is text, but got application/* for unknown reasons

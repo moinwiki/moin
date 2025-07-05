@@ -18,7 +18,11 @@ A data store (a FileStore):
 See the stores package for already implemented key/value stores.
 """
 
+from __future__ import annotations
+
 import json
+
+from typing_extensions import override
 
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
 from moin.utils.crypto import make_uuid
@@ -34,6 +38,7 @@ class Backend(BackendBase):
     ties together a store for metadata and a store for data, readonly
     """
 
+    @override
     @classmethod
     def from_uri(cls, uri):
         store_name_uri = uri.split(":", 1)
@@ -53,14 +58,17 @@ class Backend(BackendBase):
         self.meta_store = meta_store
         self.data_store = data_store
 
+    @override
     def open(self):
         self.meta_store.open()
         self.data_store.open()
 
+    @override
     def close(self):
         self.meta_store.close()
         self.data_store.close()
 
+    @override
     def __iter__(self):
         yield from self.meta_store
 
@@ -84,6 +92,7 @@ class Backend(BackendBase):
         # a file-like object).
         return data
 
+    @override
     def retrieve(self, metaid):
         meta = self._get_meta(metaid)
         dataid = meta[DATAID]
@@ -96,10 +105,12 @@ class MutableBackend(Backend, MutableBackendBase):
     same as Backend, but read/write
     """
 
+    @override
     def create(self):
         self.meta_store.create()
         self.data_store.create()
 
+    @override
     def destroy(self):
         self.meta_store.destroy()
         self.data_store.destroy()
@@ -121,6 +132,7 @@ class MutableBackend(Backend, MutableBackendBase):
         self.meta_store[metaid] = meta
         return metaid
 
+    @override
     def store(self, meta, data):
         # XXX Idea: we could check the type the store wants from us:
         # if it is a str/bytes (BytesStore), just use meta "as is",
@@ -171,6 +183,7 @@ class MutableBackend(Backend, MutableBackendBase):
     def _del_data(self, dataid):
         del self.data_store[dataid]
 
+    @override
     def remove(self, metaid, destroy_data):
         meta = self._get_meta(metaid)
         dataid = meta[DATAID]

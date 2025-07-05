@@ -30,7 +30,10 @@ optional change:
 Done!
 """
 
+from __future__ import annotations
+
 import os
+
 from moin.config.default import DefaultConfig
 from moin.utils import get_xstatic_module_path_map
 from moin.utils.interwiki import InterWikiMap
@@ -42,6 +45,7 @@ from moin.constants.namespaces import (
     NAMESPACE_HELP_COMMON,
     NAMESPACE_HELP_EN,
 )
+from moin.config import AclConfig
 
 
 class Config(DefaultConfig):
@@ -198,14 +202,14 @@ class Config(DefaultConfig):
         # Every user in YOUR-TRUSTED-EDITOR-GROUP will be able to add/delete users.
         #
         # most wiki data will be stored in NAMESPACE_DEFAULT
-        NAMESPACE_DEFAULT: dict(
+        NAMESPACE_DEFAULT: AclConfig(
             before="YOUR-SUPER-EDITOR:read,write,create,destroy,admin",
             default="YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read",
             after="",
             hierarchic=False,
         ),
         # user home pages should be stored here
-        NAMESPACE_USERS: dict(
+        NAMESPACE_USERS: AclConfig(
             before="YOUR-SUPER-EDITOR:read,write,create,destroy,admin",
             default="YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read",
             after="",
@@ -213,15 +217,15 @@ class Config(DefaultConfig):
             hierarchic=True,
         ),
         # contains user data that must be kept secret, dis-allow access for all
-        NAMESPACE_USERPROFILES: dict(before="All:", default="", after="", hierarchic=False),
+        NAMESPACE_USERPROFILES: AclConfig(before="All:", default="", after="", hierarchic=False),
         # editor help namespacess are optional
-        "help-common": dict(
+        "help-common": AclConfig(
             before="YOUR-SUPER-EDITOR:read,write,create,destroy,admin",
             default="YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read",
             after="",
             hierarchic=False,
         ),
-        "help-en": dict(
+        "help-en": AclConfig(
             before="YOUR-SUPER-EDITOR:read,write,create,destroy,admin",
             default="YOUR-TRUSTED-EDITORS-GROUP:read,write,create All:read",
             after="",
