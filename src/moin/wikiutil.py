@@ -18,6 +18,7 @@ import os
 import urllib
 
 from flask import current_app as app
+from werkzeug.routing.exceptions import NoMatch, RoutingException
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
@@ -26,6 +27,11 @@ from moin.constants.contenttypes import DRAWING_EXTENSIONS
 from moin.utils.mimetype import MimeType
 
 from moin import log
+
+from typing import NamedTuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from werkzeug.routing.map import MapAdapter
 
 logging = log.getLogger(__name__)
 
@@ -204,6 +210,48 @@ def AllParentNames(itemname):
     for idx in range(len(name_segments) - 1, 0, -1):
         result_names.append("/".join(name_segments[:idx]))
     return result_names
+
+
+class WikiLinkInfo(NamedTuple):
+    is_valid: bool
+    endpoint: str | None = None
+    item_name: str | None = None
+    is_global: bool = False
+
+
+class WikiLinkAnalyzer:
+    """
+    Helper class for analyzing wiki links.
+
+    This class helps analyzing wiki internal links (don't use it for external links).
+    A MapAdapter instance is used to identify a route matching the provided link.
+    WikiLinkInfo members returned provide details about an analyzed link.
+
+    Note: "item_name" may contain a colon character. In method inline_link_repl of class
+          Converter (moinwiki_in.py) it is assumed that if no interwiki name matching the
+          item name part before the colon does exist, the item name refers to a local
+          wiki page.
+    """
+
+    __slots__ = "map_adapter"
+
+    def __init__(self, app):
+        self.map_adapter: MapAdapter = app.url_map.bind("127.0.0.1")  # address is irrelevant
+
+    def __call__(self, link: str) -> WikiLinkInfo:
+        if not link:
+            return WikiLinkInfo(False)
+        try:
+            # find moin rule matching link and the corresponding variable mappings
+            rule, vars = self.map_adapter.match(link, return_rule=True)
+        except (NoMatch, RoutingException):
+            return WikiLinkInfo(False)
+        item_name = vars.get("item_name", None)
+        if item_name and item_name.startswith("+"):
+            return WikiLinkInfo(False)
+        # set indicator if link refers to a real wiki item or not
+        is_global = item_name == "all" or rule.endpoint == "frontend.global_views"
+        return WikiLinkInfo(True, rule.endpoint, item_name, is_global)
 
 
 #############################################################################
