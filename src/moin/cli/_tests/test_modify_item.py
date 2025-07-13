@@ -143,11 +143,11 @@ def test_item_rev(index_create2):
         assert f.read() == "MyPage version 2\r\n"
     with open("MyPage-v2.meta") as f:
         v2_meta = json.load(f)
-    assert v2_meta["size"] == 18  # newline at end is 2 chars \r\n
+    assert v2_meta[SIZE] == 18  # newline at end is 2 chars \r\n
     with open(data_dir / "MyPage-v1.meta") as f:
         v1_meta = json.load(f)
-    v1_revid = v1_meta["revid"]
-    assert v1_meta["size"] == 16
+    v1_revid = v1_meta[REVID]
+    assert v1_meta[SIZE] == 16
     item_get1 = run(
         ["moin", "item-get", "-n", "MyPage", "-m", "MyPage-v1.meta", "-d", "MyPage-v1.data", "-r", v1_revid, "--crlf"]
     )
@@ -164,8 +164,8 @@ def test_item_rev(index_create2):
         assert f.read() == "MyPage version 1\r\n"
     with open("MyPage-v1_1.meta") as f:
         v1_1_meta = json.load(f)
-    assert v1_1_meta["revid"] != v1_revid  # validate absence of -o option
-    assert v1_1_meta["size"] == 16  # validate no newline at end in storage
+    assert v1_1_meta[REVID] != v1_revid  # validate absence of -o option
+    assert v1_1_meta[SIZE] == 16  # validate no newline at end in storage
 
 
 def test_validate_metadata(index_create2):

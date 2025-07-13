@@ -62,6 +62,7 @@ from moin.forms import (
 from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import (
     ITEMTYPE,
+    CLOSED,
     CONTENTTYPE,
     ITEMID,
     CURRENT,
@@ -75,6 +76,7 @@ from moin.constants.keys import (
     ELEMENT,
     NAMESPACE,
     REFERS_TO,
+    REPLY_TO,
     CONTENT,
     ACTION_TRASH,
 )
@@ -214,7 +216,7 @@ class TicketUpdateForm(TicketForm):
         meta.update(self["meta"].value)
 
         if self["submit"].value == "update_negate_status":
-            meta["closed"] = not meta.get("closed")
+            meta[CLOSED] = not meta.get(CLOSED)
 
         data = item.content.data_storage_to_internal(item.content.data)
         message = self["message"].value
@@ -312,10 +314,10 @@ def get_comments(self):
         lookup[rev.meta[ITEMID]] = rev
         comments[rev] = []
     for rev in revs:
-        if not rev.meta["reply_to"]:
+        if not rev.meta[REPLY_TO]:
             roots.append(rev)
         else:
-            parent = lookup[rev.meta["reply_to"]]
+            parent = lookup[rev.meta[REPLY_TO]]
             comments[parent] = comments.get(parent, []) + [rev]
     return comments, roots
 

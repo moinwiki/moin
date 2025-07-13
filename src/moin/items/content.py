@@ -78,7 +78,7 @@ from moin.constants.contenttypes import (
     CONTENTTYPE_NONEXISTENT,
     CHARSET,
 )
-from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_ALGORITHM, ACTION_SAVE, NAMESPACE
+from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_ALGORITHM, ACTION_SAVE, NAMESPACE, REVID
 
 from moin import log
 
@@ -988,7 +988,7 @@ class Text(Binary):
         from moin.items import Item  # XXX causes import error if placed near top
 
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
-        item = Item.create(fqname.fullname, rev_id=newrev.meta["revid"])
+        item = Item.create(fqname.fullname, rev_id=newrev.meta[REVID])
         rendered = Markup(item.content._render_data())
         return render_template(
             template,

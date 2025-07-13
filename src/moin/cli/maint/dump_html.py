@@ -53,7 +53,7 @@ from xstatic.main import XStatic
 
 from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
-from moin.constants.keys import CURRENT, NAME_EXACT, THEME_NAME, LATEST_REVS
+from moin.constants.keys import CONTENTTYPE, CURRENT, NAME_EXACT, THEME_NAME, LATEST_REVS
 from moin.constants.contenttypes import (
     CONTENTTYPE_MEDIA,
     CONTENTTYPE_MEDIA_SUFFIX,
@@ -235,7 +235,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
                 shutil.copyfileobj(rev.data, f)
 
             # save rendered items or raw data to dump directory root
-            contenttype = item.meta["contenttype"].split(";")[0]
+            contenttype = item.meta[CONTENTTYPE].split(";")[0]
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             if contenttype in (CONTENTTYPE_MEDIA + CONTENTTYPE_OTHER) and filename.endswith(
                 CONTENTTYPE_MEDIA_SUFFIX + CONTENTTYPE_OTHER_SUFFIX
