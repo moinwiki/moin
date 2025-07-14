@@ -50,7 +50,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "MoinMoin"
-copyright = "2011-2022, The MoinMoin developers"
+copyright = "2011-2025, The MoinMoin developers"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
