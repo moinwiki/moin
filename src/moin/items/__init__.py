@@ -51,6 +51,7 @@ from moin.utils.diff_html import diff as html_diff
 from moin.utils import diff3
 from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError, OptionalMultilineText
 from moin.constants.keys import (
+    ACL,
     NAME,
     NAMES,
     NAMENGRAM,
@@ -89,6 +90,7 @@ from moin.constants.keys import (
     USERGROUP,
     WIKIDICT,
     LANGUAGE,
+    SUMMARY,
 )
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_USERPROFILES
@@ -959,7 +961,7 @@ class Item:
             self.rev.item.destroy_revision(self.rev.revid)
             flash(
                 L_('Rev Number {rev_number} of the item "{name}" was destroyed.').format(
-                    rev_number=self.meta["rev_number"], name=old_name
+                    rev_number=self.meta[REV_NUMBER], name=old_name
                 ),
                 "info",
             )
@@ -1005,8 +1007,8 @@ class Item:
             # 'strict', which causes KeyError to be thrown when meta contains
             # meta keys that are not present in self['meta_form']. Setting
             # policy to 'duck' suppresses this behavior.
-            if "acl" not in meta:
-                meta["acl"] = "None"
+            if ACL not in meta:
+                meta[ACL] = "None"
             self["meta_form"].set(meta, policy="duck")
             if meta[NAME][0].endswith("Dict"):
                 try:
@@ -1088,13 +1090,13 @@ class Item:
         else:
             meta[LANGUAGE] = app.cfg.language_default
 
-        if "acl" in meta:
+        if ACL in meta:
             # we treat this as nothing specified, so fallback to default
-            if meta["acl"] == "None":
-                meta.pop("acl")
+            if meta[ACL] == "None":
+                meta.pop(ACL)
             # this is treated as a rule which matches nothing
-            elif meta["acl"] == "Empty":
-                meta["acl"] = ""
+            elif meta[ACL] == "Empty":
+                meta[ACL] = ""
         # we store the previous (if different) and current item names into revision metadata
         # this is useful for deletes, rename history and backends that use item uids internally
         if self.fqname.field == NAME_EXACT:
@@ -1144,7 +1146,7 @@ class Item:
 
         if isinstance(data, str):
             data = self.handle_variables(data, meta)
-            charset = meta["contenttype"].split("charset=")[1]
+            charset = meta[CONTENTTYPE].split("charset=")[1]
             data = data.encode(charset)
 
         if isinstance(data, bytes):
@@ -1193,7 +1195,7 @@ class Item:
             return data
         if not request.path.startswith("/+modify"):
             return data
-        if TEMPLATE in meta["tags"]:
+        if TEMPLATE in meta[TAGS]:
             return data
 
         logging.debug(f"handle_variable data: {data!r}")  # log only if necessary
@@ -1445,10 +1447,10 @@ class Default(Contentful):
         rev_navigation_ids_dates = rev_navigation.prior_next_revs(revid, self.fqname)
         # create extra meta tags for use by web crawlers
         html_head_meta = {}
-        if "tags" in self.meta and self.meta["tags"]:
-            html_head_meta["keywords"] = ", ".join(self.meta["tags"])
-        if "summary" in self.meta and self.meta["summary"]:
-            html_head_meta["description"] = self.meta["summary"]
+        if TAGS in self.meta and self.meta[TAGS]:
+            html_head_meta["keywords"] = ", ".join(self.meta[TAGS])
+        if SUMMARY in self.meta and self.meta[SUMMARY]:
+            html_head_meta["description"] = self.meta[SUMMARY]
         return render_template(
             "show.html",
             item=self,
@@ -1484,9 +1486,9 @@ class Default(Contentful):
         """
         if request.values.get(COMMENT):
             return True
-        if request.values.get("meta_form_acl") != meta.get("acl", "None"):
+        if request.values.get("meta_form_acl") != meta.get(ACL, "None"):
             return True
-        if request.values.get("meta_form_summary") != meta.get("summary", None):
+        if request.values.get("meta_form_summary") != meta.get(SUMMARY, None):
             return True
         if meta[NAME][0].endswith("Group"):
             try:
@@ -1505,7 +1507,7 @@ class Default(Contentful):
         new_tags = request.values.get("meta_form_tags").replace(" ", "").split(",")
         if new_tags == [""]:
             new_tags = []
-        if new_tags != meta.get("tags", None):
+        if new_tags != meta.get(TAGS, None):
             return True
         return False
 

@@ -303,7 +303,7 @@ class SubscriptionsJoinedString(JoinedString):
                 value = child.u.split(" ", 1)[0]
                 item = flaskg.storage.document(**{ITEMID: value.split(":")[1]})
                 try:
-                    name_ = item.meta["name"][0]
+                    name_ = item.meta[NAME][0]
                 except IndexError:
                     name_ = _("This item doesn't exist.")
                 except AttributeError:

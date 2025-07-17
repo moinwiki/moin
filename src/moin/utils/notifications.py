@@ -22,6 +22,7 @@ from moin.constants.keys import (
     ACTION_SAVE,
     ACTION_TRASH,
     CONTENTTYPE,
+    REVID,
 )
 from moin.i18n import _, L_
 from moin.i18n import force_locale
@@ -152,9 +153,7 @@ class Notification:
         """
         if self.new_data is None or self.data is None:
             return ""
-        diff_rel_url = url_for(
-            "frontend.diff", item_name=self.fqname, rev1=self.meta["revid"], rev2=self.new_meta["revid"]
-        )
+        diff_rel_url = url_for("frontend.diff", item_name=self.fqname, rev1=self.meta[REVID], rev2=self.new_meta[REVID])
         return urljoin(domain, diff_rel_url)
 
     def render_templates(self, content_diff, meta_diff):

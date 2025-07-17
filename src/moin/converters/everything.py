@@ -7,7 +7,7 @@ MoinMoin - converter for all items (fallback)
 Convert any item to a DOM Tree (we just create a link to download it).
 """
 
-
+from moin.constants.keys import NAME
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
@@ -27,7 +27,7 @@ class Converter:
 
     def __call__(self, rev, contenttype=None, arguments=None):
         try:
-            item_name = rev.item.fqname.fullname or rev.meta["name"][0]
+            item_name = rev.item.fqname.fullname or rev.meta[NAME][0]
         except IndexError:
             # item is deleted
             message = _(

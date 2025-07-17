@@ -903,7 +903,7 @@ def convert_item(item_name):
     meta[MTIME] = int(time.time())
     meta[REV_NUMBER] = meta.get(REV_NUMBER, 0) + 1
     meta[COMMENT] = form["comment"].value
-    del meta["dataid"]
+    del meta[DATAID]
     out.seek(0)
     backend = flaskg.storage
     storage_item = backend.get_item(**item.fqname.query)
@@ -918,7 +918,7 @@ def convert_item(item_name):
     )
     item_modified.send(
         app,
-        fqname=meta["name"][0],
+        fqname=meta[NAME][0],
         action=ACTION_CONVERT,
         data=BytesIO(content),
         meta=item.meta,
@@ -1559,7 +1559,7 @@ def index(item_name):
     if fqname.value == NAMESPACE_ALL:
         fqname = CompositeName(NAMESPACE_ALL, NAME_EXACT, "")
     item_names = item_name.split("/")
-    ns_len = len(item.meta["namespace"]) + 1 if item.meta["namespace"] else 0
+    ns_len = len(item.meta[NAMESPACE]) + 1 if item.meta[NAMESPACE] else 0
 
     # detect orphan subitems and make a list of their missing parents
     used_dirs = set()
@@ -1583,8 +1583,8 @@ def index(item_name):
         what = ""
         if item.fqname.value == NAMESPACE_ALL:
             title = _("Global Index of All Namespaces")
-        elif item.meta["namespace"]:
-            what = _("Namespace '{name}' ").format(name=item.meta["namespace"])
+        elif item.meta[NAMESPACE]:
+            what = _("Namespace '{name}' ").format(name=item.meta[NAMESPACE])
             subitem = item_name[ns_len:]
             if subitem:
                 what = what + _("subitems '{item_name}'").format(item_name=subitem)
@@ -1818,7 +1818,7 @@ def history(item_name):
         entry[FQNAMES] = gen_fqnames(meta)
         history.append(entry)
     close_file(item.rev.data)
-    trash = item.meta["trash"] if "trash" in item.meta else False
+    trash = item.meta[TRASH] if TRASH in item.meta else False
 
     # avoid repeated IO to get user profile when same user edits this item multiple times
     editor_infos = {}  # userid: user_info
@@ -2868,7 +2868,7 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
         newrev = item[revid2]
     except KeyError:
         abort(404)
-    if oldrev.meta["mtime"] > newrev.meta["mtime"]:
+    if oldrev.meta[MTIME] > newrev.meta[MTIME]:
         # within diff, always place oldest on left, newest on right
         oldrev, newrev = newrev, oldrev
         revid1, revid2 = revid2, revid1
@@ -2911,7 +2911,7 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
 def _diff_raw(item, revid1, revid2):
     oldrev = item[revid1]
     newrev = item[revid2]
-    if oldrev.meta["mtime"] > newrev.meta["mtime"]:
+    if oldrev.meta[MTIME] > newrev.meta[MTIME]:
         oldrev, newrev = newrev, oldrev
         revid1, revid2 = revid2, revid1
     commonmt = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])

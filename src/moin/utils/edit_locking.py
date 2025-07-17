@@ -41,7 +41,7 @@ from flask import current_app as app
 from moin.i18n import L_
 from moin.utils.mime import Type
 from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
-from moin.constants.keys import ITEMID, REVID, REV_NUMBER, NAME
+from moin.constants.keys import CONTENTTYPE, ITEMID, REVID, REV_NUMBER, NAME
 from moin.utils import show_time
 
 from moin import log
@@ -73,7 +73,7 @@ class Edit_Utils:
         self.item_id = item.meta.get(ITEMID, item.meta.get(NAME)[0])
 
         self.coding = "utf-8"
-        contenttype = self.item.meta.get("contenttype", None)
+        contenttype = self.item.meta.get(CONTENTTYPE, None)
         if contenttype is not None:
             ct = Type(contenttype)
             self.coding = ct.parameters.get("charset", self.coding)

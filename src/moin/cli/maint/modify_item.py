@@ -22,7 +22,19 @@ from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from moin.constants.keys import CURRENT, ITEMID, DATAID, NAMESPACE, REVID, PARENTID, REV_NUMBER, MTIME, NAME
+from moin.constants.keys import (
+    CONTENTTYPE,
+    CURRENT,
+    ITEMID,
+    DATAID,
+    NAMESPACE,
+    REVID,
+    SIZE,
+    PARENTID,
+    REV_NUMBER,
+    MTIME,
+    NAME,
+)
 from moin.utils.interwiki import split_fqname
 from moin.items import Item
 
@@ -74,11 +86,11 @@ def GetItem(name, meta_file, data_file, revid, newline="\n"):
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
     with open(meta_file, "w", encoding="utf-8", newline=newline) as mf:
         mf.write(meta + "\n")
-    if "charset" in rev.meta["contenttype"]:
+    if "charset" in rev.meta[CONTENTTYPE]:
         # input data will have \r\n line endings, output will have specified endings
         # those running on windows with git autocrlf=true will want --crlf
         # those running on linux or with autocrlf=input will want --no-crlf
-        charset = rev.meta["contenttype"].split("charset=")[1]
+        charset = rev.meta[CONTENTTYPE].split("charset=")[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
         # add trailing line ending which may have been removed by splitlines,
@@ -129,15 +141,15 @@ def PutItem(meta_file, data_file, overwrite):
     item = app.storage.get_item(**query)
 
     # we want \r\n line endings in data out because \r\n is required in form textareas
-    if "charset" in meta["contenttype"]:
-        charset = meta["contenttype"].split("charset=")[1]
+    if "charset" in meta[CONTENTTYPE]:
+        charset = meta[CONTENTTYPE].split("charset=")[1]
         with open(data_file, "rb") as df:
             data = df.read().decode(charset)
         if "\r\n" not in data and "\n" in data:
             data = data.replace("\n", "\r\n")
         data = data.encode(charset)
-        if 0 < len(data) - meta["size"] <= 2:
-            data = data[0 : meta["size"]]  # potentially truncate trailing newline added by _GetItem
+        if 0 < len(data) - meta[SIZE] <= 2:
+            data = data[0 : meta[SIZE]]  # potentially truncate trailing newline added by _GetItem
         buffer = io.BytesIO()
         buffer.write(data)
         buffer.seek(0)
