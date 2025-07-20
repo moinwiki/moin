@@ -49,7 +49,7 @@ After installation, you should have a ``moin`` command available, try it:
 
  moin --help
 
-If you are running Python 3.12.+ and get a traceback with::
+If you are running Python 3.12+ and get a traceback with::
 
  ModuleNotFoundError: No module named 'pkg_resources'
 
