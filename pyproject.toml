@@ -8,6 +8,8 @@ maintainers = [
 ]
 description = "MoinMoin is an easy to use, full-featured and extensible wiki software package"
 readme = {file="README.md", content-type="text/markdown"}
+license = "GPL-2.0-or-later"
+license-files = ["LICENSE.txt"]
 requires-python = ">=3.9"
 keywords = ["wiki", "web"]
 classifiers = [
@@ -18,7 +20,6 @@ classifiers = [
     "Intended Audience :: Information Technology",
     "Intended Audience :: Other Audience",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License (GPL)",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
@@ -33,7 +34,6 @@ classifiers = [
     "Topic :: Office/Business :: Groupware",
     "Topic :: Text Processing :: Markup",
 ]
-license = {text="GNU GPL v2 (or any later version)"}
 dependencies = [
     "Babel >= 2.10.0",  # internationalization support
     "blinker >= 1.6.2",  # event signalling (e.g. for change notification trigger)
@@ -93,7 +93,7 @@ include-package-data = true
 where = ["src"]
 
 [build-system]
-requires = ["setuptools", "setuptools_scm[toml] >= 6.2"]
+requires = ["setuptools >= 77.0.3", "setuptools_scm[toml] >= 6.2"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
