@@ -266,6 +266,15 @@ file. It should match the actual charset of the configuration file.
         """Make it possible to access a config object like a dict"""
         return getattr(self, item)
 
+    def get(self, item, default=None):
+        """Dict-like get method.
+        Return the value for key if key is in the dictionary, else default.
+        If default is not given, it defaults to None, so that this method never raises a KeyError."""
+        try:
+            return getattr(self, item)
+        except AttributeError:
+            return default
+
 
 class DefaultConfig(ConfigFunctionality):
     """Configuration base class with default config values
