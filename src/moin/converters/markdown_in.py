@@ -17,6 +17,7 @@ from moin.utils.tree import moin_page, xml, html, xlink, xinclude
 from ._util import decode_data
 from moin.utils.iri import Iri
 from moin.converters.html_in import Converter as HTML_IN_Converter
+from flask import current_app
 
 from emeraldtree import ElementTree as ET
 
@@ -558,8 +559,12 @@ class Converter:
                 self.convert_invalid_p_nodes(child)
 
     def __init__(self):
+        # The Moin configuration
+        self.app_configuration = current_app.cfg
+
         self.markdown = Markdown(
-            extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"],
+            extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]
+            + self.app_configuration.markdown_extensions,
             extension_configs={
                 "mdx_wikilink_plus": {
                     "html_class": None,

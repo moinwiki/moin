@@ -753,3 +753,15 @@ The following types are supported:
 
 .. note::
    You should note that the title will be automatically capitalized.
+
+Instance-specific extensions
+----------------------------
+
+You can specify a list of additional extensions to the markdown parser per instance.
+A list of potentially interesting extensions can be access in `Python-markdown's wiki <https://github.com/Python-Markdown/markdown/wiki/Third-Party-Extensions>`_.
+
+For example, to automatically link URLs: ::
+
+    class Config(DefaultConfig):
+        ...
+        markdown_extensions = ['pymdownx.magiclink']
