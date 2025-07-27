@@ -279,9 +279,9 @@ class TestIndexingMiddleware:
         expected_all_revs = list(self.imw.documents(idx_name=ALL_REVS))
 
         print("*** all on-the-fly:")
-        self.imw.dump(idx_name=ALL_REVS)
+        dumper(self.imw, ALL_REVS)
         print("*** latest on-the-fly:")
-        self.imw.dump(idx_name=LATEST_REVS)
+        dumper(self.imw, LATEST_REVS)
 
         # now kill the index and do a full rebuild
         self.imw.close()
@@ -296,9 +296,9 @@ class TestIndexingMiddleware:
         latest_revids = [rev.revid for rev in latest_revs]
 
         print("*** all rebuilt:")
-        self.imw.dump(idx_name=ALL_REVS)
+        dumper(self.imw, ALL_REVS)
         print("*** latest rebuilt:")
-        self.imw.dump(idx_name=LATEST_REVS)
+        dumper(self.imw, LATEST_REVS)
 
         # should be all the same, order does not matter:
         print(len(expected_all_revs), sorted(expected_all_revs))
