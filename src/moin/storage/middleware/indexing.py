@@ -1351,7 +1351,9 @@ class Item(PropertiesMixin):
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
         backend_name, revid = backend.store(meta, data)
-        meta[REVID] = revid
+        assert revid
+        assert meta[REVID] == revid
+
         self.indexer.index_revision(meta, content, backend_name, force_latest=not overwrite)
         gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
