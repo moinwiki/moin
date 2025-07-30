@@ -1309,12 +1309,13 @@ class Item(PropertiesMixin):
             for e in m.children:
                 if e.name in ["itemlinks", "subscriptions"]:
                     for child in e.children:
-                        if child.valid is False:
+                        if not child.valid:
                             val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
                             e.valid = False
-                elif e.valid is False:
-                    val.append(str(e))
-                logging.warning(f"{e.valid}, {e.name}, {e.raw}")
+                elif not e.valid:
+                    val.append(f"{e.name}: {e.raw}")
+                if not e.valid:
+                    logging.warning(f"invalid: {e.name}, {e.raw}")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError(
                     _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
