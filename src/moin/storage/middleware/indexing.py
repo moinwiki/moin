@@ -1314,7 +1314,8 @@ class Item(PropertiesMixin):
                             e.valid = False
                 elif not e.valid:
                     val.append(f"{e.name}: {e.raw}")
-                logging.warning(f"{e.valid}, {e.name}, {e.raw}")
+                if not e.valid:
+                    logging.warning(f"invalid: {e.name}, {e.raw}")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError(
                     _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
