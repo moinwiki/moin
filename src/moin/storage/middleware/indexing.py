@@ -1309,10 +1309,10 @@ class Item(PropertiesMixin):
             for e in m.children:
                 if e.name in ["itemlinks", "subscriptions"]:
                     for child in e.children:
-                        if child.valid is False:
+                        if not child.valid:
                             val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
                             e.valid = False
-                elif e.valid is False:
+                elif not e.valid:
                     val.append(f"{e.name}: {e.raw}")
                 logging.warning(f"{e.valid}, {e.name}, {e.raw}")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
