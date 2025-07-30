@@ -1313,7 +1313,7 @@ class Item(PropertiesMixin):
                             val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
                             e.valid = False
                 elif e.valid is False:
-                    val.append(str(e))
+                    val.append(f"{e.name}: {e.raw}")
                 logging.warning(f"{e.valid}, {e.name}, {e.raw}")
             if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
                 raise ValueError(
