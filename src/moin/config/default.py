@@ -54,6 +54,7 @@ class ConfigFunctionality:
     auth_have_login = None
     auth_login_inputs = None
     _site_plugin_lists = None
+    markdown_extensions = []
 
     def __init__(self):
         """Init Config instance"""

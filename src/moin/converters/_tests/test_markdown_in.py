@@ -6,7 +6,9 @@
 MoinMoin - Tests for moin.converters.markdown_in
 """
 
+from collections import namedtuple
 import pytest
+from flask import Flask
 
 from . import serialize, XMLNS_RE
 
@@ -15,13 +17,24 @@ from moin.utils.tree import moin_page, xlink, xinclude, html
 from ..markdown_in import Converter
 
 
+DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
+config = DefaultConfig(markdown_extensions=[])
+
+
 class TestConverter:
     namespaces = {moin_page: "", xlink: "xlink", xinclude: "xinclude", html: "html"}
 
     output_re = XMLNS_RE
 
     def setup_class(self):
-        self.conv = Converter()
+        # mock patching flask.current_app.cfg does not work here as for speccing the original object is called and that causes a "RuntimeError: working outside of application context"
+        app = Flask(__name__)
+        # DefaultConfig doesn't work here as it does not provide all the defaults required to be initialized
+        app.cfg = config
+        ctx = app.app_context()
+        ctx.push()
+        with ctx:
+            self.conv = Converter()
 
     data = [
         ("Text", "<p>Text</p>"),
