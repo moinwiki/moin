@@ -70,7 +70,7 @@
                 <div class="submit-buttons">
                     {% set warning = "" %}
                     {% if draft_data %}
-                        <button class="moin-button" type="button" >{{ _("Load Draft") }}</button>
+                        <button class="moin-button moin-load-draft" type="button" >{{ _("Load Draft") }}</button>
                         {% set warning = _("Clicking this button will delete draft!") %}
                     {% endif %}
                     {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label,
