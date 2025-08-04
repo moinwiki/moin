@@ -120,10 +120,10 @@ header a, header a:link, header a:visited,
 .moin-flash-warning::before { font-family: FontAwesome; content: "\f071"; color: #a71818; }
 .moin-flash::after { color: #424242; right: 2px; cursor: pointer; }
 
-.moin-button, a.moin-button:link { background-color: white; border: 2pt solid var(--accent);
+.moin-button, .moin-form .moin-load-draft, a.moin-button:link { background-color: white; border: 2pt solid var(--accent);
     border-radius: 2pt; height: 24pt; width: fit-content; min-width: 60pt;
     padding: 0pt 6pt; margin: .5em 0pt; box-shadow: none; }
-.moin-button:hover, .moin-button:focus, a.moin-button:link:hover { color: white; background-color: var(--accent-hover);
+.moin-button:hover, .moin-form .moin-load-draft:hover, .moin-button:focus, a.moin-button:link:hover { color: white; background-color: var(--accent-hover);
     border-color: var(--accent-hover); box-shadow: none; }
 .moin-button:hover a { color: white; }
 .moin-button.negative { border-color: var(--negative); }
