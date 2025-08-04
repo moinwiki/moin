@@ -202,8 +202,6 @@ div.warning > ul, div.warning > p { padding-left: 30pt; }
 .moin-tab-titles a.moin-current-tab { background-color: #b3b3b3; margin: 0pt; }
 .moin-tab-titles a.moin-current-tab:hover { background-color: #b3b3b3; cursor: default; }
 
-#moin-modify br { display: none; }
-
 #moin-usersettings .moin-float-fix { display: flex; justify-content: end; }
 #usersettings_ui { width: fit-content; }
 #moin-usersettings form { width: fit-content; margin: 0 auto; }
