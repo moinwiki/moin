@@ -48,7 +48,7 @@ from markupsafe import Markup
 import pytz
 
 from whoosh import sorting
-from whoosh.query import Term, Prefix, And, Or, Not, DateRange, Every
+from whoosh.query import Term, Prefix, And, Or, Not, DateRange
 from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
@@ -343,18 +343,14 @@ def _compute_item_transclusions(item_name):
         return transcluded_names
 
 
-def add_file_filters(_filter, filetypes):
+def expand_content_types(filetypes):
     """
-    Add various terms to the filter for the search query for the selected file types
-    in the search options.
-
-    :param _filter: the current filter
-    :param filetypes: list of selected filetypes
-    :returns: the required _filter for the search query
+    :param filetypes: list of Content Types Selected by user on the More Search Options form
+    :Returns: a partial query derived fron user selection of wanted contenttypes.
     """
-    if filetypes and "all" not in filetypes:
+    all_contenttypes = []
+    if filetypes:
         contenttypes = []
-        files_filter = []
         if "markup" in filetypes:
             contenttypes.append(CONTENTTYPE_MARKUP)
         if "text" in filetypes:
@@ -371,22 +367,20 @@ def add_file_filters(_filter, filetypes):
             contenttypes.append(CONTENTTYPE_OTHER)
         for ctype in contenttypes:
             for itemtype in ctype:
-                files_filter.append(Term("contenttype", itemtype))
+                all_contenttypes.append(Term("contenttype", itemtype))
         if "unknown" in filetypes:
             known_types = []
             for known in CONTENTTYPES_MAP.keys():
                 known_types.append(Term("contenttype", known))
             unknown_types = Not(Or(known_types))
-            if not files_filter:
-                _filter.append(unknown_types)
-                _filter = And(_filter)
-                return _filter
+            if not all_contenttypes:
+                all_contenttypes.append(unknown_types)
+                all_contenttypes = And(all_contenttypes)
+                return all_contenttypes
             else:
-                files_filter.append(unknown_types)
-        files_filter = Or(files_filter)
-        _filter.append(files_filter)
-        _filter = And(_filter)
-    return _filter
+                all_contenttypes.append(unknown_types)
+        all_contenttypes = Or(all_contenttypes)
+    return all_contenttypes
 
 
 def add_facets(facets, time_sorting):
@@ -427,29 +421,37 @@ def parse_scoped_query(query):
     return None, query
 
 
-@frontend.route("/+search/<itemname:item_name>", methods=["GET", "POST"])
-@frontend.route("/+search", defaults=dict(item_name=""), methods=["GET", "POST"])
-def search(item_name):
+@frontend.route("/+search", methods=["GET", "POST"])
+def search():
     """
     Perform a whoosh search of the index and display the matching items.
 
+    This procedure supports both the one line simple query string and the ajax
+    character by character changes to the "More search options" form.
     The default search is across all namespaces in the index and excludes trash.
 
     The Jinja template formatting the output may also display data related to the
-    search such as the whoosh query, filter (if any), hit counts, and additional
-    suggested search terms.
+    search such as the whoosh query, hit counts, and score.
 
-    "Currently" there is no theme generating the '/+search/<itemname:item_name>' link
-    within Item Views. To access, users must key the query link into the browsers URL. The
-    query result is filtered limiting the output to the target item, target subitems
-    and sub-subitems..., and transclusions within those items.
-    Example URL: http://127.0.0.1:8080/+search/OtherTextItems?q=moin
+    Two prefixes to the query string are supported. A leading \ causes a browser
+    redirect to the highest scoring search result. A leading > limits the search to
+    an item's subitems.
+
+    namespaces can be entered in 3 different ways:
+        * a leading namespace in in a subitem query: >users/joe red
+        * explicit reference in the query string: namespace:users
+        * clicking a checkbox in the More Search Options form
+    The user should choose one way, and avoid conflicting choices.
     """
     search_form = SearchForm.from_flat(request.values)
     ajax = True if request.args.get("boolajax") else False
     valid = search_form.validate()
     time_sorting = False
     filetypes = []
+    namespaces = []
+    terms = []
+    trash = request.args.get("trash", "false")
+    leading_ns = ""
     if ajax:
         query = request.args.get("q")
         history = request.args.get("history") == "true"
@@ -457,30 +459,41 @@ def search(item_name):
         if time_sorting == "default":
             time_sorting = False
         filetypes = request.args.get("filetypes")
+        namespaces = request.args.get("namespaces")
         is_ticket = bool(request.args.get("is_ticket"))
         if filetypes:
             filetypes = filetypes.split(",")[:-1]  # To remove the extra '' at the end of the list
+        if namespaces:
+            namespaces = namespaces.split(",")[:-1]
+            namespaces = ["" if ns == NAMESPACE_UI_DEFAULT else ns for ns in namespaces]
     else:
         query = search_form["q"].value
         history = bool(request.values.get("history"))
-
     best_match = False
     # we test for query in case this is a test run
     if query and query.startswith("\\"):
         best_match = True
         query = query[1:]
 
-    # detect prefix and extract target item
-    subitem_target, query = parse_scoped_query(query)
+    # if query starts with > extract target item name and query: ">joe red, pink" becomes ("joe", "red pink")
+    item_name, query = parse_scoped_query(query)
+
+    # is there a leading namespace in query string
+    if item_name:
+        in_parts = item_name.split("/", 1)
+        if len(in_parts) > 1:
+            is_ns = [x[0] for x in app.cfg.namespace_mapping if x[0] == in_parts[0]]
+            if is_ns:
+                if is_ns[0] not in [NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT]:
+                    leading_ns = is_ns[0]
+                    item_name = in_parts[1]
 
     if valid or ajax:
         # most fields in the schema use a StandardAnalyzer, it omits fairly frequently used words
         # this finds such words and reports to the user
         analyzer = StandardAnalyzer()
-        omitted_words = [token.text for token in analyzer(query, removestops=False) if token.stopped]
-
+        omitted_words = [token.text for token in analyzer(query) if token.stopped]
         idx_name = ALL_REVS if history else LATEST_REVS
-
         if best_match:
             qp = flaskg.storage.query_parser([NAMES, NAMENGRAM], idx_name=idx_name)
         else:
@@ -488,59 +501,23 @@ def search(item_name):
                 [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
             )
         q = qp.parse(query)
-        _filter = []
-        _filter = add_file_filters(_filter, filetypes)
+        if trash == "false":
+            q = And([q, Not(Term(TRASH, True))])
+        if namespaces:
+            ns_terms = [Term(NAMESPACE, ns) for ns in namespaces]
+            q = And([q, Or(ns_terms)])
+        elif leading_ns:
+            ns_terms = [Term(NAMESPACE, leading_ns)]
+            q = And([q, Or(ns_terms)])
+        all_contenttypes = expand_content_types(filetypes)
 
-        # if the user specified a subitem target
-        if subitem_target:
-            # if they also specified an item name from the URL
-            if item_name:
-                # display a note that the subitem will override the item
-                flash(_("Note: Subitem target in query overrides the item in the URL."), "info")
-            # update the item_name to be the subitem_target
-            item_name = subitem_target
-
-        if item_name:  # Only search this item and subitems
-            full_name = None
-
-            # search for the full item name (i.e. "Home/Readings" for "Readings")
-            with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-                all_items = searcher.search(Every(), limit=None)
-                for hit in all_items:
-                    try:
-                        hit_name = hit[NAME][0]
-                    except IndexError:
-                        # deleted items have no names, e.g. []
-                        continue
-                    if hit_name.endswith("/" + item_name) or hit_name == item_name:
-                        full_name = hit_name
-                        break
-
-            if full_name:
-                prefix_name = full_name + "/"
-                terms = [Term(NAME_EXACT, full_name), Prefix(NAME_EXACT, prefix_name)]
-
-                show_transclusions = True
-                if show_transclusions:
-                    # XXX Search subitems and all transcluded items (even recursively),
-                    # still looks like a hack. Imaging you have "foo" on main page and
-                    # "bar" on transcluded one. Then you search for "foo AND bar".
-                    # Such stuff would only work if we expand transcluded items
-                    # at indexing time (and we currently don't).
-                    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-                        subq = Or([Term(NAME_EXACT, full_name), Prefix(NAME_EXACT, prefix_name)])
-                        subq = And([subq, Every(ITEMTRANSCLUSIONS)])
-                        flaskg.clock.start("search subitems with transclusions")
-                        results = searcher.search(subq, limit=None)
-                        flaskg.clock.stop("search subitems with transclusions")
-                        transcluded_names = set()
-                        for hit in results:
-                            name = hit[NAME]
-                            transclusions = _compute_item_transclusions(name)
-                            transcluded_names.update(transclusions)
-                    # XXX Will whoosh cope with such a large filter query?
-                    terms.extend([Term(NAME_EXACT, tname) for tname in transcluded_names])
-                _filter = Or(terms)
+        if item_name:
+            prefix_name = item_name + "/"
+            terms = [Term(NAME_EXACT, item_name), Prefix(NAME_EXACT, prefix_name)]
+        if all_contenttypes:
+            q = And([q, Or(all_contenttypes)])
+        if terms:
+            q = And([q, Or(terms)])
 
         with flaskg.storage.indexer.ix[idx_name].searcher() as searcher:
             # terms is set to retrieve list of terms which matched, in the searchtemplate, for highlight.
@@ -548,13 +525,12 @@ def search(item_name):
             facets = add_facets(facets, time_sorting)
             flaskg.clock.start("search")
             try:
-                results = searcher.search(q, filter=_filter, limit=100, terms=True, sortedby=facets)
+                results = searcher.search(q, limit=100, terms=True, sortedby=facets)
             # this may be an ajax transaction, search.js will handle a full page response
             except QueryError:
                 flash(_("""QueryError: invalid search term: {search_term}""").format(search_term=q), "error")
                 return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
             except TermNotFound:
-                # name:'moin has bugs'
                 flash(_("""TermNotFound: field is not indexed: {search_term}""").format(search_term=q), "error")
                 return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
             flaskg.clock.stop("search")
@@ -567,28 +543,25 @@ def search(item_name):
                 html = render_template(
                     "ajaxsearch.html",
                     results=results,
+                    query=query,
                     omitted_words=", ".join(omitted_words),
                     history=history,
-                    is_ticket=is_ticket,
                     whoosh_query=q,
-                    whoosh_filter=_filter,
                     flaskg=flaskg,
-                    subitem_target=subitem_target,
-                    query=query,
+                    item_name=item_name,
+                    is_ticket=is_ticket,
                 )
             else:
                 html = render_template(
                     "search.html",
                     results=results,
                     query=query,
-                    medium_search_form=search_form,
-                    item_name=item_name,
                     omitted_words=", ".join(omitted_words),
                     history=history,
                     whoosh_query=q,
-                    whoosh_filter=_filter,
                     flaskg=flaskg,
-                    subitem_target=subitem_target,
+                    item_name=item_name,
+                    medium_search_form=search_form,
                 )
             flaskg.clock.stop("search render")
     else:
