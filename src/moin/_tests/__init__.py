@@ -113,6 +113,6 @@ def get_open_wiki_files():
     files = []
     for file in proc.open_files():
         if Path(file.path).match("*/wiki/data/*") or Path(file.path).match("*/wiki/index/*"):
-            print(f"Wiki file open: {file.path}")
+            print(f"Wiki file open: {file.path} mode: {file.mode}")
             files.append(file)
     return files
