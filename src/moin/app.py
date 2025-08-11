@@ -193,6 +193,7 @@ def create_app_ext(
     if app.cfg.template_dirs:
         app.jinja_env.loader = ChoiceLoader([FileSystemLoader(app.cfg.template_dirs), app.jinja_env.loader])
     app.register_error_handler(403, themed_error)
+    app.cfg.custom_css_path = os.path.isfile("wiki_local/custom.css")
     clock.stop("create_app flask-theme")
     # create global counter to limit content security policy reports, prevent spam
     app.csp_count = 0
