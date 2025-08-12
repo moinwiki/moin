@@ -1,4 +1,5 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
+# Copyright: 2025 MoinMoin Project
 # License: the individual patches have same license as the code they are patching
 
 """
@@ -27,3 +28,19 @@ class WSGIRequestHandler(werkzeug.serving.WSGIRequestHandler):
 
 
 werkzeug.serving.WSGIRequestHandler = WSGIRequestHandler
+
+# Whoosh patching ------------------------------------------------------------
+
+# Reset buffer on close
+# see github issues #1645 and #1961
+
+from whoosh.filedb.structfile import BufferFile
+
+
+def buffer_file_close(self):
+    super(BufferFile, self).close()
+    self._buf = None
+
+
+# patch class BufferFile
+BufferFile.close = buffer_file_close
