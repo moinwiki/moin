@@ -1,4 +1,4 @@
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -16,5 +16,5 @@ class Macro(MacroInlineBase):
         attrib = {moin_page.class_: "fa-regular fa-circle-play"}
         children = [moin_page.span(attrib=attrib), _(" Start SlideShow")]
         url = url_for("frontend.slide_item", item_name=page_url.path[1:])
-        result = moin_page.a(attrib={xlink.href: url}, children=children)
+        result = moin_page.a(attrib={xlink.href: url, moin_page.class_: "moin-no-print"}, children=children)
         return result
