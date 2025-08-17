@@ -158,7 +158,10 @@ If desired, the name of this directory may be changed or a separate subdirectory
 for template files may be created by editing
 the wikiconfig file and changing the line that defines `template_dirs`::
 
-    template_dirs = [os.path.join(wikiconfig_dir, 'wiki_local'), ]
+    template_dirs = [os.path.join(wikiconfig_dir, "wiki_local")]
+
+Simple customizations using CSS can be made by providing a file named `custom.css`
+in the `wiki_local` subdirectory.
 
 Using a custom snippets.html template
 -------------------------------------

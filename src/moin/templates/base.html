@@ -66,6 +66,9 @@
                 {%- if user.valid and user.css_url -%}
                     <link media="all" rel="stylesheet" title="{{ user.name }}'s stylesheet" href="{{ user.css_url }}">
                 {%- endif -%}
+                {%- if cfg.custom_css_path -%}
+                    <link media="all" rel="stylesheet" href="{{ url_for('serve.files', name='wiki_local', filename='custom.css') }}">
+                {%- endif -%}
             {%- endblock -%}
         {%- endblock %}
     </head>
