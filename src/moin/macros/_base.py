@@ -8,13 +8,13 @@ MoinMoin - Macro base class
 
 import re
 
+from werkzeug.exceptions import abort
+
 from moin.constants.keys import CURRENT, CONTENTTYPE
 from moin.utils import iri
 from moin.items import Item
-from moin.utils.tree import html
+from moin.utils.tree import html, moin_page, xlink
 from moin.i18n import _
-from werkzeug.exceptions import abort
-from moin.utils.tree import moin_page, xlink
 from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.keys import TAGS
 
@@ -322,7 +322,7 @@ class MacroMultiLinkListBase(MacroBlockBase):
             attrib={moin_page.id: "idx-bottom", moin_page.class_: "moin-align-left"}, children="."
         )
         result_body.append(moin_page.p(children=[initials_end, initials_links_span]))
-        return moin_page.body(children=result_body)
+        return moin_page.div(children=result_body)
 
 
 class MacroNumberPageLinkListBase(MacroBlockBase):
