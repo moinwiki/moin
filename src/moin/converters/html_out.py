@@ -751,14 +751,7 @@ class ConverterPage(Converter):
                 headings_list = [h[1] for h in headings]
                 if headings_list:
                     maxlevel = max(headings_list)
-                headtogglelink = html.a(
-                    attrib={
-                        html.class_: "moin-showhide",
-                        html.href_: "#",
-                        html.onclick_: "$('.moin-table-of-contents ol').toggle();return false;",
-                    },
-                    children=["[+]"],
-                )
+                headtogglelink = html.a(attrib={html.class_: "moin-showhide", html.href_: "#"}, children=["[+]"])
                 elem_h = html.div(
                     attrib={html.class_: "moin-table-of-contents-heading"}, children=[_("Contents"), headtogglelink]
                 )
@@ -790,14 +783,7 @@ class ConverterPage(Converter):
                     if need_item:
                         stack.pop()
                         stack_push(html.li({html.id_: f"li{id}"}))
-                    togglelink = html.a(
-                        attrib={
-                            html.href_: "#",
-                            html.onclick_: f"$('#li{id} ol').toggle();return false;",
-                            html.class_: "moin-showhide",
-                        },
-                        children=["[+]"],
-                    )
+                    togglelink = html.a(attrib={html.href_: "#", html.class_: "moin-showhide"}, children=["[+]"])
                     elem_a = html.a(attrib={html.href: "#" + id}, children=[text])
                     stack_top_append(elem_a)
                     old_toggle = togglelink
