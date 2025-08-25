@@ -919,6 +919,14 @@ $(document).ready(function () {
 
     // placing initToggleComments after enhanceEdit prevents odd autoscroll issue when editing hidden comments
     moin.initToggleComments();
+    $('.moin-table-of-contents .moin-showhide').on('click', function (event) {
+        event.preventDefault();
+        var parent = $(this).parent();
+        if ($(parent).is('.moin-table-of-contents-heading')) {
+            parent = $(parent).parent();
+        }
+        $(parent).find('ol:first-of-type').toggle();
+    });
 
     moin.restoreFlashMessages();
 });
