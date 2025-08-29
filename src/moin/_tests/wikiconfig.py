@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - test wiki configuration
+MoinMoin - Test wiki configuration.
 
 Do not change any values without good reason.
 
@@ -18,9 +18,7 @@ from moin.config.default import DefaultConfig
 
 
 class Config(DefaultConfig):
-    """
-    default configuration for the unit tests
-    """
+    """Default configuration for unit tests."""
 
     _here = abspath(dirname(__file__))
     _root = abspath(join(_here, "..", ".."))

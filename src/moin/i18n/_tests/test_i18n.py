@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for i18n
+Tests for i18n
 """
 
 import pytest
@@ -24,15 +24,15 @@ def test_user_attributes():
 
 
 def test_text():
-    # test for gettext
+    # Test gettext
     result = _("test_text")
     assert result == "test_text"
 
-    # test for lazy_gettext
+    # Test lazy_gettext
     result = L_("test_lazy_text")
     assert result == "test_lazy_text"
 
-    # test for ngettext
+    # Test ngettext
     result1 = N_("text1", "text2", 1)
     assert result1 == "text1"
     result2 = N_("text1", "text2", 2)

@@ -3,17 +3,17 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - backend that ties together 2 key/value stores
+MoinMoin - backend that ties together two key/value stores.
 
 A meta store (a ByteStore):
 
-- key = revid UUID (bytes, ascii)
-- value = bytes (bytes, utf-8)
+- key = revid UUID (bytes, ASCII)
+- value = bytes (UTF-8)
 
 A data store (a FileStore):
 
-- key = dataid UUID (bytes, ascii)
-- value = file (gets/returns open file instances, to read/write binary data)
+- key = dataid UUID (bytes, ASCII)
+- value = file (gets/returns open file instances to read/write binary data)
 
 See the stores package for already implemented key/value stores.
 """
@@ -35,7 +35,7 @@ STORES_PACKAGE = "moin.storage.stores"
 
 class Backend(BackendBase):
     """
-    ties together a store for metadata and a store for data, readonly
+    Tie together a store for metadata and a store for data, read-only.
     """
 
     @override

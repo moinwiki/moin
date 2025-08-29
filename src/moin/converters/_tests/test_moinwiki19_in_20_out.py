@@ -45,10 +45,10 @@ class TestConverter:
         self.conv_out = conv_out()
 
     data = [
-        # Note: old style attachments are are supported in moinwiki_in so conversion to moin 2 markup is not necessary
-        # TODO: in a perfect world, moinwiki19_in should convert attachments
+        # Note: old-style attachments are supported in moinwiki_in, so conversion to Moin 2 markup is not necessary
+        # TODO: In a perfect world, moinwiki19_in should convert attachments
         ("[[attachment:filename.txt]]", "[[/filename.txt]]\n"),
-        # moin 1.9 to 2.0 conversion
+        # Moin 1.9 to 2.0 conversion
         ("TestPage", "[[TestPage]]\n"),
         # ('../SisterPage', '[[../SisterPage]]\n'),
     ]

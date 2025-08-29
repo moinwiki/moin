@@ -2,12 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - flask modules for better modularization
+MoinMoin - Flask application modules
 
-This package contains some Flask Modules:
+This package contains the following Flask blueprints:
 
-- frontend has all usual wiki user interface code
-- feed Module for all feed-like stuff
-- admin Module for special stuff for wiki admins
-- serve Module for static file serving
+- frontend: the user-facing wiki interface
+- feed: feed-related functionality
+- admin: administrative views for wiki administrators
+- serve: static file serving
 """

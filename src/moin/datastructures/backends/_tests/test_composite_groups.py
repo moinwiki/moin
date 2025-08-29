@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-moin.datastructures.backends.composite_groups test
+MoinMoin - moin.datastructures.backends.composite_groups tests.
 """
 
 

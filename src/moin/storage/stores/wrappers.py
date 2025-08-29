@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - store wrappers
+MoinMoin - store wrappers.
 """
 
 from io import BytesIO
@@ -14,7 +14,7 @@ class ByteToStreamWrappingStore(MutableMapping):
         """
         Wrap a file store so it can be used like a byte store.
 
-        :param stream_store: the file/stream store to wrap
+        :param stream_store: The file/stream store to wrap.
         """
         self._st = stream_store
 

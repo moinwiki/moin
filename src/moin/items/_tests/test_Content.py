@@ -4,7 +4,7 @@
 # split
 
 """
-    MoinMoin - moin.items.content Tests
+MoinMoin - Tests for moin.items.content
 """
 
 import pytest
@@ -24,7 +24,7 @@ from functools import reduce
 
 
 class TestContent:
-    """Test for arbitrary content"""
+    """Tests for arbitrary content"""
 
     def testClassFinder(self):
         for contenttype, ExpectedClass in [
@@ -68,12 +68,12 @@ class TestContent:
 
 class TestTarItems:
     """
-    tests for the container items
+    Tests for container items
     """
 
     def testCreateContainerRevision(self):
         """
-        creates a container and tests the content saved to the container
+        Creates a container and tests the content saved to it.
         """
         item_name = "ContainerItem1"
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
@@ -90,7 +90,7 @@ class TestTarItems:
 
     def testRevisionUpdate(self):
         """
-        creates two revisions of a container item
+        Creates two revisions of a container item.
         """
         item_name = "ContainerItem2"
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
@@ -107,7 +107,7 @@ class TestTarItems:
 
 
 class TestZipMixin:
-    """Test for zip-like items"""
+    """Tests for zip-like items"""
 
     def test_put_member(self):
         item_name = "Zip_file"
@@ -148,15 +148,15 @@ class TestTransformableBitmapImage:
             from PIL import Image as PILImage  # noqa
 
             result = Markup(TransformableBitmapImage._render_data_diff(item1.content, item.rev, item1.rev))
-            # On Werkzeug 0.8.2+, urls with '+' are automatically encoded to '%2B'
+            # On Werkzeug 0.8.2+, URLs with '+' are automatically encoded to '%2B'
             # The assert statement works with both older and newer versions of Werkzeug
-            # Probably not an intentional change on the werkzeug side, see issue:
+            # Probably not an intentional change on the Werkzeug side; see issue:
             # https://github.com/mitsuhiko/werkzeug/issues/146
             assert str(result).startswith('<img src="/+diffraw/image_Item?rev') or str(result).startswith(
                 '<img src="/%2Bdiffraw/image_Item?rev'
             )
         except ImportError:
-            # no PIL
+            # No PIL
             pass
 
     def test__render_data_diff_text(self):
@@ -214,23 +214,23 @@ class TestText:
         item = Item.create(item_name)
         item._save(meta, empty_html)
         item = Item.create(item_name)
-        # Unicode test, html escaping
+        # Unicode test: HTML escaping
         rev1 = update_item(item_name, meta, html)
         rev2 = update_item(item_name, {}, "     ")
         result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert escape(html) in result
-        # Unicode test, whitespace
+        # Unicode test: whitespace
         rev1 = update_item(item_name, {}, "\n\n")
         rev2 = update_item(item_name, {}, "\n     \n")
         result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" in result
-        # If fairly similar diffs are correctly spanned or not, also check indent
+        # Check whether fairly similar diffs are correctly spanned; also check indentation.
         rev1 = update_item(item_name, {}, "One Two Three Four\nSix\n\ud55c")
         rev2 = update_item(item_name, {}, "Two Three Seven Four\nSix\n\ud55c")
         result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert "<span>One </span>Two Three Four" in result
         assert "Two Three <span>Seven </span>Four" in result
-        # Check for diff_html.diff return types
+        # Check the return types of diff_html.diff
         assert reduce(
             lambda x, y: x and y,
             [

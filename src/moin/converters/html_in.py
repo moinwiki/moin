@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - HTML input converter
+MoinMoin - HTML input converter.
 
-Converts an XHTML document into an internal document tree.
+Convert an XHTML document into an internal document tree.
 
-TODO : Add support for style
+TODO: add support for style.
 """
 
 import re
@@ -50,7 +50,7 @@ class NoDupsFlash:
 
 class Converter:
     """
-    Converter html -> .x.moin.document
+    Convert HTML -> .x.moin.document.
     """
 
     # Namespace of our input data
@@ -59,10 +59,10 @@ class Converter:
     # HTML tags which can be converted directly to the moin_page namespace
     symmetric_tags = {"div", "p", "strong", "code", "quote", "blockquote", "span"}
 
-    # HTML tags to define a list, except dl which is a little bit different
+    # HTML tags that define a list; except dl, which is a little bit different
     list_tags = {"ul", "dir", "ol"}
 
-    # HTML tags which can be convert without attributes in a different DOM tag
+    # HTML tags that can be converted without attributes into a different DOM tag
     simple_tags = {  # Emphasis
         "em": moin_page.emphasis,
         "i": moin_page.emphasis,
@@ -76,15 +76,15 @@ class Converter:
         # Lists
         "dt": moin_page.list_item_label,
         "dd": moin_page.list_item_body,
-        # TODO : Some tags related to tables can be also simplify
+        # TODO: Some tags related to tables can also be simplified
     }
 
-    # HTML Tag which does not have equivalence in the DOM Tree
-    # But we keep the information using <span element>
+    # HTML tags that do not have equivalents in the DOM tree
+    # But we keep the information using a <span> element
     inline_tags = {"abbr", "acronym", "address", "dfn", "kbd"}
 
-    # HTML tags which are completely ignored by our converter.
-    # We even do not process children of these elements.
+    # HTML tags that are completely ignored by our converter.
+    # We do not even process children of these elements.
     ignored_tags = {
         "applet",
         "area",

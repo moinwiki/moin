@@ -2,13 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - config group lazy backend.
+MoinMoin - Config group lazy backend.
 
-    The config group backend allows one to define groups in a
-    configuration file.
+The config group backend allows you to define groups in a configuration file.
 
-    NOTE that this is proof-of-concept implementation. LDAP backend
-    should be based on this concept.
+NOTE: this is a proof-of-concept implementation. An LDAP backend should be based on this concept.
 """
 
 

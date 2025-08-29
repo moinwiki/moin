@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.include
+MoinMoin - moin.converters.include tests.
 """
 
 
@@ -15,7 +15,7 @@ from moin._tests import wikiconfig, update_item
 class TestInclude:
     class Config(wikiconfig.Config):
         """
-        we just have this so the test framework creates a new app with empty backends for us.
+        We include this so the test framework creates a new app with empty backends for us.
         """
 
     def test_XPointer(self):
@@ -63,18 +63,18 @@ class TestInclude:
         assert e.data == "a(b)"
 
     def test_IncludeHandlesCircularRecursion(self):
-        # detect circular recursion and create error message
+        # Detect circular recursion and create an error message.
         update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{page2}}")
         update_item("page2", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{page3}}")
         update_item("page3", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{page4}}")
         update_item("page4", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{page2}}")
         page1 = Item.create("page1")
         rendered = page1.content._render_data()
-        # an error message will follow strong tag
+        # An error message will follow the strong tag.
         assert '<strong class="moin-error">' in rendered
 
     def test_Include_Read_Permission_Denied(self):
-        # attempt to include an item that user cannot read
+        # Attempt to include an item the user cannot read.
         update_item(
             "page1",
             {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8", ACL: "All:write,create,admin,destroy"},
@@ -83,25 +83,25 @@ class TestInclude:
         update_item("page2", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "some text{{page1}}more text")
         page2 = Item.create("page2")
         rendered = page2.content._render_data()
-        # an error message will follow p tag, similar to: Access Denied, transcluded content suppressed.
+        # An error message will follow the p tag, similar to: Access Denied, transcluded content suppressed.
         assert '<div class="warning moin-read-denied"><p>' in rendered
 
     def test_ExternalInclude(self):
-        # external include
+        # External include.
         update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{http://moinmo.in}}")
         rendered = Item.create("page1").content._render_data()
         assert (
             '<object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object>'
             in rendered
         )
-        # external include embedded within text (object is an inline tag)
+        # External include embedded within text (object is an inline tag).
         update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "before {{http://moinmo.in}} after")
         rendered = Item.create("page1").content._render_data()
         assert (
             '<p>before <object class="moin-transclusion" data="http://moinmo.in" data-href="http://moinmo.in">http://moinmo.in</object> after</p>'
             in rendered
         )
-        # external include embedded within text italic and bold markup (object is an inline tag)
+        # External include embedded within italic and bold text markup (object is an inline tag).
         update_item(
             "page1",
             {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"},

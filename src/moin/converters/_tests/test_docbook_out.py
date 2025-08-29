@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.docbook_out
+MoinMoin - moin.converters.docbook_out tests.
 """
 
 from io import StringIO

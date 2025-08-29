@@ -1,17 +1,17 @@
 """
-    MoinMoin - WSGI middlewares for profiling
+    MoinMoin - WSGI middleware for profiling
 
     These have been ported from server_standalone to provide application
     profiling for a WSGI application. They are implemented as WSGI
     middlewares, so they can be plugged right in front of the MoinMoin
-    WSGI application. Attention has to be payed, that at the end of
-    profiling the `shutdown`-method has to be invoked, so that the
-    middlewares can write the reports to the filesystem.
+    WSGI application. Attention has to be paid that, at the end of
+    profiling, the `shutdown` method must be invoked so that the
+    middleware can write the reports to the file system.
 
-    TODO: in pre-WSGI MoinMoin those profilers where integrated in
+    TODO: in pre-WSGI MoinMoin those profilers were integrated into
           the standalone server and also some other gateway interfaces.
-          In the near future the middlewares here could be again made
-          configurable automatically with command line switches or
+          In the near future, the middleware here could again be made
+          configurable automatically with command-line switches or
           wiki configuration options.
 
     @copyright: 2008 MoinMoin:FlorianKrupicka,
@@ -67,7 +67,7 @@ class ProfilerMiddleware:
 
 
 class CProfileMiddleware(ProfilerMiddleware):
-    """A profiler based on the the cProfile module from the standard lib."""
+    """A profiler based on the cProfile module from the standard library."""
 
     def __init__(self, app, filename):
         super().__init__(app)
@@ -82,7 +82,7 @@ class CProfileMiddleware(ProfilerMiddleware):
 
 
 class PycallgraphMiddleware(ProfilerMiddleware):
-    """A call graphing middleware utilizing the pycallgraph 3rd party
+    """A call-graphing middleware utilizing the pycallgraph third-party
     module (available at http://pycallgraph.slowchop.com/)."""
 
     def __init__(self, app, filename):

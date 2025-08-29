@@ -2,18 +2,18 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - http authentication
+MoinMoin - HTTP authentication.
 
-    HTTPAuthMoin
-    ============
+HTTPAuthMoin
+============
 
-    HTTPAuthMoin is HTTP auth done by moin (not by your web server).
+HTTPAuthMoin is HTTP auth handled by Moin (not by your web server).
 
-    Moin will request HTTP Basic Auth and use the HTTP Basic Auth header it
-    receives to authenticate username/password against the moin user profiles.
+Moin will request HTTP Basic Auth and use the HTTP Basic Auth header it
+receives to authenticate the username/password against the Moin user profiles.
 
-    from moin.auth.http import HTTPAuthMoin
-    auth = [HTTPAuthMoin()]
+from moin.auth.http import HTTPAuthMoin
+auth = [HTTPAuthMoin()]
 """
 
 
@@ -29,7 +29,7 @@ logging = log.getLogger(__name__)
 
 
 class HTTPAuthMoin(BaseAuth):
-    """authenticate via http (basic) auth"""
+    """Authenticate via HTTP Basic Auth."""
 
     name = "http"
 

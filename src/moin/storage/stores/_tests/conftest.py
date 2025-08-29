@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - store test magic
+MoinMoin - store test utilities.
 """
 
 import pytest
@@ -66,13 +66,13 @@ def make_store(request, tmpdir):
     klass = getattr(storemodule, kind)
     construct = constructors.get(storename)
     if construct is None:
-        pytest.xfail(f"don't know how to construct {storename} store")
+        pytest.xfail(f"Don't know how to construct the {storename} store")
     store = construct(klass, tmpdir)
     store.create()
     store.open()
     request.addfinalizer(store.close)
-    # for debugging, you can disable the next line to see the stuff in the
-    # store and examine it, but usually we want to clean up afterwards:
+    # For debugging, you can disable the next line to keep the content in the
+    # store and examine it; usually, we clean up afterwards:
     request.addfinalizer(store.destroy)
     return store
 

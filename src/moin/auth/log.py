@@ -2,10 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - logging auth plugin
+MoinMoin - logging auth plugin.
 
-    This does nothing except logging the auth parameters (the password is NOT
-    logged, of course).
+This does nothing except logging the auth parameters (the password is NOT
+logged, of course).
 """
 
 
@@ -17,7 +17,7 @@ logging = log.getLogger(__name__)
 
 
 class AuthLog(BaseAuth):
-    """just log the call, do nothing else"""
+    """Just log the call; do nothing else."""
 
     name = "log"
 

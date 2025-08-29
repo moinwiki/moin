@@ -4,15 +4,15 @@
 """
 MoinMoin - Converter support
 
-Converters are used to convert between formats or between different featuresets
+Converters are used to convert between formats or between different feature sets
 of one format.
 
 There are usually three types of converters:
 
-- Between an input format like Moin Wiki or Creole and the internal tree
+- Between an input format like MoinWiki or Creole and the internal tree
   representation.
 - Between the internal tree and an output format like HTML.
-- Between different featuresets of the internal tree representation like URI
+- Between different feature sets of the internal tree representation like URI
   types or macro expansion.
 
 TODO: Merge with new-style macros.
@@ -48,9 +48,9 @@ class RegistryConverter(RegistryBase):
 
     def register(self, factory, type_input, type_output, priority=RegistryBase.PRIORITY_MIDDLE):
         """
-        Register a factory
+        Register a factory.
 
-        :param factory: Factory to register. Callable, must return an object.
+        :param factory: Factory to register. Callable; must return an object.
         """
         return self._register(self.Entry(factory, type_input, type_output, priority))
 

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Migration of PageList macro (moin1.9) to new ItemList macro (moin2)
+MoinMoin - migration of the PageList macro (Moin 1.9) to the new ItemList macro (Moin 2).
 """
 
 import re
@@ -16,17 +16,17 @@ MACRO_NAME_PAGE_LIST = "PageList"
 
 
 def convert_page_list_macro_to_item_list(node):
-    """Convert the given PageList macro node to an ItemList macro in-place
+    """Convert the given PageList macro node to an ItemList macro in-place.
 
-    The moin1.0 PageList macro used to pass all arguments to the FullSearch
-    macro, so they were essentially all treated as regular expression search queries.
+    The Moin 1.x PageList macro used to pass all arguments to the FullSearch
+    macro, so they were essentially all treated as regular-expression search queries.
     After conversion to the ItemList macro, the argument will be a simple "regex" argument.
-    To make sure all available pages are searched (not only subpages of the current page)
-    the item parameter is set to empty string (item="").
+    To make sure all available pages are searched (not only subpages of the current page),
+    the item parameter is set to an empty string (item="").
 
     Example conversions:
 
-    | PageList macro (moin1.9)       | ItemList macro (moin2)            |
+    | PageList macro (Moin 1.9)      | ItemList macro (Moin 2)           |
     |--------------------------------|-----------------------------------|
     | <<PageList>>                   | <<ItemList(item="")>>             |
     | <<PageList()>>                 | <<ItemList(item="")>>             |
@@ -35,7 +35,7 @@ def convert_page_list_macro_to_item_list(node):
     | <<PageList(regex:Rnd[^abc]+)>> | <<ItemList(item="",               |
     |                                |            regex="Rnd[^abc]+")>>  |
 
-    :param node: the DOM node matching the PageList macro content type
+    :param node: The DOM node matching the PageList macro content type.
     :type node: emeraldtree.tree.Element
     """
 
@@ -50,14 +50,14 @@ def convert_page_list_macro_to_item_list(node):
         if elem.tag.name == "arguments":
             args_before = elem.text
     if args_before:
-        # strip the "regex:" prefix if necessary
+        # Strip the "regex:" prefix if present.
         args_intermediate = re.sub(r"^regex:", "", args_before)
-        # wrap argument in new keyword argument "regex"
+        # Wrap the argument in the new keyword argument "regex".
         args_after = f'item="",regex="{args_intermediate}"'
     else:
         # PageList macros without arguments used to show every
         # available page in the wiki, so it's converted to an
-        # ItemList macro with an empty string item parameter
+        # ItemList macro with an empty-string item parameter.
         args_after = 'item=""'
 
     for elem in node.iter_elements():

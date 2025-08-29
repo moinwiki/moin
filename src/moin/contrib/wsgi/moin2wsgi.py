@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - mod_wsgi driver script
+MoinMoin - mod_wsgi driver script.
 
-    To use this, copy this file to your wiki root (wikiconfig.py resides there),
-    then add these statements to your Apache's VirtualHost definition:
+To use this, copy this file to your wiki root (where wikiconfig.py resides),
+then add these statements to your Apache VirtualHost configuration:
 
-    WSGIScriptAlias / /<path-to>/moin2wsgi.py
-    moin-wsgi user=someuser group=somegroup processes=5 threads=10 maximum-requests=1000 umask=0007
-    WSGIProcessGroup moin-wsgi
+WSGIScriptAlias / /<path-to>/moin2wsgi.py
+moin-wsgi user=someuser group=somegroup processes=5 threads=10 maximum-requests=1000 umask=0007
+WSGIProcessGroup moin-wsgi
 """
 
 import sys
@@ -24,8 +24,8 @@ if not (moin_dir in sys.path or moin_dir.lower() in sys.path):
 
 wiki_config = moin_dir + "/wikiconfig.py"
 
-# create the Moin (Flask) WSGI application
+# Create the Moin (Flask) WSGI application.
 application = create_app(wiki_config)
 
-# if you want to do some wsgi app wrapping, do it like shown below:
+# If you want to wrap the WSGI app, do it as shown below:
 # application.wsgi_app = somewrapper(application.wsgi_app)

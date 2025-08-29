@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - basic tests for frontend
+MoinMoin - Tests for frontend
 """
 
 from io import BytesIO
@@ -192,7 +192,7 @@ class TestFrontend:
         self._test_view("frontend.history", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
 
     def test_diff(self):
-        # TODO another test with valid rev1 and rev2 url args and an existing item is needed
+        # TODO: Add another test with valid rev1 and rev2 URL args and an existing item.
         self._test_view("frontend.diff", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
 
     def test_similar_names(self):
@@ -260,16 +260,16 @@ class TestFrontend:
         self._test_view("frontend.logout", status="302 FOUND", data=["<!doctype html"])
 
     def test_usersettings_notloggedin(self):
-        # if a anon user visits usersettings view, he'll get redirected to the login view
+        # If an anonymous user visits the usersettings view, they will be redirected to the login view.
         self._test_view("frontend.usersettings", status="302 FOUND", data=["<!doctype html"])
 
-    # TODO: implement test_usersettings_loggedin()
+    # TODO: Implement test_usersettings_loggedin().
 
     def test_bookmark(self):
         self._test_view("frontend.bookmark", status="302 FOUND", data=["<!doctype html"])
 
     def test_diffraw(self):
-        # TODO another test with valid rev1 and rev2 url args and an existing item is needed
+        # TODO: Add another test with valid rev1 and rev2 URL args and an existing item.
         self._test_view("frontend.diffraw", status="404 NOT FOUND", data=[], viewopts=dict(item_name="DoesntExist"))
 
     def test_global_tags(self):
@@ -277,7 +277,7 @@ class TestFrontend:
 
 
 class TestUsersettings:
-    reinit_storage = True  # avoid username / email collisions
+    reinit_storage = True  # Avoid username/email collisions.
 
     @pytest.fixture(autouse=True)
     def custom_setup(self, app):

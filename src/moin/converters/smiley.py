@@ -3,10 +3,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Smiley converter
+MoinMoin - Smiley converter.
 
-Replace all the text corresponding to a smiley, by the corresponding
-element for the DOM Tree.
+Replace all text corresponding to a smiley with the corresponding
+ element for the DOM tree.
 """
 
 import re
@@ -21,7 +21,7 @@ from . import default_registry
 
 class Converter:
     """
-    Replace each smiley by the corresponding element in the DOM Tree
+    Replace each smiley with the corresponding element in the DOM tree.
     """
 
     smileys = {
@@ -115,7 +115,7 @@ class Converter:
         by the appropriate elements, and the former text for the
         other elements of the list.
         """
-        # We split our string into different items arround
+        # We split our string into different items around
         # the matched smiley.
         splitted_string = re.split(self.smiley_re, element)
         # And then for each item of the list,

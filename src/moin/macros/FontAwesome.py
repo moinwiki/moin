@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Support use of Font Awesome fonts within wiki content.
+Support the use of Font Awesome icons within wiki content.
 
 Usage:
     <<FontAwesome(classes,color,size)>>
@@ -13,9 +13,9 @@ Usage:
     <<FontAwesome(regular thumbs-up,red,2)>>
 
 Where:
-    classes: one or more Font Awesome classes less leading "fa-", separated by " ".
-    color: optional hex color code: #f00 or #ff0000 or HTML color name
-    size: optional int or float size in EM units
+    classes: One or more Font Awesome classes without the leading "fa-", separated by spaces.
+    color: Optional hex color code (#f00 or #ff0000) or an HTML color name.
+    size: Optional integer or float size in em units.
 """
 
 

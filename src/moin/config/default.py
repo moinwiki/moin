@@ -33,13 +33,13 @@ logging = log.getLogger(__name__)
 
 
 class CacheClass:
-    """just a container for stuff we cache"""
+    """Just a container for stuff we cache."""
 
     pass
 
 
 class ConfigFunctionality:
-    """Configuration base class with config class behaviour.
+    """Configuration base class with config class behavior.
 
     This class contains the functionality for the DefaultConfig
     class for the benefit of the WikiConfig macro.
@@ -57,7 +57,7 @@ class ConfigFunctionality:
     markdown_extensions = []
 
     def __init__(self):
-        """Init Config instance"""
+        """Initialize Config instance."""
         self.cache = CacheClass()
 
         if self.config_check_enabled:
@@ -67,7 +67,7 @@ class ConfigFunctionality:
         data_dir = os.path.normpath(self.data_dir)
         self.data_dir = data_dir
 
-        # Try to decode certain names which allow unicode
+        # Try to decode certain names that allow Unicode
         self._decode()
 
         # After that, pre-compile some regexes

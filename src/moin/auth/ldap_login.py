@@ -4,18 +4,18 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - LDAP / Active Directory authentication
+MoinMoin - LDAP / Active Directory authentication.
 
-    This code only creates a user object, the session will be established by
-    moin automatically.
+This code only creates a user object; the session will be established by
+Moin automatically.
 
-    python-ldap needs to be at least 2.0.0pre06 (available since mid 2002) for
-    ldaps support - some older debian installations (woody and older?) require
-    libldap2-tls and python2.x-ldap-tls, otherwise you get ldap.SERVER_DOWN:
-    "Can't contact LDAP server" - more recent debian installations have tls
-    support in libldap2 (see dependency on gnutls) and also in python-ldap.
+python-ldap needs to be at least 2.0.0pre06 (available since mid 2002) for
+LDAPS support — some older Debian installations (woody and older?) require
+libldap2-tls and python2.x-ldap-tls; otherwise you get ldap.SERVER_DOWN:
+"Can't contact LDAP server". More recent Debian installations have TLS
+support in libldap2 (see dependency on gnutls) and also in python-ldap.
 
-    TODO: allow more configuration (display name, ...) by using callables as parameters
+TODO: allow more configuration (display name, ...) by using callables as parameters
 """
 
 
@@ -35,9 +35,9 @@ except ImportError as err:
 
 
 class LDAPAuth(BaseAuth):
-    """get authentication data from form, authenticate against LDAP (or Active
-    Directory), fetch some user infos from LDAP and create a user object
-    for that user. The session is kept by moin automatically.
+    """Get authentication data from the form, authenticate against LDAP (or Active
+    Directory), fetch some user info from LDAP, and create a user object
+    for that user. The session is kept by Moin automatically.
     """
 
     login_inputs = ["username", "password"]

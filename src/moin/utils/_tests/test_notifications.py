@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.notifications Tests
+MoinMoin - tests for moin.utils.notifications.
 """
 
 from io import BytesIO

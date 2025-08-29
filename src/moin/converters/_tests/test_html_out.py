@@ -44,7 +44,7 @@ class Base:
     def do(self, input, xpath, args={}):
         out = self.conv(self.handle_input(input), **args)
         string_to_parse = self.handle_output(out)
-        logging.debug(f"After the HTML_OUT conversion : {string_to_parse}")
+        logging.debug(f"After the HTML out conversion: {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         assert tree.xpath(xpath)
 

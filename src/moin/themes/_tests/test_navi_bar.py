@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Navibar Tests
+MoinMoin - Tests for the navigation bar
 """
 
 

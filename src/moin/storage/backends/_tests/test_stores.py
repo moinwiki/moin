@@ -2,10 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - stores backend tests
+MoinMoin - stores backend tests.
 
-Note: theoretically, it should be enough to test with one kind of store,
-      but we better test with a fs AND a memory store.
+Note: Theoretically, testing one kind of store would be enough, but we test with
+both a file system store and a memory store.
 """
 
 import os

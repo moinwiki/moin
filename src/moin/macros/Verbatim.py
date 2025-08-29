@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Output the input text as is: <<Verbatim(return `same` __text__ '''as''' entered)>>
+Outputs the input text as is: <<Verbatim(return `same` __text__ '''as''' entered)>>
 """
 
 

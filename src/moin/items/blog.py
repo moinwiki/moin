@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Blog itemtype
+MoinMoin - Blog item type
 """
 
 
@@ -56,13 +56,13 @@ class Blog(Default):
         """
         Show a blog item and a list of its blog entries below it.
 
-        If tag GET-parameter is defined, the list of blog entries consists only
-        of those entries that contain the tag value in their lists of tags.
+        If the tag GET parameter is defined, the list of blog entries consists only
+        of those entries that contain the tag value in their list of tags.
         """
-        # for now it is just one tag=value, later it could be tag=value1&tag=value2&...
+        # For now it is just one tag=value; later it could be tag=value1&tag=value2&...
         tag = request.values.get("tag")
         prefix = self.name + "/"
-        # Only blog entry itemtypes and sub items of this item
+        # Only blog entry item types and subitems of this item
         terms = [Term(ITEMTYPE, ITEMTYPE_BLOG_ENTRY), Prefix(NAME_EXACT, prefix)]
         if tag:
             terms.append(Term(TAGS, tag))
@@ -109,7 +109,7 @@ class BlogEntry(Default):
         @classmethod
         def from_item(cls, item):
             form = super().from_item(item)
-            # preload PTIME with the current datetime
+            # Preload PTIME with the current date and time
             if not form["meta_form"]["ptime"]:
                 form["meta_form"]["ptime"].set(datetime.utcnow())
             return form

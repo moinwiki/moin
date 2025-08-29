@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - table data to DOM conversion support
+MoinMoin - table data-to-DOM conversion support.
 """
 
 from moin.utils.tree import moin_page

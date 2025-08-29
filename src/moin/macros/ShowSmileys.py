@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Show all available smileys that may be included in wiki item content
+Show all available smileys that may be included in wiki item content.
 """
 
 from flask import url_for

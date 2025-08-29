@@ -4,7 +4,7 @@
 """
 MoinMoin - Tests for moin.converters.html_in and moin.converters.html_out.
 
-           It will check that roundtrip conversion is working well.
+           It checks that round-trip conversion works correctly.
 """
 
 

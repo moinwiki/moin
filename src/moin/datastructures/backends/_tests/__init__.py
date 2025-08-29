@@ -5,7 +5,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.datastructures.backends base test classes.
+MoinMoin - moin.datastructures.backends base test classes.
 """
 
 
@@ -89,8 +89,8 @@ class GroupsBackendTest:
 
     def test_backend_acl_allow(self):
         """
-        Test if the wiki group backend works with acl code.
-        Check user which has rights.
+        Test if the wiki group backend works with ACL code.
+        Check users who have rights.
         """
         acl_rights = ["AdminGroup:admin,read,write"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
@@ -103,8 +103,8 @@ class GroupsBackendTest:
 
     def test_backend_acl_deny(self):
         """
-        Test if the wiki group backend works with acl code.
-        Check user which does not have rights.
+        Test if the wiki group backend works with ACL code.
+        Check a user who does not have rights.
         """
         acl_rights = ["AdminGroup:read,write"]
         acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)

@@ -5,7 +5,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Theme Support
+MoinMoin - Theme support
+
+Helpers for rendering themed templates and UI elements.
 """
 
 from __future__ import annotations
@@ -59,7 +61,7 @@ logging = log.getLogger(__name__)
 
 
 def get_current_theme():
-    # this might be called at a time when flaskg.user is not setup yet:
+    # This might be called when flaskg.user is not set up yet:
     u = getattr(flaskg, "user", None)
     if u and u.theme_name is not None:
         theme_name = u.theme_name
@@ -85,7 +87,7 @@ def themed_error(e):
             name=item_name
         )
         if e.description.startswith(" "):
-            # leading blank indicates supplemental info, not standard werkzeug message
+            # Leading blank indicates supplemental info, not the standard Werkzeug message
             description += e.description
     else:
         # if we have no special code, we just return the HTTPException instance
@@ -96,7 +98,7 @@ def themed_error(e):
 
 class ThemeSupport:
     """
-    Support code for template feeding.
+    Support utilities used by themes and templates.
     """
 
     def __init__(self, cfg: WikiConfigProtocol):

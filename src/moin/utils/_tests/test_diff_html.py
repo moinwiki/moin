@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.utils.diff_html Tests
+MoinMoin - tests for moin.utils.diff_html.
 """
 
 
@@ -20,7 +20,7 @@ AAA 003
 AAA 004
 AAA 005
 """
-    # expeted result
+    # expected result
     expected = """&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AAA 001
 AAA 002
 AAA 003
@@ -42,7 +42,7 @@ AAA 004
 AAA 005
 """
 
-    # Case 1: charobj.ratio() < 0.5 i.e. Insufficient similarity
+    # Case 1: charobj.ratio() < 0.5, i.e., insufficient similarity
     test_input2 = """ \n
 
 BBB 006
@@ -62,7 +62,7 @@ BBB 100
     ]
     assert result == expected
 
-    # Case 2 : charobj.ratio() > 0.5 i.e. Some similarities
+    # Case 2: charobj.ratio() > 0.5, i.e., some similarities
     test_input3 = """ \n
 
 AAA 006

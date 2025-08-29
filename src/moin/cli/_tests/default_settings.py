@@ -2,11 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli._tests.default_settings configurations for tests
+MoinMoin - default CLI test settings.
 
-these settings will run tests against the development server started via moin.cli._tests.conftest.server
-to run tests against another server, copy this file to settings.py
-if it exists, settings.py needs to contain all the entries as default_settings.py"""
+These settings run tests against the development server started via moin.cli._tests.conftest.server.
+To run tests against another server, copy this file to settings.py.
+If it exists, settings.py needs to contain all entries from default_settings.py.
+"""
 
 from moin.utils.iri import Iri
 

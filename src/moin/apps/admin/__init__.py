@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - admin views package
+MoinMoin - Admin views package
 
-    This package contains all views, templates, static files for wiki administration.
+This package contains the views, templates, and static files for wiki administration.
 """
 
 

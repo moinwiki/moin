@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters for different imagetypes
+MoinMoin - Tests for moin.converters for different image types.
 """
 
 import pytest
@@ -23,7 +23,7 @@ def run_test(tree_xml, output):
 
 @pytest.mark.parametrize("img_type", ["image/jpeg", "image/svg+xml", "image/png", "image/gif"])
 def test_image(img_type):
-    """Tests if a set of imagetypes, result inside an img tag"""
+    """Test whether a set of image types results in an img tag."""
     tree_xml = (
         '<ns0:page ns0:page-href="wiki:///Home" xmlns:ns0="http://moinmo.in/namespaces/page" '
         'xmlns:ns1="http://www.w3.org/2001/XInclude" xmlns:ns2="http://www.w3.org/1999/xhtml" '
@@ -43,7 +43,7 @@ def test_image(img_type):
 
 
 def test_resize():
-    """Tests if resize attributes convert to respective html tag resize attributes"""
+    """Test whether resize attributes convert to the respective HTML tag resize attributes."""
     image_resize = (
         '<ns0:page xmlns:ns0="http://moinmo.in/namespaces/page" '
         'xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/1999/xlink">'

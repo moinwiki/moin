@@ -10,18 +10,18 @@ REPLACE = "replace"
 
 
 class UndefinedType:
-    """Represents a non-existing value"""
+    """Represents a non-existing value."""
 
 
 Undefined = UndefinedType()
 
 
 def diff(d1, d2, basekeys=None):
-    """Get the diff of 2 datastructures (usually 2 meta dicts)
+    """Get the diff of two data structures (usually two meta dicts).
 
-    :param d1: old datastructure
-    :param d2: new datastructure
-    :param basekeys: list of data keys' basenames (default: None, meaning [])
+    :param d1: old data structure
+    :param d2: new data structure
+    :param basekeys: list of data keys' base names (default: None, meaning [])
     :return: a list of tuples of the format (<change type>, <basekeys>, <value>)
              that can be used to format a diff
     """

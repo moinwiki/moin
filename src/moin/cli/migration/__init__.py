@@ -3,5 +3,5 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - migration scripts
+MoinMoin - CLI migration utilities.
 """

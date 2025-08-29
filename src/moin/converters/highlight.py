@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Text highlighting converter
+MoinMoin - Text highlighting converter.
 """
 
 import re
@@ -30,7 +30,7 @@ class Converter:
             if isinstance(child, (bytes, str)):
                 pos = 0
 
-                # Restrict it to our own namespace for now
+                # Restrict it to our own namespace for now.
                 if elem.tag.uri == moin_page.namespace:
                     for match in re.finditer(self.pattern, child):
                         text = child[pos : match.start()]
@@ -53,7 +53,7 @@ class Converter:
             elem[:] = new_childs
 
     def __init__(self, regex):
-        """treat each word separately and ignore case sensitivity"""
+        """Treat each word separately and ignore case sensitivity."""
         self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
     def __call__(self, tree):

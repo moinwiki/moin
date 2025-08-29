@@ -38,11 +38,11 @@ logging = log.getLogger(__name__)
 
 def encode_rfc2231(value, coding="UTF-8", lang=""):
     """
-    Encode a value according to RFC2231/5987.
+    Encode a value according to RFC 2231/5987.
 
-    :param value: the value to encode. must be either unicode or encoded in <coding>.
-    :param coding: the coding (charset) to use. it is a good idea to use 'UTF-8'.
-    :param lang: the language to use. defaults to empty string (no language given).
+    :param value: The value to encode. Must be either Unicode or encoded in <coding>.
+    :param coding: The encoding (charset) to use. It is a good idea to use 'UTF-8'.
+    :param lang: The language to use. Defaults to the empty string (no language given).
     """
     return f"{coding}'{lang}'{quote(value, encoding=coding)}"
 
@@ -65,12 +65,12 @@ def send_file(
     is careful about not assuming that every file is a filesystem file).
 
     This will use the most efficient method available, configured and possible
-    (for filesystem files some more optimizations may be possible that for
+    (for filesystem files some more optimizations may be possible than for
     file-like objects not having a filesystem filename).
     By default it will try to use the WSGI server's file_wrapper support.
-    Alternatively you can set ``USE_X_SENDFILE = True`` in the application's
+    Alternatively, you can set ``USE_X_SENDFILE = True`` in the application's
     config to directly emit an `X-Sendfile` header.  This
-    however requires support of the underlying webserver for `X-Sendfile`.
+    however requires support of the underlying web server for `X-Sendfile`.
 
     send_file will try to guess some stuff for you if you do not provide them:
 
@@ -81,7 +81,7 @@ def send_file(
     If you do not provide enough information, send_file might raise a
     TypeError.
 
-    For extra security you probably want to sent certain files as attachment
+    For extra security you probably want to send certain files as attachments
     (HTML for instance).
 
     Please never pass filenames to this function from user sources without
@@ -101,8 +101,8 @@ def send_file(
     :param file: a file (or file-like) object, you may give it if you either do
                  not have a filesystem filename or if you already have an open
                  file anyway.
-    :param mimetype: the mimetype of the file if provided, otherwise
-                     auto detection happens based on the filename or
+    :param mimetype: The MIME type of the file if provided; otherwise
+                     autodetection happens based on the filename or
                      attachment_filename.
     :param as_attachment: set to `True` if you want to send this file with
                           a ``Content-Disposition: attachment`` header.
@@ -116,7 +116,7 @@ def send_file(
     :param etag: you can give an etag here, None means to try to compute the
                  etag from the file's filesystem metadata (the latter of course
                  only works for filesystem files). If you do not give a
-                 filename, but you use add_etags, you must explicitely provide
+                 filename, but you use add_etags, you must explicitly provide
                  the etag as it can't compute it for that case.
     """
     if filename and not os.path.isabs(filename):

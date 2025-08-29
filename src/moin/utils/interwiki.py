@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - interwiki support code
+MoinMoin - interwiki support code.
 """
 
 from __future__ import annotations
@@ -28,14 +28,14 @@ logging = log.getLogger(__name__)
 
 def is_local_wiki(wiki_name):
     """
-    check if <wiki_name> is THIS wiki
+    Check if <wiki_name> is this wiki.
     """
     return wiki_name in ["", "Self", app.cfg.interwikiname]
 
 
 def is_known_wiki(wiki_name):
     """
-    check if <wiki_name> is a known wiki name
+    Check if <wiki_name> is a known wiki name.
 
     Note: interwiki_map should have entries for the special wikinames
     denoting THIS wiki, so we do not need to check these names separately.
@@ -45,8 +45,8 @@ def is_known_wiki(wiki_name):
 
 def get_fqname(item_name: str, field: LiteralString, namespace: str):
     """
-    Compute composite name from item_name, field, namespace
-    composite name == [NAMESPACE/][@FIELD/]NAME
+    Compute a composite name from item_name, field, and namespace.
+    Composite name == [NAMESPACE/][@FIELD/]NAME
     """
     if field and field != NAME_EXACT:
         item_name = f"@{field}/{item_name}"
@@ -69,9 +69,9 @@ def url_for_item(
     Compute URL for some local or remote/interwiki item.
 
     For local items:
-    give <rev> to get the url of some specific revision.
-    give the <endpoint> to get the url of some specific view,
-    give _external=True to compute fully specified URLs.
+    Give <rev> to get the URL of a specific revision.
+    Give <endpoint> to get the URL of a specific view,
+    and give _external=True to compute fully specified URLs.
 
     For remote/interwiki items:
     If you just give <item_name> and <wiki_name>, a generic interwiki URL
@@ -123,7 +123,7 @@ def url_for_item(
 
 def get_download_file_name(fqname):
     """
-    returns the filename that is used for downloading items
+    Return the filename used for downloading items.
     """
     if fqname.field == NAME_EXACT:
         return fqname.value
@@ -134,16 +134,16 @@ def get_download_file_name(fqname):
 def _split_namespace(namespaces, url):
     """
     Find the longest namespace in the set.
-    the namespaces are separated by  slashes (/).
+    Namespaces are separated by slashes (/).
     Example:
-        namespaces_set(['ns1', 'ns1/ns2'])
-        url: ns1/urlalasd return: ns1, urlalasd
-        url: ns3/urlalasd return: '', ns3/urlalasd
-        url: ns2/urlalasd return: '', ns2/urlalasd
-        url: ns1/ns2/urlalasd return: ns1/ns2, urlalasd
-    param namespaces_set: set of namespaces (strings) to search
-    param url: string
-    returns: (namespace, url)
+        namespaces: ['ns1', 'ns1/ns2']
+        url: ns1/urlalasd -> ns1, urlalasd
+        url: ns3/urlalasd -> '', ns3/urlalasd
+        url: ns2/urlalasd -> '', ns2/urlalasd
+        url: ns1/ns2/urlalasd -> ns1/ns2, urlalasd
+    :param namespaces: set of namespaces (strings) to search
+    :param url: string
+    :return: (namespace, url)
     """
     namespace = ""
     tokens_list = url.split("/")
@@ -162,13 +162,13 @@ def _split_namespace(namespaces, url):
 
 class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
     """
-    namedtuple to hold the compositename
+    Named tuple to hold the composite name.
     """
 
     @property
     def split(self):
         """
-        returns a dict of field_names/field_values
+        Return a dict of field names/values.
         """
         return {NAMESPACE: self.namespace, "field": self.field, "item_name": self.value}
 
@@ -182,8 +182,8 @@ class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
     @property
     def query(self):
         """
-        returns a dict that can be used as a whoosh query
-        to lookup index documents matching this CompositeName
+        Return a dict that can be used as a Whoosh query
+        to look up index documents matching this CompositeName.
         """
         field = NAME_EXACT if not self.field else self.field
         return {NAMESPACE: self.namespace, field: self.value}
@@ -198,11 +198,11 @@ class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
 
 def split_fqname(url: str) -> CompositeName:
     """
-    Split a fully qualified url into namespace, field and pagename
-    url -> [NAMESPACE/][@FIELD/]NAME
+    Split a fully qualified URL into namespace, field, and page name.
+    URL -> [NAMESPACE/][@FIELD/]NAME
 
-    :param url: the url to split
-    :returns: a namedtuple CompositeName(namespace, field, itemname)
+    :param url: the URL to split
+    :returns: a namedtuple CompositeName(namespace, field, item_name)
     Examples::
 
         url: 'ns1/ns2/@itemid/Page' return 'ns1/ns2', 'itemid', 'Page'
@@ -225,7 +225,7 @@ def split_fqname(url: str) -> CompositeName:
 
 def split_interwiki(wikiurl):
     """
-    Split a interwiki name, into wikiname and pagename, e.g::
+    Split an interwiki name into wiki name and page name, e.g.::
 
         'MoinMoin/FrontPage' -> "MoinMoin", "", "", "FrontPage"
         'FrontPage' -> "Self", "", "", "FrontPage"
@@ -271,10 +271,10 @@ def split_interwiki(wikiurl):
 
 def join_wiki(wikiurl, wikitail, field, namespace):
     """
-    Add a (url_quoted) page name to an interwiki url.
+    Add a (URL-quoted) page name to an interwiki URL.
 
     Note: We can't know what kind of URL quoting a remote wiki expects.
-          We just use a utf-8 encoded string with standard URL quoting.
+          We just use a UTF-8 encoded string with standard URL quoting.
 
     :param wikiurl: wiki url, maybe including a $PAGE placeholder
     :param wikitail: page name
@@ -311,9 +311,9 @@ def getInterwikiHome(username):
     """
     Get a user's homepage.
 
-    cfg.user_homewiki influences behaviour of this:
-    'Self' does mean we store user homepage in THIS wiki.
-    When set to our own interwikiname, it behaves like with 'Self'.
+    cfg.user_homewiki influences behavior:
+    'Self' means we store user homepages in this wiki.
+    When set to our own interwiki name, it behaves like 'Self'.
 
     'SomeOtherWiki' means we store user homepages in another wiki.
 

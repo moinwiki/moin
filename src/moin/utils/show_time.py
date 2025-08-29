@@ -36,20 +36,20 @@ def duration(seconds):
 
 def format_date_time(utc_dt=None, fmt="yyyy-MM-dd HH:mm:ss", interval="datetime"):
     """
-    Add an ISO 8601 alternative to babel's date/time formatting.
+    Add an ISO 8601 alternative to Babel's date/time formatting.
 
-    Visitors who are not logged-in see ISO 8601 formatted dates and times with
-    a "z" suffix indicating the date/time is a UTC Zulu time.
+    Visitors who are not logged in see ISO 8601-formatted dates and times with
+    a "z" suffix indicating the time is UTC (Zulu).
 
-    Logged in users who have selected the ISO 8601 option in usersettings and
-    have set their time zone to UTC in usersettings see date/times with a "z" suffix.
-    Users with a time zone other than UTC see local date/times in ISO 8601 format
+    Logged-in users who have enabled the ISO 8601 option in user settings and
+    set their time zone to UTC see dates/times with a "z" suffix.
+    Users with a time zone other than UTC see local ISO 8601 dates/times
     without the "z" suffix.
 
-    All other logged-in users will see the usual babel date/time formats based upon
+    All other logged-in users see the usual Babel date/time formats based on
     their time zone and locale.
 
-    See https://babel.pocoo.org/en/latest/dates.html#date-fields for babel format syntax.
+    See https://babel.pocoo.org/en/latest/dates.html#date-fields for Babel format syntax.
     """
     if utc_dt is None:
         utc_dt = utcnow()
@@ -57,7 +57,7 @@ def format_date_time(utc_dt=None, fmt="yyyy-MM-dd HH:mm:ss", interval="datetime"
         utc_dt = utcfromtimestamp(utc_dt)
 
     if not flaskg.user.valid:
-        # users who are not logged-in get moin version of ISO 8601: 2019-07-15 07:08:09z
+        # Users who are not logged in get Moin's ISO 8601 style: 2019-07-15 07:08:09z
         return flask_babel.format_datetime(utc_dt, fmt) + "z"
 
     if flaskg.user.iso_8601:

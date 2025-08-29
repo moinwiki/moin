@@ -25,7 +25,7 @@ client = Client(create_app())
 
 for page in PAGES:
     print('=== Run with page "%s" ===' % page)
-    print("Running %i WSGI-requests:" % RUNS)
+    print("Running %i WSGI requests:" % RUNS)
     timing = time.time()
     for run in range(RUNS):
         response = client.get(f"/{page}")
@@ -37,6 +37,6 @@ for page in PAGES:
     timing = time.time() - timing
 
     print()
-    print("Finished %i WSGI-requests in %.2f seconds" % (RUNS, timing))
+    print("Finished %i WSGI requests in %.2f seconds" % (RUNS, timing))
     print("Time per request: %.4f seconds" % (timing / RUNS))
     print("Requests per second: %.2f" % (RUNS / timing))

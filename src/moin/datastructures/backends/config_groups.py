@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - config groups backend
+MoinMoin - Config groups backend.
 
-The config_groups backend enables one to define groups and their
+The config_groups backend enables you to define groups and their
 members in a configuration file.
 """
 
@@ -20,8 +20,8 @@ class ConfigGroups(BaseGroupsBackend):
 
     def __init__(self, groups):
         """
-        :param groups: Dictionary of groups where key is group name,
-        and value is list of members of that group.
+        :param groups: Dictionary of groups where the key is the group name,
+        and the value is the list of members of that group.
         """
         super().__init__()
 

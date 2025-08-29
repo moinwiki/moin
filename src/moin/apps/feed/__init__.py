@@ -2,10 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - feed views package
+MoinMoin - Feed views package
 
-    This package contains all views, templates, static files for feeds
-    (like atom, ...).
+This package contains the views, templates, and static files for feeds (e.g., Atom).
 """
 
 

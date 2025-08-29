@@ -6,7 +6,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Moin Wiki input converter
+MoinMoin - MoinWiki input converter.
 """
 
 import re

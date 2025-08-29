@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MIME helpers
+MoinMoin — MIME helpers.
 """
 
 
@@ -97,12 +97,12 @@ class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
 
     def issupertype(self, other):
         """
-        Check if this object is a super type of the other
+        Check if this object is a supertype of the other.
 
-        A super type is defined as
+        A supertype is defined as
         - the other type matches this (possibly wildcard) type,
-        - the other subtype matches this (possibly wildcard) subtype and
-        - the other parameters are a supperset of this one.
+        - the other subtype matches this (possibly wildcard) subtype, and
+        - the other parameters are a superset of this one.
         """
         if isinstance(other, Type):
             if self.type and self.type != other.type:

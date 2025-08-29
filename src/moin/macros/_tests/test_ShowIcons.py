@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macros.ShowIcons
+MoinMoin - tests for moin.macros.ShowIcons.
 """
 
 import re
@@ -13,7 +13,7 @@ my_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def test_ShowIconsMacro():
-    """Call ShowIcons macro and test output"""
+    """Call the ShowIcons macro and test the output."""
     test_icons = ["admon-note", "angry", "biggrin", "frown", "moin-rss", "smile3", "star_off"]
     expected_namespace = "{http://moinmo.in/namespaces/page}"
     expected_tags = set(f"{expected_namespace}{el_name}" for el_name in ["table", "table-header", "table-row"])
@@ -37,7 +37,7 @@ def test_ShowIconsMacro():
 
 
 def get_css_icon_names():
-    """Read css file and search for icon urls"""
+    """Read CSS file and search for icon URLs."""
     css_file = os.path.join(os.path.split(my_dir)[0], "..", "static", "css", "common.css")
     with open(css_file, encoding="utf-8") as f:
         common_css = f.readlines()
@@ -50,7 +50,7 @@ def get_css_icon_names():
 
 
 def get_icon_filenames():
-    """Scan img/icons dir for filenames"""
+    """Scan the img/icons directory for filenames."""
     icon_dir = os.path.join(os.path.split(my_dir)[0], "..", "static", "img", "icons")
     filenames = set()
     with os.scandir(icon_dir) as files:
@@ -61,7 +61,7 @@ def get_icon_filenames():
 
 
 def test_all_icon_files_exist():
-    """Test if icons from css urls is a subset of filenames in icon dir"""
+    """Test that icons from CSS URLs are a subset of filenames in the icon directory."""
     icons = get_css_icon_names()
     files = get_icon_filenames()
     missing_icons = list(icons - files)

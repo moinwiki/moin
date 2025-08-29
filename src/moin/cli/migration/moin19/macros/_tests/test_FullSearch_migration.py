@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.cli.migration.moin19.macros Test FullSearch
+MoinMoin - tests for FullSearch macro migration (moin.cli.migration.moin19.macros).
 """
 
 import pytest
@@ -24,7 +24,7 @@ from moin.utils.tree import moin_page
     ],
 )
 def test_macro_conversion_itemlist(legacy_macro, expected_args):
-    # macro calls for Categories
+    # Macro calls for categories.
     converter = ConverterFormat19()
     dom = converter(legacy_macro, import19.CONTENTTYPE_MOINWIKI)
     migrate_macros(dom)  # in-place conversion
@@ -45,7 +45,7 @@ def test_macro_conversion_itemlist(legacy_macro, expected_args):
     ],
 )
 def test_macro_conversion_fullsearch(legacy_macro, expected_args):
-    # macro calls other than Categories are not changed
+    # Macro calls other than categories are not changed.
     converter = ConverterFormat19()
     dom = converter(legacy_macro, import19.CONTENTTYPE_MOINWIKI)
     migrate_macros(dom)  # in-place conversion

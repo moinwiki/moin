@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Archives converter (e.g. zip, tar)
+MoinMoin - Archives converter (e.g., zip, tar)
 
-Make a DOM Tree representation of an archive (== list contents of it in a table).
+Make a DOM tree representation of an archive (i.e., list its contents in a table).
 """
 
 
@@ -30,7 +30,7 @@ logging = log.getLogger(__name__)
 
 class ArchiveException(Exception):
     """
-    exception class used in case of trouble with opening/listing an archive
+    Exception class used in case of trouble opening/listing an archive.
     """
 
 
@@ -76,13 +76,13 @@ class ArchiveConverter(TableMixin):
 
     def list_contents(self, fileobj):
         """
-        analyze archive we get as fileobj and return data for table rendering.
+        Analyze the archive we get as fileobj and return data for table rendering.
 
-        We return a list of rows, each row is a list of cells.
+        Returns a list of rows; each row is a list of cells.
 
         Usually each row is [size, datetime, name] for each archive member.
 
-        In case of problems, it shall raise ArchiveException(error_msg).
+        In case of problems, raise ArchiveException(error_msg).
         """
         raise NotImplementedError
 

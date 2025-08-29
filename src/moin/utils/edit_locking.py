@@ -3,31 +3,31 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Create sqlite3 data models for edit locking and saving drafts. Expected usage
+Create SQLite3 data models for edit locking and saving drafts. Expected usage
 is limited to the +modify method in /items/__init__.py for text items.
 
-Moin2 has only two states for the edit_locking_Policy: None and 'lock'.
-None is suitable for single user desktop wikis.
+Moin2 has only two states for the edit_locking_policy: None and 'lock'.
+None is suitable for single-user desktop wikis.
 
 Drafts are always saved when an editor clicks the Preview link.
 Regardless of the edit_locking_policy, warning messages are given to the
 user when conflicts occur. Conflicts are caused when a user's edit lock times
 out, a second user obtains the item's edit lock and saves the item with updates, and then
 the first editor saves the item with conflicting updates. Such instances are
-detected and warning messages are flashed and included in the saved item.
+detected, and warning messages are flashed and included in the saved item.
 
-There are two small tables within the db saved in /wiki/sql/:
-    * editlock - maintains state of edit locks on text items when the locking policy is lock.
-        * there will be 1 row for each text item being actively edited or abandoned without a Save or Cancel
-        * rows for abandoned edits will be reused if a second user edits the item
-    * editdraft - saves pointers to text draft when user clicks the Preview button
-        * there will be 1 row per user who has clicked Modify and has not yet Saved or Cancelled
-        * if a user clicks Preview while editing a second item, the users old draft will be
-          deleted and the row reused to point to the new draft
+There are two small tables within the DB saved in /wiki/sql/:
+    * editlock - Maintains the state of edit locks on text items when the locking policy is 'lock'.
+        * There will be 1 row for each text item being actively edited or abandoned without a Save or Cancel.
+        * Rows for abandoned edits will be reused if a second user edits the item.
+    * editdraft - Saves pointers to a text draft when a user clicks the Preview button.
+        * There will be 1 row per user who has clicked Modify and has not yet Saved or Cancelled.
+        * If a user clicks Preview while editing a second item, the user's old draft will be
+          deleted and the row reused to point to the new draft.
 
 The preview drafts are saved in the /wiki/preview/ directory.
 
-To stress test edit locking use the Locust based tests in /contrib/loadtesting/.
+To stress-test edit locking, use the Locust-based tests in /contrib/loadtesting/.
 """
 
 import os
@@ -49,7 +49,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-# these are used to create paths to the sql database and saved drafts
+# These are used to create paths to the SQL database and saved drafts
 SQL = "sql"
 DB_NAME = "edit_utils.db"
 PREVIEW = "preview"

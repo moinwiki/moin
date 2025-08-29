@@ -3,5 +3,5 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - User Accounts Management Scripts
+MoinMoin - CLI commands for user account management.
 """

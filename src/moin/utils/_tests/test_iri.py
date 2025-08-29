@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.utils.iri
+MoinMoin - tests for moin.utils.iri.
 """
 
 

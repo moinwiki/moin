@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - File System Utilities
+MoinMoin - File system utilities.
 """
 
 
@@ -29,7 +29,7 @@ logging = log.getLogger(__name__)
 
 
 def chmod(name, mode, catchexception=True):
-    """change mode of some file/dir on platforms that support it."""
+    """Change the mode of a file/dir on platforms that support it."""
     try:
         os.chmod(name, mode)
     except OSError:
@@ -41,10 +41,10 @@ rename_overwrite = rename
 
 
 def rename_no_overwrite(oldname, newname, delete_old=False):
-    """Multiplatform rename
+    """Multiplatform rename.
 
-    This kind of rename is doing things differently: it fails if newname
-    already exists. This is the usual thing on win32, but not on posix.
+    This kind of rename behaves differently: it fails if newname
+    already exists. This is the usual behavior on Windows, but not on POSIX.
 
     If delete_old is True, oldname is removed in any case (even if the
     rename did not succeed).
@@ -102,9 +102,11 @@ def touch(name):
 
 
 def access_denied_decorator(fn):
-    """Due to unknown reasons, some os.* functions on Win32 sometimes fail
+    """Retry certain OS calls when transient access-denied errors occur (Windows).
+
+    Due to unknown reasons, some os.* functions on Windows sometimes fail
     with Access Denied (although access should be possible).
-    Just retrying it a bit later works and this is what we do.
+    Retrying shortly often works; this decorator does that.
     """
     if sys.platform == "win32":
 
@@ -164,7 +166,7 @@ def copytree(src, dst, symlinks=False):
     it is false, the contents of the files pointed to by symbolic
     links are copied.
 
-    In contrary to shutil.copytree, this version also copies directory
+    In contrast to shutil.copytree, this version also copies directory
     stats, not only file stats.
 
     """
@@ -191,6 +193,6 @@ def copytree(src, dst, symlinks=False):
 
 
 def wiki_index_exists():
-    """Return true if a wiki index exists."""
+    """Return True if a wiki index exists."""
     logging.debug("CWD: %s", os.getcwd())
     return bool(glob("wiki/index/_all_revs_*.toc"))

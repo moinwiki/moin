@@ -5,7 +5,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.datastructures.backends.wiki_dicts tests
+MoinMoin - moin.datastructures.backends.wiki_dicts tests.
 """
 
 

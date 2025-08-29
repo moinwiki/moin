@@ -3,5 +3,5 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - migration (upgrading) code for upgrades 1.9 -> 2.0
+MoinMoin - CLI migration utilities for upgrades from 1.9 to 2.0.
 """

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - validation tests
+MoinMoin - validation tests.
 """
 
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
@@ -18,7 +18,7 @@ from moin.utils.interwiki import CompositeName
 class TestValidation:
     def test_content(self):
         class REV(dict):
-            """fake rev"""
+            """Fake revision"""
 
         rev = REV()
         rev[keys.ITEMID] = make_uuid()

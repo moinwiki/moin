@@ -2,10 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - frontend views package
+MoinMoin - Frontend views package
 
-    This package contains all views, templates, static files that a normal wiki
-    user usually sees.
+This package contains the views, templates, and static files that a typical wiki user sees.
 """
 
 

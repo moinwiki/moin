@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-TitleIndex - generates a list of links for the namespace of the current item, grouped by initials
+TitleIndex - generates a list of links for the namespace of the current item, grouped by initials.
 
 Parameters:
     None
@@ -19,17 +19,17 @@ from moin.utils.interwiki import split_fqname
 
 class Macro(MacroMultiLinkListBase):
     def macro(self, content, arguments, page_url, alternative):
-        # get namespace of current item
+        # Get namespace of current item.
         namespace = split_fqname(str(page_url.path)).namespace
 
         if arguments:
-            err_msg = _("TitleList macro does not support any arguments.")
+            err_msg = _("TitleIndex macro does not support any arguments.")
             return fail_message(err_msg, alternative)
 
         children = get_item_names(namespace)
         if not children:
             empty_list = moin_page.list(attrib={moin_page.item_label_generate: "unordered"})
-            item_body = moin_page.list_item_body(children=[_("<TitleList macro: No matching items were found.>")])
+            item_body = moin_page.list_item_body(children=[_("<TitleIndex macro: No matching items were found.>")])
             empty_list.append(moin_page.list_item(children=[item_body]))
             return empty_list
 

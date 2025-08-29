@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Markdown input converter
+MoinMoin - Markdown input converter.
 
 https://daringfireball.net/projects/markdown/
 """
@@ -94,10 +94,10 @@ class Converter:
     # HTML tags which can be converted directly to the moin_page namespace
     symmetric_tags = {"div", "p", "strong", "code", "quote", "blockquote"}
 
-    # HTML tags to define a list, except dl which is a little bit different
+    # HTML tags that define a list; except dl, which is a little bit different
     list_tags = {"ul", "ol"}
 
-    # HTML tags which can be convert without attributes in a different DOM tag
+    # HTML tags that can be converted without attributes into a different DOM tag
     simple_tags = {  # Emphasis
         "em": moin_page.emphasis,
         "i": moin_page.emphasis,

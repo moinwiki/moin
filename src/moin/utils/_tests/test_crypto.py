@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.utils.crypto Tests
+MoinMoin - moin.utils.crypto tests.
 """
 
 
@@ -10,10 +10,10 @@ from moin.utils import crypto
 
 
 class TestRandom:
-    """crypto: random tests"""
+    """crypto: random tests."""
 
     def testRandomString(self):
-        """utils.random_string: test randomness and length"""
+        """utils.random_string: test randomness and length."""
         length = 8
         chars = "abcdefghijklmnopqrstuvwxyz"
         result1 = crypto.random_string(length, chars)
