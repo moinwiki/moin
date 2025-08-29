@@ -4,9 +4,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - feed views
+MoinMoin - Feed views
 
-    This contains all sort of feeds.
+This module provides feed endpoints (e.g., Atom).
 """
 
 
@@ -36,12 +36,12 @@ logging = log.getLogger(__name__)
 @feed.route("/atom", defaults=dict(item_name=""))
 def atom(item_name):
     """
-    Currently atom feeds behave in the following way
-    - Text diffs are shown in a side-by-side fashion
-    - The current binary item is fully rendered in the feed
-    - Image(binary)'s diff is shown using PIL
-    - First item is always rendered fully
-    - Revision meta(id, size and comment) is shown for parent and current revision
+    Atom feeds currently behave in the following way:
+    - Text diffs are shown side by side.
+    - The current binary item is fully rendered in the feed.
+    - Image (binary) diffs are shown using PIL.
+    - The first item is always rendered fully.
+    - Revision metadata (ID, size, and comment) is shown for the parent and current revision.
     """
     query = Every()
     if item_name:
@@ -85,7 +85,7 @@ def atom(item_name):
                         previous_rev, this_rev, fqname=this_rev.item.fqname
                     )
                 else:
-                    # full html rendering for new items
+                    # Full HTML rendering for new items
                     content = render_template(
                         "atom.html",
                         get="first_revision",

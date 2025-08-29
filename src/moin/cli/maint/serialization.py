@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - backend serialization / deserialization
+MoinMoin - CLI commands to serialize and deserialize backends.
 """
 
 import sys
@@ -37,7 +37,7 @@ def open_file(filename, mode):
         else:
             raise ValueError("Invalid mode string. Must contain 'r', 'w' or 'a'")
 
-        # On Windows force the stream to be in binary mode if it's needed.
+        # On Windows, force the stream to be in binary mode if needed.
         if sys.platform == "win32" and "b" in mode:
             import os
             import msvcrt
@@ -50,7 +50,7 @@ def open_file(filename, mode):
     return f
 
 
-@cli.command("save", help="Serialize the backend into a file")
+@cli.command("save", help="Serialize the configured backend(s) to a file")
 @click.option("--file", "-f", type=str, required=False, help="Filename of the output file.")
 @click.option("--backends", "-b", type=str, required=False, help="Backend names to serialize (comma separated).")
 @click.option("--all-backends", "-a", is_flag=True, help="Serialize all configured backends.")
@@ -63,13 +63,13 @@ def Serialize(file=None, backends=None, all_backends=False):
     with f as f:
         backends = get_backends(backends, all_backends)
         for backend in backends:
-            # low level - directly serialize some backend contents -
-            # this does not use the index:
+            # Low level: directly serialize backend contents;
+            # this does not use the index.
             serialize(backend, f)
     logging.info("Backup finished")
 
 
-@cli.command("load", help="Deserialize a file into the backend; with options to rename or remove a namespace")
+@cli.command("load", help="Deserialize a file into the backend; options to rename or remove a namespace")
 @click.option("--file", "-f", type=str, required=True, help="Filename of the input file.")
 @click.option(
     "--new-ns",
@@ -77,7 +77,7 @@ def Serialize(file=None, backends=None, all_backends=False):
     type=str,
     required=False,
     default=None,
-    help="New namespace name to receive items from the old namespace name.",
+    help="New namespace to receive items from the old namespace.",
 )
 @click.option(
     "--old-ns",
@@ -85,7 +85,7 @@ def Serialize(file=None, backends=None, all_backends=False):
     type=str,
     required=False,
     default=None,
-    help="Old namespace that will be deleted, all items to be restored to new namespace.",
+    help="Old namespace whose items will be restored to the new namespace; the old namespace will be deleted.",
 )
 @click.option(
     "--kill-ns",
@@ -93,7 +93,7 @@ def Serialize(file=None, backends=None, all_backends=False):
     type=str,
     required=False,
     default=None,
-    help="Namespace name to be deleted, no items within this namespace will be loaded.",
+    help="Namespace to delete; items within this namespace will not be loaded.",
 )
 def Deserialize(file=None, new_ns=None, old_ns=None, kill_ns=None):
     logging.info("Load backup started")

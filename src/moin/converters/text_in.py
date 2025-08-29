@@ -7,9 +7,9 @@ MoinMoin - Simple text input converter.
 
 It just puts all text into a code block. It acts as a wildcard for text/* input.
 
-We keep it at MIDDLE+2 prio in the registry, one after pygments converter, so
-it is a fallback for the case we have no pygments or pygments has no support
-for the input mimetype.
+We keep it at MIDDLE+2 priority in the registry, one after the pygments converter, so
+it is a fallback for the case where we have no pygments or pygments has no support
+for the input MIME type.
 """
 
 from moin.utils.mime import Type, type_moin_document

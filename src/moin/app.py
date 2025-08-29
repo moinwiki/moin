@@ -6,7 +6,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - wsgi application setup and related code
+MoinMoin - WSGI application setup and related code.
 
 Use create_app(config) to create the WSGI application (using Flask).
 """
@@ -52,7 +52,7 @@ if os.getcwd() not in sys.path and "" not in sys.path:
 
 def create_app(config: str | PathLike[str] | None = None) -> Flask:
     """
-    simple wrapper around create_app_ext()
+    Simple wrapper around create_app_ext().
     """
     return create_app_ext(flask_config_file=config)
 
@@ -65,21 +65,20 @@ def create_app_ext(
     **kwargs,
 ) -> Flask:
     """
-    Factory for moin wsgi apps
+    Factory for Moin WSGI apps.
 
-    :param flask_config_file: a flask config file name (may have a MOINCFG class),
-                              if not given, a config pointed to by MOINCFG env var
+    :param flask_config_file: A Flask config file name (may define a MOINCFG class).
+                              If not given, a config pointed to by the MOINCFG env var
                               will be loaded (if possible).
-    :param flask_config_dict: a dict used to update flask config (applied after
-                              flask_config_file was loaded [if given])
-    :param moin_config_class: if you give this, it'll be instantiated as app.cfg,
-                              otherwise it'll use MOINCFG from flask config. If that
-                              also is not there, it'll use the DefaultConfig built
-                              into MoinMoin.
-    :param warn_default: emit a warning if moin falls back to its builtin default
-                         config (maybe user forgot to specify MOINCFG?)
-    :param kwargs: if you give additional keyword args, the keys/values will get patched
-                   into the moin configuration class (before its instance is created)
+    :param flask_config_dict: A dict used to update the Flask config (applied after
+                              flask_config_file was loaded, if given).
+    :param moin_config_class: If given, this class is instantiated as app.cfg;
+                              otherwise, MOINCFG from the Flask config is used. If that
+                              is also not present, the built-in DefaultConfig will be used.
+    :param warn_default: Emit a warning if Moin falls back to its built-in default
+                         config (perhaps the user forgot to specify MOINCFG?).
+    :param kwargs: Additional keyword args will be patched into the Moin configuration
+                   class (before its instance is created).
     """
     clock = Clock()
     clock.start("create_app total")
@@ -94,7 +93,7 @@ def create_app_ext(
     else:
         cmd_name = ""
     logging.debug("info_name: %s cmd_name: %s", info_name, cmd_name)
-    # help don't need config or backend and should run independent of a valid wiki instance
+    # Help doesn't need config or backend and should run independently of a valid wiki instance
     # moin --help results in info_name=moin and cmd_name=cli
     if (info_name == "moin" and cmd_name == "cli") or info_name == "help":
         return app
@@ -169,7 +168,7 @@ def create_app_ext(
 
     app.register_blueprint(serve, url_prefix="/+serve")
 
-    # create wiki link analyzer after having registered all routes
+    # Create WikiLink analyzer after having registered all routes
     app.link_analyzer = WikiLinkAnalyzer(app)
 
     clock.stop("create_app register")
@@ -179,7 +178,7 @@ def create_app_ext(
     cache.init_app(app)
     app.cache = cache
     clock.stop("create_app flask-cache")
-    # init storage
+    # Initialize storage
     clock.start("create_app init backends")
     # start init_backends
     _init_backends(app, info_name, clock)
@@ -195,7 +194,7 @@ def create_app_ext(
     app.register_error_handler(403, themed_error)
     app.cfg.custom_css_path = os.path.isfile("wiki_local/custom.css")
     clock.stop("create_app flask-theme")
-    # create global counter to limit content security policy reports, prevent spam
+    # Create a global counter to limit Content Security Policy reports and prevent spam
     app.csp_count = 0
     app.csp_last_date = ""
     clock.stop("create_app total")

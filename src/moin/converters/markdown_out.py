@@ -4,9 +4,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Markdown markup output converter
+MoinMoin - Markdown output converter.
 
-Converts an internal document tree into markdown markup.
+Convert an internal document tree into Markdown markup.
 """
 
 import urllib.request
@@ -26,8 +26,8 @@ from moin.utils.mime import Type, type_moin_document
 
 class Markdown:
     """
-    Markdown syntax elements
-    It's dummy
+    Markdown syntax elements.
+    Placeholder for Markdown-specific tokens.
     """
 
     h = "#"
@@ -80,7 +80,7 @@ class Markdown:
 
 class Converter:
     """
-    Converter application/x.moin.document -> text/x.moin.wiki
+    Convert application/x.moin.document to Markdown markup.
     """
 
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}

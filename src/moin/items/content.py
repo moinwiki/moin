@@ -9,13 +9,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - item contents
+MoinMoin - Item content
 
-    Classes handling the content part of items (ie. minus metadata). The
-    content part is sometimes called the "data" part in other places, but is
-    always called content in this module to avoid confusion.
+Classes that handle the content part of items (i.e., excluding metadata). The
+content part is sometimes called the "data" part in other places, but it is
+consistently called content in this module to avoid confusion.
 
-    Each class in this module corresponds to a contenttype value.
+Each class in this module corresponds to a content type value.
 """
 
 from __future__ import annotations
@@ -112,7 +112,7 @@ class RegistryContent(RegistryBase):
 
     def register(self, e, group):
         """
-        Register a contenttype entry and optionally add it to a specific group.
+        Register a content type entry and optionally add it to a specific group.
         """
         # If group is specified and contenttype is not a wildcard one
         if group and e.content_type.type and e.content_type.subtype:

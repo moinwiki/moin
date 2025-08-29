@@ -2,10 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli._tests.scrapy.moincrawler.ref_checker
+MoinMoin - Scrapy spider to check references.
 
-spider a moin site and report on 404 and other errors for href, src, data, and data-href attribs
-this spider is run via moin.cli._tests.conftest.do_crawl via moin.cli._tests.test_scrapy_crawl
+Spider a Moin site and report 404 and other errors for href, src, data, and data-href attributes.
+This spider is run via moin.cli._tests.conftest.do_crawl from moin.cli._tests.test_scrapy_crawl.
 """
 
 import csv
@@ -33,18 +33,19 @@ logging = log.getLogger(__name__)
 
 
 class RefCheckerSpider(scrapy.Spider):
-    """crawl moin pages following href, src, data, and data-href attributes
+    """Crawl Moin pages following href, src, data, and data-href attributes.
 
-    this spider is run via moin.cli._tests.conftest.do_crawl via moin.cli._tests.test_scrapy_crawl
-    on close the spider writes results to _test_artifacts/crawl.csv
-    crawl.csv will be read by test_scrapy_crawl
-    original design shamelessly stolen (with permission) from
-        https://www.linode.com/docs/guides/use-scrapy-to-extract-data-from-html-tags/"""
+    This spider is run via moin.cli._tests.conftest.do_crawl from moin.cli._tests.test_scrapy_crawl.
+    On close, the spider writes results to _test_artifacts/crawl.csv.
+    The file crawl.csv is then read by test_scrapy_crawl.
+    Original design adapted (with permission) from:
+        https://www.linode.com/docs/guides/use-scrapy-to-extract-data-from-html-tags/
+    """
 
     name = "ref_checker"
 
     def __init__(self, url="http://127.0.0.1:8080/", *args, **kwargs):
-        """:param url: start url for crawl, overridden by settings.CRAWL_START in moin.cli.conftest.do_crawl"""
+        """:param url: Start URL for the crawl; overridden by settings.CRAWL_START in moin.cli.conftest.do_crawl."""
         super().__init__(*args, **kwargs)
         self.start_urls = [url]
         self.no_crawl_paths = ["/MoinWikiMacros/MonthCalendar"]  # lots of 404s for the dates
@@ -81,7 +82,8 @@ class RefCheckerSpider(scrapy.Spider):
     def _parse(self, response, **kwargs):
         """Main method that parses downloaded pages.
 
-        requests yielded from this method are added to the crawl queue"""
+        Requests yielded from this method are added to the crawl queue.
+        """
         try:
             result = response.meta["my_data"]
         except KeyError:
@@ -151,7 +153,7 @@ class RefCheckerSpider(scrapy.Spider):
                     yield request
 
     def parse(self, response, **kwargs):
-        """called by scrapy framework"""
+        """Called by the Scrapy framework."""
         try:
             yield from self._parse(response, **kwargs)
         except Exception as e:  # noqa

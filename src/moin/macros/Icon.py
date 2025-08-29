@@ -2,12 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Support use of icons within wiki content.
+Support the use of icons within wiki content.
 
-Unlike moin 1.x, moin 2 has one icon directory, not one per theme.
-Moin 1.x passed predefined alt text, width and height within the img tag;
-moin 2 assumes an error if icon is not rendered (alt text displayed in red font)
-and relies on client browser to render image based on its size.
+Unlike Moin 1.x, Moin 2 has a single icon directory rather than one per theme.
+Moin 1.x passed predefined alt text, width, and height within the <img> tag;
+Moin 2 assumes an error if an icon is not rendered (alt text displayed in red)
+and relies on the client browser to render the image based on its size.
 """
 
 
@@ -25,6 +25,6 @@ class Macro(MacroInlineBase):
             msg = _("Icon macro failed due to missing icon name.")
             return fail_message(msg, alternative)
         src = url_for("static", filename="img/icons/" + icon)
-        reason = _("Icon not rendered, invalid name")
+        reason = _("Icon not rendered (invalid name)")
         alt = f"<<Icon({icon})>> - {reason}"
         return html.img(attrib={html.src: src, html.alt: alt, html.class_: "moin-icon-macro"})

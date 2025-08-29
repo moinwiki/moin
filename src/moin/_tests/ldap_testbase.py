@@ -2,37 +2,37 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    LDAPTestBase: LDAP testing support for pytest based unit tests
+LDAPTestBase: LDAP testing support for pytest-based unit tests.
 
-    Features
-    --------
+Features
+--------
 
-    * setup_class
-      * automatic creation of a temporary LDAP server environment
-      * automatic creation of a LDAP server process (slapd)
+* setup_class
+  * automatic creation of a temporary LDAP server environment
+  * automatic creation of an LDAP server process (slapd)
 
-    * teardown_class
-      * LDAP server process will be killed and termination will be waited for
-      * temporary LDAP environment will be removed
+* teardown_class
+  * the LDAP server process will be terminated (and we will wait for termination)
+  * the temporary LDAP environment will be removed
 
-    Usage
-    -----
+Usage
+-----
 
-    Write your own test class and derive from LDAPTestBase:
+Write your own test class and derive from LDAPTestBase:
 
-    class TestLdap(LDAPTestBase):
-        def testFunction(self):
-            server_url = self.ldap_env.slapd.url
-            lo = ldap.initialize(server_url)
-            lo.simple_bind_s('', '')
+class TestLdap(LDAPTestBase):
+    def testFunction(self):
+        server_url = self.ldap_env.slapd.url
+        lo = ldap.initialize(server_url)
+        lo.simple_bind_s('', '')
 
-    Notes
-    -----
+Notes
+-----
 
-    On Ubuntu 8.04 there is apparmor imposing some restrictions on /usr/sbin/slapd,
-    so you need to disable apparmor by invoking this as root:
+On Ubuntu 8.04 there is AppArmor imposing some restrictions on /usr/sbin/slapd,
+so you need to disable AppArmor by invoking this as root:
 
-    # /etc/init.d/apparmor stop
+# /etc/init.d/apparmor stop
 """
 
 
@@ -61,9 +61,9 @@ SLAPD_EXECUTABLE = "slapd"
 
 
 def check_environ():
-    """Check the system environment whether we are able to run.
-    Either return some failure reason if we can't or None if everything
-    looks OK.
+    """Check whether the system environment can run these tests.
+
+    Return a failure reason string if we can't, or None if everything looks OK.
     """
     if ldap is None:
         return "You need python-ldap installed to use ldap_testbase."
@@ -85,7 +85,7 @@ def check_environ():
 
 
 class Slapd:
-    """Manage a slapd process for testing purposes"""
+    """Manage a slapd process for testing purposes."""
 
     def __init__(
         self,
@@ -110,7 +110,7 @@ class Slapd:
             self.service_name = service_name
 
     def start(self, timeout=0):
-        """start a slapd process and optionally wait up to timeout seconds until it responds"""
+        """Start a slapd process and optionally wait up to 'timeout' seconds until it responds."""
         args = [self.executable, "-h", self.url]
         if self.config is not None:
             args.extend(["-f", self.config])
@@ -136,14 +136,14 @@ class Slapd:
         return started
 
     def stop(self):
-        """stop this slapd process and wait until it has terminated"""
+        """Stop this slapd process and wait until it has terminated."""
         pid = self.process.pid
         os.kill(pid, signal.SIGTERM)
         os.waitpid(pid, 0)
 
 
 class LdapEnvironment:
-    """Manage a (temporary) environment for running a slapd in it"""
+    """Manage a (temporary) environment for running a slapd."""
 
     # default DB_CONFIG bdb configuration file contents
     DB_CONFIG = """\
@@ -180,9 +180,8 @@ class LdapEnvironment:
         self.timeout = timeout
 
     def create_env(self, slapd_config, db_config=DB_CONFIG):
-        """create a temporary LDAP server environment in a temp. directory,
-        including writing a slapd.conf (see configure_slapd) and a
-        DB_CONFIG there.
+        """Create a temporary LDAP server environment in a temp directory,
+        including writing a slapd.conf (see configure_slapd) and a DB_CONFIG there.
         """
         # create directories
         self.ldap_dir = tempfile.mkdtemp(prefix=f"LdapEnvironment-{self.instance}.")
@@ -212,13 +211,13 @@ class LdapEnvironment:
             f.write(slapd_config)
 
     def start_slapd(self):
-        """start a slapd and optionally wait until it talks with us"""
+        """Start a slapd and optionally wait until it responds."""
         self.slapd = Slapd(config=self.slapd_conf, port=3890 + self.instance)
         started = self.slapd.start(timeout=self.timeout)
         return started
 
     def load_directory(self, ldif_content):
-        """load the directory with the ldif_content (str)"""
+        """Load the directory with the ldif_content (str)."""
         lo = ldap.initialize(self.slapd.url)
         ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
         lo.simple_bind_s(self.rootdn, self.rootpw)
@@ -231,11 +230,11 @@ class LdapEnvironment:
         loader.parse()
 
     def stop_slapd(self):
-        """stop a slapd"""
+        """Stop slapd."""
         self.slapd.stop()
 
     def destroy_env(self):
-        """remove the temporary LDAP server environment"""
+        """Remove the temporary LDAP server environment."""
         shutil.rmtree(self.ldap_dir)
 
 
@@ -243,9 +242,9 @@ try:
     import pytest
 
     class LDAPTstBase:
-        """Test base class for pytest based tests which need a LDAP server to talk to.
+        """Test base class for pytest-based tests that need an LDAP server.
 
-        Inherit your test class from this base class to test LDAP stuff.
+        Inherit your test class from this base class to test LDAP functionality.
         """
 
         # You MUST define these in your derived class:
@@ -256,7 +255,7 @@ try:
         rootpw = None  # root password
 
         def setup_class(self):
-            """Create LDAP server environment, start slapd"""
+            """Create an LDAP server environment and start slapd."""
             self.ldap_env = LdapEnvironment(self.basedn, self.rootdn, self.rootpw)
             self.ldap_env.create_env(slapd_config=self.slapd_config)
             started = self.ldap_env.start_slapd()
@@ -268,7 +267,7 @@ try:
             self.ldap_env.load_directory(ldif_content=self.ldif_content)
 
         def teardown_class(self):
-            """Stop slapd, remove LDAP server environment"""
+            """Stop slapd and remove the LDAP server environment."""
             self.ldap_env.stop_slapd()
             self.ldap_env.destroy_env()
 

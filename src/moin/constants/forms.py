@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Flatland form related constants
+MoinMoin - Flatland form-related constants.
 """
 
 # Widget types
@@ -31,5 +31,5 @@ WIDGET_MULTI_SELECT = "multi_select"
 WIDGET_READONLY_STRING_LIST = "readonly_string_list"
 WIDGET_READONLY_ITEM_LINK_LIST = "readonly_item_link_list"
 
-# CSS Classes
+# CSS classes
 CLASS_BUTTON = "button"

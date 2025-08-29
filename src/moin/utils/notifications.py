@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Notifications
+MoinMoin - notifications.
 """
 
 from io import BytesIO
@@ -48,9 +48,9 @@ DESTROY_ALL = "DESTROY_ALL"
 
 
 def msgs():
-    """Encapsulates the main notification messages
+    """Encapsulate the main notification messages.
 
-    :return: a dictionary of notification messages
+    :return: A dictionary of notification messages.
     """
     _ = lambda x: x  # noqa
     messages = {
@@ -72,7 +72,7 @@ MESSAGES = msgs()
 
 class Notification:
     """
-    Represents a mail notification about an item change
+    Represent a mail notification about an item change.
     """
 
     txt_template = "mail/notification.txt"
@@ -101,9 +101,9 @@ class Notification:
         self.notification_sentence = L_(MESSAGES[self.action]).format(**kw)
 
     def get_content_diff(self):
-        """Create a content diff for the last item change
+        """Create a content diff for the last item change.
 
-        :return: list of diff lines
+        :return: A list of diff lines.
         """
         if self.action in [ACTION_TRASH, DESTROY_REV, DESTROY_ALL]:
             contenttype = self.meta[CONTENTTYPE]
@@ -126,10 +126,10 @@ class Notification:
         return content._get_data_diff_text(oldfile, newfile)
 
     def get_meta_diff(self):
-        """Create a meta diff for the last item change
+        """Create a metadata diff for the last item change.
 
-        :return: a list of tuples of the format (<change type>, <basekeys>, <value>)
-                 that can be used to format a diff
+        :return: A list of tuples of the format (<change type>, <basekeys>, <value>)
+                 that can be used to format a diff.
         """
         if self.action in [ACTION_TRASH, DESTROY_REV, DESTROY_ALL]:
             old_meta, new_meta = dict(self.meta), dict()
@@ -143,13 +143,13 @@ class Notification:
         return meta_diff
 
     def generate_diff_url(self, domain):
-        """Generate the URL that leads to diff page of the last 2 revisions
+        """Generate the URL to the diff page for the last two revisions.
 
-        :param domain: domain name
-        :return: the absolute URL to the diff page
+        :param domain: Domain name.
+        :return: The absolute URL to the diff page.
 
-        if data/meta are None, then new item is being created
-        if new_data/new_meta is None then item is being deleted or destroyed
+        If data/meta are None, a new item is being created.
+        If new_data/new_meta is None, the item is being deleted or destroyed.
         """
         if self.new_data is None or self.data is None:
             return ""
@@ -157,10 +157,9 @@ class Notification:
         return urljoin(domain, diff_rel_url)
 
     def render_templates(self, content_diff, meta_diff):
-        """Render both plain text and HTML templates by providing all the
-        necessary arguments
+        """Render both plain text and HTML templates.
 
-        :return: tuple consisting of plain text and HTML notification message
+        :return: A tuple consisting of the plain text and HTML notification message.
         """
         meta_diff_txt = list(make_text_diff(meta_diff))
         domain = self.app.cfg.interwiki_map[self.app.cfg.interwikiname]
@@ -194,16 +193,16 @@ class Notification:
 
 @item_modified.connect_via(ANY)
 def send_notifications(app, fqname, action, data=None, meta=None, new_data=None, new_meta=None, **kwargs):
-    """Send mail notifications to subscribers on item change
+    """Send mail notifications to subscribers when an item changes.
 
-    :param app: local proxy app
-    :param fqname: fqname of the changed item
-    :param action: type of modification - save, rename, destroy...
-    :param data: the item's data, None if item is new
-    :param meta: the item's meta data, None if item is new
-    :param new_data: open file with new data, None if action is delete or destroy
-    :param new_meta: new meta data, None if action is delete or destroy
-    :param kwargs: optional comment
+    :param app: Local proxy app.
+    :param fqname: Fully qualified name of the changed item.
+    :param action: Type of modification (save, rename, destroy, etc.).
+    :param data: The item's data, or None if the item is new.
+    :param meta: The item's metadata, or None if the item is new.
+    :param new_data: Open file with new data, or None if the action is delete or destroy.
+    :param new_meta: New metadata, or None if the action is delete or destroy.
+    :param kwargs: Optional comment.
     """
     if new_meta is None:
         subscribers = {subscriber for subscriber in get_subscribers(**meta) if subscriber.itemid != flaskg.user.itemid}

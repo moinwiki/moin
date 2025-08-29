@@ -3,12 +3,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Load I18N Text
+MoinMoin - load I18N text.
 
-This macro has the main purpose of supporting Help* page authors
-to insert the texts that a user actually sees on his screen into
-the description of the related features (which otherwise could
-get very confusing).
+This macro helps Help* page authors insert the texts that a user actually sees
+on their screen into the description of the related features (which otherwise
+could become very confusing).
 """
 
 
@@ -17,7 +16,7 @@ from moin.macros._base import MacroInlineBase
 
 
 class Macro(MacroInlineBase):
-    """Return a translation of args, or args as is"""
+    """Return a translation of the argument, or the argument as is."""
 
     def macro(self, content, arguments, page_url, alternative):
         translation = _(arguments[0])

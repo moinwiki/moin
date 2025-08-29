@@ -4,9 +4,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - RandomItem Macro displays one or multiple random item links.
+MoinMoin - RandomItem macro displays one or multiple random item links.
 
-TODO: add mimetype param and only show items matching this mimetype
+TODO: Add a mimetype parameter and only show items matching this mimetype.
 """
 
 import random
@@ -29,8 +29,8 @@ class Macro(MacroPageLinkListBase):
 
         all_item_names = get_item_names()
 
-        # Now select random item from the full list, and if it exists and
-        # we can read it, save.
+        # Now select random items from the full list, and if one exists and
+        # we can read it, save it.
         random_item_names = []
         found = 0
         while found < item_count and all_item_names:
@@ -57,5 +57,5 @@ class Macro(MacroPageLinkListBase):
             result.append(moin_page.a(attrib={xlink.href: link}, children=[name]))
             result.append(", ")
 
-        del result[-1]  # kill last comma
+        del result[-1]  # Remove the trailing comma
         return result

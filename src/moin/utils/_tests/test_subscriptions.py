@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.subscriptions Tests
+MoinMoin - tests for moin.utils.subscriptions.
 """
 
 import pytest
@@ -104,7 +104,7 @@ class TestSubscriptions:
         assert patterns == matching_patterns
 
     def test_perf_get_subscribers(self):
-        pytest.skip("usually we do no performance tests")
+        pytest.skip("Usually we do not run performance tests.")
         password = "password"
         subscriptions = [
             f"{ITEMID}:{self.item.meta[ITEMID]}",

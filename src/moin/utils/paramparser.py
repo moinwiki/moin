@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - parameter parsing and invoking of extension functions
+MoinMoin - parameter parsing and invoking of extension functions.
 """
 
 from functools import cmp_to_key
@@ -66,15 +66,15 @@ def parse_quoted_separated_ext(
     empty string as a value can be achieved by quoting it.
 
     If a name or value does not start with a quote, then the quote
-    looses its special meaning for that name or value, unless it
+    loses its special meaning for that name or value, unless it
     starts with one of the given prefixes (the parameter is a str
     containing all allowed prefixes.) The prefixes will be returned
     as ParserPrefix() instances in the first element of the tuple
     for that particular argument.
 
     If multiple separators follow each other, this is treated as
-    having None arguments inbetween, that is also true for when
-    space is used as separators (when separator is None), filter
+    having None arguments in between; that is also true for when
+    space is used as a separator (when separator is None); filter
     them out afterwards.
 
     The function can also do bracketing, i.e. parse expressions

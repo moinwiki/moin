@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters._wiki_macro
+MoinMoin - moin.converters._wiki_macro tests.
 """
 
 import pytest

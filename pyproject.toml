@@ -149,7 +149,7 @@ unfixable = []
 "src/moin/datastructures/__init__.py" = ["F401"]
 
 [tool.bandit]
-exclude_dirs = ["quickinstall.py", "*/_tests/*", "*/_ui_tests/*"]
+exclude_dirs = ["quickinstall.py", "*/_tests/*", "*/_ui_tests/*", "scripts", "contrib/loadtesting"]
 skips = ["B101", "B105", "B106", "B307", "B311", "B403", "B608"]
 
 # tox configuration - if you change anything here, run this to verify:

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - backend utilities
+MoinMoin - backend utilities.
 """
 
 import hashlib
@@ -11,11 +11,12 @@ import hashlib
 
 class TrackingFileWrapper:
     """
-    Wraps a file and computes hashcode and file size while it is read.
-    Requires that initially the realfile is open and at pos 0.
-    Users need to call .read(blocksize) until it does not return any more data.
-    After this self.hash and self.size will have the wanted values.
-    self.hash is the hash instance, you may want to call self.hash.hexdigest().
+    Wrap a file and compute a hash and file size as it is read.
+
+    The underlying file must be open and positioned at 0 initially.
+    Call read(blocksize) repeatedly until it returns no more data.
+    After that, the size and hash properties are available.
+    The hash property is the hash instance; call hash.hexdigest() if needed.
     """
 
     def __init__(self, realfile, hash_method="sha1"):
@@ -27,7 +28,7 @@ class TrackingFileWrapper:
         if hasattr(realfile, "tell"):
             fpos = realfile.tell()
             if fpos:
-                raise ValueError("file needs to be at pos 0")
+                raise ValueError("file must be at position 0")
 
     def read(self, size=-1):
         data = self._read(size)
@@ -40,11 +41,11 @@ class TrackingFileWrapper:
     @property
     def size(self):
         if not self._finished:
-            raise AttributeError("do not access size attribute before having read all data")
+            raise AttributeError("Do not access the size attribute before having read all data")
         return self._size
 
     @property
     def hash(self):
         if not self._finished:
-            raise AttributeError("do not access hash attribute before having read all data")
+            raise AttributeError("Do not access the hash attribute before having read all data")
         return self._hash

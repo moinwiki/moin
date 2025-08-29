@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.cli.migration.moin19.macros Test PageList
+MoinMoin - tests for PageList macro migration (moin.cli.migration.moin19.macros).
 """
 
 import pytest

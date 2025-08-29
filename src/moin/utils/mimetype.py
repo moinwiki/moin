@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - mimetype support
+MoinMoin - MIME type support.
 """
 
 import mimetypes
@@ -12,8 +12,8 @@ import pygments.lexers
 
 from moin.constants.contenttypes import PARSER_TEXT_MIMETYPE
 
-# prevents unexpected results on Windows
-# see http://bugs.python.org/issue10551
+# Prevent unexpected results on Windows.
+# See https://bugs.python.org/issue10551
 mimetypes.init(mimetypes.knownfiles)
 
 MIMETYPES_MORE = {
@@ -31,7 +31,7 @@ MIMETYPES_MORE = {
     ".ots": "application/vnd.oasis.opendocument.spreadsheet-template",
     ".otp": "application/vnd.oasis.opendocument.presentation-template",
     ".otg": "application/vnd.oasis.opendocument.graphics-template",
-    # some systems (like Mac OS X) don't have some of these:
+    # Some systems (such as macOS) don't have some of these:
     ".patch": "text/x-diff",
     ".diff": "text/x-diff",
     ".py": "text/x-python",
@@ -60,13 +60,12 @@ MIMETYPES_MORE = {
     ".targz": "application/x-gtar",
 }
 
-# add all mimetype patterns of pygments
+# Add all MIME type patterns from Pygments
 for name, short, patterns, mime in pygments.lexers.get_all_lexers():
     for pattern in patterns:
         if pattern.startswith("*.") and mime:
             if pattern in ("*.txt",):
-                # there are some pygments lexers that claim *.txt for different
-                # stuff than text/plain, we do not want that.
+                # Some Pygments lexers claim *.txt for types other than text/plain; skip those.
                 continue
             MIMETYPES_MORE[pattern[1:]] = mime[0]
 
@@ -74,7 +73,7 @@ for ext, mimetype in sorted(MIMETYPES_MORE.items()):
     mimetypes.add_type(mimetype, ext, True)
 
 MIMETYPES_sanitize_mapping = {
-    # this stuff is text, but got application/* for unknown reasons
+    # These types are text but sometimes get application/* for unknown reasons
     ("application", "docbook+xml"): ("text", "docbook"),
     ("application", "x-latex"): ("text", "latex"),
     ("application", "x-tex"): ("text", "tex"),
@@ -88,7 +87,7 @@ for _key, _value in MIMETYPES_sanitize_mapping.items():
 
 
 class MimeType:
-    """represents a mimetype like text/plain"""
+    """Represents a MIME type such as text/plain."""
 
     def __init__(self, mimestr=None, filename=None):
         self.major = self.minor = None  # sanitized mime type and subtype
@@ -108,8 +107,9 @@ class MimeType:
         self.parse_mimetype(mtype)
 
     def parse_mimetype(self, mimestr):
-        """take a string like used in content-type and parse it into components,
-        alternatively it also can process some abbreviated string like "wiki"
+        """Parse a Content-Type-like string into components.
+
+        Also accepts abbreviated forms such as "wiki".
         """
         parameters = mimestr.split(";")
         parameters = [p.strip() for p in parameters]
@@ -131,10 +131,10 @@ class MimeType:
         self.sanitize()
 
     def parse_format(self, format):
-        """maps from what we currently use on-page in a #format xxx processing
-        instruction to a sanitized mimetype major, minor tuple.
-        can also be user later for easier entry by the user, so he can just
-        type "wiki" instead of "text/x.moin.wiki".
+        """Map on-page #format values to a sanitized (major, minor) MIME type tuple.
+
+        This can also be used for easier user input, so a user can type
+        "wiki" instead of "text/x.moin.wiki".
         """
         format = format.lower()
         if format in PARSER_TEXT_MIMETYPE:
@@ -148,22 +148,25 @@ class MimeType:
         return mimetype
 
     def sanitize(self):
-        """convert to some representation that makes sense - this is not necessarily
-        conformant to /etc/mime.types or IANA listing, but if something is
-        readable text, we will return some ``text/*`` mimetype, not ``application/*``,
-        because we need text/plain as fallback and not application/octet-stream.
+        """Convert to a sensible representation.
+
+        This is not necessarily conformant to /etc/mime.types or the IANA listing,
+        but if something is readable text, we return a ``text/*`` MIME type, not
+        ``application/*``, because we need text/plain as a fallback (not
+        application/octet-stream).
         """
         self.major, self.minor = MIMETYPES_sanitize_mapping.get((self.major, self.minor), (self.major, self.minor))
 
     def spoil(self):
-        """this returns something conformant to /etc/mime.type or IANA as a string,
-        kind of inverse operation of sanitize(), but doesn't change self
+        """Return a string conformant to /etc/mime.types or IANA.
+
+        This is the inverse operation of sanitize(), but it does not modify self.
         """
         major, minor = MIMETYPES_spoil_mapping.get((self.major, self.minor), (self.major, self.minor))
         return self.content_type(major, minor)
 
     def content_type(self, major=None, minor=None, charset=None, params=None):
-        """return a string suitable for Content-Type header"""
+        """Return a string suitable for a Content-Type header."""
         major = major or self.major
         minor = minor or self.minor
         params = params or self.params or {}
@@ -177,26 +180,26 @@ class MimeType:
         return ";".join(params)
 
     def mime_type(self):
-        """return a string major/minor only, no params"""
+        """Return a string containing only major/minor, no parameters."""
         return f"{self.major}/{self.minor}"
 
     def as_attachment(self, cfg):
-        # for dangerous files (like .html), when we are in danger of cross-site-scripting attacks,
-        # we just let the user store them to disk ('attachment').
-        # For safe files, we directly show them inline (this also works better for IE).
+        # For dangerous files (like .html) where cross-site-scripting attacks are a risk,
+        # we let the user store them to disk (as an 'attachment').
+        # For safe files, we display them inline (this also works better for IE).
         mime_type = self.mime_type()
         return mime_type in cfg.mimetypes_xss_protect
 
     def module_name(self):
-        """convert this mimetype to a string useable as python module name,
-        we yield the exact module name first and then proceed to shorter
-        module names (useful for falling back to them, if the more special
-        module is not found) - e.g. first "text_python", next "text".
-        Finally, we yield "application_octet_stream" as the most general
-        mimetype we have.
+        """Convert this MIME type to strings usable as Python module names.
+
+        We yield the most specific module name first and then proceed to shorter
+        names (useful for falling back if a more specific module is not found),
+        e.g., first "text_python", then "text". Finally, we yield
+        "application_octet_stream" as the most general MIME type.
 
         Hint: the fallback handler module for text/* should be implemented
-        in module "text" (not "text_plain")
+        in module "text" (not "text_plain").
         """
         mimetype = self.mime_type()
         modname = mimetype.replace("/", "_").replace("-", "_").replace(".", "_")

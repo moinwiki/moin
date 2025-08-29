@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.markdown_in
+MoinMoin - moin.converters.markdown_in tests.
 """
 
 from collections import namedtuple
@@ -27,9 +27,10 @@ class TestConverter:
     output_re = XMLNS_RE
 
     def setup_class(self):
-        # mock patching flask.current_app.cfg does not work here as for speccing the original object is called and that causes a "RuntimeError: working outside of application context"
+        # Mock-patching flask.current_app.cfg does not work here because the original object is called for spec'ing,
+        # which causes a "RuntimeError: working outside of application context".
         app = Flask(__name__)
-        # DefaultConfig doesn't work here as it does not provide all the defaults required to be initialized
+        # DefaultConfig alone does not work here, as it does not provide all the defaults required to initialize.
         app.cfg = config
         ctx = app.app_context()
         ctx.push()

@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - serve (external) static files
+MoinMoin - Serve external static files
 
-    E.g. javascript based drawing or html editors.
-    We want to avoid bundling them, thus we access them somewhere on the
-    filesystem outside of moin.
+For example, JavaScript-based drawing or HTML editors.
+We avoid bundling them; instead, we access them somewhere on the
+filesystem outside of Moin.
 """
 
 

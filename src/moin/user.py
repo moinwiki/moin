@@ -69,17 +69,17 @@ logging = log.getLogger(__name__)
 
 def create_user(username, password, email, validate=True, is_encrypted=False, verify_email=False, **meta):
     """
-    Create a new user
+    Create a new user.
 
     :param username: unique user name
-    :param password: user's password - see also is_encrypted param
+    :param password: user's password — see also the is_encrypted param
     :param email: unique email address
-    :param validate: if True (default) will validate username, password, email
+    :param validate: if True (default), validate username, password, email,
                         and the uniqueness of the user created
-    :param is_encrypted: if False (default) defines that the password is in
-                        plaintext, when True - password was already encrypted
-    :verify_email: if True email is saved in user.profile[EMAIL_UNVALIDATED],
-                        else email is saved in user.profile[EMAIL]
+    :param is_encrypted: if False (default), the password is in
+                        plain text; when True, the password is already encrypted
+    :param verify_email: if True, the email is saved in user.profile[EMAIL_UNVALIDATED];
+                        otherwise, the email is saved in user.profile[EMAIL]
     :param meta: a dictionary of key-value pairs that represent user metadata and
                         will be stored into user profile metadata
     """

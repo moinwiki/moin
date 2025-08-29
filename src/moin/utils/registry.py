@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Module registry
+MoinMoin - module registry.
 
-Every module registers a factory for itself at the registry with a given
-priority.  During the lookup each factory is called with the given arguments and
-can return a callable to consider itself as a match.
+Every module registers a factory for itself in the registry with a given
+priority. During lookup, each factory is called with the given arguments and
+may return a callable to indicate it is a match.
 """
 
 
@@ -37,10 +37,10 @@ class RegistryBase:
 
     def get(self, *args, **kw):
         """
-        Lookup a matching module
+        Look up a matching module.
 
-        Each registered factory is called with the given arguments and
-        the first matching wins.
+        Each registered factory is called with the given arguments, and
+        the first match wins.
         """
         for entry in self._entries:
             conv = entry(*args, **kw)
@@ -60,9 +60,9 @@ class RegistryBase:
 
     def unregister(self, factory):
         """
-        Unregister a factory
+        Unregister a factory.
 
-        :param factory: Factory to unregister
+        :param factory: Factory to unregister.
         """
         old_entries = self._entries
         entries = [i for i in old_entries if i.factory is not factory]
@@ -75,8 +75,8 @@ class RegistryBase:
 class Registry(RegistryBase):
     def register(self, factory, priority=RegistryBase.PRIORITY_MIDDLE):
         """
-        Register a factory
+        Register a factory.
 
-        :param factory: Factory to register. Callable, have to return a class
+        :param factory: Factory to register. Callable that must return a class.
         """
         return self._register(self.Entry(factory, priority))

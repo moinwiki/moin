@@ -2,7 +2,7 @@
 # License: GNU GPL V2 (or any later version), see LICENSE.txt for details
 
 """
-    MoinMoin - tests for "serve" app
+MoinMoin - Tests for the serve app
 """
 
 from flask import url_for

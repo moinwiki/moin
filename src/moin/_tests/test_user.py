@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.user Tests
+    MoinMoin - moin.user tests.
 """
 
 
@@ -50,7 +50,7 @@ class TestUser:
     # Passwords / Login -----------------------------------------------
 
     def testAsciiPassword(self):
-        """user: login with ascii password"""
+        """User: login with ASCII password."""
         # Create test user
         name = "__Non Existent User Name__"
         password = name
@@ -61,7 +61,7 @@ class TestUser:
         assert theUser.valid
 
     def testUnicodePassword(self):
-        """user: login with non-ascii password"""
+        """User: login with non-ASCII password."""
         # Create test user
         name = "__שם משתמש לא קיים__"  # Hebrew
         password = name
@@ -72,7 +72,7 @@ class TestUser:
         assert theUser.valid
 
     def testInvalidatePassword(self):
-        """user: test invalidation of password"""
+        """User: test invalidation of password."""
         # Create test user
         name = "__Non Existent User Name__"
         password = name
@@ -82,8 +82,8 @@ class TestUser:
         theUser = user.User(name=name, password=password)
         assert theUser.valid
 
-        # invalidate the stored password (hash)
-        theUser.set_password("")  # emptry str or None means "invalidate"
+        # Invalidate the stored password (hash)
+        theUser.set_password("")  # empty str or None means "invalidate"
         theUser.save()
 
         # Try to "login" with previous password
@@ -96,8 +96,8 @@ class TestUser:
 
     def testPasswordHash(self):
         """
-        Create user, set a specific pw hash and check that user can login
-        with the correct password and can not log in with a wrong password.
+        Create a user, set a specific password hash, and check that the user can log in
+        with the correct password and cannot log in with a wrong password.
         """
         # Create test user
         name = "Test User"
@@ -176,7 +176,7 @@ class TestUser:
 
     def test_quicklinks(self):
         """
-        Test for the quicklinks
+        Test quicklinks.
         """
         pagename = "Test_page_quicklink"
         name = "Test_User_quicklink"
@@ -272,7 +272,7 @@ class TestUser:
 class TestGroupName:
 
     def testGroupNames(self):
-        """user: isValidName: reject group names"""
+        """User: isValidName: reject group names."""
         test = "AdminGroup"
         assert not user.isValidName(test)
 
@@ -280,9 +280,9 @@ class TestGroupName:
 class TestIsValidName:
 
     def testNonAlnumCharacters(self):
-        """user: isValidName: reject unicode non alpha numeric characters
+        """User: isValidName: reject Unicode non-alphanumeric characters.
 
-        : and , used in acl rules, we might add more characters to the syntax.
+        ':' and ',' are used in ACL rules; we might add more characters to the syntax.
         """
         invalid = '! # $ % ^ & * ( ) = + , : ; " | ~ / \\ \u0000 \u202a'.split()
         base = "User{0}Name"
@@ -291,13 +291,13 @@ class TestIsValidName:
             assert not user.isValidName(name)
 
     def testWhitespace(self):
-        """user: isValidName: reject leading, trailing or multiple whitespace"""
+        """User: isValidName: reject leading, trailing, or multiple whitespace."""
         cases = (" User Name", "User Name ", "User   Name")
         for test in cases:
             assert not user.isValidName(test)
 
     def testValid(self):
-        """user: isValidName: accept names in any language, with spaces"""
+        """User: isValidName: accept names in any language, with spaces."""
         cases = (
             "Jürgen Hermann",  # German
             "ניר סופר",  # Hebrew

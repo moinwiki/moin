@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli.maint.serialization tests
+MoinMoin - tests for moin.cli.maint.serialization.
 """
 
 import json
@@ -35,7 +35,7 @@ def load(restore_dir, backup_name, artifact_dir, args=None):
             p = run(command)
             assert_p_succcess(p)
     finally:
-        os.chdir(artifact_dir)  # insure we return to archive_dir for other tests
+        os.chdir(artifact_dir)  # ensure we return to archive_dir for other tests
 
 
 def test_load_all(artifact_dir, save_all):
@@ -85,7 +85,7 @@ def test_load_default_ns(artifact_dir, save_default):
                 expected_content = f.read()
                 assert expected_content, content
     finally:
-        os.chdir(artifact_dir)  # insure we return to archive_dir for other tests
+        os.chdir(artifact_dir)  # ensure we return to archive_dir for other tests
 
 
 def test_load_new_ns(artifact_dir, save_default):
@@ -100,7 +100,7 @@ def test_load_new_ns(artifact_dir, save_default):
         assert ["Home"] == item[NAME]
         assert "help-en" == item[BACKENDNAME]
     finally:
-        os.chdir(artifact_dir)  # insure we return to archive_dir for other tests
+        os.chdir(artifact_dir)  # ensure we return to archive_dir for other tests
 
 
 def test_load_corrupt(artifact_dir2, index_create2):

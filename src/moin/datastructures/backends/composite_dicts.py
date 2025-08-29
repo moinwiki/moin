@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - dict access via various backends.
+MoinMoin - Dict access via various backends.
 """
 
 
@@ -11,7 +11,7 @@ from moin.datastructures.backends import BaseDictsBackend, DictDoesNotExistError
 
 class CompositeDicts(BaseDictsBackend):
     """
-    Manage several dicts backends.
+    Manage several dict backends.
     """
 
     def __init__(self, *backends):
@@ -35,7 +35,7 @@ class CompositeDicts(BaseDictsBackend):
 
     def __contains__(self, dict_name):
         """
-        Check if a dict called dict_name is available in any of the backends.
+        Check if a dict called <dict_name> is available in any of the backends.
         """
         for backend in self._backends:
             if dict_name in backend:

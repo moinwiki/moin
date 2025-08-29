@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.backends.config_lazy_groups tests
+MoinMoin - moin.datastructures.backends.config_lazy_groups tests.
 """
 
 
@@ -37,7 +37,7 @@ class TestLazyConfigGroups(GroupsBackendTest):
 
     def test_contains_group(self):
         """
-        ConfigLazyGroups can not contain other group members.
+        ConfigLazyGroups cannot contain other group members.
 
         This test does not make sense.
         """

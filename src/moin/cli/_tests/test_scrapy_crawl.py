@@ -2,9 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli._tests.test_scrapy_crawl
+MoinMoin - tests for moin.cli scrapy crawl.
 
-crawl moin site and report on errors"""
+Crawl a Moin site and report errors.
+"""
 
 import pytest
 
@@ -96,9 +97,10 @@ class TestSiteCrawl:
 
     @pytest.mark.skip
     def test_known_issues_exist(self, crawl_results):
-        """enable this test to check for KNOWN_ISSUES which can be removed
-        after removing, be sure to confirm by crawling a host with non-blank SITE_WIKI_ROOT
-        as some issues only exist when moin is running behind apache"""
+        """Enable this test to check for KNOWN_ISSUES which can be removed.
+        After removing, be sure to confirm by crawling a host with a non-blank SITE_WIKI_ROOT,
+        as some issues exist only when Moin is running behind Apache.
+        """
         assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
         fixed = []
         for m in self.KNOWN_ISSUES:
@@ -146,9 +148,10 @@ class TestSiteCrawl:
         return True
 
     def test_server_log(self, server_crawl_log):
-        """validate no ERROR nor Traceback in log
+        """Validate that there is no ERROR or Traceback in the log.
 
-        see https://github.com/moinwiki/moin/pull/1399"""
+        See https://github.com/moinwiki/moin/pull/1399
+        """
         with open(server_crawl_log) as self.server_log:
             trailing_line_count = 0
             is_traceback = False

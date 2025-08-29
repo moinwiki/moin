@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macros.ShowSmileys
+MoinMoin - tests for moin.macros.ShowSmileys.
 """
 
 from moin.macros.ShowSmileys import Macro
 
 
 def test_Macro():
-    """test for Macro.macro"""
+    """Test Macro.macro."""
     expected_text = ["X-(", "angry", ":D", "biggrin", "<:(", "frown", "{o}", "star_off"]
     expected_tag = "{http://moinmo.in/namespaces/page}table-row"
     macro_obj = Macro()

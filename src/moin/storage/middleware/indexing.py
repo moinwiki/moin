@@ -5,47 +5,46 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - indexing middleware
+MoinMoin - indexing middleware.
 
-The backends and stores moin uses are rather simple, it is mostly just a
-unsorted / unordered bunch of revisions (meta and data) with iteration.
+The backends and stores Moin uses are rather simple; they are mostly just an
+unsorted/unordered bunch of revisions (meta and data) with iteration.
 
-The indexer middleware adds the needed power: after all metadata and data
-is indexed, we can do all sorts of operations on the indexer level:
+The indexing middleware adds the needed power: after all metadata and data
+are indexed, we can do all sorts of operations on the indexing level:
 * searching
-* lookup by name, uuid, ...
+* lookup by name, UUID, ...
 * selecting
 * listing
 
 Using Whoosh (a fast pure-Python indexing and search library), we build,
-maintain and use 2 indexes:
+maintain, and use two indexes:
 
 * "all revisions" index (big, needed for history search)
 * "latest revisions" index (smaller, just the current revisions)
 
 When creating or destroying revisions, indexes are automatically updated.
 
-There is also code to do a full index rebuild in case it gets damaged, lost
+There is also code to do a full index rebuild in case it gets damaged, lost,
 or needs rebuilding for other reasons. There is also index update code to
-do a quick "intelligent" update of a "mostly ok" index, that just adds,
-updates, deletes stuff that is different in backend compared to current index.
+do a quick, intelligent update of a mostly OK index that just adds,
+updates, or deletes entries that differ in the backend compared to the current index.
 
 Indexing is the only layer that can easily deal with **names** (it can
-easily translate names to UUIDs and vice versa) and with **items** (it
-knows current revision, it can easily list and order historial revisions),
-using the index.
+translate names to UUIDs and vice versa) and with **items** (it knows the
+current revision; it can easily list and order historical revisions), using the index.
 
-The layers below are using UUIDs to identify revisions meta and data:
+The layers below use UUIDs to identify revision metadata and data:
 
 * revid (metaid) - a UUID identifying a specific revision (revision metadata)
-* dataid - a UUID identifying some specific revision data (optional), it is
+* dataid - a UUID identifying some specific revision data (optional); it is
   just stored into revision metadata.
-* itemid - a UUID identifying an item (== a set of revisions), it is just
-  stored into revision metadata. itemid is only easily usable on indexing
+* itemid - a UUID identifying an item (a set of revisions); it is just
+  stored into revision metadata. itemid is only easily usable on the indexing
   level.
 
-Many methods provided by the indexing middleware will be fast, because they
-will not access the layers below (like the backend), but just the index files,
+Many methods provided by the indexing middleware are fast, because they
+will not access the layers below (like the backend), but just the index files;
 usually it is even just the small and thus quick latest-revs index.
 """
 

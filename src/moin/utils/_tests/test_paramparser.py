@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.paramparser Tests
+MoinMoin - tests for moin.utils.paramparser.
 """
 
 

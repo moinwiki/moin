@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.utils.registry
+MoinMoin - moin.utils.registry tests.
 """
 
 

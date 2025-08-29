@@ -29,7 +29,7 @@ class ConverterMacro:
 
     def _FootNote_repl(self, args, text, context_block):
         if not args:
-            # return a minimal note elem to indicate explicit footnote placement
+            # Return a minimal note element to indicate explicit footnote placement
             elem = moin_page.note()
             return elem
 
@@ -51,9 +51,9 @@ class ConverterMacro:
         The transclusion {{jpeg.jpg}} and the macro <<Include(jpeg.jpg)>> will have
         identical output.
 
-        If context_block is true, the macro expansion will be enclosed in a DIV-tag, else the
-        macro output will be enclosed in a SPAN-tag. converters/include.py will resolve
-        HTML 5 validation issues should the macro output block tags within an inline context.
+        If context_block is true, the macro expansion will be enclosed in a DIV tag; otherwise the
+        macro output will be enclosed in a SPAN tag. converters/include.py will resolve
+        HTML5 validation issues should the macro output block tags within an inline context.
         """
 
         def error_message(msg):
@@ -77,7 +77,9 @@ class ConverterMacro:
             pass
         sort = "sort" in args and args["sort"]
         if sort and sort not in ("ascending", "descending"):
-            return error_message(_("Include Macro above has invalid format, expected sort=ascending or descending"))
+            return error_message(
+                _("Include Macro above has invalid format, expected sort=ascending or sort=descending")
+            )
         # TODO: We need corresponding code in include.py to process items, skipitems, titlesonly, and editlink
         items = "items" in args and int(args["items"])
         skipitems = "skipitems" in args and int(args["skipitems"])
@@ -163,7 +165,7 @@ class ConverterMacro:
         """
         Should be overridden to format text in some macros according to the
         input type.
-        :returns: Sequence of (ET.Element, unicode)
+        :returns: Sequence of (ET.Element, Unicode)
         """
         return [text]
 

@@ -2,9 +2,8 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """
-This module is used to register the webdriver driver module as a global
-variable, so that it can be used by conftest methods, eg for doing a
-printscreen when a test fails
+Register the WebDriver instance as a global so it can be accessed by
+conftest hooks, e.g., to take a screenshot when a test fails.
 """
 
 driver = None
@@ -12,7 +11,7 @@ driver = None
 
 def register_driver(driver_):
     """
-    set the driver global variable to driver_
+    Set the global driver variable to driver_.
     """
     global driver
     driver = driver_
@@ -20,7 +19,7 @@ def register_driver(driver_):
 
 def get_driver():
     """
-    get the value of the driver global variable
+    Get the value of the global driver variable.
     """
     global driver
     return driver

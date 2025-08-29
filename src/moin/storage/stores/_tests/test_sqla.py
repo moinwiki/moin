@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - sqla store tests
+MoinMoin - SQLA store tests.
 """
 
 

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Pygments driven syntax highlighting input converter
+MoinMoin - Pygments-driven syntax highlighting input converter.
 """
 
 try:

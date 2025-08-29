@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli.maint.create_instance tests
+MoinMoin - tests for moin.cli.maint.create_instance.
 """
 
 from moin.cli._tests import assert_p_succcess

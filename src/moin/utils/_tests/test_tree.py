@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.utils.tree
+MoinMoin - moin.utils.tree tests.
 """
 
 from emeraldtree import ElementTree as ET

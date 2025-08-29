@@ -2,37 +2,37 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Ticket itemtype
+MoinMoin - Ticket item type
 
 TODO: Tickets require more work. Key requirements include but are not limited to:
 
- - ability to edit the original description or subsequent comments to correct typos
- - rework global history and global index to show or not show tickets and/or comments
- - rework page trail, subscriptions, navigation links to show something other than rev ids or timestamps
- - some method to override the default parser (text/x.moin.wiki) for a new ticket or comment
- - add more comments to the code
+ - Ability to edit the original description or subsequent comments to correct typos
+ - Rework global history and global index to show or not show tickets and/or comments
+ - Rework page trail, subscriptions, and navigation links to show something other than rev IDs or timestamps
+ - Provide a method to override the default parser (text/x.moin.wiki) for a new ticket or comment
+ - Add more comments to the code
 
-A ticket is a unique itemtype, the initial ticket consists of a description and meta data.
-Some of the meta data fields are unique to tickets.
+A ticket is a special item type: the initial ticket consists of a description and metadata.
+Some of the metadata fields are unique to tickets.
 
 The original design called for tickets to be nameless. Instead of a name, tickets would
-have a summary in meta data that would be too long for a typical wiki item name. However,
+have a summary in metadata that could be too long for a typical wiki item name. However,
 it is not currently possible to create a nameless item, so as a workaround, tickets are created
 with a name similar to: ticket_2016_09_21-09_19_29.
 
-When a ticket's meta data is updated, a new revision is created and the ticket's name is removed.
-After the first update, the current revision has an Old Name, after the second meta data update,
+When a ticket’s metadata is updated, a new revision is created and the ticket’s name is removed.
+After the first update, the current revision has an Old Name; after the second metadata update,
 the current name and Old Name are both displayed as None.
 
-Ticket comments and ticket comments to comments are presently created without an item type.
+Ticket comments and replies to comments are presently created without an item type.
 This is an issue because when a wiki is dumped and restored, all comments are tagged with an
-itemtype of "default". This is probably not wanted, but no other problems after a restore were
+item type of "default". This is probably not wanted, but no other problems after a restore were
 noted.
 
 As a workaround to the issue of creating nameless items, comments are created with a
-name similar to: comment_2016_09_21-09_19_29. As comments can not currently be updated,
-the name is never removed. Comments and comments to comments are linked to the original
-ticket through a refers_to field preserved in meta data.
+name similar to: comment_2016_09_21-09_19_29. As comments cannot currently be updated,
+the name is never removed. Comments and replies to comments are linked to the original
+ticket through a refers_to field preserved in metadata.
 """
 
 import time

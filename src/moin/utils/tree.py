@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tree name and element generator
+MoinMoin - Tree name and element generator.
 """
 
 
@@ -11,7 +11,7 @@ from emeraldtree import ElementTree as ET
 
 class Name(ET.QName):
     """
-    Represents a QName and factory for elements with this QName
+    Represents a QName and a factory for elements with this QName.
     """
 
     def __call__(self, attrib=None, children=(), **extra):
@@ -20,12 +20,12 @@ class Name(ET.QName):
 
 class Namespace(str):
     """
-    Represents a namespace and factory for Names within this namespace
+    Represents a namespace and a factory for Names within this namespace.
     """
 
     def __call__(self, name):
         """
-        Create a Name within this namespace
+        Create a Name within this namespace.
 
         :param name: The name within this namespace.
         :returns: A Name

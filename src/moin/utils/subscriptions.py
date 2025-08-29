@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Subscriptions
+MoinMoin - subscriptions.
 """
 
 import re
@@ -39,10 +39,10 @@ Subscriber = namedtuple("Subscriber", [ITEMID, NAME, EMAIL, LOCALE])  # type: ig
 
 
 def get_subscribers(**meta):
-    """Get all users that are subscribed to the item
+    """Get all users subscribed to the item.
 
-    :param meta: key/value pairs from item metadata - itemid, name, namespace, tags keys
-    :return: a set of Subscriber objects
+    :param meta: Key/value pairs from the item metadata (ITEMID, NAME, NAMESPACE, TAGS).
+    :return: A set of Subscriber objects.
     """
     itemid = meta.get(ITEMID)
     name = meta.get(NAME)
@@ -61,7 +61,7 @@ def get_subscribers(**meta):
     with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
         result_iterators = [searcher.search(query, limit=None)]
         subscription_patterns = searcher.lexicon(SUBSCRIPTION_PATTERNS)
-        # looks like whoosh gives us bytes (not str), decode them:
+        # Looks like Whoosh gives us bytes (not str); decode them:
         subscription_patterns = [p if isinstance(p, str) else p.decode() for p in subscription_patterns]
         patterns = get_matched_subscription_patterns(subscription_patterns, **meta)
         result_iterators.extend(searcher.documents(subscription_patterns=pattern) for pattern in patterns)
@@ -79,12 +79,12 @@ def get_subscribers(**meta):
 
 
 def get_matched_subscription_patterns(subscription_patterns, **meta):
-    """Get all the subscriptions with patterns that match at least one of item names
+    """Get all subscriptions whose patterns match at least one of the item names.
 
-    :param subscription_patterns: a list of subscription patterns (the ones that
-                                    start with NAMERE or NAMEPREFIX)
-    :param meta: key/value pairs from item metadata - name and namespace keys
-    :return: a list of matched subscription patterns
+    :param subscription_patterns: A list of subscription patterns (those that
+                                  start with NAMERE or NAMEPREFIX).
+    :param meta: Key/value pairs from the item metadata (NAME and NAMESPACE).
+    :return: A list of matched subscription patterns.
     """
     item_names = meta.get(NAME)
     item_namespace = meta.get(NAMESPACE)

@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - plain text output converter
+MoinMoin - Plain text output converter.
 
-Converts an internal document tree into plain, unformatted text.
+Convert an internal document tree into plain, unformatted text.
 
 The purpose of this converter is mainly to be used in a converter chain like
-markup -> dom -> text and get rid of the (wiki, rst, docbook, ...) markup that
-way, so we get indexable plain text for our search index.
+markup -> DOM -> text to get rid of the (wiki, reStructuredText, DocBook, ...) markup;
+thus we get indexable plain text for our search index.
 """
 
 from . import default_registry

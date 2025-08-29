@@ -2,9 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Create a H1 look-alike that will not be included in TableOfContents.
+Create an H1 look-alike that will not be included in the table of contents.
 
-<<PageTitle(My Page Title)>>
+Usage:
+    <<PageTitle(My Page Title)>>
 """
 
 from moin.utils.tree import html

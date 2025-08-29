@@ -5,8 +5,8 @@
 """
 MoinMoin - simple key/value stores.
 
-If some kvstore implementation you'ld like to use is missing from this package,
-you can likely implement it adding very little and rather easy code.
+If some key/value store implementation you'd like to use is missing from this package,
+you can likely implement it by adding very little and rather easy code.
 """
 
 from abc import abstractmethod
@@ -23,29 +23,29 @@ class StoreBase(Mapping):
     @abstractmethod
     def from_uri(cls, uri):
         """
-        return an instance constructed from the given uri
+        Return an instance constructed from the given URI.
         """
 
     def __init__(self, **kw):
         """
-        lazy stuff - just remember pathes, urls, database name, ... -
+        Lazy initialization — just remember paths, URLs, database name, etc.,
         whatever we need for open(), create(), etc.
         """
 
     def open(self):
         """
-        open the store, prepare it for usage
+        Open the store; prepare it for usage.
         """
 
     def close(self):
         """
-        close the store, stop using it, free resources (except stored data)
+        Close the store; stop using it; free resources (except stored data).
         """
 
     @abstractmethod
     def __iter__(self):
         """
-        iterate over keys present in the store
+        Iterate over keys present in the store.
         """
 
     def __len__(self):
@@ -54,7 +54,7 @@ class StoreBase(Mapping):
     @abstractmethod
     def __getitem__(self, key):
         """
-        return data stored for key
+        Return data stored for key.
         """
 
 
@@ -62,7 +62,7 @@ class BytesStoreBase(StoreBase):
     @abstractmethod
     def __getitem__(self, key):
         """
-        return bytestring for key if exists else raise KeyError
+        Return a byte string for key if it exists; otherwise raise KeyError.
         """
 
 
@@ -70,9 +70,9 @@ class FileStoreBase(StoreBase):
     @abstractmethod
     def __getitem__(self, key):
         """
-        return a filelike for key if exists else raise KeyError
+        Return a file-like object for key if it exists; otherwise raise KeyError.
 
-        note: the caller is responsible for closing the open file we return
+        Note: The caller is responsible for closing the open file we return
               after usage.
         """
 
@@ -84,24 +84,24 @@ class MutableStoreBase(StoreBase, MutableMapping):
 
     def create(self):
         """
-        create an empty store
+        Create an empty store.
         """
 
     def destroy(self):
         """
-        destroy the store (erase all stored data, remove store)
+        Destroy the store (erase all stored data, remove store).
         """
 
     @abstractmethod
     def __setitem__(self, key, value):
         """
-        store value under key
+        Store value under key.
         """
 
     @abstractmethod
     def __delitem__(self, key):
         """
-        delete the key, dereference the related value in the store
+        Delete the key, dereference the related value in the store.
         """
 
 
@@ -109,16 +109,16 @@ class BytesMutableStoreBase(MutableStoreBase):
     @abstractmethod
     def __setitem__(self, key, value):
         """
-        store a bytestring for key
+        Store a bytestring for key.
         """
 
 
 class BytesMutableStoreMixin:
     """
-    mix this into a FileMutableStore to get a BytesMutableStore, like shown here:
+    Mix this into a FileMutableStore to get a BytesMutableStore, like shown here:
 
     class BytesStore(BytesMutableStoreMixin, FileStore, BytesMutableStoreBase):
-        # that's all, nothing more needed
+        # That’s all; nothing more needed.
     """
 
     def __getitem__(self, key):
@@ -134,20 +134,20 @@ class FileMutableStoreBase(MutableStoreBase):
     @abstractmethod
     def __setitem__(self, key, stream):
         """
-        store a filelike for key
+        Store a file-like object for key.
 
-        note: caller is responsible for giving us a open file AND also for
-              closing that file later. caller must not rely on some specific
+        Note: caller is responsible for giving us an open file and also for
+              closing that file later. The caller must not rely on any specific
               file pointer position after we return.
         """
 
 
 class FileMutableStoreMixin:
     """
-    mix this into a BytesMutableStore to get a FileMutableStore, like shown here:
+    Mix this into a BytesMutableStore to get a FileMutableStore, like shown here:
 
     class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase)
-        # that's all, nothing more needed
+        # That’s all; nothing more needed.
     """
 
     def __getitem__(self, key):

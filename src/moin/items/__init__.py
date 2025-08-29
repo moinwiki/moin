@@ -9,13 +9,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - high-level (frontend) items
+MoinMoin - High-level (frontend) items
 
-    While moin.storage cares for backend storage of items,
-    this module cares for more high-level, frontend items,
-    e.g. showing, editing, etc. of wiki items.
+While moin.storage handles backend storage of items, this module focuses on higher-level, frontend operations such as showing and editing wiki items.
 
-    Each class in this module corresponds to an itemtype.
+Each class in this module corresponds to an item type.
 """
 
 from time import time, strftime

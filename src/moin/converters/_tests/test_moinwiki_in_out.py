@@ -4,9 +4,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moinwiki->DOM->moinwiki using moinwiki_in and moinwiki_out converters
+MoinMoin - Tests for MoinWiki -> DOM -> MoinWiki using moinwiki_in and moinwiki_out converters.
 
-It is merge of test_moinwiki_in and test_moinwiki_out, looks bad but works.
+This is a merge of test_moinwiki_in and test_moinwiki_out; it looks messy, but it works.
 
 TODO: Failing tests are commented out and need to be fixed.
 """

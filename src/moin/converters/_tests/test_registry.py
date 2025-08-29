@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.default_registry
+MoinMoin - moin.converters.default_registry tests.
 """
 
 import pytest

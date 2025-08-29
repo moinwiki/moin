@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli common functions for tests
+MoinMoin - common helper functions for moin.cli tests.
 """
 
 from __future__ import annotations
@@ -31,15 +31,16 @@ def run(
     timeout: int | None = None,
     env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess | subprocess.Popen:
-    """run a shell command, redirecting output to log
-    :param cmd: list of strings containing command arguments
-    :param log: open file handle to log file (binary mode) or None in which case output will be captured
-    :param wait: if True return after process is complete, otherwise return immediately after start
-    :param timeout: timeout setting in seconds, can only be used when wait is True
-    :param env: dictionary of environment variables to add to current env for subprocess
-    :return: CompletedProcess object if wait else Popen object"""
+    """Run a shell command, redirecting output to a log.
+
+    :param cmd: List of strings containing command arguments.
+    :param log: Open file handle to a log file (binary mode) or None, in which case output will be captured.
+    :param wait: If True, return after the process completes; otherwise, return immediately after start.
+    :param timeout: Timeout in seconds; can only be used when wait is True.
+    :param env: Dictionary of environment variables to add to the current environment for the subprocess.
+    :return: CompletedProcess object if wait is True; otherwise, a Popen object."""
     subprocess_environ = copy(os.environ)
-    subprocess_environ["PYTHONIOENCODING"] = "cp1252"  # simulate windows terminal to ferret out encoding issues
+    subprocess_environ["PYTHONIOENCODING"] = "cp1252"  # Simulate Windows terminal to ferret out encoding issues
     if env:
         subprocess_environ.update(env)
     logging.info(f"running {cmd}")
@@ -61,7 +62,7 @@ def run(
 
 
 def assert_p_succcess(p: subprocess.CompletedProcess):
-    """assert returncode 0 and print logs on error"""
+    """Assert returncode 0 and print logs on error."""
     try:
         assert p.returncode == 0
     except AssertionError:
@@ -75,9 +76,9 @@ COUNT_SLASHES_RE = re.compile(r"([\\]*)$")
 
 
 def _is_eval_safe(s: str) -> bool:
-    """validate that s is one of the expected formats in output of moin index-dump
+    """Validate that s matches one of the expected formats in the output of 'moin index-dump'.
 
-    valid strings include
+    Valid strings include
     'a string'
     'a string doesn\'t have to be simple'
     ['one', 'two']
@@ -126,11 +127,11 @@ def _is_eval_safe(s: str) -> bool:
 
 
 def read_index_dump(out: str, latest=False):
-    """parse output of moin dump-index yielding the items
+    """Parse the output of 'moin index-dump', yielding the items.
 
-    :param out: stdout of `moin index-dump --no-truncate` command
-    :param latest: if True yield only the latest revs
-    :return: list of dicts with key value pairs from output"""
+    :param out: stdout of the `moin index-dump --no-truncate` command.
+    :param latest: If True, yield only the latest revisions.
+    :return: List of dicts with key/value pairs from the output."""
     if not isinstance(out, str):
         raise ValueError("read_index_dump_latest_revs expects str, did you forget to .decode()")
     item = {}
@@ -153,7 +154,7 @@ def read_index_dump(out: str, latest=False):
 
 
 def read_index_dump_latest_revs(out: str):
-    """parse output of moin dump-index yielding the items in latest revs see :py:func:`read_index_dump`"""
+    """Parse the output of 'moin index-dump' yielding only the latest revisions; see :py:func:`read_index_dump`."""
     yield from read_index_dump(out, True)
 
 

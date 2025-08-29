@@ -3,9 +3,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - OpenDocument Format (ODF) input converter
+MoinMoin - OpenDocument Format (ODF) input converter.
 
-ODF documents can be created with OpenOffice.org, Libre Office and other software.
+ODF documents can be created with OpenOffice.org, LibreOffice, and other software.
 """
 
 import zipfile
@@ -59,7 +59,7 @@ for t in opendocument_types:
     default_registry.register(OpenDocumentIndexingConverter._factory, Type(t), type_text_plain)
 
 
-# use same converter for the old *.sx? (pre-opendocument) openoffice documents:
+# Use the same converter for the old *.sx? (pre-OpenDocument) OpenOffice documents:
 OpenOfficeIndexingConverter = OpenDocumentIndexingConverter
 
 openoffice_types = """\

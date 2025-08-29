@@ -1,13 +1,13 @@
 # Copyright: 2010 MoinMoin:ThomasWaldmann
 # Copyright: 2025 MoinMoin Project
-# License: the individual patches have same license as the code they are patching
+# License: The individual patches have the same license as the code they patch.
 
 """
-This module contains some monkeypatching for 3rd party code we use.
+This module contains some monkey patching for third-party code we use.
 
-We hope that any 3rd party might find this code useful and will adopt it,
-so we don't need to patch it any more. If you adopt some code from here,
-please notify us, so we can remove it from here.
+We hope that upstream projects find this code useful and adopt it, so we don't
+need to patch it anymore. If you adopt some code from here, please notify us so
+we can remove it from here.
 """
 
 
@@ -32,7 +32,7 @@ werkzeug.serving.WSGIRequestHandler = WSGIRequestHandler
 # Whoosh patching ------------------------------------------------------------
 
 # Reset buffer on close
-# see github issues #1645 and #1961
+# See GitHub issues #1645 and #1961
 
 from whoosh.filedb.structfile import BufferFile
 

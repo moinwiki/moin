@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - basic tests for misc views
+MoinMoin - Tests for misc views
 """
 
 from flask import url_for

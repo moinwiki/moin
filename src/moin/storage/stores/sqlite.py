@@ -2,13 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - sqlite3 key/value store
+MoinMoin - SQLite key/value store.
 
-This store stores into sqlite3 table, using a single db file in the filesystem.
-You can use the same db file for multiple stores, just using a different table
-name.
+This store stores data in a SQLite table, using a single DB file in the file system.
+You can use the same DB file for multiple stores by using different table names.
 
-Optionally, you can use zlib/"gzip" compression.
+Optionally, zlib ("gzip") compression can be used.
 """
 
 import os
@@ -22,20 +21,20 @@ from . import BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin
 
 class BytesStore(BytesMutableStoreBase):
     """
-    A simple sqlite3 based store.
+    A simple SQLite-based store.
     """
 
     @classmethod
     def from_uri(cls, uri):
         """
-        Create a new cls instance using the parameters provided in the uri
+        Create a new cls instance from the given URI.
 
         :param cls: Class to create
-        :param uri: The URI should follow the following template
+        :param uri: The URI should follow the template
                     db_name::table_name::compression_level
-                    where table_name and compression level are optional
+                    where table_name and compression_level are optional
         """
-        # using "::" to support windows pathnames that
+        # Using "::" to support Windows pathnames that
         # may include ":" after the drive letter.
         params = uri.split("::")
         if len(params) == 3:
@@ -46,13 +45,13 @@ class BytesStore(BytesMutableStoreBase):
         """
         Just store the params.
 
-        :param db_name: database (file)name
-        :param table_name: table to use for this store (we only touch this table)
+        :param db_name: Database (file) name
+        :param table_name: Table to use for this store (we only touch this table)
         :param compression_level: zlib compression level
-                                  0 = no compr, 1 = fast/small, ..., 9 = slow/smaller
-                                  we recommend 0 for low cpu usage, 1 for low disk space usage
-                                  high compression levels don't give much better compression,
-                                  but use lots of cpu (e.g. 6 is about 2x more cpu than 1).
+                                  0 = no compression, 1 = fast/small, ..., 9 = slow/smaller
+                                  We recommend 0 for low CPU usage, 1 for low disk space usage.
+                                  Higher compression levels do not give much better compression
+                                  but use lots of CPU (e.g., 6 is about 2× more CPU than 1).
         """
         self.db_name = db_name
         self.table_name = table_name
@@ -89,8 +88,8 @@ class BytesStore(BytesMutableStoreBase):
     def _compress(self, value):
         if self.compression_level:
             value = zlib.compress(value, self.compression_level)
-        # we store some magic start/end markers and the compression level,
-        # so we can later uncompress correctly (or rather NOT uncompress if level == 0)
+        # We store magic start/end markers and the compression level,
+        # so we can later decompress correctly (or rather not decompress if level == 0)
         header = "{{{GZ%d|" % self.compression_level
         tail = "}}}"
         return header.encode() + value + tail.encode()
@@ -109,19 +108,19 @@ class BytesStore(BytesMutableStoreBase):
         rows = list(self.conn.execute(f"select value from {self.table_name} where key=?", (key,)))
         if not rows:
             raise KeyError(key)
-        value = str(rows[0]["value"])  # a str in base64 encoding
+        value = str(rows[0]["value"])  # a string in base64 encoding
         value = base64.b64decode(value.encode())
         return self._decompress(value)
 
     def __setitem__(self, key, value):
         value = self._compress(value)
         with self.conn:
-            value = base64.b64encode(value).decode()  # a str in base64 encoding
+            value = base64.b64encode(value).decode()  # a string in base64 encoding
             try:
                 self.conn.execute(f"insert into {self.table_name} values (?, ?)", (key, value))
             except IntegrityError:
                 if NAMESPACE_USERPROFILES in self.db_name:
-                    # userprofiles namespace does support revisions so we update existing row
+                    # The userprofiles namespace does not support revisions, so we update the existing row
                     self.conn.execute(
                         'UPDATE {0} SET value = "{2}" WHERE key = "{1}"'.format(self.table_name, key, value)
                     )
@@ -130,4 +129,4 @@ class BytesStore(BytesMutableStoreBase):
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
-    """sqlite FileStore"""
+    """SQLite FileStore."""

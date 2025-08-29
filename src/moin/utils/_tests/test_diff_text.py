@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.diff_text Tests
+MoinMoin - moin.utils.diff_text tests.
 """
 
 
@@ -12,7 +12,7 @@ from moin.utils import diff_text
 class TestDiffText:
 
     def testDiff(self):
-        """utils.diff_text.diff: test correct diff calculation"""
+        """utils.diff_text.diff: test correct diff calculation."""
         in1 = """AAA 001
 AAA 002
 AAA 003

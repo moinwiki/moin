@@ -3,10 +3,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Include handling
+MoinMoin - Include handling.
 
 Expands the Include macro and transclusion elements in an internal Moin document. Note
-these two forms produce similar results:
+that these two forms produce similar results:
 
     {{jpeg.jpg}}
     <<Include(jpeg.jpg)>>
@@ -54,14 +54,14 @@ In some cases it is desirable to coerce a transcluded small image or phrase into
 inline element embedded within a paragraph. Here html_out.py will wrap the transclusion in
 a Span rather than a Div or convert a P-tag containing a phrase into a Span::
 
-    "My pet {{bird.jpg}} flys.", "[[SomePage|{{Logo.png}}]]" or "Yes, we have {{no}} bananas."
+    "My pet {{bird.jpg}} flies.", "[[SomePage|{{Logo.png}}]]" or "Yes, we have {{no}} bananas."
 
 In complex cases where a block level item is transcluded within the midst of
 several levels of text markup, such as::
 
    "plain ''italic '''bold {{BlockItem}} bold''' italic'' plain"
 
-then we must avoid generating invalid html like::
+then we must avoid generating invalid HTML like::
 
     <p>plain <emphasis>italic <strong>bold <div>
     ...</div> bold</strong> italic</emphasis> plain</p>

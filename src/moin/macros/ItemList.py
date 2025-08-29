@@ -15,11 +15,11 @@ Parameters:
     item: the wiki item to select.  If no item is specified, then the
           current item is used.
 
-    startswith: the substring the item's descendents must begin with.
+    startswith: the substring the item's descendants must begin with.
                 If no value is specified, then no startswith-filtering
                 is applied.
 
-    regex: a regular expresssion the item's descendents must match.
+    regex: a regular expression the item's descendants must match.
            If no value is specified, then no regex-filtering is applied.
 
     ordered: Should the list be ordered or unordered list (<ol> or <ul>)?
@@ -48,14 +48,14 @@ Parameters:
 
 Notes:
 
-    All parameter values must be bracketed by matching quotes.  Singlequote
-    or doublequotes are okay.
+    All parameter values must be bracketed by matching quotes.  Single quotes
+    or double quotes are okay.
 
     The "startswith" and "regex" filters may be used together.  The "startswith"
-    filter is more efficient, since it's passed into the underlyng database query,
-    whereas the "regex" filter is applied on the results returned from the database.
+    filter is more efficient, since it's passed into the underlying database query,
+    whereas the "regex" filter is applied to the results returned from the database.
 
-    This is a block level macro, do not embed in a paragraph.
+    This is a block-level macro; do not embed it in a paragraph.
 
 Examples:
     <<ItemList>>

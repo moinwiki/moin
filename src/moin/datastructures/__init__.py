@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - datastructures (groups and dicts) support.
+MoinMoin - data structures (groups and dicts) support.
 """
 
 

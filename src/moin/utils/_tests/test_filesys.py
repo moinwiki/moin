@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.filesys Tests
+MoinMoin - moin.utils.filesys tests.
 """
 
 import os
@@ -18,7 +18,7 @@ win32_incompatible = pytest.mark.skipif("sys.platform == 'win32'")
 
 
 class TestRename:
-    """test filesys.rename*"""
+    """Tests for filesys.rename*."""
 
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp("", "rename_")
@@ -36,8 +36,8 @@ class TestRename:
     def test_posix_rename_exists(self):
         self.makefile(self.src, "src")
         self.makefile(self.dst, "dst")
-        # posix rename overwrites an existing destination
-        # (on win32, we emulate this behaviour)
+        # POSIX rename overwrites an existing destination.
+        # (On Windows, we emulate this behavior.)
         filesys.rename(self.src, self.dst)
         dst_contents = open(self.dst).read()
         assert dst_contents == "src"
@@ -45,8 +45,8 @@ class TestRename:
     def test_win32_rename_exists(self):
         self.makefile(self.src, "src")
         self.makefile(self.dst, "dst")
-        # win32-like rename does not overwrite an existing destination
-        # (on posix, we emulate this behaviour)
+        # Windows-like rename does not overwrite an existing destination.
+        # (On POSIX, we emulate this behavior.)
         pytest.raises(OSError, filesys.rename_no_overwrite, self.src, self.dst)
 
     def test_special_rename_exists(self):
@@ -74,7 +74,7 @@ class TestRename:
 
 
 class TestCopy:
-    """test filesys.copytree"""
+    """Tests for filesys.copytree."""
 
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp("", "copytree1")
@@ -95,11 +95,11 @@ class TestCopy:
         self.makefile(self.src2, "src2")
         self.test_dest_dir = self.test_dir + "_copy"
         filesys.copytree(self.test_dir, self.test_dest_dir)
-        # check for the dir contents
+        # Check that directory contents match.
         assert sorted(os.listdir(self.test_dir)) == sorted(os.listdir(self.test_dest_dir))
 
     def test_dir_exist(self):
-        """raise Error if dir already exist"""
+        """Raise OSError if destination directory already exists."""
         self.test_dest_dir = tempfile.mkdtemp("", "temp_dir")
         with pytest.raises(OSError):
             filesys.copytree(self.test_dir, self.test_dest_dir)

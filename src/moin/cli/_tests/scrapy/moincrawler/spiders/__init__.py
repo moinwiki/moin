@@ -2,5 +2,5 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli._tests.moincrawler.spiders
+MoinMoin - scrapy spiders used by CLI crawl tests.
 """

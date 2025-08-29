@@ -2,25 +2,25 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin errors / exception classes
+MoinMoin errors / exception classes.
 """
 
 import sys
 
 
 class Error(Exception):
-    """Base class for moin moin errors
+    """Base class for MoinMoin errors.
 
-    Use this class when you raise errors or create sub classes that
-    may be used to display non ASCII error message.
+    Use this class when you raise errors or create subclasses that
+    may be used to display non-ASCII error messages.
 
-    Standard errors work safely only with strings using ascii or
-    unicode. This class can be used safely with both strings using
-    CHARSET and unicode.
+    Standard errors work safely only with strings using ASCII or
+    Unicode. This class can be used safely with both strings using
+    CHARSET and Unicode.
 
-    You can init this class with either unicode or string using
+    You can initialize this class with either Unicode or a string using
     CHARSET encoding. On output, the class will convert the string
-    to unicode or the unicode to string, using CHARSET.
+    to Unicode or the Unicode to string, using CHARSET.
 
     When you want to render an error, use unicode() or str() as needed.
     """
@@ -37,7 +37,7 @@ class Error(Exception):
         self.message = message
 
     def __str__(self):
-        """Return str error message"""
+        """Return the error message as str."""
         return self.message
 
     def __getitem__(self, item):
@@ -46,29 +46,29 @@ class Error(Exception):
 
 
 class CompositeError(Error):
-    """Base class for exceptions containing an exception
+    """Base class for exceptions containing another exception.
 
-    Do not use this class but its more specific sub classes.
+    Do not use this class directly; use its more specific subclasses.
 
-    Useful for hiding low level error inside high level user error,
+    Useful for hiding a low-level error inside a high-level user-facing error,
     while keeping the inner error information for debugging.
 
     Example::
 
         class InternalError(CompositeError):
-            ''' Raise for internal errors '''
+            '''Raise for internal errors.'''
 
         try:
             # code that might fail...
         except HairyLowLevelError:
-            raise InternalError("Sorry, internal error occurred")
+            raise InternalError("Sorry, an internal error occurred")
 
-    When showing a traceback, both InternalError traceback and
+    When showing a traceback, both the InternalError traceback and the
     HairyLowLevelError traceback are available.
     """
 
     def __init__(self, message):
-        """Save system exception info before this exception is raised"""
+        """Save system exception info before this exception is raised."""
         Error.__init__(self, message)
         self.innerException = sys.exc_info()
 
@@ -85,15 +85,15 @@ class CompositeError(Error):
 
 
 class FatalError(CompositeError):
-    """Base class for fatal error we can't handle
+    """Base class for fatal errors we can't handle.
 
-    Do not use this class but its more specific sub classes.
+    Do not use this class directly; use its more specific subclasses.
     """
 
 
 class ConfigurationError(FatalError):
-    """Raise when fatal misconfiguration is found"""
+    """Raised when a fatal misconfiguration is found."""
 
 
 class InternalError(FatalError):
-    """Raise when internal fatal error is found"""
+    """Raised when an internal fatal error is found."""

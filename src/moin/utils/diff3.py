@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - diff3 algorithm
+MoinMoin - diff3 algorithm.
 """
 
 
@@ -10,14 +10,15 @@ default_markers = ("<<<<<<<<<<<<<<<<<<<<<<<<<\n", "=========================\n",
 
 
 def text_merge(old, other, new, allow_conflicts=1, *markers):
-    """do line by line diff3 merge with three strings"""
+    """Do a line-by-line diff3 merge with three strings."""
     result = merge(old.splitlines(1), other.splitlines(1), new.splitlines(1), allow_conflicts, *markers)
     return "".join(result)
 
 
 def merge(old, other, new, allow_conflicts=1, *markers):
-    """do line by line diff3 merge
-    input must be lists containing single lines
+    """Do a line-by-line diff3 merge.
+
+    Input must be lists containing single lines.
     """
     if not markers:
         markers = default_markers
@@ -124,8 +125,9 @@ def merge(old, other, new, allow_conflicts=1, *markers):
 
 
 def tripple_match(old, other, new, other_match, new_match):
-    """find next matching pattern unchanged in both other and new
-    return the position in all three lists
+    """Find the next matching pattern unchanged in both 'other' and 'new'.
+
+    Return the positions in all three lists.
     """
     while True:
         difference = new_match[0] - other_match[0]
@@ -151,8 +153,9 @@ def tripple_match(old, other, new, other_match, new_match):
 
 
 def match(list1, list2, nr1, nr2, maxcount=3):
-    """return the number matching items after the given positions
-    maximum maxcount lines are are processed
+    """Return the number of matching items after the given positions.
+
+    At most 'maxcount' lines are processed.
     """
     i = 0
     len1 = len(list1)
@@ -167,8 +170,9 @@ def match(list1, list2, nr1, nr2, maxcount=3):
 
 
 def find_match(list1, list2, nr1, nr2, mincount=3):
-    """searches next matching pattern with lenght mincount
-    if no pattern is found len of the both lists is returned
+    """Search the next matching pattern with length 'mincount'.
+
+    If no pattern is found, the lengths of both lists are returned.
     """
     len1 = len(list1)
     len2 = len(list2)

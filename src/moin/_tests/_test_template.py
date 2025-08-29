@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.module_tested Tests
+    MoinMoin - moin.module_tested tests.
 
     Module names must start with 'test_' to be included in the tests.
 """
@@ -15,7 +15,7 @@ from moin import module_tested
 
 
 class TestSimpleStuff:
-    """The simplest MoinMoin test class
+    """The simplest MoinMoin test class.
 
     Class name must start with 'Test' to be included in
     the tests.
@@ -35,10 +35,10 @@ class TestSimpleStuff:
 
 
 class TestComplexStuff:
-    """Describe these tests here...
+    """Describe these tests here.
 
     Some tests may have a list of tests related to this test case. You
-    can add a test by adding another line to this list
+    can add a test by adding another line to this list.
     """
 
     _tests = (
@@ -52,10 +52,10 @@ class TestComplexStuff:
         foo = "bar"  # we want to have this non-default setting
 
     def setup_class(self):
-        """Stuff that should be run to init the state of this test class"""
+        """Stuff that should be run to initialize the state of this test class."""
 
     def teardown_class(self):
-        """Stuff that should run to clean up the state of this test class"""
+        """Stuff that should run to clean up the state of this test class."""
 
     def testFunction(self):
         """module_tested: function should..."""
@@ -64,9 +64,9 @@ class TestComplexStuff:
             assert result == expected
 
     def _helper_fuction(self, test):
-        """Some tests needs extra  work to run
+        """Some tests need extra work to run.
 
-        Keep the test non interesting details out of the way.
+        Keep the test's non-interesting details out of the way.
         """
         module_tested.do_this()
         module_tested.do_that()

@@ -2,12 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - group access via various backends.
+MoinMoin - Group access via various backends.
 
-The composite_groups is a backend that does not have direct storage,
-but composes other backends to a new one, so group definitions are
-retrieved from several backends. This allows to mix different
-backends.
+The composite_groups backend does not have direct storage; it composes other backends into a new
+one, so group definitions are retrieved from several backends. This allows mixing different backends.
 """
 
 
@@ -42,9 +40,8 @@ class CompositeGroups(BaseGroupsBackend):
         """
         Iterate over group names in all backends (filtering duplicates).
 
-        If a group with same name is defined in several backends, the
-        composite_groups backend yields only backend which is listed
-        earlier in self._backends.
+        If a group with the same name is defined in several backends, the composite_groups backend yields
+        only the one from the backend that is listed earlier in self._backends.
         """
         yielded_groups = set()
 

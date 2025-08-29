@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details
 
 """
-    MoinMoin - admin view tests
+MoinMoin - Tests for admin views
 """
 
 from flask import url_for

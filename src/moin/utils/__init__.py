@@ -2,8 +2,8 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Utility Functions
-    General helper functions that are not directly wiki related.
+MoinMoin - utility functions.
+General helper functions that are not directly wiki-related.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from moin.error import ConfigurationError
 from xstatic.main import XStatic
 
 
-# Set pickle protocol, see http://docs.python.org/lib/node64.html
+# Set pickle protocol; see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
 
 
@@ -34,7 +34,7 @@ g_charToEntity = {"&": "&amp;", "<": "&lt;", "'": "&apos;", '"': "&quot;"}
 
 def TranslateCDATA(text):
     """
-    Convert a string to a CDATA-encoded one
+    Convert a string to a CDATA-encoded one.
     Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
@@ -45,7 +45,7 @@ def TranslateCDATA(text):
 
 def TranslateText(text):
     """
-    Convert a string to a PCDATA-encoded one (do minimal encoding)
+    Convert a string to a PCDATA-encoded one (do minimal encoding).
     Copyright (c) 1999-2000 FourThought
     """
     new_string, num_subst = re.subn(g_undoUtf8Pattern, lambda m: m.group(1), text)
@@ -83,24 +83,24 @@ def rangelist(numbers):
 
 def close_file(f):
     """
-    Close a file so a Windows based server can destroy a recently viewed item's file.
+    Close a file so a Windows-based server can delete a recently viewed item's file.
 
-    If not closed, attempts to destroy an open file (before garbage collection removes it)
-    will result an error:
+    If not closed, attempts to delete an open file (before garbage collection removes it)
+    will result in an error:
         The process cannot access the file because it is being used by another process.
     """
-    # some tests reuse BytesIO objects and will fail with I/O operation on closed file.
+    # Some tests reuse BytesIO objects and will fail with I/O operation on closed file.
     if hasattr(f, "close") and not f.closed and not isinstance(f, BytesIO):
         f.close()
 
 
 def utcfromtimestamp(timestamp):
-    """Returns a naive datetime instance representing the timestamp in the UTC timezone"""
+    """Return a naive datetime representing the timestamp in the UTC time zone."""
     return datetime.fromtimestamp(timestamp, timezone.utc).replace(tzinfo=None)
 
 
 def utcnow():
-    """Returns a naive datetime instance representing the current time in the UTC timezone"""
+    """Return a naive datetime representing the current time in the UTC time zone."""
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
@@ -114,7 +114,7 @@ def get_xstatic_module_path_map(
             module = import_module(module_name)
         except ModuleNotFoundError as exc:
             raise ConfigurationError(
-                f'The python module "{module_name}" could not be found - check your configuration'
+                f'The Python module "{module_name}" could not be found - check your configuration'
             ) from exc
         xs = XStatic(module, root_url, provider, protocol)
         path_map[xs.name] = xs.base_dir  # type: ignore

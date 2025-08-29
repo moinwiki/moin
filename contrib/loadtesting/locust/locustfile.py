@@ -16,16 +16,16 @@ test_content = """
 These comments are also used as content when moin items are created; the result is
 a small load is placed upon the Whoosh indexer.
 
-The  primary goal of this test is to create a server overload. A server overload will likely take the
+The primary goal of this test is to create a server overload. A server overload will likely take the
 form of a LockError in the Whoosh AsyncWriter (/whoosh/writing.py). Each thread attempting
 to update the Whoosh index tries to obtain the write lock for a short period of time (~5
 seconds). If the lock is not obtained, a LockError exception is raised and the console log
 will show a traceback with the message "server overload or corrupt index". The item was
-saved but cannot be accessed because it is not in the index - to correct the error,
-stop the server, rebuild the indexes, restart the server.
+saved but cannot be accessed because it is not in the index — to correct the error,
+stop the server, rebuild the indexes, and restart the server.
 
 The maximum load that the wiki server can process is established by trial and error.
-With the default wait_time of 2-3 seconds running 3 symultaneous users will create a load of about
+With the default wait_time of 2–3 seconds, running 3 simultaneous users will create a load of about
 one transaction per second. Running 30 users could create a load of about 10
 transactions per second - but this may be reduced because the wiki server will have slow responses.
 
@@ -39,13 +39,13 @@ Running this script will register users, create user home pages,
 and create wiki items as part of the test. It is best to start with
 an empty wiki (./m new-wiki).
 
-Each locust user registers a new id, creates and updates a home page in the user namespace,
-creates and updates a <username> item in the default namespace, and logs-out.
+Each Locust user registers a new ID, creates and updates a home page in the user namespace,
+creates and updates a <username> item in the default namespace, and logs out.
 
-Because each locust user is working on unique items, it does not test edit locking. Use locustfile2.py
-to stress test edit locking.
+Because each Locust user is working on unique items, it does not test edit locking. Use locustfile2.py
+to stress-test edit locking.
 
-To load test Moin2:
+To load-test Moin 2:
  * read about Locust at https://docs.locust.io/en/stable/index.html - last tested with Locust 2.9.0
  * install Locust per the docs in its own venv
  * open a terminal window and start the Moin built-in server (./m run)
@@ -62,17 +62,17 @@ To load test Moin2:
  * customize and repeat:
     * ./m del-wiki
     * ./m new-wiki
-    * restart Moin2 buit-in server
+    * restart the Moin 2 built-in server
     * restart Locust server
     * refresh browser window
 """
 
 
-# used to create unique user IDs
+# Used to create unique user IDs
 user_number = 0
-# min and max wait time in seconds between user transactions, ignored, there is only 1 task
+# Min and max wait time in seconds between user transactions; ignored, there is only 1 task
 wait_time = between(2, 3)
-# sleep time between GET, POST requests in seconds
+# Sleep time between GET and POST requests, in seconds
 sleep_time = 0
 
 
@@ -80,10 +80,10 @@ class LoadTest(HttpUser):
     """
     First, create a Home page in the default and user namespaces.
 
-    Next create a workflow for each locust user that will
-    register a new user, login, create a user home page,
-    modify user home page several times,
-    create a new item, modify new item several times, and logout.
+    Next, create a workflow for each Locust user that will
+    register a new user, log in, create a user home page,
+    modify the user home page several times,
+    create a new item, modify the new item several times, and log out.
     """
 
     @events.test_start.add_listener
@@ -207,7 +207,7 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
     def create_home_page(self):
-        # click link to users home page (home page has not been created: 404 expected)
+        # Click link to the user's home page (home page has not been created: 404 expected)
         with self.client.get(self.user_home_page, catch_response=True) as response:
             if response.status_code == 404:
                 response.success()
@@ -249,7 +249,7 @@ class LoadTest(HttpUser):
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
 
     def modify_home_page(self, idx):
-        # get users home page
+        # Get the user's home page
         with self.client.get(self.user_home_page, catch_response=True) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
@@ -267,7 +267,7 @@ class LoadTest(HttpUser):
             home_page,
             {
                 "content_form_data_text": test_content % (self.user_name, self.get_time() + " idx=%s" % idx),
-                "comment": "my homepage comment",
+                "comment": "my home page comment",
                 "submit": "OK",
                 "meta_form_contenttype": "text/x.moin.wiki;charset=utf-8",
                 "meta_form_itemtype": "default",

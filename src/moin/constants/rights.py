@@ -3,10 +3,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - ACL related constants
+MoinMoin - ACL-related constants.
 """
 
-# ACL rights that are valid in moin2
+# ACL rights that are valid in Moin 2
 
 # superuser enables access to some critical functionality,
 # it is not related to CONTENT rights.
@@ -20,7 +20,7 @@ ACL_RIGHTS_FUNCTIONS = [SUPERUSER]
 ADMIN = "admin"
 
 # read means to be able to read revision data, unconditionally
-# TODO: define revision meta read behaviour
+# TODO: define revision meta read behavior
 READ = "read"
 
 # pubread means to be able to read revision data when published

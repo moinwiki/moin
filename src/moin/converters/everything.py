@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - converter for all items (fallback)
+MoinMoin - Converter for all items (fallback).
 
-Convert any item to a DOM Tree (we just create a link to download it).
+Convert any item to a DOM tree (we just create a link to download it).
 """
 
 from moin.constants.keys import NAME
@@ -18,7 +18,7 @@ from . import default_registry
 
 class Converter:
     """
-    Convert a unsupported item to DOM Tree.
+    Convert an unsupported item to a DOM tree.
     """
 
     @classmethod

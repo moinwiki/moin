@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for auth.log
+Tests for auth.log.
 """
 
 
@@ -17,7 +17,7 @@ logging = log.getLogger(__name__)
 
 
 class TestAuthLog:
-    """Test: TestAuthLog"""
+    """Tests for AuthLog."""
 
     def test_login(self):
         authlog_obj = AuthLog()

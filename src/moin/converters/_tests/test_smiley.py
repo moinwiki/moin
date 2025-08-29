@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.smiley
+MoinMoin - moin.converters.smiley tests.
 """
 
 import pytest
@@ -27,32 +27,32 @@ def serialize_strip(elem, **options):
 @pytest.mark.parametrize(
     "input,query",
     [
-        # normal
+        # Normal
         (
             "<page><body><p>bla bla :-) bla bla</p></body></page>",
             '/page/body/p/span[@class="moin-text-icon moin-smile"]',
         ),
-        # in code
+        # In code
         ("<page><body><code>bla bla :-) bla bla</code></body></page>", '/page/body[code="bla bla :-) bla bla"]'),
-        # 2 at once
+        # Two at once
         (
             "<page><body><p>:-) :-(</p></body></page>",
             "/page/body/p"
             '[span[1][@class="moin-text-icon moin-smile"]]'
             '[span[2][@class="moin-text-icon moin-sad"]]',
         ),
-        # strong
+        # Strong
         (
             "<page><body><p><strong>:-)</strong></p></body></page>",
             '/page/body/p/strong/span[@class="moin-text-icon moin-smile"]',
         ),
-        # Test to check we do not have bug with newline in the string
+        # Test to ensure we do not have a bug with a newline in the string
         ("<page><body><p>1\n2\n3\n4</p></body></page>", '/page/body[p="1\n2\n3\n4"]'),
-        # Test with space between the elements
+        # Test with a space between elements
         ("<page><body><table-of-content />     <p>text</p></body></page>", '/page/body[p="text"]'),
         # Test the ignored tags
         ("<page><body><p><code>:-)</code></p></body></page>", '/page/body/p[code=":-)"]'),
-        # Test the ignored tags and subelement
+        # Test the ignored tags and subelements
         (
             "<page><body><blockcode>:-)<strong>:-(</strong></blockcode></body></page>",
             '/page/body/blockcode[text()=":-)"][strong=":-("]',

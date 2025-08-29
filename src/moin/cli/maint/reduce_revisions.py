@@ -6,9 +6,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Reduce Item Revisions
+MoinMoin - CLI command to reduce item revisions.
 
-This script removes all revisions but the last one from all selected items.
+Remove all revisions except the latest one from selected items.
 """
 
 import click
@@ -67,7 +67,7 @@ def ReduceRevisions(query, namespace, test):
         current_full_name = current_namespace + "/" + current_name[0] if current_namespace else current_name
         if test:
             print(
-                "Item named {!r} selected but not updated, has {} revisions :".format(current_full_name, current_revno)
+                "Item named {!r} selected but not updated; has {} revisions:".format(current_full_name, current_revno)
             )
         else:
             print(f"Destroying historical revisions of {current_full_name!r}:")
@@ -90,7 +90,7 @@ def ReduceRevisions(query, namespace, test):
                         # Save existing mtime which has time this revision's data was last modified.
                         flaskg.data_mtime = meta[MTIME]
                         current_rev.item.store_revision(meta, current_rev.data, overwrite=True)
-                        print("    (current rev meta data updated)")
+                        print("    (current revision metadata updated)")
                     continue
                 has_historical_revision = True
                 name = rev.meta[NAME]

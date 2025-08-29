@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.utils.forms Tests
+MoinMoin - moin.utils.forms tests.
 """
 
 from moin.utils import forms
 
 
 class Bind:
-    """class for self defined test_bind attributes"""
+    """Class for self-defined test_bind attributes."""
 
     def __init__(self):
         self.label = "test_content"

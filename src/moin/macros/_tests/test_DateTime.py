@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macros.DateTime
+MoinMoin - tests for moin.macros.DateTime.
 """
 
 import time
@@ -16,12 +16,12 @@ from moin.utils.show_time import format_date_time
 
 
 def test_Macro():
-    """Test: DateTime.Macro"""
+    """Test Macro.macro."""
     flaskg.user.valid = True  # show_time creates ISO 8601 dates if user is not logged in
     macro_obj = Macro()
-    # when arguments is None
+    # When arguments is None
     result = macro_obj.macro("content", None, "page_url", "alternative")
-    # get the current time
+    # Get the current time
     test_time = time.time()
     test_times = [test_time, test_time - 1]  # in case our call to time.time happened just after the second rolled over
     test_times = [format_date_time(utcfromtimestamp(t)) for t in test_times]
@@ -29,7 +29,10 @@ def test_Macro():
 
     arguments = ["2023-08-07T11:11:11", "argument2"]
     result = macro_obj.macro("content", arguments, "page_url", "alternative")
-    expected = ["Aug 7, 2023, 11:11:11\u202fAM", "Aug 7, 2023, 11:11:11 AM"]  # TODO: remove 2nd entry later
+    expected = [
+        "Aug 7, 2023, 11:11:11\u202fAM",
+        "Aug 7, 2023, 11:11:11 AM",
+    ]  # TODO: The second entry can be removed in the future
     assert result in expected
 
     flaskg.user.valid = False
@@ -40,16 +43,16 @@ def test_Macro():
     arguments = ["incorrect_argument"]
     result = macro_obj.macro("content", arguments, "page_url", "alternative")
     attr = list(result.attrib.values())
-    # expecting error message with class of 'error nowiki'
+    # Expect an error message with class 'error nowiki'.
     assert "error" in attr[0]
 
-    # the following are different ways to specify the same moment
+    # The following are different ways to specify the same moment.
     expected = "2019-10-07 18:30:00z"
     arguments = [
         "2019-10-07T18:30:00Z" "2019-10-07T22:30:00+0400",
-        "2019-10-07 11:30:00-0700",  # ascii hyphen-minus
+        "2019-10-07 11:30:00-0700",  # ASCII hyphen-minus
         "2019-10-07T15:00:00-0330",
-        "2019-10-07 11:30:00\u22120700",  # unicode minus \u2212
+        "2019-10-07 11:30:00\u22120700",  # Unicode minus \u2212
         "2019-10-07T15:00:00\u22120330",
     ]
     for arg in arguments:

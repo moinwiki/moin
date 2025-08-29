@@ -5,7 +5,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - WikiDict functions.
+MoinMoin - WikiDict functions.
 """
 
 
@@ -17,10 +17,7 @@ from flask import flash
 
 
 class WikiDict(BaseDict):
-    """
-    Mapping of keys to values from meta of an item.
-
-    """
+    """Mapping of keys to values from an item's metadata."""
 
     def _load_dict(self):
         dict_name = self.name
@@ -30,7 +27,7 @@ class WikiDict(BaseDict):
             wikidict = rev.meta.get(WIKIDICT, {})
             return wikidict
         except KeyError:
-            flash(f'WikiDict "{dict_name}" does not exist or it has invalid syntax within metadata.')
+            flash(f'WikiDict "{dict_name}" does not exist or has invalid syntax in its metadata.')
             raise DictDoesNotExistError(dict_name)
 
 

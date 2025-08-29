@@ -3,37 +3,31 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Creates a static dump of HTML files for each current item in this wiki.
+MoinMoin - CLI command to create a static HTML dump for each current item in this wiki.
 
 Usage:
     moin dump-html <options>
 
 Options:
     --theme=<theme name>
-    --directory=<output directory name>  # name with / means full path, else under moin root directory
-    --exclude-ns=<comma separated list of namespaces to exclude>
+    --directory=<output directory name>  # If the name contains a '/', it is treated as a full path; otherwise it is created under the Moin root directory.
+    --exclude-ns=<comma-separated list of namespaces to exclude>
     --query=<item name or regex to select items>
 
 Defaults:
     --theme=topside_cms
-    --directory=<install root dir>HTML
+    --directory=<install root dir>/HTML
     --exclude-ns=userprofiles
 
-Works best with a CMS-like theme that excludes the wiki navigation links for login, edit,
-etc. that are not useful within a static HTML dump.
+Works best with a CMS-like theme that excludes wiki navigation links for login, edit, etc., which are not useful in a static HTML dump.
 
-Most html-formatted files created in the root (HTML) directory will not have names
-ending with .html, just as the paths used by the wiki server do not end with .html
-(e.g. http://127.0.0.1/Home). All browsers tested follow links to pages not
-having .html suffixes without complaint.
+Most HTML-formatted files created in the root (HTML) directory will not have names ending with .html, just as the paths used by the wiki server do not end with .html (e.g., http://127.0.0.1/Home). All tested browsers follow links to pages without .html suffixes without complaint.
 
 Duplicate copies of the home page and index page are created with names ending with .html.
 
-Items with media content types and names ending in common media suffixes (.png, .svg, .mp4...)
-will have their raw data, not HTML formatted pages, stored in the root HTML directory. All browsers
-tested view HTML formatted pages with names ending in common media suffixes as corrupt files.
+Items with media content types and names ending in common media suffixes (.png, .svg, .mp4, …) will have their raw data (not HTML-formatted pages) stored in the root HTML directory. All tested browsers treat HTML-formatted pages with names ending in common media suffixes as corrupt files.
 
-The raw data of all items are stored in the +get subdirectory.
+The raw data for all items is stored in the +get subdirectory.
 """
 
 import os
@@ -74,33 +68,33 @@ def cli():
     pass
 
 
-@cli.command("dump-html", help="Create a static HTML image of this wiki")
+@cli.command("dump-html", help="Create a static HTML snapshot of this wiki")
 @click.option(
     "--directory",
     "-d",
     type=str,
     required=False,
     default="HTML",
-    help="Directory name containing the output files, default HTML",
+    help="Directory name for the output files; default: HTML",
 )
 @click.option(
     "--theme",
     "-t",
     required=False,
     default="topside_cms",
-    help="Name of theme used in creating output pages, default topside_cms",
+    help="Name of the theme used to create output pages; default: topside_cms",
 )
 @click.option(
     "--exclude-ns",
     "-e",
     required=False,
     default="userprofiles",
-    help="Comma separated list of excluded namespaces, default userprofiles",
+    help="Comma-separated list of excluded namespaces; default: userprofiles",
 )
-@click.option("--query", "-q", required=False, default=None, help="name or regex of items to be included")
+@click.option("--query", "-q", required=False, default=None, help="Name or regex of items to include")
 def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=None, query=None):
     with app.test_request_context():
-        logging.info("Dump html started")
+        logging.info("Dump HTML started")
         if theme:
             app.cfg.user_defaults[THEME_NAME] = theme
         exclude_ns = exclude_ns.split(",") if exclude_ns else []

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - backend tests
+MoinMoin - backend tests.
 """
 
 from io import BytesIO
@@ -15,13 +15,13 @@ from moin.constants.keys import SIZE, HASH_ALGORITHM
 class BackendTestBase:
     def setup_method(self, method):
         """
-        self.be needs to be an opened backend
+        self.be needs to be an opened backend.
         """
         raise NotImplementedError
 
     def teardown_method(self, method):
         """
-        close self.be
+        Close self.be.
         """
         self.be.close()
 
@@ -36,13 +36,13 @@ class BackendTestBase:
 class MutableBackendTestBase(BackendTestBase):
     def setup_method(self, method):
         """
-        self.be needs to be an created/opened backend
+        self.be needs to be a created and opened backend.
         """
         raise NotImplementedError
 
     def teardown_method(self, method):
         """
-        close and destroy self.be
+        Close and destroy self.be.
         """
         self.be.close()
         self.be.destroy()
@@ -117,7 +117,7 @@ class MutableBackendTestBase(BackendTestBase):
         expected_result = set()
         for m, d in mds:
             k = self.be.store(m, BytesIO(d))
-            # note: store_revision injects some new keys (like dataid, metaid, size, hash key) into m
+            # Note: the store operation injects some new keys (like dataid, metaid, size, hash key) into m
             m = tuple(sorted(m.items()))
             expected_result.add((k, m, d))
         result = set()

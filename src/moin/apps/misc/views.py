@@ -3,9 +3,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - miscellaneous views
+MoinMoin - Miscellaneous views
 
-    Misc. stuff that doesn't fit into another view category.
+Miscellaneous views that do not fit into another category.
 """
 
 import time
@@ -26,8 +26,8 @@ from moin.utils.interwiki import CompositeName
 @misc.route("/sitemap")
 def sitemap():
     """
-    XML sitemap for search engines
-    see https://www.sitemaps.org for usage details
+    XML sitemap for search engines.
+    See https://www.sitemaps.org for usage details.
     """
 
     def format_timestamp(t):
@@ -66,13 +66,13 @@ def sitemap():
 @misc.route("/urls_names")
 def urls_names():
     """
-    List of all item URLs and names, e.g. for sisteritems.
+    List of all item URLs and names, e.g., for SisterWiki.
 
-    This view generates a list of item URLs and item names, so that other wikis
+    This view generates a list of item URLs and item names so that other wikis
     can implement SisterWiki functionality easily.
-    See: http://meatballwiki.org/wiki/SisterSitesImplementationGuide
+    See http://meatballwiki.org/wiki/SisterSitesImplementationGuide
     """
-    # XXX we currently also get deleted items, fix this
+    # TODO: We currently also get deleted items; fix this.
     fq_names = []
     for rev in flaskg.storage.documents():
         fq_names += [fqname for fqname in rev.fqnames]

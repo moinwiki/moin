@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - signals
+MoinMoin - signals
 
-    We define all signals here to avoid typos/conflicts in the signal name.
+Define all signals here to avoid typos/conflicts in signal names.
 """
 
 

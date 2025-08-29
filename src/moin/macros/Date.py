@@ -2,8 +2,8 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin Date macro - outputs the date for some specific point in time,
-adapted to the TZ settings of the user viewing the content.
+MoinMoin Date macro — outputs the date for a specific point in time,
+adapted to the user's time zone settings.
 """
 
 
@@ -17,12 +17,12 @@ from moin.i18n import _
 class MacroDateTimeBase(MacroInlineBase):
     def parse_time(self, args):
         """
-        Parse a time specification argument for usage by Date and DateTime macro.
+        Parse a time specification argument for usage by the Date and DateTime macros.
         Not all ISO 8601 format variations are accepted as input.
 
-        :param args: float/int UNIX timestamp or None or ISO 8601 formatted date time:
+        :param args: float/int UNIX timestamp, None, or ISO 8601–formatted date and time:
                      YYYY-MM-DDTHH:MM:SS (plus optional Z or z for UTC, or +/-HHMM) or
-                     YYYY-MM-DD HH:MM:SS (same as above but replacing T separator with " ")
+                     YYYY-MM-DD HH:MM:SS (same as above but replacing the T separator with " ")
         :returns: UNIX timestamp (UTC) or raises one of AttributeError, OSError, AssertionError, ValueError, OverflowError
         """
         if (
@@ -39,15 +39,15 @@ class MacroDateTimeBase(MacroInlineBase):
             tzoffset = 0  # we assume UTC no matter if there is a Z
             if tz:
                 sign = tz[0]
-                if sign in "+-\u2212":  # ascii plus, ascii hyphen-minus, unicode minus
+                if sign in "+-\u2212":  # ASCII plus, ASCII hyphen-minus, Unicode minus
                     tzh, tzm = int(tz[1:3]), int(tz[3:])
                     tzoffset = (tzh * 60 + tzm) * 60
-                    if sign in "-\u2212":  # ascii hyphen-minus, unicode minus
+                    if sign in "-\u2212":  # ASCII hyphen-minus, Unicode minus
                         tzoffset = -tzoffset
             tm = year, month, day, hour, minute, second, 0, 0, 0
 
-            # as mktime wants a localtime argument (but we only have UTC),
-            # we adjust by our local timezone's offset
+            # As mktime wants a local-time argument (but we only have UTC),
+            # we adjust by our local time zone's offset
             tm = time.mktime(tm) - time.timezone - tzoffset
         else:
             tm = float(args)

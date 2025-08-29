@@ -3,7 +3,8 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - manage whoosh indexes (building, updating, (re)moving and displaying)
+MoinMoin - CLI commands to manage Whoosh indexes (creating, destroying, building,
+updating, moving, optimizing, and displaying).
 """
 
 
@@ -30,7 +31,7 @@ def cli():
 
 
 @cli.command("index-create", help="Create empty indexes")
-@click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")
+@click.option("--tmp", is_flag=True, required=False, default=False, help="Use the temporary location.")
 @click.option("-i", "--index-create", is_flag=True, required=False, default=False, help="(deprecated)")
 @click.option("-s", "--storage-create", is_flag=True, required=False, default=False, help="(deprecated)")
 def cli_IndexCreate(tmp, index_create, storage_create):
@@ -43,7 +44,7 @@ def cli_IndexCreate(tmp, index_create, storage_create):
 
 def IndexCreate(**kwargs):
     """
-    Create empty indexes
+    Create empty indexes.
     """
     if wiki_index_exists():
         logging.error("Error: wiki index exists. Please check and destroy index before running index-create")
@@ -57,7 +58,7 @@ def IndexCreate(**kwargs):
 
 
 @cli.command("index-destroy", help="Destroy the indexes")
-@click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")
+@click.option("--tmp", is_flag=True, required=False, default=False, help="Use the temporary location.")
 def IndexDestroy(tmp):
     if not wiki_index_exists():
         logging.error(ERR_NO_INDEX)
@@ -75,9 +76,9 @@ def IndexDestroy(tmp):
     required=False,
     type=int,
     default=None,
-    help="Maximum memory (in megabytes) each index-writer will use for the indexing pool.",
+    help="Maximum memory (in megabytes) each index writer will use for the indexing pool.",
 )
-@click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")
+@click.option("--tmp", is_flag=True, required=False, default=False, help="Use the temporary location.")
 @click.option("--index-create", "-i", is_flag=True, required=False, default=False)
 @click.option("--storage-create", "-s", is_flag=True, required=False, default=False)
 def IndexBuild(tmp, procs, limitmb, **kwargs):
@@ -91,14 +92,14 @@ def IndexBuild(tmp, procs, limitmb, **kwargs):
 
 
 @cli.command("index-update", help="Update the indexes")
-@click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")
+@click.option("--tmp", is_flag=True, required=False, default=False, help="Use the temporary location.")
 def IndexUpdate(tmp):
     if not wiki_index_exists():
         logging.error(ERR_NO_INDEX)
         raise SystemExit(1)
     logging.info("Index update started")
     app.storage.update(tmp=tmp)
-    logging.info("Index update started")
+    logging.info("Index update finished")
 
 
 @cli.command("index-move", help="Move the indexes from the temporary to the normal location")
@@ -109,14 +110,14 @@ def IndexMove():
 
 
 @cli.command("index-optimize", help="Optimize the indexes")
-@click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")
+@click.option("--tmp", is_flag=True, required=False, default=False, help="Use the temporary location.")
 def cli_IndexOptimize(tmp):
     return IndexOptimize(tmp)
 
 
 def IndexOptimize(tmp):
     """
-    Optimize the indexes
+    Optimize the indexes.
     """
     if not wiki_index_exists():
         logging.error(ERR_NO_INDEX)
@@ -127,8 +128,8 @@ def IndexOptimize(tmp):
 
 
 @cli.command("index-dump", help="Dump the indexes in readable form to stdout")
-@click.option("--tmp", is_flag=True, required=False, default=False, help="use the temporary location.")
-@click.option("--truncate/--no-truncate", default=True, help="truncate long entries")
+@click.option("--tmp", is_flag=True, required=False, default=False, help="Use the temporary location.")
+@click.option("--truncate/--no-truncate", default=True, help="Truncate long entries.")
 def IndexDump(tmp, truncate):
     if not wiki_index_exists():
         logging.error(ERR_NO_INDEX)

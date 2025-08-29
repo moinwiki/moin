@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - LogFile package
+MoinMoin - log file utilities.
 
-    This module supports buffered log reads, iterating forward and backward line-by-line, etc.
+This module supports buffered log reads and iterating forward and backward line by line.
 """
 
 
@@ -20,11 +20,11 @@ CHARSET = "utf-8"
 
 
 class LogError(Exception):
-    """Base class for log errors"""
+    """Base class for log errors."""
 
 
 class LogMissing(LogError):
-    """Raised when the log is missing"""
+    """Raised when the log is missing."""
 
 
 class LineBuffer:
@@ -39,14 +39,13 @@ class LineBuffer:
 
     def __init__(self, file, offset, size, forward=True):
         """
+        TODO: when this gets refactored, don't use "file" (it's a builtin name).
 
-        TODO: when this gets refactored, don't use "file" (is a builtin)
-
-        :param file: open file object
-        :param offset: position in file to start from
-        :param size: aproximate number of bytes to read
-        :param forward : read from offset on or from offset-size to offset
-        :type forward: boolean
+        :param file: Open file object.
+        :param offset: Position in the file to start from.
+        :param size: Approximate number of bytes to read.
+        :param forward: Read from offset onward or from offset-size to offset.
+        :type forward: bool
         """
         self.loglevel = logging.NOTSET
         if forward:

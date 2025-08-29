@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.diff_datastruct Tests
+MoinMoin - tests for moin.utils.diff_datastruct.
 """
 
 import pytest

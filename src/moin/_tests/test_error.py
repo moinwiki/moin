@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.error Tests
+MoinMoin - moin.error tests.
 """
 
 
@@ -11,15 +11,15 @@ from moin import error
 
 
 class TestEncoding:
-    """MoinMoin errors do work with unicode transparently"""
+    """MoinMoin errors work with Unicode transparently."""
 
     def testCreateWithUnicode(self):
-        """error: create with unicode"""
+        """error: create with Unicode"""
         err = error.Error("טעות")
         assert str(err) == "טעות"
 
     def testCreateWithEncodedString(self):
-        """error: create with encoded string"""
+        """error: create with an encoded string"""
         err = error.Error("טעות".encode())
         assert str(err) == "טעות"
 
@@ -34,7 +34,7 @@ class TestEncoding:
         assert str(err) == "טעות"
 
     def testAccessLikeDict(self):
-        """error: access error like a dict"""
+        """error: access the error like a dict"""
         test = "value"
         err = error.Error(test)
         assert "%(message)s" % dict(message=err) == test

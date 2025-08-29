@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.moinwiki_in
+MoinMoin - moin.converters.moinwiki_in tests.
 """
 
 
@@ -54,7 +54,7 @@ class TestConverter:
             "{{somelocalimage|my alt text|width=10, height=10}}",
             '<page><body><p><xinclude:include xhtml:alt="my alt text" xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>',
         ),
-        # html5 requires img tags to have an alt attribute, html_out.py will add any required attributes that are missing
+        # HTML5 requires img tags to have an alt attribute; html_out.py will add any required attributes that are missing
         (
             "{{somelocalimage||width=10, height=10}}",
             '<page><body><p><xinclude:include xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>',
@@ -71,7 +71,7 @@ class TestConverter:
             "before {{http://moinmo.in}} middle {{http://moinmo.in}} after",
             '<page><body><p>before <object xlink:href="http://moinmo.in" /> middle <object xlink:href="http://moinmo.in" /> after</p></body></page>',
         ),
-        # in html5, object tags must not have alt attributes, html_out.py will adjust this so alt text is placed before the </object>
+        # In HTML5, object tags must not have alt attributes; html_out.py will adjust this so alt text is placed before the </object>
         (
             "{{http://moinmo.in/|test|width=10, height=10}}",
             '<page><body><p><object xhtml:alt="test" xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/" /></p></body></page>',
@@ -128,7 +128,7 @@ class TestConverter:
 
     data = [
         (
-            "=Not_a_Heading=",  # this is for better moin 1.x compatibility
+            "=Not_a_Heading=",  # this is for better Moin 1.x compatibility
             "<page><body><p>=Not_a_Heading=</p></body></page>",
         ),
         ("= Heading 1 =", '<page><body><h outline-level="1">Heading 1</h></body></page>'),
@@ -241,7 +241,7 @@ class TestConverter:
             "<<Macro(arg)>>",
             '<page><body><part alt="&lt;&lt;Macro(arg)&gt;&gt;" content-type="x-moin/macro;name=Macro"><arguments>arg</arguments></part></body></page>',
         ),
-        # these macro tests copied from test_creole_in, next test is different because leading space creates unordered list in moin2
+        # These macro tests were copied from test_creole_in. The next test is different because a leading space creates an unordered list in Moin 2
         (
             " <<Macro>> ",
             '<page><body><list item-label-generate="unordered" list-style-type="no-bullet"><list-item><list-item-body><part alt="&lt;&lt;Macro&gt;&gt;" content-type="x-moin/macro;name=Macro" /></list-item-body></list-item></list></body></page>',
@@ -327,7 +327,7 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        # a class of moin-wiki-table is added to all tables, html_out may create thead and tfoot tags
+        # A class of moin-wiki-table is added to all tables; html_out may create thead and tfoot tags.
         (
             "||||Span||\n\n",
             '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell number-columns-spanned="2">Span</table-cell></table-row></table-body></table></body></page>',

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.link
+MoinMoin - moin.converters.link tests.
 """
 
 from emeraldtree import ElementTree as ET

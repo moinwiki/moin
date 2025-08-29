@@ -3,20 +3,20 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MonthCalendar Macro
+MoinMoin - MonthCalendar macro.
 
-MonthCalendar - generates a Calendar.
+MonthCalendar generates a calendar.
 
-You can use this macro to put a month's calendar page on a Wiki page.
+You can use this macro to put a month’s calendar on a wiki page.
 
-The days are links to Wiki pages following this naming convention:
+The days are links to wiki pages following this naming convention:
 BasePageName/year-month-day
 
 Parameters:
 
     <<MonthCalendar(item,year,month,month_offset,fixed_height,anniversary)>>
 
-    each parameter can be empty and then defaults to currentpage or currentdate or monthoffset=0
+    Each parameter can be empty; defaults apply (current page, current date, or month_offset=0).
     item: str, the base page for calendar events,
           every day in the calendar will link to 'BasePage/yyyy-mm-dd'
           (or 'BasePage/mm-dd' respectively, if anniversary is set)
@@ -54,17 +54,17 @@ Examples:
     Calendar of next month:
     <<MonthCalendar(month_offset=+1)>>
 
-    Calendar of Page SampleUser, this year's december:
+    Calendar of Page SampleUser, this year's December:
     <<MonthCalendar(item="SampleUser",month=12)>>
 
-    Calendar of current Page, this year's december:
+    Calendar of the current page, this year's December:
     <<MonthCalendar(month=12)>>
 
     Calendar of December, 2022:
     <<MonthCalendar(year=2022,month=12)>>
 
     Calendar of the month two months after December, 2022
-    (maybe doesn't make much sense, but is possible)
+    (maybe this doesn't make much sense, but it is possible)
     <<MonthCalendar(year=2022,month=12,month_offset=+2)>>
 
     Calendar of year 2023 (every month padded to height of 6):

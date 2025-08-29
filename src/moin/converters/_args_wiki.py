@@ -81,11 +81,11 @@ include_re = re.compile(_include_rules, re.X | re.U)
 
 def parse(input, parse_re=parse_re):
     """
-    Parse <input> for positional and keyword arguments, with value quoting and quotes escaping.
+    Parse input for positional and keyword arguments, with value quoting and quote escaping.
 
-    :param input: with default parse_re, can be like: a b c d=e f="g h" i='j k' l="\"m\" n" o='\'p\' q'
-    :param parse_re: a compiled re pattern or None
-    :returns: Argument instance
+    :param input: with the default parse_re, can be like: a b c d=e f="g h" i='j k' l="\"m\" n" o='\'p\' q'
+    :param parse_re: a compiled regular expression or None
+    :returns: Arguments instance
     """
     ret = Arguments()
     for match in parse_re.finditer(input):
@@ -111,12 +111,12 @@ _unparse_re = re.compile(_unparse_rules, re.X)
 
 def unparse(args):
     """
-    Generate a argument string from a Argument instance <args>.
+    Generate an argument string from an Arguments instance.
     Argument values that need quoting will be quoted.
     Keyword names must never need quoting (would raise ValueError).
 
-    :param args: Argument instance
-    :returns: argument unicode object
+    :param args: Arguments instance
+    :returns: argument Unicode string
     """
 
     def quote(s):

@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Arguments wrapper
+MoinMoin - Arguments wrapper.
 """
 
 
 class Arguments:
     """
-    Represent an argument list that may contain positional or keyword args.
+    Represent an argument list that may contain positional and keyword arguments.
     """
 
     __slots__ = "positional", "keyword"
@@ -19,13 +19,13 @@ class Arguments:
 
     def __contains__(self, key):
         """
-        Check for positional argument or keyword key presence.
+        Check for the presence of a positional argument or a keyword key.
         """
         return key in self.positional or key in self.keyword
 
     def __getitem__(self, key):
         """
-        Access positional arguments by index or keyword args by key name.
+        Access positional arguments by index or keyword arguments by key name.
         """
         if isinstance(key, (int, slice)):
             return self.positional[key]

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Show contents of UserGroup attribute in metadata.
+Show the contents of the UserGroup attribute in metadata.
 """
 
 from moin.macros._base import MacroBlockBase, fail_message
@@ -18,5 +18,5 @@ class Macro(MacroBlockBase):
             item = Item.create(url)
             return item.meta[USERGROUP]
         except KeyError:
-            msg = _('ShowUserGroup macro failed - metadata lacks "usergroup" attribute.')
-            return fail_message(msg)
+            msg = _('ShowUserGroup macro failed: metadata lacks "usergroup" attribute.')
+            return fail_message(msg, alternative)

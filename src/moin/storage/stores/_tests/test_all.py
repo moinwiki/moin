@@ -53,7 +53,7 @@ def test_len(store):
 
 def test_perf(store):
     # XXX: introduce perf test option
-    pytest.skip("usually we do no performance tests")
+    pytest.skip("Usually we do not run performance tests.")
     for i in range(1000):
         key = value = str(i)
         store[key] = value.encode()

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.forms Tests
+    MoinMoin - moin.forms tests.
 """
 
 import datetime
@@ -55,7 +55,7 @@ def test_validjson():
     """
     Tests for changes to metadata when modifying an item.
 
-    Does not apply to usersettings form.
+    Does not apply to the user settings form.
     """
     app.cfg.namespace_mapping = [("", "default_backend"), ("ns1", "default_backend"), ("users", "other_backend")]
     item = Item.create("users/existingname")

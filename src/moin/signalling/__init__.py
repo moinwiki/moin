@@ -2,10 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - signalling support
+    MoinMoin - signalling support.
 
-    MoinMoin uses blinker for sending signals and letting listeners subscribe
-    to signals.
+    MoinMoin uses Blinker to send signals and let listeners subscribe to them.
 """
 
 

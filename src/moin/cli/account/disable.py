@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - disable a user account
+MoinMoin - CLI command to disable a user account.
 """
 
 
@@ -24,11 +24,11 @@ def cli():
 
 @cli.command("account-disable", help="Disable user accounts")
 @click.option("--name", "-n", required=False, type=str, help="Disable the user with user name NAME.")
-@click.option("--uid", "-u", required=False, type=str, help="Disable the user with user id UID.")
+@click.option("--uid", "-u", required=False, type=str, help="Disable the user with user ID UID.")
 def DisableUser(name, uid):
     flags_given = name or uid
     if not flags_given:
-        print("incorrect number of arguments")
+        print("Incorrect number of arguments.")
         import sys
 
         sys.exit()
@@ -40,7 +40,7 @@ def DisableUser(name, uid):
         u = user.User(auth_username=name)
 
     if not u.exists():
-        print(f'This user "{u.name!r}" does not exists!')
+        print(f'This user "{u.name!r}" does not exist!')
         return
 
     print(f" {u.itemid:<20} {u.name!r:<25} {u.email:<35}", end=" ")

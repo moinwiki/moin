@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - PDF input converter
+MoinMoin - PDF input converter.
 """
 
 import io
@@ -23,7 +23,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-# pdfminer creates many unwanted info messages
+# PDFMiner creates many unwanted info messages
 stdlogging.getLogger("pdfminer").setLevel(logging.WARNING)
 
 

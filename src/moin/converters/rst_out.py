@@ -5,9 +5,9 @@
 """
 MoinMoin - reStructuredText markup output converter
 
-Converts an internal document tree into reStructuredText markup.
+Convert an internal document tree into reStructuredText markup.
 
-This converter based on ReStructuredText 2006-09-22.
+This converter is based on ReStructuredText (2006-09-22).
 """
 
 import re
@@ -45,7 +45,7 @@ class Cell:
 class Table:
     """
     An object of this class collects the structure of a table
-    and represent it in ReStructuredText syntax.
+    and represents it in reStructuredText syntax.
     """
 
     def __init__(self):
@@ -72,9 +72,9 @@ class Table:
 
     def end_row(self):
         """
-        Adds empty cells to current row if it's too short.
+        Add empty cells to the current row if it is too short.
 
-        Moves the row to the head of the table if it is table header.
+        Move the row to the head of the table if it is a table header.
         """
         if len(self.table) > 1:
             if len(self.table[-2]) > len(self.table[-1]):
@@ -108,7 +108,7 @@ class Table:
 
     def width(self):
         """
-        :returns: width of rows in the table or zero if rows have different width
+        :returns: width of rows in the table, or zero if rows have different widths
         """
         if not self.table:
             return 0

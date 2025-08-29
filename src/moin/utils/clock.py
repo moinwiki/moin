@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Clock
+MoinMoin - clock utilities.
 """
 
 
@@ -24,14 +24,14 @@ class Clock:
 
     Usage:
         flaskg.clock.start("mytimer")
-        # do something
-        flaskg.clock.stop("mytimer", comment="add this to the log message")
-        # the optional comment field is added to the log message
-        # or if you want to use its value later
+        # Do something
+        flaskg.clock.stop("mytimer", comment="Adds this to the log message")
+        # The optional comment is appended to the log message.
+        # Or, if you want to use its value later:
         timerval = flaskg.clock.stop("mytimer")
 
-    Starting a timer multiple times is supported but the
-    one started last has to be stopped first.
+    Starting a timer multiple times is supported, but the
+    one started last must be stopped first.
     """
 
     def __init__(self):

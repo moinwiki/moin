@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli.maint.modify_item tests
+MoinMoin - tests for moin.cli.maint.modify_item.
 """
 
 import json
@@ -69,7 +69,7 @@ def test_dump_help(load_help):
 
 
 def test_item_get(load_help):
-    """extract an item from help and validate data and meta match original files in moin/help"""
+    """Extract an item from help and validate that data and metadata match the original files in moin/help."""
     item_get = run(["moin", "item-get", "-n", "help-common/cat.jpg", "-m", "cat.meta", "-d", "cat.data"])
     assert_p_succcess(item_get)
     assert Path("cat.data").exists()
@@ -92,11 +92,11 @@ def test_item_get(load_help):
 
 
 def test_item_put(index_create2):
-    """validate ability to add a new item to the wiki via item-put and extract using item-get
+    """Validate the ability to add a new item to the wiki via item-put and extract it using item-get.
 
-    include an item with non-ascii characters in name, tags and summary
+    Include an item with non-ASCII characters in the name, tags, and summary.
 
-    check for ability to handle non-ascii characters in index-dump"""
+    Check the ability to handle non-ASCII characters in index-dump."""
     for page in ["Home", "help-common/Home", "MyRussianPage"]:
         page_filename = page.replace("/", "-")
         item_get_fail = run(

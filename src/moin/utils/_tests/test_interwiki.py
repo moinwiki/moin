@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.interwiki Tests
+MoinMoin - tests for moin.utils.interwiki.
 """
 
 import tempfile
@@ -53,8 +53,8 @@ class TestInterWiki:
             # (item_name, wiki_name='', namespace='', rev=CURRENT, endpoint='frontend.show_item', _external=False):
             (("SomePage", "", "", "", CURRENT, "frontend.show_item", True), "http://localhost:8080/SomePage"),
             (("SomePage", "", "", "", CURRENT, "frontend.modify_item", False), "/+modify/SomePage"),
-            # FIXME if you set interwiki_map = dict(Self='http://localhost:8080', MoinMoin='http://moinmo.in/', ),
-            # the above line make it fails, it returns http://localhost/+modify/SomePage
+            # FIXME If you set interwiki_map = dict(Self='http://localhost:8080', MoinMoin='http://moinmo.in/', ),
+            # the above line makes it fail; it returns http://localhost/+modify/SomePage
             # (('SomePage', '', '', CURRENT, 'frontend.modify_item', True), 'http://localhost:8080/+modify/SomePage'),
             (("SomeRevID", "", "revid", "", revid, "frontend.show_item", False), f"/+show/+{revid}/@revid/SomeRevID"),
             (("SomePage", "", "", "", revid, "frontend.show_item_meta", False), f"/+meta/+{revid}/SomePage"),
@@ -101,7 +101,7 @@ class TestInterWiki:
         ]
 
         for (item_name, wiki_name, field, namespace, rev, endpoint, _external), url in tests:
-            # Workaround: substitute %40 with @ to allow both Werkzeug versions 2.2. and 2.3 TODO: remove later
+            # Workaround: substitute %40 with @ to allow both Werkzeug versions 2.2 and 2.3. TODO: remove later
             assert (
                 re.sub("%40", "@", url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external))
                 == url
@@ -220,7 +220,7 @@ class TestInterWiki:
 
 class TestInterWikiMapBackend:
     """
-    tests for interwiki map
+    Tests for the interwiki map.
     """
 
     def test_load_file(self):
@@ -229,35 +229,35 @@ class TestInterWikiMapBackend:
         """
         tmpdir = tempfile.mkdtemp()
 
-        # test an invalid file
+        # Test an invalid file.
         with pytest.raises(IOError):
             InterWikiMap.from_file(os.path.join(tmpdir, "void"))
 
-        # test a consistent valid file
+        # Test a valid file.
         testfile = os.path.join(tmpdir, "foo.iwm")
         with open(testfile, "w") as f:
             f.write("foo bar\n" "baz spam\n" "ham end end # this is really the end.")
         testiwm = InterWikiMap.from_file(testfile)
         assert testiwm.iwmap == dict(foo="bar", baz="spam", ham="end end")
 
-        # test a malformed file
+        # Test a malformed file.
         testfile = os.path.join(tmpdir, "bar.iwm")
         with open(testfile, "w") as f:
             f.write("# This is a malformed interwiki file\n" "fails # ever")
         with pytest.raises(ValueError):
             InterWikiMap.from_file(testfile)
 
-        # finally destroy everything
+        # Clean up temporary directory.
         shutil.rmtree(tmpdir)
 
     def test_load_string(self):
         """
-        Test that InterWikiMap.from_unicode correctly loads unicode objects.
+        Test that InterWikiMap.from_string correctly loads string objects.
         """
-        # test for void wiki maps
+        # Test empty wiki maps.
         assert InterWikiMap.from_string("").iwmap == dict()
         assert InterWikiMap.from_string("#spam\r\n").iwmap == dict()
-        # test for comments
+        # Test comments.
         s = (
             "# foo bar\n"
             "#spamham\r\n"
@@ -266,10 +266,10 @@ class TestInterWikiMapBackend:
             "ham spam # this is a valid description"
         )
         assert InterWikiMap.from_string(s).iwmap == dict(foo="bar", ham="spam")
-        # test for valid strings
+        # Test valid strings.
         s = "link1 http://link1.com/\r\n" "link2 http://link2.in/\r\n"
         assert InterWikiMap.from_string(s).iwmap == dict(link1="http://link1.com/", link2="http://link2.in/")
-        # test invalid strings
+        # Test invalid strings.
         with pytest.raises(ValueError):
             InterWikiMap.from_string("foobarbaz")
 

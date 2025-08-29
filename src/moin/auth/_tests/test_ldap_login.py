@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.auth.ldap Tests
+    MoinMoin - moin.auth.ldap tests.
 """
 
 
@@ -55,7 +55,7 @@ class TestMoinLDAPLogin(LDAPTstBase):
         class Config(wikiconfig.Config):
             from moin.auth.ldap_login import LDAPAuth
 
-            # ToDo get these vars from the test environment
+            # TODO: get these vars from the test environment
             server_uri = "ldap://127.0.0.1:3890"
             base_dn = "ou=testing,dc=example,dc=org"
             ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
@@ -102,7 +102,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
             from moin.auth.ldap_login import LDAPAuth
             from moin.auth import MoinAuth
 
-            # ToDo get these vars from the test environment
+            # TODO: get these vars from the test environment
             server_uri = "ldap://127.0.0.1:3890"
             base_dn = "ou=testing,dc=example,dc=org"
             ldap_auth = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
@@ -112,7 +112,7 @@ class TestBugDefaultPasswd(LDAPTstBase):
         return Config
 
     def teardown_class(self):
-        """Stop slapd, remove LDAP server environment"""
+        """Stop slapd and remove the LDAP server environment."""
         self.ldap_env.stop_slapd()
         self.ldap_env.destroy_env()
 
@@ -151,7 +151,7 @@ class TestTwoLdapServers:
     ldif_content = LDIF_CONTENT
 
     def setup_class(self):
-        """Create LDAP servers environment, start slapds"""
+        """Create LDAP server environments and start slapds."""
         self.ldap_envs = []
         for instance in range(2):
             ldap_env = LdapEnvironment(self.basedn, self.rootdn, self.rootpw, instance=instance)
@@ -166,7 +166,7 @@ class TestTwoLdapServers:
             self.ldap_envs.append(ldap_env)
 
     def teardown_class(self):
-        """Stop slapd, remove LDAP server environment"""
+        """Stop slapd and remove the LDAP server environment."""
         for ldap_env in self.ldap_envs:
             ldap_env.stop_slapd()
             ldap_env.destroy_env()
@@ -193,7 +193,7 @@ class TestLdapFailover:
     ldif_content = LDIF_CONTENT
 
     def setup_class(self):
-        """Create LDAP servers environment, start slapds"""
+        """Create LDAP server environments and start slapds."""
         self.ldap_envs = []
         for instance in range(2):
             ldap_env = LdapEnvironment(self.basedn, self.rootdn, self.rootpw, instance=instance)
@@ -212,7 +212,7 @@ class TestLdapFailover:
         class Config(wikiconfig.Config):
             from moin.auth.ldap_login import LDAPAuth
 
-            # ToDo get these vars from the test environment
+            # TODO: get these vars from the test environment
             server_uri = "ldap://127.0.0.1:3891"
             base_dn = "ou=testing,dc=example,dc=org"
             ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, name="ldap1", autocreate=True, timeout=1)
@@ -224,12 +224,12 @@ class TestLdapFailover:
         return Config
 
     def teardown_class(self):
-        """Stop slapd, remove LDAP server environment"""
+        """Stop slapd and remove the LDAP server environment."""
         for ldap_env in self.ldap_envs:
             try:
                 ldap_env.stop_slapd()
-            except:  # noqa
-                pass  # one will fail, because it is already stopped
+            except Exception:  # noqa
+                pass  # One will fail, because it is already stopped
             ldap_env.destroy_env()
 
     def testMoinLDAPFailOver(self):

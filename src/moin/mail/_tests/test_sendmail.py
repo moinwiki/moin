@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.mail.sendmail Tests
+MoinMoin - moin.mail.sendmail tests.
 """
 
 
@@ -10,7 +10,7 @@ from moin.mail import sendmail
 
 
 class TestdecodeSpamSafeEmail:
-    """mail.sendmail: testing mail"""
+    """mail.sendmail: testing decodeSpamSafeEmail."""
 
     _tests = (
         ("", ""),
@@ -29,13 +29,13 @@ class TestdecodeSpamSafeEmail:
     )
 
     def testDecodeSpamSafeMail(self):
-        """mail.sendmail: decoding spam safe mail"""
+        """mail.sendmail: decoding spam-safe email addresses."""
         for coded, expected in self._tests:
             assert sendmail.decodeSpamSafeEmail(coded) == expected
 
 
 class TestencodeSpamSafeEmail:
-    """mail.sendmail: testing spam safe mail"""
+    """mail.sendmail: testing encodeSpamSafeEmail (spam-safe encoding)."""
 
     _tests = (
         ("", ""),
@@ -48,12 +48,12 @@ class TestencodeSpamSafeEmail:
     )
 
     def testEncodeSpamSafeMail(self):
-        """mail.sendmail: encoding mail address to spam safe mail"""
+        """mail.sendmail: encoding email addresses to spam-safe format."""
         for coded, expected in self._tests:
             assert sendmail.encodeSpamSafeEmail(coded) == expected
 
     def testEncodeSpamSafeMailAndObfuscate(self):
-        """mail.sendmail: encoding mail address by an obfuscate string to spam safe mail"""
+        """mail.sendmail: encoding email addresses with an obfuscation string to spam-safe format."""
         for coded, expected in self._tests:
             expected = expected.replace(" AT ", " AT SYCTE ")
             assert sendmail.encodeSpamSafeEmail(coded, "SYCTE") == expected

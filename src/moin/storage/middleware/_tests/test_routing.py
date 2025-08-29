@@ -52,7 +52,7 @@ def test_store_get_del(router):
     other_name = "other:bar"
     other_backend_name, other_revid = router.store(dict(name=[other_name]), BytesIO(b""))
 
-    # check if store() updates the to-store metadata with correct NAMESPACE and NAME
+    # Check if store() updates the to-store metadata with correct NAMESPACE and NAME
     default_meta, _ = router.retrieve(default_backend_name, default_revid)
     other_meta, _ = router.retrieve(other_backend_name, other_revid)
     assert "" == default_meta[NAMESPACE]
@@ -60,7 +60,7 @@ def test_store_get_del(router):
     assert other_name.split(":")[0] == other_meta[NAMESPACE]
     assert other_name.split(":")[1] == other_meta[NAME][0]
 
-    # delete revs:
+    # Delete revisions:
     router.remove(default_backend_name, default_revid, destroy_data=True)
     router.remove(other_backend_name, other_revid, destroy_data=True)
 

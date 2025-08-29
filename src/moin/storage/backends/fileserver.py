@@ -2,14 +2,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - fileserver backend, exposing part of the filesystem (read-only)
+MoinMoin - fileserver backend, exposing part of the filesystem (read-only).
 
-Files show as single revision items.
+Files show as single-revision items.
 
-  - metadata is made up from fs metadata + mimetype guessing
-  - data is read from the file
+  - Metadata is made up from file system metadata plus MIME type guessing.
+  - Data is read from the file.
 
-Directories create a virtual directory item, listing the files in that
+Directories create a virtual directory item that lists the files in that
 directory.
 """
 
@@ -35,7 +35,7 @@ NAME_SEP = "/"
 
 class Backend(BackendBase):
     """
-    exposes part of the filesystem (read-only)
+    Expose part of the filesystem (read-only).
     """
 
     @override
@@ -69,7 +69,7 @@ class Backend(BackendBase):
             # so if the split does not work, the revid is invalid
             # and we raise KeyError like if the rev is not there
             raise KeyError(key)
-        # we get NAME_SEP and need to replace them by os.sep to make valid pathes:
+        # We get NAME_SEP and need to replace it with os.sep to make valid paths:
         if os.sep == NAME_SEP:
             relpath = itemname
         else:
@@ -169,7 +169,7 @@ class Backend(BackendBase):
 
     @override
     def __iter__(self):
-        # note: instead of just yielding the relative <path>, yield <path>.<mtime>,
+        # Note: Instead of just yielding the relative <path>, yield <path>.<mtime>,
         # so if the file is updated, the revid will change (and the indexer's
         # update() method can efficiently update the index).
         for dirpath, dirnames, filenames in os.walk(self.path):

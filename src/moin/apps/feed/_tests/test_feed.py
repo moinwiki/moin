@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - basic tests for feeds
+MoinMoin - Tests for feeds
 """
 
 from flask import url_for
@@ -31,7 +31,7 @@ class TestFeeds:
             assert rv.data.startswith(b"<?xml")
             assert b"foo data for feed item" in rv.data
 
-        # tests the cache invalidation
+        # Test cache invalidation
         update_item(basename, {COMMENT: "checking if the cache invalidation works"}, "")
         with app.test_client() as c:
             rv = c.get(url_for("feed.atom"))

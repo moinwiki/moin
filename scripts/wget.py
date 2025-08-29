@@ -3,10 +3,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Alternative for unix wget utility that may be run on either windows or unix. Does not implement
-typical unix wget command line syntax.
+Alternative to the Unix wget utility that can run on either Windows or Unix. Does not implement
+the typical Unix wget command-line syntax.
 
-Usage:  python <path_to>wget.py <url> <output_file>
+Usage: python path/to/wget.py <url> <output_file>
 """
 
 import sys
@@ -18,4 +18,4 @@ if __name__ == "__main__":
         urllib.request.urlretrieve(sys.argv[1], sys.argv[2])
     else:
         print("Error: incorrect parameters passed.")
-        print("Usage:  python <path_to>wget.py <url> <output_file>")
+        print("Usage: python path/to/wget.py <url> <output_file>")

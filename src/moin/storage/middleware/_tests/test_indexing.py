@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - indexing middleware tests
+MoinMoin - indexing middleware tests.
 """
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ def dumper(indexer, idx_name):
 
 
 class TestIndexingMiddleware:
-    reinit_storage = True  # cleanup after each test method
+    reinit_storage = True  # Clean up after each test method
 
     @pytest.fixture(autouse=True)
     def _imw(self):
@@ -75,7 +75,7 @@ class TestIndexingMiddleware:
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=[item_name]), BytesIO(data), return_rev=True)
         revid = rev.revid
-        # check if we have the revision now:
+        # Check if we have the revision now:
         item = self.imw[item_name]
         assert item  # does exist
         rev = item.get_revision(revid)
@@ -482,7 +482,7 @@ class TestIndexingMiddleware:
 
 
 class TestProtectedIndexingMiddleware:
-    reinit_storage = True  # cleanup after each test method
+    reinit_storage = True  # Clean up after each test method
 
     @pytest.fixture
     def cfg(self):

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - itemtype related constants
+MoinMoin - Item type–related constants.
 """
 
 ITEMTYPE_NONEXISTENT = "nonexistent"

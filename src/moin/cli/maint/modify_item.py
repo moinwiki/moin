@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - get an item revision from the wiki, put it back into the wiki.
+MoinMoin - CLI commands to get an item revision from the wiki and put it back.
 """
 
 from collections import defaultdict
@@ -56,9 +56,11 @@ def cli():
 @cli.command("item-get", help="Get an item revision from the wiki")
 @click.option("--name", "-n", type=str, required=True, help="Name of the item to get.")
 @click.option(
-    "--meta", "-m", "--meta_file", type=str, required=True, help="Filename of file to create for the metadata."
+    "--meta", "-m", "--meta_file", type=str, required=True, help="Filename of the file to create for the metadata."
 )
-@click.option("--data", "-d", "--data_file", type=str, required=True, help="Filename of file to create for the data.")
+@click.option(
+    "--data", "-d", "--data_file", type=str, required=True, help="Filename of the file to create for the data."
+)
 @click.option(
     "--revid",
     "-r",
@@ -67,7 +69,7 @@ def cli():
     default=CURRENT,
     help="Revision ID of the revision to get (default: current rev).",
 )
-@click.option("--crlf/--no-crlf", help="use windows line endings in output files")
+@click.option("--crlf/--no-crlf", help="Use Windows line endings in output files")
 def cli_GetItem(name, meta, data, revid, crlf):
     logging.info("Get item started")
     GetItem(name, meta, data, revid, "\r\n" if crlf else "\n")
@@ -87,9 +89,9 @@ def GetItem(name, meta_file, data_file, revid, newline="\n"):
     with open(meta_file, "w", encoding="utf-8", newline=newline) as mf:
         mf.write(meta + "\n")
     if "charset" in rev.meta[CONTENTTYPE]:
-        # input data will have \r\n line endings, output will have specified endings
-        # those running on windows with git autocrlf=true will want --crlf
-        # those running on linux or with autocrlf=input will want --no-crlf
+        # Input data will have \r\n line endings; output will use the specified endings.
+        # Those running on Windows with git autocrlf=true will want --crlf.
+        # Those running on Linux or with autocrlf=input will want --no-crlf.
         charset = rev.meta[CONTENTTYPE].split("charset=")[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
@@ -108,8 +110,10 @@ def GetItem(name, meta_file, data_file, revid, newline="\n"):
 
 
 @cli.command("item-put", help="Put an item revision into the wiki")
-@click.option("--meta", "-m", "--meta-file", type=str, required=True, help="Filename of file to read as metadata.")
-@click.option("--data", "-d", "--data-file", type=str, required=True, help="Filename of file to read as data.")
+@click.option(
+    "--meta", "-m", "--meta-file", type=str, required=True, help="Filename of the file to read for the metadata."
+)
+@click.option("--data", "-d", "--data-file", type=str, required=True, help="Filename of the file to read for the data.")
 @click.option(
     "--overwrite", "-o", is_flag=True, default=False, help="If given, overwrite existing revisions, if requested."
 )
@@ -200,7 +204,7 @@ def LoadHelp(namespace, path_to_help):
 @cli.command("dump-help", help="Dump a namespace of user help items to .data and .meta file pairs")
 @click.option("--namespace", "-n", type=str, required=True, help="Namespace to be dumped: help-common, help-en, etc.")
 @click.option("--path_to_help", "--path", "-p", type=str, help="Override output directory, default is src/moin/help")
-@click.option("--crlf/--no-crlf", help="use windows line endings in output files")
+@click.option("--crlf/--no-crlf", help="Use Windows line endings in output files")
 def DumpHelp(namespace, path_to_help, crlf):
     """
     Save an entire help namespace to the distribution source.

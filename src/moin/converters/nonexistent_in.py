@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - converter for non-existing items
+MoinMoin - converter for nonexistent items.
 
-Convert a non-existent item to the DOM Tree.
+Convert a nonexistent item to a DOM tree.
 """
 
 
@@ -19,7 +19,7 @@ from . import default_registry
 
 class Converter:
     """
-    Convert a non-existing item to DOM Tree.
+    Convert a nonexistent item to a DOM tree.
     """
 
     @classmethod
@@ -30,7 +30,7 @@ class Converter:
         item_name = rev.item.fqname.fullname
         attrib = {xlink.href: Iri(scheme="wiki", authority="", path="/" + item_name, query="do=modify")}
         a = moin_page.a(
-            attrib=attrib, children=[_("{item_name} does not exist. Create it? ").format(item_name=item_name)]
+            attrib=attrib, children=[_("{item_name} does not exist. Create it?").format(item_name=item_name)]
         )
         body = moin_page.body(children=(a,))
         return moin_page.page(children=(body,))

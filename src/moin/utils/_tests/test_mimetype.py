@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.utils.mimetype Tests
+MoinMoin - moin.utils.mimetype tests.
 """
 
 
@@ -10,7 +10,7 @@ from moin.utils import mimetype
 
 
 class TestMimeType:
-    """Test: utils.mimetype"""
+    """Tests for moin.utils.mimetype."""
 
     def test_parse_format(self):
         MimeType_obj = mimetype.MimeType(filename="test_file.jpg")

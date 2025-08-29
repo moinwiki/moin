@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - external static file serving
+MoinMoin - External static file serving
 """
 
 
@@ -20,7 +20,7 @@ logging = log.getLogger(__name__)
 
 @serve.route("/")
 def index():
-    # show what we have (but not where in the filesystem)
+    # Show what we have (but not where in the filesystem).
     content = "\n".join(app.cfg.serve_files.keys())
     return Response(content, content_type="text/plain")
 

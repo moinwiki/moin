@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for auth.__init__
+Tests for auth.__init__.
 """
 
 from flask import g as flaskg

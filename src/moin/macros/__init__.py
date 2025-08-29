@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - New style macros
+MoinMoin - new-style macros.
 
 Macros are used to implement complex and/or dynamic page content.
 

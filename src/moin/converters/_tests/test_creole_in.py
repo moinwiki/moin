@@ -49,7 +49,7 @@ class TestConverter:
             "[[xmpp:room@conference.example.com?join|the chatroom]]",
             '<page><body><p><a xlink:href="xmpp:room@conference.example.com?join">the chatroom</a></p></body></page>',
         ),
-        # garbage input defaults to wiki.local name
+        # Garbage input defaults to a wiki.local name
         (
             "[[invalid:fred@flinstones.org|drop me a note]]",
             '<page><body><p><a xlink:href="wiki.local:invalid:fred@flinstones.org">drop me a note</a></p></body></page>',

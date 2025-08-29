@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macros.GetVal
+MoinMoin - tests for moin.macros.GetVal.
 """
 
 import pytest
@@ -23,11 +23,12 @@ class TestMacro:
         return "TestDict"
 
     def test_Macro(self, test_dict):
+        """Test Macro.macro."""
         macro_obj = Macro()
         arguments = [test_dict]
         result = macro_obj.macro("content", arguments, "page_url", "alternative")
         attr = list(result.attrib.values())
-        # expecting error message with class of 'error nowiki'
+        # Expect an error message with class 'error nowiki'
         assert "error" in attr[0]
 
         if not flaskg.user.may.read(arguments[0]):
@@ -38,7 +39,7 @@ class TestMacro:
         result = macro_obj.macro("content", arguments, "page_url", "alternative")
         assert result == "1"
 
-        # change the value of second element
+        # Change the value of the second element
         arguments = ["TestDict, Two"]
         result = macro_obj.macro("content", arguments, "page_url", "alternative")
         assert result == "2"

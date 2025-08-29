@@ -4,7 +4,7 @@
 """
 MoinMoin - memory store
 
-Stores k/v pairs into memory (RAM, non-persistent!).
+Stores key/value pairs in memory (RAM, non-persistent!).
 
 Note: likely this is mostly useful for unit tests.
 """
@@ -51,4 +51,4 @@ class BytesStore(BytesMutableStoreBase):
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
-    """memory FileStore"""
+    """In-memory FileStore."""

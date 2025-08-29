@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macros.Date
+MoinMoin - tests for moin.macros.Date.
 """
 
 import time
@@ -30,11 +30,14 @@ class TestMacroDateTimeBase:
 
         flaskg.user.valid = True  # show_time creates ISO 8601 dates if user is not logged in
         result = format_date_time(utcfromtimestamp(ts))
-        expected = ["Aug 7, 2023, 5:38:11\u202fAM", "Aug 7, 2023, 5:38:11 AM"]  # TODO: remove 2nd entry later
+        expected = [
+            "Aug 7, 2023, 5:38:11\u202fAM",
+            "Aug 7, 2023, 5:38:11 AM",
+        ]  # TODO: The second entry can be removed later
         assert result in expected
 
         with pytest.raises(ValueError):
-            # things after next 10,000 years can't be predicted
+            # Dates beyond the next 10,000 years can't be predicted.
             MacroDateTimeBase_obj.parse_time("12011-08-07T11:11:11")
 
 
@@ -46,7 +49,7 @@ class TestMacro:
         flaskg.user.iso_8601 = False
 
         macro_obj = Macro()
-        # when arguments is None
+        # When arguments is None
         result = macro_obj.macro("content", None, "page_url", "alternative")
         test_time = time.time()
         test_time = format_date(utcfromtimestamp(test_time))

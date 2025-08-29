@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - protecting middleware tests
+MoinMoin - protecting middleware tests.
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ acl_mapping = [
 
 class FakeUser(User):
     """
-    fake user object, just to give user.name
+    Fake user object; provides user.name.
     """
 
     def __init__(self, name):
@@ -56,7 +56,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
         return self.imw
 
     def _dummy(self):
-        # replacement for tests that use unsupported methods / attributes
+        # Replacement for tests that use unsupported methods/attributes
         pass
 
     test_index_rebuild = _dummy
@@ -83,7 +83,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
 
     def test_getitem(self):
         revid_unprotected, revid_protected = self.make_items("joe:read", "boss:read")
-        # now testing:
+        # Now testing:
         item = self.imw[UNPROTECTED]
         r = item[revid_unprotected]
         assert r.data.read() == UNPROTECTED_CONTENT
@@ -93,7 +93,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
 
     def test_write(self):
         revid_unprotected, revid_protected = self.make_items("joe:write", "boss:write")
-        # now testing:
+        # Now testing:
         item = self.imw[UNPROTECTED]
         item.store_revision(
             dict(name=[UNPROTECTED], acl="joe:write", contenttype="text/plain;charset=utf-8"),
@@ -107,14 +107,14 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
             )
 
     def test_write_create(self):
-        # now testing:
+        # Now testing:
         item_name = "newitem"
         item = self.imw[item_name]
         item.store_revision(dict(name=[item_name], contenttype="text/plain;charset=utf-8"), BytesIO(b"new content"))
 
     def test_overwrite_revision(self):
         revid_unprotected, revid_protected = self.make_items("joe:write,destroy", "boss:write,destroy")
-        # now testing:
+        # Now testing:
         item = self.imw[UNPROTECTED]
         item.store_revision(
             dict(
@@ -141,7 +141,7 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
 
     def test_destroy_revision(self):
         revid_unprotected, revid_protected = self.make_items("joe:destroy", "boss:destroy")
-        # now testing:
+        # Now testing:
         item = self.imw[UNPROTECTED]
         item.destroy_revision(revid_unprotected)
         item = self.imw[PROTECTED]
@@ -150,15 +150,15 @@ class TestProtectingMiddleware(TestIndexingMiddleware):
 
     def test_destroy_middle_revision(self):
         item, item_name, revid0, revid1, revid2 = self._store_three_revs("joe:read,write,destroy")
-        # destroy the middle revision:
+        # Destroy the middle revision:
         item.destroy_revision(revid1)
         with item.get_revision(revid2) as rev:
-            # validate that the parentid of remaining rev was updated
+            # Validate that the parentid of the remaining revision was updated
             assert rev.meta[PARENTID] == revid0
 
     def test_destroy_item(self):
         revid_unprotected, revid_protected = self.make_items("joe:destroy", "boss:destroy")
-        # now testing:
+        # Now testing:
         item = self.imw[UNPROTECTED]
         item.destroy_all_revisions()
         item = self.imw[PROTECTED]

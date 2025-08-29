@@ -7,7 +7,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Wiki Security Interface and Access Control Lists
+MoinMoin - Wiki security interface and access control lists.
 """
 
 
@@ -25,9 +25,9 @@ from moin.utils.pysupport import AutoNe
 
 def require_permission(permission):
     """
-    view decorator to require a specific permission
+    View decorator to require a specific permission.
 
-    if the permission is not granted, abort with 403
+    If the permission is not granted, abort with 403.
     """
 
     def wrap(f):

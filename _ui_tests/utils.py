@@ -2,7 +2,7 @@
 # Copyright: 2012 MoinMoin:HughPerkins
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
-"""Functions to facilitate functional testing"""
+"""Functions to facilitate functional testing."""
 
 import random
 import urllib.request, urllib.parse, urllib.error
@@ -24,22 +24,21 @@ import driver_register
 
 def create_browser():
     """
-    Instantiates a firefox browser object, and configures it for English language
-    and registers it for screenshots, and sets the timeout
+    Instantiate a Firefox browser object, configure it for English,
+    register it for screenshots, and set the timeout.
     """
     profile = webdriver.FirefoxProfile()
     profile.set_preference("intl.accept_languages", "en")
     driver = webdriver.Firefox(firefox_profile=profile)
-    driver_register.register_driver(driver)  # register with
-    # driver_register, which is needed so that printscreen on test
-    # failure works
+    driver_register.register_driver(driver)  # Register with driver_register so that
+    # taking a screenshot on test failure works.
     driver.implicitly_wait(20)
     return driver
 
 
 def generate_random_word(length):
     """
-    generates a random string containing numbers, of length 'length'
+    Generate a random numeric string of length 'length'.
     """
     word = str(random.randint(10 ** (length - 1), 10**length))
     return word
@@ -47,8 +46,8 @@ def generate_random_word(length):
 
 def generate_random_name(prefix, totallength):
     """
-    create a random name, starting with 'prefix'
-    of total length 'totallength'
+    Create a random name starting with 'prefix',
+    with a total length of 'totallength'.
     """
     length = totallength - len(prefix)
     numberword = generate_random_word(length)

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.wikiutil Tests
+    MoinMoin - moin.wikiutil tests.
 """
 
 from __future__ import annotations
@@ -86,9 +86,9 @@ class TestRelativeTools:
 class TestNormalizePagename:
 
     def testPageInvalidChars(self):
-        """request: normalize pagename: remove invalid unicode chars
+        """Request: normalize pagename: remove invalid Unicode chars.
 
-        Assume the default setting
+        Assume the default setting.
         """
         test = "\u0000\u202a\u202b\u202c\u202d\u202e"
         expected = ""
@@ -96,7 +96,7 @@ class TestNormalizePagename:
         assert result == expected
 
     def testNormalizeSlashes(self):
-        """request: normalize pagename: normalize slashes"""
+        """Request: normalize pagename: normalize slashes."""
         cases = (
             ("/////", ""),
             ("/a", "a"),
@@ -109,7 +109,7 @@ class TestNormalizePagename:
             assert result == expected
 
     def testNormalizeWhitespace(self):
-        """request: normalize pagename: normalize whitespace"""
+        """Request: normalize pagename: normalize whitespace."""
         cases = (
             ("         ", ""),
             ("    a", "a"),
@@ -124,10 +124,10 @@ class TestNormalizePagename:
             assert result == expected
 
     def testUnderscoreTestCase(self):
-        """request: normalize pagename: underscore convert to spaces and normalized
+        """Request: normalize pagename: convert underscores to spaces and normalize whitespace.
 
         Underscores should convert to spaces, then spaces should be
-        normalized, order is important!
+        normalized; order is important!
         """
         cases = (
             ("         ", ""),
@@ -144,14 +144,14 @@ class TestNormalizePagename:
 class TestGroupItems:
 
     def testNormalizeGroupName(self):
-        """request: normalize itemname: restrict groups to alpha numeric Unicode
+        """Request: normalize itemname: restrict groups to alphanumeric Unicode.
 
-        Spaces should normalize after invalid chars removed!
+        Spaces should be normalized after invalid chars are removed!
         """
         cases = (
-            # current acl chars
+            # current ACL chars
             ("Name,:Group", "NameGroup"),
-            # remove than normalize spaces
+            # remove then normalize spaces
             ("Name ! @ # $ % ^ & * ( ) + Group", "Name Group"),
         )
         for test, expected in cases:
@@ -218,8 +218,8 @@ def testcontainsConflictMarker():
 
 def testsplit_anchor():
     """
-    TODO: add the test for for split_anchor when we have better
-          approach to deal wih problems like "#MoinMoin#" returning ("#MoinMoin", "")
+    TODO: add a test for split_anchor when we have a better
+          approach to deal with problems like "#MoinMoin#" returning ("#MoinMoin", "")
     """
     result = wikiutil.split_anchor("MoinMoin")
     expected = "MoinMoin", ""

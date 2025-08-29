@@ -2,13 +2,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - meta data key / index field name related constants
+MoinMoin - Metadata key and index field name constants.
 """
 
-# metadata keys
+# Metadata keys
 NAME = "name"  # a list of strings, not useful for searching nor sorting, see #364
-NAMES = "names"  # fullnames of item separated by |, useful for indexing/searching/display
-NAME_SORT = "name_sort"  # useful for sorting, slashes removed because of whoosh, see #209
+NAMES = "names"  # full names of the item separated by |, useful for indexing/searching/display
+NAME_SORT = "name_sort"  # useful for sorting, slashes removed because of Whoosh, see #209
 NAME_OLD = "name_old"
 NAMESPACE = "namespace"
 
@@ -48,9 +48,9 @@ COMMENT = "comment"
 SUMMARY = "summary"
 TRASH = "trash"
 
-# we need a specific hash algorithm to store hashes of revision data into meta
-# data. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
-# some backends may use this also for other purposes.
+# We need a specific hash algorithm to store hashes of revision data into
+# the item metadata. meta[HASH_ALGORITHM] = hash(rev_data, HASH_ALGORITHM)
+# Some backends may also use this for other purposes.
 HASH_ALGORITHM = "sha1"
 HASH_LEN = 40  # length of hex str representation of hash value
 
@@ -90,10 +90,10 @@ IMMUTABLE_KEYS = [
     REV_NUMBER,
 ]
 
-# magic REVID for current revision:
+# Magic REVID for current revision:
 CURRENT = "current"
 
-# stuff from user profiles / for whoosh index
+# Stuff from user profiles / for Whoosh index
 EMAIL = "email"
 DISPLAY_NAME = "display_name"
 THEME_NAME = "theme_name"
@@ -107,7 +107,7 @@ BOOKMARKS = "bookmarks"
 QUICKLINKS = "quicklinks"
 SESSION_KEY = "session_key"
 SESSION_TOKEN = "session_token"
-RECOVERPASS_KEY = "recoverpass_key"  # TODO: this is used for email confirmation as well, maybe it needs better name
+RECOVERPASS_KEY = "recoverpass_key"  # TODO: this is used for email confirmation as well; maybe it needs a better name
 EDIT_ON_DOUBLECLICK = "edit_on_doubleclick"
 SCROLL_PAGE_AFTER_EDIT = "scroll_page_after_edit"
 SHOW_COMMENTS = "show_comments"
@@ -167,7 +167,7 @@ CLOSED = "closed"
 ELEMENT = "element"
 REPLY_TO = "reply_to"
 
-# index names
+# Index names
 LATEST_REVS = "latest_revs"
 ALL_REVS = "all_revs"
 LATEST_META = "latest_meta"
@@ -180,7 +180,7 @@ ACTION_COPY = "COPY"
 ACTION_RENAME = "RENAME"
 ACTION_CONVERT = "CONVERT"
 
-# defaul LOCALE key value
+# Default LOCALE key value
 DEFAULT_LOCALE = "en"
 
 # key for composite name

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.macros._base
+MoinMoin - tests for moin.macros._base.
 """
 
 import pytest
@@ -12,20 +12,20 @@ from moin.utils.tree import html
 
 
 class TestMacroBase:
-    """Test for Macro base and related classes"""
+    """Tests for macro base and related classes."""
 
     def test_MacroBase(self):
-        """test for MacroBase class"""
+        """Test MacroBase class."""
         macrobase_obj = MacroBase()
         assert not macrobase_obj.immutable
         with pytest.raises(NotImplementedError):
             macrobase_obj.__call__("content", "arguments", "page_url", "alternative", "context_block")
 
     def test_MacroBlockBase(self):
-        """test for MacroBlockBase class"""
+        """Test MacroBlockBase class."""
 
         class Test_MacroBlockBase(MacroBlockBase):
-            """inherited class from MacroBlockBase"""
+            """Subclass of MacroBlockBase."""
 
         macroblockbase_obj = Test_MacroBlockBase()
         result = macroblockbase_obj.__call__("content", "arguments", "page_url", "alternative", context_block=False)
@@ -34,10 +34,10 @@ class TestMacroBase:
             macroblockbase_obj.__call__("content", "arguments", "page_url", "alternative", "context_block")
 
     def test_MacroInlineBase(self):
-        """test for MacroInlineBase class"""
+        """Test MacroInlineBase class."""
 
         class Test_MacroInlineBase(MacroInlineBase):
-            """inherited class from MacroInlineBase"""
+            """Subclass of MacroInlineBase."""
 
             def macro(self, content, arguments, page_url, alternative):
                 return "test_macro"
@@ -51,10 +51,10 @@ class TestMacroBase:
         assert not result.text
 
     def test_MacroInlineOnlyBase(self):
-        """test for MacroInlineOnlyBase class"""
+        """Test MacroInlineOnlyBase class."""
 
         class Test_MacroInlineOnlyBase(MacroInlineOnlyBase):
-            """inherited class from MacroInlineOnlyBase"""
+            """Subclass of MacroInlineOnlyBase."""
 
             def macro(self, content, arguments, page_url, alternative):
                 return "test_macro"
@@ -66,10 +66,10 @@ class TestMacroBase:
         assert result == "test_macro"
 
     def test_MacroPageLinkListBase(self):
-        """test for MacroPageLinkListBase class"""
+        """Test MacroPageLinkListBase class."""
 
         class Test_MacroPageLinkListBase(MacroPageLinkListBase):
-            """inherited class from MacroPageLinkListBase"""
+            """Subclass of MacroPageLinkListBase."""
 
             def macro(self, content, arguments, page_url, alternative):
                 return "test_macro"

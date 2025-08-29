@@ -4,15 +4,15 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Detect and correct violations of the moin2 coding standards:
+Detect and correct violations of the Moin 2 coding standards:
     - no trailing blanks
-    - exactly one linefeed at file end, see PEP8
-    - DOS line endings on .bat and .cmd files, unix line endings everywhere else
+    - exactly one line feed at file end, see PEP 8
+    - DOS line endings on .bat and .cmd files, Unix line endings everywhere else
 
-Detect and write informative message:
-    - improper indentation of template files ending with .html suffix
+Detect and write informative messages:
+    - improper indentation of template files with the .html suffix
 
-Execute this script from the root directory of the moin repository
+Execute this script from the root directory of the Moin repository
 to process all files in the <root>/src directory.
 
 Or, pass a directory path on the command line.
@@ -25,17 +25,17 @@ import os
 import re
 
 
-# file types to be processed
-# ignore help .meta and .data files; ckeditor uses tabs, markdown uses 2 trailing blanks for line break
+# File types to be processed
+# Ignore help .meta and .data files; CKEditor uses tabs, Markdown uses 2 trailing blanks for line breaks
 SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst scss".split())
 
 # stuff considered DOS/WIN that must have \r\n line endings
 WIN_SUFFIXES = set("bat cmd".split())
 
-# these are media files from help-common namespace
+# These are media files from the help-common namespace
 BINARY_FILES = tuple(".gz.data .zip.data .mp3.data .jpg.data .png.data .mp4.data".split())
 
-# global variables for checking Javascript messages
+# Global variables for checking JavaScript messages
 phrases = set()
 phrases_used = set()
 
@@ -61,7 +61,7 @@ class NoDupsLogger:
 
 def directories_to_ignore(starting_dir):
     """Return a list of directories that will not be processed."""
-    # list format: [(fully qualified directory name, sub-directory name), ... ]
+    # List format: [(fully qualified directory name, subdirectory name), ...]
     ignore_dirs = []
     level2_dirs = ".eggs .git .tox contrib dlc env moin.egg-info wiki HTML".split()
     for dir in level2_dirs:

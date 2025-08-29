@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Tests for our test environment
+    MoinMoin - tests for our test environment.
 """
 
 from io import BytesIO

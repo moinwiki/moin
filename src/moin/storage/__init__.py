@@ -43,11 +43,11 @@ BACKEND_HELP_EN = "help-en"
 
 def backend_from_uri(uri: str):
     """
-    create a backend instance for uri
+    Create a backend instance for a URI.
     """
     backend_name_uri = uri.split(":", 1)
     if len(backend_name_uri) != 2:
-        raise ValueError(f"malformed backend uri: {uri}")
+        raise ValueError(f"malformed backend URI: {uri}")
     backend_name, backend_uri = backend_name_uri
     module = __import__(BACKENDS_PACKAGE + "." + backend_name, globals(), locals(), ["MutableBackend"])
     return module.MutableBackend.from_uri(backend_uri)
@@ -59,7 +59,7 @@ def create_mapping(uri: str, namespaces: dict[str, str], backends: dict[str, str
         (backend_name, backend_from_uri((backends[backend_name] or uri) % dict(backend=backend_name, kind="%(kind)s")))
         for backend_name in backends
     ]
-    # we need the longest mountpoints first, shortest last (-> '' is very last)
+    # We need the longest mount points first, shortest last (-> '' is very last)
     namespace_mapping = sorted(namespaces.items(), key=lambda x: len(x[0]), reverse=True)
     acl_mapping = sorted(acls.items(), key=lambda x: len(x[0]), reverse=True)
     return namespace_mapping, dict(backend_mapping), acl_mapping
@@ -77,14 +77,14 @@ def create_simple_mapping(
     When configuring storage, the admin needs to provide a namespace_mapping.
     To ease creation of such a mapping, this function provides sane defaults
     for different types of stores.
-    The admin can just call this function, pass a hint on what type of stores
-    he wants to use and a proper mapping is returned.
+    The admin can call this function, pass a hint about the store type
+    they want to use, and a proper mapping is returned.
 
-    :params uri: '<backend_name>:<backend_uri>' (general form)
-                 backend_name must be a backend module name (e.g. stores)
-                 the backend_uri must have a %(backend)s placeholder, it gets replaced
-                 by the name of the backend (a simple, ascii string) and result
-                 is given to to that backend's constructor
+    :param uri: '<backend_name>:<backend_uri>' (general form)
+                backend_name must be a backend module name (e.g., stores)
+                the backend_uri must have a %(backend)s placeholder; it gets replaced
+                by the name of the backend (a simple, ASCII string) and the result
+                is given to that backend's constructor
 
                  for the 'stores' backend, backend_uri looks like '<store_name>:<store_uri>'
                  store_name must be a store module name (e.g. fs)

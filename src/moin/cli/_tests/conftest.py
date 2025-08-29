@@ -2,20 +2,17 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli pytest fixtures
+MoinMoin - pytest fixtures for moin.cli tests.
 
-Common fixtures for tests
+Common fixtures for the CLI test suite.
 
-fixtures are used for
+Fixtures are used for:
 
-* management of temporary directory under moin/_test_artifacts
-  which holds the test wiki instance
-* handling dependencies between cli commands
-  for example, index-create requires create-instance
+- Managing a temporary directory under moin/_test_artifacts that holds the test wiki instance.
+- Handling dependencies between CLI commands (for example, index-create requires create-instance).
 
-package scope fixtures used for efficiency in load-help and dump-help tests
-each cli command is executed only once
-while the tests are written one each per command
+Package-scoped fixtures are used for efficiency in load-help and dump-help tests:
+Each CLI command is executed only once, while the tests are written one per command.
 """
 
 import csv
@@ -42,9 +39,9 @@ logging = log.getLogger(__name__)
 
 @pytest.fixture(scope="package")
 def artifact_dir():
-    """create and cd to and yield directory for wiki which persists thru all tests
+    """Create, chdir into, and yield the wiki directory that persists through all tests.
 
-    directory is deleted at end of all tests"""
+    The directory is deleted at the end of all tests."""
     _, artifact_dir = get_dirs("cli")
     cwd = os.getcwd()
     os.chdir(artifact_dir)
@@ -56,7 +53,7 @@ def artifact_dir():
 
 @pytest.fixture
 def artifact_dir2():
-    """create and cd to and yield directory for wiki which gets deleted at end of each test function"""
+    """Create, chdir into, and yield the wiki directory that is deleted at the end of each test function."""
     _, artifact_dir = get_dirs("cli2")
     cwd = os.getcwd()
     os.chdir(artifact_dir)

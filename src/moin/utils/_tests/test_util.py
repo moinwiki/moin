@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils Tests
+MoinMoin - tests for moin.utils.
 """
 
 
@@ -12,7 +12,7 @@ from moin import utils
 class TestUtil:
 
     def testRangeList(self):
-        """utils.rangelist: test correct function for misc. input values"""
+        """utils.rangelist: test correct behavior for various input values"""
         result = utils.rangelist([])
         expected = ""
         assert result == expected, 'Expected "%(expected)s" but got "%(result)s"' % locals()

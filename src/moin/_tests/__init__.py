@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - some common code for testing
+MoinMoin - some common code for testing.
 """
 
 
@@ -17,7 +17,7 @@ from flask import g as flaskg
 
 from moin.constants.contenttypes import CHARSET
 from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
-from moin.converters import include  # noqa prevent circular import
+from moin.converters import include  # noqa # prevent a circular import
 from moin.items import Item
 from moin.utils.crypto import random_string
 from moin.utils.interwiki import CompositeName
@@ -29,12 +29,12 @@ from moin.utils.interwiki import CompositeName
 
 
 def become_valid(username="ValidUser"):
-    """modify flaskg.user to make the user valid.
-    Note that a valid user will only be in ACL special group "Known", if
-    we have a user profile for this user as the ACL system will check if
-    there is a userid for this username.
-    Thus, for testing purposes (e.g. if you need delete rights), it is
-    easier to use become_trusted().
+    """Modify flaskg.user to make the user valid.
+
+    Note that a valid user will only be in the ACL special group "Known" if
+    we have a user profile for this user, as the ACL system will check whether
+    there is a user ID for this username. Thus, for testing purposes (e.g., if
+    you need delete rights), it is easier to use become_trusted().
     """
     flaskg.user.profile[NAME] = [username]
     flaskg.user.may.names = [username]  # see security.DefaultSecurityPolicy class
@@ -42,7 +42,7 @@ def become_valid(username="ValidUser"):
 
 
 def become_trusted(username="TrustedUser"):
-    """modify flaskg.user to make the user valid and trusted, so it is in acl group Trusted"""
+    """Modify flaskg.user to make the user valid and trusted, so it is in the ACL group "Trusted"."""
     become_valid(username)
     flaskg.user.trusted = True
 
@@ -51,7 +51,7 @@ def become_trusted(username="TrustedUser"):
 
 
 def update_item(name, meta, data):
-    """creates or updates an item"""
+    """Create or update an item."""
     if isinstance(data, str):
         data = data.encode(CHARSET)
     fqname = CompositeName("", NAME_EXACT, name)
@@ -67,13 +67,13 @@ def update_item(name, meta, data):
 
 
 def create_random_string_list(length=14, count=10):
-    """creates a list of random strings"""
+    """Create a list of random strings."""
     chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     return [f"{random_string(length, chars)}" for counter in range(count)]
 
 
 def nuke_item(name):
-    """complete destroys an item"""
+    """Completely destroy an item."""
     item = Item.create(name)
     item.destroy()
 
@@ -82,7 +82,7 @@ def check_connection(port, host="127.0.0.1"):
     """
     Check if we can make a connection to host:port.
 
-    If not, raise Exception with a meaningful msg.
+    If not, raise an Exception with a meaningful message.
     """
     try:
         s = socket.create_connection((host, port))
@@ -93,12 +93,13 @@ def check_connection(port, host="127.0.0.1"):
 
 
 def get_dirs(subdir: str) -> tuple[Path, Path]:
-    """return Paths for directories used in tests creating artifacts_dir if needed
+    """Return Paths for directories used in tests, creating artifacts_dir if needed.
 
     :param subdir: subdirectory for artifacts_dir
     :returns: tuple (moin_dir, artifacts_dir)
-              where moin_dir is Path to moin directory, parent of src
-              and artifacts_dir is Path to moin/_test_artifacts/{subdir}"""
+              where moin_dir is the Path to the moin directory (parent of src),
+              and artifacts_dir is the Path to moin/_test_artifacts/{subdir}
+    """
     my_dir = Path(__file__).parent.resolve()
     moin_dir = my_dir.parents[2]
     artifacts_dir = moin_dir / "_test_artifacts" / subdir
@@ -108,7 +109,7 @@ def get_dirs(subdir: str) -> tuple[Path, Path]:
 
 
 def get_open_wiki_files():
-    """check if any files in wiki/data or wiki/index are in use"""
+    """Check if any files in wiki/data or wiki/index are in use."""
     proc = psutil.Process()
     files = []
     for file in proc.open_files():

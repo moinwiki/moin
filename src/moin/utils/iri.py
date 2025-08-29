@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Generic? IRI implementation
+MoinMoin - Generic IRI implementation.
 
 Implements the generic IRI form as defined in RFC 3987.
 """
@@ -17,7 +17,7 @@ from typing import Any
 
 def _iriquote_replace(exc):
     """
-    Special replace function that implements the IRI quoting rules
+    Special replace function that implements the IRI quoting rules.
     """
     if not isinstance(exc, UnicodeDecodeError):
         raise exc

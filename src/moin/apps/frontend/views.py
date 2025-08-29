@@ -10,9 +10,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - frontend views
+MoinMoin - Frontend views
 
-    This shows the usual things users see when using the wiki.
+Views that render the pages and actions a typical wiki user sees.
 """
 
 

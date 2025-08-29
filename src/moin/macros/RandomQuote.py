@@ -4,14 +4,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - RandomQuote Macro selects a random quote from FortuneCookies or a given moinwiki item.
+MoinMoin - RandomQuote macro selects a random quote from FortuneCookies or a given wiki item.
 
     Usage:
         <<RandomQuote()>>
         <<RandomQuote(WikiTips)>>
 
     Comments:
-        It will look for list delimiters on the moinwiki item in question.
+        It will look for list delimiters in the item in question.
         It will ignore anything that is not in an "*" list.
 """
 

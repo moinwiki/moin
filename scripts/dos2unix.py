@@ -3,13 +3,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Alternative for unix dos2unix utility that may be run on either windows or unix. Does not implement
-typical unix dos2unix command line syntax.
+Alternative to the Unix dos2unix utility that can run on either Windows or Unix. Does not implement
+the typical Unix dos2unix command-line syntax.
 
-If passed parameter is a directory, all files in that directory are converted to unix line endings.
-Sub-directories are not processed.  If passed parameter is a filename, only that filename is converted.
+If the passed parameter is a directory, all files in that directory are converted to Unix line endings.
+Subdirectories are not processed. If the passed parameter is a filename, only that filename is converted.
 
-Usage: python <path_to>dos2unix.py <target_directory_or_filename>
+Usage: python path/to/dos2unix.py <target_directory_or_filename>
 """
 
 import os
@@ -17,7 +17,7 @@ import sys
 
 
 def convert_file(filename):
-    """Replace DOS line endings with unix line endings."""
+    """Replace DOS line endings with Unix line endings."""
     with open(filename, "rb") as f:
         data = f.read()
     if "\0" in data:

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin cli._util common functions used in cli
+MoinMoin - common utilities for CLI commands.
 """
 
 from typing import Optional
@@ -16,9 +16,11 @@ logging = log.getLogger(__name__)
 
 
 def get_backends(backends: Optional[str], all_backends: bool) -> set[Backend]:
-    """return set of Backends for cli parameters
-    :param backends: comma separated list of backends
-    :param all_backends: True to include all backends, overrides backends parameter if True"""
+    """Return a set of Backends for CLI parameters.
+
+    :param backends: Comma-separated list of backend names.
+    :param all_backends: If True, include all backends (overrides 'backends').
+    """
     if all_backends:
         return set(app.cfg.backend_mapping.values())
     if backends:
@@ -36,10 +38,11 @@ def get_backends(backends: Optional[str], all_backends: bool) -> set[Backend]:
 
 
 def drop_and_recreate_index(indexer, procs=None, limitmb=None, multisegment=False):
-    """Drop index and recreate, rebuild and optimize
-    :param indexer: IndexingMiddleware object
+    """Drop the index and recreate, rebuild, and optimize it.
+
+    :param indexer: IndexingMiddleware object.
     :param procs: Number of processors the writer will use.
-    :param limitmb: Maximum memory (in megabytes) each index-writer will use for the indexing pool
+    :param limitmb: Maximum memory (in megabytes) each index writer will use for the indexing pool.
     """
     indexer.close()
     indexer.destroy()

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - contenttype related constants
+MoinMoin - Content type–related constants.
 """
 
 from collections import defaultdict
@@ -16,7 +16,7 @@ from moin.i18n import _
 CHARSET = "utf-8"
 CHARSET19 = "utf-8"
 
-# Parser to use mimetype text
+# Parser-to-use MIME types
 PARSER_TEXT_MIMETYPE = [
     "plain",
     "csv",
@@ -72,7 +72,7 @@ CONTENTTYPE_NO_EXPANSION = [
 ]
 
 CONTENTTYPE_VARIABLES = [
-    # content types that support variables: @SIG@, @EMAIL@, @TIME@, @DATE@, etc
+    # Content types that support variables: @SIG@, @EMAIL@, @TIME@, @DATE@, etc.
     "text/x.moin.wiki;charset=utf-8",
     "text/x.moin.wiki;format=1.9;charset=utf-8",
 ]
@@ -93,7 +93,7 @@ CONTENTTYPE_AUDIO = ["audio/wave", "audio/ogg", "audio/mpeg", "audio/webm"]
 
 CONTENTTYPE_VIDEO = ["video/ogg", "video/webm", "video/mp4"]
 
-# TODO: is there a source that maps all (or common) file suffixes to media contenttypes as used by /maint/dump_html.py
+# TODO: is there a source that maps all (or common) file suffixes to media content types as used by /maint/dump_html.py
 CONTENTTYPE_MEDIA = CONTENTTYPE_VIDEO + CONTENTTYPE_AUDIO + CONTENTTYPE_IMAGE
 CONTENTTYPE_MEDIA_SUFFIX = tuple(
     ".svg .png .jpg .jpeg .gif .wave .wav .ogg .oga .ogv.mpeg .mpg .mp3 .webm .mp4".split()

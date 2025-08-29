@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.utils.pysupport Tests
+MoinMoin - tests for moin.utils.pysupport.
 """
 
 
@@ -19,10 +19,9 @@ from moin.utils import plugins
 
 
 class TestImportNameFromMoin:
-    """Test importName of MoinMoin modules
+    """Tests importName for MoinMoin modules.
 
-    We don't make any testing for files, assuming that moin package is
-    not broken.
+    We do not test files here, assuming that the moin package is not broken.
     """
 
     def testNonExistingModule(self):
@@ -30,7 +29,7 @@ class TestImportNameFromMoin:
         pytest.raises(ImportError, pysupport.importName, "moin.utils.nonexistent", "importName")
 
     def testNonExistingAttribute(self):
-        """pysupport: import nonexistent attritbue raises AttributeError"""
+        """pysupport: import nonexistent attribute raises AttributeError"""
         pytest.raises(AttributeError, pysupport.importName, "moin.utils.pysupport", "nonexistent")
 
     def testExisting(self):
@@ -69,7 +68,7 @@ class TestImportNonExisting(TestImportNameFromPlugin):
     plugin = "NonExistingWikiPlugin"
 
     def testNonExisting(self):
-        """pysupport: import nonexistent wiki plugin fail"""
+        """pysupport: import nonexistent wiki plugin fails"""
         if self.pluginExists():
             pytest.skip(f"plugin exists: {self.plugin}")
         pytest.raises(plugins.PluginMissingError, plugins.importWikiPlugin, app.cfg, "parser", self.plugin, "Parser")
@@ -83,11 +82,10 @@ class TestImportExisting(TestImportNameFromPlugin):
     def testExisting(self):
         """pysupport: import existing wiki plugin
 
-        Tests if a module can be imported from an arbitrary path
-        like it is done in moin for plugins. Some strange bug
-        in the old implementation failed on an import of os,
-        cause os does a from os.path import that will stumble
-        over a poisoned sys.modules.
+        Tests whether a module can be imported from an arbitrary path,
+        as done in moin for plugins. A bug in the old implementation
+        failed on an import of os because os performs a 'from os.path import',
+        which would stumble over a poisoned sys.modules.
         """
         try:
             self.createTestPlugin()
@@ -100,7 +98,7 @@ class TestImportExisting(TestImportNameFromPlugin):
             self.deleteTestPlugin()
 
     def createTestPlugin(self):
-        """Create test plugin, skiping if plugin exists"""
+        """Create test plugin, skipping if plugin exists"""
         if self.pluginExists():
             self.shouldDeleteTestPlugin = False
             pytest.skip(f"Won't overwrite existing plugin: {self.plugin}")
@@ -121,7 +119,7 @@ class Parser:
             pytest.skip(f"Can't create test plugin: {err!s}")
 
     def deleteTestPlugin(self):
-        """Delete plugin files ignoring missing files errors"""
+        """Delete plugin files, ignoring missing-file errors"""
         if not self.shouldDeleteTestPlugin:
             return
         for suffix in (".py", ".pyc"):

@@ -6,7 +6,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.backends.wiki_group tests
+MoinMoin - moin.datastructures.backends.wiki_groups tests.
 """
 
 
@@ -87,9 +87,8 @@ class TestWikiGroupBackend(GroupsBackendTest):
 
     def test_wiki_backend_item_acl_usergroupmember_item(self):
         """
-        Test if the wiki group backend works with acl code.
-        First check acl rights of a user that is not a member of group
-        then add user member to an item group and check acl rights
+        Test if the wiki group backend works with ACL code.
+        First, check ACL rights of a user who is not a group member; then add the user to a group item and check ACL rights.
         """
         become_trusted()
         update_item("NewGroup", {USERGROUP: ["ExampleUser"]}, DATA)

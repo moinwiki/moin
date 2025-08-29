@@ -2,11 +2,11 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Migration of MonthCalendar macro (moin1.9) to its new syntax (moin2)
+MoinMoin - migration of the MonthCalendar macro (Moin 1.9) to its new syntax (Moin 2).
 
-The MonthCalendar macro used to have comma-separated non-name-value arguments
-such as <<MonthCalendar('TestCalendar',,,-1,,1)>>, now it has named parameters
-such as <<MonthCalendar(item='TestCalendar', offset=-1, fixed_height=true)>>
+The MonthCalendar macro used to have comma-separated, non-name-value arguments,
+such as <<MonthCalendar('TestCalendar',,,-1,,1)>>. It now uses named parameters,
+such as <<MonthCalendar(item="TestCalendar", offset=-1, fixed_height=true)>>.
 """
 from moin.cli.migration.moin19 import macro_migration
 from moin.utils import paramparser
@@ -24,11 +24,11 @@ MACRO_NAME_MONTH_CALENDAR = "MonthCalendar"
 def parseargs_legacy(
     args, defpagename, defyear, defmonth, defoffset, defoffset2, defheight6, defanniversary, deftemplate
 ):
-    """Slightly modified parsing function from MonthCalendar.py in moin-1.9
+    """Slightly modified parsing function from MonthCalendar.py in Moin 1.9.
 
-    From the moin-1.9 version of the function
-    * the request argument was dropped
-    * get_unicode was changed to get_str
+    Changes from the Moin 1.9 version:
+    * The request argument was dropped.
+    * get_unicode was changed to get_str.
     """
     args = paramparser.parse_quoted_separated(args, name_value=False)
     args += [None] * 8  # fill up with None to trigger defaults
@@ -46,15 +46,15 @@ def parseargs_legacy(
 
 
 def convert_month_calendar_macro_syntax(node):
-    """Convert the given MonthCalendar macro node to the new syntax in-place
+    """Convert the given MonthCalendar macro node to the new syntax in-place.
 
-    MonthCalendar used to have unnamed parameters in moin-1.9. The syntax
-    has been changed to name-value parameters in moin2. Migrate the given
+    MonthCalendar used to have unnamed parameters in Moin 1.9. The syntax
+    has been changed to name-value parameters in Moin 2. Migrate the given
     macro accordingly.
 
     Example conversions:
 
-    | moin1.9                          | moin2                                |
+    | Moin 1.9                         | Moin 2                               |
     |----------------------------------|--------------------------------------|
     | <<MonthCalendar()>>              | <<MonthCalendar()>>                  |
     | <<MonthCalendar('TestPage')>>    | <<MonthCalendar(item="TestPage")>>   |
@@ -63,7 +63,7 @@ def convert_month_calendar_macro_syntax(node):
     |                                  |                 month_offset=2,      |
     |                                  |                 fixed_height=true)>> |
 
-    :param node: the DOM node matching the MonthCalendar macro content type
+    :param node: The DOM node matching the MonthCalendar macro content type.
     :type node: emeraldtree.tree.Element
     """
 

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - memory store tests
+MoinMoin - memory store tests.
 """
 
 import pytest

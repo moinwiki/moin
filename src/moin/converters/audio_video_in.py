@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Audio/Video converter
+MoinMoin - Audio/Video converter.
 
-Convert audio/video to <object> tag for the DOM Tree.
+Convert an audio/video file to an <object> tag for the DOM tree.
 """
 
 
@@ -17,7 +17,7 @@ from moin.constants.keys import SUMMARY
 
 class Converter:
     """
-    Convert audio/video to the corresponding <object> in the DOM Tree
+    Convert an audio/video file to the corresponding <object> in the DOM tree.
     """
 
     @classmethod
