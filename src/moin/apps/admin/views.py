@@ -8,9 +8,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - admin views
+MoinMoin - Admin views
 
-This shows the user interface for wiki admins.
+This module provides the user interface for wiki administrators.
 """
 from collections import namedtuple
 
@@ -74,7 +74,7 @@ def index():
 
 
 @admin.route("/user")
-# wip - see #1734, this fix breaks the user view from the navigation bar.
+# WIP: see #1734; this fix breaks the user view from the navigation bar.
 # @require_permission(SUPERUSER)
 def index_user():
     return render_template(
@@ -242,7 +242,7 @@ def userprofile(user_name):
 @require_permission(SUPERUSER)
 def mail_recovery_token():
     """
-    Send user an email so he can reset his password.
+    Send the user an email so they can reset their password.
     """
     username = request.form.get("username", "")
     if username:
@@ -362,7 +362,7 @@ def wikiconfighelp():
 @admin.route("/highlighterhelp", methods=["GET"])
 @require_permission(SUPERUSER)
 def highlighterhelp():
-    """display a table with list of available Pygments lexers"""
+    """Display a table listing the available Pygments lexers."""
     import pygments.lexers
 
     headings = [_("Lexer description"), _("Lexer names"), _("File patterns"), _("Mimetypes")]
@@ -379,7 +379,7 @@ def highlighterhelp():
 @admin.route("/interwikihelp", methods=["GET"])
 @require_permission(SUPERUSER)
 def interwikihelp():
-    """display a table with list of known interwiki names / urls"""
+    """Display a table listing the known InterWiki names and URLs."""
     headings = [_("InterWiki name"), _("URL")]
     rows = sorted(app.cfg.interwiki_map.items())
     return render_template("user/interwikihelp.html", title_name=_("Interwiki Names"), headings=headings, rows=rows)
@@ -388,7 +388,7 @@ def interwikihelp():
 @admin.route("/itemsize", methods=["GET"])
 @require_permission(SUPERUSER)
 def itemsize():
-    """display a table with item sizes"""
+    """Display a table with item sizes."""
     headings = [_("Size"), _("Item name")]
     query = And([Not(Term(NAMESPACE, NAMESPACE_USERPROFILES)), Not(Term(TRASH, True))])
     revs = flaskg.storage.search_meta(query, idx_name=LATEST_REVS, sortedby=[NAME], limit=None)
@@ -471,7 +471,7 @@ def user_acl_report(uid):
 @require_permission(SUPERUSER)
 def groupbrowser():
     """
-    Display list of all groups and their members
+    Display a list of all groups and their members.
     """
     all_groups = flaskg.groups
     groups = []
@@ -496,7 +496,7 @@ def groupbrowser():
 @require_permission(SUPERUSER)
 def item_acl_report():
     """
-    Return a sorted list of all items in the wiki along with the ACL Meta-data.
+    Return a sorted list of all items in the wiki along with the ACL metadata.
 
     Item names are prefixed with the namespace, if there is a non-default namespace.
     If there are multiple names, the first name is used for sorting.

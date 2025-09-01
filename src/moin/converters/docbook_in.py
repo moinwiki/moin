@@ -3,12 +3,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - DocBook input converter
-Converts a DocBook document into an internal document tree.
+MoinMoin - DocBook input converter.
+Convert a DocBook document into an internal document tree.
 
 Currently supports DocBook v5.
 
-Some elements of DocBook v4 specification are also supported
+Some elements of the DocBook v4 specification are also supported
 for backward compatibility:
 
 - ulink
@@ -52,10 +52,10 @@ def XML(text, parser=None):
 
 class XMLParser(ET.XMLParser):
     """
-    Override EmeraldTree/tree.py XMLParser class. Required to add auto-scroll textarea feature.
+    Override EmeraldTree/tree.py XMLParser class. Required to add an auto-scroll textarea feature.
 
     There is no need to subclass all tree.py classes and procedures with stubs because this
-    modified _start_list is only needed for the initial construction of the DOM when
+    modified _start_list is only needed during the initial construction of the DOM when
     flaskg.add_lineno_attr may be True.
     """
 
@@ -68,14 +68,14 @@ class XMLParser(ET.XMLParser):
 
 class Converter:
     """
-    Converter application/docbook+xml -> x.moin.document
+    Convert application/docbook+xml -> x.moin.document.
     """
 
     # Namespace of our input data
     docbook_namespace = {docbook.namespace: "docbook"}
 
-    # DocBook elements which are completely ignored by our converter
-    # We even do not process children of these elements
+    # DocBook elements that are completely ignored by our converter
+    # We do not even process children of these elements
     ignored_tags = {
         # Info elements
         "abstract",

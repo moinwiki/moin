@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - sqlalchemy store
+MoinMoin - SQLAlchemy store.
 
-Stores k/v pairs into any database supported by sqlalchemy.
+Stores key/value pairs into any database supported by SQLAlchemy.
 """
 
 import os
@@ -28,10 +28,10 @@ class BytesStore(BytesMutableStoreBase):
     @classmethod
     def from_uri(cls, uri):
         """
-        Create a new cls instance from the using the uri
+        Create a new cls instance from the given URI.
 
-        :param cls: Class to create
-        :param uri: The database uri that we pass on to SQLAlchemy.
+        :param cls: Class to create.
+        :param uri: The database URI that we pass on to SQLAlchemy.
         """
         # using "::" to support windows pathnames that
         # may include ":" after the drive letter.
@@ -40,9 +40,9 @@ class BytesStore(BytesMutableStoreBase):
 
     def __init__(self, db_uri=None, table_name="store", verbose=False):
         """
-        :param db_uri: The database uri that we pass on to SQLAlchemy.
+        :param db_uri: The database URI that we pass on to SQLAlchemy.
                        May contain user/password/host/port/etc.
-        :param verbose: Verbosity setting. If set to True this will print all SQL queries
+        :param verbose: Verbosity setting. If set to True, this will print all SQL queries
                         to the console.
         """
         self.db_uri = db_uri
@@ -58,8 +58,8 @@ class BytesStore(BytesMutableStoreBase):
     def open(self):
         db_uri = self.db_uri
         if db_uri is None:
-            # These are settings that apply only for development / testing only. The additional args are necessary
-            # due to some limitations of the in-memory sqlite database.
+            # These settings apply only for development/testing. The additional args are necessary
+            # due to some limitations of the in-memory SQLite database.
             db_uri = "sqlite:///:memory:"
             self.engine = create_engine(db_uri, poolclass=StaticPool, connect_args={"check_same_thread": False})
         else:
@@ -124,4 +124,4 @@ class BytesStore(BytesMutableStoreBase):
 
 
 class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
-    """sqlalchemy FileStore"""
+    """SQLAlchemy FileStore."""

@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Extension Script Package
+MoinMoin - CLI entry points and command registrations.
 """
 
 import click
@@ -23,18 +23,18 @@ logging = log.getLogger(__name__)
 
 
 def Help():
-    """Moin initial help"""
+    """Moin quick help."""
     print(
         """\
 Quick help / most important commands overview:
 
-  moin create-instance  # Create wikiconfig and wiki instance directories
+  moin create-instance  # Create wikiconfig and instance directories
 
   moin index-create     # Create empty indexes and storage
 
-  moin run              # Run moin's builtin web server
+  moin run              # Run Moin's built-in web server
 
-  moin import19         # Import wiki data from moin 1.9
+  moin import19         # Import wiki data from Moin 1.9
 
 
 For more information please run:
@@ -43,7 +43,7 @@ For more information please run:
 
   moin <subcommand> --help
 
-or read the Docs at https://moin-20.readthedocs.io/
+or read the documentation at https://moin-20.readthedocs.io/
 """
     )
 
@@ -52,7 +52,7 @@ or read the Docs at https://moin-20.readthedocs.io/
 @click.group(cls=FlaskGroup, create_app=create_app, invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
-    """Moin extensions to the Flask CLI"""
+    """Moin extensions to the Flask CLI."""
     logging.debug("invoked_subcommand: %s", ctx.invoked_subcommand)
     if ctx.invoked_subcommand is None:
         Help()

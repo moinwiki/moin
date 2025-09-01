@@ -4,9 +4,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Flatland widgets
+MoinMoin - Flatland form widgets.
 
-    General Flatland widgets containing hints for the templates.
+General Flatland widgets containing hints for the templates.
 """
 
 

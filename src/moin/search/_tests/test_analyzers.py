@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
- MoinMoin - moin.search.analyzers Tests
+MoinMoin - tests for moin.search.analyzers.
 """
 
 
@@ -14,7 +14,7 @@ from moin.search.analyzers import MimeTokenizer, AclTokenizer, item_name_analyze
 class TokenizerTestBase:
 
     def testTokenizer(self):
-        """analyzers: check what obtained tokens matched given"""
+        """Analyzers: verify that obtained tokens match expected values."""
         tokenizer = self.make_tokenizer()
         for value, expected_tokens in self.test_cases_query:
             tokens = [token.text for token in tokenizer(value)]
@@ -22,7 +22,7 @@ class TokenizerTestBase:
 
 
 class TestAclTokenizer(TokenizerTestBase):
-    """analyzers: test ACL tokenizer"""
+    """Analyzers: test ACL tokenizer."""
 
     test_cases_query = [
         # (query, tokens)
@@ -99,7 +99,7 @@ class TestAclTokenizer(TokenizerTestBase):
 
 
 class TestMimeTokenizer(TokenizerTestBase):
-    """analyzers: test content type analyzer"""
+    """Analyzers: test content type analyzer."""
 
     test_cases_query = [
         # (query, tokens)
@@ -159,7 +159,7 @@ class TestMimeTokenizer(TokenizerTestBase):
 
 
 class TestItemNameAnalyzer(TokenizerTestBase):
-    """analyzers: test item_name analyzer"""
+    """Analyzers: test item_name analyzer."""
 
     test_cases_query = [
         # (query, tokens)
@@ -181,7 +181,7 @@ class TestItemNameAnalyzer(TokenizerTestBase):
         return item_name_analyzer()
 
     def testTokenizer(self):
-        """analyzers: test item name analyzer with "query" and "index" mode"""
+        """Analyzers: test item name analyzer with 'query' and 'index' modes."""
         tokenizer = self.make_tokenizer()
         for value, expected_tokens in self.test_cases_query:
             tokens = [token.text for token in tokenizer(value, mode="query")]

@@ -5,7 +5,7 @@ License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 This Locust test script may be used to identify bugs that may occur
 when an item is updated by multiple users in rapid succession.
 
-This test requires user self-registration, set wikiconfig configuration to:
+This test requires user self-registration; set the wikiconfig.py configuration to:
     registration_only_by_superuser = False
     user_email_verification = False
     edit_locking_policy = "lock"
@@ -22,7 +22,7 @@ message are appended to the Home item. If the update for a locust fails on the 1
 attempt, then a new <username> item is created and any remaining fail
 messages are written to the item.
 
-To load test Moin2:
+To load-test Moin 2:
  * read about Locust at https://docs.locust.io/en/stable/index.html - last tested with Locust 2.9.0
  * install Locust per the docs in its own venv
  * open a terminal window and start the Moin built-in server (./m run)
@@ -39,7 +39,7 @@ To load test Moin2:
  * customize and repeat:
     * ./m del-wiki
     * ./m new-wiki
-    * restart Moin2 buit-in server
+    * restart the Moin 2 built-in server
     * restart Locust server
     * refresh browser window
 """
@@ -53,16 +53,16 @@ import time
 from locust import HttpLocust, Locust, TaskSet, HttpUser, task, SequentialTaskSet, between, User, events
 
 
-# used to create unique user IDs
+# Used to create unique user IDs
 user_number = 0
-# min and max wait time in seconds between user transactions, ignored, there is only 1 task
+# Min and max wait time in seconds between user transactions; ignored, there is only 1 task
 wait_time = between(2, 3)
-# sleep time between GET, POST requests in seconds
+# Sleep time between GET and POST requests, in seconds
 sleep_time = 0
 
 
 def get_textarea(html):
-    """Return contents of textarea where html is html output from +modify"""
+    """Return the contents of the textarea where html is the HTML output from +modify."""
     try:
         html_ = html.split("<textarea ")[1]
         html_ = html_.split(">")[1]
@@ -73,7 +73,7 @@ def get_textarea(html):
 
 
 def format_date_time(dt=None):
-    """Return current or passed (dt) time in a human readable format."""
+    """Return the current time or the passed (dt) time in a human-readable format."""
     if dt is None:
         dt = datetime.datetime.now()
     fmt = "%Y-%m-%d %H:%M:%S"
@@ -83,12 +83,12 @@ def format_date_time(dt=None):
 
 class LoadTest(HttpUser):
     """
-    On start, create the Home page. Register a new user, login, modify the Home page several times, and logout.
+    On start, create the Home page. Register a new user, log in, modify the Home page several times, and log out.
     """
 
     @events.test_start.add_listener
     def on_test_start(environment, **kwargs):
-        """create Home item"""
+        """Create Home item"""
         parser = argparse.ArgumentParser()
         parser.add_argument("--host", "-H")
         args, unknown = parser.parse_known_args()
@@ -116,7 +116,7 @@ class LoadTest(HttpUser):
 
     @task(1)
     def user_workflow(self):
-        """Define workflow for each locust"""
+        """Define workflow for each Locust user."""
         self.get_home()
         time.sleep(sleep_time)
         self.click_login()
@@ -139,7 +139,7 @@ class LoadTest(HttpUser):
     def get_home(self):
         self.count = 0
         self.message = ""
-        # Home and users/Home have been created by setup, see below
+        # Home and users/Home have been created by setup; see below
         with self.client.get("/Home", catch_response=True) as response:
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
@@ -212,8 +212,8 @@ class LoadTest(HttpUser):
             if response.status_code != 200:
                 print("%s: response.status_code = %s" % (sys._getframe().f_lineno, response.status_code))
             if b"is locked by" in response.content:
-                # someone else has item locked for editing
-                self.message += "\n\n%s Item %s is locked, Locust user %s cannot do change number %s" % (
+                # Someone else has the item locked for editing
+                self.message += "\n\n%s Item %s is locked; Locust user %s cannot make change number %s" % (
                     dt,
                     item_name,
                     self.user_name,

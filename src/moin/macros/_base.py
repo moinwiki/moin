@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Macro base class
+MoinMoin - macro base classes and utilities for macros.
 """
 
 import re
@@ -73,7 +73,7 @@ def get_item_names(name="", startswith="", kind="files", skiptag="", tag="", reg
 
 
 def valid_item_name(name):
-    """return False if item_name not valid"""
+    """Return False if the item name is not valid."""
     if not isinstance(name, str):
         return False
     if name != name.strip():
@@ -89,7 +89,7 @@ def valid_item_name(name):
 
 def extract_h1(item_name):
     """
-    Return the first heading found in the item's content
+    Return the first heading found in the item's content.
     """
     item = Item.create(item_name, rev_id=CURRENT)
     contenttype = item.meta[CONTENTTYPE]
@@ -112,10 +112,10 @@ def fail_message(msg, alternative, severity="error"):
     """
     Return an error message in admonition-like format.
 
-    :param msg: error message
-    :param alternative: full text of macro as passed in MacroBase __call__
-    :param Severity: attention, caution, danger, error, hint, important, note, or tip
-    :returns: formatted text of macro, error message
+    :param msg: Error message.
+    :param alternative: Full text of the macro as passed to MacroBase.__call__.
+    :param severity: One of: attention, caution, danger, error, hint, important, note, or tip.
+    :return: Formatted HTML node containing the macro text and error message.
     """
     if severity not in "attention caution danger error hint important note tip".split():
         raise ValueError

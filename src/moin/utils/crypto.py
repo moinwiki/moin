@@ -2,13 +2,12 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Cryptographic and random functions
+MoinMoin - cryptographic and random functions.
 
 Features:
-
-- generate password recovery tokens
-- verify password recovery tokens
-- generate random strings of given length (for salting)
+- Generate password-recovery tokens
+- Verify password-recovery tokens
+- Generate random strings of a given length (for salting)
 """
 
 import hashlib
@@ -32,13 +31,13 @@ UUID_LEN = len(make_uuid())
 
 def random_string(length, allowed_chars=None):
     """
-    Generate a random string with given length consisting of the given characters.
+    Generate a random string of the given length consisting of the given characters.
 
-    Note: this is now just a little wrapper around passlib's randomness code.
+    Note: this is now just a small wrapper around Passlib's randomness code.
 
-    :param length: length of the str
-    :param allowed_chars: str with allowed characters
-    :returns: random string
+    :param length: Length of the string.
+    :param allowed_chars: String of allowed characters.
+    :returns: Random string.
     """
     assert allowed_chars is not None
     s = getrandstr(rng, allowed_chars, length)
@@ -50,23 +49,23 @@ def random_string(length, allowed_chars=None):
 
 def generate_token(key=None, stamp=None):
     """
-    generate a pair of a secret key and a crypto token.
+    Generate a pair consisting of a secret key and a token.
 
-    you can use this to implement a password recovery functionality by
-    calling generate_token() and transmitting the returned token to the
-    (correct) user (e.g. by email) and storing the returned (secret) key
-    into the user's profile on the server side.
+    You can use this to implement password-recovery functionality by
+    calling generate_token(), transmitting the returned token to the
+    correct user (e.g., by email), and storing the returned (secret) key
+    in the user's profile on the server side.
 
-    after the user received the token, he returns to the wiki, gives his
-    user name or email address and the token he received. read the (secret)
+    After the user receives the token, they return to the wiki, enter their
+    user name or email address, and the token they received. Read the (secret)
     key from the user profile and call valid_token(key, token) to verify
-    if the token is valid. if it is, consider the user authenticated, remove
-    the secret key from his profile and let him reset his password.
+    whether the token is valid. If it is valid, consider the user authenticated,
+    remove the secret key from their profile, and allow them to reset the password.
 
-    :param key: give it to recompute some specific token for verification
-    :param stamp: give it to recompute some specific token for verification
+    :param key: Recompute a specific token for verification using this key.
+    :param stamp: Recompute a specific token for verification using this timestamp.
     :rtype: 2-tuple
-    :returns: key, token (both unicode)
+    :returns: key, token (both strings)
     """
     if key is None:
         key = genword(length=32)
@@ -81,14 +80,14 @@ def generate_token(key=None, stamp=None):
 
 def valid_token(key, token, timeout=2 * 60 * 60):
     """
-    check if token is valid with respect to the secret key,
-    the token must not be older than timeout seconds.
+    Check whether a token is valid with respect to the secret key.
+    The token must not be older than the timeout (in seconds).
 
-    :param key: give the secret key to verify the token
-    :param token: the token to verify
-    :param timeout: timeout seconds, set to None to ignore timeout
+    :param key: The secret key to verify the token.
+    :param token: The token to verify.
+    :param timeout: Timeout in seconds; set to None to ignore the timeout.
     :rtype: bool
-    :returns: token is valid and not timed out
+    :returns: True if the token is valid and not timed out; otherwise False.
     """
     parts = token.split("-")
     if len(parts) != 2:
@@ -108,14 +107,14 @@ def valid_token(key, token, timeout=2 * 60 * 60):
 
 def cache_key(**kw):
     """
-    Calculate a cache key (ascii only)
+    Calculate a cache key (ASCII only).
 
     Important key properties:
 
-    * The key must be different for different <kw>.
-    * Key is pure ascii
+    * The key must be different for different kw.
+    * The key is pure ASCII.
 
-    :param kw: keys/values to compute cache key from
+    :param kw: Keys/values to compute the cache key from.
     """
     return hashlib.md5(repr(kw).encode(), usedforsecurity=False).hexdigest()
 

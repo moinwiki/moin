@@ -6,9 +6,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Set Metadata of a revision
+MoinMoin - CLI command to set metadata of a revision.
 
-This script duplicates the last revision of the selected item
+This command duplicates the last revision of the selected item
 and sets or removes metadata.
 """
 
@@ -36,7 +36,7 @@ def cli():
     pass
 
 
-@cli.command("maint-set-meta", help="Set meta data of a new revision")
+@cli.command("maint-set-meta", help="Set metadata of a new revision")
 @click.option("--key", "-k", required=False, type=str, help="The key you want to set/change in the new revision")
 @click.option("--value", "-v", type=str, help="The value to set for the given key.")
 @click.option(
@@ -45,7 +45,7 @@ def cli():
     is_flag=True,
     required=False,
     default=False,
-    help="If you want to delete the key given, add this flag.",
+    help="Delete the given key instead of setting a value.",
 )
 @click.option(
     "--query", "-q", type=str, default="", help="Only perform the operation on items found by the given query."
@@ -54,15 +54,13 @@ def SetMeta(key, value, remove, query):
     logging.info("Set meta started")
     flaskg.add_lineno_attr = False
     if not ((key and value) or (key and remove)) or (key and value and remove):
-        sys.exit(
-            "You need to either specify a proper key/value pair or " "only a key you want to delete (with -r set)."
-        )
+        sys.exit("You must either specify a key/value pair or a key to delete (use -r).")
 
     if not remove:
         try:
             value = literal_eval(value)
         except ValueError:
-            sys.exit("You need to specify a valid Python literal as the argument")
+            sys.exit("You need to specify a valid Python literal as the argument.")
 
     if query:
         qp = app.storage.query_parser([NAME_EXACT])

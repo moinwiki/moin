@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - CSV text data to DOM converter
+MoinMoin - CSV text data to DOM converter.
 """
 
 import csv
@@ -28,7 +28,7 @@ class Converter(TableMixin):
 
     def __call__(self, data, contenttype=None, arguments=None):
         text = decode_data(data, contenttype)
-        # prevent incorrect output when there are multiple trailing blank lines
+        # Prevent incorrect output when there are multiple trailing blank lines
         text = text.rstrip()
         content = normalize_split_text(text)
         dialect = csv.Sniffer().sniff(text)
@@ -37,7 +37,7 @@ class Converter(TableMixin):
         head = None
         cls = None
         try:
-            # fragile function, throws errors when csv file is incorrectly formatted
+            # Fragile function; throws errors when the CSV file is incorrectly formatted
             if csv.Sniffer().has_header("\n".join(content)):
                 head = rows[0]
                 rows = rows[1:]

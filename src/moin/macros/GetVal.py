@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin GetVal macro - gets a value for a specified key from a dict.
+MoinMoin - GetVal macro retrieves a value for a specified key from a dict.
 """
 
 

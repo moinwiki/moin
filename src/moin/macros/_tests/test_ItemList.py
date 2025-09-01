@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.macros.ItemList Tests
+MoinMoin - tests for moin.macros.ItemList.
 """
 
 from moin.items import Item
@@ -14,12 +14,12 @@ meta = {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8", ITEMTYPE: "default", REV_
 
 class TestItemListMacro:
     """
-    call ItemList macro and test ...
+    Call the ItemList macro and test the output.
     """
 
     class Config(wikiconfig.Config):
         """
-        we just have this so the test framework creates a new app with empty backends for us.
+        Provide a fresh app with empty backends for these tests.
         """
 
     def test_ItemListFullPath(self):

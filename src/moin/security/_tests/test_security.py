@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.security Tests
+MoinMoin - moin.security tests.
 """
 
 
@@ -23,7 +23,7 @@ from moin._tests import update_item, become_trusted, wikiconfig
 
 def acliter(acl):
     """
-    return a acl string iterator (using cfg.acl_rights_contents as valid acl rights)
+    Return an ACL string iterator (using cfg.acl_rights_contents as valid ACL rights).
     """
     return ACLStringIterator(app.cfg.acl_rights_contents, acl)
 

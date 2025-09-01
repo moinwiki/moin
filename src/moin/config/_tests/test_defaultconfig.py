@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.config.default Tests
+MoinMoin - moin.config.default tests.
 """
 
 
@@ -17,7 +17,7 @@ class TestPasswordChecker:
         ("", False),  # empty
         ("1966", False),  # too short
         ("asdfghjk", False),  # keyboard sequence
-        ("QwertZuiop", False),  # german keyboard sequence, with uppercase
+        ("QwertZuiop", False),  # German keyboard sequence, with uppercase
         ("mnbvcx", False),  # reverse keyboard sequence
         ("12345678", False),  # keyboard sequence, too easy
         ("aaaaaaaa", False),  # not enough different chars

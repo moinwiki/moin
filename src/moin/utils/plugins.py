@@ -7,7 +7,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - plugin loader
+MoinMoin - Plugin loader.
 """
 
 
@@ -30,23 +30,23 @@ class PluginMissingError(PluginError):
 
 
 class PluginAttributeError(PluginError):
-    """Raised when plugin does not contain an attribtue"""
+    """Raised when a plugin does not contain an attribute."""
 
 
 def importPlugin(cfg, kind, name, function="execute"):
-    """Import wiki or builtin plugin
+    """Import a wiki or built-in plugin.
 
-    Returns <function> attr from a plugin module <name>.
-    If <function> attr is missing, raise PluginAttributeError.
+    Returns the <function> attribute from a plugin module <name>.
+    If the <function> attribute is missing, raise PluginAttributeError.
     If <function> is None, return the whole module object.
 
-    If <name> plugin can not be imported, raise PluginMissingError.
+    If the <name> plugin cannot be imported, raise PluginMissingError.
 
-    kind may be one of 'action', 'macros' or any other
-    directory that exist in MoinMoin or data/plugin.
+    kind may be one of 'action', 'macros', or any other
+    directory that exists in MoinMoin or data/plugin.
 
-    Wiki plugins will always override builtin plugins. If you want
-    specific plugin, use either importWikiPlugin or importBuiltinPlugin
+    Wiki plugins will always override built-in plugins. If you want
+    a specific plugin, use either importWikiPlugin or importBuiltinPlugin
     directly.
 
     :param cfg: wiki config instance
@@ -76,7 +76,7 @@ def importWikiPlugin(cfg, kind, name, function="execute"):
 
 
 def importBuiltinPlugin(kind, name, function="execute"):
-    """Import builtin plugin from MoinMoin package
+    """Import built-in plugin from the MoinMoin package.
 
     See importPlugin docstring.
     """
@@ -87,8 +87,8 @@ def importBuiltinPlugin(kind, name, function="execute"):
 
 
 def importNameFromPlugin(moduleName, name):
-    """Return <name> attr from <moduleName> module,
-    raise PluginAttributeError if name does not exist.
+    """Return the <name> attribute from the <moduleName> module;
+    raise PluginAttributeError if the name does not exist.
 
     If name is None, return the <moduleName> module object.
     """
@@ -104,7 +104,7 @@ def importNameFromPlugin(moduleName, name):
         except AttributeError:
             raise PluginAttributeError
     else:
-        # module now has the toplevel module of <moduleName> (see __import__ docs!)
+        # module now has the top-level module of <moduleName> (see __import__ docs!)
         components = moduleName.split(".")
         for comp in components[1:]:
             module = getattr(module, comp)

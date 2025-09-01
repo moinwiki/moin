@@ -55,14 +55,14 @@ class Base:
 
     def do(self, input, xpath_query):
         string_to_parse = self.handle_output(input)
-        logging.debug(f"After the DOCBOOK_IN conversion : {string_to_parse}")
+        logging.debug(f"After the DocBook in conversion: {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         print("string_to_parse = %s" % string_to_parse)  # provide a clue for failing tests
         assert tree.xpath(xpath_query, namespaces=self.namespaces_xpath)
 
     def do_nonamespace(self, input, xpath_query):
         string_to_parse = self.handle_output(input, nonamespace=True)
-        logging.debug(f"After the DOCBOOK_IN conversion : {string_to_parse}")
+        logging.debug(f"After the DocBook in conversion: {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         assert tree.xpath(xpath_query, namespaces=self.namespaces_xpath)
 

@@ -4,9 +4,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Moinwiki markup output converter
+MoinMoin - MoinWiki output converter.
 
-Converts an internal document tree into moinwiki markup.
+Convert an internal document tree into MoinWiki markup.
 """
 
 import urllib.request
@@ -32,8 +32,8 @@ logging = log.getLogger(__name__)
 
 class Moinwiki:
     """
-    Moinwiki syntax elements
-    It's dummy
+    MoinWiki syntax elements.
+    Placeholder for MoinWiki-specific tokens.
     """
 
     h = "="
@@ -80,7 +80,7 @@ class Moinwiki:
 
 class Converter:
     """
-    Converter application/x.moin.document -> text/x.moin.wiki
+    Convert application/x.moin.document to text/x.moin.wiki.
     """
 
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}

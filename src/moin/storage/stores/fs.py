@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - filesystem store
+MoinMoin - filesystem store.
 
-Store into filesystem, one file per k/v pair.
+Store in the file system, one file per key/value pair.
 """
 
 import os
@@ -18,7 +18,7 @@ class FileStore(FileMutableStoreBase):
     """
     A simple filesystem-based store.
 
-    keys are required to be valid filenames.
+    Keys are required to be valid filenames.
     """
 
     @classmethod
@@ -27,7 +27,7 @@ class FileStore(FileMutableStoreBase):
 
     def __init__(self, path):
         """
-        :param path: base directory used for this store
+        :param path: Base directory used for this store.
         """
         self.path = path
 
@@ -66,4 +66,4 @@ class FileStore(FileMutableStoreBase):
 
 
 class BytesStore(BytesMutableStoreMixin, FileStore, BytesMutableStoreBase):
-    """filesystem BytesStore"""
+    """Filesystem BytesStore."""

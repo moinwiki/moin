@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - misc. constants not fitting elsewhere
+MoinMoin - Miscellaneous constants not fitting elsewhere.
 """
 
 from __future__ import annotations
@@ -22,14 +22,14 @@ ITEM_INVALID_CHARS_REGEX = re.compile(
     \u202A | # LRE
     \u202B | # RLE
     \u202C | # PDF
-    \u202D | # LRM
-    \u202E   # RLM
+    \u202D | # LRO
+    \u202E   # RLO
     """,
     re.UNICODE | re.VERBOSE,
 )
 
 CLEAN_INPUT_TRANSLATION_MAP: dict[int, str | None] = {
-    # these chars will be replaced by blanks
+    # These characters will be replaced by blanks
     ord("\t"): " ",
     ord("\r"): " ",
     ord("\n"): " ",
@@ -38,7 +38,7 @@ for c in (
     "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11"
     "\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
 ):
-    # these chars will be removed
+    # These characters will be removed
     CLEAN_INPUT_TRANSLATION_MAP[ord(c)] = None
 del c
 
@@ -78,7 +78,7 @@ LOCK = "lock"
 # very short flash message.
 FLASH_REPEAT = "flash_repeat"
 
-# Iconclass to endpoint mapping used in navibars
+# Icon class to endpoint mapping used in navbars
 ICON_MAP = {
     "admin.index": "fa fa-cog",
     "admin.index_user": "fa fa-user",

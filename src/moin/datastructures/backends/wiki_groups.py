@@ -4,14 +4,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - wiki group backend
+MoinMoin - Wiki group backend.
 
-The wiki_groups backend allows to define groups on wiki items.
+The wiki_groups backend allows you to define groups on wiki items.
 
-Normally, the name of the group item has to end with Group like
-FriendsGroup. This lets MoinMoin recognize it as a group. This default
-pattern could be changed (e.g. for non-english languages etc.), see
-HelpOnConfiguration.
+Normally, the name of a group item must end with "Group", like FriendsGroup. This lets MoinMoin
+recognize it as a group. This default pattern can be changed (e.g., for non-English languages);
+see HelpOnConfiguration.
 """
 
 from flask import g as flaskg

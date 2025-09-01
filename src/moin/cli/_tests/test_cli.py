@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli base tests
+MoinMoin - tests for moin.cli base.
 
-tests for cli defined in moin/cli/__init__.py
+Tests for the CLI defined in moin/cli/__init__.py.
 """
 
 from moin.cli._tests import run, assert_p_succcess

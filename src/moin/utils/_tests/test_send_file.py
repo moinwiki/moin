@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.utils.send_file Tests
+MoinMoin - moin.utils.send_file tests.
 """
 
 import os
@@ -15,7 +15,7 @@ from moin.utils import send_file
 
 
 class TestFuid:
-    """test for send_file"""
+    """Tests for moin.utils.send_file."""
 
     def setup_method(self, method):
         self.test_dir = tempfile.mkdtemp("", "test_dir")

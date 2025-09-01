@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Macro handling
+MoinMoin - Macro handling.
 
 Expands all macro elements in an internal Moin document.
 """
@@ -60,8 +60,8 @@ class Converter:
             elem_error.append(f"<<{name}>> {_('Error: invalid macro name.')}")
 
         except Exception as e:
-            # we do not want that a faulty macro aborts rendering of the page
-            # and makes the wiki UI unusable (by emitting a Server Error),
+            # We do not want a faulty macro to abort rendering of the page
+            # and make the wiki UI unusable (by emitting a Server Error),
             # thus, in case of exceptions, we just log the problem and return
             # some standard text.
             logging.exception(f"Macro {name} raised an exception:")

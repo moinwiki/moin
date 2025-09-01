@@ -67,12 +67,12 @@ class Converter:
 
         lexer = None
         if nowiki_name in {"diff", "cplusplus", "python", "java", "pascal", "irc"}:
-            # make old style markup similar to {{{#!python like new style {{{#!highlight python
+            # Make old-style markup similar to {{{#!python}} like the new style {{{#!highlight python}}.
             optional_args = nowiki_name if not optional_args else nowiki_name + " " + optional_args
             nowiki_name = "highlight"
 
         if nowiki_name == "highlight":
-            # TODO: support moin 1.9 options like numbers=on start=222 step=10
+            # TODO: support Moin 1.9 options like numbers=on, start=222, step=10
             optional_args = optional_args.split()[0]  # ignore all parameters except lexer name
             try:
                 lexer = pygments.lexers.get_lexer_by_name(optional_args)
@@ -96,7 +96,7 @@ class Converter:
                 if m and m.group(1):
                     delim = m.group(1)
                 if not delim:
-                    delim = optional_args.split()[0]  # ignore all parameters except a delimiter in first position
+                    delim = optional_args.split()[0]  # ignore all parameters except a delimiter in the first position
                     if len(delim) > 1:
                         delim = None
             sep = delim or ";"

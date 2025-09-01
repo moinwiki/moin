@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Package Initialization
+MoinMoin - package initialization.
 
-    Subpackage containing e-mail support code.
+Subpackage containing e-mail support code.
 """

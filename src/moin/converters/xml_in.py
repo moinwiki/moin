@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Generic XML input converter
+MoinMoin - Generic XML input converter.
 """
 
 import re

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - converter utilities
+MoinMoin - converter utilities.
 """
 
 try:
@@ -26,15 +26,15 @@ def allowed_uri_scheme(uri):
 
 def decode_data(data, contenttype=None):
     """
-    read and decode data, return unicode text
+    Read and decode data; return Unicode text.
 
-    supported types for data:
-    - rev object
+    Supported types for data:
+    - revision object
     - bytes
     - str
 
-    file-like objects and bytes need to be either utf-8 (or ascii, which is a subset of utf-8)
-    encoded or contenttype (including a charset parameter) needs to be given.
+    File-like objects and bytes need to be either UTF-8 (or ASCII, which is a subset of UTF-8)
+    encoded, or content type (including a charset parameter) needs to be given.
     """
     if not isinstance(data, (bytes, str)):
         data = data.data.read()
@@ -53,7 +53,7 @@ def decode_data(data, contenttype=None):
 
 def normalize_split_text(text):
     """
-    normalize line endings, split text into a list of lines
+    Normalize line endings and split text into a list of lines.
     """
     text = text.replace("\r\n", "\n")
     lines = text.split("\n")
@@ -62,13 +62,13 @@ def normalize_split_text(text):
 
 class _Iter:
     """
-    Iterator with push back support
+    Iterator with push-back support.
 
     Collected items can be pushed back into the iterator and further calls will
     return them.
 
     Increments a counter tracking the current line number. This is used by _Stack to
-    add an attribute used by javascript to autoscroll the edit textarea.
+    add an attribute used by JavaScript to auto-scroll the edit textarea.
     """
 
     def __init__(self, parent, startno=0):

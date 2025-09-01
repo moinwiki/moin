@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.moinwiki19_in
+MoinMoin - moin.converters.moinwiki19_in tests.
 """
 
 
@@ -30,13 +30,13 @@ class TestConverter:
             "http://moinmo.in/",
             '<page><body><p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p></body></page>',
         ),
-        # email tests
+        # Email tests
         (
             "mailto:foo@bar.baz",
             '<page><body><p><a xlink:href="mailto:foo@bar.baz">mailto:foo@bar.baz</a></p></body></page>',
         ),
         ("foo@bar.baz", '<page><body><p><a xlink:href="mailto:foo@bar.baz">foo@bar.baz</a></p></body></page>'),
-        ("foo@bar", "<page><body><p>foo@bar</p></body></page>"),  # 1.9 requires domain
+        ("foo@bar", "<page><body><p>foo@bar</p></body></page>"),  # Moin 1.9 requires a domain
     ]
 
     @pytest.mark.parametrize("input,output", data)

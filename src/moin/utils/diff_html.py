@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Side by side diffs
+MoinMoin - side-by-side HTML diffs.
 """
 
 
@@ -27,7 +27,7 @@ def indent(line):
 # This code originally by Scott Moonen, used with permission.
 def diff(old, new):
     """Find changes between old and new and return
-    HTML markup visualising them.
+    HTML markup visualizing them.
 
     :param old: old text [unicode]
     :param new: new text [unicode]

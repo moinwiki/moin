@@ -5,13 +5,13 @@
 """
 MoinMoin - i18n (internationalization) and l10n (localization) support
 
-To use this, please use exactly this line (no less, no more)::
+To use this, import exactly these names (no less, no more):
 
     from moin.i18n import _, L_, N_
 
-    # _ == gettext
-    # N_ == ngettext
-    # L_ == lazy_gettext
+    # _ is gettext
+    # N_ is ngettext
+    # L_ is lazy_gettext
 """
 
 
@@ -34,26 +34,26 @@ L_ = lazy_gettext
 
 
 def i18n_init(app):
-    """initialize Flask-Babel"""
+    """Initialize Flask-Babel."""
     Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
 
 def get_locale():
-    """return the locale for the current user"""
+    """Return the locale for the current user."""
     locale = None
-    # this might be called at a time when flaskg.user is not setup yet:
+    # This may be called when flaskg.user is not set up yet:
     u = getattr(flaskg, "user", None)
     if u and u.locale is not None:
-        # locale is given in user profile, use it
+        # The locale is set in the user profile; use it.
         locale = u.locale
         logging.debug(f"user locale = {locale!r}")
     else:
-        # try to guess the language from the user accept
-        # header the browser transmits. The best match wins.
+        # Try to guess the language from the Accept-Language header sent by the browser.
+        # The best match wins.
         cli_no_request_ctx = False
         try:
             logging.debug(f"request.accept_languages = {request.accept_languages!r}")
-        except RuntimeError:  # CLI call has no valid request context
+        except RuntimeError:  # CLI calls have no valid request context.
             cli_no_request_ctx = True
 
         supported_locales = [Locale("en")] + current_app.extensions["babel"].instance.list_translations()
@@ -70,8 +70,8 @@ def get_locale():
 
 
 def get_timezone():
-    """return the timezone for the current user"""
-    # this might be called at a time when flaskg.user is not setup yet:
+    """Return the timezone for the current user."""
+    # This may be called when flaskg.user is not set up yet:
     u = getattr(flaskg, "user", None)
     if u and u.timezone is not None:
         return u.timezone
@@ -81,10 +81,11 @@ def get_timezone():
 # https://github.com/lalinsky/flask-babel/commit/09ee1702c7129598bb202aa40a0e2e19f5414c24
 @contextmanager
 def force_locale(locale):
-    """Temporarily overrides the currently selected locale. Sometimes
-    it is useful to switch the current locale to different one, do
-    some tasks and then revert back to the original one. For example,
-    if the user uses German on the web site, but you want to send
+    """Temporarily override the currently selected locale.
+
+    Sometimes it is useful to switch the current locale to a different one,
+    perform some tasks, and then revert to the original. For example,
+    if the user uses German on the website, but you want to send
     them an email in English, you can use this function as a context
     manager::
 

@@ -3,16 +3,16 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - backend serialization / deserialization
+MoinMoin - backend serialization/deserialization.
 
-We use a simple custom format here::
+We use a simple custom format::
 
     4 bytes length of meta (m)
-    m bytes metadata (json serialization, utf-8 encoded)
+    m bytes metadata (JSON serialization, UTF-8 encoded)
             (the metadata contains the data length d in meta[SIZE])
     d bytes binary data
     ... (repeat for all meta/data)
-    4 bytes 00 (== length of next meta -> there is none, this is the end)
+    4 bytes 00 (== length of next meta -> there is none; this is the end)
 """
 
 import struct
@@ -51,7 +51,7 @@ def serialize_rev(meta, data):
 
 
 def get_rev_str(meta):
-    """return string representing a revision for use in logging"""
+    """Return a string representing a revision for use in logging."""
     ns = meta.get(NAMESPACE)
     name = None
     names = meta.get(NAME)
@@ -64,11 +64,13 @@ def get_rev_str(meta):
 
 
 def correcting_rev_iter(backend: Backend):
-    """iterate over the revisions in a store yielding corrected metadata
-    yields tuples of meta, data, issues
-        meta: dict of metadata with corrected size and sha1
+    """Iterate over the revisions in a store, yielding corrected metadata.
+
+    Yields tuples of (meta, data, issues):
+        meta: dict of metadata with corrected SIZE and HASH_ALGORITHM
         data: the item data
-        issues: list of str messages describing issues which were corrected"""
+        issues: list of strings describing issues that were corrected
+    """
     for revid in backend:
         issues = []
         if isinstance(revid, tuple):

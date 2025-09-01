@@ -2,7 +2,7 @@
 # License: see flatland license
 
 """
-    MoinMoin - form helpers for flatland / jinja2
+MoinMoin - form helpers for Flatland/Jinja2.
 """
 
 
@@ -73,10 +73,10 @@ placeholder_filter.tags = {"input", "textarea"}  # type: ignore[attr-defined]  #
 
 
 def error_filter_factory(class_="moin-error"):
-    """Returns an HTML generation filter annotating field CSS class on error.
+    """Return an HTML-generation filter that annotates a field’s CSS class on error.
 
-    :param class: The css class to apply in case of validation error on a
-                  field.  Default: 'error'
+    :param class_: The CSS class to apply in case of a validation error on a
+                   field. Default: 'moin-error'
     """
 
     def error_filter(tagname, attributes, contents, context, bind):
@@ -95,7 +95,7 @@ error_filter = error_filter_factory()
 
 
 def make_generator():
-    """make an html generator"""
+    """Make an HTML generator."""
     return Generator(
         auto_domid=True,
         auto_for=True,

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli.maint.index tests
+MoinMoin - tests for moin.cli.maint.index.
 """
 
 from pathlib import Path

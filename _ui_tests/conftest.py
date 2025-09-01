@@ -2,9 +2,10 @@
 # License: GNU GPL v3 (or any later version), see LICENSE.txt for details.
 
 """
-Contains events called by pytest during the life-cycle of the test suite
+Pytest hook definitions used during the lifecycle of the test suite.
+
 This module is automatically loaded by pytest, which looks for a file
-of this name
+with this name.
 """
 
 import os
@@ -16,15 +17,18 @@ import driver_register
 
 def pytest_runtest_makereport(item, call):
     """
-    Entry point for event which occurs after each test has run
-    The parameters are:
-    - item: the method called
-    - call: an object of type CallInfo, which has two properties, of which
-      excinfo contains info about any exception that got thrown by the method
-    This method is called automatically by pytest.  The name of the method
-    is used by pytest to locate it, and decide when to call it
-    This specific method instance is used to take a screenshot whenever a test
-    fails, ie whenever the method throws an exception
+    Entry point for the event that occurs after each test has run.
+
+    Parameters:
+    - item: the test function being executed
+    - call: a CallInfo object; its excinfo attribute contains information about
+      any exception raised by the test
+
+    This function is called automatically by pytest. The function name is used
+    by pytest to locate it and to decide when to call it.
+
+    This hook is used to take a screenshot whenever a test fails, i.e., whenever
+    the test raises an exception.
     """
     if call.excinfo is not None:
         if driver_register.get_driver() is not None and hasattr(item, "obj"):

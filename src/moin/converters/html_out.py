@@ -3,9 +3,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - HTML output converter
+MoinMoin - HTML output converter.
 
-Converts an internal document tree into a HTML tree.
+Convert an internal document tree into an HTML tree.
 """
 
 import re
@@ -38,7 +38,7 @@ SUSPECT = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavio
 
 def style_attr_filter(style):
     """
-    If allow_style_attributes option is True check style attribute for suspect strings, else return ''.
+    If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
     """
     if app.cfg.allow_style_attributes:
         s = "".join(style.strip().lower().split())
@@ -62,7 +62,7 @@ def mark_item_as_transclusion(elem, href_or_item):
     Return elem after adding a "moin-transclusion" class and a "data-href" attribute with
     a link to the transcluded item.
 
-    On the client side, a Javascript function will wrap the element (or a parent element)
+    On the client side, a JavaScript function will wrap the element (or a parent element)
     in a span or div and 2 overlay siblings will be created.
     """
     if isinstance(href_or_item, Item):
@@ -105,7 +105,7 @@ class Attributes:
     visit_style = Attribute("style")
     visit_title = Attribute("title")
     visit_id = Attribute("id")
-    visit_type = Attribute("type")  # IE8 needs <object... type="image/svg+xml" ...> to display svg images
+    visit_type = Attribute("type")  # IE8 needs <object... type="image/svg+xml" ...> to display SVG images
 
     def __init__(self, element):
         self.element = element

@@ -3,9 +3,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Image converter
+MoinMoin - Image converter.
 
-Convert image to <object> tag for the DOM Tree.
+Convert an image to an <object> tag for the DOM tree.
 """
 
 from urllib.parse import urlencode, parse_qs
@@ -21,7 +21,7 @@ from . import default_registry
 
 class Converter:
     """
-    Convert an image to the corresponding <object> in the DOM Tree
+    Convert an image to the corresponding <object> in the DOM tree.
     """
 
     @classmethod
@@ -38,7 +38,7 @@ class Converter:
         if arguments:
             query = arguments.keyword.get(xinclude.href)
             if query and query.query:
-                # query.query value is similar to  "w=75" given a transclusion "{{jpeg||&w=75 class="top"}}"
+                # The value of query.query is similar to "w=75" when given the transclusion '{{jpeg||&w=75 class="top"}}'.
                 query_keys.update(parse_qs(query.query))
             attrib = arguments.keyword
 

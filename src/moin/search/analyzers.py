@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Misc. tokenizers and analyzers for whoosh indexing
+MoinMoin - miscellaneous tokenizers and analyzers for Whoosh indexing.
 """
 
 from whoosh.analysis import MultiFilter, IntraWordFilter, LowercaseFilter
@@ -12,7 +12,7 @@ from moin.security import AccessControlList
 
 
 class MimeTokenizer(Tokenizer):
-    """Content type tokenizer"""
+    """Content type tokenizer."""
 
     def __call__(self, value, start_pos=0, positions=False, mode="", **kwargs):
         """
@@ -29,7 +29,7 @@ class MimeTokenizer(Tokenizer):
         Output: "application/pdf", "application", "pdf"
 
         :param value: String for tokenization
-        :mode value: query or index
+        :param mode: query or index
         :param start_pos: The position number of the first token. For example,
             if you set start_pos=2, the tokens will be numbered 2,3,4,...
             instead of 0,1,2,...
@@ -50,7 +50,7 @@ class MimeTokenizer(Tokenizer):
             # text/x.moin.wiki;charset=utf-8
             yield tk
             if "/" not in value:
-                # unsupported contenttype
+                # Unsupported content type
                 return
             major, minor = value.split("/")
             # text, x.moin.wiki;charset=utf-8
@@ -74,11 +74,11 @@ class MimeTokenizer(Tokenizer):
                     yield tk
                 minor = parameters[0]  # x.moin.wiki
             if minor == "mpeg":
-                # 'audio/mpeg' most people expect mp3
+                # 'audio/mpeg' — most people expect mp3.
                 tk.text = "mp3"
                 yield tk
             if minor == "jpeg":
-                # 'image/jpeg' most people expect jpg
+                # 'image/jpeg' — most people expect jpg.
                 tk.text = "jpg"
                 yield tk
             if minor == "x.moin.wiki":
@@ -109,19 +109,19 @@ class MimeTokenizer(Tokenizer):
 
 
 class AclTokenizer(Tokenizer):
-    """Access control list tokenizer"""
+    """Access control list tokenizer."""
 
     def __init__(self, acl_rights_contents):
         """
-        :param acl_rights_contents: ACL for contents
+        :param acl_rights_contents: ACL for contents.
         """
         self._acl_rights_contents = acl_rights_contents
 
     def __call__(self, value, start_pos=0, positions=False, mode="", **kwargs):
         """
-        Calls AccessControlList for tokenization
+        Call AccessControlList for tokenization.
 
-        Analyzer behaviour:
+        Analyzer behavior:
 
         In index mode:
             Input: "JoeDoe,JaneDoe:admin,read,write,destroy +EditorGroup:write All:read"
@@ -165,7 +165,7 @@ class AclTokenizer(Tokenizer):
 
 def item_name_analyzer():
     """
-    Analyzer behaviour:
+    Analyzer behavior:
 
     Input: "some item name", "SomeItem/SubItem", "GSOC2011"
 

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for macros.Verbatim
+MoinMoin - tests for moin.macros.Verbatim.
 """
 
 from moin.macros.Verbatim import Macro

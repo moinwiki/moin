@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - fs store tests
+MoinMoin - FS store tests.
 """
 
 import pytest

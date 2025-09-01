@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-Test for auth.http
+Tests for auth.http.
 """
 
 from flask import g as flaskg
@@ -17,7 +17,7 @@ import pytest
 
 
 class TestHTTPAuthMoin:
-    """Test: HTTPAuthMoin"""
+    """Tests for HTTPAuthMoin."""
 
     @pytest.fixture(autouse=True)
     def custom_setup(self):

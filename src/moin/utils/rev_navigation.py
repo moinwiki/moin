@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    Helper function to get prior, current, next revisions and mod-times.
+Helper to get prior, current, and next revisions and modification times.
 """
 
 from flask import g as flaskg
@@ -14,7 +14,7 @@ from moin.constants.keys import ALL_REVS, CURRENT, MTIME
 def prior_next_revs(revid, fqname):
     """
     If viewing a revision other than the current revision,
-    return prior, current, and next revids and time stamps else return None * 6.
+    return prior, current, and next revision IDs and timestamps; otherwise return None * 6.
     """
     try:
         show_revision = request.view_args["rev"] != CURRENT

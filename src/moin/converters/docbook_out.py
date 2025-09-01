@@ -3,9 +3,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - DocBook output converter
+MoinMoin - DocBook output converter.
 
-Converts an internal document tree into a DocBook v5 document.
+Convert an internal document tree into a DocBook v5 document.
 """
 
 from emeraldtree import ElementTree as ET
@@ -33,7 +33,7 @@ class Converter:
     # Only these admonitions are supported by DocBook 5
     admonition_tags = {"caution", "important", "note", "tip", "warning"}
 
-    # DOM Tree element which can easily be converted into a DocBook
+    # DOM tree elements that can be easily converted into a DocBook
     # element, without attributes.
     simple_tags = {
         "code": docbook.literal,
@@ -101,10 +101,10 @@ class Converter:
 
     def new_copy(self, tag, element, attrib):
         """
-        Function to copy one element to the DocBook tree
+        Copy one element to the DocBook tree.
 
         It first converts the children of the element,
-        and then the element itself
+        and then the element itself.
         """
         children = self.do_children(element)
         return self.new(tag, attrib, children)

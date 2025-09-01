@@ -57,7 +57,7 @@ class Config(DefaultConfig):
     data_dir = os.path.join(instance_dir, "data")
     index_storage = "FileStorage", (os.path.join(instance_dir, "index"),), {}
 
-    # setup moin to serve static files' or change to have your webserver serve static files
+    # Set up Moin to serve static files, or configure your web server to serve static files
     serve_files = dict(
         wiki_local=os.path.join(wikiconfig_dir, "wiki_local")  # store custom logos, CSS, templates, etc. here
     )
@@ -68,37 +68,37 @@ class Config(DefaultConfig):
         # change target if a specific release or language is available
         serve_files["external_docs"] = "https://moin-20.readthedocs.io/en/latest/"
 
-    # copy templates/snippets.html to directory below and edit per requirements to customize logos, etc.
+    # Copy templates/snippets.html to the directory below and edit as required to customize logos, etc.
     template_dirs = [os.path.join(wikiconfig_dir, "wiki_local")]
 
-    # it is required that you set interwikiname to a unique, stable and non-empty name.
+    # It is required that you set interwikiname to a unique, stable, and non-empty name.
     interwikiname = "MyMoinMoin"
-    # load the interwiki map from intermap.txt
+    # Load the interwiki map from intermap.txt
     try:
         interwiki_map = InterWikiMap.from_file(os.path.join(wikiconfig_dir, "intermap.txt")).iwmap
     except FileNotFoundError:
         interwiki_map = {}
-    # we must add entries for 'Self' and our interwikiname,
+    # We must add entries for 'Self' and our interwikiname;
     # if you are not running the built-in desktop server change these to your wiki URL
     interwiki_map[interwikiname] = "http://127.0.0.1:8080/"
     interwiki_map["Self"] = "http://127.0.0.1:8080/"
 
-    # sitename is displayed in heading of all wiki pages
+    # Sitename is displayed in the heading of all wiki pages
     sitename = "My MoinMoin"
 
-    # see https://www.moinmo.in/ThemeMarket for contributed moin2 themes
+    # See https://www.moinmo.in/ThemeMarket for contributed Moin 2 themes
     # default theme is topside
     # theme_default = "modernized"  # or basic or topside_cms
 
-    # prevent multiple users from editing an item at same time
+    # Prevent multiple users from editing an item at the same time
     edit_locking_policy = "lock"
     edit_lock_time = 20  # minutes, resets when the Preview button is clicked
 
-    # number of quicklinks to show in navigation bar, mouseover shows all
-    # only the modernized theme supports this
+    # Number of quicklinks to show in the navigation bar; mouseover shows all
+    # Only the modernized theme supports this
     expanded_quicklinks_size = 5
 
-    # read about PRIVACY ISSUES in docs before uncommenting the line below to use gravatars
+    # Read about PRIVACY ISSUES in the docs before uncommenting the line below to use Gravatars
     # user_use_gravatar = True
     # user_gravatar_default_img = "blank"  # or "mp", "identicon", "monsterid", "wavatar", "retro", "robohash".
     # you can also supply a publicly available image URL with user_gravatar_default_img,
@@ -107,7 +107,7 @@ class Config(DefaultConfig):
     # to deactivate the discussion feature uncomment the following line
     # supplementation_item_names = []
 
-    # read about SECURITY ISSUES in docs before uncommenting the line below allowing users
+    # Read about SECURITY ISSUES in the docs before uncommenting the line below that allows users
     # to edit style attributes in HTML and Markdown items
     # allow_style_attributes = True
 

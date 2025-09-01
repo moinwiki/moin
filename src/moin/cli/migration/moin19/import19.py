@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - import content and user data from a moin 1.9 compatible storage into the moin2 storage.
+MoinMoin - import content and user data from a Moin 1.9–compatible storage into the Moin 2 storage.
 """
 
 import os
@@ -100,7 +100,7 @@ def migr_logging(msg_id, log_msg):
     """
     The logging function writes the first messages of each type
     with warning level and the rest with debug level only.
-    See contrib/logging/logfile_cli for logging configuration example
+    See contrib/logging/logfile_cli for a logging configuration example.
     """
     migr_stat[msg_id] += 1
     if migr_stat[msg_id] < migr_warn_max:
@@ -130,7 +130,7 @@ def migr_statistics(unknown_macros):
 
 
 def check_parents(item_name, namespace):
-    """Check if all parents and grandparents exist, return list of missing parent names"""
+    """Check whether all parents and grandparents exist; return a list of missing parent names."""
     global item_last
     missing_parents = set()
     parent = ParentItemName(item_name)
@@ -161,9 +161,9 @@ def add_missing_parents(missing_parents):
         logging.debug(f"missing parent added for namespace: {namespace} name: {name}")
 
 
-@cli.command("import19", help="Import content and user data from a moin 1.9 wiki")
+@cli.command("import19", help="Import content and user data from a Moin 1.9 wiki")
 @click.option(
-    "--data_dir", "-d", type=str, required=True, help="moin 1.9 data_dir (contains pages and users subdirectories)."
+    "--data_dir", "-d", type=str, required=True, help="Moin 1.9 data_dir (contains pages and users subdirectories)."
 )
 @click.option(
     "--markup_out",
@@ -171,7 +171,7 @@ def add_missing_parents(missing_parents):
     type=click.Choice(CONTENTTYPE_MARKUP_OUT.keys()),
     required=False,
     default="moinwiki",
-    help="target markup.",
+    help="Target markup.",
 )
 @click.option(
     "--namespace",
@@ -179,7 +179,7 @@ def add_missing_parents(missing_parents):
     type=str,
     required=False,
     default=NAMESPACE_DEFAULT,
-    help="target namespace, e.g. used for members of a wikifarm.",
+    help="Target namespace; for example, used for members of a wiki farm.",
 )
 @click.option(
     "--latest-rev-only",
@@ -196,10 +196,10 @@ def add_missing_parents(missing_parents):
     required=False,
     type=int,
     default=256,
-    help="Maximum memory (in megabytes) each index-writer will use for the indexing pool.",
+    help="Maximum memory (in megabytes) each index writer will use for the indexing pool.",
 )
 def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, limitmb=None, latest_rev_only=False):
-    """Import content and user data from a moin wiki with version 1.9"""
+    """Import content and user data from a Moin 1.9 wiki."""
 
     target_namespace = namespace
     flaskg.add_lineno_attr = False
@@ -348,12 +348,12 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
 
 
 class KillRequested(Exception):
-    """raised if item killing is requested by DELETED_MODE"""
+    """Raised if item deletion is requested by DELETED_MODE."""
 
 
 class PageBackend:
     """
-    moin 1.9 page directory
+    Moin 1.9 page directory.
     """
 
     def __init__(
@@ -390,7 +390,7 @@ class PageBackend:
 
     def __iter__(self):
         pages_dir = os.path.join(self._path, "pages")
-        # sort by moin 1.9 directory names, non-ascii characters converted to 2 hex characters and enclosed in (..)
+        # Sort by Moin 1.9 directory names; non-ASCII characters are converted to two hex characters and enclosed in (..)
         pages = sorted(os.listdir(pages_dir))
         for f in pages:
             itemname = unquoteWikiname(f)
@@ -419,7 +419,7 @@ class PageBackend:
 
 class PageItem:
     """
-    moin 1.9 page
+    Moin 1.9 page.
     """
 
     def __init__(self, backend, path, itemname, target_namespace, latest_rev_only=False):
@@ -639,9 +639,9 @@ class PageRevision:
             last_moin19_rev[item_name] = (meta[REVID], meta[NAMESPACE])
 
     def _process_data(self, meta, data):
-        """In moin 1.x markup, not all metadata is stored in the page's header.
-        E.g. categories are stored in the footer of the page content. For
-        moin2, we extract that stuff from content and put it into metadata.
+        """In Moin 1.x markup, not all metadata is stored in the page's header.
+        For example, categories are stored in the footer of the page content. For
+        Moin 2, we extract that information from the content and put it into metadata.
         """
         if meta[CONTENTTYPE] == CONTENTTYPE_MOINWIKI:
             data = process_categories(meta, data, self.backend.item_category_regex)
@@ -691,11 +691,11 @@ class PageRevision:
 
 
 def migrate_itemlinks(dom, namespace, itemlinks2chg):
-    """Walk the DOM tree and change itemlinks to users namespace
+    """Walk the DOM tree and change item links to the users namespace.
 
-    :param dom: the tree to check for elements to migrate
-    :param namespace: target namespace
-    :param itemlinks2chg: list of itemlinks to be changed
+    :param dom: The tree to check for elements to migrate.
+    :param namespace: Target namespace.
+    :param itemlinks2chg: List of item links to be changed.
     :type dom: emeraldtree.tree.Element
     """
 

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Supporting functions for Python magic
+MoinMoin - supporting functions for Python magic.
 """
 
 import os
@@ -19,12 +19,12 @@ import importlib
 
 def load_package_modules(package_name, package_pathes):
     """
-    Load (import) all modules from some package (except those starting with _).
+    Load (import) all modules from a package (except those starting with "_").
 
-    This is useful if there is some code in the module that runs at import time
-    and registers some code of that module somewhere.
+    This is useful if a module contains code that runs at import time
+    and registers itself somewhere.
 
-    Call this from __init__.py of the same package like this:
+    Call this from a package’s __init__.py like this:
 
         load_package_modules(__name__, __path__)
     """
@@ -72,34 +72,32 @@ def getPackageModules(packagefile):
 
 
 def importName(modulename, name):
-    """Import name dynamically from module
+    """Import a name dynamically from a module.
 
-    Used to do dynamic import of modules and names that you know their
-    names only in runtime.
+    Used to dynamically import an attribute when its name is only known at runtime.
 
     Any error raised here must be handled by the caller.
 
-    :param modulename: full qualified mudule name, e.g. x.y.z
+    :param modulename: fully qualified module name, e.g., x.y.z
     :param name: name to import from modulename
-    :rtype: any object
-    :returns: name from module
+    :rtype: any
+    :returns: the imported object
     """
     module = __import__(modulename, globals(), {}, [name])
     return getattr(module, name)
 
 
 def makeThreadSafe(function, lock=None):
-    """Call with a function you want to make thread safe
+    """Make a function thread-safe.
 
-    Call without lock to make the function thread safe using one lock per
-    function. Call with existing lock object if you want to make several
-    functions use same lock, e.g. all functions that change same data
-    structure.
+    Call without a lock to make the function thread-safe using one lock per
+    function. Call with an existing lock object if you want several functions
+    to use the same lock (e.g., all functions that change the same data structure).
 
-    :param function: function to make thread safe
+    :param function: function to make thread-safe
     :param lock: threading.Lock instance or None
     :rtype: function
-    :returns: function decorated with locking
+    :returns: the function decorated with locking
     """
     if lock is None:
         import threading

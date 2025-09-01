@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli.maint.set_meta tests
+MoinMoin - tests for moin.cli.maint.set_meta.
 """
 
 from moin._tests import get_dirs

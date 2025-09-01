@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - email helper functions
+MoinMoin - Email helper functions.
 """
 
 
@@ -25,7 +25,7 @@ _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
 
 
 def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=None):
-    """Create and send a text/plain message
+    """Create and send a text/plain message.
 
     Return a tuple of success or error indicator and message.
 
@@ -41,7 +41,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     :type bcc: list of str
     :param mail_from: override default mail_from
     :type mail_from: str
-    :param html: html email body text
+    :param html: HTML email body text
     :type html: str
 
     :rtype: tuple

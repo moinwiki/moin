@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - serializer / deserializer tests
+MoinMoin - serializer/deserializer tests.
 """
 
 from io import BytesIO
@@ -38,18 +38,18 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture
 def source(request, tmpdir):
-    # scenario
+    # Scenario
     return make_middleware(request, tmpdir)
 
 
 @pytest.fixture
 def target(request, tmpdir):
-    # scenario
+    # Scenario
     return make_middleware(request, tmpdir)
 
 
 def make_middleware(request, tmpdir):
-    # scenario
+    # Scenario
     meta_store = BytesStore()
     data_store = FileStore()
     _backend = MutableBackend(meta_store, data_store)

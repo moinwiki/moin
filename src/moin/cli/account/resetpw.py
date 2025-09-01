@@ -5,7 +5,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - set a user password
+MoinMoin - CLI command to set a user password.
 """
 
 import sys
@@ -27,19 +27,19 @@ def cli():
 
 
 class Fault(Exception):
-    """something went wrong"""
+    """Something went wrong."""
 
 
 class NoSuchUser(Fault):
-    """raised if no such user exists"""
+    """Raised if no such user exists."""
 
 
 class UserHasNoEMail(Fault):
-    """raised if user has no e-mail address in his profile"""
+    """Raised if the user has no email address in their profile."""
 
 
 class MailFailed(Fault):
-    """raised if e-mail sending failed"""
+    """Raised if email sending failed."""
 
 
 def set_password(uid, password, notify=False, skip_invalid=False, subject=None, text=None):
@@ -52,19 +52,19 @@ def set_password(uid, password, notify=False, skip_invalid=False, subject=None, 
         if notify and not u.disabled:
             if not u.email:
                 raise UserHasNoEMail(
-                    "Notification was requested, but User profile does not have "
-                    "a validated E-Mail address (name: %r id: %r)!" % (u.name, u.itemid)
+                    "Notification was requested, but the user profile does not have "
+                    "a validated email address (name: %r, id: %r)!" % (u.name, u.itemid)
                 )
             mailok, msg = u.mail_password_recovery(subject=subject, text=text)
             if not mailok:
                 raise MailFailed(msg)
     else:
-        raise NoSuchUser("User does not exist (name: %r id: %r)!" % (u.name, u.id))
+        raise NoSuchUser("User does not exist (name: %r, id: %r)!" % (u.name, u.id))
 
 
 @cli.command("account-password", help="Set user passwords")
 @click.option("--name", "-n", required=False, type=str, help="Set password for the user with user name NAME.")
-@click.option("--uid", "-u", required=False, type=str, help="Set password for the user with user id UID.")
+@click.option("--uid", "-u", required=False, type=str, help="Set password for the user with user ID UID.")
 @click.option("--password", "-p", required=False, type=str, help="New password for this account.")
 @click.option("--all-users", "-a", is_flag=True, required=False, default=False, help="Reset password for ALL users.")
 @click.option(
@@ -73,22 +73,22 @@ def set_password(uid, password, notify=False, skip_invalid=False, subject=None, 
     is_flag=True,
     required=False,
     default=False,
-    help="Notify user(s), send them an E-Mail with a password reset link.",
+    help="Notify user(s); send them an email with a password reset link.",
 )
 @click.option("--verbose", "-v", is_flag=True, required=False, default=False, help="Verbose operation")
-@click.option("--subject", required=False, type=str, help="Subject text for the password reset notification E-Mail.")
+@click.option("--subject", required=False, type=str, help="Subject text for the password reset notification email.")
 @click.option(
     "--text",
     required=False,
     type=str,
-    help="Template text for the password reset notification E-Mail. " "Default: use the builtin standard template",
+    help="Template text for the password reset notification email. Default: use the built-in standard template",
 )
 @click.option(
     "--text-from-file",
     required=False,
     type=str,
-    help="Read full template for the password reset notification E-Mail from the given file, "
-    "overrides --text. Default: None",
+    help="Read the full template for the password reset notification email from the given file, "
+    "which overrides --text. Default: None",
 )
 @click.option(
     "--skip-invalid",
@@ -100,7 +100,7 @@ def set_password(uid, password, notify=False, skip_invalid=False, subject=None, 
 def SetPassword(name, uid, password, all_users, notify, verbose, subject, text, text_from_file, skip_invalid):
     flags_given = name or uid or all_users
     if not flags_given:
-        print("incorrect number of arguments")
+        print("Incorrect number of arguments.")
         sys.exit(1)
 
     if notify and not app.cfg.mail_enabled:
@@ -119,7 +119,7 @@ def SetPassword(name, uid, password, all_users, notify, verbose, subject, text, 
     elif all_users:
         query = {}
 
-    # sorting the list so we have some specific, reproducable order
+    # Sorting the list so we have a specific, reproducible order
     uids_metas = sorted([(rev.meta[ITEMID], rev.meta) for rev in user.search_users(**query)])
     total = len(uids_metas)
     if not total:
@@ -133,8 +133,8 @@ def SetPassword(name, uid, password, all_users, notify, verbose, subject, text, 
             email = meta.get(EMAIL_UNVALIDATED)
             if email is None:
                 raise ValueError(
-                    "neither EMAIL nor EMAIL_UNVALIDATED key is present in "
-                    "user profile metadata of uid %r name %r" % (uid, name)
+                    "Neither EMAIL nor EMAIL_UNVALIDATED keys are present in "
+                    "the user profile metadata of uid %r, name %r" % (uid, name)
                 )
             email += "[email_unvalidated]"
         try:

@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.macros.MonthCalendar Tests
+MoinMoin - tests for moin.macros.MonthCalendar.
 """
 
 from emeraldtree.tree import Element
@@ -13,7 +13,7 @@ from moin.macros.MonthCalendar import Macro, parseargs, yearmonthplusoffset
 
 def test_parseargs_one():
     """
-    checking the handling of explicit and default parameters in parseargs
+    Check handling of explicit and default parameters in parseargs.
     """
     args = parseargs(
         'item="TEST-CALENDAR",month_offset=-1,fixed_height=true',  # macro arguments
@@ -43,7 +43,7 @@ def test_parseargs_two():
 
 def test_Macro():
     """
-    call MonthCalendar macro and test some attributes of resulting table
+    Call the MonthCalendar macro and test some attributes of the resulting table.
     """
     macro_obj = Macro()
     arguments = Element("arguments")
@@ -62,7 +62,7 @@ def test_Macro():
 
     # the last macro parameter forces six rows in the calendar output
     # even though some month will only need five week rows
-    assert len(result_tags[2]) == 6  # number table rows
+    assert len(result_tags[2]) == 6  # number of table rows
 
 
 @pytest.mark.parametrize(

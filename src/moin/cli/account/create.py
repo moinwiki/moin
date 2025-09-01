@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - create a user account
+MoinMoin - CLI command to create a user account.
 """
 
 
@@ -32,10 +32,10 @@ def cli():
     "--display-name",
     required=False,
     type=str,
-    help="Set the wiki user's display name to DISPLAY_NAME (e.g. in case the NAME is cryptic).",
+    help="Set the wiki user's display name to DISPLAY_NAME (e.g., when NAME is cryptic).",
 )
 def CreateUser(name, display_name, email, password):
-    """Create a new user account"""
+    """Create a new user account."""
     logging.debug("display_name: %s", str(display_name))
     before_wiki()
 

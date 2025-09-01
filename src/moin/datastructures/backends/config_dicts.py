@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - config dict backend
+MoinMoin - Config dict backend.
 
-The config group backend enables you to define dicts in a configuration file.
+The config dict backend enables you to define dicts in a configuration file.
 """
 
 

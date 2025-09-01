@@ -1,7 +1,7 @@
 # Copyright: 2020 MoinMoin:RogerHaase
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
-# Upload this file to the pythonanywhere
+# Upload this file to PythonAnywhere.
 # Working directory: /home/<account-name>/moin
 
 import sys

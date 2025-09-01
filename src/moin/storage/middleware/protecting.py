@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - protecting middleware
+MoinMoin - protecting middleware.
 
 This checks ACLs (access control lists), so a user will not be able to do
 operations without the respective permissions.
@@ -46,12 +46,12 @@ ACL_CACHE = 600  # avoid ACL recalculation: user, namespace, ACL, parents, right
 
 class AccessDenied(Exception):
     """
-    raised when a user is denied access to an Item or Revision by ACL.
+    Raised when a user is denied access to an Item or Revision by ACL.
     """
 
 
 def gen_fqnames(meta):
-    """Generate fqnames from meta data."""
+    """Generate fqnames from metadata."""
     if meta[NAME]:
         return [CompositeName(meta[NAMESPACE], NAME_EXACT, name) for name in meta[NAME]]
     return [CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])]

@@ -6,13 +6,13 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - ReStructured Text input converter
+MoinMoin - reStructuredText input converter.
 
-It's based on docutils rst parser.
-Conversion of docutils document tree to moinmoin document tree.
+It's based on the Docutils reST parser.
+Conversion of the Docutils document tree to the MoinMoin document tree.
 
-This converter based on ReStructuredText 2006-09-22.
-Works with docutils version 0.5 (2008-06-25) or higher.
+This converter is based on ReStructuredText (2006-09-22).
+Works with Docutils version 0.5 (2008-06-25) or higher.
 """
 
 import re

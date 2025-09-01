@@ -4,7 +4,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for markdown->DOM->markdown using markdown_in and markdown_out converters
+MoinMoin - Tests for Markdown->DOM->Markdown using markdown_in and markdown_out converters
 """
 
 from collections import namedtuple

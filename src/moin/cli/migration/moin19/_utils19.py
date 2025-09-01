@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - helpers for 1.9 migration
+MoinMoin - helpers for Moin 1.9 migration.
 """
 
 import re
@@ -11,19 +11,19 @@ from moin.constants.keys import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
 from moin.constants.contenttypes import CHARSET19
 
 
-# Precompiled patterns for file name [un]quoting
+# Precompiled patterns for filename quoting/unquoting
 UNSAFE = re.compile(r"[^a-zA-Z0-9_]+")
 QUOTED = re.compile(r"\(([a-fA-F0-9]+)\)")
 
 
 def split_body(body):
     """
-    Extract the processing instructions / acl / etc. at the beginning of a page's body.
+    Extract processing instructions, ACL, etc., at the beginning of a page's body.
 
-    Hint: if you have a Page object p, you already have the result of this function in
-          p.meta and (even better) parsed/processed stuff in p.pi.
+    Hint: If you have a Page object p, you already have the result of this function in
+          p.meta and (even better) parsed/processed content in p.pi.
 
-    Returns a list of (pi, restofline) tuples and a string with the rest of the body.
+    Return a dict of processing instructions and the rest of the body as a string.
     """
     pi = {}
     comments = []
@@ -52,7 +52,7 @@ def split_body(body):
             pi[key] = " ".join(value)
         else:
             # for keys that can't occur multiple times, don't use a list:
-            pi[key] = value[-1]  # use the last value to copy 1.9 parsing behaviour
+            pi[key] = value[-1]  # use the last value to match 1.9 parsing behavior
 
     if comments:
         body = "".join(comments) + body
@@ -62,7 +62,7 @@ def split_body(body):
 
 def add_metadata_to_body(metadata, data):
     """
-    Adds the processing instructions to the data.
+    Add processing instructions to the data.
     """
     meta_keys = [NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE]
 
@@ -81,15 +81,15 @@ def add_metadata_to_body(metadata, data):
 
 def quoteWikinameFS(wikiname, charset=CHARSET19):
     """
-    Return file system representation of a Unicode WikiName.
+    Return a filesystem representation of a Unicode WikiName.
 
-    Warning: will raise UnicodeError if wikiname can not be encoded using
+    Warning: Raises UnicodeError if wikiname cannot be encoded using
     charset. The default value 'utf-8' can encode any character.
 
     :param wikiname: wiki name [unicode]
-    :param charset: charset to encode string (before quoting)
+    :param charset: charset to encode the string (before quoting)
     :rtype: string
-    :returns: quoted name, safe for any file system
+    :returns: quoted name, safe for any filesystem
     """
     filename = wikiname.encode(charset)
 
@@ -111,16 +111,16 @@ def quoteWikinameFS(wikiname, charset=CHARSET19):
 
 
 class InvalidFileNameError(Exception):
-    """Called when we find an invalid file name"""
+    """Raised when an invalid file name is encountered."""
 
     pass
 
 
 def unquoteWikiname(filename, charset=CHARSET19):
     """
-    Return Unicode WikiName from quoted file name.
+    Return a Unicode WikiName from a quoted file name.
 
-    raises an InvalidFileNameError in case of unquoting problems.
+    Raise InvalidFileNameError in case of unquoting problems.
 
     :param filename: quoted wiki name
     :param charset: charset to use for decoding (after unquoting)
@@ -143,7 +143,7 @@ def unquoteWikiname(filename, charset=CHARSET19):
                 byte = group[i : i + 2]
                 parts.append(bytes.fromhex(byte))
         except ValueError:
-            # byte not in hex, e.g 'xy'
+            # byte not in hex, e.g., 'xy'
             raise InvalidFileNameError(filename)
 
     # append rest of string

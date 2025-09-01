@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for moin.converters.moinwiki_out
+MoinMoin - moin.converters.moinwiki_out tests.
 """
 
 import pytest

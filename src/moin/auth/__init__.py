@@ -7,7 +7,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - modular authentication handling
+MoinMoin - modular authentication handling.
 
 Each authentication method is an object instance containing
 four methods:
@@ -31,7 +31,7 @@ The kw arguments that are passed in are currently:
     multistage: boolean indicating multistage login continuation
                 [may not be present, login only]
 
-login_hint() should return a HTML text that is displayed to the user right
+login_hint() should return an HTML text that is displayed to the user right
 below the login form, it should tell the user what to do in case of a
 forgotten password and how to create an account (if applicable.)
 

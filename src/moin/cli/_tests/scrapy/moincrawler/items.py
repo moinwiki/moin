@@ -2,9 +2,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - moin.cli._tests.scrapy.moincrawler.items classes for items gathered in the crawl test
+MoinMoin - dataclasses for items gathered during the crawl tests.
 
-scrapy item docs: https://docs.scrapy.org/en/latest/topics/items.html
+Scrapy item docs: https://docs.scrapy.org/en/latest/topics/items.html
 """
 from dataclasses import dataclass, fields, field
 
@@ -18,14 +18,14 @@ except ImportError:
 
 @dataclass
 class CrawlResult:
-    """class representing result of a GET in the crawl, written to crawl.csv at spider close"""
+    """Represent the result of a GET in the crawl, written to crawl.csv when the spider closes."""
 
     url: Iri = ""
     from_url: Iri = ""
-    from_text: str = ""  # link text if any
-    from_type: str = ""  # attribute name where this href was found
+    from_text: str = ""  # link text, if any
+    from_type: str = ""  # attribute name where this link was found
     response_code: int = ""
-    response_exc: str = ""  # exeption if any
+    response_exc: str = ""  # exception, if any
 
     def __post_init__(self):
         if self.url:
@@ -49,18 +49,19 @@ class CrawlResult:
 
 @dataclass
 class CrawlResultMatch(CrawlResult):
-    """class for matching to CrawlResult
+    """Class for matching against CrawlResult.
 
-    if initialiized with relative url, prepend CRAWL_START for matching
-        e.g. '/html' -> 'http:127.0.0.1:9080/help-en/html"""
+    If initialized with a relative URL, prepend CRAWL_START for matching,
+    e.g., '/html' -> 'http://127.0.0.1:9080/help-en/html'.
+    """
 
-    url_path_components: list[str] = field(default_factory=list)  # list of path components to match on
+    url_path_components: list[str] = field(default_factory=list)  # list of path components to match against
 
     def match(self, other: CrawlResult) -> bool:
-        """return True if
+        """Return True if:
 
-        for each of my not None fields, other is an exact match
-        if my url_path_components is set, require at least one of self.url_path_components in other.url.path
+        - For each of my non-None fields, the other object has the exact same value.
+        - If url_path_components is set, require at least one of them to appear in other.url.path.
         """
         for f in fields(CrawlResult):
             if (my_value := getattr(self, f.name)) and my_value != getattr(other, f.name):
@@ -75,7 +76,7 @@ class CrawlResultMatch(CrawlResult):
 
     @staticmethod
     def _relative_to_absolute(url: Iri):
-        """prepend CRAWL_START to relative url"""
+        """Prepend CRAWL_START to a relative URL."""
         if url and not url.scheme:
             url_path = url.path.fullquoted if url.path else ""
             return Iri(

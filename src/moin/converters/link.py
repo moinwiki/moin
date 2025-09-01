@@ -47,7 +47,7 @@ class ConverterBase:
 
     def __call__(self, *args, **kw):
         """
-        Calls the self.traverse_tree method
+        Call the self.traverse_tree method.
         """
         # avoids recursion for this method
         # because it is also called in subclasses
@@ -63,7 +63,7 @@ class ConverterBase:
         __tag_data_href=_tag_html_data_href,
     ):
         """
-        Traverses the tree and handles each element appropriately
+        Traverse the tree and handle each element appropriately.
         """
         new_page_href = elem.get(__tag_page_href)
         if new_page_href:
@@ -100,7 +100,7 @@ class ConverterBase:
 
     def absolute_path(self, path: IriPath, current_page_path: IriPath) -> IriPath:
         """
-        Converts a relative iri path into an absolute one
+        Convert a relative IRI path into an absolute one.
 
         :param path: the relative path to be converted
         :type path: Iri.path

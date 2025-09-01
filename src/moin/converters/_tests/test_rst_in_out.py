@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - Tests for rst -> DOM -> rst using rst in and out converters
+MoinMoin - Tests for RST->DOM->RST using rst_in and rst_out converters.
 
 TODO: Failing tests are commented out and need to be fixed.
 """

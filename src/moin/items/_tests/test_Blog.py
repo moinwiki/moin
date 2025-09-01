@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.items.blog Tests
+MoinMoin - Tests for moin.items.blog
 """
 
 import re
@@ -64,7 +64,7 @@ class TestBlog(TestView):
     def test_create(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # check save result
+        # Check save result
         item = Item.create(self.name)
         assert isinstance(item, Blog)
         assert item.itemtype == ITEMTYPE_BLOG
@@ -73,40 +73,40 @@ class TestBlog(TestView):
     def test_do_show_empty(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # empty blog page without any entries
+        # Empty blog page without any entries
         data_tokens = [self.data, self.NO_ENTRIES_MSG]
         self._test_view(self.name, data_tokens=data_tokens)
 
     def test_do_show_entries(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # store entries without PTIME
+        # Store entries without PTIME
         for entry in self.entries:
             item = Item.create(entry["name"], itemtype=ITEMTYPE_BLOG_ENTRY)
             item._save(self.entry_meta, entry["data"], comment=self.comment)
-        # the blog is not empty
+        # The blog is not empty
         exclude_data_tokens = [self.NO_ENTRIES_MSG]
-        # all stored blog entries are listed on the blog index page
+        # All stored blog entries are listed on the blog index page
         data_tokens = [self.data] + [entry["data"] for entry in self.entries]
         self._test_view(self.name, data_tokens=data_tokens, exclude_data_tokens=exclude_data_tokens)
 
     def test_do_show_sorted_entries(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # store entries
+        # Store entries
         for entry in self.entries:
             item = Item.create(entry["name"], itemtype=ITEMTYPE_BLOG_ENTRY)
             item._save(self.entry_meta, entry["data"], comment=self.comment)
-        # Add PTIME to some of the entries, ptime value is a UNIX timestamp. If PTIME
-        # is not defined, we use MTIME as publication time (which is usually in the past).
+        # Add PTIME to some of the entries. PTIME value is a Unix timestamp. If PTIME
+        # is not defined, we use MTIME as the publication time (which is usually in the past).
         self._publish_entry(self.entries[0], ptime=2000)
         self._publish_entry(self.entries[1], ptime=1000)
         time_in_future = utctimestamp(datetime(2029, 1, 1))
         self._publish_entry(self.entries[2], ptime=time_in_future)
-        # the blog is not empty
+        # The blog is not empty
         exclude_data_tokens = [self.NO_ENTRIES_MSG]
-        # blog entries are listed in reverse order relative to their PTIME/MTIMEs,
-        # entries published in the future are also listed here
+        # Blog entries are listed in reverse order relative to their PTIME/MTIME values;
+        # entries published in the future are also listed here.
         ordered_data = [
             self.data,
             self.entries[2]["data"],
@@ -120,7 +120,7 @@ class TestBlog(TestView):
     def test_filter_by_tag(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # publish some entries with tags
+        # Publish some entries with tags
         entries_meta = [
             {PTIME: 1000, TAGS: ["foo", "bar", "moin"]},
             {PTIME: 3000, TAGS: ["foo", "bar", "baz"]},
@@ -130,7 +130,7 @@ class TestBlog(TestView):
             entry_meta.update(self.entry_meta)
             item = Item.create(entry["name"], itemtype=ITEMTYPE_BLOG_ENTRY)
             item._save(entry_meta, entry["data"], comment=self.comment)
-        # filter by non-existent tag 'non-existent'
+        # Filter by the non-existent tag 'non-existent'
         data_tokens = [self.data, self.NO_ENTRIES_MSG]
         exclude_data_tokens = [self.entries[0]["data"], self.entries[1]["data"], self.entries[2]["data"]]
         self._test_view(
@@ -139,7 +139,7 @@ class TestBlog(TestView):
             data_tokens=data_tokens,
             exclude_data_tokens=exclude_data_tokens,
         )
-        # filter by tag 'moin'
+        # Filter by tag 'moin'
         exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[1]["data"]]
         ordered_data = [self.data, self.entries[2]["data"], self.entries[0]["data"]]
         regex = re.compile(r"{}.*{}.*{}".format(*ordered_data), re.DOTALL)
@@ -148,17 +148,17 @@ class TestBlog(TestView):
     def test_filter_by_acls(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
         item._save(self.meta, self.data, comment=self.comment)
-        # store some unpublished entries
+        # Store some unpublished entries
         for entry in self.entries:
             item = Item.create(entry["name"], itemtype=ITEMTYPE_BLOG_ENTRY)
             item._save(self.entry_meta, entry["data"], comment=self.comment)
-        # publish the first three entries with specific ACLs
-        # we are an "anonymous" user
+        # Publish the first three entries with specific ACLs
+        # We are an "anonymous" user.
         self._publish_entry(self.entries[0], ptime=1000, acl="%s:read" % ANON)
         self._publish_entry(self.entries[1], ptime=3000, acl="%s:read" % ANON)
-        # specify no rights on the 3rd entry
+        # Specify no rights on the third entry.
         self._publish_entry(self.entries[2], ptime=2000, acl="%s:" % ANON)
-        # the blog is not empty and the 3rd entry is not displayed
+        # The blog is not empty, and the third entry is not displayed.
         exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[2]["data"]]
         ordered_data = [self.data, self.entries[1]["data"], self.entries[0]["data"]]
         regex = re.compile(r"{}.*{}.*{}".format(*ordered_data), re.DOTALL)
@@ -176,23 +176,23 @@ class TestBlogEntry(TestView):
     entry_meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_BLOG_ENTRY}
 
     def test_create(self):
-        # create a blog item
+        # Create a blog item
         item = Item.create(self.blog_name, itemtype=ITEMTYPE_BLOG)
         item._save(self.blog_meta, self.blog_data, comment=self.comment)
-        # create a blog entry item
+        # Create a blog entry item
         item = Item.create(self.entry_name, itemtype=ITEMTYPE_BLOG_ENTRY)
         item._save(self.entry_meta, self.entry_data, comment=self.comment)
-        # check save result
+        # Check save result
         item = Item.create(self.entry_name)
         assert isinstance(item, BlogEntry)
         assert item.itemtype == ITEMTYPE_BLOG_ENTRY
         assert item.meta[CONTENTTYPE] == self.contenttype
 
     def test_do_show(self):
-        # create a blog item
+        # Create a blog item
         item = Item.create(self.blog_name, itemtype=ITEMTYPE_BLOG)
         item._save(self.blog_meta, self.blog_data, comment=self.comment)
-        # create a blog entry item
+        # Create a blog entry item
         item = Item.create(self.entry_name, itemtype=ITEMTYPE_BLOG_ENTRY)
         item._save(self.entry_meta, self.entry_data, comment=self.comment)
 

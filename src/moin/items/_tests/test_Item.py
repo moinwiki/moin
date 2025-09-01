@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.items Tests
+MoinMoin - Tests for moin.items
 """
 
 import pytest
@@ -74,10 +74,10 @@ def build_index(basename, relnames):
 def build_mixed_index(basename, spec):
     """
     Build a list of MixedIndexEntry by hand, useful as a test helper for index testing.
-    The mixed index is a combo of dirs and files with empty meta (dirs) or reduced
+    The mixed index is a combination of directories and files with empty meta (dirs) or reduced
     meta (files).
 
-    :spec is a list of (relname, hassubitem) tuples.
+    spec is a list of (relname, hassubitem) tuples.
     """
     files = [
         (
@@ -105,8 +105,8 @@ def build_mixed_index(basename, spec):
 
 def fix_meta(files, builds):
     """
-    Fix potential problem of datetimes being slightly different within files and builds metadata.
-    Also fix problem where userid is in files metadata but missing from builds metadata.
+    Fix a potential problem of datetimes being slightly different within files and builds metadata.
+    Also fix the problem where the user ID is in the files metadata but missing from the builds metadata.
     """
     fix_files = []
     fix_builds = []
@@ -177,7 +177,7 @@ class TestItem:
         assert saved_data == b""
 
     def testIndex(self):
-        # create a toplevel and some sub-items
+        # Create a top-level item and some sub-items
         basename = "Foo"
         for name in ["", "/ab", "/cd/ef", "/gh", "/ij", "/ij/kl"]:
             item = Item.create(basename + name)
@@ -192,20 +192,20 @@ class TestItem:
         dirs, files = baseitem.get_index()
         assert dirs == build_dirs_index(basename, ["cd", "ij"])
 
-        # after +index converted to table output it shows subitems
+        # After +index was converted to table output, it shows subitems
         builds = build_index(basename, ["ab", "cd/ef", "gh", "ij", "ij/kl", "mn"])
-        # fix potential problem of datetime and userid being different
+        # Fix potential differences in datetime and user ID
         fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
-        # check filtered index when startswith param is passed
+        # Check the filtered index when the 'startswith' parameter is passed
         dirs, files = baseitem.get_index(startswith="a")
         assert dirs == []
         builds = build_index(basename, ["ab"])
         fix_files, fix_builds = fix_meta(files, builds)
         assert fix_files == fix_builds
 
-        # check filtered index when contenttype_groups is passed
+        # Check the filtered index when 'contenttype_groups' is passed
         ctgroups = ["Other Text Items"]
         dirs, files = baseitem.get_index(selected_groups=ctgroups)
         assert dirs == build_dirs_index(basename, ["cd", "ij"])

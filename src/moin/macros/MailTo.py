@@ -2,8 +2,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - MailTo Macro displays an E-Mail address (either a valid mailto: link for logged in users
-or the obfuscated display passed as the first macro argument).
+MoinMoin - MailTo macro displays an email address.
+
+For logged-in users, it shows a valid mailto: link; otherwise, it displays the
+obfuscated string passed as the first macro argument.
 """
 
 
@@ -19,7 +21,7 @@ class Macro(MacroInlineBase):
     def macro(self, content, arguments, page_url, alternative):
         """
         Invocation: <<MailTo(user AT example DOT org, write me)>>
-        where 2nd parameter is optional.
+        where the second parameter is optional.
         """
         if arguments:
             arguments = arguments[0].split(",")
@@ -36,11 +38,11 @@ class Macro(MacroInlineBase):
             text = ""
 
         if flaskg.user.valid:
-            # decode address and generate mailto: link
+            # Decode address and generate a mailto: link
             email = decodeSpamSafeEmail(email)
             result = moin_page.a(attrib={xlink.href: f"mailto:{email}"}, children=[text or email])
         else:
-            # unknown user, maybe even a spambot, so just return text as given in macro args
+            # Unknown user (or spambot): return the text as given in the macro args.
             if text:
                 text += " "
             result = moin_page.code(children=[text, f"<{email}>"])

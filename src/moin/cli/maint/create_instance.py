@@ -3,24 +3,24 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin CLI - Create a MoinMoin wiki instance.
+MoinMoin - CLI command to create a wiki instance.
 
-Activate a moin virtual env, then run this command:
+Activate a Moin virtual environment, then run this command:
 
     moin create-instance --path /path/to/new/instance
 
-If path is not specified, the CWD is used as a default.
+If --path is not specified, the current working directory (CWD) is used.
 
 If the path does not exist, directories are created.
 If wikiconfig.py does not exist, it is copied from the venv config directory.
 If intermap.txt does not exist, it is copied from the venv contrib directory.
 If a wiki_local directory does not exist, it is created.
 
-Next: CD to new instance directory, run this command to initialize storage and index
+Next: change to the new instance directory and run this command to initialize storage and the index:
 
     moin index-create
 
-Optionally, populate the empty wiki with additional commands
+Optionally, populate the empty wiki with additional commands:
 
     moin load <options>
     moin import19 <options>
@@ -46,17 +46,21 @@ def cli():
     pass
 
 
-@cli.command("create-instance", help="Create wikiconfig and wiki instance directories and copy required files")
+@cli.command("create-instance", help="Create wikiconfig and wiki instance directories and copy required files.")
 @click.option(
     "--full",
     "-f",
     required=False,
     is_flag=True,
     default=False,
-    help="full setup including index creation and load of help data and welcome page",
+    help="Full setup, including index creation and loading help data and the welcome page.",
 )
 @click.option(
-    "--path", "-p", required=False, type=str, help="Path to new wikiconfig dir, defaults to CWD if not specified."
+    "--path",
+    "-p",
+    required=False,
+    type=str,
+    help="Path to the new wikiconfig directory; defaults to CWD if not specified.",
 )
 def cli_CreateInstance(full, path):
     return CreateInstance(full, path=path)
@@ -103,15 +107,15 @@ def CreateInstance(full, **kwargs):
 
 def build_instance():
     """
-    Create and build index, load help data and welcome page.
+    Create and build the index; load help data and the welcome page.
     """
-    logging.info("Build Instance started.")
+    logging.info("Build instance started.")
     if index.IndexCreate():
         modify_item.LoadHelp(namespace="help-en", path_to_help=None)
         modify_item.LoadHelp(namespace="help-common", path_to_help=None)
         modify_item.LoadWelcome()
         index.IndexOptimize(tmp=False)
         logging.info("Full instance setup finished.")
-        logging.info('You can now use "moin run" to start the builtin server.')
+        logging.info('You can now use "moin run" to start the built-in server.')
     else:
         logging.error("Build Instance failed.")

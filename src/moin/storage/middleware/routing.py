@@ -3,9 +3,9 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - namespaces middleware
+MoinMoin - namespace routing middleware.
 
-Routes requests to different backends depending on the namespace.
+Route requests to different backends depending on the namespace.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 class Backend:
     """
-    namespace dispatcher, behaves readonly for readonly mounts
+    Namespace dispatcher; behaves read-only for read-only mounts.
     """
 
     def __init__(self, namespaces: NamespaceMapping, backends: BackendMapping):
@@ -63,7 +63,7 @@ class Backend:
     @classmethod
     def from_uri(cls, uri):
         """
-        create an instance using the data given in uri
+        Create an instance using the data given in the URI.
         """
         raise NotImplementedError
 
@@ -77,12 +77,12 @@ class Backend:
 
     def _get_backend(self, fq_names: list[str]):
         """
-        For a given fully-qualified itemname (i.e. something like ns:itemname)
-        find the backend it belongs to, the itemname without namespace
-        spec and the namespace of the backend.
+        For a given fully qualified item name (e.g., "ns:itemname"),
+        find the backend it belongs to, the item name without the namespace
+        specification, and the namespace of the backend.
 
-        :param fq_names: fully-qualified itemnames
-        :returns: tuple of (backend name, local item name, namespace)
+        :param fq_names: Fully qualified item names.
+        :returns: Tuple of (backend name, local item name, namespace).
         """
         fq_name = fq_names[0]
         for namespace, backend_name in self.namespaces:
@@ -135,7 +135,7 @@ class Backend:
         backend = self.backends[backend_name]
 
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError(f"backend {backend_name} is readonly!")
+            raise TypeError(f"backend {backend_name} is read-only!")
 
         revid = backend.store(meta, data)
 
@@ -147,5 +147,5 @@ class Backend:
     def remove(self, backend_name, revid, destroy_data):
         backend = self.backends[backend_name]
         if not isinstance(backend, MutableBackendBase):
-            raise TypeError(f"backend {backend_name} is readonly")
+            raise TypeError(f"backend {backend_name} is read-only")
         backend.remove(revid, destroy_data)

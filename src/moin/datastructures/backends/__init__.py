@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - base classes for datastructs.
+MoinMoin - base classes for data structures.
 """
 
 from collections import UserDict
@@ -25,8 +25,8 @@ class DictDoesNotExistError(Exception):
 
 class BaseGroup:
     """
-    Group is something which stores members. Groups are immutable. A
-    member is some arbitrary entity name (Unicode object).
+    A group stores members. Groups are immutable. A
+    member is an arbitrary entity name (Unicode string).
     """
 
     def __init__(self, name, backend):
@@ -48,7 +48,7 @@ class BaseGroup:
 
 class BaseGroupsBackend:
     """
-    Backend provides access to the group definitions for the other
+    The backend provides access to the group definitions for the other
     MoinMoin code.
     """
 
@@ -66,15 +66,15 @@ class BaseGroupsBackend:
 
     def __iter__(self):
         """
-        Iterate over moin group names of the groups defined in this backend.
+        Iterate over Moin group names of the groups defined in this backend.
 
-        :returns: moin group names
+        :returns: Moin group names
         """
         raise NotImplementedError()
 
     def __getitem__(self, group_name):
         """
-        Get a group by its moin group name.
+        Get a group by its Moin group name.
         """
         raise NotImplementedError()
 
@@ -86,10 +86,10 @@ class BaseGroupsBackend:
 
     def groups_with_member(self, member):
         """
-        List all group names of groups containing <member>.
+        Yield all group names of groups containing <member>.
 
         :param member: member name [unicode]
-        :returns: list of group names [unicode]
+        :returns: iterator of group names [unicode]
         """
         for group_name in self:
             try:
@@ -115,7 +115,7 @@ class LazyGroup(BaseGroup):
     A lazy group does not store members internally, but gets them from
     a backend when needed.
 
-    Lazy group is made only of members. It can not consist of other groups.
+    Lazy group is made only of members. It cannot consist of other groups.
 
     For instance, this is a possible LazyGroup:
 
@@ -123,7 +123,7 @@ class LazyGroup(BaseGroup):
       * OneMember
       * OtherMember
 
-    This is a group which cannot be LazyGroup:
+    This is a group that cannot be a LazyGroup:
 
      NotPossibleGroup
       * OneMember
@@ -177,7 +177,7 @@ class GreedyGroup(BaseGroup):
 
     def _load_group(self):
         """
-        Retrieve group data from the backend and filter it to members and group_members.
+        Retrieve group data from the backend and filter it to members and group members.
         """
         members_retrieved = set(self._backend._retrieve_members(self.name))
 
@@ -191,7 +191,7 @@ class GreedyGroup(BaseGroup):
         First check if <member> is part of this group and then check
         for every subgroup in this group.
 
-        <processed_groups> is needed to avoid infinite recursion, if
+        <processed_groups> is needed to avoid infinite recursion if
         groups are defined recursively.
 
         :param member: member name [unicode]
@@ -262,7 +262,7 @@ class BaseDict(UserDict):
 
     def __init__(self, name, backend):
         """
-        Initialize a dict. Dicts are greedy, it stores all keys and
+        Initialize a dict. Dicts are greedy; they store all keys and
         items internally.
 
         :param name: moin dict name
