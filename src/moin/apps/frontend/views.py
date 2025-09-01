@@ -433,9 +433,9 @@ def search():
     The Jinja template formatting the output may also display data related to the
     search such as the whoosh query, hit counts, and score.
 
-    Two prefixes to the query string are supported. A leading \ causes a browser
-    redirect to the highest scoring search result. A leading > limits the search to
-    an item's subitems.
+    Two prefixes to the query string are supported:
+        * A leading backslash causes a browser redirect to the highest scoring search result.
+        * A leading > limits the search to an item's subitems.
 
     namespaces can be entered in 3 different ways:
         * a leading namespace in in a subitem query: >users/joe red
