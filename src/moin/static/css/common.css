@@ -499,10 +499,11 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-index tr th { text-align: center; }
 .moin-clr { clear: both; }
 .moin-index-menu { margin-bottom: 1em; }
+.moin-index-menu  > p > i { margin-bottom: 1em; color: red; }
 .moin-index-menu li { display: inline-block; }
 .moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
 .moin-download-link { display: none; }
-.moin-contenttype-selection { margin: .5em 0; }
+.moin-contenttype-selection { margin: .5em 0; display: none; }
 .moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em 0; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
 
 .moin-contenttype-selection form { z-index: 2;  background: var(--bg-primary);
@@ -518,7 +519,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
     width: 99%; margin-left: .5%; margin-bottom: 1.5em; display: none; }
 
 .moin-namespace-selection { background: var(--bg-primary); border-radius: 7px;
-    border: 3px solid var(--border); padding: .2em; }
+    border: 3px solid var(--border); padding: .2em; display: none; }
 .moin-namespace-selection ul li { list-style-type: none; font-size: 1.25em; }
 .moin-newitem-toggle,
 .moin-ns-toggle,
@@ -526,7 +527,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 #moin-newitem { width: 50%; }
 .moin-new-item { margin-left: 1em; }
 .moin-newitem-selection { background: var(--bg-primary); border-radius: 7px;
-    border: 3px solid var(--border); padding: .2em; }
+    border: 3px solid var(--border); padding: .2em; display: none; }
 #moin-initials { width: 90%; margin: 1em auto 1em auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: var(--bg-inverse); border-radius: 5px;
@@ -557,7 +558,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .jfu-file { background: linear-gradient(to right, var(--jfu-progress) 50%, transparent 50%); background-size: 200% 100%;
    background-position: right bottom; transition:all 1s ease; padding: 1em; }
 .jfu-file.jfu-failed { background: linear-gradient(to right, var(--jfu-failed) 100%, transparent 100%); }
-.jfu-bar { margin-top: 1em; font-weight: bold; background: var(--jfu-progress); }
+.jfu-bar { margin-top: 1em; font-weight: bold; background: var(--jfu-progress); width: 0%; }
 #jfu-fileupload { margin-left: 1em; }
 
 /* Forms - User Settings, rename, delete, destroy, register, diff... */
