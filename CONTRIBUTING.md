@@ -2,16 +2,16 @@
 
 Thank you for your interest in contributing to MoinMoin! We welcome contributions
 and appreciate your support in improving this project. This guide outlines how
-you can contribute, whether through bug reports, code contributions or help with
+you can contribute, whether through bug reports, code contributions, or help with
 documentation.
 
 
-## How to contribute
+## How to Contribute
 
-Find out how you can start reporting bugs, fixing bugs, adding new features or
+Find out how you can start reporting bugs, fixing bugs, adding new features, or
 improving the documentation.
 
-### Reporting bugs
+### Reporting Bugs
 
 If you've encountered a bug, please report it by following these steps:
 
@@ -20,9 +20,9 @@ If you've encountered a bug, please report it by following these steps:
  3. Provide as much detail as possible, including:
   - A description of the bug
   - Steps to reproduce the issue
-  - Any relevant logs or error messages
+  - Any relevant logs or error messages.
 
-### Suggesting enhancements
+### Suggesting Enhancements
 
 If you have an idea for a new feature or improvement:
 
@@ -30,11 +30,11 @@ If you have an idea for a new feature or improvement:
  2. Open a new issue with a detailed description of the suggested enhancement.
  3. Include a rough idea of how the enhancement could be implemented if possible.
 
-### Submitting code or documentation enhancements
+### Submitting Code or Documentation Enhancements
 
 To submit code or documentation updates, follow these steps:
 
- * Setup your development environment, see next chapter.
+ * Set up your development environment; see the next chapter.
  * Create a new branch for your changes:
    ```
    git checkout -b feature-branch
@@ -51,17 +51,17 @@ To submit code or documentation updates, follow these steps:
 We encourage you to split complex changes into smaller, focused pull requests.
 This makes it easier to review and merge your contributions.
 
-## Development setup
+## Development Setup
 
 To begin contributing, you need to set up your development environment. Follow
 the steps below to get started:
 
- * Fork the main moin repository from GitHub
- * Clone your repo to your local development system
- * Create a virtualenv and download Python packages
- * Activate the virtualenv
- * Create a wiki instance with help data and a welcome page
- * Start the built-in server
+ * Fork the main Moin repository on GitHub.
+ * Clone your fork (repository) to your local development system.
+ * Create a virtual environment and install the required Python packages.
+ * Activate the virtual environment.
+ * Create a wiki instance with help data and a welcome page.
+ * Start the built-in server.
 
 For details on setting up your environment, please refer to the MoinMoin
 development documentation at
@@ -70,8 +70,8 @@ development documentation at
 
 ## Code Style and Best Practices
 
-MoinMoin follows some common coding standards to ensure the consistency of the
-code base. Here are some major things to keep in mind:
+MoinMoin follows common coding standards to ensure the consistency of the
+codebase. Here are some major things to keep in mind:
 
  * Python Version: MoinMoin is based on Python 3. Make sure your changes work
    with the versions specified in pyproject.toml.
@@ -81,8 +81,8 @@ code base. Here are some major things to keep in mind:
  * Documentation: Ensure that your changes are well-documented. Add docstrings
    to your functions and classes where appropriate.
 
-We have added Git pre-commit hooks to ensure a consistent code quality.
-The checks include the use of the tools black, ruff and bandit. For details please see
+We use Git pre-commit hooks to help ensure consistent code quality.
+The checks include the tools Black, Ruff, and Bandit. For details, please see
 [moin-20.readthedocs.io](https://moin-20.readthedocs.io/en/latest/devel/development.html#install-pre-commit-hooks)
 
 

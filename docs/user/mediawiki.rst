@@ -3,12 +3,12 @@
 .. role:: bolditalic
 
 =========================
-Mediawiki markup overview
+MediaWiki markup overview
 =========================
 
-Features currently not working with moin's mediawiki parser are marked with **MWTODO**.
+Features currently not working with Moin's MediaWiki parser are marked with **MWTODO**.
 
-Features currently not working with moin's rst parser are marked with **reSTTODO**.
+Features currently not working with Moin's reST parser are marked with **reSTTODO**.
 
 Headings
 ========
@@ -64,7 +64,7 @@ These markups can be used within text to apply character style.
 +------------------------------------+------------------------------------+
 | | ``<del>strikethrough</del>``     | :strikethrough:`strikethrough`     |
 | | or                               |                                    |
-| | ``<s>striketrough</s>``          |                                    |
+| | ``<s>strikethrough</s>``        |                                    |
 +------------------------------------+------------------------------------+
 | | ``<code>Fixed width</code>``     | ``Fixed width``                    |
 | | or                               |                                    |

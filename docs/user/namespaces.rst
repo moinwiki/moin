@@ -20,27 +20,27 @@ URL layout
 ==========
 ``http://server/[NAMESPACE/][[@FIELD/]VALUE][/+VIEW]``
 
-Above defines the URL layout, where uppercase letters are variable parts defined below and [] denotes optional.
-It basically means search for the item field ``FIELD`` value ``VALUE`` in the namespace ``NAMESPACE`` and apply the
-view ``VIEW`` on it.
+The above defines the URL layout, where uppercase terms are variables defined below and [] denotes optional segments.
+It means: search for items where field ``FIELD`` has value ``VALUE`` in namespace ``NAMESPACE`` and apply the
+view ``VIEW`` to it.
 
 NAMESPACE
  Defines the namespace for looking up the item. NAMESPACE value ``all`` is the "namespace doesn't matter" identifier.
  It is used to access global views like global history, global tags etc.
 
 FIELD
- Whoosh schema field where to lookup the VALUE (default: ``name_exact``, lookup by name).
- FIELD can be a unique identifier like (``itemid, revid, name_exact``) or can be non-unique like (``tags``).
+ Whoosh schema field to look up the VALUE (default: ``name_exact``, lookup by name).
+ FIELD can be a unique identifier (``itemid``, ``revid``, ``name_exact``) or non-unique (e.g., ``tags``).
 
 VALUE
  Value to search in the FIELD (default: the default root within that namespace). If the FIELD is non-unique,
  we show a list of items that have ``FIELD:VALUE``.
 
 VIEW
- used to select the intended view method (default: ``show``).
+ Used to select the intended view method (default: ``show``).
 
 **Examples**:
- The following examples show how a url can look like, ``ns1, ns1/ns2`` are namespaces.
+ The following examples show how a URL can look, ``ns1`` and ``ns1/ns2`` are namespaces.
 
  - ``http://localhost:8080/Home``
  - ``http://localhost:8080/ns1/@tags/sometag``

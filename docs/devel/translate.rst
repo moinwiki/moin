@@ -5,8 +5,8 @@ Translating MoinMoin
 If your language already exists
 -------------------------------
 
-To find out if someone has already started a translation of moin2 into your
-language; check the folder moin/translations in the source tree.
+To find out whether someone has already started a translation of MoinMoin 2 into your
+language, check the folder moin/translations in the source tree.
 If there is a folder with your language code (locale) [#]_, you can
 start with the steps below. If not, please take a look at `If your
 language doesn't exist yet`_.
@@ -34,19 +34,19 @@ language doesn't exist yet`_.
    * **never** edit the 'msgid' string, and only edit the 'msgstr' field
 
    * Variables like ``%(name)x``, where x is any character, must be kept as
-     they are. They must occur in the translated text.
+    they are. They must appear in the translated text.
 
-   * For better readability you can divide a text-string over more than
-     one line, by "surrounding" each line with double quotes (").
-     It is a usual convention to have a maximal line-length of 80
-     characters.
+   * For better readability you can split a text string across multiple
+     lines by surrounding each line with double quotes (").
+     It is common convention to have a maximum line length of 80
+    characters.
 
    * Comments starting with "#.", "*#:*" or "*#|*" are
      auto-generated and should not be modified.
 
-   * Comments starting with "# " (# and at least one whitespace) are
-     translator-comments. You can modify/add them. They have to be
-     placed right before the auto-generated comments.
+   * Comments starting with "# " (# and at least one space) are
+     translator comments. You can modify or add them. They have to be
+     placed directly before the auto-generated comments.
 
    * Comments starting with "*#,*" and separated with "," are flags.
      They can be auto-generated, but they can also be set by the
@@ -55,8 +55,8 @@ language doesn't exist yet`_.
      An important flag is "fuzzy". It shows that the msgstr string might
      not be a correct translation. Only the translator can
      judge if the translation requires further modification, or is
-     acceptable as it is. Once satisfied with the translation, he/she then
-     removes this fuzzy attribute.
+     acceptable as it is. Once satisfied with the translation, the translator then
+    removes this fuzzy attribute.
 
 4. Save the messages.po file and execute::
 
@@ -105,8 +105,8 @@ A newly created translation needs a few initial preparations:
 * replace "``FIRST AUTHOR <EMAIL@ADDRESS>``" with the appropriate information
   about yourself
 
-* replace "``PROJECT VERSION``" in the head msgstr with
-  "``MoinMoin 2.0``" or newer if neccessary
+* replace "``PROJECT VERSION``" in the header msgstr with
+  "``MoinMoin 2.0``" or newer if necessary
 
 * change the value of "``Last-Translator``" to your data
 
@@ -116,7 +116,7 @@ A newly created translation needs a few initial preparations:
 Note for developers
 -------------------
 
-We use the ``format()``-Method in internationalized Strings, e.g.
+We use the ``format()`` method in internationalized strings, e.g.
 ``_('Hello {name}').format(name='World')``. ``_()`` is an alias for ``gettext()``
 
 If the translatable string contains a variable plural, that means
@@ -146,8 +146,8 @@ using::
 
 Because this sometimes creates large diffs, just because of a
 change in line numbers, you can of course use this command sparingly.
-Another option for better readability is to do a separate commit
-for this.
+Another option for better readability is to make a separate commit
+for this purpose.
 
 
 ------

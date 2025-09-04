@@ -3,7 +3,7 @@ Introduction into MoinMoin Configuration
 ========================================
 Kinds of configuration files
 ============================
-To change how moinmoin behaves and looks, you may customize it by editing
+To change how MoinMoin behaves and looks, you may customize it by editing
 its configuration files:
 
 * Wiki Engine Configuration
@@ -21,7 +21,7 @@ its configuration files:
 
 * Logging Configuration
 
-  - optional; if you don't configure this, it will use the builtin defaults
+  - optional; if you don't configure this, it will use the built-in defaults
   - this is a separate file, often called logging.conf
   - it has an .ini-like file format
 
@@ -70,11 +70,11 @@ The directories and files shown are referenced in this section of documentation 
         wiki/                 # the wiki instance; created by running "./m new-wiki" or "moin create-instance" commands
             data/             # wiki data and metadata
             index/            # wiki indexes
-        wiki_local/           # a convenient location to store custom CSS, Javascript, templates, logos, etc.
+        wiki_local/           # a convenient location to store custom CSS, JavaScript, templates, logos, etc.
         wikiconfig.py         # main configuration file, modify this to add or change features
         intermap.txt          # interwiki map: copied by quickinstall.py, updated by "./m interwiki"
 
-After installing moin from pypi or unpacking using a package manager, the directory structure will
+After installing Moin from PyPI or unpacking using a package manager, the directory structure will
 look like this::
 
     myvenv/                 # virtualenv root
@@ -93,8 +93,8 @@ and execute `moin run`.::
             data/           # wiki data and metadata
             index/          # wiki indexes
             preview/        # text item backups are created when user clicks edit Preview button
-            sql/            # sqlite database used for edit locking
-        wiki_local/         # store custom CSS, Javascript, templates, logos, etc. here
+            sql/            # SQLite database used for edit locking
+        wiki_local/         # store custom CSS, JavaScript, templates, logos, etc. here
         wikiconfig.py       # main configuration file, modify this to add or change features
         intermap.txt        # list of external wikis used in wikilinks: [[MeatBall:InterWiki]]
 
@@ -270,7 +270,7 @@ Adding scripts
 ~~~~~~~~~~~~~~
 You can add scripts like this::
 
-    {# Additional Javascript #}
+    {# Additional JavaScript #}
     {% macro scripts() -%}
     <script type="text/javascript" src="{{ url_for('serve.files', name='wiki_local', filename='MyScript.js') }}"></script>
     {% endmacro %}
@@ -401,7 +401,7 @@ That way they are easily usable on all operating systems, whether it has a packa
 system or not.
 
 In many cases, those external static files are maintained by someone else (like jQuery
-javascript library or larger js libraries) and we definitely do not want to merge
+JavaScript library or larger JS libraries) and we definitely do not want to merge
 them into our project.
 
 For MoinMoin we require the following XStatic Packages in pyproject.toml:
@@ -426,7 +426,7 @@ For MoinMoin we require the following XStatic Packages in pyproject.toml:
   used by basic theme to adjust textarea on modify view.
 
 * `svgedit_moin <https://pypi.org/project/XStatic-svg-edit-moin>`_
-  is loaded at template modify_svg-edit. It is a fast, web-based, Javascript-driven
+  is loaded at template modify_svg-edit. It is a fast, web-based, JavaScript-driven
   SVG editor.
 
 * `jquery_tablesorter <https://pypi.org/project/XStatic-JQuery.TableSorter/2.14.5.1>`_
@@ -723,7 +723,7 @@ Password strength
 As you might know, many users are bad at choosing reasonable passwords and some
 are tempted to use easily crackable passwords.
 
-To help users choose reasonable passwords, moin has a simple builtin
+To help users choose reasonable passwords, Moin has a simple built-in
 password checker that is enabled by default and does some sanity checks,
 so users don't choose easily crackable passwords.
 
@@ -1305,7 +1305,7 @@ Features:
 * uses slqalchemy (without the ORM) for database abstraction
 * supports multiple types of databases, for example:
 
-  - sqlite (default, comes built-into Python)
+  - SQLite (default, comes built into Python)
   - postgresql
   - mysql
   - and others, see sqlalchemy docs.
@@ -1326,12 +1326,12 @@ Please see the sqlalchemy docs about the DBURI part.
 Grant 'myuser' (his password: 'mypassword') full access to these databases.
 
 
-sqlite store
+SQLite store
 ------------
 Features:
 
-* directly talks to sqlite, without using sqlalchemy
-* stores data into an sqlite database, which is a single file
+* directly talks to SQLite, without using SQLAlchemy
+* stores data into a SQLite database, which is a single file
 * can either use 1 database per store or 1 table per store and you need to
   give different table names then
 * can optionally compress/decompress the data using zlib: default compression
@@ -1343,11 +1343,11 @@ Features:
     stores:sqlite:/srv/mywiki/data/mywiki_%(nsname)s.db::%(kind)s
     stores:sqlite:/srv/mywiki/data/mywiki_%(nsname)s.db::%(kind)s::1
 
-The uri part after "sqlite:" is like::
+The URI part after "sqlite:" is like::
 
     PATH::TABLENAME::COMPRESSION
 
-It uses "::" as separator to support windows pathes which may have ":" after
+It uses "::" as a separator to support Windows paths, which may have ":" after
 the drive letter.
 
 
@@ -1471,15 +1471,15 @@ to convert a moin 1.9 wiki to moin 2.0, then an item `foo` would be renamed to `
 Mail configuration
 ==================
 
-Sending E-Mail
+Sending Email
 --------------
-Moin can optionally send E-Mail. Possible uses:
+Moin can optionally send email. Possible uses:
 
 * send out item change notifications
 * enable users to reset forgotten passwords
 * inform admins about runtime exceptions
 
-You need to configure some settings before sending E-Mail can be supported::
+You need to configure some settings before sending email can be supported::
 
     # the "from:" address [Unicode]
     mail_from = "wiki <wiki@example.org>"
@@ -1500,7 +1500,7 @@ You need to configure some settings before sending E-Mail can be supported::
 
    describe more moin configuration
 
-Admin Traceback E-Mails
+Admin Traceback Emails
 -----------------------
 If you want to enable admins to receive Python tracebacks, you need to configure
 the following::
@@ -1514,13 +1514,13 @@ the following::
 
 Please also check the logging configuration example in `contrib/logging/email`.
 
-User E-Mail Address Verification
+User Email Address Verification
 --------------------------------
 
-At account creation time, Moin can require new users to verify their E-Mail
+At account creation time, Moin can require new users to verify their email
 address by clicking a link that is sent to them.
 
-Make sure that Moin is able to send E-Mails (see previous section) and add the
+Make sure that Moin is able to send emails (see previous section) and add the
 following line to your configuration file to enable this feature::
 
     user_email_verification = True

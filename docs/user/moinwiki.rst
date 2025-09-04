@@ -12,15 +12,15 @@ Moin Wiki markup overview
 ==========================
 
 This document describes the features of the moinwiki markup language.
-Because this document was created using  Restructured Text, which
+Because this document was created using reStructuredText, which
 does not support some of the features available in moinwiki, the
-examples below may show both the markup and result as block or
-predefined code.
+examples below may show both the markup and the result as block or
+preformatted code.
 
-Features currently not working with moin's Wiki parser are marked
+Features not currently working with Moin's wiki parser are marked
 with **MOINTODO**.
 
-Table Of Contents
+Table of Contents
 =================
 
 Table of contents:

@@ -1,16 +1,16 @@
 .. contents::
 
 
-==================
-Docbook XML Markup
-==================
+===================
+DocBook XML Markup
+===================
 
 
 This page shows the different features of our native DocBook support. A table of contents is automatically
 generated from section titles.
 
-This content, describing the Docbook syntax, is written in reST. Instances where reST cannot
-duplicate the same rendering produced by Docbook are flagged with **reST NOTE**.
+This content, describing the DocBook syntax, is written in reST. Instances where reST cannot
+duplicate the same rendering produced by DocBook are flagged with **reST NOTE**.
 The reST parser used by Moin and the parser used by Sphinx are different.
 
 
@@ -76,7 +76,7 @@ i. One
 
 #. Four
 
-**reST NOTE**: should show small roman numbers here
+**reST NOTE**: Should show small Roman numerals here.
 
 
 Simple text formatting
@@ -105,13 +105,13 @@ Quotes
 
 **Markup:**::
 
-  <para>This software is provided <quote>as is</quote>, without expressed
+  <para>This software is provided <quote>as is</quote>, without express
   or implied warranty.
   </para>
 
 
 **Results:**
-This software is provided "as is", without expressed
+This software is provided "as is", without express
 or implied warranty.
 
 
@@ -219,7 +219,7 @@ Tables
     <entry>b2</entry>
     <entry>b3</entry>
     <entry>b4</entry>
-    <entry morerows='1' valign='middle'><para>  <!-- Pernicous Mixed Content -->
+    <entry morerows='1' valign='middle'><para>  <!-- Pernicious Mixed Content -->
     Vertical Span</para></entry>
   </row>
   <row>
