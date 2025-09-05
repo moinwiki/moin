@@ -1,7 +1,7 @@
 .. warning::
 
-   This documentation applies only to MoinMoin version 2 (also known as Moin2,
-   Moin 2.0, MM2, MoinMoin2, etc.), except where explicitly noted otherwise.
+   This documentation applies **only** to **MoinMoin version 2** (also known as Moin2,
+   Moin 2.0, MoinMoin2, etc.), except where explicitly noted otherwise.
    Moin2 is very different from Moin 1.x, so documentation from one version will not
    apply to the other.
 
