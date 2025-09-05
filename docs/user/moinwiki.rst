@@ -8,7 +8,7 @@
 
 
 ==========================
-Moin Wiki markup overview
+MoinWiki markup overview
 ==========================
 
 This document describes the features of the moinwiki markup language.
@@ -278,14 +278,14 @@ Lists
 =====
 
 .. warning::
- * All Moin Wiki list syntax (including that for unordered lists,
+ * All MoinWiki list syntax (including that for unordered lists,
    ordered lists and definition lists) requires a leading space before
    each item in the list.
  * Unfortunately, reStructuredText does not allow leading whitespace
    in code samples, so the example markup here will not work if copied
    verbatim, and requires
    that each line of the list be indented by one space in order to
-   be valid Moin Wiki markup.
+   be valid MoinWiki markup.
  * This is also an **reSTTODO**
 
 Unordered Lists
@@ -441,7 +441,7 @@ Definition Lists
  - reStructuredText does not support multiple definitions for a
    single term, so a line break has been forced to illustrate the
    appearance of several definitions.
- - Using the prescribed Moin Wiki markup will, in fact, produce two
+ - Using the prescribed MoinWiki markup will, in fact, produce two
    separate definitions in MoinMoin (using separate ``<dd>`` tags).
 
 Horizontal Rules

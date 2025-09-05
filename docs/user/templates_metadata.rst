@@ -30,12 +30,12 @@ will be copied to the modify form within the item creation dialog; note the `tem
 tag will not be copied. Users wanting to create a new template using an old
 template will need to re-enter the `template` tag.
 
-For templates with Moin Wiki markup, Predefined Variables can be used to insert
+For templates with MoinWiki markup, Predefined Variables can be used to insert
 date, time, username, item name, and others. See Predefined Variables
-in the Moin Wiki markup overview.
+in the MoinWiki markup overview.
 
 The example below is a very simple template for the **users** namespace. Each user
-is encouraged to create a home page using the 4-line Moin Wiki markup template.
+is encouraged to create a home page using the 4-line MoinWiki markup template.
 **@ITEM@** and **@EMAIL@** are predefined variables and will be replaced with
 the item name (the new item name is expected to be the user's name) and the user's
 email address (copied from the current user's settings) when the item is saved.

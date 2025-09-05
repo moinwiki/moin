@@ -122,7 +122,7 @@ Wiki features
 
 Markup support
 --------------
-* Moin Wiki
+* MoinWiki
 * Creole
 * MediaWiki
 * reST

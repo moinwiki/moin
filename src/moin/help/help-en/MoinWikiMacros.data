@@ -1,4 +1,4 @@
-= Moin Wiki Macros =
+= MoinWiki Macros =
 
 With the exception of the markup supported within FootNotes, the MoinWiki and CreoleWiki parsers have identical macro syntax and features. The contents of this MoinWiki page will yield similar results when copied to a CreoleWiki page.
 
