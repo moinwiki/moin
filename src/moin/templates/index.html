@@ -102,7 +102,7 @@ a checkbox, an invisible link used by js for download, a link to the item
     <div class="moin-index-menu">
         {% if not (dirs or files) %}
             <p>
-                <i class="fa fa-minus-circle fa-lg" style="color: red;"></i>
+                <i class="fa fa-minus-circle fa-lg"></i>
                 {{ _("There are no items or read permission is denied for all.") }}
             </p>
         {% else %}
@@ -155,8 +155,8 @@ a checkbox, an invisible link used by js for download, a link to the item
         </div>
     {% endif %}
 
-    {# Hidden namespace selection content that is revealed if user clicks namespace button above. #}
-    <div class="moin-namespace-selection" style="display: none;">
+    {# Hidden namespace selection content that is revealed by javascript if user clicks namespace button above. #}
+    <div class="moin-namespace-selection">
         <p> {{ _("Click home icon to view namespace home page or click name to view namespace index.") }} </p>
         <ul class="moin-namespaces">
             <li><i class="fa fa-home"></i> <a href="{{ url_for('frontend.index', item_name='all') }}">{{ _("all") }}</a></li>
@@ -171,7 +171,7 @@ a checkbox, an invisible link used by js for download, a link to the item
     </div>
 
     {# Hidden filter content that is revealed if user clicks filter button above. #}
-    <div class="moin-contenttype-selection" style="display: none;">
+    <div class="moin-contenttype-selection">
         {% set unknown_items_label = _("items having unknown mime types") %}
         {{ gen.form.open(form, method="get", action=url_for('frontend.index', item_name=item_name)) }}
             <a href="#" class="moin-filter-toggle moin-button">
@@ -186,7 +186,7 @@ a checkbox, an invisible link used by js for download, a link to the item
     </div>
 
     {# Hidden New Item content that is revealed if user clicks New Item button above. #}
-    <div class="moin-newitem-selection" style="display: none;">
+    <div class="moin-newitem-selection">
         <br/>
         <form class="moin-new-item" action={{ url_for('.ajaxmodify') }} method="post">
             <label for="moin-newitem">{{ _("Item name") }}</label>
