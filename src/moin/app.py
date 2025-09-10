@@ -317,7 +317,7 @@ def before_wiki():
     """
     Setup environment for wiki requests, start timers.
     """
-    if request and (is_static_content(request.path) or request.path == "+cspreport/log"):
+    if request and (is_static_content(request.path) or request.path == "/+cspreport/log"):
         logging.debug(f"skipping before_wiki for {request.path}")
         return
 
