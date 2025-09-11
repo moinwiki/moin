@@ -7,7 +7,7 @@ Useful Resources
 
 If you have any questions about MoinWiki you can use the following resources:
 
-Documentation (installation, configuration, user docs, api reference):
+Documentation (installation, configuration, user docs, API reference):
 
 * https://moin-20.readthedocs.io/en/latest/
 
@@ -29,16 +29,16 @@ Requirements for development
 
 The `virtualenv` Python package is required.
 The installation process for `virtualenv` varies with your OS and Python distribution.
-Many linux distributions have a package manager that may do the installation.
+Many Linux distributions have a package manager that may do the installation.
 Windows users (and perhaps others) may download setuptools from https://pypi.org/project/setuptools/.
 Once setuptools is installed, do "`easy_install virtualenv`".
 Current ActiveState distributions include virtualenv in the installation bundle.
 If all else fails, try your favorite search engine.
 
-git is required should you wish to contribute patches to the moin2 development effort.
-Even if you do not intend to contribute, git is highly recommended as it
+Git is required if you wish to contribute patches to the Moin2 development effort.
+Even if you do not intend to contribute, Git is highly recommended as it
 will make it easy for you to obtain fixes and enhancements from the moin2 repositories.
-git can be installed with most linux package managers or downloaded from https://git-scm.com/.
+Git can be installed with most Linux package managers or downloaded from https://git-scm.com/.
 You can also find GUI clients there.
 
 
@@ -50,29 +50,35 @@ This is the typical workflow for anyone who wants to contribute to the developme
 create your development environment
 -----------------------------------
 
-* if you do not have a github account, create one at https://github.com/
+* if you do not have a GitHub account, create one at https://github.com/
 * fork the main repository: https://github.com/moinwiki/moin to your gh user
 * clone your gh repo to your local development machine::
 
     cd <parent_directory_of_your_future_repo>
     git clone https://github.com/yourname/moin.git
+
 * cd to repo root::
 
     cd moin
+
 * create the virtualenv and download packages::
 
     python quickinstall.py
+
 * activate virtualenv::
 
     . activate  # Windows: activate
+
 * create a wiki instance and load help data and welcome pages::
 
     moin create-instance --full
+
 * start the built-in server::
 
     moin run
+
 * point your browser at http://127.0.0.1:5000/ to access your development wiki
-* key ctrl+C to stop the built-in server
+* press Ctrl+C to stop the built-in server
 
 add more tools, exercise tools
 ------------------------------
@@ -85,22 +91,25 @@ add more tools, exercise tools
 
     ./m tests  # Windows: m tests
 
-* install NodeJS and NPM with Linux package manager; Windows users may download both from https://nodejs.org/download/
+* install Node.js and npm with a Linux package manager; Windows users may download both from https://nodejs.org/download/
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
 * install sass::
 
     sudo npm install -g sass  # Windows: npm install -g sass
-    sass --version"  # show version number to prove it works
+    sass --version  # show version number to prove it works
+
 * regenerate CSS files::
 
     ./m css  # Windows: m css
     git diff  # verify nothing changed
+
 * check for coding errors (tabs, trailing spaces, line endings, template indentation and spacing)::
 
     ./m coding-std  # Windows: m coding-std
     git diff  # verify nothing changed
+
 * revert any changes from above::
 
     git reset --hard
@@ -114,9 +123,9 @@ add more tools, exercise tools
   - convert tabs to 4 spaces
   - delete trailing blanks on file save
   - use unix line endings (use Windows line endings on .bat and .cmd files)
-  - use mono-spaced font for editing
+  - use monospaced font for editing
 * if you are new to git, read about it (https://git-scm.com/book/),
-  consider printing a cheatsheet
+  consider printing a cheat sheet
 * if you want a Python IDE, try https://www.jetbrains.com/pycharm/ Free Community Edition
 * join #moin-dev IRC channel; ask questions, learn what other developers are doing
 
@@ -223,7 +232,7 @@ review your working solution
   - if you have TortoiseGIT, use those graphical tools to review changes
 * look for poor variable names, spelling errors in comments, accidental addition
   or deletion of blank lines, complex code without comments, missing/extra spaces
-* if Javascript files were changed, run https://www.jslint.com/
+* if JavaScript files were changed, run https://www.jslint.com/
 * run tests again "./m tests"
 * do some final testing - edit an item and save, etc.
 
@@ -251,7 +260,7 @@ update your virtualenv
 Every week or so, do "m quickinstall" to install new releases of
 dependent packages. If any new packages are installed, do a
 quick check for breakages by running tests, starting the
-build-in server, modify an item, etc.
+built-in server, modify an item, etc.
 
 
 MoinMoin architecture
@@ -423,7 +432,7 @@ To run all the tests, the easiest way is to do::
     ./m tests  # windows:  m tests
 
 To run selected tests, activate your virtual env and invoke pytest from the
-toplevel directory::
+top-level directory::
 
     pytest --pep8  # run all tests, including pep8 checks
     pytest -rs  # run all tests and output information about skipped tests
@@ -496,7 +505,7 @@ Debug a Test
 To debug a test, start by going to the Py``Charm edit configuration view.
 Click the + in the upper left corner to show the popup list of configuration
 types. Choose Tox, and then follow the example below for other field values.
-Note the test starup will be rather slow, be patient.
+Note the test startup will be rather slow; be patient.
 
 .. image:: pycharmC.png
    :alt: pycharm example
@@ -504,7 +513,7 @@ Note the test starup will be rather slow, be patient.
 
 Documentation
 =============
-Moin provides two types of documention. The Sphinx docs (https://www.sphinx-doc.org)
+Moin provides two types of documentation. The Sphinx docs (https://www.sphinx-doc.org)
 are written in reST markup, and have a target audience of developers and wiki admins.
 The Help docs have a target audience of wiki editors and are written in markups supported by moin.
 

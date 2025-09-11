@@ -1,21 +1,21 @@
 ===============================
-reST (ReStructured Text) Markup
+reST (reStructuredText) Markup
 ===============================
 
 ..
  This document is duplicated within Moin2 as `/docs/user/rest.rst` and
  `contrib/sample/rst.data`. Please update both.
 
-Depending upon your source, this document may have been created by
+Depending on your source, this document may have been created by
 the Moin2 reST parser (Docutils) or the Sphinx reST parser. These parsers
-have slight differences in the rendering of reST markup, some of those differences
+have slight differences in the rendering of reST markup. Some of those differences
 are noted below.
 
 The purpose of this document is to define the features of the Moin2 reST (Docutils)
 parser. The Sphinx extensions to reST markup that are not supported
 by the Docutils parser are not included here.
 
-See the the Docutils Restructured Text documentation for more information.
+See the Docutils reStructuredText documentation for more information.
 
 Headings
 ========
@@ -391,7 +391,7 @@ Field lists are part of an extension syntax for directives usually intended for 
 Option lists
 ============
 
-Option lists are intended to document Unix or DOS command line options.
+Option lists are intended to document Unix or DOS command-line options.
 
 **Markup**::
 
@@ -532,7 +532,7 @@ Complex tables can have any number of rows or columns. They are made by ``|``, `
  +--------------------------------+
 
 One difference between the Sphinx and Moin reST parsers is demonstrated below.
-With the Spinx parser, grid table column widths can be expanded by adding spaces.
+With the Sphinx parser, grid table column widths can be expanded by adding spaces.
 
 **Markup**::
 
@@ -549,7 +549,7 @@ With the Spinx parser, grid table column widths can be expanded by adding spaces
 **Notes:**
  - The Moin2 reST parser does not add the <colgroup><col width="9%"><col width="91%">
    HTML markup added by the Sphinx parser (the width attribute generates an HTML
-   validation error), nor does it use Javascript to adjust the width of tables.
+   validation error), nor does it use JavaScript to adjust the width of tables.
  - Under Moin2, tables and table cells will be of minimal width
    (unless there is CSS styling to set tables larger).
 
@@ -610,7 +610,7 @@ Comments link within item views.
 Literal Blocks
 ==============
 
-Literal blocks are used to show text as-it-is. i.e no markup processing is done within a literal block.
+Literal blocks are used to show text as is; i.e., no markup processing is done within a literal block.
 A minimum (1) indentation is required for the text block to be recognized as a literal block.
 
 **Markup**::

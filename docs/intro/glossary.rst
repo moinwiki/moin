@@ -13,9 +13,9 @@ Glossary
       your wiki.
 
    contenttype
-      A formal, standardized way of specifying of which type some data is.
-      E.g. 'text/plain;charset=utf-8' is the contenttype for some simple piece
-      of text (encoded using utf-8 encoding), 'image/png' is the contenttype
+      A formal, standardized way of specifying the type of some data.
+      For example, 'text/plain;charset=UTF-8' is the contenttype for a simple piece
+      of text (encoded using UTF-8), and 'image/png' is the contenttype
       for a PNG image.
 
    item
@@ -28,21 +28,21 @@ Glossary
       revision.
 
    data
-      Just the raw data, no more, no less; can be some text, an image, a pdf.
+      Just the raw data, no more, no less; it can be text, an image, or a PDF.
 
    metadata
       Additional information related to or about some data. For example, if
       you create a new PDF item revision, the revision data will be the PDF
-      file's content, but moin will also additionally store revision metadata
-      that tells that this revision is in fact a PDF (its contenttype - we do not
-      rely on or require .pdf extension on the item name), when it was saved,
-      maybe some comment you gave when saving, etc.
+      file's content, but Moin will also store revision metadata
+      that indicates this revision is a PDF (its contenttype - we do not
+      rely on or require a .pdf extension in the item name), when it was saved,
+      any comment you provided when saving, etc.
 
    session
-      As the protocol (http) used by a web browser is stateless, a means
+      As the protocol (HTTP) used by web browsers is stateless, a way
       to keep state is needed. This is usually done by using a cookie stored
-      within the user's browser. It is used for example to stay logged-in into your
-      user account or store the trail of items you visited and for easier
+      in the user's browser. It is used, for example, to stay logged in to your
+      user account, to store the trail of items you visited, and for easier
       navigation.
 
    wiki engine
@@ -66,24 +66,24 @@ Glossary
       A web site implemented using a wiki engine.
 
    WSGI
-      Web Server Gateway Interface. It is a specification about how web servers,
-      like e.g. Apache with mod_wsgi, communicate with web applications, like
+      Web Server Gateway Interface. It is a specification for how web servers,
+      such as Apache with mod_wsgi, communicate with web applications, such as
       MoinMoin. It is a Python standard, described in detail in PEP 333.
 
    emeraldtree
-      An XML / tree processing library used by moin.
+      An XML/tree processing library used by Moin.
 
    flask
-      A micro framework used by moin.
+      A microframework used by Moin.
 
    jinja
-      A templating engine used by moin.
+      A templating engine used by Moin (Jinja2).
 
    sqlalchemy
-      An SQL database abstraction library used by moin.
+      An SQL database abstraction library used by Moin (SQLAlchemy).
 
    sqlite
-      An easy-to-use SQL database used by moin.
+      An easy-to-use SQL database used by Moin (SQLite).
 
    werkzeug
-      A WSGI library used by moin.
+      A WSGI library used by Moin (Werkzeug).

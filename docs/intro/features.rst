@@ -5,7 +5,7 @@ Features
 Operating System Support
 ========================
 Moin is implemented in Python, a platform-independent language.
-It works on Linux, Mac OS X, Windows, FreeBSD and other OSes that support
+It works on Linux, macOS, Windows, FreeBSD and other OSes that support
 Python.
 
 That said, Linux is the preferred and most tested deployment platform and
@@ -13,8 +13,8 @@ will likely have fewer issues than, for example, Windows.
 
 Servers
 =======
-* Builtin Python server from werkzeug, which is easy to use.
-* Any server that talks WSGI to moin:
+* Built-in Python server from Werkzeug, which is easy to use.
+* Any server that talks WSGI to Moin:
 
   - Apache2 with mod_wsgi
   - nginx with uwsgi
@@ -31,8 +31,8 @@ Servers
 
 Authentication
 ==============
-* Builtin - username / password login form of moin, MoinAuth
-* Builtin HTTP Basic Auth - browser login form, HTTPAuthMoin
+* Built-in - username/password login form of Moin, MoinAuth
+* Built-in HTTP Basic Auth - browser login form, HTTPAuthMoin
 * Auth against LDAP / Active Directory (LDAPAuth)
 * Any authentication your web server supports via GivenAuth
 
@@ -73,7 +73,7 @@ Storage Backend Types
 ---------------------
 * file system
 * sqlite3
-* everything supported by SQLalchemy
+* everything supported by SQLAlchemy
 * you can easily add your own backend with little code
 
 Serialization
@@ -108,7 +108,7 @@ Wiki features
 * Local History for one item ("History")
 * Diffs between any revision
 
-  + text item diffs, rendered nicely with html
+  + text item diffs, rendered nicely with HTML
   + image diffs
   + binary "diff" (same or not same)
 * Tags / Tag Cloud
@@ -122,7 +122,7 @@ Wiki features
 
 Markup support
 --------------
-* Moin Wiki
+* MoinWiki
 * Creole
 * MediaWiki
 * reST
@@ -148,12 +148,12 @@ Translation / Localization
 
 Logging
 =======
-* Flexible logging provided by `logging` module of python stdlib
+* Flexible logging provided by the `logging` module of the Python standard library
 
 Technologies
 ============
-* html5, css, javascript with jquery, svg
-* python
-* flask, flask-caching, flask-babel, flask-theme, click
-* whoosh, werkzeug, pygments, flatland, blinker, babel, emeraldtree
-* sqlalchemy (supports all popular SQL DBMS), sqlite, kyoto tycoon/cabinet
+* HTML5, CSS, JavaScript with jQuery, SVG
+* Python
+* Flask, Flask-Caching, Flask-Babel, Flask-Theme, Click
+* Whoosh, Werkzeug, Pygments, Flatland, Blinker, Babel, EmeraldTree
+* SQLAlchemy (supports all popular SQL DBMS), SQLite, Kyoto Tycoon/Cabinet

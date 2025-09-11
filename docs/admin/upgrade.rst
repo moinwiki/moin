@@ -3,24 +3,24 @@ Upgrading
 =========
 
 .. note::
-   Internally, moin2 is very different than moin 1.x.
+   Internally, Moin2 is very different from Moin 1.x.
 
-   moin 2.0 is *not* just a +0.1 step from 1.9 (like 1.8 -> 1.9), but the
-   change of the major version number is indicating *major and incompatible changes*.
+   Moin 2.0 is *not* just a +0.1 step from 1.9 (like 1.8 -> 1.9), but the
+   change of the major version number indicates *major and incompatible changes*.
 
    So please consider it to be different and incompatible software that tries
    to be compatible in some areas:
 
-   * Server and wiki engine Configuration: expect to review/rewrite it
-   * Wiki content: expect 90% compatibility for existing moin 1.9 content.
+   * Server and wiki engine configuration: expect to review/rewrite it
+   * Wiki content: expect ~90% compatibility for existing Moin 1.9 content.
 
-     * The most commonly used simple moin wiki markup (like headlines, lists, bold) has not changed
+     * The most commonly used simple Moin wiki markup (like headlines, lists, bold) has not changed
      * CamelCase auto links will be converted to explicit [[CamelCase]] links
      * [[attachment:my.jpg]] will be converted to [[/my.jpg]]
      * {{attachment:my.jpg}} will be converted to {{/my.jpg}}
-     * expect to change custom macros, parsers, action links, 3rd party extensions
+     * Expect to change custom macros, parsers, action links, 3rd-party extensions
 
-From moin < 1.9
+From Moin < 1.9
 ===============
 If you run an older moin version than 1.9, please first upgrade to a recent
 moin 1.9.x version (preferably >= 1.9.7) before upgrading to moin2.
@@ -30,7 +30,7 @@ Note: Both moin 1.9.x and moin2 are WSGI applications.
 Upgrading to 1.9 first also makes sense concerning the WSGI / server side.
 
 
-From moin 1.9.x
+From Moin 1.9.x
 ===============
 
 If you want to keep your user's password hashes and migrate them to moin2,
@@ -47,7 +47,7 @@ you expect. If you have a testing machine, it is a good idea to try it there
 first and not directly modify your production machine.
 
 
-Install moin2
+Install Moin2
 -------------
 Install and configure moin2, make it work, and start configuring it from
 the moin2 sample config. Do *not* just use your 1.9 wikiconfig.
@@ -56,7 +56,7 @@ the moin2 sample config. Do *not* just use your 1.9 wikiconfig.
 Adjusting the moin2 configuration
 ---------------------------------
 It is essential that you edit wikiconfig.py before you import your 1.9
-data. In particular, review the settings for::
+data. In particular, review the settings for:
 
 - sitename
 - interwikiname
@@ -66,7 +66,8 @@ data. In particular, review the settings for::
 - users_acl
 
 
-Clean up your moin 1.9 data
+
+Clean up your Moin 1.9 data
 ---------------------------
 It is a good idea to clean up your 1.9 data first, before trying to import
 it into moin2. In doing so you can avoid quite some
@@ -81,7 +82,7 @@ Deleted pages will not be migrated. A message will be written to the
 log for each deleted page.
 
 
-Importing your moin 1.9 data
+Importing your Moin 1.9 data
 ----------------------------
 Before importing your existing wiki data please ensure you have created an instance
 and index as described in the install section above using commands::
@@ -89,24 +90,24 @@ and index as described in the install section above using commands::
   moin create-instance
   moin index-create
 
-The import19 cli subcommand needs your 1.9 data directory with pages, attachments and users.
+The import19 CLI subcommand needs your 1.9 data directory with pages, attachments, and users.
 Usually you set up moin2 on a new current operating system and copy the old data directory to
 a temporary location. The utility will read the moin1.9 data, convert it and write it to
 your moin2 storage and build the index::
 
   moin import19 --data_dir /<path to moin1.9>/wiki/data
 
-Please review the logfile to find out whether the importer had critical issues with your data.
+Please review the log file to find out whether the importer had critical issues with your data.
 
 By default, all items using moin 1.9 markup are converted to moin 2 markup. The converted
 revision will have a timestamp one second later than the last revision's timestamp to preserve
 revision history.
 
 Page revisions that were created with leading `#format creole` and `#format rst` commands
-will retain the creole and rst markups.
+will retain the Creole and reST markups.
 
-There is an additional option to convert pages with moin wiki markup using one of the other moin2
-output converters: markdown, rst, html, or docbook.
+There is an additional option to convert pages with Moin wiki markup using one of the other Moin2
+output converters: Markdown, reST, HTML, or DocBook.
 Add the `--markup_out` or `-m` option to the `moin import19` command above. To
 convert the last revision of all pages with moin wiki markup to markdown::
 
@@ -129,9 +130,9 @@ contains data used internally and should always be protected from any access by 
 If you are importing a large wiki with more than 1000 entries or revisions, the index building
 part of the import will be time-consuming. You can use the following options to speed up the process::
 
- --procs <number of processors> --limitmb <memory in mb for each process>
+ --procs <number of processors> --limitmb <memory in MB for each process>
 
-Choose the values according to your available hardware resources. The defaults are 1 process and 256 mb memory.
+Choose the values according to your available hardware resources. The defaults are 1 process and 256 MB memory.
 See the `Whoosh Tips for speeding up batch indexing docs <https://whoosh.readthedocs.io/en/latest/batch.html>`_ for details.
 
 Use the following command to get an overview of all available options::
@@ -140,7 +141,7 @@ Use the following command to get an overview of all available options::
 
 Testing
 -------
-Review the logs for error messages. Start the moin server and try the "Index" and "History"
+Review the logs for error messages. Start the Moin server and try the "Index" and "History"
 views to see what is included. Check whether your data is complete and rendering correctly.
 
 If you find issues with data migration from moin 1.9 to 2, please check the
@@ -157,22 +158,22 @@ Converting after reverting
 --------------------------
 .. if the above title is changed, also change CONTENTTYPES_HELP_DOCS in constants/contenttypes.py
 
-The import19 process converts text items using Moinmoin 1.9 syntax to
-Moinmoin 2.0 syntax.
+The import19 process converts text items using MoinMoin 1.9 syntax to
+MoinMoin 2.0 syntax.
 
-The conversion is accomplished by creating a new revision of each moin wiki text item.
+The conversion is accomplished by creating a new revision of each Moin wiki text item.
 Click the History link under the Item Views panel to view the revisions.
-The latest revision will have a content type of "Moinmoin" while the older revisions
-created prior to conversion will have a content type of "Moinmoin 1.9"
+The latest revision will have a content type of "MoinMoin" while the older revisions
+created prior to conversion will have a content type of "MoinMoin 1.9"
 Click the Diff link to see the content changes made by import19.
 
-If a moin wiki item is reverted to a revision having a content type of "Moinmoin 1.9"
-with embedded old style CamelCase auto links and/or attachments (`{{attachment:my.jpg}}`),
-the revision is not converted to the Moinmoin 2 syntax automatically. Editors must do
+If a Moin wiki item is reverted to a revision having a content type of "MoinMoin 1.9"
+with embedded old-style CamelCase autolinks and/or attachments (`{{attachment:my.jpg}}`),
+the revision is not converted to the MoinMoin 2 syntax automatically. Editors must do
 the conversion by clicking the Convert link within the Item Views panel.
 
-Reverted revisions left in the Moinmoin 1.9 format will render correctly and
+Reverted revisions left in the MoinMoin 1.9 format will render correctly and
 the reverted item may be updated and saved using the old 1.9 syntax. However,
-it is recommended that all such revisions be converted to the new moin syntax
+it is recommended that all such revisions be converted to the new Moin syntax
 because the old CamelCase and attachment conventions are deprecated and will
-never be included in the moin 2 docs.
+never be included in the Moin 2 docs.

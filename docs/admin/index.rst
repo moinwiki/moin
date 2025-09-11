@@ -11,18 +11,18 @@ is doing all the hard and complex work.
 Indexes are used internally for many operations like item lookup, history,
 iterating over items, search, interactive search, etc.
 
-MoinMoin won't be able to start with damaged, inaccessible or non-existing indexes.
+MoinMoin won't be able to start with damaged, inaccessible, or non-existing indexes.
 As a result, you will need to configure and initialize indexing correctly first.
 
-moin will automatically update the index when items are created, updated, deleted,
-destroyed, or renamed via the storage api of moin, indexing layer or above.
+Moin will automatically update the index when items are created, updated, deleted,
+destroyed, or renamed via the storage API of Moin, the indexing layer, or above.
 
 Configuration
 =============
-Your need to have a ``index_storage`` entry in your wiki config.
+You need to have an ``index_storage`` entry in your wiki config.
 
-We use whoosh for indexing and as whoosh supports multiple storage backends,
-this entry is made to potentially support any storage supported by whoosh.
+We use Whoosh for indexing and, as Whoosh supports multiple storage backends,
+this entry is made to potentially support any storage supported by Whoosh.
 
 In general, this entry has the form of::
 
@@ -42,9 +42,9 @@ has one parameter - the index directory::
 
 moin index subcommand reference
 ===============================
-You can use the ``moin index-*`` group of cli subcommands to manage indexes.
+You can use the ``moin index-*`` group of CLI subcommands to manage indexes.
 
-Many of the cli commands for index management support a `--tmp` option to use
+Many of the CLI commands for index management support a `--tmp` option to use
 the temporary index location. This is useful if you want to do index operations
 in parallel to a running wiki which is still using the index at the normal
 index location.
@@ -53,8 +53,8 @@ moin index-create
 -----------------
 Creates an empty but valid index.
 
-**Note:** the moin WSGI application needs an index and storage to successfully start up.
-Please see command moin create-instance.
+**Note:** The Moin WSGI application needs an index and storage to successfully start up.
+Please see the command moin create-instance.
 
 moin index-build
 ----------------
@@ -78,7 +78,7 @@ index-update multiple times to keep even more caught up.
 
 moin index-destroy
 ------------------
-Destroy an index, such that nothing left at the respective location.
+Destroy an index such that nothing is left at the respective location.
 
 moin index-move
 ---------------
@@ -86,11 +86,11 @@ Move the index from the temporary location to the normal location.
 
 moin index-optimize
 -------------------
-Optimize an index:: see Whoosh docs for more details.
+Optimize an index; see Whoosh docs for more details.
 
 moin index-dump
 ---------------
-Output index contents in human readable form, e.g. for debugging purposes.
+Output index contents in human-readable form, e.g., for debugging purposes.
 
 **Note:** only fields with attribute ``stored=True`` can be displayed.
 
@@ -111,8 +111,8 @@ If you add data to your wiki, the index will get updated automatically.
 
 If your wiki has data and is shut down
 --------------------------------------
-If index needs a rebuild for some reason, e.g. index lost, index damaged,
-incompatible upgrade, etc., use::
+If the index needs a rebuild for some reason (e.g., index lost, index damaged,
+incompatible upgrade, etc.), use::
 
     moin index-destroy
     moin index-create
@@ -138,11 +138,11 @@ index rebuilds, schedule them at some time when your server is not too busy.
 Building an index for a wiki farm
 =================================
 If you run a wiki farm (multiple related wikis), you may share the index
-between the wikis, so users will be able to search in one wiki
+between the wikis so users will be able to search in one wiki
 and also see results from the other wikis.
 
 Before you start, you must prepare your wiki configs. For example, for a company
-that uses two farm wikis, such as ``Sales`` and ``Engineering``, Their respective
+that uses two farm wikis, such as ``Sales`` and ``Engineering``. Their respective
 wiki configs could look like:
 
 ``Sales``::

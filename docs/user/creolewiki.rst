@@ -5,9 +5,9 @@
 WikiCreole markup overview
 ==========================
 
-Features currently not working with moin's WikiCreole parser are marked with **CREOLETODO**.
+Features currently not working with Moin's WikiCreole parser are marked with **CREOLETODO**.
 
-Features currently not working with moin's rst parser are marked with **reSTTODO**.
+Features currently not working with Moin's reST parser are marked with **reSTTODO**.
 
 Headings
 ========
@@ -46,7 +46,7 @@ Level 6
 **Notes**:
 
 Closing equals signs are optional and do not affect the output.
-Also, whitespace between the first word of the heading and the opening equals sign will not be shown in the output (ie. leading whitespace is stripped).
+Also, whitespace between the first word of the heading and the opening equals sign will not be shown in the output (i.e., leading whitespace is stripped).
 
 Text formatting
 ===============
@@ -58,7 +58,7 @@ The following is a table of inline markup that can be used to format text in Cre
 +=====================================+=======================================+
 | ``**Bold Text**``                   | **Bold text**                         |
 +-------------------------------------+---------------------------------------+
-| ``//Italic Text//``                 | *Italic Text*                         |
+| ``//Italic Text//``                 | *Italic text*                         |
 +-------------------------------------+---------------------------------------+
 | ``//**Bold and Italic**//``         | :bolditalic:`Bold and Italic`         |
 +-------------------------------------+---------------------------------------+
@@ -70,7 +70,7 @@ The following is a table of inline markup that can be used to format text in Cre
 |                                     | | Second line                         |
 +-------------------------------------+---------------------------------------+
 
-**reSTTODO**: Restructured Text line blocks are not working in Moin2
+**reSTTODO**: reStructuredText line blocks are not working in Moin2
 
 Hyperlinks
 ==========

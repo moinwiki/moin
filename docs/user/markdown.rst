@@ -7,12 +7,12 @@ Markdown Markup
 This page introduces you to the most important elements of the Markdown syntax.
 For details on the Python implementation of Markdown see https://python-markdown.github.io/
 
-In addition to being supported by moin2, the Markdown markup language is used by issue trackers
-such as those found in Bitbucket and Github. So what you learn here can be used there also.
+In addition to being supported by Moin2, the Markdown markup language is used by issue trackers
+such as those found in Bitbucket and GitHub. What you learn here can be used there as well.
 
 .. _para3:
 
-Features currently not working with moin's Markdown parser are marked with **MDTODO**.
+Features currently not working with Moin's Markdown parser are marked with **MDTODO**.
 
 This page, describing the Markdown syntax, is written in reST. Instances where reST cannot
 duplicate the same rendering produced by Markdown are flagged with **reST NOTE**.
@@ -765,3 +765,5 @@ For example, to automatically link URLs: ::
     class Config(DefaultConfig):
         ...
         markdown_extensions = ['pymdownx.magiclink']
+
+

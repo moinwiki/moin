@@ -173,7 +173,7 @@ help_on_csv = " ".join(
 
 CONTENTTYPES_HELP_DOCS = {
     # content type: tuple - content type, button text; link generated later based on user preferred language
-    "text/x.moin.wiki;charset=utf-8": (("moin", _("Click for help on Moin Wiki markup."))),
+    "text/x.moin.wiki;charset=utf-8": (("moin", _("Click for help on MoinWiki markup."))),
     "text/x.moin.wiki;format=1.9;charset=utf-8": (("moin", _("Moinmoin 1.9 format is deprecated, convert to moin 2."))),
     "text/x-mediawiki;charset=utf-8": (("mediawiki", _("Click for help on Media Wiki markup."))),
     "text/x.moin.creole;charset=utf-8": (("creole", _("Click for help on Creole Wiki markup."))),

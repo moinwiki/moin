@@ -8,19 +8,19 @@
 
 
 ==========================
-Moin Wiki markup overview
+MoinWiki markup overview
 ==========================
 
 This document describes the features of the moinwiki markup language.
-Because this document was created using  Restructured Text, which
+Because this document was created using reStructuredText, which
 does not support some of the features available in moinwiki, the
-examples below may show both the markup and result as block or
-predefined code.
+examples below may show both the markup and the result as block or
+preformatted code.
 
-Features currently not working with moin's Wiki parser are marked
+Features not currently working with Moin's wiki parser are marked
 with **MOINTODO**.
 
-Table Of Contents
+Table of Contents
 =================
 
 Table of contents:
@@ -278,14 +278,14 @@ Lists
 =====
 
 .. warning::
- * All Moin Wiki list syntax (including that for unordered lists,
+ * All MoinWiki list syntax (including that for unordered lists,
    ordered lists and definition lists) requires a leading space before
    each item in the list.
  * Unfortunately, reStructuredText does not allow leading whitespace
    in code samples, so the example markup here will not work if copied
    verbatim, and requires
    that each line of the list be indented by one space in order to
-   be valid Moin Wiki markup.
+   be valid MoinWiki markup.
  * This is also an **reSTTODO**
 
 Unordered Lists
@@ -441,7 +441,7 @@ Definition Lists
  - reStructuredText does not support multiple definitions for a
    single term, so a line break has been forced to illustrate the
    appearance of several definitions.
- - Using the prescribed Moin Wiki markup will, in fact, produce two
+ - Using the prescribed MoinWiki markup will, in fact, produce two
    separate definitions in MoinMoin (using separate ``<dd>`` tags).
 
 Horizontal Rules

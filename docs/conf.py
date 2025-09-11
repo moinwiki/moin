@@ -115,7 +115,7 @@ html_theme = "sphinx_rtd_theme"  # winner, mobile-friendly
 # html_theme = 'bizstyle'
 
 # The style sheet to use for HTML pages. A file of that name must exist either
-# in Sphinx’ static/ path, or in one of the custom paths given in
+# in Sphinx's static/ path, or in one of the custom paths given in
 # html_static_path. Default is the stylesheet given by the selected theme.
 html_style = "custom.css"
 

@@ -28,7 +28,7 @@ Because of the way the Markdown parser is constructed, it is frequently not poss
 
  * [[help-en/moin]]
 
- * [[../moin|Moin Wiki markup item]]
+ * [[../moin|MoinWiki markup item]]
  * [[../creole|Creole Wiki markup item]]
  * [[../rst|ReST markup item]]
  * [[../markdown|Markdown markup item]]

@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-Please report vulnerabilities privately via Github:
+Please report vulnerabilities privately via GitHub:
 
 https://github.com/moinwiki/moin/security
 

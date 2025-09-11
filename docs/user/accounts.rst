@@ -15,7 +15,7 @@ by clicking the account creation button, and you will be presented with an accou
 The fields of this form are as follows:
 
 Name
- Your username on the wiki.  Names must not contain "/",  ":", or "," characters, invisible unicode
+ Your username on the wiki.  Names must not contain "/",  ":", or "," characters, invisible Unicode
  characters, or leading or trailing whitespace characters. Embedded single space characters
  are allowed.  This is a required field.
 
@@ -33,7 +33,7 @@ E-Mail
  the wiki. This is a required field.
 
 .. note::
- Some wikis require email verification, in which case you will have click an activation link which
+ Some wikis require email verification, in which case you will have to click an activation link that
  will be sent to the email address you provide. You must complete this step before you start using
  the wiki.
 
@@ -44,12 +44,12 @@ E-Mail
 User Settings
 =============
 
-User settings provide a way for to customise your MoinMoin experience and perform account
-maintenance functions like changing email address or password. To access your settings page, click
+User settings provide a way for you to customize your MoinMoin experience and perform account
+maintenance functions like changing your email address or password. To access your settings page, click
 the :guilabel:`Settings` button at the top of the page.
 
 The settings page appears as a list of links to various sub-pages for changing elements of your
-wiki experience, each of these sub-pages are listed below:
+wiki experience; each of these sub-pages is listed below:
 
 Personal Settings
 -----------------
@@ -66,7 +66,7 @@ Name
 
 Display-Name
  If your wiki has a custom auth method that creates cryptic user names, then
- the display-name can be created as an alternative. You will still login using your username
+ the display-name can be created as an alternative. You will still log in using your username
  or alias. The display-name will appear as links in history pages and the footer of items you have edited.
  Use your display-name to create your home page in the users namespace.
 
@@ -100,13 +100,13 @@ Notification Settings
 Notification settings allow you to configure the way MoinMoin notifies you of changes and important
 information.
 
-E-Mail
- Change the email address MoinMoin sends emails to.
+Email
+ Change the email address MoinMoin sends email to.
 
 Wiki Appearance Settings
 ------------------------
 
-Appearance settings allow you to customise the look and feel of the wiki.
+Appearance settings allow you to customize the look and feel of the wiki.
 
 Theme name
  The bundled MoinMoin wiki theme which you would like to use.
@@ -116,7 +116,7 @@ User CSS URL
  custom stylesheet here. Custom CSS provides an advanced level of control over appearance of
  MoinMoin pages.
 
-Number rows in edit textarea
+Number of rows in edit textarea
  The size (in lines) of MoinMoin's plain text editor when you edit an item. The default of 0
  resizes the textarea to hold the entire document being edited.
 
@@ -143,14 +143,14 @@ The "Options" section allows you to control privacy and advanced features of Moi
 
 Always use ISO 8601 date-time format
  Display dates and times in ISO 8601 format rather than the usual Babel formats
- based upon the user's locale. If the UTC time zone is selected, dates and times
- will have a "z" suffix indicating the date or time is a UTC Zulu time.
+ based on the user's locale. If the UTC time zone is selected, dates and times
+ will have a "Z" suffix indicating the date or time is UTC (Zulu time).
 
 Publish my email (not my wiki homepage) in author info
  Control whether or not other wiki users may see your email address.
 
-Open editor on double click
- This option allows you to simply double click the text on any MoinMoin item and have it opened
+Open editor on double-click
+ This option allows you to simply double-click the text on any MoinMoin item and have it opened
  in the editor. When using the MoinMoin text editor, the textarea caret will be positioned on
  the paragraph that was clicked. If the textarea is larger than the display window, pressing the
  right-arrow key will scroll the page so the caret is visible near the bottom of the window.
@@ -169,7 +169,7 @@ Special Features for Users with Accounts
 Your User Page
 --------------
 
-You user page is a wiki space in which you may share information about yourself with other users of
+Your user page is a wiki space in which you may share information about yourself with other users of
 that wiki. It can be accessed by clicking the button with your username on it at the top of the
 screen, and is edited like a normal wiki item.
 
@@ -186,7 +186,7 @@ has only one revision, the icon will indicate the content type.
 The second column will show the item name, aliases, or item ID (if the item was deleted)
 at that revision with a link to a revision display.
 
-The remaining columns with display timestamps, sizes, revision numbers, and comments.
+The remaining columns will display timestamps, sizes, revision numbers, and comments.
 
 Bookmarking
 -----------
@@ -203,8 +203,8 @@ Quicklinks
 ----------
 
 At the top of every MoinMoin page, there is a row of buttons for quick access to commonly used MoinMoin
-features like the global index, global history and homepage. Often, users need quick access to MoinMoin
-items without having to search for them each time - quicklinks allow you to access your favourite wiki
+features like the global index, global history, and home page. Often, users need quick access to MoinMoin
+items without having to search for them each time — quicklinks allow you to access your favorite wiki
 items at the click of a button by placing links to them at the top of every page. To quicklink an item,
 click the :guilabel:`Add Link` button at the top or bottom of a MoinMoin item. To remove a quicklink,
 simply navigate back to the item and click the :guilabel:`Remove Link` button.
