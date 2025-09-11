@@ -64,7 +64,7 @@ These markups can be used within text to apply character style.
 +------------------------------------+------------------------------------+
 | | ``<del>strikethrough</del>``     | :strikethrough:`strikethrough`     |
 | | or                               |                                    |
-| | ``<s>strikethrough</s>``        |                                    |
+| | ``<s>strikethrough</s>``         |                                    |
 +------------------------------------+------------------------------------+
 | | ``<code>Fixed width</code>``     | ``Fixed width``                    |
 | | or                               |                                    |
