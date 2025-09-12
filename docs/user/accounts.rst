@@ -3,16 +3,34 @@ User Accounts
 =============
 
 Accounts provide an easy way for wiki users to identify themselves to MoinMoin and other wiki users,
-store personal preferences and track wiki contributions. Account creation is simple and
-straightforward, and provides many benefits over browsing and editing anonymously.
+store personal preferences and track wiki contributions.
+
+The account creation method is set by the wiki admin as part of the installation process.
+
+ - The default method is suitable for wikis exposed to the internet. Only SuperUsers may
+   create a new account. New users will receive instructions for requesting an account
+   when they click the Login button. This method should never use the built-in server
+   in production mode.
+
+ - For wikis with physical access limited by a organization's intranet, the wiki admin
+   may allow self registration with an option for email verification. This method may also
+   be useful for single user desktop wikis using the built-in server.
+
+ - For desktop wikis with a single user running on a protected PC using the built-in server, the user
+   may configure wikiconfig.py to give full read/write access to anyone without
+   the need to login. In this case the user may set the default theme, edit area text size,
+   etc. in wikiconfig.py. Some minor features like quick links, subscriptions, and
+   bookmarks will not be available.
 
 Account Creation
 ================
 
-To create an account, click the :guilabel:`Login` button at the top of the page. You will be taken to a login
-page allowing you to either log in or create an account. Proceed to the create account page
-by clicking the account creation button, and you will be presented with an account creation form.
-The fields of this form are as follows:
+To create an account, click the :guilabel:`Login` button at the top of the page.
+If account creation is limited to SuperUsers, you will see instructions to send an
+email to the SuperUser.
+If self registration is allowed,
+proceed to the create account page by clicking the account creation button.
+The form fields are as follows.
 
 Name
  Your username on the wiki.  Names must not contain "/",  ":", or "," characters, invisible Unicode
@@ -37,9 +55,6 @@ E-Mail
  will be sent to the email address you provide. You must complete this step before you start using
  the wiki.
 
- Other wikis may limit new account creation to administrators only to prevent the creation
- of bogus accounts and spamming bots. In this case you will have to contact the administrator
- to request an account.
 
 User Settings
 =============
