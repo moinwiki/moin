@@ -449,7 +449,7 @@ class Binary(Content):
     _render_data_diff_text = _render_data_diff
     _render_data_diff_raw = _render_data_diff
 
-    def _render_data_diff_atom(self, oldrev, newrev):
+    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
         return render_template(
             "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=Markup(self._render_data())
         )
@@ -841,10 +841,10 @@ class TransformableBitmapImage(RenderableBitmapImage):
         else:
             return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
 
-    def _render_data_diff_atom(self, oldrev, newrev):
+    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
-            return super()._render_data_diff_atom(oldrev, newrev)
+            return super()._render_data_diff_atom(oldrev, newrev, fqname=None)
         url = url_for("frontend.diffraw", _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template(
             "atom.html",
