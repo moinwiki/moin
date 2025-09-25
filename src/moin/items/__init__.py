@@ -1591,10 +1591,22 @@ class Default(Contentful):
 
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
-            if contenttype_guessed:
-                m = re.search("charset=(.+?)($|;)", contenttype_guessed)
-                if m:
-                    data = str(data, m.group(1))
+            if data is not None:
+                if not isinstance(data, (str, bytes)):
+                    data = data.read()
+                if isinstance(data, bytes):
+                    encoding = "utf-8"
+                    if contenttype_guessed:
+                        if m := re.search("charset=(.+?)($|;)", contenttype_guessed):
+                            encoding = m.group(1)
+                    try:
+                        data = str(data, encoding)
+                    except ValueError:
+                        flash(_("Invalid data content received. Expecting text content."), "error")
+                        data = ""
+                if not isinstance(data, str):
+                    abort(422, description="invalid content")
+
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
                 if request.values.get("preview"):
@@ -1609,6 +1621,9 @@ class Default(Contentful):
                     else:  # TODO: make preview button inactive for empty items, see #1539
                         flash(_("No preview available for empty items."), "error")
                     close_file(old_item.rev.data)
+                    # update content form text data if data originated from a file upload
+                    if data and form["content_form"]["data_file"]:
+                        form["content_form"]["data_text"] = data
                 else:
                     # user clicked OK/Save button, check for conflicts,
                     if "charset" in self.contenttype:

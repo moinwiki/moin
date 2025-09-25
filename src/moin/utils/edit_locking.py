@@ -30,6 +30,8 @@ The preview drafts are saved in the /wiki/preview/ directory.
 To stress-test edit locking, use the Locust-based tests in /contrib/loadtesting/.
 """
 
+from __future__ import annotations
+
 import os
 import time
 import sqlite3
@@ -145,7 +147,7 @@ class Edit_Utils:
             user_name = request.remote_user or request.remote_addr
         return user_name
 
-    def put_draft(self, data_in, overwrite=True):
+    def put_draft(self, data_in: str | None, overwrite: bool = True) -> None:
         """
         Only 1 item draft is saved per user. Most recent item draft overlays prior item draft.
 
@@ -159,7 +161,7 @@ class Edit_Utils:
         """
         rev_id = self.rev_id
         draft_rev_number = self.rev_number
-        draft, data = self.get_draft()
+        draft, _ = self.get_draft()
         if draft:
             # draft may be of this item or remnant of a prior abandoned edit
             u_name, i_id, i_name, rev_number, save_time, i_rev_id = draft
@@ -170,14 +172,16 @@ class Edit_Utils:
                 draft_rev_number = rev_number  # XXX per line 1074 in __init__
                 rev_id = i_rev_id
                 self.draft_name = self.make_draft_name(rev_id)
-            self.cursor.execute("""DELETE FROM editdraft WHERE user_name = ? """, (self.user_name,))
+            self.cursor.execute("""DELETE FROM editdraft WHERE user_name = ?""", (self.user_name,))
+
         if data_in:
-            data_in = data_in.encode(self.coding)
+            data = data_in.encode(self.coding)
             with open(self.draft_name, "wb") as f:
-                f.write(data_in)
+                f.write(data)
             save_time = int(time.time())
         else:
             save_time = 0  # indicates user is editing item but has not done a preview, no draft has been saved
+
         self.cursor.execute(
             """INSERT INTO editdraft(user_name, item_id, item_name, rev_number, save_time, rev_id)
                            VALUES(?,?,?,?,?,?)""",
@@ -185,7 +189,7 @@ class Edit_Utils:
         )
         self.conn.commit()
 
-    def get_draft(self):
+    def get_draft(self) -> tuple[sqlite3.Row, str] | tuple[sqlite3.Row, None] | tuple[None, None]:
         """
         Return None, None if no draft available; else tuple of row fields, textarea data or None.
 
@@ -205,8 +209,8 @@ class Edit_Utils:
                     try:
                         with open(self.draft_name, "rb") as f:
                             data = f.read()
-                        data = data.decode(self.coding)
-                        return draft, data
+                        content = data.decode(self.coding)
+                        return draft, content
                     except OSError:
                         logging.error(f"User {u_name} failed to load draft for: {i_name}")
                         return draft, None
