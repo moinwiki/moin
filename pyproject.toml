@@ -36,7 +36,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
 ]
 dependencies = [
-    "Babel >= 2.10.0",  # internationalization support
+    "Babel >= 2.16.0",  # internationalization support
     "blinker >= 1.6.2",  # event signalling (e.g. for change notification trigger)
     "docutils >= 0.18.1",  # reST markup processing
     "Markdown >= 3.4.1",  # Markdown markup processing
@@ -188,3 +188,17 @@ change_dir = ""
 commands = [
     ["ruff", "check", "."]
 ]
+
+[tool.babel.extractors]
+# python works by default
+jinja2 = "jinja2.ext:babel_extract"
+
+[[tool.babel.mappings]]
+method = "python"
+pattern = "**/*.py"
+encoding = "utf-8"
+
+[[tool.babel.mappings]]
+method = "jinja2"
+pattern = ["**/templates/**/*.html", "**/templates/dictionary.js"]
+encoding = "utf-8"
