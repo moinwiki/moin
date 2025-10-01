@@ -95,6 +95,7 @@ class NodeVisitor:
         pass
 
     def open_moin_page_node(self, mointree_element, node=None):
+        # `mointree_element` can also be a `str` (text)
         if flaskg and getattr(flaskg, "add_lineno_attr", False):
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
@@ -296,13 +297,13 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_entry(self, node):
-        # process a table cell <td> tag
-        new_element = moin_page.table_cell()
+        # table cell element (<th> or <td> in HTML)
+        moin_table_cell = moin_page.table_cell()
         if "morerows" in node.attributes:
-            new_element.set(moin_page.number_rows_spanned, repr(int(node["morerows"]) + 1))
+            moin_table_cell.set(moin_page.number_rows_spanned, repr(int(node["morerows"]) + 1))
         if "morecols" in node.attributes:
-            new_element.set(moin_page.number_columns_spanned, repr(int(node["morecols"]) + 1))
-        self.open_moin_page_node(new_element, node)
+            moin_table_cell.set(moin_page.number_columns_spanned, repr(int(node["morecols"]) + 1))
+        self.open_moin_page_node(moin_table_cell, node)
 
     def depart_entry(self, node):
         self.close_moin_page_node()
@@ -315,14 +316,14 @@ class NodeVisitor:
             "lowerroman": "lower-roman",
             "upperroman": "upper-roman",
         }
-        new_node = moin_page.list(attrib={moin_page.item_label_generate: "ordered"})
+        moin_list = moin_page.list(attrib={moin_page.item_label_generate: "ordered"})
         type = enum_style.get(node["enumtype"], None)
         if type:
-            new_node.set(moin_page.list_style_type, type)
+            moin_list.set(moin_page.list_style_type, type)
         startvalue = node.get("start", 1)
         if startvalue > 1:
-            new_node.set(moin_page.list_start, str(startvalue))
-        self.open_moin_page_node(new_node, node)
+            moin_list.set(moin_page.list_start, str(startvalue))
+        self.open_moin_page_node(moin_list, node)
 
     def depart_enumerated_list(self, node):
         self.close_moin_page_node()
@@ -379,9 +380,9 @@ class NodeVisitor:
 
     def visit_footnote_reference(self, node):
         self.open_moin_page_node(moin_page.note(attrib={moin_page.note_class: "footnote"}))
-        new_footnote = moin_page.note_body()
-        self.open_moin_page_node(new_footnote)
-        self.footnotes[node.children[-1]] = new_footnote
+        moin_footnote = moin_page.note_body()
+        self.open_moin_page_node(moin_footnote)
+        self.footnotes[node.children[-1]] = moin_footnote
         node.children = []
 
     def depart_footnote_reference(self, node):
@@ -430,13 +431,12 @@ class NodeVisitor:
             # img
             target = Iri(scheme="wiki.local", path=node["uri"], fragment=None)
             attrib[xinclude.href] = target
-            new_node = xinclude.include(attrib=attrib)
+            moin_image = xinclude.include(attrib=attrib)
         else:
             # obj
-            new_node = moin_page.object(attrib)
-            new_node.set(xlink.href, url)
-
-        self.open_moin_page_node(new_node, node)
+            moin_image = moin_page.object(attrib)
+            moin_image.set(xlink.href, url)
+        self.open_moin_page_node(moin_image, node)
 
     def depart_image(self, node):
         self.close_moin_page_node()
@@ -571,24 +571,24 @@ class NodeVisitor:
             macro_name = refuri[2:-2].split("(")[0]
             if macro_name == "TableOfContents":
                 arguments = refuri[2:-2].split("(")[1][:-1].split(",")
-                node = moin_page.table_of_content()
-                self.open_moin_page_node(node)
+                moin_toc = moin_page.table_of_content()
+                self.open_moin_page_node(moin_toc)
                 if arguments and arguments[0]:
-                    node.set(moin_page.outline_level, arguments[0])
+                    moin_toc.set(moin_page.outline_level, arguments[0])
                 return
             if macro_name == "Include":
                 # include macros are expanded by include.py similar to transclusions
                 # rst include handles only wiki pages and does not support additional arguments like moinwiki
                 arguments = refuri[2:-2].split("(")[1][:-1].split(",")
                 link = Iri(scheme="wiki.local", path=arguments)
-                node = xinclude.include(
+                moin_node = xinclude.include(
                     attrib={
                         xinclude.href: link,
                         moin_page.alt: refuri,
                         moin_page.content_type: "x-moin/macro;name=" + macro_name,
                     }
                 )
-                self.open_moin_page_node(node)
+                self.open_moin_page_node(moin_node)
                 return
             try:
                 arguments = refuri[2:-2].split("(")[1][:-1]
@@ -746,10 +746,10 @@ class NodeVisitor:
         """
         if "refuri" in node or "refid" in node or "refname" in node:
             return  # already handled by Docutils "transforms"
-        moin_node = moin_page.span()
+        moin_target = moin_page.span()
         if node["ids"]:
-            moin_node.attrib[moin_page.id] = node["ids"][0]
-        self.open_moin_page_node(moin_node)
+            moin_target.attrib[moin_page.id] = node["ids"][0]
+        self.open_moin_page_node(moin_target)
 
     def depart_target(self, node):
         if "refuri" in node or "refid" in node or "refname" in node:
