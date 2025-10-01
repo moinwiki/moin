@@ -32,6 +32,7 @@ from urllib.parse import urlencode
 
 from moin import wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
+from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.constants.keys import (
     BOOKMARKS,
@@ -42,12 +43,14 @@ from moin.constants.keys import (
     EMAIL_UNVALIDATED,
     ENC_PASSWORD,
     ITEMID,
+    ITEMTYPE,
     NAME,
     NAME_EXACT,
     NAMEPREFIX,
     NAMERE,
     NAMESPACE,
     RECOVERPASS_KEY,
+    REV_NUMBER,
     SESSION_KEY,
     SESSION_TOKEN,
     TAGS,
@@ -244,7 +247,7 @@ class UserProfile:
 
     def __init__(self, **q):
         self._defaults = copy.deepcopy(app.cfg.user_defaults)
-        self._meta = {}
+        self._meta = {ITEMTYPE: ITEMTYPE_USERPROFILE}
         self._stored = False
         self._changed = False
         if q:
@@ -305,6 +308,8 @@ class UserProfile:
         if self._changed or force:
             self[NAMESPACE] = NAMESPACE_USERPROFILES
             self[CONTENTTYPE] = CONTENTTYPE_USER
+            if REV_NUMBER not in self._meta:
+                self[REV_NUMBER] = 1
             q = {ITEMID: self[ITEMID]}
             q = update_user_query(**q)
             item = get_user_backend().get_item(**q)

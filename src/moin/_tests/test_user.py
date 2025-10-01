@@ -11,8 +11,9 @@
 from flask import g as flaskg
 
 from moin import user
+from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
 from moin.items import Item
-from moin.constants.keys import ITEMID, NAME, NAMEPREFIX, NAMERE, NAMESPACE, TAGS
+from moin.constants.keys import ITEMID, ITEMTYPE, NAME, NAMEPREFIX, NAMERE, NAMESPACE, REV_NUMBER, TAGS
 
 import pytest
 
@@ -36,6 +37,8 @@ class TestSimple:
         assert u.email == email
         assert u.valid
         assert u.exists()
+        assert u.profile[ITEMTYPE] == ITEMTYPE_USERPROFILE
+        assert u.profile[REV_NUMBER] == 1
 
 
 class TestUser:
