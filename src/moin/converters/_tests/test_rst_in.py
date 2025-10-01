@@ -226,6 +226,23 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             "`Whitespace   is\nnormalized & Case is KEPT.`_",
             '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20Case%20is%20KEPT.">Whitespace   is\nnormalized &amp; Case is KEPT.</a></p></body></page>',
         ),
+        (  # in rST, matching the reference text is case insensitive:
+            "Chapter 1\n===============\n\nA reference to `chapter 1`_.\n",
+            '<page><body><h outline-level="1">Chapter 1</h><p>A reference to <a xlink:href="wiki.local:#Chapter_1">chapter 1</a>.</p></body></page>',
+        ),
+        (  # check handling of non-ASCII chars:
+            "τίτλος\n^^^^^^\n\nA reference to `τίτλος`_.\n",
+            '<page><body><h outline-level="1">τίτλος</h><p>A reference to <a xlink:href="wiki.local:#http://127.0.0.1:5000/rST-hyperlink-tests#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p></body></page>',
+        ),
+        (
+            "§ With % strange & siLLY <title>\n"
+            "--------------------------------\n\n"
+            "Reference to `§ With % strange\n"
+            "& siLLY \\<title>`_.\n",
+            '<page><body><h outline-level="1">§ With % strange &amp; siLLY &lt;title&gt;</h>'
+            '<p>Reference to <a xlink:href="wiki.local:#A.2BAKc_With_.25_strange_.26_siLLY_.3Ctitle.3E">§ With % strange\n'
+            "&amp; siLLY &lt;title&gt;</a>.</p></body></page>",
+        ),
         (
             "http://www.python.org/",
             '<page><body><p><a xlink:href="http://www.python.org/">http://www.python.org/</a></p></body></page>',
