@@ -232,7 +232,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         ),
         (  # check handling of non-ASCII chars:
             "τίτλος\n^^^^^^\n\nA reference to `τίτλος`_.\n",
-            '<page><body><h outline-level="1">τίτλος</h><p>A reference to <a xlink:href="wiki.local:#http://127.0.0.1:5000/rST-hyperlink-tests#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p></body></page>',
+            '<page><body><h outline-level="1">τίτλος</h><p>A reference to <a xlink:href="wiki.local:#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p></body></page>',
         ),
         (
             "§ With % strange & siLLY <title>\n"
