@@ -105,33 +105,6 @@ VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else V
 INDEXER_TIMEOUT = 20.0
 
 
-def get_document(indexer: IndexingMiddleware, revid: str, retry: bool = False, **kwargs):
-    """
-    Return a valid indexer document or raise a KeyError.
-
-    Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
-    indexes to storage. Try several times before failing.
-
-    :param indexer: instance of IndexingMiddleware
-    :param revid: revision to search
-    :param retry: retry backend search if document not found, required when server load is high
-    :param kwargs: idx_name, name of index used for searching (optional)
-    """
-    until = time.monotonic() + INDEXER_TIMEOUT
-    while True:
-        doc = indexer._document(revid=revid, **kwargs)
-        if doc is not None:
-            break
-        if not retry:
-            msg = f"revid: {revid} not found. Please check meta data and indexes"
-            raise KeyError(msg)
-        if time.monotonic() > until:
-            msg = f"revid: {revid} - Server overload may have corrupted the index; rebuild it."
-            raise KeyError(msg)
-        time.sleep(2)
-    return doc
-
-
 def parent_names(names):
     """
     Compute list of parent names (same order as in names, but no dupes)
@@ -1049,6 +1022,31 @@ class IndexingMiddleware:
         """
         return Item.existing(self, **query)
 
+    def get_document(self, revid: str, retry: bool = False, **kwargs):
+        """
+        Return a valid indexer document or raise a KeyError.
+
+        Under heavy loads, the Whoosh AsyncWriter writer may be delayed in writing
+        indexes to storage. Try several times before failing.
+
+        :param revid: revision to search
+        :param retry: retry backend search if document not found, required when server load is high
+        :param kwargs: idx_name, name of index used for searching (optional)
+        """
+        until = time.monotonic() + INDEXER_TIMEOUT
+        while True:
+            doc = self._document(revid=revid, **kwargs)
+            if doc is not None:
+                break
+            if not retry:
+                msg = f"revid: {revid} not found. Please check meta data and indexes"
+                raise KeyError(msg)
+            if time.monotonic() > until:
+                msg = f"revid: {revid} - Server overload may have corrupted the index; rebuild it."
+                raise KeyError(msg)
+            time.sleep(2)
+        return doc
+
 
 class PropertiesMixin:
     """
@@ -1361,7 +1359,7 @@ class Item(PropertiesMixin):
         self.indexer.index_revision(meta, content, backend_name, force_latest=not overwrite)
         gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
-            self._current = get_document(self.indexer, revid=revid, retry=True)
+            self._current = self.indexer.get_document(revid=revid, retry=True)
         if return_rev:
             return Revision(self, revid, retry=True)
 
@@ -1414,7 +1412,7 @@ class Revision(PropertiesMixin):
             if is_current:
                 doc = item._current
             else:
-                doc = get_document(item.indexer, idx_name=ALL_REVS, revid=revid, retry=retry)
+                doc = item.indexer.get_document(idx_name=ALL_REVS, revid=revid, retry=retry)
 
         if is_current:
             revid = doc.get(REVID)
