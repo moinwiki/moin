@@ -138,7 +138,7 @@ string replacement.
 If you made changes to any gettext() string, please update the .pot file
 using::
 
-    pybabel extract -F babel.cfg -o src/moin/translations/MoinMoin.pot \
+    pybabel extract -F pyproject.toml -o src/moin/translations/MoinMoin.pot \
             -k "_ gettext L_ lazy_gettext N_ ngettext" \
             --msgid-bugs-address "English <moin-user@python.org>" \
             --copyright-holder "Moin Core Team, see http://moinmo.in/MoinCoreTeamGroup" \
