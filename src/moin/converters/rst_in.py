@@ -31,7 +31,7 @@ except ImportError:
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
-from moin.wikiutil import normalize_pagename
+from moin.wikiutil import anchor_name_from_text, normalize_pagename
 
 from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
@@ -581,9 +581,18 @@ class NodeVisitor:
         if not allowed_uri_scheme(refuri):
             self.visit_error(node)
             return
-        if refuri == "":
-            # build a link to a heading or an explicitly defined anchor
-            refuri = Iri(scheme="wiki.local", fragment=node.attributes["name"].replace(" ", "_"))
+
+        if refuri == "" and "refid" in node:
+            # internal cross-links
+            refid = node["refid"]
+            target_node = node.document.ids[refid]
+            # "refid" works fine with explicit anchors but the IDs given to
+            # section headings use the normalization function from Moin, not Docutils.
+            if isinstance(target_node, nodes.section):
+                title = target_node[0]
+                refid = anchor_name_from_text(title.astext())
+            refuri = Iri(scheme="wiki.local", fragment=refid)
+
         if isinstance(refuri, str) and refuri.startswith("http"):
             if "://" not in refuri:
                 refuri = refuri.split(":")[1]
@@ -789,6 +798,7 @@ class Parser(docutils.parsers.rst.Parser):
     without matching target__.
 
     __ https://docutils.sourceforge.io/docs/api/transforms.html
+    __ https://docutils.sourceforge.io/docs/ref/doctree.html#target
     """
 
     config_section = "MoinMoin parser"
