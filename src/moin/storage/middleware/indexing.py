@@ -1430,12 +1430,6 @@ class Revision(PropertiesMixin):
         # Note: this does not immediately raise a KeyError for non-existing revs any more
         # If you access data or meta, it will, though.
 
-    def set_context(self, context):
-        for name in self.names:
-            if name.startswith(context):
-                self._name = name
-                return
-
     def _load(self):
         meta, data = self.backend.retrieve(self.backend_name, self.revid)  # raises KeyError if rev does not exist
         self.meta = Meta(self, self._doc, meta)

@@ -531,9 +531,6 @@ class ProtectedRevision:
         self.require(READ, PUBREAD)
         return self.rev.data
 
-    def set_context(self, context):
-        self.rev.set_context(context)
-
     def close(self):
         self.rev.close()
 
