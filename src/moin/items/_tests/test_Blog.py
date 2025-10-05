@@ -12,9 +12,9 @@ from flask import url_for
 
 from moin._tests import update_item
 from moin.items import Item
+from moin.constants.itemtypes import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from moin.constants.keys import CONTENTTYPE, ITEMTYPE, PTIME, ACL, TAGS
 from moin.constants.misc import ANON
-from moin.items.blog import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from moin.items.blog import Blog, BlogEntry
 from moin.themes import utctimestamp
 
