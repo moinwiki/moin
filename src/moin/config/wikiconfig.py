@@ -236,7 +236,7 @@ class Config(DefaultConfig):
     # TODO If there is a future change that requires wiki admins to merge this wikiconfig with the customized wikiconfig
     # then remove the "uri" parameter in create mapping below and in storage/__init__.py.
     namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls)
-    # define mapping of namespaces to unique item_roots (home pages within namespaces).
+    # define mapping of namespaces to unique root items (home pages within namespaces).
     root_mapping = {"users": "UserHome"}
     # default root, use this value by default for all namespaces
     default_root = "Home"

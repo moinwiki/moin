@@ -190,8 +190,7 @@ class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
 
     def get_root_fqname(self):
         """
-        Set value to the item_root of that namespace, and return
-        the new CompositeName.
+        Determine the root item of the namespace of this composite name and return it as new CompositeName instance.
         """
         return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
 

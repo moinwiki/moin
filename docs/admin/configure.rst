@@ -1454,7 +1454,7 @@ To configure custom namespaces, find the section in wikiconfig.py that looks sim
             hierarchic=False, ),
     }
     namespace_mapping, backend_mapping, acl_mapping = create_mapping(uri, namespaces, backends, acls, )
-    # define mapping of namespaces to unique item_roots (home pages within namespaces).
+    # define mapping of namespaces to unique root items (home pages within namespaces).
     root_mapping = {'users': 'UserHome', }
     # default root, use this value by default for all namespaces
     default_root = 'Home'
