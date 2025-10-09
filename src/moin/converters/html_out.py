@@ -245,10 +245,9 @@ class Converter:
         """Used by reST and docbook."""
         attrib = {}
         valid_classes = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
-        cls = elem.get(moin_page.type)
+        cls = elem.attrib.pop(moin_page.type, None)
         if cls in valid_classes:
             attrib[html.class_] = cls
-        elem.attrib = {}
         return self.new_copy(html.div, elem, attrib)
 
     def visit_moinpage_audio(self, elem):
