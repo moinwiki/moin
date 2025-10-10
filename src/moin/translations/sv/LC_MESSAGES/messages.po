@@ -1,0 +1,3176 @@
+# Translation Swedish for moin.
+# Copyright (C) 2024 Moin Core Team, see http://moinmo.in/MoinCoreTeamGroup
+# This file is distributed under the same license as the moin project.
+# Daniel Nylander <po@danielnylander.se>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: moin 2.0.0a\n"
+"Report-Msgid-Bugs-To: English <moin-user@python.org>\n"
+"POT-Creation-Date: 2024-03-09 08:09+0000\n"
+"PO-Revision-Date: 2025-10-09 19:07+0200\n"
+"Last-Translator: Daniel Nylander <github@danielnylander.se>\n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.14.0\n"
+"X-Generator: Poedit 3.7\n"
+
+#: src/moin/forms.py:101 src/moin/forms.py:180
+msgid "No namespace field in the meta."
+msgstr "Inget namnrymdsfält i metan."
+
+#: src/moin/forms.py:105
+msgid "The names in the name list must be unique."
+msgstr "Namnen i namnlistan måste vara unika."
+
+#: src/moin/forms.py:112
+msgid "Item names ({invalid_names}) must not start with '@' or '+'"
+msgstr "Artikelnamn ({invalid_names}) får inte börja med \"@\" eller \"+"
+
+#: src/moin/forms.py:120
+msgid ""
+"Item name ({invalid_names}) must not contain ',' characters. Create item with 1 name, use rename to create multiple "
+"names."
+msgstr ""
+"Artikelns namn ({invalid_names}) får inte innehålla tecknen \",\". Skapa artikel med 1 namn, använd rename för att "
+"skapa flera namn."
+
+#: src/moin/forms.py:130
+msgid "Item names ({invalid_names}) must not match with existing namespaces."
+msgstr "Artikelns namn ({invalid_names}) får inte stämma överens med befintliga namnrymder."
+
+#: src/moin/forms.py:142
+msgid "Item(s) named {duplicate_names} already exist."
+msgstr "Objekt med namnet {duplicate_names} finns redan."
+
+#: src/moin/forms.py:168
+msgid "Invalid JSON."
+msgstr "Ogiltig JSON."
+
+#: src/moin/forms.py:169
+msgid "Itemid not a proper UUID"
+msgstr "Itemid är inte ett korrekt UUID"
+
+#: src/moin/forms.py:174
+msgid "No ITEMID field"
+msgstr "Inget ITEMID-fält"
+
+#: src/moin/forms.py:184
+msgid "{_namespace} is not a valid namespace."
+msgstr "{_namespace} är inte en giltig namnrymd."
+
+#: src/moin/forms.py:205
+msgid "E-Mail"
+msgstr "E-artikel"
+
+#: src/moin/forms.py:206
+msgid "E-Mail address"
+msgstr "E-artikeladress"
+
+#: src/moin/forms.py:208
+msgid "Your E-Mail address"
+msgstr "Din e-postadress"
+
+#: src/moin/forms.py:210
+msgid "Password"
+msgstr "Lösenord"
+
+#: src/moin/forms.py:271
+msgid "This item doesn't exist."
+msgstr "Denna artikel finns inte."
+
+#: src/moin/forms.py:273
+msgid "This item name is corrupt, delete and recreate."
+msgstr "Detta artikelnamn är korrupt, radera och återskapa."
+
+#: src/moin/config/default.py:350 src/moin/forms.py:283 src/moin/templates/all.html:6
+#: src/moin/templates/ticket/advanced.html:28 src/moin/templates/tickets.html:20 src/moin/templates/tickets.html:62
+msgid "Tags"
+msgstr "Taggar"
+
+#: src/moin/forms.py:286
+msgid "Names"
+msgstr "Namn"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:18 src/moin/forms.py:290
+#: src/moin/templates/usersettings_forms.html:149
+msgid "Subscriptions"
+msgstr "Prenumerationer"
+
+#: src/moin/forms.py:294 src/moin/templates/usersettings_forms.html:133 src/moin/themes/basic/templates/layout.html:105
+msgid "Quick Links"
+msgstr "Snabblänk"
+
+#: src/moin/forms.py:296
+msgid "Search Query"
+msgstr "Sök förfrågan"
+
+#: src/moin/forms.py:346
+msgid "YYYY-MM-DD HH:MM:SS (example: 2013-12-31 23:59:59)"
+msgstr "ÅÅÅÅ-MM-DD HH:MM:SS (exempel: 2013-12-31 23:59:59)"
+
+#: src/moin/forms.py:347
+msgid "Please use the following format: YYYY-MM-DD HH:MM:SS"
+msgstr "Använd följande format: ÅÅÅÅ-MM-DD HH:MM:SS"
+
+#: src/moin/forms.py:365
+msgid "Invalid Reference."
+msgstr "Ogiltig referens."
+
+#: src/moin/forms.py:373
+msgid "(None)"
+msgstr "(inget)"
+
+#: src/moin/user.py:73
+msgid ""
+"Invalid user name '{name}'.\n"
+"Name may contain any Unicode alpha numeric character, with optional one\n"
+"space between words. Group page name is not allowed."
+msgstr ""
+"Ogiltigt användarnamn '{name}'.\n"
+"Namnet kan innehålla alla alfanumeriska tecken i Unicode, med valfritt ett\n"
+"mellanslag mellan orden. Gruppsidans namn är inte tillåtet."
+
+#: src/moin/user.py:79
+msgid "This user name already belongs to somebody else."
+msgstr "Det här användarnamnet tillhör redan någon annan."
+
+#: src/moin/user.py:88
+msgid "Password not acceptable: {msg}"
+msgstr "Lösenordet är inte acceptabelt: {msg}"
+
+#: src/moin/user.py:94
+msgid "Please provide your email address. If you lose your login information, you can get it by email."
+msgstr "Ange din e-postadress. Om du tappar bort dina inloggningsuppgifter kan du få dem via e-post."
+
+#: src/moin/apps/admin/views.py:120 src/moin/user.py:100
+msgid "This email already belongs to somebody else."
+msgstr "Den här e-postadressen tillhör redan någon annan."
+
+#: src/moin/user.py:820
+msgid "[{sitename}] Your wiki password recovery link"
+msgstr "[{sitename}] Länk för återställning av ditt wiki-lösenord"
+
+#: src/moin/user.py:836
+msgid "[{sitename}] Please verify your email address"
+msgstr "[{sitename}] Verifiera din e-postadress"
+
+#: src/moin/apps/admin/views.py:53 src/moin/config/default.py:352
+msgid "Admin"
+msgstr "Admin"
+
+#: src/moin/apps/admin/views.py:59 src/moin/config/default.py:351
+msgid "User"
+msgstr "Användare"
+
+#: src/moin/apps/admin/views.py:81 src/moin/apps/frontend/views.py:1862 src/moin/apps/frontend/views.py:2111
+msgid "Username"
+msgstr "Användarnamn"
+
+#: src/moin/apps/admin/views.py:81
+msgid "User Name"
+msgstr "Användarnamn"
+
+#: src/moin/apps/admin/views.py:83 src/moin/apps/frontend/views.py:1868 src/moin/apps/frontend/views.py:1894
+msgid "Register"
+msgstr "Registrera"
+
+#: src/moin/apps/admin/templates/admin/index.html:5 src/moin/apps/admin/templates/admin/register_new_user.html:10
+#: src/moin/apps/admin/views.py:96
+msgid "Register New User"
+msgstr "Registrera ny användare"
+
+#: src/moin/apps/admin/views.py:115
+msgid "User already exists"
+msgstr "Användarnamnet finns redan"
+
+#: src/moin/apps/admin/views.py:123
+msgid "Account for {username} created"
+msgstr "Konto för {username} skapad"
+
+#: src/moin/apps/admin/views.py:132
+msgid "{username} has been sent a password recovery email."
+msgstr "{username} har fått ett e-postmeddelande om lösenordsåterställning."
+
+#: src/moin/apps/admin/views.py:134
+msgid "{username} is an invalid user, no email has been sent."
+msgstr "{username} är en ogiltig användare, inget e-postmeddelande har skickats."
+
+#: src/moin/apps/admin/templates/admin/index.html:6 src/moin/apps/admin/templates/admin/userbrowser.html:10
+#: src/moin/apps/admin/views.py:170
+msgid "Users"
+msgstr "Användare"
+
+#: src/moin/apps/admin/views.py:181
+msgid "User profile of {username}: {email} {disabled}"
+msgstr "Användarprofil av {username}: {email} {disabled}"
+
+#: src/moin/apps/admin/views.py:202
+msgid "{0} \"{1}\" status changed to \"{2}\""
+msgstr "{0} \"{1}\" status ändrad till \"{2}\""
+
+#: src/moin/apps/admin/views.py:204
+msgid "modifying {0}.{1} failed"
+msgstr "modifiering av {0}.{1} misslyckades"
+
+#: src/moin/apps/admin/views.py:222
+msgid "{0} has been sent a password recovery email."
+msgstr "{0} har fått ett e-postmeddelande om lösenordsåterställning."
+
+#: src/moin/apps/admin/views.py:224
+msgid "{0} is an invalid user, no email has been sent."
+msgstr "{0} är en ogiltig användare, inget e-postmeddelande har skickats."
+
+#: src/moin/apps/admin/views.py:226
+msgid "No user name provided, no email sent."
+msgstr "Inget användarnamn anges, inget e-postmeddelande skickas."
+
+#: src/moin/apps/admin/templates/admin/index.html:10 src/moin/apps/admin/templates/admin/wikiconfig.html:50
+#: src/moin/apps/admin/views.py:274
+msgid "Show Wiki Configuration"
+msgstr "Visa Wiki-konfiguration"
+
+#: src/moin/apps/admin/templates/admin/index.html:11 src/moin/apps/admin/templates/admin/wikiconfighelp.html:3
+#: src/moin/apps/admin/views.py:319
+msgid "Wiki Configuration Help"
+msgstr "Hjälp med Wiki-konfiguration"
+
+#: src/moin/apps/admin/views.py:331
+msgid "Lexer description"
+msgstr "Lexer beskrivning"
+
+#: src/moin/apps/admin/views.py:332
+msgid "Lexer names"
+msgstr "Lexer namn"
+
+#: src/moin/apps/admin/views.py:333
+msgid "File patterns"
+msgstr "Filmönster"
+
+#: src/moin/apps/admin/views.py:334 src/moin/macros/HighlighterList.py:22
+msgid "Mimetypes"
+msgstr "Mimetyper"
+
+#: src/moin/apps/admin/templates/user/highlighterhelp.html:4 src/moin/apps/admin/templates/user/index_user.html:23
+#: src/moin/apps/admin/views.py:340
+msgid "Highlighters"
+msgstr "Överstrykningspennor"
+
+#: src/moin/apps/admin/views.py:349
+msgid "InterWiki name"
+msgstr "InterWiki-namn"
+
+#: src/moin/apps/admin/views.py:350 src/moin/templates/crash.html:13
+msgid "URL"
+msgstr "URL"
+
+#: src/moin/apps/admin/views.py:354
+msgid "Interwiki Names"
+msgstr "Interwiki-namn"
+
+#: src/moin/apps/admin/views.py:363 src/moin/converters/archive_in.py:66 src/moin/templates/history.html:51
+#: src/moin/templates/mychanges.html:22 src/moin/templates/utils.html:386
+msgid "Size"
+msgstr "Storlek"
+
+#: src/moin/apps/admin/views.py:364 src/moin/templates/index.html:196
+msgid "Item name"
+msgstr "Objektnamn"
+
+#: src/moin/apps/admin/views.py:373
+msgid "Item Sizes"
+msgstr "Storlek på artiklar"
+
+#: src/moin/apps/admin/views.py:387 src/moin/apps/admin/views.py:388
+msgid "Trashed Items"
+msgstr "Skrotade artikel"
+
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:16 src/moin/apps/admin/templates/admin/userbrowser.html:50
+#: src/moin/apps/admin/views.py:428
+msgid "User ACL Report"
+msgstr "ACL-rapport för användare"
+
+#: src/moin/apps/admin/templates/admin/groupbrowser.html:4 src/moin/apps/admin/templates/admin/index.html:7
+#: src/moin/apps/admin/templates/admin/userbrowser.html:17 src/moin/apps/admin/views.py:452
+msgid "Groups"
+msgstr "Grupper"
+
+#: src/moin/apps/admin/views.py:493
+msgid "Item ACL Report"
+msgstr "Punkt ACL-rapport"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:16 src/moin/apps/admin/templates/admin/groupbrowser.html:11
+#: src/moin/apps/admin/views.py:527
+msgid "Group ACL Report"
+msgstr "Grupp ACL-rapport"
+
+#: src/moin/apps/admin/views.py:552
+msgid "Failed! Not authorized.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Misslyckades! Ej auktoriserad.<br>Objekt: {item_name}<br>ACL: {acl_rule}"
+
+#: src/moin/apps/admin/views.py:555
+msgid "Success! ACL saved.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Lyckades! ACL sparat.<br>Artikel: {item_name}<br>ACL: {acl_rule}"
+
+#: src/moin/apps/admin/views.py:558
+msgid "Nothing changed, invalid ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+msgstr "Inget ändrat, ogiltig ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:17
+msgid "Group Name"
+msgstr "Gruppnamn"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:21
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:21 src/moin/templates/index.html:139
+msgid "Namespace"
+msgstr "Namnrymd"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:22
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:18 src/moin/apps/admin/templates/admin/user_acl_report.html:22
+msgid "Item Names"
+msgstr "Artikelnamn"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:23
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:43
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:23 src/moin/apps/admin/templates/admin/user_acl_report.html:43
+msgid "read"
+msgstr "läs"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:24
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:44
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:24 src/moin/apps/admin/templates/admin/user_acl_report.html:44
+msgid "write"
+msgstr "skriva"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:25
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:45
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:25 src/moin/apps/admin/templates/admin/user_acl_report.html:45
+msgid "create"
+msgstr "skapa"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:26
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:46
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:26 src/moin/apps/admin/templates/admin/user_acl_report.html:46
+msgid "destroy"
+msgstr "förstöra"
+
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:27
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:47
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:27 src/moin/apps/admin/templates/admin/user_acl_report.html:47
+msgid "admin"
+msgstr "administration"
+
+#: src/moin/apps/admin/templates/admin/groupbrowser.html:8
+msgid "Group Names"
+msgstr "Gruppnamn"
+
+#: src/moin/apps/admin/templates/admin/groupbrowser.html:9
+msgid "Member Users"
+msgstr "Medlem Användare"
+
+#: src/moin/apps/admin/templates/admin/groupbrowser.html:10
+msgid "Member Groups"
+msgstr "Medlemsgrupper"
+
+#: src/moin/apps/admin/templates/admin/groupbrowser.html:28
+msgid "ACL Report"
+msgstr "ACL-rapport"
+
+#: src/moin/apps/admin/templates/admin/index.html:3
+msgid "Admin Menu"
+msgstr "Adminmeny"
+
+#: src/moin/apps/admin/templates/admin/index.html:8 src/moin/apps/admin/templates/admin/item_acl_report.html:11
+msgid "Item ACLs"
+msgstr "Artikel ACL:er"
+
+#: src/moin/apps/admin/templates/admin/index.html:9
+msgid "Trash"
+msgstr "Papperskorg"
+
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:13
+msgid "Show/Hide items with default ACLs"
+msgstr "Visa/dölj artikel med standard-ACL:er"
+
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:15
+msgid "Number items:"
+msgstr "Antal artiklar:"
+
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:19 src/moin/items/__init__.py:508
+msgid "ACL"
+msgstr "ACL"
+
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:31 src/moin/apps/frontend/views.py:2210
+#: src/moin/apps/frontend/views.py:2221 src/moin/apps/frontend/views.py:2232 src/moin/apps/frontend/views.py:2275
+#: src/moin/apps/frontend/views.py:2302 src/moin/apps/frontend/views.py:2314
+msgid "Save"
+msgstr "Spara"
+
+#: src/moin/apps/admin/templates/admin/trash.html:12
+msgid "Old Name"
+msgstr "Gammalt namn"
+
+#: src/moin/apps/admin/templates/admin/trash.html:13 src/moin/templates/history.html:49
+#: src/moin/templates/mychanges.html:23
+msgid "Rev."
+msgstr "Rev."
+
+#: src/moin/apps/admin/templates/admin/trash.html:14 src/moin/converters/archive_in.py:66
+#: src/moin/templates/history.html:50 src/moin/templates/mychanges.html:21
+msgid "Timestamp"
+msgstr "Tidsstämpel"
+
+#: src/moin/apps/admin/templates/admin/trash.html:15 src/moin/templates/history.html:57 src/moin/templates/utils.html:378
+msgid "Editor"
+msgstr "Redigerare"
+
+#: src/moin/apps/admin/templates/admin/trash.html:16 src/moin/apps/frontend/views.py:694 src/moin/items/__init__.py:402
+#: src/moin/templates/mail/notification_main.html:24 src/moin/templates/utils.html:402
+msgid "Comment"
+msgstr "Kommentar"
+
+#: src/moin/apps/admin/templates/admin/trash.html:17 src/moin/apps/admin/templates/admin/userbrowser.html:16
+#: src/moin/templates/history.html:60
+msgid "Actions"
+msgstr "Åtgärder"
+
+#: src/moin/apps/admin/templates/admin/trash.html:29 src/moin/config/default.py:378
+msgid "Show"
+msgstr "Visa"
+
+#: src/moin/apps/admin/templates/admin/trash.html:34 src/moin/config/default.py:388
+msgid "Highlight"
+msgstr "Markera"
+
+#: src/moin/apps/admin/templates/admin/trash.html:39 src/moin/config/default.py:389
+msgid "Meta"
+msgstr "Meta"
+
+#: src/moin/apps/admin/templates/admin/trash.html:44 src/moin/config/default.py:348 src/moin/config/default.py:380
+#: src/moin/templates/all.html:5 src/moin/templates/global_history.html:59
+msgid "History"
+msgstr "Historik"
+
+#: src/moin/apps/admin/templates/admin/trash.html:49 src/moin/templates/utils.html:493
+msgid "Revert deleted item"
+msgstr "Återställ raderat artikel"
+
+#: src/moin/apps/admin/templates/admin/trash.html:55 src/moin/config/default.py:393 src/moin/templates/index.html:126
+msgid "Destroy"
+msgstr "Förstör"
+
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:17
+msgid "User Names"
+msgstr "Användarnamn"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:14
+msgid "User name"
+msgstr "Användarnamn"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:15
+msgid "Email address"
+msgstr "E-artikeladress"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:24
+msgid "disabled"
+msgstr "inaktiverad"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:35
+msgid "Enable user"
+msgstr "Aktivera användare"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:35
+msgid "Disable user"
+msgstr "Inaktivera användare"
+
+#: src/moin/apps/admin/templates/admin/userbrowser.html:43
+msgid "Mail password reset"
+msgstr "Återställning av lösenord för e-post"
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:7 src/moin/apps/admin/templates/admin/wikiconfighelp.html:13
+msgid "Variable Name"
+msgstr "Variabelnamn"
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:51
+msgid "Customized Configuration Settings"
+msgstr "Anpassade konfigurationsinställningar"
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:53
+msgid ""
+"This table shows all settings in this wiki that do not have default values. Settings that the configuration system "
+"doesn't know about are shown in italic, those may be due to third-party extensions needing configuration or settings "
+"that were removed from Moin."
+msgstr ""
+"Denna tabell visar alla inställningar i denna wiki som inte har några standardvärden. Inställningar som "
+"konfigurationssystemet inte känner till visas i kursiv stil. Det kan bero på att tredjepartstillägg behöver "
+"konfigureras eller att inställningar har tagits bort från Moin."
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:59
+msgid "Setting"
+msgstr "Inställning"
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:62
+msgid "Default configuration Settings"
+msgstr "Standardkonfiguration Inställningar"
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:64
+msgid "This table shows all settings in this wiki that retain their default values. "
+msgstr "I denna tabell visas alla inställningar i denna wiki som behåller sina standardvärden. "
+
+#: src/moin/apps/admin/templates/admin/wikiconfig.html:66
+msgid "Default Setting"
+msgstr "Standardinställning"
+
+#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:14 src/moin/items/__init__.py:1299
+msgid "Default"
+msgstr "Standard"
+
+#: src/moin/apps/admin/templates/admin/wikiconfighelp.html:15 src/moin/templates/ticket/modify.html:14
+msgid "Description"
+msgstr "Beskrivning"
+
+#: src/moin/apps/admin/templates/user/index_user.html:3
+msgid "User Menu"
+msgstr "Användarmeny"
+
+#: src/moin/apps/admin/templates/user/index_user.html:4
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: src/moin/apps/admin/templates/user/index_user.html:7
+msgid "Documentation (local)"
+msgstr "Dokumentation (lokal)"
+
+#: src/moin/apps/admin/templates/user/index_user.html:9
+msgid "Documentation (internet)"
+msgstr "Dokumentation (internet)"
+
+#: src/moin/apps/admin/templates/user/index_user.html:12
+msgid "Reports"
+msgstr "Rapporter"
+
+#: src/moin/apps/admin/templates/user/index_user.html:15 src/moin/apps/admin/templates/user/index_user.html:17
+#: src/moin/apps/frontend/views.py:1465 src/moin/apps/frontend/views.py:1466 src/moin/templates/mychanges.html:11
+msgid "My Changes"
+msgstr "Mina förändringar"
+
+#: src/moin/apps/admin/templates/user/index_user.html:19 src/moin/apps/frontend/views.py:1771
+#: src/moin/apps/frontend/views.py:1773
+msgid "Wanted Items"
+msgstr "Eftertraktade artikel"
+
+#: src/moin/apps/admin/templates/user/index_user.html:20 src/moin/apps/frontend/views.py:1788
+#: src/moin/apps/frontend/views.py:1791
+msgid "Orphaned Items"
+msgstr "Föräldralösa artikel"
+
+#: src/moin/apps/admin/templates/user/index_user.html:21 src/moin/apps/admin/templates/user/itemsize.html:4
+msgid "Item Sizes (last revision)"
+msgstr "Artikelstorlekar (senaste revidering)"
+
+#: src/moin/apps/admin/templates/user/index_user.html:22 src/moin/apps/admin/templates/user/interwikihelp.html:4
+msgid "InterWiki Names"
+msgstr "InterWiki-namn"
+
+#: src/moin/apps/admin/templates/user/index_user.html:25
+msgid "Namespaces"
+msgstr "Namnområden"
+
+#: src/moin/apps/admin/templates/user/index_user.html:27 src/moin/templates/index.html:162
+msgid "all"
+msgstr "alla"
+
+#: src/moin/apps/feed/views.py:92
+msgid "MoinMoin feels unhappy."
+msgstr "MoinMoin känner sig olycklig."
+
+#: src/moin/apps/frontend/views.py:159
+msgid "Global Views"
+msgstr "Globala synpunkter"
+
+#: src/moin/apps/frontend/views.py:175
+msgid "search also in non-current revisions"
+msgstr "sök även i långfristiga revisioner"
+
+#: src/moin/apps/frontend/views.py:176 src/moin/apps/frontend/views.py:204 src/moin/templates/lookup.html:6
+msgid "Lookup"
+msgstr "Uppslag"
+
+#: src/moin/apps/frontend/views.py:448
+msgid "QueryError: invalid search term: {search_term}"
+msgstr "QueryError: ogiltig sökterm: {search_term}"
+
+#: src/moin/apps/frontend/views.py:456
+msgid "TermNotFound: field is not indexed: {search_term}"
+msgstr "TermNotFound: fältet är inte indexerat: {search_term}"
+
+#: src/moin/apps/frontend/views.py:544 src/moin/apps/frontend/views.py:551
+msgid "This item is deleted."
+msgstr "Denna artikel är borttagen."
+
+#: src/moin/apps/frontend/views.py:547
+msgid "This item revision is deleted."
+msgstr "Denna artikelrevision har tagits bort."
+
+#: src/moin/apps/frontend/views.py:580
+msgid "Items with {field} {value}"
+msgstr "Artiklar med {field} {value}"
+
+#: src/moin/apps/frontend/views.py:689
+msgid "New Content Type"
+msgstr "Ny innehållstyp"
+
+#: src/moin/apps/frontend/views.py:694 src/moin/items/__init__.py:403
+msgid "Comment about your change"
+msgstr "Kommentera din förändring"
+
+#: src/moin/apps/frontend/views.py:695 src/moin/items/__init__.py:405
+msgid "OK"
+msgstr "OK"
+
+#: src/moin/apps/frontend/views.py:740
+msgid "Item conversion failed"
+msgstr "Konvertering av artikel misslyckades"
+
+#: src/moin/apps/frontend/views.py:775
+msgid "Item converted successfully"
+msgstr "Artikeln konverterades"
+
+#: src/moin/apps/frontend/views.py:808 src/moin/items/__init__.py:411
+msgid "Target"
+msgstr "Mål"
+
+#: src/moin/apps/frontend/views.py:809
+msgid "The name of the target item"
+msgstr "Namnet på målartikeln"
+
+#: src/moin/apps/frontend/views.py:838
+msgid "Delete all subitems listed below if checked:"
+msgstr "Ta bort alla underpunkter som anges nedan om de är markerade:"
+
+#: src/moin/apps/frontend/views.py:843
+msgid "Destroy all subitems listed below if checked:"
+msgstr "Förstör alla underpunkter som anges nedan om de är markerade:"
+
+#: src/moin/apps/frontend/views.py:1030
+msgid "Item '{bad_name}' does not exist."
+msgstr "Objektet '{bad_name}' finns inte."
+
+#: src/moin/apps/frontend/views.py:1047
+msgid "Access denied for a subitem of {bad_name}, check History for status."
+msgstr "Åtkomst nekad för en delartikel i {bad_name}, kontrollera historik för status."
+
+#: src/moin/apps/frontend/views.py:1053
+msgid "Access denied processing '{bad_name}'."
+msgstr "Åtkomst nekad för bearbetning av '{bad_name}'."
+
+#: src/moin/apps/frontend/views.py:1242
+msgid "File Successfully uploaded and renamed from {bad_name} to {good_name}. "
+msgstr "Filen har laddats upp och bytt namn från {bad_name} till {good_name}. "
+
+#: src/moin/apps/frontend/views.py:1251
+msgid "UnicodeDecodeError, upload failed, not a text file, nothing saved: '{file_name}'. Try changing the name."
+msgstr ""
+"UnicodeDecodeError, uppladdning misslyckades, inte en textfil, inget sparat: '{file_name}'. Försök att ändra namnet."
+
+#: src/moin/apps/frontend/views.py:1270
+msgid "File Successfully uploaded, existing file overwritten: '{file_name}'."
+msgstr "Filen har laddats upp, befintlig fil har skrivits över: '{file_name}'."
+
+#: src/moin/apps/frontend/views.py:1276
+msgid "Permission denied, upload failed: '{file_name}'."
+msgstr "Behörighet nekad, uppladdning misslyckades: '{file_name}'."
+
+#: src/moin/apps/frontend/views.py:1288
+msgid "File Successfully uploaded: '{item_name}'."
+msgstr "Filen har laddats upp: '{item_name}'."
+
+#: src/moin/apps/frontend/views.py:1311
+msgid "Apply Filter"
+msgstr "Använd filter"
+
+#: src/moin/apps/frontend/views.py:1385
+msgid "Global Index of All Namespaces"
+msgstr "Globalt index över alla namnrymder"
+
+#: src/moin/apps/frontend/views.py:1387 src/moin/macros/_base.py:231 src/moin/macros/_base.py:234
+msgid "Namespace '{name}' "
+msgstr "Namnrymd '{name}' "
+
+#: src/moin/apps/frontend/views.py:1390
+msgid "subitems '{item_name}'"
+msgstr "underartikel '{item_name}'"
+
+#: src/moin/apps/frontend/views.py:1391 src/moin/macros/_base.py:270
+msgid "Index of {what}"
+msgstr "Index för {what}"
+
+#: src/moin/apps/frontend/views.py:1393
+msgid "Index of subitems '{item_name}'"
+msgstr "Index för underartiklar '{item_name}'"
+
+#: src/moin/apps/frontend/views.py:1395 src/moin/config/default.py:349 src/moin/templates/index.html:220
+msgid "Global Index"
+msgstr "Globalt index"
+
+#: src/moin/apps/frontend/views.py:1432
+msgid "You must be logged in to see your changes."
+msgstr "Du måste vara inloggad för att se dina ändringar."
+
+#: src/moin/apps/frontend/views.py:1496
+msgid "Items that are referred by '{item_name}'"
+msgstr "Objekt som hänvisas till av '{item_name}'"
+
+#: src/moin/apps/frontend/views.py:1539
+msgid "Items which refer to '{item_name}'"
+msgstr "Artiklar som hänvisar till '{item_name}'"
+
+#: src/moin/apps/frontend/views.py:1699 src/moin/apps/frontend/views.py:1705 src/moin/config/default.py:348
+msgid "Global History"
+msgstr "Global historia"
+
+#: src/moin/apps/frontend/views.py:1701
+msgid "Global History of All Namespaces"
+msgstr "Global historik över alla namnrymder"
+
+#: src/moin/apps/frontend/views.py:1703
+msgid "History of Namespace '{namespace}'"
+msgstr "Historik över namnrymden '{namespace}'"
+
+#: src/moin/apps/frontend/views.py:1801 src/moin/apps/frontend/views.py:1825
+msgid "You must login to use this action: {action}."
+msgstr "Du måste logga in för att använda denna åtgärd: {action}."
+
+#: src/moin/apps/frontend/views.py:1804
+msgid "A quicklink to this page could not be added for you."
+msgstr "En quicklänk till den här sidan kunde inte läggas till för dig."
+
+#: src/moin/apps/frontend/views.py:1807
+msgid "Your quicklink to this page could not be removed."
+msgstr "Din quicklänk till den här sidan kunde inte tas bort."
+
+#: src/moin/apps/frontend/views.py:1827
+msgid "You are not allowed to subscribe to an item you may not read."
+msgstr "Du får inte prenumerera på en artikel som du inte får läsa."
+
+#: src/moin/apps/frontend/views.py:1831
+msgid "Can't remove the subscription! You are subscribed to this page, but not by itemid."
+msgstr "Jag kan inte ta bort prenumerationen! Du prenumererar på den här sidan, men inte på itemid."
+
+#: src/moin/apps/frontend/views.py:1832
+msgid "Please edit the subscription in your settings."
+msgstr "Redigera prenumerationen i dina inställningar."
+
+#: src/moin/apps/frontend/views.py:1837
+msgid "You could not get subscribed to this item."
+msgstr "Du kunde inte bli prenumerant på detta artikel."
+
+#: src/moin/apps/frontend/views.py:1846 src/moin/apps/frontend/views.py:2025 src/moin/apps/frontend/views.py:2165
+msgid "The passwords do not match."
+msgstr "Lösenorden matchar inte."
+
+#: src/moin/apps/frontend/views.py:1863
+msgid "The login username you want to use"
+msgstr "Det användarnamn du vill använda för inloggning"
+
+#: src/moin/apps/frontend/views.py:1865 src/moin/apps/frontend/views.py:2049 src/moin/apps/frontend/views.py:2201
+msgid "The login password you want to use"
+msgstr "Det inloggningslösenord du vill använda"
+
+#: src/moin/apps/frontend/views.py:1866 src/moin/apps/frontend/views.py:2051 src/moin/apps/frontend/views.py:2203
+msgid "Repeat the same password"
+msgstr "Upprepa samma lösenord"
+
+#: src/moin/apps/frontend/views.py:1919
+msgid "Account verification required, please see the email we sent to your address."
+msgstr "Kontoverifiering krävs, se e-postmeddelandet som vi skickade till din adress."
+
+#: src/moin/apps/frontend/views.py:1921
+msgid ""
+"An error occurred while sending the verification email: \"{message}\" Please contact an administrator to activate your "
+"account."
+msgstr ""
+"Ett fel inträffade när du skickade verifieringsmeddelandet: \"{message}\" Kontakta en administratör för att aktivera "
+"ditt konto."
+
+#: src/moin/apps/frontend/views.py:1925
+msgid "Account created, please log in now."
+msgstr "Konto skapat, logga in nu."
+
+#: src/moin/apps/frontend/views.py:1944
+msgid "This email is already in use."
+msgstr "Denna e-post används redan."
+
+#: src/moin/apps/frontend/views.py:1948
+msgid "Your account has been activated, you can log in now."
+msgstr "Ditt konto har aktiverats och du kan logga in nu."
+
+#: src/moin/apps/frontend/views.py:1950
+msgid "Your new email address has been confirmed."
+msgstr "Din nya e-postadress har bekräftats."
+
+#: src/moin/apps/frontend/views.py:1956
+msgid "Your username and/or token is invalid!"
+msgstr "Ditt användarnamn och/eller din token är ogiltig!"
+
+#: src/moin/apps/frontend/views.py:1968
+msgid "Your user name or your email address is needed."
+msgstr "Ditt användarnamn eller din e-postadress behövs."
+
+#: src/moin/apps/frontend/views.py:1982 src/moin/apps/frontend/views.py:2045 src/moin/converters/archive_in.py:66
+#: src/moin/macros/ShowSmileys.py:20
+msgid "Name"
+msgstr "Namn"
+
+#: src/moin/apps/frontend/views.py:1982 src/moin/apps/frontend/views.py:2045
+msgid "Your login name"
+msgstr "Ditt inloggningsnamn"
+
+#: src/moin/apps/frontend/views.py:1984
+msgid "Recover password"
+msgstr "Återställ lösenord"
+
+#: src/moin/apps/frontend/views.py:1992 src/moin/templates/lostpass.html:5
+msgid "Lost Password"
+msgstr "Glömt lösenordet"
+
+#: src/moin/apps/frontend/views.py:2014
+msgid "If this account exists, you will be notified."
+msgstr "Om detta konto finns kommer du att få ett meddelande om det."
+
+#: src/moin/apps/frontend/views.py:2026 src/moin/apps/frontend/views.py:2167
+msgid "New password is unacceptable, could not get processed."
+msgstr "Nytt lösenord är oacceptabelt, kunde inte behandlas."
+
+#: src/moin/apps/frontend/views.py:2046
+msgid "Recovery token"
+msgstr "Återhämtningsbevis"
+
+#: src/moin/apps/frontend/views.py:2047
+msgid "The recovery token that has been sent to you"
+msgstr "Återställningstoken som har skickats till dig"
+
+#: src/moin/apps/frontend/views.py:2048 src/moin/apps/frontend/views.py:2200
+msgid "New password"
+msgstr "Nytt lösenord"
+
+#: src/moin/apps/frontend/views.py:2050 src/moin/apps/frontend/views.py:2202
+msgid "New password (repeat)"
+msgstr "Nytt lösenord (upprepa)"
+
+#: src/moin/apps/frontend/views.py:2052 src/moin/apps/frontend/views.py:2204
+msgid "Change password"
+msgstr "Ändra lösenord"
+
+#: src/moin/apps/frontend/views.py:2060 src/moin/templates/recoverpass.html:5
+msgid "Recover Password"
+msgstr "Återställ Lösenord"
+
+#: src/moin/apps/frontend/views.py:2073
+msgid "Your password has been changed, you can log in now."
+msgstr "Ditt lösenord har ändrats, du kan logga in nu."
+
+#: src/moin/apps/frontend/views.py:2075
+msgid "Your token is invalid!"
+msgstr "Din token är ogiltig!"
+
+#: src/moin/apps/frontend/views.py:2087
+msgid "Either your username or password was invalid."
+msgstr "Antingen ditt användarnamn eller lösenord var ogiltigt."
+
+#: src/moin/apps/frontend/views.py:2117
+msgid "Log in"
+msgstr "Logga in"
+
+#: src/moin/apps/frontend/views.py:2124 src/moin/templates/utils.html:482 src/moin/themes/basic/templates/layout.html:172
+msgid "Login"
+msgstr "Logga in"
+
+#: src/moin/apps/frontend/views.py:2138
+msgid "You are logged in."
+msgstr "Du är inloggad."
+
+#: src/moin/apps/frontend/views.py:2154
+msgid "You are logged out."
+msgstr "Du är utloggad."
+
+#: src/moin/apps/frontend/views.py:2166
+msgid "The current password was wrong."
+msgstr "Det nuvarande lösenordet var fel."
+
+#: src/moin/apps/frontend/views.py:2170
+msgid "New password not acceptable: "
+msgstr "Nytt lösenord accepteras inte: "
+
+#: src/moin/apps/frontend/views.py:2198
+msgid "Current Password"
+msgstr "Nuvarande lösenord"
+
+#: src/moin/apps/frontend/views.py:2199
+msgid "Your current login password"
+msgstr "Ditt nuvarande lösenord för inloggning"
+
+#: src/moin/apps/frontend/views.py:2226
+msgid "Always use ISO 8601 date-time format"
+msgstr "Använd alltid ISO 8601 datum- och tidsformat"
+
+#: src/moin/apps/frontend/views.py:2227
+msgid "Publish my email (not my wiki homepage) in author info"
+msgstr "Publicera min e-postadress (inte min wiki-hemsida) i författarinfo"
+
+#: src/moin/apps/frontend/views.py:2228
+msgid "Open editor on double click"
+msgstr "Öppna redigeringsverktyget vid dubbelklick"
+
+#: src/moin/apps/frontend/views.py:2229
+msgid "Scroll page after edit"
+msgstr "Skrolla sidan efter redigering"
+
+#: src/moin/apps/frontend/views.py:2230
+msgid "Show comment sections"
+msgstr "Visa kommentarsfält"
+
+#: src/moin/apps/frontend/views.py:2231
+msgid "Disable this account forever"
+msgstr "Inaktivera detta konto för alltid"
+
+#: src/moin/apps/frontend/views.py:2241
+msgid "Invalid subscription syntax: "
+msgstr "Ogiltig syntax för prenumeration: "
+
+#: src/moin/apps/frontend/views.py:2242
+msgid "Invalid keyword: "
+msgstr "Ogiltigt nyckelord: "
+
+#: src/moin/apps/frontend/views.py:2243
+msgid "Invalid RE syntax: "
+msgstr "Ogiltig RE-syntax: "
+
+#: src/moin/apps/frontend/views.py:2283 src/moin/templates/usersettings.html:19
+msgid "User Settings"
+msgstr "Användarinställningar"
+
+#: src/moin/apps/frontend/views.py:2293
+msgid "Usernames"
+msgstr "Användarnamn"
+
+#: src/moin/apps/frontend/views.py:2293
+msgid "The login usernames you want to use"
+msgstr "De användarnamn för inloggning som du vill använda"
+
+#: src/moin/apps/frontend/views.py:2294
+msgid "Display-Name"
+msgstr "Visa namn"
+
+#: src/moin/apps/frontend/views.py:2295
+msgid "Your display name (informational)"
+msgstr "Ditt visningsnamn (informativt)"
+
+#: src/moin/apps/frontend/views.py:2298
+msgid "Timezone"
+msgstr "Tidszon"
+
+#: src/moin/apps/frontend/views.py:2300
+msgid "Locale"
+msgstr "Plats"
+
+#: src/moin/apps/frontend/views.py:2306
+msgid "Theme name"
+msgstr "Temanamn"
+
+#: src/moin/apps/frontend/views.py:2308
+msgid "User CSS URL"
+msgstr "Användarens CSS-URL"
+
+#: src/moin/apps/frontend/views.py:2309
+msgid "Give the URL of your custom CSS (optional)"
+msgstr "Ange URL-adressen till din anpassade CSS (valfritt)"
+
+#: src/moin/apps/frontend/views.py:2310
+msgid "Number rows in edit textarea"
+msgstr "Antal rader i textfältet för redigering"
+
+#: src/moin/apps/frontend/views.py:2311
+msgid "Editor textarea height (0=auto)"
+msgstr "Editor textarea höjd (0=auto)"
+
+#: src/moin/apps/frontend/views.py:2312
+msgid "History results per page"
+msgstr "Historikresultat per sida"
+
+#: src/moin/apps/frontend/views.py:2313
+msgid "Number of results per page (0=no paging)"
+msgstr "Antal resultat per sida (0=ingen personsökning)"
+
+#: src/moin/apps/frontend/views.py:2357
+msgid "Your password has been changed."
+msgstr "Ditt lösenord har ändrats."
+
+#: src/moin/apps/frontend/views.py:2366
+msgid "The username '{name}' is already in use."
+msgstr "Användarnamnet '{name}' är redan i bruk."
+
+#: src/moin/apps/frontend/views.py:2373
+msgid "This email is already in use"
+msgstr "Detta e-postmeddelande är redan i bruk"
+
+#: src/moin/apps/frontend/views.py:2388
+msgid "A confirmation email has been sent to your newly configured email address."
+msgstr "Ett bekräftelsemeddelande har skickats till din nyligen konfigurerade e-postadress."
+
+#: src/moin/apps/frontend/views.py:2395
+msgid "Your email address was not changed because sending the verification email failed. Please try again later."
+msgstr "Din e-postadress ändrades inte eftersom det inte gick att skicka verifieringsmeddelandet. Försök igen senare."
+
+#: src/moin/apps/frontend/views.py:2406
+msgid "Nothing saved."
+msgstr "Inget sparat."
+
+#: src/moin/apps/frontend/views.py:2409
+msgid "Your changes have been saved."
+msgstr "Dina ändringar har sparats."
+
+#: src/moin/apps/frontend/views.py:2461
+msgid "You must log in to use bookmarks."
+msgstr "Du måste logga in för att använda bokmärken."
+
+#: src/moin/apps/frontend/views.py:2555
+msgid "There is only one revision eligible for diff."
+msgstr "Det finns bara en revision som är kvalificerad för diff."
+
+#: src/moin/apps/frontend/views.py:2685
+msgid "Items with similar names to '{item_name}'"
+msgstr "Objekt med liknande namn som '{item_name}'"
+
+#: src/moin/apps/frontend/views.py:2781 src/moin/apps/frontend/views.py:2789
+msgid "Global Tags"
+msgstr "Globala taggar"
+
+#: src/moin/apps/frontend/views.py:2791
+msgid "Global Tags in All Namespaces"
+msgstr "Globala taggar i alla namnrymder"
+
+#: src/moin/apps/frontend/views.py:2793
+msgid "Tags in Namespace '{namespace}'"
+msgstr "Taggar i namnrymden '{namespace}'"
+
+#: src/moin/apps/frontend/views.py:2841
+msgid "Items tagged with {tag}"
+msgstr "Artiklar taggade med {tag}"
+
+#: src/moin/auth/__init__.py:260 src/moin/auth/ldap_login.py:134
+msgid "Missing password. Please enter user name and password."
+msgstr "Lösenord saknas. Ange användarnamn och lösenord."
+
+#: src/moin/auth/__init__.py:268 src/moin/auth/ldap_login.py:205 src/moin/auth/ldap_login.py:256
+msgid "Invalid username or password."
+msgstr "Felaktigt användarnamn eller lösenord."
+
+#: src/moin/auth/__init__.py:274
+msgid "If you do not have an account, <a href=\"{register_url}\">you can create one now</a>. "
+msgstr "Om du inte har något konto <a href=\"{register_url}\">kan du skapa ett nu</a>. "
+
+#: src/moin/auth/__init__.py:276
+msgid "<a href=\"{recover_url}\">Forgot your password?</a>"
+msgstr "<a href=\"{recover_url}\">Har du glömt ditt lösenord?</a>"
+
+#: src/moin/auth/http.py:60
+msgid "Please log in first."
+msgstr "Logga in först."
+
+#: src/moin/auth/ldap_login.py:270
+msgid "LDAP server {server} failed."
+msgstr "LDAP-servern {server} misslyckades."
+
+#: src/moin/config/default.py:265
+msgid "For a password a minimum length of {min_length:d} characters is required."
+msgstr "För ett lösenord krävs en minsta längd på {min_length:d} tecken."
+
+#: src/moin/config/default.py:268
+msgid "For a password a minimum of {min_different:d} different characters is required."
+msgstr "För ett lösenord krävs minst {min_different:d} olika tecken."
+
+#: src/moin/config/default.py:275
+msgid "Password is too easy to guess (password contains name or name contains password)."
+msgstr "Lösenordet är för lätt att gissa (lösenordet innehåller namnet eller namnet innehåller lösenordet)."
+
+#: src/moin/config/default.py:284
+msgid "Password is too easy to guess (keyboard sequence)."
+msgstr "Lösenordet är för lätt att gissa sig till (tangentbordssekvens)."
+
+#: src/moin/config/default.py:347
+msgid "Home"
+msgstr "Hem"
+
+#: src/moin/config/default.py:347
+msgid "Home Page"
+msgstr "Startsida"
+
+#: src/moin/config/default.py:349 src/moin/templates/all.html:7
+msgid "Index"
+msgstr "Index"
+
+#: src/moin/config/default.py:350
+msgid "Global Tags Index"
+msgstr "Global Tags Index"
+
+#: src/moin/config/default.py:352
+msgid "Administration & Docs"
+msgstr "Administration och dokumentation"
+
+#: src/moin/config/default.py:367
+msgid "Discussion"
+msgstr "Diskussion"
+
+#: src/moin/config/default.py:379 src/moin/templates/blog/utils.html:12 src/moin/templates/show.html:14
+msgid "Modify"
+msgstr "Ändra"
+
+#: src/moin/config/default.py:379
+msgid "Edit or Upload"
+msgstr "Redigera eller ladda upp"
+
+#: src/moin/config/default.py:380
+msgid "Revision History"
+msgstr "Revisionshistorik"
+
+#: src/moin/config/default.py:381 src/moin/templates/index.html:116 src/moin/themes/basic/templates/modify.html:30
+msgid "Download"
+msgstr "Ladda ner"
+
+#: src/moin/config/default.py:382 src/moin/templates/index.html:121
+msgid "Delete"
+msgstr "Ta bort"
+
+#: src/moin/config/default.py:382
+msgid "Delete this item"
+msgstr "Radera detta artikel"
+
+#: src/moin/config/default.py:383
+msgid "Create or remove a navigation link to this item"
+msgstr "Skapa eller ta bort en navigeringslänk till detta artikel"
+
+#: src/moin/config/default.py:384
+msgid "Switch notifications about item changes on or off"
+msgstr "Aktivera eller inaktivera meddelanden om artikeländringar"
+
+#: src/moin/config/default.py:385
+msgid "Subitems"
+msgstr "Underpunkter"
+
+#: src/moin/config/default.py:385
+msgid "Subitems Index"
+msgstr "Index för underartikel"
+
+#: src/moin/config/default.py:387
+msgid "Rename"
+msgstr "Byt namn"
+
+#: src/moin/config/default.py:387
+msgid "Rename this item"
+msgstr "Byt namn på detta artikel"
+
+#: src/moin/config/default.py:388
+msgid "Show with Syntax-Highlighting"
+msgstr "Visa med syntax-highlighting"
+
+#: src/moin/config/default.py:389
+msgid "Display Metadata"
+msgstr "Visa metadata"
+
+#: src/moin/config/default.py:390
+msgid "Site Map"
+msgstr "Webbkarta"
+
+#: src/moin/config/default.py:390
+msgid "Local Site Map of this item"
+msgstr "Lokal webbplatskarta för detta artikel"
+
+#: src/moin/config/default.py:391
+msgid "Similar"
+msgstr "Liknande"
+
+#: src/moin/config/default.py:391
+msgid "Items with similar names"
+msgstr "Objekt med liknande namn"
+
+#: src/moin/config/default.py:392
+msgid "Convert"
+msgstr "Konvertera"
+
+#: src/moin/config/default.py:392
+msgid "Convert this item"
+msgstr "Konvertera detta artikel"
+
+#: src/moin/config/default.py:393
+msgid "Completely destroy this item"
+msgstr "Förstör detta artikel helt och hållet"
+
+#: src/moin/config/default.py:394 src/moin/templates/ticket/modify.html:23
+msgid "Comments"
+msgstr "Kommentarer"
+
+#: src/moin/config/default.py:394 src/moin/templates/dictionary.js:15
+msgid "Hide comments"
+msgstr "Dölj kommentarer"
+
+#: src/moin/config/default.py:395
+msgid "Transclusions"
+msgstr "Uteslutningar"
+
+#: src/moin/config/default.py:395 src/moin/templates/dictionary.js:18
+msgid "Show transclusions"
+msgstr "Visa uteslutningar"
+
+#: src/moin/config/default.py:574
+msgid "To request an account, see bottom of Home page."
+msgstr "För att begära ett konto, se längst ner på startsidan."
+
+#: src/moin/constants/contenttypes.py:161
+msgid "This is a plain text item, there is no markup."
+msgstr "Detta är en vanlig textartikel, det finns ingen markering."
+
+#: src/moin/constants/contenttypes.py:162
+msgid "This item can not be edited, upload a revised file."
+msgstr "Detta artikel kan inte redigeras, ladda upp en reviderad fil."
+
+#: src/moin/constants/contenttypes.py:164
+msgid "Use a semicolon or comma to separate cells."
+msgstr "Använd semikolon eller kommatecken för att separera cellerna."
+
+#: src/moin/constants/contenttypes.py:165
+msgid "If the first row is recognized as a header, the table will be sortable."
+msgstr "Om den första raden identifieras som en rubrik blir tabellen sorterbar."
+
+#: src/moin/constants/contenttypes.py:172
+msgid "Click for help on Moin Wiki markup."
+msgstr "Klicka för att få hjälp med Moin Wiki-markering."
+
+#: src/moin/constants/contenttypes.py:173
+msgid "Moinmoin 1.9 format is deprecated, convert to moin 2."
+msgstr "Moinmoin 1.9 format är föråldrat, konvertera till moin 2."
+
+#: src/moin/constants/contenttypes.py:174
+msgid "Click for help on Media Wiki markup."
+msgstr "Klicka för att få hjälp med Media Wiki-markering."
+
+#: src/moin/constants/contenttypes.py:175
+msgid "Click for help on Creole Wiki markup."
+msgstr "Klicka för att få hjälp med Creole Wiki markup."
+
+#: src/moin/constants/contenttypes.py:176
+msgid "Click for help on Markdown Wiki markup."
+msgstr "Klicka för att få hjälp med Markdown Wiki-markering."
+
+#: src/moin/constants/contenttypes.py:177
+msgid "Click for help on reST Wiki markup."
+msgstr "Klicka för hjälp med reST Wiki-markering."
+
+#: src/moin/constants/contenttypes.py:178
+msgid "Click for help on Docbook Wiki markup."
+msgstr "Klicka för att få hjälp med Docbook Wiki markup."
+
+#: src/moin/constants/contenttypes.py:204
+msgid "No help for unknown content type."
+msgstr "Ingen hjälp för okänd innehållstyp."
+
+#: src/moin/converters/_wiki_macro.py:67
+msgid "Include Macro above has invalid format, missing item name"
+msgstr "Inkludera Makro ovan har ogiltigt format, saknar artikelnamn"
+
+#: src/moin/converters/_wiki_macro.py:78
+msgid "Include Macro above has invalid format, expected sort=ascending or descending"
+msgstr "Inkludera Makro ovan har ogiltigt format, förväntad sortering = stigande eller fallande"
+
+#: src/moin/converters/everything.py:32
+msgid "This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}"
+msgstr "Det här raderade artikeln måste återställas innan det kan visas eller laddas ner, ItemID = {itemid}"
+
+#: src/moin/converters/html_in.py:129
+msgid "Error: malformed HTML: {reason}."
+msgstr "Fel: missbildad HTML: {reason}."
+
+#: src/moin/converters/html_in.py:135
+msgid "Error: malformed HTML. Try viewing source with Highlight or Modify links."
+msgstr "Fel: missbildad HTML. Försök att visa källan med länkarna Markera eller Ändra."
+
+#: src/moin/converters/html_in.py:269
+msgid "Tag '{invalid_tag}' is not supported; all tag contents are discarded."
+msgstr "Tagg '{invalid_tag}' stöds inte; allt innehåll i taggen kasseras."
+
+#: src/moin/converters/html_in.py:276
+msgid "Tag '{invalid_tag}' is not known; tag ignored but children are processed."
+msgstr "Tagg '{invalid_tag}' är inte känd; taggen ignoreras men barnen bearbetas."
+
+#: src/moin/converters/html_out.py:690
+msgid "Link to this heading"
+msgstr "Länk till denna rubrik"
+
+#: src/moin/converters/html_out.py:756
+msgid "Contents"
+msgstr "Innehåll"
+
+#: src/moin/converters/include.py:302
+msgid "Access Denied, transcluded content suppressed."
+msgstr "Åtkomst nekad, exkluderat innehåll undertryckt."
+
+#: src/moin/converters/include.py:320
+msgid "Error: no items found matching \"<<Include({0})>>\""
+msgstr "Fel: inga artikel hittades som matchade \"<<Include({0})>>\""
+
+#: src/moin/converters/macro.py:59
+msgid "Error: invalid macro name."
+msgstr "Fel: ogiltigt makronamn."
+
+#: src/moin/converters/macro.py:67
+msgid "<<{macro_name}: execution failed [{error_msg}] (see also the log)>>"
+msgstr "<<{macro_name}: exekveringen misslyckades [{error_msg}] (se även loggen)>>"
+
+#: src/moin/converters/moinwiki_in.py:976
+msgid "Error:"
+msgstr "Fel:"
+
+#: src/moin/converters/moinwiki_in.py:977
+msgid "is invalid within"
+msgstr "är ogiltig inom"
+
+#: src/moin/converters/nonexistent_in.py:33
+msgid "{item_name} does not exist. Create it? "
+msgstr "{item_name} finns inte. Skapa den? "
+
+#: src/moin/converters/nowiki.py:39
+msgid "Defaulting to plain text due to invalid arguments: \"{arguments}\""
+msgstr "Standard för vanlig text på grund av ogiltiga argument: \"{arguments}\""
+
+#: src/moin/converters/text_csv_in.py:45
+msgid "Error parsing CSV file:"
+msgstr "Fel vid analys av CSV-fil:"
+
+#: src/moin/items/__init__.py:218
+msgid "Cannot create or rename item '{new_name}' because parent '{parent_name}' is missing."
+msgstr "Det går inte att skapa eller byta namn på artikeln '{new_name}' eftersom föräldern '{parent_name}' saknas."
+
+#: src/moin/items/__init__.py:245
+msgid "Removed leading or trailing blanks from WikiDict line: '{key_val}'."
+msgstr "Tog bort inledande eller efterföljande blanksteg från WikiDict-raden: '{key_val}'."
+
+#: src/moin/items/__init__.py:248
+msgid "Empty line in Wiki Dict discarded."
+msgstr "Tom rad i Wiki Dict kasserad."
+
+#: src/moin/items/__init__.py:256
+msgid "Removed leading or trailing blanks from WikiDict key: '{key_val}'."
+msgstr "Tog bort inledande eller efterföljande blanksteg från WikiDict-nyckeln: '{key_val}'."
+
+#: src/moin/items/__init__.py:259
+msgid "Removed leading or trailing blanks from WikiDict value: '{key_val}'."
+msgstr "Tog bort inledande eller efterföljande blanksteg från WikiDict-värdet: '{key_val}'."
+
+#: src/moin/items/__init__.py:406
+msgid "Preview"
+msgstr "Förhandsvisa"
+
+#: src/moin/items/__init__.py:407 src/moin/templates/index.html:306 src/moin/themes/basic/templates/modify.html:106
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/moin/items/__init__.py:444 src/moin/items/__init__.py:449
+msgid "The ACL string is invalid."
+msgstr "ACL-strängen är ogiltig."
+
+#: src/moin/items/__init__.py:457
+msgid "The Wiki Dict is invalid. The format is 'key=value', one per line, no commas."
+msgstr "Wiki Dict är ogiltig. Formatet är \"nyckel=värde\", en per rad, inga kommatecken."
+
+#: src/moin/items/__init__.py:465
+msgid "Invalid key=value pair: '{invalid}'. Nothing saved."
+msgstr "Ogiltigt nyckel=värde-par: '{invalid}'. Inget sparat."
+
+#: src/moin/items/__init__.py:475
+msgid "The User Group list is invalid."
+msgstr "Listan över användargrupper är ogiltig."
+
+#: src/moin/items/__init__.py:484
+msgid "Invalid user name, leading or trailing blanks not allowed: '{invalid}'. Nothing saved."
+msgstr "Ogiltigt användarnamn, inledande eller avslutande blanksteg är inte tillåtna: '{invalid}'. Inget sparat."
+
+#: src/moin/items/__init__.py:489
+msgid "Invalid user name, null string not allowed: '{invalid}'. Nothing saved."
+msgstr "Ogiltigt användarnamn, nollsträng är inte tillåten: '{invalid}'. Inget sparat."
+
+#: src/moin/items/__init__.py:493
+msgid "Invalid user name, ',' not allowed: '{invalid}'. Nothing saved."
+msgstr "Ogiltigt användarnamn, ',' är inte tillåtet: '{invalid}'. Inget sparat."
+
+#: src/moin/items/__init__.py:497
+msgid "Duplicate user name: '{invalid}'. Nothing saved."
+msgstr "Duplicerat användarnamn: '{invalid}'. Inget sparat."
+
+#: src/moin/items/__init__.py:509
+msgid "Access Control List - Use 'None' for default"
+msgstr "Åtkomstkontrollista - Använd \"Ingen\" som standard"
+
+#: src/moin/items/__init__.py:512 src/moin/items/ticket.py:97 src/moin/items/ticket.py:109
+#: src/moin/templates/ticket/advanced.html:20 src/moin/templates/ticket/modify.html:52
+#: src/moin/templates/ticket/submit.html:13 src/moin/templates/tickets.html:54
+msgid "Summary"
+msgstr "Sammanfattning"
+
+#: src/moin/items/__init__.py:512
+msgid "One-line summary of the item"
+msgstr "Sammanfattning i en rad av artikeln"
+
+#: src/moin/items/__init__.py:758 src/moin/items/__init__.py:760 src/moin/items/__init__.py:785
+msgid "The item \"{name}\" was deleted."
+msgstr "Objektet \"{name}\" har tagits bort."
+
+#: src/moin/items/__init__.py:764 src/moin/items/__init__.py:767 src/moin/items/__init__.py:801
+msgid "The item \"{name}\" was renamed to \"{new_name}\"."
+msgstr "Objektet \"{name}\" har bytt namn till \"{new_name}\"."
+
+#: src/moin/items/__init__.py:783
+msgid "The subitem \"{name}\" was deleted."
+msgstr "Underpunkten \"{name}\" har strukits."
+
+#: src/moin/items/__init__.py:818
+msgid "An item named {name} already exists in the namespace {namespace}."
+msgstr "Ett artikel med namnet {name} finns redan i namnrymden {namespace}."
+
+#: src/moin/items/__init__.py:859 src/moin/items/__init__.py:861 src/moin/items/__init__.py:873
+msgid "The item \"{name}\" was destroyed."
+msgstr "Objektet \"{name}\" har förstörts."
+
+#: src/moin/items/__init__.py:871
+msgid "The subitem \"{name}\" was destroyed."
+msgstr "Underartikeln \"{name}\" har förstörts."
+
+#: src/moin/items/__init__.py:877 src/moin/items/__init__.py:880
+msgid "Error: The subitem \"{name}\" was not destroyed, permission denied."
+msgstr "Error (Fel): Underartikeln \"{name}\" förstördes inte, behörighet nekad."
+
+#: src/moin/items/__init__.py:885
+msgid "Rev Number {rev_number} of the item \"{name}\" was destroyed."
+msgstr "Rev nummer {rev_number} för artikeln \"{name}\" har förstörts."
+
+#: src/moin/items/__init__.py:906
+msgid "Wiki Dict"
+msgstr "Wiki dikterar"
+
+#: src/moin/items/__init__.py:909
+msgid "User Group"
+msgstr "Användargrupp"
+
+#: src/moin/items/__init__.py:1300
+msgid "Wiki item"
+msgstr "Wiki-artikel"
+
+#: src/moin/items/__init__.py:1361
+msgid "Alert wiki admin that help items are not loaded"
+msgstr "Meddela wiki-administratören att hjälpartiklarna inte har lästs in"
+
+#: src/moin/items/__init__.py:1398
+msgid "You do not have permission to create the item named \"{name}\"."
+msgstr "Du har inte behörighet att skapa artikeln med namnet \"{name}\"."
+
+#: src/moin/items/__init__.py:1489
+msgid "No preview available for empty items."
+msgstr "Ingen förhandsgranskning tillgänglig för tomma artiklar."
+
+#: src/moin/items/__init__.py:1507
+msgid "Nothing changed, nothing saved."
+msgstr "Inget förändrades, inget räddades."
+
+#: src/moin/items/__init__.py:1522
+msgid "CONFLICT "
+msgstr "KONFLIKT "
+
+#: src/moin/items/__init__.py:1523
+msgid "An edit conflict has occurred, edit this item again to resolve conflicts."
+msgstr "En redigeringskonflikt har uppstått, redigera det här artikeln igen för att lösa konflikterna."
+
+#: src/moin/items/__init__.py:1566
+msgid "You may recover your draft saved {number} {interval} ago by clicking the 'Load Draft' button."
+msgstr ""
+"Du kan återställa ditt utkast som sparades för {number} {interval} år sedan genom att klicka på knappen \"Load Draft\"."
+
+#: src/moin/items/__init__.py:1570
+msgid ""
+"Your draft saved {number} {interval} ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to merge "
+"conflicting updates."
+msgstr ""
+"Ditt utkast som sparades för {number} {interval} sedan är inaktuellt, klicka på \"Avbryt\" för att kassera eller "
+"\"Ladda utkast\" och sedan \"Spara\" för att slå samman motstridiga uppdateringar."
+
+#: src/moin/items/__init__.py:1610
+msgid "User profile"
+msgstr "Användarprofil"
+
+#: src/moin/items/__init__.py:1611
+msgid "User profile item (not implemented yet!)"
+msgstr "Användarprofil (inte implementerad ännu!)"
+
+#: src/moin/items/blog.py:32
+msgid "Supertags (Categories)"
+msgstr "Supertaggar (Kategorier)"
+
+#: src/moin/items/blog.py:33
+msgid "Ordered comma separated list of tags"
+msgstr "Kommaseparerad lista med taggar i ordningsföljd"
+
+#: src/moin/items/blog.py:37
+msgid "Title (required)"
+msgstr "Titel (obligatorisk)"
+
+#: src/moin/items/blog.py:38
+msgid "One-line title of the blog entry"
+msgstr "Enradig titel på blogginlägget"
+
+#: src/moin/items/blog.py:39
+msgid "Publication time (UTC)"
+msgstr "Tid för publicering (UTC)"
+
+#: src/moin/items/blog.py:45
+msgid "Blog"
+msgstr "Blogg"
+
+#: src/moin/items/blog.py:46
+msgid "Blog item"
+msgstr "Blogginlägg"
+
+#: src/moin/items/blog.py:99
+msgid "Blog entry"
+msgstr "Blogginlägg"
+
+#: src/moin/items/blog.py:100
+msgid "Blog entry item"
+msgstr "Blogginlägg"
+
+#: src/moin/items/content.py:343 src/moin/items/ticket.py:137
+msgid "Replace content with uploaded file:"
+msgstr "Ersätt innehållet med en uppladdad fil:"
+
+#: src/moin/items/content.py:361
+msgid "The items have the same data hash code (that means they very likely have the same data)."
+msgstr "Objekten har samma hashkod för data (vilket innebär att de med stor sannolikhet har samma data)."
+
+#: src/moin/items/content.py:363
+msgid "The items have different data."
+msgstr "Artiklarna har olika data."
+
+#: src/moin/items/content.py:374
+msgid "Impossible to convert the data to the contenttype: {contenttype}"
+msgstr "Omöjligt att konvertera data till contenttype: {contenttype}"
+
+#: src/moin/items/content.py:826
+msgid "Type your text here"
+msgstr "Skriv in din text här"
+
+#: src/moin/items/content.py:1114
+msgid "Edit drawing {filename} (opens in new window)"
+msgstr "Redigera ritning {filename} (öppnas i nytt fönster)"
+
+#: src/moin/items/content.py:1118
+msgid "Clickable drawing: {filename}"
+msgstr "Klickbar ritning: {filename}"
+
+#: src/moin/items/ticket.py:98
+msgid "Find Tickets"
+msgstr "Hitta biljetter"
+
+#: src/moin/items/ticket.py:99 src/moin/items/ticket.py:111 src/moin/templates/ticket/advanced.html:24
+#: src/moin/templates/tickets.html:58
+msgid "Effort"
+msgstr "Ansträngning"
+
+#: src/moin/items/ticket.py:100 src/moin/items/ticket.py:112 src/moin/templates/ticket/advanced.html:25
+#: src/moin/templates/tickets.html:59
+msgid "Difficulty"
+msgstr "Svårighetsgrad"
+
+#: src/moin/items/ticket.py:101 src/moin/items/ticket.py:113 src/moin/templates/ticket/advanced.html:26
+#: src/moin/templates/tickets.html:60
+msgid "Severity"
+msgstr "Allvarlighetsgrad"
+
+#: src/moin/items/ticket.py:102 src/moin/items/ticket.py:114 src/moin/templates/ticket/advanced.html:27
+#: src/moin/templates/tickets.html:61
+msgid "Priority"
+msgstr "Prioritet"
+
+#: src/moin/items/ticket.py:104 src/moin/items/ticket.py:116
+msgid "Assigned To"
+msgstr "Tilldelat till"
+
+#: src/moin/items/ticket.py:105
+msgid "Author"
+msgstr "Författare"
+
+#: src/moin/items/ticket.py:110
+msgid "One-line summary"
+msgstr "Sammanfattning i en rad"
+
+#: src/moin/items/ticket.py:117
+msgid "Superseded By"
+msgstr "Ersatt av"
+
+#: src/moin/items/ticket.py:118
+msgid "Depends On"
+msgstr "Beror på"
+
+#: src/moin/items/ticket.py:122
+msgid "Supersedes"
+msgstr "Ersätter"
+
+#: src/moin/items/ticket.py:123
+msgid "Required By"
+msgstr "Krävd av"
+
+#: src/moin/items/ticket.py:124
+msgid "Subscribers"
+msgstr "Prenumeranter"
+
+#: src/moin/items/ticket.py:136
+msgid "Message"
+msgstr "Meddelande"
+
+#: src/moin/items/ticket.py:148
+msgid "Submit ticket"
+msgstr "Skicka in biljett"
+
+#: src/moin/items/ticket.py:168
+msgid "Update ticket"
+msgstr "Uppdatera biljett"
+
+#: src/moin/items/ticket.py:169 src/moin/templates/ticket/modify.html:39
+msgid "Update & reopen ticket"
+msgstr "Uppdatera och öppna ärendet igen"
+
+#: src/moin/items/ticket.py:170 src/moin/templates/ticket/modify.html:41
+msgid "Update & close ticket"
+msgstr "Uppdatera och stäng ärendet"
+
+#: src/moin/items/ticket.py:191
+msgid "{key} changed from {original} to {new}"
+msgstr "{key} ändras från {original} till {new}"
+
+#: src/moin/items/ticket.py:216
+msgid "{author} wrote on {timestamp}:"
+msgstr "{author} skrev på {timestamp}:"
+
+#: src/moin/items/ticket.py:346
+msgid "Ticket"
+msgstr "Biljett"
+
+#: src/moin/items/ticket.py:347
+msgid "Ticket item"
+msgstr "Biljettartikel"
+
+#: src/moin/macros/GetVal.py:24
+msgid "GetVal: invalid parameters, try <<GetVal(DictName, key)>>"
+msgstr "GetVal: ogiltiga parametrar, försök <<GetVal(DictName, nyckel)>>"
+
+#: src/moin/macros/GetVal.py:26
+msgid "GetVal: permission to read denied: "
+msgstr "GetVal: behörighet att läsa nekad: "
+
+#: src/moin/macros/GetVal.py:30
+msgid "GetVal: dict not found: "
+msgstr "GetVal: dict hittades inte: "
+
+#: src/moin/macros/GetVal.py:33
+msgid "GetVal macro is invalid, {item_name} missing key: {key_name}"
+msgstr "GetVal-makrot är ogiltigt, {item_name} saknar nyckel: {key_name}"
+
+#: src/moin/macros/HighlighterList.py:19
+msgid "Lexer Name"
+msgstr "Lexer Namn"
+
+#: src/moin/macros/HighlighterList.py:20
+msgid "Lexer Aliases"
+msgstr "Lexers alias"
+
+#: src/moin/macros/HighlighterList.py:21
+msgid "File Patterns"
+msgstr "Filmönster"
+
+#: src/moin/macros/Icon.py:27
+msgid "Icon not rendered, verify name is valid"
+msgstr "Ikonen återges inte, verifiera att namnet är giltigt"
+
+#: src/moin/macros/ItemList.py:92
+msgid ""
+"ItemList macro: Argument \"{arg}\" does not follow <key>=<val> format (arguments, if more than one, must be comma-"
+"separated)."
+msgstr ""
+"Makro för artikellista: Argumentet \"{arg}\" följer inte formatet <key>=<val> (argument, om fler än ett, måste vara "
+"kommaseparerade)."
+
+#: src/moin/macros/ItemList.py:96
+msgid "ItemList macro: The key's value must be bracketed by matching quotes."
+msgstr "ItemList-makro: Nyckelns värde måste vara inom parentes med matchande citattecken."
+
+#: src/moin/macros/ItemList.py:111
+msgid "ItemList macro: The value must be \"True\" or \"False\". (got \"{val}\")"
+msgstr "ItemList-makro: Värdet måste vara \"True\" eller \"False\". (fick \"{val}\")"
+
+#: src/moin/macros/ItemList.py:117
+msgid "ItemList macro: Unrecognized key \"{key}\"."
+msgstr "ItemList makro: Oigenkänd nyckel \"{key}\"."
+
+#: src/moin/macros/ItemList.py:128
+msgid "Item does not exist or read access blocked by ACLs: {0}"
+msgstr "Objektet finns inte eller läsåtkomst blockerad av ACL:er: {0}"
+
+#: src/moin/macros/ItemList.py:139
+msgid "ItemList macro: Error in regex {0!r}: {1}"
+msgstr "ItemList makro: Fel i regex {0!r}: {1}"
+
+#: src/moin/macros/ItemList.py:147
+msgid "<ItemList macro: No matching items were found.>"
+msgstr "<ItemList makro: Inga matchande artikel hittades.>"
+
+#: src/moin/macros/MailTo.py:31
+msgid "MailTo: invalid format, try: <<MailTo(user AT example DOT org, write me)>>"
+msgstr "MailTo: ogiltigt format, försök: <<MailTo(användare AT exempel DOT org, skriv till mig)>>"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "January"
+msgstr "Januari"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "February"
+msgstr "Februari"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "March"
+msgstr "Mars"
+
+#: src/moin/macros/MonthCalendar.py:209
+msgid "April"
+msgstr "April"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "May"
+msgstr "Maj"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "June"
+msgstr "Juni"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "July"
+msgstr "Juli"
+
+#: src/moin/macros/MonthCalendar.py:210
+msgid "August"
+msgstr "Augusti"
+
+#: src/moin/macros/MonthCalendar.py:211
+msgid "September"
+msgstr "September"
+
+#: src/moin/macros/MonthCalendar.py:211
+msgid "October"
+msgstr "Oktober"
+
+#: src/moin/macros/MonthCalendar.py:211
+msgid "November"
+msgstr "November"
+
+#: src/moin/macros/MonthCalendar.py:211
+msgid "December"
+msgstr "December"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Mon"
+msgstr "Mån"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Tue"
+msgstr "Tis"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Wed"
+msgstr "Ons"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Thu"
+msgstr "Tor"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Fri"
+msgstr "Fre"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Sat"
+msgstr "Lör"
+
+#: src/moin/macros/MonthCalendar.py:215 src/moin/macros/MonthCalendar.py:218
+msgid "Sun"
+msgstr "Sön"
+
+#: src/moin/macros/ShowIcons.py:29 src/moin/macros/ShowSmileys.py:20
+msgid "Markup"
+msgstr "Märkspråk"
+
+#: src/moin/macros/ShowIcons.py:29 src/moin/macros/ShowSmileys.py:20
+msgid "Result"
+msgstr "Resultat"
+
+#: src/moin/macros/ShowUserGroup.py:21
+msgid "ShowUserGroup macro failed - metadata lacks \"usergroup\" attribute."
+msgstr "Makrot ShowUserGroup misslyckades - metadata saknar attributet \"usergroup\"."
+
+#: src/moin/macros/ShowWikiDict.py:21
+msgid "ShowWikiDict macro failed - metadata lacks \"wikidict\" attribute."
+msgstr "ShowWikiDict-makrot misslyckades - metadata saknar \"wikidict\"-attribut."
+
+#: src/moin/macros/TitleIndex.py:26
+msgid "TitleList macro does not have any arguments."
+msgstr "TitleList-makrot har inga argument."
+
+#: src/moin/macros/TitleIndex.py:31
+msgid "<TitleList macro: No matching items were found.>"
+msgstr "<TitleList makro: Inga matchande artikel hittades.>"
+
+#: src/moin/macros/_base.py:74
+msgid "{item_name} content type is not moinwiki or creole"
+msgstr "{item_name} innehållstypen är inte moinwiki eller kreol"
+
+#: src/moin/macros/_base.py:85
+msgid "No heading found in item: {item_name}"
+msgstr "Ingen rubrik hittades i artikeln: {item_name}"
+
+#: src/moin/macros/_base.py:121
+msgid "Block macros cannot be used inline"
+msgstr "Blockmakron kan inte användas inline"
+
+#: src/moin/macros/_base.py:205
+msgid "Unrecognized display value \"{display}\"."
+msgstr "Oigenkänt visningsvärde \"{display}\"."
+
+#: src/moin/mail/sendmail.py:54
+msgid "Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."
+msgstr ""
+"Kontakta administratören: Det går inte att skicka e-post om lösenordsåterställning eftersom e-postkonfigurationen är "
+"ofullständig."
+
+#: src/moin/mail/sendmail.py:62
+msgid "No recipients, nothing to do"
+msgstr "Inga mottagare, inget att göra"
+
+#: src/moin/mail/sendmail.py:118
+msgid "Connection to mailserver '{server}' failed: {reason}"
+msgstr "Anslutning till mailserver '{server}' misslyckades: {reason}"
+
+#: src/moin/mail/sendmail.py:125
+msgid "Mail sent successfully"
+msgstr "E-post skickades"
+
+#: src/moin/search/__init__.py:18
+msgid "Search query too short."
+msgstr "Sökfrågan är för kort."
+
+#: src/moin/search/__init__.py:31 src/moin/templates/search.html:16 src/moin/templates/search.html:21
+msgid "Search"
+msgstr "Sök"
+
+#: src/moin/storage/middleware/indexing.py:1233
+msgid "Error: metadata validation failed, invalid field value(s) = {0}"
+msgstr "Fel: validering av metadata misslyckades, ogiltiga fältvärden = {0}"
+
+#: src/moin/storage/middleware/indexing.py:1255
+msgid "Error: nothing changed. Data unicode validation failed."
+msgstr "Fel: ingenting har ändrats. Validering av data unicode misslyckades."
+
+#: src/moin/templates/404.html:12
+msgid "Not Found"
+msgstr "Hittades inte"
+
+#: src/moin/templates/404.html:16
+msgid "The item '{item_name}' does not exist."
+msgstr "Objektet '{item_name}' finns inte."
+
+#: src/moin/templates/404.html:21
+msgid "The full path is:"
+msgstr "Den fullständiga sökvägen är:"
+
+#: src/moin/templates/ajaxsearch.html:12
+msgid "Please check these tickets if they cover your issue:"
+msgstr "Kontrollera dessa biljetter om de täcker ditt problem:"
+
+#: src/moin/templates/ajaxsearch.html:23
+msgid "{summary}"
+msgstr "{summary}"
+
+#: src/moin/templates/ajaxsearch.html:33
+msgid "Whoosh query:"
+msgstr "Whoosh fråga:"
+
+#: src/moin/templates/ajaxsearch.html:37
+msgid "Whoosh filter:"
+msgstr "Whoosh-filter:"
+
+#: src/moin/templates/ajaxsearch.html:42
+msgid "Common words omitted from query:"
+msgstr "Vanliga ord utelämnade från förfrågan:"
+
+#: src/moin/templates/ajaxsearch.html:50
+msgid "{found:d} items found, {items_filtered:d} more items filtered by content types."
+msgstr "{found:d} artikel hittades, {items_filtered:d} fler artikel filtrerade efter innehållstyper."
+
+#: src/moin/templates/ajaxsearch.html:52
+msgid "{result_len:d} items found."
+msgstr "{result_len:d} artikel hittades."
+
+#: src/moin/templates/ajaxsearch.html:82
+msgid "MATCHED TERMS:"
+msgstr "MATCHED TERMS:"
+
+#: src/moin/templates/ajaxsearch.html:89
+msgid "REVISION: {revid}, SIZE: {size}, MODIFIED: {mtime}, CONTENT TYPE: {type}, SCORE: {score}"
+msgstr "REVISION: {revid}, STORLEK: {size}, MODIFIERAD: {mtime}, INNEHÅLLSTYP: {type}, SCORE: {score}"
+
+#: src/moin/templates/ajaxsearch.html:94
+msgid "COMMENT: {content}"
+msgstr "KOMMENTAR: {content}"
+
+#: src/moin/templates/ajaxsearch.html:97
+msgid "TAGS: {content}"
+msgstr "TAGS: {content}"
+
+#: src/moin/templates/ajaxsearch.html:100
+msgid "CONTENT: {content}"
+msgstr "INNEHÅLL: {content}"
+
+#: src/moin/templates/ajaxsearch.html:109
+msgid "{count:d} items are not shown because read permission was denied."
+msgstr "{count:d} artikel visas inte eftersom läsbehörighet nekades."
+
+#: src/moin/templates/all.html:3
+msgid "Global Views of All Namespaces"
+msgstr "Globala vyer över alla namnrymder"
+
+#: src/moin/templates/convert.html:9
+msgid "Convert '{item_name}'"
+msgstr "Konvertera '{item_name}'"
+
+#: src/moin/templates/convert.html:17
+msgid "Current Content Type"
+msgstr "Aktuell typ av innehåll"
+
+#: src/moin/templates/crash.html:1
+msgid "Oops!"
+msgstr "Oops!"
+
+#: src/moin/templates/crash.html:3
+msgid "An error happened while processing your request."
+msgstr "Ett fel inträffade under behandlingen av din begäran."
+
+#: src/moin/templates/crash.html:6
+msgid ""
+"More details have been logged. The following data will be helpful for the site admin in locating the corresponding log "
+"entries:"
+msgstr ""
+"Fler detaljer har loggats. Följande data kommer att vara till hjälp för webbplatsadministratören när det gäller att "
+"hitta motsvarande loggartikeler:"
+
+#: src/moin/templates/crash.html:9
+msgid "Error ID"
+msgstr "Fel-ID"
+
+#: src/moin/templates/crash.html:11
+msgid "Server time"
+msgstr "Servertid"
+
+#: src/moin/templates/crash.html:16
+msgid "Old Revision"
+msgstr "Gammal revision"
+
+#: src/moin/templates/crash.html:18
+msgid "New Revision"
+msgstr "Ny revision"
+
+#: src/moin/templates/crash.html:23
+msgid ""
+"If the error on this web site appears confined to this one item,\n"
+"            then the problem may be that the current revision has invalid or\n"
+"            corrupted data or there is a mismatch between the\n"
+"            content type and the item data (e.g. the content type is text/x.moin.wiki\n"
+"            and the data is a PNG file). "
+msgstr ""
+"Om felet på denna webbplats verkar vara begränsat till detta enda artikel,\n"
+"            kan problemet vara att den aktuella revisionen har ogiltiga eller\n"
+"            eller skadad data eller att det finns en felmatchning mellan\n"
+"            innehållstypen och artikelns data (t.ex. innehållstypen är text/x.moin.wiki\n"
+"            och datan är en PNG-fil). "
+
+#: src/moin/templates/crash.html:30
+msgid "Possible ways to identify the cause of the problem:"
+msgstr "Möjliga sätt att identifiera orsaken till problemet:"
+
+#: src/moin/templates/crash.html:33
+msgid "Click the Highlight link within Item Views to view the raw text data."
+msgstr "Klicka på länken Markera i Artikelvyer för att visa råtextdata."
+
+#: src/moin/templates/crash.html:34
+msgid "Click the Meta link within Item Views to check the content type."
+msgstr "Klicka på länken Meta i Artikelvyer för att kontrollera innehållstypen."
+
+#: src/moin/templates/crash.html:35
+msgid "Click the Download link within Item Views and examine the data with a hex editor."
+msgstr "Klicka på länken Download i Item Views och undersök data med en hexeditor."
+
+#: src/moin/templates/crash.html:38
+msgid "Possible ways to fix the problem:"
+msgstr "Möjliga sätt att åtgärda problemet:"
+
+#: src/moin/templates/crash.html:41
+msgid "Click the History link within Item Views and revert to a prior revision."
+msgstr "Klicka på länken Historik i Artikelvyer och återgå till en tidigare revision."
+
+#: src/moin/templates/crash.html:42
+msgid "Click the Delete or Destroy link within Item Views and then recreate the item."
+msgstr "Klicka på länken Delete or Destroy i Item Views och återskapa sedan artikeln."
+
+#: src/moin/templates/crash.html:45
+msgid "To change an item to a different content type (change from GIF to PNG, etc.):"
+msgstr "Om du vill ändra ett artikel till en annan innehållstyp (ändra från GIF till PNG osv.):"
+
+#: src/moin/templates/crash.html:48
+msgid "Delete the item."
+msgstr "Ta bort artikeln."
+
+#: src/moin/templates/crash.html:49
+msgid "Recreate the item."
+msgstr "Återskapa artikeln."
+
+#: src/moin/templates/create_new_item.html:11
+msgid "Create New Item"
+msgstr "Skapa ny artikel"
+
+#: src/moin/templates/delete.html:12
+msgid "Delete '{item_name}' with alias names {alias_names}"
+msgstr "Ta bort '{item_name}' med aliasnamn {alias_names}"
+
+#: src/moin/templates/delete.html:14
+msgid "Delete '{item_name}'"
+msgstr "Ta bort '{item_name}'"
+
+#: src/moin/templates/delete.html:35
+msgid "Meta data of item to be deleted:"
+msgstr "Metadata för artikeln som ska raderas:"
+
+#: src/moin/templates/delete.html:38
+msgid "Content of item to be deleted:"
+msgstr "Innehållet i det artikel som ska raderas:"
+
+#: src/moin/templates/destroy.html:14
+msgid "Destroy '{item_name}' with alias names {alias_names}"
+msgstr "Förstör '{item_name}' med aliasnamn {alias_names}"
+
+#: src/moin/templates/destroy.html:16
+msgid "Destroy '{item_name}'"
+msgstr "Förstör '{item_name}'"
+
+#: src/moin/templates/destroy.html:39
+msgid "DESTROY {item_name} REVISION NUMBER {rev_number}"
+msgstr "FÖRSTÖR {item_name} REVISIONSNUMMER {rev_number}"
+
+#: src/moin/templates/destroy.html:52
+msgid "Meta data of item revision to be destroyed:"
+msgstr "Metadata för artikelrevision som ska förstöras:"
+
+#: src/moin/templates/destroy.html:54
+msgid "Meta data of item to be destroyed:"
+msgstr "Metadata för artikeln som ska förstöras:"
+
+#: src/moin/templates/destroy.html:59
+msgid "Content of item revision to be destroyed:"
+msgstr "Innehåll i artikelrevision som ska förstöras:"
+
+#: src/moin/templates/destroy.html:61
+msgid "Content of item to be destroyed:"
+msgstr "Innehållet i det artikel som ska förstöras:"
+
+#: src/moin/templates/dictionary.js:16
+msgid "Show comments"
+msgstr "Visa kommentarer"
+
+#: src/moin/templates/dictionary.js:17
+msgid "Hide transclusions"
+msgstr "Dölja uteslutningar"
+
+#: src/moin/templates/dictionary.js:19
+msgid "Hide tags"
+msgstr "Dölj taggar"
+
+#: src/moin/templates/dictionary.js:20 src/moin/templates/tickets.html:20
+msgid "Show all tags"
+msgstr "Visa alla taggar"
+
+#: src/moin/templates/dictionary.js:21
+msgid "Your changes will be discarded if you leave this page without saving."
+msgstr "Dina ändringar kommer att kasseras om du lämnar sidan utan att spara."
+
+#: src/moin/templates/dictionary.js:22
+msgid "You missed! Double-click on text or to the right of text to auto-scroll text editor."
+msgstr "Du missade! Dubbelklicka på texten eller till höger om texten för att automatiskt rulla textredigeraren."
+
+#: src/moin/templates/dictionary.js:23
+msgid "Your browser is obsolete. Upgrade to gain auto-scroll text editor feature."
+msgstr "Din webbläsare är föråldrad. Uppgradera för att få funktionen för automatisk rullning av textredigerare."
+
+#: src/moin/templates/dictionary.js:24
+msgid "Deleting.."
+msgstr "Tar bort.."
+
+#: src/moin/templates/dictionary.js:25
+msgid "Destroying.."
+msgstr "Förgör..."
+
+#: src/moin/templates/dictionary.js:26
+msgid "Items deleted: "
+msgstr "Objekt borttagna: "
+
+#: src/moin/templates/dictionary.js:27
+msgid "Items destroyed: "
+msgstr "Objekt förstörda: "
+
+#: src/moin/templates/dictionary.js:28
+msgid ", Not authorized, items not deleted: "
+msgstr ", Inte auktoriserad, artiklar inte raderade: "
+
+#: src/moin/templates/dictionary.js:29
+msgid ", Not authorized, items not destroyed: "
+msgstr ", Inte auktoriserad, artiklar inte förstörda: "
+
+#: src/moin/templates/dictionary.js:30
+msgid "All changes will be discarded!"
+msgstr "Alla ändringar kommer att förkastas!"
+
+#: src/moin/templates/dictionary.js:31
+msgid "Download failed, no items were selected."
+msgstr "Nedladdningen misslyckades, inga artikel valdes."
+
+#: src/moin/templates/dictionary.js:32
+msgid "Your saved draft has been loaded."
+msgstr "Ditt sparade utkast har laddats."
+
+#: src/moin/templates/dictionary.js:33
+msgid "Your edit lock will expire in 1 minute: "
+msgstr "Ditt redigeringslås upphör att gälla om 1 minut: "
+
+#: src/moin/templates/dictionary.js:34
+msgid "Add optional comment for Delete change log. "
+msgstr "Lägg till en valfri kommentar för Ta bort ändringslogg. "
+
+#: src/moin/templates/dictionary.js:35
+msgid "Add optional comment for Destroy change log. "
+msgstr "Lägg till valfri kommentar för Förstör ändringslogg. "
+
+#: src/moin/templates/dictionary.js:36
+msgid "Action complete."
+msgstr "Åtgärden slutförd."
+
+#: src/moin/templates/diff.html:10
+msgid "Diff for '{item_name}'"
+msgstr "Diff för '{item_name}'"
+
+#: src/moin/templates/diff_text.html:18 src/moin/templates/history.html:139 src/moin/templates/utils.html:492
+msgid "revert"
+msgstr "återgå"
+
+#: src/moin/templates/diff_text.html:19
+msgid "Revert to Revision"
+msgstr "Återgå till revision"
+
+#: src/moin/templates/global_history.html:43
+msgid "Set bookmark"
+msgstr "Ställ in bokmärke"
+
+#: src/moin/templates/global_history.html:78
+msgid "Delete bookmark"
+msgstr "Radera bokmärke"
+
+#: src/moin/templates/highlight.html:12
+msgid "Syntax highlighting of {name}"
+msgstr "Syntaxmarkering av {name}"
+
+#: src/moin/templates/history.html:11
+msgid "History of {fqname}"
+msgstr "Historia av {fqname}"
+
+#: src/moin/templates/history.html:23
+msgid "Item Name"
+msgstr "Objektnamn"
+
+#: src/moin/templates/history.html:24
+msgid "Click to show history spanning item delete and recreate."
+msgstr "Klicka för att visa historik över borttagning och återskapande av artikel."
+
+#: src/moin/templates/history.html:33
+msgid "Item Id"
+msgstr "Annonser ID"
+
+#: src/moin/templates/history.html:34
+msgid "Click to show history spanning item renames."
+msgstr "Klicka för att visa historik över byten av artikel."
+
+#: src/moin/templates/history.html:48 src/moin/templates/mychanges.html:20
+msgid "Name or ID ~(Old Name)"
+msgstr "Namn eller ID ~(gammalt namn)"
+
+#: src/moin/templates/history.html:58
+msgid "Content Type"
+msgstr "Innehållstyp"
+
+#: src/moin/templates/history.html:59 src/moin/templates/mychanges.html:24
+msgid "Comment and/or `Summary`"
+msgstr "Kommentar och/eller sammanfattning"
+
+#: src/moin/templates/history.html:89
+msgid "Item was deleted and later created as new with same name"
+msgstr "Objektet togs bort och skapades senare som nytt med samma namn"
+
+#: src/moin/templates/history.html:90
+msgid "Item Id Changed"
+msgstr "Artikel-ID ändrat"
+
+#: src/moin/templates/history.html:109
+msgid "show"
+msgstr "visa"
+
+#: src/moin/templates/history.html:114
+msgid "highlight"
+msgstr "highlight"
+
+#: src/moin/templates/history.html:119
+msgid "meta"
+msgstr "meta"
+
+#: src/moin/templates/history.html:124
+msgid "download"
+msgstr "nedladdning"
+
+#: src/moin/templates/history.html:131
+msgid "delete item"
+msgstr "radera artikel"
+
+#: src/moin/templates/history.html:151
+msgid "destroy all revisions"
+msgstr "förstöra alla revisioner"
+
+#: src/moin/templates/history.html:157
+msgid "destroy this revision"
+msgstr "förstöra denna revision"
+
+#: src/moin/templates/history.html:171
+msgid "Bookmark is set to"
+msgstr "Bokmärket är inställt på"
+
+#: src/moin/templates/index.html:41
+msgid "Item History"
+msgstr "Föremålets historia"
+
+#: src/moin/templates/index.html:58
+msgid "This item has subitems that match your filter."
+msgstr "Den här artikeln har underartiklar som matchar ditt filter."
+
+#: src/moin/templates/index.html:85
+msgid "These items have orphan sub-items. Click name to create or arrow to view sub-items."
+msgstr ""
+"Dessa artiklar har föräldralösa underartiklar. Klicka på namnet för att skapa eller på pilen för att visa "
+"underartikeler."
+
+#: src/moin/templates/index.html:94
+msgid "This missing item has subitems that match your filter."
+msgstr "Denna saknade artikel har underartiklar som matchar ditt filter."
+
+#: src/moin/templates/index.html:106
+msgid "There are no items or read permission is denied for all."
+msgstr "Det finns inga artikel eller läsbehörighet nekas för alla."
+
+#: src/moin/templates/index.html:110
+msgid "Toggle item selections"
+msgstr "Växla val av artikel"
+
+#: src/moin/templates/index.html:112
+msgid "Select All"
+msgstr "Välj alla"
+
+#: src/moin/templates/index.html:114
+msgid "Download selected items"
+msgstr "Ladda ner valda artiklar"
+
+#: src/moin/templates/index.html:118
+msgid "Delete selected items"
+msgstr "Ta bort markerade artikel"
+
+#: src/moin/templates/index.html:123
+msgid "Destroy selected items"
+msgstr "Förstör valda artikel"
+
+#: src/moin/templates/index.html:131
+msgid "Filter items by content type"
+msgstr "Filtrera artikel efter innehållstyp"
+
+#: src/moin/templates/index.html:133
+msgid "Filter"
+msgstr "Filtrera"
+
+#: src/moin/templates/index.html:137
+msgid "Change namespace"
+msgstr "Ändra namnrymden"
+
+#: src/moin/templates/index.html:141
+msgid "Open create item dialog"
+msgstr "Öppna dialogrutan för att skapa artikel"
+
+#: src/moin/templates/index.html:143
+msgid "New Item"
+msgstr "Nytt artikel"
+
+#: src/moin/templates/index.html:149
+msgid "Filter is on for these selected groups:"
+msgstr "Filter är på för dessa utvalda grupper:"
+
+#: src/moin/templates/index.html:160
+msgid "Click home icon to view namespace home page or click name to view namespace index."
+msgstr "Klicka på hemikonen för att visa namnområdets startsida eller klicka på namnet för att visa namnområdets index."
+
+#: src/moin/templates/index.html:179
+msgid "items having unknown mime types"
+msgstr "artikel med okända mime-typer"
+
+#: src/moin/templates/index.html:183
+msgid "Toggle"
+msgstr "Växla"
+
+#: src/moin/templates/index.html:198 src/moin/templates/index.html:200
+msgid "Enter item name here"
+msgstr "Ange artikelnamn här"
+
+#: src/moin/templates/index.html:202
+msgid "Create"
+msgstr "Skapa"
+
+#: src/moin/templates/index.html:206
+msgid ""
+"Enter Item name and click Create button above to edit or upload one item.\n"
+"                    To upload multiple files click the button below to open a file selection dialog,\n"
+"                    or drag and drop multiple files here."
+msgstr ""
+"Ange artikelnamn och klicka på knappen Skapa ovan för att redigera eller ladda upp en artikel.\n"
+"                    Om du vill ladda upp flera filer klickar du på knappen nedan för att öppna en dialogruta för "
+"filval,\n"
+"                    eller dra och släpp flera filer här."
+
+#: src/moin/templates/index.html:246 src/moin/templates/index.html:251
+msgid "Show All"
+msgstr "Visa alla"
+
+#: src/moin/templates/index.html:268
+msgid "Number Items"
+msgstr "Antal artikel"
+
+#: src/moin/templates/index.html:288
+msgid "X"
+msgstr "X"
+
+#: src/moin/templates/index.html:288
+msgid "Close"
+msgstr "Stäng"
+
+#: src/moin/templates/index.html:289
+msgid "Add optional comment for change log."
+msgstr "Lägg till valfri kommentar för ändringsloggen."
+
+#: src/moin/templates/index.html:293
+msgid "Selected names: "
+msgstr "Utvalda namn: "
+
+#: src/moin/templates/index.html:294
+msgid "Alias names: "
+msgstr "Aliasnamn: "
+
+#: src/moin/templates/index.html:297
+msgid "Check to remove subitems"
+msgstr "Kontrollera för att ta bort underartiklar"
+
+#: src/moin/templates/index.html:299
+msgid "Subitem names: "
+msgstr "Namn på underartikel: "
+
+#: src/moin/templates/index.html:300
+msgid "Rejected names, permission denied: "
+msgstr "Avvisade namn, behörighet nekad: "
+
+#: src/moin/templates/index.html:302
+msgid "Enter your comment"
+msgstr "Skriv en kommentar"
+
+#: src/moin/templates/index.html:305
+msgid "Submit"
+msgstr "Skicka"
+
+#: src/moin/templates/itemviews.html:21 src/moin/templates/ticket/ticket_macros.html:97
+msgid "Item Views"
+msgstr "Visning av artikel"
+
+#: src/moin/templates/itemviews.html:86 src/moin/templates/ticket/base.html:26
+#: src/moin/templates/ticket/ticket_macros.html:101 src/moin/themes/__init__.py:234
+msgid "Remove Link"
+msgstr "Ta bort länk"
+
+#: src/moin/templates/itemviews.html:88 src/moin/templates/ticket/base.html:28
+#: src/moin/templates/ticket/ticket_macros.html:103 src/moin/themes/__init__.py:232
+msgid "Add Link"
+msgstr "﻿Lägg till länk"
+
+#: src/moin/templates/itemviews.html:98 src/moin/templates/ticket/ticket_macros.html:45 src/moin/themes/__init__.py:238
+msgid "Unsubscribe"
+msgstr "Avsluta prenumeration"
+
+#: src/moin/templates/itemviews.html:100 src/moin/templates/ticket/ticket_macros.html:47 src/moin/themes/__init__.py:240
+msgid "Subscribe"
+msgstr "Prenumerera"
+
+#: src/moin/templates/itemviews.html:124
+msgid "Discuss contents of this item"
+msgstr "Diskutera innehållet i denna punkt"
+
+#: src/moin/templates/layout.html:41 src/moin/themes/topside/templates/layout.html:45
+msgid "Navigation"
+msgstr "Navigering"
+
+#: src/moin/templates/login.html:9
+msgid "Moin login"
+msgstr "Moin inloggning"
+
+#: src/moin/templates/lookup.html:30
+msgid "No results"
+msgstr "Inga resultat"
+
+#: src/moin/templates/lookup.html:32
+msgid "More than one result"
+msgstr "Mer än ett resultat"
+
+#: src/moin/templates/lostpass.html:7
+msgid "Please note that you only need to fill out one form field."
+msgstr "Observera att du bara behöver fylla i ett fält i formuläret."
+
+#: src/moin/templates/meta.html:12
+msgid "Metadata of {item_name}"
+msgstr "Metadata för {item_name}"
+
+#: src/moin/templates/modify.html:28 src/moin/themes/basic/templates/modify.html:13
+msgid "Modifying '{item_name}'"
+msgstr "Ändring av '{item_name}'"
+
+#: src/moin/templates/modify.html:51
+msgid "Load Draft"
+msgstr "Ladda utkast"
+
+#: src/moin/templates/modify.html:52
+msgid "Clicking this button will delete draft!"
+msgstr "Klicka på denna knapp för att radera utkast!"
+
+#: src/moin/templates/modify.html:77
+msgid "Enter list of user names, one name per line."
+msgstr "Ange en lista med användarnamn, ett namn per rad."
+
+#: src/moin/templates/modify.html:85 src/moin/themes/basic/templates/modify.html:66
+msgid "Enter \"key=value\" strings, one per line, no quotes, no blank lines."
+msgstr "Ange \"nyckel=värde\"-strängar, en per rad, inga citattecken, inga tomma rader."
+
+#: src/moin/templates/modify_meta.html:11
+msgid "General meta"
+msgstr "Allmän meta"
+
+#: src/moin/templates/modify_meta.html:26
+msgid "Tags may have embedded blanks, use commas to separate."
+msgstr "Taggar kan ha inbäddade blanksteg, använd kommatecken för att separera."
+
+#: src/moin/templates/modify_select_contenttype.html:13
+msgid "Create new item named '{name}'"
+msgstr "Skapa ett nytt artikel med namnet '{name}'"
+
+#: src/moin/templates/modify_select_contenttype.html:15
+msgid "Please select the contenttype of the new {itemtype} item."
+msgstr "Välj innehållstyp för den nya {itemtype}-artikeln."
+
+#: src/moin/templates/modify_select_contenttype.html:36
+msgid "Before creating a new item, review these existing items with similar names:"
+msgstr "Innan du skapar en ny artikel bör du granska de befintliga artiklarna med liknande namn:"
+
+#: src/moin/templates/modify_select_itemtype.html:11
+msgid "Item not found, create it now?"
+msgstr "Objektet hittades inte, skapa det nu?"
+
+#: src/moin/templates/modify_select_itemtype.html:13
+msgid ""
+"Item '{fqname}' does not exist (yet), but you can try creating it now. Please select the type of the item you want to "
+"create."
+msgstr "Objektet '{fqname}' finns inte (ännu), men du kan försöka skapa det nu. Välj vilken typ av artikel du vill skapa."
+
+#: src/moin/templates/modify_select_template.html:11
+msgid "Create new item?"
+msgstr "Skapa nytt artikel?"
+
+#: src/moin/templates/modify_select_template.html:13
+msgid "You can either <a href='{modifyhref}'>create the item from scratch</a> or select a template."
+msgstr "Du kan antingen <a href='{modifyhref}'>skapa artikeln från början</a> eller välja en mall."
+
+#: src/moin/templates/modify_select_template.html:15
+msgid "Available template items"
+msgstr "Tillgängliga mallartikel"
+
+#: src/moin/templates/modify_text.html:20 src/moin/themes/basic/templates/modify_text.html:4
+msgid "Toggle font width"
+msgstr "Växla teckensnittsbredd"
+
+#: src/moin/templates/mychanges.html:19
+msgid "Diff"
+msgstr "Diff"
+
+#: src/moin/templates/mychanges.html:50
+msgid "No changes found."
+msgstr "Inga ändringar hittades."
+
+#: src/moin/templates/register.html:5
+msgid "Create Account"
+msgstr "Skapa konto"
+
+#: src/moin/templates/rename.html:10
+msgid "Rename '{item_name}'"
+msgstr "Byt namn på '{item_name}'"
+
+#: src/moin/templates/rename.html:15
+msgid "This item has multiple names:"
+msgstr "Detta artikel har flera namn:"
+
+#: src/moin/templates/rename.html:16
+msgid ""
+"If a parent name of the subitems below is removed, that parent's subitems will become subitems of the first name in the "
+"target field:"
+msgstr ""
+"Om ett överordnat namn för underartikelen nedan tas bort, kommer det överordnade namnet att bli underartikel för det "
+"första namnet i målfältet:"
+
+#: src/moin/templates/rename.html:18
+msgid "The following subitems will be renamed:"
+msgstr "Följande underartikeler kommer att byta namn:"
+
+#: src/moin/templates/rename.html:33
+msgid "Use commas (,) to separate multiple names in the Target field."
+msgstr "Använd kommatecken (,) för att separera flera namn i fältet Target."
+
+#: src/moin/templates/rename.html:37
+msgid "Meta data of item to be renamed:"
+msgstr "Metadata för artikeln som ska bytas namn på:"
+
+#: src/moin/templates/rename.html:40
+msgid "Content of item to be renamed:"
+msgstr "Innehållet i det artikel som ska byta namn:"
+
+#: src/moin/templates/revert.html:12
+msgid "Revert '{item_name}' to Revision Number '{rev_number}'"
+msgstr "Återställ '{item_name}' till revisionsnummer '{rev_number}'"
+
+#: src/moin/templates/revert.html:23
+msgid "Meta data of item revision to be reverted:"
+msgstr "Metadata för artikelns revision som ska återställas:"
+
+#: src/moin/templates/revert.html:26
+msgid "Content of item revision to be reverted:"
+msgstr "Innehållet i artikelrevisionen som ska återställas:"
+
+#: src/moin/templates/search.html:29
+msgid ""
+"An Ajax transaction is submitted with each character keyed into the search box.\n"
+"            Transactions may be completed out of order if keying is rapid."
+msgstr ""
+"En Ajax-transaktion skickas med varje tecken som skrivs in i sökrutan.\n"
+"            Transaktioner kan slutföras i fel ordning om inmatningen sker snabbt."
+
+#: src/moin/templates/search.html:31
+msgid "For help on searching see:"
+msgstr "För hjälp med att söka se:"
+
+#: src/moin/templates/search.html:35
+msgid "Search Options"
+msgstr "Sökalternativ"
+
+#: src/moin/templates/search.html:71
+msgid "An Ajax transaction is submitted each time a radio or checkbox is clicked."
+msgstr "En Ajax-transaktion skickas varje gång man klickar på en radio- eller kryssruta."
+
+#: src/moin/templates/show.html:27 src/moin/themes/basic/templates/show.html:21
+msgid "Summary: {summary}"
+msgstr "Sammanfattning: {summary}"
+
+#: src/moin/templates/show_nonexistent.html:3
+msgid "Item not found"
+msgstr "Objektet hittades inte"
+
+#: src/moin/templates/show_nonexistent.html:5
+msgid "Item '{name}' does not exist."
+msgstr "Objektet '{name}' finns inte."
+
+#: src/moin/templates/sitemap.html:17
+msgid "SiteMap of '{item_name}'"
+msgstr "Webbplatskarta över '{item_name}'"
+
+#: src/moin/templates/sitemap.html:56
+msgid "Forward References"
+msgstr "Referenser framåt"
+
+#: src/moin/templates/sitemap.html:58
+msgid "Backward References"
+msgstr "Referenser bakåt i tiden"
+
+#: src/moin/templates/snippets.html:57 src/moin/templates/snippets.html:71
+msgid "This site uses the MoinMoin Wiki software."
+msgstr "Den här webbplatsen använder programvaran MoinMoin Wiki."
+
+#: src/moin/templates/snippets.html:59 src/moin/templates/snippets.html:73
+msgid "MoinMoin is written in Python."
+msgstr "MoinMoin är skrivet i Python."
+
+#: src/moin/templates/snippets.html:88
+msgid "modified"
+msgstr "modifierad"
+
+#: src/moin/templates/blog/utils.html:19 src/moin/templates/snippets.html:89
+msgid "by"
+msgstr "av"
+
+#: src/moin/templates/snippets.html:91
+msgid "tags:"
+msgstr "taggar:"
+
+#: src/moin/templates/tickets.html:5 src/moin/templates/tickets.html:8
+msgid "Tickets"
+msgstr "Biljetter"
+
+#: src/moin/templates/tickets.html:11
+msgid "Filter:"
+msgstr "Filtrera:"
+
+#: src/moin/templates/tickets.html:16
+msgid "Show {status} tickets"
+msgstr "Visa {status} biljetter"
+
+#: src/moin/templates/ticket/advanced.html:6 src/moin/templates/ticket/advanced.html:8 src/moin/templates/tickets.html:22
+msgid "Advanced Search"
+msgstr "Avancerad sökning"
+
+#: src/moin/templates/tickets.html:26
+msgid "Find tickets"
+msgstr "Hitta biljetter"
+
+#: src/moin/templates/tickets.html:31
+msgid "Create ticket"
+msgstr "Skapa ärende"
+
+#: src/moin/templates/blog/utils.html:29 src/moin/templates/tickets.html:36
+msgid "Tags:"
+msgstr "Taggar:"
+
+#: src/moin/templates/tickets.html:50
+msgid "{result_len:d} Tickets found."
+msgstr "{result_len:d} Biljetter hittade."
+
+#: src/moin/templates/ticket/advanced.html:21 src/moin/templates/tickets.html:55
+msgid "Status"
+msgstr "Status"
+
+#: src/moin/templates/ticket/advanced.html:22 src/moin/templates/tickets.html:56
+msgid "Updated"
+msgstr "Uppdaterad"
+
+#: src/moin/templates/ticket/advanced.html:23 src/moin/templates/tickets.html:57
+msgid "Assignee"
+msgstr "Aktör"
+
+#: src/moin/templates/ticket/advanced.html:35 src/moin/templates/ticket/advanced.html:40
+#: src/moin/templates/tickets.html:69
+msgid "ITEMID: {itemid}"
+msgstr "ITEMID: {itemid}"
+
+#: src/moin/templates/ticket/advanced.html:45 src/moin/templates/tickets.html:74
+msgid "Closed"
+msgstr "Stängd"
+
+#: src/moin/templates/ticket/advanced.html:45 src/moin/templates/tickets.html:74
+msgid "Open"
+msgstr "Öppen"
+
+#: src/moin/templates/tickets.html:107
+msgid "Tip: Sort multiple columns simultaneously by holding down the Shift key and clicking on additional column headers!"
+msgstr ""
+"Tips: Sortera flera kolumner samtidigt genom att hålla ned Shift-tangenten och klicka på ytterligare kolumnrubriker!"
+
+#: src/moin/templates/ticket/advanced.html:76 src/moin/templates/tickets.html:111
+msgid "No tickets found."
+msgstr "Hittade ingen biljett."
+
+#: src/moin/templates/usersettings_forms.html:39
+msgid "Changing your email address requires you to verify it. A link will be sent to you."
+msgstr "Om du vill ändra din e-postadress måste du verifiera den. En länk kommer att skickas till dig."
+
+#: src/moin/templates/usersettings_forms.html:69
+msgid "Use the \"Add Link\" or \"Remove Link\" controls within Item Views to add or remove quick links."
+msgstr ""
+"Använd kontrollerna \"Lägg till länk\" eller \"Ta bort länk\" i artikelvyn för att lägga till eller ta bort snabblänkar."
+
+#: src/moin/templates/usersettings_forms.html:71
+msgid "To manually add a link to a local wiki item, prefix the item name with the wiki name: MyWiki/myitem"
+msgstr ""
+"Om du manuellt vill lägga till en länk till ett lokalt wiki-artikel, föregår du artikelnamnet med wikinamnet: MyWiki/"
+"myitem"
+
+#: src/moin/templates/usersettings_forms.html:72
+msgid "To add a link to an external wiki page, use the wiki name as a prefix: MeatBall/RecentChanges"
+msgstr "För att lägga till en länk till en extern wikisida, använd wikinamnet som prefix: Köttbollen/RecentChanges"
+
+#: src/moin/templates/usersettings_forms.html:73
+msgid "To add a link to an external web page, use the full URL: http://google.com"
+msgstr "Om du vill lägga till en länk till en extern webbsida använder du hela URL:en: http://google.com"
+
+#: src/moin/templates/usersettings_forms.html:74
+msgid "Other types of links, such as mailto: may be added"
+msgstr "Andra typer av länkar, t.ex. mailto:, kan läggas till"
+
+#: src/moin/templates/usersettings_forms.html:97
+msgid "MyItemName"
+msgstr "MittPostnamn"
+
+#: src/moin/templates/usersettings_forms.html:98
+msgid "MyTagName"
+msgstr "MittTaggNamn"
+
+#: src/moin/templates/usersettings_forms.html:99
+msgid "MyNameSpace"
+msgstr "MittNamnSpace"
+
+#: src/moin/templates/usersettings_forms.html:100
+msgid "My"
+msgstr "Mina"
+
+#: src/moin/templates/usersettings_forms.html:101
+msgid "item id"
+msgstr "artikel-ID"
+
+#: src/moin/templates/usersettings_forms.html:108
+msgid "Formats for entering subscriptions:"
+msgstr "Format för inmatning av abonnemang:"
+
+#: src/moin/templates/usersettings_forms.html:114
+msgid "is created/removed by clicking a Subscribe/Unsubscribe link"
+msgstr "skapas/tas bort genom att klicka på en länk för prenumeration/avprenumeration"
+
+#: src/moin/templates/usersettings_forms.html:125
+msgid "Appearance"
+msgstr "Utseende"
+
+#: src/moin/templates/usersettings_forms.html:129
+msgid "Change Password"
+msgstr "Ändra lösenord"
+
+#: src/moin/templates/usersettings_forms.html:137
+msgid "Notifications"
+msgstr "Aviseringar"
+
+#: src/moin/templates/usersettings_forms.html:141
+msgid "Options"
+msgstr "Alternativ"
+
+#: src/moin/templates/usersettings_forms.html:145
+msgid "Personal"
+msgstr "Personlig"
+
+#: src/moin/templates/utils.html:18 src/moin/templates/utils.html:314 src/moin/templates/utils.html:346
+msgid "older"
+msgstr "äldre"
+
+#: src/moin/templates/utils.html:21
+msgid "no older revision"
+msgstr "ingen äldre revision"
+
+#: src/moin/templates/utils.html:25
+msgid "Revision "
+msgstr "Revision "
+
+#: src/moin/templates/utils.html:32 src/moin/templates/utils.html:325 src/moin/templates/utils.html:357
+msgid "newer"
+msgstr "nyare"
+
+#: src/moin/templates/utils.html:36
+msgid "no newer revision"
+msgstr "ingen nyare revision"
+
+#: src/moin/templates/utils.html:43
+msgid "Revert to this revision"
+msgstr "Återgå till denna revision"
+
+#: src/moin/templates/utils.html:224
+msgid "Alias Names"
+msgstr "Alias-namn"
+
+#: src/moin/templates/utils.html:257
+msgid "Page Trail"
+msgstr "Page Trail"
+
+#: src/moin/templates/utils.html:319 src/moin/templates/utils.html:351 src/moin/templates/utils.html:369
+msgid "Revision"
+msgstr "Revision"
+
+#: src/moin/templates/utils.html:330
+msgid "newest"
+msgstr "nyaste"
+
+#: src/moin/templates/utils.html:341
+msgid "oldest"
+msgstr "äldst"
+
+#: src/moin/templates/utils.html:394
+msgid "Time"
+msgstr "Tid"
+
+#: src/moin/templates/utils.html:427
+msgid "Deletions are marked like this."
+msgstr "Raderingar markeras på detta sätt."
+
+#: src/moin/templates/utils.html:428
+msgid "Additions are marked like this."
+msgstr "Tillägg markeras på detta sätt."
+
+#: src/moin/templates/utils.html:433 src/moin/templates/utils.html:434
+msgid "Line"
+msgstr "Rad"
+
+#: src/moin/templates/utils.html:463 src/moin/templates/utils.html:465 src/moin/themes/basic/templates/layout.html:156
+#: src/moin/themes/basic/templates/layout.html:158
+msgid "Settings"
+msgstr "Inställningar"
+
+#: src/moin/templates/utils.html:472 src/moin/templates/utils.html:474 src/moin/themes/basic/templates/layout.html:163
+#: src/moin/themes/basic/templates/layout.html:165
+msgid "Logout"
+msgstr "Logga ut"
+
+#: src/moin/templates/utils.html:498
+msgid "show diff based on bookmark"
+msgstr "visa skillnad baserat på bokmärke"
+
+#: src/moin/templates/utils.html:502
+msgid "show diff with prior revision"
+msgstr "visa skillnad mot tidigare revision"
+
+#: src/moin/templates/utils.html:543
+msgid "Previous"
+msgstr "Föregående"
+
+#: src/moin/templates/utils.html:546
+msgid "Page {page_num} of {pages}"
+msgstr "Sida {page_num} av {pages}"
+
+#: src/moin/templates/utils.html:550
+msgid "Next"
+msgstr "Nästa"
+
+#: src/moin/templates/wanteds.html:40
+msgid "Wanted Item"
+msgstr "Efterlyst artikel"
+
+#: src/moin/templates/wanteds.html:41
+msgid "Referring Item"
+msgstr "Hänvisande artikel"
+
+#: src/moin/templates/blog/layout.html:37
+msgid "Create Blog entry"
+msgstr "Skapa blogginlägg"
+
+#: src/moin/templates/blog/main.html:4
+msgid "There are no entries in this blog."
+msgstr "Det finns inga inlägg i den här bloggen."
+
+#: src/moin/templates/blog/main.html:6
+msgid "There are no entries in the '{tag}' blog category."
+msgstr "Det finns inga inlägg i bloggkategorin '{tag}'."
+
+#: src/moin/templates/blog/main.html:13
+msgid "Category:"
+msgstr "Kategori:"
+
+#: src/moin/templates/blog/utils.html:18
+msgid "Published on"
+msgstr "Publicerad"
+
+#: src/moin/templates/blog/utils.html:40
+msgid "Discussion page"
+msgstr "Diskussionssida"
+
+#: src/moin/templates/blog/utils.html:48
+msgid "Categories"
+msgstr "Kategorier"
+
+#: src/moin/templates/blog/utils.html:65
+msgid "only this blog"
+msgstr "bara den här bloggen"
+
+#: src/moin/templates/mail/notification_main.html:11
+msgid "Item link:"
+msgstr "Artikel länk:"
+
+#: src/moin/templates/mail/notification_main.html:17
+msgid "Diff link:"
+msgstr "Diff länk:"
+
+#: src/moin/templates/mail/notification_main.html:28
+msgid "Content"
+msgstr "Innehåll"
+
+#: src/moin/templates/mail/notification_main.html:32 src/moin/templates/ticket/modify.html:48
+#: src/moin/templates/ticket/submit.html:32
+msgid "Metadata"
+msgstr "Metadata"
+
+#: src/moin/templates/mail/notification_main.html:37
+msgid ""
+"You received this message because you have subscribed to a wiki\n"
+"            item on {wiki_name} for change notifications."
+msgstr ""
+"Du har fått detta meddelande eftersom du har prenumererat på ett wiki-artikel\n"
+"            artikel på {wiki_name} för ändringsmeddelanden."
+
+#: src/moin/templates/mail/notification_main.html:42
+msgid "Unsubscribe from this item notifications"
+msgstr "Avsluta prenumerationen på meddelanden om denna artikel"
+
+#: src/moin/templates/ticket/advanced.html:19
+msgid "ID"
+msgstr "ID"
+
+#: src/moin/templates/ticket/base.html:17 src/moin/themes/basic/templates/show.html:80
+msgid "User Actions"
+msgstr "Användaråtgärder"
+
+#: src/moin/templates/ticket/base.html:44
+msgid "Closed:"
+msgstr "Stängd:"
+
+#: src/moin/templates/ticket/modify.html:29
+msgid "Add Comment"
+msgstr "Lägg till kommentar"
+
+#: src/moin/templates/ticket/modify.html:63 src/moin/templates/ticket/submit.html:39
+msgid "Suggested Tags: "
+msgstr "Föreslagna taggar: "
+
+#: src/moin/templates/ticket/modify.html:76
+msgid "Back references"
+msgstr "Tillbaka referenser"
+
+#: src/moin/templates/ticket/modify.html:84
+msgid "Files"
+msgstr "Filer"
+
+#: src/moin/templates/ticket/submit.html:9
+msgid "Create new ticket"
+msgstr "Skapa ett nytt ärende"
+
+#: src/moin/templates/ticket/submit.html:23
+msgid "Describe the ticket"
+msgstr "Beskriv biljetten"
+
+#: src/moin/themes/__init__.py:65
+msgid "Access Denied"
+msgstr "Åtkomst nekad"
+
+#: src/moin/themes/__init__.py:66
+msgid "You are not allowed to access this resource."
+msgstr "Du får inte komma åt den här resursen."
+
+#: src/moin/themes/__init__.py:594
+msgid "anonymous"
+msgstr "anonym"
+
+#: src/moin/themes/basic/templates/layout.html:92
+msgid "Site Navigation"
+msgstr "Webbplatsnavigering"
+
+#: src/moin/themes/basic/templates/modify.html:60
+msgid "Enter list of user names, one name per line. No leading or trailing blanks, no blank lines."
+msgstr "Ange en lista med användarnamn, ett namn per rad. Inga inledande eller efterföljande blanksteg, inga tomma rader."
+
+#: src/moin/themes/basic/templates/modify_meta.html:14
+msgid "Tags and names may have embedded blanks, use commas to separate."
+msgstr "Taggar och namn kan ha inbäddade blanksteg, använd kommatecken för att separera."
+
+#: src/moin/themes/basic/templates/show.html:54
+msgid "View Options"
+msgstr "Visa alternativ"
+
+#: src/moin/themes/basic/templates/show.html:92
+msgid "Item Actions"
+msgstr "Punkt Åtgärder"
+
+#: src/moin/utils/edit_locking.py:268
+msgid ""
+"Edit lock for {user_name} timed out {number} {interval} ago, click 'Cancel' to yield more time, clicking 'Save' may "
+"require {user_name} to resolve conflicting edits."
+msgstr ""
+"Redigeringslåset för {user_name} timade ut för {number} {interval} sedan, klicka på \"Avbryt\" för att ge mer tid, "
+"klicka på \"Spara\" kan kräva {user_name} för att lösa motstridiga redigeringar."
+
+#: src/moin/utils/edit_locking.py:277
+msgid "Item '{item_name}' is locked by {user_name}. Try again in {number} {interval}."
+msgstr "Objektet '{item_name}' är låst av {user_name}. Försök igen i {number} {interval}."
+
+#: src/moin/utils/edit_locking.py:289
+msgid ""
+"Someone else updated '{item_name}' after your edit lock timed out. If you click 'Save', conflicting changes must be "
+"manually merged. Click 'Cancel' to discard changes."
+msgstr ""
+"Någon annan uppdaterade '{item_name}' efter att ditt redigeringslås tidsinställdes. Om du klickar på \"Spara\" måste "
+"motstridiga ändringar slås samman manuellt. Klicka på \"Avbryt\" för att kassera ändringarna."
+
+#: src/moin/utils/edit_locking.py:323
+msgid "Item '{item_name}' is locked by {user_name}. Edit lock error, check Item History to verify no changes were lost."
+msgstr ""
+"Objekt '{item_name}' är låst av {user_name}. Fel i redigeringslåset, kontrollera artikelns historik för att verifiera "
+"att inga ändringar har gått förlorade."
+
+#: src/moin/utils/notifications.py:48
+msgid "The '{fqname}' item on '{wiki_name}' has been created by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har skapats av {user_name}:"
+
+#: src/moin/utils/notifications.py:49
+msgid "The '{fqname}' item on '{wiki_name}' has been modified by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har ändrats av {user_name}:"
+
+#: src/moin/utils/notifications.py:50
+msgid "The '{fqname}' item on '{wiki_name}' has been renamed by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har bytt namn till {user_name}:"
+
+#: src/moin/utils/notifications.py:51
+msgid "The '{fqname}' item on '{wiki_name}' has been copied by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har kopierats av {user_name}:"
+
+#: src/moin/utils/notifications.py:52
+msgid "The '{fqname}' item on '{wiki_name}' has been converted by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har konverterats av {user_name}:"
+
+#: src/moin/utils/notifications.py:53
+msgid "The '{fqname}' item on '{wiki_name}' has been reverted by {user_name}:"
+msgstr "Punkten \"{fqname}\" på \"{wiki_name}\" har återkallats av \"{user_name}\":"
+
+#: src/moin/utils/notifications.py:54
+msgid "The '{fqname}' item on '{wiki_name}' has been deleted by {user_name}:"
+msgstr "Posten '{fqname}' på '{wiki_name}' har strukits av {user_name}:"
+
+#: src/moin/utils/notifications.py:55
+msgid "The '{fqname}' item on '{wiki_name}' has one revision destroyed by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har en revision förstörd av {user_name}:"
+
+#: src/moin/utils/notifications.py:56
+msgid "The '{fqname}' item on '{wiki_name}' has been destroyed by {user_name}:"
+msgstr "Objektet '{fqname}' på '{wiki_name}' har förstörts av {user_name}:"
+
+#: src/moin/utils/notifications.py:211
+msgid "An error has occurred, the current or prior revision of this item may be corrupt."
+msgstr "Ett fel har inträffat, den aktuella eller tidigare revisionen av denna artikel kan vara korrupt."
+
+#: src/moin/utils/notifications.py:217
+msgid "[{moin_name}] Update of \"{fqname}\" by {user_name}"
+msgstr "[{moin_name}] Uppdatering av \"{fqname}\" med {user_name}"
+
+#: src/moin/utils/paramparser.py:319
+msgid "Argument \"{name}\" must be a boolean value, not \"{value}\""
+msgstr "Argument \"{name}\" måste vara ett booleanskt värde, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:322
+msgid "Argument must be a boolean value, not \"{value}\""
+msgstr "Argumentet måste vara ett booleskt värde, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:348
+msgid "Argument \"{name}\" must be an integer value, not \"{value}\""
+msgstr "Argument \"{name}\" måste vara ett heltalsvärde, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:351
+msgid "Argument must be an integer value, not \"{value}\""
+msgstr "Argumentet måste vara ett heltalsvärde, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:376
+msgid "Argument \"{name}\" must be a floating point value, not \"{value}\""
+msgstr "Argument \"{name}\" måste vara ett värde med flyttal, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:379
+msgid "Argument must be a floating point value, not \"{value}\""
+msgstr "Argumentet måste vara ett värde med flytande kommatecken, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:406
+msgid "Argument \"{name}\" must be a complex value, not \"{value}\""
+msgstr "Argument \"{name}\" måste vara ett komplext värde, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:409
+msgid "Argument must be a complex value, not \"{value}\""
+msgstr "Argumentet måste vara ett komplext värde, inte \"{value}\""
+
+#: src/moin/utils/paramparser.py:463
+msgid "Argument \"{name}\" must be one of \"{choices}\").format(not \"{value}\""
+msgstr "Argument \"{name}\" måste vara ett av \"{choices}\").format(not \"{value}\""
+
+#: src/moin/utils/paramparser.py:468
+msgid "Argument must be one of \"{choices}\").format(not \"{value}\""
+msgstr "Argumentet måste vara ett av \"{choices}\").format(not \"{value}\""
+
+#: src/moin/utils/paramparser.py:689
+msgid "Too many arguments"
+msgstr "För många argument"
+
+#: src/moin/utils/paramparser.py:694
+msgid "Cannot have arguments without name following named arguments"
+msgstr "Kan inte ha argument utan namn efter namngivna argument"
+
+#: src/moin/utils/paramparser.py:710
+msgid "Argument \"{name}\" is required"
+msgstr "Argumentet \"{name}\" är obligatoriskt"
+
+#: src/moin/utils/paramparser.py:722
+msgid "No argument named \"{name}\""
+msgstr "Inget argument med namnet \"{name}\""
+
+#: src/moin/utils/show_time.py:23
+msgid "seconds"
+msgstr "sekunder"
+
+#: src/moin/utils/show_time.py:25
+msgid "minutes"
+msgstr "minuter"
+
+#: src/moin/utils/show_time.py:27
+msgid "hours"
+msgstr "timmar"
+
+#: src/moin/utils/show_time.py:29
+msgid "days"
+msgstr "dagar"
+
+#: src/moin/utils/show_time.py:31
+msgid "weeks"
+msgstr "veckor"
+
+#: src/moin/utils/show_time.py:33
+msgid "months"
+msgstr "månader"
+
+#: src/moin/utils/show_time.py:34
+msgid "years"
+msgstr "år"
