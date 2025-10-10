@@ -94,12 +94,17 @@ class NodeVisitor:
         """
         pass
 
-    def open_moin_page_node(self, mointree_element):
+    def open_moin_page_node(self, mointree_element, node=None):
         if flaskg and getattr(flaskg, "add_lineno_attr", False):
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
                 mointree_element.attrib[html.data_lineno] = self.current_lineno
                 self.last_lineno = self.current_lineno
+        if node and node["ids"]:
+            # IDs are prepended in empty <span> mointree elements
+            for _id in node["ids"]:
+                self.open_moin_page_node(moin_page.span(attrib={moin_page.id: _id}))
+                self.close_moin_page_node()
         self.current_node.append(mointree_element)
         self.current_node = mointree_element
         self.path.append(mointree_element)
@@ -118,58 +123,60 @@ class NodeVisitor:
     def depart_Text(self, node):
         pass
 
-    def visit_admonition(self, node):
-        # we do not support generic admonitions per
+    def visit_admonition(self, node, typ="attention"):
+        # use "attention" for generic admonitions, cf.
         # http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
-        self.open_moin_page_node(moin_page.admonition())
+        self.open_moin_page_node(moin_page.admonition({moin_page.type: typ}), node)
+        self.header_size += 1
 
     def depart_admonition(self, node=None):
+        self.header_size -= 1
         self.close_moin_page_node()
 
     # see http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions
     def visit_attention(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "attention"}))
+        self.visit_admonition(node, "attention")
 
     depart_attention = depart_admonition
 
     def visit_caution(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "caution"}))
+        self.visit_admonition(node, "caution")
 
     depart_caution = depart_admonition
 
     def visit_danger(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "danger"}))
+        self.visit_admonition(node, "danger")
 
     depart_danger = depart_admonition
 
     def visit_error(self, node):
         # this is used to process parsing errors as well as user error admonitions
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "error"}))
+        self.visit_admonition(node, "error")
 
     depart_error = depart_admonition
 
     def visit_hint(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "hint"}))
+        self.visit_admonition(node, "hint")
 
     depart_hint = depart_admonition
 
     def visit_important(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "important"}))
+        self.visit_admonition(node, "important")
 
     depart_important = depart_admonition
 
     def visit_note(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "note"}))
+        self.visit_admonition(node, "note")
 
     depart_note = depart_admonition
 
     def visit_tip(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "tip"}))
+        self.visit_admonition(node, "tip")
 
     depart_tip = depart_admonition
 
     def visit_warning(self, node):
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "warning"}))
+        self.visit_admonition(node, "warning")
 
     depart_warning = depart_admonition
 
@@ -181,13 +188,13 @@ class NodeVisitor:
 
     def visit_attribution(self, node):
         attrib = {html.class_: "moin-rst-attribution"}
-        self.open_moin_page_node(moin_page.p(attrib=attrib))
+        self.open_moin_page_node(moin_page.p(attrib=attrib), node)
 
     def depart_attribution(self, node):
         self.close_moin_page_node()
 
     def visit_bullet_list(self, node):
-        self.open_moin_page_node(moin_page.list(attrib={moin_page.item_label_generate: "unordered"}))
+        self.open_moin_page_node(moin_page.list(attrib={moin_page.item_label_generate: "unordered"}), node)
 
     def depart_bullet_list(self, node):
         self.close_moin_page_node()
@@ -199,13 +206,13 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_definition_list(self, node):
-        self.open_moin_page_node(moin_page.list())
+        self.open_moin_page_node(moin_page.list(), node)
 
     def depart_definition_list(self, node):
         self.close_moin_page_node()
 
     def visit_definition_list_item(self, node):
-        self.open_moin_page_node(moin_page.list_item())
+        self.open_moin_page_node(moin_page.list_item(), node)
 
     def depart_definition_list_item(self, node):
         self.close_moin_page_node()
@@ -292,7 +299,7 @@ class NodeVisitor:
             new_element.set(moin_page.number_rows_spanned, repr(int(node["morerows"]) + 1))
         if "morecols" in node.attributes:
             new_element.set(moin_page.number_columns_spanned, repr(int(node["morecols"]) + 1))
-        self.open_moin_page_node(new_element)
+        self.open_moin_page_node(new_element, node)
 
     def depart_entry(self, node):
         self.close_moin_page_node()
@@ -309,13 +316,13 @@ class NodeVisitor:
         type = enum_style.get(node["enumtype"], None)
         if type:
             new_node.set(moin_page.list_style_type, type)
-        self.open_moin_page_node(new_node)
+        self.open_moin_page_node(new_node, node)
 
     def depart_enumerated_list(self, node):
         self.close_moin_page_node()
 
     def visit_field(self, node):
-        self.open_moin_page_node(moin_page.table_row())
+        self.open_moin_page_node(moin_page.table_row(), node)
 
     def depart_field(self, node):
         self.close_moin_page_node()
@@ -328,7 +335,7 @@ class NodeVisitor:
 
     def visit_field_list(self, node):
         attrib = {html.class_: "moin-rst-fieldlist"}
-        self.open_moin_page_node(moin_page.table(attrib=attrib))
+        self.open_moin_page_node(moin_page.table(attrib=attrib), node)
         self.open_moin_page_node(moin_page.table_body())
 
     def depart_field_list(self, node):
@@ -336,7 +343,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_field_name(self, node):
-        self.open_moin_page_node(moin_page.table_cell())
+        self.open_moin_page_node(moin_page.table_cell(), node)
         self.open_moin_page_node(moin_page.strong())
         self.open_moin_page_node(f"{node.astext()}:")
         node.children = []
@@ -347,7 +354,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_figure(self, node):
-        self.open_moin_page_node(moin_page.figure(attrib={moin_page.class_: "moin-figure"}))
+        self.open_moin_page_node(moin_page.figure(attrib={moin_page.class_: "moin-figure"}), node)
 
     def depart_figure(self, node):
         self.close_moin_page_node()
@@ -388,8 +395,8 @@ class NodeVisitor:
         whitelist = ["width", "height", "alt"]
         attrib = {}
         for key in whitelist:
-            if node.get(key):
-                attrib[html(key)] = node.get(key)
+            if key in node:
+                attrib[html(key)] = node[key]
 
         # there is no 'scale' attribute, hence absent from whitelist, handled separately
         if node.get("scale"):
@@ -422,7 +429,7 @@ class NodeVisitor:
             new_node = moin_page.object(attrib)
             new_node.set(xlink.href, url)
 
-        self.open_moin_page_node(new_node)
+        self.open_moin_page_node(new_node, node)
 
     def depart_image(self, node):
         self.close_moin_page_node()
@@ -450,13 +457,13 @@ class NodeVisitor:
 
     def visit_line_block(self, node):
         """one or more line nodes make a line_block"""
-        self.open_moin_page_node(moin_page.line_block())
+        self.open_moin_page_node(moin_page.line_block(), node)
 
     def depart_line_block(self, node):
         self.close_moin_page_node()
 
     def visit_list_item(self, node):
-        self.open_moin_page_node(moin_page.list_item())
+        self.open_moin_page_node(moin_page.list_item(), node)
         self.open_moin_page_node(moin_page.list_item_body())
 
     def depart_list_item(self, node):
@@ -466,9 +473,9 @@ class NodeVisitor:
     def visit_literal(self, node):
         self.open_moin_page_node(moin_page.code())
         self.open_moin_page_node(node.astext())
-        node.children = []
         self.close_moin_page_node()
         self.close_moin_page_node()
+        raise nodes.SkipNode
 
     def visit_literal_block(self, node):
         parser = node.get("parser", "")
@@ -485,17 +492,18 @@ class NodeVisitor:
                 moin_page.part(
                     children=[arguments],
                     attrib={moin_page.content_type: "x-moin/format;name={}".format(parser.split(" ")[0])},
-                )
+                ),
+                node,
             )
         else:
-            self.open_moin_page_node(moin_page.blockcode())
+            self.open_moin_page_node(moin_page.blockcode(), node)
 
     def depart_literal_block(self, node):
         self.close_moin_page_node()
 
     def visit_option_list(self, node):
         attrib = {html.class_: "moin-rst-optionlist"}
-        self.open_moin_page_node(moin_page.table(attrib=attrib))
+        self.open_moin_page_node(moin_page.table(attrib=attrib), node)
         self.open_moin_page_node(moin_page.table_body())
 
     def depart_option_list(self, node):
@@ -503,7 +511,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_option_list_item(self, node):
-        self.open_moin_page_node(moin_page.table_row())
+        self.open_moin_page_node(moin_page.table_row(), node)
 
     def depart_option_list_item(self, node):
         self.close_moin_page_node()
@@ -521,15 +529,13 @@ class NodeVisitor:
         if self.status[-1] == "footnote":
             footnote_node = self.footnotes.get(self.footnote_lable, None)
             if footnote_node:
+                # TODO: `node.astext()` ignores all markup!
                 footnote_node.append(node.astext())
-            node.children = []
-        else:
-            self.open_moin_page_node(moin_page.p())
+            raise nodes.SkipNode
+        self.open_moin_page_node(moin_page.p(), node)
 
     def depart_paragraph(self, node):
-        if self.status[-1] == "footnote":
-            pass
-        else:
+        if self.status[-1] != "footnote":
             self.close_moin_page_node()
 
     def visit_problematic(self, node):
@@ -606,7 +612,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_row(self, node):
-        self.open_moin_page_node(moin_page.table_row())
+        self.open_moin_page_node(moin_page.table_row(), node)
 
     def depart_row(self, node):
         self.close_moin_page_node()
@@ -669,13 +675,13 @@ class NodeVisitor:
 
     def visit_system_message(self, node):
         # we have encountered a parsing error, insert an error message
-        self.open_moin_page_node(moin_page.admonition({moin_page.type: "error"}))
+        self.visit_admonition(node, "error")
 
     def depart_system_message(self, node):
         self.close_moin_page_node()
 
     def visit_table(self, node):
-        self.open_moin_page_node(moin_page.table())
+        self.open_moin_page_node(moin_page.table(), node)
 
     def depart_table(self, node):
         self.close_moin_page_node()
@@ -688,17 +694,23 @@ class NodeVisitor:
 
     def visit_target(self, node):
         """
-        Pass explicit anchor as a SPAN with no children, just an ID attribute
+        Pass explicit anchor as SPAN with ID attribute
 
         .. _example:
+
+        Paragraph with _`inline target`.
         """
-        anchor = node.get("refid")
-        if anchor:
-            self.open_moin_page_node(moin_page.span(attrib={moin_page.id: anchor}))
-            self.close_moin_page_node()
+        if "refuri" in node or "refid" in node or "refname" in node:
+            return  # already handled by Docutils "transforms"
+        moin_node = moin_page.span()
+        if node["ids"]:
+            moin_node.attrib[moin_page.id] = node["ids"][0]
+        self.open_moin_page_node(moin_node)
 
     def depart_target(self, node):
-        pass
+        if "refuri" in node or "refid" in node or "refname" in node:
+            return  # already handled by Docutils "transforms"
+        self.close_moin_page_node()
 
     def visit_term(self, node):
         self.open_moin_page_node(moin_page.list_item_label())
@@ -732,6 +744,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_title(self, node):
+        # TODO: handle titles in topic and generic admonition
         self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
     def depart_title(self, node):
@@ -752,7 +765,7 @@ class NodeVisitor:
     def visit_transition(self, node, default_class="moin-hr3"):
         # TODO: add to rst_out
         attrib = {html.class_: default_class}
-        self.open_moin_page_node(moin_page.separator(attrib=attrib))
+        self.open_moin_page_node(moin_page.separator(attrib=attrib), node)
 
     def depart_transition(self, node):
         self.close_moin_page_node()

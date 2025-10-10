@@ -37,6 +37,7 @@ class TestConverter:
         ("**Text**", "<page><body><p><strong>Text</strong></p></body></page>"),
         ("*Text*", "<page><body><p><emphasis>Text</emphasis></p></body></page>"),
         ("``Text``", "<page><body><p><code>Text</code></p></body></page>"),
+        ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
         (
             "`Text <javascript:alert('xss')>`_",
             '<page><body><p><admonition type="error">Text</admonition></p></body></page>',
@@ -107,12 +108,14 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             '<page><body><xinclude:include xinclude:href="wiki.local:images/biohazard.png" /></body></page>',
         ),
         (
-            """.. image:: images/biohazard.png
+            """
+.. image:: images/biohazard.png
+    :name: biohazard-logo
     :height: 100
     :width: 200
     :scale: 50
     :alt: alternate text""",
-            '<page><body><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" /></body></page>',
+            '<page><body><span id="biohazard-logo" /><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" /></body></page>',
         ),
         (
             "abc |test| cba\n\n.. |test| image:: test.png",
@@ -215,8 +218,14 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             '<page><body><p>Abra</p><span id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p></body></page>',
         ),
         (
-            "Abra example_ arba\n\n.. _example:\n\ntext",
-            '<page><body><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="example" /><p>text</p></body></page>',
+            """
+Abra example_ arba
+
+.. _example:
+.. _alias:
+
+text""",
+            '<page><body><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p></body></page>',
         ),
         (
             "A reference_ with no matching target links to a local Wiki item.",
@@ -226,7 +235,7 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             "`Whitespace   is\nnormalized & Case is KEPT.`_",
             '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20Case%20is%20KEPT.">Whitespace   is\nnormalized &amp; Case is KEPT.</a></p></body></page>',
         ),
-        (  # in rST, matching the reference text is case insensitive:
+        (  # in rST, reference-name matching is case insensitive:
             "Chapter 1\n===============\n\nA reference to `chapter 1`_.\n",
             '<page><body><h outline-level="1">Chapter 1</h><p>A reference to <a xlink:href="wiki.local:#Chapter_1">chapter 1</a>.</p></body></page>',
         ),
@@ -303,7 +312,8 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             "<page><body><table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table></body></page>",
         ),
         (
-            """+--------------------+-------------------------------------+
+            """
++--------------------+-------------------------------------+
 |cell spanning 2 rows|cell in the 2nd column               |
 +                    +-------------------------------------+
 |                    |cell in the 2nd column of the 2nd row|
@@ -329,7 +339,6 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
 +----------------------------------------------------------+
 |test                                                      |
 +----------------------------------------------------------+
-
 """,
             '<page><body><table><table-header><table-row><table-cell><p>AAAAAAAAAAAAAAAAAA</p></table-cell><table-cell><p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</p></table-cell></table-row></table-header><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row></table-body></table></body></page>',
         ),
@@ -343,7 +352,16 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
         (
             ":Author: Test\n:Version:  $Revision: 1.17 $\n:Copyright: c\n:Test: t",
             "<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>",
-        )
+        ),
+        (
+            """
+.. note::
+  :name: note-id
+  
+  An admonition of type "note"
+""",
+            '<page><body><span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition></body></page>',
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
