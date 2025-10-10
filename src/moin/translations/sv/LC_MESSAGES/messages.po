@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the moin project.
 # Daniel Nylander <po@danielnylander.se>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: moin 2.0.0a\n"
@@ -314,7 +313,7 @@ msgstr "Misslyckades! Ej auktoriserad.<br>Objekt: {item_name}<br>ACL: {acl_rule}
 
 #: src/moin/apps/admin/views.py:555
 msgid "Success! ACL saved.<br>Item: {item_name}<br>ACL: {acl_rule}"
-msgstr "Framgång! ACL sparat.<br>Artikel: {item_name}<br>ACL: {acl_rule}"
+msgstr "Lyckades! ACL sparat.<br>Artikel: {item_name}<br>ACL: {acl_rule}"
 
 #: src/moin/apps/admin/views.py:558
 msgid "Nothing changed, invalid ACL.<br>Item: {item_name}<br>ACL: {acl_rule}"
@@ -638,7 +637,7 @@ msgstr "Konvertering av artikel misslyckades"
 
 #: src/moin/apps/frontend/views.py:775
 msgid "Item converted successfully"
-msgstr "Föremålet konverterades framgångsrikt"
+msgstr "Artikeln konverterades"
 
 #: src/moin/apps/frontend/views.py:808 src/moin/items/__init__.py:411
 msgid "Target"
@@ -679,7 +678,7 @@ msgstr ""
 
 #: src/moin/apps/frontend/views.py:1270
 msgid "File Successfully uploaded, existing file overwritten: '{file_name}'."
-msgstr "Filen har laddats upp framgångsrikt, befintlig fil har skrivits över: '{file_name}'."
+msgstr "Filen har laddats upp, befintlig fil har skrivits över: '{file_name}'."
 
 #: src/moin/apps/frontend/views.py:1276
 msgid "Permission denied, upload failed: '{file_name}'."
@@ -687,7 +686,7 @@ msgstr "Behörighet nekad, uppladdning misslyckades: '{file_name}'."
 
 #: src/moin/apps/frontend/views.py:1288
 msgid "File Successfully uploaded: '{item_name}'."
-msgstr "Filen har laddats upp framgångsrikt: '{item_name}'."
+msgstr "Filen har laddats upp: '{item_name}'."
 
 #: src/moin/apps/frontend/views.py:1311
 msgid "Apply Filter"
@@ -1869,7 +1868,7 @@ msgstr "Anslutning till mailserver '{server}' misslyckades: {reason}"
 
 #: src/moin/mail/sendmail.py:125
 msgid "Mail sent successfully"
-msgstr "Mail skickat framgångsrikt"
+msgstr "E-post skickades"
 
 #: src/moin/search/__init__.py:18
 msgid "Search query too short."
