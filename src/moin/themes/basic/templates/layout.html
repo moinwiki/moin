@@ -14,7 +14,7 @@
 {% set user_actions, item_navigation, item_actions = theme_supp.get_local_panel(fqname) %}
 {% set current_url = request.url %}
 {% set current_path = request.path %}
-{% set current_url_showview = url_for_item(endpoint='frontend.show_item', item_name=item_name) %}
+{% set current_url_showview = url_for_item(item_name) if item_name else '' %}
 {% set login_url = theme_supp.login_url() %}
 
 {# Helper macro to generate the local panel #}

@@ -548,7 +548,7 @@ def search():
                     history=history,
                     whoosh_query=q,
                     flaskg=flaskg,
-                    item_name=item_name,
+                    subitem_target=item_name,
                     is_ticket=is_ticket,
                 )
             else:
@@ -560,12 +560,12 @@ def search():
                     history=history,
                     whoosh_query=q,
                     flaskg=flaskg,
-                    item_name=item_name,
+                    subitem_target=item_name,
                     medium_search_form=search_form,
                 )
             flaskg.clock.stop("search render")
     else:
-        html = render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
+        html = render_template("search.html", query=query, medium_search_form=search_form, subitem_target=item_name)
     return html
 
 
