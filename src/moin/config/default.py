@@ -546,7 +546,7 @@ options_no_group_name = {
                 "Home",
                 "Default root, use this value in case no match is found in root_mapping. [Unicode]",
             ),
-            ("root_mapping", {}, "mapping of namespaces to item_roots."),
+            ("root_mapping", {}, "mapping of namespaces to unique root items."),
             # the following regexes should match the complete name when used in free text
             # the group 'all' shall match all, while the group 'key' shall match the key only
             # e.g. FooGroup -> group 'all' ==  FooGroup, group 'key' == Foo

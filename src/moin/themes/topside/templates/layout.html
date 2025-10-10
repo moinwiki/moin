@@ -22,7 +22,7 @@
                     </div>
                 {%- endif %}
                 {%- if cfg.sitename %}
-                    <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                    <a class="moin-sitename" href="{{ url_for('frontend.show_item', item_name=cfg.default_root) }}">
                         {{ cfg.sitename }}
                     </a>
                 {%- endif %}
