@@ -1,4 +1,5 @@
 # Copyright: 2023-2024 MoinMoin project
+# Copyright: 2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -22,6 +23,7 @@ import shutil
 import signal
 import subprocess
 import sys
+
 from time import sleep
 
 from moin._tests import check_connection, get_dirs
@@ -169,7 +171,7 @@ def do_crawl(request, artifact_dir):
             crawl_success = False
     if server_started:
         logging.info("starting crawl")
-        os.chdir(moin_dir / "src" / "moin" / "cli" / "_tests" / "scrapy")
+        os.chdir(moin_dir / "cli" / "_tests" / "scrapy")
         try:
             com = ["scrapy", "crawl", "-a", f"url={settings.CRAWL_START}", "ref_checker"]
             with open(get_crawl_log_path(), "wb") as crawl_log:

@@ -12,7 +12,7 @@ from moin.cli._tests import run, assert_p_succcess, read_index_dump
 
 def test_set_meta(index_create2):
     moin_dir, _ = get_dirs("")
-    data_dir = moin_dir / "src" / "moin" / "cli" / "_tests" / "data"
+    data_dir = moin_dir / "cli" / "_tests" / "data"
     put = run(["moin", "item-put", "-m", data_dir / "Home.meta", "-d", data_dir / "Home.data", "-o"])
     assert_p_succcess(put)
     set_meta = run(["moin", "maint-set-meta", "-q", "Home", "-k", NAME, "-v", '["Home", "AnotherName"]'])

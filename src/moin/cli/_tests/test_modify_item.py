@@ -1,4 +1,5 @@
 # Copyright: 2023-2024 MoinMoin project
+# Copyright: 2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -39,7 +40,7 @@ def test_welcome(welcome):
 def test_dump_help(load_help):
     moin_dir, artifact_dir = get_dirs("cli")
     help_dir = Path("my_help")
-    source_help_dir = moin_dir / "src" / "moin" / "help"
+    source_help_dir = moin_dir / "help"
     with open(source_help_dir / "help-en" / "Home.data", newline="") as f:
         crlf_option = "--crlf" if "\r\n" in f.read() else "--no-crlf"
     for help_subdir in ["help-common", "help-en"]:
@@ -77,16 +78,12 @@ def test_item_get(load_help):
     moin_dir, _ = get_dirs("cli")
     with open("cat.meta") as f:
         meta_cat = json.load(f)
-    with open(moin_dir / "src" / "moin" / "help" / "help-common" / "cat.jpg.meta") as f:
+    with open(moin_dir / "help" / "help-common" / "cat.jpg.meta") as f:
         meta_cat_expected = json.load(f)
-    validate_meta(
-        meta_cat_expected,
-        meta_cat,
-        f"{moin_dir / 'src' / 'moin' / 'help' / 'help-common' / 'cat.jpg.meta'} != cat.meta",
-    )
+    validate_meta(meta_cat_expected, meta_cat, f"{moin_dir / 'help' / 'help-common' / 'cat.jpg.meta'} != cat.meta")
     with open("cat.data", "rb") as f:
         cat_bytes = f.read()
-    with open(moin_dir / "src" / "moin" / "help" / "help-common" / "cat.jpg.data", "rb") as f:
+    with open(moin_dir / "help" / "help-common" / "cat.jpg.data", "rb") as f:
         cat_bytes_expected = f.read()
     assert cat_bytes_expected == cat_bytes
 
@@ -104,7 +101,7 @@ def test_item_put(index_create2):
         )
         assert item_get_fail.returncode != 0
         moin_dir, _ = get_dirs("")
-        data_dir = moin_dir / "src" / "moin" / "cli" / "_tests" / "data"
+        data_dir = moin_dir / "cli" / "_tests" / "data"
         item_put = run(
             ["moin", "item-put", "-m", data_dir / f"{page_filename}.meta", "-d", data_dir / f"{page_filename}.data"]
         )
@@ -131,7 +128,7 @@ def test_item_rev(index_create2):
     *  MyPage-v2 has newline at end in storage (size = 18)
     *  in both cases, item-get will write file with \n at end of file"""
     moin_dir, _ = get_dirs("cli2")
-    data_dir = moin_dir / "src" / "moin" / "cli" / "_tests" / "data"
+    data_dir = moin_dir / "cli" / "_tests" / "data"
     put1 = run(["moin", "item-put", "-m", data_dir / "MyPage-v1.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(put1)
     sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
@@ -170,7 +167,7 @@ def test_item_rev(index_create2):
 
 def test_validate_metadata(index_create2):
     moin_dir, _ = get_dirs("")
-    data_dir = moin_dir / "src" / "moin" / "cli" / "_tests" / "data"
+    data_dir = moin_dir / "cli" / "_tests" / "data"
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-v1.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(item_put)
     sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
@@ -260,7 +257,7 @@ def test_validate_metadata(index_create2):
 
 def test_validate_metadata_missing_rev_num(index_create2):
     moin_dir, _ = get_dirs("")
-    data_dir = moin_dir / "src" / "moin" / "cli" / "_tests" / "data"
+    data_dir = moin_dir / "cli" / "_tests" / "data"
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-vblank.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(item_put)
     sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision

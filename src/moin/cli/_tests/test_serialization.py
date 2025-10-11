@@ -1,5 +1,5 @@
 # Copyright: 2023 MoinMoin project
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -50,7 +50,7 @@ def test_save_default_ns(artifact_dir, save_default):
 
 def test_load_default_ns(artifact_dir, save_default):
     moin_dir, _ = get_dirs("")
-    welcome_dir = moin_dir / "src" / "moin" / "help" / "welcome"
+    welcome_dir = moin_dir / "help" / "welcome"
     expected_metas = {}
     for data_fn in welcome_dir.glob("*.meta"):
         with open(data_fn) as f:
@@ -105,7 +105,7 @@ def test_load_new_ns(artifact_dir, save_default):
 
 def test_load_corrupt(artifact_dir2, index_create2):
     moin_dir, _ = get_dirs("cli")
-    data_dir = moin_dir / "src" / "moin" / "cli" / "_tests" / "data"
+    data_dir = moin_dir / "cli" / "_tests" / "data"
     # item-put below errors out without the -o, see moin.storage.backends.stores.store
     p = run(["moin", "item-put", "-m", data_dir / "Corrupt.meta", "-d", data_dir / "Corrupt.data", "-o"])
     assert_p_succcess(p)
