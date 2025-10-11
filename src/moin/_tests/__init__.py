@@ -1,6 +1,7 @@
 # Copyright: 2007 MoinMoin:KarolNowak
 # Copyright: 2008 MoinMoin:ThomasWaldmann
 # Copyright: 2008, 2010 MoinMoin:ReimarBauer
+# Copyright: 2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -97,14 +98,19 @@ def get_dirs(subdir: str) -> tuple[Path, Path]:
 
     :param subdir: subdirectory for artifacts_dir
     :returns: tuple (moin_dir, artifacts_dir)
-              where moin_dir is the Path to the moin directory (parent of src),
+              where moin_dir is the Path to the moin directory,
               and artifacts_dir is the Path to moin/_test_artifacts/{subdir}
     """
-    my_dir = Path(__file__).parent.resolve()
-    moin_dir = my_dir.parents[2]
-    artifacts_dir = moin_dir / "_test_artifacts" / subdir
+    my_dir = Path(__file__).parent.resolve().parents[2]
+    artifacts_dir = my_dir / "_test_artifacts" / subdir
     if not artifacts_dir.exists():
         artifacts_dir.mkdir(parents=True)
+
+    if Path(my_dir / "src").exists:
+        # in this case we have a development environment
+        moin_dir = my_dir / "src" / "moin"
+    else:
+        moin_dir = my_dir / "moin"
     return moin_dir, artifacts_dir
 
 
