@@ -74,7 +74,7 @@
             <header class="moin-sidebar flex-grow-0" lang="{{ theme_supp.user_lang }}" dir="{{ theme_supp.user_dir }}">
                 <div class="moin-logo">
                     {% if logo %}
-                        <a href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                        <a href="{{ url_for('frontend.show_item', item_name=cfg.root_mapping.get('', cfg.default_root)) }}">
                             {{ logo }}
                         </a>
                     {% endif %}
@@ -131,7 +131,7 @@
                             </button>
 
                             {% if cfg.sitename %}
-                                <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.item_root) }}">
+                                <a class="navbar-brand" href="{{ url_for('frontend.show_item', item_name=cfg.default_root) }}">
                                     {{ cfg.sitename }}
                                 </a>
                             {% endif %}
