@@ -142,8 +142,7 @@ Notification
 
 Translation / Localization
 --------------------------
-* currently English and German translations only; no others will be added until
-  the code and texts for moin2 are more stable
+* Translations into English, German and Swedish are currently available.
 * any localization, provided by babel / pytz
 
 Logging
