@@ -5,7 +5,7 @@ the +index Create dialog or the browsers address/url field.
 The process rendering this template should have flashed a message describing the error.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% extends theme("layout.html") %}
 
 {% set title = _("Create New Item") %}

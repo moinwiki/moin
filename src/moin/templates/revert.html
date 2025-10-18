@@ -4,8 +4,8 @@
     The revision's meta data and rendered content is displayed for user review.
 #}
 
-{% import "forms.html" as forms %}
-{% import "utils.html" as utils %}
+{% import "forms.html" as forms with context %}
+{% import "utils.html" as utils with context %}
 {% extends theme("layout.html") %}
 
 {% block content %}

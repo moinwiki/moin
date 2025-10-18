@@ -5,7 +5,7 @@
         abort(404, item_name)  # where item_name is the local item name
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% extends theme("layout.html") %}
 
 {% block content %}

@@ -5,7 +5,7 @@
     The macro defines a portion of a form enabling a user to modify selected meta data.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 
 {% macro meta_editor(form, may_admin) %}
     <dl>

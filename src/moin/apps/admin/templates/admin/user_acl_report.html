@@ -11,7 +11,7 @@
 #}
 
 {% extends theme("layout.html") %}
-{% import "utils.html" as utils %}
+{% import "utils.html" as utils with context %}
 {% block content %}
     <h1>{{ _("User ACL Report") }}</h1>
     <h2>{{ _("User Names") }}: {{ user_names|join(', ') }}</h2>

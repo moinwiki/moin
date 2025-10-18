@@ -3,7 +3,7 @@
     an item to a different text markup language.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% extends theme("show.html") %}
 
 {% set title = _("Convert '{item_name}'").format(item_name=item.fqname|shorten_fqname) %}

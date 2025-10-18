@@ -2,7 +2,7 @@
     This template returns the updates for one usersettings form processed as part of an XHR request.
 #}
 
-{% import "usersettings_forms.html" as user_forms %}
+{% import "usersettings_forms.html" as user_forms with context %}
 
 {% if part == 'personal' %}
     {{ user_forms.personal(form) }}

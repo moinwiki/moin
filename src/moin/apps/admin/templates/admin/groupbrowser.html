@@ -1,5 +1,5 @@
 {% extends theme("layout.html") %}
-{% import "utils.html" as utils %}
+{% import "utils.html" as utils with context %}
 {% block content %}
     <h1>{{ _("Groups") }}</h1>
     <table id="moin-group-browser" class="zebra moin-sortable" data-sortlist="[[0,0]]">

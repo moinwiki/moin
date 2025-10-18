@@ -6,7 +6,7 @@
     Updates to the forms will be processed as XHR requests.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 
 {% macro personal(form) %}
     {{ gen.form.open(form, id="usersettings_personal", method="post", action=url_for('frontend.usersettings')) }}

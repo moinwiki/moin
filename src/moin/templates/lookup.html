@@ -1,6 +1,6 @@
 {% extends theme("layout.html") %}
-{% import "utils.html" as utils %}
-{% import "forms.html" as forms %}
+{% import "utils.html" as utils with context %}
+{% import "forms.html" as forms with context %}
 {% block content %}
     {% if results is not defined %}
         <h1>{{ _("Lookup") }}</h1>

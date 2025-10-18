@@ -4,7 +4,7 @@
     The item's meta data and rendered content is displayed for user review.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% extends theme("show.html") %}
 
 {% set title = _("Rename '{item_name}'").format(item_name=item.fqname|shorten_fqname) %}

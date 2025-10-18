@@ -12,8 +12,8 @@
         * select edit "from scratch" or "from template"
 #}
 
-{% import "forms.html" as forms %}
-{% import "utils.html" as utils %}
+{% import "forms.html" as forms with context %}
+{% import "utils.html" as utils with context %}
 
 {% extends theme("show.html") %}
 

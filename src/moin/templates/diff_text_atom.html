@@ -1,4 +1,4 @@
-{% import "utils.html" as utils %}
+{% import "utils.html" as utils with context %}
 
 <table class="moin-diff" style="width: 100%;">
     {% for llineno, lcontent, rlineno, rcontent in diffs %}
