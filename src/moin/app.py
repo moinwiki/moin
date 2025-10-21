@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import os
 import sys
+import warnings
 
 from os import path, PathLike
 from flask import Flask, request, session

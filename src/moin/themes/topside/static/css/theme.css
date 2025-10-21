@@ -192,3 +192,96 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     div.moin-table-of-contents { box-shadow: none }
     a[href]:after { content: none; }  /* Firefox prints urls after anchor text by default */
 }
+
+/* Dark Mode Theme Support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1E1E1E;
+        color: #E8E6E3;
+    }
+    
+    #moin-header {
+        background-image: url("../../../static/img/dark-clouds.jpg"), linear-gradient(to bottom, #2A2A2A, #1E1E1E);
+        background-color: #2A2A2A;
+        border-bottom: 1px solid #3A3A3A;
+    }
+    
+    #moin-footer {
+        background-image: url("../../../static/img/dark-clouds.jpg"), linear-gradient(to top, #2A2A2A, #1E1E1E);
+        background-color: #2A2A2A;
+        background-position-y: bottom;
+        color: #B8B8B8;
+    }
+    
+    .moin-sitename {
+        color: #E8E6E3;
+    }
+    
+    a {
+        color: #6495ED;
+    }
+    
+    a:hover {
+        color: #80B3FF;
+    }
+    
+    #moin-searchform,
+    #moin-long-searchform > p > input {
+        background-color: #2A2A2A;
+        border-color: #4A6B8A;
+        color: #E8E6E3;
+    }
+    
+    .moin-search-query {
+        background-color: #2A2A2A;
+        color: #E8E6E3;
+    }
+    
+    #moin-search-submit {
+        filter: invert(1) hue-rotate(180deg);
+    }
+    
+    #popup {
+        background-color: #2A2A2A;
+        border-color: #4A6B8A;
+    }
+    
+    .popup-header {
+        background-color: #2A4A6A;
+        color: #E8E6E3;
+    }
+    
+    ul.moin-breadcrumb li ul.moin-alias {
+        background-color: #2A3544;
+        border-color: #5A7FA0;
+    }
+    
+    /* Sidebar styling for dark mode */
+    @media (min-width: 1025px) {
+        #moin-sidebar {
+            background-color: #252525;
+            border-right: 1px solid #3A3A3A;
+        }
+    }
+    
+    /* Better contrast for navigation items */
+    #moin-username,
+    #moin-navibar,
+    .moin-breadcrumb,
+    .moin-custom-panel,
+    .moin-itemviews {
+        color: #E8E6E3;
+    }
+    
+    #moin-username li a,
+    #moin-navibar li a,
+    .moin-breadcrumb li a {
+        color: #6495ED;
+    }
+    
+    #moin-username li a:hover,
+    #moin-navibar li a:hover,
+    .moin-breadcrumb li a:hover {
+        color: #80B3FF;
+    }
+}
