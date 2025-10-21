@@ -5,9 +5,9 @@
   "contenttype": "text/x-rst;charset=utf-8",
   "dataid": "c7f47fd6eaaa4e518c2bd32d741073f8",
   "externallinks": [
-    "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#enumerated-lists",
     "http://moinmo.in/",
-    "http://www.python.org/"
+    "http://www.python.org/",
+    "https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists"
   ],
   "itemid": "412d0e59c79147058ef2e947d1772d5f",
   "itemlinks": [
@@ -29,8 +29,8 @@
   "namespace": "help-en",
   "rev_number": 1,
   "revid": "fd40283c31464441a3734ba512b7cfb0",
-  "sha1": "40abb7437b6bd5234f58644114cef02eaa7a7b83",
-  "size": 21443,
+  "sha1": "d71e4e1f1e978714550ab1c0f80033cc3d3e182c",
+  "size": 19176,
   "summary": "",
   "tags": [
     "parser",

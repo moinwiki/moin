@@ -3,8 +3,9 @@ reST (reStructuredText) Markup
 ===============================
 
 ..
- This document is duplicated within Moin2 as `/docs/user/rest.rst` and
- `contrib/sample/rst.data`. Please update both.
+ This document is duplicated within the Moin2 repository as
+ `docs/user/rest.rst` and `src/moin/help/help-en/rst.data`.
+ Please update both.
 
 Depending on your source, this document may have been created by
 the Moin2 reST parser (Docutils) or the Sphinx reST parser. These parsers
@@ -96,11 +97,11 @@ The following is a table of inline markup that can be used to format text in Moi
 Markup                                   Result
 ======================================== ====================================
 ``**Bold Text**``                        **Bold text**
-                                         
+
 ``*Italic*``                             *Italic*
-                                         
+
 ````Inline Literals````                  ``Inline Literals``
-                                         
+
 ``***nested markup is not supported***`` ***nested markup is not supported***
 ======================================== ====================================
 
@@ -127,7 +128,8 @@ Markup                                                            Result
 Internal Links
 --------------
 
-The examples below use the "help-en" and "help-common" namespaces to separate these help pages from the main wiki content.
+The examples below use the "help-en" and "help-common" namespaces
+to separate these help pages from the main wiki content.
 Some target pages may be missing from the default namespace.
 
 Within the rst syntax:
