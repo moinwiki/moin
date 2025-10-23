@@ -8,9 +8,9 @@ Create a virtual environment and install Moin 2 and all requirements in developm
 
 Usage for installation:
 
-    <python> quickinstall.py (where <python> is any Python 3.9+ executable)
+    <python> quickinstall.py (where <python> is any Python 3.10+ executable)
 
-Requires: Python 3.9+, pip
+Requires: Python 3.10+, pip
 
 The first run of quickinstall.py creates these files or symlinks in the repo root:
 
@@ -47,8 +47,8 @@ from collections import Counter
 import venv
 
 
-if sys.hexversion < 0x3090000:
-    sys.exit("Error: MoinMoin requires Python 3.9+, current version is %s\n" % (platform.python_version(),))
+if sys.hexversion < 0x30A0000:
+    sys.exit("Error: MoinMoin requires Python 3.10+, current version is %s\n" % (platform.python_version(),))
 
 
 WIN_INFO = "m.bat, activate.bat, and deactivate.bat are created by quickinstall.py"

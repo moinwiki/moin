@@ -10,7 +10,7 @@ description = "MoinMoin is an easy to use, full-featured and extensible wiki sof
 readme = {file="README.md", content-type="text/markdown"}
 license = "GPL-2.0-or-later"
 license-files = ["LICENSE.txt"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["wiki", "web"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -24,7 +24,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -109,7 +108,7 @@ norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py310"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -157,13 +156,13 @@ skips = ["B101", "B105", "B106", "B307", "B311", "B403", "B608"]
 
 # run like this:
 # tox
-# tox run -e py39
+# tox run -e py310
 # tox -- -v -k test_wikiutil
 # tox -- -v
 
 [tool.tox]
 requires = ["tox>=4.21"]
-envlist = ["3.9", "3.10", "3.11", "3.12", "3.13", "ruff"]
+envlist = ["3.10", "3.11", "3.12", "3.13", "ruff"]
 
 [tool.tox.env_run_base]
 description = "Run tests under {base_python}"
