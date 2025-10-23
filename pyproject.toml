@@ -28,6 +28,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Internet :: WWW/HTTP :: WSGI",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -162,7 +163,7 @@ skips = ["B101", "B105", "B106", "B307", "B311", "B403", "B608"]
 
 [tool.tox]
 requires = ["tox>=4.21"]
-envlist = ["3.10", "3.11", "3.12", "3.13", "ruff"]
+envlist = ["3.10", "3.11", "3.12", "3.13", "3.14", "ruff"]
 
 [tool.tox.env_run_base]
 description = "Run tests under {base_python}"
