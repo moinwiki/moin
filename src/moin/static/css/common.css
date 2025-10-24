@@ -739,3 +739,106 @@ table.calendar { table-layout: fixed; }
 @media print {
     .moin-no-print { display: none; }
 }
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+    /* Reduce brightness of images to be easier on the eyes at night */
+    img:not([class*="logo"]) {
+        opacity: 0.85;
+        transition: opacity 0.3s ease;
+    }
+    
+    img:not([class*="logo"]):hover {
+        opacity: 1;
+    }
+    
+    /* Adjust form inputs for better visibility in dark mode */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="search"],
+    textarea,
+    select {
+        background-color: #2A2A2A;
+        color: #E8E6E3;
+        border-color: #4A6B8A;
+    }
+    
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus,
+    input[type="search"]:focus,
+    textarea:focus,
+    select:focus {
+        background-color: #303030;
+        border-color: #6495ED;
+        outline: 1px solid #6495ED;
+    }
+    
+    /* Better button contrast in dark mode */
+    button,
+    input[type="submit"],
+    input[type="button"],
+    input[type="reset"] {
+        background-color: #3A5A7A;
+        color: #E8E6E3;
+        border-color: #5A7FA0;
+    }
+    
+    button:hover,
+    input[type="submit"]:hover,
+    input[type="button"]:hover,
+    input[type="reset"]:hover {
+        background-color: #4A6A8A;
+        border-color: #80A0C0;
+    }
+    
+    /* Code blocks with better contrast */
+    pre,
+    code {
+        background-color: #252830;
+        color: #E8E6E3;
+        border-color: #4A5A6A;
+    }
+    
+    /* Tables in dark mode */
+    table {
+        border-color: #4A6B8A;
+    }
+    
+    th,
+    td {
+        border-color: #4A6B8A;
+    }
+    
+    /* Horizontal rules */
+    hr {
+        border-color: #4A6B8A;
+        opacity: 0.3;
+    }
+    
+    /* Scrollbar styling for WebKit browsers (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #1E1E1E;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #4A4A4A;
+        border-radius: 6px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #5A5A5A;
+    }
+    
+    /* Firefox scrollbar styling */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #4A4A4A #1E1E1E;
+    }
+}
