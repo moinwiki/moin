@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: moin 2.0.0b\n"
 "Report-Msgid-Bugs-To: English <moin-user@python.org>\n"
 "POT-Creation-Date: 2024-11-29 17:35+0100\n"
-"PO-Revision-Date: 2025-10-18 22:47+0100\n"
+"PO-Revision-Date: 2025-10-21 20:06+0200\n"
 "Last-Translator: Daniel Nylander <github@danielnylander.se>\n"
-"Language: sv\n"
 "Language-Team: Swedish <moin-user@python.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.17.0\n"
+"X-Generator: Poedit 3.8\n"
 
 #: src/moin/forms.py:126 src/moin/forms.py:210
 msgid "No namespace field in the meta."
@@ -34,11 +35,11 @@ msgstr "Artikelnamn ({invalid_names}) får inte börja med \"@\" eller \"+"
 #: src/moin/forms.py:146
 #, python-brace-format
 msgid ""
-"Item name ({invalid_names}) must not contain ',' characters. Create item with 1 name, use rename to create "
-"multiple names."
+"Item name ({invalid_names}) must not contain ',' characters. Create item with 1 name, use rename to create multiple "
+"names."
 msgstr ""
-"Artikelns namn ({invalid_names}) får inte innehålla tecknen \",\". Skapa artikel med 1 namn, använd rename för "
-"att skapa flera namn."
+"Artikelns namn ({invalid_names}) får inte innehålla tecknen \",\". Skapa artikel med 1 namn, använd rename för att "
+"skapa flera namn."
 
 #: src/moin/forms.py:157
 #, python-brace-format
@@ -69,7 +70,7 @@ msgstr "{_namespace} är inte en giltig namnrymd."
 
 #: src/moin/forms.py:238
 msgid "E-Mail"
-msgstr "E-artikel"
+msgstr "E-post"
 
 #: src/moin/forms.py:239
 msgid "E-Mail address"
@@ -319,8 +320,8 @@ msgstr "Grupper"
 msgid "Item ACL Report"
 msgstr "Punkt ACL-rapport"
 
-#: src/moin/apps/admin/templates/admin/group_acl_report.html:16
-#: src/moin/apps/admin/templates/admin/groupbrowser.html:11 src/moin/apps/admin/views.py:579
+#: src/moin/apps/admin/templates/admin/group_acl_report.html:16 src/moin/apps/admin/templates/admin/groupbrowser.html:11
+#: src/moin/apps/admin/views.py:579
 msgid "Group ACL Report"
 msgstr "Grupp ACL-rapport"
 
@@ -349,43 +350,37 @@ msgid "Namespace"
 msgstr "Namnrymd"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:22
-#: src/moin/apps/admin/templates/admin/item_acl_report.html:18
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:22
+#: src/moin/apps/admin/templates/admin/item_acl_report.html:18 src/moin/apps/admin/templates/admin/user_acl_report.html:22
 msgid "Item Names"
 msgstr "Artikelnamn"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:23
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:43
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:23
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:43
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:23 src/moin/apps/admin/templates/admin/user_acl_report.html:43
 msgid "read"
 msgstr "läs"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:24
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:44
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:24
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:44
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:24 src/moin/apps/admin/templates/admin/user_acl_report.html:44
 msgid "write"
 msgstr "skriva"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:25
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:45
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:25
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:45
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:25 src/moin/apps/admin/templates/admin/user_acl_report.html:45
 msgid "create"
 msgstr "skapa"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:26
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:46
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:26
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:46
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:26 src/moin/apps/admin/templates/admin/user_acl_report.html:46
 msgid "destroy"
 msgstr "förstöra"
 
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:27
 #: src/moin/apps/admin/templates/admin/group_acl_report.html:47
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:27
-#: src/moin/apps/admin/templates/admin/user_acl_report.html:47
+#: src/moin/apps/admin/templates/admin/user_acl_report.html:27 src/moin/apps/admin/templates/admin/user_acl_report.html:47
 msgid "admin"
 msgstr "administration"
 
@@ -449,8 +444,7 @@ msgstr "Rev."
 msgid "Timestamp"
 msgstr "Tidsstämpel"
 
-#: src/moin/apps/admin/templates/admin/trash.html:15 src/moin/templates/history.html:55
-#: src/moin/templates/utils.html:378
+#: src/moin/apps/admin/templates/admin/trash.html:15 src/moin/templates/history.html:55 src/moin/templates/utils.html:378
 msgid "Editor"
 msgstr "Redigerare"
 
@@ -500,7 +494,7 @@ msgstr "Användarnamn"
 
 #: src/moin/apps/admin/templates/admin/userbrowser.html:15
 msgid "Display name"
-msgstr "visningsnamn"
+msgstr "Visningsnamn"
 
 #: src/moin/apps/admin/templates/admin/userbrowser.html:16
 msgid "Email address"
@@ -532,9 +526,9 @@ msgstr "Anpassade konfigurationsinställningar"
 
 #: src/moin/apps/admin/templates/admin/wikiconfig.html:53
 msgid ""
-"This table shows all settings in this wiki that do not have default values. Settings that the configuration "
-"system doesn't know about are shown in italic, those may be due to third-party extensions needing configuration "
-"or settings that were removed from Moin."
+"This table shows all settings in this wiki that do not have default values. Settings that the configuration system "
+"doesn't know about are shown in italic, those may be due to third-party extensions needing configuration or settings "
+"that were removed from Moin."
 msgstr ""
 "Denna tabell visar alla inställningar i denna wiki som inte har några standardvärden. Inställningar som "
 "konfigurationssystemet inte känner till visas i kursiv stil. Det kan bero på att tredjepartstillägg behöver "
@@ -714,8 +708,7 @@ msgstr "Filen har laddats upp och bytt namn från {bad_name} till {good_name}. "
 #, python-brace-format
 msgid "UnicodeDecodeError, upload failed, not a text file, nothing saved: '{file_name}'. Try changing the name."
 msgstr ""
-"UnicodeDecodeError, uppladdning misslyckades, inte en textfil, inget sparat: '{file_name}'. Försök att ändra "
-"namnet."
+"UnicodeDecodeError, uppladdning misslyckades, inte en textfil, inget sparat: '{file_name}'. Försök att ändra namnet."
 
 #: src/moin/apps/frontend/views.py:1365
 #, python-brace-format
@@ -843,11 +836,11 @@ msgstr "Kontoverifiering krävs, se e-postmeddelandet som vi skickade till din a
 #: src/moin/apps/frontend/views.py:2063
 #, python-brace-format
 msgid ""
-"An error occurred while sending the verification email: \"{message}\" Please contact an administrator to activate"
-" your account."
+"An error occurred while sending the verification email: \"{message}\" Please contact an administrator to activate your "
+"account."
 msgstr ""
-"Ett fel inträffade när du skickade verifieringsmeddelandet: \"{message}\" Kontakta en administratör för att "
-"aktivera ditt konto."
+"Ett fel inträffade när du skickade verifieringsmeddelandet: \"{message}\" Kontakta en administratör för att aktivera "
+"ditt konto."
 
 #: src/moin/apps/frontend/views.py:2070
 msgid "Account created, please log in now."
@@ -938,8 +931,7 @@ msgstr "Antingen ditt användarnamn eller lösenord var ogiltigt."
 msgid "Log in"
 msgstr "Logga in"
 
-#: src/moin/apps/frontend/views.py:2268 src/moin/templates/utils.html:482
-#: src/moin/themes/basic/templates/layout.html:172
+#: src/moin/apps/frontend/views.py:2268 src/moin/templates/utils.html:482 src/moin/themes/basic/templates/layout.html:172
 msgid "Login"
 msgstr "Logga in"
 
@@ -1009,15 +1001,15 @@ msgstr "Användarinställningar"
 
 #: src/moin/apps/frontend/views.py:2436
 msgid "This name is already in use: "
-msgstr "Detta e-postmeddelande är redan i bruk"
+msgstr "Detta namn används redan: "
 
 #: src/moin/apps/frontend/views.py:2437
 msgid "The Display-Name contains invalid characters: "
-msgstr ""
+msgstr "Display-Name innehåller ogiltiga tecken: "
 
 #: src/moin/apps/frontend/views.py:2438
 msgid "The Username contains invalid characters: "
-msgstr ""
+msgstr "Username innehåller ogiltiga tecken: "
 
 #: src/moin/apps/frontend/views.py:2459
 msgid "Usernames"
@@ -1591,14 +1583,13 @@ msgstr "En redigeringskonflikt har uppstått, redigera det här artikeln igen f�
 #, python-brace-format
 msgid "You may recover your draft saved {number} {interval} ago by clicking the 'Load Draft' button."
 msgstr ""
-"Du kan återställa ditt utkast som sparades för {number} {interval} år sedan genom att klicka på knappen \"Load "
-"Draft\"."
+"Du kan återställa ditt utkast som sparades för {number} {interval} år sedan genom att klicka på knappen \"Load Draft\"."
 
 #: src/moin/items/__init__.py:1709
 #, python-brace-format
 msgid ""
-"Your draft saved {number} {interval} ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to "
-"merge conflicting updates."
+"Your draft saved {number} {interval} ago is outdated, click 'Cancel' to discard or 'Load Draft', then 'Save' to merge "
+"conflicting updates."
 msgstr ""
 "Ditt utkast som sparades för {number} {interval} sedan är inaktuellt, klicka på \"Avbryt\" för att kassera eller "
 "\"Ladda utkast\" och sedan \"Spara\" för att slå samman motstridiga uppdateringar."
@@ -1774,23 +1765,23 @@ msgstr "Biljettartikel"
 
 #: src/moin/macros/Anchor.py:17
 msgid "Anchor macro failed - missing argument."
-msgstr ""
+msgstr "Ankarmakro misslyckades - saknade argument."
 
 #: src/moin/macros/Anchor.py:21
 msgid "Anchor macro failed - only 1 argument allowed."
-msgstr ""
+msgstr "Ankarmakro misslyckades - endast 1 argument tillåtet."
 
 #: src/moin/macros/Anchor.py:26
 msgid "Anchor macro failed - space is not allowed in anchors."
-msgstr ""
+msgstr "Ankarmakro misslyckades - blanksteg är inte tillåtet i ankare."
 
 #: src/moin/macros/Date.py:73 src/moin/macros/DateTime.py:30
 msgid "Invalid input parameter: None, float, int, or ISO 8601 formats are accepted."
-msgstr ""
+msgstr "Ogiltig inmatningsparameter: Formaten None, float, int eller ISO 8601 accepteras."
 
 #: src/moin/macros/FontAwesome.py:30
 msgid "Missing font name, syntax is <<FontAwesome(name,color,size)>>"
-msgstr ""
+msgstr "Saknar namn på teckensnitt, syntaxen är <<FontAwesome(namn,färg,storlek)>>"
 
 #: src/moin/macros/GetVal.py:24
 msgid "Invalid parameters, try <<GetVal(DictName, key)>>"
@@ -1825,7 +1816,7 @@ msgstr "Filmönster"
 
 #: src/moin/macros/Icon.py:25
 msgid "Icon macro failed due to missing icon name."
-msgstr ""
+msgstr "Ikonmakro misslyckades på grund av att ikonens namn saknades."
 
 #: src/moin/macros/Icon.py:28
 msgid "Icon not rendered, invalid name"
@@ -1834,16 +1825,16 @@ msgstr "Ikonen återges inte, ogiltigt namn"
 #: src/moin/macros/ItemList.py:93
 #, python-brace-format
 msgid ""
-"ItemList macro: Argument \"{arg}\" does not follow <key>=<val> format (arguments, if more than one, must be "
-"comma-separated)."
+"ItemList macro: Argument \"{arg}\" does not follow <key>=<val> format (arguments, if more than one, must be comma-"
+"separated)."
 msgstr ""
-"Makro för artikellista: Argumentet \"{arg}\" följer inte formatet <key>=<val> (argument, om fler än ett, måste "
-"vara kommaseparerade)."
+"Makro för artikellista: Argumentet \"{arg}\" följer inte formatet <key>=<val> (argument, om fler än ett, måste vara "
+"kommaseparerade)."
 
 #: src/moin/macros/ItemList.py:110
 #, python-brace-format
 msgid "The value for \"{key}\" must be \"True\" or \"False\", got \"{val}\"."
-msgstr "Värdet för \”{key}\” måste vara \”True\” eller \”False\”, fick \”{val}\”."
+msgstr "Värdet för \\”{key}\\” måste vara \\”True\\” eller \\”False\\”, fick \\”{val}\\”."
 
 #: src/moin/macros/ItemList.py:121
 #, python-brace-format
@@ -1947,12 +1938,12 @@ msgstr "Sön"
 #: src/moin/macros/RandomQuote.py:42
 #, python-brace-format
 msgid "Invalid value given for item name: {0}"
-msgstr ""
+msgstr "Ogiltigt värde angivet för artikelnamn: {0}"
 
 #: src/moin/macros/RandomQuote.py:62
 #, python-brace-format
 msgid "No quotes found in {0}"
-msgstr ""
+msgstr "Inga citat hittades i {0}"
 
 #: src/moin/macros/ShowIcons.py:27 src/moin/macros/ShowSmileys.py:20
 msgid "Result"
@@ -1968,7 +1959,7 @@ msgstr "ShowWikiDict-makrot misslyckades - metadata saknar \"wikidict\"-attribut
 
 #: src/moin/macros/SlideShow.py:17
 msgid " Start SlideShow"
-msgstr ""
+msgstr " Starta bildspel"
 
 #: src/moin/macros/TitleIndex.py:26
 msgid "TitleList macro does not support any arguments."
@@ -1995,13 +1986,13 @@ msgstr "Blockmakron kan inte användas inline"
 #: src/moin/macros/_base.py:242
 #, python-brace-format
 msgid "Unrecognized \"display\" value \"{display}\"."
-msgstr "Oigenkännligt \”display\”-värde \”{display}\”."
+msgstr "Oigenkännligt \\”display\\”-värde \\”{display}\\”."
 
 #: src/moin/mail/sendmail.py:54
 msgid "Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."
 msgstr ""
-"Kontakta administratören: Det går inte att skicka e-post om lösenordsåterställning eftersom e-postkonfigurationen"
-" är ofullständig."
+"Kontakta administratören: Det går inte att skicka e-post om lösenordsåterställning eftersom e-postkonfigurationen är "
+"ofullständig."
 
 #: src/moin/mail/sendmail.py:65
 msgid "No recipients, nothing to do"
@@ -2129,11 +2120,11 @@ msgstr "Ett fel inträffade under behandlingen av din begäran."
 
 #: src/moin/templates/crash.html:6
 msgid ""
-"More details have been logged. The following data will be helpful for the site admin in locating the "
-"corresponding log entries:"
+"More details have been logged. The following data will be helpful for the site admin in locating the corresponding log "
+"entries:"
 msgstr ""
-"Fler detaljer har loggats. Följande data kommer att vara till hjälp för webbplatsadministratören när det gäller "
-"att hitta motsvarande loggartikeler:"
+"Fler detaljer har loggats. Följande data kommer att vara till hjälp för webbplatsadministratören när det gäller att "
+"hitta motsvarande loggartikeler:"
 
 #: src/moin/templates/crash.html:9
 msgid "Error ID"
@@ -2600,8 +2591,7 @@ msgstr "﻿Lägg till länk"
 msgid "Unsubscribe"
 msgstr "Avsluta prenumeration"
 
-#: src/moin/templates/itemviews.html:100 src/moin/templates/ticket/ticket_macros.html:47
-#: src/moin/themes/__init__.py:272
+#: src/moin/templates/itemviews.html:100 src/moin/templates/ticket/ticket_macros.html:47 src/moin/themes/__init__.py:272
 msgid "Subscribe"
 msgstr "Prenumerera"
 
@@ -2680,8 +2670,8 @@ msgstr "Objektet hittades inte, skapa det nu?"
 #: src/moin/templates/modify_select_itemtype.html:13
 #, python-brace-format
 msgid ""
-"Item '{fqname}' does not exist (yet), but you can try creating it now. Please select the type of the item you "
-"want to create."
+"Item '{fqname}' does not exist (yet), but you can try creating it now. Please select the type of the item you want to "
+"create."
 msgstr "Objektet '{fqname}' finns inte (ännu), men du kan försöka skapa det nu. Välj vilken typ av artikel du vill skapa."
 
 #: src/moin/templates/modify_select_template.html:11
@@ -2724,11 +2714,11 @@ msgstr "Detta artikel har flera namn:"
 
 #: src/moin/templates/rename.html:16
 msgid ""
-"If a parent name of the subitems below is removed, that parent's subitems will become subitems of the first name "
-"in the target field:"
+"If a parent name of the subitems below is removed, that parent's subitems will become subitems of the first name in the "
+"target field:"
 msgstr ""
-"Om ett överordnat namn för underartikelen nedan tas bort, kommer det överordnade namnet att bli underartikel för "
-"det första namnet i målfältet:"
+"Om ett överordnat namn för underartikelen nedan tas bort, kommer det överordnade namnet att bli underartikel för det "
+"första namnet i målfältet:"
 
 #: src/moin/templates/rename.html:18
 msgid "The following subitems will be renamed:"
@@ -2839,8 +2829,7 @@ msgstr "Filtrera:"
 msgid "Show {status} tickets"
 msgstr "Visa {status} biljetter"
 
-#: src/moin/templates/ticket/advanced.html:6 src/moin/templates/ticket/advanced.html:8
-#: src/moin/templates/tickets.html:22
+#: src/moin/templates/ticket/advanced.html:6 src/moin/templates/ticket/advanced.html:8 src/moin/templates/tickets.html:22
 msgid "Advanced Search"
 msgstr "Avancerad sökning"
 
@@ -2890,8 +2879,7 @@ msgstr "Öppen"
 #: src/moin/templates/tickets.html:107
 msgid "Tip: Sort multiple columns simultaneously by holding down the Shift key and clicking on additional column headers!"
 msgstr ""
-"Tips: Sortera flera kolumner samtidigt genom att hålla ned Shift-tangenten och klicka på ytterligare "
-"kolumnrubriker!"
+"Tips: Sortera flera kolumner samtidigt genom att hålla ned Shift-tangenten och klicka på ytterligare kolumnrubriker!"
 
 #: src/moin/templates/ticket/advanced.html:76 src/moin/templates/tickets.html:111
 msgid "No tickets found."
@@ -2904,14 +2892,13 @@ msgstr "Om du vill ändra din e-postadress måste du verifiera den. En länk kom
 #: src/moin/templates/usersettings_forms.html:69
 msgid "Use the \"Add Link\" or \"Remove Link\" controls within Item Views to add or remove quick links."
 msgstr ""
-"Använd kontrollerna \"Lägg till länk\" eller \"Ta bort länk\" i artikelvyn för att lägga till eller ta bort "
-"snabblänkar."
+"Använd kontrollerna \"Lägg till länk\" eller \"Ta bort länk\" i artikelvyn för att lägga till eller ta bort snabblänkar."
 
 #: src/moin/templates/usersettings_forms.html:71
 msgid "To manually add a link to a local wiki item, prefix the item name with the wiki name: MyWiki/myitem"
 msgstr ""
-"Om du manuellt vill lägga till en länk till ett lokalt wiki-artikel, föregår du artikelnamnet med wikinamnet: "
-"MyWiki/myitem"
+"Om du manuellt vill lägga till en länk till ett lokalt wiki-artikel, föregår du artikelnamnet med wikinamnet: MyWiki/"
+"myitem"
 
 #: src/moin/templates/usersettings_forms.html:72
 msgid "To add a link to an external wiki page, use the wiki name as a prefix: MeatBall/RecentChanges"
@@ -3198,11 +3185,11 @@ msgstr "Punkt Åtgärder"
 #: src/moin/utils/edit_locking.py:277
 #, python-brace-format
 msgid ""
-"Edit lock for {user_name} timed out {number} {interval} ago, click 'Cancel' to yield more time, clicking 'Save' "
-"may require {user_name} to resolve conflicting edits."
+"Edit lock for {user_name} timed out {number} {interval} ago, click 'Cancel' to yield more time, clicking 'Save' may "
+"require {user_name} to resolve conflicting edits."
 msgstr ""
-"Redigeringslåset för {user_name} timade ut för {number} {interval} sedan, klicka på \"Avbryt\" för att ge mer "
-"tid, klicka på \"Spara\" kan kräva {user_name} för att lösa motstridiga redigeringar."
+"Redigeringslåset för {user_name} timade ut för {number} {interval} sedan, klicka på \"Avbryt\" för att ge mer tid, "
+"klicka på \"Spara\" kan kräva {user_name} för att lösa motstridiga redigeringar."
 
 #: src/moin/utils/edit_locking.py:286
 #, python-brace-format
@@ -3213,15 +3200,15 @@ msgstr "Objektet '{item_name}' är låst av {user_name}. Försök igen i {number
 #, python-brace-format
 msgid "Someone else updated '{item_name}' after your edit lock timed out. Conflicting changes must be manually merged. "
 msgstr ""
-"Någon annan uppdaterade '{item_name}' efter att ditt redigeringslås tidsinställdes. Om du klickar på \"Spara\" "
-"måste motstridiga ändringar slås samman manuellt. Klicka på \"Avbryt\" för att kassera ändringarna."
+"Någon annan uppdaterade '{item_name}' efter att ditt redigeringslås gick över tiden. Ändringar i konflikt måste "
+"manuellt slås samman. "
 
 #: src/moin/utils/edit_locking.py:337
 #, python-brace-format
 msgid "Item '{item_name}' is locked by {user_name}. Edit lock error, check Item History to verify no changes were lost."
 msgstr ""
-"Objekt '{item_name}' är låst av {user_name}. Fel i redigeringslåset, kontrollera artikelns historik för att "
-"verifiera att inga ändringar har gått förlorade."
+"Objekt '{item_name}' är låst av {user_name}. Fel i redigeringslåset, kontrollera artikelns historik för att verifiera "
+"att inga ändringar har gått förlorade."
 
 #: src/moin/utils/notifications.py:56
 #, python-brace-format
