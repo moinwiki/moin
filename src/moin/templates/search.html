@@ -7,8 +7,8 @@
 #}
 
 {% extends theme("layout.html") %}
-{% import "forms.html" as forms %}
-{% import "utils.html" as utils %}
+{% import "forms.html" as forms with context %}
+{% import "utils.html" as utils with context %}
 
 {%- set search_form = None %} {# layout will not show search form in header #}
 

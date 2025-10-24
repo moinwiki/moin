@@ -4,7 +4,7 @@
     Original Moin code should be added here. Macros derived from Flatland should be added to forms.html.
 #}
 
-{% import 'forms.html' as forms %}
+{% import "forms.html" as forms with context %}
 
 {# "item" must be passed because of flakey jinja2 context passing #}
 {% macro rev_navigation(rev_navigation_ids_dates, fqname, view='frontend.show_item', item=item) %}

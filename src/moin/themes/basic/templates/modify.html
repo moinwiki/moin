@@ -1,9 +1,9 @@
 {% extends theme("layout.html") %}
-{% import "forms.html" as forms %}
-{% import "utils.html" as utils %}
-{% from theme(form.meta_template) import basic_meta_editor %}
+{% import "forms.html" as forms with context %}
+{% import "utils.html" as utils with context %}
+{% from theme(form.meta_template) import basic_meta_editor with context %}
 {% import theme("itemviews.html") as itemviews with context %}
-{% import theme(form['content_form'].template) as content_template %}
+{% import theme(form['content_form'].template) as content_template with context %}
 {% set extra_head = content_template.extra_head %}
 {% if content_template.basic_data_editor is defined %}
     {% set data_editor = content_template.basic_data_editor %}

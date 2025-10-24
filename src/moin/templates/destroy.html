@@ -7,7 +7,7 @@
     is removed from storage so server log is only record of the transaction.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% extends theme("show.html") %}
 
 {% if alias_names %}

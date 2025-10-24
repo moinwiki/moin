@@ -1,5 +1,5 @@
-{% import "forms.html" as forms %}
-{% import "utils.html" as utils %}
+{% import "forms.html" as forms with context %}
+{% import "utils.html" as utils with context %}
 
 {% macro show_blog_entry(entry_item) %}
     {% set summary = entry_item.meta['summary'] %}

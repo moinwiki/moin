@@ -34,7 +34,6 @@ from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CO
 from moin.constants.misc import FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
-from moin.search import SearchForm
 from moin.user import User
 from moin.utils.interwiki import (
     split_interwiki,
@@ -46,7 +45,6 @@ from moin.utils.interwiki import (
     split_fqname,
     get_fqname,
 )
-from moin.utils.forms import make_generator
 from moin.utils.clock import timed
 from moin.utils.mime import Type
 from moin.utils import show_time
@@ -763,19 +761,19 @@ def time_datetime(dt):
     return show_time.format_date_time(dt)
 
 
-def setup_jinja_env():
-    app.jinja_env.filters["shorten_fqname"] = shorten_fqname
-    app.jinja_env.filters["shorten_item_name"] = shorten_item_name
-    app.jinja_env.filters["shorten_id"] = shorten_id
-    app.jinja_env.filters["contenttype_to_class"] = contenttype_to_class
-    app.jinja_env.filters["json_dumps"] = dumps
-    app.jinja_env.filters["shorten_ctype"] = shorten_ctype
-    app.jinja_env.filters["time_hh_mm"] = time_hh_mm
-    app.jinja_env.filters["time_datetime"] = time_datetime
+def setup_jinja_env(jinja_env):
+    jinja_env.filters["shorten_fqname"] = shorten_fqname
+    jinja_env.filters["shorten_item_name"] = shorten_item_name
+    jinja_env.filters["shorten_id"] = shorten_id
+    jinja_env.filters["contenttype_to_class"] = contenttype_to_class
+    jinja_env.filters["json_dumps"] = dumps
+    jinja_env.filters["shorten_ctype"] = shorten_ctype
+    jinja_env.filters["time_hh_mm"] = time_hh_mm
+    jinja_env.filters["time_datetime"] = time_datetime
     # please note that these filters are installed by flask-babel:
     # datetimeformat, dateformat, timeformat, timedeltaformat
 
-    app.jinja_env.globals.update(
+    jinja_env.globals.update(
         {
             # please note that flask-babel/jinja2.ext installs:
             # _, gettext, ngettext
@@ -784,19 +782,11 @@ def setup_jinja_env():
             "Type": Type,
             # please note that flask-theme installs:
             # theme, theme_static
-            "theme_supp": ThemeSupport(app.cfg),
-            "user": flaskg.user,
-            "storage": flaskg.storage,
-            "clock": flaskg.clock,
-            "cfg": app.cfg,
-            "item_name": request.view_args.get("item_name", ""),
             "url_for_item": url_for_item,
             "get_fqname": get_fqname,
             "get_editor_info": lambda meta: get_editor_info(meta),
             "get_assigned_to_info": lambda meta: get_assigned_to_info(meta),
             "utctimestamp": lambda dt: utctimestamp(dt),
-            "gen": make_generator(),
-            "search_form": SearchForm.from_defaults(),
         }
     )
 

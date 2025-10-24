@@ -29,13 +29,15 @@ from flask_theme import setup_themes
 from jinja2 import ChoiceLoader, FileSystemLoader
 from whoosh.index import EmptyIndexError
 
-from moin.utils import monkeypatch  # noqa
-from moin.utils.clock import Clock
 from moin import auth, user, config
 from moin.constants.misc import ANON
 from moin.i18n import i18n_init
-from moin.themes import setup_jinja_env, themed_error
+from moin.search import SearchForm
 from moin.storage.middleware import protecting, indexing, routing
+from moin.themes import setup_jinja_env, themed_error, ThemeSupport
+from moin.utils import monkeypatch  # noqa
+from moin.utils.clock import Clock
+from moin.utils.forms import make_generator
 from moin.wikiutil import WikiLinkAnalyzer
 
 from moin import log
@@ -192,7 +194,9 @@ def create_app_ext(
     if app.cfg.template_dirs:
         app.jinja_env.loader = ChoiceLoader([FileSystemLoader(app.cfg.template_dirs), app.jinja_env.loader])
     app.register_error_handler(403, themed_error)
+    app.context_processor(inject_common_template_vars)
     app.cfg.custom_css_path = os.path.isfile("wiki_local/custom.css")
+    setup_jinja_env(app.jinja_env)
     clock.stop("create_app flask-theme")
     # Create a global counter to limit Content Security Policy reports and prevent spam
     app.csp_count = 0
@@ -313,18 +317,37 @@ def setup_user_anon():
     flaskg.user = user.User(name=ANON, auth_method="invalid")
 
 
+def inject_common_template_vars() -> dict[str, Any]:
+    if getattr(flaskg, "no_variable_injection", False):
+        return {}
+    else:
+        return {
+            "clock": flaskg.clock,
+            "storage": flaskg.storage,
+            "user": flaskg.user,
+            "item_name": request.view_args.get("item_name", ""),
+            "theme_supp": ThemeSupport(app.cfg),
+            "cfg": app.cfg,
+            "gen": make_generator(),
+            "search_form": SearchForm.from_defaults(),
+        }
+
+
 def before_wiki():
     """
     Setup environment for wiki requests, start timers.
     """
-    if request and (is_static_content(request.path) or request.path == "/+cspreport/log"):
-        logging.debug(f"skipping before_wiki for {request.path}")
+    request_path = getattr(request, "path", "") if request else ""
+    if is_static_content(request_path) or request_path == "/+cspreport/log":
+        logging.debug(f"skipping variable injection in before_wiki for {request.path}")
+        setattr(flaskg, "no_variable_injection", True)
         return
 
     logging.debug("running before_wiki")
-    flaskg.clock = Clock()
-    flaskg.clock.start("total")
-    flaskg.clock.start("init")
+
+    clock = flaskg.clock = Clock()
+    clock.start("total")
+    clock.start("init")
     try:
         flaskg.unprotected_storage = app.storage
         cli_no_request_ctx = False
@@ -342,40 +365,32 @@ def before_wiki():
         if cli_no_request_ctx:  # no request.user_agent if this is pytest or cli
             flaskg.add_lineno_attr = False
         else:
-            setup_jinja_env()
             flaskg.add_lineno_attr = request.headers.get("User-Agent", None) and flaskg.user.edit_on_doubleclick
     finally:
-        flaskg.clock.stop("init")
+        clock.stop("init")
 
 
 def teardown_wiki(response):
     """
     Teardown environment of wiki requests, stop timers.
     """
-    if request:
-        request_path = request.path
-        if is_static_content(request_path):
-            return response
-    else:
-        request_path = ""
+    request_path = getattr(request, "path", "")
+    if is_static_content(request_path) or request_path == "/+cspreport/log":
+        return response
 
     logging.debug("running teardown_wiki")
 
-    if hasattr(flaskg, "edit_utils"):
+    if edit_utils := getattr(flaskg, "edit_utils", None):
         # if transaction fails with sql file locked, we try to free it here
         try:
-            flaskg.edit_utils.conn.close()
+            edit_utils.conn.close()
         except AttributeError:
             pass
 
     try:
         # whoosh cache performance
-        for cache in (
-            flaskg.storage.parse_acl,
-            flaskg.storage.eval_acl,
-            flaskg.storage.get_acls,
-            flaskg.storage.allows,
-        ):
+        storage = flaskg.storage
+        for cache in (storage.parse_acl, storage.eval_acl, storage.get_acls, storage.allows):
             if cache.cache_info()[3] > 0:
                 msg = "cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s" % (
                     (cache.__name__,) + cache.cache_info()
@@ -386,8 +401,10 @@ def teardown_wiki(response):
         pass
 
     try:
-        flaskg.clock.stop("total", comment=request_path)
-        del flaskg.clock
+        clock = flaskg.pop("clock", None)
+        if clock is not None:
+            clock.stop("total", comment=request_path)
+            del clock
     except AttributeError:
         # can happen if teardown_wiki() is called twice, e.g. by unit tests.
         pass

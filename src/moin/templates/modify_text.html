@@ -12,7 +12,7 @@
     value and textarea scroll bars will be used as needed.
 #}
 
-{% from "modify_binary.html" import data_editor as base_editor %}
+{% from "modify_binary.html" import data_editor as base_editor with context %}
 
 {% macro data_editor(form, item_name) %}
     {% set textarea_rows = '1' if edit_rows == '0' else edit_rows %}

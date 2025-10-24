@@ -1,7 +1,7 @@
 {# Display a form to search for tickets using meta data such tags, priority, etc. #}
 
 {% extends theme("layout.html") %}
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 
 {% set title = _("Advanced Search") %}
 {% block content %}

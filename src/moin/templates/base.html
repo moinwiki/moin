@@ -8,7 +8,7 @@
 {#- This allows child templates passing their header_search macro to the common layout (eg blog).
    If there is no header_search macro defined in child templates use the default one. #}
 {%- if not header_search %}
-    {%- from "utils.html" import header_search %}
+    {%- from "utils.html" import header_search with context %}
 {%- endif -%}
 
 <html>

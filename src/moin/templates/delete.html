@@ -5,7 +5,7 @@
     The revision's meta data and rendered content is displayed for user review.
 #}
 
-{% import "forms.html" as forms %}
+{% import "forms.html" as forms with context %}
 {% extends theme("show.html") %}
 
 {% if alias_names %}
