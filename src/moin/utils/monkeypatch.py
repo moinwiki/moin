@@ -43,3 +43,22 @@ def buffer_file_close(self):
 
 # patch class BufferFile
 BufferFile.close = buffer_file_close
+
+# flask-theme patching -------------------------------------------------------
+
+# Cache the result of searching the file system for theme template files.
+# Solves issue <https://github.com/moinwiki/moin/issues/1875>.
+
+import flask_theme
+
+from flask.globals import request_ctx
+
+
+def template_exists(templatename):
+    if (templates := getattr(template_exists, "cache", None)) is None:
+        templates = flask_theme.containable(request_ctx.app.jinja_env.list_templates())
+        setattr(template_exists, "cache", templates)
+    return templatename in templates
+
+
+flask_theme.template_exists = template_exists
