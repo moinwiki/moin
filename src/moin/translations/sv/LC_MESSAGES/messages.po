@@ -1834,7 +1834,7 @@ msgstr ""
 #: src/moin/macros/ItemList.py:110
 #, python-brace-format
 msgid "The value for \"{key}\" must be \"True\" or \"False\", got \"{val}\"."
-msgstr "Värdet för \\”{key}\\” måste vara \\”True\\” eller \\”False\\”, fick \\”{val}\\”."
+msgstr "Värdet för \"{key}\" måste vara \"True\" eller \"False\", fick \"{val}\"."
 
 #: src/moin/macros/ItemList.py:121
 #, python-brace-format
@@ -1986,7 +1986,7 @@ msgstr "Blockmakron kan inte användas inline"
 #: src/moin/macros/_base.py:242
 #, python-brace-format
 msgid "Unrecognized \"display\" value \"{display}\"."
-msgstr "Oigenkännligt \\”display\\”-värde \\”{display}\\”."
+msgstr "Oigenkännligt \"display\"-värde \"{display}\"."
 
 #: src/moin/mail/sendmail.py:54
 msgid "Contact administrator: cannot send password recovery e-mail because mail configuration is incomplete."
