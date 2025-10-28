@@ -18,12 +18,14 @@ from moin.config.default import DefaultConfig
 
 
 class Config(DefaultConfig):
-    """Default configuration for unit tests."""
+    """
+    Default configuration for unit tests.
+    """
 
-    _here = abspath(dirname(__file__))
-    _root = abspath(join(_here, "..", ".."))
-    data_dir = join(_here, "wiki", "data")  # needed for plugins package TODO
-    index_storage = "FileStorage", (join(_here, "wiki", "index"),), {}
+    wikiconfig_dir = abspath(dirname(__file__))
+    instance_dir = join(wikiconfig_dir, "wiki")
+    data_dir = join(instance_dir, "data")
+    index_storage = "FileStorage", (join(instance_dir, "index"),), {}
     default_acl = None
     default_root = "FrontPage"
     interwikiname = "MoinTest"
