@@ -5,16 +5,51 @@
 MoinMoin - Tests for frontend
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING, Iterable
 from io import BytesIO
+
+import pytest
 
 from flask import url_for
 from flask import g as flaskg
 from werkzeug.datastructures import FileStorage
 
-from moin.apps.frontend import views
 from moin import user
+from moin.apps.frontend import views
+from moin.constants.keys import ITEMID
 
-import pytest
+if TYPE_CHECKING:
+    from flask.testing import FlaskClient
+    from werkzeug.test import TestResponse
+
+
+def create_user(name: str, password: str, pwencoded: bool = False, email: str | None = None) -> None:
+    """helper to create test user"""
+    if email is None:
+        email = "user@example.org"
+    user.create_user(name, password, email, is_encrypted=pwencoded)
+
+
+def set_user_in_client_session(client: FlaskClient, user: user.User) -> None:
+    # the test configuration has MoinAuth enabled
+    with client.session_transaction() as session:
+        session["user.itemid"] = user.profile[ITEMID]
+        session["user.trusted"] = False
+        session["user.auth_method"] = "moin"
+        session["user.auth_attribs"] = tuple()
+        session["user.session_token"] = user.get_session_token()
+
+
+def client_request(
+    client: FlaskClient, method: str, url: str, *, user: user.User | None = None, **kwargs: Any
+) -> TestResponse:
+    if user is not None:
+        set_user_in_client_session(client, user)
+    print(f"client request: {method} {url}")
+    response = client.open(url, method=method, **kwargs)
+    return response
 
 
 class TestFrontend:
@@ -26,51 +61,68 @@ class TestFrontend:
     def _test_view(
         self,
         viewname,
-        status="200 OK",
-        data=("<html>", "</html>"),
-        content_types=("text/html; charset=utf-8",),
-        viewopts=None,
-        params=None,
-    ):
+        *,
+        status: str = "200 OK",
+        data: Iterable[str] = ("<html>", "</html>"),
+        content_types: Iterable[str] = ("text/html; charset=utf-8",),
+        viewopts: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        user: user.User | None = None,
+    ) -> TestResponse:
+
         if viewopts is None:
             viewopts = {}
         if params is None:
             params = {}
 
         with self.app.test_client() as client:
-            for method in ["HEAD", "GET"]:
-                print("%s %s" % (method, url_for(viewname, **viewopts)))
-                rv = client.open(url_for(viewname, **viewopts), method=method, data=params)
-                rv_data = rv.data.decode()
-                assert rv.status == status
-                assert rv.headers["Content-Type"] in content_types
-                if method == "GET":
-                    for item in data:
-                        assert item in rv_data
-        return rv
+
+            request_url = url_for(viewname, **viewopts)
+
+            response = client_request(client, "HEAD", request_url, user=user, data=params)
+            assert response.status == status
+            assert response.headers["Content-Type"] in content_types
+
+            response = client_request(client, "GET", request_url, user=user, data=params)
+            assert response.status == status
+            assert response.headers["Content-Type"] in content_types
+            rv_data = response.data.decode()
+            for item in data:
+                assert item in rv_data
+
+            return response
 
     def _test_view_post(
         self,
-        viewname,
-        status="302 FOUND",
-        content_types=("text/html; charset=utf-8",),
-        data=("<html>", "</html>"),
-        form=None,
-        viewopts=None,
-    ):
+        viewname: str,
+        *,
+        status: str = "302 FOUND",
+        content_types: Iterable[str] = ("text/html; charset=utf-8",),
+        data: Iterable[str] = ("<html>", "</html>"),
+        form: dict[str, Any] | None = None,
+        viewopts: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        user: user.User | None = None,
+    ) -> TestResponse:
+
+        if params is None:
+            params = {}
         if viewopts is None:
             viewopts = {}
         if form is None:
             form = {}
-        print("POST %s" % url_for(viewname, **viewopts))
+
+        request_url = url_for(viewname, **viewopts)
+        print("POST %s" % request_url)
+
         with self.app.test_client() as client:
-            rv = client.post(url_for(viewname, **viewopts), data=form)
-            rv_data = rv.data.decode()
-            assert rv.status == status
-            assert rv.headers["Content-Type"] in content_types
+            response = client_request(client, "POST", request_url, user=user, query_string=params, data=form)
+            assert response.status == status
+            assert response.headers["Content-Type"] in content_types
+            rv_data = response.get_data(as_text=True)
             for item in data:
                 assert item in rv_data
-            return rv
+            return response
 
     def test_ajaxdelete_item_name_route(self):
         self._test_view_post(
@@ -169,6 +221,31 @@ class TestFrontend:
 
     def test_modify_item(self):
         self._test_view("frontend.modify_item", status="200 OK", viewopts=dict(item_name="DoesntExist"))
+
+    def test_modify_item_show_preview(self):
+
+        create_user("björn", "Xiwejr622")
+        test_user = flaskg.user = user.User(name="björn", password="Xiwejr622")
+
+        content = "New item content."
+
+        self._test_view_post(
+            "frontend.modify_item",
+            status="200 OK",
+            viewopts=dict(item_name="quokka"),
+            params={"itemtype": "default", "contenttype": "text/x.moin.wiki;charset=utf-8", "template": ""},
+            form={
+                "comment": "",
+                "content_form_data_text": content,
+                "content_form_data_file": content.encode(encoding="utf-8"),
+                "preview": "Preview",
+                "meta_form_acl": "None",
+                "meta_form_name": "quokka",
+                "meta_form_summary": "",
+                "meta_form_tags": "",
+            },
+            user=test_user,
+        )
 
     def test_rename_item(self):
         self._test_view("frontend.rename_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
@@ -284,7 +361,7 @@ class TestUsersettings:
         flaskg.user = saved_user
 
     def test_user_password_change(self):
-        self.createUser("moin", "Xiwejr622")
+        create_user("moin", "Xiwejr622")
         flaskg.user = user.User(name="moin", password="Xiwejr622")
         form = self.fillPasswordChangeForm("Xiwejr622", "Woodoo645", "Woodoo645")
         valid = form.validate()
@@ -294,7 +371,7 @@ class TestUsersettings:
         name = "moin"
         password = "__שם משתמש לא קיים__"  # Hebrew
 
-        self.createUser(name, password)
+        create_user(name, password)
         flaskg.user = user.User(name=name, password=password)
         form = self.fillPasswordChangeForm(password, "Woodoo645", "Woodoo645")
         valid = form.validate()
@@ -305,14 +382,14 @@ class TestUsersettings:
         password = "Xiwejr622"
         new_password = "__שם משתמש לא קיים__"  # Hebrew
 
-        self.createUser(name, password)
+        create_user(name, password)
         flaskg.user = user.User(name=name, password=password)
         form = self.fillPasswordChangeForm(password, new_password, new_password)
         valid = form.validate()
         assert valid  # form data is valid
 
     def test_fail_user_password_change_pw_mismatch(self):
-        self.createUser("moin", "Xiwejr622")
+        create_user("moin", "Xiwejr622")
         flaskg.user = user.User(name="moin", password="Xiwejr622")
         form = self.fillPasswordChangeForm("Xiwejr622", "Piped33", "Woodoo645")
         valid = form.validate()
@@ -320,7 +397,7 @@ class TestUsersettings:
         assert not valid
 
     def test_fail_password_change(self):
-        self.createUser("moin", "Xiwejr622")
+        create_user("moin", "Xiwejr622")
         flaskg.user = user.User(name="moin", password="Xiwejr622")
         form = self.fillPasswordChangeForm("Xinetd33", "Woodoo645", "Woodoo645")
         valid = form.validate()
@@ -340,9 +417,3 @@ class TestUsersettings:
         )
         form = FormClass.from_flat(request_form)
         return form
-
-    def createUser(self, name, password, pwencoded=False, email=None):
-        """helper to create test user"""
-        if email is None:
-            email = "user@example.org"
-        user.create_user(name, password, email, is_encrypted=pwencoded)
