@@ -46,10 +46,7 @@ class TestFrontend:
                 assert rv.headers["Content-Type"] in content_types
                 if method == "GET":
                     for item in data:
-                        if item == "<!doctype html":  # TODO: remove workaround when Werkzeug >= 2.1.2 is set
-                            assert item in str(rv_data).lower()
-                        else:
-                            assert item in rv_data
+                        assert item in rv_data
         return rv
 
     def _test_view_post(

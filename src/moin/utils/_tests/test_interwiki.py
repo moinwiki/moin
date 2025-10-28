@@ -10,7 +10,6 @@ MoinMoin - tests for moin.utils.interwiki.
 import tempfile
 import os.path
 import shutil
-import re
 
 import pytest
 from flask import current_app as app
@@ -101,11 +100,7 @@ class TestInterWiki:
         ]
 
         for (item_name, wiki_name, field, namespace, rev, endpoint, _external), url in tests:
-            # Workaround: substitute %40 with @ to allow both Werkzeug versions 2.2 and 2.3. TODO: remove later
-            assert (
-                re.sub("%40", "@", url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external))
-                == url
-            )
+            assert url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external) == url
 
     def test__split_namespace(self):
         map = set()
