@@ -10,8 +10,8 @@ from flask import url_for
 
 class TestMisc:
     def test_global_sitemap(self, app):
-        with app.test_client() as c:
-            rv = c.get(url_for("misc.sitemap"))
+        with app.test_client() as client:
+            rv = client.get(url_for("misc.sitemap"))
             assert rv.status == "200 OK"
             assert rv.headers["Content-Type"] == "text/xml; charset=utf-8"
             assert rv.data.startswith(b"<?xml")
@@ -19,7 +19,7 @@ class TestMisc:
             assert b"</urlset>" in rv.data
 
     def test_urls_names(self, app):
-        with app.test_client() as c:
-            rv = c.get(url_for("misc.urls_names"))
+        with app.test_client() as client:
+            rv = client.get(url_for("misc.urls_names"))
             assert rv.status == "200 OK"
             assert rv.headers["Content-Type"] == "text/plain; charset=utf-8"

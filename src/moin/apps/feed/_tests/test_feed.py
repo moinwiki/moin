@@ -13,8 +13,8 @@ from moin._tests import update_item
 
 class TestFeeds:
     def test_global_atom(self, app):
-        with app.test_client() as c:
-            rv = c.get(url_for("feed.atom"))
+        with app.test_client() as client:
+            rv = client.get(url_for("feed.atom"))
             assert rv.status == "200 OK"
             assert rv.headers["Content-Type"] == "application/atom+xml"
             assert rv.data.startswith(b"<?xml")
@@ -24,8 +24,8 @@ class TestFeeds:
     def test_global_atom_with_an_item(self, app):
         basename = "Foo"
         update_item(basename, {COMMENT: "foo data for feed item"}, "")
-        with app.test_client() as c:
-            rv = c.get(url_for("feed.atom"))
+        with app.test_client() as client:
+            rv = client.get(url_for("feed.atom"))
             assert rv.status == "200 OK"
             assert rv.headers["Content-Type"] == "application/atom+xml"
             assert rv.data.startswith(b"<?xml")
@@ -33,8 +33,8 @@ class TestFeeds:
 
         # Test cache invalidation
         update_item(basename, {COMMENT: "checking if the cache invalidation works"}, "")
-        with app.test_client() as c:
-            rv = c.get(url_for("feed.atom"))
+        with app.test_client() as client:
+            rv = client.get(url_for("feed.atom"))
             assert rv.status == "200 OK"
             assert rv.headers["Content-Type"] == "application/atom+xml"
             assert rv.data.startswith(b"<?xml")

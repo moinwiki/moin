@@ -27,8 +27,8 @@ class TestView:
         self.app = app
 
     def _test_view(self, item_name, req_args={}, data_tokens=[], exclude_data_tokens=[], regex=None):
-        with self.app.test_client() as c:
-            rv = c.get(url_for("frontend.show_item", item_name=item_name, **req_args))
+        with self.app.test_client() as client:
+            rv = client.get(url_for("frontend.show_item", item_name=item_name, **req_args))
             rv_data = rv.data.decode()
             for data in data_tokens:
                 assert data in rv_data
