@@ -144,106 +144,342 @@ Markup                                    Result
 Hyperlinks
 ==========
 
+Hyperlinks connect a `hyperlink reference`_ to a matching `hyperlink target`_.
+
+* Matching of named_ references and targets is done after normalizing
+  whitespace and case.
+
+  Moin treats named references without matching target as `wiki-internal
+  links`_.
+
+* Anonymous_ references and targets are matched according to their order.
+* The target can also be embedded_ in the reference.
+
+
 External Links
 --------------
 
-================================================================  =====================================================
-Markup                                                            Result
-================================================================  =====================================================
-``http://www.python.org/``                                        http://www.python.org/
+*External* links point to an external ressource (specified as URI).
 
-``External hyperlinks, like `Python <http://www.python.org/>`_``  External hyperlinks, like
-                                                                  `Python <http://www.python.org/>`_
+.. list-table::
+   :header-rows: 1
 
-``External hyperlinks, like Moin_.``                              External hyperlinks, like Moin_.
+   * - Markup
+     - Result
+     - Notes
 
-``.. _Moin: http://moinmo.in/``                                   .. _Moin: http://moinmo.in/
-================================================================  =====================================================
+   * - ``Moin (https://moinmo.in/) supports rST.``
 
-Internal Links
---------------
+       ``Mail me@example.org.``
 
-The examples below use the "help-en" and "help-common" namespaces
-to separate these help pages from the main wiki content.
-Some target pages may be missing from the default namespace.
+     - Moin (https://moinmo.in/) supports rST.
 
-Within the rst syntax:
+       Mail me@example.org.
 
- * a link like ``http:Home`` links to an item in the default namespace
- * a link like ``http:/subitem`` links to a subitem of the current item
- * a link that begins with a namespace like ``http:users/Home`` links to the Home item in the target namespace
- * a link like ``http:../sibling`` links to a sibling of the current item
+     - URIs and email addresses are turned into `standalone hyperlinks`_.
 
-.. _myanchor:
+   * - .. _embedded:
 
-============================  ============================  ===========================================================
-Markup                        Result                        Comment
-============================  ============================  ===========================================================
- ``http:Home``                http:Home                     link to an item in the default namespace of this wiki
+       ```Moin <https://moinmo.in/>`__ supports rST.``
 
- ```Home2 <http:Home>`_``     `Home2 <http:Home>`_          fancy link to an item in the default namespace of this wiki
+     - `Moin <https://moinmo.in/>`__ supports rST.
 
- ``http:/subitem``            http:/subitem                 link to a subitem of the current item
+     - Reference with custom link text and `embedded URI`_.
 
- ```sub <http:/subitem>`_``   `sub <http:/subitem>`_        fancy link to a subitem of the current item
+   * - .. _named:
 
- ``http:users/Home``          http:users/Home               link to an item in a different namespace of this wiki
+       ``Moin_ supports rST.``
+       ::
 
- ``http:../moin``             http:../moin                  link to a sibling of this item
+         .. _moin:
+             https://moinmo.in/
 
- ``Headings_``                Headings_                     link to Headings anchor on this item
+     - Moin_ supports rST
 
- ```Internal Links`_``        `Internal Links`_             link to a heading with embedded blanks
+       .. _moin:
+           https://moinmo.in/
 
- ``.. _myanchor:``                                          create anchor, real anchor is above this table
+     - A named `hyperlink reference`_ and matching `external target`_
+       keep the details out of the text flow.
 
- ``myanchor_``                myanchor_                     link to above anchor
-============================  ============================  ===========================================================
+   * - .. _anonymous:
 
-**Notes:**
- - If this page was created by Sphinx, none of the above internal link examples work correctly.
- - The block level "target" ``.. _myanchor:`` sets an anchor for the following element.
-   Inline targets set the anchor on the text content which is also used as label.
- - Section titles (or headings) automatically generate hyperlink targets (the title
-   text is used as the hyperlink name).
+       ```Moin supports rST`__.``
+       ::
+
+         __ https://
+            moin-20.readthedocs.io/
+            en/latest/user/rest.html
+
+     - `Moin supports rST`__.
+
+       __ https://
+          moin-20.readthedocs.io/
+          en/latest/user/rest.html
+
+     - `Anonymous references`_ and targets are handy for verbose or
+       repeated link texts.
+
+.. TODO: interwiki link currently fails:
+
+      * - ```InterWiki page on MeatBall <MeatBall:InterWiki>`__``
+
+        - `InterWiki page on MeatBall <MeatBall:InterWiki>`__
+
+        - InterWiki page on MeatBall. [#]_
+
+   .. [#] Interwiki links work only in Moin and only after configuring.
+
+
+.. _internal links:
+
+Page-Internal Links
+-------------------
+
+*Page-internal* links point to an anchor (named element or `anonymous
+target`_) in the same document.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ``Simple_ reference and _`simple` inline target``.
+     - Simple_ reference and _`simple` inline target.
+     - See `simple reference names`_ and `inline targets`_.
+
+   * - ``Links to a `named paragraph`_, the `MoinMoin logo`_,
+       and a `note admonition`_.``
+     - Links to a `named paragraph`_, the `MoinMoin logo`_,
+       and a `note admonition`_.
+     - Put `phrase references`_ in backticks.
+
+   * - ``It's `easy <simple_>`__.``
+     - It's `easy <simple_>`__.
+     - Custom link text with `embedded alias`_.
+
+   * - ``Easy__ as pie.``
+       ::
+
+         __ simple_
+
+     - Easy__ as pie.
+
+       __ simple_
+
+     - Custom link text with `anonymous reference`_
+       and anonymous `indirect target`_.
+
+   * - ``Section headings_ are implicit targets.``
+     - Section headings_ are implicit targets.
+     - For details, see `implicit targets`_.
+
+   * - ::
+
+         .. _named paragraph:
+
+         This paragraph
+         is a target.
+
+     - .. _named paragraph:
+
+       This paragraph
+       is a target.
+
+     - `Empty hyperlink targets`_ mark the following element.
+
+
+Wiki-Internal Links
+-------------------
+
+*Wiki-internal* links [#]_ point to items in the same wiki.
+
+* The Moin engine interprets `URI references`_ without scheme as references
+  to local Wiki items.
+
+* The Moin rST converter interprets `named hyperlink references without
+  matching target`__ as links to local Wiki items (whitespace is
+  normalized).
+
+* The examples do not work in the `external documentation`_.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ```<Example\ Page>__```
+     - `<Example\ Page>`__
+     - Item in default namespace as URI reference, [#]_
+
+   * - ```Example Page <Example%20Page>__```
+     - `Example Page <Example%20Page>`__
+     - ... with custom text,
+
+   * - __
+
+       ```Example Page`_``
+
+     - `Example Page`_
+
+     - ... as named reference.
+
+       Caution: `explicit targets`_, `inline targets`_ and section
+       headings_ take precedence!
+
+   * - ```users/Home`_``
+     - `users/Home`_
+     - Item in different namespace.
+
+   * - ```../moin`_``
+     - `../moin`_
+     - Sibling item,
+
+   * - ```Moin markup`__``
+       ::
+
+          __ ../moin
+
+     - `Moin markup`__
+
+       __ ../moin
+
+     - ... as URI reference in an `anonymous target`_,
+
+   * - ``|MoinMoin|_ markup``
+       ::
+
+            .. _MoinMoin: ../moin
+
+     - |MoinMoin|_ markup
+
+       .. _MoinMoin: ../moin
+
+     - ... as image_ link via `substitution reference`_.
+
+       The substitution text becomes the `reference name`_,
+       an `explicit target`_ maps it to a URI reference.
+
+   * - ```../moin#Linking`_``
+     - `../moin#Linking`_
+     - Fragment of a sibling item.
+
+   * - ```/subitem`_``
+     - `/subitem`_
+     - Subitem,
+
+   * - ```sub-item </subitem>`_``
+     - `sub-item </subitem>`__
+     - ... as URI reference with custom text.
+
+.. [#] The Docutils rST documentation designates all links employing
+   a URI reference as *external*.
+
+.. [#] In `URI context`_, whitespace is removed by default.
+   Use an escaped space or percent encoding.
+
+
+
+.. _image:
 
 Images
 ======
 
-Images may be positioned by using the align parameter with a value of left, center, or right.
-There is no facility to embed an image within a paragraph. There must be a blank line before
-and after the image declaration. Images are not enclosed within a block level element so
-several images declared successively without any positioning will display in a horizontal row.
+Images are inserted with the `"image" directive`_.
+For *inline images*, use a `substitution definition`_.
 
-**Markup**::
+.. list-table::
+   :header-rows: 1
 
-    Before text.
+   * - Markup
+     - Result
+     - Notes
 
-    .. image:: help-common/logo.svg
-       :height: 200
-       :width: 200
-       :scale: 100
-       :alt: alternate text logo.svg
-       :align: center
+   * - ::
 
-    After text.
+         .. image:: help-common/logo.svg
+            :width: 100
+            :height: 150
+            :alt: [MoinMoin logo]
+            :name: MoinMoin logo
+            :target: help-en/Home
 
-**Result**:
+     -   .. image:: help-common/logo.svg
+            :width: 100
+            :height: 150
+            :alt: [MoinMoin logo]
+            :name: MoinMoin logo
+            :target: help-en/Home
 
-Before text.
+     - A block-level image.
 
-.. image:: help-common/logo.svg
-   :height: 200
-   :width: 200
-   :scale: 100
-   :alt: alternate text logo.svg
-   :align: center
+       The :name: option provides a target for `internal links`_.
+       The :target: option makes the image "clickable".
 
-After text.
+   * - ``The |MoinMoin| logo as inline image.``
+       ::
 
-**Notes:**
- - The Sphinx parser does not have an image named "logo.svg" so the alternate text
-   will be displayed above.
+         .. |MoinMoin| image::
+            help-common/logo.svg
+            :height: 18
+
+     - The |MoinMoin| logo as inline image.
+
+       .. |MoinMoin| image::
+          help-common/logo.svg
+          :height: 18
+
+
+     - The `substitution definition`_ may be referenced more than once
+       (cf. `Wiki-Internal Links`_).
+
+   * - ``Another inline image |Python|.``
+       ::
+
+         .. |Python| image:: https://
+            docs.python.org/3/_static/py.svg
+            :height: 18
+
+     - Another inline image |Python|.
+
+       .. |Python| image:: https://
+          docs.python.org/3/_static/py.svg
+          :height: 18
+
+     - Images from external sources may be blocked by the browser
+       for security or privacy reasons.
+
+* Moin does not support `length units`_ in the :width: and :height: options.
+
+* .. image:: help-common/cat.jpg
+     :alt: [a cat]
+     :width: 80
+     :align: right
+
+  A right or left aligned image (using the :align: option) lets the
+  following elements float up.
+
+* In Moin, images are not enclosed within a block level element so
+  several images declared successively without any positioning will display
+  in a horizontal row:
+
+  .. image:: help-common/logo.svg
+     :height: 20
+     :alt: [MoinMoin logo]
+  .. image:: help-common/logo.svg
+     :height: 20
+     :alt: [MoinMoin logo]
+  .. image:: help-common/logo.svg
+     :height: 20
+     :alt: [MoinMoin logo]
+
+* In the `external documentation`_, most image-URIs do not work
+  and the alternate text is shown.
+
 
 Figures
 =======
@@ -524,8 +760,7 @@ Escaped Spaces
 --------------
 
 An escaped_ whitespace is removed (except in `URI context`_).
-This allows, e.g., `text formatting`_ inside a word:
-``H\ :sub:`2`\ O`` becomes H\ :sub:`2`\ O.
+This allows, e.g., `text formatting`_ inside a word.
 
 
 Tables
@@ -670,13 +905,13 @@ There are nine admonition types: "attention", "caution", "danger",
    * - ::
 
           .. note::
-             :name: example note
+             :name: note admonition
 
              The :name: option provides a
              target for `internal links`_.
 
      -    .. note::
-             :name: example note
+             :name: note admonition
 
              The :name: option provides a
              target for `internal links`_.
@@ -828,16 +1063,53 @@ Take it away, Eric the Orchestra Leader!
 .. _Sphinx: https://www.sphinx-doc.org
 .. _reStructuredText:
     https://docutils.sourceforge.io/FAQ.html#restructuredtext
-
+.. _anonymous references:
+.. _anonymous reference:
+.. _anonymous target:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#anonymous-hyperlinks
 .. _custom interpreted text roles:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#custom-interpreted-text-roles
-.. _escape:
+.. _embedded URI:
+.. _embedded alias:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#embedded-uris-and-aliases
+.. _empty hyperlink targets:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#internal-hyperlink-targets
 .. _escaped:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#escaping-mechanism
+.. _explicit target:
+.. _explicit targets:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#hyperlink-targets
+.. _external target:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#external-hyperlink-targets
+.. _hyperlink reference:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#hyperlink-references
+.. _hyperlink target:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#hyperlink-targets
+.. _implicit targets:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#implicit-hyperlink-targets
+.. _indirect target:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#indirect-hyperlink-targets
 .. _inline markup:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-markup
+.. _inline targets:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-internal-targets
 .. _interpreted text roles:
     https://docutils.sourceforge.io/docs/ref/rst/roles.html
+.. _phrase references:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#phrase-references
+.. _reference name:
+.. _reference names:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#reference-names
+.. _simple reference names:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#simple-reference-names
+.. _standalone hyperlinks:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#standalone-hyperlinks
+.. _substitution definition:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#substitution-definitions
+.. _substitution reference:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#substitution-references
+.. _length units:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#length-units
 .. _uri context:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#uri-context
 
@@ -847,3 +1119,7 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
 .. _"generic" admonition:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#generic-admonition
+.. _"image" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#image
+
+.. _URI references: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#URI_references
