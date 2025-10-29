@@ -20,5 +20,4 @@ class TestServe:
             rv = c.get(url_for("serve.files", name="DoesntExist"))
             assert rv.status == "404 NOT FOUND"
             assert rv.headers["Content-Type"] == "text/html; charset=utf-8"
-            # TODO: remove workaround when Werkzeug >= 2.1.2 is set (PR 1325)
-            assert "<!doctype html" in str(rv.data).lower()
+            assert rv.text.startswith("<!doctype html")
