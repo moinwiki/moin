@@ -31,7 +31,7 @@ except ImportError:
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
-from moin.wikiutil import anchor_name_from_text, normalize_pagename
+from moin.wikiutil import anchor_name_from_text
 
 from . import default_registry
 from ._util import allowed_uri_scheme, decode_data, normalize_split_text
@@ -410,7 +410,8 @@ class NodeVisitor:
             "left": "left",
             "center": "center",
             "right": "right",
-            "top": "top",  # rst parser creates error messages for top, bottom, and middle
+            # only for inline images:
+            "top": "top",
             "bottom": "bottom",
             "middle": "middle",
         }
@@ -825,11 +826,10 @@ class Parser(docutils.parsers.rst.Parser):
 class WikiReferences(transforms.Transform):
     """Resolve references without matching target as local wiki references.
 
-    Set the "refuri" attribute to refer to a local wiki item.
-    The value is derived from the node's text content with
-    `moin.wikiutil.normalize_pagename()`.
+    Set the "refuri" attribute to the whitespace-normalized (but NOT case
+    normalized) link text (`visit_reference()` adds the "wiki.local" scheme.)
 
-    Cf. https://docutils.sourceforge.io/docs/api/transforms.html#docinfo.
+    Cf. https://docutils.sourceforge.io/docs/api/transforms.html.
     """
 
     default_priority = 775
@@ -837,16 +837,18 @@ class WikiReferences(transforms.Transform):
 
     def apply(self) -> None:
         for node in self.document.findall(nodes.reference):
-            # Skip resolved references, unresolvable references, and references with matching target:
+            # Skip resolved references, unresolvable references,
+            # and references with matching target:
             if node.resolved or "refname" not in node or self.document.nameids.get(node["refname"]):
                 continue
-            # Get the name from the link text (the "refname" attribute is lowercased).
-            wikiname = normalize_pagename(node.astext(), None)  # second arg is ignored
-            # Skip references whose "refname" attribute differs from the wikiname (exept for case):
-            if normalize_pagename(node["refname"], None) != wikiname.lower():
+            # Get the refuri from the link text (keep case)
+            refuri = nodes.whitespace_normalize_name(node.astext())
+            # Skip references whose "refname" attribute differs from the
+            # refuri by more than case:
+            if node["refname"] != refuri.lower():
                 continue
-            # Resolve the reference:
-            node["refuri"] = wikiname
+            node["refuri"] = refuri
+            # Mark as resolved:
             del node["refname"]
             node.resolved = True
 

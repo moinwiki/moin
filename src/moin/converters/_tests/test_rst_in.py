@@ -227,13 +227,17 @@ Abra example_ arba
 text""",
             '<page><body><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p></body></page>',
         ),
-        (
-            "A reference_ with no matching target links to a local Wiki item.",
-            '<page><body><p>A <a xlink:href="wiki.local:reference">reference</a> with no matching target links to a local Wiki item.</p></body></page>',
+        (  # A reference_ with no matching target links to a local Wiki item.
+            "wiki references: `item`_, `namespace/item`_, `ns/item/subitem`_, `../sibling`_, `/subitem`_",
+            '<page><body><p>wiki references: <a xlink:href="wiki.local:item">item</a>,'
+            ' <a xlink:href="wiki.local:namespace/item">namespace/item</a>,'
+            ' <a xlink:href="wiki.local:ns/item/subitem">ns/item/subitem</a>,'
+            ' <a xlink:href="wiki.local:../sibling">../sibling</a>,'
+            ' <a xlink:href="wiki.local:/subitem">/subitem</a></p></body></page>',
         ),
         (
-            "`Whitespace   is\nnormalized & Case is KEPT.`_",
-            '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20Case%20is%20KEPT.">Whitespace   is\nnormalized &amp; Case is KEPT.</a></p></body></page>',
+            "`Whitespace  is\nnormalized\xA0& CÄSE is Kept.`_",
+            '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">Whitespace  is\nnormalized\xA0&amp; CÄSE is Kept.</a></p></body></page>',
         ),
         (  # in rST, reference-name matching is case insensitive:
             "Chapter 1\n===============\n\nA reference to `chapter 1`_.\n",
@@ -357,7 +361,7 @@ text""",
             """
 .. note::
   :name: note-id
-  
+
   An admonition of type "note"
 """,
             '<page><body><span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition></body></page>',
