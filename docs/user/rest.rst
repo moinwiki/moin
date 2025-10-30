@@ -382,152 +382,13 @@ Wiki-Internal Links
 .. [#] In `URI context`_, whitespace is removed by default.
    Use an escaped space or percent encoding.
 
+Transclusions
+=============
 
+For inclusion of images and videos, see Images_ and Figures_.
 
-.. _image:
+The transclusion of web pages and wiki pages is not supported in rST.
 
-Images
-======
-
-Images are inserted with the `"image" directive`_.
-For *inline images*, use a `substitution definition`_.
-
-.. list-table::
-   :header-rows: 1
-
-   * - Markup
-     - Result
-     - Notes
-
-   * - ::
-
-         .. image:: help-common/logo.svg
-            :width: 100
-            :height: 150
-            :alt: [MoinMoin logo]
-            :name: MoinMoin logo
-            :target: help-en/Home
-
-     -   .. image:: help-common/logo.svg
-            :width: 100
-            :height: 150
-            :alt: [MoinMoin logo]
-            :name: MoinMoin logo
-            :target: help-en/Home
-
-     - A block-level image.
-
-       The :name: option provides a target for `internal links`_.
-       The :target: option makes the image "clickable".
-
-   * - ``The |MoinMoin| logo as inline image.``
-       ::
-
-         .. |MoinMoin| image::
-            help-common/logo.svg
-            :height: 18
-
-     - The |MoinMoin| logo as inline image.
-
-       .. |MoinMoin| image::
-          help-common/logo.svg
-          :height: 18
-
-
-     - The `substitution definition`_ may be referenced more than once
-       (cf. `Wiki-Internal Links`_).
-
-   * - ``Another inline image |Python|.``
-       ::
-
-         .. |Python| image:: https://
-            docs.python.org/3/_static/py.svg
-            :height: 18
-
-     - Another inline image |Python|.
-
-       .. |Python| image:: https://
-          docs.python.org/3/_static/py.svg
-          :height: 18
-
-     - Images from external sources may be blocked by the browser
-       for security or privacy reasons.
-
-* Moin does not support `length units`_ in the :width: and :height: options.
-
-* .. image:: help-common/cat.jpg
-     :alt: [a cat]
-     :width: 80
-     :align: right
-
-  A right or left aligned image (using the :align: option) lets the
-  following elements float up.
-
-* In Moin, images are not enclosed within a block level element so
-  several images declared successively without any positioning will display
-  in a horizontal row:
-
-  .. image:: help-common/logo.svg
-     :height: 20
-     :alt: [MoinMoin logo]
-  .. image:: help-common/logo.svg
-     :height: 20
-     :alt: [MoinMoin logo]
-  .. image:: help-common/logo.svg
-     :height: 20
-     :alt: [MoinMoin logo]
-
-* In the `external documentation`_, most image-URIs do not work
-  and the alternate text is shown.
-
-
-Figures
-=======
-
-Figures display graphics like images, but have the added feature of supporting captions
-and explanatory text. Figures are block elements, so figures declared successively
-will display in a column.
-
-**Markup**::
-
-    Before text.
-
-    .. figure:: help-common/logo.png
-       :height: 100
-       :width: 200
-       :scale: 50
-       :alt: alternate text logo.png
-
-       Moin Logo
-
-       This logo replaced the "MoinMoin Man"
-       logo long ago.
-
-    After text.
-
-**Result**:
-
-
-Before text.
-
-.. figure:: help-common/logo.png
-   :height: 100
-   :width: 200
-   :scale: 50
-   :alt: alternate text logo.png
-
-   Moin Logo
-
-   This logo replaced the "MoinMoin Man"
-   logo long ago.
-
-After text.
-
-**Notes:**
- - The Sphinx parser does not have an image named "png" so the alternate text
-   will be displayed.
- - The Sphinx parser does not support figures so the caption and explanatory text
-   will not display correctly.
 
 Blockquotes and Indentations
 ============================
@@ -907,13 +768,13 @@ There are nine admonition types: "attention", "caution", "danger",
           .. note::
              :name: note admonition
 
-             The :name: option provides a
+             The "name" option provides a
              target for `internal links`_.
 
      -    .. note::
              :name: note admonition
 
-             The :name: option provides a
+             The "name" option provides a
              target for `internal links`_.
 
    * - ::
@@ -929,6 +790,147 @@ There are nine admonition types: "attention", "caution", "danger",
              admonition`_ as an "attention".
 
 __ https://docutils.sourceforge.io/docs/ref/rst/directives.html#admonitions
+
+
+.. _image:
+
+Images
+------
+
+Images are inserted with the `"image" directive`_.
+For *inline images*, use a `substitution definition`_.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ::
+
+         .. image:: help-common/logo.svg
+            :width: 100
+            :height: 150
+            :alt: [MoinMoin logo]
+            :name: MoinMoin logo
+            :target: help-en/Home
+
+     -   .. image:: help-common/logo.svg
+            :width: 100
+            :height: 150
+            :alt: [MoinMoin logo]
+            :name: MoinMoin logo
+            :target: help-en/Home
+
+     - A block-level image.
+
+       The "name" option provides a target for `internal links`_.
+
+       The "target" option makes the image "clickable".
+
+   * - ``The |MoinMoin| logo as inline image.``
+       ::
+
+         .. |MoinMoin| image::
+            help-common/logo.svg
+            :height: 18
+
+     - The |MoinMoin| logo as inline image.
+
+       .. |MoinMoin| image::
+          help-common/logo.svg
+          :height: 18
+
+
+     - The `substitution definition`_ may be referenced more than once
+       (cf. `Wiki-Internal Links`_).
+
+   * - ``Another inline image |Python|.``
+       ::
+
+         .. |Python| image:: https://
+            docs.python.org/3/_static/py.svg
+            :height: 18
+
+     - Another inline image |Python|.
+
+       .. |Python| image:: https://
+          docs.python.org/3/_static/py.svg
+          :height: 18
+
+     - Images from external sources may be blocked by the browser
+       for security or privacy reasons.
+
+* Videos are recognized by the file extension.
+
+  .. image:: help-common/video.mp4
+     :width: 200
+     :alt: [demo video]
+
+  TODO: currently, "width" and "alt" options are ignored by Moin.
+
+* Moin does not support `length units`_ in the "width" and "height" options.
+
+* .. image:: help-common/cat.jpg
+     :alt: [a cat]
+     :width: 80
+     :align: right
+
+  A right or left aligned image (using the "align" option) lets the
+  following elements float up.
+
+* In Moin, images are not enclosed within a block level element so
+  several images declared successively without any positioning will display
+  in a horizontal row:
+
+  .. image:: help-common/logo.svg
+     :height: 20
+     :alt: [MoinMoin logo]
+  .. image:: help-common/logo.svg
+     :height: 20
+     :alt: [MoinMoin logo]
+  .. image:: help-common/logo.svg
+     :height: 20
+     :alt: [MoinMoin logo]
+
+* In the `external documentation`_, most image-URIs do not work
+  and the alternate text is shown.
+
+
+Figures
+-------
+
+A *figure* consists of an image, a caption, and an optional legend.
+Figures are declared with the `"figure" directive`_.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          .. figure:: help-common/logo.svg
+             :height: 50
+             :alt: [white M in blue circle]
+
+             Moin Logo
+
+             (The image URI does not
+             work in the documentation
+             generated by Sphinx.)
+
+     -    .. figure:: help-common/logo.svg
+             :height: 50
+             :alt: [white M in blue circle]
+
+             Moin Logo
+
+             (The image URI does not
+             work in the documentation
+             generated by Sphinx.)
 
 
 Table of Contents
@@ -1117,6 +1119,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/directives.html
 .. _"contents" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
+.. _"figure" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure
 .. _"generic" admonition:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#generic-admonition
 .. _"image" directive:
