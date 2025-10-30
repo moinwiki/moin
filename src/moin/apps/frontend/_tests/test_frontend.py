@@ -330,6 +330,22 @@ class TestFrontend:
     def test_login(self):
         self._test_view("frontend.login")
 
+    def test_login_post(self):
+        username = "moin"
+        password = "Xiwejr622"
+        create_user(username, password)
+        response = self._test_view_post(
+            "frontend.login",
+            form={
+                "login_username": username,
+                "login_password": password,
+                "login_nexturl": "http://localhost/Home",
+                "login_submit": "1",
+            },
+            data=("Redirecting...",),
+        )
+        assert response.location == "http://localhost/Home"
+
     def test_logout(self):
         self._test_view("frontend.logout", status="302 FOUND", data=["<!doctype html"])
 
