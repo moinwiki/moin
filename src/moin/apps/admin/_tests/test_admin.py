@@ -25,8 +25,8 @@ import pytest
     ),
 )
 def test_admin(app, url_for_args, status, data):
-    with app.test_client() as c:
-        rv = c.get(url_for(**url_for_args))
+    with app.test_client() as client:
+        rv = client.get(url_for(**url_for_args))
         assert rv.status == status
         assert rv.headers["Content-Type"] == "text/html; charset=utf-8"
         for item in data:
