@@ -24,15 +24,15 @@ class TestImportNameFromMoin:
     We do not test files here, assuming that the moin package is not broken.
     """
 
-    def testNonExistingModule(self):
+    def test_non_existing_module(self):
         """pysupport: import nonexistent module raises ImportError"""
         pytest.raises(ImportError, pysupport.importName, "moin.utils.nonexistent", "importName")
 
-    def testNonExistingAttribute(self):
+    def test_non_existing_attribute(self):
         """pysupport: import nonexistent attribute raises AttributeError"""
         pytest.raises(AttributeError, pysupport.importName, "moin.utils.pysupport", "nonexistent")
 
-    def testExisting(self):
+    def test_existing(self):
         """pysupport: import name from existing module"""
         from moin.utils.pysupport import importName
 
@@ -40,12 +40,13 @@ class TestImportNameFromMoin:
         assert importName is t
 
 
+@pytest.mark.usefixtures("_app_ctx", "custom_setup")
 class TestImportNameFromPlugin:
     """Base class for import plugin tests"""
 
     name = "Parser"
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         """Check for valid plugin package"""
         self.pluginDirectory = os.path.join(app.cfg.data_dir, "plugin", "parser")
@@ -67,7 +68,7 @@ class TestImportNonExisting(TestImportNameFromPlugin):
 
     plugin = "NonExistingWikiPlugin"
 
-    def testNonExisting(self):
+    def test_non_existing(self):
         """pysupport: import nonexistent wiki plugin fails"""
         if self.pluginExists():
             pytest.skip(f"plugin exists: {self.plugin}")
@@ -79,7 +80,8 @@ class TestImportExisting(TestImportNameFromPlugin):
     plugin = "AutoCreatedMoinMoinTestPlugin"
     shouldDeleteTestPlugin = True
 
-    def testExisting(self):
+    @pytest.mark.usefixtures("_app_ctx")
+    def test_existing(self):
         """pysupport: import existing wiki plugin
 
         Tests whether a module can be imported from an arbitrary path,

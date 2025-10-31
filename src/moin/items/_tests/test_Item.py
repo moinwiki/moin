@@ -123,6 +123,7 @@ def fix_meta(files, builds):
     return fix_files, fix_builds
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestItem:
 
     def testNonExistent(self):

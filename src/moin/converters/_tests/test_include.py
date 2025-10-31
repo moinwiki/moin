@@ -5,6 +5,7 @@
 MoinMoin - moin.converters.include tests.
 """
 
+import pytest
 
 from moin.converters.include import XPointer
 from moin.items import Item
@@ -12,6 +13,7 @@ from moin.constants.keys import CONTENTTYPE, ACL
 from moin._tests import wikiconfig, update_item
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestInclude:
     class Config(wikiconfig.Config):
         """

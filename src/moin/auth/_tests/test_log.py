@@ -5,6 +5,7 @@
 Tests for auth.log.
 """
 
+import pytest
 
 from flask import g as flaskg
 
@@ -16,6 +17,7 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestAuthLog:
     """Tests for AuthLog."""
 

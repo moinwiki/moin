@@ -20,10 +20,12 @@ from moin.utils.interwiki import split_fqname
 import pytest
 
 
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestNotifications:
+
     reinit_storage = True
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         self.imw = flaskg.unprotected_storage
         self.item_name = "foo"

@@ -8,24 +8,24 @@
 MoinMoin - moin.datastructures.backends.wiki_dicts tests.
 """
 
-
-from moin.datastructures.backends._tests import DictsBackendTest
-from moin.datastructures.backends import wiki_dicts
-from moin.constants.keys import WIKIDICT
-from moin._tests import become_trusted, update_item
-
 import pytest
+
+from moin._tests import become_trusted, update_item
+from moin.constants.keys import WIKIDICT
+from moin.datastructures.backends import wiki_dicts
+from moin.datastructures.backends._tests import DictsBackendTest
 
 
 DATA = "This is a dict item."
 
 
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestWikiDictsBackend(DictsBackendTest):
 
     # Suppose that default configuration for the dicts is used which
     # is WikiDicts backend.
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         become_trusted()
 

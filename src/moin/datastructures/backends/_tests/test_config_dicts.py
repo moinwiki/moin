@@ -5,12 +5,11 @@
 MoinMoin - moin.datastructures.backends.config_dicts tests.
 """
 
+import pytest
 
 from moin.datastructures.backends._tests import DictsBackendTest
 from moin.datastructures import ConfigDicts
 from moin._tests import wikiconfig
-
-import pytest
 
 
 class TestConfigDictsBackend(DictsBackendTest):

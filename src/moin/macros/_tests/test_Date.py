@@ -6,9 +6,9 @@
 MoinMoin - tests for moin.macros.Date.
 """
 
+import pytest
 import time
 
-import pytest
 from flask import g as flaskg
 
 from moin.macros.Date import MacroDateTimeBase, Macro
@@ -16,6 +16,7 @@ from moin.utils import utcfromtimestamp
 from moin.utils.show_time import format_date_time, format_date
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestMacroDateTimeBase:
     def test_parse_time(self):
         MacroDateTimeBase_obj = MacroDateTimeBase()
@@ -41,6 +42,7 @@ class TestMacroDateTimeBase:
             MacroDateTimeBase_obj.parse_time("12011-08-07T11:11:11")
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestMacro:
     def test_macro(self):
         flaskg.user.valid = True  # show_time creates ISO 8601 dates if user is not logged in

@@ -5,6 +5,8 @@
 MoinMoin - tests for moin.macros.ItemList.
 """
 
+import pytest
+
 from moin.items import Item
 from moin.constants.keys import CONTENTTYPE, ITEMTYPE, REV_NUMBER
 from moin._tests import wikiconfig, update_item
@@ -12,6 +14,7 @@ from moin._tests import wikiconfig, update_item
 meta = {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8", ITEMTYPE: "default", REV_NUMBER: 1}
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestItemListMacro:
     """
     Call the ItemList macro and test the output.

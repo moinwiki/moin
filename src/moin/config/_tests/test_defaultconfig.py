@@ -11,6 +11,7 @@ import pytest
 from flask import current_app as app
 
 
+@pytest.mark.usefixtures("_app_ctx")
 class TestPasswordChecker:
     username = "SomeUser"
     tests_builtin = [

@@ -6,6 +6,8 @@
 Tests for auth.http.
 """
 
+import pytest
+
 from flask import g as flaskg
 from flask import request as flask_request
 
@@ -13,13 +15,12 @@ from moin.user import create_user
 from moin.auth.http import HTTPAuthMoin
 from moin.constants.misc import ANON
 
-import pytest
 
-
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestHTTPAuthMoin:
     """Tests for HTTPAuthMoin."""
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         class Auth:
             def __init__(self):

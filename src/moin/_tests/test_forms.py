@@ -5,6 +5,8 @@
     MoinMoin - moin.forms tests.
 """
 
+import pytest
+
 import datetime
 import json
 from calendar import timegm
@@ -51,6 +53,7 @@ def test_datetimeunix():
     assert d.u == ""
 
 
+@pytest.mark.usefixtures("_req_ctx")
 def test_validjson():
     """
     Tests for changes to metadata when modifying an item.

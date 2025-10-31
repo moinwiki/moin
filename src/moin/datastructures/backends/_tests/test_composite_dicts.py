@@ -6,12 +6,11 @@
 MoinMoin - moin.datastructures.backends.composite_dicts tests.
 """
 
+import pytest
 
 from moin.datastructures.backends._tests import DictsBackendTest
 from moin.datastructures import ConfigDicts, CompositeDicts
 from moin._tests import wikiconfig
-
-import pytest
 
 
 class TestCompositeDict(DictsBackendTest):

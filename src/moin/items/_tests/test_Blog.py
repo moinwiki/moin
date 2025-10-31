@@ -5,10 +5,11 @@
 MoinMoin - Tests for moin.items.blog
 """
 
+import pytest
 import re
 
 from datetime import datetime
-from flask import url_for
+from flask import current_app as app, url_for
 
 from moin._tests import update_item
 from moin.items import Item
@@ -18,27 +19,21 @@ from moin.constants.misc import ANON
 from moin.items.blog import Blog, BlogEntry
 from moin.themes import utctimestamp
 
-import pytest
+
+def _test_view(item_name, req_args={}, data_tokens=[], exclude_data_tokens=[], regex=None):
+    with app.test_client() as client:
+        rv = client.get(url_for("frontend.show_item", item_name=item_name, **req_args))
+        rv_data = rv.data.decode()
+        for data in data_tokens:
+            assert data in rv_data
+        for data in exclude_data_tokens:
+            assert data not in rv_data
+        if regex:
+            assert regex.search(rv_data)
 
 
-class TestView:
-    @pytest.fixture(autouse=True)
-    def set_self_app(self, app):
-        self.app = app
-
-    def _test_view(self, item_name, req_args={}, data_tokens=[], exclude_data_tokens=[], regex=None):
-        with self.app.test_client() as client:
-            rv = client.get(url_for("frontend.show_item", item_name=item_name, **req_args))
-            rv_data = rv.data.decode()
-            for data in data_tokens:
-                assert data in rv_data
-            for data in exclude_data_tokens:
-                assert data not in rv_data
-            if regex:
-                assert regex.search(rv_data)
-
-
-class TestBlog(TestView):
+@pytest.mark.usefixtures("_req_ctx")
+class TestBlog:
     NO_ENTRIES_MSG = "There are no entries"
 
     name = "NewBlogItem"
@@ -75,7 +70,7 @@ class TestBlog(TestView):
         item._save(self.meta, self.data, comment=self.comment)
         # Empty blog page without any entries
         data_tokens = [self.data, self.NO_ENTRIES_MSG]
-        self._test_view(self.name, data_tokens=data_tokens)
+        _test_view(self.name, data_tokens=data_tokens)
 
     def test_do_show_entries(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
@@ -88,7 +83,7 @@ class TestBlog(TestView):
         exclude_data_tokens = [self.NO_ENTRIES_MSG]
         # All stored blog entries are listed on the blog index page
         data_tokens = [self.data] + [entry["data"] for entry in self.entries]
-        self._test_view(self.name, data_tokens=data_tokens, exclude_data_tokens=exclude_data_tokens)
+        _test_view(self.name, data_tokens=data_tokens, exclude_data_tokens=exclude_data_tokens)
 
     def test_do_show_sorted_entries(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
@@ -115,7 +110,7 @@ class TestBlog(TestView):
             self.entries[1]["data"],
         ]
         regex = re.compile(r"{}.*{}.*{}.*{}.*{}".format(*ordered_data), re.DOTALL)
-        self._test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
+        _test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
     def test_filter_by_tag(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
@@ -133,7 +128,7 @@ class TestBlog(TestView):
         # Filter by the non-existent tag 'non-existent'
         data_tokens = [self.data, self.NO_ENTRIES_MSG]
         exclude_data_tokens = [self.entries[0]["data"], self.entries[1]["data"], self.entries[2]["data"]]
-        self._test_view(
+        _test_view(
             self.name,
             req_args={"tag": "non-existent"},
             data_tokens=data_tokens,
@@ -143,7 +138,7 @@ class TestBlog(TestView):
         exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[1]["data"]]
         ordered_data = [self.data, self.entries[2]["data"], self.entries[0]["data"]]
         regex = re.compile(r"{}.*{}.*{}".format(*ordered_data), re.DOTALL)
-        self._test_view(self.name, req_args={"tag": "moin"}, exclude_data_tokens=exclude_data_tokens, regex=regex)
+        _test_view(self.name, req_args={"tag": "moin"}, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
     def test_filter_by_acls(self):
         item = Item.create(self.name, itemtype=ITEMTYPE_BLOG)
@@ -162,10 +157,11 @@ class TestBlog(TestView):
         exclude_data_tokens = [self.NO_ENTRIES_MSG, self.entries[2]["data"]]
         ordered_data = [self.data, self.entries[1]["data"], self.entries[0]["data"]]
         regex = re.compile(r"{}.*{}.*{}".format(*ordered_data), re.DOTALL)
-        self._test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
+        _test_view(self.name, exclude_data_tokens=exclude_data_tokens, regex=regex)
 
 
-class TestBlogEntry(TestView):
+@pytest.mark.usefixtures("_req_ctx")
+class TestBlogEntry:
     blog_name = "NewBlogItem"
     contenttype = "text/x.moin.wiki;charset=utf-8"
     blog_data = "This is the header item of this blog"
@@ -197,4 +193,4 @@ class TestBlogEntry(TestView):
         item._save(self.entry_meta, self.entry_data, comment=self.comment)
 
         data_tokens = [self.blog_data, self.entry_data]
-        self._test_view(self.entry_name, data_tokens=data_tokens)
+        _test_view(self.entry_name, data_tokens=data_tokens)

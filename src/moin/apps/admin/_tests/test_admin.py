@@ -6,9 +6,9 @@
 MoinMoin - Tests for admin views
 """
 
-from flask import url_for
-
 import pytest
+
+from flask import url_for
 
 
 @pytest.mark.parametrize(
@@ -24,10 +24,9 @@ import pytest
         ({"endpoint": "admin.itemsize"}, "403 FORBIDDEN", ("<html>", "</html>")),
     ),
 )
-def test_admin(app, url_for_args, status, data):
-    with app.test_client() as client:
-        rv = client.get(url_for(**url_for_args))
-        assert rv.status == status
-        assert rv.headers["Content-Type"] == "text/html; charset=utf-8"
-        for item in data:
-            assert item.encode() in rv.data
+def test_admin(client, url_for_args, status, data):
+    rv = client.get(url_for(**url_for_args))
+    assert rv.status == status
+    assert rv.headers["Content-Type"] == "text/html; charset=utf-8"
+    for item in data:
+        assert item.encode() in rv.data

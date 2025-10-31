@@ -25,6 +25,7 @@ class BackendTestBase:
         """
         self.be.close()
 
+    @pytest.mark.usefixtures("_app_ctx")
     def test_getrevision_raises(self):
         with pytest.raises(KeyError):
             self.be.retrieve("doesnotexist")
@@ -46,10 +47,6 @@ class MutableBackendTestBase(BackendTestBase):
         """
         self.be.close()
         self.be.destroy()
-
-    def test_getrevision_raises(self):
-        with pytest.raises(KeyError):
-            self.be.retrieve("doesnotexist")
 
     def test_store_get_del(self):
         meta = dict(foo="bar")

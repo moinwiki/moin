@@ -17,7 +17,9 @@ from moin._tests import wikiconfig
 import pytest
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestStorageEnvironWithoutConfig:
+
     def setup_method(self, method):
         self.class_level_value = 123
 
@@ -53,6 +55,7 @@ class TestStorageEnvironWithConfig:
 
         return Config
 
+    @pytest.mark.usefixtures("_app_ctx")
     def test_config(self):
         assert isinstance(app.cfg, wikiconfig.Config)
         assert app.cfg.default_acl == DEFAULT_ACL

@@ -9,28 +9,28 @@
 MoinMoin - moin.datastructures.backends.wiki_groups tests.
 """
 
-
 import pytest
 
 from flask import current_app as app
 from flask import g as flaskg
 
+from moin._tests import become_trusted, create_random_string_list, update_item
+from moin.constants.keys import NAME, USERGROUP
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import GroupDoesNotExistError
-from moin.constants.keys import NAME, USERGROUP
 from moin.security import AccessControlList
-from moin._tests import become_trusted, create_random_string_list, update_item
 
 
 DATA = "This is a group item"
 
 
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestWikiGroupBackend(GroupsBackendTest):
 
     # Suppose that default configuration for the groups is used which
     # is WikiGroups backend.
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         become_trusted()
         for group, members in self.test_groups.items():

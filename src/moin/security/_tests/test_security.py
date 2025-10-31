@@ -28,54 +28,55 @@ def acliter(acl):
     return ACLStringIterator(app.cfg.acl_rights_contents, acl)
 
 
+@pytest.mark.usefixtures("_app_ctx")
 class TestACLStringIterator:
 
-    def testEmpty(self):
+    def test_empty(self):
         """security: empty acl string raise StopIteration"""
         acl_iter = acliter("")
         pytest.raises(StopIteration, acl_iter.__next__)
 
-    def testWhiteSpace(self):
+    def test_whiteSpace(self):
         """security: white space acl string raise StopIteration"""
         acl_iter = acliter("       ")
         pytest.raises(StopIteration, acl_iter.__next__)
 
-    def testDefault(self):
+    def test_default(self):
         """security: default meta acl"""
         acl_iter = acliter("Default Default")
         for mod, entries, rights in acl_iter:
             assert entries == ["Default"]
             assert rights == []
 
-    def testEmptyRights(self):
+    def test_empty_rights(self):
         """security: empty rights"""
         acl_iter = acliter("WikiName:")
         mod, entries, rights = next(acl_iter)
         assert entries == ["WikiName"]
         assert rights == []
 
-    def testSingleWikiNameSingleRight(self):
+    def test_single_wiki_name_single_right(self):
         """security: single wiki name, single right"""
         acl_iter = acliter("WikiName:read")
         mod, entries, rights = next(acl_iter)
         assert entries == ["WikiName"]
         assert rights == ["read"]
 
-    def testMultipleWikiNameAndRights(self):
+    def test_multiple_wiki_names_and_rights(self):
         """security: multiple wiki names and rights"""
         acl_iter = acliter("UserOne,UserTwo:read,write")
         mod, entries, rights = next(acl_iter)
         assert entries == ["UserOne", "UserTwo"]
         assert rights == ["read", "write"]
 
-    def testMultipleWikiNameAndRightsSpaces(self):
+    def test_multiple_wiki_names_with_spaces(self):
         """security: multiple names with spaces"""
         acl_iter = acliter("user one,user two:read")
         mod, entries, rights = next(acl_iter)
         assert entries == ["user one", "user two"]
         assert rights == ["read"]
 
-    def testMultipleEntries(self):
+    def test_multiple_entries(self):
         """security: multiple entries"""
         acl_iter = acliter("UserOne:read,write UserTwo:read All:")
         mod, entries, rights = next(acl_iter)
@@ -88,14 +89,14 @@ class TestACLStringIterator:
         assert entries == ["All"]
         assert rights == []
 
-    def testNameWithSpaces(self):
+    def test_single_name_with_spaces(self):
         """security: single name with spaces"""
         acl_iter = acliter("user one:read")
         mod, entries, rights = next(acl_iter)
         assert entries == ["user one"]
         assert rights == ["read"]
 
-    def testMultipleEntriesWithSpaces(self):
+    def test_multiple_entries_with_spaces(self):
         """security: multiple entries with spaces"""
         acl_iter = acliter("user one:read,write user two:read")
         mod, entries, rights = next(acl_iter)
@@ -105,7 +106,7 @@ class TestACLStringIterator:
         assert entries == ["user two"]
         assert rights == ["read"]
 
-    def testMixedNames(self):
+    def test_mixed_names(self):
         """security: mixed wiki names and names with spaces"""
         acl_iter = acliter("UserOne,user two:read,write user three,UserFour:read")
         mod, entries, rights = next(acl_iter)
@@ -115,7 +116,7 @@ class TestACLStringIterator:
         assert entries == ["user three", "UserFour"]
         assert rights == ["read"]
 
-    def testModifier(self):
+    def test_modifier(self):
         """security: acl modifiers"""
         acl_iter = acliter("+UserOne:read -UserTwo:")
         mod, entries, rights = next(acl_iter)
@@ -127,7 +128,7 @@ class TestACLStringIterator:
         assert entries == ["UserTwo"]
         assert rights == []
 
-    def testIgnoreInvalidACL(self):
+    def test_ignore_invalid_acl(self):
         """security: ignore invalid acl
 
         The last part of this acl can not be parsed. If it ends with :
@@ -139,7 +140,7 @@ class TestACLStringIterator:
         assert rights == ["read"]
         pytest.raises(StopIteration, acl_iter.__next__)
 
-    def testEmptyNamesWithRight(self):
+    def test_empty_names_with_right(self):
         """security: empty names with rights
 
         The documents does not talk about this case, may() should ignore
@@ -156,7 +157,7 @@ class TestACLStringIterator:
         assert entries == ["All"]
         assert rights == []
 
-    def testIgnoreInvalidRights(self):
+    def test_ignore_invalid_rights(self):
         """security: ignore rights not in acl_rights_contents
 
         Note: this is also important for ACL regeneration (see also acl
@@ -172,7 +173,7 @@ class TestACLStringIterator:
         # but the usernames should be still intact.
         assert acls == [("", ["JimAdelete", "JoeArevert"], ["admin", "read", "write"])]
 
-    def testBadGuy(self):
+    def test_bad_guy(self):
         """security: bad guy may not allowed anything
 
         This test was failing on the apply acl rights test.
@@ -183,7 +184,7 @@ class TestACLStringIterator:
         assert entries == ["BadGuy"]
         assert rights == []
 
-    def testAllowExtraWhitespace(self):
+    def test_allow_extra_whitespace(self):
         """security: allow extra white space between entries"""
         acl_iter = acliter("UserOne,user two:read,write   user three,UserFour:read  All:")
         mod, entries, rights = next(acl_iter)
@@ -203,13 +204,15 @@ class TestAcl:
     TO DO: test unknown user?
     """
 
-    def testhasACL(self):
+    @pytest.mark.usefixtures("_app_ctx")
+    def test_has_acl(self):
         acl = AccessControlList(valid=app.cfg.acl_rights_contents)
         assert not acl.has_acl()
         acl = AccessControlList(["All:read"], valid=app.cfg.acl_rights_contents)
         assert acl.has_acl()
 
-    def testApplyACLByUser(self):
+    @pytest.mark.usefixtures("_req_ctx")
+    def test_apply_acl_by_user(self):
         """security: applying acl by user name"""
         # This acl string...
         acl_rights = [
@@ -263,6 +266,7 @@ class TestAcl:
                 assert not acl.may(user, right)
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestGroupACL:
 
     @pytest.fixture
@@ -307,6 +311,7 @@ class TestGroupACL:
                 assert not acl.may(user, right)
 
 
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestItemAcls:
     """security: real-life access control list on items testing"""
 
@@ -343,7 +348,7 @@ class TestItemAcls:
 
         return Config
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         become_trusted(username="WikiAdmin")
         for item_name, item_acl, item_content in self.items:
@@ -392,6 +397,7 @@ class TestItemAcls:
         assert not u.may.superuser()
 
 
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestItemHierachicalAcls:
     """security: real-life access control list on items testing"""
 
@@ -427,7 +433,7 @@ class TestItemHierachicalAcls:
 
         return Config
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         become_trusted(username="WikiAdmin")
         for item_name, item_acl, item_content in self.items:
@@ -472,6 +478,7 @@ class TestItemHierachicalAcls:
                 assert not can_access, f"{u.name!r} may not {right} {itemname!r} (hierarchic)"
 
 
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestItemHierachicalAclsMultiItemNames:
     """security: real-life access control list on items testing"""
 
@@ -503,7 +510,7 @@ class TestItemHierachicalAclsMultiItemNames:
 
         return Config
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def custom_setup(self):
         become_trusted(username="WikiAdmin")
         for item_names, item_acl, item_content in self.items:

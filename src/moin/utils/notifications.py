@@ -11,9 +11,10 @@ from io import BytesIO
 from blinker import ANY
 from urllib.parse import urljoin
 
-from flask import url_for, g as flaskg
-from flask import abort
+from flask import abort, g as flaskg, url_for
+from flask_babel import force_locale
 
+from moin import log
 from moin.constants.keys import (
     ACTION_COPY,
     ACTION_RENAME,
@@ -25,7 +26,6 @@ from moin.constants.keys import (
     REVID,
 )
 from moin.i18n import _, L_
-from moin.i18n import force_locale
 from moin.items.content import Content
 from moin.mail.sendmail import sendmail
 from moin.themes import render_template
@@ -33,8 +33,6 @@ from moin.signalling.signals import item_modified
 from moin.utils.subscriptions import get_subscribers
 from moin.utils.diff_datastruct import make_text_diff, diff as dict_diff
 from moin.utils.interwiki import url_for_item
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

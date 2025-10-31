@@ -18,7 +18,7 @@ from typing import cast
 
 
 class TestCleanInput:
-    def testCleanInput(self):
+    def test_clean_input(self):
         tests = [
             ("", ""),  # empty
             ("aaa\r\n\tbbb", "aaa   bbb"),  # ws chars -> blanks
@@ -83,9 +83,10 @@ class TestRelativeTools:
         assert relative_page == wikiutil.RelItemName(current_page, absolute_page)
 
 
+@pytest.mark.usefixtures("_app_ctx")
 class TestNormalizePagename:
 
-    def testPageInvalidChars(self):
+    def test_page_invalid_chars(self):
         """Request: normalize pagename: remove invalid Unicode chars.
 
         Assume the default setting.
@@ -95,7 +96,7 @@ class TestNormalizePagename:
         result = wikiutil.normalize_pagename(test, app.cfg)
         assert result == expected
 
-    def testNormalizeSlashes(self):
+    def test_normalize_slashes(self):
         """Request: normalize pagename: normalize slashes."""
         cases = (
             ("/////", ""),
@@ -108,7 +109,7 @@ class TestNormalizePagename:
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
 
-    def testNormalizeWhitespace(self):
+    def test_normalize_whitespace(self):
         """Request: normalize pagename: normalize whitespace."""
         cases = (
             ("         ", ""),
@@ -123,7 +124,7 @@ class TestNormalizePagename:
             result = wikiutil.normalize_pagename(test, app.cfg)
             assert result == expected
 
-    def testUnderscoreTestCase(self):
+    def test_underscore_test_case(self):
         """Request: normalize pagename: convert underscores to spaces and normalize whitespace.
 
         Underscores should convert to spaces, then spaces should be
@@ -141,9 +142,10 @@ class TestNormalizePagename:
             assert result == expected
 
 
+@pytest.mark.usefixtures("_app_ctx")
 class TestGroupItems:
 
-    def testNormalizeGroupName(self):
+    def test_normalize_group_name(self):
         """Request: normalize itemname: restrict groups to alphanumeric Unicode.
 
         Spaces should be normalized after invalid chars are removed!
@@ -161,7 +163,7 @@ class TestGroupItems:
                 assert result == expected
 
 
-def testParentItemName():
+def test_ParentItemName():
     # with no parent
     result = wikiutil.ParentItemName("itemname")
     expected = ""
@@ -172,7 +174,7 @@ def testParentItemName():
     assert result == expected
 
 
-def testdrawing2fname():
+def test_drawing2fname():
     # with extension not in DRAWING_EXTENSIONS
     result = wikiutil.drawing2fname("Moin_drawing.txt")
     expected = "Moin_drawing.txt.svgdraw"
@@ -183,7 +185,7 @@ def testdrawing2fname():
     assert result == expected
 
 
-def testgetUnicodeIndexGroup():
+def test_getUnicodeIndexGroup():
     result = wikiutil.getUnicodeIndexGroup(["moin-2", "MoinMoin"])
     expected = "MOIN-2"
     assert result == expected
@@ -192,7 +194,7 @@ def testgetUnicodeIndexGroup():
         result = wikiutil.getUnicodeIndexGroup("")
 
 
-def testis_URL():
+def test_is_URL():
     sample_schemes = ["http", "https", "ftp", "ssh"]
     for scheme in sample_schemes:
         result = wikiutil.is_URL(scheme + ":MoinMoin")
@@ -206,7 +208,7 @@ def testis_URL():
     assert not result
 
 
-def testcontainsConflictMarker():
+def test_containsConflictMarker():
     # text with conflict marker
     result = wikiutil.containsConflictMarker("/!\\ '''Edit conflict - Conflict marker is present")
     assert result
@@ -216,7 +218,7 @@ def testcontainsConflictMarker():
     assert not result
 
 
-def testsplit_anchor():
+def test_split_anchor():
     """
     TODO: add a test for split_anchor when we have a better
           approach to deal with problems like "#MoinMoin#" returning ("#MoinMoin", "")
@@ -234,7 +236,7 @@ def testsplit_anchor():
     assert result == expected
 
 
-def testfile_headers():
+def test_file_headers():
     test_headers = [
         # test_file, content_type
         ("imagefile.gif", "image/gif"),
@@ -255,6 +257,7 @@ def testfile_headers():
     assert result == expected
 
 
+@pytest.mark.usefixtures("_app_ctx")
 @pytest.mark.parametrize(
     "url,expected",
     [

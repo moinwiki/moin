@@ -16,12 +16,9 @@ To use this, import exactly these names (no less, no more):
 
 
 from babel import Locale
-from contextlib import contextmanager
 
-from flask import current_app, request
-from flask import g as flaskg
+from flask import current_app, request, g as flaskg
 from flask_babel import Babel, gettext, ngettext, lazy_gettext
-from flask.globals import request_ctx
 
 from moin import log
 
@@ -34,12 +31,16 @@ L_ = lazy_gettext
 
 
 def i18n_init(app):
-    """Initialize Flask-Babel."""
+    """
+    Initialize Flask-Babel.
+    """
     Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
 
 def get_locale():
-    """Return the locale for the current user."""
+    """
+    Return the locale for the current user.
+    """
     locale = None
     # This may be called when flaskg.user is not set up yet:
     u = getattr(flaskg, "user", None)
@@ -70,43 +71,10 @@ def get_locale():
 
 
 def get_timezone():
-    """Return the timezone for the current user."""
+    """
+    Return the timezone for the current user.
+    """
     # This may be called when flaskg.user is not set up yet:
     u = getattr(flaskg, "user", None)
     if u and u.timezone is not None:
         return u.timezone
-
-
-# Original source is a patch to Flask Babel
-# https://github.com/lalinsky/flask-babel/commit/09ee1702c7129598bb202aa40a0e2e19f5414c24
-@contextmanager
-def force_locale(locale):
-    """Temporarily override the currently selected locale.
-
-    Sometimes it is useful to switch the current locale to a different one,
-    perform some tasks, and then revert to the original. For example,
-    if the user uses German on the website, but you want to send
-    them an email in English, you can use this function as a context
-    manager::
-
-        with force_locale('en_US'):
-            send_email(gettext('Hello!'), ...)
-    """
-    ctx = request_ctx
-    if ctx is None:
-        yield
-        return
-    babel = ctx.app.extensions["babel"]
-    orig_locale_selector = babel.locale_selector
-    orig_attrs = {}
-    for key in ("babel_translations", "babel_locale"):
-        orig_attrs[key] = getattr(ctx, key, None)
-    try:
-        babel.locale_selector = lambda: locale
-        for key in orig_attrs:
-            setattr(ctx, key, None)
-        yield
-    finally:
-        babel.locale_selector = orig_locale_selector
-        for key, value in orig_attrs.items():
-            setattr(ctx, key, value)

@@ -4,6 +4,9 @@
 """
 MoinMoin - tests for moin.utils.show_time.
 """
+
+import pytest
+
 from flask import g as flaskg
 
 from moin.utils import show_time
@@ -31,6 +34,7 @@ class TestShowTime:
             result = show_time.duration(seconds)
             assert result == expected
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_show_time_datetime(self):
         """Users who are not logged in get ISO 8601 Zulu dates."""
         formatted_date = show_time.format_date(utc_dt=0)
@@ -40,6 +44,7 @@ class TestShowTime:
         formatted_date_time = show_time.format_date_time(utc_dt=0)
         assert formatted_date_time == "1970-01-01 00:00:00z"
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_show_time_datetime_logged_in_utc(self):
         """Users who are logged in, selected the UTC time zone, and enabled ISO 8601 get ISO 8601 Zulu dates."""
         flaskg.user.valid = True
@@ -53,6 +58,7 @@ class TestShowTime:
         formatted_date_time = show_time.format_date_time(utc_dt=0)
         assert formatted_date_time == "1970-01-01 00:00:00z"
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_show_time_datetime_logged_in_local(self):
         """Users who are logged in with ISO 8601 disabled get dates based on locale and time zone."""
         flaskg.user.valid = True

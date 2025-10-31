@@ -25,6 +25,7 @@ class TestConfiguredGivenAuth:
 
         return Config
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test(self):
         assert flaskg.user.name == ["JoeDoe"]
 
@@ -48,6 +49,7 @@ class TestGivenAuth:
         result = givenauth_obj.transform_username("testDomain\\test name@moinmoin.org")
         assert result == "TestName"
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_request(self):
         givenauth_obj = GivenAuth()
         flaskg.user.auth_method = "given"
@@ -62,6 +64,7 @@ class TestGivenAuth:
         assert test_user.name == ["Test_User"]
 
 
+@pytest.mark.usefixtures("_req_ctx")
 def test_handle_login():
     # no messages in the beginning
     assert not flaskg._login_messages
@@ -84,6 +87,7 @@ def test_handle_login():
     assert test_user2.valid
 
 
+@pytest.mark.usefixtures("_req_ctx")
 def test_get_multistage_continuation_url():
     test_url = get_multistage_continuation_url(
         "test_auth_name", extra_fields={"password": "test_pass", "test_key": "test_value"}

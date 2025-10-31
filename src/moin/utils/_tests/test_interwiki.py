@@ -29,6 +29,7 @@ from moin.app import before_wiki
 
 
 class TestInterWiki:
+
     @pytest.fixture
     def cfg(self):
         class Config(wikiconfig.Config):
@@ -42,6 +43,7 @@ class TestInterWiki:
 
         return Config
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_url_for_item(self):
         before_wiki()
         revid = "cdc431e0fc624d6fb8372152dcb66457"
@@ -121,6 +123,7 @@ class TestInterWiki:
             assert _split_namespace(map, markup) == (namespace, pagename)
             namespace, pagename = _split_namespace(map, markup)
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_split_interwiki(self):
         app.cfg.namespace_mapping = [
             ("", "default_backend"),
@@ -157,7 +160,7 @@ class TestInterWiki:
             assert isinstance(field, str)
             assert isinstance(wikiname, str)
 
-    def testJoinWiki(self):
+    def test_join_wiki(self):
         tests = [
             (("http://example.org/", "SomePage", "", ""), "http://example.org/SomePage"),
             (("", "SomePage", "", ""), "SomePage"),
@@ -191,6 +194,7 @@ class TestInterWiki:
         for (baseurl, pagename, field, namespace), url in tests:
             assert join_wiki(baseurl, pagename, field, namespace) == url
 
+    @pytest.mark.usefixtures("_app_ctx")
     def test_split_fqname(self):
         app.cfg.namespace_mapping = [
             ("", "default_backend"),
@@ -209,6 +213,7 @@ class TestInterWiki:
         for url, (namespace, field, pagename) in tests:
             assert split_fqname(url) == (namespace, field, pagename)
 
+    @pytest.mark.usefixtures("_app_ctx")
     def test_get_interwiki_home(self):
         assert getInterwikiHome("frodo") == ("Self", "users/frodo")
 

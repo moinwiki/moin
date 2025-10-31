@@ -18,6 +18,7 @@ from moin.constants.keys import ITEMID, ITEMTYPE, NAME, NAMEPREFIX, NAMERE, NAME
 import pytest
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestSimple:
     def test_create_retrieve(self):
         name = "foo"
@@ -41,9 +42,10 @@ class TestSimple:
         assert u.profile[REV_NUMBER] == 1
 
 
+@pytest.mark.usefixtures("_req_ctx", "saved_user")
 class TestUser:
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def saved_user(self):
         orig_user = flaskg.user
         flaskg.user = user.User()
@@ -274,15 +276,17 @@ class TestUser:
 
 class TestGroupName:
 
-    def testGroupNames(self):
+    @pytest.mark.usefixtures("_app_ctx")
+    def test_group_names(self):
         """User: isValidName: reject group names."""
         test = "AdminGroup"
         assert not user.isValidName(test)
 
 
+@pytest.mark.usefixtures("_app_ctx")
 class TestIsValidName:
 
-    def testNonAlnumCharacters(self):
+    def test_non_alnum_characters(self):
         """User: isValidName: reject Unicode non-alphanumeric characters.
 
         ':' and ',' are used in ACL rules; we might add more characters to the syntax.
@@ -293,13 +297,13 @@ class TestIsValidName:
             name = base.format(c)
             assert not user.isValidName(name)
 
-    def testWhitespace(self):
+    def test_whitespace(self):
         """User: isValidName: reject leading, trailing, or multiple whitespace."""
         cases = (" User Name", "User Name ", "User   Name")
         for test in cases:
             assert not user.isValidName(test)
 
-    def testValid(self):
+    def test_valid(self):
         """User: isValidName: accept names in any language, with spaces."""
         cases = (
             "Jürgen Hermann",  # German

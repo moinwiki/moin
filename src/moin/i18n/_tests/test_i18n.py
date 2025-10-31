@@ -8,13 +8,16 @@ Tests for i18n
 
 import pytest
 
-from flask import Flask
 import flask_babel as babel
 
-from moin.i18n import get_locale, get_timezone, force_locale
+from flask import Flask
+from flask_babel import Babel, force_locale
+
+from moin.i18n import get_locale, get_timezone
 from moin.i18n import _, L_, N_
 
 
+@pytest.mark.usefixtures("_req_ctx")
 def test_user_attributes():
     test_locale = get_locale()
     assert test_locale == "en"
@@ -23,6 +26,7 @@ def test_user_attributes():
     assert test_timezone == "UTC"
 
 
+@pytest.mark.usefixtures("_app_ctx")
 def test_text():
     # Test gettext
     result = _("test_text")
@@ -39,17 +43,22 @@ def test_text():
     assert result2 == "text2"
 
 
-def test_force_locale():
-    pytest.skip("This test needs to be run with --assert=reinterp or --assert=plain flag")
-    app = Flask(__name__)
+@pytest.fixture
+def flask_app_with_de_locale():
 
     def select_locale():
         return "de_DE"
 
-    babel.Babel(app, locale_selector=select_locale)
+    app = Flask(__name__)
+    Babel(app, locale_selector=select_locale)
 
     with app.test_request_context():
-        assert str(babel.get_locale()) == "de_DE"
-        with force_locale("en_US"):
-            assert str(babel.get_locale()) == "en_US"
-        assert str(babel.get_locale()) == "de_DE"
+        yield app
+
+
+@pytest.mark.usefixtures("flask_app_with_de_locale")
+def test_force_locale():
+    assert str(babel.get_locale()) == "de_DE"
+    with force_locale("en_US"):
+        assert str(babel.get_locale()) == "en_US"
+    assert str(babel.get_locale()) == "de_DE"

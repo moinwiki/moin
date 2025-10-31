@@ -41,6 +41,7 @@ def test_parseargs_two():
     assert args == (["WikiWorkingGroup", "WikiMacrosSpecialInterestGroup"], 2020, 3, -4, True, False)
 
 
+@pytest.mark.usefixtures("_req_ctx")
 def test_Macro():
     """
     Call the MonthCalendar macro and test some attributes of the resulting table.
