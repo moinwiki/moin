@@ -49,9 +49,8 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
 /* styling for topbar */
 @media (max-width: 1024px) {
-    #moin-header { background-image: url("../../../static/img/white-clouds.jpg");
-        text-align: left; min-height: 74px; overflow: hidden; border-bottom: 1px solid #D7E9FD;
-        font-size: 1em; }
+    #moin-header { background-color: var(--bg_topside); text-align: left; min-height: 74px; overflow: hidden;
+     border-bottom: 1px solid var(--border_topside); font-size: 1em; }
     /* logo size of 64x64 px determines min-height of 74px above */
 
     #moin-logo { float: left; padding: 5px 10px 10px 5px; }
@@ -76,9 +75,8 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     .moin-edit-actions { display: none; }
     #moin-content { margin: 0 5%; width: auto; padding-bottom: 9em; }
 
-    #moin-footer { background-image: url("../../../static/img/white-clouds.jpg");
-        background-position-y: bottom;
-        border-top: 1px solid #D7E9FD; padding: 8pt 5% 10pt 5%; width: 100vw; }
+    #moin-footer { background-color: var(--bg_topside); background-position-y: bottom;
+        border-top: 1px solid var(--border_topside); padding: 8pt 5% 10pt 5%; width: 100vw; }
 
     #moin-pageinfo,
     #moin-wiki-license,
@@ -129,9 +127,9 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
 @media (min-width: 1025px) {
     /* styling for left sidebar */
-    #moin-header { background-image: url("../../../static/img/white-clouds-r.jpg"); text-align: center;
+    #moin-header { background-color: var(--bg_topside); text-align: center;
         position: fixed; top: 0; left: 0; width: 250px; height: 100%; overflow-y: auto; overflow-x: hidden;
-        border-right: 1px solid #D7E9FD; font-size: .92em; z-index: 10; }
+        border-right: 1px solid var(--border_topside); font-size: .92em; z-index: 10; }
     #moin-logo { padding: 10px 0; }
     .moin-sitename { font-size: 1.5rem; display: block; }
 
