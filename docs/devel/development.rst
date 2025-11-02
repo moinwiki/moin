@@ -584,6 +584,7 @@ Package Release on pypi.org and Github Releases
 * Commit or stash all versioned changes.
 * Pull all updates from master repo.
 * Run `./m quickinstall` and `./m extras` to update the venv and translations.
+* Update docs/changes/CHANGES
 * Update Development Status, etc. in pyproject.toml
 * Run tests.
 * Add a signed, annotated tag with the next release number to master branch::

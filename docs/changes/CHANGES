@@ -5,6 +5,113 @@ Please note: It is recommended that existing wiki's be upgraded to the
 latest moin 1.9.x release before converting to Moin 2. However, this may
 not be a necessary step as the 1.9.x file structure has not changed recently.
 
+Version 2.0.0b4 2025-11-07
+--------------------------
+This is an unstable beta release not suitable for a production wiki,
+test carefully and report new issues and feature requests on the issue tracker:
+https://github.com/moinwiki/moin/issues.
+
+After installing this release as a upgrade on an existing moin2 wiki be sure to::
+* copy or merge src/moin/config/wikiconfig.py into the root version of wikiconfig.py.
+* rebuild the Whoosh indexes
+  * moin index-destroy
+  * moin index-create
+  * moin index-build
+
+Fixes
+~~~~~
+* remove JetBrains Mono font for better performance
+* add missing changes from focus theme templates
+* improve consistency between focus theme tables
+* Improve focus theme layout (especially on mobile)
+* move 'user.may.destroy' call from focus theme template to views.py
+* skip before_wiki and teardown_wiki for content in _themes
+* set default for EDIT_ON_DOUBLECLICK to False
+* Re-enable "Wiki links" similar to moin 1.9
+* Fix extraction of open document formated files for indexing
+* Use member 'cfg' of class ThemeSupport consistently instead of taking it from the flask application context
+* Convert Basic theme from Boostrap 3 to Boostrap 4 and use sass instead of lessc (fixes #1770)
+* remove inline styles & onclick from item_acl_report.html #1816
+* Remove leftover class definition from rST converter.
+* Move slideshow inline js script to separate file
+* change focus theme layout.html to load main.js after other scripts
+* fix error in test_views.py #1885
+* Remove show.html template from theme 'focus'
+* topside: fix footer width on small screen
+* update docs for searching an item's subitems #1885
+* Update favicon.ico
+* prevent IndexError in search when wiki contains deleted items #1885
+* Moinwiki converter: make definition lists have lowest precedence in indent_re
+* Moinwiki converter: pop top of stack for closing strike through character sequence
+* Moinwiki converter: add additional test cases
+* Fix issue #1874: correct handling of wiki item links
+* WikiLinkAnalyzer: allow colon in wiki.local page name
+* Add more Python type hints
+* Replace use of Python 3.12 'type' statement with PEP 613 TypeAlias declaration
+* Fix errors caused by importing 'override'
+* Make use of meta data key constants
+* use spdx license metadata in pyproject.toml
+* add configuration option for markdown extensions
+* test_indexing.py: fix code dumping items
+* Meta data revision already set in MutableBackend._store_meta
+* Fix logging of invalid element (empty log output before)
+* Log only invalid metadata properties
+* Fix empty lines in diff in focus theme
+* Fix load draft in focus theme
+* Search does not support namespaces fixes #1907
+* get_open_wiki_files: add file mode to output for debugging
+* Add custom.css feature
+* Add buffer reset to whoosh Bufferfile.close
+* Suppress printing of slideshow start button
+* html error on TitleIndex macro; fixes #1979
+* support Python 3.13
+* CSP warning on items containing TOC macro fixes #1976
+* bandit: exclude scripts/ and contrib/loadtesting/
+* fix typos and grammar
+* fix for: invalid escape sequence '\ '
+* remove inline styles from index.html and forms.html #1816
+* docs: fix typos and grammar
+* search.rst: fix table markup / width
+* "Moin Wiki" -> "MoinWiki" when referring to markup type
+* Correct csp report log path used in before_wiki (add leading slash)
+* improve User Accounts documention
+* remove inline style from basic theme #1816
+* unexpected keyword argument 'fqname' running +feed/atom; fixes #1990
+* Basic theme fixes, show "Load Draft" button, add missing items in block options_for_javascript
+* Modify form: make loading content from file upload work
+* Rename and rework get_indexer function
+* babel: move config to pyproject.toml
+* Use itemtype constants in blog.py
+* Add test cases for hyperlinks to sections in reStructuredText.
+* rST converter: Fix handling of internal cross-references.
+* Rename get_doc to get_document and other code improvements
+* Change get_document to a method of IndexingMiddleware
+* Set item_type and rev_number for userprofile items
+* Remove unused methods (Protected) Revision.set_context
+* Fix code and jinja templates accessing the no longer existing wiki configuration setting 'item_root'.
+* Pass variable 'subitem_target' instead of 'item_name' into search templates. 'item_name' is already used for other purposes in layout.html.
+* Added Swedish translation
+* Fix handling of target elements in rst; fixes #1680.
+* Fix some compile issues in translations
+* Improve moin_dir setting to fix tox tests
+* Correct template rendering; No longer modify the Jinja environment globals with each request
+* Update rST parser documentation: preparation
+* Synchronize rST parser documentation files.
+* Remove workarounds in test code dealing with Werkzeug versions < 3.0.0
+* Set wikiconfig_dir and instance_dir in wikiconfig.py used for testing
+* Use variable name 'client' for test_client instances
+* rST in: keep leading slash in wiki-local references
+* Add test case for page modification with preview (POST request)
+* Add test case for user login POST request
+* Replace white_clouds with gray background in topside theme
+* rST in: fix non-section titles used in admonitions, sidebars, sections, tables, and topics.
+
+New features
+~~~~~~~~~~~~
+* Removed support for Python 3.9
+* Added support for Python 3.14
+
+
 Version 2.0.0b3 2025-05-24
 --------------------------
 This is an unstable beta release not suitable for a production wiki,
