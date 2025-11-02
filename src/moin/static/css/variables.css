@@ -92,4 +92,7 @@
     --bg-cal-today: #CCFFCC; /* todays background */
     --bg-cal-invalidday: #FCFCFC; /* invalid days background */
 
+    /* theme topside specific */
+    --bg_topside: #F3F3F1;
+    --border_topside: #E8E8E6;
 }
