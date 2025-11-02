@@ -127,10 +127,8 @@ class NodeVisitor:
         # use "attention" for generic admonitions, cf.
         # http://docutils.sourceforge.net/docs/ref/rst/directives.html#generic-admonition
         self.open_moin_page_node(moin_page.admonition({moin_page.type: typ}), node)
-        self.header_size += 1
 
     def depart_admonition(self, node=None):
-        self.header_size -= 1
         self.close_moin_page_node()
 
     # see http://docutils.sourceforge.net/docs/ref/rst/directives.html#specific-admonitions
@@ -643,6 +641,8 @@ class NodeVisitor:
         self.header_size -= 1
 
     def visit_sidebar(self, node):
+        # TODO: render sidebar "set off from the rest of the document somehow, typically with a border."
+        # Sidebars typically “float” to the side of the page.
         pass
 
     def depart_sidebar(self, node):
@@ -661,6 +661,9 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_subtitle(self, node):
+        # TODO: Subtitles should not have section numbering and should not be in the ToC.
+        #       If the document title is centre aligned,
+        #       the document sub-title should be centre aligned, too.
         self.header_size += 1
         self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
@@ -676,10 +679,11 @@ class NodeVisitor:
 
     def visit_system_message(self, node):
         # we have encountered a parsing error, insert an error message
+        # TODO: also show error level and line number.
         self.visit_admonition(node, "error")
 
     def depart_system_message(self, node):
-        self.close_moin_page_node()
+        self.depart_admonition(node)
 
     def visit_table(self, node):
         self.open_moin_page_node(moin_page.table(), node)
@@ -730,9 +734,9 @@ class NodeVisitor:
         The tgroup node is presented as the parent of thead and tbody. These should be siblings.
         Other children are colspec which have a colwidth attribute. Using these numbers to specify
         a width on the col element similar to Sphinx results in an HTML validation error.
-        There is no markup to specify styling such as background color. Best result is to
-        discard this node.
+        There is no markup to specify styling such as background color.
         """
+        # TODO: convert collumn width values into a form understood by Moin.
         pass
 
     def depart_tgroup(self, node):
@@ -745,13 +749,21 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_title(self, node):
-        # TODO: handle titles in topic and generic admonition
-        self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
+        # <title> is used in <admonition>, <document>, <section>, <sidebar>, <table>, and <topic>
+        # TODO: table title is currently ignored!
+        if isinstance(node.parent, (nodes.admonition, nodes.sidebar, nodes.topic)):
+            # informal title: don't include in ToC, no section numbering
+            self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+        else:
+            self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
     def depart_title(self, node):
         self.close_moin_page_node()
 
     def visit_topic(self, node):
+        # A <topic> element should be set off from the rest of the document somehow,
+        # such as with indentation or a border.
+        # TODO: represent as blockquote?
         pass
 
     def depart_topic(self, node):
