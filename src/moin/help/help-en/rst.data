@@ -294,7 +294,7 @@ target`_) in the same document.
 Wiki-Internal Links
 -------------------
 
-*Wiki-internal* links [#]_ point to items in the same wiki.
+*Wiki-internal* links [#internal-external]_ point to items in the same wiki.
 
 * The Moin engine interprets `URI references`_ without scheme as references
   to local Wiki items.
@@ -312,19 +312,19 @@ Wiki-Internal Links
      - Result
      - Notes
 
-   * - ```<Example\ Page>__```
-     - `<Example\ Page>`__
-     - Item in default namespace as URI reference, [#]_
+   * - ```<Home>__```
+     - `<Home>`__
+     - Item in default namespace as URI reference,
 
-   * - ```Example Page <Example%20Page>__```
-     - `Example Page <Example%20Page>`__
+   * - ```My Castle <Home>__```
+     - `My Castle <Home>`__
      - ... with custom text,
 
    * - __
 
-       ```Example Page`_``
+       ```Home`_``
 
-     - `Example Page`_
+     - `Home`_
 
      - ... as named reference.
 
@@ -368,18 +368,18 @@ Wiki-Internal Links
      - `../moin#Linking`_
      - Fragment of a sibling item.
 
-   * - ```/subitem`_``
-     - `/subitem`_
-     - Subitem,
+   * - ```/Subitem Example`_``
+     - `/Subitem Example`_
+     - Subitem, 
 
-   * - ```sub-item </subitem>`_``
-     - `sub-item </subitem>`__
-     - ... as URI reference with custom text.
+   * - ```sub-item </Subitem%20Example>`__``
+     - `sub-item </Subitem%20Example>`__
+     - ... as URI reference with custom text. [#whitespace-in-URI]_
 
-.. [#] The Docutils rST documentation designates all links employing
-   a URI reference as *external*.
+.. [#internal-external] The Docutils rST documentation designates all
+   links employing a URI reference as *external*.
 
-.. [#] In `URI context`_, whitespace is removed by default.
+.. [#whitespace-in-URI] In `URI context`_, whitespace is removed by default.
    Use an escaped space or percent encoding.
 
 Transclusions
