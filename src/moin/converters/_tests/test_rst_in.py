@@ -37,6 +37,14 @@ class TestConverter:
         ("**Text**", "<page><body><p><strong>Text</strong></p></body></page>"),
         ("*Text*", "<page><body><p><emphasis>Text</emphasis></p></body></page>"),
         ("``Text``", "<page><body><p><code>Text</code></p></body></page>"),
+        (  # custom role using a CSS class
+            ".. role:: orange\n\n:orange:`colourful` text",
+            '<page><body><p><span xhtml:class="orange">colourful</span> text</p></body></page>',
+        ),
+        (  # special custom roles for <del> and <ins>
+            ".. role:: del\n.. role:: ins\n\n" ":del:`deleted` text :ins:`inserted` text",
+            "<page><body><p><del>deleted</del> text <ins>inserted</ins> text</p></body></page>",
+        ),
         ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
         (
             "`Text <javascript:alert('xss')>`_",
@@ -358,13 +366,16 @@ text""",
             "<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>",
         ),
         (
-            """
-.. note::
-  :name: note-id
-
-  An admonition of type "note"
-""",
-            '<page><body><span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition></body></page>',
+            ".. note::\n" "   :name: note-id\n\n" '   An admonition of type "note"',
+            '<page><body><span id="note-id" /><admonition type="note">'
+            '<p>An admonition of type "note"</p></admonition></body></page>',
+        ),
+        # use an attention for a generic admonition
+        (
+            ".. admonition:: Generic Admonition\n\n" "   Be alert!",
+            '<page><body><admonition type="attention">'
+            '<strong xhtml:class="title">Generic Admonition</strong>'
+            "<p>Be alert!</p></admonition></body></page>",
         ),
     ]
 

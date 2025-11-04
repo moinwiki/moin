@@ -434,10 +434,21 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_inline(self, node):
-        pass
+        classes = node["classes"]
+        moin_node = moin_page.span
+        attrib = {}
+        if "ins" in classes:
+            moin_node = moin_page.ins
+            classes.remove("ins")
+        if "del" in classes:
+            moin_node = moin_page.del_
+            classes.remove("del")
+        if classes:
+            attrib[html.class_] = " ".join(classes)
+        self.open_moin_page_node(moin_node(attrib=attrib))
 
     def depart_inline(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_label(self, node):
         if self.status[-1] == "footnote":
@@ -529,6 +540,7 @@ class NodeVisitor:
             footnote_node = self.footnotes.get(self.footnote_lable, None)
             if footnote_node:
                 # TODO: `node.astext()` ignores all markup!
+                # "moin" footnotes support inline markup
                 footnote_node.append(node.astext())
             raise nodes.SkipNode
         self.open_moin_page_node(moin_page.p(), node)
