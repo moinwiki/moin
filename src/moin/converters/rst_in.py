@@ -599,6 +599,7 @@ class NodeVisitor:
             return
 
         if not allowed_uri_scheme(refuri):
+            # TODO: visit_problematic(node), append <system_message> at end.
             self.visit_error(node)
             return
 
@@ -693,9 +694,20 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_system_message(self, node):
-        # we have encountered a parsing error, insert an error message
-        # TODO: also show error level and line number.
-        self.visit_admonition(node, "error")
+        # an element reporting a parsing issue (DEBUG, INFO, WARNING, ERROR, or SEVERE)
+        # TODO: handle node['backrefs'] to <problematic> element.
+        if node["level"] < 3:
+            self.visit_admonition(node, "caution")
+        else:
+            self.visit_admonition(node, "error")
+        self.open_moin_page_node(moin_page.p())
+        self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+        title = f"{node['type']}/{node['level']}"
+        self.current_node.append(f"System Message: {title}")
+        self.close_moin_page_node()
+        if node.hasattr("line"):
+            self.current_node.append(f" ({node['source']} line {node['line']})")
+        self.close_moin_page_node()
 
     def depart_system_message(self, node):
         self.depart_admonition(node)

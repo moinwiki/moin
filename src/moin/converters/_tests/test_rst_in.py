@@ -88,7 +88,8 @@ class TestConverter:
             " 3. A\n #. B",
             '<page><body><blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
-            '<admonition type="error"><p>Enumerated list start value not ordinal-1: "3" (ordinal 3)</p></admonition>'
+            '<admonition type="caution"><p><strong xhtml:class="title">System Message: INFO/1</strong> (rST input line 1)</p>'
+            '<p>Enumerated list start value not ordinal-1: "3" (ordinal 3)</p></admonition>'
             "</blockquote></body></page>",
         ),
     ]
@@ -363,10 +364,12 @@ text""",
         self.do(input, output)
 
     data = [
+        # bibliographic data (visible meta-data)
         (
             ":Author: Test\n:Version:  $Revision: 1.17 $\n:Copyright: c\n:Test: t",
             "<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>",
         ),
+        # admonitions (hint, info, warning, error, ...)
         (
             ".. note::\n" "   :name: note-id\n\n" '   An admonition of type "note"',
             '<page><body><span id="note-id" /><admonition type="note">'
@@ -379,6 +382,26 @@ text""",
             '<strong xhtml:class="title">Generic Admonition</strong>'
             "<p>Be alert!</p></admonition></body></page>",
         ),
+        # Moin uses admonitions also for system messages
+        (
+            "Unbalanced *inline markup.",
+            "<page><body><p>Unbalanced *inline markup.</p>"
+            '<span id="system-message-1" /><admonition type="caution">'
+            '<p><strong xhtml:class="title">System Message: WARNING/2</strong> (rST input line 1)</p>'
+            "<p>Inline emphasis start-string without end-string.</p>"
+            "</admonition></body></page>",
+        ),
+        # TODO: this currently fails because the parsing error is not cleared.
+        # (
+        #     "Sections must not be nested in body elements.\n\n"
+        #     "  not allowed\n"
+        #     "  -----------\n",
+        #     "<page><body><p>Sections must not be nested in body elements.</p><blockquote>"
+        #     '<admonition type="error"><p><strong xhtml:class="title">System Message: ERROR/3</strong> (rST input line 4)</p>'
+        #     "<p>Unexpected section title.</p>"
+        #     "<blockcode>not allowed\n-----------</blockcode>"
+        #     "</admonition></blockquote></body></page>"
+        # )
     ]
 
     @pytest.mark.parametrize("input,output", data)
