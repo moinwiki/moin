@@ -314,6 +314,9 @@ class NodeVisitor:
         type = enum_style.get(node["enumtype"], None)
         if type:
             new_node.set(moin_page.list_style_type, type)
+        startvalue = node.get("start", 1)
+        if startvalue > 1:
+            new_node.set(moin_page.list_start, str(startvalue))
         self.open_moin_page_node(new_node, node)
 
     def depart_enumerated_list(self, node):

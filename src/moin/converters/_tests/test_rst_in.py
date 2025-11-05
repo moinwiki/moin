@@ -65,9 +65,10 @@ class TestConverter:
     data = [
         (
             "1. a\n   b\n   c\n\n2. b\n\n   d",
-            """<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>a
-b
-c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></list-item-body></list-item></list></body></page>""",
+            '<page><body><list item-label-generate="ordered">'
+            "<list-item><list-item-body><p>a\nb\nc</p></list-item-body></list-item>"
+            "<list-item><list-item-body><p>b</p><p>d</p></list-item-body></list-item>"
+            "</list></body></page>",
         ),
         (
             "1. a\n2. b\n\nA. c\n\na. A\n\n   1. B\n\n   2. C\n\n",
@@ -81,10 +82,11 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             "what\n      def\n\nhow\n      to",
             "<page><body><list><list-item><list-item-label>what</list-item-label><list-item-body><p>def</p></list-item-body></list-item><list-item><list-item-label>how</list-item-label><list-item-body><p>to</p></list-item-body></list-item></list></body></page>",
         ),
-        # starting an ordered list with a value other than 1 generates an error
+        # starting an ordered list with a value other than 1
+        # generates an info-level system message that stays usually hidden (TODO).
         (
             " 3. A\n #. B",
-            '<page><body><blockquote><list item-label-generate="ordered"><list-item><list-item-body><p>A</p>'
+            '<page><body><blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
             '<admonition type="error"><p>Enumerated list start value not ordinal-1: "3" (ordinal 3)</p></admonition>'
             "</blockquote></body></page>",
