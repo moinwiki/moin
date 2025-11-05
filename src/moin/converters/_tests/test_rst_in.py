@@ -82,14 +82,11 @@ class TestConverter:
             "what\n      def\n\nhow\n      to",
             "<page><body><list><list-item><list-item-label>what</list-item-label><list-item-body><p>def</p></list-item-body></list-item><list-item><list-item-label>how</list-item-label><list-item-body><p>to</p></list-item-body></list-item></list></body></page>",
         ),
-        # starting an ordered list with a value other than 1
-        # generates an info-level system message that stays usually hidden (TODO).
+        # nested in a block-quote and starting with a value other than 1
         (
             " 3. A\n #. B",
             '<page><body><blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
-            '<admonition type="caution"><p><strong xhtml:class="title">System Message: INFO/1</strong> (rST input line 1)</p>'
-            '<p>Enumerated list start value not ordinal-1: "3" (ordinal 3)</p></admonition>'
             "</blockquote></body></page>",
         ),
     ]

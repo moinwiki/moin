@@ -850,6 +850,8 @@ class Parser(docutils.parsers.rst.Parser):
     Registers a "transform__" for hyperlink references
     without matching target__.
 
+    Also register the "transforms" that are added by default for a Docutils writer.
+
     __ https://docutils.sourceforge.io/docs/api/transforms.html
     __ https://docutils.sourceforge.io/docs/ref/doctree.html#target
     """
@@ -859,7 +861,13 @@ class Parser(docutils.parsers.rst.Parser):
 
     def get_transforms(self):
         """Add WikiReferences to the registered transforms."""
-        return super().get_transforms() + [WikiReferences]
+        moin_parser_transforms = [
+            WikiReferences,
+            transforms.universal.StripClassesAndElements,
+            transforms.universal.Messages,
+            transforms.universal.FilterMessages,
+        ]
+        return super().get_transforms() + moin_parser_transforms
 
 
 class WikiReferences(transforms.Transform):
