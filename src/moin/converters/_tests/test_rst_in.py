@@ -382,9 +382,10 @@ text""",
         # Moin uses admonitions also for system messages
         (
             "Unbalanced *inline markup.",
-            "<page><body><p>Unbalanced *inline markup.</p>"
+            '<page><body><p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
             '<span id="system-message-1" /><admonition type="caution">'
-            '<p><strong xhtml:class="title">System Message: WARNING/2</strong> (rST input line 1)</p>'
+            '<p><strong xhtml:class="title">System Message: WARNING/2</strong> (rST input line 1) '
+            '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition></body></page>",
         ),

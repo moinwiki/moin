@@ -553,10 +553,15 @@ class NodeVisitor:
             self.close_moin_page_node()
 
     def visit_problematic(self, node):
-        pass
+        if node.hasattr("refid"):
+            refuri = f"#{node['refid']}"
+            attrib = {xlink.href: refuri, html.class_: "red"}
+            self.open_moin_page_node(moin_page.a(attrib=attrib), node)
+        else:
+            self.open_moin_page_node(moin_page.span(attrib={html.class_: "red"}))
 
     def depart_problematic(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_reference(self, node):
         refuri = node.get("refuri", "")
@@ -599,7 +604,7 @@ class NodeVisitor:
             return
 
         if not allowed_uri_scheme(refuri):
-            # TODO: visit_problematic(node), append <system_message> at end.
+            # TODO: prepend "wiki.local" as in "moin_in"?
             self.visit_error(node)
             return
 
@@ -696,7 +701,7 @@ class NodeVisitor:
     def visit_system_message(self, node):
         # an element reporting a parsing issue (DEBUG, INFO, WARNING, ERROR, or SEVERE)
         # TODO: handle node['backrefs'] to <problematic> element.
-        if node["level"] < 3:
+        if node.get("level", 4) < 3:
             self.visit_admonition(node, "caution")
         else:
             self.visit_admonition(node, "error")
@@ -704,10 +709,15 @@ class NodeVisitor:
         self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
         title = f"{node['type']}/{node['level']}"
         self.current_node.append(f"System Message: {title}")
-        self.close_moin_page_node()
+        self.close_moin_page_node()  # </strong>
         if node.hasattr("line"):
-            self.current_node.append(f" ({node['source']} line {node['line']})")
-        self.close_moin_page_node()
+            self.current_node.append(f" ({node['source']} line {node['line']}) ")
+        if node.get("backrefs", []):
+            backrefuri = f"#{node['backrefs'][0]}"
+            self.open_moin_page_node(moin_page.a(attrib={xlink.href: backrefuri}), node)
+            self.current_node.append("backlink")
+            self.close_moin_page_node()  # </a>
+        self.close_moin_page_node()  # </p>
 
     def depart_system_message(self, node):
         self.depart_admonition(node)
