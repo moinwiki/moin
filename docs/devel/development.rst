@@ -580,6 +580,9 @@ there may be an occasional need to access the moin shell directly::
 
 Package Release on pypi.org and Github Releases
 ===============================================
+* Update docs/changes/CHANGES, run git log and edit results::
+
+    git log --pretty=format:"* %ad %s (%an)" --no-merges --date=short
 
 * Commit or stash all versioned changes.
 * Pull all updates from master repo.
