@@ -54,7 +54,7 @@ Fixes
 * 2025-09-05 "Moin Wiki" -> "MoinWiki" when referring to markup type (Thomas Waldmann)
 * 2025-09-05 search.rst: Fix table markup/width (Thomas Waldmann)
 * 2025-09-05 index.rst: Re-add bold, remove mm2 (Thomas Waldmann)
-* 2025-09-05 Docs: Fix typos and grammar (Thomas Waldmann)
+* 2025-09-05 Docs: Fix typos and grammar (Junie AI)
 * 2025-09-03 Remove inline styles from index.html and forms.html #1816 (RogerHaase)
 * 2025-09-01 Fix invalid escape sequence '\ ' (Thomas Waldmann)
 * 2025-08-29 Fix typos and grammar (Thomas Waldmann)
