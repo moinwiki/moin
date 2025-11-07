@@ -43,8 +43,7 @@ from whoosh.query import Every, Regex
 
 from werkzeug.exceptions import Forbidden
 
-from xstatic.main import XStatic
-
+from moin import log
 from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
 from moin.constants.keys import CONTENTTYPE, CURRENT, NAME_EXACT, THEME_NAME, LATEST_REVS
@@ -55,8 +54,7 @@ from moin.constants.contenttypes import (
     CONTENTTYPE_OTHER_SUFFIX,
 )
 from moin.items import Item
-
-from moin import log
+from moin.utils import get_xstatic_module_path_map
 
 logging = log.getLogger(__name__)
 
@@ -130,13 +128,12 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         shutil.copytree(norm(join(wiki_root, "wiki_local")), norm(join(html_root, "+serve/wiki_local")))
 
         # copy files from xstatic packaging into "+serve" subdirectory
-        pkg = app.cfg.pkg
         xstatic_dirs = ["font_awesome", "jquery", "jquery_tablesorter", "autosize"]
         if theme in ["basic"]:
             xstatic_dirs.append("bootstrap")
-        for dirs in xstatic_dirs:
-            xs = XStatic(getattr(pkg, dirs), root_url="/static", provider="local", protocol="http")
-            shutil.copytree(xs.base_dir, norm(join(html_root, "+serve", dirs)))
+        module_path_map = get_xstatic_module_path_map(xstatic_dirs)
+        for xs_dir in xstatic_dirs:
+            shutil.copytree(module_path_map[xs_dir], norm(join(html_root, "+serve", xs_dir)))
 
         # copy directories for theme's static files
         if theme == "topside_cms":
