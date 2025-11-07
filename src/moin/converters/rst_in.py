@@ -314,6 +314,9 @@ class NodeVisitor:
         type = enum_style.get(node["enumtype"], None)
         if type:
             new_node.set(moin_page.list_style_type, type)
+        startvalue = node.get("start", 1)
+        if startvalue > 1:
+            new_node.set(moin_page.list_start, str(startvalue))
         self.open_moin_page_node(new_node, node)
 
     def depart_enumerated_list(self, node):
@@ -434,10 +437,21 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_inline(self, node):
-        pass
+        classes = node["classes"]
+        moin_node = moin_page.span
+        attrib = {}
+        if "ins" in classes:
+            moin_node = moin_page.ins
+            classes.remove("ins")
+        if "del" in classes:
+            moin_node = moin_page.del_
+            classes.remove("del")
+        if classes:
+            attrib[html.class_] = " ".join(classes)
+        self.open_moin_page_node(moin_node(attrib=attrib))
 
     def depart_inline(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_label(self, node):
         if self.status[-1] == "footnote":
@@ -529,6 +543,7 @@ class NodeVisitor:
             footnote_node = self.footnotes.get(self.footnote_lable, None)
             if footnote_node:
                 # TODO: `node.astext()` ignores all markup!
+                # "moin" footnotes support inline markup
                 footnote_node.append(node.astext())
             raise nodes.SkipNode
         self.open_moin_page_node(moin_page.p(), node)
@@ -538,10 +553,15 @@ class NodeVisitor:
             self.close_moin_page_node()
 
     def visit_problematic(self, node):
-        pass
+        if node.hasattr("refid"):
+            refuri = f"#{node['refid']}"
+            attrib = {xlink.href: refuri, html.class_: "red"}
+            self.open_moin_page_node(moin_page.a(attrib=attrib), node)
+        else:
+            self.open_moin_page_node(moin_page.span(attrib={html.class_: "red"}))
 
     def depart_problematic(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_reference(self, node):
         refuri = node.get("refuri", "")
@@ -584,6 +604,7 @@ class NodeVisitor:
             return
 
         if not allowed_uri_scheme(refuri):
+            # TODO: prepend "wiki.local" as in "moin_in"?
             self.visit_error(node)
             return
 
@@ -678,9 +699,25 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_system_message(self, node):
-        # we have encountered a parsing error, insert an error message
-        # TODO: also show error level and line number.
-        self.visit_admonition(node, "error")
+        # an element reporting a parsing issue (DEBUG, INFO, WARNING, ERROR, or SEVERE)
+        # TODO: handle node['backrefs'] to <problematic> element.
+        if node.get("level", 4) < 3:
+            self.visit_admonition(node, "caution")
+        else:
+            self.visit_admonition(node, "error")
+        self.open_moin_page_node(moin_page.p())
+        self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+        title = f"{node['type']}/{node['level']}"
+        self.current_node.append(f"System Message: {title}")
+        self.close_moin_page_node()  # </strong>
+        if node.hasattr("line"):
+            self.current_node.append(f" ({node['source']} line {node['line']}) ")
+        if node.get("backrefs", []):
+            backrefuri = f"#{node['backrefs'][0]}"
+            self.open_moin_page_node(moin_page.a(attrib={xlink.href: backrefuri}), node)
+            self.current_node.append("backlink")
+            self.close_moin_page_node()  # </a>
+        self.close_moin_page_node()  # </p>
 
     def depart_system_message(self, node):
         self.depart_admonition(node)
@@ -823,6 +860,8 @@ class Parser(docutils.parsers.rst.Parser):
     Registers a "transform__" for hyperlink references
     without matching target__.
 
+    Also register the "transforms" that are added by default for a Docutils writer.
+
     __ https://docutils.sourceforge.io/docs/api/transforms.html
     __ https://docutils.sourceforge.io/docs/ref/doctree.html#target
     """
@@ -832,7 +871,13 @@ class Parser(docutils.parsers.rst.Parser):
 
     def get_transforms(self):
         """Add WikiReferences to the registered transforms."""
-        return super().get_transforms() + [WikiReferences]
+        moin_parser_transforms = [
+            WikiReferences,
+            transforms.universal.StripClassesAndElements,
+            transforms.universal.Messages,
+            transforms.universal.FilterMessages,
+        ]
+        return super().get_transforms() + moin_parser_transforms
 
 
 class WikiReferences(transforms.Transform):

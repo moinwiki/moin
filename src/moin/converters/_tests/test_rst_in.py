@@ -37,6 +37,14 @@ class TestConverter:
         ("**Text**", "<page><body><p><strong>Text</strong></p></body></page>"),
         ("*Text*", "<page><body><p><emphasis>Text</emphasis></p></body></page>"),
         ("``Text``", "<page><body><p><code>Text</code></p></body></page>"),
+        (  # custom role using a CSS class
+            ".. role:: orange\n\n:orange:`colourful` text",
+            '<page><body><p><span xhtml:class="orange">colourful</span> text</p></body></page>',
+        ),
+        (  # special custom roles for <del> and <ins>
+            ".. role:: del\n.. role:: ins\n\n" ":del:`deleted` text :ins:`inserted` text",
+            "<page><body><p><del>deleted</del> text <ins>inserted</ins> text</p></body></page>",
+        ),
         ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
         (
             "`Text <javascript:alert('xss')>`_",
@@ -57,9 +65,10 @@ class TestConverter:
     data = [
         (
             "1. a\n   b\n   c\n\n2. b\n\n   d",
-            """<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>a
-b
-c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></list-item-body></list-item></list></body></page>""",
+            '<page><body><list item-label-generate="ordered">'
+            "<list-item><list-item-body><p>a\nb\nc</p></list-item-body></list-item>"
+            "<list-item><list-item-body><p>b</p><p>d</p></list-item-body></list-item>"
+            "</list></body></page>",
         ),
         (
             "1. a\n2. b\n\nA. c\n\na. A\n\n   1. B\n\n   2. C\n\n",
@@ -73,12 +82,11 @@ c</p></list-item-body></list-item><list-item><list-item-body><p>b</p><p>d</p></l
             "what\n      def\n\nhow\n      to",
             "<page><body><list><list-item><list-item-label>what</list-item-label><list-item-body><p>def</p></list-item-body></list-item><list-item><list-item-label>how</list-item-label><list-item-body><p>to</p></list-item-body></list-item></list></body></page>",
         ),
-        # starting an ordered list with a value other than 1 generates an error
+        # nested in a block-quote and starting with a value other than 1
         (
             " 3. A\n #. B",
-            '<page><body><blockquote><list item-label-generate="ordered"><list-item><list-item-body><p>A</p>'
+            '<page><body><blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
-            '<admonition type="error"><p>Enumerated list start value not ordinal-1: "3" (ordinal 3)</p></admonition>'
             "</blockquote></body></page>",
         ),
     ]
@@ -353,19 +361,45 @@ text""",
         self.do(input, output)
 
     data = [
+        # bibliographic data (visible meta-data)
         (
             ":Author: Test\n:Version:  $Revision: 1.17 $\n:Copyright: c\n:Test: t",
             "<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>",
         ),
+        # admonitions (hint, info, warning, error, ...)
         (
-            """
-.. note::
-  :name: note-id
-
-  An admonition of type "note"
-""",
-            '<page><body><span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition></body></page>',
+            ".. note::\n" "   :name: note-id\n\n" '   An admonition of type "note"',
+            '<page><body><span id="note-id" /><admonition type="note">'
+            '<p>An admonition of type "note"</p></admonition></body></page>',
         ),
+        # use an attention for a generic admonition
+        (
+            ".. admonition:: Generic Admonition\n\n" "   Be alert!",
+            '<page><body><admonition type="attention">'
+            '<strong xhtml:class="title">Generic Admonition</strong>'
+            "<p>Be alert!</p></admonition></body></page>",
+        ),
+        # Moin uses admonitions also for system messages
+        (
+            "Unbalanced *inline markup.",
+            '<page><body><p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
+            '<span id="system-message-1" /><admonition type="caution">'
+            '<p><strong xhtml:class="title">System Message: WARNING/2</strong> (rST input line 1) '
+            '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
+            "<p>Inline emphasis start-string without end-string.</p>"
+            "</admonition></body></page>",
+        ),
+        # TODO: this currently fails because the parsing error is not cleared.
+        # (
+        #     "Sections must not be nested in body elements.\n\n"
+        #     "  not allowed\n"
+        #     "  -----------\n",
+        #     "<page><body><p>Sections must not be nested in body elements.</p><blockquote>"
+        #     '<admonition type="error"><p><strong xhtml:class="title">System Message: ERROR/3</strong> (rST input line 4)</p>'
+        #     "<p>Unexpected section title.</p>"
+        #     "<blockcode>not allowed\n-----------</blockcode>"
+        #     "</admonition></blockquote></body></page>"
+        # )
     ]
 
     @pytest.mark.parametrize("input,output", data)
