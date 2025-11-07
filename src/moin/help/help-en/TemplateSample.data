@@ -17,6 +17,6 @@ Please be aware that the ACL, the summary and the tags are also copied from the 
 ## note the meta data for ACL, Summary, and Tags have been copied from
 ## the template.
 
-||<tablestyle="width: 90%;" caption="Fruit Colors">Fruit||Color||
+||<tableclass="width-90" caption="Fruit Colors">Fruit||Color||
 =====
 ||Apple||Red||
