@@ -138,9 +138,11 @@ div.warning > p { margin-top: 8px; padding-left: 4em; }
 .green { background-color: var(--bg-user-green); }
 .blue { background-color: var(--bg-user-blue); }
 .yellow { background-color: var(--bg-user-yellow); }
+.lightyellow { background-color: lightyellow; }
 .orange { background-color: var(--bg-user-orange); }
 .gray { background-color: var(--bg-user-gray); }
 .grey { background-color: var(--bg-user-gray); }
+.lightgray { background-color: lightgray; }
 .code { border: 1px solid var(--border-code); background-color: var(--bg-code);
     padding: 7px 10px; clear: both; margin: .75em 0; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; border-radius: 4px;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
@@ -381,6 +383,11 @@ div.no-borders,
 .zebra td form input { box-shadow: none; }
 .zebra tbody tr:nth-child(even),
 .zebra > tr:nth-child(odd) { background-color: var(--bg-zebra); }
+
+/* table width for users */
+.width-50 { width: 50%; }
+.width-90 { width: 90%; }
+.width-99 { width: 99%; }
 
 /* footers */
 #moin-footer { clear: both; margin: 0 0; width: 100%; }
