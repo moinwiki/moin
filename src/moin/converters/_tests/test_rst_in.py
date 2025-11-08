@@ -365,7 +365,7 @@ text""",
         # bibliographic data (visible meta-data)
         (
             ":Author: Test\n:Version:  $Revision: 1.17 $\n:Copyright: c\n:Test: t",
-            "<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>",
+            '<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row xhtml:class="test"><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>',
         ),
         # admonitions (hint, info, warning, error, ...)
         (
@@ -376,7 +376,7 @@ text""",
         # use an attention for a generic admonition
         (
             ".. admonition:: Generic Admonition\n\n" "   Be alert!",
-            '<page><body><admonition type="attention">'
+            '<page><body><admonition type="attention" xhtml:class="admonition-generic-admonition">'
             '<strong xhtml:class="title">Generic Admonition</strong>'
             "<p>Be alert!</p></admonition></body></page>",
         ),
