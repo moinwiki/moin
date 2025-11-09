@@ -12,8 +12,10 @@ Test carefully and report new issues and feature requests on the issue tracker:
 https://github.com/moinwiki/moin/issues
 
 After installing this release as an upgrade on an existing Moin 2 wiki, be sure to:
+
 * Copy or merge src/moin/config/wikiconfig.py into the root-level wikiconfig.py.
 * Rebuild the Whoosh indexes:
+
   * moin index-destroy
   * moin index-create
   * moin index-build
@@ -123,9 +125,11 @@ This is an unstable beta release not suitable for a production wiki,
 test carefully and report new issues and feature requests on the issue tracker:
 https://github.com/moinwiki/moin/issues.
 
-After installing this release as a upgrade on an existing moin2 wiki be sure to::
+After installing this release as a upgrade on an existing moin2 wiki be sure to:
+
 * copy or merge src/moin/config/wikiconfig.py into the root version of wikiconfig.py.
 * rebuild the Whoosh indexes
+
   * moin index-destroy
   * moin index-create
   * moin index-build
