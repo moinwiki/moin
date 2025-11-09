@@ -123,9 +123,10 @@ Markup                                    Result
 * The :raw: role is disabled in Moin.
 
 * TODO:
-  Some standard roles and all `custom interpreted text roles`_
-  are currently ignored by Moin. Content is shown without processing:
+  Some standard roles are currently ignored by Moin.
+  Content is shown without processing.
 
+..
   =====================  =================
   ``:ab:`abbr.```        :ab:`abbr.`
   ``:ac:`AC`/:ac:`DC```  :ac:`AC`/:ac:`DC`
