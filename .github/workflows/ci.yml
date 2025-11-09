@@ -74,3 +74,32 @@ jobs:
         name: test-artifacts-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
           _test_artifacts
+  docs:
+
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # set this to false as soon as docs building is fixed:
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y graphviz
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r docs/requirements.txt
+        pip install -e .
+    - name: Build Sphinx HTML
+      working-directory: docs
+      run: make html
+    - name: Build Sphinx LaTeX (readthedocs builds PDF from LaTeX)
+      working-directory: docs
+      run: make latex
