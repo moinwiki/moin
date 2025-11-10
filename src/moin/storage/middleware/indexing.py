@@ -50,6 +50,8 @@ usually it is even just the small and thus quick latest-revs index.
 
 from __future__ import annotations
 
+from typing import Any, Iterator, TYPE_CHECKING
+
 import gc
 import os
 import re
@@ -70,26 +72,25 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
+from moin import log, user
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
-
-from moin import user
+from moin.converters import default_registry
+from moin.i18n import _
 from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
-from moin.themes import utctimestamp
+from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 from moin.storage.middleware.routing import Backend
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
-from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
+from moin.storage.types import Document, ItemData, MetaData, ValidationState
+from moin.themes import utctimestamp
 from moin.utils import utcfromtimestamp
 from moin.utils.interwiki import split_fqname, CompositeName
+from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
-from moin.converters import default_registry
-from moin.utils.iri import Iri
-from moin.i18n import _
 
-from moin import log
-
-from typing import Any
+if TYPE_CHECKING:
+    from whoosh.index import FileIndex
 
 logging = log.getLogger(__name__)
 
@@ -120,7 +121,7 @@ def parent_names(names):
     return parents
 
 
-def search_names(name_prefix, limit=None):
+def search_names(name_prefix: str, limit: int | None = None) -> list[str]:
     """
     get list of item names beginning with name_prefix
 
@@ -137,7 +138,7 @@ def search_names(name_prefix, limit=None):
     return result_names
 
 
-def backend_to_index(meta, content, schema, backend_name):
+def backend_to_index(meta: MetaData, content: str, schema: Schema, backend_name: str) -> Document:
     """
     Convert backend metadata/data to a whoosh document.
 
@@ -199,7 +200,7 @@ def backend_subscriptions_to_index(subscriptions):
     return subscription_ids, subscription_patterns
 
 
-def convert_to_indexable(meta, data, item_name=None, is_new=False):
+def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None = None, is_new: bool = False) -> str:
     """
     Convert revision data to a indexable content.
 
@@ -221,25 +222,25 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     fqname = split_fqname(item_name)
 
     class PseudoRev:
-        def __init__(self, meta, data):
+        def __init__(self, meta: MetaData, data: ItemData) -> None:
             self.meta = meta
             self.data = data
             self.revid = meta.get(REVID)
 
             class PseudoItem:
-                def __init__(self, fqname):
+                def __init__(self, fqname: CompositeName) -> None:
                     self.fqname = fqname
                     self.name = fqname.value
 
             self.item = PseudoItem(fqname)
 
-        def read(self, *args, **kw):
+        def read(self, *args, **kw) -> bytes:
             return self.data.read(*args, **kw)
 
-        def seek(self, *args, **kw):
+        def seek(self, *args, **kw) -> int:
             return self.data.seek(*args, **kw)
 
-        def tell(self, *args, **kw):
+        def tell(self, *args, **kw) -> int:
             return self.data.tell(*args, **kw)
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
@@ -568,7 +569,9 @@ class IndexingMiddleware:
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async_=True, force_latest=True):
+    def index_revision(
+        self, meta: MetaData, content: str, backend_name: str, async_: bool = True, force_latest: bool = True
+    ) -> None:
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -608,7 +611,7 @@ class IndexingMiddleware:
                 with writer as writer:
                     writer.update_document(**doc)
 
-    def remove_index_revision(self, revid, async_=True, idx_name=LATEST_REVS):
+    def remove_index_revision(self, revid: str, async_: bool = True, idx_name: str = LATEST_REVS) -> None:
         if async_:
             writer = AsyncWriter(self.ix[idx_name])
         else:
@@ -640,7 +643,7 @@ class IndexingMiddleware:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
                     writer.delete_document(docnum_remove)
 
-    def remove_revision(self, revid, async_=True):
+    def remove_revision(self, revid: str, async_: bool = True) -> None:
         """
         Remove a single revision from indexes.
         """
@@ -653,7 +656,16 @@ class IndexingMiddleware:
         for idx_name in [LATEST_REVS, LATEST_META]:
             self.remove_index_revision(revid, async_=async_, idx_name=idx_name)
 
-    def _modify_index(self, index, schema, revids, mode="add", procs=None, limitmb=None, multisegment=False):
+    def _modify_index(
+        self,
+        index: FileIndex,
+        schema: Schema,
+        revids: Iterator[tuple[str, str]],
+        mode: str = "add",
+        procs: int | None = None,
+        limitmb: int | None = None,
+        multisegment: bool = False,
+    ) -> None:
         """
         modify index contents - add, update, delete the indexed documents for all given revids
 
@@ -1080,14 +1092,14 @@ class PropertiesMixin:
             return CompositeName(self.namespace, ITEMID, self.meta[ITEMID])
 
     @property
-    def fqname(self):
+    def fqname(self) -> CompositeName:
         """
         return the fully qualified name including the namespace: NS:NAME
         """
         return self._fqname(self.name)
 
     @property
-    def fqnames(self):
+    def fqnames(self) -> list[CompositeName]:
         """
         return the fully qualified names including the namespace: NS:NAME
         """
@@ -1236,7 +1248,7 @@ class Item(PropertiesMixin):
         """
         return Revision(self, revid, doc)
 
-    def preprocess(self, meta, data):
+    def preprocess(self, meta: MetaData, data: ItemData) -> tuple[MetaData, ItemData, str]:
         """
         preprocess a revision before it gets stored and put into index.
         """
@@ -1245,20 +1257,20 @@ class Item(PropertiesMixin):
 
     def store_revision(
         self,
-        meta,
-        data,
-        overwrite=False,
-        trusted=False,  # True for loading a serialized representation or other trusted sources
-        name=None,  # TODO name we decoded from URL path
-        action=ACTION_SAVE,
-        remote_addr=None,
-        userid=None,
-        contenttype_current=None,
-        contenttype_guessed=None,
-        acl_parent=None,
-        return_rev=False,
-        fqname=None,
-    ):
+        meta: MetaData,
+        data: ItemData,
+        overwrite: bool = False,
+        trusted: bool = False,  # True for loading a serialized representation or other trusted sources
+        name: str | None = None,  # TODO name we decoded from URL path
+        action: str = ACTION_SAVE,
+        remote_addr: str | None = None,
+        userid: str | None = None,
+        contenttype_current: str | None = None,
+        contenttype_guessed: str | None = None,
+        acl_parent: str | None = None,
+        return_rev: bool = False,
+        fqname: str | None = None,
+    ) -> Revision | None:
         """
         Store a revision into the backend, write metadata and data to it.
 
@@ -1284,7 +1296,7 @@ class Item(PropertiesMixin):
                 userid = flaskg.user.valid and flaskg.user.itemid or None
             except AttributeError:
                 pass
-        state = {
+        state: ValidationState = {
             "trusted": trusted,
             NAME: [name],
             ACTION: action,
@@ -1321,7 +1333,6 @@ class Item(PropertiesMixin):
                 raise ValueError(
                     _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
                 )
-
         # we do not have anything in m that is not defined in the schema,
         # e.g. userdefined meta keys or stuff we do not validate. thus, we
         # just update the meta dict with the validated stuff:
@@ -1330,6 +1341,7 @@ class Item(PropertiesMixin):
             # this is maint-reduce-revisions OR item-put CL process, restore saved time of item's last update
             meta[MTIME] = flaskg.data_mtime
             del flaskg.data_mtime
+
         # we do not want None / empty values:
         # XXX do not kick out empty lists before fixing NAME processing:
         meta = {k: v for k, v in meta.items() if v not in [None]}
@@ -1363,7 +1375,7 @@ class Item(PropertiesMixin):
         if return_rev:
             return Revision(self, revid, retry=True)
 
-    def store_all_revisions(self, meta, data):
+    def store_all_revisions(self, meta: MetaData, data: ItemData) -> None:
         """
         Store over all revisions of this item.
         """
@@ -1371,7 +1383,7 @@ class Item(PropertiesMixin):
             meta[REVID] = rev.revid
             self.store_revision(meta, data, overwrite=True)
 
-    def destroy_revision(self, revid):
+    def destroy_revision(self, revid: str) -> None:
         """
         Destroy revision <revid>.
         """
@@ -1468,13 +1480,13 @@ class Revision(PropertiesMixin):
 
 
 class Meta(Mapping):
-    def __init__(self, revision, doc, meta=None):
+    def __init__(self, revision, doc, meta: MetaData | None = None) -> None:
         self.revision = revision
         self._doc = doc or {}
         self._meta = meta or {}
         self._common_fields = revision.item.indexer.common_fields
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         try:
             self[key]
         except KeyError:

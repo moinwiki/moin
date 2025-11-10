@@ -21,14 +21,16 @@ If supplied metadata is missing required values that have sane defaults,
 validators may insert the defaults into the metadata or reject the data.
 """
 
+from __future__ import annotations
+
 import time
 import re
 
-from flatland import Dict, List, Unset, Boolean, Integer, String
+from flatland import Dict, Element, List, Unset, Boolean, Integer, String
 
 from moin.constants import keys
 from moin.constants.contenttypes import CONTENTTYPE_DEFAULT, CONTENTTYPE_USER
-
+from moin.storage.types import ItemData, MetaData, ValidationState
 from moin.utils.crypto import make_uuid, UUID_LEN
 from moin.utils.mime import Type
 
@@ -38,7 +40,7 @@ class DuckDict(Dict):
     policy = "duck"
 
 
-def uuid_validator(element, state):
+def uuid_validator(element: Element, state: ValidationState) -> bool:
     """
     A UUID must be a hex string of a specific length.
     """
@@ -54,7 +56,7 @@ def uuid_validator(element, state):
         return False
 
 
-def itemid_validator(element, state):
+def itemid_validator(element: Element, state: ValidationState) -> bool:
     """
     An itemid is a UUID that identifies an item.
     """
@@ -68,7 +70,7 @@ def itemid_validator(element, state):
     return uuid_validator(element, state)
 
 
-def revid_validator(element, state):
+def revid_validator(element: Element, state: ValidationState) -> bool:
     """
     A revid is a UUID that identifies a revision.
     """
@@ -77,7 +79,7 @@ def revid_validator(element, state):
     return uuid_validator(element, state)
 
 
-def userid_validator(element, state):
+def userid_validator(element: Element, state: ValidationState) -> bool:
     """
     A userid is a UUID that identifies a user (profile).
     """
@@ -90,7 +92,7 @@ def userid_validator(element, state):
     return element.raw is Unset or uuid_validator(element, state)
 
 
-def name_validator(element, state):
+def name_validator(element: Element, state: ValidationState) -> bool:
     """
     An item or revision name.
     """
@@ -110,7 +112,7 @@ def name_validator(element, state):
     return True
 
 
-def itemlink_validator(element, state):
+def itemlink_validator(element: Element, state: ValidationState) -> bool:
     """an itemlink"""
     if element.raw is Unset:
         element.set(state[keys.NAME])
@@ -127,7 +129,7 @@ def itemlink_validator(element, state):
     return True
 
 
-def tag_validator(element, state):
+def tag_validator(element: Element, state: ValidationState) -> bool:
     """
     a tag
     """
@@ -141,7 +143,7 @@ def tag_validator(element, state):
     return True
 
 
-def namespace_validator(element, state):
+def namespace_validator(element: Element, state: ValidationState) -> bool:
     """
     a namespace (part of a wiki site)
     """
@@ -153,7 +155,7 @@ def namespace_validator(element, state):
     return name_validator(element, state)
 
 
-def user_contenttype_validator(element, state):
+def user_contenttype_validator(element: Element, state: ValidationState) -> bool:
     """
     user profile content type
     """
@@ -165,7 +167,7 @@ def user_contenttype_validator(element, state):
     return v == CONTENTTYPE_USER
 
 
-def contenttype_validator(element, state):
+def contenttype_validator(element: Element, state: ValidationState) -> bool:
     """
     a supported content type
     """
@@ -195,7 +197,7 @@ def contenttype_validator(element, state):
     return True
 
 
-def mtime_validator(element, state):
+def mtime_validator(element: Element, state: ValidationState) -> bool:
     """
     a modification time (UNIX timestamp)
     """
@@ -213,7 +215,7 @@ def mtime_validator(element, state):
     return True
 
 
-def action_validator(element, state):
+def action_validator(element: Element, state: ValidationState) -> bool:
     """
     an action
     """
@@ -234,7 +236,7 @@ def action_validator(element, state):
     return True
 
 
-def acl_validator(element, state):
+def acl_validator(element: Element, state: ValidationState) -> bool:
     """
     an acl, also checks if changing acl is allowed
     """
@@ -256,7 +258,7 @@ def acl_validator(element, state):
         return True
 
 
-def comment_validator(element, state):
+def comment_validator(element: Element, state: ValidationState) -> bool:
     """
     a comment
     """
@@ -269,7 +271,7 @@ def comment_validator(element, state):
     return True
 
 
-def hostname_validator(element, state):
+def hostname_validator(element: Element, state: ValidationState) -> bool:
     """
     a hostname (dns name)
     """
@@ -283,7 +285,7 @@ def hostname_validator(element, state):
     return True
 
 
-def address_validator(element, state):
+def address_validator(element: Element, state: ValidationState) -> bool:
     """
     an IP address
     """
@@ -295,7 +297,7 @@ def address_validator(element, state):
     return True
 
 
-def size_validator(element, state):
+def size_validator(element: Element, state: ValidationState) -> bool:
     """
     a content size
     """
@@ -313,7 +315,7 @@ def size_validator(element, state):
     return True
 
 
-def hash_validator(element, state):
+def hash_validator(element: Element, state: ValidationState) -> bool:
     """
     a content hash
     """
@@ -333,7 +335,7 @@ def hash_validator(element, state):
         return False
 
 
-def subscription_validator(element, state):
+def subscription_validator(element: Element, state: ValidationState) -> bool:
     """
     a subscription
     """
@@ -438,7 +440,7 @@ UserMetaSchema = DuckDict.named("UserMetaSchema").of(
 )
 
 
-def validate_data(meta, data):
+def validate_data(meta: MetaData, data: ItemData) -> bool:
     """
     validate the data contents, if possible
 
