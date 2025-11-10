@@ -3,6 +3,10 @@
 
 """
 MoinMoin - indexing middleware tests.
+
+Be careful with 'mtime' property values in item metadata:
+moin relies on the existence of a strict ordering of item revisions. Quickly creating revisions for the same
+item might result in revisions having the same mtime value and there is no way to tell which one is the latest.
 """
 
 from __future__ import annotations
