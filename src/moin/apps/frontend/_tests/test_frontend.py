@@ -12,34 +12,16 @@ from io import BytesIO
 
 import pytest
 
-from flask import url_for
-from flask import g as flaskg
+from flask import current_app as app, g as flaskg, url_for
 from werkzeug.datastructures import FileStorage
 
 from moin import user
+from moin.apps._tests.utils import create_user, login, modify_item, make_modify_form_data, set_user_in_client_session
 from moin.apps.frontend import views
-from moin.constants.keys import ITEMID
 
 if TYPE_CHECKING:
     from flask.testing import FlaskClient
     from werkzeug.test import TestResponse
-
-
-def create_user(name: str, password: str, pwencoded: bool = False, email: str | None = None) -> None:
-    """helper to create test user"""
-    if email is None:
-        email = "user@example.org"
-    user.create_user(name, password, email, is_encrypted=pwencoded)
-
-
-def set_user_in_client_session(client: FlaskClient, user: user.User) -> None:
-    # the test configuration has MoinAuth enabled
-    with client.session_transaction() as session:
-        session["user.itemid"] = user.profile[ITEMID]
-        session["user.trusted"] = False
-        session["user.auth_method"] = "moin"
-        session["user.auth_attribs"] = tuple()
-        session["user.session_token"] = user.get_session_token()
 
 
 def client_request(
@@ -52,11 +34,8 @@ def client_request(
     return response
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestFrontend:
-
-    @pytest.fixture(autouse=True)
-    def custom_setup(self, app):
-        self.app = app
 
     def _test_view(
         self,
@@ -75,7 +54,7 @@ class TestFrontend:
         if params is None:
             params = {}
 
-        with self.app.test_client() as client:
+        with app.test_client() as client:
 
             request_url = url_for(viewname, **viewopts)
 
@@ -115,7 +94,7 @@ class TestFrontend:
         request_url = url_for(viewname, **viewopts)
         print("POST %s" % request_url)
 
-        with self.app.test_client() as client:
+        with app.test_client() as client:
             response = client_request(client, "POST", request_url, user=user, query_string=params, data=form)
             assert response.status == status
             assert response.headers["Content-Type"] in content_types
@@ -234,16 +213,7 @@ class TestFrontend:
             status="200 OK",
             viewopts=dict(item_name="quokka"),
             params={"itemtype": "default", "contenttype": "text/x.moin.wiki;charset=utf-8", "template": ""},
-            form={
-                "comment": "",
-                "content_form_data_text": content,
-                "content_form_data_file": content.encode(encoding="utf-8"),
-                "preview": "Preview",
-                "meta_form_acl": "None",
-                "meta_form_name": "quokka",
-                "meta_form_summary": "",
-                "meta_form_tags": "",
-            },
+            form=make_modify_form_data("quokka", content=content, preview="Preview"),
             user=test_user,
         )
 
@@ -366,15 +336,35 @@ class TestFrontend:
         self._test_view("frontend.global_tags")
 
 
+class TestFrontendNew:
+
+    def test_modify_item_show_preview(self, client):
+
+        create_user("björn", "Xiwejr622")
+
+        content = "New item content."
+
+        login(client, "björn", "Xiwejr622")
+
+        modify_item(
+            client,
+            "quokka",
+            make_modify_form_data("quokka", content=content, preview="Preview"),
+            expected_status_code=200,
+        )
+
+
+@pytest.fixture
+def custom_setup():
+    saved_user = flaskg.user
+    flaskg.user = user.User()
+    yield
+    flaskg.user = saved_user
+
+
+@pytest.mark.usefixtures("_req_ctx", "custom_setup")
 class TestUsersettings:
     reinit_storage = True  # Avoid username/email collisions.
-
-    @pytest.fixture(autouse=True)
-    def custom_setup(self, app):
-        saved_user = flaskg.user
-        flaskg.user = user.User()
-        yield
-        flaskg.user = saved_user
 
     def test_user_password_change(self):
         create_user("moin", "Xiwejr622")

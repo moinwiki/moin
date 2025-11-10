@@ -5,13 +5,12 @@
 MoinMoin - moin.datastructures.backends.config_lazy_groups tests.
 """
 
+import pytest
 
+from moin._tests import wikiconfig
+from moin.datastructures import ConfigGroups, CompositeGroups
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures.backends.config_lazy_groups import ConfigLazyGroups
-from moin.datastructures import ConfigGroups, CompositeGroups
-from moin._tests import wikiconfig
-
-import pytest
 
 
 class TestLazyConfigGroups(GroupsBackendTest):

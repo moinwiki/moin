@@ -10,7 +10,7 @@ from emeraldtree import ElementTree as ET
 from moin.utils.tree import Name, Namespace, html, moin_page
 
 
-def test_Name():
+def test_name():
     uri = "uri:a"
 
     name = Name("a", uri)
@@ -24,7 +24,7 @@ def test_Name():
     assert element.tag == name
 
 
-def test_Namespace():
+def test_namespace():
     uri = "uri:a"
 
     namespace = Namespace(uri)

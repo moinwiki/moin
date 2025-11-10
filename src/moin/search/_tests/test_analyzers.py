@@ -5,15 +5,17 @@
 MoinMoin - tests for moin.search.analyzers.
 """
 
+import pytest
 
 from flask import current_app as app
 
 from moin.search.analyzers import MimeTokenizer, AclTokenizer, item_name_analyzer
 
 
+@pytest.mark.usefixtures("_app_ctx")
 class TokenizerTestBase:
 
-    def testTokenizer(self):
+    def test_tokenizer(self):
         """Analyzers: verify that obtained tokens match expected values."""
         tokenizer = self.make_tokenizer()
         for value, expected_tokens in self.test_cases_query:
@@ -158,7 +160,8 @@ class TestMimeTokenizer(TokenizerTestBase):
         return MimeTokenizer()
 
 
-class TestItemNameAnalyzer(TokenizerTestBase):
+@pytest.mark.usefixtures("_app_ctx")
+class TestItemNameAnalyzer:
     """Analyzers: test item_name analyzer."""
 
     test_cases_query = [
@@ -180,7 +183,7 @@ class TestItemNameAnalyzer(TokenizerTestBase):
     def make_tokenizer(self):
         return item_name_analyzer()
 
-    def testTokenizer(self):
+    def test_tokenizer(self):
         """Analyzers: test item name analyzer with 'query' and 'index' modes."""
         tokenizer = self.make_tokenizer()
         for value, expected_tokens in self.test_cases_query:

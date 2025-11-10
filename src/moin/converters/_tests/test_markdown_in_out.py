@@ -7,8 +7,9 @@
 MoinMoin - Tests for Markdown->DOM->Markdown using markdown_in and markdown_out converters
 """
 
-from collections import namedtuple
 import pytest
+
+from collections import namedtuple
 from flask import Flask
 
 from emeraldtree import ElementTree as ET
@@ -16,14 +17,27 @@ from emeraldtree import ElementTree as ET
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
 from moin.utils.tree import moin_page, xlink, xinclude, html, xml
-from moin.converters.markdown_in import Converter as conv_in
-from moin.converters.markdown_out import Converter as conv_out
+from moin.converters.markdown_in import Converter as ConverterIn
+from moin.converters.markdown_out import Converter as ConverterOut
 
 
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
 config = DefaultConfig(markdown_extensions=[])
 
 
+@pytest.fixture
+def _app_context_with_markdown_extensions_config():
+    """
+    A fixture providing an application context with just the Moin2 configuration
+    settings required by the markdown_in_out converter.
+    """
+    app = Flask(__name__)
+    app.cfg = config
+    with app.app_context() as context:
+        yield context
+
+
+@pytest.mark.usefixtures("_app_context_with_markdown_extensions_config")
 class TestConverter:
 
     input_namespaces = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:xinclude="{}" xmlns:html="{}"'.format(
@@ -40,17 +54,6 @@ class TestConverter:
 
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
-
-    def setup_class(self):
-        # mock patching flask.current_app.cfg does not work here as for speccing the original object is called and that causes a "RuntimeError: working outside of application context"
-        app = Flask(__name__)
-        # DefaultConfig doesn't work here as it does not provide all the defaults required to be initialized
-        app.cfg = config
-        ctx = app.app_context()
-        ctx.push()
-        with ctx:
-            self.conv_in = conv_in()
-        self.conv_out = conv_out()
 
     data = [
         ("Text", "Text\n"),
@@ -203,11 +206,11 @@ class TestConverter:
         result = serialize(elem, namespaces=self.namespaces, **options)
         return self.output_re.sub("", result)
 
-    def do(self, input, output, args={}, skip=None):
-        if skip:
-            pytest.skip(skip)
-        out = self.conv_in(input, "text/x-markdown;charset=utf-8", **args)
-        out = self.conv_out(self.handle_input(self.serialize_strip(out)), **args)
+    def do(self, input, output, args={}):
+        conv_in = ConverterIn()
+        out = conv_in(input, "text/x-markdown;charset=utf-8", **args)
+        conv_out = ConverterOut()
+        out = conv_out(self.handle_input(self.serialize_strip(out)), **args)
         # assert self.handle_output(out) == output
         assert (
             self.handle_output(out).strip() == output.strip()

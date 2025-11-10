@@ -6,6 +6,7 @@ MoinMoin - tests for moin.macros.GetVal.
 """
 
 import pytest
+
 from flask import g as flaskg
 
 from moin.macros.GetVal import Macro
@@ -13,6 +14,7 @@ from moin.constants.keys import WIKIDICT
 from moin._tests import become_trusted, update_item
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestMacro:
     @pytest.fixture
     def test_dict(self):

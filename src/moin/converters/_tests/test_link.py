@@ -5,12 +5,14 @@
 MoinMoin - moin.converters.link tests.
 """
 
+import pytest
+
 from emeraldtree import ElementTree as ET
+
+from flask import current_app as app
 
 from moin.converters.link import ConverterExternOutput, xlink, ConverterItemRefs
 from moin.utils.iri import Iri
-
-import pytest
 
 
 @pytest.fixture
@@ -18,6 +20,7 @@ def conv():
     return ConverterExternOutput()
 
 
+@pytest.mark.usefixtures("_app_ctx")
 @pytest.mark.parametrize(
     "input_,output",
     (
@@ -29,7 +32,7 @@ def conv():
         ("wiki://MoinMoin/Test", "http://moinmo.in/Test"),
     ),
 )
-def test_wiki(app, conv, input_, output):
+def test_wiki(conv, input_, output):
     assert "MoinMoin" in app.cfg.interwiki_map
 
     elem = ET.Element(None)
@@ -37,6 +40,7 @@ def test_wiki(app, conv, input_, output):
     assert elem.get(xlink.href) == output
 
 
+@pytest.mark.usefixtures("_req_ctx")
 @pytest.mark.parametrize(
     "input_,page,output",
     (
@@ -72,6 +76,7 @@ def test_wikiexternal(conv, input_, output):
     assert str(href) == output
 
 
+@pytest.mark.usefixtures("_app_ctx")
 @pytest.mark.parametrize(
     "tree_xml,links_expected,transclusions_expected,external_expected",
     (

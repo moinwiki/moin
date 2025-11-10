@@ -5,15 +5,13 @@
 MoinMoin - moin.converters.moinwiki_in tests.
 """
 
-
 import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.utils.tree import moin_page, xlink, html, xinclude
-
-from moin.converters.moinwiki_in import Converter
 from moin.converters._args import Arguments
+from moin.converters.moinwiki_in import Converter
+from moin.utils.tree import moin_page, xlink, html, xinclude
 
 
 class TestConverter:
@@ -84,6 +82,7 @@ class TestConverter:
         ("----", '<page><body><separator class="moin-hr1" /></body></page>'),
     ]
 
+    @pytest.mark.usefixtures("_app_ctx")
     @pytest.mark.parametrize("args", data)
     def test_base(self, args):
         self.do(*args)
@@ -429,6 +428,7 @@ class TestConverter:
         ),
     ]
 
+    @pytest.mark.usefixtures("_app_ctx")
     @pytest.mark.parametrize("input,output", data)
     def test_table_attributes(self, input, output):
         self.do(input, output)
@@ -565,6 +565,7 @@ class TestConverter:
         ),
     ]
 
+    @pytest.mark.usefixtures("_app_ctx")
     @pytest.mark.parametrize("input,output", data)
     def test_interwiki(self, input, output):
         self.do(input, output)

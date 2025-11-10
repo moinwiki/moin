@@ -5,9 +5,12 @@
 MoinMoin - tests for moin.macros.ShowSmileys.
 """
 
+import pytest
+
 from moin.macros.ShowSmileys import Macro
 
 
+@pytest.mark.usefixtures("_app_ctx")
 def test_Macro():
     """Test Macro.macro."""
     expected_text = ["X-(", "angry", ":D", "biggrin", "<:(", "frown", "{o}", "star_off"]

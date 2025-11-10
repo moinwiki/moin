@@ -39,6 +39,7 @@ class TestConverter:
         ("foo@bar", "<page><body><p>foo@bar</p></body></page>"),  # Moin 1.9 requires a domain
     ]
 
+    @pytest.mark.usefixtures("_app_ctx")
     @pytest.mark.parametrize("input,output", data)
     def test_freelink(self, input, output):
         self.do(input, output)

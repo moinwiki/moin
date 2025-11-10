@@ -32,6 +32,7 @@ def theme_supp():
     return ThemeSupport(app.cfg)
 
 
+@pytest.mark.usefixtures("_req_ctx", "_test_user")
 def test_get_user_home(_test_user, theme_supp):
     wiki_href, display_name, title, exists = theme_supp.userhome()
     assert wiki_href == "/users/lemmy"

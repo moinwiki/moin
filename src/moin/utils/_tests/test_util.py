@@ -11,7 +11,7 @@ from moin import utils
 
 class TestUtil:
 
-    def testRangeList(self):
+    def test_rangelist(self):
         """utils.rangelist: test correct behavior for various input values"""
         result = utils.rangelist([])
         expected = ""

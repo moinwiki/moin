@@ -37,6 +37,7 @@ class TestContent:
             content = Content.create(contenttype)
             assert isinstance(content, ExpectedClass)
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_get_templates(self):
         item_name1 = "Template_Item1"
         item1 = Item.create(item_name1)
@@ -66,6 +67,7 @@ class TestContent:
         assert result2 == [item_name3]
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestTarItems:
     """
     Tests for container items
@@ -106,6 +108,7 @@ class TestTarItems:
         assert item.content.get_member("example1.txt").read() == filecontent
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestZipMixin:
     """Tests for zip-like items"""
 
@@ -119,6 +122,7 @@ class TestZipMixin:
             item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestTransformableBitmapImage:
 
     def test__transform(self):
@@ -180,6 +184,7 @@ class TestTransformableBitmapImage:
             pass
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestText:
 
     def test_data_conversion(self):

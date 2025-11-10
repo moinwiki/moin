@@ -5,12 +5,11 @@
 MoinMoin - moin.datastructures.backends.config_groups tests.
 """
 
-
-from moin.datastructures.backends._tests import GroupsBackendTest
-from moin.datastructures import ConfigGroups
-from moin._tests import wikiconfig
-
 import pytest
+
+from moin._tests import wikiconfig
+from moin.datastructures import ConfigGroups
+from moin.datastructures.backends._tests import GroupsBackendTest
 
 
 class TestConfigGroupsBackend(GroupsBackendTest):

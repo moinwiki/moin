@@ -6,36 +6,38 @@
 MoinMoin - moin.converters.markdown_in tests.
 """
 
-from collections import namedtuple
 import pytest
+
+from collections import namedtuple
 from flask import Flask
 
-from . import serialize, XMLNS_RE
-
 from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.converters.markdown_in import Converter
 
-from ..markdown_in import Converter
+from . import serialize, XMLNS_RE
 
 
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
 config = DefaultConfig(markdown_extensions=[])
 
 
+@pytest.fixture
+def _app_context_with_markdown_extensions_config():
+    """
+    A fixture providing an application context with just the Moin2 configuration
+    settings required by the markdown_in converter.
+    """
+    app = Flask(__name__)
+    app.cfg = config
+    with app.app_context() as context:
+        yield context
+
+
+@pytest.mark.usefixtures("_app_context_with_markdown_extensions_config")
 class TestConverter:
     namespaces = {moin_page: "", xlink: "xlink", xinclude: "xinclude", html: "html"}
 
     output_re = XMLNS_RE
-
-    def setup_class(self):
-        # Mock-patching flask.current_app.cfg does not work here because the original object is called for spec'ing,
-        # which causes a "RuntimeError: working outside of application context".
-        app = Flask(__name__)
-        # DefaultConfig alone does not work here, as it does not provide all the defaults required to initialize.
-        app.cfg = config
-        ctx = app.app_context()
-        ctx.push()
-        with ctx:
-            self.conv = Converter()
 
     data = [
         ("Text", "<p>Text</p>"),
@@ -212,7 +214,8 @@ class TestConverter:
         return self.output_re.sub("", result)
 
     def do(self, input, output, args={}):
-        out = self.conv(input, "text/x-markdown;charset=utf-8", **args)
+        conv = Converter()
+        out = conv(input, "text/x-markdown;charset=utf-8", **args)
         got_output = self.serialize_strip(out)
         desired_output = "<page><body>%s</body></page>" % output
         print("------------------------------------")

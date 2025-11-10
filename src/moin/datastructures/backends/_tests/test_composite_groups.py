@@ -5,16 +5,13 @@
 MoinMoin - moin.datastructures.backends.composite_groups tests.
 """
 
-
-from pytest import raises
+import pytest
 
 from flask import g as flaskg
 
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import ConfigGroups, CompositeGroups, GroupDoesNotExistError
 from moin._tests import wikiconfig
-
-import pytest
 
 
 class TestCompositeGroupsBackend(GroupsBackendTest):
@@ -31,6 +28,7 @@ class TestCompositeGroupsBackend(GroupsBackendTest):
         return Config
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class TestCompositeGroup:
 
     @pytest.fixture
@@ -67,7 +65,7 @@ class TestCompositeGroup:
         return Config
 
     def test_getitem(self):
-        raises(GroupDoesNotExistError, lambda: flaskg.groups["NotExistingGroup"])
+        pytest.raises(GroupDoesNotExistError, lambda: flaskg.groups["NotExistingGroup"])
 
     def test_clashed_getitem(self):
         """

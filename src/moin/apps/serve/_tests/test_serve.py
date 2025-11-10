@@ -8,16 +8,14 @@ MoinMoin - Tests for the serve app
 from flask import url_for
 
 
-class TestServe:
-    def test_index(self, app):
-        with app.test_client() as client:
-            rv = client.get(url_for("serve.index"))
-            assert rv.status == "200 OK"
-            assert rv.headers["Content-Type"] == "text/plain"
+def test_index(client):
+    rv = client.get(url_for("serve.index"))
+    assert rv.status == "200 OK"
+    assert rv.headers["Content-Type"] == "text/plain"
 
-    def test_files(self, app):
-        with app.test_client() as client:
-            rv = client.get(url_for("serve.files", name="DoesntExist"))
-            assert rv.status == "404 NOT FOUND"
-            assert rv.headers["Content-Type"] == "text/html; charset=utf-8"
-            assert rv.text.startswith("<!doctype html")
+
+def test_files(client):
+    rv = client.get(url_for("serve.files", name="DoesntExist"))
+    assert rv.status == "404 NOT FOUND"
+    assert rv.headers["Content-Type"] == "text/html; charset=utf-8"
+    assert rv.text.startswith("<!doctype html")

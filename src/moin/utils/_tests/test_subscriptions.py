@@ -39,6 +39,7 @@ class TestSubscriptions:
         item._save(meta)
         return Item.create(item_name)
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_get_subscribers(self, item, item_name, namespace, tag_name):
         users = get_subscribers(**item.meta)
         assert users == set()
@@ -84,6 +85,7 @@ class TestSubscriptions:
         subscribers = get_subscribers(**item.meta)
         assert {subscriber.name for subscriber in subscribers} == {user2.name0}
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_get_matched_subscription_patterns(self, item, namespace):
         meta = item.meta
         patterns = get_matched_subscription_patterns([], **meta)
@@ -103,6 +105,7 @@ class TestSubscriptions:
         patterns = get_matched_subscription_patterns(non_matching_patterns + matching_patterns, **meta)
         assert patterns == matching_patterns
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_perf_get_subscribers(self):
         pytest.skip("Usually we do not run performance tests.")
         password = "password"

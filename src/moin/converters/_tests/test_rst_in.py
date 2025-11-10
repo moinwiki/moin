@@ -284,6 +284,7 @@ text""",
         ),
     ]
 
+    @pytest.mark.usefixtures("_app_ctx")
     @pytest.mark.parametrize("input,output", data)
     def test_link(self, input, output):
         self.do(input, output)

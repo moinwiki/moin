@@ -6,6 +6,7 @@
 MoinMoin - Tests for the navigation bar
 """
 
+import pytest
 
 from flask import current_app as app
 
@@ -13,9 +14,8 @@ from moin._tests import wikiconfig
 from moin.themes import ThemeSupport
 from moin import themes
 
-import pytest
 
-
+@pytest.mark.usefixtures("_req_ctx")
 class TestNaviBar:
     @pytest.fixture
     def cfg(self):

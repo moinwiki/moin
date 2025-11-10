@@ -75,6 +75,7 @@ class TestConverter:
         ("----", '<page><body><separator class="moin-hr3" /></body></page>'),
     ]
 
+    @pytest.mark.usefixtures("_app_ctx")
     @pytest.mark.parametrize("input,output", data)
     def test_base(self, input, output):
         self.do(input, output)

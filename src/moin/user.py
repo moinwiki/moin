@@ -135,7 +135,7 @@ space between words. Group page name is not allowed."""
 
 
 def get_user_backend():
-    return flaskg.unprotected_storage
+    return app.storage
 
 
 def update_user_query(**q):

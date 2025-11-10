@@ -57,13 +57,35 @@ def dumper(indexer, idx_name):
         print()
 
 
-class TestIndexingMiddleware:
+class TestIndexingMiddlewareBase:
+
     reinit_storage = True  # Clean up after each test method
 
-    @pytest.fixture(autouse=True)
-    def _imw(self):
+    @pytest.fixture
+    def _imw(self) -> None:
         self.imw = cast(IndexingMiddleware, flaskg.unprotected_storage)
-        return self.imw
+
+    def _store_three_revs(self, acl=None):
+        item_name = "foo"
+        item = self.imw[item_name]
+        rev = item.store_revision(
+            dict(name=[item_name], mtime=1, acl=acl), BytesIO(b"bar"), trusted=True, return_rev=True
+        )
+        revid0 = rev.revid
+        rev = item.store_revision(
+            dict(name=[item_name], mtime=2, parentid=revid0, acl=acl), BytesIO(b"baz"), trusted=True, return_rev=True
+        )
+        revid1 = rev.revid
+        rev = item.store_revision(
+            dict(name=[item_name], mtime=3, parentid=revid1, acl=acl), BytesIO(b"..."), trusted=True, return_rev=True
+        )
+        revid2 = rev.revid
+        print("revids:", revid0, revid1, revid2)
+        return item, item_name, revid0, revid1, revid2
+
+
+@pytest.mark.usefixtures("_req_ctx", "_imw")
+class TestIndexingMiddleware(TestIndexingMiddlewareBase):
 
     def test_nonexisting_item(self):
         item = self.imw["foo"]
@@ -102,24 +124,6 @@ class TestIndexingMiddleware:
         revids = [_rev.revid for _rev in item.iter_revs()]
         assert len(revids) == 1  # we still have the revision, cleared
         assert revid in revids  # it is still same revid
-
-    def _store_three_revs(self, acl=None):
-        item_name = "foo"
-        item = self.imw[item_name]
-        rev = item.store_revision(
-            dict(name=[item_name], mtime=1, acl=acl), BytesIO(b"bar"), trusted=True, return_rev=True
-        )
-        revid0 = rev.revid
-        rev = item.store_revision(
-            dict(name=[item_name], mtime=2, parentid=revid0, acl=acl), BytesIO(b"baz"), trusted=True, return_rev=True
-        )
-        revid1 = rev.revid
-        rev = item.store_revision(
-            dict(name=[item_name], mtime=3, parentid=revid1, acl=acl), BytesIO(b"..."), trusted=True, return_rev=True
-        )
-        revid2 = rev.revid
-        print("revids:", revid0, revid1, revid2)
-        return item, item_name, revid0, revid1, revid2
 
     def test_destroy_revision(self):
         item, item_name, revid0, revid1, revid2 = self._store_three_revs()
@@ -481,6 +485,7 @@ class TestIndexingMiddleware:
         assert item.parentnames == {"p1", "p2", "p3/p4"}  # one p2 duplicate removed
 
 
+@pytest.mark.usefixtures("_req_ctx", "_pmw")
 class TestProtectedIndexingMiddleware:
     reinit_storage = True  # Clean up after each test method
 
@@ -491,28 +496,28 @@ class TestProtectedIndexingMiddleware:
 
         return Config
 
-    @pytest.fixture(autouse=True)
-    def imw(self):
-        self.imw = flaskg.unprotected_storage
+    @pytest.fixture
+    def _pmw(self):
+        self.pmw = flaskg.storage
 
     def test_documents(self):
         item_name = "public"
-        item = self.imw[item_name]
+        item = self.pmw[item_name]
         r = item.store_revision(dict(name=[item_name], acl="joe:read"), BytesIO(b"public content"), return_rev=True)
         revid_public = r.revid
         revids = [
-            rev.revid for rev in self.imw.documents() if rev.name != "joe"
+            rev.revid for rev in self.pmw.documents() if rev.name != "joe"
         ]  # the user profile is a revision in the backend
         assert revids == [revid_public]
 
     def test_getitem(self):
         item_name = "public"
-        item = self.imw[item_name]
+        item = self.pmw[item_name]
         r = item.store_revision(dict(name=[item_name], acl="joe:read"), BytesIO(b"public content"), return_rev=True)
         revid_public = r.revid
         # now testing:
         item_name = "public"
-        item = self.imw[item_name]
+        item = self.pmw[item_name]
         r = item[revid_public]
         assert r.data.read() == b"public content"
 
@@ -521,7 +526,7 @@ class TestProtectedIndexingMiddleware:
         # determine create revisions performance
         # for the memory backend we use, this is likely mostly building the indexes
         item_name = "foo"
-        item = self.imw[item_name]
+        item = self.pmw[item_name]
         for i in range(100):
             item.store_revision(dict(name=[item_name], acl="joe:create joe:read"), BytesIO(b"some content"))
 
@@ -531,7 +536,7 @@ class TestProtectedIndexingMiddleware:
         # for the memory backend we use, this is likely mostly building the indexes and
         # doing index lookups name -> itemid, itemid -> revids list
         item_name = "foo"
-        item = self.imw[item_name]
+        item = self.pmw[item_name]
         for i in range(100):
             item.store_revision(dict(name=[item_name], acl="joe:create joe:read"), BytesIO(b"rev number {}".format(i)))
         for r in item.iter_revs():

@@ -29,6 +29,7 @@ class TestFuid:
         f.write(content)
         f.close()
 
+    @pytest.mark.usefixtures("_req_ctx")
     def test_temptest(self):
         self.makefile(self.fname, "test_content")
         result = send_file.send_file(self.fname, as_attachment=True, conditional=True)

@@ -32,6 +32,7 @@ def serialize_strip(elem, **options):
     return output_re.sub("", result)
 
 
+@pytest.mark.usefixtures("_app_ctx")
 @pytest.mark.parametrize(
     "input,output",
     [

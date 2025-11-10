@@ -16,8 +16,11 @@ Tests that require a certain configuration, like section_numbers = 1, must
 use a Config class to define the required configuration within the test class.
 """
 
+import os.path
 import pytest
 import py
+
+from flask.ctx import AppContext
 
 import moin.log
 import moin
@@ -34,8 +37,8 @@ collect_ignore = [
 ]
 
 # Logging for tests to avoid useless output like timing information on stderr on test failures
-Moindir = py.path.local(moin.__file__).dirname
-config_file = Moindir + "/_tests/test_logging.conf"
+moin_dir = py.path.local(moin.__file__).dirname
+config_file = os.path.join(moin_dir, "_tests", "test_logging.conf")
 moin.log.load_config(config_file)
 
 
@@ -45,7 +48,7 @@ def cfg():
 
 
 @pytest.fixture
-def app_ctx(cfg):
+def app(cfg):
     namespace_mapping, backend_mapping, acl_mapping = create_simple_mapping("stores:memory:", cfg.default_acl)
     more_config = dict(
         namespace_mapping=namespace_mapping,
@@ -54,23 +57,38 @@ def app_ctx(cfg):
         create_backend=True,  # create backend storage and index
         destroy_backend=True,  # remove index and storage at app shutdown
     )
-    app = create_app_ext(flask_config_dict=dict(SECRET_KEY="foobarfoobar"), moin_config_class=cfg, **more_config)
-    ctx = app.test_request_context("/", base_url="http://localhost:8080/")
-    ctx.push()
-    before_wiki()
-
-    yield app, ctx
-
-    teardown_wiki("")
-    ctx.pop()
+    app = create_app_ext(
+        flask_config_dict=dict(SECRET_KEY="foobarfoobar", SERVER_NAME="localhost:8080", TESTING=True),
+        moin_config_class=cfg,
+        **more_config,
+    )
     try:
+        yield app
+
         # simulate ERROR PermissionError:
         # [WinError 32] The process cannot access the file because it is being used by another process
         assert [] == get_open_wiki_files()
+
     finally:
         destroy_app(app)
 
 
-@pytest.fixture(autouse=True)
-def app(app_ctx):
-    return app_ctx[0]
+@pytest.fixture
+def _app_ctx(app):
+    with app.app_context() as context:
+        yield context
+
+
+@pytest.fixture
+def _req_ctx(app):
+    with app.test_request_context("/", base_url="http://localhost:8080/") as context:
+        before_wiki()
+        yield context
+        teardown_wiki("")
+
+
+@pytest.fixture
+def client(_app_ctx: AppContext):
+    app = _app_ctx.app
+    with app.test_client() as client:
+        yield client

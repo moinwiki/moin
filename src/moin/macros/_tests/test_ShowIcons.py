@@ -5,6 +5,7 @@
 MoinMoin - tests for moin.macros.ShowIcons.
 """
 
+import pytest
 import re
 import os
 from moin.macros.ShowIcons import Macro
@@ -12,15 +13,20 @@ from moin.macros.ShowIcons import Macro
 my_dir = os.path.abspath(os.path.dirname(__file__))
 
 
+@pytest.mark.usefixtures("_app_ctx")
 def test_ShowIconsMacro():
-    """Call the ShowIcons macro and test the output."""
+    """
+    Call the ShowIcons macro and test the output.
+    """
     test_icons = ["admon-note", "angry", "biggrin", "frown", "moin-rss", "smile3", "star_off"]
     expected_namespace = "{http://moinmo.in/namespaces/page}"
     expected_tags = set(f"{expected_namespace}{el_name}" for el_name in ["table", "table-header", "table-row"])
     expected_texts = set(f"<<Icon({icon_name}.png)>>" for icon_name in test_icons)
-    expected_paths = set(f"/static/img/icons/{icon_name}.png" for icon_name in test_icons)
+    expected_paths = set(f"http://localhost:8080/static/img/icons/{icon_name}.png" for icon_name in test_icons)
+
     macro_obj = Macro()
     macro_out = macro_obj.macro("content", None, "page_url", "alternative")
+
     result_tags = set()
     result_texts = set()
     result_paths = set()

@@ -43,12 +43,12 @@ def source(request, tmpdir):
 
 
 @pytest.fixture
-def target(request, tmpdir):
+def target(request: pytest.FixtureRequest, tmpdir):
     # Scenario
     return make_middleware(request, tmpdir)
 
 
-def make_middleware(request, tmpdir):
+def make_middleware(request: pytest.FixtureRequest, tmpdir):
     # Scenario
     meta_store = BytesStore()
     data_store = FileStore()
@@ -69,6 +69,7 @@ def make_middleware(request, tmpdir):
     return mw
 
 
+@pytest.mark.usefixtures("_app_ctx")
 def test_serialize_deserialize(source, target):
     i = 0
     for name, meta, data in contents:

@@ -8,6 +8,7 @@
 MoinMoin - moin.datastructures.backends base test classes.
 """
 
+import pytest
 
 from pytest import raises
 
@@ -18,6 +19,7 @@ from moin.security import AccessControlList
 from moin.datastructures import GroupDoesNotExistError
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class GroupsBackendTest:
 
     test_groups = {
@@ -139,6 +141,7 @@ class GroupsBackendTest:
         assert not acl.may("Someone", "write")
 
 
+@pytest.mark.usefixtures("_req_ctx")
 class DictsBackendTest:
 
     dicts = {
