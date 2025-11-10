@@ -55,7 +55,6 @@ from typing import Any, Iterator, TYPE_CHECKING
 import gc
 import os
 import re
-import sys
 import shutil
 import time
 
@@ -97,11 +96,6 @@ logging = log.getLogger(__name__)
 
 WHOOSH_FILESTORAGE = "FileStorage"
 INDEXES = [LATEST_REVS, ALL_REVS, LATEST_META]
-
-VALIDATION_HANDLING_STRICT = "strict"
-VALIDATION_HANDLING_WARN = "warn"
-# TODO: fix tests to create valid metadata
-VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
 INDEXER_TIMEOUT = 20.0
 
@@ -1275,10 +1269,9 @@ class Item(PropertiesMixin):
                     val.append(f"{e.name}: {e.raw}")
                 if not e.valid:
                     logging.warning(f"invalid: {e.name}, {e.raw}")
-            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(
-                    _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
-                )
+            raise ValueError(
+                _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
+            )
 
         if update:
             # we do not have anything in m that is not defined in the schema,
