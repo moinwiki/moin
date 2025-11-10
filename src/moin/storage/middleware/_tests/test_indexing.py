@@ -294,7 +294,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         """Test that XML documents can be stored and indexed."""
         item_name = "foo"
         item = self.imw[item_name]
-        meta = dict(name=[item_name], contenttype="text/xml")
+        meta = dict(name=[item_name], contenttype="text/xml;charset=utf-8")
         rev = item.store_revision(meta, BytesIO(b'<?xml version="1.0" encoding="UTF-8"?>'), return_rev=True)
         assert rev
 
