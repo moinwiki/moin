@@ -1333,6 +1333,10 @@ class Item(PropertiesMixin):
             except AttributeError:
                 pass
 
+        if not trusted:
+            # make sure we get a new timestamp
+            meta.pop(MTIME, None)
+
         # validate existing item meta data
         state: ValidationState = {
             "trusted": trusted,
