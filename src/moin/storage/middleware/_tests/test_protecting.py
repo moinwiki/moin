@@ -10,12 +10,12 @@ from __future__ import annotations
 import pytest
 
 from io import BytesIO
+from typing import TYPE_CHECKING
 
 from moin.config import AclConfig
 from moin.constants.keys import PARENTID
+from moin.storage.middleware.protecting import ProtectedRevision, ProtectingMiddleware, AccessDenied
 from moin.user import User
-
-from ..protecting import ProtectingMiddleware, AccessDenied
 
 from .test_indexing import TestIndexingMiddlewareBase
 
@@ -50,11 +50,16 @@ class FakeUser(User):
 @pytest.mark.usefixtures("_req_ctx", "_imw", "_protected_imw")
 class TestProtectingMiddleware(TestIndexingMiddlewareBase):
 
+    if TYPE_CHECKING:
+
+        def __init__(self):
+            self.pmw: ProtectingMiddleware
+
     @pytest.fixture
     def _protected_imw(self) -> None:
         self.pmw = ProtectingMiddleware(self.imw, FakeUser("joe"), acl_mapping=acl_mapping)
 
-    def make_items(self, unprotected_acl, protected_acl):
+    def make_items(self, unprotected_acl: str, protected_acl: str):
         items = [(UNPROTECTED, unprotected_acl, UNPROTECTED_CONTENT), (PROTECTED, protected_acl, PROTECTED_CONTENT)]
         revids = []
         for item_name, acl, content in items:
@@ -64,6 +69,8 @@ class TestProtectingMiddleware(TestIndexingMiddlewareBase):
                 BytesIO(content),
                 return_rev=True,
             )
+            assert r is not None
+            assert isinstance(r, ProtectedRevision)
             revids.append(r.revid)
         return revids
 
@@ -140,7 +147,7 @@ class TestProtectingMiddleware(TestIndexingMiddlewareBase):
             item.destroy_revision(revid_protected)
 
     def test_destroy_middle_revision(self):
-        item, item_name, revid0, revid1, revid2 = self._store_three_revs("joe:read,write,destroy")
+        item, item_name, revid0, revid1, revid2 = self.store_three_revisions("joe:read,write,destroy")
         # Destroy the middle revision:
         item.destroy_revision(revid1)
         with item.get_revision(revid2) as rev:

@@ -9,13 +9,17 @@ from __future__ import annotations
 
 from io import BytesIO
 import hashlib
+import pytest
 
 from whoosh.query import Term
-import pytest
 
 from flask import g as flaskg
 
 from moin.constants.keys import (
+    ACL,
+    ACTION,
+    ACTION_SAVE,
+    ADDRESS,
     NAME,
     NAME_EXACT,
     SIZE,
@@ -43,10 +47,11 @@ from moin.constants.namespaces import NAMESPACE_USERS
 from moin.utils.interwiki import split_fqname
 
 from moin.auth import GivenAuth
-from moin.storage.middleware.indexing import IndexingMiddleware
+from moin.storage.middleware.indexing import IndexingMiddleware, Item, Revision
+from moin.storage.middleware.protecting import ProtectedItem, ProtectedRevision, ProtectingMiddleware
 from moin._tests import wikiconfig, update_item
 
-from typing import cast
+from typing import cast, TYPE_CHECKING
 
 
 def dumper(indexer, idx_name):
@@ -61,41 +66,63 @@ class TestIndexingMiddlewareBase:
 
     reinit_storage = True  # Clean up after each test method
 
+    if TYPE_CHECKING:
+
+        def __init__(self):
+            self.imw: IndexingMiddleware
+
     @pytest.fixture
     def _imw(self) -> None:
         self.imw = cast(IndexingMiddleware, flaskg.unprotected_storage)
 
-    def _store_three_revs(self, acl=None):
+    def get_item(self, name: str) -> Item:
+        return self.imw[name]
+
+    def store_revision(
+        self,
+        item: Item,
+        data: bytes,
+        *,
+        mtime: int | None = None,
+        acl: str | None = None,
+        parent: Revision | None = None,
+    ) -> Revision:
+        meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: item.names.copy()}
+        if acl:
+            meta[ACL] = acl
+        if mtime:
+            meta[MTIME] = mtime
+        if parent:
+            meta[PARENTID] = parent.revid
+        revision = item.store_revision(meta, BytesIO(data), trusted=True, return_rev=True)
+        assert revision
+        return revision
+
+    def store_three_revisions(self, acl: str | None = None):
         item_name = "foo"
-        item = self.imw[item_name]
-        rev = item.store_revision(
-            dict(name=[item_name], mtime=1, acl=acl), BytesIO(b"bar"), trusted=True, return_rev=True
-        )
-        revid0 = rev.revid
-        rev = item.store_revision(
-            dict(name=[item_name], mtime=2, parentid=revid0, acl=acl), BytesIO(b"baz"), trusted=True, return_rev=True
-        )
-        revid1 = rev.revid
-        rev = item.store_revision(
-            dict(name=[item_name], mtime=3, parentid=revid1, acl=acl), BytesIO(b"..."), trusted=True, return_rev=True
-        )
-        revid2 = rev.revid
-        print("revids:", revid0, revid1, revid2)
-        return item, item_name, revid0, revid1, revid2
+        item = self.get_item(item_name)
+        rev1 = self.store_revision(item, b"bar", mtime=1, acl=acl)
+        rev2 = self.store_revision(item, b"baz", mtime=2, acl=acl, parent=rev1)
+        rev3 = self.store_revision(item, b"...", mtime=3, acl=acl, parent=rev2)
+        print("revids:", rev1.revid, rev2.revid, rev3.revid)
+        return item, item_name, rev1.revid, rev2.revid, rev3.revid
 
 
 @pytest.mark.usefixtures("_req_ctx", "_imw")
 class TestIndexingMiddleware(TestIndexingMiddlewareBase):
 
     def test_nonexisting_item(self):
-        item = self.imw["foo"]
+        item = self.get_item("foo")
         assert not item  # does not exist
 
     def test_store_revision(self):
         item_name = "foo"
         data = b"bar"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
+        assert item is not None
+        assert not item  # item does not exist
         rev = item.store_revision(dict(name=[item_name]), BytesIO(data), return_rev=True)
+        assert rev
         revid = rev.revid
         # Check if we have the revision now:
         item = self.imw[item_name]
@@ -103,6 +130,9 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         rev = item.get_revision(revid)
         assert rev.name == item_name
         assert rev.data.read() == data
+        # check item now has an id
+        assert item.itemid
+        # ensure the items has just one revision:
         revids = [_rev.revid for _rev in item.iter_revs()]
         assert revids == [revid]
 
@@ -110,14 +140,16 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item_name = "foo"
         data = b"bar"
         newdata = b"baz"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         rev = item.store_revision(dict(name=[item_name], comment="spam"), BytesIO(data), return_rev=True)
+        assert rev
         revid = rev.revid
         # clear revision:
         item.store_revision(dict(name=[item_name], revid=revid, comment="no spam"), BytesIO(newdata), overwrite=True)
         # check if the revision was overwritten:
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         rev = item.get_revision(revid)
+        assert rev
         assert rev.name == item_name
         assert rev.meta[COMMENT] == "no spam"
         assert rev.data.read() == newdata
@@ -126,7 +158,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         assert revid in revids  # it is still same revid
 
     def test_destroy_revision(self):
-        item, item_name, revid0, revid1, revid2 = self._store_three_revs()
+        item, item_name, revid0, revid1, revid2 = self.store_three_revisions()
         query = Term(NAME_EXACT, item_name)
         metas = {m[REVID]: m for m in flaskg.storage.search_meta(query, idx_name=ALL_REVS)}
         rev1_mtime = metas[revid1][MTIME]
@@ -146,10 +178,10 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         assert 1 == len(metas)
         assert revid2 in metas
         # destroy a current revision:
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         item.destroy_revision(revid2)
         # check if the revision was destroyed:
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         query = Term(NAME_EXACT, item_name)
         metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS)
         revids = [meta[REVID] for meta in metas]
@@ -158,7 +190,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         # destroy the last revision left:
         item.destroy_revision(revid1)
         # check if the revision was destroyed:
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         query = Term(NAME_EXACT, item_name)
         metas = flaskg.storage.search_meta(query, idx_name=ALL_REVS)
         revids = [meta[REVID] for meta in metas]
@@ -166,7 +198,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         assert sorted(revids) == sorted([])
 
     def test_destroy_middle_revision(self):
-        item, item_name, revid0, revid1, revid2 = self._store_three_revs()
+        item, item_name, revid0, revid1, revid2 = self.store_three_revisions()
         # destroy the middle revision:
         item.destroy_revision(revid1)
         with item.get_revision(revid2) as rev:
@@ -176,10 +208,10 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_destroy_item(self):
         revids = []
         item_name = "foo"
-        item = self.imw[item_name]
-        rev = item.store_revision(dict(name=[item_name], mtime=1), BytesIO(b"bar"), trusted=True, return_rev=True)
+        item = self.get_item(item_name)
+        rev = self.store_revision(item, b"bar", mtime=1)
         revids.append(rev.revid)
-        rev = item.store_revision(dict(name=[item_name], mtime=2), BytesIO(b"baz"), trusted=True, return_rev=True)
+        rev = self.store_revision(item, b"baz", mtime=1)
         revids.append(rev.revid)
         # destroy item:
         item.destroy_all_revisions()
@@ -189,25 +221,26 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
 
     def test_all_revisions(self):
         item_name = "foo"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         item.store_revision(dict(name=[item_name]), BytesIO(b"does not count, different name"))
         item_name = "bar"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         item.store_revision(dict(name=[item_name]), BytesIO(b"1st"))
         item.store_revision(dict(name=[item_name]), BytesIO(b"2nd"))
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         revs = [rev.data.read() for rev in item.iter_revs()]
         assert len(revs) == 2
         assert set(revs) == {b"1st", b"2nd"}
 
     def test_latest_revision(self):
         item_name = "foo"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         item.store_revision(dict(name=[item_name]), BytesIO(b"does not count, different name"))
         item_name = "bar"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         item.store_revision(dict(name=[item_name]), BytesIO(b"1st"))
         expected_rev = item.store_revision(dict(name=[item_name]), BytesIO(b"2nd"), return_rev=True)
+        assert expected_rev
         revs = list(self.imw.documents(name=item_name))
         assert len(revs) == 1  # there is only 1 latest revision
         assert expected_rev.revid == revs[0].revid  # it is really the latest one
@@ -217,6 +250,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         data = b"bar"
         item = self.imw[item_name]
         rev = item.store_revision(dict(name=[item_name]), BytesIO(data), return_rev=True)
+        assert rev
         print(repr(rev.meta))
         assert rev.name == item_name
         assert rev.meta[SIZE] == len(data)
@@ -247,6 +281,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item = self.imw[item_name]
         item.store_revision(dict(name=[item_name]), BytesIO(b"x"), return_rev=True)
         rev2 = item.store_revision(dict(name=[item_name]), BytesIO(b"xx"), return_rev=True)
+        assert rev2
         item.store_revision(dict(name=[item_name]), BytesIO(b"xxx"), return_rev=True)
         rev = self.imw.document(idx_name=ALL_REVS, size=2)
         assert rev
@@ -266,16 +301,12 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_index_rebuild(self):
         # first we index some stuff the slow "on-the-fly" way:
         expected_latest_revids = []
-        item_name = "foo"
-        item = self.imw[item_name]
-        r = item.store_revision(
-            dict(name=[item_name], mtime=1), BytesIO(b"does not count, different name"), trusted=True, return_rev=True
-        )
+        item = self.get_item("foo")
+        r = self.store_revision(item, b"does not count, different name", mtime=1)
         expected_latest_revids.append(r.revid)
-        item_name = "bar"
-        item = self.imw[item_name]
-        item.store_revision(dict(name=[item_name], mtime=2), BytesIO(b"1st"), trusted=True)
-        r = item.store_revision(dict(name=[item_name], mtime=3), BytesIO(b"2nd"), trusted=True, return_rev=True)
+        item = self.get_item("bar")
+        self.store_revision(item, b"1st", mtime=2)
+        r = self.store_revision(item, b"2nd", mtime=3)
         expected_latest_revids.append(r.revid)
 
         # now we remember the index contents built that way:
@@ -316,29 +347,22 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         expected_all_revids = []
         expected_latest_revids = []
         missing_revids = []
-        item_name = "updated"
-        item = self.imw[item_name]
-        r = item.store_revision(dict(name=[item_name], mtime=1), BytesIO(b"updated 1st"), trusted=True, return_rev=True)
+
+        item = self.get_item("updated")
+        r = self.store_revision(item, b"updated 1st", mtime=1)
         expected_all_revids.append(r.revid)
         # we update this item below, so we don't add it to expected_latest_revids
-        item_name = "destroyed"
-        item = self.imw[item_name]
-        r = item.store_revision(
-            dict(name=[item_name], mtime=1), BytesIO(b"destroyed 1st"), trusted=True, return_rev=True
-        )
+
+        item = self.get_item("destroyed")
+        r = self.store_revision(item, b"destroyed 1st", mtime=2)
         destroy_revid = r.revid
-        # we destroy this item below, so we don't add it to expected_all_revids
-        # we destroy this item below, so we don't add it to expected_latest_revids
-        item_name = "stayssame"
-        item = self.imw[item_name]
-        r = item.store_revision(
-            dict(name=[item_name], mtime=1), BytesIO(b"stayssame 1st"), trusted=True, return_rev=True
-        )
+        # we destroy this item below, so we don't add it to expected_all_revids and expected_latest_revids
+
+        item = self.get_item("stayssame")
+        r = self.store_revision(item, b"stayssame 1st", mtime=3)
         expected_all_revids.append(r.revid)
         # we update this item below, so we don't add it to expected_latest_revids
-        r = item.store_revision(
-            dict(name=[item_name], mtime=2), BytesIO(b"stayssame 2nd"), trusted=True, return_rev=True
-        )
+        r = self.store_revision(item, b"stayssame 2nd", mtime=4)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
 
@@ -351,20 +375,19 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
 
         # while the fresh index still sits at the tmp location, we update and add some items.
         # this will not change the fresh index, but the old index we are still using.
-        item_name = "updated"
-        item = self.imw[item_name]
-        r = item.store_revision(dict(name=[item_name], mtime=2), BytesIO(b"updated 2nd"), trusted=True, return_rev=True)
+        item = self.imw["updated"]
+        r = self.store_revision(item, b"updated 2nd", mtime=5)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
         missing_revids.append(r.revid)
-        item_name = "added"
-        item = self.imw[item_name]
-        r = item.store_revision(dict(name=[item_name], mtime=1), BytesIO(b"added 1st"), trusted=True, return_rev=True)
+
+        item = self.get_item("added")
+        r = self.store_revision(item, b"added 1st", mtime=6)
         expected_all_revids.append(r.revid)
         expected_latest_revids.append(r.revid)
         missing_revids.append(r.revid)
-        item_name = "destroyed"
-        item = self.imw[item_name]
+
+        item = self.get_item("destroyed")
         item.destroy_revision(destroy_revid)
 
         # now switch to the not-quite-fresh-any-more index we have built:
@@ -408,9 +431,11 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item_name = "foo"
         meta = dict(name=[item_name])
         data = b"some test content"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
+
         data_file = BytesIO(data)
         with item.store_revision(meta, data_file, return_rev=True) as rev:
+            assert rev
             assert rev.data.read() == data
             revid = rev.revid
         with pytest.raises(ValueError):
@@ -426,7 +451,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item_name = "foo"
         meta = dict(name=[item_name], contenttype="text/plain;charset=utf-8")
         data = b"some test content\n"
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         data_file = BytesIO(data)
         with item.store_revision(meta, data_file, return_rev=True) as rev:
             expected_revid = rev.revid
@@ -438,7 +463,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_indexing_subscriptions(self):
         item_name = "foo"
         meta = dict(name=[item_name], subscriptions=[f"{NAME}::foo", f"{NAMERE}::.*"])
-        item = self.imw[item_name]
+        item = self.get_item(item_name)
         item.store_revision(meta, BytesIO(item_name.encode("utf-8")))
         doc1 = self.imw.document(subscription_ids=f"{NAME}::foo")
         doc2 = self.imw.document(subscription_patterns=f"{NAMERE}::.*")
@@ -451,7 +476,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
 
     def test_namespaces(self):
         item_name_n = "normal"
-        item = self.imw[item_name_n]
+        item = self.get_item(item_name_n)
         rev_n = item.store_revision(
             dict(name=[item_name_n], contenttype="text/plain;charset=utf-8"),
             BytesIO(item_name_n.encode("utf-8")),
@@ -465,29 +490,34 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
             BytesIO(item_name_u.encode("utf-8")),
             return_rev=True,
         )
-        item = self.imw[item_name_n]
+        item = self.get_item(item_name_n)
         rev_n = item.get_revision(rev_n.revid)
         assert rev_n.meta[NAMESPACE] == ""
         assert rev_n.meta[NAME] == [item_name_n]
-        item = self.imw[item_name_u]
+        item = self.get_item(item_name_u)
         rev_u = item.get_revision(rev_u.revid)
         assert rev_u.meta[NAMESPACE] == NAMESPACE_USERS
         assert rev_u.meta[NAME] == [item_name_u.split("/")[1]]
 
     def test_parentnames(self):
-        item_name = "child"
-        item = self.imw[item_name]
+        item = self.get_item("child")
         item.store_revision(
             dict(name=["child", "p1/a", "p2/b", "p2/c", "p3/p4/d"], contenttype="text/plain;charset=utf-8"),
             BytesIO(b""),
         )
-        item = self.imw[item_name]
+        item = self.get_item("child")
         assert item.parentnames == {"p1", "p2", "p3/p4"}  # one p2 duplicate removed
 
 
 @pytest.mark.usefixtures("_req_ctx", "_pmw")
 class TestProtectedIndexingMiddleware:
+
     reinit_storage = True  # Clean up after each test method
+
+    if TYPE_CHECKING:
+
+        def __init__(self):
+            self.pmw: ProtectingMiddleware
 
     @pytest.fixture
     def cfg(self):
@@ -497,13 +527,18 @@ class TestProtectedIndexingMiddleware:
         return Config
 
     @pytest.fixture
-    def _pmw(self):
-        self.pmw = flaskg.storage
+    def _pmw(self) -> None:
+        self.pmw = cast(ProtectingMiddleware, flaskg.storage)
+
+    def get_item(self, name: str) -> ProtectedItem:
+        return self.pmw[name]
 
     def test_documents(self):
         item_name = "public"
-        item = self.pmw[item_name]
+        item = self.get_item(item_name)
         r = item.store_revision(dict(name=[item_name], acl="joe:read"), BytesIO(b"public content"), return_rev=True)
+        assert r is not None
+        assert isinstance(r, ProtectedRevision)
         revid_public = r.revid
         revids = [
             rev.revid for rev in self.pmw.documents() if rev.name != "joe"
@@ -512,12 +547,14 @@ class TestProtectedIndexingMiddleware:
 
     def test_getitem(self):
         item_name = "public"
-        item = self.pmw[item_name]
+        item = self.get_item(item_name)
         r = item.store_revision(dict(name=[item_name], acl="joe:read"), BytesIO(b"public content"), return_rev=True)
+        assert r is not None
+        assert isinstance(r, ProtectedRevision)
         revid_public = r.revid
         # now testing:
         item_name = "public"
-        item = self.pmw[item_name]
+        item = self.get_item(item_name)
         r = item[revid_public]
         assert r.data.read() == b"public content"
 
@@ -526,9 +563,9 @@ class TestProtectedIndexingMiddleware:
         # determine create revisions performance
         # for the memory backend we use, this is likely mostly building the indexes
         item_name = "foo"
-        item = self.pmw[item_name]
+        item = self.get_item(item_name)
         for i in range(100):
-            item.store_revision(dict(name=[item_name], acl="joe:create joe:read"), BytesIO(b"some content"))
+            item.store_revision(dict(name=[item_name], mtime=i, acl="joe:create joe:read"), BytesIO(b"some content"))
 
     def test_perf_create_read(self):
         pytest.skip("usually we do no performance tests")
@@ -536,9 +573,11 @@ class TestProtectedIndexingMiddleware:
         # for the memory backend we use, this is likely mostly building the indexes and
         # doing index lookups name -> itemid, itemid -> revids list
         item_name = "foo"
-        item = self.pmw[item_name]
+        item = self.get_item(item_name)
         for i in range(100):
-            item.store_revision(dict(name=[item_name], acl="joe:create joe:read"), BytesIO(b"rev number {}".format(i)))
+            item.store_revision(
+                dict(name=[item_name], mtime=i, acl="joe:create joe:read"), BytesIO(b"rev number {}".format(i))
+            )
         for r in item.iter_revs():
             # print r.meta
             # print r.data.read()
