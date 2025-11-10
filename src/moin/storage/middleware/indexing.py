@@ -269,25 +269,25 @@ def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None =
         input_conv = reg.get(type_input_contenttype, type_moin_document)
         refs_conv = reg.get(type_moin_document, type_moin_document, items="refs")
         output_conv = reg.get(type_moin_document, type_output_contenttype)
-        if input_conv and output_conv:
-            doc = input_conv(rev, input_contenttype)
-            # We do not convert smileys, includes, macros, links, because
-            # it does not improve search results or even makes results worse.
-            # We do run the referenced converter, though, to extract links and
-            # transclusions.
-            if is_new:
-                # we only can modify new, uncommitted revisions, not stored revs
-                i = Iri(scheme="wiki", authority="", path="/" + item_name)
-                doc.set(moin_page.page_href, str(i))
-                refs_conv(doc)
-                # side effect: we update some metadata:
-                meta[ITEMLINKS] = sorted(refs_conv.get_links())
-                meta[ITEMTRANSCLUSIONS] = sorted(refs_conv.get_transclusions())
-                meta[EXTERNALLINKS] = sorted(refs_conv.get_external_links())
-            doc = output_conv(doc)
-            return doc
-        # no way
-        raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
+        if not input_conv or not output_conv:
+            # no way
+            raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
+        doc = input_conv(rev, input_contenttype)
+        # We do not convert smileys, includes, macros, links, because
+        # it does not improve search results or even makes results worse.
+        # We do run the referenced converter, though, to extract links and
+        # transclusions.
+        if is_new:
+            # we only can modify new, uncommitted revisions, not stored revs
+            i = Iri(scheme="wiki", authority="", path="/" + item_name)
+            doc.set(moin_page.page_href, str(i))
+            refs_conv(doc)
+            # side effect: we update some metadata:
+            meta[ITEMLINKS] = sorted(refs_conv.get_links())
+            meta[ITEMTRANSCLUSIONS] = sorted(refs_conv.get_transclusions())
+            meta[EXTERNALLINKS] = sorted(refs_conv.get_external_links())
+        doc = output_conv(doc)
+        return doc
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
         logging.exception(
             "Exception happened in conversion of item {!r} rev {} contenttype {}:".format(
@@ -1255,13 +1255,45 @@ class Item(PropertiesMixin):
         content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
+    def validate_metadata(self, meta: MetaData, state: ValidationState) -> bool:
+        ct = meta.get(CONTENTTYPE)
+        if ct == CONTENTTYPE_USER:
+            Schema = UserMetaSchema
+        else:
+            Schema = ContentMetaSchema
+        m = Schema(meta)
+        valid = m.validate(state)
+        if not valid:
+            val = []
+            for e in m.children:
+                if e.name in ["itemlinks", "subscriptions"]:
+                    for child in e.children:
+                        if not child.valid:
+                            val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
+                            e.valid = False
+                elif not e.valid:
+                    val.append(f"{e.name}: {e.raw}")
+                if not e.valid:
+                    logging.warning(f"invalid: {e.name}, {e.raw}")
+            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+                raise ValueError(
+                    _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
+                )
+
+        # we do not have anything in m that is not defined in the schema,
+        # e.g. userdefined meta keys or stuff we do not validate. thus, we
+        # just update the meta dict with the validated stuff:
+        meta.update(dict(m.value.items()))
+
+        return valid
+
     def store_revision(
         self,
         meta: MetaData,
         data: ItemData,
         overwrite: bool = False,
-        trusted: bool = False,  # True for loading a serialized representation or other trusted sources
-        name: str | None = None,  # TODO name we decoded from URL path
+        trusted: bool = False,
+        name: str | None = None,  # TODO ?
         action: str = ACTION_SAVE,
         remote_addr: str | None = None,
         userid: str | None = None,
@@ -1281,21 +1313,27 @@ class Item(PropertiesMixin):
         :type meta: dict
         :type data: open file (file must be closed by caller)
         :param overwrite: if True, allow overwriting of existing revs.
+        :param trusted: True for loading a serialized representation or other trusted sources
+        :param name: name we decoded from URL path
         :param return_rev: if True, return a Revision instance of the just created revision
         :returns: a Revision instance or None
         """
+
         if remote_addr is None:
             try:
                 # if we get here outside a request, this won't work:
                 remote_addr = str(request.remote_addr)
             except RuntimeError:
                 remote_addr = "127.0.0.1"
+
         if userid is None:
             try:
                 # if we get here outside a request, this won't work:
                 userid = flaskg.user.valid and flaskg.user.itemid or None
             except AttributeError:
                 pass
+
+        # validate existing item meta data
         state: ValidationState = {
             "trusted": trusted,
             NAME: [name],
@@ -1309,34 +1347,8 @@ class Item(PropertiesMixin):
             "acl_parent": acl_parent,
             FQNAME: fqname,
         }
-        ct = meta.get(CONTENTTYPE)
-        if ct == CONTENTTYPE_USER:
-            Schema = UserMetaSchema
-        else:
-            Schema = ContentMetaSchema
-        m = Schema(meta)
-        valid = m.validate(state)
-        if not valid:
-            logging.warning("data validation skipped because metadata is invalid, see below")
-            val = []
-            for e in m.children:
-                if e.name in ["itemlinks", "subscriptions"]:
-                    for child in e.children:
-                        if not child.valid:
-                            val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
-                            e.valid = False
-                elif not e.valid:
-                    val.append(f"{e.name}: {e.raw}")
-                if not e.valid:
-                    logging.warning(f"invalid: {e.name}, {e.raw}")
-            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(
-                    _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
-                )
-        # we do not have anything in m that is not defined in the schema,
-        # e.g. userdefined meta keys or stuff we do not validate. thus, we
-        # just update the meta dict with the validated stuff:
-        meta.update(dict(m.value.items()))
+        valid = self.validate_metadata(meta, state)
+
         if hasattr(flaskg, "data_mtime"):
             # this is maint-reduce-revisions OR item-put CL process, restore saved time of item's last update
             meta[MTIME] = flaskg.data_mtime
@@ -1349,21 +1361,28 @@ class Item(PropertiesMixin):
         if SUMMARY not in meta:
             meta[SUMMARY] = ""
 
-        if valid and not validate_data(meta, data):  # need valid metadata to validate data
-            logging.warning(f"data validation failed for item {meta[NAME]} ")
-            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+        if valid:
+            # need valid metadata to validate data
+            if not validate_data(meta, data):
+                logging.warning(f"data validation failed for item {meta[NAME]} ")
                 raise ValueError(_("Error: nothing changed. Data unicode validation failed."))
+        else:
+            logging.warning("data validation skipped because metadata is invalid, see below")
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
+
         backend = self.backend
+
         if not overwrite:
             revid = meta.get(REVID)
             backend_name = dict(app.cfg.namespace_mapping)[meta.get(NAMESPACE, "")]
             if revid is not None and (revid in backend or (backend_name, revid) in backend):
                 raise ValueError("need overwrite=True to overwrite existing revisions")
+
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
+
         backend_name, revid = backend.store(meta, data)
         assert revid
         assert meta[REVID] == revid
@@ -1372,8 +1391,8 @@ class Item(PropertiesMixin):
         gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
             self._current = self.indexer.get_document(revid=revid, retry=True)
-        if return_rev:
-            return Revision(self, revid, retry=True)
+
+        return Revision(self, revid, retry=True) if return_rev else None
 
     def store_all_revisions(self, meta: MetaData, data: ItemData) -> None:
         """

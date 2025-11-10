@@ -472,8 +472,7 @@ class ProtectedItem:
             self.protector._clear_acl_cache()
             return (pr.fqname, pr.meta)
         self.protector._clear_acl_cache()
-        if return_rev:
-            return ProtectedRevision(self.protector, rev, p_item=self)
+        return ProtectedRevision(self.protector, rev, p_item=self) if return_rev else None
 
     def store_all_revisions(self, meta, data):
         self.require(DESTROY)
