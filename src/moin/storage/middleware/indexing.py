@@ -1255,7 +1255,7 @@ class Item(PropertiesMixin):
         content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
-    def validate_metadata(self, meta: MetaData, state: ValidationState) -> bool:
+    def validate_metadata(self, meta: MetaData, state: ValidationState, *, update: bool) -> bool:
         ct = meta.get(CONTENTTYPE)
         if ct == CONTENTTYPE_USER:
             Schema = UserMetaSchema
@@ -1280,10 +1280,11 @@ class Item(PropertiesMixin):
                     _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
                 )
 
-        # we do not have anything in m that is not defined in the schema,
-        # e.g. userdefined meta keys or stuff we do not validate. thus, we
-        # just update the meta dict with the validated stuff:
-        meta.update(dict(m.value.items()))
+        if update:
+            # we do not have anything in m that is not defined in the schema,
+            # e.g. userdefined meta keys or stuff we do not validate. thus, we
+            # just update the meta dict with the validated stuff:
+            meta.update(dict(m.value.items()))
 
         return valid
 
@@ -1337,7 +1338,6 @@ class Item(PropertiesMixin):
             # make sure we get a new timestamp
             meta.pop(MTIME, None)
 
-        # validate existing item meta data
         state: ValidationState = {
             "trusted": trusted,
             NAME: [name],
@@ -1351,7 +1351,9 @@ class Item(PropertiesMixin):
             "acl_parent": acl_parent,
             FQNAME: fqname,
         }
-        valid = self.validate_metadata(meta, state)
+
+        # validate existing item meta data
+        valid = self.validate_metadata(meta, state, update=True)
 
         if hasattr(flaskg, "data_mtime"):
             # this is maint-reduce-revisions OR item-put CL process, restore saved time of item's last update
@@ -1359,8 +1361,12 @@ class Item(PropertiesMixin):
             del flaskg.data_mtime
 
         # we do not want None / empty values:
-        # XXX do not kick out empty lists before fixing NAME processing:
-        meta = {k: v for k, v in meta.items() if v not in [None]}
+        # do not kick out empty lists before fixing NAME processing:
+        # modify meta directly instead of going on with a new instance (one reason: validation)
+        keys_to_remove = [k for k, v in meta.items() if v is None]
+        for key in keys_to_remove:
+            meta.pop(key)
+
         # file upload UI does not have a summary field
         if SUMMARY not in meta:
             meta[SUMMARY] = ""
@@ -1386,6 +1392,9 @@ class Item(PropertiesMixin):
 
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
+
+        # validate the updated meta data before it is being stored
+        self.validate_metadata(meta, state, update=False)
 
         backend_name, revid = backend.store(meta, data)
         assert revid
