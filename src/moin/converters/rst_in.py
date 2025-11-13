@@ -105,6 +105,11 @@ class NodeVisitor:
             for _id in node["ids"]:
                 self.open_moin_page_node(moin_page.span(attrib={moin_page.id: _id}))
                 self.close_moin_page_node()
+        if node and node["classes"]:
+            classes = node["classes"][:]
+            if mointree_element.attrib.get(html.class_, ""):
+                classes.insert(0, mointree_element.attrib[html.class_])
+            mointree_element.attrib[html.class_] = " ".join(classes)
         self.current_node.append(mointree_element)
         self.current_node = mointree_element
         self.path.append(mointree_element)
@@ -285,7 +290,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_emphasis(self, node):
-        self.open_moin_page_node(moin_page.emphasis())
+        self.open_moin_page_node(moin_page.emphasis(), node)
 
     def depart_emphasis(self, node):
         self.close_moin_page_node()
@@ -438,17 +443,14 @@ class NodeVisitor:
 
     def visit_inline(self, node):
         classes = node["classes"]
-        moin_node = moin_page.span
-        attrib = {}
+        moin_node = moin_page.span()
         if "ins" in classes:
-            moin_node = moin_page.ins
+            moin_node = moin_page.ins()
             classes.remove("ins")
         if "del" in classes:
-            moin_node = moin_page.del_
+            moin_node = moin_page.del_()
             classes.remove("del")
-        if classes:
-            attrib[html.class_] = " ".join(classes)
-        self.open_moin_page_node(moin_node(attrib=attrib))
+        self.open_moin_page_node(moin_node, node)
 
     def depart_inline(self, node):
         self.close_moin_page_node()
@@ -484,7 +486,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_literal(self, node):
-        self.open_moin_page_node(moin_page.code())
+        self.open_moin_page_node(moin_page.code(), node)
         self.open_moin_page_node(node.astext())
         self.close_moin_page_node()
         self.close_moin_page_node()
@@ -670,13 +672,13 @@ class NodeVisitor:
         pass
 
     def visit_strong(self, node):
-        self.open_moin_page_node(moin_page.strong())
+        self.open_moin_page_node(moin_page.strong(), node)
 
     def depart_strong(self, node):
         self.close_moin_page_node()
 
     def visit_subscript(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "sub"}))
+        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "sub"}), node)
 
     def depart_subscript(self, node):
         self.close_moin_page_node()
@@ -693,7 +695,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_superscript(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "super"}))
+        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "super"}), node)
 
     def depart_superscript(self, node):
         self.close_moin_page_node()
