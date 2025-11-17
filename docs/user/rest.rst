@@ -485,138 +485,239 @@ An indented text block is rendered as a block-quote_.
 Lists
 =====
 
+* In reStructuredText, all lists must be separated from other body
+  elements by blank lines.
+* The list marker must **not** be indented.
+* List items may contain arbitrary body elements.
+* Blank lines between list items are optional.
+
 Unordered Lists
 ---------------
 
-**Markup**::
+A text block which begins with a ``*``, ``+``, ``-``, ``•``, ``‣``, or ``⁃``,
+followed by whitespace, is a *bullet list* item
+(`details <bullet list_>`__).
 
- - item 1
- - item 2
+.. list-table::
+   :header-rows: 1
 
-   - item 2.1
-   - item 2.2
+   * - Markup
+     - Result
 
-     - item 2.2.1
-     - item 2.2.2
+   * - ::
 
- - item 3
+           - item 1
+           - item 2
 
-**Result**:
+             -   item 2.1
+             - item 2.2
 
-- item 1
-- item 2
+               - item 2.2.1
+               -
+                item
+                2.2.2
 
-  - item 2.1
-  - item 2.2
+           - item 3
 
-    - item 2.2.1
-    - item 2.2.2
+     -
+       - item 1
+       - item 2
 
-- item 3
+         -   item 2.1
+         - item 2.2
+
+           - item 2.2.1
+           -
+            item
+            2.2.2
+
+       - item 3
+
+   * - ::
+
+           Attention!
+
+            * Indented lists
+            * are nested
+              in a block quote.
+
+     - Attention!
+
+        * Indented lists
+        * are nested
+          in a block quote.
+
+* List item bodies must be left-aligned and indented relative to the marker.
+  They may start on the same line as the marker or on the next line.
+* The first line of text sets the `indentation level`_ for this item.
+* Sub-items 2.1 to 2.2.2 show some valid input variants.
+
 
 Ordered Lists
 ---------------
 
-**Markup**::
+*Ordered lists* are similar to `unordered lists`_, but use *enumerators*
+instead of bullets (`details <enumerated lists_>`_).
 
- 1. item 1
- #. item 2
+.. list-table::
+   :header-rows: 1
 
-    (A) item 2.1
-    (#) item 2.2
+   * - Markup
+     - Result
 
-        i) item 2.2.1
-        #) item 2.2.2
+   * - ::
 
- #. item 3
+           #. item 1
+           #. item 2
 
-**Result**:
+              (a)   item 2.1
+              (#) item 2.2
 
- 1. item 1
- #. item 2
+                  i) item
+                     2.2.1
+                  #)
+                   item 2.2.2
 
-    (A) item 2.1
-    (#) item 2.2
+           #. item 3
 
-        i) item 2.2.1
-        #) item 2.2.2
+     - #. item 1
+       #. item 2
 
- #. item 3
+          (a)   item 2.1
+          (#) item 2.2
 
-**Notes**:
- - Ordered lists can be automatically enumerated using the ``#`` character as
-   demonstrated above. Note that the first item of an ordered list
-   auto-enumerated in this fashion must use explicit numbering notation
-   (e.g. ``1.``) in order to select the enumeration sequence type
-   (e.g. Roman numerals, Arabic numerals, etc.), initial number
-   (for lists which do not start at "1") and formatting type
-   (e.g. ``1.`` or ``(1)`` or ``1)``). More information on
-   enumerated lists can be found in the `reStructuredText documentation
-   <https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists>`_.
- - One or more blank lines are required before and after reStructuredText lists.
- - The Moin2 parser requires a blank line between items when changing indentation levels.
- - Formatting types (A) and i) are rendered as A. and A. by Sphinx and as A. and i. by Moin2.
+              i) item
+                 2.2.1
+              #)
+               item 2.2.2
+
+       #. item 3
+
+
+   * - ::
+
+           4) item 4 with
+
+              C. uppercase
+              #. letters and
+
+                 IV) custom
+                 #) start values
+
+     - 4) item 4 with
+
+          C. uppercase
+          #. letters and
+
+             IV) custom
+             #) start values
+
+* Ordered lists can be automatically enumerated using the ``#`` character.
+* The first enumerator determines the *enumeration sequence*, *formatting
+  type* [#]_, and *start value*.
+* Sub-items 2.1 to 2.2.2 show some valid indentation variants.
+
+.. [#] HTML output ignores the formatting style and
+       always uses a trailing period.
+
 
 Definition Lists
-================
+----------------
 
-Definition lists are formed by an unindented one line term followed by an indented definition.
+*Definition lists* are formed by a *term* on one line followed by an
+indented *definition* or *description* on the next line (details__).
 
-**Markup**::
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #definition-lists
 
- term 1
-  Definition 1.
+.. list-table::
+   :header-rows: 1
 
- term 2 : classifier
-  Definition 2.
+   * - Markup
+     - Result
 
- term 3 : classifier one : classifier two
-  Definition 3.
+   * - ::
 
-**Result**:
+           term
+             Description
+           term 2 : classifier
+             Optional *classifiers*
+             may be appended to the term.
 
-term 1
- Definition 1.
+     - term
+         Description
+       term 2 : classifier
+         Optional *classifiers*
+         may be appended to the term.
 
-term 2 : classifier
- Definition 2.
-
-term 3 : classifier one : classifier two
- Definition 3.
 
 Field Lists
-===========
+-----------
 
-Field lists are part of an extension syntax for directives usually intended for further processing.
+*Field lists* are mappings from field names to field bodies (details__).
 
-**Markup**::
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #field-lists
 
-    :Date: 2001-08-16
-    :Version: 1
-    :Authors: Joe Doe
+.. list-table::
+   :header-rows: 1
 
-**Result**:
+   * - Markup
+     - Result
 
-:Date: 2001-08-16
-:Version: 1
-:Authors: Joe Doe
+   * - ::
+
+           :Version:      2.0b2
+           :Release Date: 2001-08-16
+           :Authors: - Joe Doe
+              - Erika Mustermann
+              - Jan Kowalski
+
+     - :Version:      2.0b2
+       :Release Date: 2001-08-16
+       :Authors: - Joe Doe
+          - Erika Mustermann
+          - Jan Kowalski
+
+* Field bodies may start on the same line as the field name or on the
+  next line.
+* Field list syntax is also used for options in directives_ and for
+  `bibliographic fields`_.
+
 
 Option lists
-============
+------------
 
-Option lists are intended to document Unix or DOS command-line options.
+*Option lists* document the options of a command-line program
+(`details <option lists_>`_).
 
-**Markup**::
+.. list-table::
+   :header-rows: 1
 
-    -a      command definition
-    --a     another command definition
-    /S      dos command definition
+   * - Markup
+     - Result
 
-**Result**:
+   * - ::
 
--a      command definition
---a     another command definition
-/S      dos command definition
+           -a         Output all.
+           -c arg     Output just arg.
+           --long     Output all day long.
+           -f FILE, --file=FILE  These two
+                options are synonyms;
+                both have arguments.
+
+     - -a         Output all.
+       -c arg     Output just arg.
+       --long     Output all day long.
+       -f FILE, --file=FILE  These two
+            options are synonyms;
+            both have arguments.
+
+* There must be at least **two** spaces between the option(s) and the
+  description (which may also start on the next line).
+
+TODO: fix output in Moin.
+
 
 Transitions
 ===========
@@ -1114,13 +1215,19 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#anonymous-hyperlinks
 .. _attribution:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#attribution
+.. _bibliographic fields:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bibliographic-fields
 .. _block-quote:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
+.. _bullet list:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
 .. _embedded URI:
 .. _embedded alias:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#embedded-uris-and-aliases
 .. _empty hyperlink targets:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#internal-hyperlink-targets
+.. _enumerated lists:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists
 .. _escaping:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#escaping-mechanism
 .. _explicit target:
@@ -1134,6 +1241,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#hyperlink-targets
 .. _implicit targets:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#implicit-hyperlink-targets
+.. _indentation level:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#indentation
 .. _indirect target:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#indirect-hyperlink-targets
 .. _inline markup:
@@ -1144,6 +1253,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-internal-targets
 .. _literal context:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-context
+.. _option lists:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#option-lists
 .. _phrase references:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#phrase-references
 .. _reference name:
