@@ -71,6 +71,24 @@ create your development environment
 
     . activate  # Windows: activate
 
+* You should have a ``moin`` command available, try it::
+
+    moin --help
+
+* If you are running Python 3.12+ and get a traceback with::
+
+    ModuleNotFoundError: No module named 'pkg_resources'
+
+* then you must install setuptools manually::
+
+    pip install setuptools
+
+* then retry `moin --help`
+
+* there is a second CLI with tools for developers, try it::
+
+    ./m  # Windows: m
+
 * create a wiki instance and load help data and welcome pages::
 
     moin create-instance --full
