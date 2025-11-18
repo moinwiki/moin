@@ -27,32 +27,34 @@ IRC channel on libera.chat (quick communication and discussion):
 Requirements for development
 ============================
 
-The `virtualenv` Python package is required.
-The installation process for `virtualenv` varies with your OS and Python distribution.
-Many Linux distributions have a package manager that may do the installation.
-Windows users (and perhaps others) may download setuptools from https://pypi.org/project/setuptools/.
-Once setuptools is installed, do "`easy_install virtualenv`".
-Current ActiveState distributions include virtualenv in the installation bundle.
-If all else fails, try your favorite search engine.
-
 Git is required if you wish to contribute patches to the Moin2 development effort.
 Even if you do not intend to contribute, Git is highly recommended as it
 will make it easy for you to obtain fixes and enhancements from the moin2 repositories.
 Git can be installed with most Linux package managers or downloaded from https://git-scm.com/.
-You can also find GUI clients there.
+You can also find many alternative GUI clients there for Unix, macOS and Windows.
 
 
 Typical development workflow
 ============================
 
-This is the typical workflow for anyone who wants to contribute to the development of Moin2.
+Once setup is completed, you will have created two repos that work together with the existing
+moin master repo hosted on GitHub. One new repo will be a fork of the moin master repo hosted on
+GitHub. The other new repo will be a clone of your forked repo that will reside on your
+local PC. These three repos will be updated in a cycle:
+
+* keep your cloned repo up to date by pulling changes from the GitHub master repo
+* contribute by coding changes in your local cloned repo and pushing to your forked GitHub repo
+* after review by an administrator, the new changes in your GItHub forked repo will be merged into
+  the moin GitHub master repo
+* repeat
+
 
 create your development environment
 -----------------------------------
 
 * if you do not have a GitHub account, create one at https://github.com/
-* fork the main repository: https://github.com/moinwiki/moin to your gh user
-* clone your gh repo to your local development machine::
+* fork the main repository: https://github.com/moinwiki/moin to your GitHub user account
+* clone your GitHub repo to your local development machine::
 
     cd <parent_directory_of_your_future_repo>
     git clone https://github.com/yourname/moin.git
@@ -61,11 +63,11 @@ create your development environment
 
     cd moin
 
-* create the virtualenv and download packages::
+* create a new venv (Virtual ENVironment) and download packages::
 
     python quickinstall.py
 
-* activate virtualenv::
+* activate venv::
 
     . activate  # Windows: activate
 
@@ -80,6 +82,14 @@ create your development environment
 * point your browser at http://127.0.0.1:5000/ to access your development wiki
 * press Ctrl+C to stop the built-in server
 
+* add the GitHub moin master as a remote, "moinwiki" is used as the remote name below and elsewhere
+
+    git remote add moinwiki https://github.com/moinwiki/moin.git
+
+* verify it works, ensure your local repo up to date
+
+    git pull moinwiki master
+
 add more tools, exercise tools
 ------------------------------
 
@@ -87,18 +97,27 @@ add more tools, exercise tools
 
     ./m extras  # Windows: m extras
 
-* run the unit tests, note any existing test failures::
+* run the unit tests, if there are test failures check for open issues::
 
     ./m tests  # Windows: m tests
 
-* install Node.js and npm with a Linux package manager; Windows users may download both from https://nodejs.org/download/
+* Node.js and npm are required to install sass. Install Node.js and npm with a
+  Linux package manager; Windows users may download both from https://nodejs.org/download/
 
   * On Ubuntu 14.04 or any distribution based on Ubuntu you need to install "npm" and "nodejs-legacy" (to get the "node" command).
 
-* install sass::
+* sass is required to update Basic theme CSS files, install sass::
 
     sudo npm install -g sass  # Windows: npm install -g sass
     sass --version  # show version number to prove it works
+
+* sass fixup pending resolution of `issue #2043 <https://github.com/moinwiki/moin/issues/2043>`_,
+  missing xstatic/pkg/bootstrap/data/scss directory
+
+  - point your browser to https://github.com/twbs/bootstrap/tree/v4.5.3/scss (optional, review before downloading)
+  - modify the browser url to https://ssgithub.com/twbs/bootstrap/tree/v4.5.3/scss
+  - click the download button to save a zip file to a convenient location
+  - unzip the file to xstatic/pkg/bootstrap/data creating a scss directory as a sibling to the existing css and js directories
 
 * regenerate CSS files::
 
@@ -122,7 +141,7 @@ add more tools, exercise tools
 
   - convert tabs to 4 spaces
   - delete trailing blanks on file save
-  - use unix line endings (use Windows line endings on .bat and .cmd files)
+  - use unix line endings almost everywhere, use Windows line endings on .bat and .cmd files
   - use monospaced font for editing
 * if you are new to git, read about it (https://git-scm.com/book/),
   consider printing a cheat sheet
@@ -132,7 +151,7 @@ add more tools, exercise tools
 install pre-commit hooks
 ------------------------
 
-Some tools will inspect your changes as part of Git commit processing.
+These tools will inspect your staged changes as part of Git commit processing.
 
 * Black formats Python code to make it consistent and readable according to PEP 8 guidelines.
 * Ruff is a linter that detects style issues, errors and potential problems.
@@ -142,19 +161,26 @@ Setup pre-commit hooks::
 
     pre-commit install
 
+Running pre-commmit will stash any changed and unstaged files, then black, ruff, and bandit will
+examine and report violations on any staged files. Finally, any stashed files will be restored.
+Try running pre-commit now::
+
+    pre-commit run
+
 If your code
-change violates Black's coding standards (a changed line of code is > 120 characters) Black will
+change violates Black's coding standards (a line of code is > 120 characters) Black will
 update the file and fail the commit. Your repo will have 2 versions of the offending file:
 the staged file with your changes and an unstaged version with Black's corrections.
 
 To fix, unstage the file to merge your changes into Black's version, then restage the
-file and rerun commit.
+file and rerun pre-commit.
 
-If Ruff or Bandit find errors, they will create error messages and cause the commit to fail. In this case,
-unstage the offending file, fix the errors, restage the file and rerun commit.
+If Ruff or Bandit find errors, they will create error messages that will cause the commit to fail.
+In this case, unstage the offending file, fix the error, restage the file and rerun pre-commit.
 
-Note that these same checks are made as part of GitHub push-merge processing.
+Note that these same checks will be made as part of GitHub push-merge processing.
 If there is an error the merge will fail. Fix the error, restage the file, and commit.
+Next time, remember the easier way is to run pre-commit locally before pushing changes.
 
 Read more about
 
@@ -166,11 +192,10 @@ review configuration options
 ----------------------------
 
 * review https://moin-20.readthedocs.io/en/latest/admin/configure.html
-* configure options by editing wikiconfig.py
+* configure options by reading the comments and editing wikiconfig.py
 
+  * the default options in wikiconfig.py are secure, changes are required to edit and save items
   * set superuser privileges on at least one username
-  * the default configuration options are commonly used, it is likely new bugs can be
-    found by testing different options
 
 find a task to work on
 ----------------------
@@ -185,16 +210,8 @@ find a task to work on
 * just before you start to code changes, bring your repo up to date::
 
     git checkout master       # make sure you are on master branch
-    git pull mm master        # update your master branch
+    git pull moinwiki master  # update your master branch
     git checkout -b mychange  # create a new branch "mychange"
-    ...                       # implement your change
-    tox                       # run the tests, fix any new failure!
-    git status                # check what new files you created
-    git diff                  # check what changes you did
-    git add ...               # add the files you want to commit
-    git commit                # commit, write a nice commit comment
-    git push                  # push to your gh user's moin repo
-    ...                       # go to gh moinwiki/moin and make a PR
 
 develop a testing strategy
 --------------------------
@@ -203,8 +220,7 @@ develop a testing strategy
   but failing test for it, then fix the code and see a successful test
 * if you implement new functionality, write tests for it first, then
   implement it
-* make a plan for using a browser to test your changes; which wiki pages are
-  effected, how many browsers must be tested
+* when changing a theme, test with multiple browsers
 
 develop a working solution
 --------------------------
@@ -218,18 +234,17 @@ develop a working solution
 * obey PEP-8
 * do not fix or change code unrelated to your task, if you find
   unrelated bugs, create new issues on the tracker
-* regularly run the unit tests ("./m tests"), the amount of failing tests
-  shall not increase due to your changes
+
+  * or, stash your changes and create a new branch to fix the new issue
+* regularly run the unit tests ("./m tests"), do not create failing tests
 
 review your working solution
 ----------------------------
 
-* do "pre-commit run" to check for style and security issues using Black, Ruff, and Bandit
+* stage your changed files and do "pre-commit run" to check for style and security issues using Black, Ruff, and Bandit
 * do "./m coding-std" to check for coding errors (trailing spaces, template indentation and spacing)
 * use git diff, git status - read everything you changed - slowly, look for
   things that can be improved
-
-  - if you have TortoiseGIT, use those graphical tools to review changes
 * look for poor variable names, spelling errors in comments, accidental addition
   or deletion of blank lines, complex code without comments, missing/extra spaces
 * if JavaScript files were changed, run https://www.jslint.com/
@@ -245,19 +260,21 @@ publish your change
   * while a commit message may have multiple lines, many tools show only 80 characters of the first line
   * stuff as much info as possible into those first 80 characters::
 
-        <concise description of your change>, fixes #123
+        <concise description of your change>, fixes #1234
 
-* push the changeset to your public github repo
+  * if "fixes #1234" is included in the description, the issue will be closed when your changed is merged into the master
+  * if your patch partially fixes an open issue, include the number in the commit message, "#1234"
+* push the changeset to your public GitHub repo
 * create a pull request so your changes will get reviewed and pulled into the
   main repository
 * if you fixed an issue from the issue tracker, be sure the issue gets
   closed after your fix has been pulled into main repo.
 * celebrate, loop back to "find a task to work on"
 
-update your virtualenv
-----------------------
+update your venv
+----------------
 
-Every week or so, do "m quickinstall" to install new releases of
+Every week or so, do "./m quickinstall" and "./m extras" to install new releases of
 dependent packages. If any new packages are installed, do a
 quick check for breakages by running tests, starting the
 built-in server, modify an item, etc.
@@ -282,7 +299,6 @@ moin2 is a WSGI application and uses:
 * for stores: filesystem, sqlite3, sqlalchemy, memory
 * jquery javascript lib, a simple jQuery i18n plugin `Plugin <https://github.com/recurser/jquery-i18n>`_
 * CKeditor, the GUI editor for (x)html
-* svgdraw as drawing tool
 
 How MoinMoin works
 ==================
@@ -423,7 +439,7 @@ Testing
 =======
 
 We use pytest for automated testing. It is currently automatically installed
-into your virtualenv as a dependency.
+into your venv as a dependency.
 
 Running the tests
 -----------------
@@ -431,7 +447,7 @@ To run all the tests, the easiest way is to do::
 
     ./m tests  # windows:  m tests
 
-To run selected tests, activate your virtual env and invoke pytest from the
+To run selected tests, activate your venv and invoke pytest from the
 top-level directory::
 
     pytest --pep8  # run all tests, including pep8 checks
@@ -494,7 +510,7 @@ Debug a Moin Script
 
 To debug one of the moin commands that are normally executed in a terminal window,
 follow the example below. You can view the list of moin commands by activating
-the virtual environment and doing a "moin --help".
+the venv and doing a "moin --help".
 
 .. image:: pycharmB.png
    :alt: pycharm example
@@ -575,10 +591,7 @@ there may be an occasional need to access the moin shell directly::
     moin -h                             # show help
 
 
-
-
-
-Package Release on pypi.org and Github Releases
+Package Release on pypi.org and GitHub Releases
 ===============================================
 * Update docs/changes/CHANGES, run git log and edit results::
 
@@ -613,8 +626,8 @@ Test Build
 
 Create a new venv, install moin, create instance, start server, create item, modify and save an item::
 
-    <python> -m venv </path/to/new/virtual/environment>
-    cd </path/to/new/virtual/environment>
+    <python> -m venv </path/to/new/venv>
+    cd </path/to/new/venv>
     source bin/activate  # or "scripts\activate" on windows
     pip install --pre moin
     moin --help  # prove it works
@@ -651,8 +664,8 @@ verify the sdist is authentic::
 
 Test the GitHub package release::
 
-    <python> -m venv </path/to/new/virtual/environment>
-    cd </path/to/new/virtual/environment>
+    <python> -m venv </path/to/new/venv>
+    cd </path/to/new/venv>
     source bin/activate  # or "scripts\activate" on windows
     pip install git+https://github.com/moinwiki/moin@2.0.0a1
     moin --help  # prove it works
