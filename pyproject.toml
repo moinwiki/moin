@@ -106,6 +106,7 @@ skip-magic-trailing-comma = true
 
 [tool.pytest.ini_options]
 norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
+addopts = "--ignore=_ui_tests"
 
 [tool.ruff]
 line-length = 120

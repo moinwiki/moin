@@ -23,15 +23,16 @@ from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, 
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
+from moin.storage.types import ItemData, MetaData
 from moin.utils import close_file
 from moin.utils.interwiki import split_fqname, CompositeName
 from moin import log
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from moin.config import AclConfig
-    from moin.storage.middleware.indexing import IndexingMiddleware
+    from moin.storage.middleware.indexing import IndexingMiddleware, Item
     from moin.user import User
 
 logging = log.getLogger(__name__)
@@ -341,7 +342,7 @@ class ProtectingMiddleware:
 
 
 class ProtectedItem:
-    def __init__(self, protector, item):
+    def __init__(self, protector: ProtectingMiddleware, item: Item):
         """
         :param protector: protector middleware
         :param item: item to protect
@@ -444,7 +445,16 @@ class ProtectedItem:
     def get_revision(self, revid):
         return self[revid]
 
-    def store_revision(self, meta, data, overwrite=False, return_rev=False, return_meta=False, fqname=None, **kw):
+    def store_revision(
+        self,
+        meta: MetaData,
+        data: ItemData,
+        overwrite: bool = False,
+        return_rev: bool = False,
+        return_meta: bool = False,
+        fqname=None,
+        **kw,
+    ) -> tuple[Any, dict[str, Any]] | ProtectedRevision | None:
         self.require(WRITE)
         if not self:
             self.require(CREATE)
@@ -462,8 +472,7 @@ class ProtectedItem:
             self.protector._clear_acl_cache()
             return (pr.fqname, pr.meta)
         self.protector._clear_acl_cache()
-        if return_rev:
-            return ProtectedRevision(self.protector, rev, p_item=self)
+        return ProtectedRevision(self.protector, rev, p_item=self) if return_rev else None
 
     def store_all_revisions(self, meta, data):
         self.require(DESTROY)

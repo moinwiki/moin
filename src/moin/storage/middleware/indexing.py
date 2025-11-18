@@ -50,10 +50,11 @@ usually it is even just the small and thus quick latest-revs index.
 
 from __future__ import annotations
 
+from typing import Any, Iterator, TYPE_CHECKING
+
 import gc
 import os
 import re
-import sys
 import shutil
 import time
 
@@ -70,37 +71,31 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
+from moin import log, user
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
-
-from moin import user
+from moin.converters import default_registry
+from moin.i18n import _
 from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
-from moin.themes import utctimestamp
+from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
 from moin.storage.middleware.routing import Backend
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema, validate_data
-from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
+from moin.storage.types import Document, ItemData, MetaData, ValidationState
+from moin.themes import utctimestamp
 from moin.utils import utcfromtimestamp
 from moin.utils.interwiki import split_fqname, CompositeName
+from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
-from moin.converters import default_registry
-from moin.utils.iri import Iri
-from moin.i18n import _
 
-from moin import log
-
-from typing import Any
+if TYPE_CHECKING:
+    from whoosh.index import FileIndex
 
 logging = log.getLogger(__name__)
 
 
 WHOOSH_FILESTORAGE = "FileStorage"
 INDEXES = [LATEST_REVS, ALL_REVS, LATEST_META]
-
-VALIDATION_HANDLING_STRICT = "strict"
-VALIDATION_HANDLING_WARN = "warn"
-# TODO: fix tests to create valid metadata
-VALIDATION_HANDLING = VALIDATION_HANDLING_WARN if "pytest" in sys.modules else VALIDATION_HANDLING_STRICT
 
 INDEXER_TIMEOUT = 20.0
 
@@ -120,7 +115,7 @@ def parent_names(names):
     return parents
 
 
-def search_names(name_prefix, limit=None):
+def search_names(name_prefix: str, limit: int | None = None) -> list[str]:
     """
     get list of item names beginning with name_prefix
 
@@ -137,7 +132,7 @@ def search_names(name_prefix, limit=None):
     return result_names
 
 
-def backend_to_index(meta, content, schema, backend_name):
+def backend_to_index(meta: MetaData, content: str, schema: Schema, backend_name: str) -> Document:
     """
     Convert backend metadata/data to a whoosh document.
 
@@ -199,7 +194,7 @@ def backend_subscriptions_to_index(subscriptions):
     return subscription_ids, subscription_patterns
 
 
-def convert_to_indexable(meta, data, item_name=None, is_new=False):
+def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None = None, is_new: bool = False) -> str:
     """
     Convert revision data to a indexable content.
 
@@ -221,25 +216,25 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
     fqname = split_fqname(item_name)
 
     class PseudoRev:
-        def __init__(self, meta, data):
+        def __init__(self, meta: MetaData, data: ItemData) -> None:
             self.meta = meta
             self.data = data
             self.revid = meta.get(REVID)
 
             class PseudoItem:
-                def __init__(self, fqname):
+                def __init__(self, fqname: CompositeName) -> None:
                     self.fqname = fqname
                     self.name = fqname.value
 
             self.item = PseudoItem(fqname)
 
-        def read(self, *args, **kw):
+        def read(self, *args, **kw) -> bytes:
             return self.data.read(*args, **kw)
 
-        def seek(self, *args, **kw):
+        def seek(self, *args, **kw) -> int:
             return self.data.seek(*args, **kw)
 
-        def tell(self, *args, **kw):
+        def tell(self, *args, **kw) -> int:
             return self.data.tell(*args, **kw)
 
     if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
@@ -268,25 +263,25 @@ def convert_to_indexable(meta, data, item_name=None, is_new=False):
         input_conv = reg.get(type_input_contenttype, type_moin_document)
         refs_conv = reg.get(type_moin_document, type_moin_document, items="refs")
         output_conv = reg.get(type_moin_document, type_output_contenttype)
-        if input_conv and output_conv:
-            doc = input_conv(rev, input_contenttype)
-            # We do not convert smileys, includes, macros, links, because
-            # it does not improve search results or even makes results worse.
-            # We do run the referenced converter, though, to extract links and
-            # transclusions.
-            if is_new:
-                # we only can modify new, uncommitted revisions, not stored revs
-                i = Iri(scheme="wiki", authority="", path="/" + item_name)
-                doc.set(moin_page.page_href, str(i))
-                refs_conv(doc)
-                # side effect: we update some metadata:
-                meta[ITEMLINKS] = sorted(refs_conv.get_links())
-                meta[ITEMTRANSCLUSIONS] = sorted(refs_conv.get_transclusions())
-                meta[EXTERNALLINKS] = sorted(refs_conv.get_external_links())
-            doc = output_conv(doc)
-            return doc
-        # no way
-        raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
+        if not input_conv or not output_conv:
+            # no way
+            raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
+        doc = input_conv(rev, input_contenttype)
+        # We do not convert smileys, includes, macros, links, because
+        # it does not improve search results or even makes results worse.
+        # We do run the referenced converter, though, to extract links and
+        # transclusions.
+        if is_new:
+            # we only can modify new, uncommitted revisions, not stored revs
+            i = Iri(scheme="wiki", authority="", path="/" + item_name)
+            doc.set(moin_page.page_href, str(i))
+            refs_conv(doc)
+            # side effect: we update some metadata:
+            meta[ITEMLINKS] = sorted(refs_conv.get_links())
+            meta[ITEMTRANSCLUSIONS] = sorted(refs_conv.get_transclusions())
+            meta[EXTERNALLINKS] = sorted(refs_conv.get_external_links())
+        doc = output_conv(doc)
+        return doc
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
         logging.exception(
             "Exception happened in conversion of item {!r} rev {} contenttype {}:".format(
@@ -568,7 +563,9 @@ class IndexingMiddleware:
             index_dir, index_dir_tmp = params[0], params_tmp[0]
             os.rename(index_dir_tmp, index_dir)
 
-    def index_revision(self, meta, content, backend_name, async_=True, force_latest=True):
+    def index_revision(
+        self, meta: MetaData, content: str, backend_name: str, async_: bool = True, force_latest: bool = True
+    ) -> None:
         """
         Index a single revision, add it to all-revs and latest-revs index.
 
@@ -608,7 +605,7 @@ class IndexingMiddleware:
                 with writer as writer:
                     writer.update_document(**doc)
 
-    def remove_index_revision(self, revid, async_=True, idx_name=LATEST_REVS):
+    def remove_index_revision(self, revid: str, async_: bool = True, idx_name: str = LATEST_REVS) -> None:
         if async_:
             writer = AsyncWriter(self.ix[idx_name])
         else:
@@ -640,7 +637,7 @@ class IndexingMiddleware:
                     # this is no revision left in this item that could be the new "latest rev", just kill the rev
                     writer.delete_document(docnum_remove)
 
-    def remove_revision(self, revid, async_=True):
+    def remove_revision(self, revid: str, async_: bool = True) -> None:
         """
         Remove a single revision from indexes.
         """
@@ -653,7 +650,16 @@ class IndexingMiddleware:
         for idx_name in [LATEST_REVS, LATEST_META]:
             self.remove_index_revision(revid, async_=async_, idx_name=idx_name)
 
-    def _modify_index(self, index, schema, revids, mode="add", procs=None, limitmb=None, multisegment=False):
+    def _modify_index(
+        self,
+        index: FileIndex,
+        schema: Schema,
+        revids: Iterator[tuple[str, str]],
+        mode: str = "add",
+        procs: int | None = None,
+        limitmb: int | None = None,
+        multisegment: bool = False,
+    ) -> None:
         """
         modify index contents - add, update, delete the indexed documents for all given revids
 
@@ -1080,14 +1086,14 @@ class PropertiesMixin:
             return CompositeName(self.namespace, ITEMID, self.meta[ITEMID])
 
     @property
-    def fqname(self):
+    def fqname(self) -> CompositeName:
         """
         return the fully qualified name including the namespace: NS:NAME
         """
         return self._fqname(self.name)
 
     @property
-    def fqnames(self):
+    def fqnames(self) -> list[CompositeName]:
         """
         return the fully qualified names including the namespace: NS:NAME
         """
@@ -1236,29 +1242,61 @@ class Item(PropertiesMixin):
         """
         return Revision(self, revid, doc)
 
-    def preprocess(self, meta, data):
+    def preprocess(self, meta: MetaData, data: ItemData) -> tuple[MetaData, ItemData, str]:
         """
         preprocess a revision before it gets stored and put into index.
         """
         content = convert_to_indexable(meta, data, self.name, is_new=True)
         return meta, data, content
 
+    def validate_metadata(self, meta: MetaData, state: ValidationState, *, update: bool) -> bool:
+        ct = meta.get(CONTENTTYPE)
+        if ct == CONTENTTYPE_USER:
+            Schema = UserMetaSchema
+        else:
+            Schema = ContentMetaSchema
+        m = Schema(meta)
+        valid = m.validate(state)
+        if not valid:
+            val = []
+            for e in m.children:
+                if e.name in ["itemlinks", "subscriptions"]:
+                    for child in e.children:
+                        if not child.valid:
+                            val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
+                            e.valid = False
+                elif not e.valid:
+                    val.append(f"{e.name}: {e.raw}")
+                if not e.valid:
+                    logging.warning(f"invalid: {e.name}, {e.raw}")
+            raise ValueError(
+                _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
+            )
+
+        if update:
+            # we do not have anything in m that is not defined in the schema,
+            # e.g. userdefined meta keys or stuff we do not validate. thus, we
+            # just update the meta dict with the validated stuff:
+            meta.update(dict(m.value.items()))
+
+        return valid
+
     def store_revision(
         self,
-        meta,
-        data,
-        overwrite=False,
-        trusted=False,  # True for loading a serialized representation or other trusted sources
-        name=None,  # TODO name we decoded from URL path
-        action=ACTION_SAVE,
-        remote_addr=None,
-        userid=None,
-        contenttype_current=None,
-        contenttype_guessed=None,
-        acl_parent=None,
-        return_rev=False,
-        fqname=None,
-    ):
+        meta: MetaData,
+        data: ItemData,
+        overwrite: bool = False,
+        trusted: bool = False,
+        name: str | None = None,  # TODO ?
+        action: str = ACTION_SAVE,
+        remote_addr: str | None = None,
+        userid: str | None = None,
+        contenttype_current: str | None = None,
+        contenttype_guessed: str | None = None,
+        acl_parent: str | None = None,
+        return_rev: bool = False,
+        fqname: str | None = None,
+    ) -> Revision | None:
         """
         Store a revision into the backend, write metadata and data to it.
 
@@ -1269,22 +1307,31 @@ class Item(PropertiesMixin):
         :type meta: dict
         :type data: open file (file must be closed by caller)
         :param overwrite: if True, allow overwriting of existing revs.
+        :param trusted: True for loading a serialized representation or other trusted sources
+        :param name: name we decoded from URL path
         :param return_rev: if True, return a Revision instance of the just created revision
         :returns: a Revision instance or None
         """
+
         if remote_addr is None:
             try:
                 # if we get here outside a request, this won't work:
                 remote_addr = str(request.remote_addr)
             except RuntimeError:
                 remote_addr = "127.0.0.1"
+
         if userid is None:
             try:
                 # if we get here outside a request, this won't work:
                 userid = flaskg.user.valid and flaskg.user.itemid or None
             except AttributeError:
                 pass
-        state = {
+
+        if not trusted:
+            # make sure we get a new timestamp
+            meta.pop(MTIME, None)
+
+        state: ValidationState = {
             "trusted": trusted,
             NAME: [name],
             ACTION: action,
@@ -1297,61 +1344,51 @@ class Item(PropertiesMixin):
             "acl_parent": acl_parent,
             FQNAME: fqname,
         }
-        ct = meta.get(CONTENTTYPE)
-        if ct == CONTENTTYPE_USER:
-            Schema = UserMetaSchema
-        else:
-            Schema = ContentMetaSchema
-        m = Schema(meta)
-        valid = m.validate(state)
-        if not valid:
-            logging.warning("data validation skipped because metadata is invalid, see below")
-            val = []
-            for e in m.children:
-                if e.name in ["itemlinks", "subscriptions"]:
-                    for child in e.children:
-                        if not child.valid:
-                            val.append(f'"{str(child)}". {str(child.errors[0] if child.errors else "")}')
-                            e.valid = False
-                elif not e.valid:
-                    val.append(f"{e.name}: {e.raw}")
-                if not e.valid:
-                    logging.warning(f"invalid: {e.name}, {e.raw}")
-            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
-                raise ValueError(
-                    _("Error: metadata validation failed, invalid field value(s) = {0}").format(", ".join(val))
-                )
 
-        # we do not have anything in m that is not defined in the schema,
-        # e.g. userdefined meta keys or stuff we do not validate. thus, we
-        # just update the meta dict with the validated stuff:
-        meta.update(dict(m.value.items()))
+        # validate existing item meta data
+        valid = self.validate_metadata(meta, state, update=True)
+
         if hasattr(flaskg, "data_mtime"):
             # this is maint-reduce-revisions OR item-put CL process, restore saved time of item's last update
             meta[MTIME] = flaskg.data_mtime
             del flaskg.data_mtime
+
         # we do not want None / empty values:
-        # XXX do not kick out empty lists before fixing NAME processing:
-        meta = {k: v for k, v in meta.items() if v not in [None]}
+        # do not kick out empty lists before fixing NAME processing:
+        # modify meta directly instead of going on with a new instance (one reason: validation)
+        keys_to_remove = [k for k, v in meta.items() if v is None]
+        for key in keys_to_remove:
+            meta.pop(key)
+
         # file upload UI does not have a summary field
         if SUMMARY not in meta:
             meta[SUMMARY] = ""
 
-        if valid and not validate_data(meta, data):  # need valid metadata to validate data
-            logging.warning(f"data validation failed for item {meta[NAME]} ")
-            if VALIDATION_HANDLING == VALIDATION_HANDLING_STRICT:
+        if valid:
+            # need valid metadata to validate data
+            if not validate_data(meta, data):
+                logging.warning(f"data validation failed for item {meta[NAME]} ")
                 raise ValueError(_("Error: nothing changed. Data unicode validation failed."))
+        else:
+            logging.warning("data validation skipped because metadata is invalid, see below")
 
         if self.itemid is None:
             self.itemid = meta[ITEMID]
+
         backend = self.backend
+
         if not overwrite:
             revid = meta.get(REVID)
             backend_name = dict(app.cfg.namespace_mapping)[meta.get(NAMESPACE, "")]
             if revid is not None and (revid in backend or (backend_name, revid) in backend):
                 raise ValueError("need overwrite=True to overwrite existing revisions")
+
         meta, data, content = self.preprocess(meta, data)
         data.seek(0)  # rewind file
+
+        # validate the updated meta data before it is being stored
+        self.validate_metadata(meta, state, update=False)
+
         backend_name, revid = backend.store(meta, data)
         assert revid
         assert meta[REVID] == revid
@@ -1360,10 +1397,10 @@ class Item(PropertiesMixin):
         gc.collect()  # triggers close of index files from is_latest search
         if not overwrite:
             self._current = self.indexer.get_document(revid=revid, retry=True)
-        if return_rev:
-            return Revision(self, revid, retry=True)
 
-    def store_all_revisions(self, meta, data):
+        return Revision(self, revid, retry=True) if return_rev else None
+
+    def store_all_revisions(self, meta: MetaData, data: ItemData) -> None:
         """
         Store over all revisions of this item.
         """
@@ -1371,7 +1408,7 @@ class Item(PropertiesMixin):
             meta[REVID] = rev.revid
             self.store_revision(meta, data, overwrite=True)
 
-    def destroy_revision(self, revid):
+    def destroy_revision(self, revid: str) -> None:
         """
         Destroy revision <revid>.
         """
@@ -1468,13 +1505,13 @@ class Revision(PropertiesMixin):
 
 
 class Meta(Mapping):
-    def __init__(self, revision, doc, meta=None):
+    def __init__(self, revision, doc, meta: MetaData | None = None) -> None:
         self.revision = revision
         self._doc = doc or {}
         self._meta = meta or {}
         self._common_fields = revision.item.indexer.common_fields
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         try:
             self[key]
         except KeyError:
