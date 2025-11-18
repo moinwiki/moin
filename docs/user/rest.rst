@@ -288,7 +288,7 @@ target) in the same document.
    * - ``Links to a `named paragraph`_, the `MoinMoin logo`_,
        and a `note admonition`_.``
      - Links to a `named paragraph`_, the `MoinMoin logo`_,
-       and a `note admonition`_.
+       and a `note`_ admonition.
      - Put `phrase references`_ in backticks.
 
    * - ``It's `easy <simple_>`__.``
@@ -863,27 +863,29 @@ With the Sphinx parser, grid table column widths can be expanded by adding space
 Directives
 ==========
 
-Directives are an extension mechanism for reStructuredText (details__).
+The *directive* markup syntax provides an extension mechanism for
+reStructuredText (`details <"directive" syntax_>`__).
 
 A set of *standard directives* is described in the `reStructuredText
 Directives`_ document. Applications may add domain-specific directives.
 
-Moin adapts the "contents" and "include" directives and adds the "macro"
+Moin adapts the "contents__" and "include" directives and adds the "macro"
 and "parser" directives.
 
-__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
-   #directives
+__ `Table of Contents`_
 
 
 Admonitions
 -----------
 
 Admonitions are used to draw the reader's attention to an important
-information.
-There are nine admonition types: "attention", "caution", "danger",
-"error", "hint", "important", "note", "tip", and "warning" (details__).
+information (details__).
 
-"Error" admonitions are also used to highlight rST syntax errors.
+There are nine specific admonition types ("attention_", "caution_",
+"danger_", "error_" [#]_, "hint_", "important_", "note_", "tip_", and
+"warning_") and one "generic_" admonition.
+
+__ https://docutils.sourceforge.io/docs/ref/rst/directives.html#admonitions
 
 .. list-table::
    :header-rows: 1
@@ -893,44 +895,106 @@ There are nine admonition types: "attention", "caution", "danger",
 
    * - ::
 
-          .. caution:: Be careful!
+          .. attention:: Mind the gap!
 
-     -    .. caution:: Be careful!
+     -    .. attention:: Mind the gap!
+             :name: attention
 
    * - ::
 
-          .. danger:: Watch out!
+          .. caution:: Use
+             admonitions sparingly.
 
-     -    .. danger:: Watch out!
+     -    .. caution:: Use
+             admonitions sparingly.
+             :name: caution
 
+   * - ::
+
+          .. danger:: Slippery
+                      when wet!
+
+     -    .. danger:: Slippery
+                      when wet!
+                      :name: danger
+
+   * - ::
+
+          .. error::
+             Something went wrong
+
+     -    .. error::
+             Something went wrong
+             :name: error
+
+   * - ::
+
+          .. hint::
+             Think before you speak.
+
+     -    .. hint::
+             Think before you speak.
+             :name: hint
+
+   * - ::
+
+          .. important::
+             Back up your data!
+
+     -    .. important::
+             Back up your data!
+             :name: important
 
    * - ::
 
           .. note::
-             :name: note admonition
+             :name: note
 
-             The "name" option provides a
-             target for `internal links`_.
+             The "name" option
+             provides a target
+             for `internal links`_.
 
      -    .. note::
-             :name: note admonition
+             :name: note
 
-             The "name" option provides a
-             target for `internal links`_.
+             The "name" option
+             provides a target
+             for `internal links`_.
 
    * - ::
 
-          .. admonition:: Moin specific
+          .. tip:: Be consistent.
 
-             Moin renders the `"generic"
-             admonition`_ as an "attention".
+     -    .. tip:: Be consistent.
+             :name: tip
 
-     -    .. admonition:: Moin specific
+   * - ::
 
-             Moin renders the `"generic"
-             admonition`_ as an "attention".
+          .. warning:: Strong prose
+             may provoke
+             extreme mental exertion.
 
-__ https://docutils.sourceforge.io/docs/ref/rst/directives.html#admonitions
+     -    .. warning:: Strong prose
+             may provoke
+             extreme mental exertion.
+             :name: warning
+
+   * - ::
+
+          .. admonition:: Custom
+
+             Moin renders the generic
+             `"admonition" directive`_
+             as an "attention".
+
+     -    .. admonition:: Custom
+             :name: generic
+
+             Moin renders the generic
+             `"admonition" directive`_
+             as an "attention".
+
+.. [#] "Error" admonitions are also used to highlight rST syntax errors.
 
 
 .. _image:
@@ -1221,6 +1285,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
 .. _bullet list:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
+.. _"directive" syntax:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#directives
 .. _embedded URI:
 .. _embedded alias:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#embedded-uris-and-aliases
@@ -1275,6 +1341,8 @@ Take it away, Eric the Orchestra Leader!
 
 .. _reStructuredText Directives:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html
+.. _"admonition" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#generic-admonition
 .. _"contents" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
 .. _custom interpreted text roles:
