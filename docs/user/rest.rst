@@ -150,11 +150,8 @@ or phrases within a text block to format text.
      - ***Nested** markup* is not supported.
      - .. This is a longstanding Docutils TODO issue.
 
-* The :raw: role is disabled in Moin.
-
-* TODO:
-  Some standard roles are currently ignored by Moin.
-  Content is shown without processing.
+TODO: Some standard roles are currently ignored by Moin.
+Content is shown without processing.
 
 ..
   =====================  =================
@@ -164,12 +161,123 @@ or phrases within a text block to format text.
   ``:title:`Moin```      :title:`Moin`
   =====================  =================
 
-  .. no syntax highlight with roles derived from :code:
 
-     .. role:: latex(code)
-        :language: latex
+*Custom interpreted text roles* can be used to attach CSS class values to
+inline text (`details <custom interpreted text roles_>`__):
 
-     :latex:`\frac{\pi}{4} d^2`
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ::
+
+         .. role:: del
+
+       ``:del:`removed` content``
+
+     - .. role:: del
+
+       :del:`removed` content
+
+     - Uses the `\<del>`_ element.
+
+   * - ::
+
+         .. role:: ins
+
+       ``:ins:`editional` additions``
+
+     - .. role:: ins
+
+       :ins:`editional` additions
+
+     - Uses the `\<ins>`_ element.
+
+   * - ::
+
+           .. role:: green
+
+       ``A :green:`dragon`.``
+
+     - .. role:: green
+
+       A :green:`dragon`.
+
+     - Moin pre-defines some `CSS classes for background color`__.
+       Text with other classes can be styled with custom CSS.
+
+       __ https://moin-20.readthedocs.io/en/latest/user/moinwiki.html
+          #css-classes-for-use-with-the-wiki-parser-tables-comments-and-links
+
+   * - ::
+
+           .. role:: blue(emphasis)
+
+       ``The `Norwegian`:blue:.``
+
+     - .. role:: blue(emphasis)
+
+       The `Norwegian`:blue:.
+
+     - Custom roles may be based on standard roles.
+
+   * - ::
+
+           .. role:: em-tt(emphasis)
+              :class: monospaced
+
+       ``*emphasis* and :em-tt:`emphasis monospace```
+
+     - .. role:: em-tt(emphasis)
+          :class: monospaced
+
+       *emphasis* and :em-tt:`emphasis monospace`
+
+     - Custom roles may be used as surrogate for nested inline markup.
+
+* The examples rely on CSS styling missing in the `external documentation`_.
+
+* The :raw: role is disabled in Moin.
+
+TODO:
+
+* Syntax highlight with roles derived from "code".
+
+  ..
+    .. role:: latex(code)
+       :language: latex
+
+    :latex:`\frac{\pi}{4} d^2`
+
+* Support semantic HTML inline markup elements.
+
+  ..
+    .. role:: b
+    .. role:: dfn
+    .. role:: i
+    .. role:: kbd
+    .. role:: mark
+    .. role:: q
+    .. role:: s
+    .. role:: samp
+    .. role:: small
+    .. role:: u
+    .. role:: var
+
+    :b:    highlight :b:`key words` without marking them up as important
+    :dfn:  :dfn:`dfn` represents the defining instance of a term
+    :i:    :i:`voix alternative`
+    :kbd:  user input like :kbd:`Ctrl X`
+    :mark: :mark:`highlight` a run of text
+    :q:    represents :q:`phrasing content quoted from another source`
+    :s:    text that is no longer accurate, :s:`or no longer relevant`
+    :samp: computer output like :samp:`hello world!`
+    :small: side comments :small:`like this`
+    :u:    unarticulated annotations of, e.g, :u:`mispellings`
+    :var:  variables (or constants like :var:`c`)
 
 
 Hyperlinks
@@ -1325,6 +1433,7 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#phrase-references
 .. _reference name:
 .. _reference names:
+.. _named element:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#reference-names
 .. _simple reference names:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#simple-reference-names
@@ -1362,3 +1471,6 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/roles.html#rfc-reference
 
 .. _URI references: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#URI_references
+
+.. _\<del>: https://html.spec.whatwg.org/multipage/edits.html#the-del-element
+.. _\<ins>: https://html.spec.whatwg.org/multipage/edits.html#the-ins-element
