@@ -40,6 +40,6 @@ jobs:
         run: bandit -c pyproject.toml -r src/moin -f sarif -o results.sarif || true
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: results.sarif
