@@ -1304,19 +1304,20 @@ class Item:
             fullnames = rev[NAME]
             for fullname in fullnames:
                 prefix = self.get_prefix_match(fullname, prefixes)
-                if prefix is not None:
-                    fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, fullname)
-                    relname = fullname[len(prefix) :]
-                    if "/" in relname:
-                        # Search for the ancestor of current item. E.g. assuming the index root is 'foo' and
-                        # the current item (`rev`) is 'foo/bar/lorem/ipsum', 'foo/bar/lorem' will be found.
-                        direct_relname = relname.rpartition("/")[0]
-                        direct_relname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_relname)
-                        if direct_relname_fqname not in added_dir_relnames:
-                            added_dir_relnames.add(direct_relname_fqname)
-                            direct_fullname = prefix + direct_relname
-                            direct_fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
-                            dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
+                if prefix is None:
+                    continue
+                fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, fullname)
+                relname = fullname[len(prefix) :]
+                if "/" in relname:
+                    # Search for the ancestor of current item. E.g. assuming the index root is 'foo' and
+                    # the current item (`rev`) is 'foo/bar/lorem/ipsum', 'foo/bar/lorem' will be found.
+                    direct_relname = relname.rpartition("/")[0]
+                    direct_relname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_relname)
+                    if direct_relname_fqname not in added_dir_relnames:
+                        added_dir_relnames.add(direct_relname_fqname)
+                        direct_fullname = prefix + direct_relname
+                        direct_fullname_fqname = CompositeName(rev[NAMESPACE], NAME_EXACT, direct_fullname)
+                        dirs.append(IndexEntry(direct_relname, direct_fullname_fqname, {}))
                 mini_meta = {key: rev[key] for key in (CONTENTTYPE, ITEMTYPE, SIZE, MTIME, REV_NUMBER, NAMESPACE)}
                 if TAGS in rev and rev[TAGS]:
                     mini_meta[TAGS] = rev[TAGS]
