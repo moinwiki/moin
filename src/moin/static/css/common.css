@@ -423,7 +423,7 @@ blockquote blockquote { font-size: 1em; }
 ul blockquote { padding-left: 0; font-size: 1em; }
 li > p { margin-top: 0; margin-bottom: 0; }
 .moin-rst-attribution { font-style: italic; }
-.moin-rst-attribution:before { content: "--"; }
+.moin-rst-attribution:before { content: "—"; }
 
 /* reST line-blocks */
 .moin-line-block { margin-left: 2em; }
