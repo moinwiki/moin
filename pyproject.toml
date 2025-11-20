@@ -55,6 +55,7 @@ dependencies = [
     "whoosh >= 2.7.0",  # needed for indexed search
     "pdfminer.six",  # pdf -> text/plain conversion
     "passlib >= 1.6.0",  # strong password hashing (1.6 needed for consteq)
+    "setuptools",  # required by passlib for pkg_resources (passlib has not migrated to importlib.metadata yet)
     "sqlalchemy >= 2.0",  # used by sqla store
     "typing_extensions >= 4.12.2",
     "XStatic >= 0.0.2, < 2.0.0",  # support for static file pypi packages
