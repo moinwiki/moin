@@ -11,7 +11,7 @@ For example:
 * you want to make sure some user or all users set a new password, e.g., if:
 
   - your password policy has changed (requiring longer passwords, for example)
-  - you changed your passlib configuration and want to immediately have all
+  - you changed your password hasher configuration and want to immediately have all
     hashes upgraded
 
 Note: if we say "reset a password" (to use a commonly used term), we mean to

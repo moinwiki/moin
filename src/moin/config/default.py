@@ -1,5 +1,5 @@
 # Copyright: 2000-2004 Juergen Hermann <jh@web.de>
-# Copyright: 2005-2013 MoinMoin:ThomasWaldmann
+# Copyright: 2005-2025 MoinMoin:ThomasWaldmann
 # Copyright: 2008      MoinMoin:JohannesBerg
 # Copyright: 2010      MoinMoin:DiogenesAugusto
 # Copyright: 2011      MoinMoin:AkashSinha
@@ -170,12 +170,12 @@ class ConfigFunctionality:
                     )
                 )
 
-        from passlib.context import CryptContext
+        from moin.utils.crypto import PasswordHasher
 
         try:
-            self.cache.pwd_context = CryptContext(**self.passlib_crypt_context)
-        except ValueError as err:
-            raise error.ConfigurationError(f"passlib_crypt_context configuration is invalid [{err}].")
+            self.cache.pwd_context = PasswordHasher(**self.password_hasher_config)
+        except (ValueError, TypeError) as err:
+            raise error.ConfigurationError(f"password_hasher_config configuration is invalid [{err}].")
 
         if len(self.contenttype_enabled):
             content_registry_enable(self.contenttype_enabled)
@@ -378,22 +378,21 @@ options_no_group_name = {
                 'does simple checks whether a password is acceptable (you can switch this off by using "None" or enhance it by using a custom checker)',
             ),
             (
-                "passlib_crypt_context",
+                "password_hasher_config",
                 dict(
-                    # schemes we want to support (or deprecated schemes for which we still have
-                    # hashes in our storage).
-                    # note about bcrypt: it needs additional code (that is not pure python and
-                    # thus either needs compiling or installing platform-specific binaries)
-                    schemes=["sha512_crypt"],
-                    # default scheme for creating new pw hashes (if not given, passlib uses first from schemes)
-                    # default="sha512_crypt",
-                    # deprecated schemes get auto-upgraded to the default scheme at login
-                    # time or when setting a password (including doing a moin account pwreset).
-                    # deprecated=["auto"],
-                    # vary rounds parameter randomly when creating new hashes...
-                    # all__vary_rounds=0.1,
+                    # Argon2id parameters for password hashing
+                    # time_cost: number of iterations (default: 2)
+                    time_cost=2,
+                    # memory_cost: memory usage in KiB (default: 102400 = 100 MiB)
+                    memory_cost=102400,
+                    # parallelism: number of parallel threads (default: 8)
+                    parallelism=8,
+                    # hash_len: length of the hash in bytes (default: 16)
+                    hash_len=16,
+                    # salt_len: length of the salt in bytes (default: 16)
+                    salt_len=16,
                 ),
-                "passlib CryptContext arguments, see passlib docs",
+                "Argon2 PasswordHasher configuration parameters",
             ),
             (
                 "allow_style_attributes",
