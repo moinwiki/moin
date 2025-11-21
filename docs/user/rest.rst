@@ -140,7 +140,7 @@ or phrases within a text block to format text.
 
    * - ``:sup:`super`\ script``
      - :sup:`super`\ script
-     - … using `escaped spaces <backslash escapes_>`_.
+     - … using `escaped spaces <backslash escapes_>`__.
 
    * - ``:code:`print("hello world")```
      - :code:`print("hello world")`
@@ -523,7 +523,7 @@ Wiki-Internal Links
    links employing a URI reference as *external*.
 
 .. [#whitespace-in-URI] In `URI context`_, whitespace is removed by default.
-   Use an escaped space or percent encoding.
+   Use an `escaped space <backslash escapes_>`__ or percent encoding.
 
 
 Transclusions
@@ -827,50 +827,72 @@ Option lists
 TODO: fix output in Moin.
 
 
-Transitions
-===========
+Thematic Breaks
+===============
 
-Transitions, or horizontal rules, separate other body elements. A transition should
-not begin or end a section or document, nor should two transitions be immediately
-adjacent. The syntax for a transition marker is a horizontal line of 4 or more
-repeated punctuation characters. The syntax is the same as section title
-underlines without title text. Transition markers require blank lines before and after.
+A *thematic break* represents a change in subject or emphasis.
+It is typically rendered as additional space between paragraphs, often
+with a horizontal line, a row of asterisks, or some other ornament.
 
-**Markup**::
+----------------------------
 
-    Text
+In reStructuredText, this element is called a *transition* and
+represented by a horizontal line of 4 or more repeated punctuation
+characters (details__).
 
-    ----
+*Transitions* may not be nested in body elements (lists_, tables_,
+admonitions_, ...).
 
-    Text
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #transitions
 
+.. list-table::
+   :header-rows: 1
 
-**Result**:
+   * - Markup
+     - Result
 
-Text
+   * - ::
 
-----
+          […] or some other ornament.
 
-Text
+          ----------------------------
+
+          In reStructuredText, this […]
+
+     - See above.
+
 
 Backslash Escapes
 =================
 
-Sometimes we need markup characters as part of the text.
-A backslash escapes the following character
-(`details <escaping_>`__).
+A backslash escapes the following character (`details <escaping_>`__).
 
-* *Escaped whitespace* is removed (except in `URI context`_).
-  This allows, e.g., `text formatting`_ inside a word.
+.. list-table::
+   :header-rows: 1
 
-===========================  ==============
-Markup                       Result
-===========================  ==============
-``*hot* \*dogs*``            *hot* \*dogs*
-``C:\\WINDOWS``              C:\\WINDOWS
-``H\ :sub:`2`\ O``           H\ :sub:`2`\ O
-```</Subitem\ Example>`__``  `</Subitem\ Example>`__
-===========================  ==============
+   * - Markup
+     - Result
+     - Notes
+
+   * - ``*hot* \*dogs*``
+
+       ``C:\\WINDOWS``
+
+     - *hot* \*dogs*
+
+       C:\\WINDOWS
+
+     - The escaped character represents itself.
+
+   * - ``H\ :sub:`2`\ O``
+     - H\ :sub:`2`\ O
+     - Escaped *whitespace* is removed,
+
+   * - ```</Subitem\ Exam ple>`__``
+     -  `</Subitem\ Exam ple>`__
+     - ... except in `URI context`_
+       (where whitespace is removed by default).
 
 
 Tables
