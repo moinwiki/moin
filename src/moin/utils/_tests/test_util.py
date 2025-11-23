@@ -5,11 +5,37 @@
 MoinMoin - tests for moin.utils.
 """
 
+import pytest
 
 from moin import utils
 
 
 class TestUtil:
+
+    @pytest.mark.parametrize(
+        "input1, input2, expected",
+        [
+            ([], [], True),
+            (["x"], ["x", "x"], True),
+            (["one", "two", "three"], ["two", "one", "three"], True),
+            (["x"], ["y"], False),
+            (["x"], ["x", "y"], False),
+        ],
+    )
+    def test_contain_identical_values(self, input1: list[str], input2: list[str], expected: bool):
+        assert expected == utils.contain_identical_values(input1, input2)
+
+    @pytest.mark.parametrize(
+        "input, expected",
+        [
+            ("", []),
+            (" hello ,, ,", ["hello"]),
+            ("abc, def ", ["abc", "def"]),
+            ("red, green, purple, red", ["red", "green", "purple"]),
+        ],
+    )
+    def test_split_string(self, input: str, expected: list[str]):
+        assert expected == utils.split_string(input)
 
     def test_rangelist(self):
         """utils.rangelist: test correct behavior for various input values"""

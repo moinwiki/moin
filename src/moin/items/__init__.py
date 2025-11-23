@@ -41,12 +41,11 @@ from moin.signalling import item_modified
 from moin.storage.middleware.protecting import AccessDenied
 from moin.i18n import _, L_
 from moin.themes import render_template
-from moin.utils import rev_navigation, close_file, show_time
+from moin.utils import close_file, diff3, rev_navigation, contain_identical_values, show_time, split_string
 from moin.utils.edit_locking import Edit_Utils
 from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
 from moin.utils.registry import RegistryBase
 from moin.utils.diff_html import diff as html_diff
-from moin.utils import diff3
 from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError, OptionalMultilineText
 from moin.constants.keys import (
     ACL,
@@ -1503,6 +1502,10 @@ class Default(Contentful):
             old = meta.get(WIKIDICT, None)
             if new != old:
                 return True
+        # change in 'names'?
+        new_names = split_string(request.values.get("meta_form_name", ""))
+        if not contain_identical_values(new_names, meta.get(NAME, [])):
+            return True
         new_tags = request.values.get("meta_form_tags").replace(" ", "").split(",")
         if new_tags == [""]:
             new_tags = []
