@@ -759,29 +759,32 @@ by::
 Password storage
 ----------------
 Moin never stores wiki user passwords in clear text, but uses strong
-cryptographic hashes provided by the "passlib" library, see there for details:
+cryptographic hashes. New passwords are hashed using Argon2id (via argon2-cffi),
+a modern memory-hard algorithm recommended by security experts.
 
-    https://passlib.readthedocs.io/en/stable/
+For backward compatibility, Moin can verify legacy sha512_crypt password hashes
+(from Moin 1.9.x or earlier Moin 2.x installations). These legacy hashes are
+automatically upgraded to Argon2id when users log in successfully.
 
-
-The passlib docs recommend 3 hashing schemes that have good security:
-sha512_crypt, pbkdf2_sha512 and bcrypt (bcrypt has additional binary/compiled
-package requirements, please refer to the passlib docs in case you want to use
-it).
-
-By default, we use sha512_crypt hashes with default parameters as provided
-by passlib (this is same algorithm as moin >= 1.9.7 used by default).
-
-In case you experience slow logins or feel that you might need to tweak the
-hash generation for other reasons, please read the passlib docs. moin allows
-you to configure passlib's CryptContext params within the wiki config, the
-default is this:
+By default, we use Argon2id hashes with the following parameters:
 
 ::
 
-    passlib_crypt_context = dict(
-        schemes=["sha512_crypt", ],
+    password_hasher_config = dict(
+        time_cost=2,          # Number of iterations
+        memory_cost=102400,   # Memory usage in KiB (100 MiB)
+        parallelism=8,        # Number of parallel threads
+        hash_len=16,          # Hash length in bytes
+        salt_len=16,          # Salt length in bytes
     )
+
+In case you experience slow logins or feel that you might need to tweak the
+hash generation, you can adjust these parameters. Higher values provide better
+security but slower performance. For more information about Argon2 parameters,
+see: https://argon2-cffi.readthedocs.io/
+
+**Note:** Legacy sha512_crypt hashes are automatically upgraded to Argon2id
+upon successful login, so no manual migration is required.
 
 
 Authorization

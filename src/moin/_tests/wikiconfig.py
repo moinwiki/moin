@@ -33,11 +33,12 @@ class Config(DefaultConfig):
     interwiki_map[interwikiname] = "http://localhost:8080/"
     email_tracebacks = False
 
-    passlib_crypt_context = dict(
-        schemes=["sha512_crypt"],
-        # for the tests, we don't want to have varying rounds
-        sha512_crypt__vary_rounds=0,
-        # for the tests, we want to have a rather low rounds count,
-        # so the tests run quickly (do NOT use low counts in production!)
-        sha512_crypt__default_rounds=1001,
+    password_hasher_config = dict(
+        # For tests, use minimal Argon2 parameters for speed
+        # DO NOT use these values in production!
+        time_cost=1,  # minimum iterations
+        memory_cost=8192,  # 8 MiB (minimum recommended is 8 MiB)
+        parallelism=1,  # single thread
+        hash_len=16,
+        salt_len=16,
     )
