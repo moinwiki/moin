@@ -471,7 +471,6 @@ MoinMoin.prototype.enhanceUserSettings = function () {
 
         // send the form to the server
         $.post(form.attr('action'), form.serialize(), function (data) {
-            var i, f, newform;
             clearInterval(buttonDotAnimation);
             // if the response indicates a redirect, set the new location
             if (data.redirect) {
@@ -480,7 +479,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
                 return;
             }
             // get the new form element from the response
-            newform = $(data.form);
+            const newform = $(data.form);
             // set event handlers on the new form
             newform.submit(submitHandler);
             newform.change(changeHandler);
@@ -488,7 +487,13 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             newform.data('initialForm', newform.serialize());
             // replace the old form with the new one
             form.replaceWith(newform);
-            if (ev.currentTarget.id === 'usersettings_ui' ||  ev.currentTarget.id === 'usersettings_personal') {
+            // check if form processing gabe back an error; don't reload the page
+            // in case an error is present as this would cause validation error
+            // messages present in 'newform' to get lost.
+            const has_error = 'flash' in data && data.flash[0][1] === 'error';
+            if ((ev.currentTarget.id === 'usersettings_ui' || ev.currentTarget.id === 'usersettings_personal') &&
+                !has_error
+            ) {
                 MoinMoin.prototype.saveFlashMessages(data.flash)
                 // theme or language may have changed, show user the new theme/language
                 location.reload(true);
