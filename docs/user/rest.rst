@@ -898,94 +898,401 @@ A backslash escapes the following character (`details <escaping_>`__).
 Tables
 ======
 
+There are four ways to specify tables in reStructuredText:
+
+* `Simple tables`_ are easy to create but limited.
+* `Grid tables`_ are complete but cumbersome to create.
+* `CSV tables`_ format CSV data as table.
+* `List tables`_ are easy to type and edit but don't look like tables in
+  the rST source.
+
+Markup within the table cells is supported (you can even nest a table in
+a table cell).
+`Table Directives`_ allow customization and adding a title/caption.
+
+
 Simple Tables
 -------------
 
-Easy markup for tables consisting of two rows. This syntax can have no more than two rows.
+*Simple tables* use a compact and easy to type table representation
+(details__):
 
-**Markup**::
+- Equals signs (``=``) are used for top and bottom table borders,
+  and to separate *header rows* from the table body.
 
- ======= ======= =======
-  A       B       C
- ======= ======= =======
-  1       2       3
- ======= ======= =======
+- Each line of text starts a new row, except when there is a blank cell
+  in the first column.
 
-**Result**:
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #simple-tables
 
- ======= ======= =======
-  A       B       C
- ======= ======= =======
-  1       2       3
- ======= ======= =======
+.. list-table::
+   :header-rows: 1
 
+   * - Markup
+     - Result
+     - Notes
 
-**Markup**::
+   * - ::
 
- ======= ======= =======
-       foo         Bar
- --------------- -------
-  A       B       C
- ======= ======= =======
-  1       2       3
- ======= ======= =======
+           ==== ==== ====
+            ..   A    B
+           ==== ==== ====
+             1   A1  B1
+             2   A2  B2
+           ==== ==== ====
 
-**Result**:
+     - ==== ==== ====
+        ..   A    B
+       ==== ==== ====
+         1   A1  B1
+         2   A2  B2
+       ==== ==== ====
 
- ======= ======= =======
-       foo         Bar
- --------------- -------
-  A       B       C
- ======= ======= =======
-  1       2       3
- ======= ======= =======
+     - To start a row without content in the first column, use empty
+       comments_ (``..``) or `escaped whitespace <backslash escapes_>`_
+       (:literal:`\\ \ `).
+
+   * - ::
+
+           === === ===
+           In      Out
+           ------- ---
+            a   b  a+b
+           === === ===
+            1   2   3
+           === === ===
+
+     - === === ===
+       In      Out
+       ------- ---
+        a   b  a+b
+       === === ===
+       1   2   3
+       === === ===
+
+     - Lines of hyphens or equal signs crossing column boundaries
+       indicate *column spans*.
+
+   * - ::
+
+           =====  ================
+           row 1  a cell with
+                  two *lines*
+
+           row 2  a cell with
+
+                  two *paragraphs*
+           -----  ----------------
+           row 3  a) list
+                  #) item 2
+           =====  ================
+
+     - =====  ================
+       row 1  a cell with
+              two *lines*
+
+       row 2  a cell with
+
+              two *paragraphs*
+       -----  ----------------
+       row 3  a) list
+              #) item 2
+       =====  ================
+
+     - Cells of the first column must fit on one input line.
+       Other cells may use continuation lines.
+
+       Blank lines or lines of hyphens may be used to visually separate rows.
+
+       .. TODO: separate paragraphs inside a cell
+
+See the "table_" directive for styling options.
+
 
 Grid Tables
 -----------
 
-Complex tables can have any number of rows or columns. They are made by ``|``, ``+``, ``-`` and ``=``.
+*Grid tables* are a table representation via grid-like "ASCII art"
+(details__).
 
-**Markup**::
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #grid-tables
 
- +----------------+---------------+
- | A              |               |
- +----------------+ D             |
- | B              |               |
- +================+===============+
- | C                              |
- +--------------------------------+
+.. list-table::
+   :header-rows: 1
 
-**Result**:
+   * - Markup
+     - Result
+     - Notes
 
- +----------------+---------------+
- | A              |               |
- +----------------+ D             |
- | B              |               |
- +================+===============+
- | C                              |
- +--------------------------------+
+   * - ::
 
-One difference between the Sphinx and Moin reST parsers is demonstrated below.
-With the Sphinx parser, grid table column widths can be expanded by adding spaces.
+           +---+----+----+
+           |   | A  | B  |
+           +===+====+====+
+           | 1 | A1 | B1 |
+           +---+----+----+
+           | 2 | A2 | B2 |
+           +---+----+----+
 
-**Markup**::
+     - +---+----+----+
+       |   | A  | B  |
+       +===+====+====+
+       | 1 | A1 | B1 |
+       +---+----+----+
+       | 2 | A2 | B2 |
+       +---+----+----+
 
- +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
- +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+     -
 
-**Result**:
+   * - ::
 
- +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
- | minimal width | maximal width (will take the maximum screen space)                                                                                                           |
- +---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+           +--------------+
+           | column span  |
+           +===+==========+
+           |* A| row span |
+           |* B|          |
+           +---+          |
+           |foo|          |
+           +---+----------+
 
-**Notes:**
- - The Moin2 reST parser does not add the <colgroup><col width="9%"><col width="91%">
-   HTML markup added by the Sphinx parser (the width attribute generates an HTML
-   validation error), nor does it use JavaScript to adjust the width of tables.
- - Under Moin2, tables and table cells will be of minimal width
-   (unless there is CSS styling to set tables larger).
+     - +--------------+
+       | column span  |
+       +===+==========+
+       |* A| row span |
+       |* B|          |
+       +---+          |
+       |foo|          |
+       +---+----------+
+
+     - Grid tables allow arbitrary body elements in *all*
+       cells and both *row* and *column spans*.
+
+See the "table_" directive for styling options.
+
+
+Table Directives
+----------------
+
+*Table directives* use the `"directive" syntax`_ to pair the table content
+with a caption and/or options guiding the presentation.
+
+
+.. _CSV tables:
+
+csv-table
+*********
+
+The *csv-table* directive supports `CSV data`__ (details__).
+
+__ https://docutils.sourceforge.io/docs/ref/rst/directives.html#csv-table
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ::
+
+           .. csv-table::
+              :header-rows: 1
+              :stub-columns: 1
+
+              , A, B
+              1, A1, B1
+              2, A2, B2
+
+     - .. csv-table::
+          :header-rows: 1
+          :stub-columns: 1
+
+          , A, B
+          1, A1, B1
+          2, A2, B2
+
+     - *Delimiter*, *quote* character, *escape* character, and more can
+       be customized with directive options__.
+
+       Cell content is parsed as rST.
+
+TODO: The :url: option to load data from an external source does not work
+with the syntax for wiki-internal items.
+
+__ https://docs.python.org/3/library/csv.html
+__ https://docutils.sourceforge.io/docs/ref/rst/directives.html
+   #csv-table-options
+
+
+.. _list tables:
+
+list-table
+**********
+
+The *list-table* directive creates a table from data in a two-level
+bullet list (details__).
+
+__ https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ::
+
+           .. list-table::
+              :header-rows: 1
+              :stub-columns: 1
+
+              * -
+                - A
+                - B
+              * - 1
+                - A1
+                - B1
+              * - 2
+                - A2
+                - B2
+
+     - .. list-table::
+          :header-rows: 1
+          :stub-columns: 1
+
+          * -
+            - A
+            - B
+          * - 1
+            - A1
+            - B1
+          * - 2
+            - A2
+            - B2
+
+     - List-tables are suited for complex cell content.  They are,
+       for example, extensively used in the source of this document.
+
+
+
+table
+*****
+
+Use a *table* directive to attach a table caption, a reference name,
+or customization options to `Simple Tables`_ and `Grid Tables`_ (details__).
+
+__ https://docutils.sourceforge.io/docs/ref/rst/directives.html#table
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ::
+
+          .. table:: Fruits
+             :name:
+               fruit salad
+             :class:
+               numbered
+               moin-sortable
+               no-borders
+               yellow
+
+             ===== ====== ===
+             Fruit Colour  #
+             ===== ====== ===
+             apple red     5
+             plum  purple  3
+             kiwi  brown   17
+             ===== ====== ===
+
+     - .. table:: Fruits
+          :name:
+               fruit salad
+          :class:
+            moin-sortable
+            no-borders
+            yellow
+
+          ===== ====== ===
+          Fruit Colour  #
+          ===== ====== ===
+          apple red     5
+          plum  purple  3
+          kiwi  green   17
+          ===== ====== ===
+
+     - The "class" option allows styling with `CSS classes recognized by
+       Moin`__ or custom CSS. (This also works with `CSV tables`_ and
+       `list tables`_.)
+
+       The "name" option provides a target for `internal links`_.
+
+
+       __ ../moin
+          #CSS_classes_for_use_with_the_wiki_parser.2C_tables_and_comments
+
+Limitations
+-----------
+
+In comparison to other markup formats, you may miss some features that
+are not supported in reStructuredText:
+
+* There is no syntax for text alignment in cells or columns.
+* There is no syntax for table footer rows.
+* Attaching colour  to individual rows or cells is not supported.
+* Attaching CSS class values to individual rows or cells is not
+  universally supported.
+
+Some features of reStructuredText tables are currently not supported by
+Moin (TODO):
+
+* The table caption/title is ignored.
+* The :align:, :width:, :widths:, and :stub-columns: options are ignored.
+
+.. 
+   .. table::
+      :width: 7em
+      :widths: 1 4
+      :align: right
+
+      ==== ===
+       A    B
+      ==== ===
+       11   c
+       21   b
+       31   a
+      ==== ===
+
+.. The "stub-columns" option has no effect.
+
+.. Support Docutils "table_style_ classes":
+   *align-left*, *align-center*, *align-right*
+   *booktabs*, *borderless*,
+   *captionbelow*, *colwidths-grid*,
+   *numbered*
+
+   "Booktabs" style table, numbered, centre-aligned, width 80%:
+
+  .. table:: I/O values
+     :class: numbered booktabs
+     :width: 80%
+     :align: center
+
+     === === ===
+     In      Out
+     ------- ---
+      a   b  a+b
+     === === ===
+      1   2   3
+     === === ===
 
 
 .. _directive:
