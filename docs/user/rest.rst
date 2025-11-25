@@ -280,104 +280,24 @@ TODO:
     :var:  variables (or constants like :var:`c`)
 
 
-Hyperlinks
-==========
+Linking
+=======
 
-Hyperlinks connect a `hyperlink reference`_ to a matching `hyperlink target`_.
+Hyperlinks connect a *hyperlink reference* to a matching *hyperlink target*
+(`details <hyperlink reference_>`__).
 
 * Matching of named_ references and targets is done after normalizing
   whitespace and case.
 
-  Moin treats named references without matching target as `wiki-internal
-  links`_.
+  Moin treats `named hyperlink references without matching target`_ as
+  `wiki-internal links`_.
 
 * Anonymous_ references and targets are matched according to their order.
 * The target can also be embedded_ in the reference.
 
 
-External Links
+Internal Links
 --------------
-
-*External* links point to an external resource (specified as URI).
-
-.. list-table::
-   :header-rows: 1
-
-   * - Markup
-     - Result
-     - Notes
-
-   * - ``Moin (https://moinmo.in/) supports rST.``
-
-     - Moin (https://moinmo.in/) supports rST.
-
-     - URIs and email addresses are turned into `standalone hyperlinks`_.
-
-   * - .. _named:
-
-       ``Moin_ supports rST.``
-       ::
-
-         .. _moin:
-             https://moinmo.in/
-
-     - Moin_ supports rST
-
-       .. _moin:
-           https://moinmo.in/
-
-     - A named `hyperlink reference`_ and matching `external target`_
-       keep the details out of the text flow.
-
-   * - .. _embedded:
-
-       ```Moin <https://moinmo.in/>`__ supports rST.``
-
-     - `Moin <https://moinmo.in/>`__ supports rST.
-
-     - Reference with custom link text and `embedded URI`_.
-
-   * - .. _anonymous:
-
-       ```Moin supports rST`__.``
-       ::
-
-         __ https://
-            moin-20.readthedocs.io/
-            en/latest/user/rest.html
-
-     - `Moin supports rST`__.
-
-       __ https://
-          moin-20.readthedocs.io/
-          en/latest/user/rest.html
-
-     - `Anonymous references`_ and targets are handy for verbose or
-       repeated link texts.
-
-   * - ``:RFC:`6921```
-     - :RFC:`6921`
-     - `"rfc-reference" role`_
-
-   * - ``:PEP:`01```
-     - :PEP:`01`
-     - `"pep-reference" role`_
-
-.. TODO: interwiki link currently fails:
-
-      * - ```InterWiki page on MeatBall <MeatBall:InterWiki>`__``
-
-        - `InterWiki page on MeatBall <MeatBall:InterWiki>`__
-
-        - InterWiki page on MeatBall. [#]_
-
-   .. [#] Interwiki links work only in Moin and only after configuring.
-
-
-.. _internal links:
-
-Page-Internal Links
--------------------
 
 *Page-internal* links point to an anchor (named element or anonymous
 target) in the same document.
@@ -389,21 +309,29 @@ target) in the same document.
      - Result
      - Notes
 
-   * - ``Simple_ reference and _`simple` inline target``.
+   * - .. _named:
+
+       ``Simple_ reference and _`simple` inline target``.
+
      - Simple_ reference and _`simple` inline target.
+
      - See `simple reference names`_ and `inline targets`_.
 
    * - ``Links to a `named paragraph`_, the `MoinMoin logo`_,
-       and a `note admonition`_.``
+       and a table named `fruit salad`_.``
      - Links to a `named paragraph`_, the `MoinMoin logo`_,
-       and a `note`_ admonition.
+       and a table named `fruit salad`_.
      - Put `phrase references`_ in backticks.
 
    * - ``It's `easy <simple_>`__.``
+
      - It's `easy <simple_>`__.
+
      - Custom link text with `embedded alias`_.
 
-   * - ``Easy__ as pie.``
+   * - .. _anonymous:
+
+       ``Easy__ as pie.``
        ::
 
          __ simple_
@@ -433,9 +361,7 @@ target) in the same document.
 
      - `Empty hyperlink targets`_ mark the following element.
 
-
-Wiki-Internal Links
--------------------
+.. _Wiki-internal links:
 
 *Wiki-internal* links [#internal-external]_ point to items in the same wiki.
 
@@ -443,7 +369,7 @@ Wiki-Internal Links
   to local Wiki items.
 
 * The Moin rST converter interprets `named hyperlink references without
-  matching target`__ as links to local Wiki items (whitespace is
+  matching target`_ as links to local Wiki items (whitespace is
   normalized).
 
 * The examples do not work in the `external documentation`_.
@@ -463,7 +389,7 @@ Wiki-Internal Links
      - `My Castle <Home>`__
      - ... with custom text
 
-   * - __
+   * - .. _named hyperlink references without matching target:
 
        ``Home_``
 
@@ -519,11 +445,86 @@ Wiki-Internal Links
      - `sub-item </Subitem%20Example>`__
      - ... as URI reference with custom text [#whitespace-in-URI]_
 
-.. [#internal-external] The Docutils rST documentation designates all
+.. [#internal-external] The Docutils rST documentation denotes all
    links employing a URI reference as *external*.
 
 .. [#whitespace-in-URI] In `URI context`_, whitespace is removed by default.
    Use an `escaped space <backslash escapes_>`__ or percent encoding.
+
+
+External Links
+--------------
+
+*External* links point to an external resource (specified as URI).
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+     - Notes
+
+   * - ``Moin (https://moinmo.in/) supports rST.``
+
+     - Moin (https://moinmo.in/) supports rST.
+
+     - URIs and email addresses are turned into `standalone hyperlinks`_.
+
+   * - ``Moin_ supports rST.``
+       ::
+
+         .. _moin:
+             https://moinmo.in/
+
+     - Moin_ supports rST
+
+       .. _moin:
+           https://moinmo.in/
+
+     - A named `hyperlink reference`_ and matching `external target`_
+       keep the details out of the text flow.
+
+   * - .. _embedded:
+
+       ```Moin <https://moinmo.in/>`__ supports rST.``
+
+     - `Moin <https://moinmo.in/>`__ supports rST.
+
+     - Reference with custom link text and `embedded URI`_.
+
+   * - ```Moin supports rST`__.``
+       ::
+
+         __ https://
+            moin-20.readthedocs.io/
+            en/latest/user/rest.html
+
+     - `Moin supports rST`__.
+
+       __ https://
+          moin-20.readthedocs.io/
+          en/latest/user/rest.html
+
+     - `Anonymous references`_ and targets are handy for verbose or
+       repeated link texts.
+
+   * - ``:RFC:`6921```
+     - :RFC:`6921`
+     - `"rfc-reference" role`_
+
+   * - ``:PEP:`01```
+     - :PEP:`01`
+     - `"pep-reference" role`_
+
+.. TODO: interwiki link currently fails:
+
+      * - ```InterWiki page on MeatBall <MeatBall:InterWiki>`__``
+
+        - `InterWiki page on MeatBall <MeatBall:InterWiki>`__
+
+        - InterWiki page on MeatBall. [#]_
+
+   .. [#] Interwiki links work only in Moin and only after configuring.
 
 
 Transclusions
