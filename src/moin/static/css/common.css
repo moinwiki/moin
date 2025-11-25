@@ -429,6 +429,11 @@ li > p { margin-top: 0; margin-bottom: 0; }
 .moin-line-block { margin-left: 2em; }
 .moin-line-blk:empty { min-height: 1em; }
 
+/* HTML <aside> (rST topic and sidebar) */
+div.moin-aside { padding-left: 2em; }
+.moin-sidebar { color: var(--primary); border: var(--border-style);
+    margin: 10px 30px 10px 30px; padding: 8px; clear: both; }
+
 /* horizontal rules */
 hr { height: 1px; background-color: var(--border); border: 0; margin: .9em 0; }
 .moin-hr1 { height: 2px; }
@@ -454,6 +459,8 @@ h6 { border-bottom: 3px solid var(--border); }
 .h1 { font-size: 2em; margin: .67em 0; border-bottom: 5px solid var(--border); padding-bottom: 5px; }
 .h2 { font-size: 1.5em; margin: .75em 0; padding-bottom: 4px; border-bottom: 3px solid var(--border); }
 .moin-pagetitle { font-weight: bold; font-size: 2em; margin: .67em 0; border-bottom: 5px solid var(--border); padding-bottom: 5px; }
+/* informal heading (rST rubric or title in admonition, sidebar, or topic) */
+p.moin-title { font-weight: bold; }
 
 /* heading permalinks */
 .moin-permalink { opacity: .2; padding-left: .3em; }

@@ -640,10 +640,10 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_rubric(self, node):
-        self.visit_paragraph(node)
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title moin-rubric"}))
 
     def depart_rubric(self, node):
-        self.depart_paragraph(node)
+        self.close_moin_page_node()
 
     def visit_substitution_definition(self, node):
         """
@@ -664,12 +664,11 @@ class NodeVisitor:
         self.header_size -= 1
 
     def visit_sidebar(self, node):
-        # TODO: render sidebar "set off from the rest of the document somehow, typically with a border."
         # Sidebars typically “float” to the side of the page.
-        pass
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside moin-sidebar"}))
 
     def depart_sidebar(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_strong(self, node):
         self.open_moin_page_node(moin_page.strong(), node)
@@ -687,6 +686,8 @@ class NodeVisitor:
         # TODO: Subtitles should not have section numbering and should not be in the ToC.
         #       If the document title is centre aligned,
         #       the document sub-title should be centre aligned, too.
+        #       Use a <p> in a <hgroup> in HTML?
+        #       https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hgroup#usage_notes
         self.header_size += 1
         self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
@@ -702,16 +703,13 @@ class NodeVisitor:
 
     def visit_system_message(self, node):
         # an element reporting a parsing issue (DEBUG, INFO, WARNING, ERROR, or SEVERE)
-        # TODO: handle node['backrefs'] to <problematic> element.
         if node.get("level", 4) < 3:
             self.visit_admonition(node, "caution")
         else:
             self.visit_admonition(node, "error")
-        self.open_moin_page_node(moin_page.p())
-        self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title"}))
         title = f"{node['type']}/{node['level']}"
         self.current_node.append(f"System Message: {title}")
-        self.close_moin_page_node()  # </strong>
         if node.hasattr("line"):
             self.current_node.append(f" ({node['source']} line {node['line']}) ")
         if node.get("backrefs", []):
@@ -792,7 +790,7 @@ class NodeVisitor:
         # TODO: table title is currently ignored!
         if isinstance(node.parent, (nodes.admonition, nodes.sidebar, nodes.topic)):
             # informal title: don't include in ToC, no section numbering
-            self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+            self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title"}))
         else:
             self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
@@ -800,13 +798,11 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_topic(self, node):
-        # A <topic> element should be set off from the rest of the document somehow,
-        # such as with indentation or a border.
-        # TODO: represent as blockquote?
-        pass
+        # content that is separate from the flow of the document
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside"}))
 
     def depart_topic(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_title_reference(self, node):
         pass

@@ -375,9 +375,9 @@ text""",
         ),
         # use an attention for a generic admonition
         (
-            ".. admonition:: Generic Admonition\n\n" "   Be alert!",
+            ".. admonition:: Generic Admonition\n\n   Be alert!",
             '<page><body><admonition type="attention" xhtml:class="admonition-generic-admonition">'
-            '<strong xhtml:class="title">Generic Admonition</strong>'
+            '<p xhtml:class="moin-title">Generic Admonition</p>'
             "<p>Be alert!</p></admonition></body></page>",
         ),
         # Moin uses admonitions also for system messages
@@ -385,7 +385,7 @@ text""",
             "Unbalanced *inline markup.",
             '<page><body><p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
             '<span id="system-message-1" /><admonition type="caution">'
-            '<p><strong xhtml:class="title">System Message: WARNING/2</strong> (rST input line 1) '
+            '<p xhtml:class="moin-title">System Message: WARNING/2 (rST input line 1) '
             '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition></body></page>",
@@ -396,11 +396,28 @@ text""",
         #     "  not allowed\n"
         #     "  -----------\n",
         #     "<page><body><p>Sections must not be nested in body elements.</p><blockquote>"
-        #     '<admonition type="error"><p><strong xhtml:class="title">System Message: ERROR/3</strong> (rST input line 4)</p>'
+        #     '<admonition type="error"><p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 4)</p>'
         #     "<p>Unexpected section title.</p>"
         #     "<blockcode>not allowed\n-----------</blockcode>"
         #     "</admonition></blockquote></body></page>"
         # )
+        # Topics, Sidebars, and Rubrics
+        (
+            ".. topic:: Topic Title\n\n   topic content",
+            '<page><body><div xhtml:class="moin-aside">'
+            '<p xhtml:class="moin-title">Topic Title</p>'
+            "<p>topic content</p></div></body></page>",
+        ),
+        (
+            ".. sidebar:: Sidebar Title\n\n   sidebar content",
+            '<page><body><div xhtml:class="moin-aside moin-sidebar">'
+            '<p xhtml:class="moin-title">Sidebar Title</p>'
+            "<p>sidebar content</p></div></body></page>",
+        ),
+        (
+            ".. rubric:: Informal Heading",
+            '<page><body><p xhtml:class="moin-title moin-rubric">Informal Heading</p></body></page>',
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
