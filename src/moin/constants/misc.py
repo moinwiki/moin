@@ -43,29 +43,33 @@ for c in (
 del c
 
 # Other stuff
+
+# Whitelist of URI schemes that are deemed safe.
+# For security reasons, only URIs with these schemes are turned to
+# "active" links when rendering wiki markup (moin, rST, ...).
 URI_SCHEMES = [
+    "apt",
+    "ed2k",
+    "file",
+    "ftp",
+    "gopher",
     "http",
     "https",
-    "ftp",
-    "file",
-    "mailto",
-    "nntp",
-    "news",
-    "ssh",
-    "telnet",
     "irc",
     "ircs",
-    "xmpp",
+    "mailto",
     "mumble",
-    "webcal",
-    "ed2k",
-    "apt",
-    "rootz",
-    "gopher",
+    "news",
+    "nntp",
     "notes",
+    "rootz",
+    "rtcp",
     "rtp",
     "rtsp",
-    "rtcp",
+    "ssh",
+    "telnet",
+    "webcal",
+    "xmpp",
 ]
 
 # "ok" constants returned by /utils/edit_locking as in: ok, message = edit_utils.xxx()
