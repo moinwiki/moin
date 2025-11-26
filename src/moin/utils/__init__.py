@@ -8,8 +8,12 @@ General helper functions that are not directly wiki-related.
 
 from __future__ import annotations
 
+from typing import TypeVar
+
 import pickle
 import re
+
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from importlib import import_module
 from io import BytesIO
@@ -57,6 +61,29 @@ def TranslateText(text):
 #############################################################################
 # Misc
 #############################################################################
+
+T = TypeVar("T")
+
+
+def contain_identical_values(seq1: Sequence[T], seq2: Sequence[T]) -> bool:
+    """
+    Return True, if both sequences consist of identical values.
+    """
+    return set(seq1) == set(seq2)
+
+
+def split_string(value: str, separator: str = ",") -> list[str]:
+    """
+    Split a string value into a list of substrings based on the provided
+    separator.
+
+    Whitespace characters around each substring found when splitting the
+    input string will be removed. Duplicates and empty strings will
+    be removed from the resulting list. The order of first occurrance
+    in the input string will be preserved.
+    """
+    values = [stripped for elem in value.split(separator) if (stripped := elem.strip())]
+    return list(dict.fromkeys(values))
 
 
 def rangelist(numbers):
