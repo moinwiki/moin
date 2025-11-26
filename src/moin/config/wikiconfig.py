@@ -86,9 +86,11 @@ class Config(DefaultConfig):
     # Sitename is displayed in the heading of all wiki pages
     sitename = "My MoinMoin"
 
+    # search "pytz timezones" for values; logged-in users can choose a timezone by updating Settings > Personal
+    timezone_default = "UTC"
+
     # See https://www.moinmo.in/ThemeMarket for contributed Moin 2 themes
-    # default theme is topside
-    # theme_default = "modernized"  # or basic or topside_cms
+    theme_default = "topside"  # suported themes include modernized, focus, basic, topside_cms
 
     # Prevent multiple users from editing an item at the same time
     edit_locking_policy = "lock"
