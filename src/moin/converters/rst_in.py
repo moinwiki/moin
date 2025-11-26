@@ -683,16 +683,11 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_subtitle(self, node):
-        # TODO: Subtitles should not have section numbering and should not be in the ToC.
-        #       If the document title is centre aligned,
-        #       the document sub-title should be centre aligned, too.
-        #       Use a <p> in a <hgroup> in HTML?
-        #       https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/hgroup#usage_notes
-        self.header_size += 1
-        self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
+        # subtitle of a page, section, or sidebar
+        # TODO: Use a <hgroup> in HTML?
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-subheading"}))
 
     def depart_subtitle(self, node):
-        self.header_size -= 1
         self.close_moin_page_node()
 
     def visit_superscript(self, node):

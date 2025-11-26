@@ -50,14 +50,14 @@ class TestConverter:
     data = [
         # output is not identical to input, but HTML out display is the same
         (
-            "=====\nTitle\n=====\n\nSubTitle\n========\n\nSection\n-------\n",
-            "\n=====\nTitle\n=====\n\nSubTitle\n========\n\nSection\n=======\n",
+            "\n=====\nTitle\n=====\n\nSubTitle\n========\n\nSection\n-------\n",
+            "\n=====\nTitle\n=====\n\nSubTitle\n^^^^^^^^\n\nSection\n=======\n",
         ),
         (
             "para\n\n=======\nSection\n=======\n\nSubsection\n==========\n\nSubsubection\n------------\n",
             "para\n\nSection\n=======\n\nSubsection\n----------\n\nSubsubection\n************\n",
         ),
-        # output identical to input
+        # output identical to input (no subsection as 2nd adornment style is not unique)
         (
             "\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n",
             "\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n",

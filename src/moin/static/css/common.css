@@ -459,13 +459,19 @@ h6 { border-bottom: 3px solid var(--border); }
 .h1 { font-size: 2em; margin: .67em 0; border-bottom: 5px solid var(--border); padding-bottom: 5px; }
 .h2 { font-size: 1.5em; margin: .75em 0; padding-bottom: 4px; border-bottom: 3px solid var(--border); }
 .moin-pagetitle { font-weight: bold; font-size: 2em; margin: .67em 0; border-bottom: 5px solid var(--border); padding-bottom: 5px; }
-/* informal heading (rST rubric or title in admonition, sidebar, or topic) */
-p.moin-title { font-weight: bold; }
 
 /* heading permalinks */
 .moin-permalink { opacity: .2; padding-left: .3em; }
 /* link = foc1; paragraph = f1dd; eject = fo52; */
 .moin-permalink:after { content: "\f0c1"; font-family: FontAwesome; }
+
+/* informal headings (rST rubric or title in admonition, sidebar, or topic) */
+p.moin-title { font-weight: bold; }
+/* subheadings */
+:has(+p.moin-subheading) { border-bottom: none; padding-bottom: 0; margin-bottom: .2em; }
+p.moin-subheading { font-weight: bold; font-size: .83em; margin-top: .2em; }
+h1 + p.moin-subheading { font-size: 1.5em; border-bottom: 5px solid var(--border); padding-bottom: 0.3em; }
+/* end of headings */
 
 /* buttons */
 
