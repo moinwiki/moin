@@ -12,7 +12,7 @@ See utils.html for more macros.
     {%- if field.errors %}
         <div>
             {%- for error in field.errors %}
-                <p><span class="moin-error">{{ error }}</span></p>
+                <span class="moin-error">{{ error }}</span>
             {% endfor %}
         </div>
     {% endif %}
