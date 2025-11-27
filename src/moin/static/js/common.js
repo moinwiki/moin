@@ -487,7 +487,7 @@ MoinMoin.prototype.enhanceUserSettings = function () {
             newform.data('initialForm', newform.serialize());
             // replace the old form with the new one
             form.replaceWith(newform);
-            // check if form processing gabe back an error; don't reload the page
+            // check if form processing gave back an error; don't reload the page
             // in case an error is present as this would cause validation error
             // messages present in 'newform' to get lost.
             const has_error = 'flash' in data && data.flash[0][1] === 'error';
