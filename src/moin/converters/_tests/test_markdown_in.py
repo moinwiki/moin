@@ -46,7 +46,7 @@ class TestConverter:
         ("<http://moinmo.in/>", '<p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p>'),
         (
             '[yo](javascript:alert("xss"))',
-            '<p><a title="xss" html:title="xss" xlink:href="javascript:alert%28">yo</a>)</p>',
+            '<p><a title="xss" html:title="xss" xlink:href="wiki.local:javascript:alert%28">yo</a>)</p>',
         ),
         ("[MoinMoin](http://moinmo.in/)", '<p><a xlink:href="http://moinmo.in/">MoinMoin</a></p>'),
         ("----", '<separator class="moin-hr3" />'),
