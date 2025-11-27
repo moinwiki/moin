@@ -16,6 +16,7 @@ from collections import deque
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
 from ._util import decode_data
 from moin.utils.iri import Iri
+from moin.constants.misc import URI_SCHEMES
 from moin.converters.html_in import Converter as HTML_IN_Converter
 from flask import current_app
 
@@ -372,7 +373,11 @@ class Converter:
         href = postproc_text(self.markdown, element.attrib.get("href"))
         iri = Iri(href)
         # iri has authority, fragment, path, query, scheme = none,none,path,none
-        if iri.scheme is None:
+        # Check, if the IRI scheme is whitelisted,
+        # if not, handle the IRI as wiki-local reference:
+        if iri.scheme not in URI_SCHEMES:
+            if iri.scheme:
+                iri.path = f"{iri.scheme}:{iri.path}"
             iri.scheme = "wiki.local"
         attrib[key] = iri
         return self.new_copy(moin_page.a, element, attrib)

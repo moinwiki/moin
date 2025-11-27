@@ -428,8 +428,15 @@ class Converter:
         if allowed_uri_scheme(href):
             iri = Iri(href)
         else:
-            # invalid uri schemes like:
-            # <p><a href="javascript:alert('hi')">Test</a></p> are converted to: <p><javascript:alert('hi')"</p>
+            # URI schemes that are not in the whitelist like: """<a href="javascript:alert('hi')">Test</a>"""
+            # are converted to: """javascript:alert('hi')"""
+            # TODO: don't drop the link text, convert to
+            #
+            #     Test &gt;javascript:alert('hi')&lt;
+            #
+            # orr treat the href as wiki-local URI-reference:
+            #
+            #     href="wiki.local:javascript:alert('hi')
             return href
         if iri.scheme is None:
             iri.scheme = "wiki.local"
