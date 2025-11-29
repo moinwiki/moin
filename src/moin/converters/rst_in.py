@@ -487,10 +487,9 @@ class NodeVisitor:
 
     def visit_literal(self, node):
         self.open_moin_page_node(moin_page.code(), node)
-        self.open_moin_page_node(node.astext())
+
+    def depart_literal(self, node):
         self.close_moin_page_node()
-        self.close_moin_page_node()
-        raise nodes.SkipNode
 
     def visit_literal_block(self, node):
         parser = node.get("parser", "")
@@ -858,6 +857,9 @@ class Parser(docutils.parsers.rst.Parser):
     __ https://docutils.sourceforge.io/docs/api/transforms.html
     __ https://docutils.sourceforge.io/docs/ref/doctree.html#target
     """
+
+    # Use class values matching the pre-defined CSS highlight rules
+    settings_default_overrides = {"syntax_highlight": "short"}
 
     config_section = "MoinMoin parser"
     config_section_dependencies = ("parsers", "restructuredtext parser")

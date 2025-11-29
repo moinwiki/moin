@@ -42,8 +42,16 @@ class TestConverter:
             '<page><body><p><span xhtml:class="orange">colourful</span> text</p></body></page>',
         ),
         (  # special custom roles for <del> and <ins>
-            ".. role:: del\n.. role:: ins\n\n" ":del:`deleted` text :ins:`inserted` text",
+            ".. role:: del\n.. role:: ins\n\n:del:`deleted` text :ins:`inserted` text",
             "<page><body><p><del>deleted</del> text <ins>inserted</ins> text</p></body></page>",
+        ),
+        (  # custom role derived from "code" with syntax highlight
+            '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
+            '<page><body><p>Inline code like <code xhtml:class="code python">'
+            '<span xhtml:class="nb">print</span><span xhtml:class="p">(</span>'
+            '<span xhtml:class="mi">3</span><span xhtml:class="o">*</span>'
+            '<span xhtml:class="s2">"Hurra!"</span><span xhtml:class="p">)</span>'
+            "</code>.</p></body></page>",
         ),
         ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
         (
