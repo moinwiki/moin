@@ -136,30 +136,74 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        # from http://docutils.sourceforge.net/docs/user/rst/quickstart.html#sections; note first header is level 2 because same underlining was used for Chapter 2 Title
+        # Leading headings become page title and subtitle (if the adornment style is unique).
         (
-            "Chapter 1 Title\n===============\n\nSection 1.1 Title\n-----------------\n\nSubsection 1.1.1 Title\n~~~~~~~~~~~~~~~~~~~~~~\n\nSection 1.2 Title\n-----------------\n\nChapter 2 Title\n===============\n",
-            '<page><body><h outline-level="2">Chapter 1 Title</h><h outline-level="3">Section 1.1 Title</h><h outline-level="4">Subsection 1.1.1 Title</h><h outline-level="3">Section 1.2 Title</h><h outline-level="2">Chapter 2 Title</h></body></page>',
+            "================\n Heading 1\n================\n\n"
+            "Heading 2\n=========\n\n"
+            "Heading 3\n---------\n\n"
+            "Heading 4\n*********\n\n"
+            "Heading 5\n:::::::::\n\n"
+            "Heading 6\n+++++++++\n",
+            "<page><body>"
+            '<h outline-level="1">Heading 1</h>'
+            '<p xhtml:class="moin-subheading">Heading 2</p>'
+            '<h outline-level="2">Heading 3</h>'
+            '<h outline-level="3">Heading 4</h>'
+            '<h outline-level="4">Heading 5</h>'
+            '<h outline-level="5">Heading 6</h></body></page>',
         ),
-        # from http://docutils.sourceforge.net/docs/user/rst/quickstart.html#document-title-subtitle; note Subtitle and Section Title are level 2
+        # There is no sub-heading because the second adornment style is
+        # re-used in heading 4
         (
-            "================\n Document Title\n================\n\n----------\n Subtitle\n----------\n\nSection Title\n=============",
-            '<page><body><h outline-level="1">Document Title</h><h outline-level="2">Subtitle</h><h outline-level="2">Section Title</h></body></page>',
+            "===============\n Heading 1\n===============\n\n"
+            "Heading 2\n---------\n\n"
+            "Heading 3\n~~~~~~~~~\n\n"
+            "Heading 4\n---------\n\n",
+            "<page><body>"
+            '<h outline-level="1">Heading 1</h>'
+            '<h outline-level="2">Heading 2</h>'
+            '<h outline-level="3">Heading 3</h>'
+            '<h outline-level="2">Heading 4</h></body></page>',
         ),
-        # similar to test above; note that H3 is level 2, H4 is level 3, ...
+        # The first heading is level 2 and there is no sub-heading
+        # because the first adornment style is re-used in heading 4
         (
-            "==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\n",
-            '<page><body><h outline-level="1">H1</h><h outline-level="2">H2</h><h outline-level="2">H3</h><h outline-level="3">H4</h><h outline-level="4">H5</h><h outline-level="5">H6</h></body></page>',
+            "===============\n Heading 1\n===============\n\n"
+            "Heading 2\n---------\n\n"
+            "Heading 3\n~~~~~~~~~\n\n"
+            "=============\n Heading 4\n=============\n",
+            "<page><body>"
+            '<h outline-level="2">Heading 1</h>'
+            '<h outline-level="3">Heading 2</h>'
+            '<h outline-level="4">Heading 3</h>'
+            '<h outline-level="2">Heading 4</h></body></page>',
         ),
-        # adding a H2a heading using the H2 style underlining results in "normal" heading levels: H1 is a title, h2 and all other headings are sections
+        # The first heading is level 1, because underline+overline adornment
+        # style differs from underline-only (even if the same char is used).
         (
-            "==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\nH6\n++\n\nH2a\n===\n\n",
-            '<page><body><h outline-level="1">H1</h><h outline-level="2">H2</h><h outline-level="3">H3</h><h outline-level="4">H4</h><h outline-level="5">H5</h><h outline-level="6">H6</h><h outline-level="2">H2a</h></body></page>',
+            "===============\n Heading 1\n===============\n\n"
+            "Heading 2\n---------\n\n"
+            "Heading 3\n~~~~~~~~~\n\n"
+            "Heading 4\n=============\n",
+            "<page><body>"
+            '<h outline-level="1">Heading 1</h>'
+            '<p xhtml:class="moin-subheading">Heading 2</p>'
+            '<h outline-level="2">Heading 3</h>'
+            '<h outline-level="3">Heading 4</h></body></page>',
         ),
-        # when a document starts with a paragraph, then the first heading is rendered as a section level 2 heading
+        # When the first heading is preceded by visible content,
+        # the first heading is a section heading (level 2).
         (
-            "Paragraph\n\n==\nH1\n==\n\nH2\n==\n\nH3\n--\n\nH4\n**\n\nH5\n::\n\n",
-            '<page><body><p>Paragraph</p><h outline-level="2">H1</h><h outline-level="3">H2</h><h outline-level="4">H3</h><h outline-level="5">H4</h><h outline-level="6">H5</h></body></page>',
+            "Paragraph\n\n"
+            "================\n Heading 1\n================\n\n"
+            "Heading 2\n=========\n\n"
+            "Heading 3\n---------\n\n"
+            "Heading 4\n*********\n\n",
+            "<page><body><p>Paragraph</p>"
+            '<h outline-level="2">Heading 1</h>'
+            '<h outline-level="3">Heading 2</h>'
+            '<h outline-level="4">Heading 3</h>'
+            '<h outline-level="5">Heading 4</h></body></page>',
         ),
     ]
 
@@ -168,17 +212,10 @@ class TestConverter:
         """
         reST has a unique method of defining heading levels.
 
-        Depending on sequence of headings and reuse of heading underlining, then the docutils parser returns
-        nodes to the moin2 rst_in parser as either a:
-            * title
-            * subtitle
-            * section, then again as title
-        where title and subtitle are similar to the left and right headings on pages of a book,
-        but this usage is lost on html pages.
+        Leading headings may become a page title and subtitle,
+        but only if the adornment style is unique.
 
-        The result is heading levels have unexpected values:
-            * title, subtitle, section, subsection... (then subtitle and section are rendered as h2, subsection is h3)
-            * <paragraph>, section, subsection... (then section is an h2, subsection is h3)
+        See https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#document-structure
         """
         self.do(input, output)
 
@@ -369,15 +406,15 @@ text""",
         ),
         # admonitions (hint, info, warning, error, ...)
         (
-            ".. note::\n" "   :name: note-id\n\n" '   An admonition of type "note"',
+            '.. note::\n   :name: note-id\n\n   An admonition of type "note"',
             '<page><body><span id="note-id" /><admonition type="note">'
             '<p>An admonition of type "note"</p></admonition></body></page>',
         ),
         # use an attention for a generic admonition
         (
-            ".. admonition:: Generic Admonition\n\n" "   Be alert!",
+            ".. admonition:: Generic Admonition\n\n   Be alert!",
             '<page><body><admonition type="attention" xhtml:class="admonition-generic-admonition">'
-            '<strong xhtml:class="title">Generic Admonition</strong>'
+            '<p xhtml:class="moin-title">Generic Admonition</p>'
             "<p>Be alert!</p></admonition></body></page>",
         ),
         # Moin uses admonitions also for system messages
@@ -385,7 +422,7 @@ text""",
             "Unbalanced *inline markup.",
             '<page><body><p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
             '<span id="system-message-1" /><admonition type="caution">'
-            '<p><strong xhtml:class="title">System Message: WARNING/2</strong> (rST input line 1) '
+            '<p xhtml:class="moin-title">System Message: WARNING/2 (rST input line 1) '
             '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition></body></page>",
@@ -396,11 +433,29 @@ text""",
         #     "  not allowed\n"
         #     "  -----------\n",
         #     "<page><body><p>Sections must not be nested in body elements.</p><blockquote>"
-        #     '<admonition type="error"><p><strong xhtml:class="title">System Message: ERROR/3</strong> (rST input line 4)</p>'
+        #     '<admonition type="error"><p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 4)</p>'
         #     "<p>Unexpected section title.</p>"
         #     "<blockcode>not allowed\n-----------</blockcode>"
         #     "</admonition></blockquote></body></page>"
         # )
+        # Topics, Sidebars, and Rubrics
+        (
+            ".. topic:: Topic Title\n\n   topic content",
+            '<page><body><div xhtml:class="moin-aside">'
+            '<p xhtml:class="moin-title">Topic Title</p>'
+            "<p>topic content</p></div></body></page>",
+        ),
+        (
+            ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n\n   sidebar content",
+            '<page><body><div xhtml:class="moin-aside moin-sidebar">'
+            '<p xhtml:class="moin-title">Sidebar Title</p>'
+            '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
+            "<p>sidebar content</p></div></body></page>",
+        ),
+        (
+            ".. rubric:: Informal Heading",
+            '<page><body><p xhtml:class="moin-title moin-rubric">Informal Heading</p></body></page>',
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)

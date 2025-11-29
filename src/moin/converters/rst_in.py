@@ -95,6 +95,7 @@ class NodeVisitor:
         pass
 
     def open_moin_page_node(self, mointree_element, node=None):
+        # `mointree_element` can also be a `str` (text)
         if flaskg and getattr(flaskg, "add_lineno_attr", False):
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
@@ -296,13 +297,13 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_entry(self, node):
-        # process a table cell <td> tag
-        new_element = moin_page.table_cell()
+        # table cell element (<th> or <td> in HTML)
+        moin_table_cell = moin_page.table_cell()
         if "morerows" in node.attributes:
-            new_element.set(moin_page.number_rows_spanned, repr(int(node["morerows"]) + 1))
+            moin_table_cell.set(moin_page.number_rows_spanned, repr(int(node["morerows"]) + 1))
         if "morecols" in node.attributes:
-            new_element.set(moin_page.number_columns_spanned, repr(int(node["morecols"]) + 1))
-        self.open_moin_page_node(new_element, node)
+            moin_table_cell.set(moin_page.number_columns_spanned, repr(int(node["morecols"]) + 1))
+        self.open_moin_page_node(moin_table_cell, node)
 
     def depart_entry(self, node):
         self.close_moin_page_node()
@@ -315,14 +316,14 @@ class NodeVisitor:
             "lowerroman": "lower-roman",
             "upperroman": "upper-roman",
         }
-        new_node = moin_page.list(attrib={moin_page.item_label_generate: "ordered"})
+        moin_list = moin_page.list(attrib={moin_page.item_label_generate: "ordered"})
         type = enum_style.get(node["enumtype"], None)
         if type:
-            new_node.set(moin_page.list_style_type, type)
+            moin_list.set(moin_page.list_style_type, type)
         startvalue = node.get("start", 1)
         if startvalue > 1:
-            new_node.set(moin_page.list_start, str(startvalue))
-        self.open_moin_page_node(new_node, node)
+            moin_list.set(moin_page.list_start, str(startvalue))
+        self.open_moin_page_node(moin_list, node)
 
     def depart_enumerated_list(self, node):
         self.close_moin_page_node()
@@ -379,9 +380,9 @@ class NodeVisitor:
 
     def visit_footnote_reference(self, node):
         self.open_moin_page_node(moin_page.note(attrib={moin_page.note_class: "footnote"}))
-        new_footnote = moin_page.note_body()
-        self.open_moin_page_node(new_footnote)
-        self.footnotes[node.children[-1]] = new_footnote
+        moin_footnote = moin_page.note_body()
+        self.open_moin_page_node(moin_footnote)
+        self.footnotes[node.children[-1]] = moin_footnote
         node.children = []
 
     def depart_footnote_reference(self, node):
@@ -430,13 +431,12 @@ class NodeVisitor:
             # img
             target = Iri(scheme="wiki.local", path=node["uri"], fragment=None)
             attrib[xinclude.href] = target
-            new_node = xinclude.include(attrib=attrib)
+            moin_image = xinclude.include(attrib=attrib)
         else:
             # obj
-            new_node = moin_page.object(attrib)
-            new_node.set(xlink.href, url)
-
-        self.open_moin_page_node(new_node, node)
+            moin_image = moin_page.object(attrib)
+            moin_image.set(xlink.href, url)
+        self.open_moin_page_node(moin_image, node)
 
     def depart_image(self, node):
         self.close_moin_page_node()
@@ -571,24 +571,24 @@ class NodeVisitor:
             macro_name = refuri[2:-2].split("(")[0]
             if macro_name == "TableOfContents":
                 arguments = refuri[2:-2].split("(")[1][:-1].split(",")
-                node = moin_page.table_of_content()
-                self.open_moin_page_node(node)
+                moin_toc = moin_page.table_of_content()
+                self.open_moin_page_node(moin_toc)
                 if arguments and arguments[0]:
-                    node.set(moin_page.outline_level, arguments[0])
+                    moin_toc.set(moin_page.outline_level, arguments[0])
                 return
             if macro_name == "Include":
                 # include macros are expanded by include.py similar to transclusions
                 # rst include handles only wiki pages and does not support additional arguments like moinwiki
                 arguments = refuri[2:-2].split("(")[1][:-1].split(",")
                 link = Iri(scheme="wiki.local", path=arguments)
-                node = xinclude.include(
+                moin_node = xinclude.include(
                     attrib={
                         xinclude.href: link,
                         moin_page.alt: refuri,
                         moin_page.content_type: "x-moin/macro;name=" + macro_name,
                     }
                 )
-                self.open_moin_page_node(node)
+                self.open_moin_page_node(moin_node)
                 return
             try:
                 arguments = refuri[2:-2].split("(")[1][:-1]
@@ -640,10 +640,10 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_rubric(self, node):
-        self.visit_paragraph(node)
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title moin-rubric"}))
 
     def depart_rubric(self, node):
-        self.depart_paragraph(node)
+        self.close_moin_page_node()
 
     def visit_substitution_definition(self, node):
         """
@@ -664,12 +664,11 @@ class NodeVisitor:
         self.header_size -= 1
 
     def visit_sidebar(self, node):
-        # TODO: render sidebar "set off from the rest of the document somehow, typically with a border."
         # Sidebars typically “float” to the side of the page.
-        pass
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside moin-sidebar"}))
 
     def depart_sidebar(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_strong(self, node):
         self.open_moin_page_node(moin_page.strong(), node)
@@ -684,14 +683,11 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_subtitle(self, node):
-        # TODO: Subtitles should not have section numbering and should not be in the ToC.
-        #       If the document title is centre aligned,
-        #       the document sub-title should be centre aligned, too.
-        self.header_size += 1
-        self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
+        # subtitle of a page, section, or sidebar
+        # TODO: Use a <hgroup> in HTML?
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-subheading"}))
 
     def depart_subtitle(self, node):
-        self.header_size -= 1
         self.close_moin_page_node()
 
     def visit_superscript(self, node):
@@ -702,16 +698,13 @@ class NodeVisitor:
 
     def visit_system_message(self, node):
         # an element reporting a parsing issue (DEBUG, INFO, WARNING, ERROR, or SEVERE)
-        # TODO: handle node['backrefs'] to <problematic> element.
         if node.get("level", 4) < 3:
             self.visit_admonition(node, "caution")
         else:
             self.visit_admonition(node, "error")
-        self.open_moin_page_node(moin_page.p())
-        self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title"}))
         title = f"{node['type']}/{node['level']}"
         self.current_node.append(f"System Message: {title}")
-        self.close_moin_page_node()  # </strong>
         if node.hasattr("line"):
             self.current_node.append(f" ({node['source']} line {node['line']}) ")
         if node.get("backrefs", []):
@@ -746,10 +739,10 @@ class NodeVisitor:
         """
         if "refuri" in node or "refid" in node or "refname" in node:
             return  # already handled by Docutils "transforms"
-        moin_node = moin_page.span()
+        moin_target = moin_page.span()
         if node["ids"]:
-            moin_node.attrib[moin_page.id] = node["ids"][0]
-        self.open_moin_page_node(moin_node)
+            moin_target.attrib[moin_page.id] = node["ids"][0]
+        self.open_moin_page_node(moin_target)
 
     def depart_target(self, node):
         if "refuri" in node or "refid" in node or "refname" in node:
@@ -792,7 +785,7 @@ class NodeVisitor:
         # TODO: table title is currently ignored!
         if isinstance(node.parent, (nodes.admonition, nodes.sidebar, nodes.topic)):
             # informal title: don't include in ToC, no section numbering
-            self.open_moin_page_node(moin_page.strong(attrib={html.class_: "title"}))
+            self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title"}))
         else:
             self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
 
@@ -800,13 +793,11 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_topic(self, node):
-        # A <topic> element should be set off from the rest of the document somehow,
-        # such as with indentation or a border.
-        # TODO: represent as blockquote?
-        pass
+        # content that is separate from the flow of the document
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside"}))
 
     def depart_topic(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_title_reference(self, node):
         pass
