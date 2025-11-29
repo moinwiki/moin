@@ -469,6 +469,8 @@ MoinMoin.prototype.enhanceUserSettings = function () {
         buttonDotAnimation = setInterval(buttonRunAnimation, 500);
         buttonRunAnimation();
 
+        MoinMoin.prototype.clearFlashMessages();
+
         // send the form to the server
         $.post(form.attr('action'), form.serialize(), function (data) {
             clearInterval(buttonDotAnimation);
