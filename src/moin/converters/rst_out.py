@@ -213,8 +213,9 @@ class ReST:
     # moin2 reST standard headings, uses = above and below h1, = below h2, - below h3... + below h6
     # these heading styles are used in all .rst files under /docs/
     # does not agree with: http://documentation-style-guide-sphinx.readthedocs.io/en/latest/style-guide.html#headings
+    # Exception: use ^ above for the document subtitle.
     h_top = " =     "
-    h_bottom = " ==-*:+"
+    h_bottom = "^==-*:+"
 
     a_separator = "|"
     verbatim = "::"
@@ -439,7 +440,7 @@ class Converter:
                 comment = comment.replace("\n", "\n ")
                 return f"\n..\n {comment}\n"
         # in case div has another use
-        return self.open_children(elem)
+        return self.open_children(elem)  # TODO: handle sidebar, topic,
 
     def open_moinpage_figure(self, elem):
         """
@@ -466,13 +467,13 @@ class Converter:
         return f"{ReST.emphasis}{childrens_output}{ReST.emphasis}"
 
     def open_moinpage_h(self, elem):
-        level = elem.get(moin_page.outline_level, 1)
+        level = elem.get(moin_page.outline_level, 0)
         text = "".join(elem.itertext())
         try:
             level = int(level)
         except ValueError:
             raise ElementException("page:outline-level needs to be an integer")
-        if level < 1:
+        if level < 0:
             level = 1
         elif level > 6:
             level = 6
@@ -605,6 +606,11 @@ class Converter:
         return ret
 
     def open_moinpage_p(self, elem):
+        classes = elem.get(html.class_, "").split()
+        if "moin-subheading" in classes:
+            # Docutils <subtitle>
+            # TODO: find out whether the parent is <page>.
+            return self.open_moinpage_h(elem)
         ret = ""
         if self.status[-1] == "text":
             self.status.append("p")

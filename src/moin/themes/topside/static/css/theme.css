@@ -13,7 +13,8 @@ html { font-size: 1em; min-height: 100%; position: relative; }
 #moin-content { padding-bottom: 8em; }
 #moin-content, #moin-footer { box-sizing: border-box; max-width: 1200px; }
 h1,
-.moin-pagetitle { text-align: center; }
+.moin-pagetitle,
+h1 + p.moin-subheading { text-align: center; }
 
 a { text-decoration: none; color: #1409B9; }
 a:hover { text-decoration: underline; }

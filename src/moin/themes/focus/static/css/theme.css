@@ -10,7 +10,7 @@
 html { background-color: white; }
 html * { box-sizing: border-box; }
 html, body { max-width: 100vw; max-height: 100vh; overflow-x: hidden;}
-h1, h2, h3, h4, h5, h6 { border-bottom: none; }
+h1, h2, h3, h4, h5, h6, h1+p.moin-subheading { border-bottom: none; }
 h2 { margin-top: 1.6em; margin-bottom: 0.5em; }
 table tr td { border: none; }
 .clickable-header { cursor: pointer; }
