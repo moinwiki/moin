@@ -1,5 +1,5 @@
 # Copyright: 2011,2012 MoinMoin:ThomasWaldmann
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -480,7 +480,7 @@ UserMetaSchema = DuckDict.named("UserMetaSchema").of(
     String.named(keys.THEME_NAME).using(optional=True),
     String.named(keys.TIMEZONE).using(optional=True),
     String.named(keys.LOCALE).using(optional=True),
-    String.named(keys.CSS_URL).using(optional=True),
+    String.named(keys.CSS_FILE).using(optional=True),
     Integer.named(keys.RESULTS_PER_PAGE).using(optional=True),
     Integer.named(keys.EDIT_ROWS).using(optional=True),
     Boolean.named(keys.DISABLED).using(optional=True),

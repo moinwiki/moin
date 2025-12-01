@@ -1,4 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
+# Copyright: 2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -113,7 +114,7 @@ SCROLL_PAGE_AFTER_EDIT = "scroll_page_after_edit"
 SHOW_COMMENTS = "show_comments"
 ISO_8601 = "iso_8601"
 MAILTO_AUTHOR = "mailto_author"
-CSS_URL = "css_url"
+CSS_FILE = "css_file"
 EDIT_ROWS = "edit_rows"
 RESULTS_PER_PAGE = "results_per_page"
 WANT_TRIVIAL = "want_trivial"
@@ -146,7 +147,7 @@ USEROBJ_ATTRS = [
     TIMEZONE,
     SUBSCRIPTIONS,
     QUICKLINKS,
-    CSS_URL,
+    CSS_FILE,
 ]
 
 # keys for blog homepages

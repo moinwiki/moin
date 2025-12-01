@@ -58,7 +58,6 @@ from moin.apps.frontend import frontend
 from moin.forms import (
     OptionalText,
     RequiredText,
-    URL,
     YourEmail,
     RequiredPassword,
     Checkbox,
@@ -991,7 +990,7 @@ class RenameItemForm(TargetChangeForm):
 @frontend.route("/+create", methods=["POST"])
 def create_item():
     """
-    A user has corrected an invalid item name keyed into the +index > Create dialog or brower's URL.
+    A user has corrected an invalid item name keyed into the +index > Create dialog or browser's URL.
     """
     form = CreateItemForm.from_flat(request.form)
     item_name = form["target"]
@@ -2467,6 +2466,29 @@ class ValidSubscriptions(Validator):
         return True
 
 
+class FileNameValidator(Validator):
+    """
+    Validator ensuring a form control contains a valid file base name
+    """
+
+    element_name: str = ""
+
+    def validate(self, element, state):
+        if not self.element_name or self.element_name not in element:
+            raise RuntimeError("form element_name not configured or not found.")
+        if not element[self.element_name].valid:
+            return False
+        filename = element[self.element_name].value
+        base_file_name = os.path.basename(filename)
+        if (
+            not filename == base_file_name
+            or len(str(base_file_name)) > 255
+            or any(char in '<>:"/\\|?*' for char in str(base_file_name))
+        ):
+            return self.note_error(element, state, message="CSS file name is invalid.")
+        return True
+
+
 class UserSettingsSubscriptionsForm(Form):
     form_name = "usersettings_subscriptions"
     subscriptions = Subscriptions
@@ -2532,9 +2554,11 @@ def usersettings():
         available_themes = [(str(t.identifier), t.name) for t in get_themes_list()]
         available_themes.insert(0, ("", _("(System Default)")))
         theme_name = RadioChoice.using(label=L_("Theme name"), optional=True).with_properties(choices=available_themes)
-        css_url = URL.using(label=L_("User CSS URL"), optional=True).with_properties(
-            placeholder=L_("Give the URL of your custom CSS (optional)")
+
+        css_file = OptionalText.using(label=L_("User CSS file"), optional=True).with_properties(
+            placeholder=L_("Give the PATHNAME of your individual CSS file (optional)")
         )
+
         edit_rows = Natural.using(label=L_("Number rows in edit textarea")).with_properties(
             placeholder=L_("Editor textarea height (0=auto)")
         )
@@ -2542,6 +2566,7 @@ def usersettings():
             placeholder=L_("Number of results per page (0=no paging)")
         )
         submit_label = L_("Save")
+        validators = [FileNameValidator(element_name="css_file")]
 
     form_classes = dict(
         personal=UserSettingsPersonalForm,

@@ -981,6 +981,10 @@ class UserRevision:
             (interwiki, int(bookmark) // 1000000) for interwiki, bookmark in metadata.get(BOOKMARKS, {}).items()
         ]
 
+        old_css_url = metadata.get("css_url")
+        if old_css_url:
+            logging.warning(f"Deleted css_url {old_css_url} for user {metadata[NAME][0]} for security reasons.")
+
         # stuff we want to get rid of:
         kill = [
             "aliasname",  # renamed to display_name
@@ -1009,7 +1013,9 @@ class UserRevision:
             "last_saved",  # renamed to MTIME
             "email_subscribed_events",  # XXX no support yet
             "jabber_subscribed_events",  # XXX no support yet
+            "css_url",  # replaced by css_file for security reasons, needs manual migration
         ]
+
         for key in kill:
             if key in metadata:
                 del metadata[key]
@@ -1022,7 +1028,6 @@ class UserRevision:
             BOOKMARKS,
             ENC_PASSWORD,
             "language",
-            CSS_URL,
             EMAIL,
         ]  # XXX check subscribed_items, quicklinks
         for key in empty_kill:
