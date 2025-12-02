@@ -129,7 +129,7 @@ Theme name
 CSS file
  If you want to style MoinMoin with custom Cascading Style Sheets (CSS), enter a filename for your
  custom stylesheet here. Custom CSS provides an advanced level of control over appearance of
- MoinMoin pages. The file needs to be in the “wiki_local” subdirectory of the wiki instance.
+ MoinMoin pages. The file needs to be in the wiki_local subdirectory of the wiki instance.
  Ask your wiki administrator for assistance.
 
 Number of rows in edit textarea

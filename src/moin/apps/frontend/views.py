@@ -2481,9 +2481,9 @@ class FileNameValidator(Validator):
         filename = element[self.element_name].value
         base_file_name = os.path.basename(filename)
         if (
-            not filename == base_file_name
-            or len(str(base_file_name)) > 255
-            or any(char in '<>:"/\\|?*' for char in str(base_file_name))
+            filename != base_file_name
+            or len(base_file_name) > 255
+            or any(char in '<>:"/\\|?*' for char in base_file_name)
         ):
             return self.note_error(element, state, message="CSS file name is invalid.")
         return True
