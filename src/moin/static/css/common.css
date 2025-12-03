@@ -182,10 +182,15 @@ a.moin-nonexistent object {  background: var(--bg-disabled);  border: 3px dashed
 /* end of links */
 
 /* misc highlighting */
-.moin-error:before { content: url("../img/icons/admon-warning.png"); float: left; height: 100%; padding: 0 1em; }
-.moin-error { color: var(--error); background-color: var(--bg-error);
+.moin-error:before { content: url("../img/icons/admon-warning.png"); float: left; height: 100%; padding: 0 .5em; }
+.moin-error:not(input) {
+    color: var(--error);
+    background-color: var(--bg-error);
     border: 1px solid var(--border);
-    margin: 10px 30px 10px 30px; min-height: 64px; padding: 8px 8px 8px 8px; clear: both; display: inline-block; }
+    border-radius: 4px;
+    margin-top: .5em;
+    min-height: 12px;
+    padding: 8px 8px 8px 8px; clear: both; display: inline-block; }
 .moin-highlight { background-color: var(--bg-hilite); padding: 1px; }
 .moin-showhide { margin-left: 10px; }
 .moin-disabled { color: var(--disabled); }
@@ -621,6 +626,8 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 
 .moin-form .submit-buttons{ display: flex; column-gap: 8pt; justify-content: end;
     margin: 8pt 0; }
+
+.moin-form input.moin-error { color: var(--error) }
 
 #options dd { width: 10%; }
 #options dt { width: 60%; max-width: 40em; }
