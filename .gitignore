@@ -23,6 +23,7 @@ wiki_local/
 *.pyo
 *.orig
 *.rej
+*~
 # files created by quickinstall.py
 activate.bat
 deactivate.bat

@@ -736,7 +736,7 @@ ul#moin-rev-navigation { text-align: center; background-color: var(--bg-zebra); 
 .moin-rst-optionlist,
 .moin-rst-fieldlist { margin-left: 2em; }
 .moin-rst-optionlist td,
-.moin-rst-fieldlist td { border-width: 0; }
+.moin-rst-fieldlist td { border-width: 0; vertical-align: top; }
 .moin-rst-optionlist td:first-child,
 .moin-rst-fieldlist td:first-child { font-weight: bold; }
 
