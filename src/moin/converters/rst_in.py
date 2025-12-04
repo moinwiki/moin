@@ -473,12 +473,17 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_label(self, node):
+        # label of a footnote or citation
         if self.status[-1] == "footnote":
             self.footnote_lable = node.astext()
-        node.children = []
+            raise nodes.SkipNode
+        attrib = {html.class_: "moin-rst-label float-left"}
+        self.open_moin_page_node(moin_page.div(attrib=attrib), node)
+        self.current_node.append("[")
 
     def depart_label(self, node):
-        pass
+        self.current_node.append("]")
+        self.close_moin_page_node()
 
     def visit_line(self, node):
         """| first line of a line_block"""
@@ -710,7 +715,7 @@ class NodeVisitor:
 
     def visit_sidebar(self, node):
         # Sidebars typically “float” to the side of the page.
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside moin-sidebar"}))
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside moin-sidebar"}), node)
 
     def depart_sidebar(self, node):
         self.close_moin_page_node()
