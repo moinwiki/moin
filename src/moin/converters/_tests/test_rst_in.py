@@ -42,8 +42,16 @@ class TestConverter:
             '<page><body><p><span xhtml:class="orange">colourful</span> text</p></body></page>',
         ),
         (  # special custom roles for <del> and <ins>
-            ".. role:: del\n.. role:: ins\n\n" ":del:`deleted` text :ins:`inserted` text",
+            ".. role:: del\n.. role:: ins\n\n:del:`deleted` text :ins:`inserted` text",
             "<page><body><p><del>deleted</del> text <ins>inserted</ins> text</p></body></page>",
+        ),
+        (  # custom role derived from "code" with syntax highlight
+            '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
+            '<page><body><p>Inline code like <code xhtml:class="code python">'
+            '<span xhtml:class="nb">print</span><span xhtml:class="p">(</span>'
+            '<span xhtml:class="mi">3</span><span xhtml:class="o">*</span>'
+            '<span xhtml:class="s2">"Hurra!"</span><span xhtml:class="p">)</span>'
+            "</code>.</p></body></page>",
         ),
         ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
         (
@@ -234,11 +242,57 @@ class TestConverter:
     def test_footnote(self, input, output):
         self.do(input, output)
 
+    # Field Lists, Option Lists:
+    # TODO: currently rendered as table (like Docutils html4css1 writer),
+    #       use a description-list instead (like Docutils html5 writer)?
     data = [
         (
-            ":Date: 2001-08-16\n:Version: 1\n:Authors: Joe Doe",
-            "<page><body><table><table-body>2001-08-16<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1</table-cell></table-row><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row></table-body></table></body></page>",
-        )
+            "Leading text\n\n:Last Changed: 2001-08-16\n:*Version*: 1\n:Name: Joe Doe",
+            "<page><body><p>Leading text</p>"
+            '<table xhtml:class="moin-rst-fieldlist"><table-body>'
+            "<table-row><table-cell><strong>Last Changed:</strong></table-cell>"
+            "<table-cell><p>2001-08-16</p></table-cell></table-row>"
+            "<table-row><table-cell><strong><emphasis>Version</emphasis>:</strong></table-cell>"
+            "<table-cell><p>1</p></table-cell></table-row>"
+            "<table-row><table-cell><strong>Name:</strong></table-cell>"
+            "<table-cell><p>Joe Doe</p></table-cell></table-row>"
+            "</table-body></table></body></page>",
+        ),
+        # A field list at the start of a page is transformed into a "docinfo"
+        # bibliographic data (visible meta-data)
+        (
+            ":Date: 2001-08-16\n:Author: Joe Doe\n:Version:  $Revision: 1.17 $\n",
+            '<page><body><table xhtml:class="moin-rst-fieldlist"><table-body>'
+            "<table-row><table-cell><strong>Date:</strong></table-cell><table-cell>2001-08-16</table-cell></table-row>"
+            "<table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row>"
+            "<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row>"
+            "</table-body></table></body></page>",
+        ),
+        (
+            ":Authors: Pat, Patagon\n:Copyright: ©\n:Test: t",
+            '<page><body><table xhtml:class="moin-rst-fieldlist"><table-body>'
+            "<table-row><table-cell><strong>Authors:</strong></table-cell>"
+            "<table-cell><p>Pat</p><p>Patagon</p></table-cell></table-row>"
+            "<table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>©</table-cell></table-row>"
+            '<table-row xhtml:class="test"><table-cell><strong>Test:</strong></table-cell>'
+            "<table-cell><p>t</p></table-cell></table-row>"
+            "</table-body></table></body></page>",
+        ),
+        # option list
+        (
+            "-a           Output all.\n"
+            "--print arg  Output just arg.\n"
+            "-f FILE, --file=FILE  These two options are synonyms;\n"
+            "                      both have arguments.\n",
+            '<page><body><table xhtml:class="moin-rst-optionlist"><table-body>'
+            '<table-row><table-cell><span xhtml:class="kbd option">-a</span></table-cell>'
+            "<table-cell><p>Output all.</p></table-cell></table-row>"
+            '<table-row><table-cell><span xhtml:class="kbd option">--print arg</span></table-cell>'
+            "<table-cell><p>Output just arg.</p></table-cell></table-row>"
+            '<table-row><table-cell><span xhtml:class="kbd option">-f FILE</span>, <span xhtml:class="kbd option">--file=FILE</span></table-cell>'
+            "<table-cell><p>These two options are synonyms;\nboth have arguments.</p></table-cell></table-row>"
+            "</table-body></table></body></page>",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -399,11 +453,6 @@ text""",
         self.do(input, output)
 
     data = [
-        # bibliographic data (visible meta-data)
-        (
-            ":Author: Test\n:Version:  $Revision: 1.17 $\n:Copyright: c\n:Test: t",
-            '<page><body><table><table-body><table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Test</table-cell></table-row><table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row><table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>c</table-cell></table-row><table-row xhtml:class="test"><table-cell><strong>Test:</strong></table-cell><table-cell><p>t</p></table-cell></table-row></table-body></table></body></page>',
-        ),
         # admonitions (hint, info, warning, error, ...)
         (
             '.. note::\n   :name: note-id\n\n   An admonition of type "note"',

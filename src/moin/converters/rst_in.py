@@ -95,7 +95,6 @@ class NodeVisitor:
         pass
 
     def open_moin_page_node(self, mointree_element, node=None):
-        # `mointree_element` can also be a `str` (text)
         if flaskg and getattr(flaskg, "add_lineno_attr", False):
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
@@ -184,6 +183,12 @@ class NodeVisitor:
 
     depart_warning = depart_admonition
 
+    def visit_address(self, node):
+        self.visit_docinfo_item(node, "address")
+
+    def depart_address(self, node):
+        self.depart_docinfo_item(node)
+
     def visit_block_quote(self, node):
         self.open_moin_page_node(moin_page.blockquote())
 
@@ -222,7 +227,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_docinfo(self, node):
-        self.open_moin_page_node(moin_page.table())
+        self.open_moin_page_node(moin_page.table(attrib={html.class_: "moin-rst-fieldlist"}))
         self.open_moin_page_node(moin_page.table_body())
 
     def depart_docinfo(self, node):
@@ -230,34 +235,22 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_author(self, node):
-        self.open_moin_page_node(moin_page.table_row())
-        self.open_moin_page_node(moin_page.table_cell())
-        self.open_moin_page_node(moin_page.strong())
-        # TODO: i18n for docutils:
-        self.open_moin_page_node("Author:")
-        self.close_moin_page_node()
-        self.close_moin_page_node()
-        self.close_moin_page_node()
-        self.open_moin_page_node(moin_page.table_cell())
+        if isinstance(node.parent, nodes.authors):
+            self.open_moin_page_node(moin_page.p(), node)
+        else:
+            self.visit_docinfo_item(node, "author")
 
     def depart_author(self, node):
-        self.close_moin_page_node()
-        self.close_moin_page_node()
+        if isinstance(node.parent, nodes.authors):
+            self.close_moin_page_node()
+        else:
+            self.depart_docinfo_item(node)
 
-    def visit_version(self, node):
-        self.open_moin_page_node(moin_page.table_row())
-        self.open_moin_page_node(moin_page.table_cell())
-        self.open_moin_page_node(moin_page.strong())
-        # TODO: i18n for docutils:
-        self.open_moin_page_node("Version:")
-        self.close_moin_page_node()
-        self.close_moin_page_node()
-        self.close_moin_page_node()
-        self.open_moin_page_node(moin_page.table_cell())
+    def visit_authors(self, node):
+        self.visit_docinfo_item(node, "authors")
 
-    def depart_version(self, node):
-        self.close_moin_page_node()
-        self.close_moin_page_node()
+    def depart_authors(self, node):
+        self.depart_docinfo_item(node)
 
     def visit_caption(self, node):
         self.open_moin_page_node(moin_page.figcaption())
@@ -266,19 +259,10 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_copyright(self, node):
-        self.open_moin_page_node(moin_page.table_row())
-        self.open_moin_page_node(moin_page.table_cell())
-        self.open_moin_page_node(moin_page.strong())
-        # TODO: i18n for docutils:
-        self.open_moin_page_node("Copyright:")
-        self.close_moin_page_node()
-        self.close_moin_page_node()
-        self.close_moin_page_node()
-        self.open_moin_page_node(moin_page.table_cell())
+        self.visit_docinfo_item(node, "copyright")
 
     def depart_copyright(self, node):
-        self.close_moin_page_node()
-        self.close_moin_page_node()
+        self.depart_docinfo_item(node)
 
     def visit_comment(self, node):
         """
@@ -289,6 +273,41 @@ class NodeVisitor:
 
     def depart_comment(self, node):
         self.close_moin_page_node()
+
+    def visit_contact(self, node):
+        self.visit_docinfo_item(node, "contact")
+
+    def depart_contact(self, node):
+        self.depart_docinfo_item(node)
+
+    def visit_date(self, node):
+        self.visit_docinfo_item(node, "date")
+
+    def depart_date(self, node):
+        self.depart_docinfo_item(node)
+
+    def visit_description(self, node):
+        # description of an <option_group> in an <option_list_item>
+        self.open_moin_page_node(moin_page.table_cell())
+
+    def depart_description(self, node):
+        self.close_moin_page_node()
+
+    def visit_docinfo_item(self, node, name):
+        # auxiliary function, called by docinfo items
+        # <address>, <author>, <authors>, <contact>, <copyright>, <date>,
+        # <organization>, <revision>, <status>, and <version>,
+        self.open_moin_page_node(moin_page.table_row())
+        self.open_moin_page_node(moin_page.table_cell())
+        self.open_moin_page_node(moin_page.strong())
+        self.current_node.append(name.capitalize() + ":")  # TODO: i18n
+        self.close_moin_page_node()  # </strong>
+        self.close_moin_page_node()  # </table_cell>
+        self.open_moin_page_node(moin_page.table_cell())
+
+    def depart_docinfo_item(self, node):
+        self.close_moin_page_node()  # </table_cell>
+        self.close_moin_page_node()  # </table_row>
 
     def visit_emphasis(self, node):
         self.open_moin_page_node(moin_page.emphasis(), node)
@@ -352,11 +371,9 @@ class NodeVisitor:
     def visit_field_name(self, node):
         self.open_moin_page_node(moin_page.table_cell(), node)
         self.open_moin_page_node(moin_page.strong())
-        self.open_moin_page_node(f"{node.astext()}:")
-        node.children = []
-        self.close_moin_page_node()
 
     def depart_field_name(self, node):
+        self.current_node.append(":")
         self.close_moin_page_node()
         self.close_moin_page_node()
 
@@ -487,10 +504,9 @@ class NodeVisitor:
 
     def visit_literal(self, node):
         self.open_moin_page_node(moin_page.code(), node)
-        self.open_moin_page_node(node.astext())
+
+    def depart_literal(self, node):
         self.close_moin_page_node()
-        self.close_moin_page_node()
-        raise nodes.SkipNode
 
     def visit_literal_block(self, node):
         parser = node.get("parser", "")
@@ -531,14 +547,31 @@ class NodeVisitor:
     def depart_option_list_item(self, node):
         self.close_moin_page_node()
 
-    def visit_option(self, node):
+    def visit_option_group(self, node):
         self.open_moin_page_node(moin_page.table_cell())
+
+    def depart_option_group(self, node):
+        self.close_moin_page_node()
+
+    def visit_option(self, node):
+        self.open_moin_page_node(moin_page.span(attrib={html.class_: "kbd option"}))
 
     def depart_option(self, node):
         self.close_moin_page_node()
+        if isinstance(node.next_node(descend=False, siblings=True), nodes.option):
+            self.current_node.append(", ")
 
-    visit_description = visit_option
-    depart_description = depart_option
+    def visit_option_argument(self, node):
+        self.current_node.append(node.get("delimiter", " "))
+
+    def depart_option_argument(self, node):
+        pass
+
+    def visit_organization(self, node):
+        self.visit_docinfo_item(node, "organization")
+
+    def depart_organization(self, node):
+        self.depart_docinfo_item(node)
 
     def visit_paragraph(self, node):
         if self.status[-1] == "footnote":
@@ -633,6 +666,12 @@ class NodeVisitor:
     def depart_reference(self, node):
         self.close_moin_page_node()
 
+    def visit_revision(self, node):
+        self.visit_docinfo_item(node, "revision")
+
+    def depart_revision(self, node):
+        self.depart_docinfo_item(node)
+
     def visit_row(self, node):
         self.open_moin_page_node(moin_page.table_row(), node)
 
@@ -644,6 +683,12 @@ class NodeVisitor:
 
     def depart_rubric(self, node):
         self.close_moin_page_node()
+
+    def visit_status(self, node):
+        self.visit_docinfo_item(node, "status")
+
+    def depart_status(self, node):
+        self.depart_docinfo_item(node)
 
     def visit_substitution_definition(self, node):
         """
@@ -813,6 +858,12 @@ class NodeVisitor:
     def depart_transition(self, node):
         self.close_moin_page_node()
 
+    def visit_version(self, node):
+        self.visit_docinfo_item(node, "version")
+
+    def depart_version(self, node):
+        self.depart_docinfo_item(node)
+
     def unimplemented_visit(self, node):
         pass
 
@@ -858,6 +909,9 @@ class Parser(docutils.parsers.rst.Parser):
     __ https://docutils.sourceforge.io/docs/api/transforms.html
     __ https://docutils.sourceforge.io/docs/ref/doctree.html#target
     """
+
+    # Use class values matching the pre-defined CSS highlight rules
+    settings_default_overrides = {"syntax_highlight": "short"}
 
     config_section = "MoinMoin parser"
     config_section_dependencies = ("parsers", "restructuredtext parser")
