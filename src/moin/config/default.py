@@ -573,7 +573,7 @@ options_no_group_name = {
                     NAME: [],
                     DISPLAY_NAME: None,
                     EMAIL: None,
-                    CSS_URL: None,
+                    CSS_FILE: None,
                     ISO_8601: False,
                     MAILTO_AUTHOR: False,
                     EDIT_ON_DOUBLECLICK: False,
