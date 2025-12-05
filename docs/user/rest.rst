@@ -1608,34 +1608,46 @@ The `"contents" directive`_ generates a table of contents.
 Comments
 ========
 
-Comments are not shown on the page. Some parsers may create HTML comments
-(``<!-- -->``). The Sphinx parser suppresses comments in the HTML output.
-Within the Moin2 wiki, comments may be made visible/invisible by clicking the
-Comments link within item views.
+A *comment* is a text block that starts with ":literal:`.. \ `"
+and ends with the first non-indented line (details__).
 
-**Markup**::
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #comments
 
- .. This is a comment
- ..
-  _so: is this!
- ..
-  [and] this!
- ..
-  this:: too!
- ..
-  |even| this:: !
+* An "empty comment" followed by a blank line does not consume any
+  indented text. It serves to terminate a preceding construct.
 
-**Result**:
+* In Moin, comments may be made visible/invisible by
+  clicking the "Comments" link in the "Item Views" menu/toolbar.
 
- .. This is a comment
- ..
-  _so: is this!
- ..
-  [and] this!
- ..
-  this:: too!
- ..
-  |even| this:: !
+* Tip: to prevent mix-up with other "`explicit markup blocks`_",
+  leave the ":literal:`.. \ `" on a line by itself.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+         .. This is a comment.
+         .. [This] is a citation_.
+         ..
+            [This] is a comment.
+         ..
+
+            [This] is a blockquote.
+
+     -   .. This is a comment.
+         .. [This] is a citation_.
+         ..
+            [This] is a comment.
+         ..
+
+            [This] is a blockquote.
+
+
 
 
 Backslash Escapes
@@ -1768,6 +1780,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
 .. _bullet list:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
+.. _citation:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#citations
 .. _"directive" syntax:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#directives
 .. _embedded URI:
@@ -1779,6 +1793,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists
 .. _escaping:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#escaping-mechanism
+.. _explicit markup blocks:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#explicit-markup-blocks
 .. _explicit target:
 .. _explicit targets:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#hyperlink-targets
