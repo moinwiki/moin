@@ -148,8 +148,12 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
 Text formatting
 ===============
 
-`Inline markup`_ and `interpreted text roles`_ can be applied to words
-or phrases within a text block to format text.
+`Inline markup`_ can be applied to words or phrases within a text block
+to format text.
+
+* Less common styles are obtained via `interpreted text roles`_.
+* TODO: Some standard roles are currently ignored by Moin.
+  Content is shown without processing.
 
 .. list-table::
    :header-rows: 1
@@ -187,9 +191,6 @@ or phrases within a text block to format text.
      - ***Nested** markup* is not supported.
      - .. This is a longstanding Docutils TODO issue.
 
-TODO: Some standard roles are currently ignored by Moin.
-Content is shown without processing.
-
 ..
   =====================  =================
   ``:ab:`abbr.```        :ab:`abbr.`
@@ -200,7 +201,8 @@ Content is shown without processing.
 
 
 *Custom interpreted text roles* can be used to attach CSS class values to
-inline text (`details <custom interpreted text roles_>`__):
+inline text and set the code language for syntax highlight
+(`details <custom interpreted text roles_>`__).
 
 .. list-table::
    :header-rows: 1
@@ -274,21 +276,30 @@ inline text (`details <custom interpreted text roles_>`__):
 
      - Custom roles may be used as surrogate for nested inline markup.
 
-* The examples rely on CSS styling missing in the `external documentation`_.
+   * - ::
+
+           .. role:: tex(code)
+              :language: latex
+
+       ``:tex:`\frac{\pi}{4}```
+
+     - .. role:: tex(code)
+          :language: latex
+
+       :tex:`\frac{\pi}{4}`
+
+     - There is highlight support for many languages__.
+
+       See also `code blocks`_.
+
+       __ https://pygments.org/languages/
+
+* The examples rely on `Moin CSS classes`_ missing in the `external
+  documentation`_.
 
 * The :raw: role is disabled in Moin.
 
-TODO:
-
-* Syntax highlight with roles derived from "code".
-
-  ..
-    .. role:: latex(code)
-       :language: latex
-
-    :latex:`\frac{\pi}{4} d^2`
-
-* Support semantic HTML inline markup elements.
+* TODO: Support semantic HTML inline markup elements.
 
   ..
     .. role:: b
@@ -1803,6 +1814,21 @@ A backslash escapes the following character (`details <escaping_>`__).
        (where whitespace is removed by default).
 
 
+Error Handling
+==============
+
+Problems with a `severity level`_ above the `report level`_ generate
+system messages.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ``Unbalanced *inline markup triggers a warning.``
+     - Unbalanced *inline markup triggers a warning.
+
 .. References:
 
 .. _Sphinx: https://www.sphinx-doc.org
@@ -1909,6 +1935,11 @@ A backslash escapes the following character (`details <escaping_>`__).
     https://docutils.sourceforge.io/docs/ref/rst/roles.html#pep-reference
 .. _"rfc-reference" role:
     https://docutils.sourceforge.io/docs/ref/rst/roles.html#rfc-reference
+
+.. _severity level:
+    https://docutils.sourceforge.io/docs/peps/pep-0258.html#error-handling
+.. _report level:
+    https://docutils.sourceforge.io/docs/user/config.html#report-level
 
 .. _URI references: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#URI_references
 
