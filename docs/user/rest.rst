@@ -563,10 +563,18 @@ External Links
    .. [#] Interwiki links work only in Moin and only after configuring.
 
 
-Blockquotes and Indentations
-============================
+Blockquotes
+===========
 
-An indented text block is rendered as a block-quote_.
+An indented text block is interpreted as a *blockquote*,
+a text part quoted from another source (details__).
+
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #block-quotes
+
+* Blockquotes may contain arbitrary body elements.
+* To add an attribution_, append a paragraph preceded by
+  "``--``" or an em-dash.
 
 .. list-table::
    :header-rows: 1
@@ -576,47 +584,23 @@ An indented text block is rendered as a block-quote_.
 
    * - ::
 
-           text before
+           preceding paragraph
 
              It is my business to know
              things. That is my trade.
 
              -- Sherlock Holmes
 
-     - text before
+           succeeding paragraph
 
-         It is my business to know
-         things. That is my trade.
+     -     preceding paragraph
 
-         -- Sherlock Holmes
+             It is my business to know
+             things. That is my trade.
 
-   * - ::
+             -- Sherlock Holmes
 
-           text before
-
-             block-quote
-
-               nested block-quote
-
-                 nest to any depth
-
-             second paragraph of
-             outer block-quote
-
-     - text before
-
-         block-quote
-
-           nested block-quote
-
-                 nested to any depth
-
-         second paragraph of
-         outer block-quote
-
-* To add an attribution_, append a paragraph preceded by "``--``"
-  or an em-dash.
-* See also `line blocks`_.
+           succeeding paragraph
 
 
 Lists
@@ -1254,7 +1238,7 @@ reStructuredText (`details <"directive" syntax_>`__).
 A set of *standard directives* is described in the `reStructuredText
 Directives`_ document.  This section introduces a selection.
 See also `Table Directives`_.
- 
+
 Applications may add domain-specific directives.
 Moin adapts the "contents__" and "include" directives
 and adds the "macro" and "parser" directives.
@@ -1776,8 +1760,6 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#attribution
 .. _bibliographic fields:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bibliographic-fields
-.. _block-quote:
-    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
 .. _bullet list:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
 .. _citation:
