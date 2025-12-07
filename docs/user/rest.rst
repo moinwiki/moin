@@ -620,9 +620,12 @@ followed by whitespace, is a *bullet list* item
 (`details <bullet list_>`__).
 
 * List item bodies must be left-aligned and indented relative to the marker.
-* They may start on the same line as the marker or on the next line.
-* The first line of text sets the `indentation level`_ for this item.
-* Sub-items 2.1 to 2.2.2 show some valid input variants.
+
+  * They may start on the same line as the marker or on the next line.
+  * The first line of text sets the `indentation level`_ for this item.
+  * Sub-items 2.1 to 2.2.2 show some valid input variants.
+
+* See `line blocks`_ for the rST variant of a "bulletless list".
 
 .. list-table::
    :header-rows: 1
@@ -1227,6 +1230,140 @@ Moin (TODO):
      === === ===
 
 
+Preformatted Text
+=================
+
+Within a *preformatted text block*, line breaks are preserved.
+
+* Whitespace (except the minimal common indentation) is preserved in
+  in all preformatted blocks except `line blocks`_.
+* The font is usually "monospace" (except in `line blocks`_).
+
+* Text is parsed for inline markup in `parsed literal blocks`_
+  and `line blocks`_.
+* No markup processing is done in `literal blocks`_ and `code blocks`_.
+
+
+Literal Blocks
+--------------
+
+A double-colon (``::``) at the end of a line or on a line of its own
+starts a *literal block* (details__).
+
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+   #literal-blocks
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          In a literal block::
+
+            Whitespace   and line
+               breaks are preserved.
+
+            *Markup* is `ignored\ `_.
+
+     -    In a literal block::
+
+            Whitespace   and line
+               breaks are preserved.
+
+            *Markup* is `ignored\ `_.
+
+
+Code Blocks
+-----------
+
+The `"code" directive`_ starts a *code block*.
+Syntax highlight works if the `code language`__ is specified after
+the directive marker.
+
+__ https://pygments.org/languages/
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          .. code:: rst
+
+             .. |registered| replace::
+                :sup:`®`
+                :ltrim:
+
+     -    .. code:: rst
+
+             .. |registered| replace::
+                :sup:`®`
+                :ltrim:
+
+
+Parsed Literal Blocks
+---------------------
+
+The `"parsed-literal" directive`_ starts a *parsed* literal block.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          .. parsed-literal::
+
+            A *pre*\ formatted   block
+            with `text formatting_`.
+
+     -    .. parsed-literal::
+
+            A *pre*\ formatted   block
+            with `text formatting`_.
+
+
+Line Blocks
+-----------
+
+A *line block* is a “plain list” of lines and nested line
+blocks. It is commonly used for verse and addresses (details__).
+
+__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
+   #line-blocks
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          | Start lines with a vertical bar.
+          |     Indented lines
+          |     indicate a *nested* line block.
+          | Long lines may be
+            continued on the next line
+            (without vertical bar).
+          | In the output, all lines may wrap.
+
+     -    | Start lines with a vertical bar.
+          |     Indented lines
+          |     indicate a *nested* line block.
+          | Long lines may be
+            continued on the next line
+            (without vertical bar).
+          | In the output, all lines may wrap.
+
+
 .. _directive:
 
 Directives
@@ -1237,7 +1374,7 @@ reStructuredText (`details <"directive" syntax_>`__).
 
 A set of *standard directives* is described in the `reStructuredText
 Directives`_ document.  This section introduces a selection.
-See also `Table Directives`_.
+See also `Table Directives`_ and `Preformatted Text`_.
 
 Applications may add domain-specific directives.
 Moin adapts the "contents__" and "include" directives
@@ -1666,84 +1803,6 @@ A backslash escapes the following character (`details <escaping_>`__).
        (where whitespace is removed by default).
 
 
-Literal Blocks
-==============
-
-Literal blocks are used to show text as is; i.e., no markup processing is done within a literal block.
-A minimum (1) indentation is required for the text block to be recognized as a literal block.
-
-**Markup**::
-
- Paragraph with a space before two colons ::
-
-  Literal block
-
- Paragraph with no space before two colons::
-
-  Literal block
-
-**Result**:
-
- Paragraph with a space between preceding two colons ::
-
-  Literal block
-
- Paragraph with no space between text and two colons::
-
-  Literal block
-
-Line Blocks
-===========
-
-.. Copied from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#line-blocks
-
-Line blocks are useful for address blocks, verse (poetry, song lyrics), and
-unadorned lists, where the structure of lines is significant. Line blocks
-are groups of lines beginning with vertical bar ("|") prefixes. Each vertical
-bar prefix indicates a new line, so line breaks are preserved. Initial
-indents are also significant, resulting in a nested structure. Inline markup
-is supported. Continuation lines are wrapped portions of long lines; they
-begin with a space in place of the vertical bar. The left edge of a
-continuation line must be indented, but need not be aligned with the left
-edge of the text above it. A line block ends with a blank line.
-
-**Markup**::
-
- Take it away, Eric the Orchestra Leader!
-
-    | A one, two, a one two three four
-    |
-    | Half a bee, philosophically,
-    |     must, *ipso facto*, half not be.
-    | But half the bee has got to be,
-    |     *vis a vis* its entity.  D'you see?
-    |
-    | But can a bee be said to be
-    |     or not to be an entire bee,
-    |         when half the bee is not a bee,
-    |             due to some ancient injury?
-    |
-    | Singing...
-
-**Result**:
-
-Take it away, Eric the Orchestra Leader!
-
-    | A one, two, a one two three four
-    |
-    | Half a bee, philosophically,
-    |     must, *ipso facto*, half not be.
-    | But half the bee has got to be,
-    |     *vis a vis* its entity.  D'you see?
-    |
-    | But can a bee be said to be
-    |     or not to be an entire bee,
-    |         when half the bee is not a bee,
-    |             due to some ancient injury?
-    |
-    | Singing...
-
-
 .. References:
 
 .. _Sphinx: https://www.sphinx-doc.org
@@ -1825,6 +1884,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/directives.html
 .. _"admonition" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#generic-admonition
+.. _"code" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#code
 .. _"contents" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
 .. _custom interpreted text roles:
@@ -1833,6 +1894,8 @@ Take it away, Eric the Orchestra Leader!
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure
 .. _"image" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#image
+.. _"parsed-literal" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#parsed-literal
 .. _"rubric" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#rubric
 .. _sidebars:
