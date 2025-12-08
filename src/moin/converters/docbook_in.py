@@ -24,6 +24,7 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
@@ -862,8 +863,9 @@ class Converter:
         if linkend:
             href = "".join(["#", linkend])
         iri = Iri(href)
-        if iri.scheme is None:
-            iri.scheme = "wiki.local"
+        # ensure a safe scheme, fall back to wiki-internal reference:
+        if iri.scheme not in URI_SCHEMES:
+            iri = Iri("wiki.local:" + href)
         attrib[xlink.href] = iri
         return self.new_copy(moin_page.a, element, depth, attrib)
 

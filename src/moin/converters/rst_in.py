@@ -28,13 +28,14 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
 from moin.wikiutil import anchor_name_from_text
 
 from . import default_registry
-from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text
 
 from moin import log
 
@@ -638,11 +639,6 @@ class NodeVisitor:
                 self.close_moin_page_node()
             return
 
-        if not allowed_uri_scheme(refuri):
-            # TODO: prepend "wiki.local" as in "moin_in"?
-            self.visit_error(node)
-            return
-
         if refuri == "" and "refid" in node:
             # internal cross-links
             refid = node["refid"]
@@ -652,16 +648,16 @@ class NodeVisitor:
             if isinstance(target_node, nodes.section):
                 title = target_node[0]
                 refid = anchor_name_from_text(title.astext())
-            refuri = Iri(scheme="wiki.local", fragment=refid)
-
-        if isinstance(refuri, str) and refuri.startswith("http"):
-            if "://" not in refuri:
-                refuri = refuri.split(":")[1]
-        iri = Iri(refuri)
-        if iri.scheme is None:
-            iri.scheme = "wiki.local"
-            refuri = iri
-        self.open_moin_page_node(moin_page.a(attrib={xlink.href: refuri}))
+            iri = Iri(scheme="wiki.local", fragment=refid)
+        elif refuri.startswith("http") and "://" not in refuri:
+            # convert links like "http:Home" to wiki-internal references
+            iri = Iri("wiki.local:" + refuri.split(":", maxsplit=1)[1])
+        else:
+            # ensure a safe scheme, fall back to wiki-internal reference
+            iri = Iri(refuri)
+            if iri.scheme not in URI_SCHEMES:
+                iri = Iri("wiki.local:" + refuri)
+        self.open_moin_page_node(moin_page.a(attrib={xlink.href: iri}))
 
     def depart_reference(self, node):
         self.close_moin_page_node()
