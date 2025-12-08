@@ -335,10 +335,6 @@ Hyperlinks connect a *hyperlink reference* to a matching *hyperlink target*
 
 * Matching of named_ references and targets is done after normalizing
   whitespace and case.
-
-  Moin treats `named hyperlink references without matching target`_ as
-  `wiki-internal links`_.
-
 * Anonymous_ references and targets are matched according to their order.
 * The target can also be embedded_ in the reference.
 
@@ -346,7 +342,7 @@ Hyperlinks connect a *hyperlink reference* to a matching *hyperlink target*
 Internal Links
 --------------
 
-*Page-internal* links point to an anchor (named element or anonymous
+**Page-internal links** point to an anchor (named element or anonymous
 target) in the same document.
 
 .. list-table::
@@ -410,16 +406,31 @@ target) in the same document.
 
 .. _Wiki-internal links:
 
-*Wiki-internal* links [#internal-external]_ point to items in the same wiki.
+The Moin rST converter interprets named hyperlink references without
+matching target as **Wiki-internal links** (whitespace is normalized).
 
-* The Moin engine interprets `URI references`_ without scheme as references
-  to local Wiki items.
+* Caution! `Explicit targets`_, `inline targets`_ and `section headings`_
+  with the same name take precedence!
+* In Docutils and Sphinx, unknown target names are reported as errors.
 
-* The Moin rST converter interprets `named hyperlink references without
-  matching target`_ as links to local Wiki items (whitespace is
-  normalized).
+========================  ===================  ============================
+Markup                    Result               Notes
+========================  ===================  ============================
+``Home_``                 Home_                item in default namespace
 
-* The examples do not work in the `external documentation`_.
+```users/Home`_``         `users/Home`_        item in specified namespace
+
+```../moin`_``            `../moin`_           sibling item in current
+                                               namespace
+
+```../moin#Linking`_``    `../moin#Linking`_   fragment of a sibling item
+
+ ```/Subitem Example`_``  `/Subitem Example`_  subitem of the current item
+========================  ===================  ============================
+
+Alternatively, Wiki-internal links may be specified via `URI references`_.
+
+* The syntax for Wiki-internal links differs from POSIX *path* syntax!
 
 .. list-table::
    :header-rows: 1
@@ -430,30 +441,15 @@ target) in the same document.
 
    * - ```<Home>__```
      - `<Home>`__
-     - item in default namespace as embedded URI reference
+     - item in default namespace (as embedded URI reference)
 
    * - ```My Castle <Home>__```
      - `My Castle <Home>`__
      - ... with custom text
 
-   * - .. _named hyperlink references without matching target:
-
-       ``Home_``
-
-     - Home_
-
-     - ... as named reference
-
-       Caution: `explicit targets`_, `inline targets`_ and `section
-       headings`_ take precedence!
-
-   * - ```users/Home`_``
-     - `users/Home`_
-     - item in different namespace
-
-   * - ```../moin`_``
-     - `../moin`_
-     - sibling item
+   * - ```<users/Home>__```
+     - `<users/Home>`__
+     - item in specified namespace
 
    * - ```Moin markup`__``
        ::
@@ -464,7 +460,7 @@ target) in the same document.
 
        __ ../moin
 
-     - ... as URI reference in an `anonymous target`_
+     - sibling item (in an `anonymous target`_)
 
    * - ``|MoinMoin|_ markup``
        ::
@@ -480,23 +476,12 @@ target) in the same document.
        The substitution text becomes the `reference name`_,
        an `explicit target`_ maps it to a URI reference.
 
-   * - ```../moin#Linking`_``
-     - `../moin#Linking`_
-     - fragment of a sibling item
-
-   * - ```/Subitem Example`_``
-     - `/Subitem Example`_
-     - subitem
-
    * - ```sub-item </Subitem%20Example>`__``
      - `sub-item </Subitem%20Example>`__
-     - ... as URI reference with custom text [#whitespace-in-URI]_
+     - subitem (with custom text)
 
-.. [#internal-external] The Docutils rST documentation denotes all
-   links employing a URI reference as *external*.
-
-.. [#whitespace-in-URI] In `URI context`_, whitespace is removed by default.
-   Use an `escaped space <backslash escapes_>`__ or percent encoding.
+       In `URI context`_, whitespace is removed by default.
+       Use an `escaped space <backslash escapes_>`__ or percent encoding.
 
 
 External Links
