@@ -855,9 +855,9 @@ class NodeVisitor:
     def depart_title_reference(self, node):
         pass
 
-    def visit_transition(self, node, default_class="moin-hr3"):
+    def visit_transition(self, node):
         # TODO: add to rst_out
-        attrib = {html.class_: default_class}
+        attrib = {html.class_: "moin-hr2"}
         self.open_moin_page_node(moin_page.separator(attrib=attrib), node)
 
     def depart_transition(self, node):
