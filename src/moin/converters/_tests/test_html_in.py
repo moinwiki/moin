@@ -241,11 +241,12 @@ class TestConverter(Base):
             # <page><body><div><p><a xlink:href="http://www.base-url.com/myPage.html">Test</a></p></div></body></page>
             '/page/body/div/p/a[@xlink:href="http://www.base-url.com/myPage.html"]',
         ),
-        # verify invalid or forbidden uri schemes are removed
+        # only approved URI schemes are used in a "href"
+        # (others are handled as part of a local item name):
         (
             """<html><p><a href="javascript:alert('hi')">Test</a></p></html>""",
-            # <page><body><p>javascript:alert('hi')</p></body></page>
-            """/page/body/p[text()="javascript:alert('hi')"]""",
+            # <page><body><p><a xlink:href="wiki.local:javascript:alert%28'hi'%29">Text</a></p></body></page>
+            """/page/body/p/a[text()="Test"][@xlink:href="wiki.local:javascript:alert%28'hi'%29"]""",
         ),
     ]
 
