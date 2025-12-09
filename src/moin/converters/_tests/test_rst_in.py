@@ -384,7 +384,7 @@ class TestConverter:
         ),
         (  # URI schemes not on the whitelist are interpreted as local wiki item names
             "`Text <javascript:alert('xss')>`_",
-            "<page><body><p><a xlink:href=\"wiki.local:javascript:alert%28'xss'%29\">Text</a></p></body></page>",
+            """<page><body><p><a xlink:href="wiki.local:javascript:alert%28'xss'%29">Text</a></p></body></page>""",
         ),
     ]
 
