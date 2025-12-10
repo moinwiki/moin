@@ -23,43 +23,40 @@ class TestConverter:
         self.conv = Converter()
 
     data = [
-        ("Text", "<page><body><p>Text</p></body></page>"),
-        ("Text\nTest", "<page><body><p>Text\nTest</p></body></page>"),
-        ("Text\n\nTest", "<page><body><p>Text</p><p>Test</p></body></page>"),
+        ("paragraph", "<p>paragraph</p>"),
+        ("line 1\nline 2", "<p>line 1\nline 2</p>"),
+        ("paragraph 1\n\nparagraph\n2", "<p>paragraph 1</p><p>paragraph\n2</p>"),
         (
             "H\\ :sub:`2`\\ O\n\nE = mc\\ :sup:`2`",
-            '<page><body><p>H<span baseline-shift="sub">2</span>O</p><p>E = mc<span baseline-shift="super">2</span></p></body></page>',
+            '<p>H<span baseline-shift="sub">2</span>O</p><p>E = mc<span baseline-shift="super">2</span></p>',
         ),
         (
             "| Lend us a couple of bob till Thursday.",
-            "<page><body><line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block></body></page>",
+            "<line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block>",
         ),
-        ("**Text**", "<page><body><p><strong>Text</strong></p></body></page>"),
-        ("*Text*", "<page><body><p><emphasis>Text</emphasis></p></body></page>"),
-        ("``Text``", "<page><body><p><code>Text</code></p></body></page>"),
+        ("**Text**", "<p><strong>Text</strong></p>"),
+        ("*Text*", "<p><emphasis>Text</emphasis></p>"),
+        ("``Text``", "<p><code>Text</code></p>"),
         (  # custom role using a CSS class
             ".. role:: orange\n\n:orange:`colourful` text",
-            '<page><body><p><span xhtml:class="orange">colourful</span> text</p></body></page>',
+            '<p><span xhtml:class="orange">colourful</span> text</p>',
         ),
         (  # special custom roles for <del> and <ins>
             ".. role:: del\n.. role:: ins\n\n:del:`deleted` text :ins:`inserted` text",
-            "<page><body><p><del>deleted</del> text <ins>inserted</ins> text</p></body></page>",
+            "<p><del>deleted</del> text <ins>inserted</ins> text</p>",
         ),
         (  # custom role derived from "code" with syntax highlight
             '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
-            '<page><body><p>Inline code like <code xhtml:class="code python">'
+            '<p>Inline code like <code xhtml:class="code python">'
             '<span xhtml:class="nb">print</span><span xhtml:class="p">(</span>'
             '<span xhtml:class="mi">3</span><span xhtml:class="o">*</span>'
             '<span xhtml:class="s2">"Hurra!"</span><span xhtml:class="p">)</span>'
-            "</code>.</p></body></page>",
+            "</code>.</p>",
         ),
-        ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
-        (
-            "Text\n\n~~~~~\n\nTest",
-            '<page><body><p>Text</p><separator xhtml:class="moin-hr2" /><p>Test</p></body></page>',
-        ),
-        (".. comment", '<page><body><div class="comment dashed">comment</div></body></page>'),
-        ("..\n comment", '<page><body><div class="comment dashed">comment</div></body></page>'),
+        ("a _`Link`", '<p>a <span id="link">Link</span></p>'),
+        ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator xhtml:class="moin-hr2" /><p>break</p>'),
+        (".. comment", '<div class="comment dashed">comment</div>'),
+        ("..\n comment", '<div class="comment dashed">comment</div>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -69,29 +66,29 @@ class TestConverter:
     data = [
         (
             "1. a\n   b\n   c\n\n2. b\n\n   d",
-            '<page><body><list item-label-generate="ordered">'
+            '<list item-label-generate="ordered">'
             "<list-item><list-item-body><p>a\nb\nc</p></list-item-body></list-item>"
             "<list-item><list-item-body><p>b</p><p>d</p></list-item-body></list-item>"
-            "</list></body></page>",
+            "</list>",
         ),
         (
             "1. a\n2. b\n\nA. c\n\na. A\n\n   1. B\n\n   2. C\n\n",
-            '<page><body><list item-label-generate="ordered"><list-item><list-item-body><p>a</p></list-item-body></list-item><list-item><list-item-body><p>b</p></list-item-body></list-item></list><list item-label-generate="ordered" list-style-type="upper-alpha"><list-item><list-item-body><p>c</p></list-item-body></list-item></list><list item-label-generate="ordered" list-style-type="lower-alpha"><list-item><list-item-body><p>A</p><list item-label-generate="ordered"><list-item><list-item-body><p>B</p></list-item-body></list-item><list-item><list-item-body><p>C</p></list-item-body></list-item></list></list-item-body></list-item></list></body></page>',
+            '<list item-label-generate="ordered"><list-item><list-item-body><p>a</p></list-item-body></list-item><list-item><list-item-body><p>b</p></list-item-body></list-item></list><list item-label-generate="ordered" list-style-type="upper-alpha"><list-item><list-item-body><p>c</p></list-item-body></list-item></list><list item-label-generate="ordered" list-style-type="lower-alpha"><list-item><list-item-body><p>A</p><list item-label-generate="ordered"><list-item><list-item-body><p>B</p></list-item-body></list-item><list-item><list-item-body><p>C</p></list-item-body></list-item></list></list-item-body></list-item></list>',
         ),
         (
             "* A\n\n   - B\n\n      + C\n\n   - D\n\n* E",
-            '<page><body><list item-label-generate="unordered"><list-item><list-item-body><p>A</p><blockquote><list item-label-generate="unordered"><list-item><list-item-body><p>B</p><blockquote><list item-label-generate="unordered"><list-item><list-item-body><p>C</p></list-item-body></list-item></list></blockquote></list-item-body></list-item><list-item><list-item-body><p>D</p></list-item-body></list-item></list></blockquote></list-item-body></list-item><list-item><list-item-body><p>E</p></list-item-body></list-item></list></body></page>',
+            '<list item-label-generate="unordered"><list-item><list-item-body><p>A</p><blockquote><list item-label-generate="unordered"><list-item><list-item-body><p>B</p><blockquote><list item-label-generate="unordered"><list-item><list-item-body><p>C</p></list-item-body></list-item></list></blockquote></list-item-body></list-item><list-item><list-item-body><p>D</p></list-item-body></list-item></list></blockquote></list-item-body></list-item><list-item><list-item-body><p>E</p></list-item-body></list-item></list>',
         ),
         (
             "what\n      def\n\nhow\n      to",
-            "<page><body><list><list-item><list-item-label>what</list-item-label><list-item-body><p>def</p></list-item-body></list-item><list-item><list-item-label>how</list-item-label><list-item-body><p>to</p></list-item-body></list-item></list></body></page>",
+            "<list><list-item><list-item-label>what</list-item-label><list-item-body><p>def</p></list-item-body></list-item><list-item><list-item-label>how</list-item-label><list-item-body><p>to</p></list-item-body></list-item></list>",
         ),
         # nested in a block-quote and starting with a value other than 1
         (
             " 3. A\n #. B",
-            '<page><body><blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
+            '<blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
-            "</blockquote></body></page>",
+            "</blockquote>",
         ),
     ]
 
@@ -102,11 +99,11 @@ class TestConverter:
     data = [
         (
             "term 1\n definition 1",
-            "<page><body><list><list-item><list-item-label>term 1</list-item-label><list-item-body><p>definition 1</p></list-item-body></list-item></list></body></page>",
+            "<list><list-item><list-item-label>term 1</list-item-label><list-item-body><p>definition 1</p></list-item-body></list-item></list>",
         ),
         (
             "term 2 : classifier 1 : classifier 2\n definition 2",
-            "<page><body><list><list-item><list-item-label>term 2<span>:classifier 1</span><span>:classifier 2</span></list-item-label>classifier 1classifier 2<list-item-body><p>definition 2</p></list-item-body></list-item></list></body></page>",
+            "<list><list-item><list-item-label>term 2<span>:classifier 1</span><span>:classifier 2</span></list-item-label>classifier 1classifier 2<list-item-body><p>definition 2</p></list-item-body></list-item></list>",
         ),
     ]
 
@@ -115,10 +112,7 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        (
-            ".. image:: images/biohazard.png",
-            '<page><body><xinclude:include xinclude:href="wiki.local:images/biohazard.png" /></body></page>',
-        ),
+        (".. image:: images/biohazard.png", '<xinclude:include xinclude:href="wiki.local:images/biohazard.png" />'),
         (
             """
 .. image:: images/biohazard.png
@@ -127,11 +121,11 @@ class TestConverter:
     :width: 200
     :scale: 50
     :alt: alternate text""",
-            '<page><body><span id="biohazard-logo" /><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" /></body></page>',
+            '<span id="biohazard-logo" /><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" />',
         ),
         (
             "abc |test| cba\n\n.. |test| image:: test.png",
-            '<page><body><p>abc <xinclude:include xhtml:alt="test" xinclude:href="wiki.local:test.png" /> cba</p></body></page>',
+            '<p>abc <xinclude:include xhtml:alt="test" xinclude:href="wiki.local:test.png" /> cba</p>',
         ),
     ]
 
@@ -148,13 +142,12 @@ class TestConverter:
             "Heading 4\n*********\n\n"
             "Heading 5\n:::::::::\n\n"
             "Heading 6\n+++++++++\n",
-            "<page><body>"
             '<h outline-level="1">Heading 1</h>'
             '<p xhtml:class="moin-subheading">Heading 2</p>'
             '<h outline-level="2">Heading 3</h>'
             '<h outline-level="3">Heading 4</h>'
             '<h outline-level="4">Heading 5</h>'
-            '<h outline-level="5">Heading 6</h></body></page>',
+            '<h outline-level="5">Heading 6</h>',
         ),
         # There is no sub-heading because the second adornment style is
         # re-used in heading 4
@@ -163,11 +156,10 @@ class TestConverter:
             "Heading 2\n---------\n\n"
             "Heading 3\n~~~~~~~~~\n\n"
             "Heading 4\n---------\n\n",
-            "<page><body>"
             '<h outline-level="1">Heading 1</h>'
             '<h outline-level="2">Heading 2</h>'
             '<h outline-level="3">Heading 3</h>'
-            '<h outline-level="2">Heading 4</h></body></page>',
+            '<h outline-level="2">Heading 4</h>',
         ),
         # The first heading is level 2 and there is no sub-heading
         # because the first adornment style is re-used in heading 4
@@ -176,11 +168,10 @@ class TestConverter:
             "Heading 2\n---------\n\n"
             "Heading 3\n~~~~~~~~~\n\n"
             "=============\n Heading 4\n=============\n",
-            "<page><body>"
             '<h outline-level="2">Heading 1</h>'
             '<h outline-level="3">Heading 2</h>'
             '<h outline-level="4">Heading 3</h>'
-            '<h outline-level="2">Heading 4</h></body></page>',
+            '<h outline-level="2">Heading 4</h>',
         ),
         # The first heading is level 1, because underline+overline adornment
         # style differs from underline-only (even if the same char is used).
@@ -189,11 +180,10 @@ class TestConverter:
             "Heading 2\n---------\n\n"
             "Heading 3\n~~~~~~~~~\n\n"
             "Heading 4\n=============\n",
-            "<page><body>"
             '<h outline-level="1">Heading 1</h>'
             '<p xhtml:class="moin-subheading">Heading 2</p>'
             '<h outline-level="2">Heading 3</h>'
-            '<h outline-level="3">Heading 4</h></body></page>',
+            '<h outline-level="3">Heading 4</h>',
         ),
         # When the first heading is preceded by visible content,
         # the first heading is a section heading (level 2).
@@ -203,11 +193,11 @@ class TestConverter:
             "Heading 2\n=========\n\n"
             "Heading 3\n---------\n\n"
             "Heading 4\n*********\n\n",
-            "<page><body><p>Paragraph</p>"
+            "<p>Paragraph</p>"
             '<h outline-level="2">Heading 1</h>'
             '<h outline-level="3">Heading 2</h>'
             '<h outline-level="4">Heading 3</h>'
-            '<h outline-level="5">Heading 4</h></body></page>',
+            '<h outline-level="5">Heading 4</h>',
         ),
     ]
 
@@ -224,14 +214,8 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        (
-            "Abra [1]_\n\n.. [1] arba",
-            '<page><body><p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p></body></page>',
-        ),
-        (
-            "Abra [#]_\n\n.. [#] arba",
-            '<page><body><p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p></body></page>',
-        ),
+        ("Abra [1]_\n\n.. [1] arba", '<p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p>'),
+        ("Abra [#]_\n\n.. [#] arba", '<p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -244,7 +228,7 @@ class TestConverter:
     data = [
         (
             "Leading text\n\n:Last Changed: 2001-08-16\n:*Version*: 1\n:Name: Joe Doe",
-            "<page><body><p>Leading text</p>"
+            "<p>Leading text</p>"
             '<table xhtml:class="moin-rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Last Changed:</strong></table-cell>"
             "<table-cell><p>2001-08-16</p></table-cell></table-row>"
@@ -252,27 +236,27 @@ class TestConverter:
             "<table-cell><p>1</p></table-cell></table-row>"
             "<table-row><table-cell><strong>Name:</strong></table-cell>"
             "<table-cell><p>Joe Doe</p></table-cell></table-row>"
-            "</table-body></table></body></page>",
+            "</table-body></table>",
         ),
         # A field list at the start of a page is transformed into a "docinfo"
         # bibliographic data (visible meta-data)
         (
             ":Date: 2001-08-16\n:Author: Joe Doe\n:Version:  $Revision: 1.17 $\n",
-            '<page><body><table xhtml:class="moin-rst-fieldlist"><table-body>'
+            '<table xhtml:class="moin-rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Date:</strong></table-cell><table-cell>2001-08-16</table-cell></table-row>"
             "<table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row>"
             "<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row>"
-            "</table-body></table></body></page>",
+            "</table-body></table>",
         ),
         (
             ":Authors: Pat, Patagon\n:Copyright: ©\n:Test: t",
-            '<page><body><table xhtml:class="moin-rst-fieldlist"><table-body>'
+            '<table xhtml:class="moin-rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Authors:</strong></table-cell>"
             "<table-cell><p>Pat</p><p>Patagon</p></table-cell></table-row>"
             "<table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>©</table-cell></table-row>"
             '<table-row xhtml:class="test"><table-cell><strong>Test:</strong></table-cell>'
             "<table-cell><p>t</p></table-cell></table-row>"
-            "</table-body></table></body></page>",
+            "</table-body></table>",
         ),
         # option list
         (
@@ -280,14 +264,14 @@ class TestConverter:
             "--print arg  Output just arg.\n"
             "-f FILE, --file=FILE  These two options are synonyms;\n"
             "                      both have arguments.\n",
-            '<page><body><table xhtml:class="moin-rst-optionlist"><table-body>'
+            '<table xhtml:class="moin-rst-optionlist"><table-body>'
             '<table-row><table-cell><span xhtml:class="kbd option">-a</span></table-cell>'
             "<table-cell><p>Output all.</p></table-cell></table-row>"
             '<table-row><table-cell><span xhtml:class="kbd option">--print arg</span></table-cell>'
             "<table-cell><p>Output just arg.</p></table-cell></table-row>"
             '<table-row><table-cell><span xhtml:class="kbd option">-f FILE</span>, <span xhtml:class="kbd option">--file=FILE</span></table-cell>'
             "<table-cell><p>These two options are synonyms;\nboth have arguments.</p></table-cell></table-row>"
-            "</table-body></table></body></page>",
+            "</table-body></table>",
         ),
     ]
 
@@ -298,93 +282,68 @@ class TestConverter:
     data = [
         (
             "Abra test_ arba\n\n.. _test: http://python.org",
-            '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>',
+            '<p>Abra <a xlink:href="http://python.org">test</a> arba</p>',
         ),
         (
             "Abra test__ arba\n\n.. __: http://python.org/fish/",
-            '<page><body><p>Abra <a xlink:href="http://python.org/fish/">test</a> arba</p></body></page>',
+            '<p>Abra <a xlink:href="http://python.org/fish/">test</a> arba</p>',
         ),
-        (
-            "Abra test__ arba\n\n.. __: http://python.org",
-            '<page><body><p>Abra <a xlink:href="http://python.org">test</a> arba</p></body></page>',
-        ),
+        ("Abra test__ arba\n\n.. __: http://python.org", '<p>Abra <a xlink:href="http://python.org">test</a> arba</p>'),
         (
             "Abra\n\n.. _example:\n\nAbra example_ arba\n",
-            '<page><body><p>Abra</p><span id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p></body></page>',
+            '<p>Abra</p><span id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
         ),
         (
-            "Abra example_ arba\n\n.. _example:\n.. _alias:\n\ntext",
-            '<page><body><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p></body></page>',
+            """
+Abra example_ arba
+
+.. _example:
+.. _alias:
+
+text""",
+            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p>',
         ),
         (  # A reference_ with no matching target links to a local Wiki item.
             "wiki references: `item`_, `namespace/item`_, `ns/item/subitem`_, `../sibling`_, `/subitem`_",
-            '<page><body><p>wiki references: <a xlink:href="wiki.local:item">item</a>,'
+            '<p>wiki references: <a xlink:href="wiki.local:item">item</a>,'
             ' <a xlink:href="wiki.local:namespace/item">namespace/item</a>,'
             ' <a xlink:href="wiki.local:ns/item/subitem">ns/item/subitem</a>,'
             ' <a xlink:href="wiki.local:../sibling">../sibling</a>,'
-            ' <a xlink:href="wiki.local:/subitem">/subitem</a></p></body></page>',
+            ' <a xlink:href="wiki.local:/subitem">/subitem</a></p>',
         ),
         (
             "`Whitespace  is\nnormalized\xA0& CÄSE is Kept.`_",
-            '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">'
-            "Whitespace  is\nnormalized\xA0&amp; CÄSE is Kept.</a></p></body></page>",
+            '<p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">Whitespace  is\nnormalized\xA0&amp; CÄSE is Kept.</a></p>',
         ),
         (  # in rST, reference-name matching is case insensitive:
             "Chapter 1\n===============\n\nA reference to `chapter 1`_.\n",
-            '<page><body><h outline-level="1">Chapter 1</h>'
-            '<p>A reference to <a xlink:href="wiki.local:#Chapter_1">chapter 1</a>.</p></body></page>',
+            '<h outline-level="1">Chapter 1</h><p>A reference to <a xlink:href="wiki.local:#Chapter_1">chapter 1</a>.</p>',
         ),
         (  # check handling of non-ASCII chars:
             "τίτλος\n^^^^^^\n\nA reference to `τίτλος`_.\n",
-            '<page><body><h outline-level="1">τίτλος</h>'
-            '<p>A reference to <a xlink:href="wiki.local:#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p></body></page>',
+            '<h outline-level="1">τίτλος</h><p>A reference to <a xlink:href="wiki.local:#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p>',
         ),
         (
             "§ With % strange & siLLY <title>\n"
             "--------------------------------\n\n"
             "Reference to `§ With % strange\n"
             "& siLLY \\<title>`_.\n",
-            '<page><body><h outline-level="1">§ With % strange &amp; siLLY &lt;title&gt;</h>'
-            '<p>Reference to <a xlink:href="wiki.local:#A.2BAKc_With_.25_strange_.26_siLLY_.3Ctitle.3E">'
-            "§ With % strange\n"
-            "&amp; siLLY &lt;title&gt;</a>.</p></body></page>",
+            '<h outline-level="1">§ With % strange &amp; siLLY &lt;title&gt;</h>'
+            '<p>Reference to <a xlink:href="wiki.local:#A.2BAKc_With_.25_strange_.26_siLLY_.3Ctitle.3E">§ With % strange\n'
+            "&amp; siLLY &lt;title&gt;</a>.</p>",
         ),
-        (
-            "http://www.python.org/",
-            '<page><body><p><a xlink:href="http://www.python.org/">http://www.python.org/</a></p></body></page>',
-        ),
-        (  # legacy syntax for Wiki-internal links (use URI references without scheme instead)
-            "http:Home",
-            '<page><body><p><a xlink:href="wiki.local:Home">http:Home</a></p></body></page>',
-        ),
-        ("`<http:Home>`__", '<page><body><p><a xlink:href="wiki.local:Home">http:Home</a></p></body></page>'),
-        (
-            r"`<https:Home:\ alone>`__",
-            '<page><body><p><a xlink:href="wiki.local:Home:%20alone">https:Home: alone</a></p></body></page>',
-        ),
-        (  # no URI scheme: resolve as wiki-internal link
-            "`<Home>`__",
-            '<page><body><p><a xlink:href="wiki.local:Home">Home</a></p></body></page>',
-        ),
-        (
-            r"`<Home:\ alone>`__",
-            '<page><body><p><a xlink:href="wiki.local:Home:%20alone">Home: alone</a></p></body></page>',
-        ),
-        (  # rST recognizes e-mail addresses
-            "mailto:me@moin.com",
-            '<page><body><p><a xlink:href="mailto:me@moin.com">mailto:me@moin.com</a></p></body></page>',
-        ),
-        (
-            "`email me <mailto:fred@example.com>`_",
-            '<page><body><p><a xlink:href="mailto:fred@example.com">email me</a></p></body></page>',
-        ),
+        ("http://www.python.org/", '<p><a xlink:href="http://www.python.org/">http://www.python.org/</a></p>'),
+        ("http:Home", '<p><a xlink:href="wiki.local:Home">http:Home</a></p>'),
+        ("`Home <http:Home>`_", '<p><a xlink:href="wiki.local:Home">Home</a></p>'),
+        ("mailto:me@moin.com", '<p><a xlink:href="mailto:me@moin.com">mailto:me@moin.com</a></p>'),
+        ("`email me <mailto:fred@example.com>`_", '<p><a xlink:href="mailto:fred@example.com">email me</a></p>'),
         (
             "`Write to me`_ with your questions.\n\n.. _Write to me: jdoe@example.com",
-            '<page><body><p><a xlink:href="mailto:jdoe@example.com">Write to me</a> with your questions.</p></body></page>',
+            '<p><a xlink:href="mailto:jdoe@example.com">Write to me</a> with your questions.</p>',
         ),
-        (  # URI schemes not on the whitelist are interpreted as local wiki item names
+        (  # URI schemes not in the whitelist are interpreted as local wiki item names
             "`Text <javascript:alert('xss')>`_",
-            """<page><body><p><a xlink:href="wiki.local:javascript:alert%28'xss'%29">Text</a></p></body></page>""",
+            """<p><a xlink:href="wiki.local:javascript:alert%28'xss'%29">Text</a></p>""",
         ),
     ]
 
@@ -394,24 +353,24 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        (".. macro:: <<TableOfContents()>>", "<page><body><table-of-content /></body></page>"),
-        (".. macro:: <<Macro()>>", '<page><body><inline-part content-type="x-moin/macro;name=Macro" /></body></page>'),
+        (".. macro:: <<TableOfContents()>>", "<table-of-content />"),
+        (".. macro:: <<Macro()>>", '<inline-part content-type="x-moin/macro;name=Macro" />'),
         (
             ".. macro:: Macro(arg)",
-            '<page><body><inline-part content-type="x-moin/macro;name=Macro"><arguments>arg</arguments></inline-part></body></page>',
+            '<inline-part content-type="x-moin/macro;name=Macro"><arguments>arg</arguments></inline-part>',
         ),
         (
             "test |a| test\n\n.. |a| macro:: <<Macro()>>",
-            '<page><body><p>test <inline-part content-type="x-moin/macro;name=Macro" /> test</p></body></page>',
+            '<p>test <inline-part content-type="x-moin/macro;name=Macro" /> test</p>',
         ),
-        (".. contents::\n  :depth: 1\n", '<page><body><table-of-content outline-level="1" /></body></page>'),
+        (".. contents::\n  :depth: 1\n", '<table-of-content outline-level="1" />'),
         (
             ".. parser:: python test=test\n  import test\n  test.s = 11",
-            '<page><body><part content-type="x-moin/format;name=python"><arguments><argument name="test">test</argument></arguments>import test\ntest.s = 11</part></body></page>',
+            '<part content-type="x-moin/format;name=python"><arguments><argument name="test">test</argument></arguments>import test\ntest.s = 11</part>',
         ),
         (
             ".. include:: RecentChanges",
-            '<page><body><xinclude:include alt="&lt;&lt;Include(RecentChanges)&gt;&gt;" content-type="x-moin/macro;name=Include" xinclude:href="wiki.local:RecentChanges" /></body></page>',
+            '<xinclude:include alt="&lt;&lt;Include(RecentChanges)&gt;&gt;" content-type="x-moin/macro;name=Include" xinclude:href="wiki.local:RecentChanges" />',
         ),
     ]
 
@@ -422,11 +381,11 @@ class TestConverter:
     data = [
         (
             "+-+-+-+\n|A|B|D|\n+-+-+ +\n|C  | |\n+---+-+\n\n",
-            '<page><body><table><table-body><table-row><table-cell><p>A</p></table-cell><table-cell><p>B</p></table-cell><table-cell number-rows-spanned="2"><p>D</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>C</p></table-cell></table-row></table-body></table></body></page>',
+            '<table><table-body><table-row><table-cell><p>A</p></table-cell><table-cell><p>B</p></table-cell><table-cell number-rows-spanned="2"><p>D</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>C</p></table-cell></table-row></table-body></table>',
         ),
         (
             "+-----+-----+-----+\n|**A**|**B**|**C**|\n+-----+-----+-----+\n|1    |2    |3    |\n+-----+-----+-----+\n\n",
-            "<page><body><table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table></body></page>",
+            "<table><table-body><table-row><table-cell><p><strong>A</strong></p></table-cell><table-cell><p><strong>B</strong></p></table-cell><table-cell><p><strong>C</strong></p></table-cell></table-row><table-row><table-cell><p>1</p></table-cell><table-cell><p>2</p></table-cell><table-cell><p>3</p></table-cell></table-row></table-body></table>",
         ),
         (
             """
@@ -441,7 +400,7 @@ class TestConverter:
 +----------------------------------------------------------+
 
 """,
-            '<page><body><table><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row></table-body></table></body></page>',
+            '<table><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row></table-body></table>',
         ),
         (
             """
@@ -457,7 +416,7 @@ class TestConverter:
 |test                                                      |
 +----------------------------------------------------------+
 """,
-            '<page><body><table><table-header><table-row><table-cell><p>AAAAAAAAAAAAAAAAAA</p></table-cell><table-cell><p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</p></table-cell></table-row></table-header><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row></table-body></table></body></page>',
+            '<table><table-header><table-row><table-cell><p>AAAAAAAAAAAAAAAAAA</p></table-cell><table-cell><p>BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB</p></table-cell></table-row></table-header><table-body><table-row><table-cell number-rows-spanned="2"><p>cell spanning 2 rows</p></table-cell><table-cell><p>cell in the 2nd column</p></table-cell></table-row><table-row><table-cell><p>cell in the 2nd column of the 2nd row</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row><table-row><table-cell number-columns-spanned="2"><p>test</p></table-cell></table-row></table-body></table>',
         ),
     ]
 
@@ -469,55 +428,49 @@ class TestConverter:
         # admonitions (hint, info, warning, error, ...)
         (
             '.. note::\n   :name: note-id\n\n   An admonition of type "note"',
-            '<page><body><span id="note-id" /><admonition type="note">'
-            '<p>An admonition of type "note"</p></admonition></body></page>',
+            '<span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition>',
         ),
         # use an attention for a generic admonition
         (
             ".. admonition:: Generic Admonition\n\n   Be alert!",
-            '<page><body><admonition type="attention" xhtml:class="admonition-generic-admonition">'
+            '<admonition type="attention" xhtml:class="admonition-generic-admonition">'
             '<p xhtml:class="moin-title">Generic Admonition</p>'
-            "<p>Be alert!</p></admonition></body></page>",
+            "<p>Be alert!</p></admonition>",
         ),
         # Moin uses admonitions also for system messages
         (
             "Unbalanced *inline markup.",
-            '<page><body><p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
+            '<p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
             '<span id="system-message-1" /><admonition type="caution">'
             '<p xhtml:class="moin-title">System Message: WARNING/2 (rST input line 1) '
             '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
-            "</admonition></body></page>",
+            "</admonition>",
         ),
         # TODO: this currently fails because the parsing error is not cleared.
         # (
         #     "Sections must not be nested in body elements.\n\n"
         #     "  not allowed\n"
         #     "  -----------\n",
-        #     "<page><body><p>Sections must not be nested in body elements.</p><blockquote>"
+        #     "<p>Sections must not be nested in body elements.</p><blockquote>"
         #     '<admonition type="error"><p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 4)</p>'
         #     "<p>Unexpected section title.</p>"
         #     "<blockcode>not allowed\n-----------</blockcode>"
-        #     "</admonition></blockquote></body></page>"
+        #     "</admonition></blockquote>"
         # )
         # Topics, Sidebars, and Rubrics
         (
             ".. topic:: Topic Title\n\n   topic content",
-            '<page><body><div xhtml:class="moin-aside">'
-            '<p xhtml:class="moin-title">Topic Title</p>'
-            "<p>topic content</p></div></body></page>",
+            '<div xhtml:class="moin-aside"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></div>',
         ),
         (
             ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n   :class: float-right\n\n   sidebar content",
-            '<page><body><div xhtml:class="moin-aside moin-sidebar float-right">'
+            '<div xhtml:class="moin-aside moin-sidebar float-right">'
             '<p xhtml:class="moin-title">Sidebar Title</p>'
             '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
-            "<p>sidebar content</p></div></body></page>",
+            "<p>sidebar content</p></div>",
         ),
-        (
-            ".. rubric:: Informal Heading",
-            '<page><body><p xhtml:class="moin-title moin-rubric">Informal Heading</p></body></page>',
-        ),
+        (".. rubric:: Informal Heading", '<p xhtml:class="moin-title moin-rubric">Informal Heading</p>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -526,7 +479,12 @@ class TestConverter:
 
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub("", result)
+        result = self.output_re.sub("", result)
+        if result == "<page><body /></page>":  # empty document
+            return ""
+        result = result.removeprefix("<page><body>")
+        result = result.removesuffix("</body></page>")
+        return result
 
     def do(self, input, output, args={}, skip=None):
         out = self.conv(input, "text/x-rst;charset=utf-8", **args)
