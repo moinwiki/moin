@@ -389,6 +389,26 @@ text""",
             ".. include:: RecentChanges",
             '<xinclude:include alt="&lt;&lt;Include(RecentChanges)&gt;&gt;" content-type="x-moin/macro;name=Include" xinclude:href="wiki.local:RecentChanges" />',
         ),
+        (".. meta::\n   :description lang=en: An amusing story", ""),  # TODO: handle metadata (which?, how?)
+        (".. raw:: latex\n\n   potentially \\emph{harmfull} content", ""),  # ignore "foreign" formats
+        (
+            ".. raw:: html\n\n   <div>potentially harmfull content</div>",
+            '<admonition type="error">'
+            '<p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 1) </p>'
+            "<p>Raw HTML is not supported in Moin.</p>"
+            "<blockcode>&lt;div&gt;potentially harmfull content&lt;/div&gt;</blockcode>"
+            "</admonition>",
+        ),
+        (
+            ".. role:: raw-html(raw)\n  :format: html\n\nParagraph with :raw-html:`potentially harmfull` inline HTML.",
+            "<p>Paragraph with "
+            '<admonition type="error">'
+            '<p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 4) </p>'
+            "<p>Raw HTML is not supported in Moin.</p>"
+            "<blockcode>potentially harmfull</blockcode>"
+            "</admonition>"
+            " inline HTML.</p>",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)

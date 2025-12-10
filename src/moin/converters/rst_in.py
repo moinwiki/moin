@@ -26,7 +26,7 @@ import re
 import docutils
 from docutils import core, nodes, transforms, utils
 from docutils.nodes import reference, literal_block
-from docutils.parsers.rst import directives, roles
+from docutils.parsers.rst import directives
 
 try:
     from flask import g as flaskg
@@ -637,6 +637,14 @@ class NodeVisitor:
     def depart_problematic(self, node):
         self.close_moin_page_node()
 
+    def visit_raw(self, node):
+        if "html" in node.get("format", "").split():
+            msg = "Raw HTML is not supported in Moin."
+            content = nodes.literal_block("", node.astext())
+            msg_node = node.document.reporter.error(msg, content, base_node=node)
+            walkabout(msg_node, self)
+        raise nodes.SkipNode
+
     def visit_reference(self, node):
         refuri = node.get("refuri", "")
         if refuri.startswith("<<") and refuri.endswith(">>"):  # moin macro
@@ -1011,14 +1019,6 @@ class MoinDirectives:
 
         # used for MoinMoin parsers
         directives.register_directive("parser", self.parser)
-
-        # disallow a few directives in order to prevent XSS
-        # for directive in ('meta', 'include', 'raw'):
-        for directive in ("meta", "raw"):
-            directives.register_directive(directive, None)
-
-        # disable the raw role
-        roles._roles["raw"] = None
 
         # As a quick fix for infinite includes we only allow a fixed number of
         # includes per page
