@@ -153,8 +153,7 @@ Text formatting
 to format text.
 
 * Less common styles are obtained via `interpreted text roles`_.
-* TODO: Some standard roles are currently ignored by Moin.
-  Content is shown without processing.
+* reStructuredText does not support ``***Nested** inline markup*``. [#]_
 
 .. list-table::
    :header-rows: 1
@@ -164,41 +163,47 @@ to format text.
      - Notes
 
    * - ``*emphasis*``
-     - *emphasis*
+     -   *emphasis*
      -
 
    * - ``**strong emphasis**``
-     - **strong emphasis**
+     -   **strong emphasis**
      -
 
    * - ````inline \literal\````
-     - ``inline \literal\``
+     -   ``inline \literal\``
      - In `literal context`_, `backslashes <backslash escapes_>`__
        have no special meaning.
 
+   * - ```Hamlet```
+     -   `Hamlet`
+     - `Interpreted text`_. The `default text role`_ is configurable,
+       it defaults to the "title" role (see below).
+
+   * - ``:ab:`abbr.```
+     -   :ab:`abbr.`
+     - Abbreviations, can be styled with custom CSS.
+
+   * - ``:code:`answer = 42```
+     -   :code:`answer = 42`
+     - For syntax highlight, see `custom text roles`_.
+
    * - ``:sub:`sub`\ script``
-     - :sub:`sub`\ script
-     - Character-level markup is possible …
+     -   :sub:`sub`\ script
+     - Character-level markup …
 
    * - ``:sup:`super`\ script``
-     - :sup:`super`\ script
-     - … using `escaped spaces <backslash escapes_>`__.
+     -   :sup:`super`\ script
+     - … requires `escaped spaces <backslash escapes_>`__.
 
-   * - ``:code:`print("hello world")```
-     - :code:`print("hello world")`
-     -
+       .. _"title" role:
 
-   * - ``***Nested** markup* is not supported.``
-     - ***Nested** markup* is not supported.
-     - .. This is a longstanding Docutils TODO issue.
+   * - ``:title:`Moin```
+     -   :title:`Moin`
+     - The title of a creative work (book, opera, coding project, etc.)
+       Analog to HTML <cite>. This is the initial `default text role`_.
 
-..
-  =====================  =================
-  ``:ab:`abbr.```        :ab:`abbr.`
-  ``:ac:`AC`/:ac:`DC```  :ac:`AC`/:ac:`DC`
-  ``:math:`\sin^2 x```   :math:`\sin^2 x`
-  ``:title:`Moin```      :title:`Moin`
-  =====================  =================
+.. [#] This is a longstanding Docutils TODO issue.
 
 .. _custom text roles:
 
@@ -1867,6 +1872,8 @@ system messages.
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-markup-recognition-rules
 .. _inline targets:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-internal-targets
+.. _interpreted text:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#interpreted-text
 .. _literal context:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-context
 .. _option lists:
@@ -1898,10 +1905,14 @@ system messages.
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#code
 .. _"contents" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
+.. _default text role:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#default-role
 .. _"figure" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure
 .. _"image" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#image
+.. _"include" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#include
 .. _"parsed-literal" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#parsed-literal
 .. _"role" directive:
