@@ -208,7 +208,7 @@ class NodeVisitor:
         self.depart_docinfo_item(node)
 
     def visit_block_quote(self, node):
-        self.open_moin_page_node(moin_page.blockquote())
+        self.open_moin_page_node(moin_page.blockquote(), node)
 
     def depart_block_quote(self, node):
         self.close_moin_page_node()
@@ -227,7 +227,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_definition(self, node):
-        self.open_moin_page_node(moin_page.list_item_body())
+        self.open_moin_page_node(moin_page.list_item_body(), node)
 
     def depart_definition(self, node):
         self.close_moin_page_node()
@@ -245,7 +245,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_docinfo(self, node):
-        self.open_moin_page_node(moin_page.table(attrib={html.class_: "moin-rst-fieldlist"}))
+        self.open_moin_page_node(moin_page.table(attrib={html.class_: "moin-rst-fieldlist"}), node)
         self.open_moin_page_node(moin_page.table_body())
 
     def depart_docinfo(self, node):
@@ -271,7 +271,7 @@ class NodeVisitor:
         self.depart_docinfo_item(node)
 
     def visit_caption(self, node):
-        self.open_moin_page_node(moin_page.figcaption())
+        self.open_moin_page_node(moin_page.figcaption(), node)
 
     def depart_caption(self, node):
         self.close_moin_page_node()
@@ -701,7 +701,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_rubric(self, node):
-        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title moin-rubric"}))
+        self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title moin-rubric"}), node)
 
     def depart_rubric(self, node):
         self.close_moin_page_node()
@@ -861,7 +861,7 @@ class NodeVisitor:
 
     def visit_topic(self, node):
         # content that is separate from the flow of the document
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside"}))
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside"}), node)
 
     def depart_topic(self, node):
         self.close_moin_page_node()

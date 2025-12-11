@@ -469,8 +469,8 @@ text""",
         # )
         # Topics, Sidebars, and Rubrics
         (
-            ".. topic:: Topic Title\n\n   topic content",
-            '<div xhtml:class="moin-aside"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></div>',
+            ".. topic:: Topic Title\n   :class: custom\n\n   topic content",
+            '<div xhtml:class="moin-aside custom"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></div>',
         ),
         (
             ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n   :class: float-right\n\n   sidebar content",
@@ -479,7 +479,10 @@ text""",
             '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
             "<p>sidebar content</p></div>",
         ),
-        (".. rubric:: Informal Heading", '<p xhtml:class="moin-title moin-rubric">Informal Heading</p>'),
+        (
+            ".. rubric:: Informal Heading\n  :class: custom",
+            '<p xhtml:class="moin-title moin-rubric custom">Informal Heading</p>',
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
