@@ -3,16 +3,22 @@
 # Copyright: 2004 Alexander Schremmer <alex AT alexanderweb DOT de>
 # Copyright: 2010 MoinMoin:DmitryAndreev
 # Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2025 Docutils:Günter Milde
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
 MoinMoin - reStructuredText input converter.
 
-It's based on the Docutils reST parser.
-Conversion of the Docutils document tree to the MoinMoin document tree.
+Parse and convert `reStructuredText`__ markup.
 
-This converter is based on ReStructuredText (2006-09-22).
-Works with Docutils version 0.5 (2008-06-25) or higher.
+Parsing is done by the Docutils "rst" parser.
+The NodeVisitor converts the obtained `Docutils Document Tree`__
+into a Moin ElementTree.
+
+This converter works with Docutils 0.22 (2025-07-29) or higher.
+
+__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+__ https://docutils.sourceforge.io/docs/ref/doctree.html
 """
 
 import re
@@ -44,7 +50,10 @@ logging = log.getLogger(__name__)
 
 class NodeVisitor:
     """
-    Part of docutils which converts docutils DOM tree to Moin DOM tree
+    Methods to convert a Docutils "Doctree" into a Moin DOM tree.
+
+    "Doctree" elements are specified in
+    https://docutils.sourceforge.io/docs/ref/doctree.html
     """
 
     def __init__(self):
@@ -59,9 +68,10 @@ class NodeVisitor:
 
     def dispatch_visit(self, node):
         """
-        Call self."``visit_`` + node class name" with `node` as
-        parameter.  If the ``visit_...`` method does not exist, call
-        self.unknown_visit.
+        Call "visit_" + node class name with `node` as parameter.
+
+        If the ``visit_...()`` method does not exist,
+        call ``self.unknown_visit()``.
         """
         node_name = node.__class__.__name__
         method = getattr(self, "visit_" + node_name, self.unknown_visit)
@@ -71,9 +81,10 @@ class NodeVisitor:
 
     def dispatch_departure(self, node):
         """
-        Call self."``depart_`` + node class name" with `node` as
-        parameter.  If the ``depart_...`` method does not exist, call
-        self.unknown_departure.
+        Call "depart_" + node class name with `node` as parameter.
+
+        If the ``depart_...()`` method does not exist,
+        call ``self.unknown_departure`()`.
         """
         node_name = node.__class__.__name__
         method = getattr(self, "depart_" + node_name, self.unknown_departure)
@@ -81,19 +92,22 @@ class NodeVisitor:
 
     def unknown_visit(self, node):
         """
-        Called when entering unknown `Node` types.
+        Do nothing for `node`. Children will be processed.
 
-        Raise an exception unless overridden.
+        Called when entering unknown `Node` types.
         """
         pass
 
     def unknown_departure(self, node):
         """
-        Called before exiting unknown `Node` types.
+        Silently exit unknown `node`.
 
-        Raise exception unless overridden.
+        Called before exiting unknown `Node` types.
         """
         pass
+
+    # Auxiliary methods
+    # -----------------
 
     def open_moin_page_node(self, mointree_element, node=None):
         if flaskg and getattr(flaskg, "add_lineno_attr", False):
@@ -121,6 +135,9 @@ class NodeVisitor:
 
     def tree(self):
         return self.root
+
+    # Visitor methods
+    # ---------------
 
     def visit_Text(self, node):
         text = node.astext()
@@ -392,6 +409,10 @@ class NodeVisitor:
 
     def visit_footnote(self, node):
         self.status.append("footnote")
+        # TODO:
+        # * if there are more footnotes than footnote-marks,
+        #   some footnotes are dropped
+        # * handle multiple marks to one footnote (\footnoteref)
 
     def depart_footnote(self, node):
         self.status.pop()
@@ -846,6 +867,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_title_reference(self, node):
+        # title of a creative work (analogous to HTML <cite>)
         pass
 
     def depart_title_reference(self, node):
