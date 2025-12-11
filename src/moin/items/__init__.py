@@ -18,7 +18,7 @@ Each class in this module corresponds to an item type.
 
 from time import time, strftime
 import json
-from io import BytesIO
+from io import BytesIO, IOBase
 from collections import namedtuple
 from operator import attrgetter
 import re
@@ -1600,9 +1600,13 @@ class Default(Contentful):
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
             if data is not None:
-                if not isinstance(data, (str, bytes)):
+
+                # werkzeug may return form data using type tempfile.SpooledTemporaryFile (issue 1974)
+                if isinstance(data, IOBase):
                     data = data.read()
-                if isinstance(data, bytes):
+
+                # decode text content we may have received in binary form
+                if isinstance(data, bytes) and isinstance(self.content, Text):
                     encoding = "utf-8"
                     if contenttype_guessed:
                         if m := re.search("charset=(.+?)($|;)", contenttype_guessed):
@@ -1612,7 +1616,8 @@ class Default(Contentful):
                     except ValueError:
                         flash(_("Invalid data content received. Expecting text content."), "error")
                         data = ""
-                if not isinstance(data, str):
+
+                if not isinstance(data, (bytes, str)):
                     abort(422, description="invalid content")
 
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
