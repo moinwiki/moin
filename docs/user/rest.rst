@@ -1379,7 +1379,7 @@ Directives`_ document.  This section introduces a selection.
 See also `Table Directives`_ and `Preformatted Text`_.
 
 Applications may add domain-specific directives.
-Moin adapts the "contents__" and "include" directives
+Moin adapts the "contents__" and "include_" directives
 and adds the "macro" and "parser" directives.
 
 __ `Table of Contents`_
@@ -1646,6 +1646,36 @@ Figures are declared with the `"figure" directive`_.
              The image URI does not work in
              the `external documentation`_.
 
+
+.. _include:
+
+Inclusions
+----------
+
+The `"include" directive`_ is adapted by Moin to include Wiki items.
+
+* No directive options are supported in Moin.
+* The special syntax for `standard definition files`_ works.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          .. include:: help-common/audio.mp3
+
+     - Not shown, because it prevents compilation of the `external
+       documentation`_.
+
+   * - ::
+
+          .. include:: <html-roles.txt>
+
+     - The roles defined in the included file can be used in
+       the document.
 
 .. _rubrics:
 
@@ -1931,6 +1961,8 @@ system messages.
 .. _"rfc-reference" role:
     https://docutils.sourceforge.io/docs/ref/rst/roles.html#rfc-reference
 
+.. _standard definition files:
+    https://docutils.sourceforge.io/docs/ref/rst/definitions.html
 .. _severity level:
     https://docutils.sourceforge.io/docs/peps/pep-0258.html#error-handling
 .. _report level:
