@@ -27,6 +27,7 @@ import docutils
 from docutils import core, nodes, transforms, utils
 from docutils.nodes import reference, literal_block
 from docutils.parsers.rst import directives
+import docutils.parsers.rst.directives.misc
 
 try:
     from flask import g as flaskg
@@ -1006,7 +1007,7 @@ class MoinDirectives:
     def __init__(self):
 
         # include MoinMoin pages
-        directives.register_directive("include", self.include)
+        directives.register_directive("include", self.Include)
 
         # used for MoinMoin macros
         directives.register_directive("macro", self.macro)
@@ -1017,38 +1018,31 @@ class MoinDirectives:
         # used for MoinMoin parsers
         directives.register_directive("parser", self.parser)
 
+    class Include(directives.misc.Include):
+        """Include MoinMoin pages instead of files from the filesystem."""
+
+        option_spec = {}  # no options for now...
+
         # As a quick fix for infinite includes we only allow a fixed number of
         # includes per page
-        self.num_includes = 0
-        self.max_includes = 10
+        num_includes = 0
+        max_includes = 10
 
-    # Handle the include directive rather than letting the default docutils
-    # parser handle it. This allows the inclusion of MoinMoin pages instead of
-    # something from the filesystem.
-    def include(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-        # content contains the included file name
+        def run(self):
+            path = directives.path(self.arguments[0])
 
-        # TODO: i18n for errors
+            # Limit the number of documents that can be included
+            if self.num_includes < self.max_includes:
+                self.num_includes += 1
+            else:
+                # TODO: i18n for errors
+                lines = ["**Maximum number of allowed includes exceeded**"]
+                self.state_machine.insert_input(lines, "MoinDirectives")
+                return []
 
-        # Limit the number of documents that can be included
-        if self.num_includes < self.max_includes:
-            self.num_includes += 1
-        else:
-            lines = ["**Maximum number of allowed includes exceeded**"]
-            state_machine.insert_input(lines, "MoinDirectives")
-            return []
-
-        if content:
-            macro = f"<<Include({content[0]})>>"
-        else:
-            macro = "<<Include()>>"
-        ref = reference(macro, refuri=macro)
-        return [ref]
-
-    include.has_content = include.content = True
-    include.option_spec = {}
-    include.required_arguments = 1
-    include.optional_arguments = 0
+            macro = f"<<Include({path})>>"
+            ref = nodes.reference(macro, refuri=macro)  # TODO: use <pending> node
+            return [ref]
 
     # Add additional macro directive.
     # This allows MoinMoin macros to be used either by using the directive
