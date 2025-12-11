@@ -165,6 +165,7 @@ div.warning > p { margin-top: 8px; padding-left: 4em; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
 .resize { max-width: 100%; height: auto; }
+span.cite { font-style: italic; } /* emulate <cite> */
 /* end of userstyles */
 
 /* links */

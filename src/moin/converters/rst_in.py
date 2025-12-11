@@ -201,6 +201,18 @@ class NodeVisitor:
 
     depart_warning = depart_admonition
 
+    def visit_abbreviation(self, node):
+        self.open_moin_page_node(moin_page.span(attrib={html.class_: "abbr"}), node)
+
+    def depart_abbreviation(self, node):
+        self.close_moin_page_node()
+
+    def visit_acronym(self, node):
+        self.open_moin_page_node(moin_page.span(attrib={html.class_: "abbr"}), node)
+
+    def depart_acronym(self, node):
+        self.close_moin_page_node()
+
     def visit_address(self, node):
         self.visit_docinfo_item(node, "address")
 
@@ -868,10 +880,10 @@ class NodeVisitor:
 
     def visit_title_reference(self, node):
         # title of a creative work (analogous to HTML <cite>)
-        pass
+        self.open_moin_page_node(moin_page.span(attrib={html.class_: "cite"}), node)
 
     def depart_title_reference(self, node):
-        pass
+        self.close_moin_page_node()
 
     def visit_transition(self, node):
         # TODO: add to rst_out
