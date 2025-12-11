@@ -146,7 +146,7 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
        tables_, admonitions_, ...).
 
 
-Text formatting
+Text Formatting
 ===============
 
 `Inline markup`_ can be applied to words or phrases within a text block
@@ -205,7 +205,44 @@ to format text.
 
 .. [#] This is a longstanding Docutils TODO issue.
 
-.. _custom text roles:
+
+Additional Text Roles
+---------------------
+
+Including__ the "html-roles.txt" `standard definition file`_ adds roles that
+correspond to HTML elements representing `edits to the document`__ and
+`text-level semantics`__.
+
+__ include_
+__ https://html.spec.whatwg.org/multipage/edits.html
+__ https://html.spec.whatwg.org/multipage/text-level-semantics.html
+
+.. include:: <html-roles.txt>
+
+===================  ===============  ====================================
+Markup               Result           Notes
+===================  ===============  ====================================
+``:del:`removed```   :del:`removed`   removed content
+``:ins:`inserted```  :ins:`inserted`  editional additions
+``:b:`keyword```     :b:`keyword`     highlight :b:`key words`
+                                      without marking them up as important
+``:dfn:`dfn```       :dfn:`dfn`       the defining instance of a term
+``:i:`rôle```        :i:`rôle`        alternative voice
+``:kbd:`Ctrl X```    :kbd:`Ctrl X`    user input
+``:mark:`up```       :mark:`up`       highlight a :mark:`run of text`
+``:q:`Tagline!```    :q:`Tagline!`    content quoted from another source
+``:s:`strike```      :s:`strike`      text that is inaccurate or
+                                      no longer relevant
+``:samp:`Ready!```   :samp:`Ready!`   computer output
+``:small:`print```   :small:`print`   side comments
+``:u:`borken```      :u:`borken`      unarticulated annotations of, e.g,
+                                      :u:`mispellings`
+``:var:`n```         :var:`n`         variables (or constants)
+===================  ===============  ====================================
+
+
+Custom Text Roles
+-----------------
 
 *Custom interpreted text roles* can be used to attach CSS class values to
 inline text and set the code language for syntax highlight
@@ -217,30 +254,6 @@ inline text and set the code language for syntax highlight
    * - Markup
      - Result
      - Notes
-
-   * - ::
-
-         .. role:: del
-
-       ``:del:`removed` content``
-
-     - .. role:: del
-
-       :del:`removed` content
-
-     - Uses the `\<del>`_ element.
-
-   * - ::
-
-         .. role:: ins
-
-       ``:ins:`editional` additions``
-
-     - .. role:: ins
-
-       :ins:`editional` additions
-
-     - Uses the `\<ins>`_ element.
 
    * - ::
 
@@ -303,34 +316,6 @@ inline text and set the code language for syntax highlight
 
 * The examples rely on `Moin CSS classes`_ missing in the `external
   documentation`_.
-
-
-* TODO: Support semantic HTML inline markup elements.
-
-  ..
-    .. role:: b
-    .. role:: dfn
-    .. role:: i
-    .. role:: kbd
-    .. role:: mark
-    .. role:: q
-    .. role:: s
-    .. role:: samp
-    .. role:: small
-    .. role:: u
-    .. role:: var
-
-    :b:    highlight :b:`key words` without marking them up as important
-    :dfn:  :dfn:`dfn` represents the defining instance of a term
-    :i:    :i:`voix alternative`
-    :kbd:  user input like :kbd:`Ctrl X`
-    :mark: :mark:`highlight` a run of text
-    :q:    represents :q:`phrasing content quoted from another source`
-    :s:    text that is no longer accurate, :s:`or no longer relevant`
-    :samp: computer output like :samp:`hello world!`
-    :small: side comments :small:`like this`
-    :u:    unarticulated annotations of, e.g, :u:`mispellings`
-    :var:  variables (or constants like :var:`c`)
 
 
 Hyperlinks
@@ -1675,7 +1660,8 @@ The `"include" directive`_ is adapted by Moin to include Wiki items.
           .. include:: <html-roles.txt>
 
      - The roles defined in the included file can be used in
-       the document.
+       the document. Cf. `additional text roles`_.
+
 
 .. _rubrics:
 
@@ -1961,6 +1947,7 @@ system messages.
 .. _"rfc-reference" role:
     https://docutils.sourceforge.io/docs/ref/rst/roles.html#rfc-reference
 
+.. _standard definition file:
 .. _standard definition files:
     https://docutils.sourceforge.io/docs/ref/rst/definitions.html
 .. _severity level:
@@ -1969,9 +1956,6 @@ system messages.
     https://docutils.sourceforge.io/docs/user/config.html#report-level
 
 .. _URI references: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#URI_references
-
-.. _\<del>: https://html.spec.whatwg.org/multipage/edits.html#the-del-element
-.. _\<ins>: https://html.spec.whatwg.org/multipage/edits.html#the-ins-element
 
 .. _Moin CSS classes:
     https://moin-20.readthedocs.io/en/latest/user/moinwiki.html
