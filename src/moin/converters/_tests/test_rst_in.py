@@ -26,17 +26,24 @@ class TestConverter:
         ("paragraph", "<p>paragraph</p>"),
         ("line 1\nline 2", "<p>line 1\nline 2</p>"),
         ("paragraph 1\n\nparagraph\n2", "<p>paragraph 1</p><p>paragraph\n2</p>"),
-        (
-            "H\\ :sub:`2`\\ O\n\nE = mc\\ :sup:`2`",
-            '<p>H<span baseline-shift="sub">2</span>O</p><p>E = mc<span baseline-shift="super">2</span></p>',
-        ),
-        (
-            "| Lend us a couple of bob till Thursday.",
-            "<line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block>",
-        ),
         ("**Text**", "<p><strong>Text</strong></p>"),
         ("*Text*", "<p><emphasis>Text</emphasis></p>"),
         ("``Text``", "<p><code>Text</code></p>"),
+        ("a _`Link`", '<p>a <span id="link">Link</span></p>'),
+        ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator xhtml:class="moin-hr2" /><p>break</p>'),
+        (".. comment", '<div class="comment dashed">comment</div>'),
+        ("..\n comment", '<div class="comment dashed">comment</div>'),
+    ]
+
+    @pytest.mark.parametrize("input,output", data)
+    def test_base(self, input, output):
+        self.do(input, output)
+
+    # Interpreted text roles
+    data = [
+        # standard roles:
+        ("H\\ :sub:`2`\\ O", '<p>H<span baseline-shift="sub">2</span>O</p>'),
+        ("E = mc\\ :sup:`2`", '<p>E = mc<span baseline-shift="super">2</span></p>'),
         (  # custom role using a CSS class
             ".. role:: orange\n\n:orange:`colourful` text",
             '<p><span xhtml:class="orange">colourful</span> text</p>',
@@ -53,16 +60,13 @@ class TestConverter:
             '<span xhtml:class="s2">"Hurra!"</span><span xhtml:class="p">)</span>'
             "</code>.</p>",
         ),
-        ("a _`Link`", '<p>a <span id="link">Link</span></p>'),
-        ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator xhtml:class="moin-hr2" /><p>break</p>'),
-        (".. comment", '<div class="comment dashed">comment</div>'),
-        ("..\n comment", '<div class="comment dashed">comment</div>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)
-    def test_base(self, input, output):
+    def test_roles(self, input, output):
         self.do(input, output)
 
+    # Lists and line blocks
     data = [
         (
             "1. a\n   b\n   c\n\n2. b\n\n   d",
@@ -89,6 +93,11 @@ class TestConverter:
             '<blockquote><list item-label-generate="ordered" list-start="3"><list-item><list-item-body><p>A</p>'
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
             "</blockquote>",
+        ),
+        ("| line 1\n| line2", "<line-block><line-blk>line 1</line-blk><line-blk>line2</line-blk></line-block>"),
+        (
+            "| line 1\n|  nested line-block",
+            "<line-block><line-blk>line 1</line-blk><line-block><line-blk>nested line-block</line-blk></line-block></line-block>",
         ),
     ]
 
