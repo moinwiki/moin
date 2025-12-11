@@ -9,7 +9,12 @@ MoinMoin - Markdown input converter.
 https://daringfireball.net/projects/markdown/
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import re
+
 from html.entities import name2codepoint
 from collections import deque
 
@@ -32,10 +37,14 @@ import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
-from . import default_registry
+from moin import log
 from moin.utils.mime import Type, type_moin_document
 
-from moin import log
+from . import default_registry
+
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -421,10 +430,10 @@ class Converter(html_in.HtmlTags):
         )
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         """
         Convert markdown to moin DOM.
 

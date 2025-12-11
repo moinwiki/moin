@@ -9,6 +9,10 @@ MoinMoin - Markdown output converter.
 Convert an internal document tree into Markdown markup.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -22,6 +26,9 @@ from emeraldtree import ElementTree as ET
 
 from . import default_registry
 from moin.utils.mime import Type, type_moin_document
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class Markdown:
@@ -89,17 +96,17 @@ class Converter:
     direct_tags = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.list_item_labels = [""]
         self.list_item_label = ""
         self.list_level = 0
         self.footnotes = []  # tuple of (name, text)
         self.footnote_number = 0  # incremented if a footnote name was not passed
 
-    def __call__(self, root):
+    def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
         self.list_item_label = []

@@ -8,9 +8,13 @@
 MoinMoin - MoinWiki 1.9 input converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 
-from moin import wikiutil
+from moin import log, wikiutil
 from moin.constants.misc import URI_SCHEMES
 from moin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
 from moin.utils.interwiki import is_known_wiki
@@ -21,17 +25,20 @@ from moin.utils.tree import moin_page, xlink
 from . import default_registry
 from .moinwiki_in import Converter
 
-from moin import log
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
 
 class ConverterFormat19(Converter):
+
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    inline_freelink = r"""
+    inline_freelink: Final = (
+        r"""
          (?:
           (?<![%(u)s%(l)s/])  # require anything not upper/lower/slash before
           |
@@ -75,12 +82,14 @@ class ConverterFormat19(Converter):
           |
           $  # ... or end of line
          )
-    """ % {
-        "u": CHARS_UPPER,
-        "l": CHARS_LOWER,
-        "child": re.escape(wikiutil.CHILD_PREFIX),
-        "parent": re.escape(wikiutil.PARENT_PREFIX),
-    }
+    """
+        % {
+            "u": CHARS_UPPER,
+            "l": CHARS_LOWER,
+            "child": re.escape(wikiutil.CHILD_PREFIX),
+            "parent": re.escape(wikiutil.PARENT_PREFIX),
+        }
+    )
 
     def inline_freelink_repl(
         self,

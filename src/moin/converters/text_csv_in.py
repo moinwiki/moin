@@ -5,6 +5,10 @@
 MoinMoin - CSV text data to DOM converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import csv
 
 from ._table import TableMixin
@@ -15,6 +19,11 @@ from moin.i18n import _
 from . import default_registry
 from moin.utils.mime import Type, type_moin_document
 
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from moin.utils.mime import Type
+    from typing_extensions import Self
+
 
 class Converter(TableMixin):
     """
@@ -23,10 +32,10 @@ class Converter(TableMixin):
     """
 
     @classmethod
-    def _factory(cls, type_input, type_output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
         # Prevent incorrect output when there are multiple trailing blank lines
         text = text.rstrip()

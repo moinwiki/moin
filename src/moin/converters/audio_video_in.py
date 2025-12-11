@@ -7,12 +7,20 @@ MoinMoin - Audio/Video converter.
 Convert an audio/video file to an <object> tag for the DOM tree.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
 
 from . import default_registry
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, html
 from moin.utils.mime import Type, type_moin_document
 from moin.constants.keys import SUMMARY
+
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from moin.storage.middleware.indexing import Revision
+    from typing_extensions import Self
 
 
 class Converter:
@@ -21,13 +29,13 @@ class Converter:
     """
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls(input_type=input)
 
-    def __init__(self, input_type):
+    def __init__(self, input_type: Type) -> None:
         self.input_type = input_type
 
-    def __call__(self, rev, contenttype=None, arguments=None):
+    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         item_name = rev.item.fqname.fullname
         attrib = {
             moin_page.type_: str(self.input_type),

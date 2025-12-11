@@ -9,6 +9,10 @@ MoinMoin - MoinWiki output converter.
 Convert an internal document tree into MoinWiki markup.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -17,15 +21,17 @@ from re import findall, sub
 from emeraldtree import ElementTree as ET
 from markupsafe import Markup
 
+from moin import log
+from moin.macros import modules as macro_modules
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 
-from moin.macros import modules as macro_modules
 from . import ElementException
 from . import default_registry
 
-from moin import log
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -83,9 +89,9 @@ class Converter:
     Convert application/x.moin.document to text/x.moin.wiki.
     """
 
-    namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
+    namespaces: Final = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
 
-    supported_tag = {
+    supported_tag: Final = {
         "moinpage": (
             "a",
             "blockcode",
@@ -116,10 +122,10 @@ class Converter:
     }
 
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         # TODO: create class containing all table attributes
         self.table_tableclass = ""
@@ -139,7 +145,7 @@ class Converter:
         # 'list' - text inside list - <p> if after </p> = '<<BR>>' and </p> = ''
         # status added because of differences in interpretation of <p> in different places
 
-    def __call__(self, root):
+    def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
         self.list_item_label = []

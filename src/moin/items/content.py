@@ -20,7 +20,7 @@ Each class in this module corresponds to a content type value.
 
 from __future__ import annotations
 
-from typing import Any, IO, Protocol, TYPE_CHECKING
+from typing import Any, Callable, NamedTuple, IO, Protocol, TYPE_CHECKING
 from typing_extensions import override
 
 import os
@@ -32,7 +32,6 @@ import zipfile
 import tempfile
 from io import BytesIO
 from array import array
-from collections import namedtuple
 from operator import attrgetter
 
 from flask import current_app as app
@@ -54,22 +53,7 @@ try:
 except ImportError:
     PIL = PILImage = PILdiff = None
 
-from moin import wikiutil
-from moin.i18n import _, L_
-from moin.themes import render_template
-from moin.storage.error import StorageError
-from moin.utils.send_file import send_file
-from moin.utils.registry import RegistryBase
-from moin.utils.mimetype import MimeType
-from moin.utils.mime import Type, type_moin_document
-from moin.utils.tree import moin_page, html, xlink, docbook
-from moin.utils.iri import Iri
-from moin.utils.diff_text import diff as text_diff
-from moin.utils.diff_html import diff as html_diff
-from moin.utils.crypto import cache_key
-from moin.utils.clock import timed
-from moin.utils.interwiki import get_download_file_name
-from moin.forms import File
+from moin import log, wikiutil
 from moin.constants.contenttypes import (
     GROUP_MARKUP_TEXT,
     GROUP_OTHER_TEXT,
@@ -82,8 +66,21 @@ from moin.constants.contenttypes import (
     CHARSET,
 )
 from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_ALGORITHM, ACTION_SAVE, NAMESPACE, REVID
-
-from moin import log
+from moin.forms import File
+from moin.i18n import _, L_
+from moin.storage.error import StorageError
+from moin.themes import render_template
+from moin.utils.clock import timed
+from moin.utils.crypto import cache_key
+from moin.utils.diff_html import diff as html_diff
+from moin.utils.diff_text import diff as text_diff
+from moin.utils.interwiki import get_download_file_name
+from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document
+from moin.utils.mimetype import MimeType
+from moin.utils.registry import RegistryBase
+from moin.utils.send_file import send_file
+from moin.utils.tree import moin_page, html, xlink, docbook
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -99,15 +96,23 @@ COLS = 80
 ROWS_DATA = 20
 
 
-class RegistryContent(RegistryBase):
-    class Entry(
-        namedtuple("Entry", "factory content_type default_contenttype_params display_name ingroup_order priority")
-    ):
-        def __call__(self, content_type: str, *args, **kw):
-            if self.content_type.issupertype(Type(content_type)):
-                return self.factory(content_type, *args, **kw)
+class RegistryContent(RegistryBase["Content"]):
 
-        def __lt__(self, other):
+    class Entry(NamedTuple):
+
+        factory: Callable[..., Content]
+        content_type: Type
+        default_contenttype_params: dict[str, Any]
+        display_name: str
+        ingroup_order: int
+        priority: int
+
+        def __call__(self, content_type: str, *args: Any, **kwargs: Any) -> Content | None:
+            if self.content_type.issupertype(Type(content_type)):
+                return self.factory(content_type, *args, **kwargs)
+            return None
+
+        def __lt__(self, other: Any) -> Any:
             if isinstance(other, self.__class__):
                 # Within the registry, content_type is sorted in descending
                 # order (more specific first) while priority is in ascending
@@ -115,22 +120,22 @@ class RegistryContent(RegistryBase):
                 return (other.content_type, self.priority) < (self.content_type, other.priority)
             return NotImplemented
 
-    def __init__(self, group_names):
+    def __init__(self, group_names: list[str]) -> None:
         super().__init__()
         self.group_names = group_names
-        self.groups = {g: [] for g in group_names}
+        self.groups: dict[str, list[RegistryContent.Entry]] = {g: [] for g in group_names}
 
-    def register(self, e, group):
+    def register(self, entry: Entry, group: str | None) -> None:
         """
         Register a content type entry and optionally add it to a specific group.
         """
         # If group is specified and contenttype is not a wildcard one
-        if group and e.content_type.type and e.content_type.subtype:
+        if group and entry.content_type.type and entry.content_type.subtype:
             if group not in self.groups:
                 raise ValueError(f"Unknown group name: {group}")
-            self.groups[group].append(e)
+            self.groups[group].append(entry)
             self.groups[group].sort(key=attrgetter("ingroup_order"))
-        return self._register(e)
+        self._register(entry)
 
 
 content_registry = RegistryContent(
@@ -153,9 +158,11 @@ def register(cls):
     return cls
 
 
-def content_registry_enable(contenttype_enabled):
-    """Remove content types from the registry that are not explicitly enabled"""
-    groups_enabled = {g: [] for g in content_registry.group_names}
+def content_registry_enable(contenttype_enabled: list[str]) -> None:
+    """
+    Remove content types from the registry that are not explicitly enabled
+    """
+    groups_enabled: dict[str, list[RegistryContent.Entry]] = {g: [] for g in content_registry.group_names}
     for group in content_registry.group_names:
         for e in content_registry.groups[group]:
             if e.display_name and e.display_name in contenttype_enabled:
@@ -164,9 +171,11 @@ def content_registry_enable(contenttype_enabled):
     content_registry.groups = groups_enabled
 
 
-def content_registry_disable(contenttype_disabled):
-    """Remove disabled content types from registry"""
-    groups_enabled = {g: [] for g in content_registry.group_names}
+def content_registry_disable(contenttype_disabled: list[str]) -> None:
+    """
+    Remove disabled content types from registry
+    """
+    groups_enabled: dict[str, list[RegistryContent.Entry]] = {g: [] for g in content_registry.group_names}
     for group in content_registry.group_names:
         for e in content_registry.groups[group]:
             if not e.display_name or e.display_name not in contenttype_disabled:
@@ -202,6 +211,7 @@ class Content:
     @classmethod
     def create(cls, contenttype: str, item: Item | None = None) -> Content:
         content = content_registry.get(contenttype, item)
+        assert content is not None
         logging.debug(f"Content class {content.__class__!r} handles {contenttype!r}")
         return content
 
@@ -775,8 +785,9 @@ class TransformableBitmapImage(RenderableBitmapImage):
 
     map_content_to_output_type = {"image/jpeg": "JPEG", "image/png": "PNG", "image/gif": "GIF", "image/webp": "WebP"}
 
-    def _transform(self, content_type, size=None, transpose_op=None):
-        """resize to new size (optional), transpose according to exif infos,
+    def _transform(self, content_type: str, size=None, transpose_op=None):
+        """
+        resize to new size (optional), transpose according to exif infos,
         result data should be content_type.
         """
         try:

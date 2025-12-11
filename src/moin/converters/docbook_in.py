@@ -14,6 +14,10 @@ for backward compatibility:
 - ulink
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 
 from emeraldtree import ElementTree as ET
@@ -24,6 +28,7 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin import log
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
@@ -31,7 +36,10 @@ from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
 from . import default_registry
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
-from moin import log
+if TYPE_CHECKING:
+    from emeraldtree.ElementTree import Element
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -72,11 +80,11 @@ class Converter:
     """
 
     # Namespace of our input data
-    docbook_namespace = {docbook.namespace: "docbook"}
+    docbook_namespace: Final = {docbook.namespace: "docbook"}
 
     # DocBook elements that are completely ignored by our converter
     # We do not even process children of these elements
-    ignored_tags = {
+    ignored_tags: Final = {
         # Info elements
         "abstract",
         "artpagenums",
@@ -246,7 +254,7 @@ class Converter:
 
     # DocBook inline elements which does not have equivalence in the DOM
     # tree, but we keep the information using <span element='tag.name'>
-    inline_tags = {
+    inline_tags: Final = {
         "abbrev",
         "address",
         "accel",
@@ -310,7 +318,7 @@ class Converter:
 
     # DocBook block element which does not have equivalence in the DOM
     # tree, but we keep the information using <div html:class='tag.name'>
-    block_tags = {
+    block_tags: Final = {
         "acknowledgements",
         "appendix",
         "article",
@@ -344,12 +352,12 @@ class Converter:
     # DocBook has admonition as individual element, but the DOM Tree
     # has only one element for it, so we will convert all the DocBook
     # admonitions in this list, into the admonition element of the DOM Tree.
-    admonition_tags = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
+    admonition_tags: Final = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
 
     # DocBook can handle three kinds of media: audio, image, video.
     # TODO: a media format attribute is optional, e.g.: <imagedata format="jpeg" fileref="jpeg.jpg"/>
     #     XXX: quality of supported formats list is suspect, see below
-    media_tags = {
+    media_tags: Final = {
         # <tagname>: (<formats list>, <child tagname>, <mime type>)
         "audioobject": (
             ["x-wav", "mpeg", "ogg", "webm"],  # XXX: none of these are in http://docbook.org/tdg/en/html/audiodata.html
@@ -369,7 +377,7 @@ class Converter:
     }
 
     # DocBook tags which can be convert directly to a DOM Tree element
-    simple_tags = {
+    simple_tags: Final = {
         "code": moin_page.code,
         "computeroutput": moin_page.code,
         "glossdef": moin_page("list-item-body"),
@@ -396,7 +404,7 @@ class Converter:
     }
 
     # Other block elements which can be root element.
-    root_tags = {
+    root_tags: Final = {
         "blockquote",
         "formalpara",
         "informalequation",
@@ -420,10 +428,10 @@ class Converter:
     sect_re = re.compile("sect[1-5]")
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Element:
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
         docbook_str = "\n".join(content)

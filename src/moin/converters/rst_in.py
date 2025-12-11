@@ -21,6 +21,10 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
 __ https://docutils.sourceforge.io/docs/ref/doctree.html
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import re
 
 import docutils
@@ -34,6 +38,7 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin import log
 from moin.converters.html_in import HtmlTags
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
@@ -43,7 +48,9 @@ from moin.wikiutil import anchor_name_from_text
 from . import default_registry
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -1129,11 +1136,12 @@ class MoinDirectives:
 
 
 class Converter:
+
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
         input = normalize_split_text(text)
         MoinDirectives()

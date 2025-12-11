@@ -88,6 +88,10 @@ effects are implemented through specialized tags rather than CSS classes.
 In the example above, only class="comment" will be applied to detail.csv.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 from emeraldtree import ElementTree as ET
 import re
 import copy
@@ -109,6 +113,11 @@ from . import default_registry
 from ._args import Arguments
 
 from moin import log
+
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from moin.utils.mime import Type
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -147,7 +156,7 @@ class XPointer(list):
         # Anything else
         [^()^]+
     """
-    tokenizer_re = re.compile(tokenizer_rules, re.X)
+    tokenizer_re: Final = re.compile(tokenizer_rules, re.X)
 
     class Entry:
         __slots__ = "name", "data"
@@ -160,7 +169,7 @@ class XPointer(list):
             data = self.data.replace("^(", "(").replace("^)", ")")
             return data.replace("^^", "^")
 
-    def __init__(self, input):
+    def __init__(self, input) -> None:
         name = []
         stack = []
 
@@ -193,9 +202,8 @@ class XPointer(list):
 class Converter:
 
     @classmethod
-    def _factory(cls, input, output, includes=None, **kw):
-        if includes == "expandall":
-            return cls()
+    def _factory(cls, input: Type, output: Type, includes: str | None = None, **kwargs: Any) -> Self | None:
+        return cls() if includes == "expandall" else None
 
     def recurse(self, elem, page_href):
         # on first call, elem.tag.name=='page'.
@@ -470,7 +478,7 @@ class Converter:
         finally:
             self.stack.pop()
 
-    def __call__(self, tree):
+    def __call__(self, tree: Any) -> Any:
         self.stack = []
         self.recurse(tree, None)
         return tree

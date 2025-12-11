@@ -2,40 +2,48 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-MoinMoin - module registry.
+MoinMoin - generic registry base class.
 
-Every module registers a factory for itself in the registry with a given
-priority. During lookup, each factory is called with the given arguments and
-may return a callable to indicate it is a match.
+Each registration consists of a factory function together with a list of
+arbitrary arguments. Registered entries can be ordered by priority. 
+During lookup, each factory is called with the provided arguments and
+may return a callable to indicate a match.
 """
 
+from __future__ import annotations
 
-from collections import namedtuple
+from typing import Any, Callable, Generic, Protocol, TypeAlias, TypeVar
+
+T = TypeVar("T", covariant=True)
+
+TFactory: TypeAlias = Callable[..., T]
 
 
-class RegistryBase:
+class _RegistryEntry(Protocol[T]):
+
+    @property
+    def factory(self) -> TFactory: ...
+
+    def __call__(self, *args: Any, **kw: Any) -> T | None: ...
+
+    def __lt__(self, other: Any) -> Any: ...
+
+
+class RegistryBase(Generic[T]):
+
     PRIORITY_REALLY_FIRST = -20
     PRIORITY_FIRST = -10
     PRIORITY_MIDDLE = 0
     PRIORITY_LAST = 10
     PRIORITY_REALLY_LAST = 20
 
-    class Entry(namedtuple("Entry", "factory priority")):
-        def __call__(self, *args, **kw):
-            return self.factory(*args, **kw)
+    def __init__(self) -> None:
+        self._entries: list[_RegistryEntry[T]] = []
 
-        def __lt__(self, other):
-            if isinstance(other, self.__class__):
-                return self.priority < other.priority
-            return NotImplemented
-
-    def __init__(self):
-        self._entries = []
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: {self._entries!r}>"
 
-    def get(self, *args, **kw):
+    def get(self, *args: Any, **kwargs: Any) -> T | None:
         """
         Look up a matching module.
 
@@ -43,11 +51,11 @@ class RegistryBase:
         the first match wins.
         """
         for entry in self._entries:
-            conv = entry(*args, **kw)
-            if conv is not None:
+            if (conv := entry(*args, **kwargs)) is not None:
                 return conv
+        return None
 
-    def _register(self, entry):
+    def _register(self, entry: _RegistryEntry[T]) -> None:
         if entry not in self._entries:
             entries = self._entries[:]
             for i in range(len(entries)):
@@ -58,7 +66,7 @@ class RegistryBase:
                 entries.append(entry)
             self._entries = entries
 
-    def unregister(self, factory):
+    def unregister(self, factory: TFactory) -> None:
         """
         Unregister a factory.
 
@@ -70,13 +78,3 @@ class RegistryBase:
             # TODO: Is this necessary?
             raise ValueError
         self._entries = entries
-
-
-class Registry(RegistryBase):
-    def register(self, factory, priority=RegistryBase.PRIORITY_MIDDLE):
-        """
-        Register a factory.
-
-        :param factory: Factory to register. Callable that must return a class.
-        """
-        return self._register(self.Entry(factory, priority))

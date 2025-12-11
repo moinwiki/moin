@@ -9,7 +9,7 @@ Convert any item to a DOM tree (we just create a link to download it).
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from moin.constants.keys import NAME
 from moin.i18n import _
@@ -22,6 +22,7 @@ from . import default_registry
 if TYPE_CHECKING:
     from emeraldtree.ElementTree import Element
     from moin.converters._args import Arguments
+    from moin.storage.middleware.indexing import Revision
     from typing_extensions import Self
 
 
@@ -40,22 +41,26 @@ class Converter:
     def _factory(cls, input: Type, output: Type, **kwargs) -> Self:
         return cls()
 
-    def __call__(self, rev: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Element:
+    def __call__(
+        self, revision: Revision, contenttype: str | None = None, arguments: Arguments | None = None
+    ) -> Element:
 
         try:
-            item_name = rev.item.fqname.fullname or rev.meta[NAME][0]
+            item_name = revision.item.fqname.fullname or revision.meta[NAME][0]
         except IndexError:
             # item is deleted
             message = _(
                 "This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}"
-            ).format(itemid=rev.item.itemid)
+            ).format(itemid=revision.item.itemid)
             return make_message_page(message)
         except AttributeError:
             # conversion only works for instances of Revision or DummyRev
             message = _("No DOM representation possible for this content.")
             return make_message_page(message, "note")
 
-        attrib = {xlink.href: Iri(scheme="wiki", authority="", path="/" + item_name, query=f"do=get&rev={rev.revid}")}
+        attrib = {
+            xlink.href: Iri(scheme="wiki", authority="", path="/" + item_name, query=f"do=get&rev={revision.revid}")
+        }
         a = moin_page.a(attrib=attrib, children=[_("Download {item_name}.").format(item_name=item_name)])
         body = moin_page.body(children=(a,))
         return moin_page.page(children=(body,))

@@ -6,6 +6,10 @@
 MoinMoin - PDF input converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import io
 from datetime import datetime, timedelta
 import logging as stdlogging
@@ -16,9 +20,13 @@ from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 
 from . import default_registry
+from moin import log
 from moin.utils.mime import Type, type_text_plain
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from moin.storage.middleware.indexing import Revision
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -31,17 +39,18 @@ LAPARAMS = LAParams()
 
 
 class PDFIndexingConverter:
+
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, rev, contenttype=None, arguments=None):
+    def __call__(self, revision: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         rsrcmgr = PDFResourceManager()
         max_parse_time = timedelta(seconds=15)
         start = datetime.now()
         with io.StringIO() as f, TextConverter(rsrcmgr, f, laparams=LAPARAMS) as device:
             interpreter = PDFPageInterpreter(rsrcmgr, device)
-            for page_idx, page in enumerate(PDFPage.get_pages(rev)):
+            for page_idx, page in enumerate(PDFPage.get_pages(revision)):
                 logging.debug("Processing PDF page %d", page_idx)
                 interpreter.process_page(page)
                 if datetime.now() - start > max_parse_time:

@@ -18,24 +18,39 @@ There are usually three types of converters:
 TODO: Merge with new-style macros.
 """
 
+from __future__ import annotations
 
-from collections import namedtuple
+from typing import Any, Callable, NamedTuple, Protocol, TYPE_CHECKING
 
 from ..utils.registry import RegistryBase
 from ..utils.pysupport import load_package_modules
+
+if TYPE_CHECKING:
+    from moin.utils.mime import Type
 
 
 class ElementException(RuntimeError):
     pass
 
 
-class RegistryConverter(RegistryBase):
-    class Entry(namedtuple("Entry", "factory type_input type_output priority")):
-        def __call__(self, type_input, type_output, **kw):
-            if self.type_output.issupertype(type_output) and self.type_input.issupertype(type_input):
-                return self.factory(type_input, type_output, **kw)
+class Converter(Protocol):
+    def __call__(self, *args: Any, **kwargs) -> Any | None: ...
 
-        def __lt__(self, other):
+
+class RegistryConverter(RegistryBase[Converter]):
+
+    class Entry(NamedTuple):
+        factory: Callable[[Type, Type], Converter | None]
+        type_input: Type
+        type_output: Type
+        priority: int
+
+        def __call__(self, type_input: Type, type_output: Type, **kwargs) -> Converter | None:
+            if self.type_output.issupertype(type_output) and self.type_input.issupertype(type_input):
+                return self.factory(type_input, type_output, **kwargs)
+            return None
+
+        def __lt__(self, other: Any):
             if isinstance(other, self.__class__):
                 if self.type_output != other.type_output:
                     return other.type_output.issupertype(self.type_output)
@@ -46,13 +61,19 @@ class RegistryConverter(RegistryBase):
                 return False
             return NotImplemented
 
-    def register(self, factory, type_input, type_output, priority=RegistryBase.PRIORITY_MIDDLE):
+    def register(
+        self,
+        factory: Callable[..., Converter | None],
+        type_input: Type,
+        type_output: Type,
+        priority: int = RegistryBase.PRIORITY_MIDDLE,
+    ) -> None:
         """
         Register a factory.
 
         :param factory: Factory to register. Callable; must return an object.
         """
-        return self._register(self.Entry(factory, type_input, type_output, priority))
+        self._register(self.Entry(factory, type_input, type_output, priority))
 
 
 default_registry = RegistryConverter()

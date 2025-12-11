@@ -7,6 +7,10 @@ MoinMoin - Macro handling.
 Expands all macro elements in an internal Moin document.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 from flask import current_app as app
 
 from emeraldtree import ElementTree as ET
@@ -22,14 +26,17 @@ from . import default_registry
 
 from moin import log
 
+if TYPE_CHECKING:
+    from typing_extensions import Self
+
 logging = log.getLogger(__name__)
 
 
 class Converter:
+
     @classmethod
-    def _factory(cls, input, output, macros=None, **kw):
-        if macros == "expandall":
-            return cls()
+    def _factory(cls, input: Type, output: Type, macros: str | None = None, **kwargs: Any) -> Self | None:
+        return cls() if macros == "expandall" else None
 
     def handle_macro(self, elem, page):
         logging.debug(f"handle_macro elem: {elem!r}")
@@ -88,7 +95,7 @@ class Converter:
             if isinstance(child, ET.Node):
                 yield from self.recurse(child, page)
 
-    def __call__(self, tree):
+    def __call__(self, tree: Any) -> Any:
         for elem, page in self.recurse(tree, None):
             self.handle_macro(elem, page)
         return tree
