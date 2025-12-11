@@ -42,8 +42,8 @@ class TestConverter:
     # Interpreted text roles
     data = [
         # standard roles:
-        (":abbreviation:`abbr.`", '<p><span xhtml:class="abbr">abbr.</span></p>'),
-        (":ac:`DC`", '<p><span xhtml:class="abbr">DC</span></p>'),
+        (":abbreviation:`abbr.`", '<p><span xhtml:class="html-abbr">abbr.</span></p>'),
+        (":ac:`DC`", '<p><span xhtml:class="html-abbr">DC</span></p>'),
         (r":code:`y = exp(x)`", r'<p><code xhtml:class="code">y = exp(x)</code></p>'),
         (r":literal:`% \ `", "<p><code>% </code></p>"),
         (r":math:`\sin(x)`", r"<p>\sin(x)</p>"),  # TODO: properly support mathematical content
@@ -51,15 +51,17 @@ class TestConverter:
         (":PEP:`01`", '<p><a xlink:href="https://peps.python.org/pep-0001">PEP 01</a></p>'),
         ("H\\ :sub:`2`\\ O", '<p>H<span baseline-shift="sub">2</span>O</p>'),
         ("E = mc\\ :sup:`2`", '<p>E = mc<span baseline-shift="super">2</span></p>'),
-        (":title-reference:`Hamlet`", '<p><span xhtml:class="cite">Hamlet</span></p>'),
-        (  # custom role using a CSS class
-            ".. role:: orange\n\n:orange:`colourful` text",
-            '<p><span xhtml:class="orange">colourful</span> text</p>',
-        ),
-        (  # special custom roles for <del> and <ins>
-            ".. role:: del\n.. role:: ins\n\n:del:`deleted` text :ins:`inserted` text",
-            "<p><del>deleted</del> text <ins>inserted</ins> text</p>",
-        ),
+        (":title-reference:`Hamlet`", '<p><span xhtml:class="html-cite">Hamlet</span></p>'),
+        # custom roles
+        (".. role:: orange\n\n:orange:`colourful` text", '<p><span xhtml:class="orange">colourful</span> text</p>'),
+        # custom roles with matching Moin element
+        (".. role:: del\n\n:del:`deleted` text", "<p><del>deleted</del> text</p>"),
+        (".. role:: ins\n\n:ins:`inserted` text", "<p><ins>inserted</ins> text</p>"),
+        (".. role:: s\n\n:s:`obsolete` text", "<p><s>obsolete</s> text</p>"),
+        (".. role:: u\n\n:u:`annoted` text", "<p><u>annoted</u> text</p>"),
+        # custom roles with matching HTML element
+        (".. role:: dfn\n\n:dfn:`term`", '<p><span xhtml:class="html-dfn">term</span></p>'),
+        (".. role:: kbd\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span xhtml:class="html-kbd">Ctrl-X</span></p>'),
         (  # custom role derived from "code" with syntax highlight
             '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
             '<p>Inline code like <code xhtml:class="code python">'

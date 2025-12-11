@@ -34,6 +34,7 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
+from moin.converters.html_in import HtmlTags
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
@@ -201,13 +202,15 @@ class NodeVisitor:
     depart_warning = depart_admonition
 
     def visit_abbreviation(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={html.class_: "abbr"}), node)
+        attrib = {html.class_: "html-abbr"}
+        self.open_moin_page_node(moin_page.span(attrib=attrib), node)
 
     def depart_abbreviation(self, node):
         self.close_moin_page_node()
 
     def visit_acronym(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={html.class_: "abbr"}), node)
+        attrib = {html.class_: "html-abbr"}
+        self.open_moin_page_node(moin_page.span(attrib=attrib), node)
 
     def depart_acronym(self, node):
         self.close_moin_page_node()
@@ -232,7 +235,8 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_bullet_list(self, node):
-        self.open_moin_page_node(moin_page.list(attrib={moin_page.item_label_generate: "unordered"}), node)
+        attrib = {moin_page.item_label_generate: "unordered"}
+        self.open_moin_page_node(moin_page.list(attrib=attrib), node)
 
     def depart_bullet_list(self, node):
         self.close_moin_page_node()
@@ -494,12 +498,15 @@ class NodeVisitor:
     def visit_inline(self, node):
         classes = node["classes"]
         moin_node = moin_page.span()
-        if "ins" in classes:
-            moin_node = moin_page.ins()
-            classes.remove("ins")
-        if "del" in classes:
-            moin_node = moin_page.del_()
-            classes.remove("del")
+        # some class values indicate a matching HTML element (except when used for syntax highlight):
+        if not (isinstance(node.parent, (nodes.literal_block, nodes.literal)) and "code" in node.parent.get("classes")):
+            for tag in classes:
+                if tag in HtmlTags.symmetric_tags:
+                    moin_node = getattr(moin_page, tag)()
+                    classes.remove(tag)
+                    break
+                if tag in HtmlTags.inline_tags:
+                    classes[classes.index(tag)] = "html-" + tag
         self.open_moin_page_node(moin_node, node)
 
     def depart_inline(self, node):
@@ -557,13 +564,8 @@ class NodeVisitor:
             for name, value in named_args:
                 args.append(moin_page.argument(attrib={moin_page.name: name}, children=[value]))
             arguments = moin_page.arguments(children=args)
-            self.open_moin_page_node(
-                moin_page.part(
-                    children=[arguments],
-                    attrib={moin_page.content_type: "x-moin/format;name={}".format(parser.split(" ")[0])},
-                ),
-                node,
-            )
+            attrib = {moin_page.content_type: "x-moin/format;name={}".format(parser.split(" ")[0])}
+            self.open_moin_page_node(moin_page.part(children=[arguments], attrib=attrib), node)
         else:
             self.open_moin_page_node(moin_page.blockcode(), node)
 
@@ -674,9 +676,8 @@ class NodeVisitor:
             except IndexError:
                 arguments = ""  # <<DateTime>>
 
-            self.open_moin_page_node(
-                moin_page.inline_part(attrib={moin_page.content_type: f"x-moin/macro;name={macro_name}"})
-            )
+            attrib = {moin_page.content_type: f"x-moin/macro;name={macro_name}"}
+            self.open_moin_page_node(moin_page.inline_part(attrib=attrib))
             if arguments:
                 self.open_moin_page_node(moin_page.arguments())
                 self.open_moin_page_node(arguments)
@@ -869,9 +870,12 @@ class NodeVisitor:
         # TODO: table title is currently ignored!
         if isinstance(node.parent, (nodes.admonition, nodes.sidebar, nodes.topic)):
             # informal title: don't include in ToC, no section numbering
-            self.open_moin_page_node(moin_page.p(attrib={html.class_: "moin-title"}))
+            moin_node = moin_page.p
+            attrib = {html.class_: "moin-title"}
         else:
-            self.open_moin_page_node(moin_page.h(attrib={moin_page.outline_level: repr(self.header_size)}))
+            moin_node = moin_page.h
+            attrib = {moin_page.outline_level: repr(self.header_size)}
+        self.open_moin_page_node(moin_node(attrib=attrib))
 
     def depart_title(self, node):
         self.close_moin_page_node()
@@ -879,14 +883,16 @@ class NodeVisitor:
     def visit_topic(self, node):
         # content outside the flow of the main content of the document
         # analogous to the HTML <aside> element
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "html-aside"}), node)
+        attrib = {html.class_: "html-aside"}
+        self.open_moin_page_node(moin_page.div(attrib=attrib), node)
 
     def depart_topic(self, node):
         self.close_moin_page_node()
 
     def visit_title_reference(self, node):
         # title of a creative work (analogous to HTML <cite>)
-        self.open_moin_page_node(moin_page.span(attrib={html.class_: "cite"}), node)
+        attrib = {html.class_: "html-cite"}
+        self.open_moin_page_node(moin_page.span(attrib=attrib), node)
 
     def depart_title_reference(self, node):
         self.close_moin_page_node()
