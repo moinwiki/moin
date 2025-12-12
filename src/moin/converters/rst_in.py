@@ -25,7 +25,6 @@ import re
 
 import docutils
 from docutils import core, nodes, transforms, utils
-from docutils.nodes import literal_block
 from docutils.parsers.rst import Directive, directives
 import docutils.parsers.rst.directives.misc
 
@@ -1016,7 +1015,7 @@ class MoinDirectives:
         directives.register_directive("contents", self.Contents)
 
         # used for MoinMoin parsers
-        directives.register_directive("parser", self.parser)
+        directives.register_directive("parser", self.ParseWith)
 
     class Include(directives.misc.Include):
         """Include MoinMoin pages instead of files from the filesystem."""
@@ -1091,16 +1090,21 @@ class MoinDirectives:
             ref["name"] = macro
             return [ref]
 
-    def parser(self, name, arguments, options, content, lineo, content_offset, block_text, state, state_machine):
-        block = literal_block()
-        block["parser"] = content[0]
-        block.children = [nodes.Text("\n".join(content[1:]))]
-        return [block]
+    class ParseWith(Directive):
+        """Parse the content with specified parser."""
 
-    parser.has_content = parser.content = True
-    parser.option_spec = {}
-    parser.required_arguments = 1
-    parser.optional_arguments = 0
+        # TODO: currently fails :(
+        #       use standard directive syntax with blank line before content
+        #       use <pending> node
+
+        required_arguments = 1
+        final_argument_whitespace = True
+
+        def run(self):
+            arg = self.arguments[0].split("\n", maxsplit=1)
+            block = nodes.literal_block("", "".join(arg[1:]))
+            block["parser"] = arg[0]
+            return [block]
 
 
 class Converter:
