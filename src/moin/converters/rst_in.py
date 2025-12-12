@@ -25,7 +25,7 @@ import re
 
 import docutils
 from docutils import core, nodes, transforms, utils
-from docutils.nodes import reference, literal_block
+from docutils.nodes import literal_block
 from docutils.parsers.rst import Directive, directives
 import docutils.parsers.rst.directives.misc
 
@@ -1013,7 +1013,7 @@ class MoinDirectives:
         directives.register_directive("macro", self.Macro)
 
         # used for MoinMoin tables of content
-        directives.register_directive("contents", self.table_of_content)
+        directives.register_directive("contents", self.Contents)
 
         # used for MoinMoin parsers
         directives.register_directive("parser", self.parser)
@@ -1076,24 +1076,20 @@ class MoinDirectives:
             ref = nodes.reference(macro, name=macro, refuri=macro)
             return [ref]
 
-    def table_of_content(
-        self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine
-    ):
-        text = ""
-        for i in content:
-            m = re.search(r":(\w+): (\w+)", i)
-            if m and len(m.groups()) == 2:
-                if m.groups()[0] == "depth":
-                    text = m.groups()[1]
-        macro = f"<<TableOfContents({text})>>"
-        ref = reference(macro, refuri=macro)
-        ref["name"] = macro
-        return [ref]
+    class Contents(Directive):
+        """Call Moin macro instead of Docutils Transform for Table of Contents."""
 
-    table_of_content.has_content = table_of_content.content = True
-    table_of_content.option_spec = {}
-    table_of_content.required_arguments = 1
-    table_of_content.optional_arguments = 0
+        # TODO: support custom heading like in Docutils?
+        # optional_arguments = 1
+        # final_argument_whitespace = True
+        option_spec = {"depth": directives.nonnegative_int}
+
+        def run(self):
+            depth = self.options.get("depth", "")
+            macro = f"<<TableOfContents({depth})>>"
+            ref = nodes.reference(macro, refuri=macro)
+            ref["name"] = macro
+            return [ref]
 
     def parser(self, name, arguments, options, content, lineo, content_offset, block_text, state, state_machine):
         block = literal_block()
