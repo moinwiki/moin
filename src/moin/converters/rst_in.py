@@ -26,7 +26,7 @@ import re
 import docutils
 from docutils import core, nodes, transforms, utils
 from docutils.nodes import reference, literal_block
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
 import docutils.parsers.rst.directives.misc
 
 try:
@@ -1010,7 +1010,7 @@ class MoinDirectives:
         directives.register_directive("include", self.Include)
 
         # used for MoinMoin macros
-        directives.register_directive("macro", self.macro)
+        directives.register_directive("macro", self.Macro)
 
         # used for MoinMoin tables of content
         directives.register_directive("contents", self.table_of_content)
@@ -1044,30 +1044,37 @@ class MoinDirectives:
             ref = nodes.reference(macro, refuri=macro)  # TODO: use <pending> node
             return [ref]
 
-    # Add additional macro directive.
-    # This allows MoinMoin macros to be used either by using the directive
-    # directly or by using the substitution syntax. Much cleaner than using the
-    # reference hack (`<<SomeMacro>>`_). This however simply adds a node to the
-    # document tree which is a reference, but through a much better user
-    # interface.
-    def macro(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-        # .. macro:: <<DateTime()>>
-        # content contains macro to be called
-        if len(content):
-            # Allow either with or without brackets
-            if content[0].startswith("<<"):
-                macro = content[0]
-            else:
-                macro = f"<<{content[0]}>>"
-            ref = reference(macro, refuri=macro)
-            ref["name"] = macro
-            return [ref]
-        return
+    class Macro(Directive):
+        """
+        MoinMoin macros via directive or substitution syntax.
 
-    macro.has_content = macro.content = True
-    macro.option_spec = {}
-    macro.required_arguments = 1
-    macro.optional_arguments = 0
+        May be called with or without angle brackets, e.g. ::
+
+            .. macro:: DateTime()
+            .. macro:: <<DateTime()>>
+
+        Obsoletes the "reference syntax"::
+
+            `<<SomeMacro>>`_
+        """
+
+        # TODO:
+        # Currently just adds a node to the document tree which is a
+        # reference, but through a much better user interface.
+        #
+        # * use a <pending> node instead of the "reference hack".
+        # * add a "macro" role for inline use,
+
+        required_arguments = 1
+        final_argument_whitespace = True
+
+        def run(self):
+            macro = self.arguments[0]
+            if not (macro.startswith("<<") and macro.endswith(">>")):
+                # may be called with or without angle brackets
+                macro = f"<<{macro}>>"
+            ref = nodes.reference(macro, name=macro, refuri=macro)
+            return [ref]
 
     def table_of_content(
         self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine
