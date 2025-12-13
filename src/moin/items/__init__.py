@@ -1602,7 +1602,7 @@ class Default(Contentful):
             if data is not None:
 
                 # werkzeug may return form data using type tempfile.SpooledTemporaryFile (issue 1974)
-                if isinstance(data, IOBase):
+                if isinstance(data, IOBase) or hasattr(data, "read"):
                     data = data.read()
 
                 # decode text content we may have received in binary form
