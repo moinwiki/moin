@@ -1585,6 +1585,8 @@ class Default(Contentful):
             finally:
                 close_file(old_item.rev.data)
 
+        preview_supported = isinstance(item.content, Text)
+
         # these will be updated if user has clicked Preview
         preview_diffs = preview_rendered = None
 
@@ -1664,6 +1666,10 @@ class Default(Contentful):
             state = dict(fqname=self.fqname, itemid=meta.get(ITEMID), meta=meta)
             if form.validate(state):
                 if request.values.get("preview"):
+                    if not preview_supported:
+                        # we don't expect to reach this code under normal circumstances;
+                        # drop out in case preview was requested via use of a manually constructed url
+                        abort(400, description="Preview not supported")
                     # user has clicked Preview button, create diff and rendered item
                     edit_utils.put_draft(data if isinstance(data, str) else None)
                     # prepare data previews
@@ -1788,6 +1794,7 @@ class Default(Contentful):
             form=form,
             search_form=None,
             help=help,
+            preview_supported=preview_supported,
             preview_diffs=preview_diffs or "",
             preview_rendered=preview_rendered or "",
             edit_rows=edit_rows,
