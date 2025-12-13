@@ -12,16 +12,22 @@ from __future__ import annotations
 from typing import Any, Self, TYPE_CHECKING
 
 from moin.constants.keys import NAME
+from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.utils.mime import Type, type_moin_document
-from moin.i18n import _
 
 from . import default_registry
 
 if TYPE_CHECKING:
     from emeraldtree.ElementTree import Element
     from moin.converters._args import Arguments
+
+
+def make_message_page(text: str, class_: str = "error") -> Element:
+    admonition = moin_page.div(attrib={moin_page.class_: class_}, children=[moin_page.p(children=[text])])
+    body = moin_page.body(children=(admonition,))
+    return moin_page.page(children=(body,))
 
 
 class Converter:
@@ -42,9 +48,12 @@ class Converter:
             message = _(
                 "This deleted item must be restored before it can be viewed or downloaded, ItemID = {itemid}"
             ).format(itemid=rev.item.itemid)
-            admonition = moin_page.div(attrib={moin_page.class_: "error"}, children=[moin_page.p(children=[message])])
-            body = moin_page.body(children=(admonition,))
-            return moin_page.page(children=(body,))
+            return make_message_page(message)
+        except AttributeError:
+            # conversion only works for instances of Revision or DummyRev
+            message = _("No DOM representation possible for this content.")
+            return make_message_page(message, "note")
+
         attrib = {xlink.href: Iri(scheme="wiki", authority="", path="/" + item_name, query=f"do=get&rev={rev.revid}")}
         a = moin_page.a(attrib=attrib, children=[_("Download {item_name}.").format(item_name=item_name)])
         body = moin_page.body(children=(a,))
