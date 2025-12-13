@@ -738,13 +738,15 @@ class SvgImage(RenderableImage):
 
 
 class RenderableBitmapImage(RenderableImage):
-    """PNG/JPEG/GIF images use <img> tag (better browser support than <object>)"""
+    """PNG/JPEG/GIF/WebP images use <img> tag (better browser support than <object>)"""
 
     # if mimetype is also transformable, please register in TransformableImage ONLY!
 
 
 class TransformableBitmapImage(RenderableBitmapImage):
     """We can transform (resize, rotate, mirror) some image types"""
+
+    map_content_to_output_type = {"image/jpeg": "JPEG", "image/png": "PNG", "image/gif": "GIF", "image/webp": "WebP"}
 
     def _transform(self, content_type, size=None, transpose_op=None):
         """resize to new size (optional), transpose according to exif infos,
@@ -756,13 +758,9 @@ class TransformableBitmapImage(RenderableBitmapImage):
             # no PIL, we can't do anything, we just output the revision data as is
             return content_type, self.rev.data.read()
 
-        if content_type == "image/jpeg":
-            output_type = "JPEG"
-        elif content_type == "image/png":
-            output_type = "PNG"
-        elif content_type == "image/gif":
-            output_type = "GIF"
-        else:
+        try:
+            output_type = self.map_content_to_output_type[content_type]
+        except KeyError:
             raise ValueError(f"content_type {content_type!r} not supported")
 
         # revision obj has read() seek() tell(), thus this works:
@@ -872,13 +870,9 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 abort(404)  # TODO render user friendly error image
 
             content_type = newrev.meta[CONTENTTYPE]
-            if content_type == "image/jpeg":
-                output_type = "JPEG"
-            elif content_type == "image/png":
-                output_type = "PNG"
-            elif content_type == "image/gif":
-                output_type = "GIF"
-            else:
+            try:
+                output_type = self.map_content_to_output_type[content_type]
+            except KeyError:
                 raise ValueError(f"content_type {content_type!r} not supported")
 
             try:
@@ -927,6 +921,14 @@ class GIF(TransformableBitmapImage):
 
     contenttype = "image/gif"
     display_name = "GIF"
+
+
+@register
+class WebPImage(TransformableBitmapImage):
+    """WebP image."""
+
+    contenttype = "image/webp"
+    display_name = "WebP"
 
 
 @register
