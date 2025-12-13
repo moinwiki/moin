@@ -7,6 +7,10 @@ MoinMoin - Converter for all items (fallback).
 Convert any item to a DOM tree (we just create a link to download it).
 """
 
+from __future__ import annotations
+
+from typing import Any, Self, TYPE_CHECKING
+
 from moin.constants.keys import NAME
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
@@ -15,6 +19,10 @@ from moin.i18n import _
 
 from . import default_registry
 
+if TYPE_CHECKING:
+    from emeraldtree.ElementTree import Element
+    from moin.converters._args import Arguments
+
 
 class Converter:
     """
@@ -22,10 +30,11 @@ class Converter:
     """
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs) -> Self:
         return cls()
 
-    def __call__(self, rev, contenttype=None, arguments=None):
+    def __call__(self, rev: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Element:
+
         try:
             item_name = rev.item.fqname.fullname or rev.meta[NAME][0]
         except IndexError:

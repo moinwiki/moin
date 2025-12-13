@@ -16,6 +16,10 @@ While moin.storage handles backend storage of items, this module focuses on high
 Each class in this module corresponds to an item type.
 """
 
+from __future__ import annotations
+
+from typing import Self, TYPE_CHECKING
+
 from time import time, strftime
 import json
 from io import BytesIO, IOBase
@@ -100,6 +104,9 @@ from .content import content_registry, Content, NonExistentContent, Draw, Text
 from ..utils.pysupport import load_package_modules
 
 from moin import log
+
+if TYPE_CHECKING:
+    from moin.storage.middleware.indexing import Item as StorageItem, Revision
 
 logging = log.getLogger(__name__)
 
@@ -384,7 +391,13 @@ class DummyItem:
         return True
 
 
-def get_storage_revision(fqname, itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+def get_storage_revision(
+    fqname: CompositeName,
+    itemtype: str | None = None,
+    contenttype: str | None = None,
+    rev_id: str = CURRENT,
+    item: StorageItem | None = None,
+) -> Revision:
     """
     Get a storage Revision.
 
@@ -649,11 +662,18 @@ class Item:
     order = 0
 
     @classmethod
-    def _factory(cls, *args, **kw):
+    def _factory(cls, *args, **kw) -> Self:
         return cls(*args, **kw)
 
     @classmethod
-    def create(cls, name="", itemtype=None, contenttype=None, rev_id=CURRENT, item=None):
+    def create(
+        cls,
+        name: str = "",
+        itemtype: str | None = None,
+        contenttype: str | None = None,
+        rev_id: str = CURRENT,
+        stg_item: StorageItem | None = None,
+    ) -> Item:
         """
         Create a highlevel Item by looking up :name or directly wrapping
         :item and extract the Revision designated by :rev_id revision.
@@ -675,7 +695,7 @@ class Item:
         if fqname.field not in UFIELDS:  # Need a unique key to extract stored item.
             raise FieldNotUniqueError(f"field {fqname.field} is not in UFIELDS")
 
-        rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, item)
+        rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, stg_item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug(f"Item {name!r}, got contenttype {contenttype!r} from revision meta")
         # logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
