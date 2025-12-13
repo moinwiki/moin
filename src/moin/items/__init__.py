@@ -18,7 +18,7 @@ Each class in this module corresponds to an item type.
 
 from __future__ import annotations
 
-from typing import Self, TYPE_CHECKING
+from typing import Self, TYPE_CHECKING, TypeAlias
 
 from time import time, strftime
 import json
@@ -39,6 +39,7 @@ from markupsafe import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
 
+from moin import log
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
 from moin.constants.misc import LOCKED, LOCK
 from moin.signalling import item_modified
@@ -103,13 +104,13 @@ from moin.mail.sendmail import encodeSpamSafeEmail
 from .content import content_registry, Content, NonExistentContent, Draw, Text
 from ..utils.pysupport import load_package_modules
 
-from moin import log
-
 if TYPE_CHECKING:
     from moin.storage.middleware.indexing import Item as StorageItem, Revision
 
 logging = log.getLogger(__name__)
 
+
+PreviewDiffItem: TypeAlias = tuple[int, Markup, int, Markup]
 
 COLS = 80
 ROWS_META = 10
@@ -652,7 +653,9 @@ class FieldNotUniqueError(ValueError):
 
 
 class Item:
-    """Highlevel (not storage) Item, wraps around a storage Revision"""
+    """
+    Highlevel (not storage) Item, wraps around a storage Revision
+    """
 
     # placeholder values for registry entry properties
     itemtype = ""
@@ -1563,9 +1566,27 @@ class Default(Contentful):
         item = self
         flaskg.edit_utils = edit_utils = Edit_Utils(self)
 
+        def make_previews(item: Item, data: bytes | str | None) -> tuple[list[PreviewDiffItem] | None, str | None]:
+            if data is None:
+                # TODO: make preview button inactive for empty items, see #1539
+                flash(_("No preview available for empty items."), "error")
+                return None, None
+
+            old_item = Item.create(self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype)
+            try:
+                if isinstance(item.content, Text):
+                    old_text = old_item.content.data
+                    old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
+                    preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
+                else:
+                    preview_diffs = None
+                preview_rendered = item.content._render_data(preview=data)
+                return preview_diffs, preview_rendered
+            finally:
+                close_file(old_item.rev.data)
+
         # these will be updated if user has clicked Preview
-        preview_diffs = ""
-        preview_rendered = ""
+        preview_diffs = preview_rendered = None
 
         if request.values.get("cancel"):
             edit_utils.delete_draft()
@@ -1644,18 +1665,11 @@ class Default(Contentful):
             if form.validate(state):
                 if request.values.get("preview"):
                     # user has clicked Preview button, create diff and rendered item
-                    edit_utils.put_draft(data)
-                    old_item = Item.create(self.fqname.fullname, rev_id=CURRENT, contenttype=self.contenttype)
-                    old_text = old_item.content.data
-                    old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
-                    if data:
-                        preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
-                        preview_rendered = item.content._render_data(preview=data)
-                    else:  # TODO: make preview button inactive for empty items, see #1539
-                        flash(_("No preview available for empty items."), "error")
-                    close_file(old_item.rev.data)
+                    edit_utils.put_draft(data if isinstance(data, str) else None)
+                    # prepare data previews
+                    preview_diffs, preview_rendered = make_previews(item, data)
                     # update content form text data if data originated from a file upload
-                    if data and form["content_form"]["data_file"]:
+                    if data and form["content_form"]["data_file"] and "data_text" in form["content_form"]:
                         form["content_form"]["data_text"] = data
                 else:
                     # user clicked OK/Save button, check for conflicts,
@@ -1774,8 +1788,8 @@ class Default(Contentful):
             form=form,
             search_form=None,
             help=help,
-            preview_diffs=preview_diffs,
-            preview_rendered=preview_rendered,
+            preview_diffs=preview_diffs or "",
+            preview_rendered=preview_rendered or "",
             edit_rows=edit_rows,
             is_modify_text=is_modify_text,
             draft_data=draft_data,
