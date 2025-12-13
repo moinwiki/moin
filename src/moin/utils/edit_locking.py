@@ -42,13 +42,13 @@ from flask import request
 from flask import g as flaskg
 from flask import current_app as app
 
-from moin.i18n import L_
-from moin.utils.mime import Type
-from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
-from moin.constants.keys import CONTENTTYPE, ITEMID, REVID, REV_NUMBER, NAME
-from moin.utils import show_time
-
 from moin import log
+from moin.constants.keys import CONTENTTYPE, ITEMID, REVID, REV_NUMBER, NAME
+from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
+from moin.i18n import L_
+from moin.items.content import Text
+from moin.utils import show_time
+from moin.utils.mime import Type
 
 if TYPE_CHECKING:
     from moin.items import Item
@@ -79,7 +79,7 @@ class Edit_Utils:
         self.rev_id = item.meta.get(REVID, "new-item")
         self.item_id = item.meta.get(ITEMID, item.meta.get(NAME)[0])
 
-        self.coding = "utf-8"
+        self.coding = "utf-8" if isinstance(self.item.content, Text) else None
         contenttype = self.item.meta.get(CONTENTTYPE, None)
         if contenttype is not None:
             ct = Type(contenttype)
@@ -179,7 +179,7 @@ class Edit_Utils:
                 self.draft_name = self.make_draft_name(rev_id)
             self.cursor.execute("""DELETE FROM editdraft WHERE user_name = ?""", (self.user_name,))
 
-        if data_in:
+        if data_in and self.coding:
             data = data_in.encode(self.coding)
             with open(self.draft_name, "wb") as f:
                 f.write(data)
@@ -210,6 +210,7 @@ class Edit_Utils:
             u_name, i_id, i_name, rev_number, save_time, rev_id = draft
             if i_id == self.item_id:
                 if save_time:
+                    assert self.coding is not None
                     self.draft_name = self.make_draft_name(rev_id)
                     try:
                         with open(self.draft_name, "rb") as f:
