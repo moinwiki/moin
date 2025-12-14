@@ -18,7 +18,7 @@ Each class in this module corresponds to an item type.
 
 from __future__ import annotations
 
-from typing import Self, TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING, TypeAlias
 
 from time import time, strftime
 import json
@@ -106,6 +106,7 @@ from ..utils.pysupport import load_package_modules
 
 if TYPE_CHECKING:
     from moin.storage.middleware.indexing import Item as StorageItem, Revision
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 

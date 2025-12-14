@@ -9,7 +9,7 @@ Convert any item to a DOM tree (we just create a link to download it).
 
 from __future__ import annotations
 
-from typing import Any, Self, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from moin.constants.keys import NAME
 from moin.i18n import _
@@ -22,6 +22,7 @@ from . import default_registry
 if TYPE_CHECKING:
     from emeraldtree.ElementTree import Element
     from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 
 def make_message_page(text: str, class_: str = "error") -> Element:
