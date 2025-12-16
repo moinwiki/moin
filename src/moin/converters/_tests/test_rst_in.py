@@ -55,10 +55,6 @@ class TestConverter:
         ),
         ("a _`Link`", '<page><body><p>a <span id="link">Link</span></p></body></page>'),
         (
-            "`Text <javascript:alert('xss')>`_",
-            '<page><body><p><admonition type="error">Text</admonition></p></body></page>',
-        ),
-        (
             "Text\n\n~~~~~\n\nTest",
             '<page><body><p>Text</p><separator xhtml:class="moin-hr2" /><p>Test</p></body></page>',
         ),
@@ -317,13 +313,7 @@ class TestConverter:
             '<page><body><p>Abra</p><span id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p></body></page>',
         ),
         (
-            """
-Abra example_ arba
-
-.. _example:
-.. _alias:
-
-text""",
+            "Abra example_ arba\n\n.. _example:\n.. _alias:\n\ntext",
             '<page><body><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p></body></page>',
         ),
         (  # A reference_ with no matching target links to a local Wiki item.
@@ -336,15 +326,18 @@ text""",
         ),
         (
             "`Whitespace  is\nnormalized\xA0& CÄSE is Kept.`_",
-            '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">Whitespace  is\nnormalized\xA0&amp; CÄSE is Kept.</a></p></body></page>',
+            '<page><body><p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">'
+            "Whitespace  is\nnormalized\xA0&amp; CÄSE is Kept.</a></p></body></page>",
         ),
         (  # in rST, reference-name matching is case insensitive:
             "Chapter 1\n===============\n\nA reference to `chapter 1`_.\n",
-            '<page><body><h outline-level="1">Chapter 1</h><p>A reference to <a xlink:href="wiki.local:#Chapter_1">chapter 1</a>.</p></body></page>',
+            '<page><body><h outline-level="1">Chapter 1</h>'
+            '<p>A reference to <a xlink:href="wiki.local:#Chapter_1">chapter 1</a>.</p></body></page>',
         ),
         (  # check handling of non-ASCII chars:
             "τίτλος\n^^^^^^\n\nA reference to `τίτλος`_.\n",
-            '<page><body><h outline-level="1">τίτλος</h><p>A reference to <a xlink:href="wiki.local:#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p></body></page>',
+            '<page><body><h outline-level="1">τίτλος</h>'
+            '<p>A reference to <a xlink:href="wiki.local:#A.2BA8QDrwPEA7sDvwPC-">τίτλος</a>.</p></body></page>',
         ),
         (
             "§ With % strange & siLLY <title>\n"
@@ -352,16 +345,32 @@ text""",
             "Reference to `§ With % strange\n"
             "& siLLY \\<title>`_.\n",
             '<page><body><h outline-level="1">§ With % strange &amp; siLLY &lt;title&gt;</h>'
-            '<p>Reference to <a xlink:href="wiki.local:#A.2BAKc_With_.25_strange_.26_siLLY_.3Ctitle.3E">§ With % strange\n'
+            '<p>Reference to <a xlink:href="wiki.local:#A.2BAKc_With_.25_strange_.26_siLLY_.3Ctitle.3E">'
+            "§ With % strange\n"
             "&amp; siLLY &lt;title&gt;</a>.</p></body></page>",
         ),
         (
             "http://www.python.org/",
             '<page><body><p><a xlink:href="http://www.python.org/">http://www.python.org/</a></p></body></page>',
         ),
-        ("http:Home", '<page><body><p><a xlink:href="wiki.local:Home">http:Home</a></p></body></page>'),
-        ("`Home <http:Home>`_", '<page><body><p><a xlink:href="wiki.local:Home">Home</a></p></body></page>'),
+        (  # legacy syntax for Wiki-internal links (use URI references without scheme instead)
+            "http:Home",
+            '<page><body><p><a xlink:href="wiki.local:Home">http:Home</a></p></body></page>',
+        ),
+        ("`<http:Home>`__", '<page><body><p><a xlink:href="wiki.local:Home">http:Home</a></p></body></page>'),
         (
+            r"`<https:Home:\ alone>`__",
+            '<page><body><p><a xlink:href="wiki.local:Home:%20alone">https:Home: alone</a></p></body></page>',
+        ),
+        (  # no URI scheme: resolve as wiki-internal link
+            "`<Home>`__",
+            '<page><body><p><a xlink:href="wiki.local:Home">Home</a></p></body></page>',
+        ),
+        (
+            r"`<Home:\ alone>`__",
+            '<page><body><p><a xlink:href="wiki.local:Home:%20alone">Home: alone</a></p></body></page>',
+        ),
+        (  # rST recognizes e-mail addresses
             "mailto:me@moin.com",
             '<page><body><p><a xlink:href="mailto:me@moin.com">mailto:me@moin.com</a></p></body></page>',
         ),
@@ -372,6 +381,10 @@ text""",
         (
             "`Write to me`_ with your questions.\n\n.. _Write to me: jdoe@example.com",
             '<page><body><p><a xlink:href="mailto:jdoe@example.com">Write to me</a> with your questions.</p></body></page>',
+        ),
+        (  # URI schemes not on the whitelist are interpreted as local wiki item names
+            "`Text <javascript:alert('xss')>`_",
+            """<page><body><p><a xlink:href="wiki.local:javascript:alert%28'xss'%29">Text</a></p></body></page>""",
         ),
     ]
 

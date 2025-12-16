@@ -372,13 +372,9 @@ class Converter:
             attrib[html.title_] = element.attrib.get("title")
         href = postproc_text(self.markdown, element.attrib.get("href"))
         iri = Iri(href)
-        # iri has authority, fragment, path, query, scheme = none,none,path,none
-        # Check, if the IRI scheme is whitelisted,
-        # if not, handle the IRI as wiki-local reference:
+        # ensure a safe scheme, fall back to wiki-internal reference
         if iri.scheme not in URI_SCHEMES:
-            if iri.scheme:
-                iri.path = f"{iri.scheme}:{iri.path}"
-            iri.scheme = "wiki.local"
+            iri = Iri("wiki.local:" + href)
         attrib[key] = iri
         return self.new_copy(moin_page.a, element, attrib)
 

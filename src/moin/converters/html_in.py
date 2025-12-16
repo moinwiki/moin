@@ -18,13 +18,14 @@ from emeraldtree.html import HTML
 
 from markupsafe import escape
 
+from moin.constants.misc import URI_SCHEMES
 from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
-from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text
 
 from moin import log
 
@@ -425,21 +426,10 @@ class Converter:
         href = element.get(html.href)
         if self.base_url:
             href = "".join([self.base_url, href])
-        if allowed_uri_scheme(href):
-            iri = Iri(href)
-        else:
-            # URI schemes that are not in the whitelist like: """<a href="javascript:alert('hi')">Test</a>"""
-            # are converted to: """javascript:alert('hi')"""
-            # TODO: don't drop the link text, convert to
-            #
-            #     Test &gt;javascript:alert('hi')&lt;
-            #
-            # orr treat the href as wiki-local URI-reference:
-            #
-            #     href="wiki.local:javascript:alert('hi')
-            return href
-        if iri.scheme is None:
-            iri.scheme = "wiki.local"
+        iri = Iri(href)
+        # ensure a safe scheme, fall back to wiki-internal reference
+        if iri.scheme not in URI_SCHEMES:
+            iri = Iri("wiki.local:" + href)
         attrib[key] = iri
         return self.new_copy(moin_page.a, element, attrib)
 
