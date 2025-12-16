@@ -80,47 +80,36 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     msg["Message-ID"] = make_msgid()
     msg["Auto-Submitted"] = "auto-generated"  # RFC 3834 section 5
 
-    if cfg.mail_sendmail:
-        if bcc:
-            # Set the BCC.  This will be stripped later by sendmail.
-            msg["BCC"] = bcc
-        # Set Return-Path so that it isn't set (generally incorrectly) for us.
-        msg["Return-Path"] = mail_from
-
     # Send the message
-    if not cfg.mail_sendmail:
+    try:
+        logging.debug(f"trying to send mail (smtp) via smtp server '{cfg.mail_smarthost}'")
+        host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
+        server = smtplib.SMTP(host, int(port), timeout=SMTP_TIMEOUT)
         try:
-            logging.debug(f"trying to send mail (smtp) via smtp server '{cfg.mail_smarthost}'")
-            host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
-            server = smtplib.SMTP(host, int(port), timeout=SMTP_TIMEOUT)
+            server.ehlo()
+            try:  # try to do TLS
+                if server.has_extn("starttls"):
+                    server.starttls()
+                    server.ehlo()
+                    logging.debug("tls connection to smtp server established")
+            except Exception:
+                logging.debug("could not establish a tls connection to smtp server, continuing without tls")
+            # server.set_debuglevel(1)
+            if cfg.mail_username and cfg.mail_password:
+                logging.debug(f"trying to log in to smtp server using account '{cfg.mail_username}'")
+                server.login(cfg.mail_username, cfg.mail_password)
+            server.send_message(msg)
+        finally:
             try:
-                server.ehlo()
-                try:  # try to do TLS
-                    if server.has_extn("starttls"):
-                        server.starttls()
-                        server.ehlo()
-                        logging.debug("tls connection to smtp server established")
-                except Exception:
-                    logging.debug("could not establish a tls connection to smtp server, continuing without tls")
-                # server.set_debuglevel(1)
-                if cfg.mail_username is not None and cfg.mail_password is not None:
-                    logging.debug(f"trying to log in to smtp server using account '{cfg.mail_username}'")
-                    server.login(cfg.mail_username, cfg.mail_password)
-                server.send_message(msg)
-            finally:
-                try:
-                    server.quit()
-                except AttributeError:
-                    # in case the connection failed, SMTP has no "sock" attribute
-                    pass
-        except (smtplib.SMTPException, OSError) as e:
-            logging.exception(
-                "Connection to mailserver '{server}' failed: {reason}".format(server=cfg.mail_smarthost, reason=str(e))
-            )
-            return (0, _("Connection to mailserver failed: {reason}").format(reason=str(e)))
-
-    else:
-        raise NotImplementedError  # TODO cli sendmail support
+                server.quit()
+            except AttributeError:
+                # in case the connection failed, SMTP has no "sock" attribute
+                pass
+    except (smtplib.SMTPException, OSError) as e:
+        logging.exception(
+            "Connection to mailserver '{server}' failed: {reason}".format(server=cfg.mail_smarthost, reason=str(e))
+        )
+        return 0, _("Connection to mailserver failed: {reason}").format(reason=str(e))
 
     logging.debug("Mail sent successfully")
     return 1, _("Mail sent successfully")

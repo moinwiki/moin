@@ -1476,9 +1476,9 @@ Mail configuration
 
 Sending Email
 --------------
-Moin can optionally send email. Possible uses:
+Moin can optionally send emails. Possible uses:
 
-* send out item change notifications
+* send notifications about item changes
 * enable users to reset forgotten passwords
 * inform admins about runtime exceptions
 
@@ -1487,17 +1487,16 @@ You need to configure some settings before sending email can be supported::
     # the "from:" address [Unicode]
     mail_from = "wiki <wiki@example.org>"
 
-    # a) using an SMTP server, e.g. "mail.provider.com" with optional `:port`
-    appendix, which defaults to 25 (set None to disable mail)
+    # SMTP server, e.g. "mail.provider.com" with optional `:port` appendix, which defaults to 25
     mail_smarthost = "smtp.example.org"
 
-    # if you need to use SMTP AUTH at your mail_smarthost:
-    #mail_username = "smtp_username"
-    #mail_password = "smtp_password"
+    # usually you need to use SMTP AUTH at your mail_smarthost:
+    mail_username = "smtp_username"
+    mail_password = "smtp_password"
 
-    # b) alternatively to using SMTP, you can use the sendmail commandline tool:
-    #mail_sendmail = "/usr/sbin/sendmail -t -i"
 
+
+If either mail_from or mail_smarthost is not set, sending emails is disabled.
 
 .. todo::
 

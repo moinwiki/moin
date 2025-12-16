@@ -138,7 +138,7 @@ Feeds
 
 Notification
 ------------
-* by email: smtp or sendmail
+* by email: SMTP with TLS or SMTP_SSL
 
 Translation / Localization
 --------------------------
