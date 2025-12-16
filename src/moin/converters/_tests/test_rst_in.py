@@ -60,7 +60,7 @@ class TestConverter:
         ),
         (
             "Text\n\n~~~~~\n\nTest",
-            '<page><body><p>Text</p><separator xhtml:class="moin-hr3" /><p>Test</p></body></page>',
+            '<page><body><p>Text</p><separator xhtml:class="moin-hr2" /><p>Test</p></body></page>',
         ),
         (".. comment", '<page><body><div class="comment dashed">comment</div></body></page>'),
         ("..\n comment", '<page><body><div class="comment dashed">comment</div></body></page>'),
@@ -495,8 +495,8 @@ text""",
             "<p>topic content</p></div></body></page>",
         ),
         (
-            ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n\n   sidebar content",
-            '<page><body><div xhtml:class="moin-aside moin-sidebar">'
+            ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n   :class: float-right\n\n   sidebar content",
+            '<page><body><div xhtml:class="moin-aside moin-sidebar float-right">'
             '<p xhtml:class="moin-title">Sidebar Title</p>'
             '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
             "<p>sidebar content</p></div></body></page>",

@@ -431,7 +431,7 @@ li > p { margin-top: 0; margin-bottom: 0; }
 .moin-rst-attribution:before { content: "—"; }
 
 /* reST line-blocks */
-.moin-line-block { margin-left: 2em; }
+.moin-line-block > .moin-line-block { margin-left: 2em; }
 .moin-line-blk:empty { min-height: 1em; }
 
 /* HTML <aside> (rST topic and sidebar) */
