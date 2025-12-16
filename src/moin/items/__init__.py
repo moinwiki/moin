@@ -18,7 +18,8 @@ Each class in this module corresponds to an item type.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeAlias
+from typing import Any, TYPE_CHECKING, TypeAlias
+from typing_extensions import override
 
 from time import time, strftime
 import json
@@ -105,8 +106,12 @@ from .content import content_registry, Content, NonExistentContent, Draw, Text
 from ..utils.pysupport import load_package_modules
 
 if TYPE_CHECKING:
-    from moin.storage.middleware.indexing import Item as StorageItem, Revision
+    from flatland import Element
+    from moin.storage.middleware.protecting import ProtectedItem, ProtectedRevision
+    from moin.storage.types import MetaData
     from typing_extensions import Self
+    from werkzeug.wrappers import Response as ResponseBase
+    from whoosh.query import Query
 
 logging = log.getLogger(__name__)
 
@@ -257,7 +262,7 @@ def _verify_parents(self, new_name, namespace, old_name=""):
             )
 
 
-def str_to_dict(data):
+def str_to_dict(data: str) -> dict[str, str]:
     """
     Convert wikidicts from multi-line input form:
         'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n',
@@ -309,18 +314,17 @@ def str_to_dict(data):
     return new_dict
 
 
-def dict_to_str(dic):
+def dict_to_str(dic: dict[str, str]) -> str:
     """
     convert dict:
         {'First': 'first item', 'text with spaces': 'second item', 'Empty string': '', 'Last': 'last item'}
     to str:
         'First=first item\ntext with spaces=second item\nEmpty string=\nLast=last item\n'
     """
-    new_str = []
+    lines = []
     for k, v in dic.items():
-        new_str.append(k + "=" + v)
-    new_str = "\r\n".join(new_str)
-    return new_str
+        lines.append(k + "=" + v)
+    return "\r\n".join(lines)
 
 
 class RegistryItem(RegistryBase):
@@ -334,20 +338,20 @@ class RegistryItem(RegistryBase):
                 return self.itemtype < other.itemtype
             return NotImplemented
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.shown_entries = []
 
-    def register(self, e, shown):
+    def register(self, entry, shown: bool) -> None:
         """
         Register a factory
 
         :param factory: Factory to register. Callable, must return an object.
         """
         if shown:
-            self.shown_entries.append(e)
+            self.shown_entries.append(entry)
             self.shown_entries.sort(key=attrgetter("order"))
-        return self._register(e)
+        self._register(entry)
 
 
 item_registry = RegistryItem()
@@ -398,8 +402,8 @@ def get_storage_revision(
     itemtype: str | None = None,
     contenttype: str | None = None,
     rev_id: str = CURRENT,
-    item: StorageItem | None = None,
-) -> Revision:
+    item: ProtectedItem | None = None,
+) -> ProtectedRevision:
     """
     Get a storage Revision.
 
@@ -426,6 +430,7 @@ def get_storage_revision(
         else:
             if item.fqname:
                 fqname = item.fqname
+
     if not item:  # except NoSuchItemError:
         logging.debug(f"No such item: {fqname!r}")
         item = DummyItem(fqname)
@@ -444,6 +449,7 @@ def get_storage_revision(
                 rev = DummyRev(item, itemtype, contenttype)
                 logging.debug(f"Item {fqname!r}, created dummy revision with contenttype {contenttype!r}")
         logging.debug(f"Got item {fqname!r}, revision: {rev_id!r}")
+
     return rev
 
 
@@ -461,7 +467,7 @@ class CreateItemForm(BaseChangeForm):
     target = RequiredText.using(label=L_("Target")).with_properties(autofocus=True)
 
 
-def acl_validate(acl_string):
+def acl_validate(acl_string: str) -> bool:
     """
     Validate ACL strings, allowing special values 'None' and 'Empty'.
 
@@ -492,13 +498,14 @@ class ACLValidator(Validator):
     Meta Validator - currently used for validating ACLs only
     """
 
-    acl_fail_msg = L_("The ACL string is invalid.")
+    acl_fail_msg = L_("The ACL string is invalid: {acl}")
 
-    def validate(self, element, state):
-        if acl_validate(element) is True:
-            return True
-        flash(L_("The ACL string is invalid."), "error")
-        return element, state, "acl_fail_msg"
+    def validate(self, element: Element, state: Any) -> bool:
+        if not acl_validate(element):
+            message = self.acl_fail_msg.format(acl=element.value)
+            flash(message, "error")
+            return self.note_error(element, state, message)
+        return True
 
 
 class DictValidator(Validator):
@@ -508,7 +515,8 @@ class DictValidator(Validator):
 
     msg = L_("The Wiki Dict is invalid. The format is 'key=value', one per line, no commas.")
 
-    def validate(self, element, state):
+    @override
+    def validate(self, element: Element, state: Any) -> bool:
         meta = state["meta"]
         if WIKIDICT in meta:
             for key, val in meta[WIKIDICT].items():
@@ -527,7 +535,8 @@ class GroupValidator(Validator):
 
     group_fail_msg = L_("The User Group list is invalid.")
 
-    def validate(self, element, state):
+    @override
+    def validate(self, element: Element, state: Any) -> bool:
         no_dups = set()
         meta = state["meta"]
         if USERGROUP in meta:
@@ -604,7 +613,7 @@ class BaseModifyForm(BaseChangeForm):
 UNKNOWN_ITEM_GROUP = "Unknown Items"
 
 
-def _build_contenttype_query(groups):
+def _build_contenttype_query(groups: list[str]) -> Query:
     """
     Build a Whoosh query from a list of contenttype groups.
     """
@@ -622,7 +631,7 @@ IndexEntry = namedtuple("IndexEntry", "relname fullname meta")
 MixedIndexEntry = namedtuple("MixedIndexEntry", "relname fullname meta hassubitems")
 
 
-def get_itemtype_specific_tags(itemtype):
+def get_itemtype_specific_tags(itemtype: str) -> set[str]:
     """
     Returns the tags of a specific itemtype
     """
@@ -666,8 +675,8 @@ class Item:
     order = 0
 
     @classmethod
-    def _factory(cls, *args, **kw) -> Self:
-        return cls(*args, **kw)
+    def _factory(cls, *args: Any, **kwargs: Any) -> Self:
+        return cls(*args, **kwargs)
 
     @classmethod
     def create(
@@ -676,7 +685,7 @@ class Item:
         itemtype: str | None = None,
         contenttype: str | None = None,
         rev_id: str = CURRENT,
-        stg_item: StorageItem | None = None,
+        storage_item: ProtectedItem | None = None,
     ) -> Item:
         """
         Create a highlevel Item by looking up :name or directly wrapping
@@ -699,7 +708,7 @@ class Item:
         if fqname.field not in UFIELDS:  # Need a unique key to extract stored item.
             raise FieldNotUniqueError(f"field {fqname.field} is not in UFIELDS")
 
-        rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, stg_item)
+        rev = get_storage_revision(fqname, itemtype, contenttype, rev_id, storage_item)
         contenttype = rev.meta.get(CONTENTTYPE) or contenttype
         logging.debug(f"Item {name!r}, got contenttype {contenttype!r} from revision meta")
         # logging.debug("Item %r, rev meta dict: %r" % (name, dict(rev.meta)))
@@ -717,7 +726,7 @@ class Item:
         content.item = item
         return item
 
-    def __init__(self, fqname, rev=None, content=None):
+    def __init__(self, fqname, rev: ProtectedRevision, content: Content | None = None):
         self.fqname = fqname
         self.rev = rev
         self.content = content
@@ -728,7 +737,7 @@ class Item:
     meta = property(fget=get_meta)
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         returns the first name from the list of names.
         """
@@ -757,7 +766,7 @@ class Item:
 
     # XXX Backward compatibility, remove soon
     @property
-    def contenttype(self):
+    def contenttype(self) -> str | None:
         return self.content.contenttype if self.content else None
 
     def _meta_info(self):
@@ -988,7 +997,14 @@ class Item:
             )
         return messages, destroyed_names
 
-    def modify(self, meta, data, comment="", contenttype_guessed=None, **update_meta):
+    def modify(
+        self,
+        meta: dict[str, Any],
+        data: str | bytes,
+        comment: str = "",
+        contenttype_guessed: str | None = None,
+        **update_meta,
+    ):
         meta = dict(meta)  # we may get a read-only dict-like, copy it
         # get rid of None values
         update_meta = {key: value for key, value in update_meta.items() if value is not None}
@@ -1045,7 +1061,7 @@ class Item:
 
             self["content_form"]._load(item.content)
 
-        def _dump(self, item):
+        def _dump(self, item: Item) -> tuple[dict[str, Any], Any, str, str]:
             """
             Dump useful data out of :self. :item contains the old item and
             should not be the primary data source; but it can be useful in case
@@ -1068,7 +1084,15 @@ class Item:
             comment = self["comment"].value
             return meta, data, contenttype_guessed, comment
 
-    def do_modify(self):
+    def do_show(
+        self, revid: str, *, item_is_deleted: bool = False, item_may: dict[str, bool] | None = None
+    ) -> ResponseBase | str:
+        """
+        Handle +show GET requests.
+        """
+        raise NotImplementedError
+
+    def do_modify(self, *, item_may: dict[str, bool] | None = None) -> ResponseBase | str:
         """
         Handle +modify requests, both GET and POST.
 
@@ -1080,10 +1104,10 @@ class Item:
     def _save(
         self,
         meta,
-        data=None,
+        data: str | bytes | None = None,
         names=None,
         action=ACTION_SAVE,
-        contenttype_guessed=None,
+        contenttype_guessed: str | None = None,
         comment=None,
         overwrite=False,
         delete=False,
@@ -1200,7 +1224,7 @@ class Item:
         close_file(new_meta.revision.data)
         return new_meta[REVID], new_meta[SIZE]
 
-    def handle_variables(self, data, meta):
+    def handle_variables(self, data: str, meta) -> str:
         """Expand @VARIABLE@ in data, where variable is SIG, DATE, etc
 
         TODO: add a means for wiki admins and users to add custom variables.
@@ -1461,7 +1485,10 @@ class Default(Contentful):
             may=None,
         )
 
-    def do_show(self, revid, item_is_deleted=False, item_may=None):
+    @override
+    def do_show(
+        self, revid: str, *, item_is_deleted: bool = False, item_may: dict[str, bool] | None = None
+    ) -> ResponseBase | str:
         """
         Display an item. If this is not the current revision, page content will be
         prefaced with links to the next-rev and prior-rev.
@@ -1501,7 +1528,7 @@ class Default(Contentful):
             return "/help-" + flaskg.user.language + "/" + content_name, link_text
         return "/help-en/" + content_name, _("Alert wiki admin that help items are not loaded")
 
-    def meta_changed(self, meta):
+    def meta_changed(self, meta: MetaData) -> bool:
         """
         Return true if user changed any of the following meta data:
             comment, ACL, summary, tags, names, extra_meta wikidict, usergroup
@@ -1541,7 +1568,8 @@ class Default(Contentful):
 
         return False
 
-    def do_modify(self, item_may=None):
+    @override
+    def do_modify(self, *, item_may: dict[str, bool] | None = None) -> ResponseBase | str:
         if isinstance(self.content, NonExistentContent) and not flaskg.user.may.create(self.fqname):
             abort(
                 403,
@@ -1832,7 +1860,10 @@ class NonExistent(Item):
     def _convert(self, doc):
         abort(404)
 
-    def do_show(self, revid, **kwargs):
+    @override
+    def do_show(
+        self, revid: str, *, item_is_deleted: bool = False, item_may: dict[str, bool] | None = None
+    ) -> Response:
         # First, check if the current user has the required privileges
         if flaskg.user.may.create(self.fqname):
             content = self._select_itemtype()
@@ -1840,7 +1871,8 @@ class NonExistent(Item):
             content = render_template("show_nonexistent.html", item_name=self.name, fqname=self.fqname)
         return Response(content, 404)
 
-    def do_modify(self):
+    @override
+    def do_modify(self, *, item_may: dict[str, bool] | None = None) -> ResponseBase | str:
         # First, check if the current user has the required privileges
         if not flaskg.user.may.create(self.fqname):
             abort(403)

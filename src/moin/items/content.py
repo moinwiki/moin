@@ -20,6 +20,9 @@ Each class in this module corresponds to a content type value.
 
 from __future__ import annotations
 
+from typing import Any, IO, Protocol, TYPE_CHECKING
+from typing_extensions import override
+
 import os
 import time
 import uuid
@@ -82,6 +85,13 @@ from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_AL
 
 from moin import log
 
+if TYPE_CHECKING:
+    from typing_extensions import Self
+    from emeraldtree.ElementTree import Element
+    from moin.converters._args import Arguments
+    from moin.items import Item
+    from moin.storage.middleware.protecting import ProtectedRevision
+
 logging = log.getLogger(__name__)
 
 
@@ -93,7 +103,7 @@ class RegistryContent(RegistryBase):
     class Entry(
         namedtuple("Entry", "factory content_type default_contenttype_params display_name ingroup_order priority")
     ):
-        def __call__(self, content_type, *args, **kw):
+        def __call__(self, content_type: str, *args, **kw):
             if self.content_type.issupertype(Type(content_type)):
                 return self.factory(content_type, *args, **kw)
 
@@ -166,11 +176,10 @@ def content_registry_disable(contenttype_disabled):
     content_registry.groups = groups_enabled
 
 
-def conv_serialize(doc, namespaces, method="polyglot"):
+def conv_serialize(doc: Element, namespaces: dict[str, str], method: str = "polyglot") -> str:
     out = array("u")
     doc.write(out.fromunicode, namespaces=namespaces, method=method)
-    out = out.tounicode()
-    return out
+    return out.tounicode()
 
 
 class Content:
@@ -180,23 +189,23 @@ class Content:
     """
 
     # placeholder values for registry entry properties
-    contenttype: str | None = None
+    contenttype: str
     default_contenttype_params = {}
     display_name: str | None = None
     group = GROUP_OTHER
     ingroup_order = 0
 
     @classmethod
-    def _factory(cls, *args, **kw):
-        return cls(*args, **kw)
+    def _factory(cls, *args: Any, **kwargs: Any) -> Self:
+        return cls(*args, **kwargs)
 
     @classmethod
-    def create(cls, contenttype, item=None):
+    def create(cls, contenttype: str, item: Item | None = None) -> Content:
         content = content_registry.get(contenttype, item)
         logging.debug(f"Content class {content.__class__!r} handles {contenttype!r}")
         return content
 
-    def __init__(self, contenttype: str, item=None):
+    def __init__(self, contenttype: str, item: Item | None = None) -> None:
         # We need to keep the exact contenttype since contents may be handled
         # by a Content subclass with wildcard contenttype (eg. an unknown
         # contenttype some/type gets handled by Binary)
@@ -220,7 +229,7 @@ class Content:
     data = property(fget=get_data)
 
     @timed("conv_in_dom")
-    def internal_representation(self, attributes=None, preview=None):
+    def internal_representation(self, attributes: Arguments | None = None, preview: Any = None) -> Element:
         """
         Return the internal representation of a document using a DOM Tree
         """
@@ -262,7 +271,7 @@ class Content:
                 app.cache.set(cid, doc)
         return doc
 
-    def _expand_document(self, doc):
+    def _expand_document(self, doc: Element):
         from moin.converters import default_registry as reg
 
         flaskg.add_lineno_attr = False  # do not add data-lineno attr for transclusions, footnotes, etc.
@@ -270,26 +279,32 @@ class Content:
         macro_conv = reg.get(type_moin_document, type_moin_document, macros="expandall")
         nowiki_conv = reg.get(type_moin_document, type_moin_document, nowiki="expandall")
         link_conv = reg.get(type_moin_document, type_moin_document, links="extern")
+
         flaskg.clock.start("nowiki")
         doc = nowiki_conv(doc)
         flaskg.clock.stop("nowiki")
+
         flaskg.clock.start("conv_include")
         doc = include_conv(doc)
         flaskg.clock.stop("conv_include")
+
         flaskg.clock.start("conv_macro")
         doc = macro_conv(doc)
         flaskg.clock.stop("conv_macro")
+
         flaskg.clock.start("conv_link")
         doc = link_conv(doc)
         flaskg.clock.stop("conv_link")
+
         if "regex" in request.args:
             highlight_conv = reg.get(type_moin_document, type_moin_document, highlight="highlight")
             flaskg.clock.start("highlight")
             doc = highlight_conv(doc)
             flaskg.clock.stop("highlight")
+
         return doc
 
-    def _render_data(self, preview=None):
+    def _render_data(self, preview: Any = None) -> str:
         try:
             from moin.converters import default_registry as reg
 
@@ -523,13 +538,25 @@ class Application(Binary):
     """Base class for application/*"""
 
 
+class ContentMixin(Protocol):
+
+    contenttype: str
+    item: Item
+
+    @property
+    def name(self) -> str | None: ...
+
+    @property
+    def rev(self) -> ProtectedRevision: ...
+
+
 class TarMixin:
     """
     TarMixin offers additional functionality for tar-like items to list and
     access member files and to create new revisions by multiple posts.
     """
 
-    def list_members(self):
+    def list_members(self: ContentMixin):
         """
         list tar file contents (member file names)
         """
@@ -537,7 +564,7 @@ class TarMixin:
         tf = tarfile.open(fileobj=self.rev.data, mode="r")
         return tf.getnames()
 
-    def get_member(self, name):
+    def get_member(self: ContentMixin, name: str):
         """
         return a file-like object with the member file data
 
@@ -547,7 +574,7 @@ class TarMixin:
         tf = tarfile.open(fileobj=self.rev.data, mode="r")
         return tf.extractfile(name)
 
-    def put_member(self, name, content, content_length, expected_members):
+    def put_member(self: ContentMixin, name: str, content, content_length, expected_members):
         """
         puts a new member file into a temporary tar container.
         If all expected members have been put, it saves the tar container
@@ -618,7 +645,7 @@ class ZipMixin:
     access member files.
     """
 
-    def list_members(self):
+    def list_members(self: ContentMixin) -> list[str]:
         """
         list zip file contents (member file names)
         """
@@ -626,7 +653,7 @@ class ZipMixin:
         zf = zipfile.ZipFile(self.rev.data, mode="r")
         return zf.namelist()
 
-    def get_member(self, name):
+    def get_member(self: ContentMixin, name) -> IO[bytes]:
         """
         return a file-like object with the member file data
 
@@ -636,7 +663,7 @@ class ZipMixin:
         zf = zipfile.ZipFile(self.rev.data, mode="r")
         return zf.open(name, mode="r")
 
-    def put_member(self, name, content, content_length, expected_members):
+    def put_member(self: ContentMixin, name, content, content_length, expected_members):
         raise NotImplementedError
 
 
@@ -1220,7 +1247,7 @@ class Draw(TarMixin, Image):
         # Set the workaround flag respected in modify.html
         is_draw = True
 
-    def handle_post(self):
+    def handle_post(self) -> None:
         raise NotImplementedError
 
 
@@ -1267,7 +1294,8 @@ class SvgDraw(Draw):
     class ModifyForm(Draw.ModifyForm):
         template = "modify_svg-edit.html"
 
-    def handle_post(self):
+    @override
+    def handle_post(self) -> None:
         # called from modify UI/POST
         png_upload = request.values.get("png_data")
         svg_upload = request.values.get("filepath")

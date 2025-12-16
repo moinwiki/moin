@@ -35,6 +35,11 @@ the name is never removed. Comments and replies to comments are linked to the or
 ticket through a refers_to field preserved in metadata.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from typing_extensions import override
+
 import time
 import datetime
 
@@ -86,6 +91,10 @@ from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_
 from moin.items.content import NonExistentContent
 from moin.utils.interwiki import CompositeName
 from moin.constants.forms import WIDGET_SEARCH
+
+if TYPE_CHECKING:
+    from werkzeug.wrappers import Response as ResponseBase
+
 
 USER_QUERY = Term(CONTENTTYPE, CONTENTTYPE_USER)
 TICKET_QUERY = Term(ITEMTYPE, ITEMTYPE_TICKET)
@@ -378,14 +387,18 @@ class Ticket(Contentful):
     submit_template = "ticket/submit.html"
     modify_template = "ticket/modify.html"
 
-    def do_show(self, revid, **kwargs):
+    @override
+    def do_show(
+        self, revid: str, *, item_is_deleted: bool = False, item_may: dict[str, bool] | None = None
+    ) -> ResponseBase | str:
         if revid != CURRENT:
             # TODO When requesting a historical version, show a readonly view
             abort(403)
         else:
             return self.do_modify()
 
-    def do_modify(self):
+    @override
+    def do_modify(self, *, item_may: dict[str, bool] | None = None) -> ResponseBase | str:
         """
         Process new ticket, changes to ticket meta data, and/or a new comment against original ticket description.
 
@@ -420,6 +433,9 @@ class Ticket(Contentful):
                     except KeyError:
                         fqname = self.fqname
                     return redirect(url_for(".show_item", item_name=fqname))
+        else:
+            abort(404)
+
         if is_new:
             data_rendered = None
             files = {}
