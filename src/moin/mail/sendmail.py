@@ -1,6 +1,6 @@
 # Copyright: 2003 Juergen Hermann <jh@web.de>
 # Copyright: 2008-2009 MoinMoin:ThomasWaldmann
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -20,7 +20,7 @@ from moin import log
 
 logging = log.getLogger(__name__)
 
-
+SMTP_TIMEOUT = 20.0
 _transdict = {"AT": "@", "DOT": ".", "DASH": "-"}
 
 
@@ -92,7 +92,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
         try:
             logging.debug(f"trying to send mail (smtp) via smtp server '{cfg.mail_smarthost}'")
             host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
-            server = smtplib.SMTP(host, int(port))
+            server = smtplib.SMTP(host, int(port), timeout=SMTP_TIMEOUT)
             try:
                 server.ehlo()
                 try:  # try to do TLS
@@ -113,17 +113,12 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
                 except AttributeError:
                     # in case the connection failed, SMTP has no "sock" attribute
                     pass
-        except smtplib.SMTPException as e:
-            logging.exception("smtp mail failed with an exception.")
-            return 0, str(e)
-        except OSError as e:
-            logging.exception("smtp mail failed with an exception.")
-            return (
-                0,
-                _("Connection to mailserver '{server}' failed: {reason}").format(
-                    server=cfg.mail_smarthost, reason=str(e)
-                ),
+        except (smtplib.SMTPException, OSError) as e:
+            logging.exception(
+                "Connection to mailserver '{server}' failed: {reason}".format(server=cfg.mail_smarthost, reason=str(e))
             )
+            return (0, _("Connection to mailserver failed: {reason}").format(reason=str(e)))
+
     else:
         raise NotImplementedError  # TODO cli sendmail support
 
