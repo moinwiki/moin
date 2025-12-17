@@ -79,6 +79,9 @@ MIMETYPES_sanitize_mapping = {
     ("application", "x-tex"): ("text", "tex"),
     ("application", "javascript"): ("text", "javascript"),
     ("application", "x-dos-batch"): ("text", "bat"),
+    # Non-standard MIME types used on some platforms
+    ("application", "x-gzip"): ("application", "gzip"),  # Windows, macOS
+    ("application", "x-zip-compressed"): ("application", "zip"),  # Windows
 }
 
 MIMETYPES_spoil_mapping = {}  # inverse mapping of above
