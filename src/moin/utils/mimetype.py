@@ -106,7 +106,14 @@ class MimeType:
     def parse_filename(self, filename):
         mtype, encoding = mimetypes.guess_type(filename)
         if mtype is None:
-            mtype = "application/octet-stream"
+            if encoding == "bzip2":
+                mtype = "application/x-bzip2"
+            elif encoding == "gzip":
+                mtype = "application/gzip"
+            elif encoding == "xz":
+                mtype = "application/x-xz"
+            else:
+                mtype = "application/octet-stream"
         self.parse_mimetype(mtype)
 
     def parse_mimetype(self, mimestr):
