@@ -9,6 +9,8 @@ MoinMoin - Email helper functions.
 
 
 import smtplib
+import ssl
+
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 
@@ -57,6 +59,8 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
             ),
         )
     mail_from = mail_from or cfg.mail_from
+    if not mail_from:
+        return 0, _("No sender address configured.")
 
     logging.debug(f"send mail, from: {mail_from!r}, subj: {subject!r}")
     logging.debug(f"send mail, to: {to!r}")
@@ -80,36 +84,50 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     msg["Message-ID"] = make_msgid()
     msg["Auto-Submitted"] = "auto-generated"  # RFC 3834 section 5
 
-    # Send the message
+    # Connect to SMTP server
+    host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
+    port = int(port)
+    use_ssl = bool(port == 465)  # Use SMTP_SSL when the port is 465
+    ssl_context = ssl.create_default_context()
+    server = None
+
+    logging.debug("Connecting to SMTP host=%s port=%s ssl=%s timeout=%s", host, port, use_ssl, SMTP_TIMEOUT)
+
     try:
-        logging.debug(f"trying to send mail (smtp) via smtp server '{cfg.mail_smarthost}'")
-        host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
-        server = smtplib.SMTP(host, int(port), timeout=SMTP_TIMEOUT)
-        try:
+        if use_ssl:
+            server = smtplib.SMTP_SSL(host=host, port=port, timeout=SMTP_TIMEOUT, context=ssl_context)
             server.ehlo()
-            try:  # try to do TLS
+        else:
+            server = smtplib.SMTP(host=host, port=port, timeout=SMTP_TIMEOUT)
+            server.ehlo()
+            try:  # try to use TLS
                 if server.has_extn("starttls"):
                     server.starttls()
                     server.ehlo()
                     logging.debug("tls connection to smtp server established")
-            except Exception:
+            except (smtplib.SMTPException, OSError):
                 logging.debug("could not establish a tls connection to smtp server, continuing without tls")
-            # server.set_debuglevel(1)
-            if cfg.mail_username and cfg.mail_password:
-                logging.debug(f"trying to log in to smtp server using account '{cfg.mail_username}'")
-                server.login(cfg.mail_username, cfg.mail_password)
-            server.send_message(msg)
-        finally:
-            try:
-                server.quit()
-            except AttributeError:
-                # in case the connection failed, SMTP has no "sock" attribute
-                pass
+
+        if cfg.mail_username and cfg.mail_password:
+            logging.debug(f"trying to log in to smtp server using account '{cfg.mail_username}'")
+            server.login(cfg.mail_username, cfg.mail_password)
+
+        # Send the message
+        server.send_message(msg)
+
     except (smtplib.SMTPException, OSError) as e:
         logging.exception(
             "Connection to mailserver '{server}' failed: {reason}".format(server=cfg.mail_smarthost, reason=str(e))
         )
         return 0, _("Connection to mailserver failed: {reason}").format(reason=str(e))
+
+    finally:
+        try:
+            if server:
+                server.quit()
+        except AttributeError:
+            # in case the connection failed, SMTP has no "sock" attribute
+            pass
 
     logging.debug("Mail sent successfully")
     return 1, _("Mail sent successfully")
