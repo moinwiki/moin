@@ -80,6 +80,7 @@ MIMETYPES_sanitize_mapping = {
     ("application", "javascript"): ("text", "javascript"),
     ("application", "x-dos-batch"): ("text", "bat"),
     # Non-standard MIME types used on some platforms
+    # ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types/Common_types
     ("application", "x-gzip"): ("application", "gzip"),  # Windows, macOS
     ("application", "x-zip-compressed"): ("application", "zip"),  # Windows
 }
@@ -90,9 +91,11 @@ for _key, _value in MIMETYPES_sanitize_mapping.items():
 
 
 class MimeType:
-    """Represents a MIME type such as text/plain."""
+    """
+    Represents a MIME type such as text/plain.
+    """
 
-    def __init__(self, mimestr=None, filename=None):
+    def __init__(self, mimestr: str | None = None, filename: str | None = None) -> None:
         self.major = self.minor = None  # sanitized mime type and subtype
         self.params = {}  # parameters like "charset" or others
         self.charset = None  # this stays None until we know for sure!
@@ -105,7 +108,7 @@ class MimeType:
 
     def parse_filename(self, filename):
         mtype, encoding = mimetypes.guess_type(filename)
-        if mtype is None:
+        if (not mtype) or (mtype not in ("application/x-tar", "application/x-gtar") and encoding):
             if encoding == "bzip2":
                 mtype = "application/x-bzip2"
             elif encoding == "gzip":
