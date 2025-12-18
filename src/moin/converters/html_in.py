@@ -431,7 +431,7 @@ class Converter:
         """
         <img src="URI" /> --> <object xlink:href="URI />
         """
-        key = xlink("href")
+        key = xlink.href
         attrib = self.convert_attributes(element)
         # adding type_ attrib makes html_out create an image tag rather than an object tag
         attrib[moin_page.type_] = "image/"
@@ -445,7 +445,7 @@ class Converter:
         """
         <object data="href"></object> --> <object xlink="href" />
         """
-        key = xlink("href")
+        key = xlink.href
         attrib = {}
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.data)])
@@ -461,7 +461,7 @@ class Converter:
         <audio src="URI" /> --> <audio xlink:href="URI />
         """
         attrib = {}
-        key = xlink("href")
+        key = xlink.href
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.src)])
         else:
@@ -478,7 +478,7 @@ class Converter:
         <video src="URI" /> --> <video xlink:href="URI />
         """
         attrib = {}
-        key = xlink("href")
+        key = xlink.href
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.src)])
         else:

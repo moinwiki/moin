@@ -297,7 +297,7 @@ class Converter:
         """
         <object data="href"></object> --> <object xlink="href" />
         """
-        key = xlink("href")
+        key = xlink.href
         attrib = {}
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.data)])
