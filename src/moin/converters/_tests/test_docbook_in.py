@@ -362,17 +362,25 @@ class TestConverter(Base):
         ),
         # OLINK
         (
-            '<article><para><olink targetdoc="uri" targetptr="anchor">link</olink></para></article>',
-            # <page><body><div html:class="article"><para><a xlink:href="uri#anchor">link</a></para></div></body></page>
-            '/page/body/div/p/a[@xlink:href="uri#anchor"][text()="link"]',
+            '<article><para><olink targetdoc="http:example.org/page" targetptr="anchor">link</olink></para></article>',
+            # <page><body><div html:class="article"><para><a xlink:href="http:example.org/page#anchor">link</a></para></div></body></page>
+            '/page/body/div/p/a[@xlink:href="http:example.org/page#anchor"][text()="link"]',
         ),
-        # Link w/ javascript: scheme
+        # only approved URI schemes are used in a "href" (others are handled as part of a local item name):
         (
-            "<article><para><ulink url=\"javascript:alert('xss')\">link</ulink></para></article>",
-            # the href attribute will default to None because javascript is not an allowed url scheme
-            # we don't care how it gets rendered as long as the javascript doesn't show up
-            # <page><body><div html:class="article"><p><a xlink:href="None">link</a></p></div></body></page>
-            '/page/body/div/p/a[@xlink:href="None"][text()="link"]',
+            """<article><para><link xlink:href="javascript:alert('hi')">click me</link></para></article>""",
+            # <page><body><div html:class="article"><p><a xlink:href="wiki.local:javascript:alert%28'hi'%29">click me</a></p></div></body></page>
+            """/page/body/div/p/a[@xlink:href="wiki.local:javascript:alert%28'hi'%29"][text()="click me"]""",
+        ),
+        (
+            """<article><para><olink targetdoc="javascript:alert('hi')" targetptr="anchor">o-link</olink></para></article>""",
+            # <page><body><div html:class="article"><p><a xlink:href="wiki.local:javascript:alert%28'hi'%29">link</a></p></div></body></page>
+            """/page/body/div/p/a[@xlink:href="wiki.local:javascript:alert%28'hi'%29#anchor"][text()="o-link"]""",
+        ),
+        (
+            """<article><para><ulink url="javascript:alert('xss')">u-link</ulink></para></article>""",
+            # <page><body><div html:class="article"><p><a xlink:href="wiki.local:javascript:alert%28'xss'%29">u-link</a></p></div></body></page>
+            """/page/body/div/p/a[@xlink:href="wiki.local:javascript:alert%28'xss'%29"][text()="u-link"]""",
         ),
     ]
 
