@@ -100,6 +100,7 @@ div.warning > ol,
 div.warning > ul,
 div.warning > p { margin-top: 8px; padding-left: 4em; }
 /* Admonition extension of Markdown parser */
+/* TODO: unify with "p.moin-title" (used by rST for admonition title and more) */
 .admonition-title {
     font-weight: bold;
     font-size: 1.1em;
@@ -133,7 +134,7 @@ div.warning > p { margin-top: 8px; padding-left: 4em; }
 .moin-mime-drawing:before { content: url("../img/icons/moin-drawing.png"); margin: 0 .2em; vertical-align: middle; cursor: pointer; }
 /* end of mime type icons */
 
-/* start of userstyles - css clases that are defined for use in wiki markup: {{{#!wiki solid  */
+/* start of userstyles - CSS classes that are defined for use in wiki markup: {{{#!wiki solid  */
 .comment { color: var(--comment); background-color: var(--bg-comment); }
 .red { background-color: var(--bg-user-red); }
 .green { background-color: var(--bg-user-green); }
@@ -165,6 +166,7 @@ div.warning > p { margin-top: 8px; padding-left: 4em; }
 .justify { text-align: justify; }
 .monospaced { font-family: monospace; }
 .resize { max-width: 100%; height: auto; }
+span.cite { font-style: italic; } /* emulate <cite> */
 /* end of userstyles */
 
 /* links */
@@ -435,8 +437,8 @@ li > p { margin-top: 0; margin-bottom: 0; }
 .moin-line-block > .moin-line-block { margin-left: 2em; }
 .moin-line-blk:empty { min-height: 1em; }
 
-/* HTML <aside> (rST topic and sidebar) */
-div.moin-aside { margin-left: 2em; }
+/* reST topic and sidebar */
+div.moin-aside { margin-left: 2em; } /* HTML <aside> */
 .moin-sidebar { color: var(--primary); border: var(--border-style);
     margin: 10px 30px 10px 30px; padding: 8px; clear: both; }
 
