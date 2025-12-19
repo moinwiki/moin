@@ -87,7 +87,7 @@ CONTENTTYPE_TEXT = [
     "text/x-irclog;charset=utf-8",
 ]
 
-CONTENTTYPE_IMAGE = ["image/svg+xml", "image/png", "image/jpeg", "image/gif"]
+CONTENTTYPE_IMAGE = ["image/svg+xml", "image/png", "image/jpeg", "image/gif", "image/webp"]
 
 CONTENTTYPE_AUDIO = ["audio/wave", "audio/ogg", "audio/mpeg", "audio/webm"]
 
@@ -129,6 +129,7 @@ CONTENTTYPES_MAP = {
     "image/png": "PNG Image",
     "image/jpeg": "JPEG Image",
     "image/gif": "GIF Image",
+    "image/webp": "WebP Image",
     "audio/wave": "WAV Audio",
     "audio/ogg": "OGG Audio",
     "audio/mpeg": "MP3 Audio",
