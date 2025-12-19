@@ -24,13 +24,12 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
 
 from . import default_registry
-from ._util import allowed_uri_scheme, decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
 from moin import log
 
@@ -859,13 +858,10 @@ class Converter:
         if element.attrib.get(xlink.title_):
             attrib[html.title_] = element.attrib.get(xlink.title_)
         href = element.attrib.get(xlink.href)
+        iri = sanitise_uri_scheme(href or "")
         linkend = element.get("linkend")
         if linkend:
-            href = "".join(["#", linkend])
-        iri = Iri(href)
-        # ensure a safe scheme, fall back to wiki-internal reference:
-        if iri.scheme not in URI_SCHEMES:
-            iri = Iri("wiki.local:" + href)
+            iri.fragment = linkend
         attrib[xlink.href] = iri
         return self.new_copy(moin_page.a, element, depth, attrib)
 
@@ -888,9 +884,10 @@ class Converter:
         """
         targetdoc = element.get("targetdoc")
         targetptr = element.get("targetptr")
-        if targetdoc and targetptr and allowed_uri_scheme(targetdoc):
-            attrib = {}
-            attrib[xlink.href] = "".join([targetdoc, "#", targetptr])
+        if targetdoc and targetptr:
+            iri = sanitise_uri_scheme(targetdoc)
+            iri.fragment = targetptr
+            attrib = {xlink.href: iri}
             return self.new_copy(moin_page.a, element, depth, attrib=attrib)
 
     def visit_docbook_orderedlist(self, element, depth):
@@ -1217,10 +1214,10 @@ class Converter:
         # The namespace does not always work, so we will try to retrive the attribute whatever
         if not href:
             for key, value in element.attrib.items():
-                if key.name == "url" and allowed_uri_scheme(value):
+                if key.name == "url":
                     href = value
-        key = xlink.href
-        attrib[key] = href
+        # ensure a safe scheme, fall back to wiki-internal reference:
+        attrib[xlink.href] = sanitise_uri_scheme(href)
         return self.new_copy(moin_page.a, element, depth, attrib=attrib)
 
     def visit_qandaentry_number(self, element, depth):

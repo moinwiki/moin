@@ -44,10 +44,11 @@ class TestConverter:
         ("Text\nTest", "<p>Text\nTest</p>"),
         ("Text\n\nTest", "<p>Text</p><p>Test</p>"),
         ("<http://moinmo.in/>", '<p><a xlink:href="http://moinmo.in/">http://moinmo.in/</a></p>'),
-        (
+        (  # ensure a safe scheme, fall back to wiki-internal reference:
             '[yo](javascript:alert("xss"))',
             '<p><a title="xss" html:title="xss" xlink:href="wiki.local:javascript:alert%28">yo</a>)</p>',
         ),
+        ("[new page](Yesterday: a legacy)", '<p><a xlink:href="wiki.local:Yesterday:%20a%20legacy">new page</a></p>'),
         ("[MoinMoin](http://moinmo.in/)", '<p><a xlink:href="http://moinmo.in/">MoinMoin</a></p>'),
         ("----", '<separator class="moin-hr3" />'),
     ]

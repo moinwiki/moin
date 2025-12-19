@@ -18,14 +18,12 @@ from emeraldtree.html import HTML
 
 from markupsafe import escape
 
-from moin.constants.misc import URI_SCHEMES
 from moin.i18n import _
-from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
-from ._util import decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
 from moin import log
 
@@ -419,25 +417,21 @@ class Converter:
         """
         <a href="URI">Text</a> --> <a xlink:href="URI">Text</a>
         """
-        key = xlink("href")
         attrib = {}
         if element.attrib.get("title"):
             attrib[html.title_] = element.attrib.get("title")
         href = element.get(html.href)
         if self.base_url:
             href = "".join([self.base_url, href])
-        iri = Iri(href)
-        # ensure a safe scheme, fall back to wiki-internal reference
-        if iri.scheme not in URI_SCHEMES:
-            iri = Iri("wiki.local:" + href)
-        attrib[key] = iri
+        # ensure a safe scheme, fall back to wiki-internal reference:
+        attrib[xlink.href] = sanitise_uri_scheme(href)
         return self.new_copy(moin_page.a, element, attrib)
 
     def visit_xhtml_img(self, element):
         """
         <img src="URI" /> --> <object xlink:href="URI />
         """
-        key = xlink("href")
+        key = xlink.href
         attrib = self.convert_attributes(element)
         # adding type_ attrib makes html_out create an image tag rather than an object tag
         attrib[moin_page.type_] = "image/"
@@ -451,7 +445,7 @@ class Converter:
         """
         <object data="href"></object> --> <object xlink="href" />
         """
-        key = xlink("href")
+        key = xlink.href
         attrib = {}
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.data)])
@@ -467,7 +461,7 @@ class Converter:
         <audio src="URI" /> --> <audio xlink:href="URI />
         """
         attrib = {}
-        key = xlink("href")
+        key = xlink.href
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.src)])
         else:
@@ -484,7 +478,7 @@ class Converter:
         <video src="URI" /> --> <video xlink:href="URI />
         """
         attrib = {}
-        key = xlink("href")
+        key = xlink.href
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.src)])
         else:

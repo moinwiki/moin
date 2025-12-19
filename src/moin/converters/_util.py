@@ -24,6 +24,14 @@ def allowed_uri_scheme(uri):
     return not parsed.scheme or parsed.scheme in URI_SCHEMES
 
 
+def sanitise_uri_scheme(href: str) -> Iri:
+    """Ensure a safe scheme, fall back to wiki-internal reference."""
+    iri = Iri(href)
+    if iri.scheme not in URI_SCHEMES:
+        iri = Iri("wiki.local:" + href)
+    return iri
+
+
 def decode_data(data, contenttype=None):
     """
     Read and decode data; return Unicode text.

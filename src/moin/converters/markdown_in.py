@@ -14,9 +14,8 @@ from html.entities import name2codepoint
 from collections import deque
 
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
-from ._util import decode_data
+from ._util import decode_data, sanitise_uri_scheme
 from moin.utils.iri import Iri
-from moin.constants.misc import URI_SCHEMES
 from moin.converters.html_in import Converter as HTML_IN_Converter
 from flask import current_app
 
@@ -298,7 +297,7 @@ class Converter:
         """
         <object data="href"></object> --> <object xlink="href" />
         """
-        key = xlink("href")
+        key = xlink.href
         attrib = {}
         if self.base_url:
             attrib[key] = "".join([self.base_url, element.get(html.data)])
@@ -366,16 +365,12 @@ class Converter:
 
     def visit_a(self, element):
         """element.attrib has href, element.tag is 'a', element.text has title"""
-        key = xlink("href")
         attrib = {}
         if element.attrib.get("title"):
             attrib[html.title_] = element.attrib.get("title")
         href = postproc_text(self.markdown, element.attrib.get("href"))
-        iri = Iri(href)
-        # ensure a safe scheme, fall back to wiki-internal reference
-        if iri.scheme not in URI_SCHEMES:
-            iri = Iri("wiki.local:" + href)
-        attrib[key] = iri
+        # ensure a safe scheme, fall back to wiki-internal reference:
+        attrib[xlink.href] = sanitise_uri_scheme(href)
         return self.new_copy(moin_page.a, element, attrib)
 
     def verify_align_style(self, attrib):

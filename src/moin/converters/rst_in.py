@@ -34,14 +34,13 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
 from moin.wikiutil import anchor_name_from_text
 
 from . import default_registry
-from ._util import decode_data, normalize_split_text
+from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
 from moin import log
 
@@ -700,9 +699,7 @@ class NodeVisitor:
             iri = Iri("wiki.local:" + refuri.split(":", maxsplit=1)[1])
         else:
             # ensure a safe scheme, fall back to wiki-internal reference
-            iri = Iri(refuri)
-            if iri.scheme not in URI_SCHEMES:
-                iri = Iri("wiki.local:" + refuri)
+            iri = sanitise_uri_scheme(refuri)
         self.open_moin_page_node(moin_page.a(attrib={xlink.href: iri}))
 
     def depart_reference(self, node):
