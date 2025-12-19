@@ -48,6 +48,14 @@ class TestMimeType:
             (".jpeg", "image/jpeg"),
             (".png", "image/png"),
             (".svg", "image/svg+xml"),
+            (".tar.bz2", "application/x-tar"),
+            (".tar.gz", "application/x-tar"),
+            (".tar.xz", "application/x-tar"),
+            (".tar.zip", "application/zip"),
+            (".xml.bz2", "application/x-bzip2"),
+            (".xml.gz", "application/gzip"),
+            (".xml.xz", "application/x-xz"),
+            (".xml.zip", "application/zip"),
             ("", "application/octet-stream"),
         ]
 

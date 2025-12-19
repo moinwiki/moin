@@ -595,7 +595,7 @@ class TarMixin:
 @register
 class ApplicationXTar(TarMixin, Application):
     """
-    Tar items
+    Tar items (might be bzip2/gzip/xz compressed)
     """
 
     contenttype = "application/x-tar"
@@ -605,7 +605,7 @@ class ApplicationXTar(TarMixin, Application):
 @register
 class ApplicationXGTar(ApplicationXTar):
     """
-    Compressed tar items
+    GNU tar items
     """
 
     contenttype = "application/x-gtar"
