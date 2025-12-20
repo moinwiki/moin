@@ -682,6 +682,7 @@ class Item:
     def create(
         cls,
         name: str = "",
+        *,
         itemtype: str | None = None,
         contenttype: str | None = None,
         rev_id: str = CURRENT,
