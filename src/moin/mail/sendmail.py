@@ -85,15 +85,19 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     msg["Auto-Submitted"] = "auto-generated"  # RFC 3834 section 5
 
     # Connect to SMTP server
-    host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
-    port = int(port)
-    use_ssl = bool(port == 465)  # Use SMTP_SSL when the port is 465
-    ssl_context = ssl.create_default_context()
-    server = None
+    try:
+        host, port = (cfg.mail_smarthost + ":25").split(":")[:2]
+        port = int(port)
+        use_ssl = bool(port == 465)  # Use SMTP_SSL when the port is 465
+        ssl_context = ssl.create_default_context()
+    except (ValueError, ssl.SSLError) as e:
+        logging.exception("SSL context creation failed: {reason}".format(reason=str(e)))
+        return 0, _("SSL context creation failed: {reason}").format(reason=str(e))
 
     logging.debug("Connecting to SMTP host=%s port=%s ssl=%s timeout=%s", host, port, use_ssl, SMTP_TIMEOUT)
 
     try:
+        server = None
         if use_ssl:
             server = smtplib.SMTP_SSL(host=host, port=port, timeout=SMTP_TIMEOUT, context=ssl_context)
             server.ehlo()
@@ -105,8 +109,9 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
                     server.starttls()
                     server.ehlo()
                     logging.debug("tls connection to smtp server established")
-            except (smtplib.SMTPException, OSError):
-                logging.debug("could not establish a tls connection to smtp server, continuing without tls")
+            except (smtplib.SMTPException, OSError) as e:
+                logging.info("could not establish a tls connection to smtp server, continuing without tls")
+                logging.info(f"reason: {e}")
 
         if cfg.mail_username and cfg.mail_password:
             logging.debug(f"trying to log in to smtp server using account '{cfg.mail_username}'")
