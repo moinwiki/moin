@@ -380,6 +380,7 @@ text""",
             "test |a| test\n\n.. |a| macro:: <<Macro()>>",
             '<p>test <inline-part content-type="x-moin/macro;name=Macro" /> test</p>',
         ),
+        (".. contents::", "<table-of-content />"),
         (".. contents::\n  :depth: 1\n", '<table-of-content outline-level="1" />'),
         (
             ".. parser:: python test=test\n  import test\n  test.s = 11",

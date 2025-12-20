@@ -25,8 +25,8 @@ import re
 
 import docutils
 from docutils import core, nodes, transforms, utils
-from docutils.nodes import reference, literal_block
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
+import docutils.parsers.rst.directives.misc
 
 try:
     from flask import g as flaskg
@@ -1006,104 +1006,105 @@ class MoinDirectives:
     def __init__(self):
 
         # include MoinMoin pages
-        directives.register_directive("include", self.include)
+        directives.register_directive("include", self.Include)
 
         # used for MoinMoin macros
-        directives.register_directive("macro", self.macro)
+        directives.register_directive("macro", self.Macro)
 
         # used for MoinMoin tables of content
-        directives.register_directive("contents", self.table_of_content)
+        directives.register_directive("contents", self.Contents)
 
         # used for MoinMoin parsers
-        directives.register_directive("parser", self.parser)
+        directives.register_directive("parser", self.ParseWith)
+
+    class Include(directives.misc.Include):
+        """Include MoinMoin pages instead of files from the filesystem."""
+
+        option_spec = {}  # no options for now...
 
         # As a quick fix for infinite includes we only allow a fixed number of
         # includes per page
-        self.num_includes = 0
-        self.max_includes = 10
+        num_includes = 0
+        max_includes = 10
 
-    # Handle the include directive rather than letting the default docutils
-    # parser handle it. This allows the inclusion of MoinMoin pages instead of
-    # something from the filesystem.
-    def include(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-        # content contains the included file name
+        def run(self):
+            path = directives.path(self.arguments[0])
 
-        # TODO: i18n for errors
-
-        # Limit the number of documents that can be included
-        if self.num_includes < self.max_includes:
-            self.num_includes += 1
-        else:
-            lines = ["**Maximum number of allowed includes exceeded**"]
-            state_machine.insert_input(lines, "MoinDirectives")
-            return []
-
-        if content:
-            macro = f"<<Include({content[0]})>>"
-        else:
-            macro = "<<Include()>>"
-        ref = reference(macro, refuri=macro)
-        return [ref]
-
-    include.has_content = include.content = True
-    include.option_spec = {}
-    include.required_arguments = 1
-    include.optional_arguments = 0
-
-    # Add additional macro directive.
-    # This allows MoinMoin macros to be used either by using the directive
-    # directly or by using the substitution syntax. Much cleaner than using the
-    # reference hack (`<<SomeMacro>>`_). This however simply adds a node to the
-    # document tree which is a reference, but through a much better user
-    # interface.
-    def macro(self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-        # .. macro:: <<DateTime()>>
-        # content contains macro to be called
-        if len(content):
-            # Allow either with or without brackets
-            if content[0].startswith("<<"):
-                macro = content[0]
+            # Limit the number of documents that can be included
+            if self.num_includes < self.max_includes:
+                self.num_includes += 1
             else:
-                macro = f"<<{content[0]}>>"
-            ref = reference(macro, refuri=macro)
+                # TODO: i18n for errors
+                lines = ["**Maximum number of allowed includes exceeded**"]
+                self.state_machine.insert_input(lines, "MoinDirectives")
+                return []
+
+            macro = f"<<Include({path})>>"
+            ref = nodes.reference(macro, refuri=macro)  # TODO: use <pending> node
+            return [ref]
+
+    class Macro(Directive):
+        """
+        MoinMoin macros via directive or substitution syntax.
+
+        May be called with or without angle brackets, e.g. ::
+
+            .. macro:: DateTime()
+            .. macro:: <<DateTime()>>
+
+        Obsoletes the "reference syntax"::
+
+            `<<SomeMacro>>`_
+        """
+
+        # TODO:
+        # Currently just adds a node to the document tree which is a
+        # reference, but through a much better user interface.
+        #
+        # * use a <pending> node instead of the "reference hack".
+        # * add a "macro" role for inline use,
+
+        required_arguments = 1
+        final_argument_whitespace = True
+
+        def run(self):
+            macro = self.arguments[0]
+            if not (macro.startswith("<<") and macro.endswith(">>")):
+                # may be called with or without angle brackets
+                macro = f"<<{macro}>>"
+            ref = nodes.reference(macro, name=macro, refuri=macro)
+            return [ref]
+
+    class Contents(Directive):
+        """Call Moin macro instead of Docutils Transform for Table of Contents."""
+
+        # TODO: support custom heading like in Docutils?
+        # optional_arguments = 1
+        # final_argument_whitespace = True
+        option_spec = {"depth": directives.nonnegative_int}
+
+        def run(self):
+            depth = self.options.get("depth", "")
+            macro = f"<<TableOfContents({depth})>>"
+            ref = nodes.reference(macro, refuri=macro)
             ref["name"] = macro
             return [ref]
-        return
 
-    macro.has_content = macro.content = True
-    macro.option_spec = {}
-    macro.required_arguments = 1
-    macro.optional_arguments = 0
+    class ParseWith(Directive):
+        """Parse the content with specified parser."""
 
-    def table_of_content(
-        self, name, arguments, options, content, lineno, content_offset, block_text, state, state_machine
-    ):
-        text = ""
-        for i in content:
-            m = re.search(r":(\w+): (\w+)", i)
-            if m and len(m.groups()) == 2:
-                if m.groups()[0] == "depth":
-                    text = m.groups()[1]
-        macro = f"<<TableOfContents({text})>>"
-        ref = reference(macro, refuri=macro)
-        ref["name"] = macro
-        return [ref]
+        # TODO: currently fails :(
+        #       use standard directive syntax with blank line before content
+        #       use <pending> node
 
-    table_of_content.has_content = table_of_content.content = True
-    table_of_content.option_spec = {}
-    table_of_content.required_arguments = 1
-    table_of_content.optional_arguments = 0
+        required_arguments = 1
+        final_argument_whitespace = True
 
-    def parser(self, name, arguments, options, content, lineo, content_offset, block_text, state, state_machine):
-        block = literal_block()
-        block["parser"] = content[0]
-        block.children = [nodes.Text("\n".join(content[1:]))]
-        return [block]
-
-    parser.has_content = parser.content = True
-    parser.option_spec = {}
-    parser.required_arguments = 1
-    parser.optional_arguments = 0
+        def run(self):
+            arg = self.arguments[0].split("\n", maxsplit=1)
+            block = nodes.literal_block("", "".join(arg[1:]))
+            block["parser"] = arg[0]
+            return [block]
 
 
 class Converter:
