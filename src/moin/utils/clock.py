@@ -7,8 +7,12 @@
 MoinMoin - clock utilities.
 """
 
+from __future__ import annotations
 
 import time
+
+from typing import ParamSpec, TypeVar
+from collections.abc import Callable
 from functools import wraps, partial
 
 from flask import g as flaskg
@@ -55,12 +59,16 @@ class Clock:
             logging.warning(f"These timers have not been stopped: {', '.join(self.timers.keys())}")
 
 
-def add_timing(f, name=None):
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def add_timing(f: Callable[P, R], name: str | None = None) -> Callable[P, R]:
     if name is None:
         name = f.__name__
 
     @wraps(f)
-    def wrapper(*args, **kw):
+    def wrapper(*args: P.args, **kw: P.kwargs) -> R:
         flaskg.clock.start(name)
         retval = f(*args, **kw)
         flaskg.clock.stop(name)
@@ -69,5 +77,5 @@ def add_timing(f, name=None):
     return wrapper
 
 
-def timed(name=None):
+def timed(name: str | None = None):
     return partial(add_timing, name=name)

@@ -1060,7 +1060,7 @@ class PropertiesMixin:
     """
 
     @property
-    def name(self):
+    def name(self) -> str | None:
         if self._name and self._name in self.names:
             name = self._name
         else:
@@ -1069,7 +1069,7 @@ class PropertiesMixin:
             except IndexError:
                 # empty name list, no name:
                 name = None
-        assert isinstance(name, str) or not name
+        assert isinstance(name, str) or name is None
         return name
 
     @property

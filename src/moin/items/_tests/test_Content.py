@@ -189,7 +189,7 @@ class TestText:
 
     def test_data_conversion(self):
         item_name = "Text_Item"
-        item = Item.create(item_name, ITEMTYPE_DEFAULT, "text/plain;charset=utf-8")
+        item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="text/plain;charset=utf-8")
         test_text = "This \n is \n a \n Test"
         # test for data_internal_to_form
         result = Text.data_internal_to_form(item.content, test_text)

@@ -103,11 +103,17 @@
                     {{ gen.input(form['comment'], type="text", class="form-control") }}
                 </div>
                 <div class="submit-buttons">
-                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label, class='moin-button moin-modify-submit') }}
+                    {{ gen.input(type='submit', id='moin-save-text-button', value=form.submit_label,
+                        class='moin-button moin-modify-submit') }}
+                    {% set disabled = {} if preview_supported else { 'disabled': 'disabled' } %}
                     {{ gen.input(type='submit', id='moin-preview-text-button', name='preview', value=form.preview_label,
-                        class='moin-button moin-modify-submit', onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        class='moin-button moin-modify-submit',
+                        onclick="$('#moin-modify').removeClass('moin-changed-input')",
+                        title=warning, **disabled) }}
+                    {{ gen.input(type='submit', id='moin-cancel-text-button', name='cancel', value=form.cancel_label,
+                        class='moin-button moin-cancel',
+                        onclick="$('#moin-modify').removeClass('moin-changed-input')",
                         title=warning) }}
-                    <button class="moin-button moin-cancel" type="button">{{ _("Cancel") }}</button>
                 </div>
             {% endif %}
 

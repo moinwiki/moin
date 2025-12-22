@@ -15,6 +15,9 @@ MoinMoin - Frontend views
 Views that render the pages and actions a typical wiki user sees.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import os
 import re
@@ -109,6 +112,9 @@ from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type
 
 from moin import log
+
+if TYPE_CHECKING:
+    from werkzeug.wrappers import Response as ResponseBase
 
 logging = log.getLogger(__name__)
 
@@ -644,7 +650,7 @@ def get_item_permissions(fqname, item):
 # The second form only accepts GET since modifying a historical revision is not allowed.
 @frontend.route("/<itemname:item_name>", defaults=dict(rev=CURRENT), methods=["GET", "POST"])
 @frontend.route("/+show/+<rev>/<itemname:item_name>", methods=["GET"])
-def show_item(item_name, rev):
+def show_item(item_name: str, rev: str) -> ResponseBase | str:
     fqname = split_fqname(item_name)
     item_displayed.send(app._get_current_object(), fqname=fqname)
     if not fqname.value and fqname.field == NAME_EXACT:
