@@ -32,7 +32,7 @@
                 {%- if form and form['content_form'] and not form['content_form'].is_draw %}
                     <div class="moin-edit-actions">
                         <button class="moin-button" onclick="document.getElementById('moin-save-text-button').click()">OK</button>
-                        <button class="moin-button" onclick="document.getElementById('moin-preview-text-button').click()">Preview</button>
+                        <button class="moin-button" onclick="document.getElementById('moin-preview-text-button').click()"{% if not preview_supported %} disabled="disabled"{% endif %}>Preview</button>
                         <button class="moin-button" onclick="document.getElementById('moin-cancel-text-button').click()">Cancel</button>
                     </div>
                 {%- endif %}

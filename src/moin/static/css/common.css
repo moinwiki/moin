@@ -494,8 +494,8 @@ a.moin-button:active { color: var(--primary); text-decoration: none; }
 .moin-button:focus { box-shadow: 2px 2px 1px var(--border-button-hover); outline: none; }
 .moin-button:active {background: var(--bg-button-active); color: var(--inverse); }
 /* was bg-color2 DDD */
-input.moin-button:disabled { color: var(--disabled); background: var(--bg-disabled); }
-input.moin-button:disabled:hover { box-shadow: none; }
+.moin-button:disabled { color: var(--disabled); background: var(--bg-disabled); }
+.moin-button:disabled:hover { box-shadow: none; }
 .moin-button-less { border: 0; background: inherit; color: var(--link); }
 
 /* pre */

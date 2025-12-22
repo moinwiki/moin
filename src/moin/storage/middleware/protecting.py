@@ -32,7 +32,7 @@ from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from moin.config import AclConfig
-    from moin.storage.middleware.indexing import IndexingMiddleware, Item
+    from moin.storage.middleware.indexing import IndexingMiddleware, Item, Revision
     from moin.user import User
 
 logging = log.getLogger(__name__)
@@ -490,7 +490,8 @@ class ProtectedItem:
 
 
 class ProtectedRevision:
-    def __init__(self, protector, rev, p_item=None):
+
+    def __init__(self, protector, rev: Revision, p_item: ProtectedItem | None = None) -> None:
         """
         :param protector: Protector middleware
         :param rev: Revision to protect
@@ -500,7 +501,7 @@ class ProtectedRevision:
         self.rev = rev
         self.item = p_item or ProtectedItem(protector, rev.item)
 
-    def allows(self, capability):
+    def allows(self, capability) -> bool:
         # to check allowance for a revision, we always ask the item
         return self.item.allows(capability)
 
@@ -515,11 +516,11 @@ class ProtectedRevision:
             )
 
     @property
-    def revid(self):
+    def revid(self) -> str:
         return self.rev.revid
 
     @property
-    def name(self):
+    def name(self) -> str | None:
         return self.rev.name
 
     @property

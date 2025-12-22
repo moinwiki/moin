@@ -5,6 +5,10 @@
 MoinMoin - Blog item type
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from typing_extensions import override
 
 from datetime import datetime
 
@@ -23,6 +27,9 @@ from moin.constants.itemtypes import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from moin.constants.keys import NAME_EXACT, ITEMTYPE, MTIME, PTIME, TAGS
 from moin.items import Item, Default, register, BaseMetaForm
 from moin.utils.interwiki import split_fqname
+
+if TYPE_CHECKING:
+    from werkzeug.wrappers import Response as ResponseBase
 
 
 class BlogMetaForm(BaseMetaForm):
@@ -49,7 +56,10 @@ class Blog(Default):
         meta_form = BlogMetaForm
         meta_template = "blog/modify_main_meta.html"
 
-    def do_show(self, revid, **kwargs):
+    @override
+    def do_show(
+        self, revid: str, *, item_is_deleted: bool = False, item_may: dict[str, bool] | None = None
+    ) -> ResponseBase | str:
         """
         Show a blog item and a list of its blog entries below it.
 
@@ -111,7 +121,8 @@ class BlogEntry(Default):
                 form["meta_form"]["ptime"].set(datetime.utcnow())
             return form
 
-    def do_show(self, revid, **kwargs):
+    @override
+    def do_show(self, revid, **kwargs) -> ResponseBase | str:
         blog_item_name = self.name.rsplit("/", 1)[0]
         try:
             blog_item = Item.create(blog_item_name)
