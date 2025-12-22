@@ -1,0 +1,10 @@
+{
+  "name": "css-builder",
+  "scripts": {
+    "build": "sass --verbose --silence-deprecation import --quiet-deps --load-path=node_modules/bootstrap/scss ../../src/moin/themes/basic/scss/theme.scss ../../src/moin/themes/basic/static/css/theme.css"
+  },
+  "devDependencies": {
+    "bootstrap": "5.3.8",
+    "sass": "^1.97.1"
+  }
+}
