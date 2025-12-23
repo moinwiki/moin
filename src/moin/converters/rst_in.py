@@ -1039,6 +1039,11 @@ class MoinDirectives:
                 self.state_machine.insert_input(lines, "MoinDirectives")
                 return []
 
+            if path.startswith("<") and path.endswith(">"):
+                # include Docutils standard definition file
+                # https://docutils.sourceforge.io/docs/ref/rst/definitions.html
+                return super().run()
+
             macro = f"<<Include({path})>>"
             ref = nodes.reference(macro, refuri=macro)  # TODO: use <pending> node
             return [ref]

@@ -386,9 +386,19 @@ text""",
             ".. parser:: python test=test\n  import test\n  test.s = 11",
             '<part content-type="x-moin/format;name=python"><arguments><argument name="test">test</argument></arguments>import test\ntest.s = 11</part>',
         ),
-        (
+        (  # modified: include (transclude) Wiki pages instead of files
             ".. include:: RecentChanges",
             '<xinclude:include alt="&lt;&lt;Include(RecentChanges)&gt;&gt;" content-type="x-moin/macro;name=Include" xinclude:href="wiki.local:RecentChanges" />',
+        ),
+        (  # rST standard definition files can still be included.
+            ".. include:: <isonum.txt>\n\nR = 470 |Ohm|",
+            '<div class="comment dashed">This data file has been placed in the public domain.</div>'
+            '<div class="comment dashed">Derived from the Unicode character mappings available from\n'
+            "&lt;http://www.w3.org/2003/entities/xml/&gt;.\n"
+            "Processed by unicode2rstsubs.py, part of Docutils:\n"
+            "&lt;https://docutils.sourceforge.io&gt;."
+            "</div>"
+            "<p>R = 470 Ω</p>",
         ),
         (".. meta::\n   :description lang=en: An amusing story", ""),  # TODO: handle metadata (which?, how?)
         (".. raw:: latex\n\n   potentially \\emph{harmfull} content", ""),  # ignore "foreign" formats
