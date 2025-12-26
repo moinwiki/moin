@@ -4,7 +4,7 @@
 # Copyright: 2007 MoinMoin:HeinrichWendel
 # Copyright: 2008 MoinMoin:ChristopherDenter
 # Copyright: 2010 MoinMoin:DiogenesAugusto
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2025 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -849,9 +849,7 @@ class User:
         return True
 
     def mail_password_recovery(self, cleartext_passwd=None, subject=None, text=None):
-        """Mail a user who forgot his password a message enabling
-        him to login again.
-        """
+        """Mail a user who forgot his password a message enabling him to login again."""
         if not self.email:
             return False, "user has no E-Mail address in his profile."
 
@@ -859,7 +857,7 @@ class User:
 
         if subject is None:
             subject = _("[{sitename}] Your wiki password recovery link").format(sitename="{sitename}")
-        subject = subject % dict(sitename=self._cfg.sitename or "Wiki")
+        subject = subject.format(sitename=self._cfg.sitename or "Wiki")
         if text is None:
             link = url_for("frontend.recoverpass", username=self.name0, token=token, _external=True)
             text = render_template("mail/password_recovery.txt", link=link)

@@ -117,8 +117,7 @@ class ConfigFunctionality:
         self._site_plugin_lists = {}
 
         # check if mail is possible and set flag:
-        self.mail_enabled = (self.mail_smarthost is not None or self.mail_sendmail is not None) and self.mail_from
-        self.mail_enabled = self.mail_enabled and True or False
+        self.mail_enabled = bool(self.mail_smarthost and self.mail_from)
 
         if self.namespace_mapping is None:
             raise error.ConfigurationError(
@@ -719,13 +718,12 @@ options = {
     ),
     "mail": (
         "Mail",
-        "These settings control outgoing and incoming email from and to the wiki.",
+        "These settings control outgoing email from the wiki.",
         (
             ("from", None, "Used as From: address for generated mail. [Unicode]"),
             ("username", None, "Username for SMTP server authentication (None = don't use auth)."),
             ("password", None, "Password for SMTP server authentication (None = don't use auth)."),
             ("smarthost", None, "Address of SMTP server to use for sending mail (None = don't use SMTP server)."),
-            ("sendmail", None, "sendmail command to use for sending mail (None = don't use sendmail)"),
         ),
     ),
     "registration": (
