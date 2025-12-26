@@ -66,15 +66,19 @@ class TestConverter:
         ("`monospace`\n", "`monospace`\n"),
         ("<abbr>etc.</abbr>", "<abbr>etc.</abbr>"),
         ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
+        ("<cite>Winnie-the-Pooh</cite>", "<cite>Winnie-the-Pooh</cite>"),
         ("<dfn>term</dfn>", "<dfn>term</dfn>"),
         ("<strike>stroke</strike>\n", "<strike>stroke</strike>\n"),
         # <ins> is changed to <u>
         ("<ins>underline</ins>\n", "<u>underline</u>\n"),
         ("<kbd>Ctrl-X</kbd><", "<kbd>Ctrl-X</kbd><"),
+        ("see <mark>here</mark>", "see <mark>here</mark>"),
+        ("<q>cogito ergo sum</q>", "<q>cogito ergo sum</q>"),
         ("<big>larger</big>\n", "<big>larger</big>\n"),
-        ("<small>smaller</small>\n", "<small>smaller</small>\n"),
+        ("<small>fine print</small>\n", "<small>fine print</small>\n"),
         ("<sup>super</sup>script\n", "<sup>super</sup>script\n"),
         ("<sub>sub</sub>script\n", "<sub>sub</sub>script\n"),
+        ("<var>n</var> times\n", "<var>n</var> times\n"),
         ("<hr>\n\n<hr>\n\n<hr>\n", "----\n\n----\n\n----\n"),
     ]
 

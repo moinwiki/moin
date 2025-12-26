@@ -96,7 +96,10 @@ class TestConverter(Base):
             '/div/p/u [text()="underline"]',
         ),
         ("<html><p><big>Test</big></p></html>", '/div/p/span[@class="moin-big"][text()="Test"]'),
-        ("<html><p><small>Test</small></p></html>", '/div/p/span[@class="moin-small"][text()="Test"]'),
+        (
+            '<html><p><span class="moin-small">smaller</span></p></html>',
+            '/div/p/span[@class="moin-small"][text()="smaller"]',
+        ),
         (
             "<html><p><ins>underline</ins></p></html>",
             # <div><p><ins>underline</ins></p></div>
@@ -123,8 +126,13 @@ class TestConverter(Base):
         ("<html><p><abbr>etc.</abbr></p></html>", '/div/p[abbr="etc."]'),
         ("<html><p><acronym>AC/DC</acronym></p></html>", '/div/p[abbr="AC/DC"]'),
         ("<html><p><address>webmaster@example.org</address></p></html>", '/div/p[address="webmaster@example.org"]'),
+        ("<html><p><cite>Moin wiki</cite></p></html>", '/div/p[cite="Moin wiki"]'),
         ("<html><p><dfn>term</dfn></p></html>", '/div/p[dfn="term"]'),
         ("<html><p><kbd>Ctrl-X</kbd></p></html>", '/div/p[kbd="Ctrl-X"]'),
+        ("<html><p>see <mark>here</mark></p></html>", '/div/p[text()="see "][mark="here"]'),
+        ("<html><p><q>cogito ergo sum</q></p></html>", '/div/p[q="cogito ergo sum"]'),
+        ("<html><p><small>side remark</small></p></html>", '/div/p[small="side remark"]'),
+        ("<html><p><var>n</var> elements</p></html>", '/div/p[var="n"][text()=" elements"]'),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
