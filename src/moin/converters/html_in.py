@@ -64,14 +64,12 @@ class Converter:
     # HTML tags that can be converted without attributes into a different DOM tag
     simple_tags = {  # Emphasis
         "em": moin_page.emphasis,
-        "i": moin_page.emphasis,
-        # Strong
-        "b": moin_page.strong,
-        "strong": moin_page.strong,
+        "i": moin_page.emphasis,  # "alternate voice or mood"
+        "b": moin_page.strong,  # highlight key words without marking them up as important
         # Code and Blockcode
         "pre": moin_page.blockcode,
-        "tt": moin_page.code,
-        "samp": moin_page.code,
+        "tt": moin_page.code,  # deprecated
+        "samp": moin_page.code,  # computer output sample
         # Lists
         "dt": moin_page.list_item_label,
         "dd": moin_page.list_item_body,
@@ -81,6 +79,7 @@ class Converter:
     # HTML tags that do not have equivalents in the DOM tree
     # But we keep the information using a <span> element
     inline_tags = {"abbr", "acronym", "address", "dfn", "kbd"}
+    # TODO: Use a <div> element for <address> (it is a "body element").
 
     # HTML tags that are completely ignored by our converter.
     # We do not even process children of these elements.
@@ -113,7 +112,7 @@ class Converter:
         "style",
         "textarea",
         "title",
-        "var",
+        # "var",  # a variable or constant
     }
 
     # standard_attributes are html attributes which are used
@@ -493,11 +492,11 @@ class Converter:
     def visit_xhtml_inline(self, element):
         """
         For some specific inline tags (defined in inline_tags)
-        We just return <span element="tag.name">
+        we just return <span html:class="html-{tag.name}">
         """
         key = html("class")
         attrib = {}
-        attrib[key] = "".join(["html-", element.tag.name])
+        attrib[key] = f"html-{element.tag.name}"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_xhtml_list(self, element):
