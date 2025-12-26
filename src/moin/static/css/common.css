@@ -439,7 +439,7 @@ li > p { margin-top: 0; margin-bottom: 0; }
 
 /* reST topic and sidebar */
 div.moin-aside { margin-left: 2em; } /* HTML <aside> */
-.moin-sidebar { color: var(--primary); border: var(--border-style);
+.moin-content .moin-sidebar { color: var(--primary); border: var(--border-style);
     margin: 10px 30px 10px 30px; padding: 8px; clear: both; }
 
 /* horizontal rules */

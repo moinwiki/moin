@@ -9159,8 +9159,7 @@ ul.moin-pull-right {
   float: right !important;
 }
 
-h1, h2, h3, h4, h5, h6,
-h1 + p.moin-subheading {
+h1, h2, h3, h4, h5, h6 {
   padding-left: 0.5em;
   background-color: #E9EAEC;
   border-radius: 7px;
@@ -9180,6 +9179,19 @@ h2 {
   font-size: 1.5em;
 }
 
+:has(+ p.moin-subheading) {
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+h1 + p.moin-subheading {
+  font-weight: 500;
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .moin-pagetitle {
   font-size: 1.75em;
   font-weight: normal;
@@ -9187,18 +9199,6 @@ h2 {
   background-color: #E9EAEC;
   border-radius: 7px;
   border-bottom: 1px solid #90ADC6;
-}
-
-:has(+p.moin-subheading) {
-  margin-bottom: 0;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-h1 + p.moin-subheading {
-  font-weight: 500;
-  margin-top: 0;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
 
 .btn-primary {
