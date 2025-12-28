@@ -56,7 +56,7 @@ class Converter:
     html_namespace = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = {"div", "p", "strong", "code", "quote", "blockquote", "span"}
+    symmetric_tags = {"blockquote", "code", "del", "div", "ins", "p", "quote", "s", "span", "strong", "u"}
 
     # HTML tags that define a list; except dl, which is a little bit different
     list_tags = {"ul", "dir", "ol"}
@@ -66,6 +66,7 @@ class Converter:
         "em": moin_page.emphasis,
         "i": moin_page.emphasis,  # "alternate voice or mood"
         "b": moin_page.strong,  # highlight key words without marking them up as important
+        "strike": moin_page.s,  # strike is not a valid tag in HTML5;  TODO: ignore?
         # Code and Blockcode
         "pre": moin_page.blockcode,
         "tt": moin_page.code,  # deprecated
@@ -73,16 +74,21 @@ class Converter:
         # Lists
         "dt": moin_page.list_item_label,
         "dd": moin_page.list_item_body,
-        # TODO: Some tags related to tables can also be simplified
+        # Tables -- table, th, and td require special processing
+        "thead": moin_page.table_header,
+        "tfoot": moin_page.table_footer,
+        "tbody": moin_page.table_body,
+        "tr": moin_page.table_row,
     }
 
     # HTML tags that do not have equivalents in the DOM tree
-    # But we keep the information using a <span> element
+    # We use a <span> element but add information about the original tag.
     inline_tags = {"abbr", "acronym", "address", "dfn", "kbd"}
     # TODO: Use a <div> element for <address> (it is a "body element").
 
     # HTML tags that are completely ignored by our converter.
-    # We do not even process children of these elements.
+    # Deprecated/obsolete tags and tags not suited for wiki content
+    # We do not even process children of these elements, a warning is given.
     ignored_tags = {
         "applet",
         "area",
@@ -119,7 +125,7 @@ class Converter:
     # directly in the DOM tree, without any conversion
     standard_attributes = {"title", "class", "style", "alt"}
 
-    # Regular expression to detect an html heading tag
+    # Regular expression to detect a html heading tag
     heading_re = re.compile("h[1-6]")
 
     # Store the Base URL for all the URL of the document
@@ -270,19 +276,19 @@ class Converter:
         if element.tag.name in self.symmetric_tags:
             return self.new_copy_symmetric(element, attrib={})
 
-        # Our element is enough simple to just change the tag name
+        # Our element is simple enough to just change the tag name
         if element.tag.name in self.simple_tags:
             return self.new_copy(self.simple_tags[element.tag.name], element, attrib={})
 
-        # Our element define a list
+        # Our element defines a list
         if element.tag.name in self.list_tags:
             return self.visit_xhtml_list(element)
 
-        # We convert our element as a span tag with element attribute
+        # We convert our element to a <span> with class attribute
         if element.tag.name in self.inline_tags:
             return self.visit_xhtml_inline(element)
 
-        # We have an heading tag
+        # We have a heading tag
         if self.heading_re.match(element.tag.name):
             return self.visit_xhtml_heading(element)
 
@@ -292,7 +298,7 @@ class Converter:
         if method:
             return method(element)
 
-        # We should ignore this tag
+        # We should ignore this tag and its content
         if element.tag.name in self.ignored_tags:
             # tell user output from obsolete tags like "center" is suppressed
             msg = _("Tag '{invalid_tag}' is not supported; all tag contents are discarded.").format(
@@ -372,36 +378,6 @@ class Converter:
         attrib = {}
         attrib[key] = "super"
         return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_u(self, element):
-        """
-        <u>Text</u> --> <u>Text</u>
-        """
-        return self.new_copy(moin_page.u, element, {})
-
-    def visit_xhtml_ins(self, element):
-        """
-        <ins>Text</ins> --> <ins>Text</ins>
-        """
-        return self.new_copy(moin_page.ins, element, {})
-
-    def visit_xhtml_del(self, element):
-        """
-        <del>Text</del> --> <del>Text</del>
-        """
-        return self.new_copy(moin_page.del_, element, {})
-
-    def visit_xhtml_s(self, element):
-        """
-        <s>Text</s> --> <s>Text</s>
-        """
-        return self.new_copy(moin_page.s, element, {})
-
-    def visit_xhtml_strike(self, element):
-        """
-        <strike>Text</strike> --> <s>Text</s>  # strike is not a valid tag in html5
-        """
-        return self.new_copy(moin_page.s, element, {})
 
     def visit_xhtml_hr(self, element, min_class="moin-hr1", max_class="moin-hr6", default_class="moin-hr3"):
         """
@@ -633,20 +609,9 @@ class Converter:
                 list_table_elements.extend(r)
         return ET.Element(moin_page.table, attrib=attrib, children=list_table_elements)
 
+    # TODO: caption is currently in `ignored_tags`!
     def visit_xhtml_caption(self, element):
         return self.new_copy(moin_page.caption, element, attrib={})
-
-    def visit_xhtml_thead(self, element):
-        return self.new_copy(moin_page.table_header, element, attrib={})
-
-    def visit_xhtml_tfoot(self, element):
-        return self.new_copy(moin_page.table_footer, element, attrib={})
-
-    def visit_xhtml_tbody(self, element):
-        return self.new_copy(moin_page.table_body, element, attrib={})
-
-    def visit_xhtml_tr(self, element):
-        return self.new_copy(moin_page.table_row, element, attrib={})
 
     def visit_xhtml_td(self, element):
         attrib = self.rowspan_colspan(element)
