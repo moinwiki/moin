@@ -47,9 +47,9 @@ class NoDupsFlash:
                 pass
 
 
-class Converter:
+class HtmlTags:
     """
-    Convert HTML -> .x.moin.document.
+    Common definitions for HTML and Markdown converters.
     """
 
     # Namespace of our input data
@@ -131,6 +131,30 @@ class Converter:
     # Store the Base URL for all the URL of the document
     base_url = ""
 
+    def new(self, tag, attrib, children):
+        """
+        Return a new element for the DOM Tree
+        """
+        return ET.Element(tag, attrib=attrib, children=children)
+
+    def new_copy(self, tag, element, attrib):
+        """
+        Function to copy one element to the DOM Tree.
+
+        It first converts the child of the element,
+        and the element itself.
+        """
+        attrib_new = self.convert_attributes(element)
+        attrib.update(attrib_new)
+        children = self.do_children(element)
+        return self.new(tag, attrib, children)
+
+
+class Converter(HtmlTags):
+    """
+    Convert HTML -> .x.moin.document.
+    """
+
     @classmethod
     def _factory(cls, input, output, **kw):
         return cls()
@@ -207,24 +231,6 @@ class Converter:
             else:
                 new.append(child)
         return new
-
-    def new(self, tag, attrib, children):
-        """
-        Return a new element for the DOM Tree
-        """
-        return ET.Element(tag, attrib=attrib, children=children)
-
-    def new_copy(self, tag, element, attrib):
-        """
-        Function to copy one element to the DOM Tree.
-
-        It first converts the child of the element,
-        and the element itself.
-        """
-        attrib_new = self.convert_attributes(element)
-        attrib.update(attrib_new)
-        children = self.do_children(element)
-        return self.new(tag, attrib, children)
 
     def new_copy_symmetric(self, element, attrib):
         """
