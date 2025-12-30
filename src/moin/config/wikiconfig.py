@@ -119,15 +119,12 @@ class Config(DefaultConfig):
     # password_checker = lambda cfg, name, pw: \
     #     _default_password_checker(cfg, name, pw, min_length=8, min_different=5)  # default
 
-    # configure email, uncomment line below and choose (a) or (b)
+    # configure email, set mail_from and mail_smarthost to enable email functionality
     # mail_from = "wiki <wiki@example.org>"  # the "from:" address [Unicode]
-    # (a) using an SMTP server, e.g. "mail.provider.com"
-    # with optional `:port`appendix, which defaults to 25 (set None to disable mail)
+    # SMTP server, e.g. "mail.provider.com" with optional `:port` appendix, which defaults to 25
     # mail_smarthost = "smtp.example.org"
     # mail_username = "smtp_username"  # if you need to use SMTP AUTH at your mail_smarthost:
     # mail_password = "smtp_password"
-    # (b) an alternative to SMTP is the sendmail commandline tool:
-    # mail_sendmail = "/usr/sbin/sendmail -t -i"
 
     # list of admin emails
     admin_emails = []
