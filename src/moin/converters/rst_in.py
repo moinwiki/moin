@@ -748,8 +748,8 @@ class NodeVisitor:
         self.header_size -= 1
 
     def visit_sidebar(self, node):
-        # Sidebars typically “float” to the side of the page.
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside moin-sidebar"}), node)
+        # analogous to the DocBook <sidebar> and HTML <aside> element
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "html-aside rst-sidebar"}), node)
 
     def depart_sidebar(self, node):
         self.close_moin_page_node()
@@ -877,8 +877,9 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_topic(self, node):
-        # content that is separate from the flow of the document
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "moin-aside"}), node)
+        # content outside the flow of the main content of the document
+        # analogous to the HTML <aside> element
+        self.open_moin_page_node(moin_page.div(attrib={html.class_: "html-aside"}), node)
 
     def depart_topic(self, node):
         self.close_moin_page_node()
