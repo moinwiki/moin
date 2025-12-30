@@ -593,11 +593,15 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
 Lists
 =====
 
-* In reStructuredText, all lists must be separated from other body
+reStructuredText provides syntax for `unordered lists`_, `ordered lists`_,
+`definition lists`_, `field lists`_, and `option lists`_.
+See `line blocks`_ for the rST alternative to a "bulletless" list.
+
+* Lists must be separated from other body
   elements by blank lines.
+  Blank lines between list items are optional.
 * The list marker must **not** be indented.
 * List items may contain arbitrary body elements.
-* Blank lines between list items are optional.
 
 Unordered Lists
 ---------------
@@ -606,13 +610,11 @@ A text block which begins with a ``*``, ``+``, ``-``, ``•``, ``‣``, or ``⁃
 followed by whitespace, is a *bullet list* item
 (`details <bullet list_>`__).
 
-* List item bodies must be left-aligned and indented relative to the marker.
+* Item content must be left-aligned and indented relative to the marker.
+* Content may start on the same line as the marker or on the next line.
+* The first content line sets the `indentation level`_ for this item.
 
-  * They may start on the same line as the marker or on the next line.
-  * The first line of text sets the `indentation level`_ for this item.
-  * Sub-items 2.1 to 2.2.2 show some valid input variants.
-
-* See `line blocks`_ for the rST variant of a "bulletless list".
+Sub-items 2.1 to 2.2.2 show some valid input variants.
 
 .. list-table::
    :header-rows: 1
@@ -673,7 +675,8 @@ instead of bullets (`details <enumerated lists_>`_).
 * Ordered lists can be automatically enumerated using the ``#`` character.
 * The first enumerator determines the *enumeration sequence*, *formatting
   type* [#]_, and *start value*.
-* Sub-items 2.1 to 2.2.2 show some valid indentation variants.
+
+Sub-items 2.1 to 2.2.2 show some valid indentation variants.
 
 .. list-table::
    :header-rows: 1
@@ -824,6 +827,45 @@ Option lists
            --long  Output all day long.
            -f FILE, --file=FILE  These
               two options are synonyms.
+
+
+Line Blocks
+===========
+
+A *line block* is the reStructuredText syntax for forced line breaks
+(details__). It resembles a plain (bulletless) list and is commonly used
+for verse and addresses
+
+* Line blocks may contain inline markup and nested line blocks.
+  Block-level markup is not recognized.
+
+__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
+   #line-blocks
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          | Start lines with a vertical bar.
+          |    Indented lines
+          |    indicate a *nested* line block.
+          | Long lines may be
+            continued on the next line
+            (without vertical bar).
+          | In the output, all lines may wrap.
+
+     -    | Start lines with a vertical bar.
+          |    Indented lines
+          |    indicate a *nested* line block.
+          | Long lines may be
+            continued on the next line
+            (without vertical bar).
+          | In the output, all lines may wrap.
+
 
 
 Tables
@@ -1220,15 +1262,9 @@ Moin (TODO):
 Preformatted Text
 =================
 
-Within a *preformatted text block*, line breaks are preserved.
-
-* Whitespace (except the minimal common indentation) is preserved in
-  in all preformatted blocks except `line blocks`_.
-* The font is usually "monospace" (except in `line blocks`_).
-
-* Text is parsed for inline markup in `parsed literal blocks`_
-  and `line blocks`_.
-* No markup processing is done in `literal blocks`_ and `code blocks`_.
+In a *preformatted text block*, line breaks and whitespace
+(except the minimal common indentation) are preserved.
+The font defaults to "monospace".
 
 
 Literal Blocks
@@ -1267,8 +1303,7 @@ Code Blocks
 -----------
 
 The `"code" directive`_ starts a *code block*.
-Syntax highlight works if the `code language`__ is specified after
-the directive marker.
+Specify the content language__ to enable syntax highlight.
 
 __ https://pygments.org/languages/
 
@@ -1297,6 +1332,7 @@ Parsed Literal Blocks
 ---------------------
 
 The `"parsed-literal" directive`_ starts a *parsed* literal block.
+The content is parsed for inline markup.
 
 .. list-table::
    :header-rows: 1
@@ -1315,40 +1351,6 @@ The `"parsed-literal" directive`_ starts a *parsed* literal block.
 
             A *pre*\ formatted   block
             with `text formatting`_.
-
-
-Line Blocks
------------
-
-A *line block* is a “plain list” of lines and nested line
-blocks. It is commonly used for verse and addresses (details__).
-
-__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
-   #line-blocks
-
-.. list-table::
-   :header-rows: 1
-
-   * - Markup
-     - Result
-
-   * - ::
-
-          | Start lines with a vertical bar.
-          |     Indented lines
-          |     indicate a *nested* line block.
-          | Long lines may be
-            continued on the next line
-            (without vertical bar).
-          | In the output, all lines may wrap.
-
-     -    | Start lines with a vertical bar.
-          |     Indented lines
-          |     indicate a *nested* line block.
-          | Long lines may be
-            continued on the next line
-            (without vertical bar).
-          | In the output, all lines may wrap.
 
 
 .. _directive:
