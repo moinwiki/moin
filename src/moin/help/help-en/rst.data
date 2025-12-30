@@ -115,10 +115,11 @@ Thematic Breaks
 A *thematic break* represents a change in subject or emphasis.
 It is typically rendered as additional space between paragraphs, often
 with a horizontal line, a row of asterisks, or some other ornament.
+In HTML, it is represented by the ``<hr />`` element.
 
-----------------------------
+--------------------------------------------------------------------------
 
-In reStructuredText, this element is called a *transition* and
+In reStructuredText, this element is called *transition* and
 represented by a horizontal line of 4 or more repeated punctuation
 characters (details__).
 
@@ -133,9 +134,9 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
 
    * - ::
 
-          […] or some other ornament.
+          […] by the ``<hr />`` element.
 
-          ----------------------------
+          ------------------------------
 
           In reStructuredText, this […]
 
@@ -145,15 +146,14 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
        tables_, admonitions_, ...).
 
 
-Text formatting
+Text Formatting
 ===============
 
 `Inline markup`_ can be applied to words or phrases within a text block
 to format text.
 
 * Less common styles are obtained via `interpreted text roles`_.
-* TODO: Some standard roles are currently ignored by Moin.
-  Content is shown without processing.
+* reStructuredText does not support ``***Nested** inline markup*``. [#]_
 
 .. list-table::
    :header-rows: 1
@@ -163,46 +163,90 @@ to format text.
      - Notes
 
    * - ``*emphasis*``
-     - *emphasis*
+     -   *emphasis*
      -
 
    * - ``**strong emphasis**``
-     - **strong emphasis**
+     -   **strong emphasis**
      -
 
    * - ````inline \literal\````
-     - ``inline \literal\``
+     -   ``inline \literal\``
      - In `literal context`_, `backslashes <backslash escapes_>`__
        have no special meaning.
 
+   * - ```Hamlet```
+     -   `Hamlet`
+     - `Interpreted text`_. The `default text role`_ is configurable,
+       it defaults to the "title" role (see below).
+
+   * - ``:ab:`abbr.```
+     -   :ab:`abbr.`
+     - Abbreviations, can be styled with custom CSS.
+
+   * - ``:code:`answer = 42```
+     -   :code:`answer = 42`
+     - For syntax highlight, see `custom text roles`_.
+
    * - ``:sub:`sub`\ script``
-     - :sub:`sub`\ script
-     - Character-level markup is possible …
+     -   :sub:`sub`\ script
+     - Character-level markup …
 
    * - ``:sup:`super`\ script``
-     - :sup:`super`\ script
-     - … using `escaped spaces <backslash escapes_>`__.
+     -   :sup:`super`\ script
+     - … requires `escaped spaces <backslash escapes_>`__.
 
-   * - ``:code:`print("hello world")```
-     - :code:`print("hello world")`
-     -
+       .. _"title" role:
 
-   * - ``***Nested** markup* is not supported.``
-     - ***Nested** markup* is not supported.
-     - .. This is a longstanding Docutils TODO issue.
+   * - ``:title:`Moin```
+     -   :title:`Moin`
+     - The title of a creative work (book, opera, coding project, etc.)
+       Analog to HTML <cite>. This is the initial `default text role`_.
 
-..
-  =====================  =================
-  ``:ab:`abbr.```        :ab:`abbr.`
-  ``:ac:`AC`/:ac:`DC```  :ac:`AC`/:ac:`DC`
-  ``:math:`\sin^2 x```   :math:`\sin^2 x`
-  ``:title:`Moin```      :title:`Moin`
-  =====================  =================
+.. [#] This is a longstanding Docutils TODO issue.
 
+
+Additional Text Roles
+---------------------
+
+Including__ the "html-roles.txt" `standard definition file`_ adds roles that
+correspond to HTML elements representing `edits to the document`__ and
+`text-level semantics`__.
+
+__ include_
+__ https://html.spec.whatwg.org/multipage/edits.html
+__ https://html.spec.whatwg.org/multipage/text-level-semantics.html
+
+.. include:: <html-roles.txt>
+
+===================  ===============  ====================================
+Markup               Result           Notes
+===================  ===============  ====================================
+``:del:`removed```   :del:`removed`   removed content
+``:ins:`inserted```  :ins:`inserted`  editional additions
+``:b:`keyword```     :b:`keyword`     highlight :b:`key words`
+                                      without marking them up as important
+``:dfn:`dfn```       :dfn:`dfn`       the defining instance of a term
+``:i:`rôle```        :i:`rôle`        alternative voice
+``:kbd:`Ctrl X```    :kbd:`Ctrl X`    user input
+``:mark:`up```       :mark:`up`       highlight a :mark:`run of text`
+``:q:`Tagline!```    :q:`Tagline!`    content quoted from another source
+``:s:`strike```      :s:`strike`      text that is inaccurate or
+                                      no longer relevant
+``:samp:`Ready!```   :samp:`Ready!`   computer output
+``:small:`print```   :small:`print`   side comments
+``:u:`borken```      :u:`borken`      unarticulated annotations of, e.g,
+                                      :u:`mispellings`
+``:var:`n```         :var:`n`         variables (or constants)
+===================  ===============  ====================================
+
+
+Custom Text Roles
+-----------------
 
 *Custom interpreted text roles* can be used to attach CSS class values to
 inline text and set the code language for syntax highlight
-(`details <custom interpreted text roles_>`__).
+(`details <"role" directive_>`__).
 
 .. list-table::
    :header-rows: 1
@@ -210,30 +254,6 @@ inline text and set the code language for syntax highlight
    * - Markup
      - Result
      - Notes
-
-   * - ::
-
-         .. role:: del
-
-       ``:del:`removed` content``
-
-     - .. role:: del
-
-       :del:`removed` content
-
-     - Uses the `\<del>`_ element.
-
-   * - ::
-
-         .. role:: ins
-
-       ``:ins:`editional` additions``
-
-     - .. role:: ins
-
-       :ins:`editional` additions
-
-     - Uses the `\<ins>`_ element.
 
    * - ::
 
@@ -296,35 +316,6 @@ inline text and set the code language for syntax highlight
 
 * The examples rely on `Moin CSS classes`_ missing in the `external
   documentation`_.
-
-* The :raw: role is disabled in Moin.
-
-* TODO: Support semantic HTML inline markup elements.
-
-  ..
-    .. role:: b
-    .. role:: dfn
-    .. role:: i
-    .. role:: kbd
-    .. role:: mark
-    .. role:: q
-    .. role:: s
-    .. role:: samp
-    .. role:: small
-    .. role:: u
-    .. role:: var
-
-    :b:    highlight :b:`key words` without marking them up as important
-    :dfn:  :dfn:`dfn` represents the defining instance of a term
-    :i:    :i:`voix alternative`
-    :kbd:  user input like :kbd:`Ctrl X`
-    :mark: :mark:`highlight` a run of text
-    :q:    represents :q:`phrasing content quoted from another source`
-    :s:    text that is no longer accurate, :s:`or no longer relevant`
-    :samp: computer output like :samp:`hello world!`
-    :small: side comments :small:`like this`
-    :u:    unarticulated annotations of, e.g, :u:`mispellings`
-    :var:  variables (or constants like :var:`c`)
 
 
 Hyperlinks
@@ -439,15 +430,15 @@ Alternatively, Wiki-internal links may be specified via `URI references`_.
      - Result
      - Notes
 
-   * - ```<Home>__```
+   * - ```<Home>`__``
      - `<Home>`__
      - item in default namespace (as embedded URI reference)
 
-   * - ```My Castle <Home>__```
+   * - ```My Castle <Home>`__``
      - `My Castle <Home>`__
      - ... with custom text
 
-   * - ```<users/Home>__```
+   * - ```<users/Home>`__``
      - `<users/Home>`__
      - item in specified namespace
 
@@ -602,11 +593,15 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
 Lists
 =====
 
-* In reStructuredText, all lists must be separated from other body
+reStructuredText provides syntax for `unordered lists`_, `ordered lists`_,
+`definition lists`_, `field lists`_, and `option lists`_.
+See `line blocks`_ for the rST alternative to a "bulletless" list.
+
+* Lists must be separated from other body
   elements by blank lines.
+  Blank lines between list items are optional.
 * The list marker must **not** be indented.
 * List items may contain arbitrary body elements.
-* Blank lines between list items are optional.
 
 Unordered Lists
 ---------------
@@ -615,13 +610,11 @@ A text block which begins with a ``*``, ``+``, ``-``, ``•``, ``‣``, or ``⁃
 followed by whitespace, is a *bullet list* item
 (`details <bullet list_>`__).
 
-* List item bodies must be left-aligned and indented relative to the marker.
+* Item content must be left-aligned and indented relative to the marker.
+* Content may start on the same line as the marker or on the next line.
+* The first content line sets the `indentation level`_ for this item.
 
-  * They may start on the same line as the marker or on the next line.
-  * The first line of text sets the `indentation level`_ for this item.
-  * Sub-items 2.1 to 2.2.2 show some valid input variants.
-
-* See `line blocks`_ for the rST variant of a "bulletless list".
+Sub-items 2.1 to 2.2.2 show some valid input variants.
 
 .. list-table::
    :header-rows: 1
@@ -682,7 +675,8 @@ instead of bullets (`details <enumerated lists_>`_).
 * Ordered lists can be automatically enumerated using the ``#`` character.
 * The first enumerator determines the *enumeration sequence*, *formatting
   type* [#]_, and *start value*.
-* Sub-items 2.1 to 2.2.2 show some valid indentation variants.
+
+Sub-items 2.1 to 2.2.2 show some valid indentation variants.
 
 .. list-table::
    :header-rows: 1
@@ -835,6 +829,45 @@ Option lists
               two options are synonyms.
 
 
+Line Blocks
+===========
+
+A *line block* is the reStructuredText syntax for forced line breaks
+(details__). It resembles a plain (bulletless) list and is commonly used
+for verse and addresses
+
+* Line blocks may contain inline markup and nested line blocks.
+  Block-level markup is not recognized.
+
+__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
+   #line-blocks
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          | Start lines with a vertical bar.
+          |    Indented lines
+          |    indicate a *nested* line block.
+          | Long lines may be
+            continued on the next line
+            (without vertical bar).
+          | In the output, all lines may wrap.
+
+     -    | Start lines with a vertical bar.
+          |    Indented lines
+          |    indicate a *nested* line block.
+          | Long lines may be
+            continued on the next line
+            (without vertical bar).
+          | In the output, all lines may wrap.
+
+
+
 Tables
 ======
 
@@ -848,7 +881,7 @@ There are four ways to specify tables in reStructuredText:
 
 Markup within the table cells is supported (you can even nest a table in
 a table cell).
-`Table Directives`_ allow customization and adding a title/caption.
+`Table directives`_ allow customization and adding a title/caption.
 
 
 Simple Tables
@@ -1229,15 +1262,9 @@ Moin (TODO):
 Preformatted Text
 =================
 
-Within a *preformatted text block*, line breaks are preserved.
-
-* Whitespace (except the minimal common indentation) is preserved in
-  in all preformatted blocks except `line blocks`_.
-* The font is usually "monospace" (except in `line blocks`_).
-
-* Text is parsed for inline markup in `parsed literal blocks`_
-  and `line blocks`_.
-* No markup processing is done in `literal blocks`_ and `code blocks`_.
+In a *preformatted text block*, line breaks and whitespace
+(except the minimal common indentation) are preserved.
+The font defaults to "monospace".
 
 
 Literal Blocks
@@ -1276,8 +1303,7 @@ Code Blocks
 -----------
 
 The `"code" directive`_ starts a *code block*.
-Syntax highlight works if the `code language`__ is specified after
-the directive marker.
+Specify the content language__ to enable syntax highlight.
 
 __ https://pygments.org/languages/
 
@@ -1306,6 +1332,7 @@ Parsed Literal Blocks
 ---------------------
 
 The `"parsed-literal" directive`_ starts a *parsed* literal block.
+The content is parsed for inline markup.
 
 .. list-table::
    :header-rows: 1
@@ -1326,40 +1353,6 @@ The `"parsed-literal" directive`_ starts a *parsed* literal block.
             with `text formatting`_.
 
 
-Line Blocks
------------
-
-A *line block* is a “plain list” of lines and nested line
-blocks. It is commonly used for verse and addresses (details__).
-
-__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
-   #line-blocks
-
-.. list-table::
-   :header-rows: 1
-
-   * - Markup
-     - Result
-
-   * - ::
-
-          | Start lines with a vertical bar.
-          |     Indented lines
-          |     indicate a *nested* line block.
-          | Long lines may be
-            continued on the next line
-            (without vertical bar).
-          | In the output, all lines may wrap.
-
-     -    | Start lines with a vertical bar.
-          |     Indented lines
-          |     indicate a *nested* line block.
-          | Long lines may be
-            continued on the next line
-            (without vertical bar).
-          | In the output, all lines may wrap.
-
-
 .. _directive:
 
 Directives
@@ -1373,7 +1366,7 @@ Directives`_ document.  This section introduces a selection.
 See also `Table Directives`_ and `Preformatted Text`_.
 
 Applications may add domain-specific directives.
-Moin adapts the "contents__" and "include" directives
+Moin adapts the "contents__" and "include_" directives
 and adds the "macro" and "parser" directives.
 
 __ `Table of Contents`_
@@ -1628,9 +1621,8 @@ Figures are declared with the `"figure" directive`_.
 
              Moin Logo
 
-             (The image URI does not
-             work in the documentation
-             generated by Sphinx.)
+             The image URI does not work in
+             the `external documentation`_.
 
      -    .. figure:: help-common/logo.svg
              :height: 50
@@ -1638,9 +1630,39 @@ Figures are declared with the `"figure" directive`_.
 
              Moin Logo
 
-             (The image URI does not
-             work in the documentation
-             generated by Sphinx.)
+             The image URI does not work in
+             the `external documentation`_.
+
+
+.. _include:
+
+Inclusions
+----------
+
+The `"include" directive`_ is adapted by Moin to include Wiki items.
+
+* No directive options are supported in Moin.
+* The special syntax for `standard definition files`_ works.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Markup
+     - Result
+
+   * - ::
+
+          .. include:: help-common/audio.mp3
+
+     - Not shown, because it prevents compilation of the `external
+       documentation`_.
+
+   * - ::
+
+          .. include:: <html-roles.txt>
+
+     - The roles defined in the included file can be used in
+       the document. Cf. `additional text roles`_.
 
 
 .. _rubrics:
@@ -1738,7 +1760,7 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
   clicking the "Comments" link in the "Item Views" menu/toolbar.
 
 * Tip: to prevent mix-up with other "`explicit markup blocks`_",
-  leave the ":literal:`.. \ `" on a line by itself.
+  start the text on the line below the ":literal:`.. \ `".
 
 .. list-table::
    :header-rows: 1
@@ -1868,6 +1890,8 @@ system messages.
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-markup-recognition-rules
 .. _inline targets:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-internal-targets
+.. _interpreted text:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#interpreted-text
 .. _literal context:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-context
 .. _option lists:
@@ -1899,14 +1923,18 @@ system messages.
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#code
 .. _"contents" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
-.. _custom interpreted text roles:
-    https://docutils.sourceforge.io/docs/ref/rst/directives.html#role
+.. _default text role:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#default-role
 .. _"figure" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure
 .. _"image" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#image
+.. _"include" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#include
 .. _"parsed-literal" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#parsed-literal
+.. _"role" directive:
+    https://docutils.sourceforge.io/docs/ref/rst/directives.html#role
 .. _"rubric" directive:
     https://docutils.sourceforge.io/docs/ref/rst/directives.html#rubric
 .. _sidebars:
@@ -1921,15 +1949,15 @@ system messages.
 .. _"rfc-reference" role:
     https://docutils.sourceforge.io/docs/ref/rst/roles.html#rfc-reference
 
+.. _standard definition file:
+.. _standard definition files:
+    https://docutils.sourceforge.io/docs/ref/rst/definitions.html
 .. _severity level:
     https://docutils.sourceforge.io/docs/peps/pep-0258.html#error-handling
 .. _report level:
     https://docutils.sourceforge.io/docs/user/config.html#report-level
 
 .. _URI references: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#URI_references
-
-.. _\<del>: https://html.spec.whatwg.org/multipage/edits.html#the-del-element
-.. _\<ins>: https://html.spec.whatwg.org/multipage/edits.html#the-ins-element
 
 .. _Moin CSS classes:
     https://moin-20.readthedocs.io/en/latest/user/moinwiki.html
