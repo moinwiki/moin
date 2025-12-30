@@ -170,6 +170,7 @@ class Converter:
 
     # Inline tags which can be directly converted into an HTML element
     direct_inline_tags = {"abbr", "address", "dfn", "kbd"}
+    # TODO: <address> is no inline element.
 
     def __call__(self, element):
         return self.visit(element)
