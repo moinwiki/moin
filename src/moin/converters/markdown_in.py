@@ -16,7 +16,7 @@ from collections import deque
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
 from ._util import decode_data, sanitise_uri_scheme
 from moin.utils.iri import Iri
-from moin.converters.html_in import Converter as HTML_IN_Converter
+from moin.converters import html_in
 from flask import current_app
 
 from emeraldtree import ElementTree as ET
@@ -39,7 +39,7 @@ from moin import log
 
 logging = log.getLogger(__name__)
 
-html_in_converter = HTML_IN_Converter()
+html_in_converter = html_in.Converter()
 block_elements = "p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table".split()
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
@@ -88,99 +88,20 @@ def postproc_text(markdown, text):
     return re.sub(r"&#?\w+;", fixup, text)
 
 
-class Converter:
+class Converter(html_in.HtmlTags):
+    """
+    Convert Markdown -> .x.moin.document.
+
+    Also handle HTML tags that are supported by Moin.
+    """
+
     # {{{ html conversion
 
-    # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = {"div", "p", "strong", "code", "quote", "blockquote"}
-
-    # HTML tags that define a list; except dl, which is a little bit different
-    list_tags = {"ul", "ol"}
-
-    # HTML tags that can be converted without attributes into a different DOM tag
-    simple_tags = {  # Emphasis
-        "em": moin_page.emphasis,
-        "i": moin_page.emphasis,
-        # Strong
-        "b": moin_page.strong,
-        "strong": moin_page.strong,
-        # Code and Blockcode
-        "pre": moin_page.blockcode,
-        "tt": moin_page.code,
-        "samp": moin_page.code,
-        # Lists
-        "dl": moin_page.list_item,
-        "dt": moin_page.list_item_label,
-        "dd": moin_page.list_item_body,
-        # Table - th and td require special processing for alignment of cell contents
-        "table": moin_page.table,
-        "thead": moin_page.table_header,
-        "tbody": moin_page.table_body,
-        "tr": moin_page.table_row,
-    }
-
-    # HTML Tag which does not have equivalence in the DOM Tree
-    # But we keep the information using <span element>
-    inline_tags = {"abbr", "acronym", "address", "dfn", "kbd"}
-
-    # HTML tags which are completely ignored by our converter.
-    # We even do not process children of these elements.
-    ignored_tags = {
-        "applet",
-        "area",
-        "button",
-        "caption",
-        "center",
-        "fieldset",
-        "form",
-        "frame",
-        "frameset",
-        "head",
-        "iframe",
-        "input",
-        "isindex",
-        "label",
-        "legend",
-        "link",
-        "map",
-        "menu",
-        "noframes",
-        "noscript",
-        "optgroup",
-        "option",
-        "param",
-        "script",
-        "select",
-        "style",
-        "textarea",
-        "title",
-        "var",
-    }
-
-    # standard_attributes are html attributes which are used
-    # directly in the DOM tree, without any conversion
-    standard_attributes = {"title", "class", "style"}
-
-    # Regular expression to detect an html heading tag
-    heading_re = re.compile("h[1-6]")
-
-    def new(self, tag, attrib, children):
-        """
-        Return a new element for the DOM Tree
-        """
-        return ET.Element(tag, attrib=attrib, children=children)
-
-    def new_copy(self, tag, element, attrib):
-        """
-        Function to copy one element to the DOM Tree.
-
-        It first converts the child of the element,
-        and the element itself.
-        """
-        attrib_new = self.convert_attributes(element)
-        attrib.update(attrib_new)
-        children = self.do_children(element)
-        return self.new(tag, attrib, children)
+    # HTML tags that can be converted into a DOM tag without additional attributes
+    # The html_in converter uses specific methods for <dl> and <table> but we keep it simple here
+    simple_tags = html_in.Converter.simple_tags.copy()
+    simple_tags["dl"] = moin_page.list_item
+    simple_tags["table"] = moin_page.table
 
     def new_copy_symmetric(self, element, attrib):
         """
@@ -211,63 +132,6 @@ class Converter:
         attrib = {}
         attrib[key] = heading_level
         return self.new_copy(moin_page.h, element, attrib)
-
-    def visit_br(self, element):
-        return moin_page.line_break()
-
-    def visit_big(self, element):
-        key = moin_page("font-size")
-        attrib = {}
-        attrib[key] = "120%"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_small(self, element):
-        key = moin_page("font-size")
-        attrib = {}
-        attrib[key] = "85%"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_sub(self, element):
-        key = moin_page("baseline-shift")
-        attrib = {}
-        attrib[key] = "sub"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_sup(self, element):
-        key = moin_page("baseline-shift")
-        attrib = {}
-        attrib[key] = "super"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_u(self, element):
-        key = moin_page("text-decoration")
-        attrib = {}
-        attrib[key] = "underline"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_ins(self, element):
-        key = moin_page("text-decoration")
-        attrib = {}
-        attrib[key] = "underline"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_del(self, element):
-        key = moin_page("text-decoration")
-        attrib = {}
-        attrib[key] = "line-through"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_s(self, element):
-        key = moin_page("text-decoration")
-        attrib = {}
-        attrib[key] = "line-through"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_strike(self, element):
-        key = moin_page("text-decoration")
-        attrib = {}
-        attrib[key] = "line-through"
-        return self.new_copy(moin_page.span, element, attrib)
 
     def visit_hr(self, element, default_class="moin-hr3"):
         return self.new_copy(moin_page.separator, element, {moin_page.class_: default_class})
@@ -307,16 +171,6 @@ class Converter:
         # Convert the href attribute into unicode
         attrib[key] = str(attrib[key])
         return moin_page.object(attrib)
-
-    def visit_inline(self, element):
-        """
-        For some specific inline tags (defined in inline_tags)
-        We just return <span element="tag.name">
-        """
-        key = html.class_
-        attrib = {}
-        attrib[key] = "".join(["html-", element.tag.name])
-        return self.new_copy(moin_page.span, element, attrib)
 
     def visit_li(self, element):
         """
@@ -400,10 +254,6 @@ class Converter:
         # Our element defines a list
         if element.tag in self.list_tags:
             return self.visit_list(element)
-
-        # We convert our element as a span tag with element attribute
-        if element.tag in self.inline_tags:
-            return self.visit_inline(element)
 
         # We have a heading tag
         if self.heading_re.match(element.tag):

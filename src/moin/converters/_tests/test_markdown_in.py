@@ -70,10 +70,19 @@ class TestConverter:
         self.do(input, output)
 
     data = [
+        ("line<br />break", "<div><p>line<line-break />break</p></div>"),
+        ("<big>larger</big>", '<div><p><span font-size="120%">larger</span></p></div>'),
+        ("<small>smaller</small>", '<div><p><span font-size="85%">smaller</span></p></div>'),
+        ("<sub>sub</sub>script", '<div><p><span baseline-shift="sub">sub</span>script</p></div>'),
+        ("<sup>super</sup>script", '<div><p><span baseline-shift="super">super</span>script</p></div>'),
         ("<em>Emphasis</em>", "<div><p><emphasis>Emphasis</emphasis></p></div>"),
         ("<i>Italic</i>", "<div><p><emphasis>Italic</emphasis></p></div>"),
         ("<u>underline</u>", "<div><p><u>underline</u></p></div>"),
+        ("<ins>inserted</ins>", "<div><p><ins>inserted</ins></p></div>"),
         ("<del>deleted</del>", "<div><p><del>deleted</del></p></div>"),
+        ("<s>no longer accurate</s>", "<div><p><s>no longer accurate</s></p></div>"),
+        # the <strike> tag is deprecated since HTML4.1!
+        ("<strike>obsolete</strike>", "<div><p><s>obsolete</s></p></div>"),
         # TODO: markdown 3.3 outputs `/>\n\n\n\n</p>`, prior versions output `/></p>`. Try test again with versions 3.3+
         # Added similar test to test_markdown_in_out
         # ('<hr>',
@@ -82,6 +91,19 @@ class TestConverter:
 
     @pytest.mark.parametrize("input,output", data)
     def test_html_extension(self, input, output):
+        self.do(input, output)
+
+    data = [
+        ("<abbr>e.g.</abbr>", '<div><p><span html:class="html-abbr">e.g.</span></p></div>'),
+        # <acronym> is deprecated in favour of <abbr> in HTML5!
+        ("<acronym>AC/DC</acronym>", '<div><p><span html:class="html-acronym">AC/DC</span></p></div>'),
+        # <address> is a block-level element!
+        ("<dfn>term</dfn>", '<div><p><span html:class="html-dfn">term</span></p></div>'),
+        ("<kbd>Ctrl-X</kbd>", '<div><p><span html:class="html-kbd">Ctrl-X</span></p></div>'),
+    ]
+
+    @pytest.mark.parametrize("input,output", data)
+    def test_html_inline_tags(self, input, output):
         self.do(input, output)
 
     data = [
