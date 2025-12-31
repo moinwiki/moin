@@ -1,0 +1,25 @@
+{
+  "action": "SAVE",
+  "address": "127.0.0.1",
+  "comment": "",
+  "contenttype": "text/x.moin.wiki;charset=utf-8",
+  "dataid": "46d02b93ae1941eab5615a9d4d196ff7",
+  "externallinks": [],
+  "itemid": "9f20bcb00d6c48faaeea387ffb944953",
+  "itemlinks": [],
+  "itemtransclusions": [],
+  "itemtype": "default",
+  "language": "en",
+  "mtime": 1767192172,
+  "name": [
+    "autoscroll"
+  ],
+  "name_old": [],
+  "namespace": "help-en",
+  "rev_number": 1,
+  "revid": "06a9345d72a1402684288b9cf66e5954",
+  "sha1": "ce841f3e92989aae24fc04d17aa1f6bd851ef0f4",
+  "size": 1539,
+  "summary": "",
+  "tags": []
+}
