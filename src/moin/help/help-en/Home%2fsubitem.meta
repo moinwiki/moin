@@ -3,24 +3,25 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x.moin.wiki;charset=utf-8",
-  "dataid": "6f4be2fda5e046b69860d92111d5494d",
+  "dataid": "66ebb660a46d4685a0ec157f19195e4e",
   "externallinks": [],
   "itemid": "cf1dddc4be3c4c83b447afed4402718f",
   "itemlinks": [],
   "itemtransclusions": [
-    "help-common/logo.png"
+    "help-common/logo.svg"
   ],
   "itemtype": "default",
-  "mtime": 1681742386,
+  "language": "en",
+  "mtime": 1767193580,
   "name": [
     "Home/subitem"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "925a87df33eb47bf98ea6f9b0f68028a",
-  "sha1": "63a964ac0c1ed6f79494c1d41061179897b6b8f1",
-  "size": 92,
+  "revid": "4c7c4dfc5c0a45348c348d6ffca7aacb",
+  "sha1": "869bf35d79abe24a46c8973ab93df68df49da909",
+  "size": 103,
   "summary": "",
   "tags": []
 }
