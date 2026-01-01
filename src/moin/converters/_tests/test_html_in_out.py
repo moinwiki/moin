@@ -121,8 +121,8 @@ class TestConverter(Base):
 
     data = [
         ("<html><p><abbr>Text</abbr></p></html>", '/div/p/span[@class="html-abbr"][text()="Text"]'),
-        ("<html><p><acronym>Text</acronym></p></html>", '/div/p/span[@class="html-acronym"][text()="Text"]'),
-        ("<html><p><address>Text</address></p></html>", '/div/p/span[@class="html-address"][text()="Text"]'),
+        ("<html><p><acronym>AC/DC</acronym></p></html>", '/div/p/span[@class="html-abbr"][text()="AC/DC"]'),
+        ("<html><address>100 Acre Wood</address></html>", '/div/div[@class="html-address"][text()="100 Acre Wood"]'),
         ("<html><p><dfn>Text</dfn></p></html>", '/div/p/span[@class="html-dfn"][text()="Text"]'),
         ("<html><p><kbd>Text</kbd></p></html>", '/div/p/span[@class="html-kbd"][text()="Text"]'),
     ]
