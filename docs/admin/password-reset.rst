@@ -80,6 +80,15 @@ should have it configured::
 You can test whether it works by using the "forgot my password" functionality
 on the login page.
 
+For CLI commands with the option '--notify' you need to configure following Flask options
+that are needed to build the URL for the password recovery link in the email::
+
+    # Following settings are required for sending mails from CLI commands (e.g. account-password)
+    # SERVER_NAME = "localhost:5000"  # The hostname your wiki uses
+    # APPLICATION_ROOT = "/"  # Base prefix of your wiki (e.g. "/wiki" if behind a prefix)
+    # PREFERRED_URL_SCHEME = "http"  # Protocol you want URLs to use
+
+
 
 Editing mailtemplate.txt
 ------------------------
