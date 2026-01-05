@@ -21,7 +21,6 @@
 import copy
 import hashlib
 from io import BytesIO
-from sys import exit
 
 from babel import parse_locale
 
@@ -864,10 +863,11 @@ class User:
             try:
                 link = url_for("frontend.recoverpass", username=self.name0, token=token, _external=True)
             except RuntimeError as e:
-                logging.error(f"Building recovery link failed: {e}")
-                exit(
+                return (
+                    False,
+                    f"Building recovery link failed: {e}.\n"
                     "You need to configure 'SERVER_NAME', 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME'"
-                    " for CLI command 'moin account-reset'"
+                    " for CLI command 'moin account-reset'",
                 )
 
             # Using Jinja2 Template.render, as there is no context for Flask templates in CLI calls
