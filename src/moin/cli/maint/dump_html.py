@@ -261,7 +261,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             # work around differences in basic and modernized theme layout
             # TODO: this is likely to break as new themes are added
             if theme == "basic":
-                start = '<div class="moin-content" role="main">'  # basic
+                start = '<div class="moin-content flex-row" role="main">'  # basic
                 end = '<footer class="navbar moin-footer">'
                 div_end = "</div>"
             else:
