@@ -28,7 +28,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: 1.75em; }
+
 h2 { font-size: 1.5em; }
+
+:has(+p.moin-subheading) {
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+h1 + p.moin-subheading {
+  font-weight: 500;
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .moin-pagetitle { font-size: 1.75em;
   font-weight: normal;
   padding-left: 0.5em;
