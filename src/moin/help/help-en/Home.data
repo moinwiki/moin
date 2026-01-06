@@ -1,43 +1,40 @@
-= Moin2 Help Content =
+= Moin2 Help =
+
+== Supported Markup Formats ==
+
+In Moin2, you specify the item’s markup language when you create a new item.
+Currently, Moin2 supports:
+
+ * [[../moin|MoinWiki]]
+ * [[../creole|Creole Wiki]]
+ * [[../markdown|Markdown]]
+ * [[../mediawiki|Media Wiki]]
+ * [[../rst|reStructuredText]]
+ * [[../docbook|DocBook XML]]
+ * [[../html|HTML]]
+
+Unless the markup format is HTML, items support the [[../autoscroll|Auto Scroll]] feature:
+Double-clicking any line within the rendered text of the item will move to the modify view and auto-scroll the edit textarea to the line clicked (with [[../autoscroll|limitations]]).
 
 
-This help content demonstrates a wide variety of moin2 features.
+== User Interface ==
 
-== Test Comment ==
+Depending on the selected theme and available screen, Moin displays a header,
+footer, and/or side-bar with elements for user interaction along the item content.
 
-Click the '''Comments''' link to show/hide comments:  /* ''a test comment'' */
+=== The "Item View" Toolbar/Menu ===
 
-== Test Transclusion ==
+Click the '''<<GetText(Comments)>>''' link to show/hide comments:
+/* ''a test comment'' */
 
-Click the '''Transclusions''' link to show the content of the transclusions below:
+Click the '''<<GetText(Transclusions)>>''' link to show a frame around the
+nested transclusions below:
 
-{{../Home/subitem}}
+    {{../Home/subitem}}
 
-== Parsers with Auto Scroll ==
 
-When the content type of a target item to be edited is one of the parsers listed below, then double-clicking any line within the rendered text of the item will move to the modify view and auto-scroll the edit textarea to the line clicked, with limitations.
+== Demo Items ==
 
- * If the user is logged in, then the "Open editor on double click" and "Scroll page after edit" user settings under Options must be checked (the default).
- * If the user has logged in and has changed the "Number rows in edit textarea" user settings under Appearance to a number greater than 0, the textarea will be scrolled to the caret with all modern browsers.
- * If the user is not logged in, or the "Number rows in edit textarea" has the default setting of 0 (meaning the textarea will be vertically sized to hold all content), then the caret will be positioned correctly within the textarea, but the results will differ by browser:
-   * Firefox will scroll the window to show the textarea caret near the top of the view area.
-   * MS IE11 and Edge will scroll the window to show the textarea caret near the bottom of the window.
-   * Chrome, Opera, and Maxthon will not scroll the window; the user may force the window to scroll to the textarea caret by keying the right-arrow on the keyboard.
-
-Because of the way the Markdown parser is constructed, it is frequently not possible to calculate an accurate line number in the text source. This causes auto-scroll to miss the target text. The error can be minimized by consistent use of one blank line between text blocks.
-
- * [[help-en/moin]]
-
- * [[../moin|MoinWiki markup item]]
- * [[../creole|Creole Wiki markup item]]
- * [[../rst|reStructuredText markup item]]
- * [[../markdown|Markdown markup item]]
- * [[../docbook|DocBook XML markup item]]
- * [[../mediawiki|Media Wiki markup item]]
-
-== Other Demo Items ==
-
- * [[../html|html markup item using CKEditor]]
  * [[../MoinWikiMacros|extension macros]]
  * [[help-common/archive.zip]] and [[help-common/archive.tar.gz]]
  * [[../images]] - [[help-common/kitty.jpg]], [[help-common/logo.png]] and [[help-common/logo.svg]]
