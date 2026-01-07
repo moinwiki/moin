@@ -120,11 +120,11 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        ("<html><p><abbr>Text</abbr></p></html>", '/div/p/span[@class="html-abbr"][text()="Text"]'),
-        ("<html><p><acronym>AC/DC</acronym></p></html>", '/div/p/span[@class="html-abbr"][text()="AC/DC"]'),
-        ("<html><address>100 Acre Wood</address></html>", '/div/div[@class="html-address"][text()="100 Acre Wood"]'),
-        ("<html><p><dfn>Text</dfn></p></html>", '/div/p/span[@class="html-dfn"][text()="Text"]'),
-        ("<html><p><kbd>Text</kbd></p></html>", '/div/p/span[@class="html-kbd"][text()="Text"]'),
+        ("<html><p><abbr>etc.</abbr></p></html>", '/div/p[abbr="etc."]'),
+        ("<html><p><acronym>AC/DC</acronym></p></html>", '/div/p[abbr="AC/DC"]'),
+        ("<html><p><address>100 Acre Wood</address></p></html>", '/div/p[address="100 Acre Wood"]'),
+        ("<html><p><dfn>term</dfn></p></html>", '/div/p[dfn="term"]'),
+        ("<html><p><kbd>Ctrl-X</kbd></p></html>", '/div/p[kbd="Ctrl-X"]'),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
