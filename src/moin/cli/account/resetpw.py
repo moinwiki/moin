@@ -140,7 +140,8 @@ def SetPassword(name, uid, password, all_users, notify, verbose, subject, text, 
         try:
             set_password(uid, password, notify=notify, skip_invalid=skip_invalid, subject=subject, text=text)
         except Fault as err:
-            status = "FAILURE: [%s]" % str(err)
+            logging.error("ERROR: %s" % str(err))
+            status = "FAILED"
         else:
             status = "SUCCESS"
         if verbose:

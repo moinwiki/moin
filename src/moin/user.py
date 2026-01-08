@@ -858,9 +858,21 @@ class User:
         if subject is None:
             subject = _("[{sitename}] Your wiki password recovery link").format(sitename="{sitename}")
         subject = subject.format(sitename=self._cfg.sitename or "Wiki")
+
         if text is None:
-            link = url_for("frontend.recoverpass", username=self.name0, token=token, _external=True)
-            text = render_template("mail/password_recovery.txt", link=link)
+            try:
+                link = url_for("frontend.recoverpass", username=self.name0, token=token, _external=True)
+            except RuntimeError as e:
+                return (
+                    False,
+                    f"Building recovery link failed: {e}.\n"
+                    "You need to configure 'SERVER_NAME', 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME'"
+                    " for CLI command 'moin account-reset'",
+                )
+
+            # Using Jinja2 Template.render, as there is no context for Flask templates in CLI calls
+            template = app.jinja_env.get_template("mail/password_recovery.txt")
+            text = template.render(link=link)
 
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)
         return mailok, msg
