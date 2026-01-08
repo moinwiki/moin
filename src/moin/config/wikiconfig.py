@@ -282,3 +282,7 @@ SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
 # CACHE_TYPE = 'filesystem'
 # CACHE_DIR = '/path/to/flask-cache-dir'
 # THEME_PATHS = os.path.join(Config.instance_dir, "themes")
+# Following settings are required for sending mails from CLI commands (e.g. account-password)
+# SERVER_NAME = "localhost:5000"  # The hostname your wiki uses
+# APPLICATION_ROOT = "/"  # Base prefix of your wiki (e.g. "/wiki" if behind a prefix)
+# PREFERRED_URL_SCHEME = "http"  # Protocol you want URLs to use

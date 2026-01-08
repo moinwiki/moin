@@ -83,8 +83,7 @@ class HtmlTags:
 
     # HTML tags that do not have equivalents in the DOM tree
     # We use a <span> element but add information about the original tag.
-    inline_tags = {"abbr", "acronym", "address", "dfn", "kbd"}
-    # TODO: Use a <div> element for <address> (it is a "body element").
+    inline_tags = {"abbr", "dfn", "kbd"}
 
     # HTML tags that are completely ignored by our converter.
     # Deprecated/obsolete tags and tags not suited for wiki content
@@ -342,6 +341,15 @@ class Converter(HtmlTags):
         attrib[key] = heading_level
         ret = self.new_copy(moin_page.h, element, attrib)
         return ret
+
+    def visit_xhtml_acronym(self, element):
+        # in HTML5, <acronym> is deprecated in favour of <abbr>
+        attrib = {html.class_: "html-abbr"}
+        return self.new_copy(moin_page.span, element, attrib)
+
+    def visit_xhtml_address(self, element):
+        attrib = {html.class_: "html-address"}
+        return self.new_copy(moin_page.div, element, attrib)
 
     def visit_xhtml_br(self, element):
         """
