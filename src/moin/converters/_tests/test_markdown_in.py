@@ -100,8 +100,8 @@ class TestConverter:
         ("<acronym>AC/DC</acronym>", '<div><p><span html:class="html-abbr">AC/DC</span></p></div>'),
         # <address> is a block-level element
         (
-            "<address>100 Acre Wood</address>",
-            '<div><div><div html:class="html-address">100 Acre Wood</div>\n</div></div>',
+            "<address>webmaster@example.org</address>",
+            '<div><div><div html:class="html-address">webmaster@example.org</div>\n</div></div>',
         ),
         ("<dfn>term</dfn>", '<div><p><span html:class="html-dfn">term</span></p></div>'),
         ("<kbd>Ctrl-X</kbd>", '<div><p><span html:class="html-kbd">Ctrl-X</span></p></div>'),

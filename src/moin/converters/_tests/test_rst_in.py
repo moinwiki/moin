@@ -266,13 +266,14 @@ class TestConverter:
             "</table-body></table>",
         ),
         (
-            ":Authors: Pat, Patagon\n:Copyright: ©\n:Test: t",
+            ":Authors: Pat, Patagon\n:Copyright: © 2026 Pat\n:Address: 100 Acre Wood\n:Test: custom field",
             '<table xhtml:class="moin-rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Authors:</strong></table-cell>"
             "<table-cell><p>Pat</p><p>Patagon</p></table-cell></table-row>"
-            "<table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>©</table-cell></table-row>"
+            "<table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>© 2026 Pat</table-cell></table-row>"
+            "<table-row><table-cell><strong>Address:</strong></table-cell><table-cell>100 Acre Wood</table-cell></table-row>"
             '<table-row xhtml:class="test"><table-cell><strong>Test:</strong></table-cell>'
-            "<table-cell><p>t</p></table-cell></table-row>"
+            "<table-cell><p>custom field</p></table-cell></table-row>"
             "</table-body></table>",
         ),
         # option list

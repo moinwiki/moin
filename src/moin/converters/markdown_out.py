@@ -85,6 +85,9 @@ class Converter:
 
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
 
+    # HTML elements represented by a special html:class value.
+    direct_tags = {"abbr", "address", "dfn", "kbd"}
+
     @classmethod
     def _factory(cls, input, output, **kw):
         return cls()
@@ -447,6 +450,13 @@ class Converter:
             return "<sup>{}</sup>".format("".join(elem.itertext()))
         if baseline_shift == "sub":
             return "<sub>{}</sub>".format("".join(elem.itertext()))
+        classes = elem.attrib.get(html.class_, "").split()
+        for cls in classes:
+            if not cls.startswith("html-"):
+                continue
+            tagname = cls.removeprefix("html-")
+            if tagname in self.direct_tags:
+                return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
         return "".join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # stroke or strike-through

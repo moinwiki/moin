@@ -64,9 +64,13 @@ class TestConverter:
         ("*emphasis*\n", "*emphasis*\n"),
         ("    blockcode\n", "    blockcode\n"),
         ("`monospace`\n", "`monospace`\n"),
+        ("<abbr>etc.</abbr>", "<abbr>etc.</abbr>"),
+        ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
+        ("<dfn>term</dfn>", "<dfn>term</dfn>"),
         ("<strike>stroke</strike>\n", "<strike>stroke</strike>\n"),
         # <ins> is changed to <u>
         ("<ins>underline</ins>\n", "<u>underline</u>\n"),
+        ("<kbd>Ctrl-X</kbd><", "<kbd>Ctrl-X</kbd><"),
         ("<big>larger</big>\n", "<big>larger</big>\n"),
         ("<small>smaller</small>\n", "<small>smaller</small>\n"),
         ("<sup>super</sup>script\n", "<sup>super</sup>script\n"),

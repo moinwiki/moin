@@ -212,9 +212,9 @@ class TestConverter(Base):
             '/page/body/p/span[text()="AC/DC"][@html:class="html-abbr"]',
         ),
         (  # address is a block-level element, use <div ...>
-            "<html><address>100 Acre Wood</address></html>",
-            # <page><body><div html:class="html-address">100 Acre Wood</div></body></page>
-            '/page/body/div[text()="100 Acre Wood"][@html:class="html-address"]',
+            "<html><address>webmaster@example.org</address></html>",
+            # <page><body><div html:class="html-address">webmaster@example.org</div></body></page>
+            '/page/body/div[text()="webmaster@example.org"][@html:class="html-address"]',
         ),
         (
             "<html><p><dfn>term</dfn></p></html>",
