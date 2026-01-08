@@ -198,36 +198,38 @@ class TestConverter(Base):
     def test_span(self, input, xpath):
         self.do(input, xpath)
 
+    # HTML elements without equivalent Moin DOM tree elements
+    # are represented via a "html-{tagname}" `class` attribute:
     data = [
         (
-            "<html><p><abbr>Text</abbr></p></html>",
-            # <page><body><span html:class="html-abbr">Text</span></body></page>
-            '/page/body/p/span[text()="Text"][@html:class="html-abbr"]',
+            "<html><p><abbr>e.g.</abbr></p></html>",
+            # <page><body><span html:class="html-abbr">e.g.</span></body></page>
+            '/page/body/p/span[text()="e.g."][@html:class="html-abbr"]',
+        ),
+        (  # in HTML5, <acronym> is deprecated in favour of <abbr>
+            "<html><p><acronym>AC/DC</acronym></p></html>",
+            # <page><body><span html:class="html-abbr">AC/DC</span></body></page>
+            '/page/body/p/span[text()="AC/DC"][@html:class="html-abbr"]',
+        ),
+        (  # address is a block-level element, use <div ...>
+            "<html><address>100 Acre Wood</address></html>",
+            # <page><body><div html:class="html-address">100 Acre Wood</div></body></page>
+            '/page/body/div[text()="100 Acre Wood"][@html:class="html-address"]',
         ),
         (
-            "<html><p><acronym>Text</acronym></p></html>",
-            # <page><body><span html:class="html-acronym">Text</span></body></page>
-            '/page/body/p/span[text()="Text"][@html:class="html-acronym"]',
+            "<html><p><dfn>term</dfn></p></html>",
+            # <page><body><span html:class="html-dfn">term</span></body></page>
+            '/page/body/p/span[text()="term"][@html:class="html-dfn"]',
         ),
         (
-            "<html><p><address>Text</address></p></html>",
-            # <page><body><span html:class="html-address">Text</span></body></page>
-            '/page/body/p/span[text()="Text"][@html:class="html-address"]',
-        ),
-        (
-            "<html><p><dfn>Text</dfn></p></html>",
-            # <page><body><span html:class="html-dfn">Text</span></body></page>
-            '/page/body/p/span[text()="Text"][@html:class="html-dfn"]',
-        ),
-        (
-            "<html><p><kbd>Text</kbd></p></html>",
-            # <page><body><span html:class="html-kbd">Text</span></body></page>
-            '/page/body/p/span[text()="Text"][@html:class="html-kbd"]',
+            "<html><p><kbd>Ctrl-X</kbd></p></html>",
+            # <page><body><span html:class="html-kbd">Ctrl-X</span></body></page>
+            '/page/body/p/span[text()="Ctrl-X"][@html:class="html-kbd"]',
         ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
-    def test_span_html_element(self, input, xpath):
+    def test_other_html_elements(self, input, xpath):
         self.do(input, xpath)
 
     data = [

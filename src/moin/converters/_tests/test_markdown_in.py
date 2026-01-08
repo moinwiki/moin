@@ -94,16 +94,21 @@ class TestConverter:
         self.do(input, output)
 
     data = [
+        # TODO: there are too many <div> wrappers!
         ("<abbr>e.g.</abbr>", '<div><p><span html:class="html-abbr">e.g.</span></p></div>'),
-        # <acronym> is deprecated in favour of <abbr> in HTML5!
-        ("<acronym>AC/DC</acronym>", '<div><p><span html:class="html-acronym">AC/DC</span></p></div>'),
-        # <address> is a block-level element!
+        # <acronym> is deprecated in favour of <abbr> in HTML5
+        ("<acronym>AC/DC</acronym>", '<div><p><span html:class="html-abbr">AC/DC</span></p></div>'),
+        # <address> is a block-level element
+        (
+            "<address>100 Acre Wood</address>",
+            '<div><div><div html:class="html-address">100 Acre Wood</div>\n</div></div>',
+        ),
         ("<dfn>term</dfn>", '<div><p><span html:class="html-dfn">term</span></p></div>'),
         ("<kbd>Ctrl-X</kbd>", '<div><p><span html:class="html-kbd">Ctrl-X</span></p></div>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)
-    def test_html_inline_tags(self, input, output):
+    def test_other_html_elements(self, input, output):
         self.do(input, output)
 
     data = [
