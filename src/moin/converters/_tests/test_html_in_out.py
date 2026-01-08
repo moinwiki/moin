@@ -122,7 +122,7 @@ class TestConverter(Base):
     data = [
         ("<html><p><abbr>etc.</abbr></p></html>", '/div/p[abbr="etc."]'),
         ("<html><p><acronym>AC/DC</acronym></p></html>", '/div/p[abbr="AC/DC"]'),
-        ("<html><p><address>100 Acre Wood</address></p></html>", '/div/p[address="100 Acre Wood"]'),
+        ("<html><p><address>webmaster@example.org</address></p></html>", '/div/p[address="webmaster@example.org"]'),
         ("<html><p><dfn>term</dfn></p></html>", '/div/p[dfn="term"]'),
         ("<html><p><kbd>Ctrl-X</kbd></p></html>", '/div/p[kbd="Ctrl-X"]'),
     ]
