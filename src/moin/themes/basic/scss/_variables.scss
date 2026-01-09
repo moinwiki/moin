@@ -1,7 +1,6 @@
 @use "sass:color";
 
-// https://www.canva.com/colors/color-palettes/foil-covered-sneakers/
-$theme-col-1:  #90ADC6; // Blue Gray
+$theme-col-1:  #428BCA; // Blue Gray
 $theme-col-2:  #E9EAEC; // Pewter
 $theme-col-3:  #FAD02C; // Yellow
 $theme-col-4:  #333652; // Dark Blue
@@ -29,7 +28,7 @@ $link-nonexistent-hover-color:      $brand-danger;
 //----------------------
 $moin-navbar-inverse-color:         $theme-col-2;
 $moin-navbar-inverse-bgcolor:       $theme-col-2;
-$moin-navbar-inverse-textcolor:     $theme-col-1;
+$moin-navbar-inverse-textcolor:     $theme-col-4;
 
 $navbar-inverse-link-hover-color:   $theme-col-1;
 

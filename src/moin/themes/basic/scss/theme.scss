@@ -132,13 +132,13 @@ a:focus.moin-showhide {
   }
 }
 a.list-group-item.wikilink {
-  color: $theme-col-1;
+  color: $theme-col-4;
 }
 
 .moin-list-heading {
   background-color: $navbar-bg;
   border: 1px solid $navbar-bg;
-  color: $search_option_bar_text_color;
+  color: $theme-col-1;
   margin-bottom: 0.5em;
   border-radius: 7px;
   > a {
@@ -223,7 +223,8 @@ $navbar-inverse-border:  color.scale($navbar-inverse-bg, $lightness: -10%);
     }
   }
   .navbar-brand {
-    color: $moin-navbar-inverse-textcolor;
+    color: $theme-col-1;
+    font-weight: bold;
   }
   .navbar-toggle {
     border-color: #333;
