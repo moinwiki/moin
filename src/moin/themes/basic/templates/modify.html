@@ -37,13 +37,13 @@
                For *Draw content, hide submit button and form['comment'], since *Draw
                POSTs originate from their respective applets.
             #}
-            <ul class="nav nav-tabs moin-nav moin-shadow">
-                <li class="nav-item"><a class="nav-link active" href="#editor" data-toggle="tab">Edit Content</a></li>
-                <li class="nav-item"><a class="nav-link" href="#meta" data-toggle="tab">Edit Meta</a></li>
+            <ul class="nav nav-tabs moin-nav">
+                <li class="nav-item"><a class="nav-link active" href="#editor" data-bs-toggle="tab">Edit Content</a></li>
+                <li class="nav-item"><a class="nav-link" href="#meta" data-bs-toggle="tab">Edit Meta</a></li>
                 {% if user.may.admin(fqname) %}
-                    <li class="nav-item"><a class="nav-link" href="#acl" data-toggle="tab">Edit ACL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#acl" data-bs-toggle="tab">Edit ACL</a></li>
                 {% endif %}
-                <li class="nav-item"><a class="nav-link" href="#help" data-toggle="tab">Help</a></li>
+                <li class="nav-item"><a class="nav-link" href="#help" data-bs-toggle="tab">Help</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="editor">
