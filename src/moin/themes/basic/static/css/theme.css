@@ -11884,7 +11884,7 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   padding-left: 0.5em;
   background-color: #E9EAEC;
   border-radius: 7px;
-  border-bottom: 1px solid #90ADC6;
+  border-bottom: 1px solid #428BCA;
 }
 h1:hover .moin-permalink, .h1:hover .moin-permalink, h1:focus .moin-permalink, .h1:focus .moin-permalink, h2:hover .moin-permalink, .h2:hover .moin-permalink, h2:focus .moin-permalink, .h2:focus .moin-permalink, h3:hover .moin-permalink, .h3:hover .moin-permalink, h3:focus .moin-permalink, .h3:focus .moin-permalink, h4:hover .moin-permalink, .h4:hover .moin-permalink, h4:focus .moin-permalink, .h4:focus .moin-permalink, h5:hover .moin-permalink, .h5:hover .moin-permalink, h5:focus .moin-permalink, .h5:focus .moin-permalink, h6:hover .moin-permalink, .h6:hover .moin-permalink, h6:focus .moin-permalink, .h6:focus .moin-permalink {
   font-size: 80%;
@@ -11919,11 +11919,11 @@ h1 + p.moin-subheading, .h1 + p.moin-subheading {
   padding-left: 0.5em;
   background-color: #E9EAEC;
   border-radius: 7px;
-  border-bottom: 1px solid #90ADC6;
+  border-bottom: 1px solid #428BCA;
 }
 
 .btn-primary {
-  background-color: #90ADC6;
+  background-color: #428BCA;
 }
 
 .form-group {
@@ -11974,7 +11974,7 @@ h1 + p.moin-subheading, .h1 + p.moin-subheading {
 }
 
 a.moin-showhide {
-  color: #90ADC6;
+  color: #428BCA;
 }
 
 a:focus.moin-showhide {
@@ -12000,18 +12000,18 @@ a:focus.moin-showhide {
 }
 
 a.list-group-item.wikilink, a.wikilink.moin-user-action-special {
-  color: #90ADC6;
+  color: #333652;
 }
 
 .moin-list-heading {
   background-color: #E9EAEC;
   border: 1px solid #E9EAEC;
-  color: #90ADC6;
+  color: #428BCA;
   margin-bottom: 0.5em;
   border-radius: 7px;
 }
 .moin-list-heading > a {
-  color: #90ADC6;
+  color: #428BCA;
 }
 
 .moin-nav {
@@ -12072,19 +12072,20 @@ a.list-group-item.wikilink, a.wikilink.moin-user-action-special {
   border-color: #E9EAEC;
 }
 .moin-navbar-inverse .navbar-nav > li > a {
-  color: #90ADC6;
+  color: #333652;
 }
 .moin-navbar-inverse .navbar-nav > li > a.active {
-  color: #90ADC6;
+  color: #428BCA;
 }
 .moin-navbar-inverse .navbar-text {
-  color: #90ADC6;
+  color: #333652;
 }
 .moin-navbar-inverse .navbar-text > a {
-  color: #90ADC6;
+  color: #333652;
 }
 .moin-navbar-inverse .navbar-brand {
-  color: #90ADC6;
+  color: #428BCA;
+  font-weight: bold;
 }
 .moin-navbar-inverse .navbar-toggle {
   border-color: #333;
@@ -12127,8 +12128,8 @@ a.list-group-item.wikilink, a.wikilink.moin-user-action-special {
 .moin-quicklink {
   position: relative;
   padding: 2px 10px 2px 10px;
-  background-color: #90ADC6;
-  border: 1px solid #90ADC6;
+  background-color: #428BCA;
+  border: 1px solid #428BCA;
   margin-bottom: -1px;
 }
 .moin-quicklink > a {
@@ -12197,7 +12198,7 @@ a.list-group-item.wikilink, a.wikilink.moin-user-action-special {
 }
 
 a.moin-toggle-comments-tooltip, a.moin-transclusions-tooltip {
-  color: #90ADC6;
+  color: #428BCA;
 }
 
 a.wikilink {
@@ -12236,7 +12237,7 @@ ul.moin-breadcrumb ul.moin-alias {
 
 ul.moin-breadcrumb li ul.moin-alias li {
   padding: 2px 10px;
-  color: #90ADC6;
+  color: #428BCA;
   list-style-type: none;
   display: block;
 }
@@ -12281,7 +12282,7 @@ html, body {
   padding-left: 10px;
   border: 1px solid #555555;
   background-color: white;
-  color: #90ADC6;
+  color: #428BCA;
   border-radius: 5px;
 }
 .moin-search-option-bar > span {
