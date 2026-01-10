@@ -765,5 +765,3 @@ For example, to automatically link URLs: ::
     class Config(DefaultConfig):
         ...
         markdown_extensions = ['pymdownx.magiclink']
-
-
