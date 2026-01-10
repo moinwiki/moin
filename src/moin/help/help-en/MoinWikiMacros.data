@@ -542,8 +542,8 @@ Two random quotes:
 
 === ShowUserGroup ===
 
-This macro displays the contents of the metadata defined in the "usergroup" attribute. 
-Because this item has no metadata usergroup attribute, the result shown below 
+This macro displays the contents of the metadata defined in the "usergroup" attribute.
+Because this item has no metadata usergroup attribute, the result shown below
 represents sample output.
 
 '''Markup:'''
@@ -558,8 +558,8 @@ represents sample output.
 
 === ShowWikiDict ===
 
-This macro displays the contents of the metadata defined in the "wikidict" attribute. 
-Because this item has no metadata usergroup attribute, the result shown below 
+This macro displays the contents of the metadata defined in the "wikidict" attribute.
+Because this item has no metadata usergroup attribute, the result shown below
 represents sample output.
 
 '''Markup:'''

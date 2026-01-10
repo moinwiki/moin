@@ -11,4 +11,3 @@ Bitte besuchen Sie nun die unten angezeigte Passwort-Ruecksetz-URL und
 setzen Sie ein neues Passwort.
 
 %(link)s
-

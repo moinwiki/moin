@@ -44,4 +44,3 @@ args=('%(logfile)s', 'at')
 format=%(asctime)s %(name)s %(levelname)s %(message)s
 datefmt=
 class=logging.Formatter
-

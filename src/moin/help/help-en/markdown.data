@@ -73,7 +73,7 @@ Level 2
 ###### Level 6 ######
 
 **NOTE**: The "Level 1" and "level 2" headings above are styled with CSS to appear as headings
-but not complicate the table of contents. 
+but not complicate the table of contents.
 
 Preformatted Code
 -----------------
@@ -108,16 +108,16 @@ End preformatted code
     Paragraphs are separated
     by a blank line.
 
-    To force a line break, end a line
-    with 2 spaces.
+    To force a line break, end a line with 2 spaces or<br>
+    a HTML line break tag.
 
 **Result:**
 
 Paragraphs are separated
 by a blank line.
 
-To force a line break, end a line  
-with 2 spaces.
+To force a line break, end a line with 2 spaces or<br>
+a HTML line break tag.
 
 ----
 
@@ -189,7 +189,7 @@ Reference links have two parts. Somewhere in the document the link id is defined
 
 Images and transclusions are similar to links with both an inline and a reference style,
 but they start with an exclamation point character. The target image or item is inserted
-into the rendered page. 
+into the rendered page.
 
 |**Markup**|**Result**|
 |----------|----------|

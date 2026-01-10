@@ -59,7 +59,7 @@ The declaration for a link looks like:
 
 === Internal Links ===
 
-Within MoinWiki and Creole syntax: 
+Within MoinWiki and Creole syntax:
  * a simple link like `[[Home]]` links to an item in the default namespace
  * a relative link like `../Home` links to a sibling in the current namespace
  * a link that begins with a namespace like `[[users/Home]]` links to the Home item in the target namespace

@@ -40,4 +40,3 @@ class=logging.Formatter
 
 [formatter_console]
 format=%(asctime)s %(levelname)s %(message)s
-

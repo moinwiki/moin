@@ -19,10 +19,10 @@
                     {
                         if (entries[i].className != 'summary')
                             continue;
-                            
+
                         elements[elements.length] = entries[i];
                     }
-                    
+
                     for (i = 0; i < elements.length; i++)
                         elements[i].innerHTML = elements[i].innerText;
                 ]]></script>
@@ -44,4 +44,3 @@
         </div>
     </xsl:template>
 </xsl:stylesheet>
-

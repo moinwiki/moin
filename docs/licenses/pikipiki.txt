@@ -20,4 +20,3 @@ unlikely that anything from the PikiPiki codebase is left, but we include its
     USA
 
 The PikiPiki homepage is at http://sourcefrog.net/projects/piki/.
-

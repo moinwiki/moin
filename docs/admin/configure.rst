@@ -1559,7 +1559,7 @@ By default, logging is configured to emit output to `stderr`. This works well fo
 
 Logging is highly configurable using the `logging` module from Python’s standard library.
 
-The configuration file format is described in the official documentation:  
+The configuration file format is described in the official documentation:
 https://docs.python.org/3/library/logging.config.html#configuration-file-format
 
 Sample logging configurations can also be found in the `contrib/logging/` directory.
@@ -1615,7 +1615,7 @@ Alternatively, you can load the logging configuration explicitly at the beginnin
 
 Make sure to use an absolute path that points to a valid logging configuration file.
 
-**Important:**  
+**Important:**
 The logging configuration must be stored in a **separate file** — do **not** place it inside your `wikiconfig.py`.
 
 If no configuration is provided, or if the provided configuration file cannot be loaded, Moin will fall back to a built-in default configuration, which logs to `stderr` at the `INFO` level.

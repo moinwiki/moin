@@ -3,7 +3,7 @@
     MoinMoin - mod_wsgi driver script
 
     To use this, add those statements to your Apache's VirtualHost definition:
-    
+
     # you will invoke your moin wiki at the root url, like http://servername/ItemName:
     WSGIScriptAlias / /some/path/moin.wsgi
 

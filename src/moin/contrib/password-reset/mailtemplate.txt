@@ -10,4 +10,3 @@ wiki administrator contact information) is available there, please read it:
 Now, please go to the password reset URL below and set a new password.
 
 %(link)s
-
