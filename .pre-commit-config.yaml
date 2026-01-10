@@ -3,7 +3,6 @@ repos:
     rev: v3.2.0
     hooks:
     -   id: trailing-whitespace
-        # exclude: .markdown.data$ # in Markdown, 2 trailing spaces mark a <br>
     -   id: end-of-file-fixer
 - repo: https://github.com/psf/black
   rev: 24.10.0
