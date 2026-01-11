@@ -478,7 +478,7 @@ class CreateItemForm(BaseChangeForm):
     target = RequiredText.using(label=L_("Target")).with_properties(autofocus=True)
 
 
-def acl_validate(acl_string: str) -> bool:
+def acl_validate(acl_string: str | Element | None) -> bool:
     """
     Validate ACL strings, allowing special values 'None' and 'Empty'.
 
@@ -489,14 +489,12 @@ def acl_validate(acl_string: str) -> bool:
     acls = str(acl_string)
     if acls in ("None", "Empty", ""):  # '' is not possible if field is required on form
         return True
-    acls = acls.split()
-    for acl in acls:
+    for acl in acls.split():
         acl_rules = acl.split(":")
         if len(acl_rules) == 2:
             who, rights = acl_rules
             if rights:
-                rights = rights.split(",")
-                for right in rights:
+                for right in rights.split(","):
                     if right not in all_rights:
                         return False
         else:
