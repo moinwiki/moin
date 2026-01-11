@@ -289,7 +289,7 @@ def str_to_dict(data: str) -> dict[str, str]:
             )
             key_val = key_val.strip()
         if not key_val:
-            flash(L_("Empty line in Wiki Dict discarded."), "info")
+            flash(_("Empty line in Wiki Dict discarded."), "info")
             continue  #
         kv = key_val.split("=")
         if not len(kv) == 2:
