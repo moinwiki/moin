@@ -1743,7 +1743,7 @@ class Default(Contentful):
                         form["content_form"]["data_text"] = data
                 else:
                     # user clicked OK/Save button, check for conflicts,
-                    if "charset" in self.contenttype:
+                    if self.contenttype and "charset" in self.contenttype:
                         draft, draft_data = edit_utils.get_draft()
                         if draft:
                             # will always be a draft for normal users,
