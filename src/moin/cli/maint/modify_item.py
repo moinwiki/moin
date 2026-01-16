@@ -1,6 +1,7 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
 # Copyright: 2022 MoinMoin:RogerHaase
 # Copyright: 2023-2024 MoinMoin project
+# Copyright: 2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -248,6 +249,8 @@ def cli_ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=F
 def _fix_if_bad(bad, meta, data, bad_revids, fix, backend):
     if bad:
         bad_revids.add(meta[REVID])
+        if MTIME in meta:
+            meta.pop(MTIME)  # store_revision adds the current timestamp
         if fix:
             try:
                 item = app.storage.get_item(itemid=meta[ITEMID])
