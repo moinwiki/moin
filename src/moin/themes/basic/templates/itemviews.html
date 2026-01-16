@@ -4,7 +4,7 @@
 
 {% block views %}
     {% if navtabs %}
-        <ul class="nav nav-tabs moin-nav moin-shadow">
+        <ul class="nav nav-tabs moin-nav">
             {% for endpoint, href, maincls, iconcls, linkcls, title, label in navtabs %}
                 <li class="nav-item">
                     <a class="nav-link{% if maincls %} {{ maincls }}{% endif %}{% if linkcls %} {{ linkcls }}{% endif %}" href="{{ href }}" title="{{ title }}" rel="nofollow">

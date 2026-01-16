@@ -303,7 +303,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .moin-big { font-size: 1.17em; }
 .moin-bigger { font-size: 1.5em; }
 .moin-small { font-size: .83em; }
-.moin-tiny { font-size: .5em; vertical-align: middle; }
+.moin-tiny { font-size: .5em; vertical-align: 0.3em; }
 .moin-inline-label { display: inline; }
 .moin-link-list li { padding: 2px 0 2px 0; }
 
