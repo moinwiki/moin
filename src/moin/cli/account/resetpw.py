@@ -2,6 +2,7 @@
 # Copyright: 2008 MoinMoin:JohannesBerg
 # Copyright: 2011 MoinMoin:ReimarBauer
 # Copyright: 2023 MoinMoin project
+# Copyright: 2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -108,8 +109,13 @@ def SetPassword(name, uid, password, all_users, notify, verbose, subject, text, 
         sys.exit(1)
 
     if text_from_file:
-        with open(text_from_file) as f:
-            text = f.read().decode("utf-8")
+        try:
+            with open(text_from_file, "r", encoding="utf-8") as f:
+                text = f.read()
+        except ValueError:
+            raise click.ClickException(f"The file '{text_from_file}' is not a valid UTF-8 file.")
+        except OSError as e:
+            raise click.ClickException(f"Cannot read '{text_from_file}': {e.strerror}")
 
     before_wiki()
     if uid:
