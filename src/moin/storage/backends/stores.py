@@ -124,45 +124,40 @@ class MutableBackend(Backend, MutableBackendBase):
 
     @override
     def store(self, meta, data):
-        if DATAID not in meta:
-            tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
-            dataid = make_uuid()
-            self.data_store[dataid] = tfw
-            meta[DATAID] = dataid
-            # check whether size and hash are consistent:
-            size_expected = meta.get(SIZE)
-            size_real = tfw.size
-            if size_expected is not None and size_expected != size_real:
-                raise ValueError(
-                    "computed data size ({}) does not match data size declared in metadata ({})".format(
-                        size_real, size_expected
-                    )
-                )
-            meta[SIZE] = size_real
-            hash_expected = meta.get(HASH_ALGORITHM)
-            hash_real = tfw.hash.hexdigest()
-            if hash_expected is not None and hash_expected != hash_real:
-                raise ValueError(
-                    "computed data hash ({}) does not match data hash declared in metadata ({})".format(
-                        hash_real, hash_expected
-                    )
-                )
-            meta[HASH_ALGORITHM] = hash_real
-        else:
+        try:
             dataid = meta[DATAID]
-            # we will just asume stuff is correct if you pass it with a data id
-            if dataid not in self.data_store:
-                self.data_store[dataid] = data
-            else:
-                # this is reading the data to avoid this issue:
-                # if we do not store if we already have the dataid in the store,
-                # deserialization does not work as the fpos does not advance to the next record,
-                # because we do not read from the source file. Remove the check?
-                while data.read(64 * 1024):
-                    pass
-        # if something goes wrong below, the data shall be purged by a garbage collection
-        metaid = self._store_meta(meta)
-        return metaid
+        except KeyError:
+            dataid = make_uuid()
+
+        tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
+        self.data_store[dataid] = tfw
+        meta[DATAID] = dataid
+
+        # check whether size is consistent:
+        size_expected = meta.get(SIZE)
+        size_real = tfw.size
+        if size_expected is None:
+            meta[SIZE] = size_real
+        elif size_expected != size_real:
+            raise ValueError(
+                "computed data size ({}) does not match data size declared in metadata ({})".format(
+                    size_real, size_expected
+                )
+            )
+
+        # check whether hash is consistent:
+        hash_expected = meta.get(HASH_ALGORITHM)
+        hash_real = tfw.hash.hexdigest()
+        if hash_expected is None:
+            meta[HASH_ALGORITHM] = hash_real
+        elif hash_expected != hash_real:
+            raise ValueError(
+                "computed data hash ({}) does not match data hash declared in metadata ({})".format(
+                    hash_real, hash_expected
+                )
+            )
+
+        return self._store_meta(meta)
 
     def _del_meta(self, metaid):
         del self.meta_store[metaid]

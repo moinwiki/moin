@@ -12,6 +12,7 @@ Remove all revisions except the latest one from selected items.
 """
 
 import click
+import io
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -93,7 +94,11 @@ def ReduceRevisions(query, namespace, test):
                     # global history useless.
                     # Save existing mtime which has time this revision's data was last modified.
                     flaskg.data_mtime = meta[MTIME]
-                    current_rev.item.store_revision(meta, current_rev.data, overwrite=True)
+                    # Read the existing data into memory. This is required to avoid reading and writing
+                    # the same data file, what would happen if we would just pass current_rev.data in the
+                    # store_revision() invocation below. Ideally we would only update the metadata here.
+                    data = current_rev.data.read()
+                    current_rev.item.store_revision(meta, io.BytesIO(data), overwrite=True)
                     print("... (updated metadata of current revision)")
                 continue
 

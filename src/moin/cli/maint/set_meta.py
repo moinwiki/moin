@@ -12,21 +12,21 @@ This command duplicates the last revision of the selected item
 and sets or removes metadata.
 """
 
+import click
+import io
+import sys
 
 from ast import literal_eval
 
-import sys
-import click
 from flask import current_app as app
 from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Every
 
+from moin import log
 from moin.app import create_app
 from moin.constants.keys import NAME, NAME_EXACT, REVID, REV_NUMBER, PARENTID
-
-from moin import log
 
 logging = log.getLogger(__name__)
 
@@ -52,7 +52,9 @@ def cli():
 )
 def SetMeta(key, value, remove, query):
     logging.info("Set meta started")
+
     flaskg.add_lineno_attr = False
+
     if not ((key and value) or (key and remove)) or (key and value and remove):
         sys.exit("You must either specify a key/value pair or a key to delete (use -r).")
 
@@ -70,15 +72,21 @@ def SetMeta(key, value, remove, query):
 
     for current_rev in app.storage.search(q, limit=None):
         name = current_rev.meta[NAME]
-        newmeta = dict(current_rev.meta)
+        new_meta = dict(current_rev.meta)
         if remove:
-            newmeta.pop(key)
+            new_meta.pop(key)
             print(f"Processing {name!r}, removing {key}.")
         else:
-            newmeta[key] = value
+            new_meta[key] = value
             print(f"Processing {name!r}, setting {key}={value!r}.")
-        del newmeta[REVID]
-        newmeta[REV_NUMBER] += 1
-        newmeta[PARENTID] = current_rev.meta[REVID]
-        current_rev.item.store_revision(newmeta, current_rev.data)
+        del new_meta[REVID]
+        new_meta[REV_NUMBER] += 1
+        new_meta[PARENTID] = current_rev.meta[REVID]
+
+        # Read the existing data into memory. This is required to avoid reading and writing
+        # the same data file, what would happen if we would just pass current_rev.data in the
+        # store_revision() invocation below. Ideally we would only update the metadata here.
+        data = current_rev.data.read()
+        current_rev.item.store_revision(new_meta, io.BytesIO(data))
+
     logging.info("Set meta finished")
