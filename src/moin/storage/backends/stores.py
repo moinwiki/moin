@@ -79,17 +79,10 @@ class Backend(BackendBase):
 
     def _get_meta(self, metaid):
         meta = self.meta_store[metaid]
-        # XXX Idea: we could check the type we get from the store:
-        # if it is a str/bytes, just use it "as is",
-        # if it is a file, read and close it (so we have a str/bytes).
         return self._deserialize(meta)
 
     def _get_data(self, dataid):
         data = self.data_store[dataid]
-        # XXX Idea: we could check the type we get from the store:
-        # if it is a file, just return it "as is",
-        # if it is a str/bytes, wrap it into BytesIO (so we always return
-        # a file-like object).
         return data
 
     @override
@@ -126,17 +119,11 @@ class MutableBackend(Backend, MutableBackendBase):
             meta[REVID] = make_uuid()
         metaid = meta[REVID]
         meta = self._serialize(meta)
-        # XXX Idea: we could check the type the store wants from us:
-        # if it is a str/bytes (BytesStore), just use meta "as is",
-        # if it is a file (FileStore), wrap it into BytesIO and give that to the store.
         self.meta_store[metaid] = meta
         return metaid
 
     @override
     def store(self, meta, data):
-        # XXX Idea: we could check the type the store wants from us:
-        # if it is a str/bytes (BytesStore), just use meta "as is",
-        # if it is a file (FileStore), wrap it into BytesIO and give that to the store.
         if DATAID not in meta:
             tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
             dataid = make_uuid()
