@@ -114,12 +114,12 @@ class MutableBackend(Backend, MutableBackendBase):
         return meta_str
 
     def _store_meta(self, meta):
-        if REVID not in meta:
+        try:
             # Item.clear_revision calls us with REVID already present
-            meta[REVID] = make_uuid()
-        metaid = meta[REVID]
-        meta = self._serialize(meta)
-        self.meta_store[metaid] = meta
+            metaid = meta[REVID]
+        except KeyError:
+            metaid = meta[REVID] = make_uuid()
+        self.meta_store[metaid] = self._serialize(meta)
         return metaid
 
     @override
