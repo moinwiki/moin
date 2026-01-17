@@ -44,7 +44,7 @@ def cli():
     default="",
     help='Limit selection to a namespace; use "default" for default namespace.',
 )
-@click.option("--test", "-t", type=bool, default=0, help="List selected items, but do not update.")
+@click.option("--test", "-t", is_flag=True, help="List selected items, but do not update.")
 def ReduceRevisions(query, namespace, test):
     logging.info("Reduce revisions started")
     before_wiki()
