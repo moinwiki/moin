@@ -500,13 +500,13 @@ class NodeVisitor:
         moin_node = moin_page.span()
         # some class values indicate a matching HTML element (except when used for syntax highlight):
         if not (isinstance(node.parent, (nodes.literal_block, nodes.literal)) and "code" in node.parent.get("classes")):
-            for tag in classes:
+            for i, tag in enumerate(classes):
                 if tag in HtmlTags.symmetric_tags:
                     moin_node = getattr(moin_page, tag)()
                     classes.remove(tag)
                     break
                 if tag in HtmlTags.inline_tags:
-                    classes[classes.index(tag)] = "html-" + tag
+                    classes[i] = "html-" + tag
         self.open_moin_page_node(moin_node, node)
 
     def depart_inline(self, node):
@@ -548,7 +548,16 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_literal(self, node):
-        self.open_moin_page_node(moin_page.code(), node)
+        # some class values indicate a matching HTML element:
+        classes = node["classes"]
+        for i, tag in enumerate(classes):
+            if tag in ("kbd", "samp"):
+                classes[i] = "html-" + tag
+                moin_node = moin_page.span()
+                break
+        else:
+            moin_node = moin_page.code()
+        self.open_moin_page_node(moin_node, node)
 
     def depart_literal(self, node):
         self.close_moin_page_node()

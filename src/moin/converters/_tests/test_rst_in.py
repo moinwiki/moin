@@ -61,7 +61,8 @@ class TestConverter:
         (".. role:: u\n\n:u:`annoted` text", "<p><u>annoted</u> text</p>"),
         # custom roles with matching HTML element
         (".. role:: dfn\n\n:dfn:`term`", '<p><span xhtml:class="html-dfn">term</span></p>'),
-        (".. role:: kbd\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span xhtml:class="html-kbd">Ctrl-X</span></p>'),
+        (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span xhtml:class="html-kbd">Ctrl-X</span></p>'),
+        (".. role:: samp(literal)\n\n:samp:`Error 303`", '<p><span xhtml:class="html-samp">Error 303</span></p>'),
         (  # custom role derived from "code" with syntax highlight
             '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
             '<p>Inline code like <code xhtml:class="code python">'
