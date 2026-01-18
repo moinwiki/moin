@@ -168,9 +168,9 @@ class TestConverter(Base):
             '/page/body/p/span[text()="Test"][@font-size="120%"]',
         ),
         (
-            "<html><p><small>Test</small></p></html>",
-            # <page><body><p><span font-size="85%">Test</span></p></body></page>
-            '/page/body/p/span[text()="Test"][@font-size="85%"]',
+            '<html><p><span class="moin-small">smaller</span></p></html>',
+            # <page><body><p><span html:class="moin-small">smaller</span></p></body></page>
+            '/page/body/p/span[text()="smaller"][@html:class="moin-small"]',
         ),
         (
             "<html><p><ins>underline</ins></p></html>",
@@ -217,6 +217,11 @@ class TestConverter(Base):
             '/page/body/div[text()="webmaster@example.org"][@html:class="html-address"]',
         ),
         (
+            "<html><p><cite>Hamlet</cite></p></html>",
+            # <page><body><span html:class="html-cite">Hamlet</span></body></page>
+            '/page/body/p/span[text()="Hamlet"][@html:class="html-cite"]',
+        ),
+        (
             "<html><p><dfn>term</dfn></p></html>",
             # <page><body><span html:class="html-dfn">term</span></body></page>
             '/page/body/p/span[text()="term"][@html:class="html-dfn"]',
@@ -225,6 +230,26 @@ class TestConverter(Base):
             "<html><p><kbd>Ctrl-X</kbd></p></html>",
             # <page><body><span html:class="html-kbd">Ctrl-X</span></body></page>
             '/page/body/p/span[text()="Ctrl-X"][@html:class="html-kbd"]',
+        ),
+        (
+            "<html><p><mark>highlight</mark></p></html>",
+            # <page><body><span html:class="html-mark">highlight</span></body></page>
+            '/page/body/p/span[text()="highlight"][@html:class="html-mark"]',
+        ),
+        (
+            "<html><p><q>cogito ergo sum</q></p></html>",
+            # <page><body><span html:class="html-q">cogito ergo sum</span></body></page>
+            '/page/body/p/span[text()="cogito ergo sum"][@html:class="html-q"]',
+        ),
+        (
+            "<html><p><small>fine print</small></p></html>",
+            # <page><body><p><span html:class="html-small">fine print</span></p></body></page>
+            '/page/body/p/span[text()="fine print"][@html:class="html-small"]',
+        ),
+        (
+            "<html><p><var>n</var></p></html>",
+            # <page><body><span html:class="html-var">n</span></body></page>
+            '/page/body/p/span[text()="n"][@html:class="html-var"]',
         ),
     ]
 

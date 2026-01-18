@@ -72,7 +72,7 @@ class TestConverter:
     data = [
         ("line<br />break", "<div><p>line<line-break />break</p></div>"),
         ("<big>larger</big>", '<div><p><span font-size="120%">larger</span></p></div>'),
-        ("<small>smaller</small>", '<div><p><span font-size="85%">smaller</span></p></div>'),
+        ('<span class="moin-small">smaller</span>', '<div><p><span html:class="moin-small">smaller</span></p></div>'),
         ("<sub>sub</sub>script", '<div><p><span baseline-shift="sub">sub</span>script</p></div>'),
         ("<sup>super</sup>script", '<div><p><span baseline-shift="super">super</span>script</p></div>'),
         ("<em>Emphasis</em>", "<div><p><emphasis>Emphasis</emphasis></p></div>"),
@@ -105,6 +105,7 @@ class TestConverter:
         ),
         ("<dfn>term</dfn>", '<div><p><span html:class="html-dfn">term</span></p></div>'),
         ("<kbd>Ctrl-X</kbd>", '<div><p><span html:class="html-kbd">Ctrl-X</span></p></div>'),
+        ("<small>fine print</small>", '<div><p><span html:class="html-small">fine print</span></p></div>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)

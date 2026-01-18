@@ -83,7 +83,7 @@ class HtmlTags:
 
     # HTML tags that do not have equivalents in the DOM tree
     # We use a <span> element but add information about the original tag.
-    inline_tags = {"abbr", "dfn", "kbd"}
+    inline_tags = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
 
     # HTML tags that are completely ignored by our converter.
     # Deprecated/obsolete tags and tags not suited for wiki content
@@ -117,7 +117,6 @@ class HtmlTags:
         "style",
         "textarea",
         "title",
-        # "var",  # a variable or constant
     }
 
     # standard_attributes are html attributes which are used
@@ -364,15 +363,6 @@ class Converter(HtmlTags):
         key = moin_page("font-size")
         attrib = {}
         attrib[key] = "120%"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_small(self, element):
-        """
-        <small>Text</small> --> <span font-size=85%>Text</span>
-        """
-        key = moin_page("font-size")
-        attrib = {}
-        attrib[key] = "85%"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_xhtml_sub(self, element):

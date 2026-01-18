@@ -86,7 +86,7 @@ class Converter:
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
 
     # HTML elements represented by a special html:class value.
-    direct_tags = {"abbr", "address", "dfn", "kbd"}
+    direct_tags = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
 
     @classmethod
     def _factory(cls, input, output, **kw):
