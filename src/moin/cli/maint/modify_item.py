@@ -118,13 +118,13 @@ def GetItem(name, meta_file, data_file, revid, newline="\n"):
 @click.option(
     "--overwrite", "-o", is_flag=True, default=False, help="If given, overwrite existing revisions, if requested."
 )
-def cli_PutItem(meta, data, overwrite):
+def cli_PutItem(meta, data, overwrite: bool):
     logging.info("Put item started")
     PutItem(meta, data, overwrite)
     logging.info("Put item finished")
 
 
-def PutItem(meta_file, data_file, overwrite):
+def PutItem(meta_file, data_file, overwrite: bool):
     """
     Put an item revision from file into the wiki
     """
@@ -196,7 +196,7 @@ def LoadHelp(namespace, path_to_help):
             data_file = f.replace(".meta", ".data")
             meta_file = os.path.join(path_to_items, f)
             data_file = os.path.join(path_to_items, data_file)
-            PutItem(meta_file, data_file, "true")
+            PutItem(meta_file, data_file, True)
             print("Item loaded:", item_name)
             count += 1
     print(f"Success: help namespace {namespace} loaded successfully with {count} items")
@@ -359,5 +359,5 @@ def LoadWelcome():
         else:
             meta_file = os.path.join(path_to_items, f"{name}.meta")
             data_file = os.path.join(path_to_items, f"{name}.data")
-            PutItem(meta_file, data_file, "true")
+            PutItem(meta_file, data_file, True)
     logging.info("Load welcome finished")
