@@ -8,6 +8,10 @@ MoinMoin - HTML output converter.
 Convert an internal document tree into an HTML tree.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 
 from flask import current_app as app
@@ -16,7 +20,7 @@ from emeraldtree import ElementTree as ET
 from urllib.parse import urlencode
 from babel import Locale
 
-from moin import wikiutil
+from moin import log, wikiutil
 from moin.i18n import _
 from moin.items import Item
 from moin.utils.iri import Iri
@@ -27,7 +31,9 @@ from moin.constants.keys import LANGUAGE
 
 from . import default_registry, ElementException
 
-from moin import log
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -166,12 +172,12 @@ class Converter:
     Converter application/x.moin.document -> application/x.moin.document
     """
 
-    namespaces_visit = {moin_page: "moinpage"}
+    namespaces_visit: Final = {moin_page: "moinpage"}
 
     # Tags which can be directly converted into an HTML element
-    direct_tags = {"abbr", "address", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
+    direct_tags: Final = {"abbr", "address", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
 
-    def __call__(self, element):
+    def __call__(self, element: Any) -> Any:
         return self.visit(element)
 
     def do_children(self, element):
@@ -735,10 +741,10 @@ class ConverterPage(Converter):
     """
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs) -> Self:
         return cls()
 
-    def __call__(self, element):
+    def __call__(self, element: Any) -> Any:
         special_root = SpecialPage()
         self._special = [special_root]
         self._special_stack = [special_root]

@@ -7,6 +7,9 @@ MoinMoin - Archives converter (e.g., zip, tar)
 Make a DOM tree representation of an archive (i.e., list its contents in a table).
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
 
 from datetime import datetime
 import tarfile
@@ -15,6 +18,7 @@ import zipfile
 from . import default_registry
 from ._table import TableMixin
 
+from moin import log
 from moin.i18n import _
 from moin.utils import utcfromtimestamp
 from moin.utils.iri import Iri
@@ -23,7 +27,10 @@ from moin.utils.mime import Type, type_moin_document
 from moin.utils.interwiki import CompositeName
 from moin.constants.keys import NAME, NAMESPACE, NAME_EXACT
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from moin.storage.middleware.indexing import Revision
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -41,7 +48,7 @@ class ArchiveConverter(TableMixin):
     """
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
     def process_name(self, member_name):
@@ -56,11 +63,11 @@ class ArchiveConverter(TableMixin):
     def process_size(self, size):
         return str(size)
 
-    def __call__(self, rev, contenttype=None, arguments=None):
-        fqname = CompositeName(rev.meta[NAMESPACE], NAME_EXACT, rev.meta[NAME][0])
+    def __call__(self, revision: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
+        fqname = CompositeName(revision.meta[NAMESPACE], NAME_EXACT, revision.meta[NAME][0])
         self.fullname = fqname.fullname
         try:
-            contents = self.list_contents(rev.data)
+            contents = self.list_contents(revision.data)
             contents = [
                 (self.process_size(size), self.process_datetime(dt), self.process_name(name))
                 for size, dt, name in contents

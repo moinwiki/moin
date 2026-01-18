@@ -10,6 +10,10 @@ Convert an internal document tree into reStructuredText markup.
 This converter is based on ReStructuredText (2006-09-22).
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 
 from emeraldtree import ElementTree as ET
@@ -21,6 +25,9 @@ from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.iri import Iri
 
 from . import default_registry
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class Cell:
@@ -225,7 +232,7 @@ class ReST:
     p = "\n"
     linebreak = "\n\n"
     separator = "----"
-    list_type = {
+    list_type: Final = {
         ("definition", None): "",
         ("ordered", None): "1.",
         ("ordered", "lower-alpha"): "a.",
@@ -242,9 +249,9 @@ class Converter:
     Converter application/x.moin.document -> text/x.moin.rst
     """
 
-    namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
+    namespaces: Final = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
 
-    supported_tag = {
+    supported_tag: Final = {
         "moinpage": (
             "a",
             "blockcode",
@@ -273,10 +280,10 @@ class Converter:
     }
 
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __init__(self):
+    def __init__(self) -> None:
         # TODO: create class containing all table attributes
         self.table_tableclass = ""
         self.table_tablestyle = ""
@@ -296,7 +303,7 @@ class Converter:
         # status added because of
         #  differences in interpretation of <p> in different places
 
-    def __call__(self, root):
+    def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
         self.list_item_label = []

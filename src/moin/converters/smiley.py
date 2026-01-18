@@ -9,6 +9,10 @@ Replace all text corresponding to a smiley with the corresponding
  element for the DOM tree.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 
 from emeraldtree import ElementTree as ET
@@ -18,13 +22,17 @@ from moin.utils.tree import moin_page
 
 from . import default_registry
 
+if TYPE_CHECKING:
+    from moin.utils.mime import Type
+    from typing_extensions import Self
+
 
 class Converter:
     """
     Replace each smiley with the corresponding element in the DOM tree.
     """
 
-    smileys = {
+    smileys: Final = {
         # markup: smiley name
         "X-(": "angry",
         ":D": "biggrin",
@@ -59,25 +67,25 @@ class Converter:
         "{o}": "star_off",
     }
 
-    smiley_rule = r"""
+    smiley_rule: Final = (
+        r"""
     (^|(?<=\s))  # we require either beginning of line or some space before a smiley
     (%(smiley)s)  # one of the smileys
     ($|(?=\s))  # we require either ending of line or some space after a smiley
-""" % {
-        "smiley": "|".join([re.escape(s) for s in smileys])
-    }
+"""
+        % {"smiley": "|".join([re.escape(s) for s in smileys])}
+    )
 
-    smiley_re = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
+    smiley_re: Final = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 
     # We do not process any smiley conversion within these elements.
-    tags_to_ignore = {"code", "blockcode", "nowiki"}
+    tags_to_ignore: Final = {"code", "blockcode", "nowiki"}
 
     @classmethod
-    def _factory(cls, input, output, icon=None, **kw):
-        if icon == "smiley":
-            return cls()
+    def _factory(cls, input: Type, output: Type, icon: str | None = None, **kwargs: Any) -> Self | None:
+        return cls() if icon == "smiley" else None
 
-    def __call__(self, content):
+    def __call__(self, content: Any) -> Any:
         self.do_children(content)
         return content
 

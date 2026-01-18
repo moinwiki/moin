@@ -7,6 +7,10 @@ MoinMoin - NoWiki handling: {{{#!....}}}
 Expands nowiki elements in an internal Moin document.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import re
 
 from emeraldtree import ElementTree as ET
@@ -15,6 +19,7 @@ import pygments
 from .pygments_in import TreeFormatter
 from pygments.util import ClassNotFound
 
+from moin import log
 from moin.i18n import _
 from moin.utils.tree import moin_page
 from moin.utils.mime import type_moin_document
@@ -24,16 +29,18 @@ from ._args_wiki import parse as parse_arguments
 from ._table import TableMixin
 from ._util import normalize_split_text, _Iter
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.utils.mime import Type
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
 
 class Converter:
+
     @classmethod
-    def _factory(cls, input, output, nowiki=None, **kw):
-        if nowiki == "expandall":
-            return cls()
+    def _factory(cls, input: Type, output: Type, nowiki: str | None = None, **kwargs: Any) -> Self | None:
+        return cls() if nowiki == "expandall" else None
 
     def invalid_args(self, elem, all_nowiki_args):
         """Insert an error message into output."""
@@ -190,7 +197,7 @@ class Converter:
             if isinstance(child, ET.Node):
                 yield from self.recurse(child, page)
 
-    def __call__(self, tree):
+    def __call__(self, tree: Any) -> Any:
         for elem, page in self.recurse(tree, None):
             self.handle_nowiki(elem, page)
         return tree

@@ -12,11 +12,19 @@ it is a fallback for the case where we have no pygments or pygments has no suppo
 for the input MIME type.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 
 from . import default_registry
 from ._util import decode_data, normalize_split_text
+
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 
 class Converter:
@@ -26,10 +34,10 @@ class Converter:
     """
 
     @classmethod
-    def _factory(cls, type_input, type_output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
         blockcode = moin_page.blockcode()

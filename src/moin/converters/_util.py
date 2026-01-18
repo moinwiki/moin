@@ -6,6 +6,10 @@
 MoinMoin - converter utilities.
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 try:
     from flask import g as flaskg
 except ImportError:
@@ -32,7 +36,7 @@ def sanitise_uri_scheme(href: str) -> Iri:
     return iri
 
 
-def decode_data(data, contenttype=None):
+def decode_data(data: Any, contenttype: str | None = None) -> str:
     """
     Read and decode data; return Unicode text.
 

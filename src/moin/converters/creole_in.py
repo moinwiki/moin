@@ -22,6 +22,10 @@ Notes:
   for the rest of the paragraph.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import re
 
 from moin.constants.misc import URI_SCHEMES
@@ -35,13 +39,18 @@ from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
 
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
+
 
 class Converter(ConverterMacro):
+
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
         lines = normalize_split_text(text)
         iter_content = _Iter(lines)

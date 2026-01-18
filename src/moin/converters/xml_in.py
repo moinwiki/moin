@@ -5,14 +5,22 @@
 MoinMoin - Generic XML input converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import re
 
 from . import default_registry
 from ._util import decode_data
 
+from moin import log
 from moin.utils.mime import Type, type_text_plain
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from moin.storage.middleware.indexing import Revision
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -33,10 +41,10 @@ class XMLIndexingConverter:
     """
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, rev, contenttype=None, arguments=None):
+    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(rev, contenttype)
         text = strip_xml(text)
         return text

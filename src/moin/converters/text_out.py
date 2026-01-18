@@ -11,8 +11,16 @@ markup -> DOM -> text to get rid of the (wiki, reStructuredText, DocBook, ...) m
 thus we get indexable plain text for our search index.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 from . import default_registry
 from moin.utils.mime import type_moin_document, type_text_plain
+
+if TYPE_CHECKING:
+    from moin.utils.mime import Type
+    from typing_extensions import Self
 
 
 class Converter:
@@ -21,10 +29,10 @@ class Converter:
     """
 
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, root):
+    def __call__(self, root: Any) -> Any:
         return "\n".join(root.itertext())
 
 

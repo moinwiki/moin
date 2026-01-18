@@ -6,6 +6,10 @@
 MoinMoin - Pygments-driven syntax highlighting input converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 try:
     import pygments
     import pygments.formatter
@@ -14,10 +18,13 @@ try:
 except ImportError:
     pygments = None
 
+from moin import log
 from moin.utils.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -25,6 +32,7 @@ logging = log.getLogger(__name__)
 if pygments:
 
     class TreeFormatter(pygments.formatter.Formatter):
+
         def _append(self, type, value, element):
             class_ = STANDARD_TYPES.get(type)
             if class_:
@@ -50,9 +58,10 @@ if pygments:
                 self._append(lasttype, lastval, element)
 
     class Converter:
+
         @classmethod
-        def _factory(cls, type_input, type_output, **kw):
-            pygments_name = None
+        def _factory(cls, type_input: Type, type_output: Type, **kwargs: Any) -> Self | None:
+            pygments_name: str | None = None
             # first we check the input type against all mimetypes pygments knows:
             for name, short_names, patterns, mime_types in pygments.lexers.get_all_lexers():
                 for mt in mime_types:
@@ -65,7 +74,7 @@ if pygments:
             # if we still don't know the lexer name for pygments, check some formats
             # that were supported by special parsers in moin 1.x:
             if pygments_name is None:
-                moin_pygments = [
+                moin_pygments: Final = [
                     ("python", "Python"),
                     ("diff", "Diff"),
                     ("irssi", "IRC logs"),
@@ -85,7 +94,9 @@ if pygments:
                 lexer = pygments.lexers.find_lexer_class(pygments_name)
                 return cls(lexer())
 
-        def __init__(self, lexer=None, contenttype=None):
+            return None
+
+        def __init__(self, lexer: Any | None = None, contenttype: str | None = None) -> None:
             """
             Create a Pygments Converter.
 
@@ -98,7 +109,7 @@ if pygments:
                 mimetype = f"{ct.type}/{ct.subtype}"
 
                 # TODO: fix pygments and remove this workaround for missing mimetypes; see issue #16
-                alias_mimetypes = {
+                alias_mimetypes: Final = {
                     "text/x.moin.wiki": "text/x-trac-wiki",
                     "text/x.moin.creole": "text/x-trac-wiki",
                     "application/docbook+xml": "application/xml",
@@ -111,7 +122,7 @@ if pygments:
                     lexer = pygments.lexers.get_lexer_for_mimetype("text/plain")
             self.lexer = lexer
 
-        def __call__(self, data, contenttype=None, arguments=None):
+        def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
             text = decode_data(data, contenttype)
             content = normalize_split_text(text)
             content = "\n".join(content)
@@ -129,10 +140,11 @@ if pygments:
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
     class Converter:
-        def __init__(self, lexer=None, contenttype=None):
+
+        def __init__(self, lexer: Any | None = None, contenttype: str | None = None) -> None:
             pass
 
-        def __call__(self, content, arguments=None):
+        def __call__(self, content: Any, arguments: Arguments | None = None) -> Any:
             """Parse the text and return DOM tree."""
             blockcode = moin_page.blockcode()
             for line in content:

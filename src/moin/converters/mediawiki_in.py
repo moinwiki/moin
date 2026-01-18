@@ -9,11 +9,16 @@
 MoinMoin - MediaWiki input converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 from html.entities import name2codepoint
 
 from urllib.parse import urlencode
 
+from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
@@ -25,13 +30,15 @@ from ._args import Arguments
 from ._wiki_macro import ConverterMacro
 from ._util import decode_data, normalize_split_text, _Iter, _Stack
 
-from moin import log
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
 
 class _TableArguments:
-    rules = r"""
+    rules: Final = r"""
     (?:
         (?P<arg>
             (?:
@@ -52,9 +59,9 @@ class _TableArguments:
         )
     )
     """
-    _re = re.compile(rules, re.X)
+    _re: Final = re.compile(rules, re.X)
 
-    map_keys = {"colspan": "number-columns-spanned", "rowspan": "number-rows-spanned"}
+    map_keys: Final = {"colspan": "number-columns-spanned", "rowspan": "number-rows-spanned"}
 
     def arg_repl(self, args, arg, key=None, value_u=None, value_q1=None, value_q2=None):
         key = self.map_keys.get(key, key)
@@ -81,11 +88,12 @@ class _TableArguments:
 
 
 class Converter(ConverterMacro):
+
     @classmethod
-    def factory(cls, input, output, **kw):
+    def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
         content = normalize_split_text(text)
         iter_content = _Iter(content)
@@ -95,7 +103,7 @@ class Converter(ConverterMacro):
 
         return root
 
-    block_head = r"""
+    block_head: Final = r"""
         (?P<head>
             ^
             \s*
@@ -116,19 +124,19 @@ class Converter(ConverterMacro):
         element = moin_page.h(attrib=attrib, children=[head_text])
         stack.top_append(element)
 
-    block_line = r"(?P<line> ^ \s* $ )"
+    block_line: Final = r"(?P<line> ^ \s* $ )"
     # empty line that separates paragraphs
 
     def block_line_repl(self, _iter_content, stack, line):
         stack.clear()
 
-    block_separator = r"(?P<separator> ^ \s* -{4,} \s* $ )"
+    block_separator: Final = r"(?P<separator> ^ \s* -{4,} \s* $ )"
 
     def block_separator_repl(self, _iter_content, stack, separator):
         stack.clear()
         stack.top_append(moin_page.separator())
 
-    block_table = r"""
+    block_table: Final = r"""
         ^
         (?P<table>
             \{\|
@@ -138,7 +146,7 @@ class Converter(ConverterMacro):
         $
     """
 
-    table_end = r"""
+    table_end: Final = r"""
         ^
         (?P<table_end>
         \|\}
@@ -209,7 +217,7 @@ class Converter(ConverterMacro):
                 preprocessor_status = self.preprocessor.pop()
         stack.pop_name("table")
 
-    block_text = r"(?P<text> .+ )"
+    block_text: Final = r"(?P<text> .+ )"
 
     def block_text_repl(self, _iter_content, stack, text):
         if stack.top_check("table", "table-body", "list"):
@@ -223,7 +231,7 @@ class Converter(ConverterMacro):
             stack.top_append("\n")
         self.parse_inline(text, stack, self.inline_re)
 
-    indent = r"""
+    indent: Final = r"""
         ^
         (?P<indent> [*#:]* )
         (?P<list_begin>
@@ -357,7 +365,7 @@ class Converter(ConverterMacro):
                 it = iter_content
             self._apply(match, "block", it, new_stack)
 
-    inline_comment = r"""
+    inline_comment: Final = r"""
         (?P<comment>
             (?P<comment_begin>
                 (^|(?<=\s))
@@ -377,7 +385,7 @@ class Converter(ConverterMacro):
         # TODO
         pass
 
-    inline_emphstrong = r"""
+    inline_emphstrong: Final = r"""
         (?P<emphstrong>
             '{2,6}
             (?=
@@ -421,7 +429,7 @@ class Converter(ConverterMacro):
             else:
                 stack.push(moin_page.emphasis())
 
-    inline_entity = r"""
+    inline_entity: Final = r"""
         (?P<entity>
             &
             (?:
@@ -449,7 +457,7 @@ class Converter(ConverterMacro):
             c = chr(name2codepoint.get(entity[1:-1], 0xFFFE))
         stack.top_append(c)
 
-    inline_blockquote = r"""
+    inline_blockquote: Final = r"""
         (?P<blockquote>
             (?P<blockquote_begin>
             \<blockquote.*?\>
@@ -467,7 +475,7 @@ class Converter(ConverterMacro):
         elif blockquote_end is not None:
             stack.pop()
 
-    inline_footnote = r"""
+    inline_footnote: Final = r"""
         (?P<footnote>
             (?P<footnote_begin>
             \<ref.*?\>
@@ -490,7 +498,7 @@ class Converter(ConverterMacro):
             stack.pop()
             stack.pop()
 
-    inline_strike = r"""
+    inline_strike: Final = r"""
         (?P<strike>
            \<s\>
            |
@@ -504,7 +512,7 @@ class Converter(ConverterMacro):
         else:
             stack.pop()
 
-    inline_delete = r"""
+    inline_delete: Final = r"""
         (?P<delete>
            \<del\>
            |
@@ -518,7 +526,7 @@ class Converter(ConverterMacro):
         else:
             stack.pop()
 
-    inline_subscript = r"""
+    inline_subscript: Final = r"""
         (?P<subscript>
             <sub>
             (?P<subscript_text> .*? )
@@ -531,7 +539,7 @@ class Converter(ConverterMacro):
         elem = moin_page.span(attrib=attrib, children=[subscript_text])
         stack.top_append(elem)
 
-    inline_superscript = r"""
+    inline_superscript: Final = r"""
         (?P<superscript>
             <sup>
             (?P<superscript_text> .*? )
@@ -544,7 +552,7 @@ class Converter(ConverterMacro):
         elem = moin_page.span(attrib=attrib, children=[superscript_text])
         stack.top_append(elem)
 
-    inline_underline = r"""
+    inline_underline: Final = r"""
         (?P<underline>
             \<u\>
             |
@@ -558,7 +566,7 @@ class Converter(ConverterMacro):
         else:
             stack.pop()
 
-    inline_insert = r"""
+    inline_insert: Final = r"""
         (?P<insert>
             \<ins\>
             |
@@ -572,7 +580,8 @@ class Converter(ConverterMacro):
         else:
             stack.pop()
 
-    inline_link = r"""
+    inline_link: Final = (
+        r"""
         (?P<link>
             \[\[
             \s*
@@ -608,8 +617,8 @@ class Converter(ConverterMacro):
             \s*
             \]
         )
-    """ % dict(
-        uri_schemes="|".join(URI_SCHEMES)
+    """
+        % dict(uri_schemes="|".join(URI_SCHEMES))
     )
 
     def parse_args(self, input):
@@ -710,7 +719,7 @@ class Converter(ConverterMacro):
             stack.top_append(text)
         stack.pop()
 
-    inline_breakline = r"""
+    inline_breakline: Final = r"""
         (?P<breakline>
             \<br\ \/\>
         )
@@ -719,7 +728,7 @@ class Converter(ConverterMacro):
     def inline_breakline_repl(self, stack, breakline):
         stack.top_append(moin_page.line_break())
 
-    inline_nowiki = r"""
+    inline_nowiki: Final = r"""
         (?P<nowiki>
             <nowiki>
             (?P<nowiki_text> .*? )
@@ -770,7 +779,7 @@ class Converter(ConverterMacro):
 
     table = block_table
 
-    tablerow = r"""
+    tablerow: Final = r"""
         ^
         [|!]
         (?P<tablerow>
@@ -794,9 +803,9 @@ class Converter(ConverterMacro):
         # block_nowiki,
         block_text,
     )
-    block_re = re.compile("|".join(block), re.X | re.U | re.M)
+    block_re: Final = re.compile("|".join(block), re.X | re.U | re.M)
 
-    indent_re = re.compile(indent, re.X)
+    indent_re: Final = re.compile(indent, re.X)
 
     inline = (
         inline_link,
@@ -817,25 +826,25 @@ class Converter(ConverterMacro):
         inline_insert,
         inline_entity,
     )
-    inline_re = re.compile("|".join(inline), re.X | re.U)
+    inline_re: Final = re.compile("|".join(inline), re.X | re.U)
 
-    inlinedesc = (
+    inlinedesc: Final = (
         # inline_macro,
         inline_breakline,
         inline_nowiki,
         inline_emphstrong,
     )
-    inlinedesc_re = re.compile("|".join(inlinedesc), re.X | re.U)
+    inlinedesc_re: Final = re.compile("|".join(inlinedesc), re.X | re.U)
 
     # Nowiki end
     # nowiki_end_re = re.compile(nowiki_end, re.X)
 
     # Table
-    table_re = re.compile(table, re.X | re.U)
-    table_end_re = re.compile(table_end, re.X)
+    table_re: Final = re.compile(table, re.X | re.U)
+    table_end_re: Final = re.compile(table_end, re.X)
 
     # Table row
-    tablerow_re = re.compile(tablerow, re.X | re.U)
+    tablerow_re: Final = re.compile(tablerow, re.X | re.U)
 
     class Mediawiki_preprocessor:
 
@@ -846,11 +855,11 @@ class Converter(ConverterMacro):
                 self.text = [text]
                 self.status = status
 
-        all_tags = ["br", "blockquote" "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
+        all_tags: Final = ["br", "blockquote" "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
 
-        nowiki_tags = ["pre", "code", "tt", "nowiki"]
+        nowiki_tags: Final = ["pre", "code", "tt", "nowiki"]
 
-        block_tags = ["blockquote"]
+        block_tags: Final = ["blockquote"]
 
         def __init__(self):
             self.opened_tags = []

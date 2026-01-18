@@ -8,6 +8,10 @@ MoinMoin - DocBook output converter.
 Convert an internal document tree into a DocBook v5 document.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 from emeraldtree import ElementTree as ET
 
 from moin.utils.tree import html, moin_page, xlink, docbook, xml
@@ -17,6 +21,9 @@ from moin.utils.mime import Type, type_moin_document
 from . import default_registry, ElementException
 
 from moin import log
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -49,10 +56,10 @@ class Converter:
     standard_attribute = {}
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, element, **kw):
+    def __call__(self, data: Any, **kwargs: Any) -> Any:
         self.section_children = {}
         self.parent_section = 0
         self.current_section = 0
@@ -60,12 +67,12 @@ class Converter:
         self.root_section = 10
         # We can define the title of the document
         # using the title keyword in the argument
-        if "title" in kw:
-            self.title = kw["title"]
+        if "title" in kwargs:
+            self.title = kwargs["title"]
         else:
             self.title = "Untitled"
 
-        return self.visit(element)
+        return self.visit(data)
 
     def do_children(self, element):
         """

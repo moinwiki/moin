@@ -6,6 +6,10 @@
 MoinMoin - Text highlighting converter.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import re
 
 from flask import request
@@ -15,10 +19,15 @@ from moin.utils.tree import html, moin_page
 
 from . import default_registry
 
+if TYPE_CHECKING:
+    from moin.utils.mime import Type
+    from typing_extensions import Self
+
 
 class Converter:
+
     @classmethod
-    def _factory(cls, input, output, highlight="", regex="", **kw):
+    def _factory(cls, input: Type, output: Type, highlight: str = "", regex: str = "", **kwargs: Any) -> Self | None:
         if highlight == "highlight":
             regex = request.args["regex"]
             return cls(regex)
@@ -56,7 +65,7 @@ class Converter:
         """Treat each word separately and ignore case sensitivity."""
         self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
-    def __call__(self, tree):
+    def __call__(self, tree: Any) -> Any | None:
         self.recurse(tree)
         return tree
 

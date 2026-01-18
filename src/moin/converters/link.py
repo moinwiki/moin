@@ -11,6 +11,8 @@ special wiki links.
 
 from __future__ import annotations
 
+from typing import Any, TYPE_CHECKING
+
 from flask import current_app as app
 from flask import g as flaskg
 
@@ -24,8 +26,13 @@ from moin.wikiutil import AbsItemName
 
 from . import default_registry
 
+if TYPE_CHECKING:
+    from moin.utils.mime import Type
+    from typing_extensions import Self
+
 
 class ConverterBase:
+
     _tag_xlink_href = xlink.href
     _tag_xinclude_href = xinclude.href
     _tag_html_data_href = html.data_href
@@ -45,13 +52,13 @@ class ConverterBase:
     def handle_external_links(self, elem: Element, link: Iri, to_tag=_tag_xlink_href):
         pass
 
-    def __call__(self, *args, **kw):
+    def __call__(self, *args: Any, **kwargs) -> Any:
         """
         Call the self.traverse_tree method.
         """
         # avoids recursion for this method
         # because it is also called in subclasses
-        return self.traverse_tree(*args, **kw)
+        return self.traverse_tree(*args, **kwargs)
 
     def traverse_tree(
         self,
@@ -121,10 +128,10 @@ class ConverterBase:
 
 
 class ConverterExternOutput(ConverterBase):
+
     @classmethod
-    def _factory(cls, input, output, links=None, **kw):
-        if links == "extern":
-            return cls()
+    def _factory(cls, input: Type, output: Type, links: str | None = None, **kwargs) -> Self | None:
+        return cls() if links == "extern" else None
 
     def _get_do_rev(self, query):
         """
@@ -231,17 +238,17 @@ class ConverterItemRefs(ConverterBase):
     """
 
     @classmethod
-    def _factory(cls, input, output, items=None, **kw):
+    def _factory(cls, input: Type, output: Type, items: str | None = None, **kwargs: Any) -> Self | None:
         if items == "refs":
             return cls()
 
-    def __init__(self, **kw):
-        super().__init__(**kw)
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.links: set[str] = set()
         self.transclusions: set[str] = set()
         self.external_links: set[str] = set()
 
-    def __call__(self, *args, **kw):
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """
         Refreshes the sets for links and transclusions and proxies to ConverterBase.__call__
         """
@@ -251,7 +258,7 @@ class ConverterItemRefs(ConverterBase):
         self.transclusions = set()
         self.external_links = set()
 
-        super().__call__(*args, **kw)
+        super().__call__(*args, **kwargs)
 
     def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri, to_tag=ConverterBase._tag_xlink_href):
         """

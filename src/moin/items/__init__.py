@@ -18,16 +18,16 @@ Each class in this module corresponds to an item type.
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING, TypeAlias
+from typing import Any, Callable, NamedTuple, Type, TYPE_CHECKING, TypeAlias, TypeVar
 from typing_extensions import override
 
-from time import time, strftime
-import json
-from io import BytesIO, IOBase
-from collections import namedtuple
-from operator import attrgetter
-import re
 import difflib
+import json
+import re
+
+from io import BytesIO, IOBase
+from time import time, strftime
+from operator import attrgetter
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -41,18 +41,9 @@ from markupsafe import Markup
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin import log
-from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS
-from moin.constants.misc import LOCKED, LOCK
-from moin.signalling import item_modified
-from moin.storage.middleware.protecting import AccessDenied
-from moin.i18n import _, L_
-from moin.themes import render_template
-from moin.utils import close_file, diff3, rev_navigation, contain_identical_values, show_time, split_string
-from moin.utils.edit_locking import Edit_Utils
-from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
-from moin.utils.registry import RegistryBase
-from moin.utils.diff_html import diff as html_diff
-from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError, OptionalMultilineText
+from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
+from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
+from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.constants.keys import (
     ACL,
     NAME,
@@ -95,17 +86,26 @@ from moin.constants.keys import (
     LANGUAGE,
     SUMMARY,
 )
-from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
+from moin.constants.misc import LOCKED, LOCK
 from moin.constants.namespaces import NAMESPACE_ALL, NAMESPACE_USERPROFILES
-from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
-from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
-from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
+from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, NameNotValidError, OptionalMultilineText
+from moin.i18n import _, L_
 from moin.mail.sendmail import encodeSpamSafeEmail
+from moin.signalling import item_modified
+from moin.storage.middleware.protecting import AccessDenied
+from moin.themes import render_template
+from moin.utils import close_file, diff3, rev_navigation, contain_identical_values, show_time, split_string
+from moin.utils.diff_html import diff as html_diff
+from moin.utils.edit_locking import Edit_Utils
+from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
+from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
+from moin.utils.pysupport import load_package_modules
+from moin.utils.registry import RegistryBase
 
 from .content import content_registry, Content, NonExistentContent, Draw, Text
-from ..utils.pysupport import load_package_modules
 
 if TYPE_CHECKING:
+    from flask_babel import LazyString
     from flatland import Element
     from moin.storage.middleware.protecting import ProtectedItem, ProtectedRevision
     from moin.storage.types import MetaData
@@ -289,7 +289,7 @@ def str_to_dict(data: str) -> dict[str, str]:
             )
             key_val = key_val.strip()
         if not key_val:
-            flash(L_("Empty line in Wiki Dict discarded."), "info")
+            flash(_("Empty line in Wiki Dict discarded."), "info")
             continue  #
         kv = key_val.split("=")
         if not len(kv) == 2:
@@ -327,22 +327,30 @@ def dict_to_str(dic: dict[str, str]) -> str:
     return "\r\n".join(lines)
 
 
-class RegistryItem(RegistryBase):
-    class Entry(namedtuple("Entry", "factory itemtype display_name description order")):
-        def __call__(self, itemtype, *args, **kw):
-            if self.itemtype == itemtype:
-                return self.factory(*args, **kw)
+class RegistryItem(RegistryBase["Item"]):
 
-        def __lt__(self, other):
+    class Entry(NamedTuple):
+        factory: Callable[..., Item | None]
+        itemtype: str
+        display_name: str | LazyString
+        description: str | LazyString
+        order: int
+
+        def __call__(self, itemtype: str, *args: Any, **kwargs: Any) -> Item | None:
+            if self.itemtype == itemtype:
+                return self.factory(*args, **kwargs)
+            return None
+
+        def __lt__(self, other: Any):
             if isinstance(other, self.__class__):
                 return self.itemtype < other.itemtype
             return NotImplemented
 
     def __init__(self) -> None:
         super().__init__()
-        self.shown_entries = []
+        self.shown_entries: list[RegistryItem.Entry] = []
 
-    def register(self, entry, shown: bool) -> None:
+    def register(self, entry: Entry, shown: bool) -> None:
         """
         Register a factory
 
@@ -357,7 +365,10 @@ class RegistryItem(RegistryBase):
 item_registry = RegistryItem()
 
 
-def register(cls):
+ItemClass = TypeVar("ItemClass", bound="Item")
+
+
+def register(cls: Type[ItemClass]) -> Type[ItemClass]:
     item_registry.register(
         RegistryItem.Entry(cls._factory, cls.itemtype, cls.display_name, cls.description, cls.order), cls.shown
     )
@@ -467,7 +478,7 @@ class CreateItemForm(BaseChangeForm):
     target = RequiredText.using(label=L_("Target")).with_properties(autofocus=True)
 
 
-def acl_validate(acl_string: str) -> bool:
+def acl_validate(acl_string: str | Element | None) -> bool:
     """
     Validate ACL strings, allowing special values 'None' and 'Empty'.
 
@@ -478,14 +489,12 @@ def acl_validate(acl_string: str) -> bool:
     acls = str(acl_string)
     if acls in ("None", "Empty", ""):  # '' is not possible if field is required on form
         return True
-    acls = acls.split()
-    for acl in acls:
+    for acl in acls.split():
         acl_rules = acl.split(":")
         if len(acl_rules) == 2:
             who, rights = acl_rules
             if rights:
-                rights = rights.split(",")
-                for right in rights:
+                for right in rights.split(","):
                     if right not in all_rights:
                         return False
         else:
@@ -626,9 +635,17 @@ def _build_contenttype_query(groups: list[str]) -> Query:
     return Or(queries)
 
 
-IndexEntry = namedtuple("IndexEntry", "relname fullname meta")
+class IndexEntry(NamedTuple):
+    relname: str
+    fullname: CompositeName
+    meta: MetaData
 
-MixedIndexEntry = namedtuple("MixedIndexEntry", "relname fullname meta hassubitems")
+
+class MixedIndexEntry(NamedTuple):
+    relname: str
+    fullname: CompositeName
+    meta: MetaData
+    hassubitems: bool
 
 
 def get_itemtype_specific_tags(itemtype: str) -> set[str]:
@@ -662,6 +679,12 @@ class FieldNotUniqueError(ValueError):
     """
 
 
+class UnsupportedItemType(ValueError):
+    """
+    Moin does not support the requested item type.
+    """
+
+
 class Item:
     """
     Highlevel (not storage) Item, wraps around a storage Revision
@@ -678,9 +701,8 @@ class Item:
     def _factory(cls, *args: Any, **kwargs: Any) -> Self:
         return cls(*args, **kwargs)
 
-    @classmethod
+    @staticmethod
     def create(
-        cls,
         name: str = "",
         *,
         itemtype: str | None = None,
@@ -722,8 +744,10 @@ class Item:
         logging.debug(f"Item {name!r}, got itemtype {itemtype!r} from revision meta")
 
         item = item_registry.get(itemtype, fqname, rev=rev, content=content)
-        logging.debug(f"Item class {item.__class__!r} handles {itemtype!r}")
+        if item is None:
+            raise UnsupportedItemType(f"{itemtype}")
 
+        logging.debug(f"Item class {item.__class__!r} handles {itemtype!r}")
         content.item = item
         return item
 
@@ -748,7 +772,7 @@ class Item:
             return ""
 
     @property
-    def names(self):
+    def names(self) -> list[str]:
         """
         returns a list of 0..n names of the item
         If we are dealing with a specific name (e.g field being NAME_EXACT),
@@ -823,15 +847,23 @@ class Item:
             meta[PARENTID] = revid
         return meta
 
-    def _rename(self, names, comment, action, delete=False, do_subitems=True, ajax=False):
+    def _rename(
+        self,
+        names: list[str],
+        comment: str,
+        action: str,
+        delete: bool = False,
+        do_subitems: bool = True,
+        ajax: bool = False,
+    ) -> tuple[list[str], list[str]]:
         """
         Process Delete and Rename actions.
 
         Delete removes all alias names, and at users option (do_subitems=True) all subitems of all aliases.
         Rename changes subitem names only when the parent name is removed/changed.
         """
-        messages = []
-        subitem_names = []
+        messages: list[str] = []
+        subitem_names: list[str] = []
         self._save(self.meta, self.content.data, names=names, action=action, comment=comment, delete=delete)
         old_name = self.names if len(self.names) > 1 else self.names[0]
         new_name = names if len(names) > 1 else names[0]
@@ -899,7 +931,7 @@ class Item:
                                 close_file(item.rev.data)
         return messages, subitem_names
 
-    def rename(self, names, comment=""):
+    def rename(self, names: str | list[str], comment: str = "") -> None:
         """
         rename this item to item <names> (replace current names by names in the NAME list)
         """
@@ -920,7 +952,7 @@ class Item:
                 _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
         self._rename(names, comment, action=ACTION_RENAME)
 
-    def delete(self, comment="", do_subitems=True, ajax=False):
+    def delete(self, comment: str = "", do_subitems: bool = True, ajax: bool = False) -> tuple[list[str], list[str]]:
         """
         delete this item
         """
@@ -928,14 +960,16 @@ class Item:
         ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True, do_subitems=do_subitems, ajax=ajax)
         return ret
 
-    def revert(self, comment=""):
+    def revert(self, comment: str = "") -> tuple[str, int] | None:
         meta = dict(self.meta)
         meta[TRASH] = False
         if not self.meta[NAME]:
             meta[NAME] = meta[NAME_OLD]
         return self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
 
-    def destroy(self, comment="", destroy_item=False, subitem_names=[], ajax=False):
+    def destroy(
+        self, comment: str = "", destroy_item: bool = False, subitem_names: list = [], ajax: bool = False
+    ) -> tuple[list[str], list[str]]:
         """
         If destroy_item is false destroy current revision; else destroy current item and
         any items passed in subitem_names.
@@ -1112,7 +1146,7 @@ class Item:
         comment=None,
         overwrite=False,
         delete=False,
-    ):
+    ) -> tuple[str, int] | None:
         """
         Called by rename (delete calls rename), revert, modify (including first save), admin acl changes.
 
@@ -1709,7 +1743,7 @@ class Default(Contentful):
                         form["content_form"]["data_text"] = data
                 else:
                     # user clicked OK/Save button, check for conflicts,
-                    if "charset" in self.contenttype:
+                    if self.contenttype and "charset" in self.contenttype:
                         draft, draft_data = edit_utils.get_draft()
                         if draft:
                             # will always be a draft for normal users,
@@ -1933,21 +1967,27 @@ class NonExistent(Item):
             itemtypes=item_registry.shown_entries,
         )
 
-    def rename(self, name, comment=""):
+    @override
+    def rename(self, names: str | list[str], comment: str = "") -> None:
         # pointless for non-existing items
         pass
 
-    def delete(self, comment=""):
+    @override
+    def delete(self, comment: str = "", do_subitems: bool = True, ajax: bool = False) -> tuple[list, list]:
         # pointless for non-existing items
-        pass
+        return [], []
 
-    def revert(self, comment=""):
+    @override
+    def revert(self, comment: str = "") -> tuple[str, int] | None:
         # pointless for non-existing items
-        pass
+        return None
 
-    def destroy(self, comment="", destroy_item=False):
+    @override
+    def destroy(
+        self, comment: str = "", destroy_item: bool = False, subitem_names: list = [], ajax: bool = False
+    ) -> tuple[list[str], list[str]]:
         # pointless for non-existing items
-        pass
+        return [], []
 
 
 load_package_modules(__name__, __path__)

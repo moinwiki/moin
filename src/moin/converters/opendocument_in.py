@@ -8,6 +8,10 @@ MoinMoin - OpenDocument Format (ODF) input converter.
 ODF documents can be created with OpenOffice.org, LibreOffice, and other software.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import zipfile
 
 from moin.constants.keys import NAME
@@ -18,16 +22,21 @@ from .xml_in import strip_xml
 
 from moin import log
 
+if TYPE_CHECKING:
+    from moin.storage.middleware.indexing import Revision
+    from typing_extensions import Self
+
 logging = log.getLogger(__name__)
 
 
 class OpenDocumentIndexingConverter:
+
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, rev, contenttype=None, arguments=None):
-        zf = zipfile.ZipFile(rev.data, "r")  # rev is file-like
+    def __call__(self, rev: Revision) -> str:
+        zf = zipfile.ZipFile(rev.data, "r")  # rev.data is file-like
         try:
             data = zf.read("content.xml")
             text = data.decode("utf-8")
@@ -35,6 +44,7 @@ class OpenDocumentIndexingConverter:
             return text
         except AttributeError as e:
             logging.warning(f"Content of file {rev.meta[NAME]} is not seekable. {str(e)}")
+            return ""
         finally:
             zf.close()
 

@@ -9,6 +9,10 @@ Convert an XHTML document into an internal document tree.
 TODO: add support for style.
 """
 
+from __future__ import annotations
+
+from typing import Any, Final, TYPE_CHECKING
+
 import re
 
 from flask import flash
@@ -26,6 +30,10 @@ from . import default_registry
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
 from moin import log
+
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+    from typing_extensions import Self
 
 logging = log.getLogger(__name__)
 
@@ -53,13 +61,13 @@ class HtmlTags:
     """
 
     # Namespace of our input data
-    html_namespace = {html.namespace: "xhtml"}
+    html_namespace: Final = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags = {"blockquote", "code", "del", "div", "ins", "p", "quote", "s", "span", "strong", "u"}
+    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "quote", "s", "span", "strong", "u"}
 
     # HTML tags that define a list; except dl, which is a little bit different
-    list_tags = {"ul", "dir", "ol"}
+    list_tags: Final = {"ul", "dir", "ol"}
 
     # HTML tags that can be converted without attributes into a different DOM tag
     simple_tags = {  # Emphasis
@@ -83,12 +91,12 @@ class HtmlTags:
 
     # HTML tags that do not have equivalents in the DOM tree
     # We use a <span> element but add information about the original tag.
-    inline_tags = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
+    inline_tags: Final = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
 
     # HTML tags that are completely ignored by our converter.
     # Deprecated/obsolete tags and tags not suited for wiki content
     # We do not even process children of these elements, a warning is given.
-    ignored_tags = {
+    ignored_tags: Final = {
         "applet",
         "area",
         "button",
@@ -121,7 +129,7 @@ class HtmlTags:
 
     # standard_attributes are html attributes which are used
     # directly in the DOM tree, without any conversion
-    standard_attributes = {"title", "class", "style", "alt"}
+    standard_attributes: Final = {"title", "class", "style", "alt"}
 
     # Regular expression to detect a html heading tag
     heading_re = re.compile("h[1-6]")
@@ -154,10 +162,10 @@ class Converter(HtmlTags):
     """
 
     @classmethod
-    def _factory(cls, input, output, **kw):
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    def __call__(self, data, contenttype=None, arguments=None):
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         """
         Function called by the converter to process the
         conversion.
