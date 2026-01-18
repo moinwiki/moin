@@ -24,13 +24,21 @@ import json
 
 from typing_extensions import override
 
-from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
+from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM, NAME, NAMESPACE
+from moin.storage.types import MetaData
 from moin.utils.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper
 
 STORES_PACKAGE = "moin.storage.stores"
+
+
+def item_name_from_metadata(meta: MetaData) -> str:
+    namespace = meta.get(NAMESPACE)
+    names = meta.get(NAME)
+    name = names[0] if isinstance(names, list) else names
+    return f"{namespace}.{name}" if namespace else str(name)
 
 
 class Backend(BackendBase):
@@ -140,8 +148,8 @@ class MutableBackend(Backend, MutableBackendBase):
             meta[SIZE] = size_real
         elif size_expected != size_real:
             raise ValueError(
-                "computed data size ({}) does not match data size declared in metadata ({})".format(
-                    size_real, size_expected
+                "Item '{}': computed data size ({}) does not match data size declared in metadata ({})".format(
+                    item_name_from_metadata(meta), size_real, size_expected
                 )
             )
 
@@ -152,8 +160,8 @@ class MutableBackend(Backend, MutableBackendBase):
             meta[HASH_ALGORITHM] = hash_real
         elif hash_expected != hash_real:
             raise ValueError(
-                "computed data hash ({}) does not match data hash declared in metadata ({})".format(
-                    hash_real, hash_expected
+                "Item '{}': computed data hash ({}) does not match data hash declared in metadata ({})".format(
+                    item_name_from_metadata(meta), hash_real, hash_expected
                 )
             )
 
