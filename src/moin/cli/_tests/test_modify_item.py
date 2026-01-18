@@ -15,6 +15,13 @@ from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs,
 from moin.constants.keys import REVID, PARENTID, SIZE, REV_NUMBER, NAMES
 
 
+def sleep_to_ensure_unique_mtime():
+    # MTIME with a resolution of seconds is stored as int in the Whoosh index file.
+    # Sleep here for a little more than one second to guarantee proper sorting of
+    # revisions for index_revision.
+    sleep(1.1)
+
+
 def validate_meta(expected, actual, message):
     for d in expected, actual:
         del d["address"]  # remove elements which may not match
@@ -131,7 +138,7 @@ def test_item_rev(index_create2):
     data_dir = moin_dir / "cli" / "_tests" / "data"
     put1 = run(["moin", "item-put", "-m", data_dir / "MyPage-v1.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(put1)
-    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
+    sleep_to_ensure_unique_mtime()
     put2 = run(["moin", "item-put", "-m", data_dir / "MyPage-v2.meta", "-d", data_dir / "MyPage-v2.data", "-o"])
     assert_p_succcess(put2)
     item_get2 = run(["moin", "item-get", "-n", "MyPage", "-m", "MyPage-v2.meta", "-d", "MyPage-v2.data", "--crlf"])
@@ -170,7 +177,7 @@ def test_validate_metadata(index_create2):
     data_dir = moin_dir / "cli" / "_tests" / "data"
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-v1.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(item_put)
-    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
+    sleep_to_ensure_unique_mtime()
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-v2.meta", "-d", data_dir / "MyPage-v2.data", "-o"])
     assert_p_succcess(item_put)
     validate = run(["moin", "maint-validate-metadata", "-b", "default", "-v"])
@@ -180,10 +187,10 @@ def test_validate_metadata(index_create2):
     assert b"0 items with invalid metadata found" == outlines[0]
     item_put = run(["moin", "item-put", "-m", data_dir / "Corrupt.meta", "-d", data_dir / "Corrupt.data", "-o"])
     assert_p_succcess(item_put)
-    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
+    sleep_to_ensure_unique_mtime()
     item_put = run(["moin", "item-put", "-m", data_dir / "Corrupt2.meta", "-d", data_dir / "Corrupt2.data", "-o"])
     assert_p_succcess(item_put)
-    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
+    sleep_to_ensure_unique_mtime()
     item_put = run(["moin", "item-put", "-m", data_dir / "Corrupt3.meta", "-d", data_dir / "Corrupt3.data", "-o"])
     assert_p_succcess(item_put)
     validate = run(["moin", "maint-validate-metadata", "-b", "default", "-v"])
@@ -235,7 +242,7 @@ def test_validate_metadata(index_create2):
     assert 11 == metas[rev_id1][SIZE]
     assert PARENTID not in metas[rev_id3]
     # create a repeated revision_number
-    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
+    sleep_to_ensure_unique_mtime()
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-v2.meta", "-d", data_dir / "MyPage-v2.data"])
     assert_p_succcess(item_put)
     validate = run(["moin", "maint-validate-metadata", "-b", "default", "-v", "-f"])
@@ -260,7 +267,7 @@ def test_validate_metadata_missing_rev_num(index_create2):
     data_dir = moin_dir / "cli" / "_tests" / "data"
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-vblank.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(item_put)
-    sleep(1.1)  # MTIME is stored as int in index file, sleep here to guarntee proper sorting of revs for index_revision
+    sleep_to_ensure_unique_mtime()
     item_put = run(
         ["moin", "item-put", "-m", data_dir / "MyPage-vblank2.meta", "-d", data_dir / "MyPage-v1.data", "-o"]
     )
