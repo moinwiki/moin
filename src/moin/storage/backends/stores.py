@@ -24,6 +24,7 @@ import json
 
 from typing_extensions import override
 
+from moin import log
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM, NAME, NAMESPACE
 from moin.storage.types import MetaData
 from moin.utils.crypto import make_uuid
@@ -32,6 +33,8 @@ from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper
 
 STORES_PACKAGE = "moin.storage.stores"
+
+logger = log.getLogger(__name__)
 
 
 def item_name_from_metadata(meta: MetaData) -> str:
@@ -144,10 +147,8 @@ class MutableBackend(Backend, MutableBackendBase):
         # check whether size is consistent:
         size_expected = meta.get(SIZE)
         size_real = tfw.size
-        if size_expected is None:
-            meta[SIZE] = size_real
-        elif size_expected != size_real:
-            raise ValueError(
+        if size_expected is not None and size_expected != size_real:
+            logger.warning(
                 "Item '{}': computed data size ({}) does not match data size declared in metadata ({})".format(
                     item_name_from_metadata(meta), size_real, size_expected
                 )
@@ -156,14 +157,15 @@ class MutableBackend(Backend, MutableBackendBase):
         # check whether hash is consistent:
         hash_expected = meta.get(HASH_ALGORITHM)
         hash_real = tfw.hash.hexdigest()
-        if hash_expected is None:
-            meta[HASH_ALGORITHM] = hash_real
-        elif hash_expected != hash_real:
-            raise ValueError(
+        if hash_expected is not None and hash_expected != hash_real:
+            logger.warning(
                 "Item '{}': computed data hash ({}) does not match data hash declared in metadata ({})".format(
                     item_name_from_metadata(meta), hash_real, hash_expected
                 )
             )
+
+        meta[SIZE] = size_real
+        meta[HASH_ALGORITHM] = hash_real
 
         return self._store_meta(meta)
 
