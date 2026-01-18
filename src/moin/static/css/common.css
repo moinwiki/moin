@@ -499,9 +499,9 @@ a.moin-button:active { color: var(--primary); text-decoration: none; }
 
 /* preformatted blocks and inline code */
 .code, pre, code { background-color: var(--bg-code);
-    border: 1px solid var(--border-code); border-radius: 4px;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
-div.code, pre { clear: both; padding: 7px 10px; margin: .75em 0; }
+div.code, pre { clear: both; padding: 7px 10px; margin: .75em 0;
+    border: 1px solid var(--border-code); border-radius: 4px; }
 span.code, code { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 /* table of contents (div.toc is for markdown parser) */
