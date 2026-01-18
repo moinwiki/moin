@@ -61,11 +61,13 @@ def test_dump_help(load_help):
         data_file_names = {p.name for p in help_subdir_path.glob("*.data")}
         assert expected_data_file_names == data_file_names
         for data_file_name in expected_data_file_names:
+            # compare data content
             with open(help_subdir_path / data_file_name, "rb") as f:
                 data = f.read()
             with open(source_help_subdir / data_file_name, "rb") as f:
                 expected_data = f.read()
             assert expected_data == data, f"{data_file_name} in dump not matching to source"
+            # compare metadata
             meta_file_name = f"{str(data_file_name)[0:-5]}.meta"
             with open(help_subdir_path / meta_file_name) as f:
                 meta = json.load(f)
@@ -175,6 +177,7 @@ def test_item_rev(index_create2):
 def test_validate_metadata(index_create2):
     moin_dir, _ = get_dirs("")
     data_dir = moin_dir / "cli" / "_tests" / "data"
+    # insert 2 revisions with valid meta data
     item_put = run(["moin", "item-put", "-m", data_dir / "MyPage-v1.meta", "-d", data_dir / "MyPage-v1.data", "-o"])
     assert_p_succcess(item_put)
     sleep_to_ensure_unique_mtime()
@@ -185,6 +188,8 @@ def test_validate_metadata(index_create2):
     outlines = validate.stdout.splitlines()
     assert 1 == len(outlines)
     assert b"0 items with invalid metadata found" == outlines[0]
+    # insert 3 revisions with corrupted meta data
+    # the first 2 of them contain invalid size/hash values, which will be corrected by the backend on insertion
     item_put = run(["moin", "item-put", "-m", data_dir / "Corrupt.meta", "-d", data_dir / "Corrupt.data", "-o"])
     assert_p_succcess(item_put)
     sleep_to_ensure_unique_mtime()
@@ -193,10 +198,11 @@ def test_validate_metadata(index_create2):
     sleep_to_ensure_unique_mtime()
     item_put = run(["moin", "item-put", "-m", data_dir / "Corrupt3.meta", "-d", data_dir / "Corrupt3.data", "-o"])
     assert_p_succcess(item_put)
+    # validate meta data and expect 3 corrupted revisions
     validate = run(["moin", "maint-validate-metadata", "-b", "default", "-v"])
     assert_p_succcess(validate)
     outlines = validate.stdout.decode().splitlines()
-    assert 4 == len(outlines)
+    assert 2 == len(outlines)
     rev_id1 = "7ed018d7ceda49409e18b8efb914f5ff"  # Corrupt.meta
     rev_id2 = "0a2f1b476b6c42be80908b3b799df3fd"  # Corrupt2.meta
     rev_id3 = "39c8fe8da0a048c0b7839bf8aa02cd04"  # Corrupt3.meta
@@ -209,27 +215,20 @@ def test_validate_metadata(index_create2):
             if word == "rev_id:":
                 outlines_by_rev_id[next(words)] = outline
                 break
-    assert {rev_id1, rev_id2, rev_id3} == set(outlines_by_rev_id.keys())
-    assert (
-        "size_error name: Home item: cbd6fc46f88740acbc1dca90bb1eb8f3 rev_number: 1 rev_id: 7ed018d7ceda49409e18b8efb914f5ff "
-        "meta_size: 8 real_size: 11" == outlines_by_rev_id[rev_id1]
-    )
-    assert (
-        "sha1_error name: Page2 item: 9999989aca5e45cc8683432f986a0e50 rev_number: 1 rev_id: 0a2f1b476b6c42be80908b3b799df3fd "
-        "meta_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197a0000 "
-        "real_sha1: 25ff6d28976a9e0feb97710a0c4b08ae197afbfe" == outlines_by_rev_id[rev_id2]
-    )
+    assert {rev_id3} == set(outlines_by_rev_id.keys())
     assert (
         "parentid_error name: Page3 item: 3c7e36466726441faf6d7d266ac224e2 rev_number: 2 rev_id: 39c8fe8da0a048c0b7839bf8aa02cd04 "
         "meta_parentid: 002e5210cc884010b0dd75a1c337032d correct_parentid: None meta_revision_number: 2"
         == outlines_by_rev_id[rev_id3]
     )
-    assert "3 items with invalid metadata found" == outlines[3]
+    assert "1 items with invalid metadata found" == outlines[1]
+    # fix revisions with invalid meta data
     validate = run(["moin", "maint-validate-metadata", "-b", "default", "-f"])
     assert_p_succcess(validate)
     outlines = validate.stdout.splitlines()
     assert 1 == len(outlines)
-    assert b"3 items with invalid metadata found and fixed" == outlines[0]
+    assert b"1 items with invalid metadata found and fixed" == outlines[0]
+    # ensure all revisions now have valid meta data
     validate = run(["moin", "maint-validate-metadata", "-b", "default", "-v"])
     assert_p_succcess(validate)
     outlines = validate.stdout.splitlines()
