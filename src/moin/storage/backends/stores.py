@@ -24,13 +24,24 @@ import json
 
 from typing_extensions import override
 
-from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM
+from moin import log
+from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM, NAME, NAMESPACE
+from moin.storage.types import MetaData
 from moin.utils.crypto import make_uuid
 
 from . import BackendBase, MutableBackendBase
 from ._util import TrackingFileWrapper
 
 STORES_PACKAGE = "moin.storage.stores"
+
+logger = log.getLogger(__name__)
+
+
+def item_name_from_metadata(meta: MetaData) -> str:
+    namespace = meta.get(NAMESPACE)
+    names = meta.get(NAME)
+    name = names[0] if isinstance(names, list) else names
+    return f"{namespace}.{name}" if namespace else str(name)
 
 
 class Backend(BackendBase):
@@ -79,17 +90,10 @@ class Backend(BackendBase):
 
     def _get_meta(self, metaid):
         meta = self.meta_store[metaid]
-        # XXX Idea: we could check the type we get from the store:
-        # if it is a str/bytes, just use it "as is",
-        # if it is a file, read and close it (so we have a str/bytes).
         return self._deserialize(meta)
 
     def _get_data(self, dataid):
         data = self.data_store[dataid]
-        # XXX Idea: we could check the type we get from the store:
-        # if it is a file, just return it "as is",
-        # if it is a str/bytes, wrap it into BytesIO (so we always return
-        # a file-like object).
         return data
 
     @override
@@ -121,61 +125,49 @@ class MutableBackend(Backend, MutableBackendBase):
         return meta_str
 
     def _store_meta(self, meta):
-        if REVID not in meta:
+        try:
             # Item.clear_revision calls us with REVID already present
-            meta[REVID] = make_uuid()
-        metaid = meta[REVID]
-        meta = self._serialize(meta)
-        # XXX Idea: we could check the type the store wants from us:
-        # if it is a str/bytes (BytesStore), just use meta "as is",
-        # if it is a file (FileStore), wrap it into BytesIO and give that to the store.
-        self.meta_store[metaid] = meta
+            metaid = meta[REVID]
+        except KeyError:
+            metaid = meta[REVID] = make_uuid()
+        self.meta_store[metaid] = self._serialize(meta)
         return metaid
 
     @override
     def store(self, meta, data):
-        # XXX Idea: we could check the type the store wants from us:
-        # if it is a str/bytes (BytesStore), just use meta "as is",
-        # if it is a file (FileStore), wrap it into BytesIO and give that to the store.
-        if DATAID not in meta:
-            tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
-            dataid = make_uuid()
-            self.data_store[dataid] = tfw
-            meta[DATAID] = dataid
-            # check whether size and hash are consistent:
-            size_expected = meta.get(SIZE)
-            size_real = tfw.size
-            if size_expected is not None and size_expected != size_real:
-                raise ValueError(
-                    "computed data size ({}) does not match data size declared in metadata ({})".format(
-                        size_real, size_expected
-                    )
-                )
-            meta[SIZE] = size_real
-            hash_expected = meta.get(HASH_ALGORITHM)
-            hash_real = tfw.hash.hexdigest()
-            if hash_expected is not None and hash_expected != hash_real:
-                raise ValueError(
-                    "computed data hash ({}) does not match data hash declared in metadata ({})".format(
-                        hash_real, hash_expected
-                    )
-                )
-            meta[HASH_ALGORITHM] = hash_real
-        else:
+        try:
             dataid = meta[DATAID]
-            # we will just asume stuff is correct if you pass it with a data id
-            if dataid not in self.data_store:
-                self.data_store[dataid] = data
-            else:
-                # this is reading the data to avoid this issue:
-                # if we do not store if we already have the dataid in the store,
-                # deserialization does not work as the fpos does not advance to the next record,
-                # because we do not read from the source file. Remove the check?
-                while data.read(64 * 1024):
-                    pass
-        # if something goes wrong below, the data shall be purged by a garbage collection
-        metaid = self._store_meta(meta)
-        return metaid
+        except KeyError:
+            dataid = make_uuid()
+
+        tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
+        self.data_store[dataid] = tfw
+        meta[DATAID] = dataid
+
+        # check whether size is consistent:
+        size_expected = meta.get(SIZE)
+        size_real = tfw.size
+        if size_expected is not None and size_expected != size_real:
+            logger.warning(
+                "Item '{}': computed data size ({}) does not match data size declared in metadata ({})".format(
+                    item_name_from_metadata(meta), size_real, size_expected
+                )
+            )
+
+        # check whether hash is consistent:
+        hash_expected = meta.get(HASH_ALGORITHM)
+        hash_real = tfw.hash.hexdigest()
+        if hash_expected is not None and hash_expected != hash_real:
+            logger.warning(
+                "Item '{}': computed data hash ({}) does not match data hash declared in metadata ({})".format(
+                    item_name_from_metadata(meta), hash_real, hash_expected
+                )
+            )
+
+        meta[SIZE] = size_real
+        meta[HASH_ALGORITHM] = hash_real
+
+        return self._store_meta(meta)
 
     def _del_meta(self, metaid):
         del self.meta_store[metaid]

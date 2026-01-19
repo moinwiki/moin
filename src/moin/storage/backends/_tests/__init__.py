@@ -76,13 +76,13 @@ class MutableBackendTestBase(BackendTestBase):
         # wrong size (less data than size declared in meta)
         meta = dict(name="foo", size=42)
         data = b"barbaz"
-        with pytest.raises(ValueError):
-            metaid = self.be.store(meta, BytesIO(data))
+        metaid = self.be.store(meta, BytesIO(data))
+        assert meta[SIZE] == 6
         # wrong size (more data than size declared in meta)
         meta = dict(name="foo", size=3)
         data = b"barbaz"
-        with pytest.raises(ValueError):
-            metaid = self.be.store(meta, BytesIO(data))
+        metaid = self.be.store(meta, BytesIO(data))
+        assert meta[SIZE] == 6
 
     def test_store_check_hash(self):
         # no hash
@@ -98,12 +98,13 @@ class MutableBackendTestBase(BackendTestBase):
         metaid = self.be.store(meta, BytesIO(data))
         m, d = self.be.retrieve(metaid)
         assert meta[HASH_ALGORITHM] == hashcode
-        # wrong data -> hash mismatch
+        # wrong data gets corrected
         meta = dict(name="foo")
         meta[HASH_ALGORITHM] = hashcode
         data = b"brrbrr"
-        with pytest.raises(ValueError):
-            metaid = self.be.store(meta, BytesIO(data))
+        metaid = self.be.store(meta, BytesIO(data))
+        expected = "9ef2967d32a3b5033422a8af41816c1bf69885de"
+        assert meta[HASH_ALGORITHM] == expected
 
     def test_iter(self):
         mds = [  # (metadata items, data str)

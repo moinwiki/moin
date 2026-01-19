@@ -12,6 +12,7 @@ Remove all revisions except the latest one from selected items.
 """
 
 import click
+import io
 
 from flask import current_app as app
 from flask import g as flaskg
@@ -44,7 +45,7 @@ def cli():
     default="",
     help='Limit selection to a namespace; use "default" for default namespace.',
 )
-@click.option("--test", "-t", type=bool, default=0, help="List selected items, but do not update.")
+@click.option("--test", "-t", is_flag=True, help="List selected items, but do not update.")
 def ReduceRevisions(query, namespace, test):
     logging.info("Reduce revisions started")
     before_wiki()
@@ -60,46 +61,57 @@ def ReduceRevisions(query, namespace, test):
         q = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
 
     for current_rev in app.storage.search(q, limit=None, sortedby=[NAMESPACE, NAME_SORT]):
+
         current_name = current_rev.meta[NAME]
         current_revid = current_rev.meta[REVID]
         current_namespace = current_rev.meta[NAMESPACE]
         current_revno = current_rev.meta[REV_NUMBER]
         current_full_name = current_namespace + "/" + current_name[0] if current_namespace else current_name
+
+        # test only?
         if test:
-            print(
-                "Item named {!r} selected but not updated; has {} revisions:".format(current_full_name, current_revno)
-            )
-        else:
-            print(f"Destroying historical revisions of {current_full_name!r}:")
-            has_historical_revision = False
-            for rev in current_rev.item.iter_revs():
-                revid = rev.meta[REVID]
-                if revid == current_revid:
-                    # fixup metadata and overwrite existing revision; modified time will be updated if changed
-                    changed = False
-                    meta = dict(rev.meta)
-                    if REV_NUMBER in meta and meta[REV_NUMBER] > 1 or REV_NUMBER not in meta:
-                        changed = True
-                        meta[REV_NUMBER] = 1
-                    if PARENTID in meta:
-                        changed = True
-                        del meta[PARENTID]
-                    if changed:
-                        # By default store_revision and whoosh will replace mtime with current time making
-                        # global history useless.
-                        # Save existing mtime which has time this revision's data was last modified.
-                        flaskg.data_mtime = meta[MTIME]
-                        current_rev.item.store_revision(meta, current_rev.data, overwrite=True)
-                        print("    (current revision metadata updated)")
-                    continue
-                has_historical_revision = True
-                name = rev.meta[NAME]
-                if name == current_name:
-                    print(f"    Destroying revision {revid}")
-                else:
-                    print(f"    Destroying revision {revid} (named {name!r})")
-                current_rev.item.destroy_revision(revid)
-            if not has_historical_revision:
-                print("    (no historical revisions)")
+            print(f"Item named {current_full_name} selected but not updated; has {current_revno} revisions:")
+            continue
+
+        print(f"Destroying historical revisions of {current_full_name!r}:")
+
+        has_historical_revision = False
+
+        for rev in current_rev.item.iter_revs():
+            revid = rev.meta[REVID]
+            if revid == current_revid:
+                # fixup metadata and overwrite existing revision; modified time will be updated if changed
+                changed = False
+                meta = dict(rev.meta)
+                if REV_NUMBER not in meta or meta[REV_NUMBER] > 1:
+                    changed = True
+                    meta[REV_NUMBER] = 1
+                if PARENTID in meta:
+                    changed = True
+                    del meta[PARENTID]
+                if changed:
+                    # By default store_revision and whoosh will replace mtime with current time making
+                    # global history useless.
+                    # Save existing mtime which has time this revision's data was last modified.
+                    flaskg.data_mtime = meta[MTIME]
+                    # Read the existing data into memory. This is required to avoid reading and writing
+                    # the same data file, what would happen if we would just pass current_rev.data in the
+                    # store_revision() invocation below. Ideally we would only update the metadata here.
+                    data = current_rev.data.read()
+                    current_rev.item.store_revision(meta, io.BytesIO(data), overwrite=True)
+                    print("... (updated metadata of current revision)")
+                continue
+
+            has_historical_revision = True
+            name = rev.meta[NAME]
+            if name == current_name:
+                print(f"... destroying revision {revid}")
+            else:
+                print(f"... destroying revision {revid} (named {name!r})")
+
+            current_rev.item.destroy_revision(revid)
+
+        if not has_historical_revision:
+            print("... (no historical revisions)")
 
     logging.info("Reduce revisions finished")
