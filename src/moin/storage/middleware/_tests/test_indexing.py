@@ -48,7 +48,7 @@ from moin.constants.keys import (
 
 from moin.constants.namespaces import NAMESPACE_USERS
 
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 
 from moin.auth import GivenAuth
 from moin.storage.middleware.indexing import IndexingMiddleware, Item, Revision

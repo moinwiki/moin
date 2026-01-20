@@ -83,9 +83,9 @@ from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 from moin.storage.types import Document, ItemData, MetaData, ValidationState
 from moin.themes import utctimestamp
 from moin.utils import utcfromtimestamp
-from moin.utils.interwiki import split_fqname, CompositeName
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.names import CompositeName, parent_names, split_fqname
 from moin.utils.tree import moin_page
 
 if TYPE_CHECKING:
@@ -98,21 +98,6 @@ WHOOSH_FILESTORAGE = "FileStorage"
 INDEXES = [LATEST_REVS, ALL_REVS, LATEST_META]
 
 INDEXER_TIMEOUT = 20.0
-
-
-def parent_names(names):
-    """
-    Compute list of parent names (same order as in names, but no dupes)
-
-    :param names: item NAME from whoosh index, where NAME is a list
-    :return: parent names list
-    """
-    parents = set()
-    for name in names:
-        parent_tail = name.rsplit("/", 1)
-        if len(parent_tail) == 2:
-            parents.add(parent_tail[0])
-    return parents
 
 
 def search_names(name_prefix: str, limit: int | None = None) -> list[str]:

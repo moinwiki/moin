@@ -14,7 +14,7 @@ Usage:
 from moin.macros._base import MacroMultiLinkListBase, get_item_names, fail_message
 from moin.i18n import _
 from moin.utils.tree import moin_page
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 
 
 class Macro(MacroMultiLinkListBase):

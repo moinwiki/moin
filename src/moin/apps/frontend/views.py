@@ -100,13 +100,14 @@ from moin.constants.rights import SUPERUSER
 from moin.constants.misc import FLASH_REPEAT
 from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
-from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
+from moin.utils.interwiki import url_for_item
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.names import CompositeName, gen_fqnames, split_fqname
 from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
-from moin.storage.middleware.protecting import AccessDenied, gen_fqnames
+from moin.storage.middleware.protecting import AccessDenied
 from moin.converters import default_registry as reg
 from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type

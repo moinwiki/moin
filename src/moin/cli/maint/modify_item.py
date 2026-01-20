@@ -36,7 +36,7 @@ from moin.constants.keys import (
     MTIME,
     NAME,
 )
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 from moin.items import Item
 
 from moin import log, help as moin_help

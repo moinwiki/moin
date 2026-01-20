@@ -14,7 +14,7 @@ from calendar import timegm
 from flask import current_app as app
 
 from moin.forms import DateTimeUNIX, JSON, Names
-from moin.utils.interwiki import CompositeName
+from moin.utils.names import CompositeName
 from moin.items import Item
 from moin._tests import become_trusted
 from moin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE

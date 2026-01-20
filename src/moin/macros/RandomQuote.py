@@ -26,7 +26,7 @@ from moin.converters import default_registry as reg
 from moin.macros._base import MacroInlineBase, fail_message, valid_item_name
 from moin.utils.mime import Type, type_moin_document
 
-from moin.utils.interwiki import get_fqname, split_fqname
+from moin.utils.names import get_fqname, split_fqname
 
 random.seed()
 

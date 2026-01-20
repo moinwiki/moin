@@ -35,19 +35,11 @@ from moin.constants.misc import FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
 from moin.user import User
-from moin.utils.interwiki import (
-    split_interwiki,
-    getInterwikiHome,
-    is_local_wiki,
-    is_known_wiki,
-    url_for_item,
-    CompositeName,
-    split_fqname,
-    get_fqname,
-)
+from moin.utils.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from moin.utils.clock import timed
 from moin.utils.mime import Type
 from moin.utils import show_time
+from moin.utils.names import CompositeName, get_fqname, parent_names, split_fqname
 
 from moin import log
 
@@ -487,9 +479,6 @@ class ThemeSupport:
         :param names: item NAME from whoosh index, where NAME is a list
         :return: parent names (list of unicode)
         """
-        # must import here to avoid circular import error
-        from moin.storage.middleware.indexing import parent_names
-
         return parent_names(names)
 
     # Properties ##############################################################

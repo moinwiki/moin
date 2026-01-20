@@ -60,8 +60,9 @@ from moin.constants.keys import (
 from moin.constants.misc import ANON
 from moin.i18n import _
 from moin.mail import sendmail
-from moin.utils.interwiki import getInterwikiHome, getInterwikiName, CompositeName
+from moin.utils.interwiki import getInterwikiHome, getInterwikiName
 from moin.utils.crypto import generate_token, valid_token, make_uuid
+from moin.utils.names import CompositeName
 from moin.utils.subscriptions import get_matched_subscription_patterns
 from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 

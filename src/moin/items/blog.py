@@ -26,7 +26,7 @@ from moin.storage.middleware.protecting import AccessDenied
 from moin.constants.itemtypes import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from moin.constants.keys import NAME_EXACT, ITEMTYPE, MTIME, PTIME, TAGS
 from moin.items import Item, Default, register, BaseMetaForm
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 
 if TYPE_CHECKING:
     from werkzeug.wrappers import Response as ResponseBase

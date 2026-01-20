@@ -28,7 +28,7 @@ from moin.constants.keys import (
     TAGS,
 )
 
-from moin.utils.interwiki import CompositeName
+from moin.utils.names import CompositeName
 
 from moin import log
 

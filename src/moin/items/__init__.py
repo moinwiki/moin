@@ -97,7 +97,8 @@ from moin.themes import render_template
 from moin.utils import close_file, diff3, rev_navigation, contain_identical_values, show_time, split_string
 from moin.utils.diff_html import diff as html_diff
 from moin.utils.edit_locking import Edit_Utils
-from moin.utils.interwiki import url_for_item, split_fqname, CompositeName
+from moin.utils.interwiki import url_for_item
+from moin.utils.names import CompositeName, split_fqname
 from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
 from moin.utils.pysupport import load_package_modules
 from moin.utils.registry import RegistryBase
