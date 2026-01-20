@@ -107,7 +107,7 @@ from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
 from moin.signalling import item_displayed, item_modified
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.converters import default_registry as reg
 from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type

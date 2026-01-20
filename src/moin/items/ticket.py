@@ -64,7 +64,7 @@ from moin.forms import (
     Search,
     File,
 )
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.constants.keys import (
     ITEMTYPE,
     CLOSED,

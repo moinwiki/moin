@@ -92,7 +92,7 @@ from moin.forms import RequiredText, OptionalText, Tags, Names, validate_name, N
 from moin.i18n import _, L_
 from moin.mail.sendmail import encodeSpamSafeEmail
 from moin.signalling import item_modified
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.themes import render_template
 from moin.utils import close_file, diff3, rev_navigation, contain_identical_values, show_time, split_string
 from moin.utils.diff_html import diff as html_diff

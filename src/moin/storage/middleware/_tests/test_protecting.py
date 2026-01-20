@@ -14,7 +14,8 @@ from typing import TYPE_CHECKING
 
 from moin.config import AclConfig
 from moin.constants.keys import PARENTID
-from moin.storage.middleware.protecting import ProtectedRevision, ProtectingMiddleware, AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
+from moin.storage.middleware.protecting import ProtectedRevision, ProtectingMiddleware
 from moin.user import User
 
 from .test_indexing import TestIndexingMiddlewareBase

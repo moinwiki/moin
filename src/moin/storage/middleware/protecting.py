@@ -23,6 +23,7 @@ from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, ITEMID, FQNAMES, NAM
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.storage.types import ItemData, MetaData
 from moin.utils import close_file
 from moin.utils.names import gen_fqnames, parent_names, split_fqname
@@ -44,12 +45,6 @@ PARSE_CACHE = 100  # ACL string -> ACL object parsing:  acl, default > acls
 EVAL_CACHE = 300  # ACL evaluation for some username / capability:  acl, default_acl, user_name, right > t/f
 LOOKUP_CACHE = 200  # ACL lookup for some itemname:  itemid,fqname > acl
 ACL_CACHE = 600  # avoid ACL recalculation: user, namespace, ACL, parents, right > True/false
-
-
-class AccessDenied(Exception):
-    """
-    Raised when a user is denied access to an Item or Revision by ACL.
-    """
 
 
 def pchecker(right, allowed, item):

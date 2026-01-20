@@ -22,7 +22,7 @@ from moin.apps.frontend.views import get_item_permissions
 from moin.i18n import L_
 from moin.themes import render_template
 from moin.forms import Text, Tags, DateTime
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.constants.itemtypes import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY
 from moin.constants.keys import NAME_EXACT, ITEMTYPE, MTIME, PTIME, TAGS
 from moin.items import Item, Default, register, BaseMetaForm
