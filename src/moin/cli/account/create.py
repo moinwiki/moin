@@ -39,11 +39,10 @@ def CreateUser(name, display_name, email, password):
     logging.debug("display_name: %s", str(display_name))
     before_wiki()
 
-    # TODO: add display_name to create_user
-    msg = user.create_user(username=name, password=password, email=email)
+    msg = user.create_user(username=name, password=password, email=email, display_name=display_name)
 
     if msg:
         print(msg)
     else:
         u = user.User(auth_username=name)
-        logging.info("User %s %s %s - created.", u.itemid, u.name, u.email)
+        logging.info("User %s %s %s (%s) - created.", u.itemid, u.name, u.email, display_name)
