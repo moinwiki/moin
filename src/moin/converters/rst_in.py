@@ -512,6 +512,9 @@ class NodeVisitor:
                     moin_node = getattr(moin_page, tag)()
                     classes.remove(tag)
                     break
+                if tag == "q":
+                    moin_node = moin_page.quote()
+                    classes.remove(tag)
                 if tag in HtmlTags.inline_tags:
                     classes[i] = "html-" + tag
         self.open_moin_page_node(moin_node, node)

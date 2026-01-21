@@ -59,6 +59,7 @@ class TestConverter:
         (".. role:: ins\n\n:ins:`inserted` text", "<p><ins>inserted</ins> text</p>"),
         (".. role:: s\n\n:s:`obsolete` text", "<p><s>obsolete</s> text</p>"),
         (".. role:: u\n\n:u:`annoted` text", "<p><u>annoted</u> text</p>"),
+        (".. role:: q\n\n:q:`inline quote`", "<p><quote>inline quote</quote></p>"),
         # custom roles with matching HTML element
         (".. role:: dfn\n\n:dfn:`term`", '<p><span xhtml:class="html-dfn">term</span></p>'),
         (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span xhtml:class="html-kbd">Ctrl-X</span></p>'),

@@ -93,7 +93,7 @@ class Converter:
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
 
     # HTML elements represented by a special html:class value.
-    direct_tags = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
+    direct_tags = {"abbr", "cite", "dfn", "kbd", "mark", "small", "var"}
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
@@ -433,6 +433,10 @@ class Converter:
             ret = ""
         childrens_output = self.open_children(elem)
         return f"{ret}{childrens_output}"
+
+    def open_moinpage_quote(self, elem):
+        # inline quote
+        return f"<q>{self.open_children(elem)}</q>"
 
     def open_moinpage_samp(self, elem):
         # text {{{more text}}} end

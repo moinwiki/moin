@@ -90,6 +90,7 @@ class TestConverter(Base):
     data = [
         ("<html><p><sub>sub</sub>script</p></html>", '/div/p[sub="sub"]'),
         ("<html><p><sup>super</sup>script</p></html>", '/div/p[sup="super"]'),
+        ("<html><p><q>cogito ergo sum</q></p></html>", '/div/p[q="cogito ergo sum"]'),
         (
             "<html><p><u>underline</u></p></html>",
             # <div><p><u>underline</u></p></div>
@@ -130,7 +131,6 @@ class TestConverter(Base):
         ("<html><p><dfn>term</dfn></p></html>", '/div/p[dfn="term"]'),
         ("<html><p><kbd>Ctrl-X</kbd></p></html>", '/div/p[kbd="Ctrl-X"]'),
         ("<html><p>see <mark>here</mark></p></html>", '/div/p[text()="see "][mark="here"]'),
-        ("<html><p><q>cogito ergo sum</q></p></html>", '/div/p[q="cogito ergo sum"]'),
         ("<html><p><small>side remark</small></p></html>", '/div/p[small="side remark"]'),
         ("<html><p><var>n</var> elements</p></html>", '/div/p[var="n"][text()=" elements"]'),
     ]

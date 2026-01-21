@@ -175,7 +175,7 @@ class Converter:
     namespaces_visit: Final = {moin_page: "moinpage"}
 
     # Tags which can be directly converted into an HTML element
-    direct_tags: Final = {"abbr", "address", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
+    direct_tags: Final = {"abbr", "address", "cite", "dfn", "kbd", "mark", "small", "var"}
 
     def __call__(self, element: Any) -> Any:
         return self.visit(element)

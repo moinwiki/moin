@@ -64,7 +64,7 @@ class HtmlTags:
     html_namespace: Final = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "quote", "s", "span", "strong", "u"}
+    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "u"}
 
     # HTML tags that define a list; except dl, which is a little bit different
     list_tags: Final = {"ul", "dir", "ol"}
@@ -74,7 +74,8 @@ class HtmlTags:
         "em": moin_page.emphasis,
         "i": moin_page.emphasis,  # "alternate voice or mood"
         "b": moin_page.strong,  # highlight key words without marking them up as important
-        "strike": moin_page.s,  # strike is not a valid tag in HTML5;  TODO: ignore?
+        "q": moin_page.quote,
+        "strike": moin_page.s,  # obsolete
         # Code and Blockcode
         "pre": moin_page.blockcode,
         "tt": moin_page.code,  # deprecated
@@ -91,7 +92,7 @@ class HtmlTags:
 
     # HTML tags that do not have equivalents in the DOM tree
     # We use a <span> element but add information about the original tag.
-    inline_tags: Final = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
+    inline_tags: Final = {"abbr", "cite", "dfn", "kbd", "mark", "small", "var"}
 
     # HTML tags that are completely ignored by our converter.
     # Deprecated/obsolete tags and tags not suited for wiki content

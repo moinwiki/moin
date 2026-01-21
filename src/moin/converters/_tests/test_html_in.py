@@ -237,11 +237,6 @@ class TestConverter(Base):
             '/page/body/p/span[text()="highlight"][@html:class="html-mark"]',
         ),
         (
-            "<html><p><q>cogito ergo sum</q></p></html>",
-            # <page><body><span html:class="html-q">cogito ergo sum</span></body></page>
-            '/page/body/p/span[text()="cogito ergo sum"][@html:class="html-q"]',
-        ),
-        (
             "<html><p><small>fine print</small></p></html>",
             # <page><body><p><span html:class="html-small">fine print</span></p></body></page>
             '/page/body/p/span[text()="fine print"][@html:class="html-small"]',
@@ -310,7 +305,7 @@ class TestConverter(Base):
 
     data = [
         (
-            "<html><div><p><quote>Inline quote</quote></p></div></html>",
+            "<html><div><p><q>Inline quote</q></p></div></html>",
             # <page><body><div><p><quote>Inline quote</quote></p></body></page>
             '/page/body/div/p[quote="Inline quote"]',
         ),

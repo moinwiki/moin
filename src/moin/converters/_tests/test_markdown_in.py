@@ -83,6 +83,7 @@ class TestConverter:
         ("<s>no longer accurate</s>", "<div><p><s>no longer accurate</s></p></div>"),
         # the <strike> tag is deprecated since HTML4.1!
         ("<strike>obsolete</strike>", "<div><p><s>obsolete</s></p></div>"),
+        ("<q>Inline quote</q>", "<div><p><quote>Inline quote</quote></p></div>"),
         # TODO: markdown 3.3 outputs `/>\n\n\n\n</p>`, prior versions output `/></p>`. Try test again with versions 3.3+
         # Added similar test to test_markdown_in_out
         # ('<hr>',
