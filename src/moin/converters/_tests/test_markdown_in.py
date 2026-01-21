@@ -76,7 +76,7 @@ class TestConverter:
         ("<sub>sub</sub>script", '<div><p><span baseline-shift="sub">sub</span>script</p></div>'),
         ("<sup>super</sup>script", '<div><p><span baseline-shift="super">super</span>script</p></div>'),
         ("<em>Emphasis</em>", "<div><p><emphasis>Emphasis</emphasis></p></div>"),
-        ("<i>Italic</i>", "<div><p><emphasis>Italic</emphasis></p></div>"),
+        ("<i>alternate voice</i>", '<div><p><emphasis html:class="html-i">alternate voice</emphasis></p></div>'),
         ("<u>underline</u>", "<div><p><u>underline</u></p></div>"),
         ("<ins>inserted</ins>", "<div><p><ins>inserted</ins></p></div>"),
         ("<del>deleted</del>", "<div><p><del>deleted</del></p></div>"),
@@ -104,7 +104,7 @@ class TestConverter:
             "<address>webmaster@example.org</address>",
             '<div><div><div html:class="html-address">webmaster@example.org</div>\n</div></div>',
         ),
-        ("<dfn>term</dfn>", '<div><p><span html:class="html-dfn">term</span></p></div>'),
+        ("<dfn>term</dfn>", '<div><p><emphasis html:class="html-dfn">term</emphasis></p></div>'),
         ("<kbd>Ctrl-X</kbd>", '<div><p><span html:class="html-kbd">Ctrl-X</span></p></div>'),
         ("<small>fine print</small>", '<div><p><span html:class="html-small">fine print</span></p></div>'),
     ]

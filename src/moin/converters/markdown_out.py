@@ -17,15 +17,14 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-from . import ElementException
-
-from moin.utils.tree import moin_page, xlink, xinclude, html
-from moin.utils.iri import Iri
-
 from emeraldtree import ElementTree as ET
 
-from . import default_registry
+from moin.converters import html_out
+from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page, xlink, xinclude, html
+
+from . import default_registry, ElementException
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -91,9 +90,6 @@ class Converter:
     """
 
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
-
-    # HTML elements represented by a special html:class value.
-    direct_tags = {"abbr", "cite", "dfn", "kbd", "mark", "small", "var"}
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
@@ -161,6 +157,16 @@ class Converter:
                 attr_list.append(f'{key.name}="{val}"')
         if attr_list:
             return Markdown.attribute_open + " ".join(attr_list) + Markdown.attribute_close
+        return ""
+
+    def tag_from_cls(self, elem):
+        classes = elem.attrib.get(html.class_, "").split()
+        for cls in classes:
+            if not cls.startswith("html-"):
+                continue
+            tagname = cls.removeprefix("html-")
+            if tagname in html_out.Converter.indirect_tags:
+                return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
         return ""
 
     def open_moinpage(self, elem):
@@ -264,7 +270,7 @@ class Converter:
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
-        return f"{Markdown.emphasis}{childrens_output}{Markdown.emphasis}"
+        return self.tag_from_cls(elem) or f"{Markdown.emphasis}{childrens_output}{Markdown.emphasis}"
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -461,14 +467,7 @@ class Converter:
             return "<sup>{}</sup>".format("".join(elem.itertext()))
         if baseline_shift == "sub":
             return "<sub>{}</sub>".format("".join(elem.itertext()))
-        classes = elem.attrib.get(html.class_, "").split()
-        for cls in classes:
-            if not cls.startswith("html-"):
-                continue
-            tagname = cls.removeprefix("html-")
-            if tagname in self.direct_tags:
-                return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
-        return "".join(self.open_children(elem))
+        return self.tag_from_cls(elem) or "".join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
         return Markdown.stroke_open + self.open_children(elem) + Markdown.stroke_close

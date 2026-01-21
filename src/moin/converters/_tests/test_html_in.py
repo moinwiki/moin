@@ -218,13 +218,18 @@ class TestConverter(Base):
         ),
         (
             "<html><p><cite>Hamlet</cite></p></html>",
-            # <page><body><span html:class="html-cite">Hamlet</span></body></page>
-            '/page/body/p/span[text()="Hamlet"][@html:class="html-cite"]',
+            # <page><body><emphasis html:class="html-cite">Hamlet</emphasis></body></page>
+            '/page/body/p/emphasis[text()="Hamlet"][@html:class="html-cite"]',
         ),
         (
             "<html><p><dfn>term</dfn></p></html>",
-            # <page><body><span html:class="html-dfn">term</span></body></page>
-            '/page/body/p/span[text()="term"][@html:class="html-dfn"]',
+            # <page><body><emphasis html:class="html-dfn">term</emphasis></body></page>
+            '/page/body/p/emphasis[text()="term"][@html:class="html-dfn"]',
+        ),
+        (
+            "<html><p><i>alternate voice</i></p></html>",
+            # <page><body><p><emphasis html:class="html-i">alternate voice</emphasis></body></page>
+            '/page/body/p/emphasis[text()="alternate voice"][@html:class="html-i"]',
         ),
         (
             "<html><p><kbd>Ctrl-X</kbd></p></html>",
@@ -243,8 +248,8 @@ class TestConverter(Base):
         ),
         (
             "<html><p><var>n</var></p></html>",
-            # <page><body><span html:class="html-var">n</span></body></page>
-            '/page/body/p/span[text()="n"][@html:class="html-var"]',
+            # <page><body><emphasis html:class="html-var">n</emphasis></body></page>
+            '/page/body/p/emphasis[text()="n"][@html:class="html-var"]',
         ),
     ]
 
