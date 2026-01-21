@@ -14,6 +14,7 @@ from . import BackendTestBase
 
 
 class TestFileServerBackend(BackendTestBase):
+
     def setup_method(self, method):
         self.path = path = tempfile.mkdtemp()
         self.be = Backend(path)

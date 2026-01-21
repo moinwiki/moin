@@ -6,7 +6,7 @@ MoinMoin - store test utilities.
 """
 
 import pytest
-from ..wrappers import ByteToStreamWrappingStore
+from .wrappers import ByteToStreamWrappingStore
 
 STORES_PACKAGE = "moin.storage.stores"
 

@@ -6,7 +6,10 @@
 MoinMoin - backend utilities.
 """
 
+from __future__ import annotations
+from typing import Any
 import hashlib
+from io import BytesIO
 
 
 class TrackingFileWrapper:
@@ -19,7 +22,7 @@ class TrackingFileWrapper:
     The hash property is the hash instance; call hash.hexdigest() if needed.
     """
 
-    def __init__(self, realfile, hash_method="sha1"):
+    def __init__(self, realfile: BytesIO, hash_method: str = "sha1") -> None:
         self._realfile = realfile
         self._read = realfile.read
         self._hash = hashlib.new(hash_method)
@@ -30,7 +33,7 @@ class TrackingFileWrapper:
             if fpos:
                 raise ValueError("file must be at position 0")
 
-    def read(self, size=-1):
+    def read(self, size: int = -1) -> bytes:
         data = self._read(size)
         if not data or size == -1:
             self._finished = True
@@ -39,13 +42,13 @@ class TrackingFileWrapper:
         return data
 
     @property
-    def size(self):
+    def size(self) -> int:
         if not self._finished:
             raise AttributeError("Do not access the size attribute before having read all data")
         return self._size
 
     @property
-    def hash(self):
+    def hash(self) -> Any:
         if not self._finished:
             raise AttributeError("Do not access the hash attribute before having read all data")
         return self._hash

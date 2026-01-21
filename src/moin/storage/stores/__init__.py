@@ -9,19 +9,28 @@ If some key/value store implementation you'd like to use is missing from this pa
 you can likely implement it by adding very little and rather easy code.
 """
 
+from __future__ import annotations
+
+from typing import BinaryIO, Iterator, TypeAlias, TypeVar
+from typing_extensions import Self
+
 from abc import abstractmethod
-from collections.abc import Mapping, MutableMapping
-from io import BytesIO
+from collections.abc import MutableMapping
+
+BinaryData = bytes | bytearray | memoryview
 
 
-class StoreBase(Mapping):
+_StoreValueT = TypeVar("_StoreValueT")
+
+
+class StoreBase(MutableMapping[str, _StoreValueT]):
     """
-    A simple read-only key/value store.
+    A simple read/write key/value store.
     """
 
     @classmethod
     @abstractmethod
-    def from_uri(cls, uri):
+    def from_uri(cls: type[Self], uri: str) -> Self:
         """
         Return an instance constructed from the given URI.
         """
@@ -32,128 +41,66 @@ class StoreBase(Mapping):
         whatever we need for open(), create(), etc.
         """
 
-    def open(self):
+    def create(self) -> None:
+        """
+        Create an empty store.
+        """
+
+    def destroy(self) -> None:
+        """
+        Destroy the store (erase all stored data, remove store).
+        """
+
+    def open(self) -> None:
         """
         Open the store; prepare it for usage.
         """
 
-    def close(self):
+    def close(self) -> None:
         """
         Close the store; stop using it; free resources (except stored data).
         """
 
     @abstractmethod
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         """
         Iterate over keys present in the store.
         """
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len([key for key in self])
 
     @abstractmethod
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> _StoreValueT:
         """
         Return data stored for key.
         """
-
-
-class BytesStoreBase(StoreBase):
-    @abstractmethod
-    def __getitem__(self, key):
-        """
-        Return a byte string for key if it exists; otherwise raise KeyError.
-        """
-
-
-class FileStoreBase(StoreBase):
-    @abstractmethod
-    def __getitem__(self, key):
-        """
-        Return a file-like object for key if it exists; otherwise raise KeyError.
-
-        Note: The caller is responsible for closing the open file we return
-              after usage.
-        """
-
-
-class MutableStoreBase(StoreBase, MutableMapping):
-    """
-    A simple read/write key/value store.
-    """
-
-    def create(self):
-        """
-        Create an empty store.
-        """
-
-    def destroy(self):
-        """
-        Destroy the store (erase all stored data, remove store).
-        """
+        raise KeyError
 
     @abstractmethod
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: _StoreValueT) -> None:
         """
         Store value under key.
         """
+        raise KeyError
 
     @abstractmethod
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         """
         Delete the key, dereference the related value in the store.
         """
+        raise KeyError
 
 
-class BytesMutableStoreBase(MutableStoreBase):
-    @abstractmethod
-    def __setitem__(self, key, value):
-        """
-        Store a bytestring for key.
-        """
+BytesStoreBase: TypeAlias = StoreBase[BinaryData]
+"""
+A store dealing with binary data.
+"""
 
 
-class BytesMutableStoreMixin:
-    """
-    Mix this into a FileMutableStore to get a BytesMutableStore, like shown here:
+FileStoreBase: TypeAlias = StoreBase[BinaryIO]
+"""
+A store dealing with file-like objects.
 
-    class BytesStore(BytesMutableStoreMixin, FileStore, BytesMutableStoreBase):
-        # That’s all; nothing more needed.
-    """
-
-    def __getitem__(self, key):
-        with super().__getitem__(key) as stream:
-            return stream.read()
-
-    def __setitem__(self, key, value):
-        with BytesIO(value) as stream:
-            super().__setitem__(key, stream)
-
-
-class FileMutableStoreBase(MutableStoreBase):
-    @abstractmethod
-    def __setitem__(self, key, stream):
-        """
-        Store a file-like object for key.
-
-        Note: caller is responsible for giving us an open file and also for
-              closing that file later. The caller must not rely on any specific
-              file pointer position after we return.
-        """
-
-
-class FileMutableStoreMixin:
-    """
-    Mix this into a BytesMutableStore to get a FileMutableStore, like shown here:
-
-    class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase)
-        # That’s all; nothing more needed.
-    """
-
-    def __getitem__(self, key):
-        value = super().__getitem__(key)
-        return BytesIO(value)
-
-    def __setitem__(self, key, stream):
-        value = stream.read()
-        super().__setitem__(key, value)
+Note: The caller is responsible for closing the opened files.
+"""
