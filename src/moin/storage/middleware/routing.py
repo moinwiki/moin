@@ -11,13 +11,13 @@ Route requests to different backends depending on the namespace.
 from __future__ import annotations
 
 from moin.constants.keys import NAME, BACKENDNAME, NAMESPACE
+from moin.storage.types import ItemData, MetaData
 
-from moin.storage.backends import MutableBackendBase
-
-from typing import TYPE_CHECKING
+from typing import Iterator, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from moin.config import BackendMapping, NamespaceMapping
+    from typing_extensions import Self
 
 
 class Backend:
@@ -61,7 +61,7 @@ class Backend:
             assert backend_name in backends
 
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls, uri: str) -> Self:
         """
         Create an instance using the data given in the URI.
         """
@@ -75,7 +75,7 @@ class Backend:
         for backend in self.backends.values():
             backend.close()
 
-    def _get_backend(self, fq_names: list[str]):
+    def _get_backend(self, fq_names: list[str]) -> tuple[str, list[str], str]:
         """
         For a given fully qualified item name (e.g., "ns:itemname"),
         find the backend it belongs to, the item name without the namespace
@@ -91,14 +91,14 @@ class Backend:
                 return backend_name, item_names, namespace.rstrip(":")
         raise AssertionError(f"No backend found for {fq_name!r}. Namespaces: {self.namespaces!r}")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[tuple[str, str]]:
         # Note: yields enough information so we can retrieve the revision from
         #       the right backend later (this is more than just the revid).
         for backend_name, backend in self.backends.items():
             for revid in backend:  # TODO maybe directly yield the backend?
                 yield (backend_name, revid)
 
-    def retrieve(self, backend_name: str, revid):
+    def retrieve(self, backend_name: str, revid: str) -> tuple[MetaData, ItemData]:
         backend = self.backends[backend_name]
         meta, data = backend.retrieve(revid)
         return meta, data
@@ -106,15 +106,15 @@ class Backend:
     # writing part
     def create(self):
         for backend in self.backends.values():
-            if isinstance(backend, MutableBackendBase):
+            if not backend.read_only:
                 backend.create()
 
     def destroy(self):
         for backend in self.backends.values():
-            if isinstance(backend, MutableBackendBase):
+            if not backend.read_only:
                 backend.destroy()
 
-    def store(self, meta, data):
+    def store(self, meta, data) -> tuple[str, str]:
         namespace = meta.get(NAMESPACE)
         if namespace is None:
             # if there is no NAMESPACE in metadata, we assume that the NAME
@@ -134,9 +134,6 @@ class Backend:
             backend_name, _, _ = self._get_backend([namespace])
         backend = self.backends[backend_name]
 
-        if not isinstance(backend, MutableBackendBase):
-            raise TypeError(f"backend {backend_name} is read-only!")
-
         revid = backend.store(meta, data)
 
         # add the BACKENDNAME after storing, so it gets only into
@@ -146,6 +143,4 @@ class Backend:
 
     def remove(self, backend_name, revid, destroy_data):
         backend = self.backends[backend_name]
-        if not isinstance(backend, MutableBackendBase):
-            raise TypeError(f"backend {backend_name} is read-only")
         backend.remove(revid, destroy_data)

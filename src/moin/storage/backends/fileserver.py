@@ -15,8 +15,8 @@ directory.
 
 from __future__ import annotations
 
-from typing import Any
-from typing_extensions import override
+from typing import Any, Iterator
+from typing_extensions import override, Self
 
 import os
 import errno
@@ -26,9 +26,9 @@ from urllib.parse import quote as url_quote
 from urllib.parse import unquote as url_unquote
 
 from moin.constants.keys import NAME, ITEMID, REVID, MTIME, SIZE, CONTENTTYPE, HASH_ALGORITHM
-from . import BackendBase
-
+from moin.storage.error import ReadOnlyBackendError
 from moin.utils.mimetype import MimeType
+from . import BackendBase
 
 NAME_SEP = "/"
 
@@ -40,24 +40,37 @@ class Backend(BackendBase):
 
     @override
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls, uri: str) -> Self:
         return cls(uri)
 
-    def __init__(self, path):
+    def __init__(self, path: str | os.PathLike) -> None:
         """
         :param path: base directory (all files/dirs below will be exposed)
         """
         self.path = str(path)
 
+    @property
     @override
-    def open(self):
+    def read_only(self) -> bool:
+        return True
+
+    @override
+    def create(self) -> None:
+        raise ReadOnlyBackendError("backend is read-only!")
+
+    @override
+    def destroy(self) -> None:
+        raise ReadOnlyBackendError("backend is read-only!")
+
+    @override
+    def open(self) -> None:
         pass
 
     @override
-    def close(self):
+    def close(self) -> None:
         pass
 
-    def _mkpath(self, key) -> tuple[str, str]:
+    def _mkpath(self, key: str) -> tuple[str, str]:
         """
         key -> itemname, absolute path (strip mtime)
         """
@@ -76,7 +89,7 @@ class Backend(BackendBase):
             relpath = itemname.replace(NAME_SEP, os.sep)
         return itemname, os.path.join(self.path, relpath)
 
-    def _mkkey(self, path) -> tuple[str, int]:
+    def _mkkey(self, path: str) -> tuple[str, int]:
         """
         absolute path -> itemname, mtime
         """
@@ -92,14 +105,14 @@ class Backend(BackendBase):
         mtime = int(st.st_mtime)
         return itemname, mtime
 
-    def _encode(self, key):
+    def _encode(self, key: str) -> str:
         """
         we need to get rid of slashes in revids because we put them into URLs
         and it would confuse the URL routing.
         """
         return url_quote(key, safe="")
 
-    def _decode(self, qkey):
+    def _decode(self, qkey: str) -> str:
         return url_unquote(qkey)
 
     def _get_meta(self, itemname, path) -> dict[str, Any]:
@@ -143,11 +156,11 @@ class Backend(BackendBase):
                     dirs.append(name)
                 else:
                     files.append(name)
-            content = ["= Directory contents =", " * [[../]]"]
-            content.extend(f" * [[/{name}|{name}/]]" for name in sorted(dirs))
-            content.extend(f" * [[/{name}|{name}]]" for name in sorted(files))
-            content.append("")
-            content = "\r\n".join(content)
+            lines = ["= Directory contents =", " * [[../]]"]
+            lines.extend(f" * [[/{name}|{name}/]]" for name in sorted(dirs))
+            lines.extend(f" * [[/{name}|{name}]]" for name in sorted(files))
+            lines.append("")
+            content = "\r\n".join(lines)
         except OSError as err:
             content = str(err)
         return content
@@ -168,7 +181,7 @@ class Backend(BackendBase):
             raise
 
     @override
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         # Note: Instead of just yielding the relative <path>, yield <path>.<mtime>,
         # so if the file is updated, the revid will change (and the indexer's
         # update() method can efficiently update the index).
@@ -180,9 +193,17 @@ class Backend(BackendBase):
                 yield self._encode("%s.%d" % self._mkkey(os.path.join(dirpath, filename)))
 
     @override
-    def retrieve(self, key) -> tuple[Any, Any]:
-        key = self._decode(key)
+    def retrieve(self, metaid: str) -> tuple[Any, Any]:
+        key = self._decode(metaid)
         itemname, path = self._mkpath(key)
         meta = self._get_meta(itemname, path)
         data = self._get_data(itemname, path)
         return meta, data
+
+    @override
+    def store(self, meta: dict[str, Any], data) -> str:
+        raise ReadOnlyBackendError("backend is read-only!")
+
+    @override
+    def remove(self, metaid: str, destroy_data: bool = False) -> None:
+        raise ReadOnlyBackendError("backend is read-only!")

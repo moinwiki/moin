@@ -16,7 +16,7 @@ from ..serialization import serialize, deserialize
 from moin.constants.keys import NAME, CONTENTTYPE
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 
-from moin.storage.backends.stores import MutableBackend
+from moin.storage.backends.stores import Backend
 from moin.storage.stores.memory import BytesStore, FileStore
 
 contents = [
@@ -51,7 +51,7 @@ def make_middleware(request: pytest.FixtureRequest, tmpdir):
     # Scenario
     meta_store = BytesStore()
     data_store = FileStore()
-    _backend = MutableBackend(meta_store, data_store)
+    _backend = Backend(meta_store, data_store)
     namespaces = [(NAMESPACE_DEFAULT, "backend")]
     backends = {"backend": _backend}
     backend = RoutingBackend(namespaces, backends)

@@ -9,36 +9,43 @@ Stores key/value pairs into any database supported by SQLAlchemy.
 
 import os
 
+from typing import BinaryIO, TYPE_CHECKING
+from typing_extensions import override, Self
+
+from io import BytesIO
+
 from sqlalchemy import create_engine, select, MetaData, Table, Column, String, LargeBinary
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import IntegrityError
 
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from . import BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin
+
+from . import BytesStoreBase, FileStoreBase
+
+if TYPE_CHECKING:
+    from sqlalchemy import Engine
 
 KEY_LEN = 128
 VALUE_LEN = 1024 * 1024  # 1MB binary data
 
 
-class BytesStore(BytesMutableStoreBase):
-    """
-    A simple dict-based in-memory store. No persistence!
-    """
+class SQLAlchemyStoreMixin:
 
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls, uri: str) -> Self:
         """
         Create a new cls instance from the given URI.
 
         :param cls: Class to create.
         :param uri: The database URI that we pass on to SQLAlchemy.
         """
-        # using "::" to support windows pathnames that
-        # may include ":" after the drive letter.
+        # using "::" to support windows pathnames that may include ":" after the drive letter.
         params = uri.split("::")
+        if len(params) == 3:
+            params[2] = params[2].lower() == "true"
         return cls(*params)
 
-    def __init__(self, db_uri=None, table_name="store", verbose=False):
+    def __init__(self, db_uri: str | None = None, table_name: str = "store", verbose: bool = False) -> None:
         """
         :param db_uri: The database URI that we pass on to SQLAlchemy.
                        May contain user/password/host/port/etc.
@@ -47,17 +54,21 @@ class BytesStore(BytesMutableStoreBase):
         """
         self.db_uri = db_uri
         self.verbose = verbose
-        self.engine = None
-        self.table = None
+        self.engine: Engine | None = None
+        self.table: Table | None = None
         self.table_name = table_name
-        if db_uri.startswith("sqlite:///"):
+        self._make_dirs()
+
+    def _make_dirs(self) -> None:
+        if self.db_uri is None:
+            return
+        if self.db_uri.startswith("sqlite:///"):
             db_path = os.path.dirname(self.db_uri.split("sqlite:///")[1])
             if db_path and not os.path.exists(db_path):
                 os.makedirs(db_path)
 
-    def open(self):
-        db_uri = self.db_uri
-        if db_uri is None:
+    def open(self) -> None:
+        if (db_uri := self.db_uri) is None:
             # These settings apply only for development/testing. The additional args are necessary
             # due to some limitations of the in-memory SQLite database.
             db_uri = "sqlite:///:memory:"
@@ -73,11 +84,13 @@ class BytesStore(BytesMutableStoreBase):
             Column("value", LargeBinary(VALUE_LEN)),
         )
 
-    def close(self):
-        self.engine.dispose()
+    def close(self) -> None:
+        if self.engine is not None:
+            self.engine.dispose()
+            self.engine = None
         self.table = None
 
-    def create(self):
+    def create(self) -> None:
         self.open()
         with self.engine.connect() as conn:
             with conn.begin():
@@ -102,7 +115,7 @@ class BytesStore(BytesMutableStoreBase):
             with conn.begin():
                 conn.execute(self.table.delete().where(self.table.c.key == key))
 
-    def __getitem__(self, key):
+    def _getitem(self, key):
         with self.engine.connect() as conn:
             value = conn.execute(select(self.table.c.value).where(self.table.c.key == key)).fetchone()
             if value is not None:
@@ -110,7 +123,7 @@ class BytesStore(BytesMutableStoreBase):
             else:
                 raise KeyError(key)
 
-    def __setitem__(self, key, value):
+    def _setitem(self, key, value):
         with self.engine.connect() as conn:
             with conn.begin():
                 try:
@@ -123,5 +136,29 @@ class BytesStore(BytesMutableStoreBase):
                         raise
 
 
-class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
-    """SQLAlchemy FileStore."""
+class BytesStore(SQLAlchemyStoreMixin, BytesStoreBase):
+    """
+    A simple dict-based in-memory store. No persistence!
+    """
+
+    def __getitem__(self, key):
+        return self._getitem(key)
+
+    def __setitem__(self, key, value):
+        self._setitem(key, value)
+
+
+class FileStore(SQLAlchemyStoreMixin, FileStoreBase):
+    """
+    SQLAlchemy FileStore.
+    """
+
+    @override
+    def __getitem__(self, key: str) -> BinaryIO:
+        value = self._getitem(key)
+        return BytesIO(value)
+
+    @override
+    def __setitem__(self, key: str, stream: BinaryIO) -> None:
+        value = stream.read()
+        self._setitem(key, value)

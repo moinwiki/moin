@@ -50,7 +50,7 @@ usually it is even just the small and thus quick latest-revs index.
 
 from __future__ import annotations
 
-from typing import Any, Iterator, TYPE_CHECKING
+from typing import Any, Generator, Iterator, TYPE_CHECKING
 
 import gc
 import io
@@ -672,7 +672,7 @@ class IndexingMiddleware:
                 else:
                     raise ValueError(f"mode must be 'update', 'add' or 'delete', not '{mode}'")
 
-    def _find_latest_backends_revids(self, index, query=None):
+    def _find_latest_backends_revids(self, index: FileIndex, query=None) -> list[tuple[str, str]]:
         """
         find the latest revision identifiers using the all-revs index
 
@@ -830,7 +830,7 @@ class IndexingMiddleware:
         finally:
             ix.close()
 
-    def query_parser(self, default_fields, idx_name=LATEST_REVS):
+    def query_parser(self, default_fields: list[str], idx_name: str = LATEST_REVS) -> QueryParser:
         """
         Build a query parser for a list of default fields.
         """
@@ -843,7 +843,7 @@ class IndexingMiddleware:
             raise ValueError("default_fields list must at least contain one field name")
         qp.add_plugin(RegexPlugin())
 
-        def userid_pseudo_field_factory(fieldname):
+        def userid_pseudo_field_factory(fieldname: str):
             """generate a translator function, that searches for the userid
             in the given fieldname when provided with the username
             """
@@ -872,7 +872,7 @@ class IndexingMiddleware:
         )
         return qp
 
-    def search(self, q, idx_name=LATEST_REVS, **kw):
+    def search(self, q, idx_name: str = LATEST_REVS, **kw) -> Generator[Revision]:
         """
         Search with query q, yield Revisions.
         """
@@ -885,7 +885,7 @@ class IndexingMiddleware:
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+    def search_page(self, q, idx_name: str = LATEST_REVS, pagenum=1, pagelen=10, **kw) -> Generator[Revision]:
         """
         Same as search, but with paging support.
         """
@@ -898,7 +898,7 @@ class IndexingMiddleware:
                 item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
                 yield item.get_revision(doc[REVID], doc=doc)
 
-    def search_meta(self, q, idx_name=LATEST_REVS, regex=None, **kw):
+    def search_meta(self, q, idx_name: str = LATEST_REVS, regex=None, **kw) -> Generator[MetaData]:
         """
         Search with query q, yield Revision metadata from index.
         """
@@ -913,7 +913,7 @@ class IndexingMiddleware:
                 meta = hit.fields()
                 yield meta
 
-    def search_meta_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+    def search_meta_page(self, q, idx_name: str = LATEST_REVS, pagenum=1, pagelen=10, **kw) -> Generator[MetaData]:
         """
         Same as search_meta, but with paging support.
         """
@@ -931,7 +931,7 @@ class IndexingMiddleware:
         with self.ix[idx_name].searcher() as searcher:
             return len(searcher.search(q, **kw))
 
-    def documents(self, idx_name=LATEST_REVS, **kw):
+    def documents(self, idx_name: str = LATEST_REVS, **kw) -> Generator[Revision]:
         """
         Yield Revisions matching the kw args.
         """
@@ -940,7 +940,7 @@ class IndexingMiddleware:
             item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
             yield item.get_revision(doc[REVID], doc=doc)
 
-    def _documents(self, idx_name=LATEST_REVS, **kw):
+    def _documents(self, idx_name: str = LATEST_REVS, **kw) -> Generator[Document]:
         """
         Yield documents matching the kw args (internal use only).
 
@@ -951,7 +951,7 @@ class IndexingMiddleware:
             # ends and the "with" is left to close the index files.
             yield from searcher.documents(**kw)
 
-    def document(self, idx_name=LATEST_REVS, **kw):
+    def document(self, idx_name: str = LATEST_REVS, **kw) -> Revision | None:
         """
         Return a Revision matching the kw args.
         """
@@ -961,7 +961,7 @@ class IndexingMiddleware:
             item = Item(self, latest_doc=latest_doc, itemid=doc[ITEMID])
             return item.get_revision(doc[REVID], doc=doc)
 
-    def _document(self, idx_name=LATEST_REVS, short=False, **kw):
+    def _document(self, idx_name: str = LATEST_REVS, short=False, **kw) -> Document | None:
         """
         Return a document matching the kw args (internal use only).
         """
@@ -970,7 +970,7 @@ class IndexingMiddleware:
         with self.ix[idx_name].searcher() as searcher:
             return searcher.document(**kw)
 
-    def has_item(self, name: str):
+    def has_item(self, name: str) -> bool:
         if name.startswith("@itemid/"):
             item = Item(self, short=True, **{ITEMID: name[8:]})
         else:
@@ -978,7 +978,7 @@ class IndexingMiddleware:
             item = Item(self, short=True, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
         return bool(item)
 
-    def __getitem__(self, name: str):
+    def __getitem__(self, name: str) -> Item:
         """
         Return item with <name> (may be a new or existing item).
         """
@@ -987,7 +987,7 @@ class IndexingMiddleware:
         fqname = split_fqname(name)
         return Item(self, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
 
-    def get_item(self, short=False, **query):
+    def get_item(self, short=False, **query) -> Item:
         """
         Return item identified by the query (may be a new or existing item).
 
@@ -996,7 +996,7 @@ class IndexingMiddleware:
         """
         return Item(self, short=short, **query)
 
-    def create_item(self, **query):
+    def create_item(self, **query) -> Item:
         """
         Return item identified by the query (must be a new item).
 
@@ -1062,7 +1062,7 @@ class PropertiesMixin:
     def namespace(self):
         return self.meta.get(NAMESPACE, "")
 
-    def _fqname(self, name=None):
+    def _fqname(self, name=None) -> CompositeName:
         """
         return the fully qualified name including the namespace: NS:NAME
         """
@@ -1089,7 +1089,7 @@ class PropertiesMixin:
             return [self.fqname]
 
     @property
-    def parentnames(self):
+    def parentnames(self) -> set[str]:
         """
         Return list of parent names (same order as in names, but no dupes)
 
@@ -1098,7 +1098,7 @@ class PropertiesMixin:
         return parent_names(self.names)
 
     @property
-    def fqparentnames(self):
+    def fqparentnames(self) -> list[CompositeName]:
         """
         return the fully qualified parent names including the namespace: NS:NAME
         """
@@ -1109,23 +1109,24 @@ class PropertiesMixin:
         return self.meta.get(ACL)
 
     @property
-    def ptime(self):
+    def ptime(self) -> int | None:
         dt = self.meta.get(PTIME)
         if dt is not None:
             return utctimestamp(dt)
 
     @property
-    def names(self):
+    def names(self) -> list[str]:
         return self.meta[NAME]
 
     @property
-    def mtime(self):
+    def mtime(self) -> int | None:
         dt = self.meta.get(MTIME)
         if dt is not None:
             return utctimestamp(dt)
 
 
 class Item(PropertiesMixin):
+
     def __init__(self, indexer: IndexingMiddleware, latest_doc=None, short=False, **query):
         """
         :param indexer: indexer middleware instance
@@ -1166,7 +1167,7 @@ class Item(PropertiesMixin):
         return self._current
 
     @property
-    def parentids(self):
+    def parentids(self) -> set[str]:
         """
         compute list of parent itemids
 
@@ -1215,13 +1216,13 @@ class Item(PropertiesMixin):
         if self:
             yield from self.indexer.documents(idx_name=ALL_REVS, itemid=self.itemid)
 
-    def __getitem__(self, revid):
+    def __getitem__(self, revid: str) -> Revision:
         """
         Get Revision with revision id <revid>.
         """
         return Revision(self, revid)
 
-    def get_revision(self, revid, doc=None):
+    def get_revision(self, revid: str, doc: Document | None = None) -> Revision:
         """
         Similar to item[revid], but you can optionally give an already existing
         whoosh result document for the given revid to avoid backend accesses for some use cases.
@@ -1433,7 +1434,9 @@ class Revision(PropertiesMixin):
     An existing revision (exists in the backend).
     """
 
-    def __init__(self, item: Item, revid: str, doc=None, name=None, retry=False):
+    def __init__(
+        self, item: Item, revid: str, doc: Document | None = None, name: str | None = None, retry: bool = False
+    ):
         is_current = revid == CURRENT
         if doc is None:
             if is_current:
@@ -1466,7 +1469,7 @@ class Revision(PropertiesMixin):
         return meta, data
 
     @property
-    def data(self):
+    def data(self) -> ItemData:
         if self._data is None:
             self._load()
         return self._data
@@ -1495,7 +1498,8 @@ class Revision(PropertiesMixin):
 
 
 class Meta(Mapping):
-    def __init__(self, revision, doc, meta: MetaData | None = None) -> None:
+
+    def __init__(self, revision: Revision, doc: Document, meta: MetaData | None = None) -> None:
         self.revision = revision
         self._doc = doc or {}
         self._meta = meta or {}
