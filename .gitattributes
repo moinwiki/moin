@@ -1,1 +1,2 @@
-src/moin/help/** binary
+# Wiki text items must have LF line endings also on Windows
+src/moin/help/** eol=lf
