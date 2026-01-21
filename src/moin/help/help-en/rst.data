@@ -119,12 +119,9 @@ In HTML, it is represented by the ``<hr />`` element.
 
 --------------------------------------------------------------------------
 
-In reStructuredText, this element is called *transition* and
+In reStructuredText, this element is called transition_ and
 represented by a horizontal line of 4 or more repeated punctuation
-characters (details__).
-
-__ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
-   #transitions
+characters.
 
 .. list-table::
    :header-rows: 1
@@ -227,7 +224,7 @@ Markup               Result           Notes
 ``:b:`keyword```     :b:`keyword`     highlight :b:`key words`
                                       without marking them up as important
 ``:dfn:`dfn```       :dfn:`dfn`       the defining instance of a term
-``:i:`rôle```        :i:`rôle`        alternative voice
+``:i:`rôle```        :i:`rôle`        alternate voice
 ``:kbd:`Ctrl X```    :kbd:`Ctrl X`    user input
 ``:mark:`up```       :mark:`up`       highlight a :mark:`run of text`
 ``:q:`Tagline!```    :q:`Tagline!`    content quoted from another source
@@ -235,9 +232,9 @@ Markup               Result           Notes
                                       no longer relevant
 ``:samp:`Ready!```   :samp:`Ready!`   computer output
 ``:small:`print```   :small:`print`   side comments
-``:u:`borken```      :u:`borken`      unarticulated annotations of, e.g,
+``:u:`anotation```   :u:`anotation`   unarticulated annotations of, e.g,
                                       :u:`mispellings`
-``:var:`n```         :var:`n`         variables (or constants)
+``:var:`n```         :var:`n`         variables
 ===================  ===============  ====================================
 
 
@@ -402,7 +399,10 @@ matching target as **Wiki-internal links** (whitespace is normalized).
 
 * Caution! `Explicit targets`_, `inline targets`_ and `section headings`_
   with the same name take precedence!
+* The `syntax for Wiki-internal links`__ differs from POSIX *path* syntax!
 * In Docutils and Sphinx, unknown target names are reported as errors.
+
+__ https://moin-20.readthedocs.io/en/latest/user/namespaces.html#url-layout
 
 ========================  ===================  ============================
 Markup                    Result               Notes
@@ -420,8 +420,6 @@ Markup                    Result               Notes
 ========================  ===================  ============================
 
 Alternatively, Wiki-internal links may be specified via `URI references`_.
-
-* The syntax for Wiki-internal links differs from POSIX *path* syntax!
 
 .. list-table::
    :header-rows: 1
@@ -1584,8 +1582,8 @@ For *inline images*, use a `substitution definition`_.
   following elements float up.
 
 * In Moin, images are not enclosed within a block level element so
-  several images declared successively without any positioning will display
-  in a horizontal row:
+  several images declared successively without any positioning will
+  be displayed in a horizontal row:
 
   .. image:: help-common/logo.svg
      :height: 20
@@ -1892,6 +1890,8 @@ system messages.
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#inline-internal-targets
 .. _interpreted text:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#interpreted-text
+.. _length units:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#length-units
 .. _literal context:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-context
 .. _option lists:
@@ -1910,8 +1910,8 @@ system messages.
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#substitution-definitions
 .. _substitution reference:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#substitution-references
-.. _length units:
-    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#length-units
+.. _transition:
+    https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#transitions
 .. _uri context:
     https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#uri-context
 
