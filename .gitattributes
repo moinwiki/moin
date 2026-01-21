@@ -1,1 +1,6 @@
-src/moin/help/** binary
+# Wiki help pages must keep CR/LF line endings
+src/moin/help/** text eol=cr
+
+# List binary help "*.data" items below ("*.meta" data is always text)
+src/moin/help/help-common/**.data binary
+src/moin/help/help-common/**.svg.data text eol=cr
