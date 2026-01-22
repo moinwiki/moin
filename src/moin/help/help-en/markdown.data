@@ -108,16 +108,16 @@ End preformatted code
     Paragraphs are separated
     by a blank line.
 
-    To force a line break, end a line with 2 spaces or<br>
-    a HTML line break tag.
+    To force a line break, end a line with 2 spaces or a <br />
+    HTML line break tag.
 
 **Result:**
 
 Paragraphs are separated
 by a blank line.
 
-To force a line break, end a line with 2 spaces or<br>
-a HTML line break tag.
+To force a line break, end a line with 2 spaces or a <br />
+HTML line break tag.
 
 ----
 
@@ -536,7 +536,7 @@ To highlight code syntax, wrap the code in triple backtick (`) or tilde (~) char
     alert(s);
     ```
 
-    ~~~ {python}
+    ~~~ python
     def hello():
        print "Hello World!"
     ~~~
@@ -548,7 +548,7 @@ var s = "JavaScript syntax highlighting";
 alert(s);
 ```
 
-~~~ {python}
+~~~ python
 def hello():
    print "Hello World!"
 ~~~

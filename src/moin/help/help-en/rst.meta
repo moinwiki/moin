@@ -3,7 +3,7 @@
   "address": "127.0.0.1",
   "comment": "",
   "contenttype": "text/x-rst;charset=utf-8",
-  "dataid": "69d7adecd6e145d48647e950aba65a38",
+  "dataid": "440cb5b2b04e41598a92475bec6bdb7c",
   "externallinks": [
     "http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#line-blocks",
     "https://docs.python.org/3/_static/py.svg",
@@ -77,6 +77,7 @@
     "https://html.spec.whatwg.org/multipage/edits.html",
     "https://html.spec.whatwg.org/multipage/text-level-semantics.html",
     "https://moin-20.readthedocs.io/en/latest/user/moinwiki.html#css-classes-for-use-with-the-wiki-parser-tables-comments-and-links",
+    "https://moin-20.readthedocs.io/en/latest/user/namespaces.html#url-layout",
     "https://moin-20.readthedocs.io/en/latest/user/rest.html",
     "https://moinmo.in/",
     "https://peps.python.org/pep-0001",
@@ -84,7 +85,7 @@
     "https://tools.ietf.org/html/rfc6921.html",
     "https://www.sphinx-doc.org"
   ],
-  "itemid": "412d0e59c79147058ef2e947d1772d5f",
+  "itemid": "1310233690404118b40d1f5901ba4ae2",
   "itemlinks": [
     "Home",
     "help-en/Home",
@@ -99,22 +100,21 @@
   ],
   "itemtype": "default",
   "language": "en",
-  "mtime": 1767096079,
+  "mtime": 1769077889,
   "name": [
     "rst"
   ],
   "name_old": [],
   "namespace": "help-en",
   "rev_number": 1,
-  "revid": "1226bf4e23ad46898dfcd0601e33fa13",
-  "sha1": "b60033dfe91514e89aa6680aca7f92115de69e81",
-  "size": 49315,
+  "revid": "3938500a53bc47c89ad919a462787352",
+  "sha1": "4ae3999d42a15abbc781404b278039781e9fd022",
+  "size": 49418,
   "summary": "",
   "tags": [
     "parser",
     "demo",
     "ReST",
     "rst"
-  ],
-  "trash": false
+  ]
 }
