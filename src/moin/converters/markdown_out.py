@@ -475,7 +475,7 @@ class Converter:
         return f"<ins>{self.open_children(elem)}</ins>"
 
     def open_moinpage_u(self, elem):  # annotated text
-        return f"<u>{self.open_children(elem)}</u>"
+        return self.tag_from_cls(elem) or f"<u>{self.open_children(elem)}</u>"
 
     def open_moinpage_strong(self, elem):
         return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"

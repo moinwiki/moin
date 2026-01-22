@@ -666,7 +666,7 @@ class Converter:
         return self.new_copy(html.tr, elem)
 
     def visit_moinpage_u(self, elem):
-        return self.new_copy(html.u, elem)
+        return self.new_copy_from_cls(elem) or self.new_copy(html.u, elem)
 
 
 class SpecialId:

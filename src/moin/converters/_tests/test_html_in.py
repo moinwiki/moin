@@ -238,8 +238,8 @@ class TestConverter(Base):
         ),
         (
             "<html><p><mark>highlight</mark></p></html>",
-            # <page><body><span html:class="html-mark">highlight</span></body></page>
-            '/page/body/p/span[text()="highlight"][@html:class="html-mark"]',
+            # <page><body><u html:class="html-mark">highlight</u></body></page>
+            '/page/body/p/u[text()="highlight"][@html:class="html-mark"]',
         ),
         (
             "<html><p><small>fine print</small></p></html>",

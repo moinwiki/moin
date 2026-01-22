@@ -95,16 +95,14 @@ class HtmlTags:
     # we use a more generic element and store the original tag as class value
     # e.g. <cite> → <emphasis class="html-cite}">
     indirect_tags: Final = {
-        # emphasized text (default style: italic)
+        "abbr": moin_page.span,  # abbreviation
         "cite": moin_page.emphasis,  # title of a creative work
         "dfn": moin_page.emphasis,  # defining instance of a term
         "i": moin_page.emphasis,  # alternate voice
-        "var": moin_page.emphasis,  # variable
-        # misc (no common default style)
-        "abbr": moin_page.span,
-        "mark": moin_page.span,
-        "small": moin_page.span,  # side comment (small print)
         "kbd": moin_page.span,  # user input;  TODO: use moin_page.code?
+        "mark": moin_page.u,  # marked or highlighted for reference purposes
+        "small": moin_page.span,  # side comment (small print)
+        "var": moin_page.emphasis,  # variable
     }
 
     # HTML tags that are completely ignored by our converter.
