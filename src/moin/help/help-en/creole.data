@@ -2,7 +2,8 @@
 
 <<TableOfContents>>
 
-**Creole** is a wiki markup language that has a goal of becoming a common wiki syntax that will enable better exchange of content between different wiki engines.
+[[https://en.wikipedia.org/wiki/Creole_(markup)|**Creole**]] is a wiki markup language that has a goal of becoming a common wiki syntax that will enable better exchange of content between different wiki engines.
+Development stalled around 2007.
 
 This page introduces you to the most important elements of the creole syntax. Under each heading within a shaded box is the verbatim markup followed by the output as rendered by the wiki engine. The display of some of the features depends upon your wiki configuration and choice of theme.
 
