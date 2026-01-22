@@ -48,12 +48,8 @@ class Markdown:
     monospace = "`"
     strong = "**"
     emphasis = "*"
-    underline_open = "<u>"
-    underline_close = "</u>"
     samp_open = "`"
     samp_close = "`"
-    stroke_open = "<strike>"
-    stroke_close = "</strike>"
     table_marker = "|"
     p = "\n"
     linebreak = "  "
@@ -469,17 +465,17 @@ class Converter:
             return "<sub>{}</sub>".format("".join(elem.itertext()))
         return self.tag_from_cls(elem) or "".join(self.open_children(elem))
 
-    def open_moinpage_del(self, elem):  # stroke or strike-through
-        return Markdown.stroke_open + self.open_children(elem) + Markdown.stroke_close
+    def open_moinpage_del(self, elem):  # editorial removements
+        return f"<del>{self.open_children(elem)}</del>"
 
-    def open_moinpage_s(self, elem):  # s is used for stroke or strike by html_in
-        return self.open_moinpage_del(elem)
+    def open_moinpage_s(self, elem):  # inaccurate or obsolete text
+        return f"<s>{self.open_children(elem)}</s>"
 
-    def open_moinpage_ins(self, elem):  # underline
-        return Markdown.underline_open + self.open_children(elem) + Markdown.underline_close
+    def open_moinpage_ins(self, elem):  # editorial insertions
+        return f"<ins>{self.open_children(elem)}</ins>"
 
-    def open_moinpage_u(self, elem):  # underline via html_in
-        return self.open_moinpage_ins(elem)
+    def open_moinpage_u(self, elem):  # annotated text
+        return f"<u>{self.open_children(elem)}</u>"
 
     def open_moinpage_strong(self, elem):
         return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"
