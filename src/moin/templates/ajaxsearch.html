@@ -115,6 +115,14 @@
                         <div class="warning">{{ _('{count:d} items are not shown because read permission was denied.').format(count=count[0]) }}</div>
                     {% endif %}
                 </div>
+            {% else %}
+                <div class="moin-search-results">
+                    <p>
+                        <a href="{{ url_for('frontend.show_item', item_name=query) }}">
+                            {{ _('Create new page "{name}"').format(name=query) }}
+                        </a>
+                    </p>
+                </div>
             {% endif %}
         {% endif %}
     {% endif %}
