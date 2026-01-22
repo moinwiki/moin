@@ -16,7 +16,7 @@ from moin.items import Item
 from moin.storage.middleware import indexing as msmi
 from moin.utils.diff_datastruct import diff as dict_diff
 from moin.utils.notifications import Notification, DESTROY_REV, DESTROY_ALL
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 
 import pytest
 

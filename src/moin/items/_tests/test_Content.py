@@ -19,7 +19,7 @@ from moin.items import Item
 from moin.items.content import Content, Binary, Text, Image, TransformableBitmapImage
 from moin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 from functools import reduce
 
 

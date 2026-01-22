@@ -15,7 +15,7 @@ from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.items import Item
 from moin.macros._base import MacroPageLinkListBase, get_item_names
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
 
 random.seed()
 

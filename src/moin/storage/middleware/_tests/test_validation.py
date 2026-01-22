@@ -9,10 +9,8 @@ from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from moin.constants import keys
 from moin.constants.contenttypes import CONTENTTYPE_USER
-
+from moin.utils.names import CompositeName
 from moin.utils.crypto import make_uuid
-
-from moin.utils.interwiki import CompositeName
 
 
 class TestValidation:

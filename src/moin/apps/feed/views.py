@@ -25,7 +25,8 @@ from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, COMMENT, MTIME, REV
 from moin.themes import get_editor_info, render_template
 from moin.items import Item
 from moin.utils.crypto import cache_key
-from moin.utils.interwiki import url_for_item, split_fqname
+from moin.utils.interwiki import url_for_item
+from moin.utils.names import split_fqname
 
 from moin import log
 

@@ -14,15 +14,8 @@ import shutil
 import pytest
 from flask import current_app as app
 
-from moin.utils.interwiki import (
-    split_interwiki,
-    join_wiki,
-    InterWikiMap,
-    url_for_item,
-    _split_namespace,
-    split_fqname,
-    getInterwikiHome,
-)
+from moin.utils.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, getInterwikiHome
+from moin.utils.names import split_fqname, split_namespace
 from moin._tests import wikiconfig
 from moin.constants.keys import CURRENT
 from moin.app import before_wiki
@@ -104,7 +97,7 @@ class TestInterWiki:
         for (item_name, wiki_name, field, namespace, rev, endpoint, _external), url in tests:
             assert url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external) == url
 
-    def test__split_namespace(self):
+    def test_split_namespace(self):
         map = set()
         map.add("ns1")
         map.add("ns1/ns2")
@@ -120,8 +113,8 @@ class TestInterWiki:
             ("OtherWiki/ns1/OtherPage", ("", "OtherWiki/ns1/OtherPage")),
         ]
         for markup, (namespace, pagename) in tests:
-            assert _split_namespace(map, markup) == (namespace, pagename)
-            namespace, pagename = _split_namespace(map, markup)
+            assert split_namespace(map, markup) == (namespace, pagename)
+            namespace, pagename = split_namespace(map, markup)
 
     @pytest.mark.usefixtures("_req_ctx")
     def test_split_interwiki(self):

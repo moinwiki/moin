@@ -20,7 +20,7 @@ from moin.apps.misc import misc
 
 from moin.constants.keys import MTIME, NAME_EXACT, NAMESPACE, NAME
 from moin.themes import render_template
-from moin.utils.interwiki import CompositeName
+from moin.utils.names import CompositeName
 
 
 @misc.route("/sitemap")

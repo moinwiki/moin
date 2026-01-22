@@ -21,7 +21,7 @@ from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
 from moin.converters import include  # noqa # prevent a circular import
 from moin.items import Item
 from moin.utils.crypto import random_string
-from moin.utils.interwiki import CompositeName
+from moin.utils.names import CompositeName
 
 
 # Promoting the test user -------------------------------------------

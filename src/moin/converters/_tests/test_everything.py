@@ -13,7 +13,7 @@ from moin.constants.keys import CONTENTTYPE, ITEMTYPE, REV_NUMBER
 from moin.converters.everything import Converter
 from moin.items.content import Content
 
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 
 from moin.items import Item
 from moin.utils.tree import moin_page, xlink, html, xinclude

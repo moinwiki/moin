@@ -67,7 +67,7 @@ import re
 from flask import request
 from flask import g as flaskg
 from moin.i18n import _
-from moin.utils.interwiki import split_fqname
+from moin.utils.names import split_fqname
 from moin.macros._base import MacroPageLinkListBase, get_item_names, fail_message
 from moin.converters._args_wiki import parse as parse_arguments
 

@@ -8,18 +8,17 @@ MoinMoin - interwiki support code.
 
 from __future__ import annotations
 
-from typing_extensions import LiteralString
 from urllib.parse import quote as url_quote
 
 from flask import current_app as app
 from flask import url_for
 
 import os.path
-from collections import namedtuple
 
-from moin.constants.keys import CURRENT, FIELDS, NAME_EXACT, NAMESPACE
+from moin.constants.keys import CURRENT, NAME_EXACT
 from moin.constants.contenttypes import CHARSET
 from moin.constants.namespaces import NAMESPACE_USERS
+from moin.utils.names import get_fqname, split_fqname, split_namespace
 
 from moin import log
 
@@ -41,18 +40,6 @@ def is_known_wiki(wiki_name):
     denoting THIS wiki, so we do not need to check these names separately.
     """
     return wiki_name in app.cfg.interwiki_map
-
-
-def get_fqname(item_name: str, field: LiteralString, namespace: str):
-    """
-    Compute a composite name from item_name, field, and namespace.
-    Composite name == [NAMESPACE/][@FIELD/]NAME
-    """
-    if field and field != NAME_EXACT:
-        item_name = f"@{field}/{item_name}"
-    if namespace:
-        item_name = f"{namespace}/{item_name}"
-    return item_name
 
 
 def url_for_item(
@@ -131,97 +118,6 @@ def get_download_file_name(fqname):
         return f"{fqname.field}-{fqname.value}"
 
 
-def _split_namespace(namespaces, url):
-    """
-    Find the longest namespace in the set.
-    Namespaces are separated by slashes (/).
-    Example:
-        namespaces: ['ns1', 'ns1/ns2']
-        url: ns1/urlalasd -> ns1, urlalasd
-        url: ns3/urlalasd -> '', ns3/urlalasd
-        url: ns2/urlalasd -> '', ns2/urlalasd
-        url: ns1/ns2/urlalasd -> ns1/ns2, urlalasd
-    :param namespaces: set of namespaces (strings) to search
-    :param url: string
-    :return: (namespace, url)
-    """
-    namespace = ""
-    tokens_list = url.split("/")
-    for token in tokens_list:
-        if namespace:
-            token = f"{namespace}/{token}"
-        if token in namespaces:
-            namespace = token
-        else:
-            break
-    if namespace:
-        length = len(namespace) + 1
-        url = url[length:]
-    return namespace, url
-
-
-class CompositeName(namedtuple("CompositeName", "namespace, field, value")):
-    """
-    Named tuple to hold the composite name.
-    """
-
-    @property
-    def split(self):
-        """
-        Return a dict of field names/values.
-        """
-        return {NAMESPACE: self.namespace, "field": self.field, "item_name": self.value}
-
-    @property
-    def fullname(self):
-        return get_fqname(self.value, self.field, self.namespace)
-
-    def __str__(self):
-        return self.fullname
-
-    @property
-    def query(self):
-        """
-        Return a dict that can be used as a Whoosh query
-        to look up index documents matching this CompositeName.
-        """
-        field = NAME_EXACT if not self.field else self.field
-        return {NAMESPACE: self.namespace, field: self.value}
-
-    def get_root_fqname(self):
-        """
-        Determine the root item of the namespace of this composite name and return it as new CompositeName instance.
-        """
-        return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
-
-
-def split_fqname(url: str) -> CompositeName:
-    """
-    Split a fully qualified URL into namespace, field, and page name.
-    URL -> [NAMESPACE/][@FIELD/]NAME
-
-    :param url: the URL to split
-    :returns: a namedtuple CompositeName(namespace, field, item_name)
-    Examples::
-
-        url: 'ns1/ns2/@itemid/Page' return 'ns1/ns2', 'itemid', 'Page'
-        url: '@revid/OtherPage' return '', 'revid', 'OtherPage'
-        url: 'ns1/Page' return 'ns1', '', 'Page'
-        url: 'ns1/ns2/@notfield' return 'ns1/ns2', '', '@notfield'
-    """
-    if not url:
-        return CompositeName("", NAME_EXACT, "")
-    namespaces = {namespace.rstrip("/") for namespace, _ in app.cfg.namespace_mapping}
-    namespace, url = _split_namespace(namespaces, url)
-    field = NAME_EXACT
-    if url.startswith("@"):
-        tokens = url[1:].split("/", 1)
-        if tokens[0] in FIELDS:
-            field = tokens[0]
-            url = tokens[1] if len(tokens) > 1 else ""
-    return CompositeName(namespace, field, url)
-
-
 def split_interwiki(wikiurl):
     """
     Split an interwiki name into wiki name and page name, e.g.::
@@ -256,7 +152,7 @@ def split_interwiki(wikiurl):
         interwiki_mapping = set()
         for interwiki_name in app.cfg.interwiki_map:
             interwiki_mapping.add(interwiki_name.split("/")[0])
-        wikiname, item_name = _split_namespace(interwiki_mapping, wikiurl)
+        wikiname, item_name = split_namespace(interwiki_mapping, wikiurl)
         if wikiname:
             wikiurl = wikiurl[len(wikiname) + 1 :]
         namespace, field, item_name = split_fqname(wikiurl)

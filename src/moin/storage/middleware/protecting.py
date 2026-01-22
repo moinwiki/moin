@@ -19,13 +19,15 @@ import time
 from whoosh.util.cache import lfu_cache
 
 from moin.constants.rights import CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS
-from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, NAME_EXACT, ITEMID, FQNAMES, NAME, NAMESPACE
+from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, ITEMID, FQNAMES, NAME, NAMESPACE
 from moin.constants.namespaces import NAMESPACE_ALL
 
 from moin.security import AccessControlList
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.storage.types import ItemData, MetaData
 from moin.utils import close_file
-from moin.utils.interwiki import split_fqname, CompositeName
+from moin.utils.names import gen_fqnames, parent_names, split_fqname
+
 from moin import log
 
 from typing import Any, TYPE_CHECKING
@@ -45,19 +47,6 @@ LOOKUP_CACHE = 200  # ACL lookup for some itemname:  itemid,fqname > acl
 ACL_CACHE = 600  # avoid ACL recalculation: user, namespace, ACL, parents, right > True/false
 
 
-class AccessDenied(Exception):
-    """
-    Raised when a user is denied access to an Item or Revision by ACL.
-    """
-
-
-def gen_fqnames(meta):
-    """Generate fqnames from metadata."""
-    if meta[NAME]:
-        return [CompositeName(meta[NAMESPACE], NAME_EXACT, name) for name in meta[NAME]]
-    return [CompositeName(meta[NAMESPACE], ITEMID, meta[ITEMID])]
-
-
 def pchecker(right, allowed, item):
     """Check blog entry publication date."""
     if allowed and right == PUBREAD:
@@ -72,7 +61,6 @@ def pchecker(right, allowed, item):
 
 
 class ProtectingMiddleware:
-    from .indexing import parent_names
 
     def __init__(self, indexer: IndexingMiddleware, user: User, acl_mapping: list[tuple[str, AclConfig]]):
         """
@@ -221,8 +209,6 @@ class ProtectingMiddleware:
         Return true if user may read item revision represented by whoosh index hit.
         Called by ajaxsearch template, others.
         """
-        from .indexing import parent_names
-
         self.meta = meta
         self.fqnames = gen_fqnames(meta)
         may_read = self.allows(
@@ -276,8 +262,6 @@ class ProtectingMiddleware:
         Note that ALCs are checked after whoosh returns a pagefull of items. It is possible that
         the results shown to the user will have fewer revisions than expected.
         """
-        # import here to avoid circular import error
-        from .indexing import parent_names
 
         for meta in self.indexer.search_meta_page(q, idx_name=idx_name, pagenum=pagenum, pagelen=pagelen, **kw):
             self.meta = meta

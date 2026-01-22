@@ -15,7 +15,7 @@ from moin.utils import iri
 from moin.items import Item
 from moin.utils.tree import html, moin_page, xlink
 from moin.i18n import _
-from moin.storage.middleware.protecting import AccessDenied
+from moin.storage.middleware.exceptions import AccessDenied
 from moin.constants.keys import TAGS
 
 
