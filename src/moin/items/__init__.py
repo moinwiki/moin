@@ -1706,6 +1706,7 @@ class Default(Contentful):
 
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
+            is_text_upload = True
             if data is not None:
 
                 # werkzeug may return form data using type tempfile.SpooledTemporaryFile (issue 1974)
