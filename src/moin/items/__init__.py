@@ -1788,7 +1788,7 @@ class Default(Contentful):
                     # save the new revision, unlock, delete draft
                     contenttype_qs = request.values.get("contenttype")
                     if not is_text_upload and contenttype_guessed:
-                         contenttype_qs = contenttype_guessed
+                        contenttype_qs = contenttype_guessed
                     try:
                         self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
                     except AccessDenied:
