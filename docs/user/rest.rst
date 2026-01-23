@@ -1062,6 +1062,7 @@ csv-table
 
 The *csv-table* directive supports `CSV data`__ (details__).
 
+__ https://docs.python.org/3/library/csv.html
 __ https://docutils.sourceforge.io/docs/ref/rst/directives.html#csv-table
 
 .. list-table::
@@ -1097,7 +1098,6 @@ __ https://docutils.sourceforge.io/docs/ref/rst/directives.html#csv-table
 TODO: The :url: option to load data from an external source does not work
 with the syntax for wiki-internal items.
 
-__ https://docs.python.org/3/library/csv.html
 __ https://docutils.sourceforge.io/docs/ref/rst/directives.html
    #csv-table-options
 
