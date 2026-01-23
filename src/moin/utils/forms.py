@@ -1,4 +1,5 @@
 # Copyright: 2010 Thomas Waldmann, Jason Kirtland, Scott Wilson
+# Copyright: 2026 MoinMoin:UlrichB
 # License: see flatland license
 
 """
@@ -97,6 +98,7 @@ error_filter = error_filter_factory()
 def make_generator():
     """Make an HTML generator."""
     return Generator(
+        markup="html",
         auto_domid=True,
         auto_for=True,
         auto_filter=True,
