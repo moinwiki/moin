@@ -68,9 +68,11 @@ class TestConverter:
         ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
         ("<cite>Winnie-the-Pooh</cite>", "<cite>Winnie-the-Pooh</cite>"),
         ("<dfn>term</dfn>", "<dfn>term</dfn>"),
-        ("<strike>stroke</strike>\n", "<strike>stroke</strike>\n"),
-        # <ins> is changed to <u>
-        ("<ins>underline</ins>\n", "<u>underline</u>\n"),
+        ("<strike>stroke</strike>\n", "<s>stroke</s>\n"),  # <strike> is obsolete since HTML 4.1
+        ("<ins>inserted</ins>\n", "<ins>inserted</ins>\n"),
+        ("<del>deleted</del>\n", "<del>deleted</del>\n"),
+        ("<u>annotated</u>\n", "<u>annotated</u>\n"),
+        ("<s>no longer accurate</s>\n", "<s>no longer accurate</s>\n"),
         ("<kbd>Ctrl-X</kbd><", "<kbd>Ctrl-X</kbd><"),
         ("see <mark>here</mark>", "see <mark>here</mark>"),
         ("<q>cogito ergo sum</q>", "<q>cogito ergo sum</q>"),

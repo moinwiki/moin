@@ -1,4 +1,5 @@
 # Copyright: 2010 MoinMoin:ValentinJaniaut
+# Copyright: 2026 Günter Milde
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -64,17 +65,18 @@ class HtmlTags:
     html_namespace: Final = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "quote", "s", "span", "strong", "u"}
+    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "u"}
 
     # HTML tags that define a list; except dl, which is a little bit different
     list_tags: Final = {"ul", "dir", "ol"}
 
-    # HTML tags that can be converted without attributes into a different DOM tag
-    simple_tags = {  # Emphasis
+    # HTML tags with a matching but differently named Moinpage DOM tag
+    simple_tags: Final = {
+        # Inline text markup (text level semantics)
         "em": moin_page.emphasis,
-        "i": moin_page.emphasis,  # "alternate voice or mood"
         "b": moin_page.strong,  # highlight key words without marking them up as important
-        "strike": moin_page.s,  # strike is not a valid tag in HTML5;  TODO: ignore?
+        "q": moin_page.quote,
+        "strike": moin_page.s,  # obsolete
         # Code and Blockcode
         "pre": moin_page.blockcode,
         "tt": moin_page.code,  # deprecated
@@ -89,9 +91,19 @@ class HtmlTags:
         "tr": moin_page.table_row,
     }
 
-    # HTML tags that do not have equivalents in the DOM tree
-    # We use a <span> element but add information about the original tag.
-    inline_tags: Final = {"abbr", "cite", "dfn", "kbd", "mark", "q", "small", "var"}
+    # HTML tags that do not have equivalents in the Moinpage DOM tree
+    # we use a more generic element and store the original tag as class value
+    # e.g. <cite> → <emphasis class="html-cite}">
+    indirect_tags: Final = {
+        "abbr": moin_page.span,  # abbreviation
+        "cite": moin_page.emphasis,  # title of a creative work
+        "dfn": moin_page.emphasis,  # defining instance of a term
+        "i": moin_page.emphasis,  # alternate voice
+        "kbd": moin_page.span,  # user input;  TODO: use moin_page.code?
+        "mark": moin_page.u,  # marked or highlighted for reference purposes
+        "small": moin_page.span,  # side comment (small print)
+        "var": moin_page.emphasis,  # variable
+    }
 
     # HTML tags that are completely ignored by our converter.
     # Deprecated/obsolete tags and tags not suited for wiki content
@@ -248,6 +260,15 @@ class Converter(HtmlTags):
         tag = ET.QName(element.tag.name, moin_page)
         return self.new_copy(tag, element, attrib)
 
+    def new_copy_indirect(self, element):
+        """
+        Return a "close match" base-element with the original tag as class value.
+        """
+        tagname = element.tag.name
+        element_type = self.indirect_tags[tagname]
+        attrib = {html("class"): f"html-{tagname}"}
+        return self.new_copy(element_type, element, attrib)
+
     def convert_attributes(self, element):
         result = {}
         for key, value in element.attrib.items():
@@ -292,13 +313,13 @@ class Converter(HtmlTags):
         if element.tag.name in self.simple_tags:
             return self.new_copy(self.simple_tags[element.tag.name], element, attrib={})
 
+        # We convert our element to a "close match" with class attribute
+        if element.tag.name in self.indirect_tags:
+            return self.new_copy_indirect(element)
+
         # Our element defines a list
         if element.tag.name in self.list_tags:
             return self.visit_xhtml_list(element)
-
-        # We convert our element to a <span> with class attribute
-        if element.tag.name in self.inline_tags:
-            return self.visit_xhtml_inline(element)
 
         # We have a heading tag
         if self.heading_re.match(element.tag.name):
@@ -476,16 +497,6 @@ class Converter(HtmlTags):
             if key.name == "id":
                 attrib[xml("id")] = value
         return moin_page.video(attrib)
-
-    def visit_xhtml_inline(self, element):
-        """
-        For some specific inline tags (defined in inline_tags)
-        we just return <span html:class="html-{tag.name}">
-        """
-        key = html("class")
-        attrib = {}
-        attrib[key] = f"html-{element.tag.name}"
-        return self.new_copy(moin_page.span, element, attrib)
 
     def visit_xhtml_list(self, element):
         """

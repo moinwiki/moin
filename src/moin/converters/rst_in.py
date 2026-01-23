@@ -39,7 +39,6 @@ except ImportError:
     flaskg = None
 
 from moin import log
-from moin.converters.html_in import HtmlTags
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
@@ -503,18 +502,35 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_inline(self, node):
+        # <inline> element class values that indicate specific HTML tags
+        symmetric_tags = {"del", "ins", "s", "samp", "u"}
+        indirect_tags = {
+            "b": moin_page.strong,
+            "dfn": moin_page.emphasis,
+            "i": moin_page.emphasis,
+            "kbd": moin_page.code,
+            "mark": moin_page.span,
+            "small": moin_page.span,
+            "var": moin_page.emphasis,
+        }
         classes = node["classes"]
-        moin_node = moin_page.span()
+        moin_node_type = moin_page.span
         # some class values indicate a matching HTML element (except when used for syntax highlight):
         if not (isinstance(node.parent, (nodes.literal_block, nodes.literal)) and "code" in node.parent.get("classes")):
             for i, tag in enumerate(classes):
-                if tag in HtmlTags.symmetric_tags:
-                    moin_node = getattr(moin_page, tag)()
+                if tag in symmetric_tags:
+                    moin_node_type = getattr(moin_page, tag)
                     classes.remove(tag)
                     break
-                if tag in HtmlTags.inline_tags:
+                if tag == "q":
+                    moin_node_type = moin_page.quote
+                    classes.remove(tag)
+                    break
+                if tag in indirect_tags:
+                    moin_node_type = indirect_tags[tag]
                     classes[i] = "html-" + tag
-        self.open_moin_page_node(moin_node, node)
+                    break
+        self.open_moin_page_node(moin_node_type(), node)
 
     def depart_inline(self, node):
         self.close_moin_page_node()
@@ -908,7 +924,7 @@ class NodeVisitor:
     def visit_title_reference(self, node):
         # title of a creative work (analogous to HTML <cite>)
         attrib = {html.class_: "html-cite"}
-        self.open_moin_page_node(moin_page.span(attrib=attrib), node)
+        self.open_moin_page_node(moin_page.emphasis(attrib=attrib), node)
 
     def depart_title_reference(self, node):
         self.close_moin_page_node()

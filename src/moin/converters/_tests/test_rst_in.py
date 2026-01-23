@@ -51,7 +51,7 @@ class TestConverter:
         (":PEP:`01`", '<p><a xlink:href="https://peps.python.org/pep-0001">PEP 01</a></p>'),
         ("H\\ :sub:`2`\\ O", '<p>H<span baseline-shift="sub">2</span>O</p>'),
         ("E = mc\\ :sup:`2`", '<p>E = mc<span baseline-shift="super">2</span></p>'),
-        (":title-reference:`Hamlet`", '<p><span xhtml:class="html-cite">Hamlet</span></p>'),
+        (":title-reference:`Hamlet`", '<p><emphasis xhtml:class="html-cite">Hamlet</emphasis></p>'),
         # custom roles
         (".. role:: orange\n\n:orange:`colourful` text", '<p><span xhtml:class="orange">colourful</span> text</p>'),
         # custom roles with matching Moin element
@@ -59,8 +59,9 @@ class TestConverter:
         (".. role:: ins\n\n:ins:`inserted` text", "<p><ins>inserted</ins> text</p>"),
         (".. role:: s\n\n:s:`obsolete` text", "<p><s>obsolete</s> text</p>"),
         (".. role:: u\n\n:u:`annoted` text", "<p><u>annoted</u> text</p>"),
+        (".. role:: q\n\n:q:`inline quote`", "<p><quote>inline quote</quote></p>"),
         # custom roles with matching HTML element
-        (".. role:: dfn\n\n:dfn:`term`", '<p><span xhtml:class="html-dfn">term</span></p>'),
+        (".. role:: dfn\n\n:dfn:`term`", '<p><emphasis xhtml:class="html-dfn">term</emphasis></p>'),
         (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span xhtml:class="html-kbd">Ctrl-X</span></p>'),
         (".. role:: samp(literal)\n\n:samp:`Error 303`", '<p><span xhtml:class="html-samp">Error 303</span></p>'),
         (  # custom role derived from "code" with syntax highlight
