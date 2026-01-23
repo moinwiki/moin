@@ -53,6 +53,7 @@ from __future__ import annotations
 from typing import Any, Iterator, TYPE_CHECKING
 
 import gc
+import io
 import os
 import re
 import shutil
@@ -1413,7 +1414,11 @@ class Item(PropertiesMixin):
                         child_meta[PARENTID] = my_parent
                     else:
                         del child_meta[PARENTID]
-                    self.store_revision(child_meta, child_rev.data, overwrite=True, trusted=True)
+                    # Read the existing data into memory. This is required to avoid reading and writing
+                    # the same data file, what would happen if we would just pass child_rev.data in the
+                    # store_revision() invocation below. Ideally we would only update the metadata here.
+                    data = child_rev.data.read()
+                    self.store_revision(child_meta, io.BytesIO(data), overwrite=True, trusted=True)
 
     def destroy_all_revisions(self):
         """
