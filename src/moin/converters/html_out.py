@@ -588,6 +588,12 @@ class Converter:
     def visit_moinpage_samp(self, elem):
         return self.new_copy(html.samp, elem)
 
+    def visit_moinpage_sub(self, elem):
+        return self.new_copy(html.sub, elem)
+
+    def visit_moinpage_sup(self, elem):
+        return self.new_copy(html.sup, elem)
+
     def visit_moinpage_separator(self, elem):
         return self.new_copy(html.hr, elem)
 
@@ -595,13 +601,6 @@ class Converter:
         # TODO : Fix bug if a span has multiple attributes
         # Check for the attributes of span
         attrib = Attributes(elem)
-        # Check for the baseline-shift (subscript or superscript)
-        generate = attrib.get("baseline-shift")
-        if generate:
-            if generate == "sub":
-                return self.new_copy(html.sub, elem)
-            elif generate == "super":
-                return self.new_copy(html.sup, elem)
         generate = attrib.get("font-size")
         if generate:
             if generate == "85%":

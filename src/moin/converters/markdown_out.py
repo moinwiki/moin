@@ -149,7 +149,7 @@ class Converter:
         """
         attr_list = []
         for key, val in elem.attrib.items():
-            if key.name not in ("data-lineno", "outline-level", "href", "item-label-generate", "baseline-shift"):
+            if key.name not in ("data-lineno", "outline-level", "href", "item-label-generate"):
                 attr_list.append(f'{key.name}="{val}"')
         if attr_list:
             return Markdown.attribute_open + " ".join(attr_list) + Markdown.attribute_close
@@ -452,17 +452,12 @@ class Converter:
 
     def open_moinpage_span(self, elem):
         font_size = elem.get(moin_page.font_size, "")
-        baseline_shift = elem.get(moin_page.baseline_shift, "")
         if font_size:
             return "{}{}{}".format(
                 Markdown.larger_open if font_size == "120%" else Markdown.smaller_open,
                 self.open_children(elem),
                 Markdown.larger_close if font_size == "120%" else Markdown.smaller_close,
             )
-        if baseline_shift == "super":
-            return "<sup>{}</sup>".format("".join(elem.itertext()))
-        if baseline_shift == "sub":
-            return "<sub>{}</sub>".format("".join(elem.itertext()))
         return self.tag_from_cls(elem) or "".join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # editorial removements
@@ -479,6 +474,12 @@ class Converter:
 
     def open_moinpage_strong(self, elem):
         return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"
+
+    def open_moinpage_sub(self, elem):
+        return f"<sub>{self.open_children(elem)}</sub>"
+
+    def open_moinpage_sup(self, elem):
+        return f"<sup>{self.open_children(elem)}</sup>"
 
     def open_moinpage_table(self, elem):
         self.status.append("table")

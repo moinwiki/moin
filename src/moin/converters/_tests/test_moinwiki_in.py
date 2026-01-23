@@ -144,8 +144,8 @@ class TestConverter:
 
     data = [
         ("__underline__", "<page><body><p><ins>underline</ins></p></body></page>"),
-        (",,sub,,script", '<page><body><p><span baseline-shift="sub">sub</span>script</p></body></page>'),
-        ("^super^script", '<page><body><p><span baseline-shift="super">super</span>script</p></body></page>'),
+        (",,sub,,script", "<page><body><p><sub>sub</sub>script</p></body></page>"),
+        ("^super^script", "<page><body><p><sup>super</sup>script</p></body></page>"),
         ("~-smaller-~", '<page><body><p><span font-size="85%">smaller</span></p></body></page>'),
         ("~+larger+~", '<page><body><p><span font-size="120%">larger</span></p></body></page>'),
         ("--(strike through)--", "<page><body><p><del>strike through</del></p></body></page>"),

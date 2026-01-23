@@ -149,13 +149,13 @@ class TestConverter(Base):
     data = [
         (
             "<html><p><sub>sub</sub>script</p></html>",
-            # <page><body><p><span baseline-shift="sub">sub</span></p></body></page>
-            '/page/body/p/span[text()="sub"][@baseline-shift="sub"]',
+            # <page><body><p><sub>sub</sub></p></body></page>
+            '/page/body/p[sub="sub"]',
         ),
         (
             "<html><p><sup>super</sup>script</p></html>",
-            # <page><body><p><span baseline-shift="super">super</span></p></body></page>
-            '/page/body/p/span[text()="super"][@baseline-shift="super"]',
+            # <page><body><p><sup>super</sup></p></body></page>
+            '/page/body/p[sup="super"]',
         ),
         (
             "<html><p><u>underline</u></p></html>",
@@ -195,7 +195,7 @@ class TestConverter(Base):
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
-    def test_span(self, input, xpath):
+    def test_inline_elements(self, input, xpath):
         self.do(input, xpath)
 
     # HTML elements without equivalent Moin DOM tree elements

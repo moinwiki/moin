@@ -65,7 +65,7 @@ class HtmlTags:
     html_namespace: Final = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "u"}
+    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "sub", "sup", "u"}
 
     # HTML tags that define a list; except dl, which is a little bit different
     list_tags: Final = {"ul", "dir", "ol"}
@@ -392,24 +392,6 @@ class Converter(HtmlTags):
         key = moin_page("font-size")
         attrib = {}
         attrib[key] = "120%"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_sub(self, element):
-        """
-        <sub>Text</sub> --> <span base-line-shift="sub">Text</span>
-        """
-        key = moin_page("baseline-shift")
-        attrib = {}
-        attrib[key] = "sub"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_sup(self, element):
-        """
-        <sup>Text</sup> --> <span base-line-shift="super">Text</span>
-        """
-        key = moin_page("baseline-shift")
-        attrib = {}
-        attrib[key] = "super"
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_xhtml_hr(self, element, min_class="moin-hr1", max_class="moin-hr6", default_class="moin-hr3"):

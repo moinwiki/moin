@@ -49,8 +49,8 @@ class TestConverter:
         (r":math:`\sin(x)`", r"<p>\sin(x)</p>"),  # TODO: properly support mathematical content
         (":RFC:`1234`", '<p><a xlink:href="https://tools.ietf.org/html/rfc1234.html">RFC 1234</a></p>'),
         (":PEP:`01`", '<p><a xlink:href="https://peps.python.org/pep-0001">PEP 01</a></p>'),
-        ("H\\ :sub:`2`\\ O", '<p>H<span baseline-shift="sub">2</span>O</p>'),
-        ("E = mc\\ :sup:`2`", '<p>E = mc<span baseline-shift="super">2</span></p>'),
+        ("H\\ :sub:`2`\\ O", "<p>H<sub>2</sub>O</p>"),
+        ("E = mc\\ :sup:`2`", "<p>E = mc<sup>2</sup></p>"),
         (":title-reference:`Hamlet`", '<p><emphasis xhtml:class="html-cite">Hamlet</emphasis></p>'),
         # custom roles
         (".. role:: orange\n\n:orange:`colourful` text", '<p><span xhtml:class="orange">colourful</span> text</p>'),

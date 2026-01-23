@@ -794,7 +794,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_subscript(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "sub"}), node)
+        self.open_moin_page_node(moin_page.sub(), node)
 
     def depart_subscript(self, node):
         self.close_moin_page_node()
@@ -808,7 +808,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_superscript(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "super"}), node)
+        self.open_moin_page_node(moin_page.sup(), node)
 
     def depart_superscript(self, node):
         self.close_moin_page_node()

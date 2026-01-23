@@ -564,7 +564,6 @@ class Converter:
         # Colored text or backgrounds supported by html, markdown extensions, etc
         # are ignored and not converted.
         font_size = elem.get(moin_page.font_size, "")
-        baseline_shift = elem.get(moin_page.baseline_shift, "")
         class_ = elem.get(moin_page.class_, "")
         if class_ == "comment":
             return f"/* {self.open_children(elem)} */"
@@ -574,10 +573,6 @@ class Converter:
                 self.open_children(elem),
                 Moinwiki.larger_close if font_size == "120%" else Moinwiki.smaller_close,
             )
-        if baseline_shift == "super":
-            return f"^{''.join(elem.itertext())}^"
-        if baseline_shift == "sub":
-            return f",,{''.join(elem.itertext())},,"
         return "".join(self.open_children(elem))
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
@@ -594,6 +589,12 @@ class Converter:
 
     def open_moinpage_strong(self, elem):
         return f"{Moinwiki.strong}{self.open_children(elem)}{Moinwiki.strong}"
+
+    def open_moinpage_sub(self, elem):
+        return f",,{''.join(elem.itertext())},,"
+
+    def open_moinpage_sup(self, elem):
+        return f"^{''.join(elem.itertext())}^"
 
     def open_moinpage_table(self, elem):
         self.table_tableclass = elem.attrib.get(moin_page.class_, "")

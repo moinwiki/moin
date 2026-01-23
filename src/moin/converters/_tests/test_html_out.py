@@ -168,14 +168,8 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        (
-            '<page><body><p><span baseline-shift="sub">sub</span>script</p></body></page>',
-            '/div/p[text()="script"][sub="sub"]',
-        ),
-        (
-            '<page><body><p><span baseline-shift="super">super</span>script</p></body></page>',
-            '/div/p[text()="script"][sup="super"]',
-        ),
+        ("<page><body><p><sub>sub</sub>script</p></body></page>", '/div/p[text()="script"][sub="sub"]'),
+        ("<page><body><p><sup>super</sup>script</p></body></page>", '/div/p[text()="script"][sup="super"]'),
         ("<page><body><p><u>underline</u></p></body></page>", '/div/p/u [text()="underline"]'),
         ("<page><body><p><ins>underline</ins></p></body></page>", '/div/p/ins [text()="underline"]'),
         ("<page><body><p><s>stroke</s></p></body></page>", '/div/p/s [text()="stroke"]'),

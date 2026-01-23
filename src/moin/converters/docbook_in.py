@@ -393,6 +393,8 @@ class Converter:
         "row": moin_page("table-row"),
         "screen": moin_page.blockcode,
         "simpara": moin_page.p,
+        "subscript": moin_page.sub,
+        "superscript": moin_page.sup,
         "term": moin_page("list-item-label"),
         "listitem": moin_page("list-item-body"),
         "thead": moin_page("table-header"),
@@ -1071,29 +1073,11 @@ class Converter:
         attrib[key] = "unordered"
         return self.visit_simple_list(moin_page.list, attrib, element, depth)
 
-    def visit_docbook_subscript(self, element, depth):
-        """
-        <subscript> --> <span baseline-shift="sub">
-        """
-        attrib = {}
-        key = moin_page("baseline-shift")
-        attrib[key] = "sub"
-        return self.new_copy(moin_page.span, element, depth, attrib=attrib)
-
     def visit_docbook_substeps(self, element, depth):
         """
         Return the same elements than a procedure
         """
         return self.visit_docbook_procedure(element, depth)
-
-    def visit_docbook_superscript(self, element, depth):
-        """
-        <superscript> --> <span baseline-shift="super">
-        """
-        attrib = {}
-        key = moin_page("baseline-shift")
-        attrib[key] = "super"
-        return self.new_copy(moin_page.span, element, depth, attrib=attrib)
 
     def visit_docbook_procedure(self, element, depth):
         """
@@ -1175,8 +1159,8 @@ class Converter:
                 children.append(trademark_entities[trademark_class])
         elif trademark_class == "service":
             # no entity name nor entity number defined for superscript SM
-            sup_attrib = {moin_page("baseline-shift"): "super"}
-            service_mark = self.new(moin_page.span, attrib=sup_attrib, children=["SM"])
+            service_mark = self.new(moin_page.sup, attrib={}, children=["SM"])
+            # TODO: use Unicode Character '℠' (8480, 0x2120)?
             children.append(service_mark)
         attrib = {html.class_: "db-trademark"}
         return self.new(moin_page.span, attrib=attrib, children=children)

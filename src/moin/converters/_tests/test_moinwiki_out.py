@@ -57,8 +57,8 @@ class TestConverter(Base):
         ("<page:ins>underline</page:ins>", "__underline__"),
         ('<page:span page:font-size="120%">larger</page:span>', "~+larger+~"),
         ('<page:span page:font-size="85%">smaller</page:span>', "~-smaller-~"),
-        ('<page:tag><page:span page:baseline-shift="super">super</page:span>script</page:tag>', "^super^script"),
-        ('<page:tag><page:span page:baseline-shift="sub">sub</page:span>script</page:tag>', ",,sub,,script"),
+        ("<page:tag><page:sup>super</page:sup>script</page:tag>", "^super^script"),
+        ("<page:tag><page:sub>sub</page:sub>script</page:tag>", ",,sub,,script"),
     ]
 
     @pytest.mark.parametrize("input,output", data)
