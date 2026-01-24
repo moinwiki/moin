@@ -199,57 +199,57 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     # HTML elements without equivalent Moin DOM tree elements
-    # are represented via a "html-{tagname}" `class` attribute:
+    # are represented by the "html-tag" attribute:
     data = [
         (
             "<html><p><abbr>e.g.</abbr></p></html>",
-            # <page><body><span html:class="html-abbr">e.g.</span></body></page>
-            '/page/body/p/span[text()="e.g."][@html:class="html-abbr"]',
+            # <page><body><span html-tag="abbr">e.g.</span></body></page>
+            '/page/body/p/span[text()="e.g."][@html-tag="abbr"]',
         ),
         (  # in HTML5, <acronym> is deprecated in favour of <abbr>
             "<html><p><acronym>AC/DC</acronym></p></html>",
-            # <page><body><span html:class="html-abbr">AC/DC</span></body></page>
-            '/page/body/p/span[text()="AC/DC"][@html:class="html-abbr"]',
+            # <page><body><span html-tag="abbr">AC/DC</span></body></page>
+            '/page/body/p/span[text()="AC/DC"][@html-tag="abbr"]',
         ),
         (  # address is a block-level element, use <div ...>
             "<html><address>webmaster@example.org</address></html>",
-            # <page><body><div html:class="html-address">webmaster@example.org</div></body></page>
-            '/page/body/div[text()="webmaster@example.org"][@html:class="html-address"]',
+            # <page><body><div html-tag="address">webmaster@example.org</div></body></page>
+            '/page/body/div[text()="webmaster@example.org"][@html-tag="address"]',
         ),
         (
             "<html><p><cite>Hamlet</cite></p></html>",
-            # <page><body><emphasis html:class="html-cite">Hamlet</emphasis></body></page>
-            '/page/body/p/emphasis[text()="Hamlet"][@html:class="html-cite"]',
+            # <page><body><emphasis html-tag="cite">Hamlet</emphasis></body></page>
+            '/page/body/p/emphasis[text()="Hamlet"][@html-tag="cite"]',
         ),
         (
             "<html><p><dfn>term</dfn></p></html>",
-            # <page><body><emphasis html:class="html-dfn">term</emphasis></body></page>
-            '/page/body/p/emphasis[text()="term"][@html:class="html-dfn"]',
+            # <page><body><emphasis html-tag="dfn">term</emphasis></body></page>
+            '/page/body/p/emphasis[text()="term"][@html-tag="dfn"]',
         ),
         (
             "<html><p><i>alternate voice</i></p></html>",
-            # <page><body><p><emphasis html:class="html-i">alternate voice</emphasis></body></page>
-            '/page/body/p/emphasis[text()="alternate voice"][@html:class="html-i"]',
+            # <page><body><p><emphasis html-tag="i">alternate voice</emphasis></body></page>
+            '/page/body/p/emphasis[text()="alternate voice"][@html-tag="i"]',
         ),
         (
             "<html><p><kbd>Ctrl-X</kbd></p></html>",
-            # <page><body><span html:class="html-kbd">Ctrl-X</span></body></page>
-            '/page/body/p/span[text()="Ctrl-X"][@html:class="html-kbd"]',
+            # <page><body><span html-tag="kbd">Ctrl-X</span></body></page>
+            '/page/body/p/span[text()="Ctrl-X"][@html-tag="kbd"]',
         ),
         (
             "<html><p><mark>highlight</mark></p></html>",
-            # <page><body><u html:class="html-mark">highlight</u></body></page>
-            '/page/body/p/u[text()="highlight"][@html:class="html-mark"]',
+            # <page><body><u html-tag="mark">highlight</u></body></page>
+            '/page/body/p/u[text()="highlight"][@html-tag="mark"]',
         ),
         (
             "<html><p><small>fine print</small></p></html>",
-            # <page><body><p><span html:class="html-small">fine print</span></p></body></page>
-            '/page/body/p/span[text()="fine print"][@html:class="html-small"]',
+            # <page><body><p><span html-tag="small">fine print</span></p></body></page>
+            '/page/body/p/span[text()="fine print"][@html-tag="small"]',
         ),
         (
             "<html><p><var>n</var></p></html>",
-            # <page><body><emphasis html:class="html-var">n</emphasis></body></page>
-            '/page/body/p/emphasis[text()="n"][@html:class="html-var"]',
+            # <page><body><emphasis html-tag="var">n</emphasis></body></page>
+            '/page/body/p/emphasis[text()="n"][@html-tag="var"]',
         ),
     ]
 

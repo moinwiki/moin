@@ -93,10 +93,11 @@ class HtmlTags:
     }
 
     # HTML tags that do not have equivalents in the Moinpage DOM tree
-    # we use a more generic element and store the original tag as class value
-    # e.g. <cite> → <emphasis class="html-cite}">
+    # we use a more generic element and store the original tag
+    # e.g. <cite> → <emphasis html-tag="cite}">
     indirect_tags: Final = {
         "abbr": moin_page.span,  # abbreviation
+        "address": moin_page.div,  # contact info
         "cite": moin_page.emphasis,  # title of a creative work
         "dfn": moin_page.emphasis,  # defining instance of a term
         "i": moin_page.emphasis,  # alternate voice
@@ -267,7 +268,7 @@ class Converter(HtmlTags):
         """
         tagname = element.tag.name
         element_type = self.indirect_tags[tagname]
-        attrib = {html("class"): f"html-{tagname}"}
+        attrib = {moin_page("html-tag"): tagname}
         return self.new_copy(element_type, element, attrib)
 
     def convert_attributes(self, element):
@@ -373,12 +374,8 @@ class Converter(HtmlTags):
 
     def visit_xhtml_acronym(self, element):
         # in HTML5, <acronym> is deprecated in favour of <abbr>
-        attrib = {html.class_: "html-abbr"}
+        attrib = {moin_page("html-tag"): "abbr"}
         return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_address(self, element):
-        attrib = {html.class_: "html-address"}
-        return self.new_copy(moin_page.div, element, attrib)
 
     def visit_xhtml_big(self, element):
         """

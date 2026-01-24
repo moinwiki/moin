@@ -19,7 +19,6 @@ import urllib.error
 
 from emeraldtree import ElementTree as ET
 
-from moin.converters import html_out
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
@@ -155,16 +154,6 @@ class Converter:
             return Markdown.attribute_open + " ".join(attr_list) + Markdown.attribute_close
         return ""
 
-    def tag_from_cls(self, elem):
-        classes = elem.attrib.get(html.class_, "").split()
-        for cls in classes:
-            if not cls.startswith("html-"):
-                continue
-            tagname = cls.removeprefix("html-")
-            if tagname in html_out.Converter.indirect_tags:
-                return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
-        return ""
-
     def open_moinpage(self, elem):
         n = "open_moinpage_" + elem.tag.name.replace("-", "_")
         f = getattr(self, n, None)
@@ -266,7 +255,10 @@ class Converter:
 
     def open_moinpage_emphasis(self, elem):
         childrens_output = self.open_children(elem)
-        return self.tag_from_cls(elem) or f"{Markdown.emphasis}{childrens_output}{Markdown.emphasis}"
+        tagname = elem.attrib.get(moin_page("html-tag"))
+        if tagname:
+            return f"<{tagname}>{childrens_output}</{tagname}>"
+        return f"{Markdown.emphasis}{childrens_output}{Markdown.emphasis}"
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -451,6 +443,9 @@ class Converter:
         return "\n----\n"
 
     def open_moinpage_span(self, elem):
+        tagname = elem.attrib.get(moin_page("html-tag"))
+        if tagname:
+            return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
         font_size = elem.get(moin_page.font_size, "")
         if font_size:
             return "{}{}{}".format(
@@ -458,7 +453,7 @@ class Converter:
                 self.open_children(elem),
                 Markdown.larger_close if font_size == "120%" else Markdown.smaller_close,
             )
-        return self.tag_from_cls(elem) or "".join(self.open_children(elem))
+        return self.open_children(elem)
 
     def open_moinpage_del(self, elem):  # editorial removements
         return f"<del>{self.open_children(elem)}</del>"
@@ -470,7 +465,8 @@ class Converter:
         return f"<ins>{self.open_children(elem)}</ins>"
 
     def open_moinpage_u(self, elem):  # annotated text
-        return self.tag_from_cls(elem) or f"<u>{self.open_children(elem)}</u>"
+        tagname = elem.attrib.get(moin_page("html-tag")) or "u"
+        return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
 
     def open_moinpage_strong(self, elem):
         return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"

@@ -78,8 +78,12 @@ class TestConverter(Base):
             '/div/p[em="Test"]',
         ),
         (
-            '<page:page><page:body><page:p><page:emphasis html:class="html-i">alternate voice</page:emphasis></page:p></page:body></page:page>',
+            '<page:page><page:body><page:p><page:emphasis page:html-tag="i">alternate voice</page:emphasis></page:p></page:body></page:page>',
             '/div/p[i="alternate voice"]',
+        ),
+        (
+            '<page:page><page:body><page:p><page:u page:html-tag="mark">hi</page:u></page:p></page:body></page:page>',
+            '/div/p[mark="hi"]',
         ),
         (
             "<page:page><page:body><page:p><page:strong>Test</page:strong></page:p></page:body></page:page>",
