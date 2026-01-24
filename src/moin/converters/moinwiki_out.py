@@ -563,17 +563,15 @@ class Converter:
         # moin syntax does not support style attributes within span tags.
         # Colored text or backgrounds supported by html, markdown extensions, etc
         # are ignored and not converted.
-        font_size = elem.get(moin_page.font_size, "")
+        html_class = elem.get(html.class_, "")
         class_ = elem.get(moin_page.class_, "")
         if class_ == "comment":
             return f"/* {self.open_children(elem)} */"
-        if font_size:
-            return "{}{}{}".format(
-                Moinwiki.larger_open if font_size == "120%" else Moinwiki.smaller_open,
-                self.open_children(elem),
-                Moinwiki.larger_close if font_size == "120%" else Moinwiki.smaller_close,
-            )
-        return "".join(self.open_children(elem))
+        if "moin-big" in html_class:
+            return f"{Moinwiki.larger_open}{self.open_children(elem)}{Moinwiki.larger_close}"
+        if "moin-small" in html_class:
+            return f"{Moinwiki.smaller_open}{self.open_children(elem)}{Moinwiki.smaller_close}"
+        return self.open_children(elem)
 
     def open_moinpage_del(self, elem):  # stroke or strike-through
         return Moinwiki.stroke_open + self.open_children(elem) + Moinwiki.stroke_close
@@ -590,11 +588,11 @@ class Converter:
     def open_moinpage_strong(self, elem):
         return f"{Moinwiki.strong}{self.open_children(elem)}{Moinwiki.strong}"
 
-    def open_moinpage_sub(self, elem):
-        return f",,{''.join(elem.itertext())},,"
+    def open_moinpage_sub(self, elem):  # subscript
+        return f",,{''.join(elem.itertext())},,"  # nested markup not supported
 
-    def open_moinpage_sup(self, elem):
-        return f"^{''.join(elem.itertext())}^"
+    def open_moinpage_sup(self, elem):  # superscript
+        return f"^{''.join(elem.itertext())}^"  # nested markup not supported
 
     def open_moinpage_table(self, elem):
         self.table_tableclass = elem.attrib.get(moin_page.class_, "")

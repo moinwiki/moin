@@ -146,12 +146,12 @@ class TestConverter:
         ("__underline__", "<page><body><p><ins>underline</ins></p></body></page>"),
         (",,sub,,script", "<page><body><p><sub>sub</sub>script</p></body></page>"),
         ("^super^script", "<page><body><p><sup>super</sup>script</p></body></page>"),
-        ("~-smaller-~", '<page><body><p><span font-size="85%">smaller</span></p></body></page>'),
-        ("~+larger+~", '<page><body><p><span font-size="120%">larger</span></p></body></page>'),
+        ("~-smaller-~", '<page><body><p><span xhtml:class="moin-small">smaller</span></p></body></page>'),
+        ("~+larger+~", '<page><body><p><span xhtml:class="moin-big">larger</span></p></body></page>'),
         ("--(strike through)--", "<page><body><p><del>strike through</del></p></body></page>"),
         (
             "normal ~+big __underline__ big+~ normal",
-            '<page><body><p>normal <span font-size="120%">big <ins>underline</ins> big</span> normal</p></body></page>',
+            '<page><body><p>normal <span xhtml:class="moin-big">big <ins>underline</ins> big</span> normal</p></body></page>',
         ),
         (
             "/* normal __underline__ normal */",

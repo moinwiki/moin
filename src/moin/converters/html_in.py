@@ -380,11 +380,9 @@ class Converter(HtmlTags):
 
     def visit_xhtml_big(self, element):
         """
-        <big>Text</big> --> <span font-size=120%>Text</span>
+        <big>Text</big> --> <span html:class="moin-big">Text</span>
         """
-        key = moin_page("font-size")
-        attrib = {}
-        attrib[key] = "120%"
+        attrib = {html.class_: "moin-big"}
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_xhtml_hr(self, element, min_class="moin-hr1", max_class="moin-hr6", default_class="moin-hr3"):

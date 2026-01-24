@@ -71,7 +71,7 @@ class TestConverter:
 
     data = [
         ("line<br />break", "<div><p>line<line-break />break</p></div>"),
-        ("<big>larger</big>", '<div><p><span font-size="120%">larger</span></p></div>'),
+        ("<big>larger</big>", '<div><p><span html:class="moin-big">larger</span></p></div>'),
         ('<span class="moin-small">smaller</span>', '<div><p><span html:class="moin-small">smaller</span></p></div>'),
         ("<sub>sub</sub>script", "<div><p><sub>sub</sub>script</p></div>"),
         ("<sup>super</sup>script", "<div><p><sup>super</sup>script</p></div>"),

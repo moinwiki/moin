@@ -498,11 +498,14 @@ class Converter:
 
     def visit_moinpage_span(self, element):
         """
-        The span element is used in the DOM Tree to define some specific formatting.
-        So each attribute will give different resulting tag.
+        Handle generic inline container.
+
+        Besides carrying ID or class info, the span element is used in the
+        "Moinpage" tree to define specific element (sub)types or formatting.
+        So it may stand for different inline elements (cf. html_in/html_out).
         """
-        # TODO: Add support for font-size attribute
-        # TODO: Add support for special html:class attribute values
+        # TODO: Add support for the "html-tag" attribute.
+        #       Add support for special "html:class" attribute values.
         return self.new_copy(docbook.phrase, element, attrib={})
 
     def visit_moinpage_strong(self, element):

@@ -55,8 +55,8 @@ class TestConverter(Base):
         ("<page:code>monospace</page:code>", "`monospace`"),
         ("<page:del>stroke</page:del>", "--(stroke)--"),
         ("<page:ins>underline</page:ins>", "__underline__"),
-        ('<page:span page:font-size="120%">larger</page:span>', "~+larger+~"),
-        ('<page:span page:font-size="85%">smaller</page:span>', "~-smaller-~"),
+        ('<page:span html:class="moin-big">larger</page:span>', "~+larger+~"),
+        ('<page:span html:class="moin-small">smaller</page:span>', "~-smaller-~"),
         ("<page:tag><page:sup>super</page:sup>script</page:tag>", "^super^script"),
         ("<page:tag><page:sub>sub</page:sub>script</page:tag>", ",,sub,,script"),
     ]

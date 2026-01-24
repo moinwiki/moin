@@ -179,11 +179,11 @@ class TestConverter(Base):
         ("<page><body><p><s>stroke</s></p></body></page>", '/div/p/s [text()="stroke"]'),
         ("<page><body><p><del>stroke</del></p></body></page>", '/div/p/del [text()="stroke"]'),
         (
-            '<page><body><p><span font-size="85%">small</span></p></body></page>',
+            '<page><body><p><span class="moin-small">small</span></p></body></page>',
             '/div/p/span[@class="moin-small"][text()="small"]',
         ),
         (
-            '<page><body><p><span font-size="120%">big</span></p></body></page>',
+            '<page><body><p><span class="moin-big">big</span></p></body></page>',
             '/div/p/span[@class="moin-big"][text()="big"]',
         ),
     ]

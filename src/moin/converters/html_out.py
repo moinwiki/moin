@@ -583,23 +583,6 @@ class Converter:
         return self.new_copy(html.hr, elem)
 
     def visit_moinpage_span(self, elem):
-        # TODO : Fix bug if a span has multiple attributes
-        # Check for the attributes of span
-        attrib = Attributes(elem)
-        generate = attrib.get("font-size")
-        if generate:
-            if generate == "85%":
-                attribute = {}
-                key = html("class")
-                attribute[key] = "moin-small"
-                return self.new_copy(html.span, elem, attribute)
-            elif generate == "120%":
-                attribute = {}
-                key = html("class")
-                attribute[key] = "moin-big"
-                return self.new_copy(html.span, elem, attribute)
-        # Try if there is a class indicating a special inline HTML element,
-        # else just return a <span>
         return self.new_copy(html.span, elem)
 
     def visit_moinpage_s(self, elem):

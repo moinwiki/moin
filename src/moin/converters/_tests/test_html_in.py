@@ -163,9 +163,9 @@ class TestConverter(Base):
             '/page/body/p/u[text()="underline"]',
         ),
         (
-            "<html><p><big>Test</big></p></html>",
-            # <page><body><p><span font-size="120%">Test</span></p></body></page>
-            '/page/body/p/span[text()="Test"][@font-size="120%"]',
+            "<html><p><big>bigger</big></p></html>",
+            # <page><body><p><span html:class="moin-big">bigger</span></p></body></page>
+            '/page/body/p/span[text()="bigger"][@html:class="moin-big"]',
         ),
         (
             '<html><p><span class="moin-small">smaller</span></p></html>',
