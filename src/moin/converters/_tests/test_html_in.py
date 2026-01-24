@@ -211,10 +211,15 @@ class TestConverter(Base):
             # <page><body><span html-tag="abbr">AC/DC</span></body></page>
             '/page/body/p/span[text()="AC/DC"][@html-tag="abbr"]',
         ),
-        (  # address is a block-level element, use <div ...>
+        (  # <address> is a block-level element
             "<html><address>webmaster@example.org</address></html>",
             # <page><body><div html-tag="address">webmaster@example.org</div></body></page>
             '/page/body/div[text()="webmaster@example.org"][@html-tag="address"]',
+        ),
+        (  # <aside> is a block-level element
+            "<html><aside><p>tangentially related</p></aside></html>",
+            # <page><body><div html-tag="aside"><p>tangentially related</p></div></body></page>
+            '/page/body/div[@html-tag="aside"]/p[text()="tangentially related"]',
         ),
         (
             "<html><p><cite>Hamlet</cite></p></html>",

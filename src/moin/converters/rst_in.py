@@ -783,7 +783,8 @@ class NodeVisitor:
 
     def visit_sidebar(self, node):
         # analogous to the DocBook <sidebar> and HTML <aside> element
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "html-aside rst-sidebar"}), node)
+        attrib = {moin_page("html-tag"): "aside", html.class_: "rst-sidebar"}
+        self.open_moin_page_node(moin_page.div(attrib=attrib), node)
 
     def depart_sidebar(self, node):
         self.close_moin_page_node()
@@ -916,7 +917,7 @@ class NodeVisitor:
     def visit_topic(self, node):
         # content outside the flow of the main content of the document
         # analogous to the HTML <aside> element
-        attrib = {html.class_: "html-aside"}
+        attrib = {moin_page("html-tag"): "aside"}
         self.open_moin_page_node(moin_page.div(attrib=attrib), node)
 
     def depart_topic(self, node):

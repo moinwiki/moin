@@ -432,13 +432,14 @@ li > p { margin-top: 0; margin-bottom: 0; }
 .moin-rst-attribution { font-style: italic; }
 .moin-rst-attribution:before { content: "—"; }
 
-/* reST line-blocks */
+/* rST line-blocks */
 .moin-line-block > .moin-line-block { margin-left: 2em; }
 .moin-line-blk:empty { min-height: 1em; }
 
-/* reST topic and sidebar */
-div.html-aside { margin-left: 2em; } /* content outside of the document's main text */
-.html-aside.rst-sidebar { color: var(--primary); border: var(--border-style);
+/* rST topic and rST/DocBook sidebar */
+aside { margin-left: 2em; } /* content outside of the document's main text */
+aside.rst-sidebar, div.db-sidebar {
+    color: var(--primary); border: var(--border-style);
     margin: 10px 30px 10px 30px; padding: 8px; }
 
 /* horizontal rules */
