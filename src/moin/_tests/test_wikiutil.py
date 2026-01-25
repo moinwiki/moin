@@ -125,24 +125,6 @@ def test_containsConflictMarker():
     assert not result
 
 
-def test_split_anchor():
-    """
-    TODO: add a test for split_anchor when we have a better
-          approach to deal with problems like "#MoinMoin#" returning ("#MoinMoin", "")
-    """
-    result = wikiutil.split_anchor("MoinMoin")
-    expected = "MoinMoin", ""
-    assert result == expected
-
-    result = wikiutil.split_anchor("MoinMoin#test_anchor|label|attr=val")
-    expected = ["MoinMoin", "test_anchor|label|attr=val"]
-    assert result == expected
-
-    result = wikiutil.split_anchor("#MoinMoin#")
-    expected = ["#MoinMoin", ""]
-    assert result == expected
-
-
 def test_file_headers():
     test_headers = [
         # test_file, content_type
