@@ -21,7 +21,7 @@ from flask import current_app as app
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
 from moin.constants.contenttypes import CHARSET
-from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP
+from moin.constants.misc import URI_SCHEMES
 from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
 from moin.utils.mimetype import MimeType
@@ -41,33 +41,6 @@ PARENT_PREFIX = "../"
 PARENT_PREFIX_LEN = len(PARENT_PREFIX)
 CHILD_PREFIX = "/"
 CHILD_PREFIX_LEN = len(CHILD_PREFIX)
-
-
-#############################################################################
-# Data validation / cleanup
-#############################################################################
-
-
-# TODO: use similar code in a flatland validator
-def clean_input(text, max_len=201):
-    """Clean input:
-    replace CR, LF, TAB by whitespace
-    delete control chars
-
-    :param text: Unicode text to clean (if we get str, we decode it)
-    :rtype: Unicode
-    :returns: cleaned text
-    """
-    # we only have input fields with max 200 chars, but spammers send us more
-    length = len(text)
-    if length == 0 or length > max_len:
-        return ""
-    else:
-        if isinstance(text, bytes):
-            # the translate() below can ONLY process unicode, thus, if we get
-            # bytes, we try to decode it using the usual coding:
-            text = text.decode(CHARSET)
-        return text.translate(CLEAN_INPUT_TRANSLATION_MAP)
 
 
 #############################################################################

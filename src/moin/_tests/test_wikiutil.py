@@ -16,18 +16,6 @@ from moin.wikiutil import WikiLinkAnalyzer, WikiLinkInfo
 from typing import cast
 
 
-class TestCleanInput:
-    def test_clean_input(self):
-        tests = [
-            ("", ""),  # empty
-            ("aaa\r\n\tbbb", "aaa   bbb"),  # ws chars -> blanks
-            ("aaa\x00\x01bbb", "aaabbb"),  # strip weird chars
-            ("a" * 500, ""),  # too long
-        ]
-        for instr, outstr in tests:
-            assert wikiutil.clean_input(instr) == outstr
-
-
 class TestAnchorNames:
     @pytest.mark.parametrize(
         "text,expected",
