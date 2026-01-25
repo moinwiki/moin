@@ -20,7 +20,6 @@ import urllib
 from flask import current_app as app
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
-from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
@@ -250,23 +249,6 @@ def anchor_name_from_text(text):
     if not res[:1].isalpha():
         return f"A{res}"
     return res
-
-
-def get_hostname(addr):
-    """
-    Looks up the DNS hostname for some IP address.
-
-    :param addr: IP address to look up (str)
-    :returns: host dns name (unicode) or
-              None (if lookup is disallowed or failed)
-    """
-    if app.cfg.log_reverse_dns_lookups:
-        import socket
-
-        try:
-            return str(socket.gethostbyaddr(addr)[0], CHARSET)
-        except (OSError, UnicodeError):
-            pass
 
 
 def file_headers(filename=None, content_type=None, content_length=None):
