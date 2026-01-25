@@ -869,13 +869,20 @@ $(document).ready(function () {
         location.hash = '';
     });
 
+    // CKEditor
+    const editor_elem = document.querySelector(".ckeditor");
+    if (editor_elem) {
+        createEditor(editor_elem)
+    }
+
     // add function to be executed when user clicks Load Draft button on +modify page
     $('.moin-load-draft').on('click', function () {
-        try { CKEDITOR.prop;
-            CKEDITOR.instances.f_content_form_data_text.setData($('#moin-draft-data').val());
+        const draft_data = $('#moin-draft-data').val()
+        try {
+            window.ckeditor.setData(draft_data);
         }
         catch {
-            $('.moin-edit-content').val($('#moin-draft-data').val());
+            $('.moin-edit-content').val(draft_data);
         }
         $('#moin-modify').addClass('moin-changed-input');
         $('.moin-load-draft').hide();
