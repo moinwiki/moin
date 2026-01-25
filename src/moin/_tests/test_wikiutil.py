@@ -81,17 +81,6 @@ def test_ParentItemName():
     assert result == expected
 
 
-def test_drawing2fname():
-    # with extension not in DRAWING_EXTENSIONS
-    result = wikiutil.drawing2fname("Moin_drawing.txt")
-    expected = "Moin_drawing.txt.svgdraw"
-    assert result == expected
-    # with extension in DRAWING_EXTENSIONS
-    result = wikiutil.drawing2fname("Moindir.Moin_drawing.jpg")
-    expected = "Moindir.Moin_drawing.jpg"
-    assert result == expected
-
-
 def test_getUnicodeIndexGroup():
     result = wikiutil.getUnicodeIndexGroup(["moin-2", "MoinMoin"])
     expected = "MOIN-2"

@@ -21,7 +21,6 @@ from flask import current_app as app
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
 from moin.constants.misc import URI_SCHEMES
-from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
 from moin.utils.mimetype import MimeType
 
@@ -187,15 +186,6 @@ class WikiLinkAnalyzer:
 #############################################################################
 # Misc
 #############################################################################
-
-
-def drawing2fname(drawing):
-    _, ext = os.path.splitext(drawing)
-    # note: do not just check for empty extension or stuff like drawing:foo.bar
-    # will fail, instead of being expanded to foo.bar.svgdraw
-    if ext not in DRAWING_EXTENSIONS:
-        drawing += ".svgdraw"
-    return drawing
 
 
 def getUnicodeIndexGroup(name):
