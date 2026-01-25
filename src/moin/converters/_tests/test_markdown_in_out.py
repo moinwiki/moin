@@ -78,6 +78,7 @@ class TestConverter:
         ("<q>cogito ergo sum</q>", "<q>cogito ergo sum</q>"),
         ("<big>larger</big>\n", "<big>larger</big>\n"),
         ("<small>fine print</small>\n", "<small>fine print</small>\n"),
+        ('<span class="red" id="dwarf">star</span>', '<span class="red" id="dwarf">star</span>'),
         ("<sup>super</sup>script\n", "<sup>super</sup>script\n"),
         ("<sub>sub</sub>script\n", "<sub>sub</sub>script\n"),
         ("<var>n</var> times\n", "<var>n</var> times\n"),
@@ -113,7 +114,7 @@ class TestConverter:
         ),
         # TODO: wrong output, creates indented blockcode, loses fenced code language
         (
-            '~~~ {python}\ndef hello():\n    print "Hello World!"\n~~~\n',
+            '~~~ python\ndef hello():\n    print "Hello World!"\n~~~\n',
             '    def hello():\n        print "Hello World!"\n',
         ),
         ("~~~\nddd\neee\nfff\n~~~\n", "    ddd\n    eee\n    fff\n"),
