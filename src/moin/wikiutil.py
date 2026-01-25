@@ -21,7 +21,7 @@ from flask import current_app as app
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
 from moin.constants.contenttypes import CHARSET
-from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
+from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP
 from moin.constants.contenttypes import DRAWING_EXTENSIONS
 
 from moin.utils.mimetype import MimeType
@@ -68,48 +68,6 @@ def clean_input(text, max_len=201):
             # bytes, we try to decode it using the usual coding:
             text = text.decode(CHARSET)
         return text.translate(CLEAN_INPUT_TRANSLATION_MAP)
-
-
-# TODO: use similar code in a flatland validator
-def normalize_pagename(name, cfg):
-    """Normalize page name
-
-    Prevent creating page names with invisible characters or funny
-    whitespace that might confuse the users or abuse the wiki, or
-    just does not make sense.
-
-    Restrict group pages further, so they can be used inside ACL lines.
-
-    :param name: page name, Unicode
-    :rtype: Unicode
-    :returns: decoded and sanitized page name
-    """
-    # Strip invalid characters
-    name = ITEM_INVALID_CHARS_REGEX.sub("", name)
-
-    # Split to pages and normalize each one
-    pages = name.split("/")
-    normalized = []
-    for page in pages:
-        # Ignore empty or whitespace only pages
-        if not page or page.isspace():
-            continue
-
-        # Clean up group pages.
-        # Strip non-alphanumeric characters, keep whitespace
-        if isGroupItem(page):
-            page = "".join([c for c in page if c.isalnum() or c.isspace()])
-
-        # Normalize whitespace. Each name can contain multiple
-        # words separated by a single space. split() handles all
-        # 30 Unicode spaces (isspace() == True)
-        page = " ".join(page.split())
-
-        normalized.append(page)
-
-    # Assemble components into full page name
-    name = "/".join(normalized)
-    return name
 
 
 #############################################################################

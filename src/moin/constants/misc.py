@@ -8,25 +8,7 @@ MoinMoin - Miscellaneous constants not fitting elsewhere.
 
 from __future__ import annotations
 
-import re
-
 ANON = "anonymous"
-
-# Invalid characters - invisible characters that should not be in page
-# names. Prevent user confusion and wiki abuse, e.g '\u202aFrontPage'.
-ITEM_INVALID_CHARS_REGEX = re.compile(
-    r"""
-    \u0000 | # NULL
-
-    # Bidi control characters
-    \u202A | # LRE
-    \u202B | # RLE
-    \u202C | # PDF
-    \u202D | # LRO
-    \u202E   # RLO
-    """,
-    re.UNICODE | re.VERBOSE,
-)
 
 CLEAN_INPUT_TRANSLATION_MAP: dict[int, str | None] = {
     # These characters will be replaced by blanks

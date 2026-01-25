@@ -11,7 +11,6 @@ from __future__ import annotations
 import pytest
 
 from flask import current_app as app
-from moin.constants.chartypes import CHARS_SPACES
 from moin import wikiutil
 from moin.wikiutil import WikiLinkAnalyzer, WikiLinkInfo
 from typing import cast
@@ -81,86 +80,6 @@ class TestRelativeTools:
     @pytest.mark.parametrize("current_page,relative_page,absolute_page", tests)
     def test_rel_pagename(self, current_page, relative_page, absolute_page):
         assert relative_page == wikiutil.RelItemName(current_page, absolute_page)
-
-
-@pytest.mark.usefixtures("_app_ctx")
-class TestNormalizePagename:
-
-    def test_page_invalid_chars(self):
-        """Request: normalize pagename: remove invalid Unicode chars.
-
-        Assume the default setting.
-        """
-        test = "\u0000\u202a\u202b\u202c\u202d\u202e"
-        expected = ""
-        result = wikiutil.normalize_pagename(test, app.cfg)
-        assert result == expected
-
-    def test_normalize_slashes(self):
-        """Request: normalize pagename: normalize slashes."""
-        cases = (
-            ("/////", ""),
-            ("/a", "a"),
-            ("a/", "a"),
-            ("a/////b/////c", "a/b/c"),
-            ("a b/////c d/////e f", "a b/c d/e f"),
-        )
-        for test, expected in cases:
-            result = wikiutil.normalize_pagename(test, app.cfg)
-            assert result == expected
-
-    def test_normalize_whitespace(self):
-        """Request: normalize pagename: normalize whitespace."""
-        cases = (
-            ("         ", ""),
-            ("    a", "a"),
-            ("a    ", "a"),
-            ("a     b     c", "a b c"),
-            ("a   b  /  c    d  /  e   f", "a b/c d/e f"),
-            # All 30 unicode spaces
-            (CHARS_SPACES, ""),
-        )
-        for test, expected in cases:
-            result = wikiutil.normalize_pagename(test, app.cfg)
-            assert result == expected
-
-    def test_underscore_test_case(self):
-        """Request: normalize pagename: convert underscores to spaces and normalize whitespace.
-
-        Underscores should convert to spaces, then spaces should be
-        normalized; order is important!
-        """
-        cases = (
-            ("         ", ""),
-            ("  a", "a"),
-            ("a  ", "a"),
-            ("a  b  c", "a b c"),
-            ("a  b  /  c  d  /  e  f", "a b/c d/e f"),
-        )
-        for test, expected in cases:
-            result = wikiutil.normalize_pagename(test, app.cfg)
-            assert result == expected
-
-
-@pytest.mark.usefixtures("_app_ctx")
-class TestGroupItems:
-
-    def test_normalize_group_name(self):
-        """Request: normalize itemname: restrict groups to alphanumeric Unicode.
-
-        Spaces should be normalized after invalid chars are removed!
-        """
-        cases = (
-            # current ACL chars
-            ("Name,:Group", "NameGroup"),
-            # remove then normalize spaces
-            ("Name ! @ # $ % ^ & * ( ) + Group", "Name Group"),
-        )
-        for test, expected in cases:
-            # validate we are testing valid group names
-            if wikiutil.isGroupItem(test):
-                result = wikiutil.normalize_pagename(test, app.cfg)
-                assert result == expected
 
 
 def test_ParentItemName():
