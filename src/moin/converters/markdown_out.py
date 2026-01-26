@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
+import re
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -149,27 +150,26 @@ class Converter:
         """
         attr_list = []
         for key, val in elem.attrib.items():
-            if key.name not in ("data-lineno", "outline-level", "href", "item-label-generate", "baseline-shift"):
+            if key.name not in ("data-lineno", "outline-level", "href", "item-label-generate"):
                 attr_list.append(f'{key.name}="{val}"')
         if attr_list:
             return Markdown.attribute_open + " ".join(attr_list) + Markdown.attribute_close
         return ""
 
-    def tag_from_cls(self, elem):
-        classes = elem.attrib.get(html.class_, "").split()
-        for cls in classes:
-            if not cls.startswith("html-"):
-                continue
-            tagname = cls.removeprefix("html-")
-            if tagname in html_out.Converter.indirect_tags:
-                return f"<{tagname}>{self.open_children(elem)}</{tagname}>"
-        return ""
+    def html_inline_element(self, tagname, elem):
+        STRIP_NS_RE = re.compile(r"\{[^}]*\}")
+        attrs = html_out.Attributes(elem).convert()
+        starttag = [tagname]
+        starttag += [f'{k}="{v}"' for (k, v) in attrs.items()]
+        starttag = " ".join(starttag)
+        starttag = STRIP_NS_RE.sub("", starttag)
+        return f"<{starttag}>{self.open_children(elem)}</{tagname}>"
 
     def open_moinpage(self, elem):
         n = "open_moinpage_" + elem.tag.name.replace("-", "_")
-        f = getattr(self, n, None)
-        if f:
-            ret = f(elem)
+        visitor = getattr(self, n, None)
+        if visitor:
+            ret = visitor(elem)
             if elem.tag.name not in (
                 "separator",
                 "blockcode",
@@ -261,12 +261,19 @@ class Converter:
             text = elem[0][1].split("\n")
             return "\n" + "\n".join(["    " + x for x in text]) + "\n"
 
+        # TODO: write HTML block for "indirect" HTML tags
+        # tagname = elem.attrib.get(moin_page("html-tag"))
+        # if tagname:
+        #     return f"{self.html_block_element(tagname, elem)}"
+
         childrens_output = self.open_children(elem)
         return "\n\n" + childrens_output + "\n\n"
 
     def open_moinpage_emphasis(self, elem):
-        childrens_output = self.open_children(elem)
-        return self.tag_from_cls(elem) or f"{Markdown.emphasis}{childrens_output}{Markdown.emphasis}"
+        tagname = elem.attrib.get(moin_page("html-tag"))
+        if tagname:
+            return self.html_inline_element(tagname, elem)
+        return f"{Markdown.emphasis}{self.open_children(elem)}{Markdown.emphasis}"
 
     def open_moinpage_h(self, elem):
         level = elem.get(moin_page.outline_level, 1)
@@ -438,7 +445,7 @@ class Converter:
 
     def open_moinpage_quote(self, elem):
         # inline quote
-        return f"<q>{self.open_children(elem)}</q>"
+        return self.html_inline_element("q", elem)
 
     def open_moinpage_samp(self, elem):
         # text {{{more text}}} end
@@ -451,34 +458,42 @@ class Converter:
         return "\n----\n"
 
     def open_moinpage_span(self, elem):
+        tagname = elem.attrib.get(moin_page("html-tag"))
+        if tagname:
+            return self.html_inline_element(tagname, elem)
         font_size = elem.get(moin_page.font_size, "")
-        baseline_shift = elem.get(moin_page.baseline_shift, "")
         if font_size:
             return "{}{}{}".format(
                 Markdown.larger_open if font_size == "120%" else Markdown.smaller_open,
                 self.open_children(elem),
                 Markdown.larger_close if font_size == "120%" else Markdown.smaller_close,
             )
-        if baseline_shift == "super":
-            return "<sup>{}</sup>".format("".join(elem.itertext()))
-        if baseline_shift == "sub":
-            return "<sub>{}</sub>".format("".join(elem.itertext()))
-        return self.tag_from_cls(elem) or "".join(self.open_children(elem))
+        if html_out.Attributes(elem).convert():
+            # use <span> to represent attributes
+            return self.html_inline_element("span", elem)
+        return self.open_children(elem)
 
     def open_moinpage_del(self, elem):  # editorial removements
-        return f"<del>{self.open_children(elem)}</del>"
+        return self.html_inline_element("del", elem)
 
     def open_moinpage_s(self, elem):  # inaccurate or obsolete text
-        return f"<s>{self.open_children(elem)}</s>"
+        return self.html_inline_element("s", elem)
 
     def open_moinpage_ins(self, elem):  # editorial insertions
-        return f"<ins>{self.open_children(elem)}</ins>"
+        return self.html_inline_element("ins", elem)
 
     def open_moinpage_u(self, elem):  # annotated text
-        return self.tag_from_cls(elem) or f"<u>{self.open_children(elem)}</u>"
+        tagname = elem.attrib.get(moin_page("html-tag")) or "u"
+        return self.html_inline_element(tagname, elem)
 
     def open_moinpage_strong(self, elem):
         return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"
+
+    def open_moinpage_sub(self, elem):
+        return self.html_inline_element("sub", elem)
+
+    def open_moinpage_sup(self, elem):
+        return self.html_inline_element("sup", elem)
 
     def open_moinpage_table(self, elem):
         self.status.append("table")

@@ -491,17 +491,17 @@ class TestConverter(Base):
             # <page><body><div html:class="db-article"><p>text<emphasis>strong</emphasis></p></div></body></page>
             '/page/body/div/p[text()="text"]/emphasis[text()="strong"]',
         ),
-        # SUBSCRIPT --> SPAN baseline-shift = 'sub'
+        # SUBSCRIPT --> SUB
         (
             "<article><para><subscript>sub</subscript>script</para></article>",
-            # <page><body><div html:class="article"><p>script<span baseline-shift="sub">sub</span></p></div></body></page>
-            '/page/body/div/p[text()="script"]/span[@baseline-shift="sub"][text()="sub"]',
+            # <page><body><div html:class="article"><p><sub>sub</sub>script</p></div></body></page>
+            '/page/body/div/p[text()="script"]/sub["sub"]',
         ),
-        # SUPERSCRIPT --> SPAN baseline-shift = 'super'
+        # SUPERSCRIPT --> SUP
         (
             "<article><para><superscript>super</superscript>script</para></article>",
-            # <page><body><div html:class="article"><p>script<span baseline-shift="super">super</span></p></div></body></page>
-            '/page/body/div/p[text()="script"]/span[@baseline-shift="super"][text()="super"]',
+            # <page><body><div html:class="article"><p><sup>super</sup>script</p></div></body></page>
+            '/page/body/div/p[text()="script"]/sup["super"]',
         ),
         # PHRASE --> SPAN
         (
@@ -570,8 +570,8 @@ class TestConverter(Base):
         ),
         (
             '<article><para><trademark class="service">MoinMoin</trademark></para></article>',
-            # <page><body><div html:class="article"><p><span class="db-trademark">MoinMoin<span baseline-shift="super">SM</span></span></p></div></body></page>
-            '/page/body/div/p/span[@html:class="db-trademark"][text()="MoinMoin"]/span[@baseline-shift="super"][text()="SM"]',
+            # <page><body><div html:class="article"><p><span class="db-trademark">MoinMoin<sup>SM</sup></span></p></div></body></page>
+            '/page/body/div/p/span[@html:class="db-trademark"][text()="MoinMoin"]/sup[text()="SM"]',
         ),
         (
             "<article><para><trademark>MoinMoin</trademark></para></article>",

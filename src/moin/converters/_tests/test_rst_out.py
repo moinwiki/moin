@@ -54,7 +54,7 @@ class TestConverter(Base):
             """\n==\nh1\n==\n\nh2\n==\n\nh3\n--\n\nh4\n**\n\nh5\n::\n\nh6\n++\n""",
         ),
         (
-            '<page:page><page:body><page:p>H<page:span page:baseline-shift="sub">2</page:span>O</page:p><page:p>E = mc<page:span page:baseline-shift="super">2</page:span></page:p></page:body></page:page>',
+            "<page:page><page:body><page:p>H<page:sub>2</page:sub>O</page:p><page:p>E = mc<page:sup>2</page:sup></page:p></page:body></page:page>",
             "H\\ :sub:`2`\\ O\n\nE = mc\\ :sup:`2`\\ \n",
         ),
         ("<page:page><page:body><page:p>H<page:span>2</page:span>O</page:p></page:body></page:page>", "H2O\n"),

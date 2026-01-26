@@ -78,8 +78,12 @@ class TestConverter(Base):
             '/div/p[em="Test"]',
         ),
         (
-            '<page:page><page:body><page:p><page:emphasis html:class="html-i">alternate voice</page:emphasis></page:p></page:body></page:page>',
+            '<page:page><page:body><page:p><page:emphasis page:html-tag="i">alternate voice</page:emphasis></page:p></page:body></page:page>',
             '/div/p[i="alternate voice"]',
+        ),
+        (
+            '<page:page><page:body><page:p><page:u page:html-tag="mark">hi</page:u></page:p></page:body></page:page>',
+            '/div/p[mark="hi"]',
         ),
         (
             "<page:page><page:body><page:p><page:strong>Test</page:strong></page:p></page:body></page:page>",
@@ -168,24 +172,18 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        (
-            '<page><body><p><span baseline-shift="sub">sub</span>script</p></body></page>',
-            '/div/p[text()="script"][sub="sub"]',
-        ),
-        (
-            '<page><body><p><span baseline-shift="super">super</span>script</p></body></page>',
-            '/div/p[text()="script"][sup="super"]',
-        ),
+        ("<page><body><p><sub>sub</sub>script</p></body></page>", '/div/p[text()="script"][sub="sub"]'),
+        ("<page><body><p><sup>super</sup>script</p></body></page>", '/div/p[text()="script"][sup="super"]'),
         ("<page><body><p><u>underline</u></p></body></page>", '/div/p/u [text()="underline"]'),
         ("<page><body><p><ins>underline</ins></p></body></page>", '/div/p/ins [text()="underline"]'),
         ("<page><body><p><s>stroke</s></p></body></page>", '/div/p/s [text()="stroke"]'),
         ("<page><body><p><del>stroke</del></p></body></page>", '/div/p/del [text()="stroke"]'),
         (
-            '<page><body><p><span font-size="85%">small</span></p></body></page>',
+            '<page><body><p><span class="moin-small">small</span></p></body></page>',
             '/div/p/span[@class="moin-small"][text()="small"]',
         ),
         (
-            '<page><body><p><span font-size="120%">big</span></p></body></page>',
+            '<page><body><p><span class="moin-big">big</span></p></body></page>',
             '/div/p/span[@class="moin-big"][text()="big"]',
         ),
     ]

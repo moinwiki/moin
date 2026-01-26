@@ -126,6 +126,7 @@ class TestConverter(Base):
         ("<html><p><abbr>etc.</abbr></p></html>", '/div/p[abbr="etc."]'),
         ("<html><p><acronym>AC/DC</acronym></p></html>", '/div/p[abbr="AC/DC"]'),
         ("<html><p><address>webmaster@example.org</address></p></html>", '/div/p[address="webmaster@example.org"]'),
+        ("<html><p><aside>tangentially related</aside></p></html>", '/div/p[aside="tangentially related"]'),
         ("<html><p><cite>Moin wiki</cite></p></html>", '/div/p[cite="Moin wiki"]'),
         ("<html><p><dfn>term</dfn></p></html>", '/div/p[dfn="term"]'),
         ("<html><p><i>alternate voice</i></p></html>", '/div/p[i="alternate voice"]'),

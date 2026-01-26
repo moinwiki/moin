@@ -715,11 +715,6 @@ class Converter:
         return "\n\n" + ReST.separator + "\n\n"
 
     def open_moinpage_span(self, elem):
-        baseline_shift = elem.get(moin_page.baseline_shift, "")
-        if baseline_shift == "super":
-            return "\\ :sup:`{}`\\ ".format("".join(elem.itertext()))
-        if baseline_shift == "sub":
-            return "\\ :sub:`{}`\\ ".format("".join(elem.itertext()))
         id = elem.get(moin_page.id, "")
         if id:
             self.headings.append(id)
@@ -728,6 +723,12 @@ class Converter:
 
     def open_moinpage_strong(self, elem):
         return ReST.strong + self.open_children(elem) + ReST.strong
+
+    def open_moinpage_sub(self, elem):
+        return f'\\ :sub:`{"".join(elem.itertext())}`\\ '
+
+    def open_moinpage_sup(self, elem):
+        return f'\\ :sup:`{"".join(elem.itertext())}`\\ '
 
     def open_moinpage_table(self, elem):
         self.table_tableclass = elem.attrib.get("class", "")

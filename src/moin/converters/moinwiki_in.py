@@ -637,8 +637,8 @@ class Converter(ConverterMacro):
 
     def inline_size_repl(self, stack, size, size_begin=None, size_end=None):
         if size_begin:
-            size = "120%" if size[1] == "+" else "85%"
-            attrib = {moin_page.font_size: size}
+            size = "moin-big" if size[1] == "+" else "moin-small"
+            attrib = {html.class_: size}
             elem = moin_page.span(attrib=attrib)
             stack.push(elem)
         else:
@@ -669,8 +669,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_subscript_repl(self, stack, subscript, subscript_text):
-        attrib = {moin_page.baseline_shift: "sub"}
-        elem = moin_page.span(attrib=attrib, children=[subscript_text])
+        elem = moin_page.sub(children=[subscript_text])
         stack.top_append(elem)
 
     inline_superscript = r"""
@@ -682,8 +681,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_superscript_repl(self, stack, superscript, superscript_text):
-        attrib = {moin_page.baseline_shift: "super"}
-        elem = moin_page.span(attrib=attrib, children=[superscript_text])
+        elem = moin_page.sup(children=[superscript_text])
         stack.top_append(elem)
 
     inline_underline = r"""

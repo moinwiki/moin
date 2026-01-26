@@ -213,16 +213,16 @@ class TestConverter(Base):
             # <article><simpara><phrase>Text</phrase></simpara></article>
             '/article/simpara[phrase="Text"]',
         ),
-        # SPAN baseline-shift=sub --> subscript
+        # SUB --> SUBSCRIPT
         (
-            '<page><body><p>sub<span page:baseline-shift="sub">sub</span>script</p></body></page>',
-            # <article><simpara>script<subscript>sub</subscript></simpara></article>
+            "<page><body><p><sub>sub</sub>script</p></body></page>",
+            # <article><simpara><subscript>sub</subscript>script</simpara></article>
             '/article/simpara[text()="script"][subscript="sub"]',
         ),
-        # SPAN baseline-shift=super --> superscript
+        # SUP --> SUPERSCRIPT
         (
-            '<page><body><p>sub<span page:baseline-shift="super">super</span>script</p></body></page>',
-            # <article><simpara>script</simpara><superscript>super</superscript></article>
+            "<page><body><p><sup>super</sup>script</p></body></page>",
+            # <article><simpara></simpara><superscript>super</superscript>script</article>
             '/article/simpara[text()="script"][superscript="super"]',
         ),
         # STRONG --> EMPHASIS role='strong'

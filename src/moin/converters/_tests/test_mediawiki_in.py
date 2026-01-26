@@ -45,7 +45,7 @@ class TestConverter:
         ("<s>Strikethrough</s>", "<page><body><p><s>Strikethrough</s></p></body></page>"),
         (
             "test <sup>super</sup> or <sub>sub</sub>",
-            '<page><body><p>test <span baseline-shift="super">super</span> or <span baseline-shift="sub">sub</span></p></body></page>',
+            "<page><body><p>test <sup>super</sup> or <sub>sub</sub></p></body></page>",
         ),
         (
             "text <blockquote> quote quote quote quote quote quote </blockquote> text",
