@@ -1707,6 +1707,7 @@ class Default(Contentful):
 
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
+            is_text_upload = True
             if data is not None:
 
                 # werkzeug may return form data using type tempfile.SpooledTemporaryFile (issue 1974)
@@ -1714,7 +1715,9 @@ class Default(Contentful):
                     data = data.read()
 
                 # decode text content we may have received in binary form
-                if isinstance(data, bytes) and isinstance(self.content, Text):
+                # but only if it looks like text (or we don't know the type)
+                is_text_upload = not contenttype_guessed or contenttype_guessed.startswith("text/")
+                if is_text_upload and isinstance(data, bytes) and isinstance(self.content, Text):
                     encoding = "utf-8"
                     if contenttype_guessed:
                         if m := re.search("charset=(.+?)($|;)", contenttype_guessed):
@@ -1785,6 +1788,8 @@ class Default(Contentful):
 
                     # save the new revision, unlock, delete draft
                     contenttype_qs = request.values.get("contenttype")
+                    if not is_text_upload and contenttype_guessed:
+                        contenttype_qs = contenttype_guessed
                     try:
                         self.modify(meta, data, comment, contenttype_guessed, **{CONTENTTYPE: contenttype_qs})
                     except AccessDenied:
