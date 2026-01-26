@@ -153,8 +153,6 @@ GROUP_VIDEO = "Video Items"
 GROUP_DRAWING = "Drawing Items"
 GROUP_OTHER = "Other Items"
 
-DRAWING_EXTENSIONS = [".svg", ".png", ".jpg", ".jpeg", ".gif"]
-
 
 # help for wiki editors based on content type
 def ext_link(href, link_text=None):

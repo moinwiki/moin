@@ -11,22 +11,9 @@ from __future__ import annotations
 import pytest
 
 from flask import current_app as app
-from moin.constants.chartypes import CHARS_SPACES
 from moin import wikiutil
 from moin.wikiutil import WikiLinkAnalyzer, WikiLinkInfo
 from typing import cast
-
-
-class TestCleanInput:
-    def test_clean_input(self):
-        tests = [
-            ("", ""),  # empty
-            ("aaa\r\n\tbbb", "aaa   bbb"),  # ws chars -> blanks
-            ("aaa\x00\x01bbb", "aaabbb"),  # strip weird chars
-            ("a" * 500, ""),  # too long
-        ]
-        for instr, outstr in tests:
-            assert wikiutil.clean_input(instr) == outstr
 
 
 class TestAnchorNames:
@@ -83,86 +70,6 @@ class TestRelativeTools:
         assert relative_page == wikiutil.RelItemName(current_page, absolute_page)
 
 
-@pytest.mark.usefixtures("_app_ctx")
-class TestNormalizePagename:
-
-    def test_page_invalid_chars(self):
-        """Request: normalize pagename: remove invalid Unicode chars.
-
-        Assume the default setting.
-        """
-        test = "\u0000\u202a\u202b\u202c\u202d\u202e"
-        expected = ""
-        result = wikiutil.normalize_pagename(test, app.cfg)
-        assert result == expected
-
-    def test_normalize_slashes(self):
-        """Request: normalize pagename: normalize slashes."""
-        cases = (
-            ("/////", ""),
-            ("/a", "a"),
-            ("a/", "a"),
-            ("a/////b/////c", "a/b/c"),
-            ("a b/////c d/////e f", "a b/c d/e f"),
-        )
-        for test, expected in cases:
-            result = wikiutil.normalize_pagename(test, app.cfg)
-            assert result == expected
-
-    def test_normalize_whitespace(self):
-        """Request: normalize pagename: normalize whitespace."""
-        cases = (
-            ("         ", ""),
-            ("    a", "a"),
-            ("a    ", "a"),
-            ("a     b     c", "a b c"),
-            ("a   b  /  c    d  /  e   f", "a b/c d/e f"),
-            # All 30 unicode spaces
-            (CHARS_SPACES, ""),
-        )
-        for test, expected in cases:
-            result = wikiutil.normalize_pagename(test, app.cfg)
-            assert result == expected
-
-    def test_underscore_test_case(self):
-        """Request: normalize pagename: convert underscores to spaces and normalize whitespace.
-
-        Underscores should convert to spaces, then spaces should be
-        normalized; order is important!
-        """
-        cases = (
-            ("         ", ""),
-            ("  a", "a"),
-            ("a  ", "a"),
-            ("a  b  c", "a b c"),
-            ("a  b  /  c  d  /  e  f", "a b/c d/e f"),
-        )
-        for test, expected in cases:
-            result = wikiutil.normalize_pagename(test, app.cfg)
-            assert result == expected
-
-
-@pytest.mark.usefixtures("_app_ctx")
-class TestGroupItems:
-
-    def test_normalize_group_name(self):
-        """Request: normalize itemname: restrict groups to alphanumeric Unicode.
-
-        Spaces should be normalized after invalid chars are removed!
-        """
-        cases = (
-            # current ACL chars
-            ("Name,:Group", "NameGroup"),
-            # remove then normalize spaces
-            ("Name ! @ # $ % ^ & * ( ) + Group", "Name Group"),
-        )
-        for test, expected in cases:
-            # validate we are testing valid group names
-            if wikiutil.isGroupItem(test):
-                result = wikiutil.normalize_pagename(test, app.cfg)
-                assert result == expected
-
-
 def test_ParentItemName():
     # with no parent
     result = wikiutil.ParentItemName("itemname")
@@ -171,17 +78,6 @@ def test_ParentItemName():
     # with a parent
     result = wikiutil.ParentItemName("some/parent/itemname")
     expected = "some/parent"
-    assert result == expected
-
-
-def test_drawing2fname():
-    # with extension not in DRAWING_EXTENSIONS
-    result = wikiutil.drawing2fname("Moin_drawing.txt")
-    expected = "Moin_drawing.txt.svgdraw"
-    assert result == expected
-    # with extension in DRAWING_EXTENSIONS
-    result = wikiutil.drawing2fname("Moindir.Moin_drawing.jpg")
-    expected = "Moindir.Moin_drawing.jpg"
     assert result == expected
 
 
@@ -216,24 +112,6 @@ def test_containsConflictMarker():
     # text without conflict marker
     result = wikiutil.containsConflictMarker("No conflict marker")
     assert not result
-
-
-def test_split_anchor():
-    """
-    TODO: add a test for split_anchor when we have a better
-          approach to deal with problems like "#MoinMoin#" returning ("#MoinMoin", "")
-    """
-    result = wikiutil.split_anchor("MoinMoin")
-    expected = "MoinMoin", ""
-    assert result == expected
-
-    result = wikiutil.split_anchor("MoinMoin#test_anchor|label|attr=val")
-    expected = ["MoinMoin", "test_anchor|label|attr=val"]
-    assert result == expected
-
-    result = wikiutil.split_anchor("#MoinMoin#")
-    expected = ["#MoinMoin", ""]
-    assert result == expected
 
 
 def test_file_headers():
