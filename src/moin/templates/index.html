@@ -27,7 +27,7 @@ a checkbox, an invisible link used by js for download, a link to the item
     <tr>
         <td class="moin-index-icons">
             <span class="moin-select-item">
-                <input class="moin-item" type="checkbox" value="{{ e.fullname }}"/>
+                <input class="moin-item" type="checkbox" name="{{ e.fullname }}" value="{{ e.fullname }}"/>
                 {% set mimetype = "application/x.moin.download" %}
                 {# invisible link below is used by js to download item #}
                 <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
@@ -295,7 +295,7 @@ a checkbox, an invisible link used by js for download, a link to the item
                     <p class="popup-subitem-names">{{ _("Subitem names: ") }}<span class="popup-names"></span></p>
                     <p class="popup-rejected-names hidden">{{ _("Rejected names, permission denied: ") }}<span class="popup-names"></span></p>
                 </div>
-                <input type="text" class="popup-comment" placeholder="{{ _("Enter your comment") }}"/>
+                <input type="text" class="popup-comment" id="moin-comment" placeholder="{{ _("Enter your comment") }}"/>
                 <input type="hidden" class="popup-action" value=""/>
                 <br/>
                 <input type="button" class="moin-button popup-submit" value="{{ _("Submit") }}"/>

@@ -20,9 +20,7 @@ import urllib
 from flask import current_app as app
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
-from moin.constants.contenttypes import CHARSET
-from moin.constants.misc import URI_SCHEMES, CLEAN_INPUT_TRANSLATION_MAP, ITEM_INVALID_CHARS_REGEX
-from moin.constants.contenttypes import DRAWING_EXTENSIONS
+from moin.constants.misc import URI_SCHEMES
 
 from moin.utils.mimetype import MimeType
 
@@ -41,75 +39,6 @@ PARENT_PREFIX = "../"
 PARENT_PREFIX_LEN = len(PARENT_PREFIX)
 CHILD_PREFIX = "/"
 CHILD_PREFIX_LEN = len(CHILD_PREFIX)
-
-
-#############################################################################
-# Data validation / cleanup
-#############################################################################
-
-
-# TODO: use similar code in a flatland validator
-def clean_input(text, max_len=201):
-    """Clean input:
-    replace CR, LF, TAB by whitespace
-    delete control chars
-
-    :param text: Unicode text to clean (if we get str, we decode it)
-    :rtype: Unicode
-    :returns: cleaned text
-    """
-    # we only have input fields with max 200 chars, but spammers send us more
-    length = len(text)
-    if length == 0 or length > max_len:
-        return ""
-    else:
-        if isinstance(text, bytes):
-            # the translate() below can ONLY process unicode, thus, if we get
-            # bytes, we try to decode it using the usual coding:
-            text = text.decode(CHARSET)
-        return text.translate(CLEAN_INPUT_TRANSLATION_MAP)
-
-
-# TODO: use similar code in a flatland validator
-def normalize_pagename(name, cfg):
-    """Normalize page name
-
-    Prevent creating page names with invisible characters or funny
-    whitespace that might confuse the users or abuse the wiki, or
-    just does not make sense.
-
-    Restrict group pages further, so they can be used inside ACL lines.
-
-    :param name: page name, Unicode
-    :rtype: Unicode
-    :returns: decoded and sanitized page name
-    """
-    # Strip invalid characters
-    name = ITEM_INVALID_CHARS_REGEX.sub("", name)
-
-    # Split to pages and normalize each one
-    pages = name.split("/")
-    normalized = []
-    for page in pages:
-        # Ignore empty or whitespace only pages
-        if not page or page.isspace():
-            continue
-
-        # Clean up group pages.
-        # Strip non-alphanumeric characters, keep whitespace
-        if isGroupItem(page):
-            page = "".join([c for c in page if c.isalnum() or c.isspace()])
-
-        # Normalize whitespace. Each name can contain multiple
-        # words separated by a single space. split() handles all
-        # 30 Unicode spaces (isspace() == True)
-        page = " ".join(page.split())
-
-        normalized.append(page)
-
-    # Assemble components into full page name
-    name = "/".join(normalized)
-    return name
 
 
 #############################################################################
@@ -259,15 +188,6 @@ class WikiLinkAnalyzer:
 #############################################################################
 
 
-def drawing2fname(drawing):
-    _, ext = os.path.splitext(drawing)
-    # note: do not just check for empty extension or stuff like drawing:foo.bar
-    # will fail, instead of being expanded to foo.bar.svgdraw
-    if ext not in DRAWING_EXTENSIONS:
-        drawing += ".svgdraw"
-    return drawing
-
-
 def getUnicodeIndexGroup(name):
     """
     Return a group letter for `name`, which must be a unicode string.
@@ -319,50 +239,6 @@ def anchor_name_from_text(text):
     if not res[:1].isalpha():
         return f"A{res}"
     return res
-
-
-def split_anchor(pagename):
-    """
-    Split a pagename that (optionally) has an anchor into the real pagename
-    and the anchor part. If there is no anchor, it returns an empty string
-    for the anchor.
-
-    Note: if pagename contains a # (as part of the pagename, not as anchor),
-          you can use a trick to make it work nevertheless: just append a
-          # at the end:
-          "C##" returns ("C#", "")
-          "Problem #1#" returns ("Problem #1", "")
-
-    TODO: We shouldn't deal with composite pagename#anchor strings, but keep
-          it separate.
-          Current approach: [[pagename#anchor|label|attr=val,&qarg=qval]]
-          Future approach:  [[pagename|label|attr=val,&qarg=qval,#anchor]]
-          The future approach will avoid problems when there is a # in the
-          pagename part (and no anchor). Also, we need to append #anchor
-          at the END of the generated URL (AFTER the query string).
-    """
-    parts = pagename.rsplit("#", 1)
-    if len(parts) == 2:
-        return parts
-    else:
-        return pagename, ""
-
-
-def get_hostname(addr):
-    """
-    Looks up the DNS hostname for some IP address.
-
-    :param addr: IP address to look up (str)
-    :returns: host dns name (unicode) or
-              None (if lookup is disallowed or failed)
-    """
-    if app.cfg.log_reverse_dns_lookups:
-        import socket
-
-        try:
-            return str(socket.gethostbyaddr(addr)[0], CHARSET)
-        except (OSError, UnicodeError):
-            pass
 
 
 def file_headers(filename=None, content_type=None, content_length=None):

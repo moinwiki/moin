@@ -5,7 +5,7 @@ $(document).ready(function () {
     // this depends on the id's used for different tab-panes in modify.html and usersettings.html (Basic Theme)
     "use strict";
     $('#meta, #help').removeClass('active');
-    $('textarea').autosize();
+    $('textarea').each(function(){autosize(this)});
     $('div.dropup').removeClass('menu');
     $('ul.dropdown-menu').removeClass('submenu');
     $('.topnavcollapse').addClass('collapse');
