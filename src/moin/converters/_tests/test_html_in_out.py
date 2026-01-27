@@ -148,9 +148,10 @@ class TestConverter(Base):
 
     data = [
         ("<html><div><code>Code</code></div></html>", '/div/div[code="Code"]'),
-        ("<html><div><samp>Code</samp></div></html>", '/div/div[code="Code"]'),
-        ("<html><pre>Code</pre></html>", '/div[pre="Code"]'),
-        ("<html><p><tt>Code</tt></p></html>", '/div/p[code="Code"]'),
+        ("<html><div><kbd>Ctrl-X</kbd></div></html>", '/div/div[kbd="Ctrl-X"]'),
+        ("<html><div><samp>Error 303</samp></div></html>", '/div/div[samp="Error 303"]'),
+        ("<html><pre>Code\n  Block</pre></html>", '/div[pre="Code\n  Block"]'),
+        ("<html><p><tt>Monospace</tt></p></html>", '/div/p/span[@class="monospaced"][text()="Monospace"]'),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

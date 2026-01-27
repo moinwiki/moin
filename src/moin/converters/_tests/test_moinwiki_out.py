@@ -52,7 +52,8 @@ class TestConverter(Base):
         ("<page:strong>strong</page:strong>", "'''strong'''"),
         ("<page:emphasis>emphasis</page:emphasis>", "''emphasis''"),
         ("<page:blockcode>blockcode</page:blockcode>", "{{{\nblockcode\n}}}\n"),
-        ("<page:code>monospace</page:code>", "`monospace`"),
+        ("<page:code>code</page:code>", "{{{code}}}"),
+        ("<page:literal>monospace</page:literal>", "`monospace`"),
         ("<page:del>stroke</page:del>", "--(stroke)--"),
         ("<page:ins>underline</page:ins>", "__underline__"),
         ('<page:span html:class="moin-big">larger</page:span>', "~+larger+~"),
@@ -206,7 +207,7 @@ class TestConverter(Base):
         ),
         (
             '<page:page><page:body><page:page><page:body page:class="red solid"><page:p>This is wiki markup in a <page:strong>div</page:strong> with <page:ins>css</page:ins> <page:code>class="red solid"</page:code>.</page:p></page:body></page:page></page:body></page:page>',
-            "{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ `class=\"red solid\"`.\n}}}\n",
+            "{{{{#!wiki red/solid\nThis is wiki markup in a '''div''' with __css__ {{{class=\"red solid\"}}}.\n}}}}\n",
         ),
         (
             '<page:page><page:body><page:part page:content-type="x-moin/format;name=creole"><page:arguments><page:argument page:name="style">st: er</page:argument><page:argument page:name="class">par: arg para: arga</page:argument></page:arguments><page:body>... **bold** ...</page:body></page:part></page:body></page:page>',

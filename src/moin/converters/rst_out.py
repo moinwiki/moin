@@ -226,7 +226,7 @@ class ReST:
 
     a_separator = "|"
     verbatim = "::"
-    monospace = "``"
+    literal = "``"
     strong = "**"
     emphasis = "*"
     p = "\n"
@@ -429,7 +429,7 @@ class Converter:
         )
 
     def open_moinpage_code(self, elem):
-        ret = "{}{}{}".format(ReST.monospace, "".join(elem.itertext()), ReST.monospace)
+        ret = "{}{}{}".format(ReST.literal, "".join(elem.itertext()), ReST.literal)
         return ret
 
     def open_moinpage_div(self, elem):

@@ -69,15 +69,16 @@ class TestConverter:
         "<dfn>term</dfn>",
         "<ins>inserted</ins>",
         "<del>deleted</del>",
-        "<u>annotated</u>",
-        "<s>no longer accurate</s>",
         "<kbd>Ctrl-X</kbd><",
         "see <mark>here</mark>",
         "<q>cogito ergo sum</q>",
+        "<s>no longer accurate</s>",
+        "<samp>Error 33</samp>",
         "<small>fine print</small>",
         '<span class="red" id="dwarf">star</span>',
         "<sup>super</sup>script",
         "<sub>sub</sub>script",
+        "<u>annotated</u>",
         "<var>n</var> times",
     ]
 
@@ -92,10 +93,12 @@ class TestConverter:
         ("----\n\n------\n\n--------\n", "----\n\n----\n\n----\n"),
         ("<hr>\n\n<hr>\n\n<hr>\n", "----\n\n----\n\n----\n"),
         ("line  \nbreak", "line<br />\nbreak"),
+        ("<code>Code</code>", "`Code`"),
         # we accept outdated HTML elements but map them to recommended substitute
         ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
         ("<big>larger</big>\n", '<span class="moin-big">larger</span>'),  # <big> is obsolete
-        ("<strike>stroke</strike>\n", "<s>stroke</s>\n"),  # <strike> is obsolete since HTML 4.1
+        ("<strike>stroke</strike>\n", "<s>stroke</s>"),  # <strike> is obsolete since HTML 4.1
+        ("<tt>literal</tt>", '<span class="monospaced">literal</span>'),
     )
 
     @pytest.mark.parametrize("input,output", data)

@@ -406,11 +406,11 @@ class TestConverter(Base):
             # <page><body><div html:class="article"><blockcode>Text</blockcode></div></body></page>
             '/page/body/div[blockcode="Text"]',
         ),
-        # LITERAL --> CODE
+        # LITERAL --> LITERAL
         (
             "<article><para>text<literal>literal</literal></para></article>",
-            # <page><body><div html:class="article"><p>text<code>literal</code></p></div></body></page>
-            '/page/body/div/p[text()="text"][code="literal"]',
+            # <page><body><div html:class="article"><p>text<literal>literal</literal></p></div></body></page>
+            '/page/body/div/p[text()="text"][literal="literal"]',
         ),
         (
             "<article><blockquote><attribution>author</attribution>text</blockquote></article>",
@@ -423,11 +423,17 @@ class TestConverter(Base):
             # <page><body><div html:class="article"><p><code>Text</code></p></article>
             '/page/body/div/p[code="Text"]',
         ),
-        # COMPUTEROUTPUT --> CODE
+        # COMPUTEROUTPUT --> SAMP
         (
             "<article><para><computeroutput>Text</computeroutput></para></article>",
-            # <page><body><div html:class="article"><p><code>Text</code></p></article>
-            '/page/body/div/p[code="Text"]',
+            # <page><body><div html:class="article"><p><samp>Text</samp></p></article>
+            '/page/body/div/p[samp="Text"]',
+        ),
+        # USERINPUT --> KBD
+        (
+            "<article><para><userinput>Ctrl-X</userinput></para></article>",
+            # <page><body><div html:class="article"><p><kbd>Ctrl-X</kbd></p></article>
+            '/page/body/div/p[kbd="Ctrl-X"]',
         ),
         # MARKUP --> CODE
         (

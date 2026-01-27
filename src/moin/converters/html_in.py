@@ -65,7 +65,21 @@ class HtmlTags:
     html_namespace: Final = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "sub", "sup", "u"}
+    symmetric_tags: Final = {
+        "blockquote",
+        "code",
+        "del",
+        "div",
+        "ins",
+        "kbd",
+        "p",
+        "s",
+        "samp",
+        "strong",
+        "sub",
+        "sup",
+        "u",
+    }
 
     # HTML tags that define a list; except dl, which is a little bit different
     list_tags: Final = {"ul", "dir", "ol"}
@@ -80,8 +94,7 @@ class HtmlTags:
         "br": moin_page.line_break,
         # Code and Blockcode
         "pre": moin_page.blockcode,
-        "tt": moin_page.code,  # deprecated
-        "samp": moin_page.code,  # computer output sample
+        "tt": moin_page.literal,  # deprecated, output as <span class="monospaced">
         # Lists
         "dt": moin_page.list_item_label,
         "dd": moin_page.list_item_body,
@@ -102,7 +115,6 @@ class HtmlTags:
         "cite": moin_page.emphasis,  # title of a creative work
         "dfn": moin_page.emphasis,  # defining instance of a term
         "i": moin_page.emphasis,  # alternate voice
-        "kbd": moin_page.span,  # user input;  TODO: use moin_page.code?
         "mark": moin_page.u,  # marked or highlighted for reference purposes
         "small": moin_page.span,  # side comment (small print)
         "var": moin_page.emphasis,  # variable
@@ -590,6 +602,13 @@ class Converter(HtmlTags):
         """
         list_item_body = ET.Element(moin_page.list_item_body, attrib={}, children=self.do_children(element))
         return ET.Element(moin_page.list_item, attrib={}, children=[list_item_body])
+
+    def visit_xhtml_span(self, element):
+        element_type = moin_page.span
+        html_class = element.get(html.class_, "")
+        if "monospaced" in html_class:
+            element_type = moin_page.literal
+        return self.new_copy(element_type, element, attrib={})
 
     def visit_xhtml_table(self, element):
         attrib = self.convert_attributes(element)

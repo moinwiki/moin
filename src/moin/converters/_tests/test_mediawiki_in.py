@@ -33,7 +33,7 @@ class TestConverter:
         ),
         (
             "<nowiki>no ''markup''</nowiki>\n\n<code>no ''markup''</code>\n\n<tt>no ''markup''</tt>",
-            "<page><body><p><code>no ''markup''</code></p><p><code>no ''markup''</code></p><p><code>no ''markup''</code></p></body></page>",
+            "<page><body><p><literal>no ''markup''</literal></p><p><code>no ''markup''</code></p><p><literal>no ''markup''</literal></p></body></page>",
         ),
         (
             "<pre>no ''markup'' block</pre>",

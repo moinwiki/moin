@@ -7,6 +7,12 @@
 
 """
 MoinMoin - MediaWiki input converter.
+
+Mediawiki syntax is documented at
+https://www.mediawiki.org/wiki/Help:Formatting
+
+Supported HTML tags are listed at
+https://www.mediawiki.org/wiki/Help:HTML_in_wikitext
 """
 
 from __future__ import annotations
@@ -760,13 +766,13 @@ class Converter(ConverterMacro):
 
         if nowiki_text is not None:
             text = nowiki_text
-            stack.top_append(moin_page.code(children=[text]))
+            stack.top_append(moin_page.literal(children=[text]))
         elif nowiki_text_code is not None:
             text = nowiki_text_code
             stack.top_append(moin_page.code(children=[text]))
         elif nowiki_text_tt is not None:
             text = nowiki_text_tt
-            stack.top_append(moin_page.code(children=[text]))
+            stack.top_append(moin_page.literal(children=[text]))
         # Remove empty backtick nowiki samples
         elif nowiki_text_pre:
             # TODO: pre_args parsing

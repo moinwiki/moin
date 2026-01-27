@@ -28,7 +28,7 @@ class TestConverter:
         ("paragraph 1\n\nparagraph\n2", "<p>paragraph 1</p><p>paragraph\n2</p>"),
         ("**Text**", "<p><strong>Text</strong></p>"),
         ("*Text*", "<p><emphasis>Text</emphasis></p>"),
-        ("``Text``", "<p><code>Text</code></p>"),
+        ("``literal``", "<p><literal>literal</literal></p>"),
         ("a _`Link`", '<p>a <span id="link">Link</span></p>'),
         ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator xhtml:class="moin-hr2" /><p>break</p>'),
         (".. comment", '<div class="comment dashed">comment</div>'),
@@ -44,8 +44,8 @@ class TestConverter:
         # standard roles:
         (":abbreviation:`abbr.`", '<p><span html-tag="abbr">abbr.</span></p>'),
         (":ac:`DC`", '<p><span html-tag="abbr">DC</span></p>'),
-        (r":code:`y = exp(x)`", r'<p><code xhtml:class="code">y = exp(x)</code></p>'),
-        (r":literal:`% \ `", "<p><code>% </code></p>"),
+        (r":code:`y = exp(x)`", r"<p><code>y = exp(x)</code></p>"),
+        (r":literal:`% \ `", "<p><literal>% </literal></p>"),
         (r":math:`\sin(x)`", r"<p>\sin(x)</p>"),  # TODO: properly support mathematical content
         (":RFC:`1234`", '<p><a xlink:href="https://tools.ietf.org/html/rfc1234.html">RFC 1234</a></p>'),
         (":PEP:`01`", '<p><a xlink:href="https://peps.python.org/pep-0001">PEP 01</a></p>'),
@@ -62,11 +62,11 @@ class TestConverter:
         (".. role:: q\n\n:q:`inline quote`", "<p><quote>inline quote</quote></p>"),
         # custom roles with matching HTML element
         (".. role:: dfn\n\n:dfn:`term`", '<p><emphasis html-tag="dfn">term</emphasis></p>'),
-        (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span html-tag="kbd">Ctrl-X</span></p>'),
-        (".. role:: samp(literal)\n\n:samp:`Error 303`", '<p><span html-tag="samp">Error 303</span></p>'),
+        (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", "<p>Enter <kbd>Ctrl-X</kbd></p>"),
+        (".. role:: samp(literal)\n\n:samp:`Error 303`", "<p><samp>Error 303</samp></p>"),
         (  # custom role derived from "code" with syntax highlight
             '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
-            '<p>Inline code like <code xhtml:class="code python">'
+            '<p>Inline code like <code xhtml:class="python">'
             '<span xhtml:class="nb">print</span><span xhtml:class="p">(</span>'
             '<span xhtml:class="mi">3</span><span xhtml:class="o">*</span>'
             '<span xhtml:class="s2">"Hurra!"</span><span xhtml:class="p">)</span>'

@@ -46,11 +46,9 @@ class Markdown:
     comment_close = " -->"
     verbatim_open = "    "  # * 3
     verbatim_close = "    "  # * 3
-    monospace = "`"
+    code = "`"
     strong = "**"
     emphasis = "*"
-    samp_open = "`"
-    samp_close = "`"
     table_marker = "|"
     p = "\n"
     linebreak = "<br />"
@@ -85,7 +83,7 @@ class Converter:
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
 
     # elements with identical tagname in Moinpage and Markdown and no special handling
-    simple_inline_tags = {"del", "ins", "s", "sub", "sup"}
+    simple_inline_tags = {"del", "ins", "kbd", "s", "samp", "sub", "sup"}
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
@@ -155,9 +153,9 @@ class Converter:
             return Markdown.attribute_open + " ".join(attr_list) + Markdown.attribute_close
         return ""
 
-    def html_inline_element(self, tagname, elem):
+    def html_inline_element(self, tagname, elem, attrib={}):
         STRIP_NS_RE = re.compile(r"\{[^}]*\}")
-        attrs = html_out.Attributes(elem).convert()
+        attrs = html_out.Attributes(elem).convert() | attrib
         starttag = [tagname]
         starttag += [f'{k}="{v}"' for (k, v) in attrs.items()]
         starttag = " ".join(starttag)
@@ -178,6 +176,7 @@ class Converter:
                 "separator",
                 "blockcode",
                 "code",
+                "literal",
                 "div",
                 "th",
                 "emphasis",
@@ -241,10 +240,7 @@ class Converter:
         return "\n" + "\n".join(indented) + "\n"
 
     def open_moinpage_code(self, elem):
-        ret = Markdown.monospace
-        ret += "".join(elem.itertext())
-        ret += Markdown.monospace
-        return ret
+        return f'{Markdown.code}{"".join(elem.itertext())}{Markdown.code}'
 
     def open_moinpage_div(self, elem):
         """
@@ -339,6 +335,10 @@ class Converter:
         if self.list_item_label[0] == Markdown.definition_list_marker[0]:
             child_out = "\n    ".join(child_out.split("\n"))
         return ret + child_out
+
+    def open_moinpage_literal(self, elem):
+        attrib = {html.class_: "monospaced"}
+        return self.html_inline_element("span", elem, attrib)
 
     def open_moinpage_note(self, elem):
         # used for moinwiki to markdown conversion; not used for broken markdown to markdown conversion
@@ -444,13 +444,6 @@ class Converter:
     def open_moinpage_quote(self, elem):
         # inline quote
         return self.html_inline_element("q", elem)
-
-    def open_moinpage_samp(self, elem):
-        # text {{{more text}}} end
-        ret = Markdown.samp_open
-        ret += "".join(elem.itertext())
-        ret += Markdown.samp_close
-        return ret
 
     def open_moinpage_separator(self, elem):
         return "\n----\n"
