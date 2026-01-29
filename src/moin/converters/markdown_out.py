@@ -53,7 +53,7 @@ class Markdown:
     samp_close = "`"
     table_marker = "|"
     p = "\n"
-    linebreak = "  "
+    linebreak = "<br />"
     object_open = "{{"
     object_close = "}}"
     definition_list_marker = ":  "

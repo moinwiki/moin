@@ -63,6 +63,7 @@ class TestConverter:
         "*emphasis*",
         "    blockcode",
         "`monospace`",
+        "line <br />\nbreak",
         "<abbr>etc.</abbr>",
         "<cite>Winnie-the-Pooh</cite>",
         "<dfn>term</dfn>",
@@ -90,6 +91,7 @@ class TestConverter:
         ("xxx\n\n------\n\n------\n\n------\n", "xxx\n\n----\n\n----\n\n----\n"),
         ("----\n\n------\n\n--------\n", "----\n\n----\n\n----\n"),
         ("<hr>\n\n<hr>\n\n<hr>\n", "----\n\n----\n\n----\n"),
+        ("line  \nbreak", "line<br />\nbreak"),
         # we accept outdated HTML elements but map them to recommended substitute
         ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
         ("<big>larger</big>\n", '<span class="moin-big">larger</span>'),  # <big> is obsolete
