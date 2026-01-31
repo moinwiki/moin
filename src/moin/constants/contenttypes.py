@@ -180,7 +180,7 @@ CONTENTTYPES_HELP_DOCS = {
     "text/x-rst;charset=utf-8": (("rst", _("Click for help on reST Wiki markup."))),
     "application/docbook+xml;charset=utf-8": (("docbook", _("Click for help on Docbook Wiki markup."))),
     # content type: help string
-    "text/html;charset=utf-8": ext_link("http://ckeditor.com/"),
+    "text/html;charset=utf-8": ext_link("https://ckeditor.com"),
     "text/plain;charset=utf-8": help_on_plain_text,
     "text/x-diff;charset=utf-8": help_on_plain_text,
     "text/x-python;charset=utf-8": help_on_plain_text,
@@ -197,7 +197,7 @@ CONTENTTYPES_HELP_DOCS = {
     "video/ogg": help_on_binary,
     "video/webm": help_on_binary,
     "video/mp4": help_on_binary,
-    "application/x-svgdraw": ext_link("http://code.google.com/p/svg-edit/"),
+    "application/x-svgdraw": ext_link("https://github.com/SVG-Edit/svgedit"),
     "application/octet-stream": help_on_binary,
     "application/x-tar": help_on_binary,
     "application/x-gtar": help_on_binary,
