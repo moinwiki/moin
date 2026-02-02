@@ -6,7 +6,7 @@
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2001 Richard Jones <richard@bizarsoftware.com.au>
 # Copyright: 2001 Juergen Hermann <jh@web.de>
-# Copyright: 2023-2025 MoinMoin:UlrichB
+# Copyright: 2023-2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -694,7 +694,7 @@ def show_dom(item):
         status = 404
     else:
         status = 200
-    content = render_template("dom.xml", data_xml=Markup(item.content._render_data_xml()))
+    content = render_template("dom.xml", data_xml=item.content._render_data_xml())
     return Response(content, status, mimetype="text/xml")
 
 

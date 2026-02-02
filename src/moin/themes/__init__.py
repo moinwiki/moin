@@ -1,7 +1,7 @@
 # Copyright: 2003-2010 MoinMoin:ThomasWaldmann
 # Copyright: 2008 MoinMoin:RadomirDopieralski
 # Copyright: 2010 MoinMoin:DiogenesAugusto
-# Copyright: 2023-2024 MoinMoin project
+# Copyright: 2023-2026 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -24,6 +24,7 @@ from flask import current_app as app
 from flask import g as flaskg
 from flask import url_for, request, session, flash
 from flask_theme import get_theme, render_theme_template
+from jinja2 import select_autoescape
 
 from babel import Locale
 
@@ -782,3 +783,6 @@ def setup_jinja_env(jinja_env):
     # if Jinja whitespace control options are turned on, it becomes obvious why the default is off
     # app.jinja_env.trim_blocks = True
     # app.jinja_env.lstrip_blocks = True
+
+    # XML templates must not be HTML-autoescaped
+    jinja_env.autoescape = select_autoescape(enabled_extensions=("html", "htm"), disabled_extensions=("xml",))
