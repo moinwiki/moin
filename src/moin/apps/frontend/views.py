@@ -2875,35 +2875,53 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
         revid1, revid2 = revid2, revid1
     common_ct = _common_type(oldrev.meta[CONTENTTYPE], newrev.meta[CONTENTTYPE])
 
-    try:
-        item = Item.create(fqname.fullname, contenttype=common_ct, rev_id=newrev.revid)
-    except AccessDenied:
-        abort(403)
+    if common_ct:
+        try:
+            item = Item.create(fqname.fullname, contenttype=common_ct, rev_id=newrev.revid)
+        except AccessDenied:
+            abort(403)
 
-    # if there are many revisions, create rev_links dict with links to older and newer revisions on diff display
-    rev_links = {}
-    if len(rev_ids) > 2:
-        rev1_idx = rev_ids.index(revid1)
-        rev2_idx = rev_ids.index(revid2)
-        if rev1_idx > 0:
-            rev_links["r1_oldest"] = rev_ids[0]
-            rev_links["r1_older"] = rev_ids[rev1_idx - 1]
-        if rev2_idx > rev1_idx + 1:
-            rev_links["r1_newer"] = rev_ids[rev1_idx + 1]
-        end = len(rev_ids) - 1
-        if rev2_idx < end:
-            rev_links["r2_newer"] = rev_ids[rev2_idx + 1]
-            rev_links["r2_newest"] = rev_ids[-1]
-        if rev2_idx > rev1_idx + 1:
-            rev_links["r2_older"] = rev_ids[rev2_idx - 1]
-    if rev_links:
-        rev_links["revid1"] = revid1
-        rev_links["revid2"] = revid2
+        # if there are many revisions, create rev_links dict with links to older and newer revisions on diff display
+        rev_links = {}
+        if len(rev_ids) > 2:
+            rev1_idx = rev_ids.index(revid1)
+            rev2_idx = rev_ids.index(revid2)
+            if rev1_idx > 0:
+                rev_links["r1_oldest"] = rev_ids[0]
+                rev_links["r1_older"] = rev_ids[rev1_idx - 1]
+            if rev2_idx > rev1_idx + 1:
+                rev_links["r1_newer"] = rev_ids[rev1_idx + 1]
+            end = len(rev_ids) - 1
+            if rev2_idx < end:
+                rev_links["r2_newer"] = rev_ids[rev2_idx + 1]
+                rev_links["r2_newest"] = rev_ids[-1]
+            if rev2_idx > rev1_idx + 1:
+                rev_links["r2_older"] = rev_ids[rev2_idx - 1]
+        if rev_links:
+            rev_links["revid1"] = revid1
+            rev_links["revid2"] = revid2
 
-    try:
-        diff_html = Markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
-    except Exception:
-        return _crash(item, oldrev, newrev)
+        try:
+            diff_html = Markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
+        except Exception:
+            return _crash(item, oldrev, newrev)
+    else:
+        # no common content type (e.g. text/x-moin-wiki vs image/png)
+        # we can't render a diff, so we just show a message.
+        # we use the new revision's item to render the page structure around the message.
+        try:
+            item = Item.create(fqname.fullname, rev_id=newrev.revid)
+        except AccessDenied:
+            abort(403)
+        diff_html = (
+            Markup('<div class="caution">')
+            + _("Cannot generate a comparison view because revisions have different content types.")
+            + Markup("<br>")
+            + _("Old content type: {old_ct}").format(old_ct=oldrev.meta[CONTENTTYPE])
+            + Markup("<br>")
+            + _("New content type: {new_ct}").format(new_ct=newrev.meta[CONTENTTYPE])
+            + Markup("</div>")
+        )
 
     item_may = get_item_permissions(item.fqname, item)
     return render_template("diff.html", item_name=item.name, fqname=item.fqname, diff_html=diff_html, may=item_may)

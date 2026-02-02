@@ -24,28 +24,29 @@ import site
 
 moin_dir = os.path.dirname(os.path.abspath(__file__))
 
-if sys.platform == 'win32':
-    site.addsitedir(moin_dir + '-venv-python/Lib/site-packages')
+if sys.platform == "win32":
+    site.addsitedir(moin_dir + "-venv-python/Lib/site-packages")
 else:
-    site.addsitedir(moin_dir + '-venv-{0}/lib/{0}/site-packages'.format(sys.executable))
+    site.addsitedir(moin_dir + "-venv-{0}/lib/{0}/site-packages".format(sys.executable))
 
 # make sure this directory is in sys.path (.lower() avoids duplicate entries on Windows)
 if not (moin_dir in sys.path or moin_dir.lower() in sys.path):
     sys.path.insert(0, moin_dir)
 
 # for debugging sys.path issues, comment out after things are working
-print('== moin2.wsgi sys.path ==')
+print("== moin2.wsgi sys.path ==")
 for p in sys.path:
     print(p)
-print('== end moin2.wsgi sys.path ==')
+print("== end moin2.wsgi sys.path ==")
 
-wiki_config = moin_dir + '/wikiconfig_local.py'
+wiki_config = moin_dir + "/wikiconfig_local.py"
 if not os.path.exists(wiki_config):
-    wiki_config = moin_dir + '/wikiconfig.py'
-print('== wiki_config path =', wiki_config, '==')
+    wiki_config = moin_dir + "/wikiconfig.py"
+print("== wiki_config path =", wiki_config, "==")
 
 # create the Moin (Flask) WSGI application
 from moin.app import create_app
+
 application = create_app(wiki_config)
 
 # please note: if you want to do some wsgi app wrapping, do it like shown below:
