@@ -5,7 +5,7 @@
 MoinMoin - generic registry base class.
 
 Each registration consists of a factory function together with a list of
-arbitrary arguments. Registered entries can be ordered by priority. 
+arbitrary arguments. Registered entries can be ordered by priority.
 During lookup, each factory is called with the provided arguments and
 may return a callable to indicate a match.
 """
