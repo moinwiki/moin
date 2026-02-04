@@ -48,6 +48,8 @@ class Converter:
         "list-item": docbook.varlistentry,
         "list-item-label": docbook.term,
         "quote": docbook.quote,
+        "sub": docbook.subscript,
+        "sup": docbook.superscript,
     }
 
     # We store the standard attributes of an element.
@@ -496,20 +498,14 @@ class Converter:
 
     def visit_moinpage_span(self, element):
         """
-        The span element is used in the DOM Tree to define some specific formatting.
-        So each attribute will give different resulting tag.
+        Handle generic inline container.
 
-        TODO: Add support for text-decoration attribute
-        TODO: Add support for font-size attribute
+        Besides carrying ID or class info, the span element is used in the
+        "Moinpage" tree to define specific element (sub)types or formatting.
+        So it may stand for different inline elements (cf. html_in/html_out).
         """
-        # Check for the attributes of span
-        for key, value in element.attrib.items():
-            if key.name == "baseline-shift":
-                if value == "super":
-                    return self.new_copy(docbook.superscript, element, attrib={})
-                if value == "sub":
-                    return self.new_copy(docbook.subscript, element, attrib={})
-
+        # TODO: Add support for the "html-tag" attribute.
+        #       Add support for special "html:class" attribute values.
         return self.new_copy(docbook.phrase, element, attrib={})
 
     def visit_moinpage_strong(self, element):

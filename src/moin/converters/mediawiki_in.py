@@ -535,8 +535,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_subscript_repl(self, stack, subscript, subscript_text):
-        attrib = {moin_page.baseline_shift: "sub"}
-        elem = moin_page.span(attrib=attrib, children=[subscript_text])
+        elem = moin_page.sub(children=[subscript_text])
         stack.top_append(elem)
 
     inline_superscript: Final = r"""
@@ -548,8 +547,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_superscript_repl(self, stack, superscript, superscript_text):
-        attrib = {moin_page.baseline_shift: "super"}
-        elem = moin_page.span(attrib=attrib, children=[superscript_text])
+        elem = moin_page.sup(children=[superscript_text])
         stack.top_append(elem)
 
     inline_underline: Final = r"""

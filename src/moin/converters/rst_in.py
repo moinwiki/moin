@@ -208,14 +208,14 @@ class NodeVisitor:
     depart_warning = depart_admonition
 
     def visit_abbreviation(self, node):
-        attrib = {html.class_: "html-abbr"}
+        attrib = {moin_page("html-tag"): "abbr"}
         self.open_moin_page_node(moin_page.span(attrib=attrib), node)
 
     def depart_abbreviation(self, node):
         self.close_moin_page_node()
 
     def visit_acronym(self, node):
-        attrib = {html.class_: "html-abbr"}
+        attrib = {moin_page("html-tag"): "abbr"}
         self.open_moin_page_node(moin_page.span(attrib=attrib), node)
 
     def depart_acronym(self, node):
@@ -509,28 +509,29 @@ class NodeVisitor:
             "dfn": moin_page.emphasis,
             "i": moin_page.emphasis,
             "kbd": moin_page.code,
-            "mark": moin_page.span,
+            "mark": moin_page.u,
             "small": moin_page.span,
             "var": moin_page.emphasis,
         }
-        classes = node["classes"]
-        moin_node_type = moin_page.span
+        moin_node = moin_page.span()
         # some class values indicate a matching HTML element (except when used for syntax highlight):
         if not (isinstance(node.parent, (nodes.literal_block, nodes.literal)) and "code" in node.parent.get("classes")):
-            for i, tag in enumerate(classes):
+            classes = node["classes"]
+            for tag in classes:
                 if tag in symmetric_tags:
-                    moin_node_type = getattr(moin_page, tag)
+                    moin_node = getattr(moin_page, tag)()
                     classes.remove(tag)
                     break
                 if tag == "q":
-                    moin_node_type = moin_page.quote
+                    moin_node = moin_page.quote()
                     classes.remove(tag)
                     break
                 if tag in indirect_tags:
-                    moin_node_type = indirect_tags[tag]
-                    classes[i] = "html-" + tag
+                    moin_node = indirect_tags[tag]()
+                    moin_node.attrib[moin_page("html-tag")] = tag
+                    classes.remove(tag)
                     break
-        self.open_moin_page_node(moin_node_type(), node)
+        self.open_moin_page_node(moin_node, node)
 
     def depart_inline(self, node):
         self.close_moin_page_node()
@@ -573,10 +574,10 @@ class NodeVisitor:
     def visit_literal(self, node):
         # some class values indicate a matching HTML element:
         classes = node["classes"]
-        for i, tag in enumerate(classes):
+        for tag in classes:
             if tag in ("kbd", "samp"):
-                classes[i] = "html-" + tag
-                moin_node = moin_page.span()
+                classes.remove(tag)
+                moin_node = moin_page.span(attrib={moin_page("html-tag"): tag})
                 break
         else:
             moin_node = moin_page.code()
@@ -782,7 +783,8 @@ class NodeVisitor:
 
     def visit_sidebar(self, node):
         # analogous to the DocBook <sidebar> and HTML <aside> element
-        self.open_moin_page_node(moin_page.div(attrib={html.class_: "html-aside rst-sidebar"}), node)
+        attrib = {moin_page("html-tag"): "aside", html.class_: "rst-sidebar"}
+        self.open_moin_page_node(moin_page.div(attrib=attrib), node)
 
     def depart_sidebar(self, node):
         self.close_moin_page_node()
@@ -794,7 +796,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_subscript(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "sub"}), node)
+        self.open_moin_page_node(moin_page.sub(), node)
 
     def depart_subscript(self, node):
         self.close_moin_page_node()
@@ -808,7 +810,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_superscript(self, node):
-        self.open_moin_page_node(moin_page.span(attrib={moin_page.baseline_shift: "super"}), node)
+        self.open_moin_page_node(moin_page.sup(), node)
 
     def depart_superscript(self, node):
         self.close_moin_page_node()
@@ -915,7 +917,7 @@ class NodeVisitor:
     def visit_topic(self, node):
         # content outside the flow of the main content of the document
         # analogous to the HTML <aside> element
-        attrib = {html.class_: "html-aside"}
+        attrib = {moin_page("html-tag"): "aside"}
         self.open_moin_page_node(moin_page.div(attrib=attrib), node)
 
     def depart_topic(self, node):
@@ -923,7 +925,7 @@ class NodeVisitor:
 
     def visit_title_reference(self, node):
         # title of a creative work (analogous to HTML <cite>)
-        attrib = {html.class_: "html-cite"}
+        attrib = {moin_page("html-tag"): "cite"}
         self.open_moin_page_node(moin_page.emphasis(attrib=attrib), node)
 
     def depart_title_reference(self, node):

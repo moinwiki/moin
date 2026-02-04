@@ -65,7 +65,7 @@ class HtmlTags:
     html_namespace: Final = {html.namespace: "xhtml"}
 
     # HTML tags which can be converted directly to the moin_page namespace
-    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "u"}
+    symmetric_tags: Final = {"blockquote", "code", "del", "div", "ins", "p", "s", "span", "strong", "sub", "sup", "u"}
 
     # HTML tags that define a list; except dl, which is a little bit different
     list_tags: Final = {"ul", "dir", "ol"}
@@ -77,6 +77,7 @@ class HtmlTags:
         "b": moin_page.strong,  # highlight key words without marking them up as important
         "q": moin_page.quote,
         "strike": moin_page.s,  # obsolete
+        "br": moin_page.line_break,
         # Code and Blockcode
         "pre": moin_page.blockcode,
         "tt": moin_page.code,  # deprecated
@@ -92,10 +93,12 @@ class HtmlTags:
     }
 
     # HTML tags that do not have equivalents in the Moinpage DOM tree
-    # we use a more generic element and store the original tag as class value
-    # e.g. <cite> → <emphasis class="html-cite}">
+    # we use a more generic element and store the original tag
+    # e.g. <cite> → <emphasis html-tag="cite}">
     indirect_tags: Final = {
         "abbr": moin_page.span,  # abbreviation
+        "address": moin_page.div,  # contact info
+        "aside": moin_page.div,  # content that is tangentially related to the main content
         "cite": moin_page.emphasis,  # title of a creative work
         "dfn": moin_page.emphasis,  # defining instance of a term
         "i": moin_page.emphasis,  # alternate voice
@@ -109,34 +112,34 @@ class HtmlTags:
     # Deprecated/obsolete tags and tags not suited for wiki content
     # We do not even process children of these elements, a warning is given.
     ignored_tags: Final = {
-        "applet",
-        "area",
-        "button",
-        "caption",
-        "center",
-        "fieldset",
-        "form",
-        "frame",
-        "frameset",
-        "head",
-        "iframe",
-        "input",
-        "isindex",
-        "label",
-        "legend",
+        "applet",  # embedded applet, not supported in HTML5
+        "area",  # image map
+        "button",  # web form
+        "caption",  # TODO support table captions
+        "center",  # deprecated; TODO map to <div class="center">?
+        "fieldset",  # web form
+        "form",  # web form
+        "frame",  # deprecated
+        "frameset",  # deprecated
+        "head",  # document meta-data
+        "iframe",  # transclusions (nested browsing context)
+        "input",  # web form
+        "isindex",  # only in <head>, deprecated, obsolete
+        "label",  # web form
+        "legend",  # web form
         "link",
-        "map",
-        "menu",
-        "noframes",
-        "noscript",
-        "optgroup",
-        "option",
-        "param",
-        "script",
-        "select",
-        "style",
-        "textarea",
-        "title",
+        "map",  # image map
+        "menu",  # TODO: map to <ul>?
+        "noframes",  # TODO: ignore but process children?
+        "noscript",  # TODO: ignore but process children?
+        "optgroup",  # web form
+        "option",  # web form
+        "param",  # object parameter, deprecated
+        "script",  # insecure!
+        "select",  # web form
+        "style",  # CSS style rules, only in <head> (which we ignore)
+        "textarea",  # web form
+        "title",  # metadata title
     }
 
     # standard_attributes are html attributes which are used
@@ -266,7 +269,7 @@ class Converter(HtmlTags):
         """
         tagname = element.tag.name
         element_type = self.indirect_tags[tagname]
-        attrib = {html("class"): f"html-{tagname}"}
+        attrib = {moin_page("html-tag"): tagname}
         return self.new_copy(element_type, element, attrib)
 
     def convert_attributes(self, element):
@@ -372,44 +375,14 @@ class Converter(HtmlTags):
 
     def visit_xhtml_acronym(self, element):
         # in HTML5, <acronym> is deprecated in favour of <abbr>
-        attrib = {html.class_: "html-abbr"}
+        attrib = {moin_page("html-tag"): "abbr"}
         return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_address(self, element):
-        attrib = {html.class_: "html-address"}
-        return self.new_copy(moin_page.div, element, attrib)
-
-    def visit_xhtml_br(self, element):
-        """
-        <br /> --> <line-break />
-        """
-        return moin_page.line_break()
 
     def visit_xhtml_big(self, element):
         """
-        <big>Text</big> --> <span font-size=120%>Text</span>
+        <big>Text</big> --> <span html:class="moin-big">Text</span>
         """
-        key = moin_page("font-size")
-        attrib = {}
-        attrib[key] = "120%"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_sub(self, element):
-        """
-        <sub>Text</sub> --> <span base-line-shift="sub">Text</span>
-        """
-        key = moin_page("baseline-shift")
-        attrib = {}
-        attrib[key] = "sub"
-        return self.new_copy(moin_page.span, element, attrib)
-
-    def visit_xhtml_sup(self, element):
-        """
-        <sup>Text</sup> --> <span base-line-shift="super">Text</span>
-        """
-        key = moin_page("baseline-shift")
-        attrib = {}
-        attrib[key] = "super"
+        attrib = {html.class_: "moin-big"}
         return self.new_copy(moin_page.span, element, attrib)
 
     def visit_xhtml_hr(self, element, min_class="moin-hr1", max_class="moin-hr6", default_class="moin-hr3"):

@@ -42,16 +42,16 @@ class TestConverter:
     # Interpreted text roles
     data = [
         # standard roles:
-        (":abbreviation:`abbr.`", '<p><span xhtml:class="html-abbr">abbr.</span></p>'),
-        (":ac:`DC`", '<p><span xhtml:class="html-abbr">DC</span></p>'),
+        (":abbreviation:`abbr.`", '<p><span html-tag="abbr">abbr.</span></p>'),
+        (":ac:`DC`", '<p><span html-tag="abbr">DC</span></p>'),
         (r":code:`y = exp(x)`", r'<p><code xhtml:class="code">y = exp(x)</code></p>'),
         (r":literal:`% \ `", "<p><code>% </code></p>"),
         (r":math:`\sin(x)`", r"<p>\sin(x)</p>"),  # TODO: properly support mathematical content
         (":RFC:`1234`", '<p><a xlink:href="https://tools.ietf.org/html/rfc1234.html">RFC 1234</a></p>'),
         (":PEP:`01`", '<p><a xlink:href="https://peps.python.org/pep-0001">PEP 01</a></p>'),
-        ("H\\ :sub:`2`\\ O", '<p>H<span baseline-shift="sub">2</span>O</p>'),
-        ("E = mc\\ :sup:`2`", '<p>E = mc<span baseline-shift="super">2</span></p>'),
-        (":title-reference:`Hamlet`", '<p><emphasis xhtml:class="html-cite">Hamlet</emphasis></p>'),
+        ("H\\ :sub:`2`\\ O", "<p>H<sub>2</sub>O</p>"),
+        ("E = mc\\ :sup:`2`", "<p>E = mc<sup>2</sup></p>"),
+        (":title-reference:`Hamlet`", '<p><emphasis html-tag="cite">Hamlet</emphasis></p>'),
         # custom roles
         (".. role:: orange\n\n:orange:`colourful` text", '<p><span xhtml:class="orange">colourful</span> text</p>'),
         # custom roles with matching Moin element
@@ -61,9 +61,9 @@ class TestConverter:
         (".. role:: u\n\n:u:`annoted` text", "<p><u>annoted</u> text</p>"),
         (".. role:: q\n\n:q:`inline quote`", "<p><quote>inline quote</quote></p>"),
         # custom roles with matching HTML element
-        (".. role:: dfn\n\n:dfn:`term`", '<p><emphasis xhtml:class="html-dfn">term</emphasis></p>'),
-        (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span xhtml:class="html-kbd">Ctrl-X</span></p>'),
-        (".. role:: samp(literal)\n\n:samp:`Error 303`", '<p><span xhtml:class="html-samp">Error 303</span></p>'),
+        (".. role:: dfn\n\n:dfn:`term`", '<p><emphasis html-tag="dfn">term</emphasis></p>'),
+        (".. role:: kbd(literal)\n\nEnter :kbd:`Ctrl-X`", '<p>Enter <span html-tag="kbd">Ctrl-X</span></p>'),
+        (".. role:: samp(literal)\n\n:samp:`Error 303`", '<p><span html-tag="samp">Error 303</span></p>'),
         (  # custom role derived from "code" with syntax highlight
             '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
             '<p>Inline code like <code xhtml:class="code python">'
@@ -514,11 +514,11 @@ text""",
         # Topics, Sidebars, and Rubrics
         (
             ".. topic:: Topic Title\n   :class: custom\n\n   topic content",
-            '<div xhtml:class="html-aside custom"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></div>',
+            '<div html-tag="aside" xhtml:class="custom"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></div>',
         ),
         (
             ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n   :class: float-right\n\n   sidebar content",
-            '<div xhtml:class="html-aside rst-sidebar float-right">'
+            '<div html-tag="aside" xhtml:class="rst-sidebar float-right">'
             '<p xhtml:class="moin-title">Sidebar Title</p>'
             '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
             "<p>sidebar content</p></div>",

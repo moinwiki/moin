@@ -174,11 +174,6 @@ class Converter:
 
     namespaces_visit: Final = {moin_page: "moinpage"}
 
-    # HTML tags that do not have equivalents in the DOM tree
-    # we use a "close match" and store the original tag as class value
-    # e.g.  <emphasis class="html-cite}">
-    indirect_tags: Final = {"abbr", "address", "cite", "dfn", "i", "kbd", "mark", "small", "var"}
-
     def __call__(self, element: Any) -> Any:
         return self.visit(element)
 
@@ -197,25 +192,15 @@ class Converter:
         return new
 
     def new_copy(self, tag, element, attrib={}):
+        # Check for an alternative_tagname:
+        html_tagname = element.attrib.get(moin_page("html-tag"))
+        if html_tagname:
+            tag = html(html_tagname)
+        # Convert attributes and children:
         attrib_new = Attributes(element).convert()
         attrib_new.update(attrib)
         children = self.do_children(element)
         return tag(attrib_new, children)
-
-    def new_copy_from_cls(self, element):
-        classes = element.attrib.get(html.class_, "").split()
-        for cls in classes:
-            if not cls.startswith("html-"):
-                continue
-            tagname = cls.removeprefix("html-")
-            if tagname in self.indirect_tags:
-                classes.remove(cls)
-                if classes:
-                    element.attrib[html.class_] = " ".join(classes)
-                else:
-                    del element.attrib[html.class_]
-                return self.new_copy(html(tagname), element)
-        return None
 
     def visit(self, elem):
         uri = elem.tag.uri
@@ -302,10 +287,10 @@ class Converter:
         return self.new_copy(html.del_, elem)
 
     def visit_moinpage_div(self, elem):
-        return self.new_copy_from_cls(elem) or self.new_copy(html.div, elem)
+        return self.new_copy(html.div, elem)
 
     def visit_moinpage_emphasis(self, elem):
-        return self.new_copy_from_cls(elem) or self.new_copy(html.em, elem)
+        return self.new_copy(html.em, elem)
 
     def visit_moinpage_figure(self, elem):
         return self.new_copy(html.figure, elem)
@@ -588,35 +573,17 @@ class Converter:
     def visit_moinpage_samp(self, elem):
         return self.new_copy(html.samp, elem)
 
+    def visit_moinpage_sub(self, elem):
+        return self.new_copy(html.sub, elem)
+
+    def visit_moinpage_sup(self, elem):
+        return self.new_copy(html.sup, elem)
+
     def visit_moinpage_separator(self, elem):
         return self.new_copy(html.hr, elem)
 
     def visit_moinpage_span(self, elem):
-        # TODO : Fix bug if a span has multiple attributes
-        # Check for the attributes of span
-        attrib = Attributes(elem)
-        # Check for the baseline-shift (subscript or superscript)
-        generate = attrib.get("baseline-shift")
-        if generate:
-            if generate == "sub":
-                return self.new_copy(html.sub, elem)
-            elif generate == "super":
-                return self.new_copy(html.sup, elem)
-        generate = attrib.get("font-size")
-        if generate:
-            if generate == "85%":
-                attribute = {}
-                key = html("class")
-                attribute[key] = "moin-small"
-                return self.new_copy(html.span, elem, attribute)
-            elif generate == "120%":
-                attribute = {}
-                key = html("class")
-                attribute[key] = "moin-big"
-                return self.new_copy(html.span, elem, attribute)
-        # Try if there is a class indicating a special inline HTML element,
-        # else just return a <span>
-        return self.new_copy_from_cls(elem) or self.new_copy(html.span, elem)
+        return self.new_copy(html.span, elem)
 
     def visit_moinpage_s(self, elem):
         return self.new_copy(html.s, elem)
@@ -666,7 +633,7 @@ class Converter:
         return self.new_copy(html.tr, elem)
 
     def visit_moinpage_u(self, elem):
-        return self.new_copy_from_cls(elem) or self.new_copy(html.u, elem)
+        return self.new_copy(html.u, elem)
 
 
 class SpecialId:
