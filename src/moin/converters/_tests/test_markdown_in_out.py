@@ -55,38 +55,51 @@ class TestConverter:
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
 
+    # simple input: the round-trip results in the same output
     data = [
-        ("Text", "Text\n"),
-        ("Text\n\nText\n", "Text\n\nText\n"),
-        ("xxx\n\n------\n\n------\n\n------\n", "xxx\n\n----\n\n----\n\n----\n"),
-        ("----\n\n------\n\n--------\n", "----\n\n----\n\n----\n"),
-        ("**strong**\n", "**strong**\n"),
-        ("*emphasis*\n", "*emphasis*\n"),
-        ("    blockcode\n", "    blockcode\n"),
-        ("`monospace`\n", "`monospace`\n"),
-        ("<abbr>etc.</abbr>", "<abbr>etc.</abbr>"),
-        ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
-        ("<cite>Winnie-the-Pooh</cite>", "<cite>Winnie-the-Pooh</cite>"),
-        ("<dfn>term</dfn>", "<dfn>term</dfn>"),
-        ("<strike>stroke</strike>\n", "<s>stroke</s>\n"),  # <strike> is obsolete since HTML 4.1
-        ("<ins>inserted</ins>\n", "<ins>inserted</ins>\n"),
-        ("<del>deleted</del>\n", "<del>deleted</del>\n"),
-        ("<u>annotated</u>\n", "<u>annotated</u>\n"),
-        ("<s>no longer accurate</s>\n", "<s>no longer accurate</s>\n"),
-        ("<kbd>Ctrl-X</kbd><", "<kbd>Ctrl-X</kbd><"),
-        ("see <mark>here</mark>", "see <mark>here</mark>"),
-        ("<q>cogito ergo sum</q>", "<q>cogito ergo sum</q>"),
-        ("<big>larger</big>\n", '<span class="moin-big">larger</span>'),  # <big> is obsolete
-        ("<small>fine print</small>\n", "<small>fine print</small>\n"),
-        ('<span class="red" id="dwarf">star</span>', '<span class="red" id="dwarf">star</span>'),
-        ("<sup>super</sup>script\n", "<sup>super</sup>script\n"),
-        ("<sub>sub</sub>script\n", "<sub>sub</sub>script\n"),
-        ("<var>n</var> times\n", "<var>n</var> times\n"),
-        ("<hr>\n\n<hr>\n\n<hr>\n", "----\n\n----\n\n----\n"),
+        "Text",
+        "paragraph 1\n\nparagraph 2",
+        "**strong**",
+        "*emphasis*",
+        "    blockcode",
+        "`monospace`",
+        "line <br />\nbreak",
+        "<abbr>etc.</abbr>",
+        "<cite>Winnie-the-Pooh</cite>",
+        "<dfn>term</dfn>",
+        "<ins>inserted</ins>",
+        "<del>deleted</del>",
+        "<u>annotated</u>",
+        "<s>no longer accurate</s>",
+        "<kbd>Ctrl-X</kbd><",
+        "see <mark>here</mark>",
+        "<q>cogito ergo sum</q>",
+        "<small>fine print</small>",
+        '<span class="red" id="dwarf">star</span>',
+        "<sup>super</sup>script",
+        "<sub>sub</sub>script",
+        "<var>n</var> times",
     ]
 
+    @pytest.mark.parametrize("sample", data)
+    def test_base(self, sample):
+        self.do(sample, sample)
+
+    # input variants: the round-trip results in "normalized" Markdown
+    data = (
+        ("paragraph 1\n\n\n\nparagraph 2", "paragraph 1\n\nparagraph 2"),
+        ("xxx\n\n------\n\n------\n\n------\n", "xxx\n\n----\n\n----\n\n----\n"),
+        ("----\n\n------\n\n--------\n", "----\n\n----\n\n----\n"),
+        ("<hr>\n\n<hr>\n\n<hr>\n", "----\n\n----\n\n----\n"),
+        ("line  \nbreak", "line<br />\nbreak"),
+        # we accept outdated HTML elements but map them to recommended substitute
+        ("<acronym>DC</acronym>", "<abbr>DC</abbr>"),  # in HTML5, <acronym> is deprecated in favour of <abbr>
+        ("<big>larger</big>\n", '<span class="moin-big">larger</span>'),  # <big> is obsolete
+        ("<strike>stroke</strike>\n", "<s>stroke</s>\n"),  # <strike> is obsolete since HTML 4.1
+    )
+
     @pytest.mark.parametrize("input,output", data)
-    def test_base(self, input, output):
+    def test_normalize(self, input, output):
         self.do(input, output)
 
     data = [

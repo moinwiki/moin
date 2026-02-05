@@ -53,11 +53,7 @@ class Markdown:
     samp_close = "`"
     table_marker = "|"
     p = "\n"
-    linebreak = "  "
-    larger_open = "<big>"
-    larger_close = "</big>"
-    smaller_open = "<small>"
-    smaller_close = "</small>"
+    linebreak = "<br />"
     object_open = "{{"
     object_close = "}}"
     definition_list_marker = ":  "
@@ -87,6 +83,9 @@ class Converter:
     """
 
     namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
+
+    # elements with identical tagname in Moinpage and Markdown and no special handling
+    simple_inline_tags = {"del", "ins", "s", "sub", "sup"}
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
@@ -166,8 +165,13 @@ class Converter:
         return f"<{starttag}>{self.open_children(elem)}</{tagname}>"
 
     def open_moinpage(self, elem):
-        n = "open_moinpage_" + elem.tag.name.replace("-", "_")
-        visitor = getattr(self, n, None)
+        tagname = elem.tag.name
+        if tagname in self.simple_inline_tags:
+            ret = self.html_inline_element(tagname, elem)
+            self.last_closed = tagname.replace("-", "_")
+            return ret
+        visitor_name = "open_moinpage_" + tagname.replace("-", "_")
+        visitor = getattr(self, visitor_name, None)
         if visitor:
             ret = visitor(elem)
             if elem.tag.name not in (
@@ -175,14 +179,8 @@ class Converter:
                 "blockcode",
                 "code",
                 "div",
-                "big",
-                "small",
-                "sup",
-                "sub",
                 "th",
                 "emphasis",
-                "s",
-                "ins",
                 "u",
                 "span",
                 "table",
@@ -198,7 +196,7 @@ class Converter:
                         ret += attrib + "\n"
                     else:
                         ret += attrib
-            self.last_closed = elem.tag.name.replace("-", "_")
+            self.last_closed = tagname.replace("-", "_")
             return ret
         return self.open_children(elem)
 
@@ -461,26 +459,10 @@ class Converter:
         tagname = elem.attrib.get(moin_page("html-tag"))
         if tagname:
             return self.html_inline_element(tagname, elem)
-        font_size = elem.get(moin_page.font_size, "")
-        if font_size:
-            return "{}{}{}".format(
-                Markdown.larger_open if font_size == "120%" else Markdown.smaller_open,
-                self.open_children(elem),
-                Markdown.larger_close if font_size == "120%" else Markdown.smaller_close,
-            )
         if html_out.Attributes(elem).convert():
             # use <span> to represent attributes
             return self.html_inline_element("span", elem)
         return self.open_children(elem)
-
-    def open_moinpage_del(self, elem):  # editorial removements
-        return self.html_inline_element("del", elem)
-
-    def open_moinpage_s(self, elem):  # inaccurate or obsolete text
-        return self.html_inline_element("s", elem)
-
-    def open_moinpage_ins(self, elem):  # editorial insertions
-        return self.html_inline_element("ins", elem)
 
     def open_moinpage_u(self, elem):  # annotated text
         tagname = elem.attrib.get(moin_page("html-tag")) or "u"
@@ -488,12 +470,6 @@ class Converter:
 
     def open_moinpage_strong(self, elem):
         return f"{Markdown.strong}{self.open_children(elem)}{Markdown.strong}"
-
-    def open_moinpage_sub(self, elem):
-        return self.html_inline_element("sub", elem)
-
-    def open_moinpage_sup(self, elem):
-        return self.html_inline_element("sup", elem)
 
     def open_moinpage_table(self, elem):
         self.status.append("table")
