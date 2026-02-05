@@ -48,7 +48,7 @@ class Clock:
 
     def stop(self, timer, comment=""):
         if timer in self.timers:
-            value = time.time() - self.timers[timer].pop()
+            value = time.time() - self.timers[timer].pop(0)
             logging.debug(f"timer {timer}({len(self.timers[timer])}): {value * 1000:.2f}ms {comment}")
             if not self.timers[timer]:
                 del self.timers[timer]
