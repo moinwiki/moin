@@ -54,6 +54,10 @@ class Clock:
                 del self.timers[timer]
             return value
 
+    def delta(self, timer):
+        times = self.timers.get(timer)
+        return time.time() - times[0] if times is not None else None
+
     def __del__(self):
         if self.timers:
             logging.warning(f"These timers have not been stopped: {', '.join(self.timers.keys())}")
