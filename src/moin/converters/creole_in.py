@@ -416,7 +416,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_nowiki_repl(self, stack, nowiki, nowiki_text):
-        stack.top_append(moin_page.code(children=(nowiki_text,)))
+        stack.top_append(moin_page.literal(children=(nowiki_text,)))
 
     inline_object = r"""
         (?P<object>

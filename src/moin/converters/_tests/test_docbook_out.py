@@ -201,11 +201,29 @@ class TestConverter(Base):
             # <article><screen><![CDATA[Text]]></screen></article>
             '/article[screen="<![CDATA[Text]]>"]',
         ),
-        # Code conversion into <literal>
+        # CODE --> CODE
         (
             "<page><body><p><code>Text</code></p></body></page>",
-            # <article><simpara><literal>Text</literal></simpara></article>
-            '/article/simpara[literal="Text"]',
+            # <article><simpara><code>Text</code></simpara></article>
+            '/article/simpara[code="Text"]',
+        ),
+        # KBD --> USERINPUT
+        (
+            "<page><body><p><kbd>Ctrl-X</kbd></p></body></page>",
+            # <article><simpara><userinput>Ctrl-X</userinput></simpara></article>
+            '/article/simpara[userinput="Ctrl-X"]',
+        ),
+        # LITERAL --> LITERAL
+        (
+            "<page><body><p><literal>monospaced</literal></p></body></page>",
+            # <article><simpara><literal>monospaced</literal></simpara></article>
+            '/article/simpara[literal="monospaced"]',
+        ),
+        # SAMP --> COMPUTEROUTPUT
+        (
+            "<page><body><p><samp>Error 42</samp></p></body></page>",
+            # <article><simpara><computeroutput>Error 42</computeroutput></simpara></article>
+            '/article/simpara[computeroutput="Error 42"]',
         ),
         # SPAN --> PHRASE
         (

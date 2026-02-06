@@ -48,12 +48,12 @@ class Moinwiki:
     a_close = "]]"
     verbatim_open = "{"  # * 3
     verbatim_close = "}"  # * 3
-    monospace = "`"
+    literal = "`"
     strong = "'''"
     emphasis = "''"
     underline = "__"
-    samp_open = "{{{"  # 3 brackets is only option for inline
-    samp_close = "}}}"
+    code_open = "{{{"  # 3 brackets is only option for inline
+    code_close = "}}}"
     stroke_open = "--("
     stroke_close = ")--"
     table_marker = "||"
@@ -260,10 +260,8 @@ class Converter:
         return "\n\n" + "\n".join(indented) + "\n\n"
 
     def open_moinpage_code(self, elem):
-        ret = Moinwiki.monospace
-        ret += "".join(elem.itertext())
-        ret += Moinwiki.monospace
-        return ret
+        # text {{{more text}}} end
+        return f'{Moinwiki.code_open}{"".join(elem.itertext())}{Moinwiki.code_close}'
 
     def open_moinpage_div(self, elem):
         childrens_output = self.open_children(elem)
@@ -287,6 +285,10 @@ class Converter:
         ret += "".join(elem.itertext())
         ret += f" {Moinwiki.h * level}\n"
         return "\n" + ret
+
+    def open_moinpage_kbd(self, elem):
+        # there is no specific markup for user input (<kbd>)
+        self.open_moinpage_literal()
 
     def open_moinpage_line_break(self, elem):
         return Moinwiki.linebreak
@@ -335,6 +337,10 @@ class Converter:
             ret = "\n"
         ret += " " * (len("".join(self.list_item_labels[:-1])) + len(self.list_item_labels[:-1])) + self.list_item_label
         return ret + self.open_children(elem)
+
+    def open_moinpage_literal(self, elem):
+        # Inline text that is some literal value. Typically set in monospace
+        return f'{Moinwiki.literal}{"".join(elem.itertext())}{Moinwiki.literal}'
 
     def open_moinpage_note(self, elem):
         class_ = elem.get(moin_page.note_class, "")
@@ -540,11 +546,8 @@ class Converter:
         return ret
 
     def open_moinpage_samp(self, elem):
-        # text {{{more text}}} end
-        ret = Moinwiki.samp_open
-        ret += "".join(elem.itertext())
-        ret += Moinwiki.samp_close
-        return ret
+        # there is no specific markup for computer output (<samp>)
+        self.open_moinpage_literal()
 
     def open_moinpage_separator(self, elem, hr_class_prefix="moin-hr"):
         hr_ending = "\n"

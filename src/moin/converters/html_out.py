@@ -343,6 +343,9 @@ class Converter:
     def visit_moinpage_ins(self, elem):
         return self.new_copy(html.ins, elem)
 
+    def visit_moinpage_kbd(self, elem):
+        return self.new_copy(html.kbd, elem)
+
     def visit_moinpage_line_break(self, elem):
         # TODO: attributes?
         return html.br()
@@ -428,6 +431,11 @@ class Converter:
                 elif item.tag.name == "list-item-body":
                     ret.append(self.new_copy(html.dd, item))
         return ret
+
+    def visit_moinpage_literal(self, elem):
+        """Inline literal text (user input, computer output, etc.)."""
+        attrib = {html.class_: "monospaced"}
+        return self.new_copy(html.span, elem, attrib)
 
     def eval_object_type(self, mimetype, href):
         """

@@ -503,12 +503,11 @@ class NodeVisitor:
 
     def visit_inline(self, node):
         # <inline> element class values that indicate specific HTML tags
-        symmetric_tags = {"del", "ins", "s", "samp", "u"}
+        symmetric_tags = {"del", "ins", "kbd", "s", "samp", "u"}
         indirect_tags = {
             "b": moin_page.strong,
             "dfn": moin_page.emphasis,
             "i": moin_page.emphasis,
-            "kbd": moin_page.code,
             "mark": moin_page.u,
             "small": moin_page.span,
             "var": moin_page.emphasis,
@@ -575,13 +574,13 @@ class NodeVisitor:
         # some class values indicate a matching HTML element:
         classes = node["classes"]
         for tag in classes:
-            if tag in ("kbd", "samp"):
+            if tag in ("code", "kbd", "samp"):
                 classes.remove(tag)
-                moin_node = moin_page.span(attrib={moin_page("html-tag"): tag})
+                moin_node_type = getattr(moin_page, tag)
                 break
         else:
-            moin_node = moin_page.code()
-        self.open_moin_page_node(moin_node, node)
+            moin_node_type = moin_page.literal
+        self.open_moin_page_node(moin_node_type(), node)
 
     def depart_literal(self, node):
         self.close_moin_page_node()

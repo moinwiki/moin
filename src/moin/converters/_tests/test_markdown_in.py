@@ -75,10 +75,14 @@ class TestConverter:
         ('<span class="moin-small">smaller</span>', '<div><p><span html:class="moin-small">smaller</span></p></div>'),
         ("<sub>sub</sub>script", "<div><p><sub>sub</sub>script</p></div>"),
         ("<sup>super</sup>script", "<div><p><sup>super</sup>script</p></div>"),
+        ("<code>Code</code>", "<div><p><code>Code</code></p></div>"),
         ("<em>Emphasis</em>", "<div><p><emphasis>Emphasis</emphasis></p></div>"),
         ("<i>alternate voice</i>", '<div><p><emphasis html-tag="i">alternate voice</emphasis></p></div>'),
         ("<u>underline</u>", "<div><p><u>underline</u></p></div>"),
         ("<ins>inserted</ins>", "<div><p><ins>inserted</ins></p></div>"),
+        ("<kbd>Ctrl-X</kbd>", "<div><p><kbd>Ctrl-X</kbd></p></div>"),
+        ("<samp>Error 33</samp>", "<div><p><samp>Error 33</samp></p></div>"),
+        ("<tt>literal</tt>", "<div><p><literal>literal</literal></p></div>"),
         ("<del>deleted</del>", "<div><p><del>deleted</del></p></div>"),
         ("<s>no longer accurate</s>", "<div><p><s>no longer accurate</s></p></div>"),
         # the <strike> tag is deprecated since HTML4.1!
@@ -105,7 +109,6 @@ class TestConverter:
             '<div><div><div html-tag="address">webmaster@example.org</div>\n</div></div>',
         ),
         ("<dfn>term</dfn>", '<div><p><emphasis html-tag="dfn">term</emphasis></p></div>'),
-        ("<kbd>Ctrl-X</kbd>", '<div><p><span html-tag="kbd">Ctrl-X</span></p></div>'),
         ("<small>fine print</small>", '<div><p><span html-tag="small">fine print</span></p></div>'),
     ]
 

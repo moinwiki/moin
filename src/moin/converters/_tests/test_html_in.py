@@ -237,11 +237,6 @@ class TestConverter(Base):
             '/page/body/p/emphasis[text()="alternate voice"][@html-tag="i"]',
         ),
         (
-            "<html><p><kbd>Ctrl-X</kbd></p></html>",
-            # <page><body><span html-tag="kbd">Ctrl-X</span></body></page>
-            '/page/body/p/span[text()="Ctrl-X"][@html-tag="kbd"]',
-        ),
-        (
             "<html><p><mark>highlight</mark></p></html>",
             # <page><body><u html-tag="mark">highlight</u></body></page>
             '/page/body/p/u[text()="highlight"][@html-tag="mark"]',
@@ -293,9 +288,14 @@ class TestConverter(Base):
             '/page/body/div[code="Code"]',
         ),
         (
+            "<html><p><kbd>Ctrl-X</kbd></p></html>",
+            # <page><body><kbd>Ctrl-X</kbd></body></page>
+            '/page/body/p[kbd="Ctrl-X"]',
+        ),
+        (
             "<html><div><samp>Code</samp></div></html>",
-            # <page><body><div><code>Code</code></div></body></page>
-            '/page/body/div[code="Code"]',
+            # <page><body><div><samp>Code</samp></div></body></page>
+            '/page/body/div[samp="Code"]',
         ),
         (
             "<html><pre>Code</pre></html>",
@@ -304,8 +304,13 @@ class TestConverter(Base):
         ),
         (
             "<html><p><tt>Code</tt></p></html>",
-            # <page><body><p><code>Code</code></p></body></page>
-            '/page/body/p[code="Code"]',
+            # <page><body><p><literal>Code</literal></p></body></page>
+            '/page/body/p[literal="Code"]',
+        ),
+        (
+            '<html><p><span class="monospaced">Literal</span></p></html>',
+            # <page><body><p><literal>Literal</literal></p></body></page>
+            '/page/body/p[literal="Literal"]',
         ),
     ]
 

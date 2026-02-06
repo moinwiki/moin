@@ -43,11 +43,14 @@ class Converter:
     # DOM tree elements that can be easily converted into a DocBook
     # element, without attributes.
     simple_tags = {
-        "code": docbook.literal,
+        "code": docbook.code,
         "emphasis": docbook.emphasis,
+        "kbd": docbook.userinput,
         "list-item": docbook.varlistentry,
         "list-item-label": docbook.term,
+        "literal": docbook.literal,
         "quote": docbook.quote,
+        "samp": docbook.computeroutput,
         "sub": docbook.subscript,
         "sup": docbook.superscript,
     }

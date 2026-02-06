@@ -310,7 +310,6 @@ class Converter:
         "termdef",
         "type",
         "uri",
-        "userinput",
         "wordasword",
         "varname",
         "anchor",
@@ -379,12 +378,12 @@ class Converter:
     # DocBook tags which can be convert directly to a DOM Tree element
     simple_tags: Final = {
         "code": moin_page.code,
-        "computeroutput": moin_page.code,
+        "computeroutput": moin_page.samp,
         "glossdef": moin_page("list-item-body"),
         "glossentry": moin_page("list-item"),
         "glosslist": moin_page("list"),
         "glossterm": moin_page("list-item-label"),
-        "literal": moin_page.code,
+        "literal": moin_page.literal,
         "markup": moin_page.code,
         "para": moin_page.p,
         "phrase": moin_page.span,
@@ -401,6 +400,7 @@ class Converter:
         "tfoot": moin_page("table-footer"),
         "tbody": moin_page("table-body"),
         "tr": moin_page("table-row"),
+        "userinput": moin_page.kbd,
         "variablelist": moin_page("list"),
         "varlistentry": moin_page("list-item"),
     }

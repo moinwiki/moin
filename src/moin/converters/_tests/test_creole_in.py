@@ -270,12 +270,15 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        ("{{{nowiki}}}", "<page><body><p><code>nowiki</code></p></body></page>"),
-        ("{{{{nowiki}}}}", "<page><body><p><code>{nowiki}</code></p></body></page>"),
-        ("text: {{{nowiki}}}, text", "<page><body><p>text: <code>nowiki</code>, text</p></body></page>"),
+        ("{{{nowiki}}}", "<page><body><p><literal>nowiki</literal></p></body></page>"),
+        ("{{{{nowiki}}}}", "<page><body><p><literal>{nowiki}</literal></p></body></page>"),
+        ("text: {{{nowiki}}}, text", "<page><body><p>text: <literal>nowiki</literal>, text</p></body></page>"),
         ("{{{\nnowiki\n}}}", "<page><body><blockcode>nowiki</blockcode></body></page>"),
         ("{{{\nnowiki\nno\nwiki\n}}}", "<page><body><blockcode>nowiki\nno\nwiki</blockcode></body></page>"),
-        ("{{{nowiki}}} {{{nowiki}}}", "<page><body><p><code>nowiki</code> <code>nowiki</code></p></body></page>"),
+        (
+            "{{{nowiki}}} {{{nowiki}}}",
+            "<page><body><p><literal>nowiki</literal> <literal>nowiki</literal></p></body></page>",
+        ),
         # XXX: Is <page> correct?
         ("{{{\n#!\nwiki\n}}}", "<page><body><page><body><p>wiki</p></body></page></body></page>"),
         (

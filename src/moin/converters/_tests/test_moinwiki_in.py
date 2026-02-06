@@ -434,18 +434,18 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        ("{{{nowiki}}}", "<page><body><p><samp>nowiki</samp></p></body></page>"),
-        ("`nowiki`", "<page><body><p><code>nowiki</code></p></body></page>"),
-        ("{{{{nowiki}}}}", "<page><body><p><samp>{nowiki}</samp></p></body></page>"),
-        ("text: {{{nowiki}}}, text", "<page><body><p>text: <samp>nowiki</samp>, text</p></body></page>"),
+        ("{{{nowiki}}}", "<page><body><p><code>nowiki</code></p></body></page>"),
+        ("`nowiki`", "<page><body><p><literal>nowiki</literal></p></body></page>"),
+        ("{{{{nowiki}}}}", "<page><body><p><code>{nowiki}</code></p></body></page>"),
+        ("text: {{{nowiki}}}, text", "<page><body><p>text: <code>nowiki</code>, text</p></body></page>"),
         ("{{{\nnowiki\n}}}", "<page><body><nowiki>3<nowiki-args></nowiki-args>nowiki</nowiki></body></page>"),
         (
             "{{{\nnowiki\nno\nwiki\n}}}",
             "<page><body><nowiki>3<nowiki-args></nowiki-args>nowiki\nno\nwiki</nowiki></body></page>",
         ),
-        ("{{{nowiki}}} {{{nowiki}}}", "<page><body><p><samp>nowiki</samp> <samp>nowiki</samp></p></body></page>"),
-        ("{{{}}}", "<page><body><p><samp></samp></p></body></page>"),
-        ("``", "<page><body><p><code></code></p></body></page>"),
+        ("{{{nowiki}}} {{{nowiki}}}", "<page><body><p><code>nowiki</code> <code>nowiki</code></p></body></page>"),
+        ("{{{}}}", "<page><body><p><code></code></p></body></page>"),
+        ("``", "<page><body><p><literal></literal></p></body></page>"),
         # XXX: Is <page> correct?
         ("{{{#!\ntest\n}}}", "<page><body><nowiki>3<nowiki-args>#!</nowiki-args>test</nowiki></body></page>"),
         (
