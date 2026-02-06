@@ -53,7 +53,7 @@ logging = log.getLogger(__name__)
 def get_current_theme():
     # This might be called when flaskg.user is not set up yet:
     u = getattr(flaskg, "user", None)
-    if u and u.theme_name is not None:
+    if u and u.theme_name:
         theme_name = u.theme_name
     else:
         theme_name = app.cfg.theme_default
