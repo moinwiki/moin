@@ -65,11 +65,7 @@ See utils.html for more macros.
 {% macro annotated_input(field, type=none) %}
     {%- set type = type or field.properties.widget %}
     <dt>
-        {%- if type == 'checkbox' %}
-            {{ _checkbox_label(field) }}
-        {%- else %}
-            {{ gen.label(field) }}
-        {% endif %}
+        {{ gen.label(field) }}
     </dt>
     <dd>
         {{ raw_input(field, type) }}
@@ -89,33 +85,6 @@ See utils.html for more macros.
         {{ gen.textarea(field, rows=field.properties.rows|string, cols=field.properties.cols|string, **kwargs) }}
         {{ render_errors(field) }}
     </dd>
-{%- endmacro %}
-
-{% macro _valued_label(field, value, contents=none) %}
-    {#-
-        XXX Patch <label>'s `for` attribute with value when element referred to is checkbox or radio.
-        See: https://bitbucket.org/jek/flatland/issue/9
-    #}
-    {{ gen.label(field, for='f_{0}_{1}'.format(field.flattened_name(), value.replace(' ', '')), contents=contents, **kwargs) }}
-{%- endmacro %}
-
-{% macro _checkbox_label(field) %}
-    {{ _valued_label(field, '1', **kwargs) }}
-{%- endmacro %}
-
-{% macro _radio_label(field, value) %}
-    {{ _valued_label(field, value, value, **kwargs) }}
-{%- endmacro %}
-
-{% macro inline_checkbox(field) %}
-    {{ raw_input(field, 'checkbox') }}
-    {{ _checkbox_label(field, class='moin-inline-label') }}
-    {{ render_errors(field) }}
-    {%- if field.properties.helper is defined %}
-        <span class="helper-text">
-            {{ field.properties.helper }}
-        </span>
-    {% endif %}
 {%- endmacro %}
 
 {% macro any_integer(field) %}
@@ -141,7 +110,7 @@ See utils.html for more macros.
     <dd class="moin-radio">
         {%- for id, theme in (field.properties.choices) %}
             {{ gen.input(field, type='radio', value=id) -}}
-            {{- _valued_label(field, value=id, contents=theme, class='moin-inline-label') }}
+            {{ gen.label(field, value=id, contents=theme, class='moin-inline-label') }}
             {%- if not loop.last -%}<br>{% endif -%}
         {%- endfor %}
     </dd>
@@ -180,7 +149,7 @@ See utils.html for more macros.
     {%- for value, label, description in field.member_schema.properties['choice_specs'] %}
         <li>
             {{ raw_input(field, 'checkbox', value=value) }}
-            {{ _valued_label(field, value, label or value, class='moin-inline-label') }}
+            {{ gen.label(field) }}
             {%- if description %}
                 <span class="helper-text">
                     {{ description }}
