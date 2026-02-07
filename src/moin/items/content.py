@@ -20,7 +20,7 @@ Each class in this module corresponds to a content type value.
 
 from __future__ import annotations
 
-from typing import Any, Callable, NamedTuple, IO, Protocol, TYPE_CHECKING
+from typing import Any, Callable, ClassVar, LiteralString, NamedTuple, IO, Protocol, TYPE_CHECKING
 from typing_extensions import override
 
 import os
@@ -103,7 +103,7 @@ class RegistryContent(RegistryBase["Content"]):
         factory: Callable[..., Content]
         content_type: Type
         default_contenttype_params: dict[str, Any]
-        display_name: str
+        display_name: str | None
         ingroup_order: int
         priority: int
 
@@ -143,7 +143,7 @@ content_registry = RegistryContent(
 )
 
 
-def register(cls):
+def register(cls: type[Content]):
     content_registry.register(
         RegistryContent.Entry(
             cls._factory,
@@ -193,16 +193,15 @@ def conv_serialize(doc: Element, namespaces: dict[str, str], method: str = "poly
 
 class Content:
     """
-    Base for content classes defining some helpers, agnostic about content
-    data.
+    Base for content classes defining some helpers, agnostic about content data.
     """
 
     # placeholder values for registry entry properties
     contenttype: str
-    default_contenttype_params = {}
-    display_name: str | None = None
-    group = GROUP_OTHER
-    ingroup_order = 0
+    default_contenttype_params: ClassVar[dict[str, Any]] = {}
+    display_name: ClassVar[str | None] = None
+    group: ClassVar[LiteralString | None] = GROUP_OTHER
+    ingroup_order: ClassVar[int] = 0
 
     @classmethod
     def _factory(cls, *args: Any, **kwargs: Any) -> Self:
