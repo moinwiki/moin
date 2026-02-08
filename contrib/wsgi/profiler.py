@@ -1,21 +1,21 @@
 """
-    MoinMoin - WSGI middleware for profiling
+MoinMoin - WSGI middleware for profiling
 
-    These have been ported from server_standalone to provide application
-    profiling for a WSGI application. They are implemented as WSGI
-    middlewares, so they can be plugged right in front of the MoinMoin
-    WSGI application. Attention has to be paid that, at the end of
-    profiling, the `shutdown` method must be invoked so that the
-    middleware can write the reports to the file system.
+These have been ported from server_standalone to provide application
+profiling for a WSGI application. They are implemented as WSGI
+middlewares, so they can be plugged right in front of the MoinMoin
+WSGI application. Attention has to be paid that, at the end of
+profiling, the `shutdown` method must be invoked so that the
+middleware can write the reports to the file system.
 
-    TODO: in pre-WSGI MoinMoin those profilers were integrated into
-          the standalone server and also some other gateway interfaces.
-          In the near future, the middleware here could again be made
-          configurable automatically with command-line switches or
-          wiki configuration options.
+TODO: in pre-WSGI MoinMoin those profilers were integrated into
+      the standalone server and also some other gateway interfaces.
+      In the near future, the middleware here could again be made
+      configurable automatically with command-line switches or
+      wiki configuration options.
 
-    @copyright: 2008 MoinMoin:FlorianKrupicka,
-    @license: GNU GPL, see COPYING for details.
+@copyright: 2008 MoinMoin:FlorianKrupicka,
+@license: GNU GPL, see COPYING for details.
 """
 
 from werkzeug.wsgi import get_current_url

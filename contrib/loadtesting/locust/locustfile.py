@@ -9,7 +9,6 @@ from time import time
 
 from locust import HttpLocust, Locust, TaskSet, HttpUser, task, SequentialTaskSet, between, User, events
 
-
 test_content = """
 = %s Home Page %s =
 

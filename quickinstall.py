@@ -34,7 +34,6 @@ Usage (to display a menu of commands):
     - Windows:  m
 """
 
-
 import os
 import subprocess
 import sys
@@ -45,7 +44,6 @@ import fnmatch
 import timeit
 from collections import Counter
 import venv
-
 
 if sys.hexversion < 0x30A0000:
     sys.exit("Error: MoinMoin requires Python 3.10+, current version is %s\n" % (platform.python_version(),))
@@ -123,9 +121,7 @@ del-rej         delete all files matching *.rej
 del-wiki        create a backup, then delete all wiki data
 
 Please refer to 'moin help' to learn more about the CLI for wiki administrators.
-""".format(
-    M
-)
+""".format(M)
 
 
 def search_for_phrase(filename):
@@ -278,8 +274,8 @@ class Commands:
 
     def run_time(self, command):
         seconds = int(timeit.default_timer() - self.tic)
-        (t_min, t_sec) = divmod(seconds, 60)
-        (t_hour, t_min) = divmod(t_min, 60)
+        t_min, t_sec = divmod(seconds, 60)
+        t_hour, t_min = divmod(t_min, 60)
         print(f"{command} run time (h:mm:ss) {t_hour}:{t_min:0>2}:{t_sec:0>2}")
 
     def cmd_quickinstall(self, *args):

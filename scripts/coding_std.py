@@ -24,7 +24,6 @@ import sys
 import os
 import re
 
-
 # File types to be processed
 # Ignore help .meta and .data files; CKEditor uses tabs, Markdown uses 2 trailing blanks for line breaks
 SELECTED_SUFFIXES = set("py bat cmd html css js styl less rst scss".split())

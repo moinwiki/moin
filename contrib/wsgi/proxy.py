@@ -1,11 +1,11 @@
 """
-    WSGI middleware for running WSGI apps behind proxies.
+WSGI middleware for running WSGI apps behind proxies.
 
-    Analyzes the X-Forwarded-For HTTP header and uses the address the outermost
-    trusted proxy sees as REMOTE_ADDR.
+Analyzes the X-Forwarded-For HTTP header and uses the address the outermost
+trusted proxy sees as REMOTE_ADDR.
 
-    @copyright: 2008 MoinMoin:FlorianKrupicka
-    @license: GNU GPL, see COPYING for details.
+@copyright: 2008 MoinMoin:FlorianKrupicka
+@license: GNU GPL, see COPYING for details.
 """
 
 

@@ -52,7 +52,6 @@ import time
 
 from locust import HttpLocust, Locust, TaskSet, HttpUser, task, SequentialTaskSet, between, User, events
 
-
 # Used to create unique user IDs
 user_number = 0
 # Min and max wait time in seconds between user transactions; ignored, there is only 1 task

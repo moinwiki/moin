@@ -1,8 +1,8 @@
 """
-    MoinMoin - raw_wsgi_bench
+MoinMoin - raw_wsgi_bench
 
-    @copyright: 2008 MoinMoin:FlorianKrupicka
-    @license: GNU GPL, see COPYING for details.
+@copyright: 2008 MoinMoin:FlorianKrupicka
+@license: GNU GPL, see COPYING for details.
 """
 
 import time
