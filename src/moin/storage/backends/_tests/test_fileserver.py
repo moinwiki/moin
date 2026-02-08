@@ -59,9 +59,7 @@ class TestFileServerBackend(BackendTestBase):
  * [[../]]
  * [[/bar.txt|bar.txt]]
  * [[/foo.png|foo.png]]
-""".replace(
-            "\n", "\r\n"
-        ).encode()
+""".replace("\n", "\r\n").encode()
         expected_result.add((dir_meta, dir_data))
         result = set()
         for i in self.be:
@@ -89,9 +87,7 @@ class TestFileServerBackend(BackendTestBase):
 = Directory contents =
  * [[../]]
  * [[/dir|dir/]]
-""".replace(
-            "\n", "\r\n"
-        ).encode()
+""".replace("\n", "\r\n").encode()
         expected_result.add((dir_meta, dir_data))
         dir_meta = tuple(sorted(dict(name="dir", size=0, contenttype="text/x.moin.wiki;charset=utf-8").items()))
         dir_data = """\
@@ -99,9 +95,7 @@ class TestFileServerBackend(BackendTestBase):
  * [[../]]
  * [[/bar.txt|bar.txt]]
  * [[/foo.png|foo.png]]
-""".replace(
-            "\n", "\r\n"
-        ).encode()
+""".replace("\n", "\r\n").encode()
         expected_result.add((dir_meta, dir_data))
         result = set()
         for i in self.be:

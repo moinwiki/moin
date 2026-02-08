@@ -337,9 +337,7 @@ class Converter(ConverterMacro):
             ([|] \s* (?P<link_text>.+?) \s*)?
             \]\]
         )
-    """ % dict(
-        uri_schemes="|".join(URI_SCHEMES)
-    )
+    """ % dict(uri_schemes="|".join(URI_SCHEMES))
 
     def inline_link_repl(
         self,
@@ -467,9 +465,7 @@ class Converter(ConverterMacro):
             )
             ($ | (?=\s | [,.:;!?()] (\s | $)))
         )
-    """ % dict(
-        uri_schemes="|".join(URI_SCHEMES)
-    )
+    """ % dict(uri_schemes="|".join(URI_SCHEMES))
 
     def inline_url_repl(self, stack, url, url_target, escaped_url=None):
         """Handle raw urls in text."""

@@ -7,7 +7,6 @@
 MoinMoin - CLI command to disable a user account.
 """
 
-
 import click
 from flask.cli import FlaskGroup  # , with_appcontext
 

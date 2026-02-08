@@ -8,7 +8,6 @@ using the Icon macro:
     <<Icon(myicon.png)>>
 """
 
-
 import os
 
 from flask import url_for

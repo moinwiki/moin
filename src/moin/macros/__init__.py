@@ -12,7 +12,6 @@ tree representation of the document.
 TODO: Merge with converters
 """
 
-
 from moin.utils import pysupport
 
 modules = pysupport.getPackageModules(__file__)

@@ -5,7 +5,6 @@
 MoinMoin - moin.utils.crypto tests.
 """
 
-
 from moin.utils import crypto
 
 

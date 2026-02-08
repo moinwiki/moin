@@ -20,7 +20,6 @@ from moin.utils.tree import moin_page, xlink, xinclude, html, xml
 from moin.converters.markdown_in import Converter as ConverterIn
 from moin.converters.markdown_out import Converter as ConverterOut
 
-
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
 config = DefaultConfig(markdown_extensions=[])
 

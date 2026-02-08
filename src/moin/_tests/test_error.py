@@ -6,7 +6,6 @@
 MoinMoin - moin.error tests.
 """
 
-
 from moin import error
 
 

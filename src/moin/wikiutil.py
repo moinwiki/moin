@@ -9,7 +9,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - Wiki Utility Functions
+MoinMoin - Wiki Utility Functions
 """
 
 from __future__ import annotations
@@ -198,7 +198,7 @@ def getUnicodeIndexGroup(name):
     :returns: group letter or None
     """
     c = name[0]
-    if "\uAC00" <= c <= "\uD7AF":  # Hangul Syllables
+    if "\uac00" <= c <= "\ud7af":  # Hangul Syllables
         return chr(0xAC00 + (int(ord(c) - 0xAC00) / 588) * 588)
     else:
         return c.upper()  # we put lower and upper case words into the same index group

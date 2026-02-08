@@ -10,7 +10,6 @@ on their screen into the description of the related features (which otherwise
 could become very confusing).
 """
 
-
 from moin.i18n import _
 from moin.macros._base import MacroInlineBase
 

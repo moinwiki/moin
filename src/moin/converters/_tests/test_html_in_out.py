@@ -7,7 +7,6 @@ MoinMoin - Tests for moin.converters.html_in and moin.converters.html_out.
            It checks that round-trip conversion works correctly.
 """
 
-
 from io import StringIO
 
 import pytest

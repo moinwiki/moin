@@ -5,7 +5,6 @@
 MoinMoin - moin.mail.sendmail tests.
 """
 
-
 from moin.mail import sendmail
 
 

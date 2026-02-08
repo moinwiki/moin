@@ -7,7 +7,6 @@ MoinMoin - Config dict backend.
 The config dict backend enables you to define dicts in a configuration file.
 """
 
-
 from moin.datastructures.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
 
 

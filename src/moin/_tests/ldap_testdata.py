@@ -5,7 +5,6 @@
 MoinMoin - LDAP test data.
 """
 
-
 BASEDN = "ou=testing,dc=example,dc=org"
 ROOTDN = f"cn=root,{BASEDN}"
 ROOTPW = "secret"

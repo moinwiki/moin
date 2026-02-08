@@ -6,7 +6,6 @@
 MoinMoin - SQLite store tests.
 """
 
-
 import pytest
 
 from ..sqlite import BytesStore, FileStore

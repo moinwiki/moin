@@ -7,7 +7,6 @@ MoinMoin - signals
 Define all signals here to avoid typos/conflicts in signal names.
 """
 
-
 from blinker import Namespace, ANY  # noqa
 
 _signals = Namespace()

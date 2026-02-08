@@ -8,6 +8,7 @@ The MonthCalendar macro used to have comma-separated, non-name-value arguments,
 such as <<MonthCalendar('TestCalendar',,,-1,,1)>>. It now uses named parameters,
 such as <<MonthCalendar(item="TestCalendar", offset=-1, fixed_height=true)>>.
 """
+
 from moin.cli.migration.moin19 import macro_migration
 from moin.utils import paramparser
 from moin.utils.tree import moin_page
@@ -78,7 +79,7 @@ def convert_month_calendar_macro_syntax(node):
         if elem.tag.name == "arguments":
             args_before = elem.text
     if args_before:
-        (parmpagename, parmyear, parmmonth, parmoffset, parmoffset2, parmheight6, parmanniversary, parmtemplate) = (
+        parmpagename, parmyear, parmmonth, parmoffset, parmoffset2, parmheight6, parmanniversary, parmtemplate = (
             parseargs_legacy(args_before, None, None, None, None, None, False, False, None)
         )
 

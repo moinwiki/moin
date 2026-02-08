@@ -8,7 +8,6 @@ The config_groups backend enables you to define groups and their
 members in a configuration file.
 """
 
-
 from moin.datastructures.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
 
 

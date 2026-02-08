@@ -10,7 +10,6 @@ import re
 from moin.constants.keys import NAME, ACL, CONTENTTYPE, MTIME, LANGUAGE
 from moin.constants.contenttypes import CHARSET19
 
-
 # Precompiled patterns for filename quoting/unquoting
 UNSAFE = re.compile(r"[^a-zA-Z0-9_]+")
 QUOTED = re.compile(r"\(([a-fA-F0-9]+)\)")

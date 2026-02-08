@@ -5,7 +5,6 @@
 MoinMoin - moin.converters.moinwiki19_in tests.
 """
 
-
 import pytest
 
 from . import serialize, XMLNS_RE

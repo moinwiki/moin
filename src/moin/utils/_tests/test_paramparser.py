@@ -5,7 +5,6 @@
 MoinMoin - tests for moin.utils.paramparser.
 """
 
-
 import pytest
 
 from moin.utils import paramparser
@@ -257,7 +256,7 @@ class TestParamParsing:
             ("a:b:c:d", None, ":", [("a", "b", "c", "d")]),
             ('a:"b:c":d', None, ":", [("a", "b:c", "d")]),
             ("-a:b:d", None, ":", [(M, "a", "b", "d")]),
-            ('"-a:b:d"', None, ":", [("-a:b:d")]),
+            ('"-a:b:d"', None, ":", ["-a:b:d"]),
             ('-"a:b:d"', None, ":", [(M, "a:b:d")]),
             ('-a:"b:c":"d e f g"', None, ":", [(M, "a", "b:c", "d e f g")]),
             ("+-a:b:d", None, ":", [(P, "-a", "b", "d")]),

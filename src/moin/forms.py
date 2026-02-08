@@ -9,7 +9,6 @@ MoinMoin - Flatland form widgets.
 General Flatland widgets containing hints for the templates.
 """
 
-
 import re
 import datetime
 import json

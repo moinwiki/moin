@@ -15,7 +15,6 @@ from moin.constants.keys import WIKIDICT
 from moin.datastructures.backends import wiki_dicts
 from moin.datastructures.backends._tests import DictsBackendTest
 
-
 DATA = "This is a dict item."
 
 

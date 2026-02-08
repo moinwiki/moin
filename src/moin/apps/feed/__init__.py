@@ -7,7 +7,6 @@ MoinMoin - Feed views package
 This package contains the views, templates, and static files for feeds (e.g., Atom).
 """
 
-
 from flask import Blueprint
 
 feed = Blueprint("feed", __name__)

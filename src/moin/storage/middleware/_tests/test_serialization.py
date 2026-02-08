@@ -19,7 +19,6 @@ from moin.constants.namespaces import NAMESPACE_DEFAULT
 from moin.storage.backends.stores import MutableBackend
 from moin.storage.stores.memory import BytesStore, FileStore
 
-
 contents = [
     ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
     ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b"2nd"),

@@ -9,7 +9,6 @@ We avoid bundling them; instead, we access them somewhere on the
 filesystem outside of Moin.
 """
 
-
 from flask import Blueprint
 
 serve = Blueprint("serve", __name__)

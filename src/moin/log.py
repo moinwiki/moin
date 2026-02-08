@@ -2,53 +2,53 @@
 # Copyright: 2007 MoinMoin:JohannesBerg
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 """
-    MoinMoin - initialize the "logging" system.
+MoinMoin - initialize the "logging" system.
 
-    WARNING
-    -------
-    Logging must be configured VERY early, before the code in log.getLogger
-    gets executed. Thus, logging is configured either by:
+WARNING
+-------
+Logging must be configured VERY early, before the code in log.getLogger
+gets executed. Thus, logging is configured either by:
 
-    a) an environment variable MOINLOGGINGCONF that contains the path/filename
-       of a logging configuration file — this method overrides all following
-       methods (except if it can't read or use that configuration, then it
-       will use c))
-    b) an explicit call to moin.log.load_config('logging.conf') —
-       you need to do this very early or a) or c) will happen before
-    c) using a built-in fallback logging configuration
+a) an environment variable MOINLOGGINGCONF that contains the path/filename
+   of a logging configuration file — this method overrides all following
+   methods (except if it can't read or use that configuration, then it
+   will use c))
+b) an explicit call to moin.log.load_config('logging.conf') —
+   you need to do this very early or a) or c) will happen before
+c) using a built-in fallback logging configuration
 
-    If logging is not yet configured, log.getLogger will do an implicit
-    configuration call — then a) or c) is done.
+If logging is not yet configured, log.getLogger will do an implicit
+configuration call — then a) or c) is done.
 
-    Usage (for wiki server admins)
-    ------------------------------
-    Either use something like this in a shell script:
-    MOINLOGGINGCONF=/path/to/logging.conf
-    export MOINLOGGINGCONF
+Usage (for wiki server admins)
+------------------------------
+Either use something like this in a shell script:
+MOINLOGGINGCONF=/path/to/logging.conf
+export MOINLOGGINGCONF
 
-    Or, modify your server adapter script (e.g., moin.cgi) to do this::
+Or, modify your server adapter script (e.g., moin.cgi) to do this::
 
-        from moin import log
-        log.load_config('contrib/logging/logfile')  # XXX please fix this path!
+    from moin import log
+    log.load_config('contrib/logging/logfile')  # XXX please fix this path!
 
-    You have to fix that path to use a logging configuration matching your
-    needs (we provide some examples in the path given there; it is relative to
-    the uncompressed Moin distribution archive — if you use a Moin package,
-    you may find it under /usr/share/moin/).
-    It is likely that you also have to edit the sample logging configurations
-    we provide (e.g., to fix the log file location).
+You have to fix that path to use a logging configuration matching your
+needs (we provide some examples in the path given there; it is relative to
+the uncompressed Moin distribution archive — if you use a Moin package,
+you may find it under /usr/share/moin/).
+It is likely that you also have to edit the sample logging configurations
+we provide (e.g., to fix the log file location).
 
-    Usage (for developers)
-    ----------------------
-    If you write code for Moin, do this at the top of your module::
+Usage (for developers)
+----------------------
+If you write code for Moin, do this at the top of your module::
 
-       from moin import log
-       logging = log.getLogger(__name__)
+   from moin import log
+   logging = log.getLogger(__name__)
 
-    This will create a logger with 'moin.your.module' as its name.
-    The logger can optionally be configured in the logging configuration.
-    If you don't configure it, some upper-level logger (e.g., the root logger)
-    will do the logging.
+This will create a logger with 'moin.your.module' as its name.
+The logger can optionally be configured in the logging configuration.
+If you don't configure it, some upper-level logger (e.g., the root logger)
+will do the logging.
 """
 
 from __future__ import annotations

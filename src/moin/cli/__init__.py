@@ -24,8 +24,7 @@ logging = log.getLogger(__name__)
 
 def Help():
     """Moin quick help."""
-    print(
-        """\
+    print("""\
 Quick help / most important commands overview:
 
   moin create-instance  # Create wikiconfig and instance directories
@@ -44,8 +43,7 @@ For more information please run:
   moin <subcommand> --help
 
 or read the documentation at https://moin-20.readthedocs.io/
-"""
-    )
+""")
 
 
 # @click.option('--config', required=False, default=None)

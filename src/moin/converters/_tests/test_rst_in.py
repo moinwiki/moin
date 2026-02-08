@@ -334,8 +334,8 @@ text""",
             ' <a xlink:href="wiki.local:/subitem">/subitem</a></p>',
         ),
         (
-            "`Whitespace  is\nnormalized\xA0& CÄSE is Kept.`_",
-            '<p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">Whitespace  is\nnormalized\xA0&amp; CÄSE is Kept.</a></p>',
+            "`Whitespace  is\nnormalized\xa0& CÄSE is Kept.`_",
+            '<p><a xlink:href="wiki.local:Whitespace%20is%20normalized%20&amp;%20CÄSE%20is%20Kept.">Whitespace  is\nnormalized\xa0&amp; CÄSE is Kept.</a></p>',
         ),
         (  # in rST, reference-name matching is case insensitive:
             "Chapter 1\n===============\n\nA reference to `chapter 1`_.\n",

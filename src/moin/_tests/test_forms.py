@@ -2,7 +2,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.forms tests.
+MoinMoin - moin.forms tests.
 """
 
 import pytest

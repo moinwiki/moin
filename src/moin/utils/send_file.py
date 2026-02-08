@@ -19,7 +19,6 @@ compatible), because we can easily adapt anyway and the code can be much
 simpler without compatibility code.
 """
 
-
 import os
 import mimetypes
 from time import time

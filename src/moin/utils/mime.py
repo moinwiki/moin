@@ -5,7 +5,6 @@
 MoinMoin — MIME helpers.
 """
 
-
 from collections import namedtuple
 from moin.utils.pysupport import AutoNe
 

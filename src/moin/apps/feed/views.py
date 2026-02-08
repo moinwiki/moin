@@ -9,7 +9,6 @@ MoinMoin - Feed views
 This module provides feed endpoints (e.g., Atom).
 """
 
-
 from flask import request, Response
 from flask import current_app as app
 from flask import g as flaskg

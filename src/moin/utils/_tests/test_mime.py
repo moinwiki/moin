@@ -5,7 +5,6 @@
 MoinMoin - moin.utils.mime tests.
 """
 
-
 from moin.utils.mime import Type
 
 

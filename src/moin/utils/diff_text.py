@@ -5,7 +5,6 @@
 MoinMoin - simple text diff (uses difflib).
 """
 
-
 import difflib
 
 

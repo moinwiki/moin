@@ -35,7 +35,6 @@ so you need to disable AppArmor by invoking this as root:
 # /etc/init.d/apparmor stop
 """
 
-
 import os
 import shutil
 import tempfile

@@ -8,7 +8,6 @@ This does nothing except logging the auth parameters (the password is NOT
 logged, of course).
 """
 
-
 from moin.auth import BaseAuth, ContinueLogin
 
 from moin import log

@@ -18,7 +18,6 @@ Where:
     size: Optional integer or float size in em units.
 """
 
-
 from moin.utils.tree import html, moin_page
 from moin.macros._base import MacroInlineBase, fail_message
 from moin.i18n import _

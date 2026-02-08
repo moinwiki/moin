@@ -11,7 +11,6 @@
 MoinMoin - Configuration defaults class
 """
 
-
 import re
 import os
 
@@ -203,9 +202,7 @@ Unknown configuration options: {}.
 
 For more information, see configuration docs. Please check your
 configuration for typos before requesting support or reporting a bug.
-""".format(
-                ", ".join(unknown)
-            )
+""".format(", ".join(unknown))
             raise error.ConfigurationError(msg)
 
     def _decode(self):

@@ -7,7 +7,6 @@
 MoinMoin - CLI command to create a user account.
 """
 
-
 import click
 from flask.cli import FlaskGroup
 

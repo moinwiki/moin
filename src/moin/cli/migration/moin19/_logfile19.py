@@ -7,7 +7,6 @@ MoinMoin - log file utilities.
 This module supports buffered log reads and iterating forward and backward line by line.
 """
 
-
 import os
 import codecs
 import errno

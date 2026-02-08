@@ -10,7 +10,6 @@ need to patch it anymore. If you adopt some code from here, please notify us so
 we can remove it from here.
 """
 
-
 # werkzeug patching ----------------------------------------------------------
 
 # make werkzeug's WSGIRequestHandler use some more sane logging format, get

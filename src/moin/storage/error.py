@@ -7,7 +7,6 @@
 MoinMoin - storage errors.
 """
 
-
 from moin.error import CompositeError
 
 

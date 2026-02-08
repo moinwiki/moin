@@ -18,7 +18,6 @@ support in libldap2 (see dependency on gnutls) and also in python-ldap.
 TODO: allow more configuration (display name, ...) by using callables as parameters
 """
 
-
 from moin import user
 from moin.i18n import _
 from moin.auth import BaseAuth, CancelLogin, ContinueLogin

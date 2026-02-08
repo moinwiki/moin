@@ -729,9 +729,7 @@ class Converter(ConverterMacro):
             )?
             \]\]
         )
-    """ % dict(
-        uri_schemes="|".join(URI_SCHEMES)
-    )
+    """ % dict(uri_schemes="|".join(URI_SCHEMES))
 
     def inline_link_repl(
         self,

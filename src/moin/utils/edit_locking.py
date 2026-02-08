@@ -110,16 +110,13 @@ class Edit_Utils:
             os.mkdir(os.path.join(app.cfg.instance_dir, PREVIEW))
         con = sqlite3.connect(self.sql_filename)  # opens existing file or creates new file
         cursor = con.cursor()
-        cursor.execute(
-            """CREATE TABLE editlock(item_id TEXT NOT NULL PRIMARY KEY,
+        cursor.execute("""CREATE TABLE editlock(item_id TEXT NOT NULL PRIMARY KEY,
                                                 item_name TEXT,
                                                 user_name TEXT,
                                                 timeout FLOAT
                                                 )
-        """
-        )
-        cursor.execute(
-            """
+        """)
+        cursor.execute("""
             CREATE TABLE editdraft(user_name TEXT NOT NULL PRIMARY KEY,
                                    item_id TEXT,
                                    item_name TEXT,
@@ -127,8 +124,7 @@ class Edit_Utils:
                                    save_time INTEGER,
                                    rev_id TEXT
                                    )
-        """
-        )
+        """)
         con.commit()
         return con
 

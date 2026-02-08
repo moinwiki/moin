@@ -6,7 +6,6 @@
 MoinMoin - SQLA store tests.
 """
 
-
 import pytest
 
 from ..sqla import BytesStore, FileStore

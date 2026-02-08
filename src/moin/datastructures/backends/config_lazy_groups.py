@@ -9,7 +9,6 @@ The config group backend allows you to define groups in a configuration file.
 NOTE: this is a proof-of-concept implementation. An LDAP backend should be based on this concept.
 """
 
-
 from moin.datastructures.backends import LazyGroup, LazyGroupsBackend
 
 

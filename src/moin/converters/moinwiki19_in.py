@@ -37,8 +37,7 @@ class ConverterFormat19(Converter):
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
-    inline_freelink: Final = (
-        r"""
+    inline_freelink: Final = r"""
          (?:
           (?<![%(u)s%(l)s/])  # require anything not upper/lower/slash before
           |
@@ -82,14 +81,12 @@ class ConverterFormat19(Converter):
           |
           $  # ... or end of line
          )
-    """
-        % {
-            "u": CHARS_UPPER,
-            "l": CHARS_LOWER,
-            "child": re.escape(wikiutil.CHILD_PREFIX),
-            "parent": re.escape(wikiutil.PARENT_PREFIX),
-        }
-    )
+    """ % {
+        "u": CHARS_UPPER,
+        "l": CHARS_LOWER,
+        "child": re.escape(wikiutil.CHILD_PREFIX),
+        "parent": re.escape(wikiutil.PARENT_PREFIX),
+    }
 
     def inline_freelink_repl(
         self,
@@ -158,9 +155,7 @@ class ConverterFormat19(Converter):
                 )
             )
         )
-    """ % dict(
-        uri_schemes="|".join(URI_SCHEMES)
-    )
+    """ % dict(uri_schemes="|".join(URI_SCHEMES))
 
     def inline_url_repl(self, stack, url, url_target):
         url = Iri(url_target)

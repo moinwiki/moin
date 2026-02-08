@@ -584,8 +584,7 @@ class Converter(ConverterMacro):
         else:
             stack.pop()
 
-    inline_link: Final = (
-        r"""
+    inline_link: Final = r"""
         (?P<link>
             \[\[
             \s*
@@ -621,9 +620,7 @@ class Converter(ConverterMacro):
             \s*
             \]
         )
-    """
-        % dict(uri_schemes="|".join(URI_SCHEMES))
-    )
+    """ % dict(uri_schemes="|".join(URI_SCHEMES))
 
     def parse_args(self, input):
         """

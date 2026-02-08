@@ -5,7 +5,6 @@
 MoinMoin - tests for moin.utils.diff_html.
 """
 
-
 from moin.utils import diff_html
 
 

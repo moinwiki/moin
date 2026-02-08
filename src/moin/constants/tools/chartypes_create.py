@@ -28,8 +28,7 @@ def main():
     chars_digits = "".join(digits)
     chars_spaces = "".join(space)
 
-    print(
-        """
+    print("""
 CHARS_UPPER = "%(chars_upper)s"
 
 CHARS_LOWER = "%(chars_lower)s"
@@ -39,9 +38,7 @@ CHARS_DIGITS = "%(chars_digits)s"
 CHARS_SPACES = "%(chars_spaces)s"
 
 
-"""
-        % locals()
-    )
+""" % locals())
 
 
 if __name__ == "__main__":

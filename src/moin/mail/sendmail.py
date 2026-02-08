@@ -7,7 +7,6 @@
 MoinMoin - Email helper functions.
 """
 
-
 import smtplib
 import ssl
 

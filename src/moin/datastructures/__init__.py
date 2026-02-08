@@ -5,7 +5,6 @@
 MoinMoin - data structures (groups and dicts) support.
 """
 
-
 from moin.datastructures.backends.wiki_dicts import WikiDicts
 from moin.datastructures.backends.config_dicts import ConfigDicts
 from moin.datastructures.backends.composite_dicts import CompositeDicts

@@ -5,7 +5,6 @@
 MoinMoin - Dict access via various backends.
 """
 
-
 from moin.datastructures.backends import BaseDictsBackend, DictDoesNotExistError
 
 
