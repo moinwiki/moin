@@ -1144,6 +1144,9 @@ class Markdown(MarkupItem):
     contenttype = "text/x-markdown"
     display_name = "Markdown"
 
+    class ModifyForm(Text.ModifyForm):
+        template = "modify_text_markdown.html"
+
 
 @register
 class HTML(MarkupItem):

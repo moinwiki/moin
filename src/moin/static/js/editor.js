@@ -54,7 +54,8 @@ const {
 	MediaEmbed,
 	ShowBlocks,
 	SourceEditing,
-	HtmlComment
+	HtmlComment,
+    Markdown
 } = CKEDITOR;
 
 /**
@@ -247,7 +248,11 @@ const editorConfig = {
 };
 
 function createEditor(element) {
-	ClassicEditor.create(element, editorConfig).then( editor => {
+    config = editorConfig
+    if (element.matches(".markdown")) {
+      config = { ...config, plugins: [ ...config.plugins, Markdown ] };
+    }
+	ClassicEditor.create(element, config).then( editor => {
 		window.ckeditor = editor;
 	});
 }
