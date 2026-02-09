@@ -98,6 +98,7 @@ from moin.utils import close_file, diff3, rev_navigation, contain_identical_valu
 from moin.utils.diff_html import diff as html_diff
 from moin.utils.edit_locking import Edit_Utils
 from moin.utils.interwiki import url_for_item
+from moin.utils.markup import safe_markup
 from moin.utils.names import CompositeName, split_fqname
 from moin.utils.notifications import DESTROY_REV, DESTROY_ALL
 from moin.utils.pysupport import load_package_modules
@@ -1544,7 +1545,7 @@ class Default(Contentful):
             rev=self.rev,
             contenttype=self.contenttype,
             rev_navigation_ids_dates=rev_navigation_ids_dates,
-            data_rendered=Markup(self.content._render_data()),
+            data_rendered=safe_markup(self.content._render_data()),
             html_head_meta=html_head_meta,
             item_is_deleted=item_is_deleted,
             may=item_may,
@@ -1642,7 +1643,9 @@ class Default(Contentful):
                 if isinstance(item.content, Text):
                     old_text = old_item.content.data
                     old_text = Text(old_item.contenttype, item=old_item).data_storage_to_internal(old_text)
-                    preview_diffs = [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, data)]
+                    preview_diffs = [
+                        (d[0], safe_markup(d[1]), d[2], safe_markup(d[3])) for d in html_diff(old_text, data)
+                    ]
                 else:
                     preview_diffs = None
                 preview_rendered = item.content._render_data(preview=data)

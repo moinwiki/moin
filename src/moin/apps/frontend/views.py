@@ -101,6 +101,7 @@ from moin.constants.misc import FLASH_REPEAT
 from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item
+from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
 from moin.utils.tree import html, docbook
@@ -694,7 +695,7 @@ def show_dom(item):
         status = 404
     else:
         status = 200
-    content = render_template("dom.xml", data_xml=Markup(item.content._render_data_xml()))
+    content = render_template("dom.xml", data_xml=safe_markup(item.content._render_data_xml()))
     return Response(content, status, mimetype="text/xml")
 
 
@@ -724,7 +725,7 @@ def highlight_item(item):
             item=item,
             item_name=item.name,
             fqname=item.fqname,
-            data_text=Markup(item.content._render_data_highlight()),
+            data_text=safe_markup(item.content._render_data_highlight()),
             rev=item.rev,
             rev_navigation_ids_dates=rev_navigation_ids_dates,
             meta=item._meta_info(),
@@ -770,7 +771,7 @@ def content_item(item_name: str, rev: str):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    return render_template("content.html", item_name=item.name, data_rendered=Markup(item.content._render_data()))
+    return render_template("content.html", item_name=item.name, data_rendered=safe_markup(item.content._render_data()))
 
 
 @frontend.route("/+slideshow/<itemname:item_name>", defaults=dict(rev=CURRENT))
@@ -784,7 +785,7 @@ def slide_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    data_rendered = Markup(item.content._render_data_slide())
+    data_rendered = safe_markup(item.content._render_data_slide())
     return render_template("slideshow.html", item_name=item.name, data_rendered=data_rendered)
 
 
@@ -1030,7 +1031,7 @@ def revert_item(item_name, rev):
         fqname=item.fqname,
         rev_id=rev,
         form=form,
-        data_rendered=Markup(item.content._render_data()),
+        data_rendered=safe_markup(item.content._render_data()),
     )
     close_file(item.rev.data)
     return ret
@@ -1082,7 +1083,7 @@ def rename_item(item_name):
         subitem_names=subitem_names,
         fqname=item.fqname,
         form=form,
-        data_rendered=Markup(item.content._render_data()),
+        data_rendered=safe_markup(item.content._render_data()),
         len=len,
         may=item_may,
     )
@@ -1108,7 +1109,7 @@ def delete_item(item_name):
         item_names = tuple(x + "/" for x in item.names)
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
 
-        data_rendered = Markup(item.content._render_data())
+        data_rendered = safe_markup(item.content._render_data())
         alias_names = set(item.names) - {item_name}
     elif request.method == "POST":
         form = DeleteItemForm.from_flat(request.form)
@@ -1376,7 +1377,7 @@ def destroy_item(item_name, rev):
         fqname=fqname,
         rev_id=rev,
         form=form,
-        data_rendered=Markup(item.content._render_data()),
+        data_rendered=safe_markup(item.content._render_data()),
         item_is_deleted=item_is_deleted,
         may=item_may,
     )
@@ -2903,7 +2904,7 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
             rev_links["revid2"] = revid2
 
         try:
-            diff_html = Markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
+            diff_html = safe_markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
         except Exception:
             return _crash(item, oldrev, newrev)
     else:

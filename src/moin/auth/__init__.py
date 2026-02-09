@@ -143,10 +143,10 @@ from werkzeug.utils import redirect
 from flask import url_for, session, request
 from flask import g as flaskg
 from flask import current_app as app
-from markupsafe import Markup
 
 from moin import user
 from moin.i18n import _
+from moin.utils.markup import safe_markup
 
 from moin import log
 
@@ -280,7 +280,7 @@ class MoinAuth(BaseAuth):
                 register_url=url_for("frontend.register")
             )
         msg += _('<a href="{recover_url}">Forgot your password?</a>').format(recover_url=url_for("frontend.lostpass"))
-        return Markup(msg)
+        return safe_markup(msg)
 
 
 class GivenAuth(BaseAuth):
