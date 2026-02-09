@@ -47,12 +47,12 @@ class ConfigDataCache:
     Just a container for stuff we cache.
     """
 
-    pwd_context: PasswordHasher
+    pwd_hasher: PasswordHasher
 
     def __init__(self, config: ConfigFunctionality) -> None:
 
         try:
-            self.pwd_context = PasswordHasher(**config.password_hasher_config)
+            self.pwd_hasher = PasswordHasher(**config.password_hasher_config)
         except (ValueError, TypeError) as err:
             raise error.ConfigurationError(f"password_hasher_config configuration is invalid [{err}].")
 
