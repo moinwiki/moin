@@ -252,7 +252,6 @@ class Config(DefaultConfig):
     mod_names = [
         "jquery",
         "jquery_file_upload",
-        "bootstrap",
         "font_awesome",
         "ckeditor",
         "autosize",
