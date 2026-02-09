@@ -16,7 +16,6 @@ from moin.converters.markdown_in import Converter
 
 from . import serialize, XMLNS_RE
 
-
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
 config = DefaultConfig(markdown_extensions=[])
 

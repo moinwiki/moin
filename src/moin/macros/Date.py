@@ -6,7 +6,6 @@ MoinMoin Date macro — outputs the date for a specific point in time,
 adapted to the user's time zone settings.
 """
 
-
 import time
 
 from moin.macros._base import MacroInlineBase, fail_message

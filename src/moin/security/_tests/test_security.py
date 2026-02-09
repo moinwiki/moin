@@ -7,7 +7,6 @@
 MoinMoin - moin.security tests.
 """
 
-
 import pytest
 
 from flask import current_app as app

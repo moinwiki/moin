@@ -20,7 +20,6 @@ from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import GroupDoesNotExistError
 from moin.security import AccessControlList
 
-
 DATA = "This is a group item"
 
 

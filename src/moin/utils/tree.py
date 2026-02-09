@@ -5,7 +5,6 @@
 MoinMoin - Tree name and element generator.
 """
 
-
 from emeraldtree import ElementTree as ET
 
 

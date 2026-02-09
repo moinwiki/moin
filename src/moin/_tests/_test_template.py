@@ -4,11 +4,10 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.module_tested tests.
+MoinMoin - moin.module_tested tests.
 
-    Module names must start with 'test_' to be included in the tests.
+Module names must start with 'test_' to be included in the tests.
 """
-
 
 # include here the module that you want to test:
 from moin import module_tested

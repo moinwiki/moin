@@ -8,15 +8,14 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - User Accounts
+MoinMoin - User Accounts
 
-    TODO: Currently works on unprotected user backend
+TODO: Currently works on unprotected user backend
 
-    This module contains functions to access user accounts (list all users, get
-    some specific user). User instances are used to access the user profile of
-    some specific user (name, password, email, bookmark, trail, settings, ...).
+This module contains functions to access user accounts (list all users, get
+some specific user). User instances are used to access the user profile of
+some specific user (name, password, email, bookmark, trail, settings, ...).
 """
-
 
 import copy
 import hashlib
@@ -91,11 +90,9 @@ def create_user(username, password, email, validate=True, is_encrypted=False, ve
 
     # Don't allow creating users with invalid names
     if validate and not isValidName(username):
-        return _(
-            """Invalid user name '{name}'.
+        return _("""Invalid user name '{name}'.
 Name may contain any Unicode alpha numeric character, with optional one
-space between words. Group page name is not allowed."""
-        ).format(name=username)
+space between words. Group page name is not allowed.""").format(name=username)
 
     # Name required to be unique. Check if name belong to another user.
     if validate and search_users(**{NAME_EXACT: username}):

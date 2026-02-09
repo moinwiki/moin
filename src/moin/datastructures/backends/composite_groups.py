@@ -8,7 +8,6 @@ The composite_groups backend does not have direct storage; it composes other bac
 one, so group definitions are retrieved from several backends. This allows mixing different backends.
 """
 
-
 from moin.datastructures.backends import BaseGroupsBackend, GroupDoesNotExistError
 
 

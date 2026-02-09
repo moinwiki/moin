@@ -31,7 +31,6 @@ from moin.constants.keys import LANGUAGE
 
 from . import default_registry, ElementException
 
-
 if TYPE_CHECKING:
     from typing_extensions import Self
 
@@ -839,25 +838,17 @@ class ConverterPage(Converter):
         id = self._id.gen_id("note")
         prefixed_id = "%s-%s" % (self._id.get_id("note-placement"), id)
 
-        elem_ref = ET.XML(
-            """
+        elem_ref = ET.XML("""
 <html:sup xmlns:html="{}" html:id="note-{}-ref" html:class="moin-footnote">
 <html:a html:href="#note-{}">{}</html:a>
 </html:sup>
-""".format(
-                html, prefixed_id, prefixed_id, id
-            )
-        )
+""".format(html, prefixed_id, prefixed_id, id))
 
-        elem_note = ET.XML(
-            """
+        elem_note = ET.XML("""
 <html:p xmlns:html="{}" html:id="note-{}">
 <html:sup><html:a html:href="#note-{}-ref">{}</html:a></html:sup>
 </html:p>
-""".format(
-                html, prefixed_id, prefixed_id, id
-            )
-        )
+""".format(html, prefixed_id, prefixed_id, id))
 
         elem_note.extend(body)
         top.add_footnote(elem_note)

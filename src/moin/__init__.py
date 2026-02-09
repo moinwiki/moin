@@ -7,7 +7,6 @@
 MoinMoin — a wiki engine written in Python.
 """
 
-
 import sys
 import platform
 

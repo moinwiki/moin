@@ -6,7 +6,6 @@
 MoinMoin - form helpers for Flatland/Jinja2.
 """
 
-
 from markupsafe import Markup
 import werkzeug.datastructures
 

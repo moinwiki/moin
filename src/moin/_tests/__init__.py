@@ -8,7 +8,6 @@
 MoinMoin - some common code for testing.
 """
 
-
 import socket
 from io import BytesIO
 from pathlib import Path
@@ -22,7 +21,6 @@ from moin.converters import include  # noqa # prevent a circular import
 from moin.items import Item
 from moin.utils.crypto import random_string
 from moin.utils.names import CompositeName
-
 
 # Promoting the test user -------------------------------------------
 # Usually the tests run as anonymous user, but for some stuff, you

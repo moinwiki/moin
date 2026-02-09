@@ -4,9 +4,8 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.user tests.
+MoinMoin - moin.user tests.
 """
-
 
 from flask import g as flaskg
 

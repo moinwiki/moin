@@ -297,7 +297,7 @@ class _Value(str):
     quote_rules_iri = (
         """((?:%[0-9a-fA-F]{2})+)|"""
         """([^-!$&'*+.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz|"""
-        """\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)"""
+        """\u00a0-\ud7ff\uf900-\ufdcf\ufdf0-\uffef]+)"""
     )
     quote_rules_uri = (
         """((?:%[0-9a-fA-F]{2})+)|"""

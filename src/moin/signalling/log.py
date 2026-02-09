@@ -2,9 +2,8 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - logging signal handlers.
+MoinMoin - logging signal handlers.
 """
-
 
 from .signals import ANY, item_displayed, item_modified
 from flask import got_request_exception

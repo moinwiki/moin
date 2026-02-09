@@ -12,6 +12,7 @@ MoinMoin - Admin views
 
 This module provides the user interface for wiki administrators.
 """
+
 from collections import namedtuple
 
 from flask import request, url_for, flash, redirect

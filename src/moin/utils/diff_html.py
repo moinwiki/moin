@@ -6,7 +6,6 @@
 MoinMoin - side-by-side HTML diffs.
 """
 
-
 import difflib
 
 from markupsafe import escape

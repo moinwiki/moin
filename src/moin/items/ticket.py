@@ -246,9 +246,7 @@ def message_markup(message):
     message = f"{heading}\n\n{message}"
     return """{{{{{{#!wiki moin-ticket
 %(message)s
-}}}}}}""" % dict(
-        message=message
-    )
+}}}}}}""" % dict(message=message)
 
 
 def check_itemid(self):

@@ -5,7 +5,6 @@
 MoinMoin - tests for moin.utils.iri.
 """
 
-
 from moin.utils.iri import Iri, IriAuthority, IriPath
 
 

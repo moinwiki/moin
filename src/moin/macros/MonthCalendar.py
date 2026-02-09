@@ -110,7 +110,7 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
         table_head = moin_page.table_header()
         table_row = moin_page.table_row()
         for _idx, cell_tuple in enumerate(head):
-            (cell, cell_class) = cell_tuple
+            cell, cell_class = cell_tuple
             table_cell = moin_page.table_cell(children=[cell])
             table_cell.attrib[moin_page("class")] = cell_class
             table_row.append(table_cell)
@@ -125,7 +125,7 @@ def build_dom_calendar_table(rows, head=None, caption=None, cls=None):
             # - cell content
             # - href for <a> tag
             # - CSS class for <td> tag
-            (cell, cell_addr, cell_class) = cell_tuple
+            cell, cell_addr, cell_class = cell_tuple
 
             # empty cell
             if not cell_addr:

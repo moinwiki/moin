@@ -9,7 +9,6 @@ MoinMoin - Content type–related constants.
 from collections import defaultdict
 from moin.i18n import _
 
-
 # Charset - we support only 'utf-8'. While older encodings might work,
 # we don't have the resources to test them, and there is no real
 # benefit for the user. IMPORTANT: use only lowercase 'utf-8'!

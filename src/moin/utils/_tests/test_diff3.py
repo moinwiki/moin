@@ -5,7 +5,6 @@
 MoinMoin - tests for moin.utils.diff3.
 """
 
-
 from moin.utils import diff3
 
 

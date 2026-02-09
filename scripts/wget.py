@@ -12,7 +12,6 @@ Usage: python path/to/wget.py <url> <output_file>
 import sys
 import urllib.request
 
-
 if __name__ == "__main__":
     if len(sys.argv) == 3:
         urllib.request.urlretrieve(sys.argv[1], sys.argv[2])

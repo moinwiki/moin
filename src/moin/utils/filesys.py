@@ -7,7 +7,6 @@
 MoinMoin - File system utilities.
 """
 
-
 import sys
 import os
 import shutil

@@ -10,7 +10,6 @@
 MoinMoin - Wiki security interface and access control lists.
 """
 
-
 from functools import wraps
 
 from flask import current_app as app

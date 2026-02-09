@@ -5,7 +5,6 @@
 MoinMoin - moin.utils.diff_text tests.
 """
 
-
 from moin.utils import diff_text
 
 

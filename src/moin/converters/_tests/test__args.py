@@ -5,7 +5,6 @@
 MoinMoin - moin.converters._args tests.
 """
 
-
 import pytest
 
 from moin.converters._args import Arguments

@@ -1,9 +1,9 @@
 """
-    Reads a variables.css file and a common.css (or theme.css) file, and outputs a lint.css file
-    similar to common.css but with all var(...) expressions replaced with the values
-    from variables.css. The output file can then be submitted to a CSS validator.
+Reads a variables.css file and a common.css (or theme.css) file, and outputs a lint.css file
+similar to common.css but with all var(...) expressions replaced with the values
+from variables.css. The output file can then be submitted to a CSS validator.
 
-    This program will be obsolete when a CSS lint program supports variables.
+This program will be obsolete when a CSS lint program supports variables.
 """
 
 variables_in = "../../src/moin/static/css/variables.css"

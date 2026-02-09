@@ -204,7 +204,7 @@ def parse_quoted_separated_ext(
                     cur.append(None)
             noquote = False
         elif not quoted and not seplimit_reached and char in separators:
-            (cur, noquote, separator_count, seplimit_reached, nextitemsep) = additem(
+            cur, noquote, separator_count, seplimit_reached, nextitemsep = additem(
                 result, cur, separator_count, nextitemsep
             )
         elif not quoted and not noquote and char in quotes:
@@ -220,7 +220,7 @@ def parse_quoted_separated_ext(
         elif not quoted and char in opening:
             while len(cur) and cur[-1] is None:
                 del cur[-1]
-            (cur, noquote, separator_count, seplimit_reached, nextitemsep) = additem(
+            cur, noquote, separator_count, seplimit_reached, nextitemsep = additem(
                 result, cur, separator_count, nextitemsep
             )
             bracketstack.append((matchingbracket[char], result))
@@ -228,7 +228,7 @@ def parse_quoted_separated_ext(
         elif not quoted and char in closing:
             while len(cur) and cur[-1] is None:
                 del cur[-1]
-            (cur, noquote, separator_count, seplimit_reached, nextitemsep) = additem(
+            cur, noquote, separator_count, seplimit_reached, nextitemsep = additem(
                 result, cur, separator_count, nextitemsep
             )
             cur = []

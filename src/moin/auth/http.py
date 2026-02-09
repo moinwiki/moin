@@ -16,7 +16,6 @@ from moin.auth.http import HTTPAuthMoin
 auth = [HTTPAuthMoin()]
 """
 
-
 from flask import request
 
 from moin import user

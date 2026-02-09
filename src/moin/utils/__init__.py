@@ -20,7 +20,6 @@ from io import BytesIO
 from moin.error import ConfigurationError
 from xstatic.main import XStatic
 
-
 # Set pickle protocol; see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
 
@@ -29,8 +28,8 @@ PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
 # XML helper functions
 #############################################################################
 
-g_xmlIllegalCharPattern = re.compile("[\x01-\x08\x0B-\x0D\x0E-\x1F\x80-\xFF]")
-g_undoUtf8Pattern = re.compile("\xC2([^\xC2])")
+g_xmlIllegalCharPattern = re.compile("[\x01-\x08\x0b-\x0d\x0e-\x1f\x80-\xff]")
+g_undoUtf8Pattern = re.compile("\xc2([^\xc2])")
 g_cdataCharPattern = re.compile("[&<'\"]")
 g_textCharPattern = re.compile("[&<]")
 g_charToEntity = {"&": "&amp;", "<": "&lt;", "'": "&apos;", '"': "&quot;"}

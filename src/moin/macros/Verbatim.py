@@ -5,7 +5,6 @@
 Outputs the input text as is: <<Verbatim(return `same` __text__ '''as''' entered)>>
 """
 
-
 from moin.macros._base import MacroInlineBase
 
 

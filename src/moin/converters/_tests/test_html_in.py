@@ -5,7 +5,6 @@
 MoinMoin - moin.converters.html_in tests.
 """
 
-
 from io import StringIO
 
 import pytest

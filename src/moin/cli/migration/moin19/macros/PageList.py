@@ -10,7 +10,6 @@ import re
 from moin.cli.migration.moin19 import macro_migration
 from moin.utils.tree import moin_page
 
-
 CONTENT_TYPE_MACRO_FORMATTER = "x-moin/macro;name={}"
 MACRO_NAME_PAGE_LIST = "PageList"
 

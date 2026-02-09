@@ -28,7 +28,6 @@ from moin.app import create_app_ext, destroy_app, before_wiki, teardown_wiki
 from moin._tests import wikiconfig, get_open_wiki_files
 from moin.storage import create_simple_mapping
 
-
 # Exclude some directories from pytest test discovery; paths are relative to this file
 collect_ignore = [
     "static",  # same

@@ -3,7 +3,7 @@
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
-    MoinMoin - moin.wikiutil tests.
+MoinMoin - moin.wikiutil tests.
 """
 
 from __future__ import annotations

@@ -7,7 +7,6 @@ MoinMoin - import content and user data from a Moin 1.9–compatible storage int
 
 from moin.utils.tree import moin_page
 
-
 # A dict mapping content_type -> migration_callback.
 _migration_callbacks = {}
 

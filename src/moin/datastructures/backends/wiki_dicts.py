@@ -8,7 +8,6 @@
 MoinMoin - WikiDict functions.
 """
 
-
 from flask import g as flaskg
 
 from moin.constants.keys import CURRENT, WIKIDICT

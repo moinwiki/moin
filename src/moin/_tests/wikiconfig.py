@@ -11,7 +11,6 @@ We mostly want to have default values here, except for stuff that doesn't
 work without setting them (like data_dir).
 """
 
-
 from os.path import abspath, dirname, join
 
 from moin.config.default import DefaultConfig

@@ -5,7 +5,6 @@
 MoinMoin - External static file serving
 """
 
-
 from flask import Response, abort
 from flask import send_from_directory
 

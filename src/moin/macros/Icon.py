@@ -10,7 +10,6 @@ Moin 2 assumes an error if an icon is not rendered (alt text displayed in red)
 and relies on the client browser to render the image based on its size.
 """
 
-
 from flask import url_for
 
 from moin.utils.tree import html

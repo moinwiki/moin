@@ -8,7 +8,6 @@ MoinMoin - Macro and pseudo-macro handling
 Base class for wiki parser with macro support.
 """
 
-
 from moin.utils import iri
 from moin.utils.mime import Type
 from moin.utils.tree import moin_page, xinclude

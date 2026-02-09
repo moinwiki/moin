@@ -6,7 +6,6 @@
 MoinMoin - tests for moin.utils.pysupport.
 """
 
-
 import os
 import errno
 
@@ -112,9 +111,7 @@ import sys, os
 
 class Parser:
     key = '{}'
-""".format(
-            self.key
-        )
+""".format(self.key)
         try:
             open(self.pluginFilePath(".py"), "w").write(data)
         except Exception as err:

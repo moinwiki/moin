@@ -67,14 +67,11 @@ class Converter:
         "{o}": "star_off",
     }
 
-    smiley_rule: Final = (
-        r"""
+    smiley_rule: Final = r"""
     (^|(?<=\s))  # we require either beginning of line or some space before a smiley
     (%(smiley)s)  # one of the smileys
     ($|(?=\s))  # we require either ending of line or some space after a smiley
-"""
-        % {"smiley": "|".join([re.escape(s) for s in smileys])}
-    )
+""" % {"smiley": "|".join([re.escape(s) for s in smileys])}
 
     smiley_re: Final = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 

@@ -6,6 +6,7 @@ MoinMoin - dataclasses for items gathered during the crawl tests.
 
 Scrapy item docs: https://docs.scrapy.org/en/latest/topics/items.html
 """
+
 from dataclasses import dataclass, fields, field
 
 from moin.utils.iri import Iri
