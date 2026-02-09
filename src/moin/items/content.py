@@ -20,8 +20,8 @@ Each class in this module corresponds to a content type value.
 
 from __future__ import annotations
 
-from typing import Any, Callable, ClassVar, LiteralString, NamedTuple, IO, Protocol, TYPE_CHECKING
-from typing_extensions import override
+from typing import Any, Callable, ClassVar, NamedTuple, IO, Protocol, TYPE_CHECKING
+from typing_extensions import LiteralString, override
 
 import os
 import time
