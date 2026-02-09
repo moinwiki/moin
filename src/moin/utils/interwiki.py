@@ -44,6 +44,7 @@ def is_known_wiki(wiki_name):
 
 def url_for_item(
     item_name: str,
+    *,
     wiki_name: str = "",
     field: str = "",
     namespace: str = "",
