@@ -493,11 +493,11 @@ class User:
         if not pw_hash or not password:
             return False, False
 
-        pwd_context = self._cfg.cache.pwd_context
+        pwd_hasher = self._cfg.cache.pwd_hasher
         password_correct = False
         recomputed_hash = None
         try:
-            password_correct, recomputed_hash = pwd_context.verify_and_update(password, pw_hash)
+            password_correct, recomputed_hash = pwd_hasher.verify_and_update(password, pw_hash)
         except (ValueError, TypeError) as err:
             logging.error(
                 "in user profile %r, verifying the passlib pw hash raised an Exception [%s]" % (self.name, str(err))
@@ -523,7 +523,7 @@ class User:
             # invalidate the pw hash
             password = ""
         elif not is_encrypted:
-            password = self._cfg.cache.pwd_context.hash(password)
+            password = self._cfg.cache.pwd_hasher.hash(password)
         self.profile[ENC_PASSWORD] = password
         # Invalidate all other browser sessions except this one.
         try:
