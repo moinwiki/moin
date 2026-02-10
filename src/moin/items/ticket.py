@@ -46,8 +46,6 @@ import datetime
 from flask import request, abort, redirect, url_for
 from flask import g as flaskg
 
-from markupsafe import Markup
-
 from whoosh.query import Term, And
 
 from moin.i18n import L_
@@ -89,6 +87,7 @@ from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.itemtypes import ITEMTYPE_TICKET
 from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from moin.items.content import NonExistentContent
+from moin.utils.markup import safe_markup
 from moin.utils.names import CompositeName
 from moin.constants.forms import WIDGET_SEARCH
 
@@ -440,7 +439,7 @@ class Ticket(Contentful):
             roots = []
             comments = {}
         else:
-            data_rendered = Markup(self.content._render_data())
+            data_rendered = safe_markup(self.content._render_data())
             files = get_files(self)
             comments, roots = get_comments(self)
         suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)

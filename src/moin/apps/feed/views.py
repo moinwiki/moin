@@ -14,7 +14,6 @@ from flask import current_app as app
 from flask import g as flaskg
 
 from feedgen.feed import FeedGenerator
-from markupsafe import Markup
 
 from whoosh.query import Term, And, Every
 
@@ -25,6 +24,7 @@ from moin.themes import get_editor_info, render_template
 from moin.items import Item
 from moin.utils.crypto import cache_key
 from moin.utils.interwiki import url_for_item
+from moin.utils.markup import safe_markup
 from moin.utils.names import split_fqname
 
 from moin import log
@@ -90,7 +90,7 @@ def atom(item_name):
                         "atom.html",
                         get="first_revision",
                         rev=this_rev,
-                        content=Markup(hl_item.content._render_data()),
+                        content=safe_markup(hl_item.content._render_data()),
                         revision=this_revid,
                     )
             except Exception:
@@ -102,7 +102,7 @@ def atom(item_name):
                 # Trim down extremely long revision comment
                 if len(rev_comment) > 80:
                     content = render_template(
-                        "atom.html", get="comment_cont_merge", comment=rev_comment[79:], content=Markup(content)
+                        "atom.html", get="comment_cont_merge", comment=rev_comment[79:], content=safe_markup(content)
                     )
                     rev_comment = f"{rev_comment[:79]}..."
                 feed_title = f"{author.get(NAME, '')} - {rev_comment}"

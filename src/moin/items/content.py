@@ -40,7 +40,7 @@ from flask import request, url_for, Response, abort
 
 from flatland import Form, String
 
-from markupsafe import Markup, escape
+from markupsafe import escape
 
 from werkzeug.http import is_resource_modified
 
@@ -76,6 +76,7 @@ from moin.utils.diff_html import diff as html_diff
 from moin.utils.diff_text import diff as text_diff
 from moin.utils.interwiki import get_download_file_name
 from moin.utils.iri import Iri
+from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.mimetype import MimeType
 from moin.utils.registry import RegistryBase
@@ -475,7 +476,7 @@ class Binary(Content):
 
     def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
         return render_template(
-            "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=Markup(self._render_data())
+            "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=safe_markup(self._render_data())
         )
 
     def _convert(self, doc):
@@ -882,11 +883,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             return super()._render_data_diff_atom(oldrev, newrev, fqname=None)
         url = url_for("frontend.diffraw", _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template(
-            "atom.html",
-            oldrev=oldrev,
-            newrev=newrev,
-            get="binary",
-            content=Markup(f'<img src="{escape(url)}" />'),  # nosec B704
+            "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=safe_markup(f'<img src="{escape(url)}" />')
         )
 
     def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
@@ -894,7 +891,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
             # no PIL, we can't do anything, we just call the base class method
             return super()._render_data_diff(oldrev, newrev)
         url = url_for("frontend.diffraw", item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
-        return Markup(f'<img src="{escape(url)}" />')  # nosec B704
+        return safe_markup(f'<img src="{escape(url)}" />')
 
     def _render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
@@ -1028,7 +1025,7 @@ class Text(Binary):
 
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
         item = Item.create(fqname.fullname, rev_id=newrev.meta[REVID])
-        rendered = Markup(item.content._render_data())
+        rendered = safe_markup(item.content._render_data())
         return render_template(
             template,
             item_name=fqname.fullname,
@@ -1049,7 +1046,7 @@ class Text(Binary):
         """
         old_text = self.data_storage_to_internal(oldfile.read())
         new_text = self.data_storage_to_internal(newfile.read())
-        return [(d[0], Markup(d[1]), d[2], Markup(d[3])) for d in html_diff(old_text, new_text)]
+        return [(d[0], safe_markup(d[1]), d[2], safe_markup(d[3])) for d in html_diff(old_text, new_text)]
 
     def _get_data_diff_text(self, oldfile, newfile):
         """Get the text diff of 2 versions of file contents
@@ -1287,11 +1284,11 @@ class DrawPNGMap(Draw):
         if image_map:
             mapid, image_map = self._transform_map(image_map, title)
             title = _("Clickable drawing: {filename}").format(filename=self.name)
-            return Markup(
+            return safe_markup(
                 image_map + f'<img src="{escape(png_url)}" alt="{escape(title)}" usemap="#{escape(mapid)}" />'
-            )  # nosec B704
+            )
         else:
-            return Markup(f'<img src="{escape(png_url)}" alt="{escape(title)}" />')  # nosec B704
+            return safe_markup(f'<img src="{escape(png_url)}" alt="{escape(title)}" />')
 
 
 @register
@@ -1321,4 +1318,4 @@ class SvgDraw(Draw):
         # of items and also rendering them with the code in base class could work
         drawing_url = url_for("frontend.get_item", item_name=self.name, member="drawing.svg", rev=self.rev.revid)
         png_url = url_for("frontend.get_item", item_name=self.name, member="drawing.png", rev=self.rev.revid)
-        return Markup(f'<img src="{escape(png_url)}" alt="{escape(drawing_url)}" />')  # nosec B704
+        return safe_markup(f'<img src="{escape(png_url)}" alt="{escape(drawing_url)}" />')
