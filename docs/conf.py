@@ -56,10 +56,10 @@ copyright = "2011-2025, The MoinMoin developers"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from pkg_resources import get_distribution
+from importlib.metadata import version as get_version
 
 # The full version, including alpha/beta/rc tags.
-release = get_distribution("moin").version
+release = get_version("moin")
 # The short X.Y version.
 version = ".".join(release.split(".")[:2])
 
