@@ -43,9 +43,9 @@ ul.moin-breadcrumb li { position: relative; display: inline-block; }
 ul.moin-breadcrumb li:hover ul.moin-alias { display: block; }
 ul.moin-breadcrumb li i { color: #1409b9; }
 ul.moin-breadcrumb li i.moin-tiny { font-size: .5em; }
-ul.moin-breadcrumb li ul.moin-alias { display: none; padding: 0; margin: 0; margin-bottom: 4px; }
-ul.moin-breadcrumb li ul.moin-alias { background-color: #e6f2fe; border: 1px solid #00417f; border-radius: 6px; }
-ul.moin-breadcrumb li ul.moin-alias { position: absolute; left: 1.5em; bottom: .8em; z-index: 20; }
+ul.moin-breadcrumb li ul.moin-alias { display: none; padding: 0; margin: 0; margin-bottom: 4px;
+    background-color: #e6f2fe; border: 1px solid #00417f; border-radius: 6px;
+    position: absolute; left: 1.5em; bottom: .8em; z-index: 20; }
 ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
 /* styling for topbar */
@@ -59,7 +59,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
     #moin-searchform { float: right; margin: 4px 12px 0 0; }
 
-    #moin-header ul { margin: .1em 5% .4em 5%; padding: 0; }
+    #moin-header ul { margin: .1em 5% .4em; padding: 0; }
     #moin-username { float: right; padding: .3em 0; font-size: .94em; }
     #moin-username li { display: inline-block; padding: 8px; }
     #moin-navibar { clear: both; }
@@ -77,7 +77,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     #moin-content { margin: 0 5%; width: auto; padding-bottom: 9em; }
 
     #moin-footer { background-color: var(--bg_topside); background-position-y: bottom;
-        border-top: 1px solid var(--border_topside); padding: 8pt 5% 10pt 5%; width: 100vw; }
+        border-top: 1px solid var(--border_topside); padding: 8pt 5% 10pt; width: 100vw; }
 
     #moin-pageinfo,
     #moin-wiki-license,
@@ -112,7 +112,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
 @media screen and (max-width: 900px) {
     #moin-content { margin: 0 2%; padding-bottom: 16em; }
-    #moin-header ul { margin: .1em 2% .4em 2%; }
+    #moin-header ul { margin: .1em 2% .4em; }
     #moin-footer { grid-template-rows: auto auto auto; width: 100vw;
         grid-template-columns: 1fr 1fr; row-gap: 6pt; }
     #moin-footer .moin-itemviews  { margin: 5px 0; display: flex; column-gap: 6pt;
@@ -134,7 +134,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     #moin-logo { padding: 10px 0; }
     .moin-sitename { font-size: 1.5rem; display: block; }
 
-    #moin-searchform {  margin: 1em auto 0 auto; }
+    #moin-searchform {  margin: 1em auto 0; }
 
     #moin-header > ul > li { display: block; padding-left: 20px; text-align: left; }
     #moin-username i,
@@ -159,7 +159,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
     #moin-content, #moin-footer { padding-left: 250px; }
     #moin-content{ margin: 0 2%; }
-    #moin-footer { margin: 0 2% 6pt 2%; }
+    #moin-footer { margin: 0 2% 6pt; }
 
     #moin-footer .moin-itemviews { display: none; }
     /* TODO: if these are all P tags, why float left in common.css? */
@@ -172,7 +172,7 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
 
 @media (min-width: 1281px) {
     #moin-content { margin: 0 7%; }
-    #moin-footer { margin: 0 7% 6pt 7%; }
+    #moin-footer { margin: 0 7% 6pt; }
 }
 
 @media print {
