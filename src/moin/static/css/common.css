@@ -71,7 +71,7 @@ div.important,
 div.note,
 div.tip,
 div.warning { color: var(--primary); border: var(--border-style);
-    margin: 10px 30px 10px 30px; min-height: 64px; padding: 8px; clear: both; }
+    margin: 10px 30px; min-height: 64px; padding: 8px; clear: both; }
 div.attention > ol,
 div.attention > ul,
 div.attention > p,
@@ -192,13 +192,13 @@ a.moin-nonexistent object {  background: var(--bg-disabled);  border: 3px dashed
     border-radius: 4px;
     margin-top: .5em;
     min-height: 12px;
-    padding: 8px 8px 8px 8px; clear: both; display: inline-block; }
+    padding: 8px; clear: both; display: inline-block; }
 .moin-highlight { background-color: var(--bg-hilite); padding: 1px; }
 .moin-showhide { margin-left: 10px; }
 .moin-disabled { color: var(--disabled); }
 .moin-summary { margin-top: .5em; font-style: italic; }
 .moin-icon-macro { color: var(--error); }
-.moin-p { margin: 1em 0 1em 0; }  /* when we need a div styled like a p */
+.moin-p { margin: 1em 0; }  /* when we need a div styled like a p */
 /* end misc highlighting */
 
 /* create item view */
@@ -305,7 +305,7 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .moin-small { font-size: .83em; }
 .moin-tiny { font-size: .5em; vertical-align: 0.3em; }
 .moin-inline-label { display: inline; }
-.moin-link-list li { padding: 2px 0 2px 0; }
+.moin-link-list li { padding: 2px 0; }
 
 /* item ACL report */
 .moin-acl-report { width: 100%; border-collapse: collapse; display: table; }
@@ -338,16 +338,15 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .moin-ticket-search { float: right; }
 #ticket-table-tip { color: var(--border); }
 #ticket-summary { width: 50%; }
-.moin-ticket-tags { border-bottom: none; clear: both; }
+.moin-ticket-tags { border-bottom: none; clear: both; margin-top: 1em; display: none; }
 .moin-ticketsearch-form { display: inline; }
 #moin-ticketsearch-query { background-image: url("../../../static/img/search.png"); background-repeat: no-repeat; background-position: 5px;
     padding-left: 24px; width: 150px; margin-left: 7px; }
-.moin-ticket-tags { margin-top: 1em; display: none; }
 #ticket-list tr td:first-child a { font-family: monospace; }
 
 /* tags tab */
 ul.moin-tags { display: block; margin-left: 0; }
-ul.moin-tags > li { padding: 5px 0 5px 0; display: inline-block; text-align: center; width: 300px; }
+ul.moin-tags > li { padding: 5px 0; display: inline-block; text-align: center; width: 300px; }
 ul.moin-tags li.weight0 { font-size: 100%; }
 ul.moin-tags li.weight1 { font-size: 120%; }
 ul.moin-tags li.weight2 { font-size: 140%; }
@@ -397,7 +396,7 @@ div.no-borders,
 .width-99 { width: 99%; }
 
 /* footers */
-#moin-footer { clear: both; margin: 0 0; width: 100%; }
+#moin-footer { clear: both; margin: 0; width: 100%; }
 #moin-wiki-license,
 #moin-version,
 #moin-timings { margin: 10px 20px; text-align: left; font-size: .7em; color: var(--muted); float: left; clear: left; }
@@ -440,7 +439,7 @@ li > p { margin-top: 0; margin-bottom: 0; }
 aside { margin-left: 2em; } /* content outside of the document's main text */
 aside.rst-sidebar, div.db-sidebar {
     color: var(--primary); border: var(--border-style);
-    margin: 10px 30px 10px 30px; padding: 8px; }
+    margin: 10px 30px; padding: 8px; }
 
 /* horizontal rules */
 hr { height: 1px; background-color: var(--border); border: 0; margin: .9em 0; }
@@ -514,7 +513,7 @@ div.toc { border: 1px solid var(--border); color: var(--primary);
 div.moin-table-of-contents ol,
 div.toc ul { margin: 0; padding: 0 0 0 .92em; }
 div.moin-table-of-contents li,
-div.toc li { margin: .12em 0 0 0; padding: 0; list-style: none; }
+div.toc li { margin: .12em 0 0; padding: 0; list-style: none; }
 div.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 .5em 1em; letter-spacing: .075em; }
 
 /* docbook captions for video and audio */
@@ -534,7 +533,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
 .moin-download-link { display: none; }
 .moin-contenttype-selection { margin: .5em 0; display: none; }
-.moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em 0; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
+.moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
 
 .moin-contenttype-selection form { z-index: 2;  background: var(--bg-primary);
     border: 3px solid var(--border); padding: .2em; border-radius: 7px; }
@@ -558,7 +557,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-new-item { margin-left: 1em; }
 .moin-newitem-selection { background: var(--bg-primary); border-radius: 7px;
     border: 3px solid var(--border); padding: .2em; display: none; }
-#moin-initials { width: 90%; margin: 1em auto 1em auto; text-align: center; }
+#moin-initials { width: 90%; margin: 1em auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: var(--bg-inverse); border-radius: 5px;
     color: var(--inverse); text-decoration: none; }
@@ -609,7 +608,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-settings-head a { color: var(--primary); text-decoration: none; }
 .moin-subitem-list { font-size: 1.25em; color: var(--alert); }
 
-.moin-form dd { float: left; width: 70%; margin: .3em 0 .3em 0; }
+.moin-form dd { float: left; width: 70%; margin: .3em 0; }
 .moin-form dd input { width: 75%; }
 .moin-form dd select { width: 76%; }
 .moin-form dt { clear: both; float: left; width: 25%; text-align: right; margin-top: .3em; padding-right: 1em; }
@@ -729,7 +728,7 @@ figcaption { font-weight: bold; }
 .moin-revert { text-align: center; }
 .moin-rev-navigation-current { font-size: 1.25em; font-weight: bold; }
 .moin-rev-navigation-older,
-.moin-rev-navigation-newer {padding: 0 20px 0 20px; }
+.moin-rev-navigation-newer {padding: 0 20px; }
 ul#moin-rev-navigation li { display: inline; }
 ul#moin-rev-navigation { text-align: center; background-color: var(--bg-zebra); }
 @media (max-width: 1500px) {
@@ -752,8 +751,8 @@ ul#moin-rev-navigation { text-align: center; background-color: var(--bg-zebra); 
 .calendar th,
 .calendar thead,
 .calendar tr { padding: 0; border: 3px solid var(--border-cal); text-align: center; }
-.calendar caption { padding: .5em 0 .3em 0; color: var(--cal-text); font-size: 1.1em; font-weight: bold; border: 3px solid var(--border-cal); }
-.calendar td { width: 14%; padding: .5em .2em .3em .2em; text-align: center; border: inherit; }
+.calendar caption { padding: .5em 0 .3em; color: var(--cal-text); font-size: 1.1em; font-weight: bold; border: 3px solid var(--border-cal); }
+.calendar td { width: 14%; padding: .5em .2em .3em; text-align: center; border: inherit; }
 
 table.calendar { table-layout: fixed; }
 .cal-header   { background-color: var(--bg-cal-header); }
