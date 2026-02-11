@@ -13,18 +13,26 @@ from moin.constants.keys import NAME, NAMESPACE
 
 from ..routing import Backend as RoutingBackend
 
-from moin.storage.backends.stores import MutableBackend as StoreBackend, Backend as ROBackend
+from moin.storage.backends.stores import Backend as StoreBackend
+from moin.storage.error import ReadOnlyBackendError
 from moin.storage.stores.memory import BytesStore as MemoryBytesStore
 from moin.storage.stores.memory import FileStore as MemoryFileStore
 
 
 def make_ro_backend():
-    store = StoreBackend(MemoryBytesStore(), MemoryFileStore())
-    store.create()
-    store.open()
-    store.store({NAME: "test"}, BytesIO(b""))
-    store.store({NAME: "test2"}, BytesIO(b""))
-    return ROBackend(store.meta_store, store.data_store)
+    meta_store = MemoryBytesStore()
+    data_store = MemoryFileStore()
+    # create a mutable backend
+    backend = StoreBackend(meta_store, data_store)
+    backend.create()
+    backend.open()
+    backend.store({NAME: "test"}, BytesIO(b""))
+    backend.store({NAME: "test2"}, BytesIO(b""))
+    backend.close()
+    # create a read-only backend
+    backend = StoreBackend(meta_store, data_store, read_only=True)
+    backend.open()
+    return backend
 
 
 @pytest.fixture
@@ -66,15 +74,15 @@ def test_store_get_del(router):
 
 
 def test_store_readonly_fails(router):
-    with pytest.raises(TypeError):
+    with pytest.raises(ReadOnlyBackendError):
         router.store(dict(name=["ro:testing"]), BytesIO(b""))
 
 
 def test_del_readonly_fails(router):
     ro_be_name, ro_id = next(iter(router))  # we have only readonly items
     print(ro_be_name, ro_id)
-    with pytest.raises(TypeError):
-        router.remove(ro_be_name, ro_id)
+    with pytest.raises(ReadOnlyBackendError):
+        router.remove(ro_be_name, ro_id, destroy_data=True)
 
 
 def test_destroy_create_dont_touch_ro(router):

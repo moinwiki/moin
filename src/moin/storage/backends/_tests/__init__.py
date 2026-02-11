@@ -5,17 +5,25 @@
 MoinMoin - backend tests.
 """
 
-from io import BytesIO
+from typing import Protocol
 
 import pytest
 
+from io import BytesIO
+
 from moin.constants.keys import SIZE, HASH_ALGORITHM
+from moin.storage.backends import BackendBase
 
 
-class BackendTestBase:
+class WithBE(Protocol):
+    be: BackendBase
+
+
+class BackendTestBase(WithBE):
+
     def setup_method(self, method):
         """
-        self.be needs to be an opened backend.
+        self.be needs to be a created an opened backend.
         """
         raise NotImplementedError
 
@@ -35,6 +43,7 @@ class BackendTestBase:
 
 
 class MutableBackendTestBase(BackendTestBase):
+
     def setup_method(self, method):
         """
         self.be needs to be a created and opened backend.

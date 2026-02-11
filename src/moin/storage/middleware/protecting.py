@@ -14,23 +14,21 @@ Note: for method / attribute docs, please see the same methods / attributes in
 
 from __future__ import annotations
 
+from typing import Any, Generator, TYPE_CHECKING
+
 import time
 
 from whoosh.util.cache import lfu_cache
 
-from moin.constants.rights import CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS
+from moin import log
 from moin.constants.keys import ACL, ALL_REVS, LATEST_REVS, ITEMID, FQNAMES, NAME, NAMESPACE
 from moin.constants.namespaces import NAMESPACE_ALL
-
+from moin.constants.rights import CREATE, READ, PUBREAD, WRITE, ADMIN, DESTROY, ACL_RIGHTS_CONTENTS
 from moin.security import AccessControlList
 from moin.storage.middleware.exceptions import AccessDenied
 from moin.storage.types import ItemData, MetaData
 from moin.utils import close_file
-from moin.utils.names import gen_fqnames, parent_names, split_fqname
-
-from moin import log
-
-from typing import Any, TYPE_CHECKING
+from moin.utils.names import CompositeName, gen_fqnames, parent_names, split_fqname
 
 if TYPE_CHECKING:
     from moin.config import AclConfig
@@ -47,7 +45,7 @@ LOOKUP_CACHE = 200  # ACL lookup for some itemname:  itemid,fqname > acl
 ACL_CACHE = 600  # avoid ACL recalculation: user, namespace, ACL, parents, right > True/false
 
 
-def pchecker(right, allowed, item):
+def pchecker(right: str, allowed: bool, item: Item) -> bool:
     """Check blog entry publication date."""
     if allowed and right == PUBREAD:
         # PUBREAD permission is only granted after publication time (ptime)
@@ -87,7 +85,7 @@ class ProtectingMiddleware:
         lfu_cache_decorator = lfu_cache(ACL_CACHE)
         self.allows = lfu_cache_decorator(self._allows)
         # placeholder to show we are passing meta data around without affecting lfu caches
-        self.meta = None
+        self.meta: MetaData | None = None
 
     def _clear_acl_cache(self):
         # if we have modified the backend somehow so ACL lookup is influenced,
@@ -95,7 +93,7 @@ class ProtectingMiddleware:
         # ACL lookups afterwards will fetch fresh info from the lower layers.
         self.get_acls.cache_clear()
 
-    def _get_configured_acls(self, fqname):
+    def _get_configured_acls(self, fqname: CompositeName):
         """
         for a fully-qualified itemname (namespace:name), get the acl configuration
         for that (part of the) namespace.
@@ -112,7 +110,7 @@ class ProtectingMiddleware:
                 return {"default": "All:", "hierarchic": False, "after": "", "before": ""}
             raise ValueError(f"No acl_mapping entry found for item {fqname!r}")
 
-    def _get_acls(self, itemid=None, fqname=None):
+    def _get_acls(self, itemid: str | None = None, fqname: CompositeName | None = None):
         """
         return a list of (alternatively valid) effective acls for the item
         identified via itemid or fqname.
@@ -148,7 +146,7 @@ class ProtectingMiddleware:
                     acl = self.meta[ACL]
                     return [acl]
 
-        item = None
+        item: ProtectedItem | None = None
         if not meta_available or self._get_configured_acls(fqname)["hierarchic"]:
             """self.meta is not valid or namespace uses hierarchic acls and we need item parentids"""
             item = self.get_item(short=True, **q)
@@ -175,22 +173,22 @@ class ProtectingMiddleware:
         aclobj = self.parse_acl(acl, default_acl)
         return aclobj.may(user_name, right)
 
-    def query_parser(self, default_fields, idx_name=LATEST_REVS):
+    def query_parser(self, default_fields: list[str], idx_name: str = LATEST_REVS):
         return self.indexer.query_parser(default_fields, idx_name=idx_name)
 
-    def search(self, q, idx_name=LATEST_REVS, **kw):
+    def search(self, q, idx_name: str = LATEST_REVS, **kw) -> Generator[ProtectedRevision]:
         for rev in self.indexer.search(q, idx_name, **kw):
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
-    def search_page(self, q, idx_name=LATEST_REVS, pagenum=1, pagelen=10, **kw):
+    def search_page(self, q, idx_name: str = LATEST_REVS, pagenum=1, pagelen=10, **kw) -> Generator[ProtectedRevision]:
         for rev in self.indexer.search_page(q, idx_name, pagenum, pagelen, **kw):
             rev = ProtectedRevision(self, rev)
             if rev.allows(READ) or rev.allows(PUBREAD):
                 yield rev
 
-    def search_meta(self, q, idx_name=LATEST_REVS, regex=None, **kw):
+    def search_meta(self, q, idx_name: str = LATEST_REVS, regex=None, **kw):
         """
         Yield an item's metadata, skipping any items where read permission is denied.
 
@@ -204,7 +202,7 @@ class ProtectingMiddleware:
             if result:
                 yield meta
 
-    def may_read_rev(self, meta):
+    def may_read_rev(self, meta: MetaData) -> bool:
         """
         Return true if user may read item revision represented by whoosh index hit.
         Called by ajaxsearch template, others.
@@ -231,7 +229,7 @@ class ProtectingMiddleware:
                 item_acl = acl_cfg["default"]
             yield " ".join([before_acl, item_acl, after_acl])
 
-    def _allows(self, user_names, acls, parentnames, namespace, right):
+    def _allows(self, user_names, acls, parentnames, namespace, right) -> bool:
         """
         Check if usernames may have <right> access on this item.
 
@@ -326,7 +324,8 @@ class ProtectingMiddleware:
 
 
 class ProtectedItem:
-    def __init__(self, protector: ProtectingMiddleware, item: Item):
+
+    def __init__(self, protector: ProtectingMiddleware, item: Item) -> None:
         """
         :param protector: protector middleware
         :param item: item to protect
@@ -426,7 +425,7 @@ class ProtectedItem:
         rev = self.item[revid]
         return ProtectedRevision(self.protector, rev, p_item=self)
 
-    def get_revision(self, revid):
+    def get_revision(self, revid: str):
         return self[revid]
 
     def store_revision(
@@ -436,9 +435,9 @@ class ProtectedItem:
         overwrite: bool = False,
         return_rev: bool = False,
         return_meta: bool = False,
-        fqname=None,
-        **kw,
-    ) -> tuple[Any, dict[str, Any]] | ProtectedRevision | None:
+        fqname: CompositeName | None = None,
+        **kw: Any,
+    ) -> tuple[CompositeName, MetaData] | ProtectedRevision | None:
         self.require(WRITE)
         if not self:
             self.require(CREATE)
@@ -475,7 +474,7 @@ class ProtectedItem:
 
 class ProtectedRevision:
 
-    def __init__(self, protector, rev: Revision, p_item: ProtectedItem | None = None) -> None:
+    def __init__(self, protector: ProtectingMiddleware, rev: Revision, p_item: ProtectedItem | None = None) -> None:
         """
         :param protector: Protector middleware
         :param rev: Revision to protect

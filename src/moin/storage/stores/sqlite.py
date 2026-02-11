@@ -10,22 +10,26 @@ You can use the same DB file for multiple stores by using different table names.
 Optionally, zlib ("gzip") compression can be used.
 """
 
+from __future__ import annotations
+
+from typing import BinaryIO, Iterator
+from typing_extensions import override, Self
+
 import os
 import base64
 import zlib
+
+from io import BytesIO
 from sqlite3 import connect, Row, IntegrityError
 
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
-from . import BytesMutableStoreBase, FileMutableStoreBase, FileMutableStoreMixin
+from . import BytesStoreBase, FileStoreBase
 
 
-class BytesStore(BytesMutableStoreBase):
-    """
-    A simple SQLite-based store.
-    """
+class SqliteStoreMixin:
 
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls: type[Self], uri: str) -> Self:
         """
         Create a new cls instance from the given URI.
 
@@ -41,7 +45,7 @@ class BytesStore(BytesMutableStoreBase):
             params[2] = int(params[2])
         return cls(*params)
 
-    def __init__(self, db_name, table_name="store", compression_level=0):
+    def __init__(self, db_name: str, table_name: str = "store", compression_level: int = 0) -> None:
         """
         Just store the params.
 
@@ -60,28 +64,28 @@ class BytesStore(BytesMutableStoreBase):
         if not os.path.exists(db_path):
             os.makedirs(db_path)
 
-    def create(self):
+    def create(self) -> None:
         conn = connect(self.db_name)
         with conn:
             conn.execute(f"create table {self.table_name} (key text primary key, value blob)")
 
-    def destroy(self):
+    def destroy(self) -> None:
         conn = connect(self.db_name)
         with conn:
             conn.execute(f"drop table {self.table_name}")
 
-    def open(self):
+    def open(self) -> None:
         self.conn = connect(self.db_name, check_same_thread=False)
         self.conn.row_factory = Row  # make column access by ['colname'] possible
 
-    def close(self):
+    def close(self) -> None:
         pass
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         for row in self.conn.execute(f"select key from {self.table_name}"):
             yield row["key"]
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         with self.conn:
             self.conn.execute(f"delete from {self.table_name} where key=?", (key,))
 
@@ -104,7 +108,7 @@ class BytesStore(BytesMutableStoreBase):
             value = zlib.decompress(value)
         return value
 
-    def __getitem__(self, key):
+    def _getitem(self, key: str) -> bytes:
         rows = list(self.conn.execute(f"select value from {self.table_name} where key=?", (key,)))
         if not rows:
             raise KeyError(key)
@@ -112,7 +116,7 @@ class BytesStore(BytesMutableStoreBase):
         value = base64.b64decode(value.encode())
         return self._decompress(value)
 
-    def __setitem__(self, key, value):
+    def _setitem(self, key: str, value: bytes) -> None:
         value = self._compress(value)
         with self.conn:
             value = base64.b64encode(value).decode()  # a string in base64 encoding
@@ -128,5 +132,31 @@ class BytesStore(BytesMutableStoreBase):
                     raise
 
 
-class FileStore(FileMutableStoreMixin, BytesStore, FileMutableStoreBase):
-    """SQLite FileStore."""
+class BytesStore(SqliteStoreMixin, BytesStoreBase):
+    """
+    A simple SQLite-based store.
+    """
+
+    @override
+    def __getitem__(self, key: str) -> bytes:
+        return self._getitem(key)
+
+    @override
+    def __setitem__(self, key: str, value: bytes) -> None:
+        self._setitem(key, value)
+
+
+class FileStore(SqliteStoreMixin, FileStoreBase):
+    """
+    SQLite FileStore.
+    """
+
+    @override
+    def __getitem__(self, key: str) -> BinaryIO:
+        value = self._getitem(key)
+        return BytesIO(value)
+
+    @override
+    def __setitem__(self, key: str, stream: BinaryIO) -> None:
+        value = stream.read()
+        self._setitem(key, value)
