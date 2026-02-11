@@ -110,6 +110,8 @@ SESSION_KEY = "session_key"
 SESSION_TOKEN = "session_token"
 RECOVERPASS_KEY = "recoverpass_key"  # TODO: this is used for email confirmation as well; maybe it needs a better name
 EDIT_ON_DOUBLECLICK = "edit_on_doubleclick"
+USE_HTML_EDITOR = "use_html_editor"
+USE_MARKDOWN_EDITOR = "use_markdown_editor"
 SCROLL_PAGE_AFTER_EDIT = "scroll_page_after_edit"
 SHOW_COMMENTS = "show_comments"
 ISO_8601 = "iso_8601"
@@ -148,6 +150,8 @@ USEROBJ_ATTRS = [
     SUBSCRIPTIONS,
     QUICKLINKS,
     CSS_FILE,
+    USE_HTML_EDITOR,
+    USE_MARKDOWN_EDITOR,
 ]
 
 # keys for blog homepages

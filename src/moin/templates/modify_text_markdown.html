@@ -7,7 +7,7 @@
 
     The data_editor macro defines the textarea used by the CKEditor to edit HTML items.
 #}
-{% if user.use_html_editor %}
+{% if user.use_markdown_editor %}
     {% macro extra_head() %}
         <script src="{{ url_for('static', filename='js/ckeditor5.umd.js') }}"></script>
         <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
@@ -17,7 +17,7 @@
     {% endmacro %}
 
     {% macro data_editor(form, item_name) %}
-        {{ gen.textarea(form['data_text'], class='ckeditor', rows=form.rows|string, cols=form.cols|string) }}
+        {{ gen.textarea(form['data_text'], class='ckeditor markdown', rows=form.rows|string, cols=form.cols|string) }}
     {% endmacro %}
 {% else %}
     {% from "modify_binary.html" import data_editor as base_editor with context %}
