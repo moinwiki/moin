@@ -76,7 +76,7 @@ class Converter:
     smiley_re: Final = re.compile(smiley_rule, re.UNICODE | re.VERBOSE)
 
     # We do not process any smiley conversion within these elements.
-    tags_to_ignore: Final = {"code", "blockcode", "nowiki"}
+    tags_to_ignore: Final = {"code", "blockcode", "literal", "nowiki"}
 
     @classmethod
     def _factory(cls, input: Type, output: Type, icon: str | None = None, **kwargs: Any) -> Self | None:
