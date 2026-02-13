@@ -32,8 +32,13 @@ def serialize_strip(elem, **options):
             "<page><body><p>bla bla :-) bla bla</p></body></page>",
             '/page/body/p/span[@class="moin-text-icon moin-smile"]',
         ),
-        # In code
-        ("<page><body><code>bla bla :-) bla bla</code></body></page>", '/page/body[code="bla bla :-) bla bla"]'),
+        # Smiley gets ignored inside code element
+        ("<page><body><code>bla bla :-) bla bla</code></body></page>", '/page/body/code[text()="bla bla :-) bla bla"]'),
+        # Smiley gets ignored inside literal element
+        (
+            "<page><body><literal>bla bla :-) bla bla</literal></body></page>",
+            '/page/body/literal[text()="bla bla :-) bla bla"]',
+        ),
         # Two at once
         (
             "<page><body><p>:-) :-(</p></body></page>",
@@ -51,7 +56,7 @@ def serialize_strip(elem, **options):
         # Test with a space between elements
         ("<page><body><table-of-content />     <p>text</p></body></page>", '/page/body[p="text"]'),
         # Test the ignored tags
-        ("<page><body><p><code>:-)</code></p></body></page>", '/page/body/p[code=":-)"]'),
+        ("<page><body><p><code>:-)</code></p></body></page>", '/page/body/p/code[text()=":-)"]'),
         # Test the ignored tags and subelements
         (
             "<page><body><blockcode>:-)<strong>:-(</strong></blockcode></body></page>",
