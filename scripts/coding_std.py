@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-# Copyright: 2012-2018 MoinMoin:RogerHaase
-# Copyright: 2023 MoinMoin project
+# Copyright: 2012-2026 MoinMoin project
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -11,6 +10,7 @@ Detect and correct violations of the Moin 2 coding standards:
 
 Detect and write informative messages:
     - improper indentation of template files with the .html suffix
+    - all i18n phrases in .js files must be matched in templates/dictionary.js
 
 Execute this script from the root directory of the Moin repository
 to process all files in the <root>/src directory.
@@ -33,6 +33,10 @@ WIN_SUFFIXES = set("bat cmd".split())
 
 # These are media files from the help-common namespace
 BINARY_FILES = tuple(".gz.data .zip.data .mp3.data .jpg.data .png.data .mp4.data".split())
+
+# .js files to check for i18n phrases
+JS_I18N_FILES = "basic.js common.js index_action.js jfu.js search.js tickets.js".split()
+JS_I18N_FILES = tuple(os.path.join("static", "js", x) for x in JS_I18N_FILES)
 
 # Global variables for checking JavaScript messages
 phrases = set()
@@ -248,13 +252,14 @@ def check_files(filename, suffix):
         print("Skipping file due to UnicodeDecodeError:", filename)
         return
 
+    if filename.endswith(JS_I18N_FILES):
+        check_js_phrases(lines, filename)
+    else:
+        return
+
     if filename.endswith(".html"):
         check_template_indentation(lines, filename, logger)
         check_template_spacing(lines, filename, logger)
-
-    if filename.endswith(".js"):
-        check_js_phrases(lines, filename)
-
     # now look at file end and get rid of all whitespace-only lines there:
     while lines:
         if not lines[-1].strip():
@@ -347,8 +352,7 @@ def check_js_phrases(lines, filename):
     Print error message if not defined in phrases, else add phrase to used phrases set.
     """
     global phrases_used
-    if filename.endswith("jquery.i18n.min.js") or filename.endswith("dictionary.js"):
-        return
+
     pattern = re.compile(r"""_\("([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)"\)""")
     bad_pat = re.compile(r"""_\(([\w\s\d~`@#$%^&*()+=:;'<,>.?/!-?]+)\)""")
     for count, line in enumerate(lines, start=1):
