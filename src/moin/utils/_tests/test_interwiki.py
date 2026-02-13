@@ -95,7 +95,18 @@ class TestInterWiki:
         ]
 
         for (item_name, wiki_name, field, namespace, rev, endpoint, _external), url in tests:
-            assert url_for_item(item_name, wiki_name, field, namespace, rev, endpoint, _external) == url
+            assert (
+                url_for_item(
+                    item_name,
+                    wiki_name=wiki_name,
+                    field=field,
+                    namespace=namespace,
+                    rev=rev,
+                    endpoint=endpoint,
+                    _external=_external,
+                )
+                == url
+            )
 
     def test_split_namespace(self):
         map = set()
