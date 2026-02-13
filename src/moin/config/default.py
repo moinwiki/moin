@@ -171,7 +171,7 @@ class ConfigFunctionality:
         from moin.utils.crypto import PasswordHasher
 
         try:
-            self.cache.pwd_context = PasswordHasher(**self.password_hasher_config)
+            self.cache.pwd_hasher = PasswordHasher(**self.password_hasher_config)
         except (ValueError, TypeError) as err:
             raise error.ConfigurationError(f"password_hasher_config configuration is invalid [{err}].")
 
