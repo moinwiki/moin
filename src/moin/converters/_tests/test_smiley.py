@@ -32,8 +32,13 @@ def serialize_strip(elem, **options):
             "<page><body><p>bla bla :-) bla bla</p></body></page>",
             '/page/body/p/span[@class="moin-text-icon moin-smile"]',
         ),
-        # In code
+        # Smiley gets ignored inside code element
         ("<page><body><code>bla bla :-) bla bla</code></body></page>", '/page/body/code[text()="bla bla :-) bla bla"]'),
+        # Smiley gets ignored inside literal element
+        (
+            "<page><body><literal>bla bla :-) bla bla</literal></body></page>",
+            '/page/body/literal[text()="bla bla :-) bla bla"]',
+        ),
         # Two at once
         (
             "<page><body><p>:-) :-(</p></body></page>",
