@@ -42,7 +42,7 @@ from moin.constants.forms import (
     WIDGET_EMAIL,
     WIDGET_FILE,
     WIDGET_HIDDEN,
-    WIDGET_INLINE_CHECKBOX,
+    # WIDGET_INLINE_CHECKBOX,
     WIDGET_MULTILINE_TEXT,
     WIDGET_MULTI_SELECT,
     WIDGET_PASSWORD,
@@ -247,7 +247,7 @@ RequiredPassword = Password.validated_by(Present())
 
 Checkbox = Boolean.with_properties(widget=WIDGET_CHECKBOX).using(optional=True, default=1)
 
-InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
+# InlineCheckbox = Checkbox.with_properties(widget=WIDGET_INLINE_CHECKBOX)
 
 Select = Enum.with_properties(widget=WIDGET_SELECT)
 

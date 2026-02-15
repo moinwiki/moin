@@ -64,7 +64,7 @@ from moin.forms import (
     YourEmail,
     RequiredPassword,
     Checkbox,
-    InlineCheckbox,
+    # InlineCheckbox,
     Select,
     Names,
     Tags,
@@ -213,7 +213,7 @@ class LookupForm(Form):
     itemtransclusions = OptionalText.using(label="itemtransclusions")
     refs = OptionalText.using(label="refs")
     tags = Tags.using(optional=True).using(label="tags")
-    history = InlineCheckbox.using(label=L_("search also in non-current revisions"))
+    # history = InlineCheckbox.using(label=L_("search also in non-current revisions"))
     submit_label = L_("Lookup")
 
 
