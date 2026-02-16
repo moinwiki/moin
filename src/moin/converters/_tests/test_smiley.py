@@ -32,13 +32,6 @@ def serialize_strip(elem, **options):
             "<page><body><p>bla bla :-) bla bla</p></body></page>",
             '/page/body/p/span[@class="moin-text-icon moin-smile"]',
         ),
-        # Smiley gets ignored inside code element
-        ("<page><body><code>bla bla :-) bla bla</code></body></page>", '/page/body/code[text()="bla bla :-) bla bla"]'),
-        # Smiley gets ignored inside literal element
-        (
-            "<page><body><literal>bla bla :-) bla bla</literal></body></page>",
-            '/page/body/literal[text()="bla bla :-) bla bla"]',
-        ),
         # Two at once
         (
             "<page><body><p>:-) :-(</p></body></page>",
@@ -55,9 +48,12 @@ def serialize_strip(elem, **options):
         ("<page><body><p>1\n2\n3\n4</p></body></page>", '/page/body[p="1\n2\n3\n4"]'),
         # Test with a space between elements
         ("<page><body><table-of-content />     <p>text</p></body></page>", '/page/body[p="text"]'),
-        # Test the ignored tags
-        ("<page><body><p><code>:-)</code></p></body></page>", '/page/body/p/code[text()=":-)"]'),
-        # Test the ignored tags and subelements
+        # Do not convert content of "literal" and similar elements:
+        ("<page><body><literal>bla :-) bla</literal></body></page>", '/page/body/literal[text()="bla :-) bla"]'),
+        ("<page><body><code>bla :-) bla</code></body></page>", '/page/body/code[text()="bla :-) bla"]'),
+        ("<page><body><kbd>bla :-) bla</kbd></body></page>", '/page/body/kbd[text()="bla :-) bla"]'),
+        ("<page><body><nowiki>bla :-) bla</nowiki></body></page>", '/page/body/nowiki[text()="bla :-) bla"]'),
+        ("<page><body><samp>bla :-) bla</samp></body></page>", '/page/body/samp[text()="bla :-) bla"]'),
         (
             "<page><body><blockcode>:-)<strong>:-(</strong></blockcode></body></page>",
             '/page/body/blockcode[text()=":-)"][strong=":-("]',
