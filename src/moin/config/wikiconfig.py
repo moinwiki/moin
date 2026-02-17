@@ -249,16 +249,7 @@ class Config(DefaultConfig):
     # it is uncommon to change these because of local customizations
 
     # names below must be package names
-    mod_names = [
-        "jquery",
-        "jquery_file_upload",
-        "font_awesome",
-        "ckeditor",
-        "autosize",
-        "svgedit_moin",
-        "jquery_tablesorter",
-        "pygments",
-    ]
+    mod_names = ["font_awesome", "svgedit_moin", "pygments"]
     serve_files.update(get_xstatic_module_path_map(mod_names))
 
 
