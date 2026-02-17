@@ -194,8 +194,8 @@ See utils.html for more macros.
  {%- endmacro %}
 
  {% macro file_uploader_scripts() %}
-    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='js/vendor/jquery.ui.widget.js') }}"></script>
-    <script src="{{ url_for('serve.files', name='jquery_file_upload', filename='js/jquery.fileupload.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/jquery.ui.widget.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}"></script>
  {%- endmacro %}
 
 {#- Show a list of names that will be affected by a recursive action; delete, destroy, rename #}
