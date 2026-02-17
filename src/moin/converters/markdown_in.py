@@ -112,6 +112,14 @@ class Converter(html_in.HtmlTags):
     simple_tags["dl"] = moin_page.list_item
     simple_tags["table"] = moin_page.table
 
+    # Non-void HTML tags that could be split by markdown's inline pattern processor
+    _non_void_html_tags = frozenset(
+        html_in.HtmlTags.symmetric_tags
+        | (set(simple_tags.keys()) - {"br"})
+        | set(html_in.HtmlTags.indirect_tags.keys())
+    )
+    _open_tag_re = re.compile(r"^(.*?)<(\w+)(?:\s[^>]*)?>(.*)$", re.DOTALL)
+
     def new_copy_symmetric(self, element, attrib):
         """
         Create a new QName, with the same tag of the element,
@@ -413,6 +421,105 @@ class Converter(html_in.HtmlTags):
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
 
+    def _create_element_for_tag(self, tag_name, children):
+        """Create a moin_page DOM element for the given HTML tag name."""
+        if tag_name in self.symmetric_tags:
+            return ET.Element(ET.QName(tag_name, moin_page), attrib={}, children=children)
+        elif tag_name in self.simple_tags:
+            return ET.Element(self.simple_tags[tag_name], attrib={}, children=children)
+        elif tag_name in self.indirect_tags:
+            attrib = {moin_page("html-tag"): tag_name}
+            return ET.Element(self.indirect_tags[tag_name], attrib=attrib, children=children)
+        else:
+            return ET.Element(ET.QName(tag_name, moin_page), attrib={}, children=children)
+
+    def _reassemble_split_html_tags(self, node):
+        """
+        Reassemble raw HTML tags split by markdown's inline pattern processor.
+
+        When markdown converts inline syntax (like _emphasis_) inside HTML tags
+        (like <del>), the HTML tag gets split across text/tail boundaries.
+        This results in separate strings for opening and closing tags with
+        converted elements in between:
+            ["<del>text ", Element(emphasis, ...), "</del>"]
+
+        This method detects such splits and reassembles them into proper DOM elements:
+            [Element(del, ["text ", Element(emphasis, ...)])]
+        """
+        if isinstance(node, list):
+            children = node
+        else:
+            children = list(node)
+
+        result = []
+        i = 0
+        changed = False
+
+        while i < len(children):
+            child = children[i]
+            if isinstance(child, str):
+                m = self._open_tag_re.match(child)
+                if m:
+                    pre_text, tag_name, inner_text = m.group(1), m.group(2), m.group(3)
+                    tag_lower = tag_name.lower()
+                    closing_tag = f"</{tag_name}>"
+
+                    if tag_lower in self._non_void_html_tags and closing_tag not in child:
+                        # Scan forward through siblings for the matching closing tag
+                        close_idx = None
+                        for j in range(i + 1, len(children)):
+                            sibling = children[j]
+                            if isinstance(sibling, str) and closing_tag in sibling:
+                                close_idx = j
+                                break
+
+                        if close_idx is not None:
+                            changed = True
+                            close_str = children[close_idx]
+                            close_pos = close_str.index(closing_tag)
+                            inner_tail = close_str[:close_pos]
+                            post_text = close_str[close_pos + len(closing_tag) :]
+
+                            # Collect inner children
+                            inner = []
+                            if inner_text:
+                                inner.append(inner_text)
+                            for k in range(i + 1, close_idx):
+                                inner.append(children[k])
+                            if inner_tail:
+                                inner.append(inner_tail)
+
+                            # Recursively process inner children (handles nested split tags)
+                            self._reassemble_split_html_tags(inner)
+
+                            new_elem = self._create_element_for_tag(tag_lower, inner)
+
+                            if pre_text:
+                                result.append(pre_text)
+                            result.append(new_elem)
+                            if post_text:
+                                result.append(post_text)
+
+                            i = close_idx + 1
+                            continue
+
+                result.append(child)
+                i += 1
+            else:
+                # Recurse into element children
+                self._reassemble_split_html_tags(child)
+                result.append(child)
+                i += 1
+
+        if changed:
+            if isinstance(node, list):
+                node[:] = result
+            else:
+                # EmeraldTree Element: replace all children
+                del node[:]
+                for c in result:
+                    node.append(c)
+
     def __init__(self):
         # The Moin configuration
         self.app_configuration = current_app.cfg
@@ -488,6 +595,9 @@ class Converter(html_in.HtmlTags):
 
         # run markdown post processors and convert from ElementTree to an EmeraldTree object
         converted = self.do_children(root, add_lineno=add_lineno)
+
+        # reassemble HTML tags that were split by markdown's inline pattern processor
+        self._reassemble_split_html_tags(converted)
 
         # convert html embedded in text strings to EmeraldTree nodes
         self.convert_embedded_markup(converted)
