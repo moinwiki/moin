@@ -87,7 +87,7 @@
       base = $.Widget;
     }
 
-    if ($.isArray(prototype)) {
+    if (Array.isArray(prototype)) {
       prototype = $.extend.apply(null, [{}].concat(prototype));
     }
 
@@ -131,7 +131,7 @@
     // inheriting from
     basePrototype.options = $.widget.extend({}, basePrototype.options);
     $.each(prototype, function (prop, value) {
-      if (!$.isFunction(value)) {
+      if (typeof value !== "function") {
         proxiedPrototype[prop] = value;
         return;
       }
@@ -273,7 +273,7 @@
               );
             }
 
-            if (!$.isFunction(instance[options]) || options.charAt(0) === '_') {
+            if (typeof instance[options] !== "function" || options.charAt(0) === '_') {
               return $.error(
                 "no such method '" +
                   options +
@@ -755,7 +755,7 @@
 
       this.element.trigger(event, data);
       return !(
-        ($.isFunction(callback) &&
+        (typeof callback === "function" &&
           callback.apply(this.element[0], [event].concat(data)) === false) ||
         event.isDefaultPrevented()
       );
