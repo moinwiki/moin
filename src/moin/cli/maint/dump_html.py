@@ -128,9 +128,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         shutil.copytree(norm(join(wiki_root, "wiki_local")), norm(join(html_root, "+serve/wiki_local")))
 
         # copy files from xstatic packaging into "+serve" subdirectory
-        xstatic_dirs = ["font_awesome", "jquery", "jquery_tablesorter", "autosize"]
-        if theme in ["basic"]:
-            xstatic_dirs.append("bootstrap")
+        xstatic_dirs = ["font_awesome"]
         module_path_map = get_xstatic_module_path_map(xstatic_dirs)
         for xs_dir in xstatic_dirs:
             shutil.copytree(module_path_map[xs_dir], norm(join(html_root, "+serve", xs_dir)))
