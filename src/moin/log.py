@@ -58,6 +58,7 @@ import logging.config
 import logging.handlers  # needed for handlers defined there being configurable in logging.conf file
 import os
 import warnings
+import moin
 
 from io import StringIO
 
@@ -119,48 +120,47 @@ def _log_warning(message, category, filename, lineno, file=None, line=None):
     logger.warning(msg)
 
 
-def load_config(conf_fname=None):
-    """Load logging config from a config file."""
+def load_config(conf_fname: str | None = None) -> None:
+    """
+    Load logging configuration from a config file.
+    """
     global configured
-    err_msg = None
-    conf_fname = os.environ.get("MOINLOGGINGCONF", conf_fname)
-    if conf_fname:
+
+    load_config_error: Exception | None = None
+    if conf_fname := os.environ.get("MOINLOGGINGCONF", conf_fname):
         try:
             conf_fname = os.path.abspath(conf_fname)
             # We open the config file here to be able to give a reasonable
             # error message in case of failure (if we give the filename to
             # fileConfig(), it silently ignores unreadable files and gives
             # unhelpful error messages like "No section: 'formatters'"):
-            f = open(conf_fname)
-            try:
+            with open(conf_fname, "rt", encoding="utf-8") as f:
                 logging.config.fileConfig(f)
-            finally:
-                f.close()
             configured = True
             logger = getLogger(__name__)
             logger.debug(f'using logging configuration read from "{conf_fname}"')
-            warnings.showwarning = _log_warning
         except Exception as err:  # XXX be more precise
-            err_msg = str(err)
+            load_config_error = err
+
     if not configured:
-        # load built-in fallback logging config
+        # load built-in fallback logging configuration
         with StringIO(logging_config) as f:
             logging.config.fileConfig(f)
         configured = True
         logger = getLogger(__name__)
-        if err_msg:
-            logger.warning(f'load_config for "{conf_fname}" failed with "{err_msg}".')
-        logger.debug("using logging configuration read from built-in fallback in moin.log module!")
-        warnings.showwarning = _log_warning
+        if load_config_error:
+            logger.error(f"loading logging configuration failed: {load_config_error}")
+        logger.debug("using internal fallback logging configuration read from built-in module moin.log!")
 
-    import moin
+    warnings.showwarning = _log_warning
 
     code_path = os.path.dirname(moin.__file__)
     logger.debug(f"Running {moin.project} {moin.version} code from {code_path}")
 
 
 def getLogger(name: str | None):
-    """Wrapper around logging.getLogger, so we can do some more stuff:
+    """
+    Wrapper around logging.getLogger, so we can do some more stuff:
 
     - preprocess the logger name
     - patch log level constants into the logger object, so it can be used
