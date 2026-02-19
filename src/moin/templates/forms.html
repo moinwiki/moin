@@ -149,7 +149,7 @@ See utils.html for more macros.
     {%- for value, label, description in field.member_schema.properties['choice_specs'] %}
         <li>
             {{ raw_input(field, 'checkbox', value=value) }}
-            {{ gen.label(field) }}
+            {{ gen.label(field, value=value, contents=label or value) }}
             {%- if description %}
                 <span class="helper-text">
                     {{ description }}

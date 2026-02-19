@@ -1478,7 +1478,7 @@ def jfu_server(item_name):
 def contenttype_selects_gen():
     for g in content_registry.group_names:
         description = ", ".join([e.display_name for e in content_registry.groups[g]])
-        yield g, None, description
+        yield g, L_(g), description
     yield "Unknown Items", None, "Items of contenttype unknown to MoinMoin"
 
 
