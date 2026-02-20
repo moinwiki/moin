@@ -85,7 +85,7 @@ def parent_names(names: list[str]) -> set[str]:
     return parents
 
 
-def split_namespace(namespaces: list[str], url: str) -> tuple[str, str]:
+def split_namespace(namespaces: list[str] | set[str], url: str) -> tuple[str, str]:
     """
     Find the longest namespace in the set.
     Namespaces are separated by slashes (/).
