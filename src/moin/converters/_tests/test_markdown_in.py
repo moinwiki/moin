@@ -241,6 +241,36 @@ class TestConverter:
         """Test embedded markup in markdown"""
         self.do(input, output)
 
+    data = [
+        # Original issue #1838: emphasis inside <del> in a list item
+        (
+            "* <del>Deleted list item with _emphasized text_</del>",
+            '<list item-label-generate="unordered"><list-item><list-item-body>'
+            "<del>Deleted list item with <emphasis>emphasized text</emphasis></del>"
+            "</list-item-body></list-item></list>",
+        ),
+        # <ins> with emphasis
+        (
+            "<ins>Inserted with _emphasis_</ins>",
+            "<p><ins>Inserted with <emphasis>emphasis</emphasis></ins></p>",
+        ),
+        # <kbd> with strong
+        (
+            "<kbd>Press **Ctrl+C**</kbd>",
+            "<p><kbd>Press <strong>Ctrl+C</strong></kbd></p>",
+        ),
+        # <del> without markdown (should still work - regression check)
+        (
+            "<del>deleted</del>",
+            "<div><p><del>deleted</del></p></div>",
+        ),
+    ]
+
+    @pytest.mark.parametrize("input,output", data)
+    def test_html_with_markdown_emphasis(self, input, output):
+        """Test HTML tags containing markdown inline markup (issue #1838)"""
+        self.do(input, output)
+
     def serialize_strip(self, elem, **options):
         result = serialize(elem, namespaces=self.namespaces, **options)
         return self.output_re.sub("", result)
