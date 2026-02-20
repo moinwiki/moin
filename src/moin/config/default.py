@@ -11,54 +11,148 @@
 MoinMoin - Configuration defaults class
 """
 
+from __future__ import annotations
+
 import re
 import os
 
+from typing import Any, TYPE_CHECKING, NamedTuple, TypedDict
+
 from babel import Locale, parse_locale
 
+from moin import log
 from moin.i18n import _, L_, N_
 from moin import error
+from moin.config import PasswordHasherConfig
 from moin.constants.rights import ACL_RIGHTS_CONTENTS, ACL_RIGHTS_FUNCTIONS
 from moin.constants.keys import *
 from moin.items.content import content_registry_enable, content_registry_disable
 from moin import datastructures
 from moin.auth import MoinAuth
 from moin.utils import plugins
+from moin.utils.crypto import PasswordHasher
 from moin.security import AccessControlList, DefaultSecurityPolicy
 
-from moin import log
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from moin.auth import BaseAuth
+    from moin.config import AclConfig, AclMapping, BackendMapping, ItemViews, NamespaceMapping, NaviBarEntries
+    from moin.datastructures.backends import BaseDictsBackend, BaseGroupsBackend
 
 logging = log.getLogger(__name__)
 
 
-class CacheClass:
-    """Just a container for stuff we cache."""
+class ConfigDataCache:
+    """
+    Just a container for stuff we cache.
+    """
 
-    pass
+    pwd_hasher: PasswordHasher
+
+    def __init__(self, config: ConfigFunctionality) -> None:
+
+        try:
+            self.pwd_hasher = PasswordHasher(**config.password_hasher_config)
+        except (ValueError, TypeError) as err:
+            raise error.ConfigurationError(f"password_hasher_config configuration is invalid [{err}].")
+
+        # pre-compile some regexes
+        self.item_dict_regex = re.compile(config.item_dict_regex, re.UNICODE)
+        self.item_group_regex = re.compile(config.item_group_regex, re.UNICODE)
+
+        # the ..._regexact versions only match if nothing is left (exact match)
+        self.item_dict_regexact = re.compile(f"^{config.item_dict_regex}$", re.UNICODE)
+        self.item_group_regexact = re.compile(f"^{config.item_group_regex}$", re.UNICODE)
+
+        # compiled functions ACL
+        self.acl_functions = AccessControlList([config.acl_functions], valid=config.acl_rights_functions)
 
 
 class ConfigFunctionality:
-    """Configuration base class with config class behavior.
+    """
+    Configuration base class with config class behavior.
 
     This class contains the functionality for the DefaultConfig
     class for the benefit of the WikiConfig macro.
     """
 
-    # attributes of this class that should not be shown
-    # in the WikiConfig() macro.
-    siteid = None
-    cache = None
-    mail_enabled = None
-    auth_can_logout = None
-    auth_have_login = None
-    auth_login_inputs = None
-    _site_plugin_lists = None
-    markdown_extensions = []
+    # fields dynamically added to the configuration via invocation of _add_options_to_defconfig at the end of this file
+    acl_functions: str
+    acl_mapping: AclMapping
+    acl_rights_contents: list[str]
+    acl_rights_functions: list[str]
+    acls: dict[str, AclConfig]
+    admin_emails: list[str]
+    auth: list[BaseAuth]
+    auth_can_logout: list[str]
+    auth_have_login: bool
+    auth_login_inputs: list[str]
+    backend_mapping: BackendMapping
+    backends: dict[str, str | None]
+    cache: ConfigDataCache
+    config_check_enabled: bool
+    content_dir: str
+    content_security_policy: str
+    content_security_policy_report_only: str
+    content_security_policy_limit_per_day: int
+    contenttype_disabled: list[str]
+    contenttype_enabled: list[str]
+    data_dir: str
+    default_root: str
+    destroy_backend: bool
+    dicts: Callable[[], BaseDictsBackend]
+    edit_lock_time: int
+    edit_locking_policy: str
+    email_tracebacks: bool
+    endpoints_excluded: list[str]
+    expanded_quicklinks_size: int
+    groups: Callable[[], BaseGroupsBackend]
+    index_storage: tuple[str, list[Any] | tuple[Any, ...], dict[str, Any]]
+    instance_dir: str
+    interwikiname: str
+    interwiki_map: dict[str, str]
+    item_dict_regex: str
+    item_group_regex: str
+    item_views: ItemViews
+    language_default: str
+    locale_default: str
+    mail_enabled: bool
+    mail_from: str | None
+    mail_password: str | None
+    mail_sendmail: str | None
+    mail_smarthost: str | None
+    mail_username: str | None
+    markdown_extensions: list[str] = []
+    namespace_mapping: NamespaceMapping
+    namespaces: dict[str, str]
+    navi_bar: NaviBarEntries
+    password_hasher_config: PasswordHasherConfig
+    registration_hint: str
+    registration_only_by_superuser: bool
+    root_mapping: dict[str, str]
+    secrets: dict[str, str] | str
+    serve_files: dict[str, str]
+    show_hosts: bool
+    siteid: str
+    sitename: str
+    supplementation_item_names: list[str]
+    template_dirs: list[str]
+    theme_default: str
+    timezone_default: str
+    uri: str
+    user_defaults: dict[str, Any]
+    user_email_unique: bool
+    user_email_verification: bool
+    user_homewiki: str
+    wikiconfig_dir: str
 
-    def __init__(self):
-        """Initialize Config instance."""
-        self.cache = CacheClass()
+    _plugin_modules: list[str]
+    _site_plugin_lists: dict[str, dict[str, str]]
 
+    def __init__(self) -> None:
+        """
+        Initialize Config instance.
+        """
         if self.config_check_enabled:
             self._config_check()
 
@@ -69,16 +163,8 @@ class ConfigFunctionality:
         # Try to decode certain names that allow Unicode
         self._decode()
 
-        # After that, pre-compile some regexes
-        self.cache.item_dict_regex = re.compile(self.item_dict_regex, re.UNICODE)
-        self.cache.item_group_regex = re.compile(self.item_group_regex, re.UNICODE)
-
-        # the ..._regexact versions only match if nothing is left (exact match)
-        self.cache.item_dict_regexact = re.compile(f"^{self.item_dict_regex}$", re.UNICODE)
-        self.cache.item_group_regexact = re.compile(f"^{self.item_group_regex}$", re.UNICODE)
-
-        # compiled functions ACL
-        self.cache.acl_functions = AccessControlList([self.acl_functions], valid=self.acl_rights_functions)
+        # After that, create our cache instance
+        self.cache = ConfigDataCache(self)
 
         plugins._loadPluginModule(self)
 
@@ -150,7 +236,7 @@ class ConfigFunctionality:
                     "(minimum length is {} chars)!".format(secret_min_length)
                 )
             # for lazy people: set all required secrets to same value
-            secrets = {}
+            secrets: dict[str, str] = {}
             for key in secret_key_names:
                 secrets[key] = self.secrets
             self.secrets = secrets
@@ -167,13 +253,6 @@ class ConfigFunctionality:
                         secret_min_length, secret_key_name
                     )
                 )
-
-        from moin.utils.crypto import PasswordHasher
-
-        try:
-            self.cache.pwd_hasher = PasswordHasher(**self.password_hasher_config)
-        except (ValueError, TypeError) as err:
-            raise error.ConfigurationError(f"password_hasher_config configuration is invalid [{err}].")
 
         if len(self.contenttype_enabled):
             content_registry_enable(self.contenttype_enabled)
@@ -265,8 +344,8 @@ file. It should match the actual charset of the configuration file.
 
 
 class DefaultConfig(ConfigFunctionality):
-    """Configuration base class with default config values
-    (added below)
+    """
+    Configuration base class with default config values (added below)
     """
 
     # Do not add anything into this class. Functionality must
@@ -275,7 +354,9 @@ class DefaultConfig(ConfigFunctionality):
     # the options dictionary.
 
 
-def _default_password_checker(cfg, username, password, min_length=8, min_different=5):
+def _default_password_checker(
+    cfg, username: str, password: str, min_length: int = 8, min_different: int = 5
+) -> str | None:
     """Check if a password is secure enough.
     We use a built-in check to get rid of the worst passwords.
 
@@ -321,9 +402,21 @@ def _default_password_checker(cfg, username, password, min_length=8, min_differe
 
 
 class DefaultExpression:
-    def __init__(self, exprstr):
-        self.text = exprstr
-        self.value = eval(exprstr)
+    def __init__(self, expr: str):
+        self.text = expr
+        self.value = eval(expr)
+
+
+class Option(NamedTuple):
+    name: str
+    default_value: Any | None
+    description: str
+
+
+class OptionsGroup(NamedTuple):
+    short_description: str
+    long_description: str | None
+    options: tuple[Option, ...]
 
 
 #
@@ -331,20 +424,20 @@ class DefaultExpression:
 # group name, see below (at the options dict) for more
 # information on the layout of this structure.
 #
-options_no_group_name = {
+options_no_group_name: dict[str, OptionsGroup] = {
     # ==========================================================================
-    "datastructures": (
+    "datastructures": OptionsGroup(
         "Datastruct",
         None,
         (
             # ('dicts', lambda cfg: datastructures.ConfigDicts({}),
-            (
+            Option(
                 "dicts",
                 lambda cfg: datastructures.WikiDicts(),
                 "function f(cfg) that returns a backend which is used to access dicts definitions.",
             ),
             # ('groups', lambda cfg: datastructures.ConfigGroups({}),
-            (
+            Option(
                 "groups",
                 lambda cfg: datastructures.WikiGroups(),
                 "function f(cfg) that returns a backend which is used to access groups definitions.",
@@ -352,30 +445,32 @@ options_no_group_name = {
         ),
     ),
     # ==========================================================================
-    "auth": (
+    "auth": OptionsGroup(
         "Authentication / Authorization / Security",
         None,
         (
-            ("auth", DefaultExpression("[MoinAuth()]"), "list of auth objects, to be called in order as specified"),
-            (
+            Option(
+                "auth", DefaultExpression("[MoinAuth()]"), "list of auth objects, to be called in order as specified"
+            ),
+            Option(
                 "secrets",
                 None,
                 """Either a long shared secret string used for multiple purposes or a dict {"purpose": "longsecretstring", ...} for setting up different shared secrets for different purposes.""",
             ),
-            (
+            Option(
                 "SecurityPolicy",
                 DefaultSecurityPolicy,
                 "Class object hook for implementing security restrictions or relaxations",
             ),
-            ("endpoints_excluded", [], "Exclude unwanted endpoints (list of strings)"),
-            (
+            Option("endpoints_excluded", [], "Exclude unwanted endpoints (list of strings)"),
+            Option(
                 "password_checker",
                 DefaultExpression("_default_password_checker"),
                 'does simple checks whether a password is acceptable (you can switch this off by using "None" or enhance it by using a custom checker)',
             ),
-            (
+            Option(
                 "password_hasher_config",
-                dict(
+                PasswordHasherConfig(
                     # Argon2id parameters for password hashing
                     # time_cost: number of iterations (default: 2)
                     time_cost=2,
@@ -390,7 +485,7 @@ options_no_group_name = {
                 ),
                 "Argon2 PasswordHasher configuration parameters",
             ),
-            (
+            Option(
                 "allow_style_attributes",
                 False,
                 "trust editors to not abuse style attribute security holes within HTML (CKEditor) or Markdown items",
@@ -398,26 +493,26 @@ options_no_group_name = {
         ),
     ),
     # ==========================================================================
-    "style": (
+    "style": OptionsGroup(
         "Style / Theme / UI",
         "These settings control how the wiki user interface will look like.",
         (
-            (
+            Option(
                 "sitename",
                 "Untitled Wiki",
                 "Short description of your wiki site, displayed below the logo on each page, and used in RSS documents as the channel title [Unicode]",
             ),
-            (
+            Option(
                 "interwikiname",
                 None,
                 "unique, stable and required InterWiki name (prefix, moniker) of the site [Unicode]",
             ),
-            (
+            Option(
                 "html_pagetitle",
                 None,
                 "Allows you to set a specific HTML page title (if None, it defaults to the value of 'sitename') [Unicode]",
             ),
-            (
+            Option(
                 "navi_bar",
                 [
                     # cls, endpoint, args, link_text, title
@@ -432,9 +527,9 @@ options_no_group_name = {
                 ],
                 "Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]",
             ),
-            ("expanded_quicklinks_size", 8, "Number of quicklinks to show as expanded in navi bar"),
-            ("theme_default", "topside", "Default theme."),
-            (
+            Option("expanded_quicklinks_size", 8, "Number of quicklinks to show as expanded in navi bar"),
+            Option("theme_default", "topside", "Default theme."),
+            Option(
                 "serve_files",
                 {},
                 """
@@ -442,14 +537,16 @@ options_no_group_name = {
          from the filesystem as url .../+serve/<name>/...
          """,
             ),
-            (
+            Option(
                 "supplementation_item_names",
                 [_("Discussion")],
                 "List of names of the supplementation (sub)items [Unicode]",
             ),
-            ("interwiki_preferred", [], "In dialogues, show those wikis at the top of the list [list of Unicode]."),
-            ("trail_size", 5, "Number of items in the trail of recently visited items"),
-            (
+            Option(
+                "interwiki_preferred", [], "In dialogues, show those wikis at the top of the list [list of Unicode]."
+            ),
+            Option("trail_size", 5, "Number of items in the trail of recently visited items"),
+            Option(
                 "item_views",
                 [
                     # (endpointname, label, title, check_item_exists
@@ -474,84 +571,84 @@ options_no_group_name = {
                 ],
                 "list of edit bar entries (list of tuples (endpoint, label, title, exists))",
             ),
-            ("show_hosts", True, "if True, show host names and IPs. Set to False to hide them."),
-            ("show_interwiki", False, "if True, let the theme display your interwiki name"),
-            ("show_names", True, "if True, show user names in the revision history. Set to False to hide them."),
-            ("show_section_numbers", False, "show section numbers in headings by default"),
-            ("show_rename_redirect", False, "if True, offer creation of redirect pages when renaming wiki pages"),
-            ("template_dirs", [], "list of directories with templates that will override theme and base templates."),
+            Option("show_hosts", True, "if True, show host names and IPs. Set to False to hide them."),
+            Option("show_interwiki", False, "if True, let the theme display your interwiki name"),
+            Option("show_names", True, "if True, show user names in the revision history. Set to False to hide them."),
+            Option("show_section_numbers", False, "show section numbers in headings by default"),
+            Option("show_rename_redirect", False, "if True, offer creation of redirect pages when renaming wiki pages"),
+            Option(
+                "template_dirs", [], "list of directories with templates that will override theme and base templates."
+            ),
         ),
     ),
     # ==========================================================================
-    "editor": (
+    "editor": OptionsGroup(
         "Editor",
         None,
         (
-            (
-                "edit_locking_policy",
-                "lock",
-                "Editor locking policy: None or 'lock'",
+            Option(
+                "edit_locking_policy", "lock", "Editor locking policy: None or 'lock'"
             ),  # 'warn' as in 1.9.x is not supported
-            ("edit_lock_time", 10, "Time, in minutes, to hold or renew edit lock at start of edit or preview"),
+            Option("edit_lock_time", 10, "Time, in minutes, to hold or renew edit lock at start of edit or preview"),
             # ('item_license', '', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
             # ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
         ),
     ),
     # ==========================================================================
-    "paging": (
+    "paging": OptionsGroup(
         "Paging",
         None,
-        (("results_per_page", 50, "Number of results to be shown on a single page in pagination"),),
+        (Option("results_per_page", 50, "Number of results to be shown on a single page in pagination"),),
     ),
     # ==========================================================================
-    "data": (
+    "data": OptionsGroup(
         "Data Storage",
         None,
         (
-            ("data_dir", "./data/", "Path to the data directory."),
-            ("plugin_dirs", [], "Plugin directories."),
-            ("interwiki_map", {}, "Dictionary of wiki_name -> wiki_url"),
-            (
+            Option("data_dir", "./data/", "Path to the data directory."),
+            Option("plugin_dirs", [], "Plugin directories."),
+            Option("interwiki_map", {}, "Dictionary of wiki_name -> wiki_url"),
+            Option(
                 "namespace_mapping",
                 None,
                 "A list of tuples, each tuple containing: Namespace identifier, backend name. "
                 + "E.g.: [('', 'default')), ].",
             ),
-            (
+            Option(
                 "backend_mapping",
                 None,
                 "A dictionary that maps backend names to backends. " + "E.g.: {'default': Backend(), }.",
             ),
-            (
+            Option(
                 "acl_mapping",
                 None,
                 "This needs to point to a list of tuples, each tuple containing: name prefix, acl protection to be applied to matching items. "
                 + "E.g.: [('', dict(default='All:read,write,create,admin')), ].",
             ),
-            ("mimetypes_to_index_as_empty", [], "List of mimetypes which are indexed as though they were empty."),
+            Option("mimetypes_to_index_as_empty", [], "List of mimetypes which are indexed as though they were empty."),
         ),
     ),
     # ==========================================================================
-    "items": (
+    "items": OptionsGroup(
         "Special Item Names",
         None,
         (
-            (
+            Option(
                 "default_root",
                 "Home",
                 "Default root, use this value in case no match is found in root_mapping. [Unicode]",
             ),
-            ("root_mapping", {}, "mapping of namespaces to unique root items."),
+            Option("root_mapping", {}, "mapping of namespaces to unique root items."),
             # the following regexes should match the complete name when used in free text
             # the group 'all' shall match all, while the group 'key' shall match the key only
             # e.g. FooGroup -> group 'all' ==  FooGroup, group 'key' == Foo
             # moin's code will add ^ / $ at beginning / end when needed
-            (
+            Option(
                 "item_dict_regex",
                 r"(?P<all>(?P<key>\S+)Dict)",
                 "Item names exactly matching this regex are regarded as items containing variable dictionary definitions [Unicode]",
             ),
-            (
+            Option(
                 "item_group_regex",
                 r"(?P<all>(?P<key>\S+)Group)",
                 "Item names exactly matching this regex are regarded as items containing group definitions [Unicode]",
@@ -559,11 +656,11 @@ options_no_group_name = {
         ),
     ),
     # ==========================================================================
-    "user": (
+    "user": OptionsGroup(
         "User Preferences",
         None,
         (
-            (
+            Option(
                 "user_defaults",
                 {
                     NAME: [],
@@ -602,16 +699,16 @@ options_no_group_name = {
         ),
     ),
     # ==========================================================================
-    "various": (
+    "various": OptionsGroup(
         "Various",
         None,
         (
             # ('bang_meta', True, 'if True, enable {{{#!NoWikiName}}} markup'),
-            ("config_check_enabled", False, "if True, check configuration for unknown settings."),
-            ("timezone_default", "UTC", "Default time zone."),
-            ("locale_default", "en_US", "Default locale for user interface and content."),
+            Option("config_check_enabled", False, "if True, check configuration for unknown settings."),
+            Option("timezone_default", "UTC", "Default time zone."),
+            Option("locale_default", "en_US", "Default locale for user interface and content."),
             # ('log_remote_addr', True, "if True, log the remote IP address (and maybe hostname)."),
-            (
+            Option(
                 "log_reverse_dns_lookups",
                 True,
                 "if True, do a reverse DNS lookup on page SAVE. If your DNS is broken, set this to False to speed up SAVE.",
@@ -619,27 +716,29 @@ options_no_group_name = {
             # some dangerous mimetypes (we don't use "content-disposition: inline" for them when a user
             # downloads such data, because the browser might execute e.g. Javascript contained
             # in the HTML and steal your moin session cookie or do other nasty stuff)
-            (
+            Option(
                 "mimetypes_xss_protect",
                 ["text/html", "application/x-shockwave-flash", "application/xhtml+xml"],
                 '"content-disposition: inline" is not used for downloads of such data',
             ),
             # ('refresh', None, "refresh = (minimum_delay_s, targets_allowed) enables use of '#refresh 5 PageName' processing instruction, targets_allowed must be either 'internal' or 'external'"),
-            ("siteid", "MoinMoin", None),  # XXX just default to some existing module name to
+            Option("siteid", "MoinMoin", "Id of the wiki site"),  # XXX just default to some existing module name to
             # make plugin loader etc. work for now
-            ("contenttype_disabled", [], "List of disabled content types. Ignored if contenttype_enabled is set."),
-            (
+            Option(
+                "contenttype_disabled", [], "List of disabled content types. Ignored if contenttype_enabled is set."
+            ),
+            Option(
                 "contenttype_enabled",
                 [],
                 "List of available content types for new items. Default: [] (all types enabled).",
             ),
-            ("content_security_policy", "", "Content security policy."),
-            (
+            Option("content_security_policy", "", "Content security policy."),
+            Option(
                 "content_security_policy_report_only",
                 "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';",
                 "Content security policy in report-only mode.",
             ),
-            ("content_security_policy_limit_per_day", 100, "Limit of reports logged per day."),
+            Option("content_security_policy_limit_per_day", 100, "Limit of reports logged per day."),
         ),
     ),
 }
@@ -665,70 +764,69 @@ options_no_group_name = {
 # you can use the DefaultExpression class, see 'auth' above for example.
 #
 #
-options = {
-    "acl": (
+
+options: dict[str, OptionsGroup] = {
+    "acl": OptionsGroup(
         "Access Control Lists",
         "ACLs control who may do what.",
         (
-            ("functions", "", "Access Control List for functions."),
-            ("rights_contents", ACL_RIGHTS_CONTENTS, "Valid tokens for right sides of content ACL entries."),
-            ("rights_functions", ACL_RIGHTS_FUNCTIONS, "Valid tokens for right sides of function ACL entries."),
+            Option("functions", "", "Access Control List for functions."),
+            Option("rights_contents", ACL_RIGHTS_CONTENTS, "Valid tokens for right sides of content ACL entries."),
+            Option("rights_functions", ACL_RIGHTS_FUNCTIONS, "Valid tokens for right sides of function ACL entries."),
         ),
     ),
-    "ns": (
+    "ns": OptionsGroup(
         "Storage Namespaces",
         "Storage namespaces can be defined for all sorts of data. "
         "All items sharing a common namespace as prefix are then stored within the same backend. "
         "The common prefix for all data is ''.",
         (
-            (
-                "content",
-                "/",
-                "All content is by default stored below /, hence the prefix is ''.",
+            Option(
+                "content", "/", "All content is by default stored below /, hence the prefix is ''."
             ),  # Not really necessary. Just for completeness.
-            (
+            Option(
                 "user_profile",
                 "userprofiles/",
                 "User profiles (i.e. user data, not their homepage) are stored in this namespace.",
             ),
-            ("user_homepage", "users/", "All user homepages are stored in this namespace."),
+            Option("user_homepage", "users/", "All user homepages are stored in this namespace."),
         ),
     ),
-    "user": (
+    "user": OptionsGroup(
         "User",
         None,
         (
-            ("email_unique", True, "if True, check email addresses for uniqueness and don't accept duplicates."),
-            (
+            Option("email_unique", True, "if True, check email addresses for uniqueness and don't accept duplicates."),
+            Option(
                 "email_verification",
                 False,
                 "if True, require a new user to verify his or her email address before the first login.",
             ),
-            (
+            Option(
                 "homewiki",
                 "Self",
                 "interwiki name of the wiki where the user home pages are located [Unicode] - useful if you have ''many'' users. You could even link to nonwiki \"user pages\" if the wiki username is in the target URL.",
             ),
-            ("use_gravatar", False, "if True, gravatar.com will be used to find User's avatar"),
-            ("gravatar_default_img", "blank", "default image if email not registered at gravatar.com."),
+            Option("use_gravatar", False, "if True, gravatar.com will be used to find User's avatar"),
+            Option("gravatar_default_img", "blank", "default image if email not registered at gravatar.com."),
         ),
     ),
-    "mail": (
+    "mail": OptionsGroup(
         "Mail",
         "These settings control outgoing email from the wiki.",
         (
-            ("from", None, "Used as From: address for generated mail. [Unicode]"),
-            ("username", None, "Username for SMTP server authentication (None = don't use auth)."),
-            ("password", None, "Password for SMTP server authentication (None = don't use auth)."),
-            ("smarthost", None, "Address of SMTP server to use for sending mail (None = don't use SMTP server)."),
+            Option("from", None, "Used as From: address for generated mail. [Unicode]"),
+            Option("username", None, "Username for SMTP server authentication (None = don't use auth)."),
+            Option("password", None, "Password for SMTP server authentication (None = don't use auth)."),
+            Option("smarthost", None, "Address of SMTP server to use for sending mail (None = don't use SMTP server)."),
         ),
     ),
-    "registration": (
+    "registration": OptionsGroup(
         "Registration",
         "These settings control registration options",
         (
-            ("only_by_superuser", False, "True is recommended value for public wikis on the internet."),
-            (
+            Option("only_by_superuser", False, "True is recommended value for public wikis on the internet."),
+            Option(
                 "hint",
                 _("To request an account, see bottom of Home page."),
                 "message on login page when only_by_superuser is True",
@@ -738,10 +836,9 @@ options = {
 }
 
 
-def _add_options_to_defconfig(opts, addgroup=True):
-    for groupname in opts:
-        group_short, group_doc, group_opts = opts[groupname]
-        for name, default, doc in group_opts:
+def _add_options_to_defconfig(opts: dict[str, OptionsGroup], addgroup: bool = True) -> None:
+    for groupname, options_group in opts.items():
+        for name, default, _doc in options_group.options:
             if addgroup:
                 name = groupname + "_" + name
             if isinstance(default, DefaultExpression):

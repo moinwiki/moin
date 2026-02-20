@@ -11,9 +11,7 @@ both a file system store and a memory store.
 import os
 import tempfile
 
-from ..stores import MutableBackend
-from . import MutableBackendTestBase
-
+from moin.storage.backends.stores import Backend
 from moin.storage.stores.memory import BytesStore as MemoryBytesStore
 from moin.storage.stores.memory import FileStore as MemoryFileStore
 from moin.storage.stores.fs import BytesStore as FSBytesStore
@@ -21,12 +19,14 @@ from moin.storage.stores.fs import FileStore as FSFileStore
 from moin.storage.stores.sqla import BytesStore as SQLABytesStore
 from moin.storage.stores.sqla import FileStore as SQLAFileStore
 
+from . import MutableBackendTestBase
+
 
 class TestMemoryBackend(MutableBackendTestBase):
     def setup_method(self, method):
         meta_store = MemoryBytesStore()
         data_store = MemoryFileStore()
-        self.be = MutableBackend(meta_store, data_store)
+        self.be = Backend(meta_store, data_store)
         self.be.create()
         self.be.open()
 
@@ -39,7 +39,7 @@ class TestFSBackend(MutableBackendTestBase):
         data_path = tempfile.mkdtemp()
         os.rmdir(data_path)
         data_store = FSFileStore(data_path)
-        self.be = MutableBackend(meta_store, data_store)
+        self.be = Backend(meta_store, data_store)
         self.be.create()
         self.be.open()
 
@@ -50,6 +50,6 @@ class TestSQLABackend(MutableBackendTestBase):
         data_path = tempfile.mktemp()
         meta_store = SQLABytesStore(f"sqlite:///{meta_path}")
         data_store = SQLAFileStore(f"sqlite:///{data_path}")
-        self.be = MutableBackend(meta_store, data_store)
+        self.be = Backend(meta_store, data_store)
         self.be.create()
         self.be.open()

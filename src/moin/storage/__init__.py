@@ -30,7 +30,8 @@ from moin.constants.namespaces import (
     NAMESPACE_HELP_COMMON,
     NAMESPACE_HELP_EN,
 )
-from moin.config import AclConfig
+from moin.config import AclConfig, AclMapping, BackendMapping, NamespaceMapping
+from moin.storage.backends import BackendBase
 
 BACKENDS_PACKAGE = "moin.storage.backends"
 
@@ -41,7 +42,7 @@ BACKEND_HELP_COMMON = "help-common"
 BACKEND_HELP_EN = "help-en"
 
 
-def backend_from_uri(uri: str):
+def backend_from_uri(uri: str) -> BackendBase:
     """
     Create a backend instance for a URI.
     """
@@ -49,11 +50,13 @@ def backend_from_uri(uri: str):
     if len(backend_name_uri) != 2:
         raise ValueError(f"malformed backend URI: {uri}")
     backend_name, backend_uri = backend_name_uri
-    module = __import__(BACKENDS_PACKAGE + "." + backend_name, globals(), locals(), ["MutableBackend"])
-    return module.MutableBackend.from_uri(backend_uri)
+    module = __import__(BACKENDS_PACKAGE + "." + backend_name, globals(), locals(), ["Backend"])
+    return module.Backend.from_uri(backend_uri)
 
 
-def create_mapping(uri: str, namespaces: dict[str, str], backends: dict[str, str], acls: dict[str, AclConfig]):
+def create_mapping(
+    uri: str, namespaces: dict[str, str], backends: dict[str, str | None], acls: dict[str, AclConfig]
+) -> tuple[NamespaceMapping, BackendMapping, AclMapping]:
     # TODO "or uri" can be removed in the future, see TODO in config/wikiconfig.py
     backend_mapping = [
         (backend_name, backend_from_uri((backends[backend_name] or uri) % dict(backend=backend_name, kind="%(kind)s")))
@@ -66,13 +69,13 @@ def create_mapping(uri: str, namespaces: dict[str, str], backends: dict[str, str
 
 
 def create_simple_mapping(
-    uri="stores:fs:instance",
-    default_acl=None,
-    userprofiles_acl=None,
-    users_acl=None,
-    help_common_acl=None,
-    help_en_acl=None,
-):
+    uri: str = "stores:fs:instance",
+    default_acl: AclConfig | None = None,
+    userprofiles_acl: AclConfig | None = None,
+    users_acl: AclConfig | None = None,
+    help_common_acl: AclConfig | None = None,
+    help_en_acl: AclConfig | None = None,
+) -> tuple[NamespaceMapping, BackendMapping, AclMapping]:
     """
     When configuring storage, the admin needs to provide a namespace_mapping.
     To ease creation of such a mapping, this function provides sane defaults
@@ -98,15 +101,15 @@ def create_simple_mapping(
     """
     # if no acls are given, use something mostly harmless:
     if not default_acl:
-        default_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
+        default_acl = AclConfig(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     if not userprofiles_acl:
-        userprofiles_acl = dict(before="All:", default="", after="", hierarchic=False)
+        userprofiles_acl = AclConfig(before="All:", default="", after="", hierarchic=False)
     if not users_acl:
-        users_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
+        users_acl = AclConfig(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     if not help_common_acl:
-        help_common_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
+        help_common_acl = AclConfig(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     if not help_en_acl:
-        help_en_acl = dict(before="", default="All:read,write,create,admin", after="", hierarchic=False)
+        help_en_acl = AclConfig(before="", default="All:read,write,create,admin", after="", hierarchic=False)
     namespaces = {
         NAMESPACE_DEFAULT: BACKEND_DEFAULT,
         NAMESPACE_USERPROFILES: BACKEND_USERPROFILES,
@@ -114,7 +117,7 @@ def create_simple_mapping(
         NAMESPACE_HELP_COMMON: BACKEND_HELP_COMMON,
         NAMESPACE_HELP_EN: BACKEND_HELP_EN,
     }
-    backends = {
+    backends: dict[str, str | None] = {
         BACKEND_DEFAULT: None,
         BACKEND_USERPROFILES: None,
         BACKEND_USERS: None,

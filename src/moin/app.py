@@ -236,7 +236,7 @@ def _init_backends(app, info_name, clock):
         logging.debug("Wiki index not found.")
 
 
-def init_backends(app, create_backend=False):
+def init_backends(app, create_backend: bool = False) -> None:
     """
     initialize the backends
     """

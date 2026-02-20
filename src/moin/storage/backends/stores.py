@@ -22,17 +22,23 @@ from __future__ import annotations
 
 import json
 
+from typing import Any, Iterator, TYPE_CHECKING
 from typing_extensions import override
 
 from moin import log
 from moin.constants.keys import REVID, DATAID, SIZE, HASH_ALGORITHM, NAME, NAMESPACE
+from moin.storage.error import ReadOnlyBackendError
+from moin.storage.stores import BytesStoreBase, FileStoreBase
 from moin.storage.types import MetaData
 from moin.utils.crypto import make_uuid
 
-from . import BackendBase, MutableBackendBase
+from . import BackendBase
 from ._util import TrackingFileWrapper
 
 STORES_PACKAGE = "moin.storage.stores"
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 logger = log.getLogger(__name__)
 
@@ -46,12 +52,11 @@ def item_name_from_metadata(meta: MetaData) -> str:
 
 class Backend(BackendBase):
     """
-    Tie together a store for metadata and a store for data, read-only.
+    Tie together a store for metadata and a store for data.
     """
 
-    @override
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls, uri: str) -> Self:
         store_name_uri = uri.split(":", 1)
         if len(store_name_uri) != 2:
             raise ValueError(f"malformed store uri: {uri}")
@@ -61,70 +66,67 @@ class Backend(BackendBase):
         data_store_uri = store_uri % dict(kind="data")
         return cls(module.BytesStore.from_uri(meta_store_uri), module.FileStore.from_uri(data_store_uri))
 
-    def __init__(self, meta_store, data_store):
+    def __init__(self, meta_store: BytesStoreBase, data_store: FileStoreBase, read_only: bool = False):
         """
         :param meta_store: a ByteStore for metadata
         :param data_store: a FileStore for data
+        :param read_only: indicates if the backend is read-only or not
         """
         self.meta_store = meta_store
         self.data_store = data_store
+        self._read_only = read_only
+
+    def _ensure_mutable(self) -> None:
+        if self.read_only:
+            raise ReadOnlyBackendError("backend is read-only!")
+
+    @property
+    @override
+    def read_only(self) -> bool:
+        return self._read_only
 
     @override
-    def open(self):
-        self.meta_store.open()
-        self.data_store.open()
-
-    @override
-    def close(self):
-        self.meta_store.close()
-        self.data_store.close()
-
-    @override
-    def __iter__(self):
-        yield from self.meta_store
-
-    def _deserialize(self, meta_str):
-        text = meta_str.decode("utf-8")
-        meta = json.loads(text)
-        return meta
-
-    def _get_meta(self, metaid):
-        meta = self.meta_store[metaid]
-        return self._deserialize(meta)
-
-    def _get_data(self, dataid):
-        data = self.data_store[dataid]
-        return data
-
-    @override
-    def retrieve(self, metaid):
-        meta = self._get_meta(metaid)
-        dataid = meta[DATAID]
-        data = self._get_data(dataid)
-        return meta, data
-
-
-class MutableBackend(Backend, MutableBackendBase):
-    """
-    same as Backend, but read/write
-    """
-
-    @override
-    def create(self):
+    def create(self) -> None:
+        self._ensure_mutable()
         self.meta_store.create()
         self.data_store.create()
 
     @override
-    def destroy(self):
+    def destroy(self) -> None:
+        self._ensure_mutable()
         self.meta_store.destroy()
         self.data_store.destroy()
 
-    def _serialize(self, meta):
-        text = json.dumps(meta, ensure_ascii=False)
-        meta_str = text.encode("utf-8")
-        return meta_str
+    @override
+    def open(self) -> None:
+        self.meta_store.open()
+        self.data_store.open()
 
-    def _store_meta(self, meta):
+    @override
+    def close(self) -> None:
+        self.meta_store.close()
+        self.data_store.close()
+
+    @override
+    def __iter__(self) -> Iterator[str]:
+        yield from self.meta_store
+
+    def _serialize(self, meta) -> bytes:
+        text = json.dumps(meta, ensure_ascii=False)
+        return text.encode("utf-8")
+
+    def _deserialize(self, data: bytes) -> dict[str, Any]:
+        text = data.decode("utf-8")
+        return json.loads(text)
+
+    def _get_meta(self, metaid: str):
+        meta = self.meta_store[metaid]
+        return self._deserialize(meta)
+
+    def _get_data(self, dataid):
+        return self.data_store[dataid]
+
+    def _store_meta(self, meta: MetaData) -> str:
         try:
             # Item.clear_revision calls us with REVID already present
             metaid = meta[REVID]
@@ -133,15 +135,30 @@ class MutableBackend(Backend, MutableBackendBase):
         self.meta_store[metaid] = self._serialize(meta)
         return metaid
 
+    def _del_meta(self, metaid: str):
+        del self.meta_store[metaid]
+
+    def _del_data(self, dataid: str):
+        del self.data_store[dataid]
+
     @override
-    def store(self, meta, data):
+    def retrieve(self, metaid: str) -> tuple[MetaData, Any]:
+        meta = self._get_meta(metaid)
+        dataid = meta[DATAID]
+        data = self._get_data(dataid)
+        return meta, data
+
+    @override
+    def store(self, meta: MetaData, data) -> str:
+        self._ensure_mutable()
+
         try:
             dataid = meta[DATAID]
         except KeyError:
             dataid = make_uuid()
 
         tfw = TrackingFileWrapper(data, hash_method=HASH_ALGORITHM)
-        self.data_store[dataid] = tfw
+        self.data_store[dataid] = tfw  # type: ignore
         meta[DATAID] = dataid
 
         # check whether size is consistent:
@@ -169,14 +186,9 @@ class MutableBackend(Backend, MutableBackendBase):
 
         return self._store_meta(meta)
 
-    def _del_meta(self, metaid):
-        del self.meta_store[metaid]
-
-    def _del_data(self, dataid):
-        del self.data_store[dataid]
-
     @override
-    def remove(self, metaid, destroy_data):
+    def remove(self, metaid: str, destroy_data: bool = False) -> None:
+        self._ensure_mutable()
         meta = self._get_meta(metaid)
         dataid = meta[DATAID]
         self._del_meta(metaid)

@@ -22,6 +22,12 @@ class BackendError(StorageError):
     """
 
 
+class ReadOnlyBackendError(BackendError):
+    """
+    Raised if a mutating operation on a read-only backend was attempted.
+    """
+
+
 class NoSuchItemError(BackendError):
     """
     Raised if the requested item does not exist.
