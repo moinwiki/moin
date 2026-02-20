@@ -1413,13 +1413,11 @@ def jfu_server(item_name):
         ).format(file_name=file_name)
         ret = make_response(
             jsonify(
-                {
-                    "name": subitem_name,
-                    "files": [item_name],
-                    "message": msg,
-                    "class": "jfu-failed",
-                    "contenttype": contenttype_to_class(contenttype),
-                }
+                file=item_name,
+                name=subitem_name,
+                message=msg,
+                css_class="jfu-failed",
+                contenttype=contenttype_to_class(contenttype),
             ),
             200,
         )
@@ -1445,13 +1443,11 @@ def jfu_server(item_name):
         msg = _("Permission denied, upload failed: '{file_name}'.").format(file_name=file_name)
         ret = make_response(
             jsonify(
-                {
-                    "name": subitem_name,
-                    "files": [item_name],
-                    "message": msg,
-                    "class": "jfu-failed",
-                    "contenttype": contenttype_to_class(contenttype),
-                }
+                file=item_name,
+                name=subitem_name,
+                message=msg,
+                css_class="jfu-failed",
+                contenttype=contenttype_to_class(contenttype),
             ),
             200,
         )
@@ -1463,12 +1459,12 @@ def jfu_server(item_name):
         msg = _("File Successfully uploaded: '{item_name}'.").format(item_name=item_name)
     ret = make_response(
         jsonify(
+            file=item_name,
             name=subitem_name,
-            files=[item_name],
-            message=msg,
             size=size,
             url=url_for(".show_item", item_name=item_name),
             contenttype=contenttype_to_class(contenttype),
+            message=msg,
         ),
         200,
     )

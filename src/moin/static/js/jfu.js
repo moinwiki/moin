@@ -39,28 +39,23 @@ $(function () {
             data.context.css("background-position-x", 100 - progress + "%");
         },
         done: function (e, data) {
-            // show success/fail message for each file uploaded
-            var url;
-            $.each(data.result.files, function (index, file) {
-                data.context.text(JSON.parse(data.jqXHR.responseText).message);
-                // class is passed when upload fails, 403s are returned as 200 with error message
-                data.context.addClass(JSON.parse(data.jqXHR.responseText).class);
-
-                if (!(JSON.parse(data.jqXHR.responseText).class)) {
-                    url = JSON.parse(data.jqXHR.responseText).url;
-                    name = JSON.parse(data.jqXHR.responseText).name;
-                    // add row to index table showing success, not all cells are populated
-                    $("table.moin-index tbody").prepend('<tr class="jfu-recent"><td class="moin-index-icons">' +
-                        '<span class="moin-select-item" onclick="classtoggle($(this))" > ' +
-                        '<input class="moin-item" type="checkbox" value="' + url + '"  />' +
-                        '</span> <span><i class="fa fa-upload" /></span></td>' +
-                        '<td><a href=' + url + '>' + url + '</a></td><td class="moin-integer">' + data.total +
-                        '</td><td class="moin-integer">1</td><td></td><td></td></tr>');
-                }
-            });
-            // update item count in upper left of table
-            $(".moin-num-rows").text($('.moin-index tbody tr').length);
-        }
+            const response = data.result;
+            // show success/fail message for the file uploaded file
+            data.context.text(response.message);
+            // class is passed when upload fails, 403s are returned as 200 with error message
+            data.context.addClass(response.css_class);
+            // if the upload succeeded add a row to the index table; not all cells are populated
+            if (!response.css_class) {
+                $("table.moin-index tbody").prepend('<tr class="jfu-recent"><td class="moin-index-icons">' +
+                    '<span class="moin-select-item" onclick="classtoggle($(this))" > ' +
+                    '<input class="moin-item" type="checkbox" value="' + response.url + '"  />' +
+                    '</span> <span><i class="fa fa-upload" /></span></td>' +
+                    '<td><a href=' + response.url + '>' + response.url + '</a></td><td class="moin-integer">' + response.size +
+                    '</td><td class="moin-integer">1</td><td></td><td></td></tr>');
+                // update item count in upper left of table
+                $(".moin-num-rows").text($('.moin-index tbody tr').length);
+            }
+        },
     });
 });
 

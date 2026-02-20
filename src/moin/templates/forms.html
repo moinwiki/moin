@@ -186,7 +186,7 @@ See utils.html for more macros.
 
  {% macro render_file_uploader(submit_url) %} {# pages that use this macro must also use file_uploader_scripts macro below #}
     <div id="jfu-file_upload">
-        <input id="jfu-fileupload" type="file" name="file_storage" data-url={{ submit_url }} multiple>
+        <input id="jfu-fileupload" type="file" name="file_storage" data-url={{ submit_url }}>
         <div id="jfu-progress">
             <p class="jfu-bar"></p>
          </div>
