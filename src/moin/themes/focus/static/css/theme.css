@@ -40,7 +40,7 @@ input[type="checkbox"]:checked { background-color: var(--accent-light); }
 
 #moin-page { min-width: 0pt; }
 
-header { min-width: 140pt; width: 220px; min-height: 100vh; margin-right: 18pt; padding: 8pt;
+header { min-width: 200px; width: 200px; min-height: 100vh; margin-right: 18pt; padding: 8pt;
     box-shadow: 2pt 0pt 10pt 2pt rgba(0, 0, 0, 0.1); }
 header ol, header ul { padding-left: 0pt; }
 header li::marker { display: none; }
