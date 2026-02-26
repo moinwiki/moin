@@ -94,8 +94,27 @@ header a, header a:link, header a:visited,
 .moin-breadcrumb { margin: 14pt 0; }
 .moin-breadcrumb .moin-panel-heading { font-size: 1.1rem; margin-bottom: 4pt; }
 .moin-breadcrumb ul { list-style-type: circle; padding-left: 16pt; }
-.moin-breadcrumb ul li { margin-bottom: 4pt; }
-.moin-breadcrumb a { padding: 4pt; border-radius: 2pt; display: block; width: 90%; }
+.moin-breadcrumb ul li { position: relative; margin-bottom: 4pt; }
+.moin-breadcrumb a { padding: 4px; border-radius: 2pt; display: inline-block; }
+.moin-breadcrumb ul li ul.moin-alias { display: none; }
+.moin-breadcrumb ul li:hover ul.moin-alias, ul.moin-alias:hover {
+    display: block;
+    position: absolute;
+    bottom: calc(100% - 6pt);
+    left: 20px;
+    z-index: 500;
+    list-style-type: none;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background-color: white;
+    padding: 4px 0;
+}
+.moin-breadcrumb ul li:hover ul.moin-alias li:first-of-type {
+    font-weight: bold;
+    /* Same padding as <a> elements that are inside the following <li> elements */
+    padding: 0 4px;
+}
+.moin-breadcrumb ul li:hover ul.moin-alias a { text-wrap: nowrap; width: 100%; }
 
 #moin-footer { display: flex; flex-direction: column; width: unset;
     margin-top: 40pt; margin-bottom: 4pt; padding-right: 10pt; }
