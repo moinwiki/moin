@@ -5,14 +5,14 @@
 Tests for auth.__init__.
 """
 
-from flask import g as flaskg
+import pytest
 
-from moin._tests import wikiconfig
-from moin.constants.misc import ANON
+from moin import flaskg
 from moin.auth import GivenAuth, handle_login, get_multistage_continuation_url
+from moin.constants.misc import ANON
 from moin.user import create_user
 
-import pytest
+from moin._tests import wikiconfig
 
 
 class TestConfiguredGivenAuth:

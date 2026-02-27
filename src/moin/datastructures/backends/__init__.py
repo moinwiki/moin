@@ -7,8 +7,7 @@ MoinMoin - base classes for data structures.
 
 from collections import UserDict
 
-from flask import current_app as app
-from flask import g as flaskg
+from moin import app, flaskg
 
 
 class GroupDoesNotExistError(Exception):

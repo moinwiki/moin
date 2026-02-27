@@ -29,8 +29,6 @@ from io import BytesIO, IOBase
 from time import time, strftime
 from operator import attrgetter
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import request, Response, redirect, abort, url_for, flash
 
 from flatland import Form
@@ -40,7 +38,7 @@ from markupsafe import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
 
-from moin import log
+from moin import app, flaskg, log
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET

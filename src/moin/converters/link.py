@@ -13,11 +13,9 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
-from flask import current_app as app
-from flask import g as flaskg
-
 from emeraldtree.ElementTree import Element
 
+from moin import app, flaskg
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri, IriPath
 from moin.utils.mime import type_moin_document

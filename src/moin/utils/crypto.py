@@ -22,10 +22,9 @@ from uuid import uuid4
 from argon2 import PasswordHasher as Argon2PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError, VerifyMismatchError
 
+from moin import log
 from moin.constants.keys import HASH_ALGORITHM
 from moin.utils import sha512_crypt
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

@@ -7,14 +7,12 @@
 MoinMoin - moin.user tests.
 """
 
-from flask import g as flaskg
-
-from moin import user
-from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
-from moin.items import Item
-from moin.constants.keys import ITEMID, ITEMTYPE, NAME, NAMEPREFIX, NAMERE, NAMESPACE, REV_NUMBER, TAGS
-
 import pytest
+
+from moin import flaskg, user
+from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
+from moin.constants.keys import ITEMID, ITEMTYPE, NAME, NAMEPREFIX, NAMERE, NAMESPACE, REV_NUMBER, TAGS
+from moin.items import Item
 
 
 @pytest.mark.usefixtures("_req_ctx")

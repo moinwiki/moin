@@ -62,8 +62,6 @@ import time
 from collections.abc import Mapping
 
 from flask import request
-from flask import g as flaskg
-from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
 from whoosh.writing import AsyncWriter
@@ -72,7 +70,7 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
-from moin import log, user
+from moin import app, flaskg, log, user
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.converters import default_registry

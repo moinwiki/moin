@@ -14,20 +14,17 @@ MoinMoin - Wiki Utility Functions
 
 from __future__ import annotations
 
+from typing import NamedTuple, TYPE_CHECKING
+
 import os
 import urllib
 
-from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
+from moin import app, log
 from moin.constants.misc import URI_SCHEMES
-
 from moin.utils.mimetype import MimeType
-
-from moin import log
-
-from typing import NamedTuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from werkzeug.routing.map import MapAdapter

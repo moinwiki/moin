@@ -11,13 +11,11 @@ Miscellaneous views that do not fit into another category.
 import time
 
 from flask import Response
-from flask import current_app as app
-from flask import g as flaskg
 
 from whoosh.query import Term, Or, And
 
+from moin import app, flaskg
 from moin.apps.misc import misc
-
 from moin.constants.keys import MTIME, NAME_EXACT, NAMESPACE, NAME
 from moin.themes import render_template
 from moin.utils.names import CompositeName

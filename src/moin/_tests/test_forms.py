@@ -11,8 +11,7 @@ import datetime
 import json
 from calendar import timegm
 
-from flask import current_app as app
-
+from moin import app
 from moin.forms import DateTimeUNIX, JSON, Names
 from moin.utils.names import CompositeName
 from moin.items import Item

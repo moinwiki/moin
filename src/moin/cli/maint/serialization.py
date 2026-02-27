@@ -10,14 +10,12 @@ MoinMoin - CLI commands to serialize and deserialize backends.
 import sys
 import click
 
-from flask import current_app as app
 from flask.cli import FlaskGroup
 
+from moin import app, log
 from moin.storage.middleware.serialization import serialize, deserialize
 from moin.app import create_app
 from moin.cli._util import get_backends, drop_and_recreate_index
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

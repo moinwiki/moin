@@ -7,9 +7,7 @@ MoinMoin - tests for our test environment.
 
 from io import BytesIO
 
-from flask import current_app as app
-from flask import g as flaskg
-
+from moin import app, flaskg
 from moin.constants.keys import NAME, CONTENTTYPE
 
 from moin._tests import wikiconfig

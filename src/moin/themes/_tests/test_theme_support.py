@@ -3,12 +3,11 @@
 
 import pytest
 
-from flask import current_app as app
-from flask import g as flaskg
-
-from moin._tests import wikiconfig
+from moin import app, flaskg
 from moin.themes import ThemeSupport
 from moin.user import User
+
+from moin._tests import wikiconfig
 
 
 @pytest.fixture

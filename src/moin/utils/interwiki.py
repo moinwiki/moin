@@ -8,13 +8,13 @@ MoinMoin - interwiki support code.
 
 from __future__ import annotations
 
-from urllib.parse import quote as url_quote
-
-from flask import current_app as app
-from flask import url_for
-
 import os.path
 
+from urllib.parse import quote as url_quote
+
+from flask import url_for
+
+from moin import app
 from moin.constants.keys import CURRENT, NAME_EXACT
 from moin.constants.contenttypes import CHARSET
 from moin.constants.namespaces import NAMESPACE_USERS

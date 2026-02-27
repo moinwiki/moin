@@ -16,10 +16,10 @@ To use this, import exactly these names (no less, no more):
 
 from babel import Locale
 
-from flask import current_app, request, g as flaskg
+from flask import request
 from flask_babel import Babel, gettext, ngettext, lazy_gettext
 
-from moin import log
+from moin import current_app, flaskg, log
 
 logging = log.getLogger(__name__)
 

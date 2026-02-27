@@ -14,17 +14,14 @@ Remove all revisions except the latest one from selected items.
 import click
 import io
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Term, And, Regex, Not
 
+from moin import app, flaskg, log
 from moin.constants.keys import NAME, NAME_SORT, NAME_EXACT, NAMESPACE, REVID, PARENTID, REV_NUMBER, MTIME
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.app import create_app, before_wiki
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

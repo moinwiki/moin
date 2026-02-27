@@ -11,10 +11,8 @@ import errno
 
 import pytest
 
-from flask import current_app as app
-
-from moin.utils import pysupport, crypto
-from moin.utils import plugins
+from moin import app
+from moin.utils import crypto, plugins, pysupport
 
 
 class TestImportNameFromMoin:

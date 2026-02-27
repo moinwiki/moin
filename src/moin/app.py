@@ -13,17 +13,19 @@ Use create_app(config) to create the WSGI application (using Flask).
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import os
 import sys
 
 from os import path, PathLike
-from flask import Flask, request, session
-from flask import current_app as app
-from flask import g as flaskg
+
+import flask
+import flask.ctx
 
 from click import get_current_context
+
+from flask import Flask, request, session
 
 from flask_caching import Cache
 from flask_theme import setup_themes
@@ -324,8 +326,30 @@ def create_app_ext(
     )
 
 
+if TYPE_CHECKING:
+    from moin.utils.edit_locking import Edit_Utils
+    from moin.datastructures.backends import BaseDictsBackend, BaseGroupsBackend
+
+
+class AppCtxGlobals(flask.ctx._AppCtxGlobals):
+    link_analyzer: WikiLinkAnalyzer
+    storage: protecting.ProtectingMiddleware
+    user: user.User
+    dicts: BaseDictsBackend
+    groups: BaseGroupsBackend
+    add_lineno_attr: bool
+    edit_utils: Edit_Utils
+    clock: Clock
+    _login_multistage: Any | None
+    _login_multistage_name: Any | None
+    _login_messages: list
+
+
 def destroy_app(app: MoinApp):
     app.deinit_backends()
+
+
+from . import app, flaskg  # pylint: disable=wrong-import-position
 
 
 def setup_user() -> user.User:

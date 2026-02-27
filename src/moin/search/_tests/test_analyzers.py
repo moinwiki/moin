@@ -7,8 +7,7 @@ MoinMoin - tests for moin.search.analyzers.
 
 import pytest
 
-from flask import current_app as app
-
+from moin import app
 from moin.search.analyzers import MimeTokenizer, AclTokenizer, item_name_analyzer
 
 

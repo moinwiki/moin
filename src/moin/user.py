@@ -17,19 +17,19 @@ some specific user). User instances are used to access the user profile of
 some specific user (name, password, email, bookmark, trail, settings, ...).
 """
 
+from __future__ import annotations
+
 import copy
 import hashlib
 from io import BytesIO
 
 from babel import parse_locale
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import session, url_for, render_template
 from jinja2.runtime import Undefined
 from urllib.parse import urlencode
 
-from moin import wikiutil
+from moin import app, flaskg, wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
 from moin.constants.namespaces import NAMESPACE_USERPROFILES

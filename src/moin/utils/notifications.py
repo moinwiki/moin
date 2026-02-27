@@ -11,10 +11,10 @@ from io import BytesIO
 from blinker import ANY
 from urllib.parse import urljoin
 
-from flask import abort, g as flaskg, url_for
+from flask import abort, url_for
 from flask_babel import force_locale
 
-from moin import log
+from moin import flaskg, log
 from moin.constants.keys import (
     ACTION_COPY,
     ACTION_RENAME,

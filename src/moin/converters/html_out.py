@@ -14,13 +14,11 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from flask import current_app as app
-from flask import g as flaskg
 from emeraldtree import ElementTree as ET
 from urllib.parse import urlencode
 from babel import Locale
 
-from moin import log, wikiutil
+from moin import app, flaskg, log, wikiutil
 from moin.i18n import _
 from moin.items import Item
 from moin.utils.iri import Iri

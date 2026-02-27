@@ -9,13 +9,11 @@ MoinMoin - moin.security tests.
 
 import pytest
 
-from flask import current_app as app
-
-from moin.security import AccessControlList, ACLStringIterator
-
-from moin.user import User
+from moin import app
 from moin.constants.keys import NAME, ACL
 from moin.datastructures import ConfigGroups
+from moin.security import AccessControlList, ACLStringIterator
+from moin.user import User
 
 from moin._tests import update_item, become_trusted, wikiconfig
 

@@ -11,14 +11,13 @@ MoinMoin - moin.datastructures.backends.wiki_groups tests.
 
 import pytest
 
-from flask import current_app as app
-from flask import g as flaskg
-
-from moin._tests import become_trusted, create_random_string_list, update_item
+from moin import app, flaskg
 from moin.constants.keys import NAME, USERGROUP
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import GroupDoesNotExistError
 from moin.security import AccessControlList
+
+from moin._tests import become_trusted, create_random_string_list, update_item
 
 DATA = "This is a group item"
 

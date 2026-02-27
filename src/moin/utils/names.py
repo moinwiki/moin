@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from flask import current_app as app
+from moin import app
 from moin.constants.keys import FIELDS, ITEMID, NAME, NAME_EXACT, NAMESPACE
 from moin.storage.types import MetaData
 

@@ -20,13 +20,12 @@ import urllib.parse
 
 from json import dumps
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import url_for, request, session, flash
 from flask_theme import get_theme, render_theme_template
 
 from babel import Locale
 
+from moin import app, flaskg, log
 from moin.i18n import _, L_
 from moin import wikiutil
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
@@ -40,8 +39,6 @@ from moin.utils.clock import timed
 from moin.utils.mime import Type
 from moin.utils import show_time
 from moin.utils.names import CompositeName, get_fqname, parent_names, split_fqname
-
-from moin import log
 
 if TYPE_CHECKING:
     from moin.config import WikiConfigProtocol

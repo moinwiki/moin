@@ -7,8 +7,7 @@ MoinMoin - tests for moin.utils.show_time.
 
 import pytest
 
-from flask import g as flaskg
-
+from moin import flaskg
 from moin.utils import show_time
 
 

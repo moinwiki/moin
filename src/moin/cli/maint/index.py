@@ -8,16 +8,13 @@ updating, moving, optimizing, and displaying).
 """
 
 import click
-from flask import current_app as app
-from flask import g as flaskg
+
 from flask.cli import FlaskGroup
 
+from moin import app, flaskg, log
 from moin.app import create_app
 from moin.constants.keys import LATEST_REVS, ALL_REVS, LATEST_META
 from moin.utils.filesys import wiki_index_exists
-
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

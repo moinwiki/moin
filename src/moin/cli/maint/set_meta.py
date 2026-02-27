@@ -18,13 +18,11 @@ import sys
 
 from ast import literal_eval
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Every
 
-from moin import log
+from moin import app, flaskg, log
 from moin.app import create_app
 from moin.constants.keys import NAME, NAME_EXACT, REVID, REV_NUMBER, PARENTID
 

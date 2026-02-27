@@ -17,19 +17,17 @@ from collections import namedtuple
 
 from flask import request, url_for, flash, redirect
 from flask import Response
-from flask import current_app as app
-from flask import g as flaskg
 
 from flatland.validation import Validator
 from flatland import Form
 
 from whoosh.query import Term, And, Not
 
+from moin import app, flaskg, user
 from moin.i18n import _, L_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
 from moin.apps.frontend.views import _using_moin_auth, add_csp_headers
-from moin import user
 from moin.constants.keys import (
     NAME,
     DISPLAY_NAME,

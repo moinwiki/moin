@@ -17,7 +17,7 @@ import pytest
 
 from whoosh.query import Term
 
-from flask import g as flaskg
+from moin import flaskg
 
 from moin.constants.keys import (
     ACL,

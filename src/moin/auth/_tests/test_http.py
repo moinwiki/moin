@@ -8,12 +8,12 @@ Tests for auth.http.
 
 import pytest
 
-from flask import g as flaskg
 from flask import request as flask_request
 
-from moin.user import create_user
+from moin import flaskg
 from moin.auth.http import HTTPAuthMoin
 from moin.constants.misc import ANON
+from moin.user import create_user
 
 
 @pytest.mark.usefixtures("_req_ctx", "custom_setup")

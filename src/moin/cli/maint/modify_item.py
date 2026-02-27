@@ -15,10 +15,10 @@ import io
 import os
 
 import click
-from flask import current_app as app
-from flask import g as flaskg
 from flask.cli import FlaskGroup
 
+from moin import app, flaskg, log
+from moin import help as moin_help
 from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
@@ -38,8 +38,6 @@ from moin.constants.keys import (
 )
 from moin.utils.names import split_fqname
 from moin.items import Item
-
-from moin import log, help as moin_help
 
 logging = log.getLogger(__name__)
 

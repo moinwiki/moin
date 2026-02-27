@@ -13,7 +13,7 @@ recognize it as a group. This default pattern can be changed (e.g., for non-Engl
 see HelpOnConfiguration.
 """
 
-from flask import g as flaskg
+from moin import flaskg
 
 from moin.constants.keys import CURRENT, USERGROUP
 from moin.datastructures.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError

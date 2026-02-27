@@ -8,11 +8,11 @@
 MoinMoin - WikiDict functions.
 """
 
-from flask import g as flaskg
+from flask import flash
 
+from moin import flaskg
 from moin.constants.keys import CURRENT, WIKIDICT
 from moin.datastructures.backends import BaseDict, BaseDictsBackend, DictDoesNotExistError
-from flask import flash
 
 
 class WikiDict(BaseDict):

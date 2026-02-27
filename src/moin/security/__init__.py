@@ -12,10 +12,9 @@ MoinMoin - Wiki security interface and access control lists.
 
 from functools import wraps
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import abort
 
+from moin import app, flaskg
 from moin.constants import rights
 from moin.constants.keys import NAME_EXACT
 from moin import user

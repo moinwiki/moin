@@ -8,11 +8,10 @@ MoinMoin - Tests for the navigation bar
 
 import pytest
 
-from flask import current_app as app
+from moin import app, themes
+from moin.themes import ThemeSupport
 
 from moin._tests import wikiconfig
-from moin.themes import ThemeSupport
-from moin import themes
 
 
 @pytest.mark.usefixtures("_req_ctx")

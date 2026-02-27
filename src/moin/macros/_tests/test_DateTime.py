@@ -9,8 +9,7 @@ MoinMoin - tests for moin.macros.DateTime.
 import pytest
 import time
 
-from flask import g as flaskg
-
+from moin import flaskg
 from moin.macros.DateTime import Macro
 from moin.utils import utcfromtimestamp
 from moin.utils.show_time import format_date_time

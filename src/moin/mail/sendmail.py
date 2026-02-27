@@ -13,11 +13,8 @@ import ssl
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 
-from flask import current_app as app
-
+from moin import app, log
 from moin.i18n import _
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

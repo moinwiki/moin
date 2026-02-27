@@ -12,12 +12,11 @@ MoinMoin - CLI command to set a user password.
 import sys
 import click
 
-from flask import current_app as app
 from flask.cli import FlaskGroup
 
-from moin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL, EMAIL_UNVALIDATED
+from moin import app, log, user
 from moin.app import create_app, before_wiki
-from moin import user, log
+from moin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL, EMAIL_UNVALIDATED
 
 logging = log.getLogger(__name__)
 

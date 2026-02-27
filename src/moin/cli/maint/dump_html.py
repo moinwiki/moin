@@ -35,16 +35,14 @@ import shutil
 import re
 
 import click
-from flask import g as flaskg
-from flask import current_app
 from flask.cli import FlaskGroup
 
 from whoosh.query import Every, Regex
 
 from werkzeug.exceptions import Forbidden
 
-from moin import log
-from moin.app import MoinApp, create_app, before_wiki, setup_user_anon
+from moin import app, flaskg, log
+from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
 from moin.constants.keys import CONTENTTYPE, CURRENT, NAME_EXACT, THEME_NAME, LATEST_REVS
 from moin.constants.contenttypes import (
@@ -55,8 +53,6 @@ from moin.constants.contenttypes import (
 )
 from moin.items import Item
 from moin.utils import get_xstatic_module_path_map
-
-from typing import cast
 
 logging = log.getLogger(__name__)
 
@@ -93,7 +89,6 @@ def cli():
 )
 @click.option("--query", "-q", required=False, default=None, help="Name or regex of items to include")
 def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=None, query=None):
-    app = cast(MoinApp, current_app)
     with app.test_request_context():
         logging.info("Dump HTML started")
         if theme:

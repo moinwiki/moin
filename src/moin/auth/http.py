@@ -18,11 +18,9 @@ auth = [HTTPAuthMoin()]
 
 from flask import request
 
-from moin import user
+from moin import log, user
 from moin.i18n import _
 from moin.auth import BaseAuth
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

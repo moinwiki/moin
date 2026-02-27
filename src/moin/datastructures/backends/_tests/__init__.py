@@ -12,9 +12,7 @@ import pytest
 
 from pytest import raises
 
-from flask import current_app as app
-from flask import g as flaskg
-
+from moin import app, flaskg
 from moin.security import AccessControlList
 from moin.datastructures import GroupDoesNotExistError
 

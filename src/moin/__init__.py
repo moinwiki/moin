@@ -7,8 +7,27 @@
 MoinMoin — a wiki engine written in Python.
 """
 
+from __future__ import annotations
+
 import sys
 import platform
+import flask
+
+from typing import cast, TYPE_CHECKING
+
+if TYPE_CHECKING:
+
+    from .app import AppCtxGlobals, MoinApp
+
+    current_app = cast(MoinApp, flask.current_app)
+    g = cast(AppCtxGlobals, flask.g)
+
+else:
+    current_app = flask.current_app
+    g = flask.g
+
+app = current_app  # deprecated, use current_app instead
+flaskg = g  # deprecated, use g instead
 
 from ._version import version  # noqa
 

@@ -141,14 +141,12 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from flask import url_for, session, request
-from flask import g as flaskg
-from flask import current_app as app
 
 from moin import user
 from moin.i18n import _
 from moin.utils.markup import safe_markup
 
-from moin import log
+from moin import app, flaskg, log
 
 logging = log.getLogger(__name__)
 

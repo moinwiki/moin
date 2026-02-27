@@ -7,8 +7,7 @@ MoinMoin - moin.datastructures.backends.composite_groups tests.
 
 import pytest
 
-from flask import g as flaskg
-
+from moin import flaskg
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import ConfigGroups, CompositeGroups, GroupDoesNotExistError
 from moin._tests import wikiconfig

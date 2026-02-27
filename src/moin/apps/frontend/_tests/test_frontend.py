@@ -12,10 +12,10 @@ from io import BytesIO
 
 import pytest
 
-from flask import current_app as app, g as flaskg, url_for
+from flask import url_for
 from werkzeug.datastructures import FileStorage
 
-from moin import user
+from moin import app, flaskg, user
 from moin.apps._tests.utils import create_user, login, modify_item, make_modify_form_data, set_user_in_client_session
 from moin.apps.frontend import views
 

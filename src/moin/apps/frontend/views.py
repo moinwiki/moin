@@ -38,8 +38,6 @@ from functools import wraps, partial
 from werkzeug.utils import secure_filename
 
 from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify, session
-from flask import current_app as app
-from flask import g as flaskg
 from flask_babel import format_datetime
 from flask_theme import get_themes_list
 
@@ -55,6 +53,7 @@ from whoosh.query import Term, Prefix, And, Or, Not, DateRange
 from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
+from moin import app, flaskg, log
 from moin.i18n import _, L_
 from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
@@ -112,8 +111,6 @@ from moin.storage.middleware.exceptions import AccessDenied
 from moin.converters import default_registry as reg
 from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type
-
-from moin import log
 
 if TYPE_CHECKING:
     from werkzeug.wrappers import Response as ResponseBase

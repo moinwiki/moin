@@ -9,8 +9,9 @@ import pytest
 import re
 
 from datetime import datetime
-from flask import current_app as app, url_for
+from flask import url_for
 
+from moin import app
 from moin._tests import update_item
 from moin.items import Item
 from moin.constants.itemtypes import ITEMTYPE_BLOG, ITEMTYPE_BLOG_ENTRY

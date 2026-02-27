@@ -30,12 +30,11 @@ import base64
 import tarfile
 import zipfile
 import tempfile
+
 from io import BytesIO
 from array import array
 from operator import attrgetter
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import request, url_for, Response, abort
 
 from flatland import Form, String
@@ -45,6 +44,8 @@ from markupsafe import escape
 from werkzeug.http import is_resource_modified
 
 from whoosh.query import Term, And
+
+from moin import app, flaskg
 
 try:
     import PIL

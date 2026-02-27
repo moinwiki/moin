@@ -39,10 +39,8 @@ import time
 import sqlite3
 
 from flask import request
-from flask import g as flaskg
-from flask import current_app as app
 
-from moin import log
+from moin import app, flaskg, log
 from moin.constants.keys import CONTENTTYPE, ITEMID, REVID, REV_NUMBER, NAME
 from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
 from moin.i18n import L_

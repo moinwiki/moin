@@ -10,13 +10,12 @@ This module provides feed endpoints (e.g., Atom).
 """
 
 from flask import request, Response
-from flask import current_app as app
-from flask import g as flaskg
 
 from feedgen.feed import FeedGenerator
 
 from whoosh.query import Term, And, Every
 
+from moin import app, flaskg, log
 from moin.i18n import _
 from moin.apps.feed import feed
 from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
@@ -26,8 +25,6 @@ from moin.utils.crypto import cache_key
 from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
 from moin.utils.names import split_fqname
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

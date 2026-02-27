@@ -9,8 +9,7 @@ import pytest
 
 from emeraldtree import ElementTree as ET
 
-from flask import current_app as app
-
+from moin import app
 from moin.converters.link import ConverterExternOutput, xlink, ConverterItemRefs
 from moin.utils.iri import Iri
 

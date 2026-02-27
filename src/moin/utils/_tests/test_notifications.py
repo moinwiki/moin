@@ -7,10 +7,9 @@ MoinMoin - tests for moin.utils.notifications.
 
 from io import BytesIO
 
-from flask import g as flaskg
-from flask import current_app as app
 from flask import url_for
 
+from moin import app, flaskg
 from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, NAME, PARENTID
 from moin.items import Item
 from moin.storage.middleware import indexing as msmi

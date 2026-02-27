@@ -199,7 +199,7 @@ class EmailHandler(logging.Handler):
         """
         # The app config is accessible after logging is initialized, so set the
         # arguments and make the decision to send mail or not here.
-        from flask import current_app as app
+        from moin import app
 
         try:
             email_tracebacks = app.cfg.email_tracebacks

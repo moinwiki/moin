@@ -15,9 +15,7 @@ from typing import ParamSpec, TypeVar
 from collections.abc import Callable
 from functools import wraps, partial
 
-from flask import g as flaskg
-
-from moin import log
+from moin import flaskg, log
 
 logging = log.getLogger(__name__)
 

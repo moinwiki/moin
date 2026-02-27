@@ -31,10 +31,9 @@ from flatland.exc import AdaptationError
 
 from whoosh.query import Term, Or, Not, And
 
-from flask import g as flaskg
-from flask import current_app as app
 from flask import flash
 
+from moin import app, flaskg
 from moin.constants.forms import (
     WIDGET_ANY_INTEGER,
     WIDGET_CHECKBOX,

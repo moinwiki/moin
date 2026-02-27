@@ -17,8 +17,6 @@ from io import BytesIO
 import click
 
 from flask.cli import FlaskGroup
-from flask import current_app as app
-from flask import g as flaskg
 
 from ._utils19 import unquoteWikiname, split_body
 from ._logfile19 import LogFile
@@ -31,6 +29,7 @@ from .macros import MonthCalendar  # noqa
 from .macros import FullSearch  # noqa
 from .macros import PageList  # noqa
 
+from moin import app, flaskg, log
 from moin.app import create_app
 from moin.cli._util import drop_and_recreate_index
 from moin.constants.keys import *  # noqa
@@ -48,8 +47,6 @@ from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.wikiutil import ParentItemName, AllParentNames
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

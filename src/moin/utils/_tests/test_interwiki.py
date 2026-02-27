@@ -12,8 +12,8 @@ import os.path
 import shutil
 
 import pytest
-from flask import current_app as app
 
+from moin import app
 from moin.utils.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, getInterwikiHome
 from moin.utils.names import split_fqname, split_namespace
 from moin._tests import wikiconfig
