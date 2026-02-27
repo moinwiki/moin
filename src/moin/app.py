@@ -328,11 +328,13 @@ def create_app_ext(
 if TYPE_CHECKING:
     from moin.utils.edit_locking import Edit_Utils
     from moin.datastructures.backends import BaseDictsBackend, BaseGroupsBackend
+    from moin.storage.middleware.indexing import IndexingMiddleware
 
 
 class AppCtxGlobals(flask.ctx._AppCtxGlobals):
     link_analyzer: WikiLinkAnalyzer
     storage: protecting.ProtectingMiddleware
+    unprotected_storage: IndexingMiddleware
     user: user.User
     dicts: BaseDictsBackend
     groups: BaseGroupsBackend

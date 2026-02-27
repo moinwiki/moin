@@ -12,7 +12,7 @@ Helpers for rendering themed templates and UI elements.
 
 from __future__ import annotations
 
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import os
 import urllib.request
@@ -42,7 +42,6 @@ from moin.utils.names import CompositeName, get_fqname, parent_names, split_fqna
 
 if TYPE_CHECKING:
     from moin.config import WikiConfigProtocol
-    from moin.storage.middleware.protecting import ProtectingMiddleware
 
 logging = log.getLogger(__name__)
 
@@ -90,8 +89,8 @@ class ThemeSupport:
 
     def __init__(self, cfg: WikiConfigProtocol):
         self.cfg = cfg
-        self.user = cast(User, flaskg.user)
-        self.storage = cast("ProtectingMiddleware", flaskg.storage)
+        self.user = flaskg.user
+        self.storage = flaskg.storage
         self.ui_lang = cfg.language_default
         self.ui_dir = cfg.content_dir
         self.user_lang = flaskg.user.language or self.ui_lang
