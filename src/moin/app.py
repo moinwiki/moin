@@ -35,6 +35,7 @@ from whoosh.index import EmptyIndexError
 
 from moin import auth, user, config, log
 from moin.config import WikiConfigProtocol
+from moin.config.default import DefaultConfig
 from moin.constants.misc import ANON
 from moin.error import ConfigurationError
 from moin.i18n import i18n_init
@@ -162,8 +163,6 @@ class MoinApp(Flask):
         if not moin_config_class:
             if warn_default:
                 logging.warning("using builtin default configuration")
-            from moin.config.default import DefaultConfig
-
             moin_config_class = DefaultConfig
 
         for key, value in kwargs.items():
