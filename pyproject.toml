@@ -103,6 +103,10 @@ skip-magic-trailing-comma = true
 python_version = "3.10"
 files = ["src"]
 exclude = ["/_tests/"]
+allow_redefinition = true
+#check_untyped_defs = true
+follow_untyped_imports = true
+local_partial_types = true
 ignore_missing_imports = true
 show_error_codes = true
 pretty = true
@@ -124,6 +128,7 @@ exclude = [
     ".git",
     ".git-rewrite",
     ".idea",
+    ".mypy_cache",
     ".ruff_cache",
     ".tox",
     "build",
@@ -184,6 +189,14 @@ commands = [
 PYTHONHASHSEED = "0"
 # needed so that lxml can build from source (e.g. on pypy):
 CFLAGS = "-I/usr/include/libxml2"
+
+[tool.tox.env.mypy]
+allowlist_externals = ["mypy"]
+deps = ["mypy"]
+package = "skip"
+commands = [
+    ["mypy", { replace="posargs", default=["src"], extend=true }]
+]
 
 [tool.tox.env.ruff]
 description = "Run the ruff linter on the moin sources"
