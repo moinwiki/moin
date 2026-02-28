@@ -307,7 +307,7 @@ def create_app_ext(
                               will be loaded (if possible).
     :param flask_config_dict: A dict used to update the Flask config (applied after
                               flask_config_file was loaded, if given).
-    :param moin_config_class: If given, this class is instantiated as app.cfg;
+    :param moin_config_class: If given, this class is instantiated as current_app.cfg;
                               otherwise, MOINCFG from the Flask config is used. If that
                               is also not present, the built-in DefaultConfig will be used.
     :param warn_default: Emit a warning if Moin falls back to its built-in default
@@ -350,7 +350,7 @@ def destroy_app(app: MoinApp):
     app.deinit_backends()
 
 
-from . import app, flaskg  # pylint: disable=wrong-import-position
+from . import current_app, flaskg  # pylint: disable=wrong-import-position
 
 
 def setup_user() -> user.User:
@@ -412,8 +412,8 @@ def inject_common_template_vars() -> dict[str, Any]:
             "storage": flaskg.storage,
             "user": flaskg.user,
             "item_name": request.view_args.get("item_name", ""),
-            "theme_supp": ThemeSupport(app.cfg),
-            "cfg": app.cfg,
+            "theme_supp": ThemeSupport(current_app.cfg),
+            "cfg": current_app.cfg,
             "gen": make_generator(),
             "search_form": SearchForm.from_defaults(),
         }
@@ -435,7 +435,7 @@ def before_wiki():
     clock.start("total")
     clock.start("init")
     try:
-        flaskg.unprotected_storage = app.storage
+        flaskg.unprotected_storage = current_app.storage
         cli_no_request_ctx = False
         try:
             flaskg.user = setup_user()
@@ -443,10 +443,10 @@ def before_wiki():
             flaskg.user = user.User(name=ANON, auth_method="invalid")
             cli_no_request_ctx = True
 
-        flaskg.storage = protecting.ProtectingMiddleware(app.storage, flaskg.user, app.cfg.acl_mapping)
+        flaskg.storage = protecting.ProtectingMiddleware(current_app.storage, flaskg.user, current_app.cfg.acl_mapping)
 
-        flaskg.dicts = app.cfg.dicts()
-        flaskg.groups = app.cfg.groups()
+        flaskg.dicts = current_app.cfg.dicts()
+        flaskg.groups = current_app.cfg.groups()
 
         if cli_no_request_ctx:  # no request.user_agent if this is pytest or cli
             flaskg.add_lineno_attr = False

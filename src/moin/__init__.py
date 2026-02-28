@@ -26,7 +26,6 @@ else:
     current_app = flask.current_app
     g = flask.g
 
-app = current_app  # deprecated, use current_app instead
 flaskg = g  # deprecated, use g instead
 
 from ._version import version  # noqa

@@ -8,7 +8,7 @@ MoinMoin - External static file serving
 from flask import Response, abort
 from flask import send_from_directory
 
-from moin import app, log
+from moin import current_app, log
 from moin.apps.serve import serve
 
 logging = log.getLogger(__name__)
@@ -17,7 +17,7 @@ logging = log.getLogger(__name__)
 @serve.route("/")
 def index():
     # Show what we have (but not where in the filesystem).
-    content = "\n".join(app.cfg.serve_files.keys())
+    content = "\n".join(current_app.cfg.serve_files.keys())
     return Response(content, content_type="text/plain")
 
 
@@ -25,7 +25,7 @@ def index():
 @serve.route("/<name>/<path:filename>")
 def files(name, filename):
     try:
-        base_path = app.cfg.serve_files[name]
+        base_path = current_app.cfg.serve_files[name]
     except KeyError:
         abort(404)
 

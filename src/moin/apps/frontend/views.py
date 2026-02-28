@@ -53,7 +53,7 @@ from whoosh.query import Term, Prefix, And, Or, Not, DateRange
 from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
-from moin import app, flaskg, log
+from moin import current_app, flaskg, log
 from moin.i18n import _, L_
 from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.apps.frontend import frontend
@@ -126,13 +126,13 @@ def dispatch():
     args = request.values.to_dict()
     endpoint = str(args.pop("endpoint"))
     # filter args given to url_for, so that no unneeded args end up in query string:
-    args = {k: args[k] for k in args if app.url_map.is_endpoint_expecting(endpoint, k)}
+    args = {k: args[k] for k in args if current_app.url_map.is_endpoint_expecting(endpoint, k)}
     return redirect(url_for(endpoint, **args))
 
 
 @frontend.route("/")
 def show_root():
-    item_name = app.cfg.root_mapping.get(NAMESPACE_DEFAULT, app.cfg.default_root)
+    item_name = current_app.cfg.root_mapping.get(NAMESPACE_DEFAULT, current_app.cfg.default_root)
     return redirect(url_for_item(item_name))
 
 
@@ -316,15 +316,15 @@ def limit_csp_reports():
     """
     Check number of reports logged today, if limit is set and reached return True
     """
-    if app.cfg.content_security_policy_limit_per_day > 0:
-        app.csp_count += 1
+    if current_app.cfg.content_security_policy_limit_per_day > 0:
+        current_app.csp_count += 1
         current_date = datetime.now().strftime("%Y%m%d")
-        if app.csp_last_date != current_date:  # reset counter on a new day
-            app.csp_last_date = current_date
-            app.csp_count = 1
-        if app.csp_count == app.cfg.content_security_policy_limit_per_day:
+        if current_app.csp_last_date != current_date:  # reset counter on a new day
+            current_app.csp_last_date = current_date
+            current_app.csp_count = 1
+        if current_app.csp_count == current_app.cfg.content_security_policy_limit_per_day:
             logging.warning("Last csp report today, skipping further reports, limit reached.")
-        if app.csp_count <= app.cfg.content_security_policy_limit_per_day:
+        if current_app.csp_count <= current_app.cfg.content_security_policy_limit_per_day:
             return False
     return True
 
@@ -486,7 +486,7 @@ def search():
     if item_name:
         in_parts = item_name.split("/", 1)
         if len(in_parts) > 1:
-            is_ns = [x[0] for x in app.cfg.namespace_mapping if x[0] == in_parts[0]]
+            is_ns = [x[0] for x in current_app.cfg.namespace_mapping if x[0] == in_parts[0]]
             if is_ns:
                 if is_ns[0] not in [NAMESPACE_USERPROFILES, NAMESPACE_DEFAULT]:
                     leading_ns = is_ns[0]
@@ -651,7 +651,7 @@ def get_item_permissions(fqname, item):
 @frontend.route("/+show/+<rev>/<itemname:item_name>", methods=["GET"])
 def show_item(item_name: str, rev: str) -> ResponseBase | str:
     fqname = split_fqname(item_name)
-    item_displayed.send(app._get_current_object(), fqname=fqname)
+    item_displayed.send(current_app._get_current_object(), fqname=fqname)
     if not fqname.value and fqname.field == NAME_EXACT:
         fqname = fqname.get_root_fqname()
         return redirect(url_for_item(fqname))
@@ -761,7 +761,7 @@ def show_item_meta(item):
 def content_item(item_name: str, rev: str):
     """same as show_item, but we only show the content"""
     fqname = split_fqname(item_name)
-    item_displayed.send(app, fqname=fqname)
+    item_displayed.send(current_app, fqname=fqname)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
@@ -775,7 +775,7 @@ def content_item(item_name: str, rev: str):
 def slide_item(item_name, rev):
     """same as show_item, but we only show the content"""
     fqname = split_fqname(item_name)
-    item_displayed.send(app, fqname=fqname)
+    item_displayed.send(current_app, fqname=fqname)
     try:
         item = Item.create(item_name, rev_id=rev)
     except AccessDenied:
@@ -894,7 +894,7 @@ def convert_item(item_name):
         return_rev=True,
     )
     item_modified.send(
-        app,
+        current_app,
         fqname=meta[NAME][0],
         action=ACTION_CONVERT,
         data=BytesIO(content),
@@ -1451,7 +1451,7 @@ def jfu_server(item_name):
         return ret
 
     data_file.close()
-    item_modified.send(app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
+    item_modified.send(current_app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
     if not msg:
         msg = _("File Successfully uploaded: '{item_name}'.").format(item_name=item_name)
     ret = make_response(
@@ -1587,7 +1587,7 @@ def index(item_name):
         editors=editor_info_for_reports(),
         selected_groups=selected_groups,
         str=str,
-        app=app,
+        app=current_app,
         may=item_may,
     )
 
@@ -1605,7 +1605,7 @@ def mychanges():
         results_per_page = flaskg.user.results_per_page
     else:
         flash(_("You must be logged in to see your changes."), "error")
-        results_per_page = app.cfg.results_per_page
+        results_per_page = current_app.cfg.results_per_page
     page_num = request.values.get("page_num", 1)
     page_num = max(int(page_num), 1)
 
@@ -1759,7 +1759,7 @@ def history(item_name):
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
-        results_per_page = app.cfg.results_per_page
+        results_per_page = current_app.cfg.results_per_page
     terms = [Term(term, value) for term, value in fqname.query.items()]
     if bookmark_time:
         terms.append(DateRange(MTIME, start=utcfromtimestamp(bookmark_time), end=None))
@@ -1846,7 +1846,7 @@ def global_history(namespace):
     if flaskg.user.valid:
         results_per_page = flaskg.user.results_per_page
     else:
-        results_per_page = app.cfg.results_per_page
+        results_per_page = current_app.cfg.results_per_page
 
     page_num = request.values.get("page_num", 1)
     page_num = max(int(page_num), 1)
@@ -2075,7 +2075,7 @@ def _using_moin_auth():
     """
     from moin.auth import MoinAuth
 
-    for auth in app.cfg.auth:
+    for auth in current_app.cfg.auth:
         if isinstance(auth, MoinAuth):
             return True
     return False
@@ -2083,7 +2083,7 @@ def _using_moin_auth():
 
 @frontend.route("/+register", methods=["GET", "POST"])
 def register():
-    if app.cfg.registration_only_by_superuser and not getattr(flaskg.user.may, SUPERUSER)():
+    if current_app.cfg.registration_only_by_superuser and not getattr(flaskg.user.may, SUPERUSER)():
         # deny registration to bots
         abort(404)
 
@@ -2104,14 +2104,14 @@ def register():
                 "password": form["password1"].value,
                 "email": form["email"].value,
             }
-            if app.cfg.user_email_verification:
+            if current_app.cfg.user_email_verification:
                 user_kwargs["is_disabled"] = True
                 user_kwargs["verify_email"] = True
             msg = user.create_user(**user_kwargs)
             if msg:
                 flash(msg, "error")
             else:
-                if app.cfg.user_email_verification:
+                if current_app.cfg.user_email_verification:
                     u = user.User(auth_username=user_kwargs["username"])
                     is_ok, msg = u.mail_email_verification()
                     if is_ok:
@@ -2140,7 +2140,7 @@ def verifyemail():
     success = False
     if u and token and u.validate_recovery_token(token):
         unvalidated_email = u.profile[EMAIL_UNVALIDATED]
-        if app.cfg.user_email_unique and user.search_users(**{EMAIL: unvalidated_email}):
+        if current_app.cfg.user_email_unique and user.search_users(**{EMAIL: unvalidated_email}):
             msg = _("This email is already in use.")
         else:
             if u.disabled:
@@ -2229,7 +2229,7 @@ class ValidPasswordRecovery(Validator):
 
         password = element["password1"].value
         try:
-            app.cfg.cache.pwd_hasher.hash(password)
+            current_app.cfg.cache.pwd_hasher.hash(password)
         except (ValueError, TypeError):
             return self.note_error(element, state, "password_problem_msg")
 
@@ -2328,7 +2328,7 @@ def login():
         if not next_url.startswith(request.host_url) or "/+" in next_url:
             next_url = url_for(".show_root")
         form["nexturl"].set(next_url)
-        for authmethod in app.cfg.auth:
+        for authmethod in current_app.cfg.auth:
             hint = authmethod.login_hint()
             if hint:
                 flash(hint, "info")
@@ -2342,7 +2342,9 @@ def login():
         for msg in flaskg._login_messages:
             # flash the error messages for failed login
             flash(msg, "error")
-    return render_template("login.html", title_name=title_name, login_inputs=app.cfg.auth_login_inputs, form=form)
+    return render_template(
+        "login.html", title_name=title_name, login_inputs=current_app.cfg.auth_login_inputs, form=form
+    )
 
 
 @frontend.route("/+logout")
@@ -2375,13 +2377,13 @@ class ValidChangePass(Validator):
             return self.note_error(element, state, "passwords_mismatch_msg")
 
         password = element["password1"].value
-        pw_checker = app.cfg.password_checker
+        pw_checker = current_app.cfg.password_checker
         if pw_checker:
             pw_error = pw_checker(flaskg.user.name[0], password)
             if pw_error:
                 return self.note_error(element, state, message=password_not_accepted_msg + pw_error)
         try:
-            app.cfg.cache.pwd_hasher.hash(password)
+            current_app.cfg.cache.pwd_hasher.hash(password)
         except (ValueError, TypeError):
             return self.note_error(element, state, "password_problem_msg")
         return True
@@ -2544,7 +2546,7 @@ def usersettings():
         # _timezones_keys = sorted(Locale('en').time_zones.keys())
         _timezones_keys = [str(tz) for tz in pytz.common_timezones]
         timezone = Select.using(label=L_("Timezone")).out_of((e, e) for e in _timezones_keys)
-        _supported_locales = app.extensions["babel"].instance.list_translations()
+        _supported_locales = current_app.extensions["babel"].instance.list_translations()
         locale = Select.using(label=L_("Locale")).out_of(
             [("auto", "---")] + [(str(locale), locale.display_name) for locale in _supported_locales], sort_by=1
         )
@@ -2614,7 +2616,7 @@ def usersettings():
                         if (
                             form["email"].value != flaskg.user.email
                             and user.search_users(**{EMAIL: form["email"].value})
-                            and app.cfg.user_email_unique
+                            and current_app.cfg.user_email_unique
                         ):
                             # duplicate email
                             response["flash"].append((_("This email is already in use"), "error"))
@@ -2628,7 +2630,7 @@ def usersettings():
                             flaskg.user.profile[k] = v
                         if (
                             part == "notification"
-                            and app.cfg.user_email_verification
+                            and current_app.cfg.user_email_verification
                             and form["email"].value != user_old_email
                         ):
                             flaskg.user.profile[EMAIL] = user_old_email
@@ -3322,11 +3324,11 @@ def add_security_headers(resp):
 
 
 def add_csp_headers(resp):
-    if app.cfg.content_security_policy:
-        resp.headers["Content-Security-Policy"] = app.cfg.content_security_policy
-    if app.cfg.content_security_policy_report_only:
+    if current_app.cfg.content_security_policy:
+        resp.headers["Content-Security-Policy"] = current_app.cfg.content_security_policy
+    if current_app.cfg.content_security_policy_report_only:
         resp.headers["Content-Security-Policy-Report-Only"] = (
-            f"{app.cfg.content_security_policy_report_only} report-uri {url_for('frontend.cspreport')}; "
+            f"{current_app.cfg.content_security_policy_report_only} report-uri {url_for('frontend.cspreport')}; "
         )
     return resp
 

@@ -146,7 +146,7 @@ from moin import user
 from moin.i18n import _
 from moin.utils.markup import safe_markup
 
-from moin import app, flaskg, log
+from moin import current_app, flaskg, log
 
 logging = log.getLogger(__name__)
 
@@ -271,8 +271,8 @@ class MoinAuth(BaseAuth):
             return ContinueLogin(user_obj, _("Invalid username or password."))
 
     def login_hint(self):
-        if app.cfg.registration_only_by_superuser:
-            msg = app.cfg.registration_hint + " "
+        if current_app.cfg.registration_only_by_superuser:
+            msg = current_app.cfg.registration_hint + " "
         else:
             msg = _('If you do not have an account, <a href="{register_url}">you can create one now</a>. ').format(
                 register_url=url_for("frontend.register")
@@ -404,7 +404,7 @@ def handle_login(userobj, **kw):
     for param in kw.keys():
         params[param] = kw.get(param)
 
-    for authmethod in app.cfg.auth:
+    for authmethod in current_app.cfg.auth:
         if stage and authmethod.name != stage:
             continue
         ret = authmethod.login(userobj, **params)
@@ -442,7 +442,7 @@ def handle_logout(userobj):
         # not logged in
         return userobj
 
-    for authmethod in app.cfg.auth:
+    for authmethod in current_app.cfg.auth:
         userobj, cont = authmethod.logout(userobj)
         if not cont:
             break
@@ -451,7 +451,7 @@ def handle_logout(userobj):
 
 def handle_request(userobj):
     """Handle the per-request callbacks of the configured authentication methods."""
-    for authmethod in app.cfg.auth:
+    for authmethod in current_app.cfg.auth:
         userobj, cont = authmethod.request(userobj)
         if not cont:
             break
@@ -467,8 +467,8 @@ def setup_from_session():
         auth_attribs = session["user.auth_attribs"]
         session_token = session["user.session_token"]
         logging.debug(f"got from session: {itemid!r} {trusted!r} {auth_method!r} {auth_attribs!r}")
-        logging.debug(f"current auth methods: {app.cfg.auth_methods!r}")
-        if auth_method and auth_method in app.cfg.auth_methods:
+        logging.debug(f"current auth methods: {current_app.cfg.auth_methods!r}")
+        if auth_method and auth_method in current_app.cfg.auth_methods:
             userobj = user.User(itemid, auth_method=auth_method, auth_attribs=auth_attribs, trusted=trusted)
             if not userobj.validate_session(session_token):
                 logging.debug("session token doesn't validate")

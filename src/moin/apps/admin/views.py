@@ -23,7 +23,7 @@ from flatland import Form
 
 from whoosh.query import Term, And, Not
 
-from moin import app, flaskg, user
+from moin import current_app, flaskg, user
 from moin.i18n import _, L_
 from moin.themes import render_template, get_editor_info
 from moin.apps.admin import admin
@@ -79,7 +79,7 @@ def index_user():
         title_name=_("User"),
         flaskg=flaskg,
         NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
-        app=app,
+        app=current_app,
     )
 
 
@@ -136,7 +136,7 @@ def register_new_user():
             if users:
                 flash(_("User already exists"), "error")
             emails = None
-            if app.cfg.user_email_unique:
+            if current_app.cfg.user_email_unique:
                 emails = user.search_users(email=email)
                 if emails:
                     flash(_("This email already belongs to somebody else."), "error")
@@ -290,7 +290,7 @@ def wikiconfig():
 
     found = []
     found_default = []
-    for vname, value in iter_vnames(app.cfg):
+    for vname, value in iter_vnames(current_app.cfg):
         if hasattr(defaultconfig.ConfigFunctionality, vname):
             continue
         if vname in settings and settings[vname] == value:
@@ -378,7 +378,7 @@ def highlighterhelp():
 def interwikihelp():
     """Display a table listing the known InterWiki names and URLs."""
     headings = [_("InterWiki name"), _("URL")]
-    rows = sorted(app.cfg.interwiki_map.items())
+    rows = sorted(current_app.cfg.interwiki_map.items())
     return render_template("user/interwikihelp.html", title_name=_("Interwiki Names"), headings=headings, rows=rows)
 
 
@@ -512,7 +512,7 @@ def item_acl_report():
         item_acl = meta.get(ACL)
         acl_default = item_acl is None
         if acl_default:
-            for namespace, acl_config in app.cfg.acl_mapping:
+            for namespace, acl_config in current_app.cfg.acl_mapping:
                 if item_namespace == namespace:
                     item_acl = acl_config["default"]
                     break

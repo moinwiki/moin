@@ -11,7 +11,7 @@ import click
 
 from flask.cli import FlaskGroup
 
-from moin import app, flaskg, log
+from moin import current_app, flaskg, log
 from moin.app import create_app
 from moin.constants.keys import LATEST_REVS, ALL_REVS, LATEST_META
 from moin.utils.filesys import wiki_index_exists
@@ -46,9 +46,9 @@ def IndexCreate(**kwargs):
         logging.error("Error: wiki index exists. Please check and destroy index before running index-create")
         return False
     logging.info("Index creation started")
-    app.init_backends(create_backend=True)
+    current_app.init_backends(create_backend=True)
     tmp = kwargs.get("tmp")
-    app.storage.create(tmp=tmp)
+    current_app.storage.create(tmp=tmp)
     logging.info("Index creation finished")
     return True
 
@@ -60,7 +60,7 @@ def IndexDestroy(tmp):
         logging.error(ERR_NO_INDEX)
         raise SystemExit(1)
     logging.info("Index destroy started")
-    app.storage.destroy(tmp=tmp)
+    current_app.storage.destroy(tmp=tmp)
     logging.info("Index destroy finished")
 
 
@@ -83,7 +83,7 @@ def IndexBuild(tmp, procs, limitmb, **kwargs):
         raise SystemExit(1)
     logging.info("Index build started")
     flaskg.add_lineno_attr = False  # no need to add lineno attributes while building indexes
-    app.storage.rebuild(tmp=tmp, procs=procs, limitmb=limitmb)
+    current_app.storage.rebuild(tmp=tmp, procs=procs, limitmb=limitmb)
     logging.info("Index build finished")
 
 
@@ -94,14 +94,14 @@ def IndexUpdate(tmp):
         logging.error(ERR_NO_INDEX)
         raise SystemExit(1)
     logging.info("Index update started")
-    app.storage.update(tmp=tmp)
+    current_app.storage.update(tmp=tmp)
     logging.info("Index update finished")
 
 
 @cli.command("index-move", help="Move the indexes from the temporary to the normal location")
 def IndexMove():
     logging.info("Index move started")
-    app.storage.move_index()
+    current_app.storage.move_index()
     logging.info("Index move finished")
 
 
@@ -119,7 +119,7 @@ def IndexOptimize(tmp):
         logging.error(ERR_NO_INDEX)
         raise SystemExit(1)
     logging.info("Index optimization started")
-    app.storage.optimize_index(tmp=tmp)
+    current_app.storage.optimize_index(tmp=tmp)
     logging.info("Index optimization finished")
 
 
@@ -133,7 +133,7 @@ def IndexDump(tmp, truncate):
     logging.info("Index dump started")
     for idx_name in [LATEST_REVS, ALL_REVS, LATEST_META]:
         print(f" {'-' * 10} {idx_name} {'-' * 60}")
-        for kvs in app.storage.dump(tmp=tmp, idx_name=idx_name):
+        for kvs in current_app.storage.dump(tmp=tmp, idx_name=idx_name):
             for k, v in kvs:
                 v = repr(v)
                 if truncate:

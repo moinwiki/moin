@@ -9,7 +9,7 @@ MoinMoin - moin.security tests.
 
 import pytest
 
-from moin import app
+from moin import current_app
 from moin.constants.keys import NAME, ACL
 from moin.datastructures import ConfigGroups
 from moin.security import AccessControlList, ACLStringIterator
@@ -22,7 +22,7 @@ def acliter(acl):
     """
     Return an ACL string iterator (using cfg.acl_rights_contents as valid ACL rights).
     """
-    return ACLStringIterator(app.cfg.acl_rights_contents, acl)
+    return ACLStringIterator(current_app.cfg.acl_rights_contents, acl)
 
 
 @pytest.mark.usefixtures("_app_ctx")
@@ -203,9 +203,9 @@ class TestAcl:
 
     @pytest.mark.usefixtures("_app_ctx")
     def test_has_acl(self):
-        acl = AccessControlList(valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(valid=current_app.cfg.acl_rights_contents)
         assert not acl.has_acl()
-        acl = AccessControlList(["All:read"], valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(["All:read"], valid=current_app.cfg.acl_rights_contents)
         assert acl.has_acl()
 
     @pytest.mark.usefixtures("_req_ctx")
@@ -225,7 +225,7 @@ class TestAcl:
             "BadGuy:  "
             "All:read  "
         ]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         # Should apply these rights:
         users = (
@@ -254,7 +254,7 @@ class TestAcl:
 
         # Check rights
         for user, may in users:
-            mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
+            mayNot = [right for right in current_app.cfg.acl_rights_contents if right not in may]
             # User should have these rights...
             for right in may:
                 assert acl.may(user, right)
@@ -287,7 +287,7 @@ class TestGroupACL:
         """security: applying acl by group name"""
         # This acl string...
         acl_rights = ["PGroup,AllGroup:read,write,admin " "AGroup:read "]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         # Should apply these rights:
         users = (
@@ -299,7 +299,7 @@ class TestGroupACL:
 
         # Check rights
         for user, may in users:
-            mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
+            mayNot = [right for right in current_app.cfg.acl_rights_contents if right not in may]
             # User should have these rights...
             for right in may:
                 assert acl.may(user, right)
@@ -382,7 +382,7 @@ class TestItemAcls:
                 assert can_access, f"{u.name!r} may {right} {itemname!r} (normal)"
 
             # User should NOT have these rights:
-            mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
+            mayNot = [right for right in current_app.cfg.acl_rights_contents if right not in may]
             for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
                 assert not can_access, f"{u.name!r} may not {right} {itemname!r} (normal)"
@@ -469,7 +469,7 @@ class TestItemHierachicalAcls:
                 assert can_access, f"{u.name!r} may {right} {itemname!r} (hierarchic)"
 
             # User should NOT have these rights:
-            mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
+            mayNot = [right for right in current_app.cfg.acl_rights_contents if right not in may]
             for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
                 assert not can_access, f"{u.name!r} may not {right} {itemname!r} (hierarchic)"
@@ -549,7 +549,7 @@ class TestItemHierachicalAclsMultiItemNames:
                 assert can_access, f"{u.name!r} may {right} {itemname!r} (hierarchic)"
 
             # User should NOT have these rights:
-            mayNot = [right for right in app.cfg.acl_rights_contents if right not in may]
+            mayNot = [right for right in current_app.cfg.acl_rights_contents if right not in may]
             for right in mayNot:
                 can_access = getattr(u.may, right)(itemname)
                 assert not can_access, f"{u.name!r} may not {right} {itemname!r} (hierarchic)"

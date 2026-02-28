@@ -7,7 +7,7 @@ MoinMoin - moin.config.default tests.
 
 import pytest
 
-from moin import app
+from moin import current_app
 
 
 @pytest.mark.usefixtures("_app_ctx")
@@ -29,7 +29,7 @@ class TestPasswordChecker:
     ]
 
     def testBuiltinPasswordChecker(self):
-        pw_checker = app.cfg.password_checker
+        pw_checker = current_app.cfg.password_checker
         if not pw_checker:
             pytest.skip("password_checker is disabled in the configuration, not testing it")
         else:

@@ -36,7 +36,7 @@ import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
-from moin import app, log
+from moin import current_app, log
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
@@ -521,7 +521,7 @@ class Converter(html_in.HtmlTags):
 
     def __init__(self):
         # The Moin configuration
-        self.app_configuration = app.cfg
+        self.app_configuration = current_app.cfg
 
         self.markdown = Markdown(
             extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]

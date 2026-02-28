@@ -11,7 +11,7 @@ import errno
 
 import pytest
 
-from moin import app
+from moin import current_app
 from moin.utils import crypto, plugins, pysupport
 
 
@@ -46,7 +46,7 @@ class TestImportNameFromPlugin:
     @pytest.fixture
     def custom_setup(self):
         """Check for valid plugin package"""
-        self.pluginDirectory = os.path.join(app.cfg.data_dir, "plugin", "parser")
+        self.pluginDirectory = os.path.join(current_app.cfg.data_dir, "plugin", "parser")
         self.checkPackage(self.pluginDirectory)
 
     def checkPackage(self, path):
@@ -69,7 +69,9 @@ class TestImportNonExisting(TestImportNameFromPlugin):
         """pysupport: import nonexistent wiki plugin fails"""
         if self.pluginExists():
             pytest.skip(f"plugin exists: {self.plugin}")
-        pytest.raises(plugins.PluginMissingError, plugins.importWikiPlugin, app.cfg, "parser", self.plugin, "Parser")
+        pytest.raises(
+            plugins.PluginMissingError, plugins.importWikiPlugin, current_app.cfg, "parser", self.plugin, "Parser"
+        )
 
 
 class TestImportExisting(TestImportNameFromPlugin):
@@ -89,8 +91,8 @@ class TestImportExisting(TestImportNameFromPlugin):
         try:
             self.createTestPlugin()
             # clear the plugin cache...
-            app.cfg._site_plugin_lists = {}
-            parser = plugins.importWikiPlugin(app.cfg, "parser", self.plugin, "Parser")
+            current_app.cfg._site_plugin_lists = {}
+            parser = plugins.importWikiPlugin(current_app.cfg, "parser", self.plugin, "Parser")
             assert getattr(parser, "__name__", None) == "Parser"
             assert parser.key == self.key
         finally:

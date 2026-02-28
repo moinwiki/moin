@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from moin import app
+from moin import current_app
 from moin import wikiutil
 from moin.wikiutil import WikiLinkInfo
 
@@ -153,7 +153,7 @@ def test_file_headers():
     ],
 )
 def test_classify_link(url, expected):
-    link_analyzer = app.link_analyzer
+    link_analyzer = current_app.link_analyzer
     result = link_analyzer(url)
     assert result == expected
 

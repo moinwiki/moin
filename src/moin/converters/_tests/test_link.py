@@ -9,7 +9,7 @@ import pytest
 
 from emeraldtree import ElementTree as ET
 
-from moin import app
+from moin import current_app
 from moin.converters.link import ConverterExternOutput, xlink, ConverterItemRefs
 from moin.utils.iri import Iri
 
@@ -32,7 +32,7 @@ def conv():
     ),
 )
 def test_wiki(conv, input_, output):
-    assert "MoinMoin" in app.cfg.interwiki_map
+    assert "MoinMoin" in current_app.cfg.interwiki_map
 
     elem = ET.Element(None)
     conv.handle_wiki_links(elem, Iri(input_))

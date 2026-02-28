@@ -13,7 +13,7 @@ from typing import Any, TYPE_CHECKING
 
 from emeraldtree import ElementTree as ET
 
-from moin import app, log
+from moin import current_app, log
 from moin.utils import plugins
 from moin.i18n import _
 from moin.utils import iri
@@ -55,7 +55,7 @@ class Converter:
         elem_error = moin_page.error()
 
         try:
-            cls = plugins.importPlugin(app.cfg, "macros", name, function="Macro")
+            cls = plugins.importPlugin(current_app.cfg, "macros", name, function="Macro")
             macro = cls()
             ret = macro((), args, page, alt, context_block)
             elem_body.append(ret)

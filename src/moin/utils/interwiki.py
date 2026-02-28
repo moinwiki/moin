@@ -14,7 +14,7 @@ from urllib.parse import quote as url_quote
 
 from flask import url_for
 
-from moin import app
+from moin import current_app
 from moin.constants.keys import CURRENT, NAME_EXACT
 from moin.constants.contenttypes import CHARSET
 from moin.constants.namespaces import NAMESPACE_USERS
@@ -29,7 +29,7 @@ def is_local_wiki(wiki_name):
     """
     Check if <wiki_name> is this wiki.
     """
-    return wiki_name in ["", "Self", app.cfg.interwikiname]
+    return wiki_name in ["", "Self", current_app.cfg.interwikiname]
 
 
 def is_known_wiki(wiki_name):
@@ -39,7 +39,7 @@ def is_known_wiki(wiki_name):
     Note: interwiki_map should have entries for the special wikinames
     denoting THIS wiki, so we do not need to check these names separately.
     """
-    return wiki_name in app.cfg.interwiki_map
+    return wiki_name in current_app.cfg.interwiki_map
 
 
 def url_for_item(
@@ -78,7 +78,7 @@ def url_for_item(
             url = url_for(endpoint, item_name=item_name, rev=rev, _external=_external)
     else:
         try:
-            wiki_base_url = app.cfg.interwiki_map[wiki_name]
+            wiki_base_url = current_app.cfg.interwiki_map[wiki_name]
         except KeyError:
             logging.warning(f"no interwiki_map entry for {wiki_name!r}")
             item_name = get_fqname(item_name, field, namespace)
@@ -151,7 +151,7 @@ def split_interwiki(wikiurl):
     wikiname = field = namespace = ""
     if not wikiurl.startswith("/"):
         interwiki_mapping = set()
-        for interwiki_name in app.cfg.interwiki_map:
+        for interwiki_name in current_app.cfg.interwiki_map:
             interwiki_mapping.add(interwiki_name.split("/")[0])
         wikiname, item_name = split_namespace(interwiki_mapping, wikiurl)
         if wikiname:
@@ -200,7 +200,7 @@ def getInterwikiName(item_name):
     :rtype: str
     :returns: wiki_name:item_name
     """
-    return f"{app.cfg.interwikiname}/{item_name}"
+    return f"{current_app.cfg.interwikiname}/{item_name}"
 
 
 def getInterwikiHome(username):
@@ -217,7 +217,7 @@ def getInterwikiHome(username):
     :rtype: tuple
     :returns: (wikiname, itemname)
     """
-    homewiki = app.cfg.user_homewiki
+    homewiki = current_app.cfg.user_homewiki
     if is_local_wiki(homewiki):
         homewiki = "Self"
     return homewiki, get_fqname(username, NAME_EXACT, NAMESPACE_USERS)

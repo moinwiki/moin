@@ -45,7 +45,7 @@ from werkzeug.http import is_resource_modified
 
 from whoosh.query import Term, And
 
-from moin import app, flaskg
+from moin import current_app, flaskg
 
 try:
     import PIL
@@ -255,7 +255,7 @@ class Content:
                     hash_hexdigest=hash_hexdigest,
                     attrs=repr(attributes),
                 )
-                doc = app.cache.get(cid)
+                doc = current_app.cache.get(cid)
         if doc is None:
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
@@ -279,7 +279,7 @@ class Content:
             if self.contenttype.startswith(("text/x.moin.wiki", "text/x-mediawiki", "text/x.moin.creole")):
                 doc = smiley_conv(doc)
             if cid:
-                app.cache.set(cid, doc)
+                current_app.cache.set(cid, doc)
         return doc
 
     def _expand_document(self, doc: Element):
@@ -518,7 +518,7 @@ class Binary(Content):
             content_type = mimetype
         else:
             content_type = mt.content_type()
-        as_attachment = force_attachment or mt.as_attachment(app.cfg)
+        as_attachment = force_attachment or mt.as_attachment(current_app.cfg)
         return send_file(
             file=file_to_send,
             mimetype=content_type,
@@ -861,7 +861,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 height=height,
                 transpose=transpose,
             )
-            c = app.cache.get(cid)
+            c = current_app.cache.get(cid)
             if c is None:
                 if mimetype:
                     content_type = mimetype
@@ -870,7 +870,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 size = (width or 99999, height or 99999)
                 content_type, data = self._transform(content_type, size=size, transpose_op=transpose)
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
-                app.cache.set(cid, (headers, data))
+                current_app.cache.set(cid, (headers, data))
             else:
                 # XXX TODO check ACL behaviour
                 headers, data = c
@@ -899,7 +899,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
         cid = cache_key(
             usage="ImageDiff", hash_name=hash_name, hash_old=oldrev.meta[hash_name], hash_new=newrev.meta[hash_name]
         )
-        c = app.cache.get(cid)
+        c = current_app.cache.get(cid)
         if c is None:
             if PIL is None:
                 abort(404)  # TODO render user friendly error image
@@ -921,7 +921,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 data = outfile.getvalue()
                 outfile.close()
                 headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
-                app.cache.set(cid, (headers, data))
+                current_app.cache.set(cid, (headers, data))
             except (OSError, ValueError) as err:
                 logging.exception(f"error during PILdiff: {err}")
                 abort(404)  # TODO render user friendly error image
@@ -1198,7 +1198,7 @@ class DocBook(MarkupItem):
         # We determine the different parameters for the reply
         mt = MimeType(mimestr="application/docbook+xml;charset=utf-8")
         content_type = mt.content_type()
-        as_attachment = mt.as_attachment(app.cfg)
+        as_attachment = mt.as_attachment(current_app.cfg)
         # After creation of the BytesIO, we are at the end of the file
         # so position is the size the file.
         # and then we should move it back at the beginning of the file

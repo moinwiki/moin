@@ -37,7 +37,7 @@ class WikiGroups(BaseGroupsBackend):
 
     def __iter__(self):
         """
-        To find group pages, app.cfg.cache.item_group_regexact pattern is used.
+        To find group pages, current_app.cfg.cache.item_group_regexact pattern is used.
         """
         # TODO: use whoosh to search for group_regex matching items
         item_list = [

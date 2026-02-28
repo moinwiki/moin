@@ -22,12 +22,13 @@ import urllib
 from werkzeug.exceptions import NotFound
 from werkzeug.routing.exceptions import NoMatch, RoutingException
 
-from moin import app, log
+from moin import current_app, log
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.mimetype import MimeType
 
 if TYPE_CHECKING:
     from werkzeug.routing.map import MapAdapter
+    from moin.app import MoinApp
 
 logging = log.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def isGroupItem(itemname):
     :rtype: bool
     :returns: True if item is a group item
     """
-    return app.cfg.cache.item_group_regexact.search(itemname) is not None
+    return current_app.cfg.cache.item_group_regexact.search(itemname) is not None
 
 
 def AbsItemName(context: str, itemname: str) -> str:
@@ -162,7 +163,7 @@ class WikiLinkAnalyzer:
 
     __slots__ = "map_adapter"
 
-    def __init__(self, app):
+    def __init__(self, app: MoinApp):
         self.map_adapter: MapAdapter = app.url_map.bind("127.0.0.1")  # address is irrelevant
 
     def __call__(self, link: str) -> WikiLinkInfo:

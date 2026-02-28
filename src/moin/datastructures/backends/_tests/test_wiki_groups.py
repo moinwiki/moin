@@ -11,7 +11,7 @@ MoinMoin - moin.datastructures.backends.wiki_groups tests.
 
 import pytest
 
-from moin import app, flaskg
+from moin import current_app, flaskg
 from moin.constants.keys import NAME, USERGROUP
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import GroupDoesNotExistError
@@ -92,7 +92,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         update_item("NewGroup", {USERGROUP: ["ExampleUser"]}, DATA)
 
         acl_rights = ["NewGroup:read,write"]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         has_rights_before = acl.may("AnotherUser", "read")
 

@@ -8,7 +8,7 @@ MoinMoin - Tests for the navigation bar
 
 import pytest
 
-from moin import app, themes
+from moin import current_app, themes
 from moin.themes import ThemeSupport
 
 from moin._tests import wikiconfig
@@ -25,7 +25,7 @@ class TestNaviBar:
 
     @pytest.fixture
     def theme(self):
-        return ThemeSupport(app.cfg)
+        return ThemeSupport(current_app.cfg)
 
     def test_split_navilink(self, theme):
         tests = [

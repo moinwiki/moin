@@ -33,7 +33,7 @@ from whoosh.query import Term, Or, Not, And
 
 from flask import flash
 
-from moin import app, flaskg
+from moin import current_app, flaskg
 from moin.constants.forms import (
     WIDGET_ANY_INTEGER,
     WIDGET_CHECKBOX,
@@ -122,7 +122,7 @@ def validate_name(meta, itemid):
     current_namespace = meta.get(NAMESPACE)
     if current_namespace is None:
         raise NameNotValidError(L_("No namespace field in the meta."))
-    namespaces = [namespace.rstrip("/") for namespace, _ in app.cfg.namespace_mapping]
+    namespaces = [namespace.rstrip("/") for namespace, _ in current_app.cfg.namespace_mapping]
 
     if len(names) != len(set(names)):
         msg = L_("The names in the name list must be unique.")
@@ -207,7 +207,7 @@ class ValidJSON(Validator):
         if current_namespace is None:
             self.invalid_namespace_msg = L_("No namespace field in the meta.")
             return False
-        namespaces = [namespace.rstrip("/") for namespace, _ in app.cfg.namespace_mapping]
+        namespaces = [namespace.rstrip("/") for namespace, _ in current_app.cfg.namespace_mapping]
         if current_namespace not in namespaces:  # current_namespace must be an existing namespace.
             self.invalid_namespace_msg = L_("{_namespace} is not a valid namespace.").format(
                 _namespace=current_namespace

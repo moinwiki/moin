@@ -13,7 +13,7 @@ import ssl
 from email.message import EmailMessage
 from email.utils import formatdate, make_msgid
 
-from moin import app, log
+from moin import current_app, log
 from moin.i18n import _
 
 logging = log.getLogger(__name__)
@@ -45,7 +45,7 @@ def sendmail(subject, text, to=None, cc=None, bcc=None, mail_from=None, html=Non
     :rtype: tuple
     :returns: (is_ok, Description of error or OK message)
     """
-    cfg = app.cfg
+    cfg = current_app.cfg
     if not cfg.mail_enabled:
         return (
             0,

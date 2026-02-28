@@ -14,7 +14,7 @@ import click
 
 from flask.cli import FlaskGroup
 
-from moin import app, log, user
+from moin import current_app, log, user
 from moin.app import create_app, before_wiki
 from moin.constants.keys import ITEMID, NAME, NAME_EXACT, EMAIL, EMAIL_UNVALIDATED
 
@@ -103,7 +103,7 @@ def SetPassword(name, uid, password, all_users, notify, verbose, subject, text, 
         print("Incorrect number of arguments.")
         sys.exit(1)
 
-    if notify and not app.cfg.mail_enabled:
+    if notify and not current_app.cfg.mail_enabled:
         print("This wiki is not enabled for mail processing. The --notify option requires this. Aborting...")
         sys.exit(1)
 

@@ -3,7 +3,7 @@
 
 import pytest
 
-from moin import app, flaskg
+from moin import current_app, flaskg
 from moin.themes import ThemeSupport
 from moin.user import User
 
@@ -28,7 +28,7 @@ def cfg():
 
 @pytest.fixture
 def theme_supp():
-    return ThemeSupport(app.cfg)
+    return ThemeSupport(current_app.cfg)
 
 
 @pytest.mark.usefixtures("_req_ctx", "_test_user")

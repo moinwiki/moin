@@ -15,7 +15,7 @@ from typing import Any, TYPE_CHECKING
 
 from emeraldtree.ElementTree import Element
 
-from moin import app, flaskg
+from moin import current_app, flaskg
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri, IriPath
 from moin.utils.mime import type_moin_document
@@ -196,7 +196,7 @@ class ConverterExternOutput(ConverterBase):
         endpoint = "frontend.show_item"
         if input.path:
             item_name = str(input.path)
-            info = app.link_analyzer(item_name)
+            info = current_app.link_analyzer(item_name)
             if not info.is_valid:
                 elem.set(moin_page.class_, "moin-nonexistent")
             elif not info.is_global and info.item_name:
@@ -268,7 +268,7 @@ class ConverterItemRefs(ConverterBase):
         path = input.path
         if not path:
             return
-        info = app.link_analyzer(str(path))
+        info = current_app.link_analyzer(str(path))
         if not info.is_valid or info.is_global or not info.item_name:
             return
         if info.endpoint == "frontend.show_item":

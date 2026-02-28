@@ -7,7 +7,7 @@ MoinMoin - tests for moin.search.analyzers.
 
 import pytest
 
-from moin import app
+from moin import current_app
 from moin.search.analyzers import MimeTokenizer, AclTokenizer, item_name_analyzer
 
 
@@ -96,7 +96,7 @@ class TestAclTokenizer(TokenizerTestBase):
     ]
 
     def make_tokenizer(self):
-        return AclTokenizer(app.cfg.acl_rights_contents)
+        return AclTokenizer(current_app.cfg.acl_rights_contents)
 
 
 class TestMimeTokenizer(TokenizerTestBase):

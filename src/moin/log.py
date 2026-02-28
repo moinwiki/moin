@@ -199,10 +199,10 @@ class EmailHandler(logging.Handler):
         """
         # The app config is accessible after logging is initialized, so set the
         # arguments and make the decision to send mail or not here.
-        from moin import app
+        from moin import current_app
 
         try:
-            email_tracebacks = app.cfg.email_tracebacks
+            email_tracebacks = current_app.cfg.email_tracebacks
         except (RuntimeError, AttributeError):
             # likely: RuntimeError: working outside of application context
             # if we get that, we can't access the cfg and can't send mail anyway.
@@ -217,9 +217,9 @@ class EmailHandler(logging.Handler):
         self.in_email_handler = True
 
         try:
-            toaddrs = self.toaddrs if self.toaddrs else app.cfg.admin_emails
+            toaddrs = self.toaddrs if self.toaddrs else current_app.cfg.admin_emails
             log_level = logging.getLevelName(self.level)
-            subject = self.subject if self.subject else f"[{app.cfg.sitename}][{log_level}] Log message"
+            subject = self.subject if self.subject else f"[{current_app.cfg.sitename}][{log_level}] Log message"
             msg = self.format(record)
             from moin.mail.sendmail import sendmail
 

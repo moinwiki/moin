@@ -15,7 +15,7 @@ import pytest
 from flask import url_for
 from werkzeug.datastructures import FileStorage
 
-from moin import app, flaskg, user
+from moin import current_app, flaskg, user
 from moin.apps._tests.utils import create_user, login, modify_item, make_modify_form_data, set_user_in_client_session
 from moin.apps.frontend import views
 
@@ -54,7 +54,7 @@ class TestFrontend:
         if params is None:
             params = {}
 
-        with app.test_client() as client:
+        with current_app.test_client() as client:
 
             request_url = url_for(viewname, **viewopts)
 
@@ -94,7 +94,7 @@ class TestFrontend:
         request_url = url_for(viewname, **viewopts)
         print("POST %s" % request_url)
 
-        with app.test_client() as client:
+        with current_app.test_client() as client:
             response = client_request(client, "POST", request_url, user=user, query_string=params, data=form)
             assert response.status == status
             assert response.headers["Content-Type"] in content_types

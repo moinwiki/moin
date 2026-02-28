@@ -40,7 +40,7 @@ import sqlite3
 
 from flask import request
 
-from moin import app, flaskg, log
+from moin import current_app, flaskg, log
 from moin.constants.keys import CONTENTTYPE, ITEMID, REVID, REV_NUMBER, NAME
 from moin.constants.misc import ANON, NO_LOCK, LOCKED, LOCK
 from moin.i18n import L_
@@ -83,13 +83,13 @@ class Edit_Utils:
             ct = Type(contenttype)
             self.coding = ct.parameters.get("charset", self.coding)
 
-        self.sql_filename = os.path.join(app.cfg.instance_dir, SQL, DB_NAME)
+        self.sql_filename = os.path.join(current_app.cfg.instance_dir, SQL, DB_NAME)
         if os.path.exists(self.sql_filename):
             self.conn = sqlite3.connect(self.sql_filename)
         else:
             self.conn = self.create_db_tables()
         self.cursor = self.conn.cursor()
-        self.preview_path = os.path.join(app.cfg.instance_dir, PREVIEW)
+        self.preview_path = os.path.join(current_app.cfg.instance_dir, PREVIEW)
         self.draft_name = self.make_draft_name(self.rev_id)
 
         self.conn.isolation_level = "EXCLUSIVE"
@@ -102,10 +102,10 @@ class Edit_Utils:
         The edit locking table is created even if locking policy is None. A wiki admin can later
         change locking policy without affecting saved drafts.
         """
-        if not os.path.exists(os.path.join(app.cfg.instance_dir, SQL)):
-            os.mkdir(os.path.join(app.cfg.instance_dir, SQL))
-        if not os.path.exists(os.path.join(app.cfg.instance_dir, PREVIEW)):
-            os.mkdir(os.path.join(app.cfg.instance_dir, PREVIEW))
+        if not os.path.exists(os.path.join(current_app.cfg.instance_dir, SQL)):
+            os.mkdir(os.path.join(current_app.cfg.instance_dir, SQL))
+        if not os.path.exists(os.path.join(current_app.cfg.instance_dir, PREVIEW)):
+            os.mkdir(os.path.join(current_app.cfg.instance_dir, PREVIEW))
         con = sqlite3.connect(self.sql_filename)  # opens existing file or creates new file
         cursor = con.cursor()
         cursor.execute("""CREATE TABLE editlock(item_id TEXT NOT NULL PRIMARY KEY,
@@ -244,7 +244,7 @@ class Edit_Utils:
     # editlock methods start here
     def update_editlock(self) -> None:
         """Reset existing editlock, same user or different user is given the item lock."""
-        timeout = int(time.time()) + app.cfg.edit_lock_time * 60
+        timeout = int(time.time()) + current_app.cfg.edit_lock_time * 60
         self.cursor.execute(
             """UPDATE editlock SET timeout = ?, user_name = ? WHERE item_id = ? """,
             (timeout, self.user_name, self.item_id),
@@ -265,7 +265,7 @@ class Edit_Utils:
         else return False, 'lock failed' message.
         """
         msg = None
-        if app.cfg.edit_locking_policy == LOCK:
+        if current_app.cfg.edit_locking_policy == LOCK:
             locked = self.get_lock_status()
             if locked:
                 # somebody has lock, may be current user or other user; lock may have timed out
@@ -294,7 +294,7 @@ class Edit_Utils:
 
             else:
                 # item is not locked
-                timeout = int(time.time()) + app.cfg.edit_lock_time * 60
+                timeout = int(time.time()) + current_app.cfg.edit_lock_time * 60
                 draft, data = self.get_draft()
                 if draft:
                     u_name, i_id, i_name, rev_number, save_time, rev_id = draft
