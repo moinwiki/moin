@@ -12,7 +12,7 @@ html * { box-sizing: border-box; }
 html, body { max-width: 100vw; max-height: 100vh; overflow-x: hidden;}
 h1, h2, h3, h4, h5, h6, h1+p.moin-subheading { border-bottom: none; }
 h2 { margin-top: 1.6em; margin-bottom: 0.5em; }
-table tr td { border: none; }
+table tr td { border: 1px solid #bbb; }
 .clickable-header { cursor: pointer; }
 input[type="checkbox"] { appearance: none; border: 2pt solid #242424;
     height: 12pt; width: 12pt; transition: background-color 80ms linear; }
@@ -40,7 +40,7 @@ input[type="checkbox"]:checked { background-color: var(--accent-light); }
 
 #moin-page { min-width: 0pt; }
 
-header { min-width: 140pt; width: 220px; min-height: 100vh; margin-right: 18pt; padding: 8pt;
+header { min-width: 200px; width: 200px; min-height: 100vh; margin-right: 18pt; padding: 8pt;
     box-shadow: 2pt 0pt 10pt 2pt rgba(0, 0, 0, 0.1); }
 header ol, header ul { padding-left: 0pt; }
 header li::marker { display: none; }
@@ -94,8 +94,27 @@ header a, header a:link, header a:visited,
 .moin-breadcrumb { margin: 14pt 0; }
 .moin-breadcrumb .moin-panel-heading { font-size: 1.1rem; margin-bottom: 4pt; }
 .moin-breadcrumb ul { list-style-type: circle; padding-left: 16pt; }
-.moin-breadcrumb ul li { margin-bottom: 4pt; }
-.moin-breadcrumb a { padding: 4pt; border-radius: 2pt; display: block; width: 90%; }
+.moin-breadcrumb ul li { position: relative; margin-bottom: 4pt; }
+.moin-breadcrumb a { padding: 4px; border-radius: 2pt; display: inline-block; }
+.moin-breadcrumb ul li ul.moin-alias { display: none; }
+.moin-breadcrumb ul li:hover ul.moin-alias, ul.moin-alias:hover {
+    display: block;
+    position: absolute;
+    bottom: calc(100% - 6pt);
+    left: 20px;
+    z-index: 500;
+    list-style-type: none;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background-color: white;
+    padding: 4px 0;
+}
+.moin-breadcrumb ul li:hover ul.moin-alias li:first-of-type {
+    font-weight: bold;
+    /* Same padding as <a> elements that are inside the following <li> elements */
+    padding: 0 4px;
+}
+.moin-breadcrumb ul li:hover ul.moin-alias a { text-wrap: nowrap; width: 100%; }
 
 #moin-footer { display: flex; flex-direction: column; width: unset;
     margin-top: 40pt; margin-bottom: 4pt; padding-right: 10pt; }
