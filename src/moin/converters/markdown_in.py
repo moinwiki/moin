@@ -111,14 +111,9 @@ class Converter(html_in.HtmlTags):
     simple_tags = html_in.Converter.simple_tags.copy()
     simple_tags["dl"] = moin_page.list_item
     simple_tags["table"] = moin_page.table
+    void_tags = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 
-    # Non-void HTML tags that could be split by markdown's inline pattern processor
-    _non_void_html_tags = frozenset(
-        html_in.HtmlTags.symmetric_tags
-        | (set(simple_tags.keys()) - {"br"})
-        | set(html_in.HtmlTags.indirect_tags.keys())
-    )
-    _open_tag_re = re.compile(r"^(.*?)<(\w+)(?:\s[^>]*)?>(.*)$", re.DOTALL)
+    _open_tag_re = re.compile(r"^(.*?)(<(\w+)(?:\s[^>]*)?>)(.*)$", re.DOTALL)
 
     def new_copy_symmetric(self, element, attrib):
         """
@@ -370,39 +365,42 @@ class Converter(html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
-    def embedded_markup(self, text):
+    def html_markup(self, text):
         """
-        Allow embedded raw HTML markup per https://daringfireball.net/projects/markdown/syntax#html
-        This replaces the functionality of RawHtmlPostprocessor in .../markdown/postprocessors.py.
+        Handle embedded HTML markup.
 
-        To prevent hackers from exploiting raw HTML, the strings of safe HTML are converted to
+        The RawHtmlPostprocessor (in .../markdown/postprocessors.py)
+        places back HTML markup that was stashed away by the
+        HtmlBlockPreprocessor and the HtmlInlineProcessor.
+        This method converts the HTML markup to moin_page
         tree nodes by using the html_in.py converter.
+
+        https://daringfireball.net/projects/markdown/syntax#html
+        https://python-markdown.github.io/reference/markdown/
         """
         try:
-            # we enclose plain text and span tags with P-tags
-            p_text = html_in_converter(f"<p>{text}</p>")
-            # discard page and body tags
-            return p_text[0][0]
+            page = html_in_converter(f"<div>{text}</div>")  # wrap in auxiliary element to avoid orphan strings
+            return list(page[0][0])  # discard <page> and <body> wrappers, return <div>'s children
         except (AssertionError, IndexError) as ex:
             # malformed tags, will be escaped so user can see and fix
             logging.debug(f"Caught exception in embedded_markup: {ex}")
             return text
 
-    def convert_embedded_markup(self, node):
+    def convert_embedded_html_markup(self, node):
         """
-        Recurse through tree looking for embedded or generated markup.
+        Recurse through tree looking for embedded or generated HTML markup.
 
         :param node: a tree node
         """
-        for idx, child in enumerate(node):
+        for i, child in enumerate(node):
             if isinstance(child, str):
                 # search for HTML tags
                 if re.search("<[^ ].*?>", child):
-                    node[idx] = self.embedded_markup(child)  # child is immutable string, so must do node[idx]
+                    node[i : i + 1] = self.html_markup(child)  # replace child with result of conversion
             else:
-                # do not convert markup within a <pre> tag
-                if not child.tag == moin_page.blockcode and not child.tag == moin_page.code:
-                    self.convert_embedded_markup(child)
+                # do not convert markup within "literal" elements
+                if child.tag not in (moin_page.blockcode, moin_page.code):
+                    self.convert_embedded_html_markup(child)
 
     def convert_invalid_p_nodes(self, node):
         """
@@ -421,17 +419,19 @@ class Converter(html_in.HtmlTags):
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
 
-    def _create_element_for_tag(self, tag_name, children):
-        """Create a moin_page DOM element for the given HTML tag name."""
-        if tag_name in self.symmetric_tags:
-            return ET.Element(ET.QName(tag_name, moin_page), attrib={}, children=children)
-        elif tag_name in self.simple_tags:
-            return ET.Element(self.simple_tags[tag_name], attrib={}, children=children)
-        elif tag_name in self.indirect_tags:
-            attrib = {moin_page("html-tag"): tag_name}
-            return ET.Element(self.indirect_tags[tag_name], attrib=attrib, children=children)
-        else:
-            return ET.Element(ET.QName(tag_name, moin_page), attrib={}, children=children)
+    def _create_element_for_tag(self, tag):
+        """Return a moin_page DOM element for the given HTML tag.
+
+        If the tag name is not supported, return None.
+        """
+        if not tag.endswith("/>"):
+            tag = tag.replace(">", " />")  # make tag self-closing (we append the child elements later)
+        tree = html_in_converter(tag)
+        try:
+            element = tree[0][0]  # strip <page> and <body> wrappers
+        except IndexError:
+            return None
+        return element
 
     def _reassemble_split_html_tags(self, node):
         """
@@ -460,11 +460,10 @@ class Converter(html_in.HtmlTags):
             if isinstance(child, str):
                 m = self._open_tag_re.match(child)
                 if m:
-                    pre_text, tag_name, inner_text = m.group(1), m.group(2), m.group(3)
-                    tag_lower = tag_name.lower()
+                    pre_text, tag, tag_name, inner_text = m.group(1, 2, 3, 4)
                     closing_tag = f"</{tag_name}>"
 
-                    if tag_lower in self._non_void_html_tags and closing_tag not in child:
+                    if tag_name.lower() not in self.void_tags and closing_tag not in child:
                         # Scan forward through siblings for the matching closing tag
                         close_idx = None
                         for j in range(i + 1, len(children)):
@@ -492,11 +491,15 @@ class Converter(html_in.HtmlTags):
                             # Recursively process inner children (handles nested split tags)
                             self._reassemble_split_html_tags(inner)
 
-                            new_elem = self._create_element_for_tag(tag_lower, inner)
+                            new_elem = self._create_element_for_tag(tag)
 
                             if pre_text:
                                 result.append(pre_text)
-                            result.append(new_elem)
+                            if new_elem:
+                                new_elem.extend(inner)
+                                result.append(new_elem)
+                            elif tag_name not in self.ignored_tags:
+                                result.extend(inner)
                             if post_text:
                                 result.append(post_text)
 
@@ -517,8 +520,7 @@ class Converter(html_in.HtmlTags):
             else:
                 # EmeraldTree Element: replace all children
                 del node[:]
-                for c in result:
-                    node.append(c)
+                node.extend(result)
 
     def __init__(self):
         # The Moin configuration
@@ -600,7 +602,7 @@ class Converter(html_in.HtmlTags):
         self._reassemble_split_html_tags(converted)
 
         # convert html embedded in text strings to EmeraldTree nodes
-        self.convert_embedded_markup(converted)
+        self.convert_embedded_html_markup(converted)
         # convert P-tags containing block elements to DIV-tags
         self.convert_invalid_p_nodes(converted)
 

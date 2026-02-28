@@ -250,6 +250,16 @@ class TestConverter(Base):
             # <page><body><emphasis html-tag="var">n</emphasis></body></page>
             '/page/body/p/emphasis[text()="n"][@html-tag="var"]',
         ),
+        (  # explicitly ignored tags are dropped together with their content
+            "<p>Press <button>here!</button></p>",
+            # <page><body><p>Press </p></body></page>
+            '/page/body/p[text()="Press "]',
+        ),
+        (  # unknown tags are dropped but the content is kept
+            "<p><custom>unknown tag</custom></p>",
+            # <page><body><p>unknown tag</p></body></page>
+            '/page/body/p[text()="unknown tag"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

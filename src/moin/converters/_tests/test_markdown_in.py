@@ -189,30 +189,30 @@ class TestConverter:
         # only complete/correct tags are recognized.
         ("one < two", "<p>one &lt; two</p>"),
         ("[[one]] < two", '<p><a xlink:href="wiki.local:one">one</a> &lt; two</p>'),
-        ("pre <strong>bold</strong> post", "<div><p>pre <strong>bold</strong> post</p></div>"),
+        ("pre <strong>bold</strong> post", "<p>pre <strong>bold</strong> post</p>"),
         (  # a block-level element
             "<address>webmaster@example.org</address>",
-            '<div><div><div html-tag="address">webmaster@example.org</div>\n</div></div>',
+            '<div><div html-tag="address">webmaster@example.org</div>\n</div>',
         ),
         # explicitly ignored tags (html_in.HtmlTags.ignored_tags) are dropped together with their content:
-        ("<button>Stop</button>", "<div><p /></div>"),
-        ("<script>1+1</script>", "<div><p>\n</p></div>"),
+        ("<button>Stop</button>", "<p />"),
+        ("<script>1+1</script>", "<p>\n</p>"),
         # Markdown syntax in block-level HTML tags is not processed (https://daringfireball.net/projects/markdown/syntax#html)
-        ("<h2>**strong** heading</h2>", '<div><div><h outline-level="2">**strong** heading</h>\n</div></div>'),
+        ("<h2>**strong** heading</h2>", '<div><h outline-level="2">**strong** heading</h>\n</div>'),
         # TODO: markdown 3.3 outputs `/>\n\n\n\n</p>`, prior versions output `/></p>`. Try test again with versions 3.3+
         # Added similar test to test_markdown_in_out
         # ('<hr>',
-        #  '<div><p><separator html:class="moin-hr3" />\n\n\n\n</p></div>'),  # works only with markdown 3.3
+        #  '<p><separator html:class="moin-hr3" />\n\n\n\n</p>'),  # works only with markdown 3.3
         # <hr> is a block level tag: end paragraph before the tag, start new paragraph after it!
         # TODO currently fails:
-        # ("a<hr>_break_", '<div><p>a</p><separator html:class="moin-hr3" /><p><emphasis>break</emphasis></p></div>'),
-        # ("a<hr />_break_", '<div><p>a</p><separator html:class="moin-hr3" /><p><emphasis>break</emphasis></p></div>'),
+        # ("a<hr>_break_", '<p>a</p><separator html:class="moin-hr3" /><p><emphasis>break</emphasis></p>'),
+        # ("a<hr />_break_", '<p>a</p><separator html:class="moin-hr3" /><p><emphasis>break</emphasis></p>'),
         # (
         #     "a\n<hr>\n_break_",
-        #     '<div><p>a</p><separator html:class="moin-hr3" />\n<p><emphasis>break</emphasis></p></div>',
+        #     '<p>a</p><separator html:class="moin-hr3" />\n<p><emphasis>break</emphasis></p>',
         # ),
-        # ("_a_<hr>break", '<div><p><emphasis>a</emphasis></p><separator html:class="moin-hr3" /><p>break</p></div>'),
-        # ("_a_<hr>\nbreak", '<div><p><emphasis>a</emphasis></p><separator html:class="moin-hr3" />\n<p>break</p></div>'),
+        # ("_a_<hr>break", '<p><emphasis>a</emphasis></p><separator html:class="moin-hr3" /><p>break</p>'),
+        # ("_a_<hr>\nbreak", '<p><emphasis>a</emphasis></p><separator html:class="moin-hr3" />\n<p>break</p>'),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -222,35 +222,40 @@ class TestConverter:
 
     data = [
         # TODO: there are too many <div> wrappers!
-        ("line<br />break", "<div><p>line<line-break />break</p></div>"),
-        ("<big>larger</big>", '<div><p><span html:class="moin-big">larger</span></p></div>'),
-        ('<span class="moin-small">smaller</span>', '<div><p><span html:class="moin-small">smaller</span></p></div>'),
-        ("<sub>sub</sub>script", "<div><p><sub>sub</sub>script</p></div>"),
-        ("<sup>super</sup>script", "<div><p><sup>super</sup>script</p></div>"),
-        ("<code>Code</code>", "<div><p><code>Code</code></p></div>"),
-        ("<em>Emphasis</em>", "<div><p><emphasis>Emphasis</emphasis></p></div>"),
-        ("<i>alternate voice</i>", '<div><p><emphasis html-tag="i">alternate voice</emphasis></p></div>'),
-        ("<u>underline</u>", "<div><p><u>underline</u></p></div>"),
-        ("<ins>inserted</ins>", "<div><p><ins>inserted</ins></p></div>"),
-        ("<kbd>Ctrl-X</kbd>", "<div><p><kbd>Ctrl-X</kbd></p></div>"),
-        ("<samp>Error 33</samp>", "<div><p><samp>Error 33</samp></p></div>"),
-        ("<tt>literal</tt>", "<div><p><literal>literal</literal></p></div>"),
-        ("<del>deleted</del>", "<div><p><del>deleted</del></p></div>"),
-        ("<s>no longer accurate</s>", "<div><p><s>no longer accurate</s></p></div>"),
+        ('<a href="subitem">link text</a>', '<p><a xlink:href="wiki.local:subitem">link text</a></p>'),
+        ("<BIG>larger</BIG>", '<p><span html:class="moin-big">larger</span></p>'),
+        ('<span class="moin-small">smaller</span>', '<p><span html:class="moin-small">smaller</span></p>'),
+        ("<sub>sub</sub>script", "<p><sub>sub</sub>script</p>"),
+        ("<sup>super</sup>script", "<p><sup>super</sup>script</p>"),
+        ("<code>Code</code>", "<p><code>Code</code></p>"),
+        ("<em>Emphasis</em>", "<p><emphasis>Emphasis</emphasis></p>"),
+        ("<i>alternate voice</i>", '<p><emphasis html-tag="i">alternate voice</emphasis></p>'),
+        ("<u>underline</u>", "<p><u>underline</u></p>"),
+        ("<ins>inserted</ins>", "<p><ins>inserted</ins></p>"),
+        ("<kbd>Ctrl-X</kbd>", "<p><kbd>Ctrl-X</kbd></p>"),
+        ("<samp>Error 33</samp>", "<p><samp>Error 33</samp></p>"),
+        ("<tt>literal</tt>", "<p><literal>literal</literal></p>"),
+        ("<del>deleted</del>", "<p><del>deleted</del></p>"),
+        ("<s>no longer accurate</s>", "<p><s>no longer accurate</s></p>"),
         # the <strike> tag is deprecated since HTML4.1!
-        ("<strike>obsolete</strike>", "<div><p><s>obsolete</s></p></div>"),
-        ("<q>Inline quote</q>", "<div><p><quote>Inline quote</quote></p></div>"),
-        ("<dfn>term</dfn>", '<div><p><emphasis html-tag="dfn">term</emphasis></p></div>'),
-        ("<small>fine print</small>", '<div><p><span html-tag="small">fine print</span></p></div>'),
-        ("<abbr>e.g.</abbr>", '<div><p><span html-tag="abbr">e.g.</span></p></div>'),
+        ("<strike>obsolete</strike>", "<p><s>obsolete</s></p>"),
+        ("<q>Inline quote</q>", "<p><quote>Inline quote</quote></p>"),
+        ("<dfn>term</dfn>", '<p><emphasis html-tag="dfn">term</emphasis></p>'),
+        ("<small>fine print</small>", '<p><span html-tag="small">fine print</span></p>'),
+        ("<abbr>e.g.</abbr>", '<p><span html-tag="abbr">e.g.</span></p>'),
         # keep standard attributes "title", "class", "style", and "alt":
-        ('<del class="red">deleted</del>', '<div><p><del html:class="red">deleted</del></p></div>'),
-        (
-            '<abbr title="for example">e.g.</abbr>',
-            '<div><p><span html-tag="abbr" html:title="for example">e.g.</span></p></div>',
-        ),
+        ('<del class="red">deleted</del>', '<p><del html:class="red">deleted</del></p>'),
+        ('<abbr title="for example">e.g.</abbr>', '<p><span html-tag="abbr" html:title="for example">e.g.</span></p>'),
         # in HTML5, <acronym> is deprecated in favour of <abbr>
-        ("<acronym>AC/DC</acronym>", '<div><p><span html-tag="abbr">AC/DC</span></p></div>'),
+        ("<acronym>AC/DC</acronym>", '<p><span html-tag="abbr">AC/DC</span></p>'),
+        # <br> is a void inline element
+        ("one<br />two", "<p>one<line-break />two</p>"),
+        ("one<br>two", "<p>one<line-break />two</p>"),
+        ("one<br />\ntwo", "<p>one<line-break />\ntwo</p>"),
+        ("one  \ntwo", "<p>one<line-break />\ntwo</p>"),
+        # there may be multiple HTML elements in a block
+        ("<u>underline</u> and <sub>sub</sub>", "<p><u>underline</u> and <sub>sub</sub></p>"),
+        ("<u>underline with <sub>sub</sub></u>", "<p><u>underline with <sub>sub</sub></u></p>"),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -264,15 +269,36 @@ class TestConverter:
             "<del>Deleted list item with <emphasis>emphasized text</emphasis></del>"
             "</list-item-body></list-item></list>",
         ),
+        (
+            '<a href="subitem">link *text*</a>',
+            '<p><a xlink:href="wiki.local:subitem">link <emphasis>text</emphasis></a></p>',
+        ),
+        (
+            '<abbr title="for example">_e.g._</abbr>',
+            '<p><span html-tag="abbr" html:title="for example"><emphasis>e.g.</emphasis></span></p>',
+        ),
+        ("<acronym>**AC/DC**</acronym>", '<p><span html-tag="abbr"><strong>AC/DC</strong></span></p>'),
+        ("<BIG>_larger_</BIG>", '<p><span html:class="moin-big"><emphasis>larger</emphasis></span></p>'),
         ("<ins>Inserted with _emphasis_</ins>", "<p><ins>Inserted with <emphasis>emphasis</emphasis></ins></p>"),
         ("<kbd>Press **Q**</kbd>", "<p><kbd>Press <strong>Q</strong></kbd></p>"),
-        ("<del>`1+1`</del>", "<p><del><code>1+1</code></del></p>"),
-        ("<tt>**mono**</tt>", "<p><literal><strong>mono</strong></literal></p>"),
+        ("<DEL>`1+1`</DEL>", "<p><del><code>1+1</code></del></p>"),
+        ("<dfn>**strong** term</dfn>", '<p><emphasis html-tag="dfn"><strong>strong</strong> term</emphasis></p>'),
         ("<i>alternate **voice**</i>", '<p><emphasis html-tag="i">alternate <strong>voice</strong></emphasis></p>'),
         ("<small>`fine` print</small>", '<p><span html-tag="small"><code>fine</code> print</span></p>'),
-        ("<abbr>_e.g._</abbr>", '<p><span html-tag="abbr"><emphasis>e.g.</emphasis></span></p>'),
-        # ignored tag and content
-        ("<script>`1+1`</script>", "<div><p>\n</p></div>"),
+        ("<tt>**mono**</tt>", "<p><literal><strong>mono</strong></literal></p>"),
+        # explicitly ignored tags are dropped together with their content:
+        ("<button>`Stop`</button>", "<p />"),
+        ("<script>`1+1`</script>", "<p>\n</p>"),
+        # unknown tags are ignored but their content is passed on:
+        ("<custom>`1+1`</custom>", "<p><code>1+1</code></p>"),
+        # <br> is an inline tag: do not break the paragraph!
+        ("one<br>_two_", "<p>one<line-break /><emphasis>two</emphasis></p>"),
+        ("one<br />_two_", "<p>one<line-break /><emphasis>two</emphasis></p>"),
+        ("one<br>\n_two_", "<p>one<line-break />\n<emphasis>two</emphasis></p>"),
+        ("_one_<br>two", "<p><emphasis>one</emphasis><line-break />two</p>"),
+        ("_one_<br>\ntwo", "<p><emphasis>one</emphasis><line-break />\ntwo</p>"),
+        # there may be multiple HTML elements in a block
+        ("<u>**underline**</u> and <sub>sub</sub>", "<p><u><strong>underline</strong></u> and <sub>sub</sub></p>"),
     ]
 
     @pytest.mark.parametrize("input,output", data)
@@ -281,27 +307,14 @@ class TestConverter:
         self.do(input, output)
 
     data = [  # Some valid samples still fail!
-        # tags with dedicated visit_{tag_name}() method:
-        ("<big>_larger_</big>", '<p><span html:class="moin-big"><emphasis>larger</emphasis></span></p>'),
-        ("<p><dfn>*strong* term</dfn></p>", '<p><emphasis html-tag="dfn"><strong>strong</strong>term</emphasis></p>'),
-        ("<acronym>**AC/DC**</acronym>", '<p><span html-tag="abbr"><strong>AC/DC</strong></span></p>'),
-        # tags with standard_attributes "title", "class", "style", and "alt"
-        ('<del class="red">`1+1`</del>', '<p><del html:class="red"><code>1+1</code></del></p>'),
-        (
-            '<abbr title="for example">_e.g._</abbr>',
-            '<p><span html-tag="abbr" title="for example"><emphasis>e.g.</emphasis></span></p>',
+        (  # Error: malformed HTML: end tag mismatch
+            "<u>underline</u> and <sub>**sub**</sub>",
+            "<p><u>underline</u> and <sub><strong>sub</strong></sub></p>",
         ),
-        # explicitly ignored tags are dropped toghether with their content:
-        ("<button>`Stop`</button>", "<p />"),
-        # unknown tags are ignored but their content is passed on:
-        ("<custom>`1+1`</custom>", "<p><code>1+1</code></p>"),
-        # TODO: Markdown markup and empty tags: fix paragraphs <p>:
-        # <br> is an inline tag: do not break the paragraph!
-        ("one<br>_two_", "<div><p>one<line-break /><emphasis>two</emphasis></p></div>"),
-        ("one<br />_two_", "<div><p>one<line-break /><emphasis>two</emphasis</p>></div>"),
-        ("one<br>\n_two_", "<div><p>one<line-break /><emphasis>two</emphasis></p></div>"),
-        ("_one_<br>two", "<div><p><emphasis>one</emphasis><line-break />two</p></div>"),
-        ("_one_<br>\ntwo", "<div><p><emphasis>one</emphasis><line-break />\ntwo</p></div>"),
+        (
+            "<u>**underline**</u> and <sub>**sub**</sub>",
+            "<p><u><strong>underline</strong></u> and <sub><strong>sub</strong></sub></p>",
+        ),
     ]
 
     @pytest.mark.xfail
