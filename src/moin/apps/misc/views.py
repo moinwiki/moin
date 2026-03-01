@@ -11,13 +11,11 @@ Miscellaneous views that do not fit into another category.
 import time
 
 from flask import Response
-from flask import current_app as app
-from flask import g as flaskg
 
 from whoosh.query import Term, Or, And
 
+from moin import current_app, flaskg
 from moin.apps.misc import misc
-
 from moin.constants.keys import MTIME, NAME_EXACT, NAMESPACE, NAME
 from moin.themes import render_template
 from moin.utils.names import CompositeName
@@ -37,8 +35,8 @@ def sitemap():
     # get names for root urls
     root_fqnames = []
     root_mapping = [
-        (namespace, app.cfg.root_mapping.get(namespace, app.cfg.default_root))
-        for namespace, _ in app.cfg.namespace_mapping
+        (namespace, current_app.cfg.root_mapping.get(namespace, current_app.cfg.default_root))
+        for namespace, _ in current_app.cfg.namespace_mapping
     ]
     query = Or([And([Term(NAME_EXACT, root), Term(NAMESPACE, namespace)]) for namespace, root in root_mapping])
     for rev in flaskg.storage.search(q=query):

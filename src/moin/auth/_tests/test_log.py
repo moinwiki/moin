@@ -7,12 +7,9 @@ Tests for auth.log.
 
 import pytest
 
-from flask import g as flaskg
-
+from moin import flaskg, log
 from moin.auth.log import AuthLog
 from moin.constants.misc import ANON
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

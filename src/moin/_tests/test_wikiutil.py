@@ -10,10 +10,9 @@ from __future__ import annotations
 
 import pytest
 
-from flask import current_app as app
+from moin import current_app
 from moin import wikiutil
-from moin.wikiutil import WikiLinkAnalyzer, WikiLinkInfo
-from typing import cast
+from moin.wikiutil import WikiLinkInfo
 
 
 class TestAnchorNames:
@@ -154,7 +153,7 @@ def test_file_headers():
     ],
 )
 def test_classify_link(url, expected):
-    link_analyzer = cast(WikiLinkAnalyzer, app.link_analyzer)
+    link_analyzer = current_app.link_analyzer
     result = link_analyzer(url)
     assert result == expected
 

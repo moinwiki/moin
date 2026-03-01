@@ -17,19 +17,19 @@ some specific user). User instances are used to access the user profile of
 some specific user (name, password, email, bookmark, trail, settings, ...).
 """
 
+from __future__ import annotations
+
 import copy
 import hashlib
 from io import BytesIO
 
 from babel import parse_locale
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import session, url_for, render_template
 from jinja2.runtime import Undefined
 from urllib.parse import urlencode
 
-from moin import wikiutil
+from moin import current_app, flaskg, wikiutil
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
@@ -101,7 +101,7 @@ space between words. Group page name is not allowed.""").format(name=username)
     # XXX currently we just support creating with 1 name:
     theuser.profile[NAME] = [str(username)]
 
-    pw_checker = app.cfg.password_checker
+    pw_checker = current_app.cfg.password_checker
     if validate and pw_checker:
         pw_error = pw_checker(username, password)
         if pw_error:
@@ -114,7 +114,7 @@ space between words. Group page name is not allowed.""").format(name=username)
         return _("Please provide your email address. If you lose your" " login information, you can get it by email.")
 
     # Email should be unique - see also MoinMoin/scripts/accounts/moin_usercheck.py
-    if validate and email and app.cfg.user_email_unique:
+    if validate and email and current_app.cfg.user_email_unique:
         if search_users(email=email):
             return _("This email already belongs to somebody else.")
 
@@ -133,7 +133,7 @@ space between words. Group page name is not allowed.""").format(name=username)
 
 
 def get_user_backend():
-    return app.storage
+    return current_app.storage
 
 
 def update_user_query(**q):
@@ -167,7 +167,7 @@ def get_editor(userid, addr, hostname):
     'interwiki' (Interwiki homepage) or 'anon' ('').
     """
     result = "anon", ""
-    if app.cfg.show_hosts and hostname:
+    if current_app.cfg.show_hosts and hostname:
         result = "ip", hostname
     if userid:
         userdata = User(userid)
@@ -244,7 +244,7 @@ class UserProfile:
     """A User Profile"""
 
     def __init__(self, **q):
-        self._defaults = copy.deepcopy(app.cfg.user_defaults)
+        self._defaults = copy.deepcopy(current_app.cfg.user_defaults)
         self._meta = {ITEMTYPE: ITEMTYPE_USERPROFILE}
         self._stored = False
         self._changed = False
@@ -337,7 +337,7 @@ class User:
                                First tuple element was used for authentication.
         """
         self.profile = UserProfile()
-        self._cfg = app.cfg
+        self._cfg = current_app.cfg
         self.valid = False
         self.trusted = trusted
         self.auth_method = kw.get("auth_method", "internal")
@@ -409,11 +409,11 @@ class User:
         return lang
 
     def avatar(self, size=30):
-        if not app.cfg.user_use_gravatar:
+        if not current_app.cfg.user_use_gravatar:
             return None
 
-        if app.cfg.user_gravatar_default_img:
-            default = app.cfg.user_gravatar_default_img
+        if current_app.cfg.user_gravatar_default_img:
+            default = current_app.cfg.user_gravatar_default_img
         else:
             default = "blank"
 
@@ -869,7 +869,7 @@ class User:
                 )
 
             # Using Jinja2 Template.render, as there is no context for Flask templates in CLI calls
-            template = app.jinja_env.get_template("mail/password_recovery.txt")
+            template = current_app.jinja_env.get_template("mail/password_recovery.txt")
             text = template.render(link=link)
 
         mailok, msg = sendmail.sendmail(subject, text, to=[self.email], mail_from=self._cfg.mail_from)

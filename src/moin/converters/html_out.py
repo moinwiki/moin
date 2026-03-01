@@ -14,13 +14,11 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from flask import current_app as app
-from flask import g as flaskg
 from emeraldtree import ElementTree as ET
 from urllib.parse import urlencode
 from babel import Locale
 
-from moin import log, wikiutil
+from moin import current_app, flaskg, log, wikiutil
 from moin.i18n import _
 from moin.items import Item
 from moin.utils.iri import Iri
@@ -45,7 +43,7 @@ def style_attr_filter(style):
     """
     If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
     """
-    if app.cfg.allow_style_attributes:
+    if current_app.cfg.allow_style_attributes:
         s = "".join(style.strip().lower().split())
         if any(x in s for x in SUSPECT):
             return " /*style suppressed, failed test for suspect strings*/ "
@@ -78,7 +76,7 @@ def mark_item_as_transclusion(elem, href_or_item):
         elif hasattr(flaskg.user, LANGUAGE):
             elem.attrib[html.lang] = flaskg.user.language
         else:
-            elem.attrib[html.lang] = app.cfg.language_default
+            elem.attrib[html.lang] = current_app.cfg.language_default
         elem.attrib[html.dir] = Locale(elem.attrib[html.lang]).text_direction
     else:  # isinstance(href_or_item, Iri)
         href = href_or_item

@@ -15,9 +15,7 @@ from typing import ParamSpec, TypeVar
 from collections.abc import Callable
 from functools import wraps, partial
 
-from flask import g as flaskg
-
-from moin import log
+from moin import flaskg, log
 
 logging = log.getLogger(__name__)
 
@@ -57,6 +55,23 @@ class Clock:
     def delta(self, timer):
         times = self.timers.get(timer)
         return time.time() - times[0] if times is not None else None
+
+    def timeit(self, timer, comment=""):
+
+        class TimeIt:
+            def __init__(self, clock, timer, comment):
+                self.clock = clock
+                self.timer = timer
+                self.comment = comment
+
+            def __enter__(self):
+                self.clock.start(self.timer)
+                return self
+
+            def __exit__(self, exc_type, exc_value, traceback):
+                self.clock.stop(self.timer, self.comment)
+
+        return TimeIt(self, timer, comment)
 
     def __del__(self):
         if self.timers:

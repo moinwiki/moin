@@ -7,10 +7,9 @@ MoinMoin - tests for moin.utils.notifications.
 
 from io import BytesIO
 
-from flask import g as flaskg
-from flask import current_app as app
 from flask import url_for
 
+from moin import current_app, flaskg
 from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, NAME, PARENTID
 from moin.items import Item
 from moin.storage.middleware import indexing as msmi
@@ -45,55 +44,55 @@ class TestNotifications:
     def test_get_content_diff(self):
         item = self.imw[self.item_name]
         rev1 = self.store_revision(item, b"x", contenttype="text/plain;charset=utf-8")
-        notification = Notification(app, self.fqname, ACTION_SAVE, None, None, rev1.data, rev1.meta)
+        notification = Notification(current_app, self.fqname, ACTION_SAVE, None, None, rev1.data, rev1.meta)
         assert notification.get_content_diff() == ["+ x"]
         rev1.data.seek(0, 0)
 
         rev2 = self.store_revision(item, b"xx", contenttype="text/plain;charset=utf-8")
-        notification = Notification(app, self.fqname, ACTION_SAVE, rev1.data, rev1.meta, rev2.data, rev2.meta)
+        notification = Notification(current_app, self.fqname, ACTION_SAVE, rev1.data, rev1.meta, rev2.data, rev2.meta)
         assert notification.get_content_diff() == ["- x", "+ xx"]
         rev2.data.seek(0, 0)
 
-        notification = Notification(app, self.fqname, ACTION_TRASH, rev2.data, rev2.meta, None, None)
+        notification = Notification(current_app, self.fqname, ACTION_TRASH, rev2.data, rev2.meta, None, None)
         assert notification.get_content_diff() == ["- xx"]
         rev2.data.seek(0, 0)
 
         item = Item.create(self.item_name)
-        notification = Notification(app, self.fqname, DESTROY_REV, rev2.data, rev2.meta, None, None)
+        notification = Notification(current_app, self.fqname, DESTROY_REV, rev2.data, rev2.meta, None, None)
         assert notification.get_content_diff() == ["- xx"]
         rev2.data.seek(0, 0)
 
         item = Item.create(self.item_name)
-        notification = Notification(app, self.fqname, DESTROY_ALL, rev2.data, rev2.meta, None, None)
+        notification = Notification(current_app, self.fqname, DESTROY_ALL, rev2.data, rev2.meta, None, None)
         assert notification.get_content_diff() == ["- xx"]
 
     def test_get_meta_diff(self):
         item = self.imw[self.item_name]
         rev1 = self.store_revision(item, b"x")
-        notification = Notification(app, self.fqname, ACTION_SAVE, None, None, rev1.data, rev1.meta)
+        notification = Notification(current_app, self.fqname, ACTION_SAVE, None, None, rev1.data, rev1.meta)
         assert notification.get_meta_diff() == dict_diff(dict(), rev1.meta._meta)
 
         rev2 = self.store_revision(item, b"xx")
-        notification = Notification(app, self.fqname, ACTION_SAVE, rev1.data, rev1.meta, rev2.data, rev2.meta)
+        notification = Notification(current_app, self.fqname, ACTION_SAVE, rev1.data, rev1.meta, rev2.data, rev2.meta)
         assert notification.get_meta_diff() == dict_diff(rev1.meta._meta, rev2.meta._meta)
 
         actions = [DESTROY_REV, DESTROY_ALL, ACTION_TRASH]
         for action in actions:
-            notification = Notification(app, self.fqname, action, rev2.data, rev2.meta, rev1.data, rev1.meta)
+            notification = Notification(current_app, self.fqname, action, rev2.data, rev2.meta, rev1.data, rev1.meta)
             assert notification.get_meta_diff() == dict_diff(rev2.meta._meta, dict())
 
     def test_generate_diff_url(self):
         domain = "http://test.com"
-        notification = Notification(app, self.fqname, DESTROY_REV, None, None, None, None)
+        notification = Notification(current_app, self.fqname, DESTROY_REV, None, None, None, None)
         assert notification.generate_diff_url(domain) == ""
 
         item = self.imw[self.item_name]
         rev1 = self.store_revision(item, b"x")
-        notification = Notification(app, self.fqname, DESTROY_REV, rev1.data, rev1.meta, None, None)
+        notification = Notification(current_app, self.fqname, DESTROY_REV, rev1.data, rev1.meta, None, None)
         assert notification.generate_diff_url(domain) == ""
 
         rev2 = self.store_revision(item, b"xx")
-        notification = Notification(app, self.fqname, DESTROY_REV, rev1.data, rev1.meta, rev2.data, rev2.meta)
+        notification = Notification(current_app, self.fqname, DESTROY_REV, rev1.data, rev1.meta, rev2.data, rev2.meta)
         assert notification.generate_diff_url(domain) == "{}{}".format(
             domain, url_for("frontend.diff", item_name=self.item_name, rev1=rev1.revid, rev2=rev2.revid)
         )

@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from flask import g as flaskg
+    from moin import flaskg
 except ImportError:
     # in case converters become an independent package
     flaskg = None

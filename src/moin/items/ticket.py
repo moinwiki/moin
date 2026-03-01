@@ -44,10 +44,10 @@ import time
 import datetime
 
 from flask import request, abort, redirect, url_for
-from flask import g as flaskg
 
 from whoosh.query import Term, And
 
+from moin import flaskg
 from moin.i18n import L_
 from moin.themes import render_template
 from moin.forms import (

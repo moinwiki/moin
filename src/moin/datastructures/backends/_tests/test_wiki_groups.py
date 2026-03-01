@@ -11,14 +11,13 @@ MoinMoin - moin.datastructures.backends.wiki_groups tests.
 
 import pytest
 
-from flask import current_app as app
-from flask import g as flaskg
-
-from moin._tests import become_trusted, create_random_string_list, update_item
+from moin import current_app, flaskg
 from moin.constants.keys import NAME, USERGROUP
 from moin.datastructures.backends._tests import GroupsBackendTest
 from moin.datastructures import GroupDoesNotExistError
 from moin.security import AccessControlList
+
+from moin._tests import become_trusted, create_random_string_list, update_item
 
 DATA = "This is a group item"
 
@@ -93,7 +92,7 @@ class TestWikiGroupBackend(GroupsBackendTest):
         update_item("NewGroup", {USERGROUP: ["ExampleUser"]}, DATA)
 
         acl_rights = ["NewGroup:read,write"]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         has_rights_before = acl.may("AnotherUser", "read")
 

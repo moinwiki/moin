@@ -11,10 +11,9 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
-from flask import current_app as app
-
 from emeraldtree import ElementTree as ET
 
+from moin import current_app, log
 from moin.utils import plugins
 from moin.i18n import _
 from moin.utils import iri
@@ -23,8 +22,6 @@ from moin.utils.tree import moin_page
 from moin.utils.plugins import PluginMissingError
 
 from . import default_registry
-
-from moin import log
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -58,7 +55,7 @@ class Converter:
         elem_error = moin_page.error()
 
         try:
-            cls = plugins.importPlugin(app.cfg, "macros", name, function="Macro")
+            cls = plugins.importPlugin(current_app.cfg, "macros", name, function="Macro")
             macro = cls()
             ret = macro((), args, page, alt, context_block)
             elem_body.append(ret)

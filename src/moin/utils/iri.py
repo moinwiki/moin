@@ -9,10 +9,11 @@ Implements the generic IRI form as defined in RFC 3987.
 
 from __future__ import annotations
 
+from typing import Any
+
 import codecs
 import re
 from moin.utils.pysupport import AutoNe
-from typing import Any
 
 
 def _iriquote_replace(exc):

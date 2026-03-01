@@ -13,7 +13,7 @@ recognize it as a group. This default pattern can be changed (e.g., for non-Engl
 see HelpOnConfiguration.
 """
 
-from flask import g as flaskg
+from moin import flaskg
 
 from moin.constants.keys import CURRENT, USERGROUP
 from moin.datastructures.backends import GreedyGroup, BaseGroupsBackend, GroupDoesNotExistError
@@ -37,7 +37,7 @@ class WikiGroups(BaseGroupsBackend):
 
     def __iter__(self):
         """
-        To find group pages, app.cfg.cache.item_group_regexact pattern is used.
+        To find group pages, current_app.cfg.cache.item_group_regexact pattern is used.
         """
         # TODO: use whoosh to search for group_regex matching items
         item_list = [

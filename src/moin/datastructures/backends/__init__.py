@@ -7,8 +7,7 @@ MoinMoin - base classes for data structures.
 
 from collections import UserDict
 
-from flask import current_app as app
-from flask import g as flaskg
+from moin import current_app, flaskg
 
 
 class GroupDoesNotExistError(Exception):
@@ -53,7 +52,7 @@ class BaseGroupsBackend:
     """
 
     def __init__(self):
-        self.item_group_regex = app.cfg.cache.item_group_regexact
+        self.item_group_regex = current_app.cfg.cache.item_group_regexact
 
     def is_group_name(self, member):
         return self.item_group_regex.match(member)
@@ -285,7 +284,7 @@ class BaseDict(UserDict):
 class BaseDictsBackend:
 
     def __init__(self):
-        self.item_dict_regex = app.cfg.cache.item_dict_regexact
+        self.item_dict_regex = current_app.cfg.cache.item_dict_regexact
 
     def is_dict_name(self, name):
         return self.item_dict_regex.match(name)

@@ -11,8 +11,7 @@ import datetime
 import json
 from calendar import timegm
 
-from flask import current_app as app
-
+from moin import current_app
 from moin.forms import DateTimeUNIX, JSON, Names
 from moin.utils.names import CompositeName
 from moin.items import Item
@@ -60,7 +59,11 @@ def test_validjson():
 
     Does not apply to the user settings form.
     """
-    app.cfg.namespace_mapping = [("", "default_backend"), ("ns1", "default_backend"), ("users", "other_backend")]
+    current_app.cfg.namespace_mapping = [
+        ("", "default_backend"),
+        ("ns1", "default_backend"),
+        ("users", "other_backend"),
+    ]
     item = Item.create("users/existingname")
     meta = {NAMESPACE: "users", CONTENTTYPE: "text/plain;charset=utf-8"}
     become_trusted()

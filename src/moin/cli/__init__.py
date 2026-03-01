@@ -12,12 +12,11 @@ import sys
 
 from flask.cli import FlaskGroup
 
+from moin import log
 from moin.app import create_app
 from moin.cli.maint import create_instance, index, modify_item, set_meta, serialization, reduce_revisions, dump_html
 from moin.cli.account import create, disable, resetpw
 from moin.cli.migration.moin19 import import19
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

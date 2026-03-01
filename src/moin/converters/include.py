@@ -96,23 +96,20 @@ from emeraldtree import ElementTree as ET
 import re
 import copy
 
-from flask import g as flaskg
-
 from whoosh.query import Regex
 
+from moin import flaskg, log
 from moin.constants.keys import NAME_EXACT
+from moin.converters.html_out import mark_item_as_transclusion, Attributes
+from moin.i18n import _
 from moin.items import Item
 from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
 from moin.utils.tree import html, moin_page, xinclude, xlink
 from moin.utils.mime import type_moin_document
-from moin.converters.html_out import mark_item_as_transclusion, Attributes
-from moin.i18n import _
 
 from . import default_registry
 from ._args import Arguments
-
-from moin import log
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments

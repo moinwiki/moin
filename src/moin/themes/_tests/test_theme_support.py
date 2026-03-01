@@ -3,12 +3,11 @@
 
 import pytest
 
-from flask import current_app as app
-from flask import g as flaskg
-
-from moin._tests import wikiconfig
+from moin import current_app, flaskg
 from moin.themes import ThemeSupport
 from moin.user import User
+
+from moin._tests import wikiconfig
 
 
 @pytest.fixture
@@ -29,7 +28,7 @@ def cfg():
 
 @pytest.fixture
 def theme_supp():
-    return ThemeSupport(app.cfg)
+    return ThemeSupport(current_app.cfg)
 
 
 @pytest.mark.usefixtures("_req_ctx", "_test_user")

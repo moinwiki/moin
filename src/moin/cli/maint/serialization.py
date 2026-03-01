@@ -10,14 +10,12 @@ MoinMoin - CLI commands to serialize and deserialize backends.
 import sys
 import click
 
-from flask import current_app as app
 from flask.cli import FlaskGroup
 
+from moin import current_app, log
 from moin.storage.middleware.serialization import serialize, deserialize
 from moin.app import create_app
 from moin.cli._util import get_backends, drop_and_recreate_index
-
-from moin import log
 
 logging = log.getLogger(__name__)
 
@@ -98,7 +96,7 @@ def Serialize(file=None, backends=None, all_backends=False):
 def Deserialize(file=None, new_ns=None, old_ns=None, kill_ns=None):
     logging.info("Load backup started")
     with open_file(file, "rb") as f:
-        deserialize(f, app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
+        deserialize(f, current_app.storage.backend, new_ns=new_ns, old_ns=old_ns, kill_ns=kill_ns)
     logging.info("Rebuilding the index ...")
-    drop_and_recreate_index(app.storage)
+    drop_and_recreate_index(current_app.storage)
     logging.info("Load Backup finished.")

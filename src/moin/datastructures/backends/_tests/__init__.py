@@ -12,9 +12,7 @@ import pytest
 
 from pytest import raises
 
-from flask import current_app as app
-from flask import g as flaskg
-
+from moin import current_app, flaskg
 from moin.security import AccessControlList
 from moin.datastructures import GroupDoesNotExistError
 
@@ -95,7 +93,7 @@ class GroupsBackendTest:
         Check users who have rights.
         """
         acl_rights = ["AdminGroup:admin,read,write"]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         for user in self.expanded_groups["AdminGroup"]:
             for permission in ["read", "write", "admin"]:
@@ -109,7 +107,7 @@ class GroupsBackendTest:
         Check a user who does not have rights.
         """
         acl_rights = ["AdminGroup:read,write"]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         assert "SomeUser" not in flaskg.groups["AdminGroup"]
         for permission in ["read", "write"]:
@@ -122,7 +120,7 @@ class GroupsBackendTest:
 
     def test_backend_acl_with_all(self):
         acl_rights = ["EditorGroup:read,write,admin All:read"]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         for member in self.expanded_groups["EditorGroup"]:
             for permission in ["read", "write", "admin"]:
@@ -136,7 +134,7 @@ class GroupsBackendTest:
         assert "NotExistingGroup" not in flaskg.groups
 
         acl_rights = ["NotExistingGroup:read,write,admin All:read"]
-        acl = AccessControlList(acl_rights, valid=app.cfg.acl_rights_contents)
+        acl = AccessControlList(acl_rights, valid=current_app.cfg.acl_rights_contents)
 
         assert not acl.may("Someone", "write")
 

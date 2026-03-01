@@ -12,7 +12,7 @@ Helpers for rendering themed templates and UI elements.
 
 from __future__ import annotations
 
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import os
 import urllib.request
@@ -20,13 +20,12 @@ import urllib.parse
 
 from json import dumps
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import url_for, request, session, flash
 from flask_theme import get_theme, render_theme_template
 
 from babel import Locale
 
+from moin import current_app, flaskg, log
 from moin.i18n import _, L_
 from moin import wikiutil
 from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
@@ -41,11 +40,8 @@ from moin.utils.mime import Type
 from moin.utils import show_time
 from moin.utils.names import CompositeName, get_fqname, parent_names, split_fqname
 
-from moin import log
-
 if TYPE_CHECKING:
     from moin.config import WikiConfigProtocol
-    from moin.storage.middleware.protecting import ProtectingMiddleware
 
 logging = log.getLogger(__name__)
 
@@ -56,12 +52,14 @@ def get_current_theme():
     if u and u.theme_name:
         theme_name = u.theme_name
     else:
-        theme_name = app.cfg.theme_default
+        theme_name = current_app.cfg.theme_default
     try:
         return get_theme(theme_name)
     except KeyError:
-        logging.warning(f"Theme {theme_name!r} was not found; using default of {app.cfg.theme_default!r} instead.")
-        theme_name = app.cfg.theme_default
+        logging.warning(
+            f"Theme {theme_name!r} was not found; using default of {current_app.cfg.theme_default!r} instead."
+        )
+        theme_name = current_app.cfg.theme_default
         return get_theme(theme_name)
 
 
@@ -93,8 +91,8 @@ class ThemeSupport:
 
     def __init__(self, cfg: WikiConfigProtocol):
         self.cfg = cfg
-        self.user = cast(User, flaskg.user)
-        self.storage = cast("ProtectingMiddleware", flaskg.storage)
+        self.user = flaskg.user
+        self.storage = flaskg.storage
         self.ui_lang = cfg.language_default
         self.ui_dir = cfg.content_dir
         self.user_lang = flaskg.user.language or self.ui_lang
@@ -530,7 +528,7 @@ class ThemeSupport:
         :returns: whether item pointed to by the link exists or not
         """
         item_name = itemlink
-        info = app.link_analyzer(item_name)
+        info = current_app.link_analyzer(item_name)
         if not info.is_valid:
             return False
         if info.is_global:
@@ -573,7 +571,7 @@ def get_editor_info(meta, external=False):
     name = None  # author name
     uri = None  # author homepage uri
     email = None  # pure email address of author
-    if app.cfg.show_hosts and addr:
+    if current_app.cfg.show_hosts and addr:
         # only tell ip / hostname if show_hosts is True
         if hostname:
             text = hostname[:15]  # 15 = len(ipaddr)
@@ -599,7 +597,7 @@ def get_editor_info(meta, external=False):
             email = u.email
             css = "editor mail"
         else:
-            homewiki = app.cfg.user_homewiki
+            homewiki = current_app.cfg.user_homewiki
             if is_local_wiki(homewiki):
                 css = "editor homepage local"
             else:
@@ -780,5 +778,5 @@ def setup_jinja_env(jinja_env):
     )
 
     # if Jinja whitespace control options are turned on, it becomes obvious why the default is off
-    # app.jinja_env.trim_blocks = True
-    # app.jinja_env.lstrip_blocks = True
+    # current_app.jinja_env.trim_blocks = True
+    # current_app.jinja_env.lstrip_blocks = True

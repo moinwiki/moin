@@ -17,8 +17,6 @@ from io import BytesIO
 import click
 
 from flask.cli import FlaskGroup
-from flask import current_app as app
-from flask import g as flaskg
 
 from ._utils19 import unquoteWikiname, split_body
 from ._logfile19 import LogFile
@@ -31,6 +29,7 @@ from .macros import MonthCalendar  # noqa
 from .macros import FullSearch  # noqa
 from .macros import PageList  # noqa
 
+from moin import current_app, flaskg, log
 from moin.app import create_app
 from moin.cli._util import drop_and_recreate_index
 from moin.constants.keys import *  # noqa
@@ -48,8 +47,6 @@ from moin.utils.mime import type_moin_document
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
 from moin.wikiutil import ParentItemName, AllParentNames
-
-from moin import log
 
 logging = log.getLogger(__name__)
 
@@ -150,12 +147,12 @@ def add_missing_parents(missing_parents):
     """Add all missing parent items with a Moin item that only contains a comment."""
     for namespace, name in sorted(missing_parents):
         query = {NAME_EXACT: name, NAMESPACE: namespace}
-        item = app.storage.get_item(**query)
+        item = current_app.storage.get_item(**query)
         item.meta[COMMENT] = "created by import19"
         item.meta[CONTENTTYPE] = "text/x.moin.wiki;charset=utf-8"
         item.meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         item.meta[REV_NUMBER] = 1
-        item.meta[LANGUAGE] = app.cfg.language_default
+        item.meta[LANGUAGE] = current_app.cfg.language_default
         data = b"## created by import19"
         item.store_revision(item.meta, BytesIO(data), overwrite=False)
         logging.debug(f"missing parent added for namespace: {namespace} name: {name}")
@@ -205,7 +202,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
     flaskg.add_lineno_attr = False
     flaskg.item_name2id = {}
     userid_old2new = {}
-    indexer = app.storage
+    indexer = current_app.storage
     backend = indexer.backend  # backend without indexing
     users_itemlist = set()
     global custom_namespaces
@@ -333,7 +330,7 @@ def ImportMoin19(data_dir=None, markup_out=None, namespace=None, procs=None, lim
     logging.info("PHASE5: Rebuilding the index ...")
     msg = ""
     try:
-        drop_and_recreate_index(app.storage, procs=procs, limitmb=limitmb, multisegment=True)
+        drop_and_recreate_index(current_app.storage, procs=procs, limitmb=limitmb, multisegment=True)
     except Exception:
         logging.exception("Index build failed. You can try to destroy, create and rebuild the index manually")
         msg = " with errors"
@@ -578,7 +575,7 @@ class PageRevision:
         meta[NAMESPACE] = target_namespace
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         if LANGUAGE not in meta:
-            meta[LANGUAGE] = app.cfg.language_default
+            meta[LANGUAGE] = current_app.cfg.language_default
         if meta[NAME][0].endswith("Template"):
             if TAGS in meta:
                 meta[TAGS].append(TEMPLATE)
@@ -594,7 +591,7 @@ class PageRevision:
         for custom_namespace in custom_namespaces:
             if meta[NAME][0] == custom_namespace:
                 # cannot have itemname == namespace_name, so we rename. XXX may create an item with duplicate name
-                new_name = app.cfg.root_mapping.get(meta[NAME][0], app.cfg.default_root)
+                new_name = current_app.cfg.root_mapping.get(meta[NAME][0], current_app.cfg.default_root)
                 logging.warning(f"Converting {meta[NAME][0]} to namespace:homepage {custom_namespace}:{new_name}")
                 meta[NAMESPACE] = custom_namespace
                 meta[NAME] = [new_name]
@@ -777,7 +774,7 @@ class AttachmentRevision:
         meta[REV_NUMBER] = 1
         meta[ITEMTYPE] = ITEMTYPE_DEFAULT
         if LANGUAGE not in meta:
-            meta[LANGUAGE] = app.cfg.language_default
+            meta[LANGUAGE] = current_app.cfg.language_default
         for attr in (COMMENT, SUMMARY):
             meta[attr] = ""
         for attr in (EXTERNALLINKS, ITEMLINKS, ITEMTRANSCLUSIONS, NAME_OLD, TAGS):
@@ -1115,11 +1112,11 @@ def namespaces():
     """
     Return a list of custom namespaces defined in wikiconfig.
 
-    if create_simple_mapping is used, app.config.namespaces is not defined.
+    if create_simple_mapping is used, current_app.config.namespaces is not defined.
     """
     blacklist = ["default", "userprofiles", "users", ""]
     try:
-        custom_namespaces = [x.rstrip("/") for x in app.cfg.namespaces.keys() if x not in blacklist]
+        custom_namespaces = [x.rstrip("/") for x in current_app.cfg.namespaces.keys() if x not in blacklist]
         custom_namespaces.sort(key=len, reverse=True)
     except AttributeError:
         return []

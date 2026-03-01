@@ -9,9 +9,9 @@ import re
 from collections import namedtuple
 from itertools import chain
 
-from flask import g as flaskg
-
 from whoosh.query import Term, Or
+
+from moin import flaskg, log
 
 from moin.constants.keys import (
     DEFAULT_LOCALE,
@@ -29,8 +29,6 @@ from moin.constants.keys import (
 )
 
 from moin.utils.names import CompositeName
-
-from moin import log
 
 logging = log.getLogger(__name__)
 

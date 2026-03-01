@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from flask import current_app as app
+from moin import current_app
 from moin.constants.keys import FIELDS, ITEMID, NAME, NAME_EXACT, NAMESPACE
 from moin.storage.types import MetaData
 
@@ -46,7 +46,9 @@ class CompositeName(NamedTuple):
         """
         Determine the root item of the namespace of this composite name and return it as new CompositeName instance.
         """
-        return CompositeName(self.namespace, NAME_EXACT, app.cfg.root_mapping.get(self.namespace, app.cfg.default_root))
+        return CompositeName(
+            self.namespace, NAME_EXACT, current_app.cfg.root_mapping.get(self.namespace, current_app.cfg.default_root)
+        )
 
 
 def get_fqname(item_name: str, field: str, namespace: str) -> str:
@@ -130,7 +132,7 @@ def split_fqname(url: str) -> CompositeName:
     """
     if not url:
         return CompositeName("", NAME_EXACT, "")
-    namespaces = {namespace.rstrip("/") for namespace, _ in app.cfg.namespace_mapping}
+    namespaces = {namespace.rstrip("/") for namespace, _ in current_app.cfg.namespace_mapping}
     namespace, url = split_namespace(namespaces, url)
     field = NAME_EXACT
     if url.startswith("@"):

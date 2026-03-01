@@ -3,9 +3,9 @@
 
 import pytz
 
-from flask import g as flaskg
 import flask_babel
 
+from moin import flaskg
 from moin.i18n import _
 from moin import i18n
 from moin.utils import utcfromtimestamp, utcnow

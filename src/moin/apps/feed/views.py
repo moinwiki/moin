@@ -10,13 +10,12 @@ This module provides feed endpoints (e.g., Atom).
 """
 
 from flask import request, Response
-from flask import current_app as app
-from flask import g as flaskg
 
 from feedgen.feed import FeedGenerator
 
 from whoosh.query import Term, And, Every
 
+from moin import current_app, flaskg, log
 from moin.i18n import _
 from moin.apps.feed import feed
 from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
@@ -26,8 +25,6 @@ from moin.utils.crypto import cache_key
 from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
 from moin.utils.names import split_fqname
-
-from moin import log
 
 logging = log.getLogger(__name__)
 
@@ -51,15 +48,15 @@ def atom(item_name):
     if revs:
         rev = revs[0]
         cid = cache_key(usage="atom", revid=rev.revid, item_name=item_name)
-        content = app.cache.get(cid)
+        content = current_app.cache.get(cid)
     else:
         content = None
         cid = None
     if content is None:
         if not item_name:
-            title = f"{app.cfg.sitename}"
+            title = f"{current_app.cfg.sitename}"
         else:
-            title = f"{app.cfg.sitename} - {fqname}"
+            title = f"{current_app.cfg.sitename} - {fqname}"
         feed = FeedGenerator()
         feed.id(request.url)
         feed.title(title)
@@ -122,5 +119,5 @@ def atom(item_name):
         content.insert(1, render_template("atom.html", get="xml"))
         content = "\n".join(content)
         if cid is not None:
-            app.cache.set(cid, content)
+            current_app.cache.set(cid, content)
     return Response(content, content_type="application/atom+xml")

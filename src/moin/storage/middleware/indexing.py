@@ -62,8 +62,6 @@ import time
 from collections.abc import Mapping
 
 from flask import request
-from flask import g as flaskg
-from flask import current_app as app
 
 from whoosh.fields import Schema, TEXT, ID, NUMERIC, DATETIME, KEYWORD, BOOLEAN, NGRAMWORDS
 from whoosh.writing import AsyncWriter
@@ -72,7 +70,7 @@ from whoosh.qparser import WordNode
 from whoosh.query import Every, Prefix, Term
 from whoosh.sorting import FieldFacet
 
-from moin import log, user
+from moin import current_app, flaskg, log, user
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
 from moin.converters import default_registry
@@ -223,7 +221,7 @@ def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None =
         def tell(self, *args, **kw) -> int:
             return self.data.tell(*args, **kw)
 
-    if meta[CONTENTTYPE] in app.cfg.mimetypes_to_index_as_empty:
+    if meta[CONTENTTYPE] in current_app.cfg.mimetypes_to_index_as_empty:
         logging.debug(f"not indexing content of {meta[NAME]!r} as requested by configuration")
         return ""
 
@@ -1366,7 +1364,7 @@ class Item(PropertiesMixin):
 
         if not overwrite:
             revid = meta.get(REVID)
-            backend_name = dict(app.cfg.namespace_mapping)[meta.get(NAMESPACE, "")]
+            backend_name = dict(current_app.cfg.namespace_mapping)[meta.get(NAMESPACE, "")]
             if revid is not None and (revid in backend or (backend_name, revid) in backend):
                 raise ValueError("need overwrite=True to overwrite existing revisions")
 

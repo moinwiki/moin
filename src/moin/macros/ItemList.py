@@ -65,7 +65,7 @@ Examples:
 
 import re
 from flask import request
-from flask import g as flaskg
+from moin import flaskg
 from moin.i18n import _
 from moin.utils.names import split_fqname
 from moin.macros._base import MacroPageLinkListBase, get_item_names, fail_message

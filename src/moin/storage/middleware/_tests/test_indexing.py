@@ -11,14 +11,16 @@ item might result in revisions having the same mtime value and there is no way t
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from io import BytesIO
 import hashlib
 import pytest
 
 from whoosh.query import Term
 
-from flask import g as flaskg
-
+from moin import flaskg
+from moin.auth import GivenAuth
 from moin.constants.keys import (
     ACL,
     ACTION,
@@ -45,17 +47,12 @@ from moin.constants.keys import (
     PARENTID,
     MTIME,
 )
-
 from moin.constants.namespaces import NAMESPACE_USERS
-
-from moin.utils.names import split_fqname
-
-from moin.auth import GivenAuth
 from moin.storage.middleware.indexing import IndexingMiddleware, Item, Revision
 from moin.storage.middleware.protecting import ProtectedItem, ProtectedRevision, ProtectingMiddleware
-from moin._tests import wikiconfig, update_item
+from moin.utils.names import split_fqname
 
-from typing import cast, TYPE_CHECKING
+from moin._tests import wikiconfig, update_item
 
 
 def dumper(indexer, idx_name):
@@ -72,12 +69,12 @@ class TestIndexingMiddlewareBase:
 
     if TYPE_CHECKING:
 
-        def __init__(self):
+        def __init__(self) -> None:
             self.imw: IndexingMiddleware
 
     @pytest.fixture
     def _imw(self) -> None:
-        self.imw = cast(IndexingMiddleware, flaskg.unprotected_storage)
+        self.imw = flaskg.unprotected_storage
 
     def get_item(self, name: str) -> Item:
         return self.imw[name]
@@ -532,7 +529,7 @@ class TestProtectedIndexingMiddleware:
 
     @pytest.fixture
     def _pmw(self) -> None:
-        self.pmw = cast(ProtectingMiddleware, flaskg.storage)
+        self.pmw = flaskg.storage
 
     def get_item(self, name: str) -> ProtectedItem:
         return self.pmw[name]

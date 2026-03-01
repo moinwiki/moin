@@ -12,8 +12,8 @@ import os.path
 import shutil
 
 import pytest
-from flask import current_app as app
 
+from moin import current_app
 from moin.utils.interwiki import split_interwiki, join_wiki, InterWikiMap, url_for_item, getInterwikiHome
 from moin.utils.names import split_fqname, split_namespace
 from moin._tests import wikiconfig
@@ -129,7 +129,7 @@ class TestInterWiki:
 
     @pytest.mark.usefixtures("_req_ctx")
     def test_split_interwiki(self):
-        app.cfg.namespace_mapping = [
+        current_app.cfg.namespace_mapping = [
             ("", "default_backend"),
             ("ns1/", "default_backend"),
             ("ns1/ns2/", "other_backend"),
@@ -200,7 +200,7 @@ class TestInterWiki:
 
     @pytest.mark.usefixtures("_app_ctx")
     def test_split_fqname(self):
-        app.cfg.namespace_mapping = [
+        current_app.cfg.namespace_mapping = [
             ("", "default_backend"),
             ("ns1/", "default_backend"),
             ("ns1/ns2/", "other_backend"),

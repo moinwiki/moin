@@ -29,8 +29,6 @@ from io import BytesIO, IOBase
 from time import time, strftime
 from operator import attrgetter
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import request, Response, redirect, abort, url_for, flash
 
 from flatland import Form
@@ -40,7 +38,7 @@ from markupsafe import Markup
 
 from whoosh.query import Term, Prefix, And, Or, Not
 
-from moin import log
+from moin import current_app, flaskg, log
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
 from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
@@ -958,7 +956,7 @@ class Item:
         """
         delete this item
         """
-        item_modified.send(app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
+        item_modified.send(current_app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
         ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True, do_subitems=do_subitems, ajax=ajax)
         return ret
 
@@ -983,7 +981,7 @@ class Item:
         messages = []
         destroyed_names = self.names
         action = DESTROY_ALL if destroy_item else DESTROY_REV
-        item_modified.send(app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
+        item_modified.send(current_app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
         close_file(self.rev.data)
         if self.names:
             old_name = self.names if len(self.names) > 1 else self.names[0]
@@ -1170,7 +1168,7 @@ class Item:
         if flaskg.user.language:
             meta[LANGUAGE] = flaskg.user.language
         else:
-            meta[LANGUAGE] = app.cfg.language_default
+            meta[LANGUAGE] = current_app.cfg.language_default
 
         if ACL in meta:
             # we treat this as nothing specified, so fallback to default
@@ -1244,10 +1242,10 @@ class Item:
             return_rev=True,
         )
         if currentrev is None:
-            item_modified.send(app, fqname=fqname, action=action, new_data=data, new_meta=new_meta)
+            item_modified.send(current_app, fqname=fqname, action=action, new_data=data, new_meta=new_meta)
         else:
             item_modified.send(
-                app,
+                current_app,
                 fqname=fqname,
                 action=action,
                 new_data=data,
@@ -1406,7 +1404,7 @@ class Item:
                 if TAGS in rev and rev[TAGS]:
                     mini_meta[TAGS] = rev[TAGS]
                 mini_meta[USERID] = rev.get(USERID, "")
-                mini_meta[ADDRESS] = rev.get(ADDRESS, "") if app.cfg.show_hosts else ""
+                mini_meta[ADDRESS] = rev.get(ADDRESS, "") if current_app.cfg.show_hosts else ""
                 files.append(IndexEntry(relname, fullname_fqname, mini_meta))
         files = sorted(files, key=lambda x: x[1])  # default namespace items are on top
         return dirs, files
@@ -1660,12 +1658,12 @@ class Default(Contentful):
 
         if request.values.get("cancel"):
             edit_utils.delete_draft()
-            if app.cfg.edit_locking_policy == LOCK:
+            if current_app.cfg.edit_locking_policy == LOCK:
                 edit_utils.unlock_item(cancel=True)
             edit_utils.cursor_close()
             return redirect(url_for_item(**self.fqname.split))
 
-        if app.cfg.edit_locking_policy == LOCK:
+        if current_app.cfg.edit_locking_policy == LOCK:
             locked, msg = edit_utils.lock_item()
             if msg:
                 flash(msg, "info")
@@ -1768,7 +1766,7 @@ class Default(Contentful):
                             if original_text == data and not self.meta_changed(item.meta):
                                 flash(_("Nothing changed, nothing saved."), "info")
                                 edit_utils.delete_draft()
-                                if app.cfg.edit_locking_policy == LOCK:
+                                if current_app.cfg.edit_locking_policy == LOCK:
                                     edit_utils.unlock_item(cancel=True)
                                 edit_utils.cursor_close()
                                 return redirect(url_for_item(**self.fqname.split))
@@ -1801,7 +1799,7 @@ class Default(Contentful):
                     else:
                         close_file(self.rev.data)
                         edit_utils.delete_draft()
-                        if app.cfg.edit_locking_policy == LOCK:
+                        if current_app.cfg.edit_locking_policy == LOCK:
                             locked_msg = edit_utils.unlock_item()
                             if locked_msg:
                                 logging.error(f"Item saved but locked by someone else: {self.fqname!r}")
@@ -1847,9 +1845,9 @@ class Default(Contentful):
                             "error",
                         )
 
-        if app.cfg.edit_locking_policy == LOCK:
+        if current_app.cfg.edit_locking_policy == LOCK:
             # we pass lock_duration so javascript can show alert before timer expires
-            lock_duration = app.cfg.edit_lock_time * 60
+            lock_duration = current_app.cfg.edit_lock_time * 60
         else:
             lock_duration = None
         edit_utils.cursor_close()

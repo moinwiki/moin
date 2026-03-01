@@ -15,10 +15,10 @@ import io
 import os
 
 import click
-from flask import current_app as app
-from flask import g as flaskg
 from flask.cli import FlaskGroup
 
+from moin import current_app, flaskg, log
+from moin import help as moin_help
 from moin.app import create_app, before_wiki
 from moin.cli._util import get_backends
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
@@ -38,8 +38,6 @@ from moin.constants.keys import (
 )
 from moin.utils.names import split_fqname
 from moin.items import Item
-
-from moin import log, help as moin_help
 
 logging = log.getLogger(__name__)
 
@@ -83,7 +81,7 @@ def GetItem(name, meta_file, data_file, revid, newline="\n"):
     If this revision has alias names, return a list of all names, else return None.
     """
     fqname = split_fqname(name)
-    item = app.storage.get_item(**fqname.query)
+    item = current_app.storage.get_item(**fqname.query)
     rev = item[revid]
     alias_names = None if len(rev.meta[NAME]) < 2 else rev.meta[NAME]
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
@@ -143,7 +141,7 @@ def PutItem(meta_file, data_file, overwrite: bool):
         meta.pop(DATAID, None)
     query = {ITEMID: meta[ITEMID], NAMESPACE: meta[NAMESPACE]}
     logging.debug(f"query: {str(query)}")
-    item = app.storage.get_item(**query)
+    item = current_app.storage.get_item(**query)
 
     # we want \r\n line endings in data out because \r\n is required in form textareas
     if "charset" in meta[CONTENTTYPE]:
@@ -253,7 +251,7 @@ def _fix_if_bad(bad, meta, data, bad_revids, fix, backend):
             meta.pop(MTIME)  # store_revision adds the current timestamp
         if fix:
             try:
-                item = app.storage.get_item(itemid=meta[ITEMID])
+                item = current_app.storage.get_item(itemid=meta[ITEMID])
                 rev = item.get_revision(meta[REVID])
                 dict(rev.meta)  # force load to validate rev is in index
             except KeyError:
@@ -290,7 +288,7 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                     print(issue)
             _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
         # Skipping checks for userprofiles, as revision numbers and parentids are not used here
-        if backend == app.cfg.backend_mapping[NAMESPACE_USERPROFILES]:
+        if backend == current_app.cfg.backend_mapping[NAMESPACE_USERPROFILES]:
             continue
         # fix bad parentid references and repeated or missing revision numbers
         for item_id, rev_datum in revs.items():
@@ -354,7 +352,7 @@ def LoadWelcome():
     logging.info("Load welcome page started")
     path_to_items = _get_path_to_help("welcome")
     for name in ["Home", "users-Home"]:
-        if app.storage.has_item(name):
+        if current_app.storage.has_item(name):
             logging.warning("Item with name %s exists and will not be overwritten.", name)
         else:
             meta_file = os.path.join(path_to_items, f"{name}.meta")

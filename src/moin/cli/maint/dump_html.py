@@ -35,15 +35,13 @@ import shutil
 import re
 
 import click
-from flask import g as flaskg
-from flask import current_app as app
 from flask.cli import FlaskGroup
 
 from whoosh.query import Every, Regex
 
 from werkzeug.exceptions import Forbidden
 
-from moin import log
+from moin import current_app, flaskg, log
 from moin.app import create_app, before_wiki, setup_user_anon
 from moin.apps.frontend.views import show_item
 from moin.constants.keys import CONTENTTYPE, CURRENT, NAME_EXACT, THEME_NAME, LATEST_REVS
@@ -91,10 +89,10 @@ def cli():
 )
 @click.option("--query", "-q", required=False, default=None, help="Name or regex of items to include")
 def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=None, query=None):
-    with app.test_request_context():
+    with current_app.test_request_context():
         logging.info("Dump HTML started")
         if theme:
-            app.cfg.user_defaults[THEME_NAME] = theme
+            current_app.cfg.user_defaults[THEME_NAME] = theme
         exclude_ns = exclude_ns.split(",") if exclude_ns else []
 
         before_wiki()
@@ -103,7 +101,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         norm = os.path.normpath
         join = os.path.join
 
-        wiki_root = norm(app.cfg.wikiconfig_dir)
+        wiki_root = norm(current_app.cfg.wikiconfig_dir)
         moinmoin = os.path.dirname(log.__file__)  # log is imported from moin -> this is src/moin
         logging.debug("wiki_root dir: %s, moin src dir: %s", wiki_root, moinmoin)
         if "/" in directory:
@@ -113,7 +111,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             html_root = norm(join(wiki_root, directory))
 
         # override ACLs with permission to read all items
-        for _, acls in app.cfg.acl_mapping:
+        for _, acls in current_app.cfg.acl_mapping:
             acls["before"] = "All:read"
 
         # create an empty output directory after deleting any existing directory
@@ -163,7 +161,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
         used_dirs = get_used_dirs(query=q)
         # In the filesystem the item cannot have the same name as the directory.
         # so we append .html to the filename for items in used_dirs.
-        for current_rev in app.storage.search(q, limit=None, sortedby=("namespace", "name")):
+        for current_rev in current_app.storage.search(q, limit=None, sortedby=("namespace", "name")):
 
             if current_rev.namespace in exclude_ns:
                 # we usually do not copy userprofiles, no one can login to a static wiki
@@ -207,7 +205,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
 
             # TODO: fix basic theme
-            rendered = rendered.replace('<a href="">', f'<a href="{app.cfg.default_root}">')
+            rendered = rendered.replace('<a href="">', f'<a href="{current_app.cfg.default_root}">')
 
             # correct links inside document
             for node in used_dirs:
@@ -216,7 +214,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
 
             # copy raw data for all items to output /+get directory;
             # images are required, text items are of marginal/no benefit
-            item = app.storage[current_rev.fqname.fullname]
+            item = current_app.storage[current_rev.fqname.fullname]
             rev = item[CURRENT]
             full_file_name = get_dir + "/" + file_name
             os.makedirs(os.path.dirname(full_file_name), exist_ok=True)
@@ -247,7 +245,7 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
                     except UnicodeEncodeError:
                         print("Saved file named {}".format(filename.encode("ascii", errors="replace")))
 
-            if current_rev.fqname.fullname == app.cfg.default_root:
+            if current_rev.fqname.fullname == current_app.cfg.default_root:
                 # make duplicates of home page that are easy to find in directory list and open with a click
                 for target in [(current_rev.name + ".html"), ("_" + current_rev.name + ".html")]:
                     with open(norm(join(html_root, target)), "wb") as f:
@@ -284,14 +282,14 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
                 page = part1 + start + name_links + div_end + end + part2
             except IndexError:
                 page = home_page
-                print(f"Error: failed to find {end} in item named {app.cfg.default_root}")
+                print(f"Error: failed to find {end} in item named {current_app.cfg.default_root}")
             for target in ["+index", "_+index.html"]:
                 with open(norm(join(html_root, target)), "wb") as f:
                     f.write(page.encode("utf8"))
         else:
             print(
                 'Error: index pages not created because no home page exists, expected an item named "{}".'.format(
-                    app.cfg.default_root
+                    current_app.cfg.default_root
                 )
             )
         logging.info("Dump html complete")

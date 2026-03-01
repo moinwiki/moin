@@ -8,11 +8,10 @@ MoinMoin - Tests for the navigation bar
 
 import pytest
 
-from flask import current_app as app
+from moin import current_app, themes
+from moin.themes import ThemeSupport
 
 from moin._tests import wikiconfig
-from moin.themes import ThemeSupport
-from moin import themes
 
 
 @pytest.mark.usefixtures("_req_ctx")
@@ -26,7 +25,7 @@ class TestNaviBar:
 
     @pytest.fixture
     def theme(self):
-        return ThemeSupport(app.cfg)
+        return ThemeSupport(current_app.cfg)
 
     def test_split_navilink(self, theme):
         tests = [

@@ -14,17 +14,14 @@ Remove all revisions except the latest one from selected items.
 import click
 import io
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Term, And, Regex, Not
 
+from moin import current_app, flaskg, log
 from moin.constants.keys import NAME, NAME_SORT, NAME_EXACT, NAMESPACE, REVID, PARENTID, REV_NUMBER, MTIME
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.app import create_app, before_wiki
-
-from moin import log
 
 logging = log.getLogger(__name__)
 
@@ -60,7 +57,7 @@ def ReduceRevisions(query, namespace, test):
     else:
         q = Not(Term(NAMESPACE, NAMESPACE_USERPROFILES))
 
-    for current_rev in app.storage.search(q, limit=None, sortedby=[NAMESPACE, NAME_SORT]):
+    for current_rev in current_app.storage.search(q, limit=None, sortedby=[NAMESPACE, NAME_SORT]):
 
         current_name = current_rev.meta[NAME]
         current_revid = current_rev.meta[REVID]

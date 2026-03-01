@@ -7,9 +7,7 @@ MoinMoin - tests for our test environment.
 
 from io import BytesIO
 
-from flask import current_app as app
-from flask import g as flaskg
-
+from moin import current_app, flaskg
 from moin.constants.keys import NAME, CONTENTTYPE
 
 from moin._tests import wikiconfig
@@ -26,7 +24,7 @@ class TestStorageEnvironWithoutConfig:
     def test_fresh_backends(self):
         assert self.class_level_value == 123
 
-        assert isinstance(app.cfg, wikiconfig.Config)
+        assert isinstance(current_app.cfg, wikiconfig.Config)
 
         storage = flaskg.storage
         assert storage
@@ -57,5 +55,5 @@ class TestStorageEnvironWithConfig:
 
     @pytest.mark.usefixtures("_app_ctx")
     def test_config(self):
-        assert isinstance(app.cfg, wikiconfig.Config)
-        assert app.cfg.default_acl == DEFAULT_ACL
+        assert isinstance(current_app.cfg, wikiconfig.Config)
+        assert current_app.cfg.default_acl == DEFAULT_ACL

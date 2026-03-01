@@ -12,10 +12,9 @@ MoinMoin - Wiki security interface and access control lists.
 
 from functools import wraps
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask import abort
 
+from moin import current_app, flaskg
 from moin.constants import rights
 from moin.constants.keys import NAME_EXACT
 from moin import user
@@ -91,13 +90,13 @@ class DefaultSecurityPolicy:
         :rtype: function
         :returns: checking function for that right
         """
-        if attr in app.cfg.acl_rights_contents:
+        if attr in current_app.cfg.acl_rights_contents:
             return lambda itemname: flaskg.storage.may(itemname, attr, usernames=self.names)
-        if attr in app.cfg.acl_rights_functions:
+        if attr in current_app.cfg.acl_rights_functions:
 
             def multiuser_may():
                 # TODO: if "may" would accept multiple names, we could get rid of this
-                may = app.cfg.cache.acl_functions.may
+                may = current_app.cfg.cache.acl_functions.may
                 for name in self.names:
                     if may(name, attr):
                         return True

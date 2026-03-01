@@ -8,14 +8,13 @@ MoinMoin - common utilities for CLI commands.
 
 from __future__ import annotations
 
-from flask import current_app as app
-from moin import log
-from moin.storage.backends.stores import Backend
+from moin import current_app, log
+from moin.storage.backends.stores import BackendBase
 
 logging = log.getLogger(__name__)
 
 
-def get_backends(backends: str | None, all_backends: bool) -> set[Backend]:
+def get_backends(backends: str | None, all_backends: bool) -> set[BackendBase]:
     """
     Return a set of Backends for CLI parameters.
 
@@ -23,13 +22,13 @@ def get_backends(backends: str | None, all_backends: bool) -> set[Backend]:
     :param all_backends: If True, include all backends (overrides 'backends').
     """
     if all_backends:
-        return set(app.cfg.backend_mapping.values())
+        return set(current_app.cfg.backend_mapping.values())
 
     if not backends:
         logging.warning("no backends specified")
         return set()
 
-    existing_backends = set(app.cfg.backend_mapping)
+    existing_backends = set(current_app.cfg.backend_mapping)
     requested_backends = set(backends.split(","))
     if not requested_backends.issubset(existing_backends):
         print("Error: Wrong backend name given.")
@@ -37,7 +36,11 @@ def get_backends(backends: str | None, all_backends: bool) -> set[Backend]:
         print("Configured Backends: %r" % existing_backends)
         return set()
 
-    return {app.cfg.backend_mapping.get(backend_name) for backend_name in requested_backends}
+    return {
+        backend
+        for backend_name in requested_backends
+        if (backend := current_app.cfg.backend_mapping.get(backend_name)) is not None
+    }
 
 
 def drop_and_recreate_index(indexer, procs=None, limitmb=None, multisegment: bool = False) -> None:

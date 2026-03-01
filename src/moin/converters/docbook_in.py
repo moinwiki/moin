@@ -23,7 +23,7 @@ import re
 from emeraldtree import ElementTree as ET
 
 try:
-    from flask import g as flaskg
+    from moin import flaskg
 except ImportError:
     # in case converters become an independent package
     flaskg = None

@@ -5,9 +5,9 @@
 Helper to get prior, current, and next revisions and modification times.
 """
 
-from flask import g as flaskg
 from flask import request
 from whoosh.query import Term, And
+from moin import flaskg
 from moin.constants.keys import ALL_REVS, CURRENT, MTIME
 
 

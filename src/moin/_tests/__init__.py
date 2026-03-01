@@ -13,8 +13,7 @@ from io import BytesIO
 from pathlib import Path
 import psutil
 
-from flask import g as flaskg
-
+from moin import flaskg
 from moin.constants.contenttypes import CHARSET
 from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
 from moin.converters import include  # noqa # prevent a circular import

@@ -18,13 +18,11 @@ import sys
 
 from ast import literal_eval
 
-from flask import current_app as app
-from flask import g as flaskg
 from flask.cli import FlaskGroup
 
 from whoosh.query import Every
 
-from moin import log
+from moin import current_app, flaskg, log
 from moin.app import create_app
 from moin.constants.keys import NAME, NAME_EXACT, REVID, REV_NUMBER, PARENTID
 
@@ -65,12 +63,12 @@ def SetMeta(key, value, remove, query):
             sys.exit("You need to specify a valid Python literal as the argument.")
 
     if query:
-        qp = app.storage.query_parser([NAME_EXACT])
+        qp = current_app.storage.query_parser([NAME_EXACT])
         q = qp.parse(query)
     else:
         q = Every()
 
-    for current_rev in app.storage.search(q, limit=None):
+    for current_rev in current_app.storage.search(q, limit=None):
         name = current_rev.meta[NAME]
         new_meta = dict(current_rev.meta)
         if remove:

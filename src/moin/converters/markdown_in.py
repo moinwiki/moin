@@ -22,12 +22,11 @@ from moin.utils.tree import moin_page, xml, html, xlink, xinclude
 from ._util import decode_data, sanitise_uri_scheme
 from moin.utils.iri import Iri
 from moin.converters import html_in
-from flask import current_app
 
 from emeraldtree import ElementTree as ET
 
 try:
-    from flask import g as flaskg
+    from moin import flaskg
 except ImportError:
     # in case converters become an independent package
     flaskg = None
@@ -37,7 +36,7 @@ import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
-from moin import log
+from moin import current_app, log
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
