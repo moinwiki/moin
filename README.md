@@ -1,6 +1,9 @@
 MoinMoin — a lightweight open-source wiki engine
 ================================================
 
+[![CI Status](https://github.com/moinwiki/moin/actions/workflows/ci.yml/badge.svg)](https://github.com/moinwiki/moin/actions/workflows/ci.yml)
+[![Read the Docs](https://readthedocs.org/projects/moin-20/badge/?version=latest)](https://moin-20.readthedocs.io/en/latest)
+
 <img src="https://github.com/moinwiki/moin/blob/master/src/moin/static/logos/moinmoin.svg?raw=true" alt="MoinMoin Logo" width="120" align="right">
 
 MoinMoin is an easy-to-use, full-featured, and extensible wiki software package
