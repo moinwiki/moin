@@ -43,12 +43,11 @@ import glob
 import shutil
 import fnmatch
 import timeit
-from collections import Counter
 import venv
 
-if sys.hexversion < 0x30A0000:
-    sys.exit("Error: MoinMoin requires Python 3.10+, current version is %s\n" % (platform.python_version(),))
+from collections import Counter
 
+MIN_PYTHON_VERSION = (3, 10)
 
 WIN_INFO = "m.bat, activate.bat, and deactivate.bat are created by quickinstall.py"
 NIX_INFO = "the m bash script and the activate symlink are created by quickinstall.py"
@@ -64,9 +63,17 @@ BACKUPWIKI = "m-backup-wiki.txt"
 DUMPHTML = "m-dump-html.txt"
 EXTRAS = "m-extras.txt"
 DIST = "m-create-dist.txt"
+
 # default files used for backup and restore
 BACKUP_FILENAME = os.path.normpath("wiki/backup.moin")
 JUST_IN_CASE_BACKUP = os.path.normpath("wiki/deleted-backup.moin")
+
+
+if sys.version_info < MIN_PYTHON_VERSION:
+    sys.exit(
+        f"Error: MoinMoin requires Python { '.'.join(map(str, MIN_PYTHON_VERSION)) }+, "
+        f"current version is { platform.python_version() }"
+    )
 
 
 if os.name == "nt":

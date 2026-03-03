@@ -32,6 +32,10 @@ from ._version import version  # noqa
 
 project = "MoinMoin"
 
+MIN_PYTHON_VERSION = (3, 10)
 
-if sys.hexversion < 0x30A0000:
-    sys.exit("Error: %s requires Python 3.10 or later; current version is %s\n" % (project, platform.python_version()))
+if sys.version_info < MIN_PYTHON_VERSION:
+    sys.exit(
+        f"Error: { project } requires Python { '.'.join(map(str, MIN_PYTHON_VERSION)) } or later; "
+        f"current version is { platform.python_version() }"
+    )
