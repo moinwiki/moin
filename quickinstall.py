@@ -548,7 +548,7 @@ class ViewLogFile(Command):
         logs = set(CMD_LOGS.keys())
         if self.args.target and self.args.target in logs and os.path.isfile(CMD_LOGS[self.args.target]):
             if WINDOWS_OS:
-                command = f"start {CMD_LOGS[self.additional[0]]}"
+                command = f"start {CMD_LOGS[self.args.target]}"
             else:
                 # .format requires {{ and }} to escape { and }
                 command = f"${{VISUAL:-${{FCEDIT:-${{EDITOR:-less}}}}}} {CMD_LOGS[self.args.target]}"
@@ -880,15 +880,34 @@ class CommandArgumentParser(argparse.ArgumentParser):
 
 class CustomArgumentParser(argparse.ArgumentParser):
 
+    def __init__(self, *args, **kwargs):
+        self.default_subparser = kwargs.pop("default_subparser", None)
+        super().__init__(*args, **kwargs)
+
+    def parse_known_args(self, args=None, namespace=None):
+        if args is None:
+            args = sys.argv[1:]
+
+        if (not args or args[0].startswith("-")) and self.default_subparser:
+            args = [self.default_subparser] + args
+
+        return super().parse_known_args(args, namespace)
+
     def print_usage(self, file=None):
         if file is None:
             file = sys.stdout
         file.write(help)
 
 
+def already_installed() -> bool:
+    marker_file = "m.bat" if IS_WIN else "m"
+    return os.path.isfile(marker_file)
+
+
 def create_args_parser() -> argparse.ArgumentParser:
 
-    toplevel_parser = CustomArgumentParser()
+    # default to perform a moin quick installation if moin wasn't already installed
+    toplevel_parser = CustomArgumentParser(default_subparser=None if already_installed() else "quickinstall")
 
     subparsers = toplevel_parser.add_subparsers(dest="command", parser_class=CommandArgumentParser)
 
@@ -939,11 +958,6 @@ def main() -> None:
 
     parser = create_args_parser()
     args, remainder = parser.parse_known_args()
-
-    # no command given and first time invocation after cloning the git repository
-    # => do a quick installation
-    if not args.command and not os.path.isfile("m") and not os.path.isfile("m.bat"):
-        args.command = QuickInstall.key
 
     # no command given => show usage information
     if not args.command:
