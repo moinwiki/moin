@@ -907,45 +907,45 @@ def already_installed() -> bool:
 def create_args_parser() -> argparse.ArgumentParser:
 
     # default to perform a moin quick installation if moin wasn't already installed
-    toplevel_parser = CustomArgumentParser(default_subparser=None if already_installed() else "quickinstall")
+    toplevel_parser = CustomArgumentParser(default_subparser=None if already_installed() else QuickInstall.key)
 
     subparsers = toplevel_parser.add_subparsers(dest="command", parser_class=CommandArgumentParser)
 
-    parser = subparsers.add_parser("quickinstall")
+    parser = subparsers.add_parser(QuickInstall.key)
     parser.add_argument("--venv", required=False, default=None)
 
-    parser = subparsers.add_parser("createvenv")
+    parser = subparsers.add_parser(CreateVirtualEnv.key)
     parser.add_argument("--source", required=True)
     parser.add_argument("--name", required=False, default=None)
 
-    parser = subparsers.add_parser("extras")
+    parser = subparsers.add_parser(InstallExtras.key)
 
-    parser = subparsers.add_parser("docs")
+    parser = subparsers.add_parser(GenerateDocs.key)
 
-    parser = subparsers.add_parser("interwiki")
+    parser = subparsers.add_parser(RefreshInterwiki.key)
 
-    parser = subparsers.add_parser("log")
+    parser = subparsers.add_parser(ViewLogFile.key)
     parser.add_argument("--target", required=True, choices=CMD_LOGS.keys())
 
-    parser = subparsers.add_parser("new-wiki")
+    parser = subparsers.add_parser(CreateNewWiki.key)
 
-    parser = subparsers.add_parser("restore")
+    parser = subparsers.add_parser(Restore.key)
     parser.add_argument("--filename", required=False)
 
-    parser = subparsers.add_parser("backup")
+    parser = subparsers.add_parser(Backup.key)
     parser.add_argument("--filename", required=False)
 
-    parser = subparsers.add_parser("dump-html")
+    parser = subparsers.add_parser(HtmlDump.key)
 
-    parser = subparsers.add_parser("css")
-    parser = subparsers.add_parser("tests")
-    parser = subparsers.add_parser("coding-std")
+    parser = subparsers.add_parser(RunSass.key)
+    parser = subparsers.add_parser(RunTests.key)
+    parser = subparsers.add_parser(CheckCodingStandard.key)
 
-    parser = subparsers.add_parser("del-all")
-    parser = subparsers.add_parser("del-orig")
-    parser = subparsers.add_parser("del-pyc")
-    parser = subparsers.add_parser("del-rej")
-    parser = subparsers.add_parser("del-wiki")
+    parser = subparsers.add_parser(DeleteAll.key)
+    parser = subparsers.add_parser(DeleteOrigFiles.key)
+    parser = subparsers.add_parser(DeletePycFiles.key)
+    parser = subparsers.add_parser(DeleteRejectedFiles.key)
+    parser = subparsers.add_parser(DeleteWiki.key)
 
     return toplevel_parser
 
