@@ -155,11 +155,27 @@ class TestConverter:
             "[[Main/sub]]",  # check if label is kept lower case, check if slash in link is detected
             '<p><a xlink:href="wiki.local:Main/sub">sub</a></p>',
         ),
+        (  # TODO: do we want code highlight in simple pre-formatted blocks? Spurious empty <span>.
+            '    "preformatted" code is rendered in a <pre> element.\n',
+            '<div><div html:class="codehilite"><blockcode><span /><code>'
+            '"preformatted" code is rendered in a &lt;pre&gt; element.\n'
+            "</code></blockcode></div>\n"
+            "</div>",
+        ),
+        (  # TODO: code language should become class value, spurious empty <span>
+            "~~~ python\n" "def hello():\n" '    print "Hello World!"\n' "~~~\n",
+            '<div><div html:class="codehilite"><blockcode><span /><code>'
+            '<span html:class="k">def</span><span html:class="w"> </span>'
+            '<span html:class="nf">hello</span><span html:class="p">():</span>\n'
+            '    <span html:class="nb">print</span> <span html:class="s2">"Hello World!"</span>\n'
+            "</code></blockcode></div>\n"
+            "</div>",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)
-    def test_wikilinks(self, input, output):
-        """Test the Wikilinks extension: https://python-markdown.github.io/extensions/wikilinks/"""
+    def test_extensions(self, input, output):
+        """Test Markdown extensions: https://python-markdown.github.io/extensions/"""
         self.do(input, output)
 
     data = [
@@ -185,20 +201,33 @@ class TestConverter:
     def test_admonition(self, input, output):
         self.do(input, output)
 
-    data = [  # TODO: there are too many <div> wrappers!
+    data = [
         # only complete/correct tags are recognized.
         ("one < two", "<p>one &lt; two</p>"),
         ("[[one]] < two", '<p><a xlink:href="wiki.local:one">one</a> &lt; two</p>'),
         ("pre <strong>bold</strong> post", "<p>pre <strong>bold</strong> post</p>"),
-        (  # a block-level element
+        # block-level elements
+        # TODO: convert_invalid_p_nodes() keeps spurious <div>s.
+        (
             "<address>webmaster@example.org</address>",
             '<div><div html-tag="address">webmaster@example.org</div>\n</div>',
         ),
+        (  # TODO: invalid <p>
+            "<ul><li><em>Item</em></li></ul>",
+            '<p><list item-label-generate="unordered"><list-item><list-item-body><emphasis>Item</emphasis></list-item-body></list-item></list>\n</p>',
+        ),
+        (
+            '<table><tbody><tr><td colspan="2">Cell</td></tr></tbody></table>',
+            '<div><table><table-body><table-row><table-cell number-columns-spanned="2">Cell</table-cell></table-row></table-body></table>\n</div>',
+        ),
+        # Markdown markup in block-level HTML tags is not processed (https://daringfireball.net/projects/markdown/syntax#html)
+        ("<p>**nice** <em>trick</em></p>", "<div><p>**nice** <emphasis>trick</emphasis></p>\n</div>"),
+        ("<h2>**strong** heading</h2>", '<div><h outline-level="2">**strong** heading</h>\n</div>'),
+        ('<pre>2*3*4\n print("s")</pre>', '<div><blockcode>2*3*4\n print("s")</blockcode>\n</div>'),
+        ("<map><p>**nice**</p></map>", "<p>\n</p>"),
         # explicitly ignored tags (html_in.HtmlTags.ignored_tags) are dropped together with their content:
         ("<button>Stop</button>", "<p />"),
-        ("<script>1+1</script>", "<p>\n</p>"),
-        # Markdown syntax in block-level HTML tags is not processed (https://daringfireball.net/projects/markdown/syntax#html)
-        ("<h2>**strong** heading</h2>", '<div><h outline-level="2">**strong** heading</h>\n</div>'),
+        ("<script>2*3*4</script>", "<p>\n</p>"),
         # TODO: markdown 3.3 outputs `/>\n\n\n\n</p>`, prior versions output `/></p>`. Try test again with versions 3.3+
         # Added similar test to test_markdown_in_out
         # ('<hr>',
@@ -221,7 +250,6 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        # TODO: there are too many <div> wrappers!
         ('<a href="subitem">link text</a>', '<p><a xlink:href="wiki.local:subitem">link text</a></p>'),
         ("<BIG>larger</BIG>", '<p><span html:class="moin-big">larger</span></p>'),
         ('<span class="moin-small">smaller</span>', '<p><span html:class="moin-small">smaller</span></p>'),
@@ -253,6 +281,11 @@ class TestConverter:
         ("one<br>two", "<p>one<line-break />two</p>"),
         ("one<br />\ntwo", "<p>one<line-break />\ntwo</p>"),
         ("one  \ntwo", "<p>one<line-break />\ntwo</p>"),
+        # <br> do not break the paragraph if preceded or followed by Markdown markup
+        ("one<br>_two_", "<p>one<line-break /><emphasis>two</emphasis></p>"),
+        ("one<br>\n_two_", "<p>one<line-break />\n<emphasis>two</emphasis></p>"),
+        ("_one_<br>two", "<p><emphasis>one</emphasis><line-break />two</p>"),
+        ("_one_<br>\ntwo", "<p><emphasis>one</emphasis><line-break />\ntwo</p>"),
         # there may be multiple HTML elements in a block
         ("<u>underline</u> and <sub>sub</sub>", "<p><u>underline</u> and <sub>sub</sub></p>"),
         ("<u>underline with <sub>sub</sub></u>", "<p><u>underline with <sub>sub</sub></u></p>"),
@@ -286,17 +319,13 @@ class TestConverter:
         ("<i>alternate **voice**</i>", '<p><emphasis html-tag="i">alternate <strong>voice</strong></emphasis></p>'),
         ("<small>`fine` print</small>", '<p><span html-tag="small"><code>fine</code> print</span></p>'),
         ("<tt>**mono**</tt>", "<p><literal><strong>mono</strong></literal></p>"),
+        # Attention: Markdown markup in <code> is processed:
+        ("<code>2*3*4</code>", "<p><code>2<emphasis>3</emphasis>4</code></p>"),
+        ("<code><em>important</em></code>", "<p><code><emphasis>important</emphasis></code></p>"),
         # explicitly ignored tags are dropped together with their content:
         ("<button>`Stop`</button>", "<p />"),
-        ("<script>`1+1`</script>", "<p>\n</p>"),
         # unknown tags are ignored but their content is passed on:
         ("<custom>`1+1`</custom>", "<p><code>1+1</code></p>"),
-        # <br> is an inline tag: do not break the paragraph!
-        ("one<br>_two_", "<p>one<line-break /><emphasis>two</emphasis></p>"),
-        ("one<br />_two_", "<p>one<line-break /><emphasis>two</emphasis></p>"),
-        ("one<br>\n_two_", "<p>one<line-break />\n<emphasis>two</emphasis></p>"),
-        ("_one_<br>two", "<p><emphasis>one</emphasis><line-break />two</p>"),
-        ("_one_<br>\ntwo", "<p><emphasis>one</emphasis><line-break />\ntwo</p>"),
         # there may be multiple HTML elements in a block
         ("<u>**underline**</u> and <sub>sub</sub>", "<p><u><strong>underline</strong></u> and <sub>sub</sub></p>"),
     ]
