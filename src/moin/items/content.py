@@ -332,7 +332,7 @@ class Content:
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
             error_id = uuid.uuid4()
-            logging.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
+            logging.exception(f'An exception happened in _render_data (error_id={error_id}, name="{self.name}"):')
             rendered_data = render_template(
                 "crash.html", server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"), url=request.url, error_id=error_id
             )
