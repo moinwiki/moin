@@ -637,12 +637,19 @@ class Converter(ConverterMacro):
 
     def inline_size_repl(self, stack, size, size_begin=None, size_end=None):
         if size_begin:
-            size = "moin-big" if size[1] == "+" else "moin-small"
-            attrib = {html.class_: size}
+            size_elem = "moin-big" if size[1] == "+" else "moin-small"
+            attrib = {html.class_: size_elem}
             elem = moin_page.span(attrib=attrib)
             stack.push(elem)
-        else:
+        elif stack and stack.top_check("span"):
             stack.pop()
+        else:
+            msg = f"unbalanced use of moin size element {size}"
+            logging.warning(msg)
+            try:
+                flash(msg, "warning")
+            except RuntimeError:  # CLI call has no valid request context
+                pass
 
     inline_strike = r"""
         (?P<strike>
