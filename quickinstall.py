@@ -925,7 +925,7 @@ def create_args_parser() -> argparse.ArgumentParser:
     parser = subparsers.add_parser(RefreshInterwiki.key)
 
     parser = subparsers.add_parser(ViewLogFile.key)
-    parser.add_argument("--target", required=True, choices=CMD_LOGS.keys())
+    parser.add_argument("target", choices=CMD_LOGS.keys())
 
     parser = subparsers.add_parser(CreateNewWiki.key)
 
