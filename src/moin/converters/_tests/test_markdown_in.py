@@ -327,18 +327,13 @@ class TestConverter:
         # unknown tags are ignored but their content is passed on:
         ("<custom>`1+1`</custom>", "<p><code>1+1</code></p>"),
         # there may be multiple HTML elements in a block
-        ("<u>**underline**</u> and <sub>sub</sub>", "<p><u><strong>underline</strong></u> and <sub>sub</sub></p>"),
-    ]
-
-    @pytest.mark.parametrize("input,output", data)
-    def test_inline_html_with_embedded_markdown(self, input, output):
-        """Test HTML markup containing Markdown markup"""
-        self.do(input, output)
-
-    data = [  # Some valid samples still fail!
-        (  # Error: malformed HTML: end tag mismatch
-            "<u>underline</u> and <sub>**sub**</sub>",
-            "<p><u>underline</u> and <sub><strong>sub</strong></sub></p>",
+        (
+            "<u>**strong underline**</u> and <sub>sub</sub>",
+            "<p><u><strong>strong underline</strong></u> and <sub>sub</sub></p>",
+        ),
+        (
+            "<u>underline</u> and <sub>**strong sub**</sub>",
+            "<p><u>underline</u> and <sub><strong>strong sub</strong></sub></p>",
         ),
         (
             "<u>**underline**</u> and <sub>**sub**</sub>",
@@ -346,10 +341,9 @@ class TestConverter:
         ),
     ]
 
-    @pytest.mark.xfail
     @pytest.mark.parametrize("input,output", data)
-    def test_failing_html_and_markdown(self, input, output):
-        """Test HTML tags containing Markdown inline markup"""
+    def test_inline_html_with_embedded_markdown(self, input, output):
+        """Test HTML markup containing Markdown markup"""
         self.do(input, output)
 
     def serialize_strip(self, elem, **options):

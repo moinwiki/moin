@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING
 
 import re
 
+from html import unescape as html_unescape
 from html.entities import name2codepoint
 from collections import deque
 
@@ -43,7 +44,7 @@ from . import default_registry
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
-    from typing_extensions import Any, Iterable, Self
+    from typing_extensions import Any, Generator, Iterable, Self
 
 logging = log.getLogger(__name__)
 
@@ -368,19 +369,31 @@ class Converter(html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
-    def html_markup(self, text):
+    def separate_html_tags(self, nodes: Iterable[ET.Element | str]) -> Generator[ET.Element | str]:
+        """Split string-nodes at HTML tags."""
+        for node in nodes:
+            if isinstance(node, ET.Element):
+                yield node
+            else:
+                for part in re.split(r"(</?\w.*?>)", node, flags=re.DOTALL):
+                    yield part
+
+    def create_element_for_tag(self, start_tag: str, end_tag: str) -> ET.Element | None:
         """
-        Handle embedded HTML markup.
+        Return a moin_page element for the given tags
         """
         try:
-            page = html_in_converter(f"<div>{text}</div>")  # wrap in auxiliary element to avoid orphan strings
-            return list(page[0][0])  # discard <page> and <body> wrappers, return <div>'s children
+            page = html_in_converter(start_tag + end_tag)
+            element = page[0][0]  # strip <body> and <page> wrappers
+            # more efficient but does not currently work:
+            # html_tree = html_in.HTML(start_tag + end_tag)
+            # element = html_in_converter.visit(html_tree)
         except (AssertionError, IndexError) as ex:
-            # malformed tags, will be escaped so user can see and fix
-            logging.debug(f"Caught exception in embedded_markup: {ex}")
-            return text
+            logging.debug(f"Exception in HTML markup: {ex}")
+            element = None
+        return element
 
-    def convert_embedded_html_markup(self, node: ET.Element | list[ET.Element | str]) -> None:
+    def convert_html_markup(self, node_or_children: ET.Element | list[ET.Element | str]) -> None:
         """
         Recurse through tree, convert HTML markup to moin_page elements.
 
@@ -393,15 +406,60 @@ class Converter(html_in.HtmlTags):
         https://daringfireball.net/projects/markdown/syntax#html
         https://python-markdown.github.io/reference/markdown/
         """
-        for i, child in enumerate(node):
-            if isinstance(child, str):
-                # search for HTML tags
-                if re.search("<[^ ].*?>", child):
-                    node[i : i + 1] = self.html_markup(child)  # replace child with result of conversion
+
+        nodes = self.separate_html_tags(node_or_children)
+        result = []
+
+        for node in nodes:
+            if isinstance(node, ET.Element):
+                # recurse
+                self.convert_html_markup(node)
+                result.append(node)
+                continue
+
+            if not node:
+                continue  # drop empty strings
+
+            # Check for HTML start-tags:
+            match = re.search(r"<(\w+).*?(/?) *>", node)
+            if not match:
+                # Convert character references to corresponding Unicode characters:
+                result.append(html_unescape(node))
+                continue
+            # we have a HTML start-tag
+            # Collect children:
+            children = []
+            tag_name, self_closing = match.group(1, 2)
+            if tag_name in self.void_tags or self_closing:
+                end_tag = ""
             else:
-                # do not convert markup within "literal" elements
-                if child.tag not in (moin_page.blockcode, moin_page.code):
-                    self.convert_embedded_html_markup(child)
+                end_tag = f"</{tag_name}>"
+            if end_tag:
+                for child in nodes:
+                    if child == end_tag:
+                        break
+                    children.append(child)
+
+            if self.markdown.is_block_level(tag_name):
+                # we can append the children to the start-tag
+                #   Markdown formatting syntax is not processed within block-level HTML tags."
+                #   -- https://daringfireball.net/projects/markdown/syntax#html
+                node = "".join((node, *children))
+                children = []
+            else:
+                # recurse (children are EmeraldTree elements or str)
+                self.convert_html_markup(children)
+
+            element = self.create_element_for_tag(node, end_tag)
+            if element:
+                element.extend(children)
+                result.append(element)
+            elif tag_name in self.ignored_tags:  # ignore tag and children
+                continue
+            else:  # unknown tag, keep children.
+                result.extend(children)
+        # update in-place
+        node_or_children[:] = result
 
     def convert_invalid_p_nodes(self, node: Iterable[ET.Element | str]) -> None:
         """
@@ -417,109 +475,6 @@ class Converter(html_in.HtmlTags):
                         if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
-
-    def _create_element_for_tag(self, tag):
-        """Return a moin_page DOM element for the given HTML tag.
-
-        If the tag name is not supported, return None.
-        """
-        if not tag.endswith("/>"):
-            tag = tag.replace(">", " />")  # make tag self-closing (we append the child elements later)
-        tree = html_in_converter(tag)
-        try:
-            element = tree[0][0]  # strip <page> and <body> wrappers
-        except IndexError:
-            return None
-        return element
-
-    def _reassemble_split_html_tags(self, node):
-        """
-        Reassemble raw HTML tags split by markdown's inline pattern processor.
-
-        When markdown converts inline syntax (like _emphasis_) inside HTML tags
-        (like <del>), the HTML tag gets split across text/tail boundaries.
-        This results in separate strings for opening and closing tags with
-        converted elements in between:
-            ["<del>text ", Element(emphasis, ...), "</del>"]
-
-        This method detects such splits and reassembles them into proper DOM elements:
-            [Element(del, ["text ", Element(emphasis, ...)])]
-        """
-        if isinstance(node, list):
-            children = node
-        else:
-            children = list(node)
-
-        result = []
-        i = 0
-        changed = False
-
-        while i < len(children):
-            child = children[i]
-            if isinstance(child, str):
-                m = self._open_tag_re.match(child)
-                if m:
-                    pre_text, tag, tag_name, inner_text = m.group(1, 2, 3, 4)
-                    closing_tag = f"</{tag_name}>"
-
-                    if tag_name.lower() not in self.void_tags and closing_tag not in child:
-                        # Scan forward through siblings for the matching closing tag
-                        close_idx = None
-                        for j in range(i + 1, len(children)):
-                            sibling = children[j]
-                            if isinstance(sibling, str) and closing_tag in sibling:
-                                close_idx = j
-                                break
-
-                        if close_idx is not None:
-                            changed = True
-                            close_str = children[close_idx]
-                            close_pos = close_str.index(closing_tag)
-                            inner_tail = close_str[:close_pos]
-                            post_text = close_str[close_pos + len(closing_tag) :]
-
-                            # Collect inner children
-                            inner = []
-                            if inner_text:
-                                inner.append(inner_text)
-                            for k in range(i + 1, close_idx):
-                                inner.append(children[k])
-                            if inner_tail:
-                                inner.append(inner_tail)
-
-                            # Recursively process inner children (handles nested split tags)
-                            self._reassemble_split_html_tags(inner)
-
-                            new_elem = self._create_element_for_tag(tag)
-
-                            if pre_text:
-                                result.append(pre_text)
-                            if new_elem:
-                                new_elem.extend(inner)
-                                result.append(new_elem)
-                            elif tag_name not in self.ignored_tags:
-                                result.extend(inner)
-                            if post_text:
-                                result.append(post_text)
-
-                            i = close_idx + 1
-                            continue
-
-                result.append(child)
-                i += 1
-            else:
-                # Recurse into element children
-                self._reassemble_split_html_tags(child)
-                result.append(child)
-                i += 1
-
-        if changed:
-            if isinstance(node, list):
-                node[:] = result
-            else:
-                # EmeraldTree Element: replace all children
-                del node[:]
-                node.extend(result)
 
     def __init__(self):
         # The Moin configuration
@@ -597,10 +552,8 @@ class Converter(html_in.HtmlTags):
         add_lineno = bool(flaskg and getattr(flaskg, "add_lineno_attr", False))
         page_children = self.do_children(root, add_lineno=add_lineno)
 
-        # reassemble HTML tags that were split by markdown's inline pattern processor
-        self._reassemble_split_html_tags(page_children)
         # convert HTML markup in text strings to EmeraldTree elements
-        self.convert_embedded_html_markup(page_children)
+        self.convert_html_markup(page_children)
         # convert <paragaph> elements containing block elements to <div>
         self.convert_invalid_p_nodes(page_children)
 
