@@ -21,7 +21,7 @@ input[type="checkbox"]:checked { background-color: var(--accent-light); }
 #moin-main-wrapper { display: flex; }
 .moin-logo { text-align: start; }
 .moin-sitename { display: flex; margin-top: 4pt; margin-bottom: 10pt;
-    font-size: 1.4rem; font-weight: 600; white-space: normal; }
+    font-size: 1.4rem; font-weight: 600; text-wrap: balance; white-space: break-spaces; }
 #toggle-header { display: none; background-color: transparent; border: none; min-width: 25px; }
 #moin-username, #moin-navibar { display: flex; flex-direction: column; row-gap: 6pt; margin-bottom: 8pt; }
 #moin-username a, #moin-navibar a { width: 90%; display: block; padding: 4pt; border-radius: 2pt; }
@@ -40,7 +40,7 @@ input[type="checkbox"]:checked { background-color: var(--accent-light); }
 
 #moin-page { min-width: 0pt; }
 
-header { min-width: 200px; width: 200px; min-height: 100vh; margin-right: 18pt; padding: 8pt;
+header { min-width: 220px; width: 220px; min-height: 100vh; margin-right: 18pt; padding: 8pt;
     box-shadow: 2pt 0pt 10pt 2pt rgba(0, 0, 0, 0.1); }
 header ol, header ul { padding-left: 0pt; }
 header li::marker { display: none; }
