@@ -69,14 +69,14 @@
 
                 {# use css styling to create a borderless row that looks like a table end #}
                 <tr>
-                    <td class="moin-history-end-of-day" colspan="7">&nbsp;</td>
+                    <td class="moin-history-end-of-day" colspan="6">&nbsp;</td>
                 </tr>
             {% endfor %}
 
             {# if user has set a bookmark, create a header with a link to remove bookmark #}
             {% if bookmark_time %}
                 <tr class="moin-history-day-banner">
-                    <td colspan="7">
+                    <td colspan="6">
                         <span class="moin-history-date">{{ bookmark_time|time_datetime }}</span>
                         <a class="moin-bookmark-link" href="{{ url_for('frontend.bookmark', time='del') }}">{{ _("Delete bookmark") }}</a>
                     </td>
