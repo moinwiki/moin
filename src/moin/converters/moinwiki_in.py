@@ -2,7 +2,7 @@
 # Copyright: 2006-2008 MoinMoin:ThomasWaldmann
 # Copyright: 2007 MoinMoin:ReimarBauer
 # Copyright: 2008-2010 MoinMoin:BastianBlank
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -15,7 +15,7 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from flask import request
+from flask import request, flash
 from urllib.parse import urlencode
 
 from moin import log
@@ -373,7 +373,7 @@ class Converter(ConverterMacro):
             element = moin_page.p()
             stack.push(element)
         elif stack.top_check("p") or len(stack.top()):
-            # we are in a paragraph or multi-line list item, don't loose the whitespace
+            # we are in a paragraph or multi-line list item, don't lose the whitespace
             stack.top_append("\n")
         self.parse_inline(text, stack, self.inline_re)
 
@@ -637,12 +637,19 @@ class Converter(ConverterMacro):
 
     def inline_size_repl(self, stack, size, size_begin=None, size_end=None):
         if size_begin:
-            size = "moin-big" if size[1] == "+" else "moin-small"
-            attrib = {html.class_: size}
+            size_elem = "moin-big" if size[1] == "+" else "moin-small"
+            attrib = {html.class_: size_elem}
             elem = moin_page.span(attrib=attrib)
             stack.push(elem)
-        else:
+        elif stack and stack.top_check("span"):
             stack.pop()
+        else:
+            msg = f"unbalanced use of moin size element {size}"
+            logging.warning(msg)
+            try:
+                flash(msg, "warning")
+            except RuntimeError:  # CLI call has no valid request context
+                pass
 
     inline_strike = r"""
         (?P<strike>
@@ -1101,9 +1108,20 @@ class Converter(ConverterMacro):
         pos = 0
         for match in inline_re.finditer(text):
             # Handle leading text
-            stack.top_append_ifnotempty(text[pos : match.start()])
-            pos = match.end()
+            try:
+                stack.top_append_ifnotempty(text[pos : match.start()])
+            except IndexError:
+                msg = f"Error processing inline element '{text}' with markup tag '{match.group(0)}'"
+                logging.error(msg)
 
+                try:
+                    flash(msg, "error")
+                except RuntimeError:  # CLI call has no valid request context
+                    pass
+
+                continue
+            finally:
+                pos = match.end()
             self._apply(match, "inline", stack)
 
         # Handle trailing text
