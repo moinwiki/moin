@@ -1,5 +1,5 @@
 # Copyright: 2011 MoinMoin:ThomasWaldmann
-# Copyright: 2024 MoinMoin:UlrichB
+# Copyright: 2024-2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -8,6 +8,7 @@ MoinMoin - converter utilities.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 try:
@@ -159,6 +160,9 @@ class _Stack:
         self._list.append(self.Item(elem))
 
     def top(self):
+        if not self._list:
+            logging.error("Internal error: Stack underflow; markup is likely malformed")
+            # the exception will be handled in the calling converter module
         return self._list[-1].elem
 
     def top_append(self, elem):
