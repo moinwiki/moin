@@ -34,17 +34,23 @@ Usage (to display a menu of commands):
     - Windows:  m
 """
 
+from __future__ import annotations
+
+from typing import Any, ClassVar
+
+import argparse
+import fnmatch
+import glob
 import os
 import os.path
+import platform
 import subprocess
 import sys
-import platform
-import glob
 import shutil
-import fnmatch
 import timeit
 import venv
 
+from abc import ABC, abstractmethod
 from collections import Counter
 
 MIN_PYTHON_VERSION = (3, 10)
@@ -102,6 +108,14 @@ CMD_LOGS = {
     "dist": DIST,
 }
 
+# code below and path_locations copied from virtualenv.py v16.7.10 because path_locations dropped in v20.0.0 rewrite.
+PY_VERSION = f"python{sys.version_info[0]}.{sys.version_info[1]}"
+IS_PYPY = hasattr(sys, "pypy_version_info")
+IS_WIN = sys.platform == "win32"
+ABI_FLAGS = getattr(sys, "abiflags", "")
+
+join = os.path.join
+
 
 help = """
 Usage: "{} <target>" where <target> is:
@@ -132,8 +146,61 @@ Please refer to 'moin help' to learn more about the CLI for wiki administrators.
 """.format(M)
 
 
-def search_for_phrase(filename):
-    """Search a text file for key phrases and print the lines of interest or print a count by phrase."""
+def mkdir(at_path: str) -> None:
+    if not os.path.exists(at_path):
+        os.makedirs(at_path)
+
+
+def path_locations(home_dir: str, dry_run: bool = False) -> tuple[str, str, str, str]:
+    """
+    Return the path locations for the environment (where libraries are, where scripts go, etc).
+    """
+    home_dir = os.path.abspath(home_dir)
+    lib_dir, inc_dir, bin_dir = None, None, None
+    # XXX: We'd use distutils.sysconfig.get_python_inc/lib but its
+    # prefix arg is broken: http://bugs.python.org/issue3386
+    if IS_WIN:
+        # Windows has lots of problems with executables with spaces in
+        # the name; this function will remove them (using the ~1
+        # format):
+        if not dry_run:
+            mkdir(home_dir)
+        if " " in home_dir:
+            import ctypes
+
+            get_short_path_name = ctypes.windll.kernel32.GetShortPathNameW
+            size = max(len(home_dir) + 1, 256)
+            buf = ctypes.create_unicode_buffer(size)
+            try:
+                # noinspection PyUnresolvedReferences
+                u = unicode
+            except NameError:
+                u = str
+            ret = get_short_path_name(u(home_dir), buf, size)
+            if not ret:
+                print(f'Error: the path "{home_dir}" has a space in it')
+                print("We could not determine the short pathname for it.")
+                print("Exiting.")
+                sys.exit(3)
+            home_dir = str(buf.value)
+        lib_dir = join(home_dir, "Lib")
+        inc_dir = join(home_dir, "Include")
+        bin_dir = join(home_dir, "Scripts")
+    if IS_PYPY:
+        lib_dir = home_dir
+        inc_dir = join(home_dir, "include")
+        bin_dir = join(home_dir, "bin")
+    elif not IS_WIN:
+        lib_dir = join(home_dir, "lib", PY_VERSION)
+        inc_dir = join(home_dir, "include", PY_VERSION + ABI_FLAGS)
+        bin_dir = join(home_dir, "bin")
+    return home_dir, lib_dir, inc_dir, bin_dir
+
+
+def search_for_phrase(filename: str) -> None:
+    """
+    Search a text file for key phrases and print the lines of interest or print a count by phrase.
+    """
     files = {
         # filename: (list of phrases)
         # Note: phrases must be lower-case
@@ -205,15 +272,17 @@ def search_for_phrase(filename):
                         print(idx + 1, line.rstrip())
                     break
     for key in counts:
-        print('The phrase "%s" was found %s times.' % (key, counts[key]))
+        print(f'The phrase "{key}" was found {counts[key]} times.')
 
 
-def wiki_exists():
-    """Return True if a wiki exists."""
+def wiki_exists() -> bool:
+    """
+    Return True if a wiki exists.
+    """
     return bool(glob.glob("wiki/index/_all_revs_*.toc"))
 
 
-def copy_config_files():
+def copy_config_files() -> None:
     if not os.path.isfile("wikiconfig.py"):
         shutil.copy("src/moin/config/wikiconfig.py", "wikiconfig.py")
     if not os.path.isfile("intermap.txt"):
@@ -222,8 +291,10 @@ def copy_config_files():
         os.mkdir("wiki_local")
 
 
-def make_wiki(command, mode="w", msg="\nSuccess: a new wiki has been created."):
-    """Process command to create a new wiki."""
+def make_wiki(command: str, mode: str = "w", msg: str = "\nSuccess: a new wiki has been created.") -> None:
+    """
+    Process command to create a new wiki.
+    """
     if wiki_exists() and mode == "w":
         print("Error: a wiki exists, delete it and try again.")
     else:
@@ -233,74 +304,184 @@ def make_wiki(command, mode="w", msg="\nSuccess: a new wiki has been created."):
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         if result == 0:
             print(msg)
-            return True
         else:
-            print("Important messages from %s are shown below:" % NEWWIKI)
+            print(f"Important messages from {NEWWIKI} are shown below:")
             search_for_phrase(NEWWIKI)
-            print('\nError: attempt to create wiki failed. Do "%s log new-wiki" to see complete log.' % M)
-            return False
+            print(f'\nError: attempt to create wiki failed. Do "{M} log new-wiki" to see complete log.')
 
 
-def delete_files(pattern):
-    """Recursively delete all files matching pattern."""
+def delete_files(pattern) -> None:
+    """
+    Recursively delete all files matching pattern.
+    """
     matches = 0
     for root, dirnames, filenames in os.walk(os.path.abspath(os.path.dirname(__file__))):
         for filename in fnmatch.filter(filenames, pattern):
             os.remove(os.path.join(root, filename))
             matches += 1
-    print('Deleted %s files matching "%s".' % (matches, pattern))
+    print(f'Deleted {matches} files matching "{pattern}".')
 
 
-def create_m():
-    """Create an 'm.bat' or 'm' bash script that will run quickinstall.py using this Python"""
+def create_m() -> None:
+    """
+    Create an 'm.bat or 'm' bash script that will run quickinstall.py using this Python.
+    """
+    quickinstall = sys.argv[0]
     if WINDOWS_OS:
         with open("m.bat", "w") as f:
-            f.write(f":: {WIN_INFO}\n\n@{sys.executable} quickinstall.py %* --help\n")
+            f.write(f":: {WIN_INFO}\n\n@{sys.executable} {quickinstall} %*\n")
     else:
         with open("m", "w") as f:
-            f.write(f"#!/bin/sh\n# {NIX_INFO}\n\n{sys.executable} quickinstall.py $* --help\n")
+            f.write(f"#!/bin/sh\n# {NIX_INFO}\n\n{sys.executable} {quickinstall} $*\n")
             os.fchmod(f.fileno(), 0o775)
 
 
-class Commands:
-    """Each cmd_ method processes a choice on the menu."""
+class Command(ABC):
 
-    def __init__(self):
+    key: ClassVar[str]
+
+    def __init__(self, args: argparse.Namespace = argparse.Namespace(), additional: list[str] = []) -> None:
+        self.args = args
+        self.additional = additional
         self.tic = timeit.default_timer()
 
-    def run_time(self, command):
+    def run_time(self) -> None:
+        command = self.__class__.__name__
         seconds = int(timeit.default_timer() - self.tic)
         t_min, t_sec = divmod(seconds, 60)
         t_hour, t_min = divmod(t_min, 60)
         print(f"{command} run time (h:mm:ss) {t_hour}:{t_min:0>2}:{t_sec:0>2}")
 
-    def cmd_quickinstall(self, *args):
-        """create or update a virtual environment with the required packages"""
-        if os.path.isdir(".tox"):
-            # keep tox test virtualenvs in sync with moin-env-python
-            command = "{} quickinstall.py --FirstCall {}{}tox --recreate --notest".format(
-                sys.executable, " ".join(args), SEP
-            )
-            print(
-                "Running quickinstall.py and tox recreate virtualenvs... output messages redirected to {}".format(
-                    QUICKINSTALL
-                )
-            )
-        else:
-            command = f"{sys.executable} quickinstall.py --FirstCall"
-            print(f"Running quickinstall.py... output messages redirected to {QUICKINSTALL}")
-        with open(QUICKINSTALL, "w") as messages:
+    @abstractmethod
+    def execute(self) -> None: ...
+
+
+class QuickInstall(Command):
+    """
+    Perform quick installation steps required for moin wiki development.
+    """
+
+    key = "quickinstall"
+
+    def run_shell_command(self, command: str, append: bool = False) -> None:
+        with open(QUICKINSTALL, "a" if append else "w") as messages:
             # we run ourself as a subprocess so output can be captured in a log file
             subprocess.run(command, shell=True, stderr=messages, stdout=messages)
+
+    def execute(self) -> None:
+
+        source = os.path.dirname(os.path.realpath(sys.argv[0]))
+        command = f"{sys.executable} {sys.argv[0]} createvenv --source {source}"
+        if self.args.venv:
+            command += f" --name {self.args.venv}"
+        print(f"Running {sys.argv[0]}... output messages redirected to {QUICKINSTALL}")
+        self.run_shell_command(command)
+
+        if os.path.isdir(".tox"):
+            # keep tox test virtualenvs in sync with moin-env-python
+            command = "tox --recreate --notest"
+            print(f"Running tox recreate virtualenvs... output messages redirected to {QUICKINSTALL}")
+            self.run_shell_command(command, append=True)
+
+        copy_config_files()
+
         print(
-            '\nSearching {}, important messages are shown below... Do "{} log quickinstall" '
-            "to see complete log.\n".format(QUICKINSTALL, M)
+            f"\nSearching {QUICKINSTALL}, important messages are shown below... "
+            f'Do "{M} log quickinstall" to see complete log.\n'
         )
         search_for_phrase(QUICKINSTALL)
-        self.run_time("Quickinstall")
+        self.run_time()
 
-    def cmd_docs(self, *args):
-        """create local Sphinx html documentation"""
+
+class CreateVirtualEnv(Command):
+    """
+    Create or update a virtual environment with the required packages.
+    """
+
+    key = "createvenv"
+
+    def __init__(self, args: argparse.Namespace, additional: list[str]) -> None:
+        super().__init__(args, additional)
+        self.dir_source = args.source
+        venv_path = self._get_venv_path(args.source, args.name)
+        venv_home, venv_lib, venv_inc, venv_bin = path_locations(venv_path)
+        self.dir_venv = venv_home
+        self.dir_venv_bin = venv_bin
+
+    def _get_venv_path(self, source, name: str | None = None) -> str:
+        if not name:
+            base, source_name = os.path.split(source)
+            executable = os.path.basename(sys.executable).split(".exe")[0]
+            venv_path = os.path.join(base, f"{source_name}-venv-{executable}")
+        else:
+            venv_path = os.path.join(source, name)
+        return os.path.abspath(venv_path)
+
+    def execute(self) -> None:
+        self.do_venv()
+        self.do_helpers()
+        self.do_install()
+        self.do_catalog()
+        sys.stdout.write(f"\n\nSuccessfully created or updated venv at {self.dir_venv}\n")
+
+    def do_venv(self) -> None:
+        venv.create(self.dir_venv, system_site_packages=False, clear=False, symlinks=False, with_pip=True, prompt=None)
+
+    def do_install(self) -> None:
+        args = [
+            os.path.join(self.dir_venv_bin, "pip"),
+            "install",
+            "--upgrade",
+            "--upgrade-strategy=eager",
+            "--editable",
+            self.dir_source,
+        ]
+        subprocess.check_call(args)
+
+    def do_catalog(self) -> None:
+        subprocess.check_call(
+            (
+                os.path.join(self.dir_venv_bin, "pybabel"),
+                "compile",
+                "--statistics",
+                # needed in case user runs quickinstall.py with a cwd other than the repo root
+                "--directory",
+                os.path.join(os.path.dirname(__file__), "src", "moin", "translations"),
+            )
+        )
+
+    def create_wrapper(self, filename, target) -> None:
+        """
+        Create files in the repo root that wrap files in `<path-to-virtual-env>/Scripts`.
+        """
+        target = os.path.join(self.dir_venv_bin, target)
+        with open(filename, "w") as f:
+            f.write(f":: {WIN_INFO}\n\n@call {target} %*\n")
+
+    def do_helpers(self) -> None:
+        """
+        Create small helper scripts or symlinks in repo root, avoid keying the long path to virtual env.
+        """
+        create_m()
+        if WINDOWS_OS:
+            # windows commands are: activate | deactivate
+            self.create_wrapper("activate.bat", "activate.bat")
+            self.create_wrapper("deactivate.bat", "deactivate.bat")
+        else:
+            # linux commands are: source activate | deactivate
+            if os.path.exists("activate"):
+                os.unlink("activate")
+            os.symlink(os.path.join(self.dir_venv_bin, "activate"), "activate")  # no need to define deactivate on unix
+
+
+class GenerateDocs(Command):
+    """
+    Create local Sphinx html documentation.
+    """
+
+    key = "docs"
+
+    def execute(self) -> None:
         command = "sphinx-apidoc -f -o docs/devel/api src/moin {0}cd docs{0} make html".format(SEP)
         print(f"Creating HTML docs... output messages written to {DOCS}.")
         with open(DOCS, "w") as messages:
@@ -314,10 +495,18 @@ class Commands:
                 'Error: creation of HTML docs failed with return code "{}".'
                 ' Do "{} log docs" to see complete log.'.format(result, M)
             )
-        self.run_time("Docs")
+        self.run_time()
 
-    def cmd_extras(self, *args):
-        """install optional packages from requirements.d"""
+
+class InstallExtras(Command):
+    """
+    Install optional packages from `requirements.d`.
+    """
+
+    key = "extras"
+
+    def execute(self) -> None:
+
         reqs = ["requirements.d/extras.txt", "requirements.d/development.txt", "docs/requirements.txt"]
         if not WINDOWS_OS:
             reqs.append("requirements.d/ldap.txt")
@@ -329,70 +518,95 @@ class Commands:
             subprocess.call(command, shell=True, stderr=messages, stdout=messages)
         print('\nImportant messages from {} are shown below. Do "{} log extras" to see complete log.'.format(EXTRAS, M))
         search_for_phrase(EXTRAS)
-        self.run_time("Extras")
+        self.run_time()
 
-    def cmd_interwiki(self, *args):
-        """refresh contrib/interwiki/intermap.txt"""
+
+class RefreshInterwiki(Command):
+    """
+    Refresh the content of file `contrib/interwiki/intermap.txt`.
+    """
+
+    key = "interwiki"
+
+    def execute(self) -> None:
         print("Refreshing {}...".format(os.path.normpath("contrib/interwiki/intermap.txt")))
         command = "{} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw intermap.txt".format(
             sys.executable
         )
         subprocess.call(command, shell=True)
 
-    def cmd_log(self, *args):
-        """View a log file with the default text editor"""
 
-        def log_help(logs):
-            """Print list of available logs to view."""
-            print(f"usage: {M} log <target> where <target> is:\n\n")
-            choices = "{0: <16}- {1}"
-            for log in sorted(logs):
-                if os.path.isfile(CMD_LOGS[log]):
-                    print(choices.format(log, CMD_LOGS[log]))
-                else:
-                    print(choices.format(log, "* file does not exist"))
+class ViewLogFile(Command):
+    """
+    View a log file with the default text editor.
+    """
+
+    key = "log"
+
+    def execute(self) -> None:
 
         logs = set(CMD_LOGS.keys())
-        if args and args[0] in logs and os.path.isfile(CMD_LOGS[args[0]]):
+        if self.args.target and self.args.target in logs and os.path.isfile(CMD_LOGS[self.args.target]):
             if WINDOWS_OS:
-                command = f"start {CMD_LOGS[args[0]]}"
+                command = f"start {CMD_LOGS[self.args.target]}"
             else:
                 # .format requires {{ and }} to escape { and }
-                command = f"${{VISUAL:-${{FCEDIT:-${{EDITOR:-less}}}}}} {CMD_LOGS[args[0]]}"
+                command = f"${{VISUAL:-${{FCEDIT:-${{EDITOR:-less}}}}}} {CMD_LOGS[self.args.target]}"
             subprocess.call(command, shell=True)
         else:
-            log_help(logs)
+            self.print_help()
 
-    def cmd_new_wiki(self, *args):
-        """create empty wiki"""
-        command = "moin index-create"
+    @staticmethod
+    def print_help():
+        """
+        Print a list of log files available for viewing.
+        """
+        print(f"usage: {M} log <target> where <target> is:\n")
+        choices = "{0: <16}- {1}"
+        logs = set(CMD_LOGS.keys())
+        for log in sorted(logs):
+            if os.path.isfile(CMD_LOGS[log]):
+                print(choices.format(log, CMD_LOGS[log]))
+            else:
+                print(choices.format(log, "* file does not exist"))
+
+
+class CreateNewWiki(Command):
+    """
+    Create an empty wiki.
+    """
+
+    key = "new-wiki"
+
+    def execute(self) -> None:
         print("Creating a new empty wiki...")
+        command = "moin index-create"
         make_wiki(command)  # share code with restore command
 
-    def cmd_restore(self, *args):
-        """create wiki and load data from wiki/backup.moin or user specified path"""
-        command = "moin index-create{0} moin load --file %s{0} moin index-build".format(SEP)
-        filename = BACKUP_FILENAME
-        if args:
-            filename = args[0]
-        if os.path.isfile(filename):
-            command = command % filename
-            print(f"Creating a new wiki and loading it with data from {filename}...")
-            make_wiki(command)
-        else:
-            print(f"Error: cannot create wiki because {filename} does not exist.")
-        self.run_time("Restore")
 
-    def cmd_import19(self, *args):
-        """import a moin 1.9 wiki"""
+class Import19(Command):
+    """
+    Import a moin 1.9 wiki.
+    """
+
+    key = "import19"
+
+    def execute(self) -> None:
         print("Error: Subcommand import19 not supported. Please use 'moin import19'.")
 
-    def cmd_backup(self, *args):
-        """roll 3 prior backups and create new wiki/backup.moin or backup to user specified file"""
+
+class Backup(Command):
+    """
+    Roll 3 prior backups and create new wiki/backup.moin or backup to user specified file.
+    """
+
+    key = "backup"
+
+    def execute(self) -> None:
         if wiki_exists():
             filename = BACKUP_FILENAME
-            if args:
-                filename = args[0]
+            if self.args.filename:
+                filename = self.args.filename
                 print(f"Creating a wiki backup to {filename}...")
             else:
                 print(f"Creating a wiki backup to {filename} after rolling 3 prior backups...")
@@ -420,13 +634,41 @@ class Commands:
                 print("\nError: attempt to backup wiki failed.")
         else:
             print("Error: cannot backup wiki because it has not been created.")
-        self.run_time("Backup")
+        self.run_time()
 
-    def cmd_dump_html(self, *args):
-        """create a static html dump of this wiki"""
+
+class Restore(Command):
+    """
+    Create wiki and load data from wiki/backup.moin or user specified path.
+    """
+
+    key = "restore"
+
+    def execute(self) -> None:
+        command = "moin index-create{0} moin load --file %s{0} moin index-build".format(SEP)
+        filename = BACKUP_FILENAME
+        if self.args.filename:
+            filename = self.args.filename
+        if os.path.isfile(filename):
+            command = command % filename
+            print(f"Creating a new wiki and loading it with data from {filename}...")
+            make_wiki(command)
+        else:
+            print(f"Error: cannot create wiki because {filename} does not exist.")
+        self.run_time()
+
+
+class HtmlDump(Command):
+    """
+    Create a static html dump of this wiki.
+    """
+
+    key = "dump-html"
+
+    def execute(self) -> None:
         if wiki_exists():
             print("Creating static HTML image of wiki...")
-            command = "moin dump-html {}".format(" ".join(args))
+            command = "moin dump-html {}".format(" ".join(self.additional))
             with open(DUMPHTML, "w") as messages:
                 result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
             if result == 0:
@@ -442,39 +684,69 @@ class Commands:
             search_for_phrase(DUMPHTML)
         else:
             print("Error: cannot dump wiki because it has not been created.")
-        self.run_time("HTML Dump")
+        self.run_time()
 
-    def cmd_css(self, *args):
-        """run sass to update basic theme CSS files"""
+
+class RunSass(Command):
+    """
+    Run sass to update basic theme CSS files.
+    """
+
+    key = "css"
+
+    def execute(self) -> None:
         print("Running sass to update Basic theme CSS files. This requires Node.js and NPM to be installed locally.")
         build_css_dir = os.path.join("contrib", "css-build")
         command = f"cd {build_css_dir}{SEP}npm install{SEP}npm run build"
+        print(f"running command: {command}")
         result = subprocess.call(command, shell=True)
         if result == 0:
             print("Success: Basic theme CSS files updated.")
         else:
             print("Error: Basic theme CSS files update failed, see error messages above.")
 
-    def cmd_tests(self, *args):
-        """run tests, output goes to m-tox.txt"""
+
+class RunTests(Command):
+    """
+    Run tests, output goes to `m-tox.txt`.
+    """
+
+    key = "tests"
+
+    def execute(self) -> None:
         print(f"Running tests... output written to {TOX}.")
-        command = "tox -- {1} > {0} 2>&1".format(TOX, " ".join(args))
+        command = "tox -- {1} > {0} 2>&1".format(TOX, " ".join(self.additional))
+        print(f"Test command line: {command}")
         subprocess.call(command, shell=True)
         print(f'Important messages from {TOX} are shown below. Do "{M} log tests" to see complete log.')
         search_for_phrase(TOX)
-        self.run_time("Tests")
+        self.run_time()
 
-    def cmd_coding_std(self, *args):
-        """correct scripts that taint the HG repository and clutter subsequent code reviews"""
+
+class CheckCodingStandard(Command):
+    """
+    Correct scripts that taint the repository and clutter subsequent code reviews.
+    """
+
+    key = "coding-std"
+
+    def execute(self) -> None:
         print("Checking for trailing blanks, DOS line endings, Unix line endings, empty lines at eof...")
-        command = "%s scripts/coding_std.py" % sys.executable
+        command = f"{sys.executable} scripts/coding_std.py"
         subprocess.call(command, shell=True)
 
-    # not on menu, rarely used, similar code was in moin 1.9
-    def cmd_dist(self, *args):
-        """create distribution archive in dist/"""
+
+# not on menu, rarely used, similar code was in moin 1.9
+class CreateDist(Command):
+    """
+    Create a distribution archive in subfolder `dist/`.
+    """
+
+    key = "dist"
+
+    def execute(self) -> None:
         print("Deleting wiki data, then creating distribution archive in /dist, output written to {}.".format(DIST))
-        self.cmd_del_wiki(*args)
+        DeleteWiki().execute()
         command = "pip install build ; python -m build"
         with open(DIST, "w") as messages:
             result = subprocess.call(command, shell=True, stderr=messages, stdout=messages)
@@ -489,27 +761,48 @@ class Commands:
                 )
             )
 
-    def cmd_del_all(self, *args):
-        """same as running the 4 del-* commands below"""
-        self.cmd_del_orig(*args)
-        self.cmd_del_pyc(*args)
-        self.cmd_del_rej(*args)
-        self.cmd_del_wiki(*args)
 
-    def cmd_del_orig(self, *args):
-        """delete all files matching *.orig"""
+class DeleteOrigFiles(Command):
+    """
+    Delete all files matching `*.orig`.
+    """
+
+    key = "del-orig"
+
+    def execute(self) -> None:
         delete_files("*.orig")
 
-    def cmd_del_pyc(self, *args):
-        """delete all files matching *.pyc"""
+
+class DeletePycFiles(Command):
+    """
+    Delete all files matching `*.pyc`.
+    """
+
+    key = "del-pyc"
+
+    def execute(self) -> None:
         delete_files("*.pyc")
 
-    def cmd_del_rej(self, *args):
-        """delete all files matching *.rej"""
+
+class DeleteRejectedFiles(Command):
+    """
+    Delete all files matching `*.rej`.
+    """
+
+    key = "del-rej"
+
+    def execute(self) -> None:
         delete_files("*.rej")
 
-    def cmd_del_wiki(self, *args):
-        """create a just-in-case backup, then delete all wiki data"""
+
+class DeleteWiki(Command):
+    """
+    Create a just-in-case backup, then delete all wiki data.
+    """
+
+    key = "del-wiki"
+
+    def execute(self) -> None:
         command = f"moin save --all-backends --file {JUST_IN_CASE_BACKUP}"
         if wiki_exists():
             print(f"Creating a backup named {JUST_IN_CASE_BACKUP}; then deleting all wiki data and indexes...")
@@ -528,189 +821,158 @@ class Commands:
             print("Wiki data successfully deleted.")
         else:
             print("Wiki data not deleted because it does not exist.")
-        self.run_time("Delete wiki")
+        self.run_time()
 
 
-class QuickInstall:
+class DeleteAll(Command):
+    """
+    Same as running the 4 del-* commands below.
+    """
 
-    def __init__(self, source):
-        self.dir_source = source
-        base, source_name = os.path.split(source)
-        executable = os.path.basename(sys.executable).split(".exe")[0]
-        venv_path = os.path.join(base, f"{source_name}-venv-{executable}")
-        venv_path = os.path.abspath(venv_path)
-        venv_home, venv_lib, venv_inc, venv_bin = path_locations(venv_path)
-        self.dir_venv = venv_home
-        self.dir_venv_bin = venv_bin
+    key = "del-all"
 
-    def __call__(self):
-        self.do_venv()
-        self.do_helpers()
-        self.do_install()
-        self.do_catalog()
-        sys.stdout.write(f"\n\nSuccessfully created or updated venv at {self.dir_venv}\n")
+    def execute(self) -> None:
+        DeleteOrigFiles().execute()
+        DeletePycFiles().execute()
+        DeleteRejectedFiles().execute()
+        DeleteWiki().execute()
 
-    def do_venv(self):
-        venv.create(self.dir_venv, system_site_packages=False, clear=False, symlinks=False, with_pip=True, prompt=None)
 
-    def do_install(self):
-        args = [
-            os.path.join(self.dir_venv_bin, "pip"),
-            "install",
-            "--upgrade",
-            "--upgrade-strategy=eager",
-            "--editable",
-            self.dir_source,
-        ]
-        subprocess.check_call(args)
+COMMANDS: list[type[Command]] = [
+    QuickInstall,
+    CreateVirtualEnv,
+    GenerateDocs,
+    InstallExtras,
+    RefreshInterwiki,
+    ViewLogFile,
+    CreateNewWiki,
+    Import19,
+    Backup,
+    Restore,
+    HtmlDump,
+    RunSass,
+    RunTests,
+    CheckCodingStandard,
+    CreateDist,
+    DeleteAll,
+    DeleteOrigFiles,
+    DeletePycFiles,
+    DeleteRejectedFiles,
+    DeleteWiki,
+]
+"""
+Each cmd_ method processes a choice on the menu.
+"""
 
-    def do_catalog(self):
-        subprocess.check_call(
-            (
-                os.path.join(self.dir_venv_bin, "pybabel"),
-                "compile",
-                "--statistics",
-                # needed in case user runs quickinstall.py with a cwd other than the repo root
-                "--directory",
-                os.path.join(os.path.dirname(__file__), "src", "moin", "translations"),
-            )
-        )
 
-    def create_wrapper(self, filename, target):
-        r"""Create files in the repo root that wrap files in <path-to-virtual-env>\Scripts."""  # noqa
-        target = os.path.join(self.dir_venv_bin, target)
-        with open(filename, "w") as f:
-            f.write(f":: {WIN_INFO}\n\n@call {target} %*\n")
+class CommandArgumentParser(argparse.ArgumentParser):
 
-    def do_helpers(self):
-        """Create small helper scripts or symlinks in the repo root; avoid typing the long path to the virtual environment."""
-        create_m()
-        if WINDOWS_OS:
-            # Windows commands are: activate | deactivate
-            self.create_wrapper("activate.bat", "activate.bat")
-            self.create_wrapper("deactivate.bat", "deactivate.bat")
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.moin_command = None
+
+    def print_usage(self, file=None) -> None:
+        if self.moin_command and hasattr(self.moin_command, "print_help"):
+            self.moin_command.print_help()
         else:
-            # Linux commands are: source activate | deactivate
-            if os.path.exists("activate"):
-                os.unlink("activate")
-            os.symlink(os.path.join(self.dir_venv_bin, "activate"), "activate")  # no need to define deactivate on Unix
+            super().print_usage(file)
 
 
-# code below and path_locations copied from virtualenv.py v16.7.10 because path_locations dropped in v20.0.0 rewrite.
-PY_VERSION = f"python{sys.version_info[0]}.{sys.version_info[1]}"
-IS_PYPY = hasattr(sys, "pypy_version_info")
-IS_WIN = sys.platform == "win32"
-ABI_FLAGS = getattr(sys, "abiflags", "")
-join = os.path.join
+class CustomArgumentParser(argparse.ArgumentParser):
+
+    def __init__(self, *args, **kwargs):
+        self.default_subparser = kwargs.pop("default_subparser", None)
+        super().__init__(*args, **kwargs)
+
+    def parse_known_args(self, args=None, namespace=None):
+        if args is None:
+            args = sys.argv[1:]
+
+        if (not args or args[0].startswith("-")) and self.default_subparser:
+            args = [self.default_subparser] + args
+
+        return super().parse_known_args(args, namespace)
+
+    def print_usage(self, file=None):
+        if file is None:
+            file = sys.stdout
+        file.write(help)
 
 
-def mkdir(at_path):
-    if not os.path.exists(at_path):
-        os.makedirs(at_path)
+def already_installed() -> bool:
+    marker_file = "m.bat" if IS_WIN else "m"
+    return os.path.isfile(marker_file)
 
 
-def path_locations(home_dir, dry_run=False):
-    """Return the path locations for the environment (where libraries are,
-    where scripts go, etc.)."""
-    home_dir = os.path.abspath(home_dir)
-    lib_dir, inc_dir, bin_dir = None, None, None
-    # XXX: We'd use distutils.sysconfig.get_python_inc/lib but its
-    # prefix arg is broken: http://bugs.python.org/issue3386
-    if IS_WIN:
-        # Windows has lots of problems with executables with spaces in
-        # the name; this function will remove them (using the ~1
-        # format):
-        if not dry_run:
-            mkdir(home_dir)
-        if " " in home_dir:
-            import ctypes
+def create_args_parser() -> argparse.ArgumentParser:
 
-            get_short_path_name = ctypes.windll.kernel32.GetShortPathNameW
-            size = max(len(home_dir) + 1, 256)
-            buf = ctypes.create_unicode_buffer(size)
-            try:
-                # noinspection PyUnresolvedReferences
-                u = unicode
-            except NameError:
-                u = str
-            ret = get_short_path_name(u(home_dir), buf, size)
-            if not ret:
-                print(f'Error: the path "{home_dir}" has a space in it')
-                print("We could not determine the short pathname for it.")
-                print("Exiting.")
-                sys.exit(3)
-            home_dir = str(buf.value)
-        lib_dir = join(home_dir, "Lib")
-        inc_dir = join(home_dir, "Include")
-        bin_dir = join(home_dir, "Scripts")
-    if IS_PYPY:
-        lib_dir = home_dir
-        inc_dir = join(home_dir, "include")
-        bin_dir = join(home_dir, "bin")
-    elif not IS_WIN:
-        lib_dir = join(home_dir, "lib", PY_VERSION)
-        inc_dir = join(home_dir, "include", PY_VERSION + ABI_FLAGS)
-        bin_dir = join(home_dir, "bin")
-    return home_dir, lib_dir, inc_dir, bin_dir
+    # default to perform a moin quick installation if moin wasn't already installed
+    toplevel_parser = CustomArgumentParser(default_subparser=None if already_installed() else QuickInstall.key)
+
+    subparsers = toplevel_parser.add_subparsers(dest="command", parser_class=CommandArgumentParser)
+
+    parser = subparsers.add_parser(QuickInstall.key)
+    parser.add_argument("--venv", required=False, default=None)
+
+    parser = subparsers.add_parser(CreateVirtualEnv.key)
+    parser.add_argument("--source", required=True)
+    parser.add_argument("--name", required=False, default=None)
+
+    parser = subparsers.add_parser(InstallExtras.key)
+
+    parser = subparsers.add_parser(GenerateDocs.key)
+
+    parser = subparsers.add_parser(RefreshInterwiki.key)
+
+    parser = subparsers.add_parser(ViewLogFile.key)
+    parser.add_argument("target", choices=CMD_LOGS.keys())
+
+    parser = subparsers.add_parser(CreateNewWiki.key)
+
+    parser = subparsers.add_parser(Restore.key)
+    parser.add_argument("--filename", required=False)
+
+    parser = subparsers.add_parser(Backup.key)
+    parser.add_argument("--filename", required=False)
+
+    parser = subparsers.add_parser(HtmlDump.key)
+
+    parser = subparsers.add_parser(RunSass.key)
+    parser = subparsers.add_parser(RunTests.key)
+    parser = subparsers.add_parser(CheckCodingStandard.key)
+
+    parser = subparsers.add_parser(DeleteAll.key)
+    parser = subparsers.add_parser(DeleteOrigFiles.key)
+    parser = subparsers.add_parser(DeletePycFiles.key)
+    parser = subparsers.add_parser(DeleteRejectedFiles.key)
+    parser = subparsers.add_parser(DeleteWiki.key)
+
+    return toplevel_parser
+
+
+def usage() -> None:
+    print(help)
+
+
+def main() -> None:
+
+    parser = create_args_parser()
+    args, remainder = parser.parse_known_args()
+
+    # no command given => show usage information
+    if not args.command:
+        usage()
+        sys.exit(1)
+
+    command = next((cmd for cmd in COMMANDS if cmd.key == args.command), None)
+    assert command
+    print(f"command = {command} args = {args!r}")
+
+    # Some commands expect a virtual environment to be present when executing a command
+    # in a child process.
+    # Make sure to run ". activate" in your command shell.
+    command(args, remainder).execute()
 
 
 if __name__ == "__main__":
-    # create a set of valid menu choices
-    commands = Commands()
-    choices = set()
-    names = dir(commands)
-    for name in names:
-        if name.startswith("cmd_"):
-            choices.add(name)
-    args = sys.argv[:]
-
-    if len(args) > 2 and args[-1] == "--help":
-        # m and m.bat have trailing --help so "./m" comes across as "python quickinstall.py --help"
-        # if user did "./m <option>" we have "python quickinstall.py <option> --help"
-        # then we can delete the --help and do <option>
-        args = args[:-1]
-
-    if (os.path.isfile("activate") or os.path.isfile("activate.bat")) and (
-        len(args) == 2 and args[1] in ("-h", "--help")
-    ):
-        # user keyed "./m", "./m -h", or "./m --help"
-        print(help)
-
-    else:
-        if not (os.path.isfile("m") or os.path.isfile("m.bat")):
-            # user is running "python quickinstall.py" after fresh clone (or m or m.bat has been deleted)
-            create_m()  # create "m" or "m.bat" file so above IF will be false next time around
-            command = getattr(commands, "cmd_quickinstall")
-            # run this same script (quickinstall.py) again in a subprocess to create the virtual env
-            command()
-            # a few success/failure messages will have printed on users terminal, suggest next step
-            print('\n> > > Type "%s" to activate venv, then "%s" for menu < < <' % (ACTIVATE, M))
-
-        elif args == ["quickinstall.py", "quickinstall"]:
-            # user keyed "./m quickinstall" to update virtualenv
-            command = getattr(commands, "cmd_quickinstall")
-            # run this same script (quickinstall.py) again in a subprocess to recreate the virtual env
-            command()
-
-        else:
-            if len(args) == 1 and args[0].endswith("quickinstall.py"):
-                # user keyed "python quickinstall.py" instead of "./m quickinstall"
-                # run this same script (quickinstall.py) again in a subprocess to create the virtual env
-                command = getattr(commands, "cmd_quickinstall")
-                command()
-
-            elif args == ["quickinstall.py", "--FirstCall"]:
-                # we are in a subprocess call after "python quickinstall.py" or  "./m quickinstall"
-                QuickInstall(os.path.dirname(os.path.realpath(args[0])))()
-                copy_config_files()
-
-            else:
-                # we have some simple command like "./m css" that does not update virtualenv
-                choice = "cmd_%s" % args[1]
-                choice = choice.replace("-", "_")
-                if choice in choices:
-                    choice = getattr(commands, choice)
-                    choice(*args[2:])
-                else:
-                    print(help)
-                    print('Error: unknown menu selection "%s"' % args[1])
+    main()
