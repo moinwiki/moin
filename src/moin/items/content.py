@@ -5,7 +5,7 @@
 # Copyright: 2010 MoinMoin:ValentinJaniaut
 # Copyright: 2010 MoinMoin:DiogenesAugusto
 # Copyright: 2012 MoinMoin:CheerXiao
-# Copyright: 2023-2025 MoinMoin:UlrichB
+# Copyright: 2023-2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -187,7 +187,7 @@ def content_registry_disable(contenttype_disabled: list[str]) -> None:
     content_registry.groups = groups_enabled
 
 
-def conv_serialize(doc: Element, namespaces: dict[str, str], method: str = "polyglot") -> str:
+def conv_serialize(doc: Element, namespaces: dict[str, str], method: str = "html") -> str:
     out = array("u")
     doc.write(out.fromunicode, namespaces=namespaces, method=method)
     return out.tounicode()
