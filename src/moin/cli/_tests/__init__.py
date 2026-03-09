@@ -24,10 +24,10 @@ from moin.constants.keys import ALL_REVS, LATEST_META
 logging = log.getLogger(__name__)
 
 
-def _prepare_subprocess_env(env: dict[str, str] | None):
-    subprocess_environ = copy(os.environ)
-    subprocess_environ["PYTHONIOENCODING"] = "cp1252"  # Simulate Windows terminal to ferret out encoding issues
+def _create_subprocess_env(env: dict[str, str] | None):
+    subprocess_environ = None
     if env:
+        subprocess_environ = copy(os.environ)
         subprocess_environ.update(env)
     return subprocess_environ
 
@@ -50,7 +50,7 @@ def start(
         stderr = subprocess.PIPE
     # needed for use of os.kill
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0  # type: ignore
-    subprocess_environ = _prepare_subprocess_env(env)
+    subprocess_environ = _create_subprocess_env(env)
     return subprocess.Popen(cmd, stdout=stdout, stderr=stderr, creationflags=flags, env=subprocess_environ)
 
 
@@ -78,7 +78,7 @@ def run(
     else:  # log is None
         stdout = subprocess.PIPE
         stderr = subprocess.PIPE
-    subprocess_environ = _prepare_subprocess_env(env)
+    subprocess_environ = _create_subprocess_env(env)
     return subprocess.run(cmd, stdout=stdout, stderr=stderr, env=subprocess_environ, timeout=timeout)
 
 
