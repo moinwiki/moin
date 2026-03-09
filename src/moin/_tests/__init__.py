@@ -103,7 +103,7 @@ def get_dirs(subdir: str) -> tuple[Path, Path]:
     if not artifacts_dir.exists():
         artifacts_dir.mkdir(parents=True)
 
-    if Path(my_dir / "src").exists:
+    if Path(my_dir / "src").exists():
         # in this case we have a development environment
         moin_dir = my_dir / "src" / "moin"
     else:
