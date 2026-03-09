@@ -27,7 +27,7 @@ import sys
 from time import sleep
 
 from moin._tests import check_connection, get_dirs
-from moin.cli._tests import run, getBackupPath
+from moin.cli._tests import run, start, getBackupPath
 from moin.cli._tests.scrapy.moincrawler.items import CrawlResult
 from moin import log
 
@@ -116,7 +116,7 @@ def get_crawl_csv_path():
 def server(welcome, load_help, artifact_dir):
     started = False
     server_log = open(get_crawl_server_log_path(), "wb")
-    server = run(["moin", "run", "-p", "9080"], server_log, wait=False)
+    server = start(["moin", "run", "-p", "9080"], log=server_log)
     wait_count = 0
     while not started and wait_count < 12:
         wait_count += 1
@@ -176,7 +176,7 @@ def do_crawl(request, artifact_dir):
             com = ["scrapy", "crawl", "-a", f"url={settings.CRAWL_START}", "ref_checker"]
             with open(get_crawl_log_path(), "wb") as crawl_log:
                 try:
-                    p = run(com, crawl_log, timeout=600, env={"MOIN_SCRAPY_CRAWL_CSV": str(get_crawl_csv_path())})
+                    p = run(com, log=crawl_log, timeout=600, env={"MOIN_SCRAPY_CRAWL_CSV": str(get_crawl_csv_path())})
                 except subprocess.TimeoutExpired as e:
                     crawl_log.write(f"\n{repr(e)}\n".encode())
                     raise
