@@ -241,7 +241,7 @@ class TestInclude:
             '<p><span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src='
             in rendered
         )
-        assert '/logo.png" /></span></p>' in rendered
+        assert '/logo.png"></span></p>' in rendered
         # simple transclusion with alt text and width
         update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, '{{logo.png|my alt text|width="100"}}')
         rendered = Item.create("page1").content._render_data()
@@ -249,7 +249,7 @@ class TestInclude:
             '<p><span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="my alt text" src='
             in rendered
         )
-        assert 'logo.png" width="100" /></span></p>' in rendered
+        assert 'logo.png" width="100"></span></p>' in rendered
         # within paragraph
         update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "text {{logo.png}} text")
         rendered = Item.create("page1").content._render_data()
@@ -257,7 +257,7 @@ class TestInclude:
             '<p>text <span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src='
             in rendered
         )
-        assert '/logo.png" /></span> text</p>' in rendered
+        assert '/logo.png"></span> text</p>' in rendered
         # within markup
         update_item(
             "page1",
@@ -269,7 +269,7 @@ class TestInclude:
             '<p>Normal <em>italic <strong>bold <span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src='
             in rendered
         )
-        assert '/logo.png" /></span> bold</strong> italic</em> normal</p>' in rendered
+        assert '/logo.png"></span> bold</strong> italic</em> normal</p>' in rendered
         # multiple transclusions
         update_item("page1", {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8"}, "{{logo.png}}{{logo.png}}")
         rendered = Item.create("page1").content._render_data()
@@ -278,7 +278,7 @@ class TestInclude:
             in rendered
         )
         assert (
-            '/logo.png" /></span><span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src='
+            '/logo.png"></span><span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src='
             in rendered
         )
         # check for old bug
@@ -296,7 +296,7 @@ class TestInclude:
             '<p>text <a href="/page2"><span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src="'
             in rendered
         )
-        assert '/logo.png" /></span></a> text</p>' in rendered
+        assert '/logo.png"></span></a> text</p>' in rendered
         # link alternate with image embedded in markup
         update_item(
             "page1",
@@ -308,7 +308,7 @@ class TestInclude:
             '<p>text <a href="/page2">plain <strong>bold <span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src="'
             in rendered
         )
-        assert '/logo.png" /></span> bold</strong> plain</a> text</p>' in rendered
+        assert '/logo.png"></span> bold</strong> plain</a> text</p>' in rendered
         # nonexistent image used in link alternate
         # XXX html validation errora: A inside A - the image alternate turns into an A-tag to create the non-existant image.  Error is easily seen.
         # IE9, Firefox, Chrome, Safari, and Opera display this OK;  the only usable hyperlink is to create the missing image.
@@ -326,7 +326,7 @@ class TestInclude:
             '<p>text <a class="moin-nonexistent" href="/page2xxx"><span class="moin-transclusion" data-href="/logo.png" dir="ltr" lang="en"><img alt="logo.png" src="'
             in rendered
         )
-        assert '/logo.png" /></span></a> text</p>' in rendered
+        assert '/logo.png"></span></a> text</p>' in rendered
         # transclude block elem as link alternate to nonexistent page
         # XXX html validation errors, block element inside A.
         # IE9, Firefox, Chrome, Safari, and Opera display this OK;  the hyperlink is the entire div enclosing the block elem
