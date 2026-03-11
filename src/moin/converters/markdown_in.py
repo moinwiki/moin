@@ -16,7 +16,6 @@ from typing import TYPE_CHECKING
 import re
 
 from html import unescape as html_unescape
-from html.entities import name2codepoint
 from collections import deque
 
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
@@ -55,16 +54,16 @@ BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 def postproc_text(markdown: Markdown, text: str | None) -> str | None:
     """
-    Run markdown post-processors and convert character entities to literal Unicode.
+    Run `markdown` post-processors, convert character entities to literals.
 
-    Replaces HTML or XML character references and entities with the corresponding
-    Unicode character.
+    Restore raw HTML to the document.
+    Restore valid entities
+    Replace HTML or XML character references and entities with the
+    corresponding Unicode character.
 
-    :param text: The HTML (or XML) source text.
-    :returns: The plain text.
+    :param markdown: Markdown parser instance.
+    :param text: text string (as returned from the Markdown parser).
     """
-    # http://effbot.org/zone/re-sub.htm#unescape-html
-
     if text is None:
         return None
 
@@ -77,26 +76,7 @@ def postproc_text(markdown: Markdown, text: str | None) -> str | None:
     if text.startswith("<pre>") or text.startswith('<div class="codehilite"><pre>'):
         return text
 
-    def fixup(m):
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return chr(int(text[3:-1], 16))
-                else:
-                    return chr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = chr(name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text  # leave as is
-
-    return re.sub(r"&#?\w+;", fixup, text)
+    return html_unescape(text)
 
 
 class Converter(html_in.HtmlTags):
@@ -236,7 +216,7 @@ class Converter(html_in.HtmlTags):
         attrib = {}
         if element.attrib.get("title"):
             attrib[html.title_] = element.attrib.get("title")
-        href = postproc_text(self.markdown, element.attrib.get("href"))
+        href = html_unescape(element.attrib.get("href"))
         # ensure a safe scheme, fall back to wiki-internal reference:
         attrib[xlink.href] = sanitise_uri_scheme(href)
         return self.new_copy(moin_page.a, element, attrib)

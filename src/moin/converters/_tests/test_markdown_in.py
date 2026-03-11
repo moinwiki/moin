@@ -51,6 +51,10 @@ class TestConverter:
         ),
         ("[new page](Yesterday: a legacy)", '<p><a xlink:href="wiki.local:Yesterday:%20a%20legacy">new page</a></p>'),
         ("[MoinMoin](http://moinmo.in/)", '<p><a xlink:href="http://moinmo.in/">MoinMoin</a></p>'),
+        (  # & may be given as literal or entity
+            "[query](http:example.org?num=20&amp;q=top&x=u)",
+            '<p><a xlink:href="http:example.org?num=20&amp;q=top&amp;x=u">query</a></p>',
+        ),
         ("----", '<separator class="moin-hr3" />'),
     ]
 
@@ -251,6 +255,10 @@ class TestConverter:
 
     data = [
         ('<a href="subitem">link text</a>', '<p><a xlink:href="wiki.local:subitem">link text</a></p>'),
+        (  # & may be given as literal or entity
+            '<a href="http:example.org?num=20&amp;q=top&x=u">query</a>',
+            '<p><a xlink:href="http:example.org?num=20&amp;q=top&amp;x=u">query</a></p>',
+        ),
         ("<BIG>larger</BIG>", '<p><span html:class="moin-big">larger</span></p>'),
         ('<span class="moin-small">smaller</span>', '<p><span html:class="moin-small">smaller</span></p>'),
         ("<sub>sub</sub>script", "<p><sub>sub</sub>script</p>"),
