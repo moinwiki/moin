@@ -19,6 +19,7 @@ wiki_local/
 .idea/
 .pytest_cache/
 .tox/
+.venv/
 *.pyc
 *.pyo
 *.orig

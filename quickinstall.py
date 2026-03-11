@@ -916,7 +916,7 @@ def create_args_parser() -> argparse.ArgumentParser:
 
     parser = subparsers.add_parser(CreateVirtualEnv.key)
     parser.add_argument("--source", required=True)
-    parser.add_argument("--name", required=False, default=None)
+    parser.add_argument("--name", required=False, default=".venv")
 
     parser = subparsers.add_parser(InstallExtras.key)
 
