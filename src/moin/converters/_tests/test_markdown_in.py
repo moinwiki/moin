@@ -259,6 +259,7 @@ class TestConverter:
             '<a href="http:example.org?num=20&amp;q=top&x=u">query</a>',
             '<p><a xlink:href="http:example.org?num=20&amp;q=top&amp;x=u">query</a></p>',
         ),
+        ('<a class="selected">no href</a>', '<p><a html:class="selected">no href</a></p>'),
         ("<BIG>larger</BIG>", '<p><span html:class="moin-big">larger</span></p>'),
         ('<span class="moin-small">smaller</span>', '<p><span html:class="moin-small">smaller</span></p>'),
         ("<sub>sub</sub>script", "<p><sub>sub</sub>script</p>"),

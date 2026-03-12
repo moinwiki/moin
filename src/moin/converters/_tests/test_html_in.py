@@ -284,6 +284,11 @@ class TestConverter(Base):
             # <page><body><p><a xlink:href="wiki.local:javascript:alert%28'hi'%29">Text</a></p></body></page>
             """/page/body/p/a[text()="Test"][@xlink:href="wiki.local:javascript:alert%28'hi'%29"]""",
         ),
+        (  # don't fail at an <a> without href
+            '<p><a class="selected">active</a></p>',
+            # <page><body><p><a html:class="selected">active</a></p></div></body></page>
+            '/page/body/p/a[text()="active"][@html:class="selected"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

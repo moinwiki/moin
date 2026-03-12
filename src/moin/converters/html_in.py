@@ -414,10 +414,11 @@ class Converter(HtmlTags):
         if element.attrib.get("title"):
             attrib[html.title_] = element.attrib.get("title")
         href = element.get(html.href)
-        if self.base_url:
-            href = "".join([self.base_url, href])
-        # ensure a safe scheme, fall back to wiki-internal reference:
-        attrib[xlink.href] = sanitise_uri_scheme(href)
+        if href is not None:
+            if self.base_url:
+                href = "".join([self.base_url, href])
+            # ensure a safe scheme, fall back to wiki-internal reference:
+            attrib[xlink.href] = sanitise_uri_scheme(href)
         return self.new_copy(moin_page.a, element, attrib)
 
     def visit_xhtml_img(self, element):
