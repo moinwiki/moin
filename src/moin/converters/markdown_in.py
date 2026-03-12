@@ -52,7 +52,7 @@ block_elements = "p h blockcode ol ul pre address blockquote dl div fieldset for
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 
-def postproc_text(markdown: Markdown, text: str | None) -> str | None:
+def postproc_text(markdown: Markdown, text: str) -> str:
     """
     Run `markdown` post-processors, convert character entities to literals.
 
@@ -64,9 +64,6 @@ def postproc_text(markdown: Markdown, text: str | None) -> str | None:
     :param markdown: Markdown parser instance.
     :param text: text string (as returned from the Markdown parser).
     """
-    if text is None:
-        return None
-
     if text == "[TOC]":
         return moin_page.table_of_content(attrib={})
 
@@ -283,7 +280,7 @@ class Converter(html_in.HtmlTags):
         """
         new = []
         # post-process leading text
-        if getattr(element, "text", "") and element.text != "\n":
+        if getattr(element, "text") and element.text != "\n":
             new.append(postproc_text(self.markdown, element.text))
 
         for child in element:
@@ -297,7 +294,7 @@ class Converter(html_in.HtmlTags):
                 r = (r,)
             new.extend(r)
             # post-process trailing text
-            if getattr(child, "tail", "") and child.tail != "\n":
+            if getattr(child, "tail") and child.tail != "\n":
                 new.append(postproc_text(self.markdown, child.tail))
         return new
 
