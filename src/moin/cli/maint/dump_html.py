@@ -128,7 +128,7 @@ def Dump(
             acls["before"] = "All:read"
 
         # create an empty output directory after deleting any existing directory
-        print(f"Creating output directory {html_root}, starting to copy supporting files")
+        click.echo(f"Creating output directory {html_root}, starting to copy supporting files")
         if html_root.exists():
             shutil.rmtree(html_root, ignore_errors=False)
 
@@ -168,7 +168,7 @@ def Dump(
         else:
             q = Every()
 
-        print("Starting to dump items")
+        click.echo("Starting to dump items")
 
         # In the filesystem the item cannot have the same name as the directory.
         # so we append .html to the filename for items in used_dirs.
@@ -186,14 +186,14 @@ def Dump(
                 item_name = current_rev.fqname.fullname
                 rendered = show_item(item_name, CURRENT)
             except Forbidden:
-                print(f"Failed to dump {current_rev.name}: Forbidden")
+                click.echo(f"Failed to dump {current_rev.name}: Forbidden")
                 continue
             except KeyError:
-                print(f"Failed to dump {current_rev.name}: KeyError")
+                click.echo(f"Failed to dump {current_rev.name}: KeyError")
                 continue
 
             if not isinstance(rendered, str):
-                print(f"Rendering failed for {item_name} with response {rendered}")
+                click.echo(f"Rendering failed for {item_name} with response {rendered}")
                 continue
 
             rendered = fixup_item_content(item_name, rendered, default_root=current_app.cfg.default_root)
@@ -361,10 +361,10 @@ def create_raw_data_file(filename: Path, rev: Revision) -> None:
         rev.data.seek(0)
         shutil.copyfileobj(rev.data, f)
         try:
-            print(f"Saved file named {filename} as raw data")
+            click.echo(f"Saved file named {filename} as raw data")
         except UnicodeEncodeError:
             safe_filename = str(filename).encode("ascii", errors="replace").decode()
-            print(f"Saved file named {safe_filename} as raw data")
+            click.echo(f"Saved file named {safe_filename} as raw data")
 
 
 def create_html_file(filename: Path, content: str) -> None:
@@ -372,17 +372,17 @@ def create_html_file(filename: Path, content: str) -> None:
     with open(filename, "wb") as f:
         f.write(content.encode("utf8"))
         try:
-            print(f"Saved file named {filename}")
+            click.echo(f"Saved file named {filename}")
         except UnicodeEncodeError:
             safe_filename = str(filename).encode("ascii", errors="replace").decode()
-            print(f"Saved file named {safe_filename}")
+            click.echo(f"Saved file named {safe_filename}")
 
 
 def create_index_page(
     home_page: str, theme: str, names: list[tuple[str, str]], html_root: Path, wiki_root: str
 ) -> None:
     if not home_page:
-        print(
+        click.echo(
             'Error: index pages not created because no home page exists, expected an item named "{}".'.format(wiki_root)
         )
         return
@@ -412,7 +412,7 @@ def create_index_page(
         page = part1 + start + name_links + div_end + end + part2
     except IndexError:
         page = home_page
-        print(f"Error: failed to find {end} in item named {wiki_root}")
+        click.echo(f"Error: failed to find {end} in item named {wiki_root}")
 
     for target in ["+index", "index.html"]:
         with open(html_root / target, "wb") as f:
