@@ -95,6 +95,11 @@ class TestConverter(Base):
             # <page><body><p>paragraph</p><div>div</div></body></page>
             '/page/body/div/text()="Div"',
         ),
+        (
+            "<center>centered text</center>",
+            # <page><body><div html:class="center">centered text</div></body></page>
+            '/page/body/div[text()="centered text"][@html:class="center"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
@@ -284,6 +289,11 @@ class TestConverter(Base):
             # <page><body><p><a xlink:href="wiki.local:javascript:alert%28'hi'%29">Text</a></p></body></page>
             """/page/body/p/a[text()="Test"][@xlink:href="wiki.local:javascript:alert%28'hi'%29"]""",
         ),
+        (  # don't fail at an <a> without href
+            '<p><a class="selected">active</a></p>',
+            # <page><body><p><a html:class="selected">active</a></p></div></body></page>
+            '/page/body/p/a[text()="active"][@html:class="selected"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
@@ -380,11 +390,16 @@ class TestConverter(Base):
             # <page><body><div><list><list-item><list-item-label>Label</list-item-label><list-item-body>Item</list-item-body></list-item></list></div></body></page>
             '/page/body/div/list/list-item[list-item-label="Label"][list-item-body="Item"]',
         ),
-        (
+        (  # <dir> is a variant of <ul>, deprecated (already in HTML 4.1)
             "<html><div><dir><li>Item</li></dir></div></html>",
             # <page><body><div><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></div></page></body></page>
             '/page/body/div/list[@item-label-generate="unordered"]/list-item[list-item-body="Item"]',
         ),
+        # (  # <menu> is a "semantic alternative" of <ul>. TODO: ignore or map to unordered list?
+        #     "<menu><li>Item</li></menu>",
+        #     # <page><body><list item-label-generate="unordered"><list-item><list-item-body>Item</list-item-body></list-item></list></page></body></page>
+        #     '/page/body/list[@item-label-generate="unordered"]/list-item[list-item-body="Item"]',
+        # ),
         (
             "<div><ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul></div>",
             # <page><body><div><list item-label-generate="unordered"><list-item><list-item-body>Item 1</list-item-body></list-item><list-item><list-item-body>Item 2</list-item-body></list-item><list-item><list-item-body>Item 3</list-item-body></list-item></list></div></page></body></page>

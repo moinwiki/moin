@@ -128,7 +128,6 @@ class HtmlTags:
         "area",  # image map
         "button",  # web form
         "caption",  # TODO support table captions
-        "center",  # deprecated; TODO map to <div class="center">?
         "fieldset",  # web form
         "form",  # web form
         "frame",  # deprecated
@@ -397,6 +396,13 @@ class Converter(HtmlTags):
         attrib = {html.class_: "moin-big"}
         return self.new_copy(moin_page.span, element, attrib)
 
+    def visit_xhtml_center(self, element):
+        """
+        <center>Text</center> --> <div html:class="centered">Text</div>
+        """
+        attrib = {html.class_: "center"}
+        return self.new_copy(moin_page.div, element, attrib)
+
     def visit_xhtml_hr(self, element, min_class="moin-hr1", max_class="moin-hr6", default_class="moin-hr3"):
         """
         <hr /> --> <separator />
@@ -414,10 +420,11 @@ class Converter(HtmlTags):
         if element.attrib.get("title"):
             attrib[html.title_] = element.attrib.get("title")
         href = element.get(html.href)
-        if self.base_url:
-            href = "".join([self.base_url, href])
-        # ensure a safe scheme, fall back to wiki-internal reference:
-        attrib[xlink.href] = sanitise_uri_scheme(href)
+        if href is not None:
+            if self.base_url:
+                href = "".join([self.base_url, href])
+            # ensure a safe scheme, fall back to wiki-internal reference:
+            attrib[xlink.href] = sanitise_uri_scheme(href)
         return self.new_copy(moin_page.a, element, attrib)
 
     def visit_xhtml_img(self, element):
@@ -507,11 +514,8 @@ class Converter(HtmlTags):
         # We will define the appropriate attribute
         # according to the type of the list
         attrib = self.convert_attributes(element)
-        if element.tag.name == "ul" or element.tag.name == "dir":
-            attrib[moin_page("item-label-generate")] = "unordered"
-        elif element.tag.name == "ol":
+        if element.tag.name == "ol":
             attrib[moin_page("item-label-generate")] = "ordered"
-
             # We check which kind of style we have
             style = element.get(html.type)
             if "A" == style:
@@ -522,6 +526,8 @@ class Converter(HtmlTags):
                 attrib[moin_page("list-style-type")] = "lower-alpha"
             elif "i" == style:
                 attrib[moin_page("list-style-type")] = "lower-roman"
+        else:
+            attrib[moin_page("item-label-generate")] = "unordered"
 
         # we should not have any strings in the child
         list_items = []
