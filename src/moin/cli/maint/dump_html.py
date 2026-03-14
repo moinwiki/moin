@@ -36,6 +36,7 @@ import shutil
 import re
 
 import click
+from flask import render_template
 from flask.cli import FlaskGroup
 
 from pathlib import Path
@@ -136,6 +137,10 @@ def Dump(
         # create subdirectories and copy static css, icons, images into "static" subdirectory
         shutil.copytree(moinmoin / "static", html_root / "static")
         shutil.copytree(get_wiki_local_dir(), html_root / "+serve" / "wiki_local")
+
+        # render script dictionary.js (i18n strings)
+        with open(html_root / "static" / "js" / "dictionary.js", "wt", encoding="utf-8") as f:
+            f.write(render_dictionary_js())
 
         # copy files from xstatic packaging into "+serve" subdirectory
         xstatic_dirs = ["font_awesome"]
@@ -322,6 +327,7 @@ def fixup_item_content(item_name: str, rendered: str, /, default_root: str = "Ho
     rendered = rendered.replace('src="/static/', f'src="{rel_path2root}static/')
     rendered = rendered.replace('src="/+get/', f'src="{rel_path2root}+get/')
     rendered = rendered.replace('src="/+serve/', f'src="{rel_path2root}+serve/')
+    rendered = rendered.replace('src="/+template/dictionary.js', f'src="{rel_path2root}static/js/dictionary.js')
     rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
 
     # TODO: fix basic theme
@@ -411,3 +417,7 @@ def create_index_page(
     for target in ["+index", "index.html"]:
         with open(html_root / target, "wb") as f:
             f.write(page.encode("utf8"))
+
+
+def render_dictionary_js() -> str:
+    return render_template("dictionary.js")
