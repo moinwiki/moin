@@ -179,6 +179,6 @@ def read_index_dump_latest_revs(out: str):
     yield from read_index_dump(out, True)
 
 
-def getBackupPath(backup_name):
+def get_backup_path(backup_name):
     _, artifacts_base_dir = get_dirs("")
     return artifacts_base_dir / backup_name

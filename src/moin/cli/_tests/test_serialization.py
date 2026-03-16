@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 
 from moin._tests import get_dirs
-from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs, getBackupPath
+from moin.cli._tests import run, assert_p_succcess, read_index_dump_latest_revs, get_backup_path
 from moin.constants.keys import NAME, MTIME, CONTENT, BACKENDNAME, NAMESPACE
 from moin import log
 
@@ -20,7 +20,7 @@ logging = log.getLogger(__name__)
 
 def test_save_all(artifacts_dir, save_all):
     assert_p_succcess(save_all)
-    assert getBackupPath("backup.moin").exists()
+    assert get_backup_path("backup.moin").exists()
 
 
 def load(restore_dir, backup_name, artifacts_dir, args=None):
@@ -30,7 +30,7 @@ def load(restore_dir, backup_name, artifacts_dir, args=None):
         for command in (
             ["moin", "create-instance"],
             ["moin", "index-create"],
-            ["moin", "load", "-f", getBackupPath(backup_name)] + (args if args else []),
+            ["moin", "load", "-f", get_backup_path(backup_name)] + (args if args else []),
         ):
             p = run(command)
             assert_p_succcess(p)
@@ -45,7 +45,7 @@ def test_load_all(artifacts_dir, save_all):
 
 def test_save_default_ns(artifacts_dir, save_default):
     assert_p_succcess(save_default)
-    assert getBackupPath("backup_default.moin").exists()
+    assert get_backup_path("backup_default.moin").exists()
 
 
 def test_load_default_ns(artifacts_dir, save_default):
@@ -110,7 +110,7 @@ def test_load_corrupt(artifacts_dir2, index_create2):
     p = run(["moin", "item-put", "-m", data_dir / "Corrupt.meta", "-d", data_dir / "Corrupt.data", "-o"])
     assert_p_succcess(p)
     backup_name = "backup_corrupt.moin"
-    p = run(["moin", "save", "-b", "default", "-f", getBackupPath(backup_name)])
+    p = run(["moin", "save", "-b", "default", "-f", get_backup_path(backup_name)])
     assert_p_succcess(p)
     restore_dir = Path(artifacts_dir2 / "restore_new_ns")
     load(restore_dir, backup_name, artifacts_dir2)
