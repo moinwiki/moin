@@ -18,12 +18,12 @@ from moin import log
 logging = log.getLogger(__name__)
 
 
-def test_save_all(artifact_dir, save_all):
+def test_save_all(artifacts_dir, save_all):
     assert_p_succcess(save_all)
     assert getBackupPath("backup.moin").exists()
 
 
-def load(restore_dir, backup_name, artifact_dir, args=None):
+def load(restore_dir, backup_name, artifacts_dir, args=None):
     restore_dir.mkdir()
     os.chdir(restore_dir)
     try:
@@ -35,20 +35,20 @@ def load(restore_dir, backup_name, artifact_dir, args=None):
             p = run(command)
             assert_p_succcess(p)
     finally:
-        os.chdir(artifact_dir)  # ensure we return to archive_dir for other tests
+        os.chdir(artifacts_dir)  # ensure we return to archive_dir for other tests
 
 
-def test_load_all(artifact_dir, save_all):
-    restore_dir = Path(artifact_dir / "restore_all")
-    load(restore_dir, "backup.moin", artifact_dir)
+def test_load_all(artifacts_dir, save_all):
+    restore_dir = Path(artifacts_dir / "restore_all")
+    load(restore_dir, "backup.moin", artifacts_dir)
 
 
-def test_save_default_ns(artifact_dir, save_default):
+def test_save_default_ns(artifacts_dir, save_default):
     assert_p_succcess(save_default)
     assert getBackupPath("backup_default.moin").exists()
 
 
-def test_load_default_ns(artifact_dir, save_default):
+def test_load_default_ns(artifacts_dir, save_default):
     moin_dir, _ = get_dirs("")
     welcome_dir = moin_dir / "help" / "welcome"
     expected_metas = {}
@@ -59,8 +59,8 @@ def test_load_default_ns(artifact_dir, save_default):
                 continue
             name = meta[NAME][0]
             expected_metas[name] = meta
-    restore_dir = Path(artifact_dir / "restore_default")
-    load(restore_dir, "backup_default.moin", artifact_dir)
+    restore_dir = Path(artifacts_dir / "restore_default")
+    load(restore_dir, "backup_default.moin", artifacts_dir)
     os.chdir(restore_dir)
     try:
         index_dump = run(["moin", "index-dump", "--no-truncate"])
@@ -85,12 +85,12 @@ def test_load_default_ns(artifact_dir, save_default):
                 expected_content = f.read()
                 assert expected_content, content
     finally:
-        os.chdir(artifact_dir)  # ensure we return to archive_dir for other tests
+        os.chdir(artifacts_dir)  # ensure we return to archive_dir for other tests
 
 
-def test_load_new_ns(artifact_dir, save_default):
-    restore_dir = Path(artifact_dir / "restore_new_ns")
-    load(restore_dir, "backup_default.moin", artifact_dir, ["-o", "", "-n", "help-en"])
+def test_load_new_ns(artifacts_dir, save_default):
+    restore_dir = Path(artifacts_dir / "restore_new_ns")
+    load(restore_dir, "backup_default.moin", artifacts_dir, ["-o", "", "-n", "help-en"])
     os.chdir(restore_dir)
     try:
         index_dump = run(["moin", "index-dump", "--no-truncate"])
@@ -100,10 +100,10 @@ def test_load_new_ns(artifact_dir, save_default):
         assert ["Home"] == item[NAME]
         assert "help-en" == item[BACKENDNAME]
     finally:
-        os.chdir(artifact_dir)  # ensure we return to archive_dir for other tests
+        os.chdir(artifacts_dir)  # ensure we return to archive_dir for other tests
 
 
-def test_load_corrupt(artifact_dir2, index_create2):
+def test_load_corrupt(artifacts_dir2, index_create2):
     moin_dir, _ = get_dirs("cli")
     data_dir = moin_dir / "cli" / "_tests" / "data"
     # item-put below errors out without the -o, see moin.storage.backends.stores.store
@@ -112,5 +112,5 @@ def test_load_corrupt(artifact_dir2, index_create2):
     backup_name = "backup_corrupt.moin"
     p = run(["moin", "save", "-b", "default", "-f", getBackupPath(backup_name)])
     assert_p_succcess(p)
-    restore_dir = Path(artifact_dir2 / "restore_new_ns")
-    load(restore_dir, backup_name, artifact_dir2)
+    restore_dir = Path(artifacts_dir2 / "restore_new_ns")
+    load(restore_dir, backup_name, artifacts_dir2)

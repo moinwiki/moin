@@ -40,7 +40,7 @@ logging = log.getLogger(__name__)
 
 
 @pytest.fixture(scope="package")
-def artifact_dir():
+def artifacts_dir():
     """Create, chdir into, and yield the wiki directory that persists through all tests.
 
     The directory is deleted at the end of all tests."""
@@ -54,7 +54,7 @@ def artifact_dir():
 
 
 @pytest.fixture
-def artifact_dir2():
+def artifacts_dir2():
     """Create, chdir into, and yield the wiki directory that is deleted at the end of each test function."""
     _, artifact_dir = get_dirs("cli2")
     cwd = os.getcwd()
@@ -66,7 +66,7 @@ def artifact_dir2():
 
 
 @pytest.fixture(scope="package")
-def create_instance(artifact_dir):
+def create_instance(artifacts_dir):
     return run(["moin", "create-instance"])
 
 
@@ -113,7 +113,7 @@ def get_crawl_csv_path():
 
 
 @pytest.fixture(scope="package")
-def server(welcome, load_help, artifact_dir):
+def server(welcome, load_help, artifacts_dir):
     started = False
     server_log = open(get_crawl_server_log_path(), "wb")
     server = start(["moin", "run", "-p", "9080"], log=server_log)
@@ -156,7 +156,7 @@ def server(welcome, load_help, artifact_dir):
 
 
 @pytest.fixture(scope="package")
-def do_crawl(request, artifact_dir):
+def do_crawl(request, artifacts_dir):
     moin_dir, artifact_base_dir = get_dirs("")
     # initialize output files
     with open(get_crawl_log_path(), "w"):
@@ -187,12 +187,12 @@ def do_crawl(request, artifact_dir):
                 with open(get_crawl_log_path()) as f:
                     logging.error(f.read())
         finally:
-            os.chdir(artifact_dir)
+            os.chdir(artifacts_dir)
     return crawl_success
 
 
 @pytest.fixture(scope="package")
-def crawl_results(request, artifact_dir) -> list[CrawlResult]:
+def crawl_results(request, artifacts_dir) -> list[CrawlResult]:
     _, artifact_base_dir = get_dirs("")
     crawl_success = True
     if settings.DO_CRAWL:
@@ -219,7 +219,7 @@ def server_crawl_log(crawl_results):
 
 
 @pytest.fixture
-def create_instance2(artifact_dir2):
+def create_instance2(artifacts_dir2):
     return run(["moin", "create-instance"])
 
 
