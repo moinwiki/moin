@@ -16,6 +16,8 @@ Package-scoped fixtures are used for efficiency in load-help and dump-help tests
 Each CLI command is executed only once, while the tests are written one per command.
 """
 
+from typing import Generator
+
 import csv
 import os
 import pytest
@@ -23,7 +25,9 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 
+from pathlib import Path
 from time import sleep
 
 from moin._tests import check_connection, get_dirs
@@ -64,6 +68,22 @@ def artifacts_dir2():
     yield artifacts_dir
     os.chdir(cwd)
     shutil.rmtree(artifacts_dir, ignore_errors=True)
+
+
+@pytest.fixture
+def moin_test_dir(
+    artifacts_dir: Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+) -> Generator[Path, None, None]:
+    """
+    Create a temporary directory in the artifacts directory and set it as the working directory for the
+    test case currently being executed.
+
+    The return value is the newly created temporary directory.
+    """
+    with tempfile.TemporaryDirectory(dir=artifacts_dir, prefix="", ignore_cleanup_errors=True) as temp_folder:
+        print(f"test case »{ request.node.name }« using temp folder { temp_folder }")
+        monkeypatch.chdir(temp_folder)
+        yield Path(temp_folder)
 
 
 @pytest.fixture(scope="package")
