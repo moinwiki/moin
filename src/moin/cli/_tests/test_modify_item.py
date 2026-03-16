@@ -45,7 +45,7 @@ def test_welcome(welcome):
 
 
 def test_dump_help(load_help):
-    moin_dir, artifact_dir = get_dirs("cli")
+    moin_dir, artifacts_dir = get_dirs("cli")
     help_dir = Path("my_help")
     source_help_dir = moin_dir / "help"
     with open(source_help_dir / "help-en" / "Home.data", newline="") as f:

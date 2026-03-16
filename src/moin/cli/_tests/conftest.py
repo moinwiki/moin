@@ -41,28 +41,29 @@ logging = log.getLogger(__name__)
 
 @pytest.fixture(scope="package")
 def artifacts_dir():
-    """Create, chdir into, and yield the wiki directory that persists through all tests.
+    """
+    Create, chdir into, and yield the wiki directory that persists through all tests.
 
     The directory is deleted at the end of all tests."""
-    _, artifact_dir = get_dirs("cli")
+    _, artifacts_dir = get_dirs("cli")
     cwd = os.getcwd()
-    os.chdir(artifact_dir)
-    logging.info(f"artifact_dir = {str(artifact_dir)}")
-    yield artifact_dir
+    os.chdir(artifacts_dir)
+    logging.info(f"artifacts_dir = {str(artifacts_dir)}")
+    yield artifacts_dir
     os.chdir(cwd)
-    shutil.rmtree(artifact_dir, ignore_errors=True)
+    shutil.rmtree(artifacts_dir, ignore_errors=True)
 
 
 @pytest.fixture
 def artifacts_dir2():
     """Create, chdir into, and yield the wiki directory that is deleted at the end of each test function."""
-    _, artifact_dir = get_dirs("cli2")
+    _, artifacts_dir = get_dirs("cli2")
     cwd = os.getcwd()
-    os.chdir(artifact_dir)
-    logging.info(f"artifact_dir = {str(artifact_dir)}")
-    yield artifact_dir
+    os.chdir(artifacts_dir)
+    logging.info(f"artifacts_dir = {str(artifacts_dir)}")
+    yield artifacts_dir
     os.chdir(cwd)
-    shutil.rmtree(artifact_dir, ignore_errors=True)
+    shutil.rmtree(artifacts_dir, ignore_errors=True)
 
 
 @pytest.fixture(scope="package")
@@ -98,18 +99,18 @@ def save_default(welcome):
 
 
 def get_crawl_server_log_path():
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / "server-crawl.log"
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / "server-crawl.log"
 
 
 def get_crawl_log_path():
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / "crawl.log"
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / "crawl.log"
 
 
 def get_crawl_csv_path():
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / "crawl.csv"
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / "crawl.csv"
 
 
 @pytest.fixture(scope="package")
@@ -157,7 +158,7 @@ def server(welcome, load_help, artifacts_dir):
 
 @pytest.fixture(scope="package")
 def do_crawl(request, artifacts_dir):
-    moin_dir, artifact_base_dir = get_dirs("")
+    moin_dir, artifacts_base_dir = get_dirs("")
     # initialize output files
     with open(get_crawl_log_path(), "w"):
         pass
@@ -193,7 +194,7 @@ def do_crawl(request, artifacts_dir):
 
 @pytest.fixture(scope="package")
 def crawl_results(request, artifacts_dir) -> list[CrawlResult]:
-    _, artifact_base_dir = get_dirs("")
+    _, artifacts_base_dir = get_dirs("")
     crawl_success = True
     if settings.DO_CRAWL:
         crawl_success = request.getfixturevalue("do_crawl")
