@@ -24,41 +24,62 @@ from moin.constants.keys import ALL_REVS, LATEST_META
 logging = log.getLogger(__name__)
 
 
-def run(
-    cmd: Sequence[str | os.PathLike],
-    log: int | IO[Any] | None = None,
-    wait: bool = True,
-    timeout: int | None = None,
-    env: dict[str, str] | None = None,
-) -> subprocess.CompletedProcess | subprocess.Popen:
-    """Run a shell command, redirecting output to a log.
+def _create_subprocess_env(env: dict[str, str] | None):
+    subprocess_environ = None
+    if env:
+        subprocess_environ = copy(os.environ)
+        subprocess_environ.update(env)
+    return subprocess_environ
+
+
+def start(
+    cmd: Sequence[str | os.PathLike], /, log: int | IO[Any] | None = None, env: dict[str, str] | None = None
+) -> subprocess.Popen:
+    """
+    Run a shell command, redirecting output to a log.
 
     :param cmd: List of strings containing command arguments.
     :param log: Open file handle to a log file (binary mode) or None, in which case output will be captured.
-    :param wait: If True, return after the process completes; otherwise, return immediately after start.
-    :param timeout: Timeout in seconds; can only be used when wait is True.
     :param env: Dictionary of environment variables to add to the current environment for the subprocess.
-    :return: CompletedProcess object if wait is True; otherwise, a Popen object."""
-    subprocess_environ = copy(os.environ)
-    subprocess_environ["PYTHONIOENCODING"] = "cp1252"  # Simulate Windows terminal to ferret out encoding issues
-    if env:
-        subprocess_environ.update(env)
+    :return: A Popen object."""
     logging.info(f"running {cmd}")
     if stdout := log:
         stderr = subprocess.STDOUT
     else:  # log is None
         stdout = subprocess.PIPE
         stderr = subprocess.PIPE
-    kwargs = {}
-    flags = 0
-    if wait:
-        run_func = subprocess.run
-        kwargs["timeout"] = timeout
-    else:
-        run_func = subprocess.Popen
-        if sys.platform == "win32":
-            flags = subprocess.CREATE_NEW_PROCESS_GROUP  # needed for use of os.kill
-    return run_func(cmd, stdout=stdout, stderr=stderr, creationflags=flags, env=subprocess_environ, **kwargs)
+    # needed for use of os.kill
+    flags = subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0  # type: ignore
+    subprocess_environ = _create_subprocess_env(env)
+    return subprocess.Popen(cmd, stdout=stdout, stderr=stderr, creationflags=flags, env=subprocess_environ)
+
+
+def run(
+    cmd: Sequence[str | os.PathLike],
+    /,
+    log: int | IO[Any] | None = None,
+    timeout: int | None = None,
+    env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess:
+    """
+    Run a shell command, redirecting output to a log.
+    Waits for the shell command to complete or raises a TimeoutExpired exception when reaching the specified
+    timeout value.
+
+    :param cmd: List of strings containing command arguments.
+    :param log: Open file handle to a log file (binary mode) or None, in which case output will be captured.
+    :param timeout: Timeout in seconds; can only be used when wait is True.
+    :param env: Dictionary of environment variables to add to the current environment for the subprocess.
+    :return: A CompletedProcess object.
+    """
+    logging.info(f"running {cmd}")
+    if stdout := log:
+        stderr = subprocess.STDOUT
+    else:  # log is None
+        stdout = subprocess.PIPE
+        stderr = subprocess.PIPE
+    subprocess_environ = _create_subprocess_env(env)
+    return subprocess.run(cmd, stdout=stdout, stderr=stderr, env=subprocess_environ, timeout=timeout)
 
 
 def assert_p_succcess(p: subprocess.CompletedProcess):
@@ -158,6 +179,6 @@ def read_index_dump_latest_revs(out: str):
     yield from read_index_dump(out, True)
 
 
-def getBackupPath(backup_name):
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / backup_name
+def get_backup_path(backup_name):
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / backup_name

@@ -30,12 +30,17 @@ Items with media content types and names ending in common media suffixes (.png, 
 The raw data for all items is stored in the +get subdirectory.
 """
 
-import os
+from __future__ import annotations
+
 import shutil
 import re
 
 import click
+from flask import render_template
 from flask.cli import FlaskGroup
+
+from pathlib import Path
+from urllib.parse import urlparse
 
 from whoosh.query import Every, Regex
 
@@ -53,6 +58,7 @@ from moin.constants.contenttypes import (
 )
 from moin.items import Item
 from moin.utils import get_xstatic_module_path_map
+from moin.storage.middleware.indexing import Item as IndexedItem, Revision
 
 logging = log.getLogger(__name__)
 
@@ -87,83 +93,88 @@ def cli():
     default="userprofiles",
     help="Comma-separated list of excluded namespaces; default: userprofiles",
 )
-@click.option("--query", "-q", required=False, default=None, help="Name or regex of items to include")
-def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=None, query=None):
+@click.option("--query", "-q", required=False, default=None, help="name or regex of items to be included")
+@click.option(
+    "--convenience-duplicates", required=False, default=False, help="create convenience duplicates of toplevel pages"
+)
+def Dump(
+    directory: str = "HTML",
+    theme: str = "topside_cms",
+    exclude_ns: str | None = "userprofiles",
+    user: str | None = None,
+    query: str | None = None,
+    convenience_duplicates: bool = False,
+) -> None:
     with current_app.test_request_context():
-        logging.info("Dump HTML started")
+        logging.info("Dump html started")
         if theme:
             current_app.cfg.user_defaults[THEME_NAME] = theme
-        exclude_ns = exclude_ns.split(",") if exclude_ns else []
+        excluded_namespaces = exclude_ns.split(",") if exclude_ns else []
 
         before_wiki()
         setup_user_anon()
 
-        norm = os.path.normpath
-        join = os.path.join
-
-        wiki_root = norm(current_app.cfg.wikiconfig_dir)
-        moinmoin = os.path.dirname(log.__file__)  # log is imported from moin -> this is src/moin
+        wiki_root = Path(current_app.cfg.wikiconfig_dir)
+        moinmoin = Path(log.__file__).parent  # log is imported from moin -> this is src/moin
         logging.debug("wiki_root dir: %s, moin src dir: %s", wiki_root, moinmoin)
         if "/" in directory:
             # user has specified complete path to root
-            html_root = directory
+            html_root = Path(directory)
         else:
-            html_root = norm(join(wiki_root, directory))
+            html_root = Path(wiki_root) / directory
 
         # override ACLs with permission to read all items
         for _, acls in current_app.cfg.acl_mapping:
             acls["before"] = "All:read"
 
         # create an empty output directory after deleting any existing directory
-        print(f"Creating output directory {html_root}, starting to copy supporting files")
-        if os.path.exists(html_root):
+        click.echo(f"Creating output directory {html_root}, starting to copy supporting files")
+        if html_root.exists():
             shutil.rmtree(html_root, ignore_errors=False)
-        else:
-            os.makedirs(html_root)
+
+        html_root.mkdir(parents=True)
 
         # create subdirectories and copy static css, icons, images into "static" subdirectory
-        shutil.copytree(norm(join(moinmoin, "static")), norm(join(html_root, "static")))
-        shutil.copytree(norm(get_wiki_local_dir()), norm(join(html_root, "+serve/wiki_local")))
+        shutil.copytree(moinmoin / "static", html_root / "static")
+        shutil.copytree(get_wiki_local_dir(), html_root / "+serve" / "wiki_local")
+
+        # render script dictionary.js (i18n strings)
+        with open(html_root / "static" / "js" / "dictionary.js", "wt", encoding="utf-8") as f:
+            f.write(render_dictionary_js())
 
         # copy files from xstatic packaging into "+serve" subdirectory
         xstatic_dirs = ["font_awesome"]
         module_path_map = get_xstatic_module_path_map(xstatic_dirs)
         for xs_dir in xstatic_dirs:
-            shutil.copytree(module_path_map[xs_dir], norm(join(html_root, "+serve", xs_dir)))
+            shutil.copytree(module_path_map[xs_dir], html_root / "+serve" / xs_dir)
 
         # copy directories for theme's static files
         if theme == "topside_cms":
             # topside_cms uses topside CSS files
-            from_dir = norm(join(moinmoin, "themes/topside/static"))
+            from_dir = moinmoin / "themes" / "topside" / "static"
         else:
-            from_dir = norm(join(moinmoin, "themes", theme, "static"))
-        to_dir = norm(join(html_root, "_themes", theme))
+            from_dir = moinmoin / "themes" / theme / "static"
+        to_dir = html_root / "_themes" / theme
         shutil.copytree(from_dir, to_dir)
 
-        # convert: <img alt="svg" src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg" />
-        # to:      <img alt="svg" src="+get/svg" />
-        invalid_src = re.compile(r' src="/\+get/\+[0-9a-f]{32}/')
-
-        invalid_href = re.compile(r' href="/\+get/\+[0-9a-f]{32}/')
-
         # get ready to render and copy individual items
-        names = []
-        home_page = None
-        get_dir = norm(join(html_root, "+get"))  # images and other raw data from wiki content
-        os.makedirs(get_dir)
+        names: list[tuple[str, str]] = []
+        home_page: str | None = None
+        get_dir = Path(html_root) / "+get"  # images and other raw data from wiki content
+        get_dir.mkdir()
 
         if query:
             q = Regex(NAME_EXACT, query)
         else:
             q = Every()
 
-        print("Starting to dump items")
-        used_dirs = get_used_dirs(query=q)
+        click.echo("Starting to dump items")
+
         # In the filesystem the item cannot have the same name as the directory.
         # so we append .html to the filename for items in used_dirs.
         for current_rev in current_app.storage.search(q, limit=None, sortedby=("namespace", "name")):
 
-            if current_rev.namespace in exclude_ns:
+            if current_rev.namespace in excluded_namespaces:
                 # we usually do not copy userprofiles, no one can login to a static wiki
                 continue
 
@@ -174,132 +185,158 @@ def Dump(directory="HTML", theme="topside_cms", exclude_ns="userprofiles", user=
             try:
                 item_name = current_rev.fqname.fullname
                 rendered = show_item(item_name, CURRENT)
-                if item_name in used_dirs:
-                    file_name = item_name + ".html"
-                else:
-                    file_name = item_name
-                filename = norm(join(html_root, file_name))
-                names.append(item_name)  # save item_names for index
             except Forbidden:
-                print(f"Failed to dump {current_rev.name}: Forbidden")
+                click.echo(f"Failed to dump {current_rev.name}: Forbidden")
                 continue
             except KeyError:
-                print(f"Failed to dump {current_rev.name}: KeyError")
+                click.echo(f"Failed to dump {current_rev.name}: KeyError")
                 continue
 
             if not isinstance(rendered, str):
-                print(f"Rendering failed for {file_name} with response {rendered}")
+                click.echo(f"Rendering failed for {item_name} with response {rendered}")
                 continue
 
-            # remove item ID from: href="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/example.drawio"
-            rendered = re.sub(invalid_href, ' href="/+get/', rendered)
+            rendered = fixup_item_content(item_name, rendered, default_root=current_app.cfg.default_root)
 
-            # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
-            rendered = re.sub(invalid_src, ' src="/+get/', rendered)
+            item = current_app.storage[current_rev.fqname.fullname]
+            rev = item[CURRENT]
 
-            # make hrefs relative to root folder
-            rel_path2root = PARENT_DIR * len(re.findall("/", item_name))
-            rendered = rendered.replace('href="/', 'href="' + rel_path2root)
-            rendered = rendered.replace('src="/static/', 'src="' + rel_path2root + "static/")
-            rendered = rendered.replace('src="/+serve/', 'src="+serve/')
-            rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
-
-            # TODO: fix basic theme
-            rendered = rendered.replace('<a href="">', f'<a href="{current_app.cfg.default_root}">')
-
-            # correct links inside document
-            for node in used_dirs:
-                node_href = f'href="{rel_path2root}{node}"'
-                rendered = rendered.replace(node_href, node_href[:-1] + '.html"')
+            file_name = Path(item_name)
 
             # copy raw data for all items to output /+get directory;
             # images are required, text items are of marginal/no benefit
-            item = current_app.storage[current_rev.fqname.fullname]
-            rev = item[CURRENT]
-            full_file_name = get_dir + "/" + file_name
-            os.makedirs(os.path.dirname(full_file_name), exist_ok=True)
-            with open(full_file_name, "wb") as f:
-                shutil.copyfileobj(rev.data, f)
+            create_raw_data_file(get_dir / adjust_raw_filename_suffix(file_name), rev)
 
             # save rendered items or raw data to dump directory root
-            contenttype = item.meta[CONTENTTYPE].split(";")[0]
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
-            if contenttype in (CONTENTTYPE_MEDIA + CONTENTTYPE_OTHER) and filename.endswith(
-                CONTENTTYPE_MEDIA_SUFFIX + CONTENTTYPE_OTHER_SUFFIX
-            ):
+            if is_raw_data_content(item, file_name):
                 # do not put a rendered html-formatted file with a name like video.mp4 into root;
                 # browsers want raw data
-                with open(filename, "wb") as f:
-                    rev.data.seek(0)
-                    shutil.copyfileobj(rev.data, f)
-                    try:
-                        print(f"Saved file named {filename} as raw data")
-                    except UnicodeEncodeError:
-                        print("Saved file named {} as raw data".format(filename.encode("ascii", errors="replace")))
-
+                create_raw_data_file(Path(html_root) / file_name, rev)
             else:
-                with open(filename, "wb") as f:
-                    f.write(rendered.encode("utf8"))
-                    try:
-                        print(f"Saved file named {filename}")
-                    except UnicodeEncodeError:
-                        print("Saved file named {}".format(filename.encode("ascii", errors="replace")))
+                # extension ".html" is required for browsing html content
+                if file_name.suffix != ".html":
+                    file_name = add_path_suffix(file_name, ".html")
+                create_html_file(Path(html_root) / file_name, rendered)
+
+            # save item_name for the index generation
+            names.append((item_name, str(file_name)))
 
             if current_rev.fqname.fullname == current_app.cfg.default_root:
-                # make duplicates of home page that are easy to find in directory list and open with a click
-                for target in [(current_rev.name + ".html"), ("_" + current_rev.name + ".html")]:
-                    with open(norm(join(html_root, target)), "wb") as f:
-                        f.write(rendered.encode("utf8"))
-                home_page = rendered  # save a copy for creation of index page
+                if convenience_duplicates:
+                    # make duplicates of home page that are easy to find in directory list and open with a click
+                    for target in [(current_rev.name + ".html"), ("_" + current_rev.name + ".html")]:
+                        create_html_file(html_root / target, rendered)
+                # save a copy for creation of index page
+                home_page = rendered
 
-        if home_page:
-            # create an index page by replacing the content of the home page with a list of items
-            # work around differences in basic and modernized theme layout
-            # TODO: this is likely to break as new themes are added
-            if theme == "basic":
-                start = '<div class="moin-content flex-row" role="main">'  # basic
-                end = '<footer class="navbar moin-footer">'
-                div_end = "</div>"
-            else:
-                start = '<div id="moin-content">'  # modernized , topside, topside cms
-                end = '<footer id="moin-footer">'
-                div_end = "</div></div>"
-            # build a page named "+index" containing links to all wiki items
-            ul = "<h1>Index</h1><ul>{0}</ul>"
-            li = '<li><a href="{0}">{1}</a></li>'
-            links = []
-            names.sort()
-            for name in names:
-                if name in used_dirs:
-                    li_name = name + ".html"
-                else:
-                    li_name = name
-                links.append(li.format(li_name, name))
-            name_links = ul.format("\n".join(links))
-            try:
-                part1 = home_page.split(start)[0]
-                part2 = home_page.split(end)[1]
-                page = part1 + start + name_links + div_end + end + part2
-            except IndexError:
-                page = home_page
-                print(f"Error: failed to find {end} in item named {current_app.cfg.default_root}")
-            for target in ["+index", "_+index.html"]:
-                with open(norm(join(html_root, target)), "wb") as f:
-                    f.write(page.encode("utf8"))
-        else:
-            print(
-                'Error: index pages not created because no home page exists, expected an item named "{}".'.format(
-                    current_app.cfg.default_root
-                )
-            )
+        create_index_page(home_page, theme, names, html_root, current_app.cfg.default_root)
+
         logging.info("Dump html complete")
 
 
-def get_wiki_local_dir() -> str:
-    return current_app.cfg.wiki_local_dir
+def add_path_suffix(path: Path, suffix: str):
+    return path.parent / (path.name + suffix)
 
 
-def get_used_dirs(query):
+def is_raw_data_content(item: IndexedItem, filename: Path) -> bool:
+    contenttype = item.meta[CONTENTTYPE].split(";")[0]
+    return contenttype in (CONTENTTYPE_MEDIA + CONTENTTYPE_OTHER) and filename.suffix in (
+        CONTENTTYPE_MEDIA_SUFFIX + CONTENTTYPE_OTHER_SUFFIX
+    )
+
+
+def adjust_raw_filename_suffix(filename: Path):
+    """
+    Add the suffix ".raw" to filename in case it doesn't have a dot suffix or the existing suffix
+    does not belong to a media or other content type.
+    """
+    if filename.suffix in (CONTENTTYPE_MEDIA_SUFFIX + CONTENTTYPE_OTHER_SUFFIX):
+        return filename
+    else:
+        return add_path_suffix(filename, ".raw")
+
+
+def adjust_raw_url_suffix(url: str) -> str:
+    """
+    Add the suffix ".raw" to a raw content url in case it has no dot suffix or the existing suffix
+    does not belong to a media or other content type.
+    """
+    try:
+        suffix = "." + url.rsplit(".", 1)[1]
+        if suffix in (CONTENTTYPE_MEDIA_SUFFIX + CONTENTTYPE_OTHER_SUFFIX):
+            return url
+    except IndexError:
+        pass
+    return url + ".raw"
+
+
+def get_wiki_local_dir() -> Path:
+    return Path(current_app.cfg.wiki_local_dir)
+
+
+def is_raw_url(url: str):
+    """
+    Detect if url points to raw content item.
+    """
+    return url.startswith("/+get/")
+
+
+def is_page_url(url: str):
+    if url.startswith("#") or url.startswith("/+") or url.startswith("/_") or url.startswith("/static/"):
+        return False
+    parsed = urlparse(url)
+    if parsed.scheme:
+        return False
+    return True
+
+
+def fixup_page_link(m: re.Match) -> str:
+    target = m.group(2)
+    extra = ""
+    if is_raw_url(target):
+        filename = target.rsplit("/", 1)[-1]
+        target = adjust_raw_url_suffix(target)
+        extra = f' download="{filename}"'
+    elif is_page_url(target):
+        parsed = urlparse(target)
+        target = parsed._replace(path=parsed.path + ".html").geturl()
+    return f"{m.group(1)}{target}{m.group(3)}{extra}{m.group(4)}"
+
+
+INVALID_SRC = re.compile(r' src="/\+get/\+[0-9a-f]{32}/')
+
+INVALID_HREF = re.compile(r' href="/\+get/\+[0-9a-f]{32}/')
+
+LINK_REGEX = re.compile(r"((?:href|src)\s*=\s*[\"\']?)([^\"\'\s>]+)([\"\'])(\s?)")
+
+
+def fixup_item_content(item_name: str, rendered: str, /, default_root: str = "Home") -> str:
+
+    # remove item ID from: href="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/example.drawio"
+    rendered = re.sub(INVALID_HREF, ' href="/+get/', rendered)
+
+    # remove item ID from: src="/+get/+7cb364b8ca5d4b7e960a4927c99a2912/svg"
+    rendered = re.sub(INVALID_SRC, ' src="/+get/', rendered)
+
+    # make internal links target ".html" files
+    rendered = re.sub(LINK_REGEX, fixup_page_link, rendered)
+
+    # make hrefs relative to root folder
+    rel_path2root = PARENT_DIR * len(re.findall("/", item_name))
+    rendered = rendered.replace('href="/', 'href="' + rel_path2root)
+    rendered = rendered.replace('src="/static/', f'src="{rel_path2root}static/')
+    rendered = rendered.replace('src="/+get/', f'src="{rel_path2root}+get/')
+    rendered = rendered.replace('src="/+serve/', f'src="{rel_path2root}+serve/')
+    rendered = rendered.replace('src="/+template/dictionary.js', f'src="{rel_path2root}static/js/dictionary.js')
+    rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
+
+    # TODO: fix basic theme
+    rendered = rendered.replace('<a href="">', f'<a href="{default_root}">')
+
+    return rendered
+
+
+def get_used_dirs(query) -> set[str]:
     """
     get a list of item_names which have subitems (nodes in a tree)
     """
@@ -316,3 +353,71 @@ def get_used_dirs(query):
             used_dirs.add(file_.value)
     logging.debug("used_dirs: %s", str(used_dirs))
     return used_dirs
+
+
+def create_raw_data_file(filename: Path, rev: Revision) -> None:
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    with open(filename, "wb") as f:
+        rev.data.seek(0)
+        shutil.copyfileobj(rev.data, f)
+        try:
+            click.echo(f"Saved file named {filename} as raw data")
+        except UnicodeEncodeError:
+            safe_filename = str(filename).encode("ascii", errors="replace").decode()
+            click.echo(f"Saved file named {safe_filename} as raw data")
+
+
+def create_html_file(filename: Path, content: str) -> None:
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    with open(filename, "wb") as f:
+        f.write(content.encode("utf8"))
+        try:
+            click.echo(f"Saved file named {filename}")
+        except UnicodeEncodeError:
+            safe_filename = str(filename).encode("ascii", errors="replace").decode()
+            click.echo(f"Saved file named {safe_filename}")
+
+
+def create_index_page(
+    home_page: str, theme: str, names: list[tuple[str, str]], html_root: Path, wiki_root: str
+) -> None:
+    if not home_page:
+        click.echo(
+            'Error: index pages not created because no home page exists, expected an item named "{}".'.format(wiki_root)
+        )
+        return
+
+    # create an index page by replacing the content of the home page with a list of items
+    # work around differences in basic and modernized theme layout
+    # TODO: this is likely to break as new themes are added
+    if theme == "basic":
+        start = '<div class="moin-content" role="main">'  # basic
+        end = '<footer class="navbar moin-footer">'
+        div_end = "</div>"
+    else:
+        start = '<div id="moin-content">'  # modernized , topside, topside cms
+        end = '<footer id="moin-footer">'
+        div_end = "</div></div>"
+
+    # build a page named "+index" containing links to all wiki items
+    links = []
+    names.sort(key=lambda item: item[0])
+    for name in names:
+        links.append(f'<li><a href="{name[1]}">{name[0]}</a></li>')
+    name_links = "<h1>Index</h1><ul>{0}</ul>".format("\n".join(links))
+
+    try:
+        part1 = home_page.split(start)[0]
+        part2 = home_page.split(end)[1]
+        page = part1 + start + name_links + div_end + end + part2
+    except IndexError:
+        page = home_page
+        click.echo(f"Error: failed to find {end} in item named {wiki_root}")
+
+    for target in ["+index", "index.html"]:
+        with open(html_root / target, "wb") as f:
+            f.write(page.encode("utf8"))
+
+
+def render_dictionary_js() -> str:
+    return render_template("dictionary.js")

@@ -16,6 +16,8 @@ Package-scoped fixtures are used for efficiency in load-help and dump-help tests
 Each CLI command is executed only once, while the tests are written one per command.
 """
 
+from typing import Generator
+
 import csv
 import os
 import pytest
@@ -23,11 +25,13 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 
+from pathlib import Path
 from time import sleep
 
 from moin._tests import check_connection, get_dirs
-from moin.cli._tests import run, getBackupPath
+from moin.cli._tests import run, start, get_backup_path
 from moin.cli._tests.scrapy.moincrawler.items import CrawlResult
 from moin import log
 
@@ -40,33 +44,50 @@ logging = log.getLogger(__name__)
 
 
 @pytest.fixture(scope="package")
-def artifact_dir():
-    """Create, chdir into, and yield the wiki directory that persists through all tests.
+def artifacts_dir():
+    """
+    Create, chdir into, and yield the wiki directory that persists through all tests.
 
     The directory is deleted at the end of all tests."""
-    _, artifact_dir = get_dirs("cli")
+    _, artifacts_dir = get_dirs("cli")
     cwd = os.getcwd()
-    os.chdir(artifact_dir)
-    logging.info(f"artifact_dir = {str(artifact_dir)}")
-    yield artifact_dir
+    os.chdir(artifacts_dir)
+    logging.info(f"artifacts_dir = {str(artifacts_dir)}")
+    yield artifacts_dir
     os.chdir(cwd)
-    shutil.rmtree(artifact_dir, ignore_errors=True)
+    shutil.rmtree(artifacts_dir, ignore_errors=True)
 
 
 @pytest.fixture
-def artifact_dir2():
+def artifacts_dir2():
     """Create, chdir into, and yield the wiki directory that is deleted at the end of each test function."""
-    _, artifact_dir = get_dirs("cli2")
+    _, artifacts_dir = get_dirs("cli2")
     cwd = os.getcwd()
-    os.chdir(artifact_dir)
-    logging.info(f"artifact_dir = {str(artifact_dir)}")
-    yield artifact_dir
+    os.chdir(artifacts_dir)
+    logging.info(f"artifacts_dir = {str(artifacts_dir)}")
+    yield artifacts_dir
     os.chdir(cwd)
-    shutil.rmtree(artifact_dir, ignore_errors=True)
+    shutil.rmtree(artifacts_dir, ignore_errors=True)
+
+
+@pytest.fixture
+def moin_test_dir(
+    artifacts_dir: Path, monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest
+) -> Generator[Path, None, None]:
+    """
+    Create a temporary directory in the artifacts directory and set it as the working directory for the
+    test case currently being executed.
+
+    The return value is the newly created temporary directory.
+    """
+    with tempfile.TemporaryDirectory(dir=artifacts_dir, prefix="", ignore_cleanup_errors=True) as temp_folder:
+        print(f"test case »{ request.node.name }« using temp folder { temp_folder }")
+        monkeypatch.chdir(temp_folder)
+        yield Path(temp_folder)
 
 
 @pytest.fixture(scope="package")
-def create_instance(artifact_dir):
+def create_instance(artifacts_dir):
     return run(["moin", "create-instance"])
 
 
@@ -89,34 +110,34 @@ def welcome(index_create):
 
 @pytest.fixture(scope="package")
 def save_all(load_help, welcome):
-    return run(["moin", "save", "-a", "-f", getBackupPath("backup.moin")])
+    return run(["moin", "save", "-a", "-f", get_backup_path("backup.moin")])
 
 
 @pytest.fixture(scope="package")
 def save_default(welcome):
-    return run(["moin", "save", "-b", "default", "-f", getBackupPath("backup_default.moin")])
+    return run(["moin", "save", "-b", "default", "-f", get_backup_path("backup_default.moin")])
 
 
 def get_crawl_server_log_path():
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / "server-crawl.log"
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / "server-crawl.log"
 
 
 def get_crawl_log_path():
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / "crawl.log"
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / "crawl.log"
 
 
 def get_crawl_csv_path():
-    _, artifact_base_dir = get_dirs("")
-    return artifact_base_dir / "crawl.csv"
+    _, artifacts_base_dir = get_dirs("")
+    return artifacts_base_dir / "crawl.csv"
 
 
 @pytest.fixture(scope="package")
-def server(welcome, load_help, artifact_dir):
+def server(welcome, load_help, artifacts_dir):
     started = False
     server_log = open(get_crawl_server_log_path(), "wb")
-    server = run(["moin", "run", "-p", "9080"], server_log, wait=False)
+    server = start(["moin", "run", "-p", "9080"], log=server_log)
     wait_count = 0
     while not started and wait_count < 12:
         wait_count += 1
@@ -156,8 +177,8 @@ def server(welcome, load_help, artifact_dir):
 
 
 @pytest.fixture(scope="package")
-def do_crawl(request, artifact_dir):
-    moin_dir, artifact_base_dir = get_dirs("")
+def do_crawl(request, artifacts_dir):
+    moin_dir, artifacts_base_dir = get_dirs("")
     # initialize output files
     with open(get_crawl_log_path(), "w"):
         pass
@@ -176,7 +197,7 @@ def do_crawl(request, artifact_dir):
             com = ["scrapy", "crawl", "-a", f"url={settings.CRAWL_START}", "ref_checker"]
             with open(get_crawl_log_path(), "wb") as crawl_log:
                 try:
-                    p = run(com, crawl_log, timeout=600, env={"MOIN_SCRAPY_CRAWL_CSV": str(get_crawl_csv_path())})
+                    p = run(com, log=crawl_log, timeout=600, env={"MOIN_SCRAPY_CRAWL_CSV": str(get_crawl_csv_path())})
                 except subprocess.TimeoutExpired as e:
                     crawl_log.write(f"\n{repr(e)}\n".encode())
                     raise
@@ -187,13 +208,13 @@ def do_crawl(request, artifact_dir):
                 with open(get_crawl_log_path()) as f:
                     logging.error(f.read())
         finally:
-            os.chdir(artifact_dir)
+            os.chdir(artifacts_dir)
     return crawl_success
 
 
 @pytest.fixture(scope="package")
-def crawl_results(request, artifact_dir) -> list[CrawlResult]:
-    _, artifact_base_dir = get_dirs("")
+def crawl_results(request, artifacts_dir) -> list[CrawlResult]:
+    _, artifacts_base_dir = get_dirs("")
     crawl_success = True
     if settings.DO_CRAWL:
         crawl_success = request.getfixturevalue("do_crawl")
@@ -219,7 +240,7 @@ def server_crawl_log(crawl_results):
 
 
 @pytest.fixture
-def create_instance2(artifact_dir2):
+def create_instance2(artifacts_dir2):
     return run(["moin", "create-instance"])
 
 

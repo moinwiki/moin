@@ -62,7 +62,7 @@ class RefCheckerSpider(scrapy.Spider):
     def spider_closed(self):
         logging.info("entering spider_closed")
         try:
-            _, artifact_base_dir = get_dirs("")
+            _, artifacts_base_dir = get_dirs("")
             for k, c in self.crawler.stats.get_stats().items():  # bubble up spider exceptions into test failures
                 if k.startswith("spider_exceptions"):
                     logging.error(f"spider_exception: {c}")
