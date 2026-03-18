@@ -94,9 +94,7 @@ def cli():
     help="Comma-separated list of excluded namespaces; default: userprofiles",
 )
 @click.option("--query", "-q", required=False, default=None, help="name or regex of items to be included")
-@click.option(
-    "--convenience-duplicates", required=False, default=False, help="create convenience duplicates of toplevel pages"
-)
+@click.option("--convenience-duplicates", is_flag=True, help="create convenience duplicates of toplevel pages")
 def Dump(
     directory: str = "HTML",
     theme: str = "topside_cms",
