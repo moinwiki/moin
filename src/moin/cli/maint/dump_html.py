@@ -307,6 +307,8 @@ INVALID_HREF = re.compile(r' href="/\+get/\+[0-9a-f]{32}/')
 
 LINK_REGEX = re.compile(r"((?:href|src)\s*=\s*[\"\']?)([^\"\'\s>]+)([\"\'])(\s?)")
 
+INDEX_REGEX = re.compile(r"(href=\"(?:../)*)(\+index)(\">)")
+
 
 def fixup_item_content(item_name: str, rendered: str, /, default_root: str = "Home") -> str:
 
@@ -326,7 +328,7 @@ def fixup_item_content(item_name: str, rendered: str, /, default_root: str = "Ho
     rendered = rendered.replace('src="/+get/', f'src="{rel_path2root}+get/')
     rendered = rendered.replace('src="/+serve/', f'src="{rel_path2root}+serve/')
     rendered = rendered.replace('src="/+template/dictionary.js', f'src="{rel_path2root}static/js/dictionary.js')
-    rendered = rendered.replace('href="+index/"', 'href="+index"')  # trailing slash changes relative position
+    rendered = INDEX_REGEX.sub(r"\g<1>index.html\g<3>", rendered)
 
     # TODO: fix basic theme
     rendered = rendered.replace('<a href="">', f'<a href="{default_root}">')
