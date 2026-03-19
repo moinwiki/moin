@@ -39,7 +39,7 @@ from markdown.extensions.codehilite import CodeHiliteExtension
 from moin import current_app, log
 from moin.utils.mime import Type, type_moin_document
 
-from . import default_registry
+from . import default_registry, NoDupsFlash
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
@@ -527,7 +527,7 @@ class Converter(html_in.HtmlTags):
         page_children = self.do_children(root, add_lineno=add_lineno)
 
         # convert HTML markup in text strings to EmeraldTree elements
-        html_in_converter.no_dups_flash = html_in.NoDupsFlash()
+        html_in_converter.no_dups_flash = NoDupsFlash()
         self.convert_html_markup(page_children)
         # convert <paragaph> elements containing block elements to <div>
         self.convert_invalid_p_nodes(page_children)

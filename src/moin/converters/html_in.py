@@ -16,8 +16,6 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from flask import flash
-
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
@@ -27,7 +25,7 @@ from moin.i18n import _
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 
-from . import default_registry
+from . import default_registry, NoDupsFlash
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
 from moin import log
@@ -37,23 +35,6 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 logging = log.getLogger(__name__)
-
-
-class NoDupsFlash:
-    """
-    Issue flash messages for unsupported HTML tags; but do not create duplicate messages.
-    """
-
-    def __init__(self):
-        self.messages = set()
-
-    def log(self, message, category):
-        if message not in self.messages:
-            self.messages.add(message)
-            try:
-                flash(message, category)
-            except RuntimeError:  # CLI call has no valid request context
-                pass
 
 
 class HtmlTags:

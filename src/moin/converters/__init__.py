@@ -22,11 +22,30 @@ from __future__ import annotations
 
 from typing import Any, Callable, NamedTuple, Protocol, TYPE_CHECKING
 
+from flask import flash
+
 from ..utils.registry import RegistryBase
 from ..utils.pysupport import load_package_modules
 
 if TYPE_CHECKING:
     from moin.utils.mime import Type
+
+
+class NoDupsFlash:
+    """
+    Issue flash messages for converter; but do not create duplicate messages.
+    """
+
+    def __init__(self) -> None:
+        self.messages: set[str] = set()
+
+    def log(self, message: str, category: str) -> None:
+        if message not in self.messages:
+            self.messages.add(message)
+            try:
+                flash(message, category)
+            except RuntimeError:  # CLI call has no valid request context
+                pass
 
 
 class ElementException(RuntimeError):
