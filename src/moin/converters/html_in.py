@@ -66,7 +66,7 @@ class HtmlTags:
     list_tags: Final = {"ul", "dir", "ol"}
 
     # HTML tags with a matching but differently named Moinpage DOM tag
-    simple_tags: Final = {
+    simple_tags = {
         # Inline text markup (text level semantics)
         "em": moin_page.emphasis,
         "b": moin_page.strong,  # highlight key words without marking them up as important
