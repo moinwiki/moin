@@ -129,9 +129,14 @@ The --query option may be a single page name or a regular expression selecting t
 to be included in the dump. The default of ".*" selects all items.
 
 Once created, the HTML directory may be moved anywhere as all the internal links are
-relative. The pages may be served using your favorite web server or directly from
-the file system.
+relative. The pages may be served using your favorite web server. If you want to
+load pages directly from your local file system, then be warned:
+All modern browsers (Chrome, Edge, Firefox, Opera) serve files loaded from the OS
+file system as plain text.
 
-.. warning::
- Some browsers (Chrome, IE11, Opera) serve files loaded from the OS
- file system as plain text. See https://github.com/moinwiki/moin/issues/641
+There is an easy workaround, just start a Python server in a termminal window::
+
+    cd path/to/dump/html/directory
+    <python> -m http.server 5000
+
+and point your browser to http://127.0.0.1:5000/
