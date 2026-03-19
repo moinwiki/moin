@@ -20,40 +20,42 @@ TODO: Merge with new-style macros.
 
 from __future__ import annotations
 
-from typing import Any, Callable, NamedTuple, Protocol, TYPE_CHECKING
+from typing import Any, Callable, Iterable, NamedTuple, Protocol, TYPE_CHECKING
 
 from flask import flash
 
-from ..utils.registry import RegistryBase
-from ..utils.pysupport import load_package_modules
+from moin.utils.pysupport import load_package_modules
+from moin.utils.registry import RegistryBase
 
 if TYPE_CHECKING:
     from moin.utils.mime import Type
-
-
-class NoDupsFlash:
-    """
-    Issue flash messages for converter; but do not create duplicate messages.
-    """
-
-    def __init__(self) -> None:
-        self.messages: set[str] = set()
-
-    def log(self, message: str, category: str) -> None:
-        if message not in self.messages:
-            self.messages.add(message)
-            try:
-                flash(message, category)
-            except RuntimeError:  # CLI call has no valid request context
-                pass
 
 
 class ElementException(RuntimeError):
     pass
 
 
+class ConverterMessage(NamedTuple):
+    message: str
+    category: str
+
+
+def report_converter_messages_as_flash_message(messages: Iterable[ConverterMessage]) -> None:
+    try:
+        for message in messages:
+            flash(message.message, message.category)
+    except RuntimeError:  # in case we have no valid request context (e.g. CLI)
+        pass
+
+
 class Converter(Protocol):
-    def __call__(self, *args: Any, **kwargs) -> Any | None: ...
+
+    @property
+    def messages(self) -> set[ConverterMessage]: ...
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any | None: ...
+
+    def reset_messages(self) -> None: ...
 
 
 class RegistryConverter(RegistryBase[Converter]):

@@ -18,10 +18,12 @@ import re
 from html import unescape as html_unescape
 from collections import deque
 
-from moin.utils.tree import moin_page, xml, html, xlink, xinclude
-from ._util import decode_data, sanitise_uri_scheme
-from moin.utils.iri import Iri
 from moin.converters import html_in
+from moin.converters.base import ConverterBase
+from moin.utils.iri import Iri
+from moin.utils.tree import moin_page, xml, html, xlink, xinclude
+
+from ._util import decode_data, sanitise_uri_scheme
 
 from emeraldtree import ElementTree as ET
 
@@ -75,7 +77,7 @@ def postproc_text(markdown: Markdown, text: str) -> str:
     return html_unescape(text)
 
 
-class Converter(html_in.HtmlTags):
+class Converter(ConverterBase, html_in.HtmlTags):
     """
     Convert Markdown -> .x.moin.document.
 
@@ -456,7 +458,7 @@ class Converter(html_in.HtmlTags):
         self.html_in_converter = html_in.Converter()
 
         # share messages with the HTML-In converter
-        self.html_in_converter.no_dups_flash = self.no_dups_flash
+        self.html_in_converter.messages = self.messages
 
         # The Moin configuration
         self.app_configuration = current_app.cfg

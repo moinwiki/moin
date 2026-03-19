@@ -8,19 +8,22 @@ MoinMoin - Macro and pseudo-macro handling
 Base class for wiki parser with macro support.
 """
 
+from __future__ import annotations
+
+from moin import log
+from moin.converters.base import ConverterBase
+from moin.i18n import _
 from moin.utils import iri
 from moin.utils.mime import Type
 from moin.utils.tree import moin_page, xinclude
 from ._args_wiki import parse as parse_arguments
 from ._args_wiki import include_re
-from moin.i18n import _
-
-from moin import log
 
 logging = log.getLogger(__name__)
 
 
-class ConverterMacro:
+class ConverterMacro(ConverterBase):
+
     def _BR_repl(self, args, text, context_block):
         if context_block:
             return
