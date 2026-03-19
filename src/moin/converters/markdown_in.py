@@ -39,7 +39,7 @@ from markdown.extensions.codehilite import CodeHiliteExtension
 from moin import current_app, log
 from moin.utils.mime import Type, type_moin_document
 
-from . import default_registry, NoDupsFlash
+from . import default_registry
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
@@ -47,7 +47,6 @@ if TYPE_CHECKING:
 
 logging = log.getLogger(__name__)
 
-html_in_converter = html_in.Converter()
 block_elements = "p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table".split()
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
@@ -90,6 +89,7 @@ class Converter(html_in.HtmlTags):
     simple_tags = html_in.Converter.simple_tags.copy()
     simple_tags["dl"] = moin_page.list_item
     simple_tags["table"] = moin_page.table
+
     void_tags = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 
     _open_tag_re = re.compile(r"^(.*?)(<(\w+)(?:\s[^>]*)?>)(.*)$", re.DOTALL)
@@ -361,7 +361,7 @@ class Converter(html_in.HtmlTags):
         """
         try:
             html_tree = html_in.HTML(start_tag + end_tag)
-            element = html_in_converter.visit(html_tree)
+            element = self.html_in_converter.visit(html_tree)
         except (AssertionError, IndexError) as ex:
             logging.debug(f"Exception in HTML markup: {ex}")
             element = None
@@ -450,7 +450,14 @@ class Converter(html_in.HtmlTags):
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
 
-    def __init__(self):
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.html_in_converter = html_in.Converter()
+
+        # share messages with the HTML-In converter
+        self.html_in_converter.no_dups_flash = self.no_dups_flash
+
         # The Moin configuration
         self.app_configuration = current_app.cfg
 
@@ -527,7 +534,6 @@ class Converter(html_in.HtmlTags):
         page_children = self.do_children(root, add_lineno=add_lineno)
 
         # convert HTML markup in text strings to EmeraldTree elements
-        html_in_converter.no_dups_flash = NoDupsFlash()
         self.convert_html_markup(page_children)
         # convert <paragaph> elements containing block elements to <div>
         self.convert_invalid_p_nodes(page_children)
