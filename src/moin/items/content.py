@@ -244,7 +244,9 @@ class Content:
         """
         Return the internal representation of a document using a DOM Tree
         """
+
         doc = cid = None
+
         if preview is None:
             hash_name = HASH_ALGORITHM
             hash_hexdigest = self.rev.meta.get(hash_name)
@@ -256,6 +258,8 @@ class Content:
                     attrs=repr(attributes),
                 )
                 doc = current_app.cache.get(cid)
+
+        # No cached page found => render the page content
         if doc is None:
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
@@ -271,6 +275,7 @@ class Content:
             name = self.rev.fqname.fullname if self.rev else self.name
             links = Iri(scheme="wiki", authority="", path="/" + name)
             doc = input_conv(preview or self.rev, self.contenttype, arguments=attributes)
+
             # XXX is the following assuming that the top element of the doc tree
             # is a moin_page.page element? if yes, this is the wrong place to do that
             # as not every doc will have that element (e.g. for images, we just get
@@ -278,8 +283,16 @@ class Content:
             doc.set(moin_page.page_href, str(links))
             if self.contenttype.startswith(("text/x.moin.wiki", "text/x-mediawiki", "text/x.moin.creole")):
                 doc = smiley_conv(doc)
+
             if cid:
                 current_app.cache.set(cid, doc)
+
+            # report converter messages to the client
+            if hasattr(input_conv, "messages"):
+                from moin.converters import report_converter_messages_as_flash_message
+
+                report_converter_messages_as_flash_message(input_conv.messages)
+
         return doc
 
     def _expand_document(self, doc: Element):

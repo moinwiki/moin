@@ -15,7 +15,7 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from flask import request, flash
+from flask import request
 from urllib.parse import urlencode
 
 from moin import log
@@ -647,7 +647,7 @@ class Converter(ConverterMacro):
             msg = f"unbalanced use of moin size element {size}"
             logging.warning(msg)
             try:
-                flash(msg, "warning")
+                self.log(msg, "warning")
             except RuntimeError:  # CLI call has no valid request context
                 pass
 
@@ -1103,7 +1103,9 @@ class Converter(ConverterMacro):
         return body
 
     def parse_inline(self, text, stack, inline_re):
-        """Recognize inline elements within the given text"""
+        """
+        Recognize inline elements within the given text
+        """
 
         pos = 0
         for match in inline_re.finditer(text):
@@ -1111,14 +1113,7 @@ class Converter(ConverterMacro):
             try:
                 stack.top_append_ifnotempty(text[pos : match.start()])
             except IndexError:
-                msg = f"Error processing inline element '{text}' with markup tag '{match.group(0)}'"
-                logging.error(msg)
-
-                try:
-                    flash(msg, "error")
-                except RuntimeError:  # CLI call has no valid request context
-                    pass
-
+                self.log(f"Error processing inline element '{text}' with markup tag '{match.group(0)}'", "error")
                 continue
             finally:
                 pos = match.end()

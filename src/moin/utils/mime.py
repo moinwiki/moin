@@ -5,25 +5,31 @@
 MoinMoin — MIME helpers.
 """
 
-from collections import namedtuple
+from __future__ import annotations
+
+from typing import Any, NamedTuple
 from moin.utils.pysupport import AutoNe
 
 
-class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
-    """
-    :ivar type: Type part
-    :type type: str
-    :ivar subtype: Subtype part
-    :type subtype: str
-    :ivar parameters: Parameters part
-    :type parameters: dict
-    """
+class _Type(NamedTuple):
+    type: str | None
+    subtype: str | None
+    parameters: dict[str, Any]
+
+
+class Type(_Type, AutoNe):
 
     __token_allowed = s = frozenset(
         r"""!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ""" r"""^_`abcdefghijklmnopqrstuvwxyz{|}~"""
     )
 
-    def __new__(cls, _type=None, type=None, subtype=None, parameters=None):
+    def __new__(
+        cls,
+        _type: Type | str | None = None,
+        type: str | None = None,
+        subtype: str | None = None,
+        parameters: dict[str, Any] | None = None,
+    ):
         """
         :param _type: Type object or string representation
         :keyword type: Type part
@@ -56,7 +62,13 @@ class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
 
         return NotImplemented
 
-    def __str__(self):
+    def __ne__(self, other):
+        ret = self.__eq__(other)
+        if ret is NotImplemented:
+            return ret
+        return not ret
+
+    def __str__(self) -> str:
         ret = ["{}/{}".format(self.type or "*", self.subtype or "*")]
 
         parameters = sorted(self.parameters.items())
@@ -68,7 +80,7 @@ class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
 
         return ";".join(ret)
 
-    def __token_check(self, value):
+    def __token_check(self, value) -> bool:
         token_allowed = self.__token_allowed
         for v in value:
             if v not in token_allowed:
@@ -76,7 +88,7 @@ class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
         return True
 
     @classmethod
-    def _parse(cls, type):
+    def _parse(cls, type) -> tuple[str, str, dict[str, Any]]:
         parts = type.split(";")
 
         type, subtype = parts[0].strip().lower().split("/", 1)
@@ -94,7 +106,7 @@ class Type(namedtuple("Type", "type subtype parameters"), AutoNe):
 
         return type, subtype, parameters
 
-    def issupertype(self, other):
+    def issupertype(self, other: Any) -> bool:
         """
         Check if this object is a supertype of the other.
 

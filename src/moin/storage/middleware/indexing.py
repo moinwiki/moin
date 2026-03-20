@@ -73,7 +73,7 @@ from whoosh.sorting import FieldFacet
 from moin import current_app, flaskg, log, user
 from moin.constants.keys import *  # noqa
 from moin.constants.contenttypes import CONTENTTYPE_USER
-from moin.converters import default_registry
+from moin.converters import default_registry as converter_registry
 from moin.i18n import _
 from moin.search.analyzers import item_name_analyzer, MimeTokenizer, AclTokenizer
 from moin.storage.error import NoSuchItemError, ItemAlreadyExistsError
@@ -83,7 +83,7 @@ from moin.storage.types import Document, ItemData, MetaData, ValidationState
 from moin.themes import utctimestamp
 from moin.utils import utcfromtimestamp
 from moin.utils.iri import Iri
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import Type, type_moin_document, type_text_plain
 from moin.utils.names import CompositeName, parent_names, split_fqname
 from moin.utils.tree import moin_page
 
@@ -225,32 +225,35 @@ def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None =
         logging.debug(f"not indexing content of {meta[NAME]!r} as requested by configuration")
         return ""
 
-    rev = PseudoRev(meta, data)
+    revision = PseudoRev(meta, data)
     try:
         # TODO use different converter mode?
         # Maybe we want some special mode for the input converters so they emit
         # different output than for normal rendering), esp. for the non-markup
         # content types (images, etc.).
+
         input_contenttype = meta[CONTENTTYPE]
         output_contenttype = "text/plain"
         type_input_contenttype = Type(input_contenttype)
-        type_output_contenttype = Type(output_contenttype)
-        reg = default_registry
+        type_output_contenttype = type_text_plain
+
         # first try a direct conversion (this could be useful for extraction
         # of (meta)data from binary types, like from images or audio):
-        conv = reg.get(type_input_contenttype, type_output_contenttype)
-        if conv:
-            doc = conv(rev, input_contenttype)
-            return doc
+        converter = converter_registry.get(type_input_contenttype, type_output_contenttype)
+        if converter:
+            document = converter(revision, input_contenttype)
+            return document
+
         # otherwise try via DOM as intermediate format (this is useful if
         # input type is markup, to get rid of the markup):
-        input_conv = reg.get(type_input_contenttype, type_moin_document)
-        refs_conv = reg.get(type_moin_document, type_moin_document, items="refs")
-        output_conv = reg.get(type_moin_document, type_output_contenttype)
+        input_conv = converter_registry.get(type_input_contenttype, type_moin_document)
+        refs_conv = converter_registry.get(type_moin_document, type_moin_document, items="refs")
+        output_conv = converter_registry.get(type_moin_document, type_output_contenttype)
         if not input_conv or not output_conv:
             # no way
             raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
-        doc = input_conv(rev, input_contenttype)
+        document = input_conv(revision, input_contenttype)
+
         # We do not convert smileys, includes, macros, links, because
         # it does not improve search results or even makes results worse.
         # We do run the referenced converter, though, to extract links and
@@ -258,22 +261,23 @@ def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None =
         if is_new:
             # we only can modify new, uncommitted revisions, not stored revs
             i = Iri(scheme="wiki", authority="", path="/" + item_name)
-            doc.set(moin_page.page_href, str(i))
-            refs_conv(doc)
+            document.set(moin_page.page_href, str(i))
+            refs_conv(document)
             # side effect: we update some metadata:
             meta[ITEMLINKS] = sorted(refs_conv.get_links())
             meta[ITEMTRANSCLUSIONS] = sorted(refs_conv.get_transclusions())
             meta[EXTERNALLINKS] = sorted(refs_conv.get_external_links())
-        doc = output_conv(doc)
-        return doc
+        document = output_conv(document)
+        return document
+
     except Exception as e:  # catch all exceptions, we don't want to break an indexing run
         logging.exception(
             "Exception happened in conversion of item {!r} rev {} contenttype {}:".format(
                 item_name, meta.get(REVID, "new"), meta.get(CONTENTTYPE, "")
             )
         )
-        doc = f"ERROR [{e!s}]"
-        return doc
+        document = f"ERROR [{e!s}]"
+        return document
 
 
 class IndexingMiddleware:

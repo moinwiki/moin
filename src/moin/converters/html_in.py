@@ -16,8 +16,6 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from flask import flash
-
 from emeraldtree import ElementTree as ET
 from emeraldtree.html import HTML
 
@@ -31,29 +29,13 @@ from . import default_registry
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
 from moin import log
+from moin.converters.base import ConverterBase
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
 logging = log.getLogger(__name__)
-
-
-class NoDupsFlash:
-    """
-    Issue flash messages for unsupported HTML tags; but do not create duplicate messages.
-    """
-
-    def __init__(self):
-        self.messages = set()
-
-    def log(self, message, category):
-        if message not in self.messages:
-            self.messages.add(message)
-            try:
-                flash(message, category)
-            except RuntimeError:  # CLI call has no valid request context
-                pass
 
 
 class HtmlTags:
@@ -85,7 +67,7 @@ class HtmlTags:
     list_tags: Final = {"ul", "dir", "ol"}
 
     # HTML tags with a matching but differently named Moinpage DOM tag
-    simple_tags: Final = {
+    simple_tags = {
         # Inline text markup (text level semantics)
         "em": moin_page.emphasis,
         "b": moin_page.strong,  # highlight key words without marking them up as important
@@ -182,7 +164,7 @@ class HtmlTags:
         return self.new(tag, attrib, children)
 
 
-class Converter(HtmlTags):
+class Converter(ConverterBase, HtmlTags):
     """
     Convert HTML -> .x.moin.document.
     """
@@ -193,12 +175,8 @@ class Converter(HtmlTags):
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         """
-        Function called by the converter to process the
-        conversion.
-
-        TODO: Add support for different arguments
+        Function called by the converter to process the conversion.
         """
-        self.no_dups_flash = NoDupsFlash()
 
         text = decode_data(data, contenttype)
         # data cleanup is not needed by html_out, but is needed by moinwiki_out; CKEditor adds unwanted \n\t
@@ -351,7 +329,7 @@ class Converter(HtmlTags):
             msg = _("Tag '{invalid_tag}' is not supported; all tag contents are discarded.").format(
                 invalid_tag=element.tag.name
             )
-            self.no_dups_flash.log(msg, "info")
+            self.log(msg, "info")
             logging.debug(f"WARNING : Ignored tag : {element.tag.name}")
             return
 
@@ -359,8 +337,7 @@ class Converter(HtmlTags):
         msg = _("Tag '{invalid_tag}' is not known; tag ignored but children are processed.").format(
             invalid_tag=element.tag.name
         )
-        self.no_dups_flash.log(msg, "info")
-        logging.debug(f"WARNING : Unknown tag : {element.tag.name}")
+        self.log(msg, "info")
         return self.do_children(element)
 
     # TODO: if this is useful, it should be documented. Normally <BASE..> tags are in <HEAD> and
