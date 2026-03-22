@@ -58,10 +58,6 @@ dependencies = [
     "argon2-cffi >= 23.1.0",  # strong password hashing with Argon2id
     "sqlalchemy >= 2.0",  # used by sqla store
     "typing_extensions >= 4.12.2",
-    "XStatic >= 0.0.2, < 2.0.0",  # support for static file pypi packages
-    "XStatic-Font-Awesome >= 6.2.1.0, <= 6.2.1.1",
-    "XStatic-svg-edit-moin >= 2012.11.15.1, <= 2012.11.27.1",
-    "XStatic-Pygments >= 1.6.0.1, <= 2.9.0.1",
 ]
 
 [project.optional-dependencies]

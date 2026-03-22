@@ -36,7 +36,6 @@ import os
 
 from moin.config import AclConfig, IndexStorageConfig
 from moin.config.default import DefaultConfig
-from moin.utils import get_xstatic_module_path_map
 from moin.utils.interwiki import InterWikiMap
 from moin.storage import create_mapping
 from moin.constants.namespaces import (
@@ -251,7 +250,6 @@ class Config(DefaultConfig):
 
     # names below must be package names
     mod_names = ["font_awesome", "svgedit_moin", "pygments"]
-    serve_files.update(get_xstatic_module_path_map(mod_names))
 
 
 # flask settings require all caps

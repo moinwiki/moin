@@ -42,6 +42,7 @@ from moin.i18n import i18n_init
 from moin.search import SearchForm
 from moin.storage.middleware import protecting, indexing, routing
 from moin.themes import setup_jinja_env, themed_error, ThemeSupport
+from moin.utils import get_xstatic_module_path_map
 from moin.utils import monkeypatch  # noqa
 from moin.utils.clock import Clock
 from moin.utils.forms import make_generator
@@ -177,6 +178,8 @@ class MoinApp(Flask):
             raise ConfigurationError("Configuration does not implement WikiConfigProtocol")
 
         cfg.custom_css_path = os.path.isfile(os.path.join(cfg.wiki_local_dir, "custom.css"))
+
+        cfg.serve_files.update(get_xstatic_module_path_map(cfg.mod_names))
 
         self.cfg = cfg
 
