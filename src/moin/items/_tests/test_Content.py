@@ -81,13 +81,12 @@ class TestTarItems:
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
         filecontent = b"abcdefghij"
         content_length = len(filecontent)
-        members = {"example1.txt", "example2.txt"}
-        item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
-        item.content.put_member("example2.txt", filecontent, content_length, expected_members=members)
+        item.content.put_member("example1.txt", filecontent, content_length, True, False)
+        item.content.put_member("example2.txt", filecontent, content_length, False, True)
 
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
         tf_names = set(item.content.list_members())
-        assert tf_names == members
+        assert tf_names == {"example1.txt", "example2.txt"}
         assert item.content.get_member("example1.txt").read() == filecontent
 
     def testRevisionUpdate(self):
@@ -98,11 +97,10 @@ class TestTarItems:
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
         filecontent = b"abcdefghij"
         content_length = len(filecontent)
-        members = {"example1.txt"}
-        item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
+        item.content.put_member("example1.txt", filecontent, content_length, True, True)
         filecontent = b"AAAABBBB"
         content_length = len(filecontent)
-        item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
+        item.content.put_member("example1.txt", filecontent, content_length, True, True)
 
         item = Item.create(item_name, contenttype="application/x-tar")
         assert item.content.get_member("example1.txt").read() == filecontent
@@ -117,9 +115,8 @@ class TestZipMixin:
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/zip")
         filecontent = "test_contents"
         content_length = len(filecontent)
-        members = {"example1.txt", "example2.txt"}
         with pytest.raises(NotImplementedError):
-            item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
+            item.content.put_member("example1.txt", filecontent, content_length, True, False)
 
 
 @pytest.mark.usefixtures("_req_ctx")

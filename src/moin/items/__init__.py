@@ -1693,7 +1693,7 @@ class Default(Contentful):
             form = self.ModifyForm.from_item(item)
 
         if method == "POST":
-            # XXX workaround for *Draw items
+            # special handling for *Draw items
             if isinstance(self.content, Draw):
                 try:
                     self.content.handle_post()
@@ -1701,10 +1701,8 @@ class Default(Contentful):
                     edit_utils.cursor_close()
                     abort(403)
                 else:
-                    # *Draw Applets POSTs more than once, redirecting would
-                    # break them
                     edit_utils.cursor_close()
-                    return "OK"
+                    return redirect(url_for_item(**self.fqname.split))
 
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)
