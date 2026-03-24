@@ -267,6 +267,8 @@ SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
 # USE_X_SENDFILE = False
 # LOGGER_NAME = 'MoinMoin'
+# set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
+TRUSTED_HOSTS = ["localhost", "127.0.0.1"]  # add your webserver hostnames
 # config for flask-cache:
 # CACHE_TYPE = 'filesystem'
 # CACHE_DIR = '/path/to/flask-cache-dir'
