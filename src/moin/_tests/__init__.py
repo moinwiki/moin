@@ -15,7 +15,8 @@ import psutil
 
 from moin import flaskg
 from moin.constants.contenttypes import CHARSET
-from moin.constants.keys import NAME, CONTENTTYPE, NAME_EXACT
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.keys import NAME, CONTENTTYPE, ITEMTYPE, NAME_EXACT
 from moin.converters import include  # noqa # prevent a circular import
 from moin.items import Item
 from moin.utils.crypto import random_string
@@ -56,6 +57,8 @@ def update_item(name, meta, data):
     item = flaskg.storage.get_item(**fqname.query)
 
     meta = meta.copy()
+    if ITEMTYPE not in meta:
+        meta[ITEMTYPE] = ITEMTYPE_DEFAULT
     if NAME not in meta:
         meta[NAME] = [name]
     if CONTENTTYPE not in meta:

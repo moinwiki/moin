@@ -21,6 +21,7 @@ from whoosh.query import Term
 
 from moin import flaskg
 from moin.auth import GivenAuth
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.constants.keys import (
     ACL,
     ACTION,
@@ -46,6 +47,7 @@ from moin.constants.keys import (
     REV_NUMBER,
     PARENTID,
     MTIME,
+    SUBSCRIPTIONS,
 )
 from moin.constants.namespaces import NAMESPACE_USERS
 from moin.storage.middleware.indexing import IndexingMiddleware, Item, Revision
@@ -88,7 +90,7 @@ class TestIndexingMiddlewareBase:
         acl: str | None = None,
         parent: Revision | None = None,
     ) -> Revision:
-        meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: item.names.copy()}
+        meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: item.names.copy(), ITEMTYPE: ITEMTYPE_DEFAULT}
         if acl:
             meta[ACL] = acl
         if mtime:
@@ -122,7 +124,8 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item = self.get_item(item_name)
         assert item is not None
         assert not item  # item does not exist
-        rev = item.store_revision(dict(name=[item_name]), BytesIO(data), return_rev=True)
+        meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}
+        rev = item.store_revision(meta, BytesIO(data), return_rev=True)
         assert rev
         revid = rev.revid
         # Check if we have the revision now:
@@ -142,11 +145,13 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         data = b"bar"
         newdata = b"baz"
         item = self.get_item(item_name)
-        rev = item.store_revision(dict(name=[item_name], comment="spam"), BytesIO(data), return_rev=True)
+        meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, COMMENT: "spam"}
+        rev = item.store_revision(meta, BytesIO(data), return_rev=True)
         assert rev
         revid = rev.revid
         # clear revision:
-        item.store_revision(dict(name=[item_name], revid=revid, comment="no spam"), BytesIO(newdata), overwrite=True)
+        meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, COMMENT: "no spam", REVID: revid}
+        item.store_revision(meta, BytesIO(newdata), overwrite=True)
         # check if the revision was overwritten:
         item = self.get_item(item_name)
         rev = item.get_revision(revid)
@@ -223,11 +228,11 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_all_revisions(self):
         item_name = "foo"
         item = self.get_item(item_name)
-        item.store_revision(dict(name=[item_name]), BytesIO(b"does not count, different name"))
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"does not count, different name"))
         item_name = "bar"
         item = self.get_item(item_name)
-        item.store_revision(dict(name=[item_name]), BytesIO(b"1st"))
-        item.store_revision(dict(name=[item_name]), BytesIO(b"2nd"))
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"1st"))
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"2nd"))
         item = self.get_item(item_name)
         revs = [rev.data.read() for rev in item.iter_revs()]
         assert len(revs) == 2
@@ -236,11 +241,13 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_latest_revision(self):
         item_name = "foo"
         item = self.get_item(item_name)
-        item.store_revision(dict(name=[item_name]), BytesIO(b"does not count, different name"))
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"does not count, different name"))
         item_name = "bar"
         item = self.get_item(item_name)
-        item.store_revision(dict(name=[item_name]), BytesIO(b"1st"))
-        expected_rev = item.store_revision(dict(name=[item_name]), BytesIO(b"2nd"), return_rev=True)
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"1st"))
+        expected_rev = item.store_revision(
+            {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"2nd"), return_rev=True
+        )
         assert expected_rev
         revs = list(self.imw.documents(name=item_name))
         assert len(revs) == 1  # there is only 1 latest revision
@@ -250,7 +257,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item_name = "foo"
         data = b"bar"
         item = self.imw[item_name]
-        rev = item.store_revision(dict(name=[item_name]), BytesIO(data), return_rev=True)
+        rev = item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(data), return_rev=True)
         assert rev
         print(repr(rev.meta))
         assert rev.name == item_name
@@ -261,7 +268,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         assert DATAID in rev.meta
 
     def test_meta_itemlinks_moin(self):
-        meta1 = {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8", ITEMTYPE: "default", REV_NUMBER: 1}
+        meta1 = {CONTENTTYPE: "text/x.moin.wiki;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT, REV_NUMBER: 1}
         rev1 = update_item("item01", meta1, "[[Home]] [[users/user]] [[/Subitem01]]")
         assert "Home" in rev1.meta[ITEMLINKS]
         assert "users/user" in rev1.meta[ITEMLINKS]
@@ -270,7 +277,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
             CONTENTTYPE: "text/x.moin.wiki;charset=utf-8",
             NAME: ["user"],
             NAMESPACE: NAMESPACE_USERS,
-            ITEMTYPE: "default",
+            ITEMTYPE: ITEMTYPE_DEFAULT,
             REV_NUMBER: 1,
         }
         rev2 = update_item("%s/user" % NAMESPACE_USERS, meta2, "[[users/usr1]] [[../usr2]]")
@@ -280,10 +287,10 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_documents(self):
         item_name = "foo"
         item = self.imw[item_name]
-        item.store_revision(dict(name=[item_name]), BytesIO(b"x"), return_rev=True)
-        rev2 = item.store_revision(dict(name=[item_name]), BytesIO(b"xx"), return_rev=True)
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"x"), return_rev=True)
+        rev2 = item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"xx"), return_rev=True)
         assert rev2
-        item.store_revision(dict(name=[item_name]), BytesIO(b"xxx"), return_rev=True)
+        item.store_revision({NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"xxx"), return_rev=True)
         rev = self.imw.document(idx_name=ALL_REVS, size=2)
         assert rev
         assert rev.revid == rev2.revid
@@ -295,7 +302,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         """Test that XML documents can be stored and indexed."""
         item_name = "foo"
         item = self.imw[item_name]
-        meta = dict(name=[item_name], contenttype="text/xml;charset=utf-8")
+        meta = {NAME: [item_name], CONTENTTYPE: "text/xml;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}
         rev = item.store_revision(meta, BytesIO(b'<?xml version="1.0" encoding="UTF-8"?>'), return_rev=True)
         assert rev
 
@@ -430,7 +437,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_revision_contextmanager(self):
         # check if rev.data is closed after leaving the with-block
         item_name = "foo"
-        meta = dict(name=[item_name])
+        meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT}
         data = b"some test content"
         item = self.get_item(item_name)
 
@@ -450,7 +457,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         # TODO: this is a very simple check that assumes that data is put 1:1
         # into index' CONTENT field.
         item_name = "foo"
-        meta = dict(name=[item_name], contenttype="text/plain;charset=utf-8")
+        meta = {NAME: [item_name], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}
         data = b"some test content\n"
         item = self.get_item(item_name)
         data_file = BytesIO(data)
@@ -463,7 +470,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
 
     def test_indexing_subscriptions(self):
         item_name = "foo"
-        meta = dict(name=[item_name], subscriptions=[f"{NAME}::foo", f"{NAMERE}::.*"])
+        meta = {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, SUBSCRIPTIONS: [f"{NAME}::foo", f"{NAMERE}::.*"]}
         item = self.get_item(item_name)
         item.store_revision(meta, BytesIO(item_name.encode("utf-8")))
         doc1 = self.imw.document(subscription_ids=f"{NAME}::foo")
@@ -479,7 +486,7 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         item_name_n = "normal"
         item = self.get_item(item_name_n)
         rev_n = item.store_revision(
-            dict(name=[item_name_n], contenttype="text/plain;charset=utf-8"),
+            {NAME: [item_name_n], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT},
             BytesIO(item_name_n.encode("utf-8")),
             return_rev=True,
         )
@@ -487,7 +494,12 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
         fqname_u = split_fqname(item_name_u)
         item = self.imw.get_item(**fqname_u.query)
         rev_u = item.store_revision(
-            dict(name=[fqname_u.value], namespace=fqname_u.namespace, contenttype="text/plain;charset=utf-8"),
+            {
+                NAME: [fqname_u.value],
+                NAMESPACE: fqname_u.namespace,
+                CONTENTTYPE: "text/plain;charset=utf-8",
+                ITEMTYPE: ITEMTYPE_DEFAULT,
+            },
             BytesIO(item_name_u.encode("utf-8")),
             return_rev=True,
         )
@@ -503,7 +515,11 @@ class TestIndexingMiddleware(TestIndexingMiddlewareBase):
     def test_parentnames(self):
         item = self.get_item("child")
         item.store_revision(
-            dict(name=["child", "p1/a", "p2/b", "p2/c", "p3/p4/d"], contenttype="text/plain;charset=utf-8"),
+            {
+                NAME: ["child", "p1/a", "p2/b", "p2/c", "p3/p4/d"],
+                CONTENTTYPE: "text/plain;charset=utf-8",
+                ITEMTYPE: ITEMTYPE_DEFAULT,
+            },
             BytesIO(b""),
         )
         item = self.get_item("child")
@@ -537,7 +553,11 @@ class TestProtectedIndexingMiddleware:
     def test_documents(self):
         item_name = "public"
         item = self.get_item(item_name)
-        r = item.store_revision(dict(name=[item_name], acl="joe:read"), BytesIO(b"public content"), return_rev=True)
+        r = item.store_revision(
+            {NAME: [item_name], ACL: "joe:read", ITEMTYPE: ITEMTYPE_DEFAULT},
+            BytesIO(b"public content"),
+            return_rev=True,
+        )
         assert r is not None
         assert isinstance(r, ProtectedRevision)
         revid_public = r.revid
@@ -549,7 +569,11 @@ class TestProtectedIndexingMiddleware:
     def test_getitem(self):
         item_name = "public"
         item = self.get_item(item_name)
-        r = item.store_revision(dict(name=[item_name], acl="joe:read"), BytesIO(b"public content"), return_rev=True)
+        r = item.store_revision(
+            {NAME: [item_name], ACL: "joe:read", ITEMTYPE: ITEMTYPE_DEFAULT},
+            BytesIO(b"public content"),
+            return_rev=True,
+        )
         assert r is not None
         assert isinstance(r, ProtectedRevision)
         revid_public = r.revid
@@ -566,7 +590,10 @@ class TestProtectedIndexingMiddleware:
         item_name = "foo"
         item = self.get_item(item_name)
         for i in range(100):
-            item.store_revision(dict(name=[item_name], mtime=i, acl="joe:create joe:read"), BytesIO(b"some content"))
+            item.store_revision(
+                {NAME: [item_name], MTIME: i, ACL: "joe:create joe:read", ITEMTYPE: ITEMTYPE_DEFAULT},
+                BytesIO(b"some content"),
+            )
 
     def test_perf_create_read(self):
         pytest.skip("usually we do no performance tests")
@@ -577,7 +604,8 @@ class TestProtectedIndexingMiddleware:
         item = self.get_item(item_name)
         for i in range(100):
             item.store_revision(
-                dict(name=[item_name], mtime=i, acl="joe:create joe:read"), BytesIO(b"rev number {}".format(i))
+                {NAME: [item_name], MTIME: i, ACL: "joe:create joe:read", ITEMTYPE: ITEMTYPE_DEFAULT},
+                BytesIO(b"rev number {}".format(i)),
             )
         for r in item.iter_revs():
             # print r.meta

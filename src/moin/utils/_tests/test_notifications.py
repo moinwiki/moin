@@ -10,7 +10,8 @@ from io import BytesIO
 from flask import url_for
 
 from moin import current_app, flaskg
-from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, NAME, PARENTID
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.keys import ACTION, ACTION_SAVE, ACTION_TRASH, ADDRESS, NAME, ITEMTYPE, PARENTID
 from moin.items import Item
 from moin.storage.middleware import indexing as msmi
 from moin.utils.diff_datastruct import diff as dict_diff
@@ -34,7 +35,7 @@ class TestNotifications:
     def store_revision(
         self, item: msmi.Item, data: bytes, *, parent: msmi.Revision | None = None, **kwargs
     ) -> msmi.Revision:
-        meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: item.names.copy()} | kwargs
+        meta = {ACTION: ACTION_SAVE, ADDRESS: "127.0.0.1", NAME: item.names.copy(), ITEMTYPE: ITEMTYPE_DEFAULT} | kwargs
         if parent:
             meta[PARENTID] = parent.revid
         revision = item.store_revision(meta, BytesIO(data), trusted=True, return_rev=True)

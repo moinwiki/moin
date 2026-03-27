@@ -66,7 +66,18 @@ from moin.constants.contenttypes import (
     CONTENTTYPE_NONEXISTENT,
     CHARSET,
 )
-from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_ALGORITHM, ACTION_SAVE, NAMESPACE, REVID
+from moin.constants.keys import (
+    ITEMTYPE,
+    NAME_EXACT,
+    CONTENTTYPE,
+    TAGS,
+    TEMPLATE,
+    HASH_ALGORITHM,
+    ACTION_SAVE,
+    NAMESPACE,
+    REVID,
+)
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.forms import File
 from moin.i18n import _, L_
 from moin.storage.error import StorageError
@@ -613,10 +624,13 @@ class TarMixin:
         """
         if name not in expected_members:
             raise StorageError(f"tried to add unexpected member {name!r} to container item {self.name!r}")
+
         assert isinstance(name, str)
+
         temp_fname = os.path.join(
             tempfile.gettempdir(), "TarContainer_" + cache_key(usage="TarContainer", name=self.name)
         )
+
         with tarfile.open(temp_fname, mode="a") as tf:
             ti = tarfile.TarInfo(name)
             if isinstance(content, bytes):
@@ -632,14 +646,16 @@ class TarMixin:
             ti.size = content_length
             tf.addfile(ti, content)
             tf_members = set(tf.getnames())
+
         if tf_members - expected_members:
             msg = f"found unexpected members in container item {self.name!r}"
             logging.error(msg)
             os.remove(temp_fname)
             raise StorageError(msg)
+
         if tf_members == expected_members:
             # everything we expected has been added to the tar file, save the container as revision
-            meta = {CONTENTTYPE: self.contenttype}
+            meta = {CONTENTTYPE: self.contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
             with open(temp_fname, "rb") as data:
                 self.item._save(meta, data, names=self.name, action=ACTION_SAVE, comment="")
             os.remove(temp_fname)

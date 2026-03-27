@@ -12,11 +12,12 @@ import json
 from calendar import timegm
 
 from moin import current_app
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.forms import DateTimeUNIX, JSON, Names
 from moin.utils.names import CompositeName
 from moin.items import Item
 from moin._tests import become_trusted
-from moin.constants.keys import ITEMID, NAME, CONTENTTYPE, NAMESPACE
+from moin.constants.keys import ITEMID, ITEMTYPE, NAME, CONTENTTYPE, NAMESPACE
 
 
 def test_datetimeunix():
@@ -65,7 +66,7 @@ def test_validjson():
         ("users", "other_backend"),
     ]
     item = Item.create("users/existingname")
-    meta = {NAMESPACE: "users", CONTENTTYPE: "text/plain;charset=utf-8"}
+    meta = {NAMESPACE: "users", CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}
     become_trusted()
     item._save(meta, data="This is a valid Item.")
 

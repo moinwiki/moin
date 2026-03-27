@@ -8,7 +8,8 @@ MoinMoin - tests for our test environment.
 from io import BytesIO
 
 from moin import current_app, flaskg
-from moin.constants.keys import NAME, CONTENTTYPE
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.keys import ITEMTYPE, NAME, CONTENTTYPE
 
 from moin._tests import wikiconfig
 
@@ -32,7 +33,9 @@ class TestStorageEnvironWithoutConfig:
         itemname = "this item shouldn't exist yet"
         assert not storage.has_item(itemname)
         item = storage[itemname]
-        item.store_revision({NAME: [itemname], CONTENTTYPE: "text/plain;charset=utf-8"}, BytesIO(b""))
+        item.store_revision(
+            {NAME: [itemname], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}, BytesIO(b"")
+        )
         assert storage.has_item(itemname)
 
 

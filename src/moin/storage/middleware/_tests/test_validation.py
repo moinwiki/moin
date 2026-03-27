@@ -5,6 +5,7 @@
 MoinMoin - validation tests.
 """
 
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_USERPROFILE
 from moin.storage.middleware.validation import ContentMetaSchema, UserMetaSchema
 
 from moin.constants import keys
@@ -24,6 +25,7 @@ class TestValidation:
         rev[keys.ACL] = "All:read"
 
         meta = {
+            keys.ITEMTYPE: ITEMTYPE_DEFAULT,
             keys.REVID: make_uuid(),
             keys.PARENTID: make_uuid(),
             keys.NAME: ["a"],
@@ -61,6 +63,7 @@ class TestValidation:
     def test_user(self):
         meta = {
             keys.ITEMID: make_uuid(),
+            keys.ITEMTYPE: ITEMTYPE_USERPROFILE,
             keys.REVID: make_uuid(),
             keys.NAME: ["user name"],
             keys.NAMESPACE: "userprofiles",
