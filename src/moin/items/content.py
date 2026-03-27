@@ -598,7 +598,9 @@ class TarMixin:
         tf = tarfile.open(fileobj=self.rev.data, mode="r")
         return tf.extractfile(name)
 
-    def put_member(self: ContentMixin, name: str, content, content_length, expected_members):
+    def put_member(
+        self: ContentMixin, name: str, content: bytes | BytesIO, content_length: int | None, expected_members: set[str]
+    ) -> None:
         """
         puts a new member file into a temporary tar container.
         If all expected members have been put, it saves the tar container
