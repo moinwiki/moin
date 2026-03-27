@@ -243,7 +243,12 @@ class Content:
 
     @property
     def name(self):
-        return self.item.name
+        """
+        The fully qualified name of the content item.
+        """
+        assert self.item is not None
+        assert self.item.fqname is not None
+        return self.item.fqname.fullname
 
     def get_data(self):
         return ""  # TODO create a better method for binary stuff
@@ -657,7 +662,7 @@ class TarMixin:
             # everything we expected has been added to the tar file, save the container as revision
             meta = {CONTENTTYPE: self.contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
             with open(temp_fname, "rb") as data:
-                self.item._save(meta, data, names=self.name, action=ACTION_SAVE, comment="")
+                self.item._save(meta, data, action=ACTION_SAVE, comment="")
             os.remove(temp_fname)
 
 
@@ -1351,6 +1356,8 @@ class SvgDraw(Draw):
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
-        drawing_url = url_for("frontend.get_item", item_name=self.name, member="drawing.svg", rev=self.rev.revid)
-        png_url = url_for("frontend.get_item", item_name=self.name, member="drawing.png", rev=self.rev.revid)
+        revid = self.rev.revid
+        item_name = self.name
+        drawing_url = url_for("frontend.get_item", item_name=item_name, member="drawing.svg", rev=revid)
+        png_url = url_for("frontend.get_item", item_name=item_name, member="drawing.png", rev=revid)
         return safe_markup(f'<img src="{escape(png_url)}" alt="{escape(drawing_url)}" />')
