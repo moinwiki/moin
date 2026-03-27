@@ -1516,7 +1516,8 @@ class Meta(Mapping):
             return True
 
     def __iter__(self):
-        self._meta, _ = self.revision._load()
+        if not self._meta:
+            self._meta, _ = self.revision._load()
         return iter(self._meta)
 
     def __getitem__(self, key):
