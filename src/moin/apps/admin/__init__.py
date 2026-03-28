@@ -7,7 +7,6 @@ MoinMoin - Admin views package
 This package contains the views, templates, and static files for wiki administration.
 """
 
-from flask import Blueprint
+from .views import admin
 
-admin = Blueprint("admin", __name__, template_folder="templates")
-import moin.apps.admin.views  # noqa
+__all__ = ["admin"]

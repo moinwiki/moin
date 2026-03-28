@@ -7,7 +7,6 @@ MoinMoin - Miscellaneous views package
 This package contains miscellaneous views that do not fit into another category.
 """
 
-from flask import Blueprint
+from .views import misc
 
-misc = Blueprint("misc", __name__, template_folder="templates")
-import moin.apps.misc.views  # noqa
+__all__ = ["misc"]

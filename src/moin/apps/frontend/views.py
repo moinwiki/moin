@@ -37,7 +37,8 @@ from functools import wraps, partial
 
 from werkzeug.utils import secure_filename
 
-from flask import request, url_for, flash, Response, make_response, redirect, abort, jsonify, session
+from flask import Blueprint, Response
+from flask import request, url_for, flash, make_response, redirect, abort, jsonify, session
 from flask_babel import format_datetime
 from flask_theme import get_themes_list
 
@@ -56,7 +57,6 @@ from whoosh.analysis import StandardAnalyzer
 from moin import current_app, flaskg, log
 from moin.i18n import _, L_
 from moin.themes import render_template, contenttype_to_class, get_editor_info
-from moin.apps.frontend import frontend
 from moin.forms import (
     OptionalText,
     RequiredText,
@@ -119,6 +119,8 @@ logging = log.getLogger(__name__)
 
 
 jfu_server_lock = threading.Lock()
+
+frontend = Blueprint("frontend", __name__)
 
 
 @frontend.route("/+dispatch", methods=["GET"])

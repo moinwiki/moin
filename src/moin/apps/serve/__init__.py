@@ -9,7 +9,6 @@ We avoid bundling them; instead, we access them somewhere on the
 filesystem outside of Moin.
 """
 
-from flask import Blueprint
+from .views import serve
 
-serve = Blueprint("serve", __name__)
-import moin.apps.serve.views  # noqa
+__all__ = ["serve"]

@@ -8,17 +8,20 @@ MoinMoin - Miscellaneous views
 Miscellaneous views that do not fit into another category.
 """
 
+from __future__ import annotations
+
 import time
 
-from flask import Response
+from flask import Blueprint, Response
 
 from whoosh.query import Term, Or, And
 
 from moin import current_app, flaskg
-from moin.apps.misc import misc
 from moin.constants.keys import MTIME, NAME_EXACT, NAMESPACE, NAME
 from moin.themes import render_template
 from moin.utils.names import CompositeName
+
+misc = Blueprint("misc", __name__, template_folder="templates")
 
 
 @misc.route("/sitemap")

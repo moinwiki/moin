@@ -8,8 +8,9 @@ MoinMoin - tests for moin.utils.subscriptions.
 import pytest
 
 from moin import user
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_USERPROFILE
 from moin.items import Item
-from moin.constants.keys import ACL, ITEMID, CONTENTTYPE, NAME, NAMERE, NAMEPREFIX, SUBSCRIPTIONS, TAGS
+from moin.constants.keys import ACL, ITEMID, CONTENTTYPE, ITEMTYPE, NAME, NAMERE, NAMEPREFIX, SUBSCRIPTIONS, TAGS
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERPROFILES
 from moin.utils.subscriptions import get_subscribers, get_matched_subscription_patterns
 
@@ -31,7 +32,7 @@ class TestSubscriptions:
 
     @pytest.fixture
     def meta(self, tag_name):
-        return {CONTENTTYPE: "text/plain;charset=utf-8", TAGS: [tag_name]}
+        return {CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT, TAGS: [tag_name]}
 
     @pytest.fixture
     def item(self, item_name, meta):
@@ -79,7 +80,11 @@ class TestSubscriptions:
             subscribers_names = {subscriber.name for subscriber in subscribers}
             assert subscribers_names == expected_names
 
-        meta = {CONTENTTYPE: "text/plain;charset=utf-8", ACL: f"{user1.name0}: All:read,write"}
+        meta = {
+            CONTENTTYPE: "text/plain;charset=utf-8",
+            ITEMTYPE: ITEMTYPE_USERPROFILE,
+            ACL: f"{user1.name0}: All:read,write",
+        }
         item._save(meta, comment="")
         item = Item.create(item_name)
         subscribers = get_subscribers(**item.meta)

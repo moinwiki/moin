@@ -66,7 +66,18 @@ from moin.constants.contenttypes import (
     CONTENTTYPE_NONEXISTENT,
     CHARSET,
 )
-from moin.constants.keys import NAME_EXACT, CONTENTTYPE, TAGS, TEMPLATE, HASH_ALGORITHM, ACTION_SAVE, NAMESPACE, REVID
+from moin.constants.keys import (
+    ITEMTYPE,
+    NAME_EXACT,
+    CONTENTTYPE,
+    TAGS,
+    TEMPLATE,
+    HASH_ALGORITHM,
+    ACTION_SAVE,
+    NAMESPACE,
+    REVID,
+)
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.forms import File
 from moin.i18n import _, L_
 from moin.storage.error import StorageError
@@ -232,7 +243,12 @@ class Content:
 
     @property
     def name(self):
-        return self.item.name
+        """
+        The fully qualified name of the content item.
+        """
+        assert self.item is not None
+        assert self.item.fqname is not None
+        return self.item.fqname.fullname
 
     def get_data(self):
         return ""  # TODO create a better method for binary stuff
@@ -598,7 +614,14 @@ class TarMixin:
         tf = tarfile.open(fileobj=self.rev.data, mode="r")
         return tf.extractfile(name)
 
-    def put_member(self: ContentMixin, name: str, content, content_length, expected_members):
+    def put_member(
+        self: ContentMixin,
+        name: str,
+        content: bytes | BytesIO,
+        content_length: int | None,
+        is_first: bool,
+        is_last: bool,
+    ) -> None:
         """
         puts a new member file into a temporary tar container.
         If all expected members have been put, it saves the tar container
@@ -609,13 +632,13 @@ class TarMixin:
         :param content_length: byte-length of content (for bytes, None can be given)
         :param expected_members: set of expected member file names
         """
-        if name not in expected_members:
-            raise StorageError(f"tried to add unexpected member {name!r} to container item {self.name!r}")
         assert isinstance(name, str)
+
         temp_fname = os.path.join(
             tempfile.gettempdir(), "TarContainer_" + cache_key(usage="TarContainer", name=self.name)
         )
-        with tarfile.open(temp_fname, mode="a") as tf:
+
+        with tarfile.open(temp_fname, mode="w" if is_first else "a") as tf:
             ti = tarfile.TarInfo(name)
             if isinstance(content, bytes):
                 if content_length is None:
@@ -629,17 +652,13 @@ class TarMixin:
             assert content_length >= 0  # we don't want -1 interpreted as 4G-1
             ti.size = content_length
             tf.addfile(ti, content)
-            tf_members = set(tf.getnames())
-        if tf_members - expected_members:
-            msg = f"found unexpected members in container item {self.name!r}"
-            logging.error(msg)
-            os.remove(temp_fname)
-            raise StorageError(msg)
-        if tf_members == expected_members:
-            # everything we expected has been added to the tar file, save the container as revision
-            meta = {CONTENTTYPE: self.contenttype}
+
+        if is_last:
+            # final member has been added to the tar file, save the container as revision
+            meta = {CONTENTTYPE: self.contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
             with open(temp_fname, "rb") as data:
-                self.item._save(meta, data, names=self.name, action=ACTION_SAVE, comment="")
+                self.item._save(meta, data, action=ACTION_SAVE, comment="")
+            # remove the temporary file
             os.remove(temp_fname)
 
 
@@ -687,7 +706,14 @@ class ZipMixin:
         zf = zipfile.ZipFile(self.rev.data, mode="r")
         return zf.open(name, mode="r")
 
-    def put_member(self: ContentMixin, name, content, content_length, expected_members):
+    def put_member(
+        self: ContentMixin,
+        name: str,
+        content: bytes | BytesIO,
+        content_length: int | None,
+        is_first: bool,
+        is_last: bool,
+    ) -> None:
         raise NotImplementedError
 
 
@@ -1310,7 +1336,9 @@ class DrawPNGMap(Draw):
 
 @register
 class SvgDraw(Draw):
-    """drawings by svg-edit. It creates two files (svg, png) which are stored as tar file."""
+    """
+    Drawing created by SVG-Edit. It creates two files (svg, png) which are stored as tar file.
+    """
 
     contenttype = "application/x-svgdraw"
     display_name = "SVGDRAW"
@@ -1321,18 +1349,18 @@ class SvgDraw(Draw):
     @override
     def handle_post(self) -> None:
         # called from modify UI/POST
-        png_upload = request.values.get("png_data")
+        png_data = request.values.get("png_data")
         svg_upload = request.values.get("filepath")
-        png_content = png_upload.decode("base_64")
-        png_content = base64.urlsafe_b64decode(png_content.split(",")[1])
-        svg_content = svg_upload.decode("base_64")
-        content_length = None
-        self.put_member("drawing.svg", svg_content, content_length, expected_members={"drawing.svg", "drawing.png"})
-        self.put_member("drawing.png", png_content, content_length, expected_members={"drawing.svg", "drawing.png"})
+        png_content = base64.urlsafe_b64decode(png_data.split(",")[1])
+        svg_content = base64.urlsafe_b64decode(svg_upload)
+        self.put_member("drawing.svg", svg_content, None, True, False)
+        self.put_member("drawing.png", png_content, None, False, True)
 
     def _render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
-        drawing_url = url_for("frontend.get_item", item_name=self.name, member="drawing.svg", rev=self.rev.revid)
-        png_url = url_for("frontend.get_item", item_name=self.name, member="drawing.png", rev=self.rev.revid)
+        revid = self.rev.revid
+        item_name = self.name
+        drawing_url = url_for("frontend.get_item", item_name=item_name, member="drawing.svg", rev=revid)
+        png_url = url_for("frontend.get_item", item_name=item_name, member="drawing.png", rev=revid)
         return safe_markup(f'<img src="{escape(png_url)}" alt="{escape(drawing_url)}" />')

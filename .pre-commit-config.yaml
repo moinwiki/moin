@@ -3,11 +3,17 @@ repos:
     rev: v6.0.0
     hooks:
     -   id: trailing-whitespace
+        exclude: |
+          (?x)(
+            ^src/moin/static/js/.*\.min\.js|
+            ^src/moin/xstatic/
+          )
     -   id: end-of-file-fixer
         exclude: |
           (?x)(
             ^src/moin/static/js/.*\.min\.js|
-            ^src/moin/help/help-common/.*\.data
+            ^src/moin/help/help-common/.*\.data|
+            ^src/moin/xstatic/
           )
 - repo: https://github.com/psf/black
   rev: 26.1.0

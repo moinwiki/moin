@@ -10,15 +10,14 @@ from __future__ import annotations
 
 from typing import TypeVar
 
+import os.path
 import pickle
 import re
 
 from collections.abc import Sequence
 from datetime import datetime, timezone
-from importlib import import_module
 from io import BytesIO
 from moin.error import ConfigurationError
-from xstatic.main import XStatic
 
 # Set pickle protocol; see http://docs.python.org/lib/node64.html
 PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
@@ -134,14 +133,10 @@ def get_xstatic_module_path_map(
     module_names: list[str], root_url: str = "/static", provider: str = "local", protocol: str = "http"
 ) -> dict[str, str]:
     path_map: dict[str, str] = {}
-    for name in module_names:
-        module_name = f"xstatic.pkg.{name}"
-        try:
-            module = import_module(module_name)
-        except ModuleNotFoundError as exc:
-            raise ConfigurationError(
-                f'The Python module "{module_name}" could not be found - check your configuration'
-            ) from exc
-        xs = XStatic(module, root_url, provider, protocol)
-        path_map[xs.name] = xs.base_dir  # type: ignore
+    xstatic_base_path = os.path.normpath(os.path.join(__file__, "..", "..", "xstatic"))
+    for module_name in module_names:
+        base_path = os.path.join(xstatic_base_path, module_name)
+        if not os.path.exists(base_path):
+            raise ConfigurationError(f'The Python module "{module_name}" could not be found - check your configuration')
+        path_map[module_name] = base_path
     return path_map

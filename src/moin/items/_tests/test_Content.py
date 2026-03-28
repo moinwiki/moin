@@ -17,7 +17,7 @@ from moin.utils import diff_html
 from moin._tests import update_item
 from moin.items import Item
 from moin.items.content import Content, Binary, Text, Image, TransformableBitmapImage
-from moin.constants.keys import CONTENTTYPE, TAGS, TEMPLATE
+from moin.constants.keys import CONTENTTYPE, ITEMTYPE, TAGS, TEMPLATE
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT
 from moin.utils.names import split_fqname
 from functools import reduce
@@ -42,21 +42,21 @@ class TestContent:
         item_name1 = "Template_Item1"
         item1 = Item.create(item_name1)
         contenttype1 = "text/plain;charset=utf-8"
-        meta = {CONTENTTYPE: contenttype1, TAGS: [TEMPLATE]}
+        meta = {CONTENTTYPE: contenttype1, ITEMTYPE: ITEMTYPE_DEFAULT, TAGS: [TEMPLATE]}
         item1._save(meta)
         item1 = Item.create(item_name1)
 
         item_name2 = "Template_Item2"
         item2 = Item.create(item_name2)
         contenttype1 = "text/plain;charset=utf-8"
-        meta = {CONTENTTYPE: contenttype1, TAGS: [TEMPLATE]}
+        meta = {CONTENTTYPE: contenttype1, ITEMTYPE: ITEMTYPE_DEFAULT, TAGS: [TEMPLATE]}
         item2._save(meta)
         item2 = Item.create(item_name2)
 
         item_name3 = "Template_Item3"
         item3 = Item.create(item_name3)
         contenttype2 = "image/png"
-        meta = {CONTENTTYPE: contenttype2, TAGS: [TEMPLATE]}
+        meta = {CONTENTTYPE: contenttype2, ITEMTYPE: ITEMTYPE_DEFAULT, TAGS: [TEMPLATE]}
         item3._save(meta)
         item3 = Item.create(item_name3)
         # two items of same content type
@@ -81,13 +81,12 @@ class TestTarItems:
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
         filecontent = b"abcdefghij"
         content_length = len(filecontent)
-        members = {"example1.txt", "example2.txt"}
-        item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
-        item.content.put_member("example2.txt", filecontent, content_length, expected_members=members)
+        item.content.put_member("example1.txt", filecontent, content_length, True, False)
+        item.content.put_member("example2.txt", filecontent, content_length, False, True)
 
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
         tf_names = set(item.content.list_members())
-        assert tf_names == members
+        assert tf_names == {"example1.txt", "example2.txt"}
         assert item.content.get_member("example1.txt").read() == filecontent
 
     def testRevisionUpdate(self):
@@ -98,11 +97,10 @@ class TestTarItems:
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/x-tar")
         filecontent = b"abcdefghij"
         content_length = len(filecontent)
-        members = {"example1.txt"}
-        item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
+        item.content.put_member("example1.txt", filecontent, content_length, True, True)
         filecontent = b"AAAABBBB"
         content_length = len(filecontent)
-        item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
+        item.content.put_member("example1.txt", filecontent, content_length, True, True)
 
         item = Item.create(item_name, contenttype="application/x-tar")
         assert item.content.get_member("example1.txt").read() == filecontent
@@ -117,9 +115,8 @@ class TestZipMixin:
         item = Item.create(item_name, itemtype=ITEMTYPE_DEFAULT, contenttype="application/zip")
         filecontent = "test_contents"
         content_length = len(filecontent)
-        members = {"example1.txt", "example2.txt"}
         with pytest.raises(NotImplementedError):
-            item.content.put_member("example1.txt", filecontent, content_length, expected_members=members)
+            item.content.put_member("example1.txt", filecontent, content_length, True, False)
 
 
 @pytest.mark.usefixtures("_req_ctx")
@@ -129,7 +126,7 @@ class TestTransformableBitmapImage:
         item_name = "image_Item"
         item = Item.create(item_name)
         contenttype = "image/jpeg"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item._save(meta)
         item = Item.create(item_name)
         try:
@@ -145,7 +142,7 @@ class TestTransformableBitmapImage:
         item_name = "image_Item"
         item = Item.create(item_name)
         contenttype = "image/jpeg"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item._save(meta)
         item1 = Item.create(item_name)
         try:
@@ -167,7 +164,7 @@ class TestTransformableBitmapImage:
         item_name = "image_Item"
         item = Item.create(item_name)
         contenttype = "image/jpeg"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item._save(meta)
         item1 = Item.create(item_name)
         data = b"test_data"
@@ -215,7 +212,7 @@ class TestText:
         fqname = split_fqname(item_name)
         empty_html = "<span></span>"
         html = "<span>\ud55c</span>"
-        meta = {CONTENTTYPE: "text/html;charset=utf-8"}
+        meta = {CONTENTTYPE: "text/html;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}
         item = Item.create(item_name)
         item._save(meta, empty_html)
         item = Item.create(item_name)
@@ -249,7 +246,7 @@ class TestText:
         item_name = "Text_Item"
         item = Item.create(item_name)
         contenttype = "text/plain;charset=utf-8"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         data1 = b"old_data"
         item._save(meta, data1)
         item1 = Item.create(item_name)
@@ -266,7 +263,7 @@ class TestText:
         item_name = "Text_Item"
         item = Item.create(item_name)
         contenttype = "text/plain;charset=utf-8"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item._save(meta)
         item1 = Item.create(item_name)
         data = "test_data\nnext line"
@@ -286,7 +283,7 @@ class TestText:
         )
         for key in contenttypes:
             for contenttype in contenttypes[key]:
-                meta = {CONTENTTYPE: contenttype}
+                meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
                 item._save(meta)
                 item_ = Item.create(item_name)
                 oldfile = BytesIO(b"x")
@@ -301,7 +298,7 @@ class TestText:
         item_name = "Test_Item"
         item = Item.create(item_name)
         contenttype = "text/plain;charset=utf-8"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item._save(meta)
         item_ = Item.create(item_name)
         oldfile = BytesIO(b"")
