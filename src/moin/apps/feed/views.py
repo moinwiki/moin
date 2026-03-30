@@ -9,7 +9,7 @@ MoinMoin - Feed views
 This module provides feed endpoints (e.g., Atom).
 """
 
-from flask import request, Response
+from flask import Blueprint, request, Response
 
 from feedgen.feed import FeedGenerator
 
@@ -17,7 +17,6 @@ from whoosh.query import Term, And, Every
 
 from moin import current_app, flaskg, log
 from moin.i18n import _
-from moin.apps.feed import feed
 from moin.constants.keys import NAME, NAME_EXACT, NAMESPACE, COMMENT, MTIME, REVID, ALL_REVS, PARENTID, LATEST_REVS
 from moin.themes import get_editor_info, render_template
 from moin.items import Item
@@ -27,6 +26,8 @@ from moin.utils.markup import safe_markup
 from moin.utils.names import split_fqname
 
 logging = log.getLogger(__name__)
+
+feed = Blueprint("feed", __name__)
 
 
 @feed.route("/atom/<itemname:item_name>")

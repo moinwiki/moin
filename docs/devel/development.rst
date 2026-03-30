@@ -75,16 +75,6 @@ create your development environment
 
     moin --help
 
-* If you are running Python 3.12+ and get a traceback with::
-
-    ModuleNotFoundError: No module named 'pkg_resources'
-
-* then you must install setuptools manually::
-
-    pip install setuptools
-
-* then retry `moin --help`
-
 * there is a second CLI with tools for developers, try it::
 
     ./m  # Windows: m

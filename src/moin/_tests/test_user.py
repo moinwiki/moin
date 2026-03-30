@@ -10,7 +10,7 @@ MoinMoin - moin.user tests.
 import pytest
 
 from moin import flaskg, user
-from moin.constants.itemtypes import ITEMTYPE_USERPROFILE
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_USERPROFILE
 from moin.constants.keys import ITEMID, ITEMTYPE, NAME, NAMEPREFIX, NAMERE, NAMESPACE, REV_NUMBER, TAGS
 from moin.items import Item
 
@@ -125,7 +125,7 @@ class TestUser:
         tagname = "xxx"
         regexp = r"\d+"
         item = Item.create(pagename)
-        item._save({NAMESPACE: "", TAGS: [tagname]})
+        item._save({NAMESPACE: "", TAGS: [tagname], ITEMTYPE: ITEMTYPE_DEFAULT})
         item = Item.create(pagename)
         meta = item.meta
 

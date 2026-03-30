@@ -18,7 +18,7 @@ Each class in this module corresponds to an item type.
 
 from __future__ import annotations
 
-from typing import Any, Callable, NamedTuple, Type, TYPE_CHECKING, TypeAlias, TypeVar
+from typing import Any, Callable, Iterable, NamedTuple, Type, TYPE_CHECKING, TypeAlias, TypeVar
 from typing_extensions import override
 
 import difflib
@@ -1356,7 +1356,9 @@ class Item:
         revs = flaskg.storage.search(query, sortedby=NAME_EXACT, limit=None)
         return revs
 
-    def make_flat_index(self, subitems, isglobalindex=False):
+    def make_flat_index(
+        self, subitems: Iterable[MetaData], isglobalindex: bool = False
+    ) -> tuple[list[IndexEntry], list[IndexEntry]]:
         """
         Create two IndexEntry lists - ``dirs`` and ``files`` - from a list of
         subitems.
@@ -1375,11 +1377,9 @@ class Item:
         :param isglobalindex: True if the query is for global indexes.
         """
         prefixes = [""] if isglobalindex else self.subitem_prefixes
-        # IndexEntry instances of "file" subitems
-        files = []
-        # IndexEntry instances of "directory" subitems
-        dirs = []
-        added_dir_relnames = set()
+        files: list[IndexEntry] = []
+        dirs: list[IndexEntry] = []
+        added_dir_relnames: set[CompositeName] = set()
         for rev in subitems:
             if rev[NAMESPACE] == NAMESPACE_USERPROFILES:
                 continue
@@ -1693,7 +1693,7 @@ class Default(Contentful):
             form = self.ModifyForm.from_item(item)
 
         if method == "POST":
-            # XXX workaround for *Draw items
+            # special handling for *Draw items
             if isinstance(self.content, Draw):
                 try:
                     self.content.handle_post()
@@ -1701,10 +1701,8 @@ class Default(Contentful):
                     edit_utils.cursor_close()
                     abort(403)
                 else:
-                    # *Draw Applets POSTs more than once, redirecting would
-                    # break them
                     edit_utils.cursor_close()
-                    return "OK"
+                    return redirect(url_for_item(**self.fqname.split))
 
             form = self.ModifyForm.from_request(request)
             meta, data, contenttype_guessed, comment = form._dump(self)

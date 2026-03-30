@@ -5,17 +5,19 @@
 MoinMoin - External static file serving
 """
 
-from flask import Response, abort
-from flask import send_from_directory
+from __future__ import annotations
+
+from flask import Blueprint, Response, abort, send_from_directory
 
 from moin import current_app, log
-from moin.apps.serve import serve
 
 logging = log.getLogger(__name__)
 
+serve = Blueprint("serve", __name__)
+
 
 @serve.route("/")
-def index():
+def index() -> Response:
     # Show what we have (but not where in the filesystem).
     content = "\n".join(current_app.cfg.serve_files.keys())
     return Response(content, content_type="text/plain")
@@ -23,7 +25,7 @@ def index():
 
 @serve.route("/<name>/", defaults=dict(filename=""))
 @serve.route("/<name>/<path:filename>")
-def files(name, filename):
+def files(name: str, filename: str) -> Response:
     try:
         base_path = current_app.cfg.serve_files[name]
     except KeyError:

@@ -30,7 +30,7 @@ from moin.constants.keys import (
 )
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
-from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT
+from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_DEFAULT
 
 
 def build_dirs_index(basename, relnames):
@@ -142,7 +142,7 @@ class TestItem:
         name = "NewItem"
         contenttype = "text/plain;charset=utf-8"
         data = b"foobar"
-        meta = {"foo": "bar", CONTENTTYPE: contenttype}
+        meta = {"foo": "bar", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         comment = "saved it"
         become_trusted()
         item = Item.create(name)
@@ -265,7 +265,7 @@ class TestItem:
         name = "Test_Item"
         contenttype = "text/plain;charset=utf-8"
         data = "test_data"
-        meta = {"test_key": "test_value", CONTENTTYPE: contenttype}
+        meta = {"test_key": "test_value", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         comment = "saved it"
         item = Item.create(name)
         item._save(meta, data, comment=comment)
@@ -390,7 +390,7 @@ class TestItem:
         name = "Test_Item2"
         contenttype = "text/plain;charset=utf-8"
         data = "test_data"
-        meta = {"test_key": "test_value", CONTENTTYPE: contenttype}
+        meta = {"test_key": "test_value", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         comment = "saved it"
         item = Item.create(name)
         item._save(meta, data, comment=comment)
@@ -411,7 +411,7 @@ class TestItem:
         """
         contenttype = "text/plain;charset=utf-8"
         data = "test_data"
-        meta = {"test_key": "test_value", CONTENTTYPE: contenttype}
+        meta = {"test_key": "test_value", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         comment = "saved it"
         item = Item.create("aaa")
         item._save(meta, data, comment=comment)
@@ -457,7 +457,7 @@ class TestItem:
         name = "Test_Item"
         contenttype = "text/plain;charset=utf-8"
         data = "test_data"
-        meta = {"test_key": "test_value", CONTENTTYPE: contenttype}
+        meta = {"test_key": "test_value", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         comment = "saved it"
         item = Item.create(name)
         item._save(meta, data, comment=comment)
@@ -470,7 +470,7 @@ class TestItem:
         name = "Test_Item"
         contenttype = "text/plain;charset=utf-8"
         data = "test_data"
-        meta = {"test_key": "test_value", CONTENTTYPE: contenttype}
+        meta = {"test_key": "test_value", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         comment = "saved it"
         item = Item.create(name)
         item._save(meta, data, comment=comment)
@@ -479,7 +479,7 @@ class TestItem:
         assert item.meta["test_key"] == "test_value"
         # modify
         another_data = "another_test_data"
-        another_meta = {"another_test_key": "another_test_value", CONTENTTYPE: contenttype}
+        another_meta = {"another_test_key": "another_test_value", CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item.modify(another_meta, another_data)
         item = Item.create(name)
         assert item.name == "Test_Item"
@@ -488,7 +488,12 @@ class TestItem:
         assert item.meta["another_test_key"] == another_meta["another_test_key"]
         assert item.content.data == another_data.encode()
         # add/update meta
-        another_meta = {"test_key": "test_value", "another_test_key": "another_test_value", CONTENTTYPE: contenttype}
+        another_meta = {
+            "test_key": "test_value",
+            "another_test_key": "another_test_value",
+            CONTENTTYPE: contenttype,
+            ITEMTYPE: ITEMTYPE_DEFAULT,
+        }
         item.modify(another_meta, another_data)
         item = Item.create(name)
         update_meta = {
@@ -496,6 +501,7 @@ class TestItem:
             "new_test_key": "new_test_value",
             "none_test_key": None,
             CONTENTTYPE: contenttype,
+            ITEMTYPE: ITEMTYPE_DEFAULT,
         }
         item.modify(another_meta, another_data, **update_meta)
         item = Item.create(name)
@@ -509,7 +515,7 @@ class TestItem:
         name = "trash_item_test"
         contenttype = "text/plain;charset=utf-8"
         data = "test_data"
-        meta = {CONTENTTYPE: contenttype}
+        meta = {CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item = Item.create(name)
         # save rev 0
         item._save(meta, data)
@@ -524,7 +530,7 @@ class TestItem:
         item = Item.create(new_name)
         assert item.meta[TRASH]
 
-        new_meta = {NAME: ["foobar", "buz"], CONTENTTYPE: contenttype}
+        new_meta = {NAME: ["foobar", "buz"], CONTENTTYPE: contenttype, ITEMTYPE: ITEMTYPE_DEFAULT}
         item._save(new_meta, data)
         item = Item.create("foobar")
 

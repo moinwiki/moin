@@ -81,6 +81,19 @@ class ItemidValidator(Validator):
         return uuid_validator(element, state)
 
 
+class ItemtypeValidator(Validator):
+    """
+    Validate an itemtype - a string value that identifies the type of an item.
+    """
+
+    def validate(self, element: Element, state: ValidationState) -> bool:
+        if element.raw is Unset:
+            return self.note_error(element, state, message="Itemtype is missing")
+        if not isinstance(element.value, str):
+            return self.note_error(element, state, message="Itemtype value must be of type str")
+        return True
+
+
 class RevidValidator(Validator):
     """
     Validate a revid - a UUID value that identifies an item revision.
@@ -443,6 +456,7 @@ class SubscriptionValidator(Validator):
 
 common_meta = (
     String.named(keys.ITEMID).validated_by(ItemidValidator()),
+    String.named(keys.ITEMTYPE).validated_by(ItemtypeValidator()),
     String.named(keys.REVID).validated_by(RevidValidator()),
     String.named(keys.PARENTID).validated_by(uuid_validator).using(optional=True),
     String.named(keys.NAMESPACE).using(strip=False).validated_by(namespace_validator),

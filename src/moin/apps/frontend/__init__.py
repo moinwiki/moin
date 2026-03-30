@@ -7,7 +7,6 @@ MoinMoin - Frontend views package
 This package contains the views, templates, and static files that a typical wiki user sees.
 """
 
-from flask import Blueprint
+from .views import frontend
 
-frontend = Blueprint("frontend", __name__)
-import moin.apps.frontend.views  # noqa
+__all__ = ["frontend"]

@@ -43,3 +43,5 @@ class Config(DefaultConfig):
         hash_len=16,
         salt_len=16,
     )
+
+    mod_names = []

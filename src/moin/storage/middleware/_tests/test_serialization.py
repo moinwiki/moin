@@ -9,22 +9,24 @@ from io import BytesIO
 
 import pytest
 
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+
 from ..indexing import IndexingMiddleware, WHOOSH_FILESTORAGE
 from ..routing import Backend as RoutingBackend
 from ..serialization import serialize, deserialize
 
-from moin.constants.keys import NAME, CONTENTTYPE
+from moin.constants.keys import NAME, CONTENTTYPE, ITEMTYPE
 from moin.constants.namespaces import NAMESPACE_DEFAULT
 
 from moin.storage.backends.stores import Backend
 from moin.storage.stores.memory import BytesStore, FileStore
 
 contents = [
-    ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
-    ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b"2nd"),
-    ("Subdir", {NAME: ["Subdir"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
-    ("Subdir/Foo", {NAME: ["Subdir/Foo"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
-    ("Subdir/Bar", {NAME: ["Subdir/Bar"], CONTENTTYPE: "text/plain;charset=utf-8"}, b""),
+    ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}, b""),
+    ("Foo", {NAME: ["Foo"], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}, b"2nd"),
+    ("Subdir", {NAME: ["Subdir"], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}, b""),
+    ("Subdir/Foo", {NAME: ["Subdir/Foo"], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}, b""),
+    ("Subdir/Bar", {NAME: ["Subdir/Bar"], CONTENTTYPE: "text/plain;charset=utf-8", ITEMTYPE: ITEMTYPE_DEFAULT}, b""),
 ]
 
 

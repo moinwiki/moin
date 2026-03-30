@@ -15,8 +15,8 @@ This module provides the user interface for wiki administrators.
 
 from collections import namedtuple
 
+from flask import Blueprint, Response
 from flask import request, url_for, flash, redirect
-from flask import Response
 
 from flatland.validation import Validator
 from flatland import Form
@@ -26,7 +26,6 @@ from whoosh.query import Term, And, Not
 from moin import current_app, flaskg, user
 from moin.i18n import _, L_
 from moin.themes import render_template, get_editor_info
-from moin.apps.admin import admin
 from moin.apps.frontend.views import _using_moin_auth, add_csp_headers
 from moin.constants.keys import (
     NAME,
@@ -62,6 +61,8 @@ from moin.storage.middleware.exceptions import AccessDenied
 from moin.utils.names import CompositeName, gen_fqnames, parent_names, split_fqname
 from moin.config import default as defaultconfig
 from moin.forms import RequiredText, YourEmail
+
+admin = Blueprint("admin", __name__, template_folder="templates")
 
 
 @admin.route("/superuser")

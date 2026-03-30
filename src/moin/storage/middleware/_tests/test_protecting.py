@@ -13,7 +13,8 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 from moin.config import AclConfig
-from moin.constants.keys import PARENTID
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.keys import ACL, CONTENTTYPE, NAME, ITEMTYPE, PARENTID, REVID
 from moin.storage.middleware.exceptions import AccessDenied
 from moin.storage.middleware.protecting import ProtectedRevision, ProtectingMiddleware
 from moin.user import User
@@ -66,7 +67,7 @@ class TestProtectingMiddleware(TestIndexingMiddlewareBase):
         for item_name, acl, content in items:
             item = self.pmw[item_name]
             r = item.store_revision(
-                dict(name=[item_name], acl=acl, contenttype="text/plain;charset=utf-8"),
+                {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, ACL: acl, CONTENTTYPE: "text/plain;charset=utf-8"},
                 BytesIO(content),
                 return_rev=True,
             )
@@ -95,13 +96,23 @@ class TestProtectingMiddleware(TestIndexingMiddlewareBase):
         # Now testing:
         item = self.pmw[UNPROTECTED]
         item.store_revision(
-            dict(name=[UNPROTECTED], acl="joe:write", contenttype="text/plain;charset=utf-8"),
+            {
+                NAME: [UNPROTECTED],
+                ITEMTYPE: ITEMTYPE_DEFAULT,
+                ACL: "joe:write",
+                CONTENTTYPE: "text/plain;charset=utf-8",
+            },
             BytesIO(UNPROTECTED_CONTENT),
         )
         item = self.pmw[PROTECTED]
         with pytest.raises(AccessDenied):
             item.store_revision(
-                dict(name=[PROTECTED], acl="boss:write", contenttype="text/plain;charset=utf-8"),
+                {
+                    NAME: [PROTECTED],
+                    ITEMTYPE: ITEMTYPE_DEFAULT,
+                    ACL: "boss:write",
+                    CONTENTTYPE: "text/plain;charset=utf-8",
+                },
                 BytesIO(UNPROTECTED_CONTENT),
             )
 
@@ -109,31 +120,36 @@ class TestProtectingMiddleware(TestIndexingMiddlewareBase):
         # Now testing:
         item_name = "newitem"
         item = self.pmw[item_name]
-        item.store_revision(dict(name=[item_name], contenttype="text/plain;charset=utf-8"), BytesIO(b"new content"))
+        item.store_revision(
+            {NAME: [item_name], ITEMTYPE: ITEMTYPE_DEFAULT, CONTENTTYPE: "text/plain;charset=utf-8"},
+            BytesIO(b"new content"),
+        )
 
     def test_overwrite_revision(self):
         revid_unprotected, revid_protected = self.make_items("joe:write,destroy", "boss:write,destroy")
         # Now testing:
         item = self.pmw[UNPROTECTED]
         item.store_revision(
-            dict(
-                name=[UNPROTECTED],
-                acl="joe:write,destroy",
-                contenttype="text/plain;charset=utf-8",
-                revid=revid_unprotected,
-            ),
+            {
+                NAME: [UNPROTECTED],
+                ITEMTYPE: ITEMTYPE_DEFAULT,
+                ACL: "joe:write,destroy",
+                CONTENTTYPE: "text/plain;charset=utf-8",
+                REVID: revid_unprotected,
+            },
             BytesIO(UNPROTECTED_CONTENT),
             overwrite=True,
         )
         item = self.pmw[PROTECTED]
         with pytest.raises(AccessDenied):
             item.store_revision(
-                dict(
-                    name=[PROTECTED],
-                    acl="boss:write,destroy",
-                    contenttype="text/plain;charset=utf-8",
-                    revid=revid_protected,
-                ),
+                {
+                    NAME: [PROTECTED],
+                    ITEMTYPE: ITEMTYPE_DEFAULT,
+                    ACL: "boss:write,destroy",
+                    CONTENTTYPE: "text/plain;charset=utf-8",
+                    REVID: revid_protected,
+                },
                 BytesIO(UNPROTECTED_CONTENT),
                 overwrite=True,
             )
