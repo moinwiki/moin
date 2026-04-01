@@ -20,7 +20,6 @@ import sys
 
 from os import path, PathLike
 
-#  import flask
 import flask.ctx
 
 from click import get_current_context

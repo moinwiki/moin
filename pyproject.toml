@@ -37,21 +37,21 @@ classifiers = [
 ]
 dependencies = [
     "Babel >= 2.16.0",  # internationalization support
-    "blinker >= 1.6.2",  # event signalling (e.g. for change notification trigger)
+    "blinker >= 1.9.0",  # event signalling (e.g. for change notification trigger)
     "docutils >= 0.22.0",  # reST markup processing
     "Markdown >= 3.10.0",  # Markdown markup processing
     "mdx_wikilink_plus >= 1.4.1",  # Markdown Wikilinks extension
-    "Flask >= 3.0.0",  # lightweight WSGI web application framework
+    "Flask >= 3.1.0",  # lightweight WSGI web application framework
     "Flask-Babel >= 3.0.0",  # i18n support
-    "Flask-Caching >= 1.2.0",  # caching support
+    "Flask-Caching >= 2.2.0",  # caching support
     "Flask-Theme >= 0.3.6",  # theme support
     "emeraldtree >= 0.11.0",  # xml processing
     "feedgen >= 0.9.0",  # Atom feed
     "flatland >= 1.0.0",  # form handling
-    "Jinja2 >= 3.1.0",  # template engine
+    "Jinja2 >= 3.1.3",  # template engine
     "markupsafe >= 3.0.2",  # safe html and xml
     "pygments >= 1.4",  # src code / text file highlighting
-    "Werkzeug >= 3.0.0",  # WSGI toolkit
+    "Werkzeug >= 3.1.0",  # WSGI toolkit
     "whoosh >= 2.7.0",  # needed for indexed search
     "pdfminer.six",  # pdf -> text/plain conversion
     "argon2-cffi >= 23.1.0",  # strong password hashing with Argon2id
