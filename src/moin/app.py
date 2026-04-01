@@ -20,7 +20,7 @@ import sys
 
 from os import path, PathLike
 
-import flask
+#  import flask
 import flask.ctx
 
 from click import get_current_context
@@ -38,6 +38,7 @@ from moin.config import WikiConfigProtocol
 from moin.config.default import DefaultConfig
 from moin.constants.misc import ANON
 from moin.error import ConfigurationError
+from moin.apps.frontend.views import bad_request
 from moin.i18n import i18n_init
 from moin.search import SearchForm
 from moin.storage.middleware import protecting, indexing, routing
@@ -89,6 +90,8 @@ class MoinApp(Flask):
 
         # create wiki link analyzer after having registered all routes
         self.link_analyzer = WikiLinkAnalyzer(self)
+
+        self.register_error_handler(400, bad_request)
 
         with clock.timeit("create_app flask-cache"):
             self.create_flask_cache()
