@@ -537,7 +537,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         # convert HTML markup in text strings to EmeraldTree elements
         self.convert_html_markup(page_children)
-        # convert <paragaph> elements containing block elements to <div>
+        # convert <paragraph> elements containing block elements to <div>
         self.convert_invalid_p_nodes(page_children)
 
         body = moin_page.body(children=page_children)
