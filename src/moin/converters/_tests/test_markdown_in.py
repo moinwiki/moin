@@ -165,6 +165,43 @@ class TestConverter:
     @pytest.mark.parametrize(
         "input,output",
         [
+            # TODO: spurious empty <span>
+            (
+                "```\nstart\nstop\n```",
+                '<div><div html:class="codehilite"><blockcode><span /><code>start\nstop\n</code></blockcode></div>\n</div>',
+            )
+        ],
+    )
+    def test_code_block(self, input, output):
+        self.do(input, output)
+
+    @pytest.mark.parametrize(
+        "input,output",
+        [
+            ("start `pre` end", "<p>start <code>pre</code> end</p>"),
+            ("start `abc < def` end", "<p>start <code>abc &lt; def</code> end</p>"),
+            ("start `abc &lt; def` end", "<p>start <code>abc &amp;lt; def</code> end</p>"),
+            ("start `[TOC]` end", "<p>start <code>[TOC]</code> end</p>"),
+            ("``start `code` end``", "<p><code>start `code` end</code></p>"),
+        ],
+    )
+    def test_code(self, input, output):
+        self.do(input, output)
+
+    @pytest.mark.parametrize(
+        "input,output",
+        [
+            ("< & >", "<p>&lt; &amp; &gt;</p>"),
+            ("<strong>0 < 1</strong>", "<p><strong>0 &lt; 1</strong></p>"),
+            ("<strong>0 &lt; 1</strong>", "<p><strong>0 &lt; 1</strong></p>"),
+        ],
+    )
+    def test_character_entities(self, input, output):
+        self.do(input, output)
+
+    @pytest.mark.parametrize(
+        "input,output",
+        [
             ("[[Bracketed]]", '<p><a xlink:href="wiki.local:Bracketed">Bracketed</a></p>'),
             (
                 "[[Main/sub]]",  # check if label is kept lower case, check if slash in link is detected

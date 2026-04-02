@@ -55,12 +55,10 @@ BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 def postproc_text(markdown: Markdown, text: str) -> str:
     """
-    Run `markdown` post-processors, convert character entities to literals.
+    Run `markdown` post-processors.
 
     Restore raw HTML to the document.
     Restore valid entities
-    Replace HTML or XML character references and entities with the
-    corresponding Unicode character.
 
     :param markdown: Markdown parser instance.
     :param text: text string (as returned from the Markdown parser).
@@ -71,10 +69,7 @@ def postproc_text(markdown: Markdown, text: str) -> str:
     for pp in markdown.postprocessors:
         text = pp.run(text)
 
-    if text.startswith("<pre>") or text.startswith('<div class="codehilite"><pre>'):
-        return text
-
-    return html_unescape(text)
+    return text
 
 
 class Converter(ConverterBase, html_in.HtmlTags):
@@ -284,7 +279,6 @@ class Converter(ConverterBase, html_in.HtmlTags):
         # post-process leading text
         if getattr(element, "text") and element.text != "\n":
             new.append(postproc_text(self.markdown, element.text))
-
         for child in element:
             r = self.visit(child)
             if r is None:
