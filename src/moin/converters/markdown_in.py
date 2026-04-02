@@ -53,25 +53,6 @@ block_elements = "p h blockcode ol ul pre address blockquote dl div fieldset for
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 
-def postproc_text(markdown: Markdown, text: str) -> str:
-    """
-    Run `markdown` post-processors.
-
-    Restore raw HTML to the document.
-    Restore valid entities
-
-    :param markdown: Markdown parser instance.
-    :param text: text string (as returned from the Markdown parser).
-    """
-    if text == "[TOC]":
-        return moin_page.table_of_content(attrib={})
-
-    for pp in markdown.postprocessors:
-        text = pp.run(text)
-
-    return text
-
-
 class Converter(ConverterBase, html_in.HtmlTags):
     """
     Convert Markdown -> .x.moin.document.
@@ -263,6 +244,23 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
     # }}} end of Markdown parser output element conversion methods
 
+    def postproc_text(self, text: str, tag: str) -> str:
+        """
+        Run `markdown` post-processors.
+
+        Restore raw HTML to the document.
+        Restore valid entities
+
+        :param text: text string (as returned from the Markdown parser).
+        """
+        if text == "[TOC]" and tag != "code":
+            return moin_page.table_of_content(attrib={})
+
+        for pp in self.markdown.postprocessors:
+            text = pp.run(text)
+
+        return text
+
     def do_children(self, element, add_lineno=False) -> list[ET.Element | str]:
         """
         Convert the children of `element` to EmeraldTree nodes.
@@ -275,10 +273,13 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         Add data-lineno attributes to children if requested.
         """
+
         new = []
+
         # post-process leading text
-        if getattr(element, "text") and element.text != "\n":
-            new.append(postproc_text(self.markdown, element.text))
+        if (text := getattr(element, "text")) and text != "\n":
+            new.append(self.postproc_text(text, element.tag))
+
         for child in element:
             r = self.visit(child)
             if r is None:
@@ -289,9 +290,11 @@ class Converter(ConverterBase, html_in.HtmlTags):
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r,)
             new.extend(r)
+
             # post-process trailing text
-            if getattr(child, "tail") and child.tail != "\n":
-                new.append(postproc_text(self.markdown, child.tail))
+            if (text := getattr(child, "tail")) and text != "\n":
+                new.append(self.postproc_text(text, ""))
+
         return new
 
     def count_lines(self, text):
