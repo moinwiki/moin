@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
+import logging
 import os
 import sys
 
@@ -430,7 +431,8 @@ def before_wiki():
     """
     request_path = getattr(request, "path", "") if request else ""
     if is_static_content(request_path) or request_path == "/+cspreport/log":
-        logger.debug(f"skipping variable injection in before_wiki for {request.path}")
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"skipping variable injection in before_wiki for {request.path}")
         setattr(flaskg, "no_variable_injection", True)
         return
 
@@ -478,18 +480,19 @@ def teardown_wiki(response):
         except AttributeError:
             pass
 
-    try:
-        # whoosh cache performance
-        storage = flaskg.storage
-        for cache in (storage.parse_acl, storage.eval_acl, storage.get_acls, storage.allows):
-            if cache.cache_info()[3] > 0:
-                msg = "cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s" % (
-                    (cache.__name__,) + cache.cache_info()
-                )
-                logger.debug(msg)
-    except AttributeError:
-        # moin commands may not have flaskg.storage
-        pass
+    if logger.isEnabledFor(logging.DEBUG):
+        try:
+            # whoosh cache performance
+            storage = flaskg.storage
+            for cache in (storage.parse_acl, storage.eval_acl, storage.get_acls, storage.allows):
+                if cache.cache_info()[3] > 0:
+                    msg = "cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s" % (
+                        (cache.__name__,) + cache.cache_info()
+                    )
+                    logger.debug(msg)
+        except AttributeError:
+            # moin commands may not have flaskg.storage
+            pass
 
     try:
         clock = flaskg.pop("clock", None)
