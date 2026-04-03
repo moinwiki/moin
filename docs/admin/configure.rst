@@ -1595,26 +1595,42 @@ Example `logging.conf` to enable debug-level logging:
 .. code-block:: ini
 
     [loggers]
-    keys=root
+    keys=root,cspreport
 
     [handlers]
-    keys=console
+    keys=console,cspreport
 
     [formatters]
-    keys=simple
+    keys=default,simple
 
     [logger_root]
     level=DEBUG
-    handlers=console
+    handlers=console,cspreport
+
+    [logger_cspreport]
+    level=INFO
+    handlers=cspreport
+    propagate=0
+    qualname=cspreport
 
     [handler_console]
     class=StreamHandler
     level=DEBUG
-    formatter=simple
+    formatter=default
     args=(sys.stderr,)
 
-    [formatter_simple]
+    [handler_cspreport]
+    class=FileHandler
+    level=NOTSET
+    formatter=simple
+    args=('cspreport.log', 'w')
+
+    [formatter_default]
     format=%(asctime)s - %(levelname)s - %(name)s - %(message)s
+
+    [formatter_simple]
+    format=%(asctime)s %(message)s
+    datefmt=
 
 configuration in adaptor script
 ===============================
