@@ -48,7 +48,7 @@ from moin.utils.clock import Clock
 from moin.utils.forms import make_generator
 from moin.wikiutil import WikiLinkAnalyzer
 
-logging = log.getLogger(__name__)
+logger = log.getLogger(__name__)
 
 
 if os.getcwd() not in sys.path and "" not in sys.path:
@@ -74,7 +74,7 @@ class MoinApp(Flask):
 
         info_name = self.get_info_name()
         cmd_name = self.get_command_name()
-        logging.debug("info_name: %s cmd_name: %s", info_name, cmd_name)
+        logger.debug("info_name: %s cmd_name: %s", info_name, cmd_name)
         # Help doesn't need config or backend and should run independently of a valid wiki instance
         # moin --help results in info_name=moin and cmd_name=cli
         if (info_name == "moin" and cmd_name == "cli") or info_name == "help":
@@ -165,7 +165,7 @@ class MoinApp(Flask):
 
         if not moin_config_class:
             if warn_default:
-                logging.warning("using builtin default configuration")
+                logger.warning("using builtin default configuration")
             moin_config_class = DefaultConfig
 
         for key, value in kwargs.items():
@@ -246,17 +246,17 @@ class MoinApp(Flask):
             if info_name not in ["create-instance", "build-instance"] and not info_name.startswith("index-"):
                 missing_indexes = self.storage.missing_index_check()
                 if missing_indexes == "all":
-                    logging.error(
+                    logger.error(
                         "Error: all wiki indexes missing. Try 'moin help' or 'moin --help' to get further information."
                     )
                 elif missing_indexes == "'latest_meta'":  # TODO: remove this check after 6-12 month
-                    logging.error(
+                    logger.error(
                         "Error: Wiki index 'latest_meta' missing. Please see https://github.com/moinwiki/moin/pull/1877"
                     )
                 else:
-                    logging.error(f"Error: Wiki index {missing_indexes} missing, please check.")
+                    logger.error(f"Error: Wiki index {missing_indexes} missing, please check.")
                 raise SystemExit(1)
-            logging.debug("Wiki index not found.")
+            logger.debug("Wiki index not found.")
 
     def _init_backends(self, create_backend: bool) -> None:
         """
@@ -265,7 +265,7 @@ class MoinApp(Flask):
         # A ns_mapping consists of several lines, where each line is made up like this:
         # mountpoint, unprotected backend
         # Just initialize with unprotected backends.
-        logging.debug("running init_backends")
+        logger.debug("running init_backends")
         self.router = routing.Backend(self.cfg.namespace_mapping, self.cfg.backend_mapping)
         if create_backend or getattr(self.cfg, "create_backend", False):
             self.router.create()
@@ -277,7 +277,7 @@ class MoinApp(Flask):
             acl_rights_contents=self.cfg.acl_rights_contents,
         )
 
-        logging.debug("create_backend: %s ", str(create_backend))
+        logger.debug("create_backend: %s ", str(create_backend))
         if create_backend or getattr(self.cfg, "create_backend", False):  # 2. call of init_backends
             self.storage.create()
         self.storage.open()
@@ -320,7 +320,7 @@ def create_app_ext(
     :param kwargs: Additional keyword args will be patched into the Moin configuration
                    class (before its instance is created).
     """
-    logging.debug("running create_app_ext")
+    logger.debug("running create_app_ext")
     return MoinApp(
         flask_config_file=flask_config_file,
         flask_config_dict=flask_config_dict,
@@ -363,7 +363,7 @@ def setup_user() -> user.User:
     Try to retrieve a valid user object from the request, be it
     either through the session or through a login.
     """
-    logging.debug("running setup_user")
+    logger.debug("running setup_user")
     # init some stuff for auth processing:
     flaskg._login_multistage = None
     flaskg._login_multistage_name = None
@@ -430,11 +430,11 @@ def before_wiki():
     """
     request_path = getattr(request, "path", "") if request else ""
     if is_static_content(request_path) or request_path == "/+cspreport/log":
-        logging.debug(f"skipping variable injection in before_wiki for {request.path}")
+        logger.debug(f"skipping variable injection in before_wiki for {request.path}")
         setattr(flaskg, "no_variable_injection", True)
         return
 
-    logging.debug("running before_wiki")
+    logger.debug("running before_wiki")
 
     clock = flaskg.clock = Clock()
     clock.start("total")
@@ -469,7 +469,7 @@ def teardown_wiki(response):
     if is_static_content(request_path) or request_path == "/+cspreport/log":
         return response
 
-    logging.debug("running teardown_wiki")
+    logger.debug("running teardown_wiki")
 
     if edit_utils := getattr(flaskg, "edit_utils", None):
         # if transaction fails with sql file locked, we try to free it here
@@ -486,7 +486,7 @@ def teardown_wiki(response):
                 msg = "cache = %s: hits = %s, misses = %s, maxsize = %s, size = %s" % (
                     (cache.__name__,) + cache.cache_info()
                 )
-                logging.debug(msg)
+                logger.debug(msg)
     except AttributeError:
         # moin commands may not have flaskg.storage
         pass

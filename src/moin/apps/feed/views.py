@@ -25,7 +25,7 @@ from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
 from moin.utils.names import split_fqname
 
-logging = log.getLogger(__name__)
+logger = log.getLogger(__name__)
 
 feed = Blueprint("feed", __name__)
 
@@ -71,7 +71,7 @@ def atom(item_name):
             name = rev.fqname.fullname
             item = rev.item
             this_revid = rev.meta[REVID]
-            logging.debug("name: %s revid: %s", name, this_revid)
+            logger.debug("name: %s revid: %s", name, this_revid)
             previous_revid = rev.meta.get(PARENTID)
             this_rev = rev
             try:
@@ -92,7 +92,7 @@ def atom(item_name):
                         revision=this_revid,
                     )
             except Exception:
-                logging.exception(f"content rendering crashed on item {name}")
+                logger.exception(f"content rendering crashed on item {name}")
                 content = _("MoinMoin feels unhappy.")
             author = get_editor_info(rev.meta, external=True)
             rev_comment = rev.meta.get(COMMENT, "")

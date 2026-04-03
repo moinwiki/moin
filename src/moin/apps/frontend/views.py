@@ -116,7 +116,7 @@ import moin.utils.mimetype as mime_type
 if TYPE_CHECKING:
     from werkzeug.wrappers import Response as ResponseBase
 
-logging = log.getLogger(__name__)
+logger = log.getLogger(__name__)
 
 
 jfu_server_lock = threading.Lock()
@@ -309,9 +309,9 @@ def cspreport():
     if not limit_csp_reports():
         try:
             csp_report = json.loads(request.data.decode("UTF-8"))["csp-report"]
-            logging.warning(f"{request.remote_addr} {request.content_type}: {csp_report}")
+            logger.warning(f"{request.remote_addr} {request.content_type}: {csp_report}")
         except json.JSONDecodeError as e:
-            logging.error(f"Got CSP report with invalid JSON syntax: {e}")
+            logger.error(f"Got CSP report with invalid JSON syntax: {e}")
     return Response("", 204)
 
 
@@ -326,7 +326,7 @@ def limit_csp_reports():
             current_app.csp_last_date = current_date
             current_app.csp_count = 1
         if current_app.csp_count == current_app.cfg.content_security_policy_limit_per_day:
-            logging.warning("Last csp report today, skipping further reports, limit reached.")
+            logger.warning("Last csp report today, skipping further reports, limit reached.")
         if current_app.csp_count <= current_app.cfg.content_security_policy_limit_per_day:
             return False
     return True
@@ -859,7 +859,7 @@ def convert_item(item_name):
         conv_out = reg.get(type_moin_document, Type(form["new_type"].value))
         out = conv_out(dom)
     except Exception:
-        logging.exception("Error converting item: %s", item.fqname)
+        logger.exception("Error converting item: %s", item.fqname)
         flash(L_("Item conversion failed"), "error")
         return redirect(url_for_item(**item.fqname.split))
     meta = dict(item.meta)
@@ -1297,7 +1297,7 @@ def log_destroy_action(item, subitem_names, comment, revision=None):
     elif subitem_names:
         destroy_info[0] = ("An item and all item subitems have been destroyed", "")
     for name, val in destroy_info:
-        logging.info(f"{name}: {val}")
+        logger.info(f"{name}: {val}")
 
 
 @frontend.route("/+destroy/+<rev>/<itemname:item_name>", methods=["GET", "POST"])
@@ -2848,7 +2848,7 @@ def _common_type(ct1, ct2):
 def _crash(item, oldrev, newrev):
     """This is called from several places, need to handle passed message"""
     error_id = uuid.uuid4()
-    logging.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
+    logger.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
     return render_template(
         "crash_view.html",
         server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"),
@@ -3088,7 +3088,7 @@ def global_tags(namespace):
     tags_counts = {}
     for meta in metas:
         tags = meta.get(TAGS, [])
-        logging.debug(f"name {meta[NAME]!r} rev {meta[REVID]} tags {tags!r}")
+        logger.debug(f"name {meta[NAME]!r} rev {meta[REVID]} tags {tags!r}")
         for tag in tags:
             tags_counts[tag] = tags_counts.setdefault(tag, 0) + 1
     tags_counts = sorted(tags_counts.items())
