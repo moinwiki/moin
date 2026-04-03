@@ -118,6 +118,7 @@ if TYPE_CHECKING:
 
 logger = log.getLogger(__name__)
 
+cspreport_logger = log.getLogger("cspreport")
 
 jfu_server_lock = threading.Lock()
 
@@ -305,13 +306,15 @@ def cspreport():
     content security policy report receiver
     """
     if request.content_type not in ["application/csp-report"]:
-        abort(400, f"Invalid content type '{request.content_type}'.")
+        abort(400, f"Invalid content type '{request.content_type}' for CSP report.")
+
     if not limit_csp_reports():
         try:
             csp_report = json.loads(request.data.decode("UTF-8"))["csp-report"]
-            logger.warning(f"{request.remote_addr} {request.content_type}: {csp_report}")
+            cspreport_logger.info(f"{request.remote_addr} {request.content_type}: {csp_report}")
         except json.JSONDecodeError as e:
-            logger.error(f"Got CSP report with invalid JSON syntax: {e}")
+            logger.warning(f"Got CSP report with invalid JSON syntax: {e}")
+
     return Response("", 204)
 
 
