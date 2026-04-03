@@ -129,9 +129,9 @@ def atom(item_name: str) -> Response:
         content = feed.atom_str(pretty=True).decode("utf-8")
 
         # Hack to add XSLT stylesheet declaration since AtomFeed doesn't allow this
-        content = content.split("\n")
-        content.insert(1, render_template("atom.html", get="xml"))
-        content = "\n".join(content)
+        stylesheet_ref = render_template("atom.html", get="xml")
+        index = content.find("\n") + 1
+        content = content[:index] + stylesheet_ref + content[index:]
 
         if cid is not None:
             current_app.cache.set(cid, content)
