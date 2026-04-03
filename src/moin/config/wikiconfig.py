@@ -142,12 +142,15 @@ class Config(DefaultConfig):
     # for users who self-register
     user_email_verification = False
 
-    # content_security_policy = ""  # Content security policy, setting will be enforced
-    # if value is empty, CSP header will not be set at all
-    # Content security policy in report-only mode, the report_uri directive will be added automatically
+    # Content security policy, setting will be enforced. If value is empty, CSP header will not be set at all
+    # content_security_policy = ""
+
+    # Content security policy in report-only mode, the report_uri directive will be added automatically.
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for configuration details.
     # content_security_policy_report_only = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';"
-    # see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for configuration details
-    # content_security_policy_limit_per_day = 100  # Limit of reports logged per day, 0 equals unlimited
+
+    # Limit of reports logged per day; a negative value means no limit.
+    # content_security_policy_limit_per_day = 100
 
     # Define the super user who will have access to administrative functions like user registration,
     # password reset, disabling users, etc.
