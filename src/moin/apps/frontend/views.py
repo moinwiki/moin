@@ -315,19 +315,20 @@ def cspreport():
     return Response("", 204)
 
 
-def limit_csp_reports():
+def limit_csp_reports() -> bool:
     """
     Check number of reports logged today, if limit is set and reached return True
     """
-    if current_app.cfg.content_security_policy_limit_per_day > 0:
+    cfg = current_app.cfg
+    if (limit_per_day := cfg.content_security_policy_limit_per_day) > 0:
         current_app.csp_count += 1
         current_date = datetime.now().strftime("%Y%m%d")
         if current_app.csp_last_date != current_date:  # reset counter on a new day
             current_app.csp_last_date = current_date
             current_app.csp_count = 1
-        if current_app.csp_count == current_app.cfg.content_security_policy_limit_per_day:
+        if current_app.csp_count == limit_per_day:
             logger.warning("Last csp report today, skipping further reports, limit reached.")
-        if current_app.csp_count <= current_app.cfg.content_security_policy_limit_per_day:
+        if current_app.csp_count <= limit_per_day:
             return False
     return True
 

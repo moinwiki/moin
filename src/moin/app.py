@@ -114,8 +114,8 @@ class MoinApp(Flask):
             setup_jinja_env(self.jinja_env)
 
         # create global counter to limit content security policy reports, prevent spam
-        self.csp_count = 0
-        self.csp_last_date = ""
+        self.csp_count: int = 0
+        self.csp_last_date: str = ""
 
         clock.stop("create_app total")
         del clock
