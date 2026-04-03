@@ -268,6 +268,10 @@ SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
 # SESSION_COOKIE_NAME = 'session'
 # from datetime import timedelta  # next line requires this
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
+
+# Set a default cache expiration time of 1 day
+SEND_FILE_MAX_AGE_DEFAULT = 86400
+
 # USE_X_SENDFILE = False
 # LOGGER_NAME = 'MoinMoin'
 # set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
