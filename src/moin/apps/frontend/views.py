@@ -107,6 +107,7 @@ from moin.utils.names import CompositeName, gen_fqnames, split_fqname
 from moin.utils.tree import html, docbook
 from moin.search import SearchForm
 from moin.search.analyzers import item_name_analyzer
+from moin.security.csp import add_csp_headers
 from moin.signalling import item_displayed, item_modified
 from moin.storage.middleware.exceptions import AccessDenied
 from moin.converters import default_registry as reg
@@ -3341,16 +3342,6 @@ def new():
 @frontend.after_request
 def add_security_headers(resp):
     return add_csp_headers(resp)
-
-
-def add_csp_headers(resp):
-    if current_app.cfg.content_security_policy:
-        resp.headers["Content-Security-Policy"] = current_app.cfg.content_security_policy
-    if current_app.cfg.content_security_policy_report_only:
-        resp.headers["Content-Security-Policy-Report-Only"] = (
-            f"{current_app.cfg.content_security_policy_report_only} report-uri {url_for('frontend.cspreport')}; "
-        )
-    return resp
 
 
 @frontend.errorhandler(BadRequest)
