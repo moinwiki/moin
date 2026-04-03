@@ -506,12 +506,8 @@ def teardown_wiki(response):
     return response
 
 
-def is_static_content(request_path):
+def is_static_content(request_path: str) -> bool:
     """
     Check if content is static and does not need usual wiki handling
     """
-
-    if request_path.startswith(("/static/", "/+serve/", "/+template/", "/_themes/")):
-        return True
-    else:
-        return False
+    return request_path.startswith(("/static/", "/+serve/", "/+template/", "/_themes/"))
