@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+{#-
+    Tell user why a "400 Bad Request" error occurred.
+#}
+
+<html lang=en>
+<title>HTTP 400 - Bad Request</title>
+    <h2> {{ _("HTTP 400 - Bad Request") }}</h2>
+    <div class="error">
+        <p>
+            {{ ("{description}").format(description=msg.description ) }}
+        <br><br>
+            {{ _("Please check the hostname in your URL or ask the wiki admin to check the flask configuration.") }}
+        </p>
+    </div>
+</html>

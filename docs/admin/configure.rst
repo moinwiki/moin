@@ -1543,11 +1543,24 @@ their docs for details)::
  #PERMANENT_SESSION_LIFETIME = timedelta(days=31)
  #USE_X_SENDFILE = False
  #LOGGER_NAME = 'MoinMoin'
+ #set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
+ TRUSTED_HOSTS = ["localhost", "127.0.0.1"]  # add your webserver hostnames
 
  # for Flask-Caching:
  #CACHE_TYPE = 'filesystem'
  #CACHE_DIR = '/path/to/flask-cache-dir'
  #CACHE_THRESHOLD = 300  # expiration time in seconds
+
+
+In production deployments, `TRUSTED_HOSTS` must be configured correctly.
+Otherwise, when generating absolute links for password reset, email verification, or similar flows,
+the application may trust unvalidated Host values, which can cause links in outgoing emails to point
+to an incorrect or attacker-controlled domain. Using a hostname in the request URL that is not in
+`TRUSTED_HOSTS` may lead to a "HTTP 400 - Bad Request"-Error with a message like
+`"Host <hostname> is not trusted."`.
+
+For information on the most important security-related aspects of the Flask configuration,
+see https://flask.palletsprojects.com/en/stable/web-security.
 
 
 =====================

@@ -35,6 +35,7 @@ from datetime import timezone
 from collections import namedtuple
 from functools import wraps, partial
 
+from werkzeug.exceptions import BadRequest
 from werkzeug.utils import secure_filename
 
 from flask import Blueprint, Response
@@ -3333,6 +3334,13 @@ def add_csp_headers(resp):
             f"{current_app.cfg.content_security_policy_report_only} report-uri {url_for('frontend.cspreport')}; "
         )
     return resp
+
+
+@frontend.errorhandler(BadRequest)
+def bad_request(error):
+    # custom HTML page for HTTP 400
+    setattr(flaskg, "no_variable_injection", True)
+    return render_template("400.html", msg=error), 400
 
 
 @frontend.errorhandler(404)
