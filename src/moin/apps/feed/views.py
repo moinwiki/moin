@@ -9,6 +9,8 @@ MoinMoin - Feed views
 This module provides feed endpoints (e.g., Atom).
 """
 
+from __future__ import annotations
+
 from flask import Blueprint, request, Response
 
 from feedgen.feed import FeedGenerator
@@ -32,7 +34,7 @@ feed = Blueprint("feed", __name__)
 
 @feed.route("/atom/<itemname:item_name>")
 @feed.route("/atom", defaults=dict(item_name=""))
-def atom(item_name):
+def atom(item_name: str) -> Response:
     """
     Atom feeds currently behave in the following way:
     - Text diffs are shown side by side.
@@ -42,9 +44,11 @@ def atom(item_name):
     - Revision metadata (ID, size, and comment) is shown for the parent and current revision.
     """
     query = Every()
+
     if item_name:
         fqname = split_fqname(item_name)
         query = And([Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace)])
+
     revs = list(flaskg.storage.search(query, idx_name=LATEST_REVS, sortedby=[MTIME], reverse=True, limit=1))
     if revs:
         rev = revs[0]
@@ -53,20 +57,26 @@ def atom(item_name):
     else:
         content = None
         cid = None
+
     if content is None:
         if not item_name:
             title = f"{current_app.cfg.sitename}"
         else:
             title = f"{current_app.cfg.sitename} - {fqname}"
+
         feed = FeedGenerator()
         feed.id(request.url)
         feed.title(title)
         feed.link(href=request.host_url)
         feed.link(href=request.url, rel="self")
+
         query = Every()
+
         if item_name:
             query = And([Term(NAME_EXACT, fqname.value), Term(NAMESPACE, fqname.namespace)])
+
         history = flaskg.storage.search(query, idx_name=ALL_REVS, sortedby=[MTIME], reverse=True, limit=100)
+
         for rev in history:
             name = rev.fqname.fullname
             item = rev.item
@@ -108,17 +118,22 @@ def atom(item_name):
                 feed_title = f"{author.get(NAME, '')}"
             if not item_name:
                 feed_title = f"{name} - {feed_title}"
+
             feed_entry = feed.add_entry()
             feed_entry.id(url_for_item(name, rev=this_revid, _external=True))
             feed_entry.title(feed_title)
             feed_entry.author({"name": author.get(NAME, "")})
             feed_entry.link(href=url_for_item(name, rev=this_revid, _external=True))
             feed_entry.content(content, type="html")
+
         content = feed.atom_str(pretty=True).decode("utf-8")
+
         # Hack to add XSLT stylesheet declaration since AtomFeed doesn't allow this
         content = content.split("\n")
         content.insert(1, render_template("atom.html", get="xml"))
         content = "\n".join(content)
+
         if cid is not None:
             current_app.cache.set(cid, content)
+
     return Response(content, content_type="application/atom+xml")
