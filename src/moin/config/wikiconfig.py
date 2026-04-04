@@ -142,12 +142,15 @@ class Config(DefaultConfig):
     # for users who self-register
     user_email_verification = False
 
-    # content_security_policy = ""  # Content security policy, setting will be enforced
-    # if value is empty, CSP header will not be set at all
-    # Content security policy in report-only mode, the report_uri directive will be added automatically
+    # Content security policy, setting will be enforced. If value is empty, CSP header will not be set at all
+    # content_security_policy = ""
+
+    # Content security policy in report-only mode, the report_uri directive will be added automatically.
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for configuration details.
     # content_security_policy_report_only = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';"
-    # see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for configuration details
-    # content_security_policy_limit_per_day = 100  # Limit of reports logged per day, 0 equals unlimited
+
+    # Limit of reports logged per day; a negative value means no limit.
+    # content_security_policy_limit_per_day = 100
 
     # Define the super user who will have access to administrative functions like user registration,
     # password reset, disabling users, etc.
@@ -265,6 +268,10 @@ SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
 # SESSION_COOKIE_NAME = 'session'
 # from datetime import timedelta  # next line requires this
 # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
+
+# Set a default cache expiration time of 1 day
+SEND_FILE_MAX_AGE_DEFAULT = 86400
+
 # USE_X_SENDFILE = False
 # LOGGER_NAME = 'MoinMoin'
 # set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
