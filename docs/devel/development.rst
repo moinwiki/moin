@@ -616,8 +616,11 @@ Package Release on pypi.org and GitHub Releases
     git log --pretty=format:"* %ad %s (%an)" --no-merges --date=short
 
 * Commit or stash all versioned changes.
+* Create a GIT branch for release: `release-a1`
 * Pull all updates from master repo.
-* Run `./m quickinstall` and `./m extras` to update the venv and translations.
+* If running on Windows, delete .venv, m.bat, activate.bat, deactivate.bat
+  else delete .venv, activate, and m
+* Run `<python> quickinstall.py` and `./m extras` to update the venv and translations.
 * Update Development Status, etc. in pyproject.toml
 * Run tests.
 * Add a signed, annotated tag with the next release number to master branch::
