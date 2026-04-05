@@ -347,13 +347,15 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 lineno += line_count + 2
         self.line_numbers = line_numbers
 
+    tag_re = re.compile(r"(</?\w.*?>)", flags=re.DOTALL)
+
     def separate_html_tags(self, nodes: Iterable[ET.Element | str]) -> Generator[ET.Element | str]:
         """Split string-nodes at HTML tags."""
         for node in nodes:
             if isinstance(node, ET.Element):
                 yield node
             else:
-                for part in re.split(r"(</?\w.*?>)", node, flags=re.DOTALL):
+                for part in self.tag_re.split(node):
                     yield part
 
     def create_element_for_tag(self, start_tag: str, end_tag: str) -> ET.Element | None:
@@ -367,6 +369,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
             logging.debug(f"Exception in HTML markup: {ex}")
             element = None
         return element
+
+    start_tag_re = re.compile(r"<(\w+).*?(/?) *>")
 
     def convert_html_markup(self, node_or_children: ET.Element | list[ET.Element | str]) -> None:
         """
@@ -396,7 +400,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 continue  # drop empty strings
 
             # Check for HTML start-tags:
-            match = re.search(r"<(\w+).*?(/?) *>", node)
+            match = self.start_tag_re.search(node)
             if not match:
                 # Convert character references to corresponding Unicode characters:
                 result.append(html_unescape(node))
@@ -478,6 +482,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
 
+    newlines_re = re.compile(r"(?<=\n) +\n")
+
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         """
         Convert markdown to moin DOM.
@@ -506,7 +512,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
         text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
         text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
         text = text.expandtabs(self.markdown.tab_length)
-        text = re.sub(r"(?<=\n) +\n", "\n", text)
+        text = self.newlines_re.sub("\n", text)
 
         # save line counts for start of each block, used later for edit autoscroll
         self.count_lines(text)
