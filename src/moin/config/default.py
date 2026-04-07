@@ -747,6 +747,7 @@ options_no_group_name: dict[str, OptionsGroup] = {
                 "Content security policy in report-only mode.",
             ),
             Option("content_security_policy_limit_per_day", 100, "Limit of reports logged per day."),
+            Option("allow_style_attributes", False, "Allow style attributes in HTML or MarkDown content"),
             # admin emails
             Option("admin_emails", [], 'Administrator email addresses, e.g. ["admin <admin@example.org>"]'),
         ),

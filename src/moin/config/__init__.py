@@ -52,6 +52,7 @@ class WikiConfigProtocol(Protocol):
     acl_rights_contents: list[str]
     acl_rights_functions: list[str]
     admin_emails: list[str]
+    allow_style_attributes: bool
     auth: list[BaseAuth]
     auth_can_logout: list[str]
     auth_login_inputs: list[str]

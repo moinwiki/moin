@@ -39,7 +39,7 @@ logging = log.getLogger(__name__)
 SUSPECT = {"/*", "/>", "\\", "`", "script", "&#", "http", "expression", "behavior"}
 
 
-def style_attr_filter(style):
+def style_attr_filter(style: str) -> str:
     """
     If allow_style_attributes is True, check the style attribute for suspect strings; otherwise return ''.
     """
@@ -134,7 +134,8 @@ class Attributes:
 
         for key, value in self.element.attrib.items():
             if key == html.style:
-                value = style_attr_filter(value)
+                if not (value := style_attr_filter(value)):
+                    continue
             if key.uri == moin_page:
                 # We never have _ in attribute names, so ignore them instead of
                 # create ambigues matches.
