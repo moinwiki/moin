@@ -196,7 +196,8 @@ $("document").ready(function () {
     });
 
     // add click handler to "Submit" button on "Please provide comment..." popup
-    $(".popup-submit").click(function () {
+    $("#popup-form").submit(function (event) {
+        event.preventDefault();
         // process delete or destroy action
         var comment = $(".popup-comment").val(),
             action = $(".popup-action").val();
