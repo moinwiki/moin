@@ -284,6 +284,7 @@ a checkbox, an invisible link used by js for download, a link to the item
                 <span>{{ _("Add optional comment for change log.") }}</span>
             </div>
             <div class="popup-body">
+                <form id="popup-form">
                 <div class="caution">
                     <p class="popup-selected-names">{{ _("Selected names: ") }}<span class="popup-names"></span></p>
                     <p class="popup-alias-names">{{ _("Alias names: ") }}<span class="popup-names"></span></p>
@@ -297,8 +298,9 @@ a checkbox, an invisible link used by js for download, a link to the item
                 <input type="text" class="popup-comment" id="moin-comment" placeholder="{{ _("Enter your comment") }}"/>
                 <input type="hidden" class="popup-action" value=""/>
                 <br/>
-                <input type="button" class="moin-button popup-submit" value="{{ _("Submit") }}"/>
+                <input type="submit" class="moin-button popup-submit" value="{{ _("Submit") }}" />
                 <input type="button" class="moin-button popup-cancel" value="{{ _("Cancel") }}"/>
+                </form>
             </div>
         </div>
     </div>
