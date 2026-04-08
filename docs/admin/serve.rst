@@ -38,20 +38,6 @@ Stopping the built-in server
 ----------------------------
 To stop the wiki server, either press Ctrl+C or close the window.
 
-Debugging with the built-in server
-----------------------------------
-Werkzeug has a debugger that may be used to analyze tracebacks. As of version 0.11.0,
-a pin number is written to the log when the server is started::
-
-  INFO werkzeug:87  * Debugger pin code: 123-456-789
-
-The pin code must be entered once per debugging session. If you will never use the
-built-in server for public access, you may disable the pin check by adding::
-
- WERKZEUG_DEBUG_PIN=off
-
-to your OS's environment variables. See Werkzeug docs for more information.
-
 Using the built-in server for production
 ----------------------------------------
 
