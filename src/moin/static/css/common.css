@@ -361,7 +361,7 @@ ul.moin-tags li.weight9 { font-size: 280%; }
 .moin-footnotes p { margin: 1em; }
 
 /* moin default table styling */
-table { margin: 1% 0; }
+table { margin: .5em 0; }
 caption { border: 1px solid var(--border); border-bottom: 0;
     background-color: var(--bg-heading); font-size: 1.25em; font-weight: bold; }
 tr > th,
