@@ -119,14 +119,6 @@ add more tools, exercise tools
     sudo npm install -g sass  # Windows: npm install -g sass
     sass --version  # show version number to prove it works
 
-* sass fixup pending resolution of `issue #2043 <https://github.com/moinwiki/moin/issues/2043>`_,
-  missing xstatic/pkg/bootstrap/data/scss directory
-
-  - point your browser to https://github.com/twbs/bootstrap/tree/v4.5.3/scss (optional, review before downloading)
-  - modify the browser url to https://ssgithub.com/twbs/bootstrap/tree/v4.5.3/scss
-  - click the download button to save a zip file to a convenient location
-  - unzip the file to xstatic/pkg/bootstrap/data creating a scss directory as a sibling to the existing css and js directories
-
 * regenerate CSS files::
 
     ./m css  # Windows: m css
@@ -534,6 +526,22 @@ Note the test startup will be rather slow; be patient.
 .. image:: pycharmC.png
    :alt: pycharm example
    :align: left
+
+Debugging with the Werkzeug debugger
+------------------------------------
+The Werkzeug debugger requires no setup but is less powerful than PyCharm.
+
+.. warning::
+
+  Note that this debugger must only be used in a secure test environment that cannot be
+  accessed by the public!
+
+To use, just start the built-in server with the debug option::
+
+ moin run --debug
+
+See Werkzeug docs for more information.
+
 
 Documentation
 =============

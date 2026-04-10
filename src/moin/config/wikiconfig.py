@@ -259,8 +259,8 @@ class Config(DefaultConfig):
 MOINCFG = Config  # adding MOINCFG=<path> to OS environment overrides CWD
 # Flask settings - see the flask documentation about their meaning
 SECRET_KEY = "WARNING: set this to a unique string to create secure cookies"
-DEBUG = False  # use True for development only, not for public sites!
-TESTING = False  # built-in server (./m run) ignores TESTING and DEBUG settings
+DEBUG = False  # ignored by the built-in server
+TESTING = False  # if True the built-in server will detect source file changes and restart
 # per https://flask.palletsprojects.com/en/1.1.x/security/#set-cookie-options
 SESSION_COOKIE_SECURE = False  # flask default is False
 SESSION_COOKIE_HTTPONLY = True  # flask default is True
