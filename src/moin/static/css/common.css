@@ -226,8 +226,8 @@ a.moin-nonexistent object {  background: var(--bg-disabled);  border: 3px dashed
 /* end of transclusion positioning */
 
 /* transclusion wrapper overlays */
-.moin-transclusion { max-width: 100%; }
 .moin-transclusion img { max-width: 100%; }
+.moin-transclusion video { max-width: 100%; }
 .moin-item-wrapper { position: relative; display: inline-block; }
 div.moin-item-wrapper { /* force bottom border of transcluded headings to extend across entire page */ width: 100%; }
 div.moin-item-wrapper,
