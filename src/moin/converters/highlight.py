@@ -63,7 +63,11 @@ class Converter:
 
     def __init__(self, regex):
         """Treat each word separately and ignore case sensitivity."""
-        self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
+        words = [re.escape(word) for word in regex.split()]
+        if not words:
+            self.pattern = re.compile(r"$^")
+            return
+        self.pattern = re.compile("|".join(words), re.IGNORECASE)
 
     def __call__(self, tree: Any) -> Any | None:
         self.recurse(tree)
