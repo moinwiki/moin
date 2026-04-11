@@ -1484,19 +1484,26 @@ Moin can optionally send emails. Possible uses:
 
 You need to configure some settings before sending email can be supported::
 
-    # the "from:" address [Unicode]
-    mail_from = "wiki <wiki@example.org>"
+ # the "from:" email address
+ mail_from = "MoinWiki <wiki@example.org>"
 
-    # SMTP server, e.g. "mail.provider.com" with optional `:port` appendix, which defaults to 25
-    mail_smarthost = "smtp.example.org"
+ # SMTP server with optional `:port` appendix, which defaults to 25
+ mail_smarthost = 'mail.example.org:587'
 
-    # usually you need to use SMTP AUTH at your mail_smarthost:
-    mail_username = "smtp_username"
-    mail_password = "smtp_password"
-
-
+ # usually you need to use SMTP AUTH at your mail_smarthost:
+ mail_username = "smtp_username"
+ mail_password = "smtp_password"
 
 If either mail_from or mail_smarthost is not set, sending emails is disabled.
+
+For CLI commands with the option '--notify' you need to configure some Flask options
+that are needed to build the URL for the password recovery link in the email. These options
+are part of the framework configuration at the end of wikiconfig::
+
+ # Following 3 lines are required for sending mails from CLI commands (e.g. account-password)
+ # SERVER_NAME = "localhost:5000"  # The hostname your wiki uses
+ # APPLICATION_ROOT = "/"  # Base prefix of your wiki (e.g. "/wiki" if behind a prefix)
+ # PREFERRED_URL_SCHEME = "https"  # Protocol you want URLs to use
 
 .. todo::
 
@@ -1507,11 +1514,11 @@ Admin Traceback Emails
 If you want to enable admins to receive Python tracebacks, you need to configure
 the following::
 
-    # list of admin emails
-    admin_emails = ["admin <admin@example.org>"]
+ # list of admin emails
+ admin_emails = ["admin <admin@example.org>"]
 
-    # send tracebacks to admins
-    email_tracebacks = True
+ # send tracebacks to admins
+ email_tracebacks = True
 
 
 Please also check the logging configuration example in `contrib/logging/email`.
@@ -1525,7 +1532,7 @@ address by clicking a link that is sent to them.
 Make sure that Moin is able to send emails (see previous section) and add the
 following line to your configuration file to enable this feature::
 
-    user_email_verification = True
+ user_email_verification = True
 
 
 =======================
@@ -1535,22 +1542,40 @@ Framework Configuration
 Things you may want to configure for Flask and its extensions (see
 their docs for details)::
 
- # for Flask
- SECRET_KEY = 'you need to change this so it is really secret'
- DEBUG = False  # use True for development only, not for public sites!
- TESTING = False  # if true, some servers will detect file changes and restart
- #SESSION_COOKIE_NAME = 'session'
- #PERMANENT_SESSION_LIFETIME = timedelta(days=31)
- #USE_X_SENDFILE = False
- #LOGGER_NAME = 'MoinMoin'
- #set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
+ # Flask settings - see the flask documentation about their meaning - caps required
+ SECRET_KEY = "WARNING: set this to a unique string to create secure cookies"
+ DEBUG = False  # ignored by the built-in server
+ TESTING = False  # if True the built-in server will detect source file changes and restart
+ # per https://flask.palletsprojects.com/en/stable/web-security/#set-cookie-options
+
+ SESSION_COOKIE_SECURE = False  # flask default is False
+ SESSION_COOKIE_HTTPONLY = True  # flask default is True
+ SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
+ # SESSION_COOKIE_NAME = 'session'
+ # from datetime import timedelta  # next line requires this
+ # PERMANENT_SESSION_LIFETIME = timedelta(days=31)
+
+ # Set a default cache expiration time of 1 day
+ SEND_FILE_MAX_AGE_DEFAULT = 86400
+
+ # USE_X_SENDFILE = False
+ # LOGGER_NAME = 'MoinMoin'
+ # set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
  TRUSTED_HOSTS = ["localhost", "127.0.0.1"]  # add your webserver hostnames
 
- # for Flask-Caching:
- #CACHE_TYPE = 'filesystem'
- #CACHE_DIR = '/path/to/flask-cache-dir'
- #CACHE_THRESHOLD = 300  # expiration time in seconds
+ # Following 3 lines are required for sending mails from CLI commands (e.g. account-password)
+ # SERVER_NAME = "localhost:5000"  # The hostname your wiki uses
+ # APPLICATION_ROOT = "/"  # Base prefix of your wiki (e.g. "/wiki" if behind a prefix)
+ # PREFERRED_URL_SCHEME = "https"  # Protocol you want URLs to use
 
+ # config for flask-cache
+ # CACHE_TYPE = 'filesystem'
+ # CACHE_DIR = '/path/to/flask-cache-dir'
+ # CACHE_DEFAULT_TIMEOUT = 300  # seconds
+ # CACHE_THRESHOLD = 500  # maximum number of items before it starts deleting some
+
+ # config for flask-theme
+ # THEME_PATHS = os.path.join(Config.instance_dir, "themes")
 
 In production deployments, `TRUSTED_HOSTS` must be configured correctly.
 Otherwise, when generating absolute links for password reset, email verification, or similar flows,

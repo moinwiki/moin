@@ -255,13 +255,14 @@ class Config(DefaultConfig):
     mod_names = ["font_awesome", "svgedit_moin", "pygments"]
 
 
-# flask settings require all caps
+# Start of Framework configuration - Flask and its extensions
 MOINCFG = Config  # adding MOINCFG=<path> to OS environment overrides CWD
-# Flask settings - see the flask documentation about their meaning
+# Flask settings - see the flask documentation about their meaning - caps required
 SECRET_KEY = "WARNING: set this to a unique string to create secure cookies"
 DEBUG = False  # ignored by the built-in server
 TESTING = False  # if True the built-in server will detect source file changes and restart
-# per https://flask.palletsprojects.com/en/1.1.x/security/#set-cookie-options
+# per https://flask.palletsprojects.com/en/stable/web-security/#set-cookie-options
+
 SESSION_COOKIE_SECURE = False  # flask default is False
 SESSION_COOKIE_HTTPONLY = True  # flask default is True
 SESSION_COOKIE_SAMESITE = "Lax"  # flask default is None
@@ -276,11 +277,17 @@ SEND_FILE_MAX_AGE_DEFAULT = 86400
 # LOGGER_NAME = 'MoinMoin'
 # set TRUSTED_HOSTS to prevent host header injection (e.g. for public or intranet wikis)
 TRUSTED_HOSTS = ["localhost", "127.0.0.1"]  # add your webserver hostnames
-# config for flask-cache:
-# CACHE_TYPE = 'filesystem'
-# CACHE_DIR = '/path/to/flask-cache-dir'
-# THEME_PATHS = os.path.join(Config.instance_dir, "themes")
-# Following settings are required for sending mails from CLI commands (e.g. account-password)
+
+# Following 3 lines are required for sending mails from CLI commands (e.g. account-password)
 # SERVER_NAME = "localhost:5000"  # The hostname your wiki uses
 # APPLICATION_ROOT = "/"  # Base prefix of your wiki (e.g. "/wiki" if behind a prefix)
-# PREFERRED_URL_SCHEME = "http"  # Protocol you want URLs to use
+# PREFERRED_URL_SCHEME = "https"  # Protocol you want URLs to use
+
+# config for flask-cache
+# CACHE_TYPE = 'filesystem'
+# CACHE_DIR = '/path/to/flask-cache-dir'
+# CACHE_DEFAULT_TIMEOUT = 300  # seconds
+# CACHE_THRESHOLD = 500  # maximum number of items before it starts deleting some
+
+# config for flask-theme
+# THEME_PATHS = os.path.join(Config.instance_dir, "themes")
