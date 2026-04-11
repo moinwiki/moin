@@ -47,7 +47,7 @@ class HTTPAuthMoin(BaseAuth):
 
         auth = request.authorization
         if auth and auth.username and auth.password is not None:
-            logging.debug(f"http basic auth, received username: {auth.username!r} password: {auth.password!r}")
+            logging.debug(f"http basic auth, received username: {auth.username!r}")
             u = user.User(
                 name=auth.username, password=auth.password, auth_method=self.name, auth_attribs=[], trusted=self.trusted
             )
