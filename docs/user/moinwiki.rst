@@ -254,6 +254,8 @@ else is ignored) to be added as attributes in the HTML, however
 one can, add anything to the query URL using ``&``, like ``&w``
 in the example above.
 
+Transcluded images and videos are resized to fit within layout by default. If you wish to see full-sized file, follow the resource link which can be provided by wiki editor on page or found in Transclusion tab.
+
 Most browsers will display a large blank space when a web page using
 an https protocol is transcluded into a page using http protocol.
 Transcluding a png image using an https protocol into an http protocol
