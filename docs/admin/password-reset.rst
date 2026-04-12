@@ -65,29 +65,11 @@ Make sure email functionality works
 -----------------------------------
 If you know you have working email functionality, skip this section.
 
-Password recovery and password reset notification work via email, so you
-should have it configured::
-
-    # the email address used for From: (consider using an address that
-    # can be directly replied to, at least while doing the pw reset):
-    mail_from = 'wiki@example.org'
-    # your SMTP mail server hostname:port (default is 25)
-    mail_smarthost = 'mail.example.org:587'
-    # the login there, if authentication is needed
-    mail_username = 'wiki@example.org'
-    mail_password = 'SuperSecretSMTPPassword'
+Password recovery and password reset notification work via email.
+Make sure that Moin is able to send emails; see :ref:`mail-configuration`.
 
 You can test whether it works by using the "forgot my password" functionality
 on the login page.
-
-For CLI commands with the option '--notify' you need to configure following Flask options
-that are needed to build the URL for the password recovery link in the email::
-
-    # Following settings are required for sending mails from CLI commands (e.g. account-password)
-    # SERVER_NAME = "localhost:5000"  # The hostname your wiki uses
-    # APPLICATION_ROOT = "/"  # Base prefix of your wiki (e.g. "/wiki" if behind a prefix)
-    # PREFERRED_URL_SCHEME = "http"  # Protocol you want URLs to use
-
 
 
 Editing mailtemplate.txt
