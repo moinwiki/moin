@@ -45,6 +45,7 @@ Administering MoinMoin
    admin/index
    admin/password-reset
    admin/maintenance
+   admin/security
    man/moin
 
 Getting Support for and Contributing to MoinMoin

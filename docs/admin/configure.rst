@@ -507,6 +507,8 @@ For many themes, modifying the files noted above will be sufficient. If changes 
 views are required, copy additional template files. If there is a requirement to change
 the MoinMoin base code, please consider submitting a patch.
 
+.. _authentication:
+
 Authentication
 ==============
 MoinMoin uses a configurable `auth` list of authenticators, so the admin can
@@ -682,6 +684,8 @@ Example logging output::
 log output. Make sure you only use this for testing only and delete the logs when
 done.
 
+.. _transmission-security:
+
 Transmission security
 =====================
 Credentials
@@ -718,6 +722,9 @@ use unique credentials and not reuse passwords that are used for other purposes.
 
 Password security
 =================
+
+.. _password-strength:
+
 Password strength
 -----------------
 As you might know, many users are bad at choosing reasonable passwords and some
@@ -755,6 +762,7 @@ by::
 
     password_checker = None  # no password checking
 
+.. _password-storage:
 
 Password storage
 ----------------
@@ -786,6 +794,8 @@ see: https://argon2-cffi.readthedocs.io/
 **Note:** Legacy sha512_crypt hashes are automatically upgraded to Argon2id
 upon successful login, so no manual migration is required.
 
+
+.. _authorization:
 
 Authorization
 =============
@@ -1020,6 +1030,7 @@ moin documentation. Make up your own secrets::
 If you don't configure these secrets, moin will detect this and reuse Flask's
 SECRET_KEY for all secrets it needs.
 
+.. _groups:
 
 Groups
 ======
@@ -1135,6 +1146,8 @@ items with the same names::
         return CompositeDicts(ConfigDicts(dicts),
                               WikiDicts())
 
+
+.. _configure-csp:
 
 Content security policy (CSP)
 =============================
@@ -1534,6 +1547,7 @@ following line to your configuration file to enable this feature::
 
  user_email_verification = True
 
+.. _framework-configuration:
 
 =======================
 Framework Configuration
@@ -1587,6 +1601,7 @@ to an incorrect or attacker-controlled domain. Using a hostname in the request U
 For information on the most important security-related aspects of the Flask configuration,
 see https://flask.palletsprojects.com/en/stable/web-security.
 
+.. _logging-configuration:
 
 =====================
 Logging Configuration

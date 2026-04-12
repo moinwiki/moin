@@ -115,6 +115,7 @@ For production, please use a real web server like Apache or nginx.
 
 For more information on various wiki admin activities, see `Moin Command Line Interface`.
 
+.. _signed-releases:
 
 Verifying signed releases
 =========================
