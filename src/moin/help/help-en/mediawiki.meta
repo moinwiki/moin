@@ -12,14 +12,15 @@
   ],
   "itemid": "cb68b5889e344c1994d6c22fd365db04",
   "itemlinks": [
-    "Home",
+    "Home"
+  ],
+  "itemtransclusions": [
     "help-common/audio.mp3",
     "help-common/cat.jpg",
     "help-common/logo.png",
     "help-common/logo.svg",
     "help-common/video.mp4"
   ],
-  "itemtransclusions": [],
   "itemtype": "default",
   "mtime": 1681742400,
   "name": [

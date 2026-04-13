@@ -10,12 +10,13 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.utils.tree import moin_page, xlink
+from moin.utils.tree import html, moin_page, xinclude, xlink
 from moin.converters.mediawiki_in import Converter
 
 
 class TestConverter:
-    namespaces = {moin_page.namespace: "", xlink.namespace: "xlink"}
+
+    namespaces = {moin_page.namespace: "", html.namespace: "html", xinclude.namespace: "xi", xlink.namespace: "xlink"}
 
     output_re = XMLNS_RE
 
@@ -184,58 +185,59 @@ Apple
     def test_table(self, input, output):
         self.do(input, output)
 
-    data = [
-        ("[[SomeLink]]", '<page><body><p><a xlink:href="wiki.local:SomeLink">SomeLink</a></p></body></page>'),
-        ("[http://external.link]", '<page><body><p><a xlink:href="http://external.link"></a></p></body></page>'),
-        (
-            "[http://external.link alt text]",
-            '<page><body><p><a xlink:href="http://external.link">alt text</a></p></body></page>',
-        ),
-        (
-            "[[SomeLink|Some text]]",
-            '<page><body><p><a xlink:href="wiki.local:SomeLink">Some text</a></p></body></page>',
-        ),
-        (
-            "[[SomeLink|arg1=value|arg2=otherval|Some text]]",
-            '<page><body><p><a xlink:href="wiki.local:SomeLink?arg1=value&amp;arg2=otherval">Some text</a></p></body></page>',
-        ),
-        (
-            "[[File:Test.jpg|test]]",
-            '<page><body><p><object alt="test" xlink:href="wiki.local:Test.jpg?do=get">test</object></p></body></page>',
-        ),
-        (
-            "[[File:MyImage.png]]",
-            '<page><body><p><object alt="MyImage.png" xlink:href="wiki.local:MyImage.png?do=get">MyImage.png</object></p></body></page>',
-        ),
-        (
-            "[[File:MyImage.png|arg=http://google.com|caption]]",
-            '<page><body><p><object alt="caption" xlink:href="wiki.local:MyImage.png?arg=http%253A%252F%252Fgoogle.com&amp;do=get">caption</object></p></body></page>',
-        ),
-        (
-            "[[File:Test.png|do=get|arg1=test|arg2=something else]]",
-            '<page><body><p><object alt="Test.png" xlink:href="wiki.local:Test.png?do=get&amp;arg1=test&amp;arg2=something+else">Test.png</object></p></body></page>',
-        ),
-        # The do=xxx part is just to test if do in args is being updated correctly, it's invalid otherwise
-        (
-            "[[File:Test2.png|do=xxx|caption|arg1=test]]",
-            '<page><body><p><object alt="caption" xlink:href="wiki.local:Test2.png?do=xxx&amp;arg1=test">caption</object></p></body></page>',
-        ),
-        (
-            "[[File:myimg.png|'Graph showing width |= k for 5 < k < 10']]",
-            '<page><body><p><object alt="Graph showing width |= k for 5 &lt; k &lt; 10" xlink:href="wiki.local:myimg.png?do=get">Graph showing width |= k for 5 &lt; k &lt; 10</object></p></body></page>',
-        ),
-        (
-            "[[File:myimg.png|arg1='longish caption value with |= to test'|arg2=other|test stuff]]",
-            '<page><body><p><object alt="test stuff" xlink:href="wiki.local:myimg.png?arg1=longish+caption+value+with+%257C%253D+to+test&amp;arg2=other&amp;do=get">test stuff</object></p></body></page>',
-        ),
-        # Unicode test
-        (
-            "[[File:Test.jpg|\xe8]]",
-            '<page><body><p><object alt="\xe8" xlink:href="wiki.local:Test.jpg?do=get">\xe8</object></p></body></page>',
-        ),
-    ]
-
-    @pytest.mark.parametrize("input,output", data)
+    @pytest.mark.parametrize(
+        "input,output",
+        [
+            ("[[SomeLink]]", '<page><body><p><a xlink:href="wiki.local:SomeLink">SomeLink</a></p></body></page>'),
+            ("[http://external.link]", '<page><body><p><a xlink:href="http://external.link"></a></p></body></page>'),
+            (
+                "[http://external.link alt text]",
+                '<page><body><p><a xlink:href="http://external.link">alt text</a></p></body></page>',
+            ),
+            (
+                "[[SomeLink|Some text]]",
+                '<page><body><p><a xlink:href="wiki.local:SomeLink">Some text</a></p></body></page>',
+            ),
+            (
+                "[[SomeLink|arg1=value|arg2=otherval|Some text]]",
+                '<page><body><p><a xlink:href="wiki.local:SomeLink?arg1=value&amp;arg2=otherval">Some text</a></p></body></page>',
+            ),
+            (
+                "[[File:Test.jpg|test]]",
+                '<page><body><p><xi:include alt="test" xi:href="wiki.local:Test.jpg?do=get">test</xi:include></p></body></page>',
+            ),
+            (
+                "[[File:MyImage.png]]",
+                '<page><body><p><xi:include alt="MyImage.png" xi:href="wiki.local:MyImage.png?do=get">MyImage.png</xi:include></p></body></page>',
+            ),
+            (
+                "[[File:MyImage.png|arg=http://google.com|caption]]",
+                '<page><body><p><xi:include alt="caption" xi:href="wiki.local:MyImage.png?arg=http%253A%252F%252Fgoogle.com&amp;do=get">caption</xi:include></p></body></page>',
+            ),
+            (
+                "[[File:Test.png|do=get|arg1=test|arg2=something else]]",
+                '<page><body><p><xi:include alt="Test.png" xi:href="wiki.local:Test.png?do=get&amp;arg1=test&amp;arg2=something+else">Test.png</xi:include></p></body></page>',
+            ),
+            # The do=xxx part is just to test if do in args is being updated correctly, it's invalid otherwise
+            (
+                "[[File:Test2.png|do=xxx|caption|arg1=test]]",
+                '<page><body><p><xi:include alt="caption" xi:href="wiki.local:Test2.png?do=xxx&amp;arg1=test">caption</xi:include></p></body></page>',
+            ),
+            (
+                "[[File:myimg.png|'Graph showing width |= k for 5 < k < 10']]",
+                '<page><body><p><xi:include alt="Graph showing width |= k for 5 &lt; k &lt; 10" xi:href="wiki.local:myimg.png?do=get">Graph showing width |= k for 5 &lt; k &lt; 10</xi:include></p></body></page>',
+            ),
+            (
+                "[[File:myimg.png|arg1='longish caption value with |= to test'|arg2=other|test stuff]]",
+                '<page><body><p><xi:include alt="test stuff" xi:href="wiki.local:myimg.png?arg1=longish+caption+value+with+%257C%253D+to+test&amp;arg2=other&amp;do=get">test stuff</xi:include></p></body></page>',
+            ),
+            # Unicode test
+            (
+                "[[File:Test.jpg|\xe8]]",
+                '<page><body><p><xi:include alt="\xe8" xi:href="wiki.local:Test.jpg?do=get">\xe8</xi:include></p></body></page>',
+            ),
+        ],
+    )
     def test_links(self, input, output):
         self.do(input, output)
 
