@@ -42,7 +42,7 @@ class Converter:
 
     def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> None:
         item_name = rev.item.name
-        query_keys = {"do": "get", "rev": rev.revid}
+        query_keys = {"do": ["get"], "rev": [rev.revid]}
         attrib = {}
         if arguments:
             query = arguments.keyword.get(xinclude.href)
@@ -51,7 +51,7 @@ class Converter:
                 query_keys.update(parse_qs(query.query))
             attrib = arguments.keyword
 
-        query = urlencode(query_keys, encoding=CHARSET)
+        query = urlencode(query_keys, doseq=True, encoding=CHARSET)
 
         attrib.update(
             {

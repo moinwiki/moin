@@ -28,7 +28,7 @@ from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
-from moin.utils.tree import moin_page, xlink
+from moin.utils.tree import moin_page, xinclude, xlink
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
@@ -676,6 +676,7 @@ class Converter(ConverterMacro):
             target = Iri(scheme="wiki.local", path=path, query=query, fragment=fragment)
             text = link_item
         else:
+            # local file link?
             if link_url and len(link_url.split(":")) > 0 and link_url.split(":")[0] == "File":
                 object_item = ":".join(link_url.split(":")[1:])
                 args = parsed_args.keyword
@@ -692,10 +693,9 @@ class Converter(ConverterMacro):
 
                 if not link_text:
                     link_text = text
-                attrib = {xlink.href: target}
-                attrib[moin_page.alt] = link_text
 
-                element = moin_page.object(attrib)
+                element = xinclude.include({xinclude.href: target, moin_page.alt: link_text})
+
                 stack.push(element)
                 if link_text:
                     self.preprocessor.push()
@@ -705,6 +705,7 @@ class Converter(ConverterMacro):
                     stack.top_append(text)
                 stack.pop()
                 return
+
             target = Iri(scheme="wiki.local", path=link_url)
             text = link_url
         if external_link_url:
