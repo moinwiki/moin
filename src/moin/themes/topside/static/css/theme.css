@@ -426,16 +426,13 @@ ul.moin-breadcrumb li ul.moin-alias li { display: block; padding: 2px 10px; }
     .cpf { color: #777; font-style: italic } /* Comment.PreprocFile */
     .c1 { color: #777; font-style: italic } /* Comment.Single */
     .cs { color: #777; font-style: italic } /* Comment.Special */
-    .gd { color: #CCC } /* Generic.Deleted */
     .ge { color: #CCC } /* Generic.Emph */
     .ges { color: #CCC } /* Generic.EmphStrong */
     .gr { color: #CCC } /* Generic.Error */
     .gh { color: #CCC } /* Generic.Heading */
-    .gi { color: #CCC } /* Generic.Inserted */
     .go { color: #CCC } /* Generic.Output */
     .gp { color: #FFF } /* Generic.Prompt */
     .gs { color: #CCC } /* Generic.Strong */
-    .gu { color: #CCC } /* Generic.Subheading */
     .gt { color: #CCC } /* Generic.Traceback */
     .kc { color: #7686BB; font-weight: bold } /* Keyword.Constant */
     .kd { color: #7686BB; font-weight: bold } /* Keyword.Declaration */
