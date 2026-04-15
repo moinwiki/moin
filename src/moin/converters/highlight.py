@@ -12,8 +12,6 @@ from typing import Any, TYPE_CHECKING
 
 import re
 
-from flask import request
-
 from moin.utils.mime import type_moin_document
 from moin.utils.tree import html, moin_page
 
@@ -28,9 +26,19 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, highlight: str = "", regex: str = "", **kwargs: Any) -> Self | None:
-        if highlight == "highlight":
-            regex = request.args["regex"]
-            return cls(regex)
+        return cls(regex) if highlight == "highlight" else None
+
+    def __init__(self, regex: str) -> None:
+        if match := re.fullmatch('r"([^"]*)"', regex):
+            # extract the real regex from Whoosh regex search term
+            self.pattern = re.compile(match.group(1))
+        else:
+            # treat each word separately and ignore case sensitivity
+            self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
+
+    def __call__(self, tree: Any) -> Any | None:
+        self.recurse(tree)
+        return tree
 
     def recurse(self, elem):
         new_childs = []
@@ -60,14 +68,6 @@ class Converter:
         # Use inline replacement to avoid a complete tree copy
         if len(new_childs) > len(elem):
             elem[:] = new_childs
-
-    def __init__(self, regex):
-        """Treat each word separately and ignore case sensitivity."""
-        self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
-
-    def __call__(self, tree: Any) -> Any | None:
-        self.recurse(tree)
-        return tree
 
 
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)

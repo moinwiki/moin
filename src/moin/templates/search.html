@@ -85,6 +85,6 @@
 {% endblock %}
 
 {% block body_scripts %}
-    <script src="{{ url_for('serve.files', name='jquery', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 {% endblock %}
