@@ -12,8 +12,6 @@ from typing import Any, TYPE_CHECKING
 
 import re
 
-from flask import request
-
 from moin.utils.mime import type_moin_document
 from moin.utils.tree import html, moin_page
 
@@ -28,9 +26,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, highlight: str = "", regex: str = "", **kwargs: Any) -> Self | None:
-        if highlight == "highlight":
-            regex = request.args["regex"]
-            return cls(regex)
+        return cls(regex) if highlight == "highlight" else None
 
     def recurse(self, elem):
         new_childs = []
@@ -61,8 +57,8 @@ class Converter:
         if len(new_childs) > len(elem):
             elem[:] = new_childs
 
-    def __init__(self, regex):
-        """Treat each word separately and ignore case sensitivity."""
+    def __init__(self, regex: str) -> None:
+        # Treat each word separately and ignore case sensitivity.
         self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
     def __call__(self, tree: Any) -> Any | None:

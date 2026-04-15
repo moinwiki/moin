@@ -337,7 +337,8 @@ class Content:
         flaskg.clock.stop("conv_link")
 
         if "regex" in request.args:
-            highlight_conv = reg.get(type_moin_document, type_moin_document, highlight="highlight")
+            regex = request.args["regex"]
+            highlight_conv = reg.get(type_moin_document, type_moin_document, highlight="highlight", regex=regex)
             flaskg.clock.start("highlight")
             doc = highlight_conv(doc)
             flaskg.clock.stop("highlight")
