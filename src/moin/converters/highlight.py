@@ -28,6 +28,14 @@ class Converter:
     def _factory(cls, input: Type, output: Type, highlight: str = "", regex: str = "", **kwargs: Any) -> Self | None:
         return cls(regex) if highlight == "highlight" else None
 
+    def __init__(self, regex: str) -> None:
+        # Treat each word separately and ignore case sensitivity.
+        self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
+
+    def __call__(self, tree: Any) -> Any | None:
+        self.recurse(tree)
+        return tree
+
     def recurse(self, elem):
         new_childs = []
 
@@ -56,14 +64,6 @@ class Converter:
         # Use inline replacement to avoid a complete tree copy
         if len(new_childs) > len(elem):
             elem[:] = new_childs
-
-    def __init__(self, regex: str) -> None:
-        # Treat each word separately and ignore case sensitivity.
-        self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
-
-    def __call__(self, tree: Any) -> Any | None:
-        self.recurse(tree)
-        return tree
 
 
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)
