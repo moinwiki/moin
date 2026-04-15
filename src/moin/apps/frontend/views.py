@@ -477,6 +477,7 @@ def search():
     terms = []
     trash = request.args.get("trash", "false")
     leading_ns = ""
+
     if ajax:
         query = request.args.get("q")
         history = request.args.get("history") == "true"
@@ -494,7 +495,9 @@ def search():
     else:
         query = search_form["q"].value
         history = bool(request.values.get("history"))
+
     best_match = False
+
     # we test for query in case this is a test run
     if query and query.startswith("\\"):
         best_match = True
@@ -525,7 +528,12 @@ def search():
             qp = flaskg.storage.query_parser(
                 [NAMES, NAMENGRAM, TAGS, SUMMARY, SUMMARYNGRAM, CONTENT, CONTENTNGRAM, COMMENT], idx_name=idx_name
             )
-        q = qp.parse(query)
+        try:
+            q = qp.parse(query)
+        except Exception:
+            flash(_("""QueryError: invalid search term: {search_term}""").format(search_term=query), "error")
+            return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
+
         if trash == "false":
             q = And([q, Not(Term(TRASH, True))])
         if namespaces:
@@ -555,9 +563,13 @@ def search():
             except QueryError:
                 flash(_("""QueryError: invalid search term: {search_term}""").format(search_term=q), "error")
                 return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
+            except re.PatternError:
+                flash(_("""QueryError: invalid regex in search term: {search_term}""").format(search_term=q), "error")
+                return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
             except TermNotFound:
                 flash(_("""TermNotFound: field is not indexed: {search_term}""").format(search_term=q), "error")
                 return render_template("search.html", query=query, medium_search_form=search_form, item_name=item_name)
+
             flaskg.clock.stop("search")
 
             if best_match and results:
