@@ -209,24 +209,12 @@ class MoinApp(Flask):
         self.before_request(before_wiki)
         self.teardown_request(teardown_wiki)
 
-        from moin.apps.frontend import frontend
+        from moin.apps import admin, feed, frontend, misc, serve
 
         self.register_blueprint(frontend)
-
-        from moin.apps.admin import admin
-
         self.register_blueprint(admin, url_prefix="/+admin")
-
-        from moin.apps.feed import feed
-
         self.register_blueprint(feed, url_prefix="/+feed")
-
-        from moin.apps.misc import misc
-
         self.register_blueprint(misc, url_prefix="/+misc")
-
-        from moin.apps.serve import serve
-
         self.register_blueprint(serve, url_prefix="/+serve")
 
     def create_flask_cache(self) -> None:
