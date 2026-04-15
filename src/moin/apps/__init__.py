@@ -11,3 +11,11 @@ This package contains the following Flask blueprints:
 - admin: administrative views for wiki administrators
 - serve: static file serving
 """
+
+from .admin import admin
+from .feed import feed
+from .frontend import frontend
+from .misc import misc
+from .serve import serve
+
+__all__ = ["admin", "feed", "frontend", "misc", "serve"]
