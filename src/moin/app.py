@@ -41,6 +41,7 @@ from moin.error import ConfigurationError
 from moin.apps.frontend.views import bad_request
 from moin.i18n import i18n_init
 from moin.search import SearchForm
+from moin.security.csp import set_csp_nonce
 from moin.storage.middleware import protecting, indexing, routing
 from moin.themes import setup_jinja_env, themed_error, ThemeSupport
 from moin.utils import get_xstatic_module_path_map
@@ -434,6 +435,7 @@ def before_wiki():
         cli_no_request_ctx = False
         try:
             flaskg.user = setup_user()
+            set_csp_nonce(request)
         except RuntimeError:  # CLI call has no valid request context, create dummy
             flaskg.user = user.User(name=ANON, auth_method="invalid")
             cli_no_request_ctx = True

@@ -33,6 +33,7 @@ from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CO
 from moin.constants.misc import FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
 from moin.constants.rights import SUPERUSER
+from moin.security.csp import get_csp_nonce
 from moin.user import User
 from moin.utils.interwiki import split_interwiki, getInterwikiHome, is_local_wiki, is_known_wiki, url_for_item
 from moin.utils.clock import timed
@@ -762,6 +763,7 @@ def setup_jinja_env(jinja_env):
 
     jinja_env.globals.update(
         {
+            "csp_nonce": get_csp_nonce,
             # please note that flask-babel/jinja2.ext installs:
             # _, gettext, ngettext
             "isinstance": isinstance,
