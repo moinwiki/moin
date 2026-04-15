@@ -29,8 +29,12 @@ class Converter:
         return cls(regex) if highlight == "highlight" else None
 
     def __init__(self, regex: str) -> None:
-        # Treat each word separately and ignore case sensitivity.
-        self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
+        if match := re.fullmatch('r"([^"]*)"', regex):
+            # extract the real regex from Whoosh regex search term
+            self.pattern = re.compile(match.group(1))
+        else:
+            # treat each word separately and ignore case sensitivity
+            self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
     def __call__(self, tree: Any) -> Any | None:
         self.recurse(tree)
