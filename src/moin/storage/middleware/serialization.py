@@ -21,7 +21,8 @@ import json
 from werkzeug.wsgi import LimitedStream
 
 from moin.constants.keys import NAME, ITEMTYPE, SIZE, NAMESPACE, REVID, ITEMID, REV_NUMBER, HASH_ALGORITHM
-from moin.constants.itemtypes import ITEMTYPE_DEFAULT
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_USERPROFILE
+from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.storage.backends.stores import Backend
 from moin.storage.backends._util import TrackingFileWrapper
 
@@ -72,13 +73,23 @@ def correcting_rev_iter(backend: Backend):
         issues: list of strings describing issues that were corrected
     """
     for revid in backend:
-        issues = []
+
+        issues: list[str] = []
+
         if isinstance(revid, tuple):
             # router middleware gives tuples and wants both values for retrieve:
             meta, data = backend.retrieve(*revid)
         else:
             # lower level backends have simple revids
             meta, data = backend.retrieve(revid)
+
+        if ITEMTYPE not in meta:
+            itemtype = ITEMTYPE_DEFAULT
+            if meta.get(NAMESPACE) == NAMESPACE_USERPROFILES:
+                itemtype = ITEMTYPE_USERPROFILE
+            issues.append(f"{ITEMTYPE}_error {get_rev_str(meta)}: missing itemtype ({itemtype})")
+            meta[ITEMTYPE] = itemtype
+
         tfw = TrackingFileWrapper(data)
         while tfw.read(64 * 1024):
             pass
@@ -92,6 +103,7 @@ def correcting_rev_iter(backend: Backend):
             )
             meta[HASH_ALGORITHM] = real_hash
         data.seek(0)
+
         yield meta, data, issues
 
 

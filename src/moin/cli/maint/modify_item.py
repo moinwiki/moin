@@ -268,14 +268,16 @@ class RevData:
     rev_id: str
     rev_number: int
     mtime: int
-    parent_id: str = None
+    parent_id: str | None = None
     issues: list[str] = field(default_factory=list)
 
 
-def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False):
+def ValidateMetadata(
+    backend_names: str | None = None, all_backends: bool = False, verbose: bool = False, fix: bool = False
+) -> set[str]:
     flaskg.add_lineno_attr = False
-    backends = get_backends(backends, all_backends)
-    bad_revids = set()
+    backends = get_backends(backend_names, all_backends)
+    bad_revids: set[str] = set()
     for backend in backends:
         revs: dict[str, list[RevData]] = defaultdict(list)
         for meta, data, issues in correcting_rev_iter(backend):
@@ -287,9 +289,11 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                 for issue in issues:
                     print(issue)
             _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
+
         # Skipping checks for userprofiles, as revision numbers and parentids are not used here
         if backend == current_app.cfg.backend_mapping[NAMESPACE_USERPROFILES]:
             continue
+
         # fix bad parentid references and repeated or missing revision numbers
         for item_id, rev_datum in revs.items():
             rev_datum.sort(key=lambda r: (r.rev_number, r.mtime))
@@ -310,6 +314,7 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                         rev_data.rev_number = prev_rev_data.rev_number + 1
                         rev_data.issues.append("revision_number_error")
                 prev_rev_data = rev_data
+
             for rev_data in [r for r in rev_datum if r.issues]:
                 bad = True
                 meta, data = backend.retrieve(rev_data.rev_id)
@@ -336,6 +341,7 @@ def ValidateMetadata(backends=None, all_backends=False, verbose=False, fix=False
                         pass
                 meta[REV_NUMBER] = rev_data.rev_number
                 _fix_if_bad(bad, meta, data, bad_revids, fix, backend)
+
     print(f'{len(bad_revids)} items with invalid metadata found{" and fixed" if fix else ""}')
     return bad_revids
 
