@@ -325,10 +325,6 @@ tr > th { background-color: var(--accent-lighter); }
     .fa.global-history { height: 22pt; width: 22pt; }
 }
 
-@media (min-width: 1000pt) {
-    #moin-page { margin: 0pt auto; }
-}
-
 @media print {
     html, body { max-height: unset; }
     #moin-header, #top-bar, #moin-footer, #moin-flash {
