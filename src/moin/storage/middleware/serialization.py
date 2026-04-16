@@ -83,6 +83,10 @@ def correcting_rev_iter(backend: Backend):
             # lower level backends have simple revids
             meta, data = backend.retrieve(revid)
 
+        if REV_NUMBER not in meta:
+            issues.append(f"{REV_NUMBER}_error {get_rev_str(meta)}: missing revision number")
+            meta[REV_NUMBER] = -1
+
         if ITEMTYPE not in meta:
             itemtype = ITEMTYPE_DEFAULT
             if meta.get(NAMESPACE) == NAMESPACE_USERPROFILES:
