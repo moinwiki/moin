@@ -14,7 +14,7 @@ from flask.cli import FlaskGroup
 
 from moin import log
 from moin.app import create_app
-from moin.cli.maint import create_instance, index, modify_item, set_meta, serialization, reduce_revisions, dump_html
+from moin.cli.maint import create_instance, dump_html, index, modify_item, set_meta, serialization, reduce_revisions, validate_metadata
 from moin.cli.account import create, disable, resetpw
 from moin.cli.migration.moin19 import import19
 
@@ -80,15 +80,15 @@ cli.add_command(create.CreateUser)
 cli.add_command(disable.DisableUser)
 cli.add_command(resetpw.SetPassword)
 
-cli.add_command(reduce_revisions.ReduceRevisions)
-
-cli.add_command(set_meta.SetMeta)
-
 cli.add_command(modify_item.cli_GetItem)
 cli.add_command(modify_item.cli_PutItem)
 cli.add_command(modify_item.cli_LoadHelp)
 cli.add_command(modify_item.DumpHelp)
 cli.add_command(modify_item.cli_LoadWelcome)
-cli.add_command(modify_item.cli_ValidateMetadata)
+
+cli.add_command(reduce_revisions.ReduceRevisions)
+
+cli.add_command(set_meta.SetMeta)
+cli.add_command(validate_metadata.cli_ValidateMetadata)
 
 cli.add_command(import19.ImportMoin19)
