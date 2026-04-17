@@ -13,7 +13,7 @@ If --path is not specified, the current working directory (CWD) is used.
 
 If the path does not exist, directories are created.
 If wikiconfig.py does not exist, it is copied from the venv config directory.
-If intermap.txt does not exist, it is copied from the venv contrib directory.
+If intermap.txt does not exist, it is copied from the venv config directory.
 If a wiki_local directory does not exist, it is created.
 
 Next: change to the new instance directory and run this command to initialize storage and the index:
@@ -34,11 +34,12 @@ import click
 from flask.cli import FlaskGroup
 from flask.ctx import AppContext
 
-from moin import config, contrib, log
+from moin import config
 from moin.app import create_app
+from moin.log import getLogger
 from moin.cli.maint import index, modify_item
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 @click.group(cls=FlaskGroup, create_app=create_app)
@@ -72,33 +73,33 @@ def CreateInstance(full, **kwargs):
     """
     path = kwargs.get("path", None)
     if full and path:
-        logging.error("The parameter full and path are mutually exclusive.")
+        logger.error("The parameter full and path are mutually exclusive.")
         return False
-    logging.debug("Instance creation started.")
+
+    logger.debug("Instance creation started.")
     config_path = os.path.dirname(config.__file__)
-    contrib_path = os.path.dirname(contrib.__file__)
 
     if not path:
         path = os.getcwd()
     if os.path.exists(path):
-        logging.info("Directory %s already exists, using as wikiconfig dir.", os.path.abspath(path))
+        logger.info("Directory %s already exists, using as wikiconfig dir.", os.path.abspath(path))
     else:
         os.makedirs(path)
-        logging.info("Directory %s created.", os.path.abspath(path))
+        logger.info("Directory %s created.", os.path.abspath(path))
 
     if os.path.isfile(os.path.join(path, "wikiconfig.py")):
-        logging.info("wikiconfig.py already exists, not copied.")
+        logger.info("wikiconfig.py already exists, not copied.")
     else:
         shutil.copy(os.path.join(config_path, "wikiconfig.py"), path)
 
     if os.path.isfile(os.path.join(path, "intermap.txt")):
-        logging.info("intermap.txt already exists, not copied.")
+        logger.info("intermap.txt already exists, not copied.")
     else:
-        shutil.copy(os.path.join(contrib_path, "intermap.txt"), path)
+        shutil.copy(os.path.join(config_path, "intermap.txt"), path)
     local_path = os.path.join(path, "wiki_local")
     if not os.path.isdir(local_path):
         os.mkdir(local_path)
-    logging.info("Instance creation finished.")
+    logger.info("Instance creation finished.")
 
     if full:
         with AppContext(create_app()):
@@ -109,13 +110,13 @@ def build_instance():
     """
     Create and build the index; load help data and the welcome page.
     """
-    logging.info("Build instance started.")
+    logger.info("Build instance started.")
     if index.IndexCreate():
         modify_item.LoadHelp(namespace="help-en", path_to_help=None)
         modify_item.LoadHelp(namespace="help-common", path_to_help=None)
         modify_item.LoadWelcome()
         index.IndexOptimize(tmp=False)
-        logging.info("Full instance setup finished.")
-        logging.info('You can now use "moin run" to start the built-in server.')
+        logger.info("Full instance setup finished.")
+        logger.info('You can now use "moin run" to start the built-in server.')
     else:
-        logging.error("Build Instance failed.")
+        logger.error("Build Instance failed.")
