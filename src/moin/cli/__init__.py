@@ -80,11 +80,11 @@ cli.add_command(create.CreateUser)
 cli.add_command(disable.DisableUser)
 cli.add_command(resetpw.SetPassword)
 
-cli.add_command(modify_item.cli_GetItem)
-cli.add_command(modify_item.cli_PutItem)
-cli.add_command(modify_item.cli_LoadHelp)
+cli.add_command(modify_item.GetItem)
+cli.add_command(modify_item.PutItem)
+cli.add_command(modify_item.LoadHelp)
 cli.add_command(modify_item.DumpHelp)
-cli.add_command(modify_item.cli_LoadWelcome)
+cli.add_command(modify_item.LoadWelcome)
 
 cli.add_command(reduce_revisions.ReduceRevisions)
 

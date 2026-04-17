@@ -111,9 +111,9 @@ def build_instance():
     """
     logging.info("Build instance started.")
     if index.IndexCreate():
-        modify_item.LoadHelp(namespace="help-en", path_to_help=None)
-        modify_item.LoadHelp(namespace="help-common", path_to_help=None)
-        modify_item.LoadWelcome()
+        modify_item.load_help(namespace="help-en", path_to_help=None)
+        modify_item.load_help(namespace="help-common", path_to_help=None)
+        modify_item.load_welcome()
         index.IndexOptimize(tmp=False)
         logging.info("Full instance setup finished.")
         logging.info('You can now use "moin run" to start the built-in server.')

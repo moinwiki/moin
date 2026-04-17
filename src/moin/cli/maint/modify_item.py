@@ -8,11 +8,16 @@
 MoinMoin - CLI commands to get an item revision from the wiki and put it back.
 """
 
+from __future__ import annotations
+
+from typing import cast
+
 import json
 import io
 import os
 
 import click
+
 from flask.cli import FlaskGroup
 
 from moin import current_app, flaskg
@@ -36,40 +41,12 @@ from moin.items import Item
 logger = getLogger(__name__)
 
 
-def _get_path_to_help(subdir=""):
+def _get_path_to_help(subdir: str = "") -> str:
     help_path = os.path.dirname(moin_help.__file__)
     return os.path.normpath(os.path.join(help_path, subdir))
 
 
-@click.group(cls=FlaskGroup, create_app=create_app)
-def cli():
-    pass
-
-
-@cli.command("item-get", help="Get an item revision from the wiki")
-@click.option("--name", "-n", type=str, required=True, help="Name of the item to get.")
-@click.option(
-    "--meta", "-m", "--meta_file", type=str, required=True, help="Filename of the file to create for the metadata."
-)
-@click.option(
-    "--data", "-d", "--data_file", type=str, required=True, help="Filename of the file to create for the data."
-)
-@click.option(
-    "--revid",
-    "-r",
-    type=str,
-    required=False,
-    default=CURRENT,
-    help="Revision ID of the revision to get (default: current rev).",
-)
-@click.option("--crlf/--no-crlf", help="Use Windows line endings in output files")
-def cli_GetItem(name, meta, data, revid, crlf):
-    logger.info("Get item started")
-    GetItem(name, meta, data, revid, "\r\n" if crlf else "\n")
-    logger.info("Get item finished")
-
-
-def GetItem(name, meta_file, data_file, revid, newline="\n"):
+def get_item(name: str, meta_file: str, data_file: str, revid: str, newline: str = "\n") -> list[str] | None:
     """
     Get an item revision from the wiki and save meta and data in separate files.
     If this revision has alias names, return a list of all names, else return None.
@@ -77,46 +54,39 @@ def GetItem(name, meta_file, data_file, revid, newline="\n"):
     fqname = split_fqname(name)
     item = current_app.storage.get_item(**fqname.query)
     rev = item[revid]
-    alias_names = None if len(rev.meta[NAME]) < 2 else rev.meta[NAME]
+    names = cast(list[str], rev.meta[NAME])
+
+    alias_names = None if len(names) < 2 else names
+
     meta = json.dumps(dict(rev.meta), sort_keys=True, indent=2, ensure_ascii=False)
     with open(meta_file, "w", encoding="utf-8", newline=newline) as mf:
         mf.write(meta + "\n")
-    if "charset" in rev.meta[CONTENTTYPE]:
+
+    content_type = rev.meta[CONTENTTYPE]
+    assert isinstance(content_type, str)
+
+    if "charset" in content_type:
         # Input data will have \r\n line endings; output will use the specified endings.
         # Those running on Windows with git autocrlf=true will want --crlf.
         # Those running on Linux or with autocrlf=input will want --no-crlf.
-        charset = rev.meta[CONTENTTYPE].split("charset=")[1]
+        charset = content_type.split("charset=")[1]
         data = rev.data.read().decode(charset)
         lines = data.splitlines()
         # add trailing line ending which may have been removed by splitlines,
-        # or add extra trailing line ending which will be removed in _PutItem if file is imported
+        # or add extra trailing line ending which will be removed in PutItem if file is imported
         lines = "\n".join(lines) + "\n"
         with open(data_file, "w", encoding=charset, newline=newline) as df:
             df.write(lines)
-        return alias_names
+    else:
+        data = rev.data.read()
+        with open(data_file, "wb") as df:
+            df.write(data)
 
-    data = rev.data.read()
-    with open(data_file, "wb") as df:
-        df.write(data)
     logger.info("Get item finished")
     return alias_names
 
 
-@cli.command("item-put", help="Put an item revision into the wiki")
-@click.option(
-    "--meta", "-m", "--meta-file", type=str, required=True, help="Filename of the file to read for the metadata."
-)
-@click.option("--data", "-d", "--data-file", type=str, required=True, help="Filename of the file to read for the data.")
-@click.option(
-    "--overwrite", "-o", is_flag=True, default=False, help="If given, overwrite existing revisions, if requested."
-)
-def cli_PutItem(meta, data, overwrite: bool):
-    logger.info("Put item started")
-    PutItem(meta, data, overwrite)
-    logger.info("Put item finished")
-
-
-def PutItem(meta_file, data_file, overwrite: bool):
+def put_item(meta_file: str, data_file: str, overwrite: bool) -> None:
     """
     Put an item revision from file into the wiki
     """
@@ -152,20 +122,28 @@ def PutItem(meta_file, data_file, overwrite: bool):
         buffer.seek(0)
         item.store_revision(meta, buffer, overwrite=overwrite)
         buffer.close()
-        return
-
-    with open(data_file, "rb") as df:
-        item.store_revision(meta, df, overwrite=overwrite)
-
-
-@cli.command("load-help", help="Load a directory of help .data and .meta file pairs into a wiki namespace")
-@click.option("--namespace", "-n", type=str, required=True, help="Namespace to be loaded: help-common, help-en, etc.")
-@click.option("--path_to_help", "--path", "-p", type=str, help="Override source directory, default is src/moin/help")
-def cli_LoadHelp(namespace, path_to_help):
-    return LoadHelp(namespace, path_to_help)
+    else:
+        with open(data_file, "rb") as df:
+            item.store_revision(meta, df, overwrite=overwrite)
 
 
-def LoadHelp(namespace, path_to_help):
+def load_welcome() -> None:
+    """
+    Load a welcome page as initial home from distribution source.
+    """
+    logger.info("Load welcome page started")
+    path_to_items = _get_path_to_help("welcome")
+    for name in ["Home", "users-Home"]:
+        if current_app.storage.has_item(name):
+            logger.warning("Item with name %s exists and will not be overwritten.", name)
+        else:
+            meta_file = os.path.join(path_to_items, f"{name}.meta")
+            data_file = os.path.join(path_to_items, f"{name}.data")
+            put_item(meta_file, data_file, True)
+    logger.info("Load welcome finished")
+
+
+def load_help(namespace: str, path_to_help: str) -> None:
     """
     Load an entire help namespace from distribution source.
     """
@@ -188,17 +166,13 @@ def LoadHelp(namespace, path_to_help):
             data_file = f.replace(".meta", ".data")
             meta_file = os.path.join(path_to_items, f)
             data_file = os.path.join(path_to_items, data_file)
-            PutItem(meta_file, data_file, True)
+            put_item(meta_file, data_file, True)
             print("Item loaded:", item_name)
             count += 1
     print(f"Success: help namespace {namespace} loaded successfully with {count} items")
 
 
-@cli.command("dump-help", help="Dump a namespace of user help items to .data and .meta file pairs")
-@click.option("--namespace", "-n", type=str, required=True, help="Namespace to be dumped: help-common, help-en, etc.")
-@click.option("--path_to_help", "--path", "-p", type=str, help="Override output directory, default is src/moin/help")
-@click.option("--crlf/--no-crlf", help="Use Windows line endings in output files")
-def DumpHelp(namespace, path_to_help, crlf):
+def dump_help(namespace: str, path_to_help: str, crlf) -> None:
     """
     Save an entire help namespace to the distribution source.
     Items with alias names must be copied only once.
@@ -220,7 +194,7 @@ def DumpHelp(namespace, path_to_help, crlf):
         esc_name = file_.relname.replace("/", "%2f")
         meta_file = os.path.join(path_to_help, namespace, esc_name + ".meta")
         data_file = os.path.join(path_to_help, namespace, esc_name + ".data")
-        alias_names = GetItem(str(file_.fullname), meta_file, data_file, CURRENT, "\r\n" if crlf else "\n")
+        alias_names = get_item(str(file_.fullname), meta_file, data_file, CURRENT, "\r\n" if crlf else "\n")
         if alias_names:
             # no harm in adding current name to no_alias_dups
             no_alias_dups += alias_names
@@ -229,22 +203,63 @@ def DumpHelp(namespace, path_to_help, crlf):
     print(f"Success: help namespace {namespace} saved with {count} items")
 
 
+@click.group(cls=FlaskGroup, create_app=create_app)
+def cli():
+    pass
+
+
+@cli.command("item-get", help="Get an item revision from the wiki")
+@click.option("--name", "-n", type=str, required=True, help="Name of the item to get.")
+@click.option(
+    "--meta", "-m", "--meta_file", type=str, required=True, help="Filename of the file to create for the metadata."
+)
+@click.option(
+    "--data", "-d", "--data_file", type=str, required=True, help="Filename of the file to create for the data."
+)
+@click.option(
+    "--revid",
+    "-r",
+    type=str,
+    required=False,
+    default=CURRENT,
+    help="Revision ID of the revision to get (default: current rev).",
+)
+@click.option("--crlf/--no-crlf", help="Use Windows line endings in output files")
+def GetItem(name, meta, data, revid, crlf) -> None:
+    logger.info("Get item started")
+    get_item(name, meta, data, revid, "\r\n" if crlf else "\n")
+    logger.info("Get item finished")
+
+
+@cli.command("item-put", help="Put an item revision into the wiki")
+@click.option(
+    "--meta", "-m", "--meta-file", type=str, required=True, help="Filename of the file to read for the metadata."
+)
+@click.option("--data", "-d", "--data-file", type=str, required=True, help="Filename of the file to read for the data.")
+@click.option(
+    "--overwrite", "-o", is_flag=True, default=False, help="If given, overwrite existing revisions, if requested."
+)
+def PutItem(meta, data, overwrite: bool) -> None:
+    logger.info("Put item started")
+    put_item(meta, data, overwrite)
+    logger.info("Put item finished")
+
+
+@cli.command("load-help", help="Load a directory of help .data and .meta file pairs into a wiki namespace")
+@click.option("--namespace", "-n", type=str, required=True, help="Namespace to be loaded: help-common, help-en, etc.")
+@click.option("--path_to_help", "--path", "-p", type=str, help="Override source directory, default is src/moin/help")
+def LoadHelp(namespace, path_to_help) -> None:
+    load_help(namespace, path_to_help)
+
+
+@cli.command("dump-help", help="Dump a namespace of user help items to .data and .meta file pairs")
+@click.option("--namespace", "-n", type=str, required=True, help="Namespace to be dumped: help-common, help-en, etc.")
+@click.option("--path_to_help", "--path", "-p", type=str, help="Override output directory, default is src/moin/help")
+@click.option("--crlf/--no-crlf", help="Use Windows line endings in output files")
+def DumpHelp(namespace, path_to_help, crlf) -> None:
+    dump_help(namespace, path_to_help, crlf)
+
+
 @cli.command("welcome", help="Load initial welcome page into an empty wiki")
-def cli_LoadWelcome():
-    return LoadWelcome()
-
-
-def LoadWelcome():
-    """
-    Load a welcome page as initial home from distribution source.
-    """
-    logger.info("Load welcome page started")
-    path_to_items = _get_path_to_help("welcome")
-    for name in ["Home", "users-Home"]:
-        if current_app.storage.has_item(name):
-            logger.warning("Item with name %s exists and will not be overwritten.", name)
-        else:
-            meta_file = os.path.join(path_to_items, f"{name}.meta")
-            data_file = os.path.join(path_to_items, f"{name}.data")
-            PutItem(meta_file, data_file, True)
-    logger.info("Load welcome finished")
+def LoadWelcome() -> None:
+    load_welcome()
