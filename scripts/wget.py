@@ -14,7 +14,11 @@ import urllib.request
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
-        urllib.request.urlretrieve(sys.argv[1], sys.argv[2])
+        filename, headers = urllib.request.urlretrieve(sys.argv[1], sys.argv[2])
+        print(f"Destination file: {filename}")
+        print(f"HTTP headers: {headers}")
+        sys.exit(0)
     else:
         print("Error: incorrect parameters passed.")
         print("Usage: python path/to/wget.py <url> <output_file>")
+        sys.exit(1)
