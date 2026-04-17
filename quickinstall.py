@@ -286,7 +286,7 @@ def copy_config_files() -> None:
     if not os.path.isfile("wikiconfig.py"):
         shutil.copy("src/moin/config/wikiconfig.py", "wikiconfig.py")
     if not os.path.isfile("intermap.txt"):
-        shutil.copy("src/moin/contrib/intermap.txt", "intermap.txt")
+        shutil.copy("contrib/interwiki/intermap.txt", "intermap.txt")
     if not os.path.isdir("wiki_local"):
         os.mkdir("wiki_local")
 
@@ -523,17 +523,18 @@ class InstallExtras(Command):
 
 class RefreshInterwiki(Command):
     """
-    Refresh the content of file `contrib/interwiki/intermap.txt`.
+    Refresh the content of file `intermap.txt`.
     """
 
     key = "interwiki"
 
+    intermap_uri = "https://master19.moinmo.in/InterWikiMap?action=raw"
+
     def execute(self) -> None:
-        print("Refreshing {}...".format(os.path.normpath("contrib/interwiki/intermap.txt")))
-        command = "{} scripts/wget.py http://master19.moinmo.in/InterWikiMap?action=raw intermap.txt".format(
-            sys.executable
-        )
-        subprocess.call(command, shell=True)
+        intermap_path = os.path.abspath("intermap.txt")
+        print(f"Refreshing {intermap_path}...")
+        command = f"{sys.executable} scripts/wget.py {self.intermap_uri} {intermap_path}"
+        subprocess.run(command, shell=True, check=True)
 
 
 class ViewLogFile(Command):
