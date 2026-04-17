@@ -14,7 +14,16 @@ from flask.cli import FlaskGroup
 
 from moin import log
 from moin.app import create_app
-from moin.cli.maint import create_instance, dump_html, index, modify_item, set_meta, serialization, reduce_revisions, validate_metadata
+from moin.cli.maint import (
+    create_instance,
+    dump_html,
+    index,
+    modify_item,
+    set_meta,
+    serialization,
+    reduce_revisions,
+    validate_metadata,
+)
 from moin.cli.account import create, disable, resetpw
 from moin.cli.migration.moin19 import import19
 

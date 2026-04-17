@@ -18,13 +18,7 @@ from flask.cli import FlaskGroup
 from moin import current_app, flaskg
 from moin.app import create_app
 from moin.cli._util import get_backends
-from moin.constants.keys import (
-    ITEMID,
-    REVID,
-    PARENTID,
-    REV_NUMBER,
-    MTIME,
-)
+from moin.constants.keys import ITEMID, REVID, PARENTID, REV_NUMBER, MTIME
 from moin.constants.namespaces import NAMESPACE_USERPROFILES
 from moin.log import getLogger
 from moin.storage.middleware.serialization import get_rev_str, correcting_rev_iter
@@ -37,6 +31,7 @@ class RevData:
     """
     Class for storing data used to correct rev_number and parentid.
     """
+
     rev_id: str
     rev_number: int
     mtime: int

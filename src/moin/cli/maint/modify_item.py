@@ -24,17 +24,7 @@ from moin import current_app, flaskg
 from moin import help as moin_help
 from moin.app import create_app, before_wiki
 from moin.log import getLogger
-from moin.constants.keys import (
-    CONTENTTYPE,
-    CURRENT,
-    ITEMID,
-    DATAID,
-    NAMESPACE,
-    REVID,
-    SIZE,
-    MTIME,
-    NAME,
-)
+from moin.constants.keys import CONTENTTYPE, CURRENT, ITEMID, DATAID, NAMESPACE, REVID, SIZE, MTIME, NAME
 from moin.utils.names import split_fqname
 from moin.items import Item
 
