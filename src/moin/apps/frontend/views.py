@@ -436,7 +436,7 @@ def parse_scoped_query(query):
     If no scope is found, returns (None, query).
     """
     if not query:
-        return None, None
+        return None, query
     if query.startswith(">"):
         parts = query[1:].split(None, 1)
         if len(parts) == 2:

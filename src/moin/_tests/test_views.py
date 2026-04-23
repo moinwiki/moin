@@ -27,4 +27,4 @@ class TestParseScopedQuery:
     def test_parse_scoped_query_empty(self):
         scope, actual_query = parse_scoped_query("")
         assert scope is None
-        assert actual_query is None
+        assert actual_query == ""
