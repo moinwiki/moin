@@ -98,7 +98,7 @@ See utils.html for more macros.
     <dd>
         {%- for i in range(field.properties.lower, field.properties.upper+1) %}
             {{ gen.input(field, type='radio', value=i|string) }}
-            {{ _radio_label(field, value=i|string, class='moin-inline-label') }}
+            {{ gen.label(field, value=i|string, contents=i|string, class='moin-inline-label') }}
         {%- endfor %}
     </dd>
 {%- endmacro %}

@@ -84,7 +84,7 @@ from moin.constants.keys import (
     ACTION_TRASH,
 )
 from moin.constants.contenttypes import CONTENTTYPE_USER
-from moin.constants.itemtypes import ITEMTYPE_TICKET
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
 from moin.items import Item, Contentful, register, BaseModifyForm, get_itemtype_specific_tags, IndexEntry
 from moin.items.content import NonExistentContent
 from moin.utils.markup import safe_markup
@@ -92,6 +92,7 @@ from moin.utils.names import CompositeName
 from moin.constants.forms import WIDGET_SEARCH
 
 if TYPE_CHECKING:
+    from moin.storage.middleware.indexing import Meta
     from werkzeug.wrappers import Response as ResponseBase
 
 
@@ -357,7 +358,7 @@ def build_tree(comments, root, comment_tree, indent):
         return []
 
 
-def create_comment(meta, message):
+def create_comment(meta: Meta, message: str) -> None:
     """
     Create a new item comment against original description, refers_to links to original.
     """
@@ -365,7 +366,13 @@ def create_comment(meta, message):
     item_name = meta[ITEMID] + "/" + "comment_" + str(current_timestamp)
     item = Item.create(item_name)
     item.modify(
-        {},
+        {
+            # itemtype is required now; should probably use a new type for comments instead of using default
+            # see comment at the start of the file
+            ITEMTYPE: ITEMTYPE_DEFAULT,
+            # need to specify a content type; always use moin-wiki format for now
+            CONTENTTYPE: "text/x.moin.wiki;charset=utf-8",
+        },
         data=message,
         element="comment",
         contenttype_guessed="text/x.moin.wiki;charset=utf-8",
