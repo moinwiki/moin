@@ -37,6 +37,8 @@ from flatland.validation import Validator
 
 from markupsafe import Markup
 
+from urllib.parse import unquote
+
 from whoosh.query import Term, Prefix, And, Or, Not
 
 from moin import current_app, flaskg, log
@@ -1519,6 +1521,7 @@ class Default(Contentful):
             item=self,
             item_name=self.name,
             fqname=self.fqname,
+            title=unquote(self.name),
             rev=self.rev,
             contenttype=self.contenttype,
             rev_navigation_ids_dates=rev_navigation_ids_dates,
