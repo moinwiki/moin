@@ -1,2 +1,4 @@
 # Wiki text items must have LF line endings also on Windows
 src/moin/help/** eol=lf
+# exclude xstatic directory from github language stats
+src/moin/xstatic/** linguist-vendored
