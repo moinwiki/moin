@@ -85,16 +85,14 @@ from moin.items import (
     NameNotUniqueError,
     MissingParentError,
     FieldNotUniqueError,
-    get_itemtype_specific_tags,
     CreateItemForm,
     find_matches,
 )
 from moin.items.content import content_registry, conv_serialize
-from moin.items.ticket import AdvancedSearchForm, render_comment_data
 from moin import user
 from moin.constants.keys import *  # noqa
 from moin.constants.namespaces import *  # noqa
-from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_TICKET, ITEMTYPE_NONEXISTENT
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_NONEXISTENT
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
 from moin.constants.misc import FLASH_REPEAT
@@ -486,7 +484,6 @@ def search():
             time_sorting = False
         filetypes = request.args.get("filetypes")
         namespaces = request.args.get("namespaces")
-        is_ticket = bool(request.args.get("is_ticket"))
         if filetypes:
             filetypes = filetypes.split(",")[:-1]  # To remove the extra '' at the end of the list
         if namespaces:
@@ -586,7 +583,6 @@ def search():
                     whoosh_query=q,
                     flaskg=flaskg,
                     subitem_target=item_name,
-                    is_ticket=is_ticket,
                 )
             else:
                 html = render_template(
@@ -3194,160 +3190,9 @@ def template(filename):
     return response
 
 
-@frontend.route("/+tickets", methods=["GET", "POST"])
-def tickets():
-    """
-    Show a list of ticket items
-    """
-    if request.method == "POST":
-        query = request.form["q"]
-        status = request.form["status"]
-    else:
-        query = None
-        status = "open"
-
-    current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-    idx_name = ALL_REVS
-    qp = flaskg.storage.query_parser([TAGS, SUMMARY, CONTENT, ITEMID], idx_name=idx_name)
-    term1 = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
-    term2 = []
-    if query:
-        term2.append(qp.parse(query))
-
-    if status == "open":
-        term1.append(Term(CLOSED, False))
-    elif status == "closed":
-        term1.append(Term(CLOSED, True))
-
-    selected_tags = set(request.args.getlist("selected_tags"))
-    term1.extend(Term(TAGS, tag) for tag in selected_tags)
-    assigned_username = request.args.get(ASSIGNED_TO) or query
-    user = [Term(NAME, assigned_username)]
-    user.append(Term(CONTENTTYPE, CONTENTTYPE_USER))
-    user = And(user)
-
-    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-        if assigned_username:
-            selected_user = searcher.search(user, limit=None)
-            if selected_user:
-                assigned_to = selected_user[0][ITEMID]
-                term2.append(Term(ASSIGNED_TO, assigned_to))
-            elif not query:
-                term2 = []
-                term1 = []
-        q = None
-        # There are two cases when the user uses the search box in the ticket tracker and other
-        # when user clicks on Assignee name in the ticket's table to view all tickets assigned to him
-        # E.g. of link for second case is  +tickets?assigned_to=username .
-        # For the first case, i.e. when using the search box, variable 'query' (i.e. what ever is searched)
-        # should be present either in TAGS, SUMMARY, CONTENT, ITEMID 'or' ASSIGNED_TO 'and' should be
-        # of given status (closed or open).
-        # While in second case we have to get all the results having given status 'and'
-        # Assigned_to = request.args.get(ASSIGNED_TO).
-        # In first case we use 'and' while in second case we use 'or' while adding the assigned_to condition
-        # to retrieve the results.
-        if query:
-            term2 = Or(term2)
-            term1.extend([term2])
-        else:
-            term1.extend(term2)
-        q = And(term1)
-        results = searcher.search(q, limit=None)
-        tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
-        return render_template(
-            "tickets.html",
-            results=results,
-            query=query,
-            status=status,
-            tags=tags,
-            selected_tags=selected_tags,
-            current_timestamp=current_timestamp,
-        )
-
-
-@frontend.route("/+tickets/query", methods=["GET", "POST"])
-def ticket_search():
-    """
-    Suggest duplicate tickets while a new ticket is being created. Executed multiple times as user types/clicks.
-
-    TODO: not useful as is, suggestions must match every word in ticket summary.
-    Clicking radio buttons create updates but values seem to have no effect on results.
-    Better suggestions may come from matching on tag values.
-    """
-    form = AdvancedSearchForm()
-    suggested_tags = get_itemtype_specific_tags(ITEMTYPE_TICKET)
-    results = []
-
-    with flaskg.storage.indexer.ix[LATEST_REVS].searcher() as searcher:
-        if request.method == "POST":
-            effort = request.form.get("effort")
-            difficulty = request.form.get("difficulty")
-            severity = request.form.get("severity")
-            priority = request.form.get("priority")
-            tags = request.form.get("tags")
-            assigned_to = request.form.get("assigned_to")
-            author = request.form.get("author")
-            term = [Term(ITEMTYPE, ITEMTYPE_TICKET)]
-            if effort:
-                term.append(Term(EFFORT, effort))
-            if difficulty:
-                term.append(Term(DIFFICULTY, difficulty))
-            if severity:
-                term.append(Term(SEVERITY, severity))
-            if priority:
-                term.append(Term(PRIORITY, priority))
-            if tags:
-                term.append(Term(TAGS, tags))
-            if author:
-                term.append(Term(USERID, author))
-            if assigned_to:
-                term.append(Term(ASSIGNED_TO, assigned_to))
-
-            query = And(term)
-            results = searcher.search(query, sortedby=NAME_EXACT, limit=None)
-
-        return render_template(
-            "ticket/advanced.html",
-            search_form=form,
-            ticket_results=results,
-            suggested_tags=suggested_tags,
-            timestamp=datetime.fromtimestamp,
-            is_ticket=True,
-        )
-
-
-@frontend.route("/+comment", defaults=dict(item_name=""), methods=["POST"])
-def comment(item_name):
-    """
-    Initiated by tickets.js when user clicks Save button adding a reply to a prior comment.
-
-    An html fragment formatting a new comment is produced. It is inserted into the page via javascript.
-    """
-    itemid = request.form.get("refers_to")
-    reply_to = request.form.get("reply_to")
-    data = request.form.get("data")
-    if data:
-        current_timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-        item_name = str(itemid) + "/" + "comment_" + str(current_timestamp)
-        item = Item.create(item_name)
-        item.modify(
-            {},
-            data=data,
-            element="comment",
-            contenttype_guessed="text/x.moin.wiki;charset=utf-8",
-            refers_to=itemid,
-            reply_to=reply_to,
-            author=flaskg.user.name[0],
-        )
-        item = Item.create(item.name, rev_id=CURRENT)
-        return render_template(
-            "ticket/comment.html", comment=item, render_comment_data=render_comment_data, datetime=datetime
-        )
-
-
 @frontend.route("/+new", methods=["GET", "POST"])
 def new():
-    # TODO: Implement creation of blog entries and ticket items
+    # TODO: Implement creation of blog entries
     raise NotImplementedError
 
 

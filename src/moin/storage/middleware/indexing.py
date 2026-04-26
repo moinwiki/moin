@@ -385,22 +385,6 @@ class IndexingMiddleware:
         }
         latest_revs_fields.update(**userprofile_fields)
 
-        # XXX This is a highly adhoc way to support indexing of ticket items.
-        ticket_fields = {
-            EFFORT: NUMERIC(stored=True),
-            DIFFICULTY: NUMERIC(stored=True),
-            SEVERITY: NUMERIC(stored=True),
-            PRIORITY: NUMERIC(stored=True),
-            ASSIGNED_TO: ID(stored=True),
-            REPLY_TO: ID(stored=True),
-            REFERS_TO: ID(stored=True),
-            ELEMENT: ID(stored=True),
-            SUPERSEDED_BY: ID(stored=True),
-            DEPENDS_ON: ID(stored=True),
-            CLOSED: BOOLEAN(stored=True),
-        }
-        latest_revs_fields.update(**ticket_fields)
-
         blog_entry_fields = {
             # blog publish time from metadata (converted to UTC datetime)
             PTIME: DATETIME(stored=True)
@@ -866,9 +850,7 @@ class IndexingMiddleware:
             PseudoFieldPlugin(
                 dict(
                     # username:JoeDoe searches for revisions modified by JoeDoe
-                    username=userid_pseudo_field_factory(USERID),
-                    # assigned:JoeDoe searches for tickets assigned to JoeDoe
-                    assigned=userid_pseudo_field_factory(ASSIGNED_TO),
+                    username=userid_pseudo_field_factory(USERID)
                 )
             )
         )

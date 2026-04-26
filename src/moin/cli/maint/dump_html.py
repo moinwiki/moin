@@ -177,7 +177,7 @@ def Dump(
                 continue
 
             if not current_rev.name:
-                # TODO: we skip nameless tickets, but named tickets and comments are processed with ugly names
+                # we skip nameless tickets, only needed for compatibility
                 continue
 
             try:
