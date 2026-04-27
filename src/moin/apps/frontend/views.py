@@ -2339,6 +2339,7 @@ class LoginForm(Form):
 
     username = RequiredText.using(label=L_("Username"), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
+    persistent = Checkbox.using(label=_("Remember me"), default=False)
     nexturl = Hidden.using(default="")
     # This field results in a login_submit field in the POST form, which is in
     # turn looked for by setup_user() in app.py as marker for login requests.

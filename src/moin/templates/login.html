@@ -15,6 +15,9 @@
                     {% if 'password' in login_inputs %}
                         {{ forms.render(form['password']) }}
                     {% endif %}
+                    {% if 'persistent' in login_inputs %}
+                        {{ forms.render(form['persistent']) }}
+                    {% endif %}
                 </dl>
                 {{ forms.render(form['nexturl']) }}
                 {{ forms.render(form['submit']) }}

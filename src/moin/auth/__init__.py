@@ -265,7 +265,7 @@ class MoinAuth(BaseAuth):
     """
 
     name = "moin"
-    login_inputs = ["username", "password"]
+    login_inputs = ["username", "password", "persistent"]
     logout_possible = True
 
     def __init__(self, **kw: Any) -> None:
@@ -420,6 +420,7 @@ def handle_login(userobj: User | None, **kw: Any) -> User | None:
     """
 
     stage = kw.pop("stage", None)
+    persistent = kw.pop("login_persistent", None) in ("1", "true")
 
     params = {
         "username": kw.pop("login_username", None),
@@ -463,6 +464,9 @@ def handle_login(userobj: User | None, **kw: Any) -> User | None:
 
         if not cont:
             break
+
+    if userobj and userobj.valid:
+        session.permanent = persistent
 
     return userobj
 
