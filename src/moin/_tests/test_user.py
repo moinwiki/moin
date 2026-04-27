@@ -275,16 +275,16 @@ class TestGroupName:
 
     @pytest.mark.usefixtures("_app_ctx")
     def test_group_names(self):
-        """User: isValidName: reject group names."""
+        """is_valid_username: reject group names."""
         test = "AdminGroup"
-        assert not user.isValidName(test)
+        assert not user.is_valid_username(test)
 
 
 @pytest.mark.usefixtures("_app_ctx")
-class TestIsValidName:
+class TestIsValidUserName:
 
     def test_non_alnum_characters(self):
-        """User: isValidName: reject Unicode non-alphanumeric characters.
+        """User: is_valid_username: reject Unicode non-alphanumeric characters.
 
         ':' and ',' are used in ACL rules; we might add more characters to the syntax.
         """
@@ -292,16 +292,16 @@ class TestIsValidName:
         base = "User{0}Name"
         for c in invalid:
             name = base.format(c)
-            assert not user.isValidName(name)
+            assert not user.is_valid_username(name)
 
     def test_whitespace(self):
-        """User: isValidName: reject leading, trailing, or multiple whitespace."""
+        """is_valid_username: reject leading, trailing, or multiple whitespace."""
         cases = (" User Name", "User Name ", "User   Name")
         for test in cases:
-            assert not user.isValidName(test)
+            assert not user.is_valid_username(test)
 
     def test_valid(self):
-        """User: isValidName: accept names in any language, with spaces."""
+        """is_valid_username: accept names in any language, with spaces."""
         cases = (
             "Jürgen Hermann",  # German
             "ניר סופר",  # Hebrew
@@ -309,7 +309,7 @@ class TestIsValidName:
             "가각간갇갈 갉갊감 갬갯걀갼",  # Hangul (gibberish)
         )
         for test in cases:
-            assert user.isValidName(test)
+            assert user.is_valid_username(test)
 
 
 coverage_modules = ["moin.user"]

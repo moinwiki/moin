@@ -89,7 +89,7 @@ def create_user(username, password, email, validate=True, is_encrypted=False, ve
     theuser = User(auth_method="new-user")
 
     # Don't allow creating users with invalid names
-    if validate and not isValidName(username):
+    if validate and not is_valid_username(username):
         return _("""Invalid user name '{name}'.
 Name may contain any Unicode alpha numeric character, with optional one
 space between words. Group page name is not allowed.""").format(name=username)
@@ -180,7 +180,7 @@ def get_editor(userid, addr, hostname):
     return result
 
 
-def normalizeName(name):
+def normalize_username(name):
     """Make normalized user name
 
     Prevent impersonating another user with names containing leading,
@@ -210,12 +210,12 @@ def normalizeName(name):
     return name
 
 
-def isValidName(name):
+def is_valid_username(name):
     """Validate user name
 
     :param name: user name, unicode
     """
-    normalized = normalizeName(name)
+    normalized = normalize_username(name)
     return (name == normalized) and not wikiutil.isGroupItem(name)
 
 

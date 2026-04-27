@@ -2555,11 +2555,11 @@ def usersettings():
                     if user.search_users(**{NAME_EXACT: name}):
                         # duplicate name
                         errors.append(invalid_id_in_use_msg + name)
-                if not user.normalizeName(name) == name:
+                if not user.normalize_username(name) == name:
                     errors.append(invalid_character_message + name)
             display_name = form[DISPLAY_NAME].value
             if display_name:
-                if not user.normalizeName(display_name) == display_name:
+                if not user.normalize_username(display_name) == display_name:
                     errors.append(invalid_character_msg + display_name)
             if errors:
                 return self.note_error(element, state, message=", ".join(errors))
