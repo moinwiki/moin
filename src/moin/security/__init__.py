@@ -17,7 +17,7 @@ from flask import abort
 from moin import current_app, flaskg
 from moin.constants import rights
 from moin.constants.keys import NAME_EXACT
-from moin import user
+from moin.user import search_users
 from moin.utils.pysupport import AutoNe
 
 
@@ -275,7 +275,7 @@ class AccessControlList(AutoNe):
         that means that there is a valid user account present.
         works for subscription emails.
         """
-        if user.search_users(**{NAME_EXACT: name}):  # is a user with this name known?
+        if search_users(**{NAME_EXACT: name}):  # is a user with this name known?
             return rightsdict.get(dowhat)
         return None
 
