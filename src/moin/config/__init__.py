@@ -10,6 +10,7 @@ from moin.datastructures.backends import BaseDictsBackend, BaseGroupsBackend
 
 if TYPE_CHECKING:
     from moin.auth import BaseAuth
+    from moin.security import DefaultSecurityPolicy
     from moin.storage.backends import BackendBase
 
 NamespaceMapping: TypeAlias = list[tuple[str, str]]
@@ -96,6 +97,7 @@ class WikiConfigProtocol(Protocol):
     registration_only_by_superuser: bool
     root_mapping: dict[str, str]
     secrets: dict[str, str] | str
+    SecurityPolicy: type[DefaultSecurityPolicy]
     serve_files: dict[str, str]
     show_hosts: bool
     siteid: str
