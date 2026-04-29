@@ -412,6 +412,9 @@ class GivenAuth(BaseAuth):
         return user_obj, True
 
 
+from moin.utils.parse import parse_bool
+
+
 def handle_login(userobj: User | None, **kw: Any) -> User | None:
     """
     Process a 'login' request by going through the configured authentication
@@ -420,7 +423,7 @@ def handle_login(userobj: User | None, **kw: Any) -> User | None:
     """
 
     stage = kw.pop("stage", None)
-    persistent = kw.pop("login_persistent", None) in ("1", "true")
+    persistent = parse_bool(kw.pop("login_persistent", "false"))
 
     params = {
         "username": kw.pop("login_username", None),
