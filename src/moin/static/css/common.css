@@ -330,18 +330,6 @@ a.moin-item-overlay-lr:hover { opacity: .8; background-color: var(--bg-trans-hov
 .tablesorter-header-inner { padding-left: 10px; cursor: pointer; }
 .sorter-false > .tablesorter-header-inner { padding-left: 0; }
 
-/* tickets */
-.moin-existing-tags { display: inline; }
-.moin-ticket-create-link,
-.moin-ticket-search { float: right; }
-#ticket-table-tip { color: var(--border); }
-#ticket-summary { width: 50%; }
-.moin-ticket-tags { border-bottom: none; clear: both; margin-top: 1em; display: none; }
-.moin-ticketsearch-form { display: inline; }
-#moin-ticketsearch-query { background-image: url("../../../static/img/search.png"); background-repeat: no-repeat; background-position: 5px;
-    padding-left: 24px; width: 150px; margin-left: 7px; }
-#ticket-list tr td:first-child a { font-family: monospace; }
-
 /* tags tab */
 ul.moin-tags { display: block; margin-left: 0; }
 ul.moin-tags > li { padding: 5px 0; display: inline-block; text-align: center; width: 300px; }

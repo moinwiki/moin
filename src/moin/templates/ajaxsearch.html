@@ -6,124 +6,99 @@
 #}
 
 {%- if results is defined %}
-    {%- if is_ticket %}
-        {%- if results %}
-            <div id="ticket-results">
-                <h4>{{ _("Please check these tickets if they cover your issue:") }}</h4>
-                <table>
-                    {% for result in results %}
-                        {% if result['itemtype'] == 'ticket' %}
-                            <tr>
-                                <td>
-                                    <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid') }}">
-                                        <b>{{ result['itemid'][:4] }}</b>
-                                    </a>
-                                </td>
-                                <td>
-                                    <p class="moin-search-hit-info">{{ _("{summary}").format(summary=result['summary']) }}</p>
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </table>
-            </div>
-        {% endif %}
-
-    {% else %}
-        {# when user keys changes into long search form, updates to whoosh_query indicates conclusion of queued searches #}
-        {% if subitem_target %}
-            <div class="moin-search-scope">
-                <em>Searching within {{ subitem_target }} and subitems for: “{{ query }}”</em>
-            </div>
-        {% endif %}
-        <p class="moin-suggestions"> {{ _("Whoosh query:") }}
-            <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
+    {# when user keys changes into long search form, updates to whoosh_query indicates conclusion of queued searches #}
+    {% if subitem_target %}
+        <div class="moin-search-scope">
+            <em>Searching within {{ subitem_target }} and subitems for: “{{ query }}”</em>
+        </div>
+    {% endif %}
+    <p class="moin-suggestions"> {{ _("Whoosh query:") }}
+        <span class="moin-suggestion-terms">{{ whoosh_query }} </span>
+    </p>
+    {%- if whoosh_filter %}
+        <p class="moin-suggestions"> {{ _("Whoosh filter:") }}
+            <span class="moin-suggestion-terms">{{ whoosh_filter }} </span>
         </p>
-        {%- if whoosh_filter %}
-            <p class="moin-suggestions"> {{ _("Whoosh filter:") }}
-                <span class="moin-suggestion-terms">{{ whoosh_filter }} </span>
-            </p>
-        {%- endif %}
-        {%- if omitted_words %}
-            <p class="moin-suggestions"> {{ _("Common words omitted from content field query:") }}
-                <span class="moin-suggestion-terms">{{ omitted_words }} </span>
-            </p>
-        {%- endif %}
-        {%- if results is defined %}
-            <p class="moin-search-hits">
-                {%- if results.filtered_count %}
-                    {%- set found = results|length %}
-                    {{ _("{found:d} items found, {items_filtered:d} more items filtered by content types.").format(found=found, items_filtered=results.filtered_count) }}
-                {%- else %}
-                    {{ _("{result_len:d} items found.").format(result_len=results|length) }}
-                {%- endif %}
-            </p>
-            {%- if results %}
-                <div class="moin-search-results">
-                    {%- set count = [0] %}
-                        {%- for result in results %}
-                            {%- set fullname = theme_supp.get_fullname(result) %}
-                            {%- set permission = flaskg.storage.may_read_rev(result) %}
-                            {%- if permission %}
-                                <p class="moin-search-match">
-                                    <span class="moin-search-name">
-                                        {# when user clicks on an item link under results, "regex=query" will highlight search terms within content #}
-                                        {%- if result['name'] %}
-                                            {%- if history %}
-                                                {# user has checked "All" radio button under Revisions heading #}
-                                                <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid', regex=query) }}">
-                                                    <b>{{ result['names'] }}</b>
-                                                </a>
-                                            {%- else %}
-                                                <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace'], regex=query) }}">
-                                                    <b>{{ result['names'] }}</b>
-                                                </a>
-                                            {%- endif %}
-                                        {%- else %}
+    {%- endif %}
+    {%- if omitted_words %}
+        <p class="moin-suggestions"> {{ _("Common words omitted from content field query:") }}
+            <span class="moin-suggestion-terms">{{ omitted_words }} </span>
+        </p>
+    {%- endif %}
+    {%- if results is defined %}
+        <p class="moin-search-hits">
+            {%- if results.filtered_count %}
+                {%- set found = results|length %}
+                {{ _("{found:d} items found, {items_filtered:d} more items filtered by content types.").format(found=found, items_filtered=results.filtered_count) }}
+            {%- else %}
+                {{ _("{result_len:d} items found.").format(result_len=results|length) }}
+            {%- endif %}
+        </p>
+        {%- if results %}
+            <div class="moin-search-results">
+                {%- set count = [0] %}
+                    {%- for result in results %}
+                        {%- set fullname = theme_supp.get_fullname(result) %}
+                        {%- set permission = flaskg.storage.may_read_rev(result) %}
+                        {%- if permission %}
+                            <p class="moin-search-match">
+                                <span class="moin-search-name">
+                                    {# when user clicks on an item link under results, "regex=query" will highlight search terms within content #}
+                                    {%- if result['name'] %}
+                                        {%- if history %}
+                                            {# user has checked "All" radio button under Revisions heading #}
                                             <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid', regex=query) }}">
-                                                <b>Item ID : {{ result['itemid'] }}</b>
+                                                <b>{{ result['names'] }}</b>
+                                            </a>
+                                        {%- else %}
+                                            <a href="{{ url_for_item(item_name=result['name'][0], wiki_name='Self', namespace=result['namespace'], regex=query) }}">
+                                                <b>{{ result['names'] }}</b>
                                             </a>
                                         {%- endif %}
-                                    </span>
-                                    <span>{{ _("MATCHED TERMS:") }}</span>
-                                    {%- for field, term in result.matched_terms() %}
-                                        {%- set field, term = theme_supp.field_term(field, term) %}
-                                        <span>{{ field }}:{{ term }}, </span>
-                                    {%- endfor %}
-                                </p>
-                                <p class="moin-search-hit-info">
-                                    {{ _("REVISION: {revid}, SIZE: {size}, MODIFIED: {mtime}, CONTENT TYPE: {type}, SCORE: {score}").
-                                        format(type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|time_datetime,
-                                        size=result['size']|filesizeformat, revid=result['rev_number'], score=result.score|round(2)) }}
-                                </p>
-                                {%- if result.highlights('comment') %}
-                                    <p class="moin-found-text">{{ _("COMMENT: {content}").format(content=result.highlights('comment')|safe) }}</p>
-                                {%- endif %}
-                                {%- if result['tags'] %}
-                                    <p class="moin-found-text">{{ _("TAGS: {content}").format(content=result['tags']|safe) }}</p>
-                                {%- endif %}
-                                {%- if result.highlights('content') %}
-                                    <p class="moin-found-text">{{ _("CONTENT: {content}").format(content=result.highlights('content')|safe) }}</p>
-                                {%- endif %}
-                            {%- else %}
-                                {#- read permission denied, using list to work around jinja2 scoping issue #}
-                                {%- if count.append(count.pop() + 1) %}
-                                {%- endif %}
+                                    {%- else %}
+                                        <a href="{{ url_for_item(item_name=result['revid'], wiki_name='Self', namespace=result['namespace'], field='revid', regex=query) }}">
+                                            <b>Item ID : {{ result['itemid'] }}</b>
+                                        </a>
+                                    {%- endif %}
+                                </span>
+                                <span>{{ _("MATCHED TERMS:") }}</span>
+                                {%- for field, term in result.matched_terms() %}
+                                    {%- set field, term = theme_supp.field_term(field, term) %}
+                                    <span>{{ field }}:{{ term }}, </span>
+                                {%- endfor %}
+                            </p>
+                            <p class="moin-search-hit-info">
+                                {{ _("REVISION: {revid}, SIZE: {size}, MODIFIED: {mtime}, CONTENT TYPE: {type}, SCORE: {score}").
+                                    format(type=(result['contenttype']|shorten_ctype), mtime=result['mtime']|time_datetime,
+                                    size=result['size']|filesizeformat, revid=result['rev_number'], score=result.score|round(2)) }}
+                            </p>
+                            {%- if result.highlights('comment') %}
+                                <p class="moin-found-text">{{ _("COMMENT: {content}").format(content=result.highlights('comment')|safe) }}</p>
                             {%- endif %}
-                        {%- endfor %}
-                    {% if count[0] %}
-                        <div class="warning">{{ _('{count:d} items are not shown because read permission was denied.').format(count=count[0]) }}</div>
-                    {% endif %}
-                </div>
-            {% else %}
-                <div class="moin-search-results">
-                    <p>
-                        <a href="{{ url_for('frontend.show_item', item_name=query) }}">
-                            {{ _('Create new page "{name}"').format(name=query) }}
-                        </a>
-                    </p>
-                </div>
-            {% endif %}
+                            {%- if result['tags'] %}
+                                <p class="moin-found-text">{{ _("TAGS: {content}").format(content=result['tags']|safe) }}</p>
+                            {%- endif %}
+                            {%- if result.highlights('content') %}
+                                <p class="moin-found-text">{{ _("CONTENT: {content}").format(content=result.highlights('content')|safe) }}</p>
+                            {%- endif %}
+                        {%- else %}
+                            {#- read permission denied, using list to work around jinja2 scoping issue #}
+                            {%- if count.append(count.pop() + 1) %}
+                            {%- endif %}
+                        {%- endif %}
+                    {%- endfor %}
+                {% if count[0] %}
+                    <div class="warning">{{ _('{count:d} items are not shown because read permission was denied.').format(count=count[0]) }}</div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="moin-search-results">
+                <p>
+                    <a href="{{ url_for('frontend.show_item', item_name=query) }}">
+                        {{ _('Create new page "{name}"').format(name=query) }}
+                    </a>
+                </p>
+            </div>
         {% endif %}
     {% endif %}
 {% endif %}

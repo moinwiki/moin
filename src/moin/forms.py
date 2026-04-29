@@ -255,8 +255,7 @@ Select = Enum.with_properties(widget=WIDGET_SELECT)
 # submit buttons instead of radio buttons.
 #
 # This is used to present the user several "OK" buttons with slightly different
-# semantics, like "Update" and "Update and Close" on a ticket page, or
-# "Save as Draft" and "Publish" when editing a blog entry.
+# semantics, like "Save as Draft" and "Publish" when editing a blog entry.
 SelectSubmit = Enum.with_properties(widget=WIDGET_SELECT_SUBMIT)
 
 

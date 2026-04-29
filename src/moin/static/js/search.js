@@ -32,12 +32,12 @@ $(document).ready(function(){
     $('.moin-loginsettings').addClass('navbar-right');
 
     // execute ajax transaction and replace old ajaxsearch.html content with updated ajaxsearch.html results
-    function ajaxify(query, allrevs, time_sorting, filetypes, namespaces, trash, is_ticket) {
+    function ajaxify(query, allrevs, time_sorting, filetypes, namespaces, trash) {
         var wiki_root = $('#moin-wiki-root').val();
         $.ajax({
             type: "GET",
             url: wiki_root + "/+search",
-            data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, namespaces: namespaces, trash: trash, boolajax: true, is_ticket: is_ticket }
+            data: { q: query, history: allrevs, time_sorting: time_sorting, filetypes: filetypes, namespaces: namespaces, trash: trash, boolajax: true }
         }).done(function(data) {
             if (data.search(/doctype/i) > 0) {
                 // this is a full page with a flash error message, replace everything
@@ -65,10 +65,6 @@ $(document).ready(function(){
         var filetypes = "";
         var namespaces = "";
         var trash = "";
-        var is_ticket = "";
-        if( $('input[name="meta_summary"]').length ){
-            is_ticket = true;
-        }
         allrev = $('[name="history"]:checked').val() === "all";
         trash = $('[name="trash"]:checked').val() === "include";
         time_sorting = $('[name="modified_time"]:checked').val();
@@ -80,6 +76,6 @@ $(document).ready(function(){
             namespaces += $(this).val() + ',';
         });
 
-        ajaxify($(this).val(), allrev, time_sorting, filetypes, namespaces, trash, is_ticket);
+        ajaxify($(this).val(), allrev, time_sorting, filetypes, namespaces, trash);
     });
 });

@@ -526,8 +526,6 @@ options_no_group_name: dict[str, OptionsGroup] = {
                     ("wikilink", "frontend.global_tags", dict(), L_("Tags"), L_("Global Tags Index")),
                     ("wikilink", "admin.index_user", dict(), L_("User"), L_("User")),
                     ("wikilink", "admin.index", dict(), L_("Admin"), L_("Administration & Docs")),
-                    # TODO: tickets are broken
-                    # ('wikilink', 'frontend.tickets', dict(), L_('Tickets'), L_('List of Tickets')),
                 ],
                 "Data to create the navi_bar from. Users can add more items in their quick links in user preferences. You need to configure a list of tuples (css_class, endpoint, args, label, title). Use L_() for translating. [list of tuples]",
             ),
@@ -595,7 +593,6 @@ options_no_group_name: dict[str, OptionsGroup] = {
             ),  # 'warn' as in 1.9.x is not supported
             Option("edit_lock_time", 10, "Time, in minutes, to hold or renew edit lock at start of edit or preview"),
             # ('item_license', '', 'not used: maybe page_license_enabled from 1.9.x; if set, show the license item within the editor. [Unicode]'),
-            # ('edit_ticketing', True, 'not used: maybe a remnant of https://moinmo.in/TicketSystem'),
         ),
     ),
     # ==========================================================================

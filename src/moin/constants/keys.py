@@ -160,18 +160,6 @@ SUPERTAGS = "supertags"
 # keys for blog entries
 PTIME = "ptime"
 
-# keys for tickets
-EFFORT = "effort"
-DIFFICULTY = "difficulty"
-SEVERITY = "severity"
-PRIORITY = "priority"
-ASSIGNED_TO = "assigned_to"
-SUPERSEDED_BY = "superseded_by"
-DEPENDS_ON = "depends_on"
-CLOSED = "closed"
-ELEMENT = "element"
-REPLY_TO = "reply_to"
-
 # Index names
 LATEST_REVS = "latest_revs"
 ALL_REVS = "all_revs"

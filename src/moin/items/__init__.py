@@ -41,7 +41,7 @@ from whoosh.query import Term, Prefix, And, Or, Not
 from moin import current_app, flaskg, log
 from moin.constants.chartypes import CHARS_UPPER, CHARS_LOWER
 from moin.constants.contenttypes import CONTENTTYPES_HELP_DOCS, CONTENTTYPE_NONEXISTENT, CONTENTTYPE_VARIABLES
-from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT, ITEMTYPE_TICKET
+from moin.constants.itemtypes import ITEMTYPE_NONEXISTENT, ITEMTYPE_USERPROFILE, ITEMTYPE_DEFAULT
 from moin.constants.keys import (
     ACL,
     NAME,
@@ -742,6 +742,9 @@ class Item:
 
         itemtype = rev.meta.get(ITEMTYPE) or itemtype or ITEMTYPE_DEFAULT
         logging.debug(f"Item {name!r}, got itemtype {itemtype!r} from revision meta")
+        if itemtype == "ticket":
+            # wiki has old ticket item, for compatibility only
+            itemtype = ITEMTYPE_DEFAULT
 
         item = item_registry.get(itemtype, fqname, rev=rev, content=content)
         if item is None:
@@ -1106,9 +1109,8 @@ class Item:
                       suitable as arguments of the same names to pass to
                       item.modify
             """
-            # Since the metadata form for tickets is an incomplete one, we load the
-            # original meta and update it with those from the metadata editor
-            # e.g. we get PARENTID in here
+            # Merge original metadata with edited metadata to avoid losing fields
+            # that are not present in the editor form
             meta = item.meta_filter(item.prepare_meta_for_modify(item.meta))
             meta.update(self["meta_form"].value)
             if item.name.endswith("Dict"):
@@ -1203,8 +1205,7 @@ class Item:
             if deleted_names:  # some names have been deleted.
                 meta[NAME_OLD] = current_names
                 # if no names left, then set the trash
-                # but not if the item is a ticket (tickets get closed, not deleted)
-                if not new_names and (ITEMTYPE not in meta or not meta[ITEMTYPE] == ITEMTYPE_TICKET):
+                if not new_names:
                     meta[TRASH] = True
                     meta[NAME] = None
             meta[REV_NUMBER] = currentrev.meta.get(REV_NUMBER, 0) + 1
@@ -1920,18 +1921,15 @@ class NonExistent(Item):
 
     def _select_itemtype(self):
         """
-        TODO: Here we bypass the code that allows a user to select an itemtype just before
         creating a new item:
 
             Default - Wiki item
             Blog - Blog item
             Blog entry - Blog entry item
-            Ticket - Ticket item
 
-        Blogs and Tickets are broken.
+        Blogs are broken.
 
-        If you want to work on tickets or blogs, create a new branch and revert the change
-        made on or about 2017-07-04:
+        If you want to work on blogs, create a new branch and revert the change made on or about 2017-07-04:
         """
         # if this is a subitem, verify all parent items exist
         try:
@@ -1961,15 +1959,6 @@ class NonExistent(Item):
             group_names=content_registry.group_names,
             groups=content_registry.groups,
             similar_names=similar_names,
-        )
-
-        # dead code, see above
-        return render_template(
-            "modify_select_itemtype.html",
-            item=self,
-            item_name=self.name,
-            fqname=self.fqname,
-            itemtypes=item_registry.shown_entries,
         )
 
     @override

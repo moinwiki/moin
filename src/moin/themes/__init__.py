@@ -28,7 +28,7 @@ from babel import Locale
 from moin import current_app, flaskg, log
 from moin.i18n import _, L_
 from moin import wikiutil
-from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, ASSIGNED_TO, NAME, NAMESPACE
+from moin.constants.keys import USERID, ADDRESS, HOSTNAME, REVID, ITEMID, NAME_EXACT, NAME, NAMESPACE
 from moin.constants.contenttypes import CONTENTTYPES_MAP, CONTENTTYPE_MARKUP, CONTENTTYPE_TEXT, CONTENTTYPE_MOIN_19
 from moin.constants.misc import FLASH_REPEAT, ICON_MAP
 from moin.constants.namespaces import NAMESPACE_DEFAULT, NAMESPACE_USERS, NAMESPACE_USERPROFILES, NAMESPACE_ALL
@@ -130,7 +130,7 @@ class ThemeSupport:
                 # The request urls for short form searches and ajax searches are similar to the following:
                 # http://127.0.0.1:5000/+search?q=mtime%3A2022+rev_number%3A2
                 # http://127.0.0.1:5000/+search?q=mtime%3A2022-02&history=false&time_sorting=default&filetypes=all
-                #     %2C&boolajax=true&is_ticket= HTTP/1.1
+                #     %2C&boolajax=true HTTP/1.1
                 url = request.url
                 url = urllib.parse.unquote(url)
                 args = url.split("?q=")[1]
@@ -613,15 +613,6 @@ def get_editor_info(meta, external=False):
     return result
 
 
-def get_assigned_to_info(meta):
-    display_name = ""
-    userid = meta.get(ASSIGNED_TO)
-    if userid:
-        u = User(userid)
-        display_name = u.display_name or u.name0
-    return display_name
-
-
 def shorten_fqname(fqname, length=25):
     """
     Shorten a given long fqname so that it looks good depending upon whether
@@ -774,7 +765,6 @@ def setup_jinja_env(jinja_env):
             "url_for_item": url_for_item,
             "get_fqname": get_fqname,
             "get_editor_info": lambda meta: get_editor_info(meta),
-            "get_assigned_to_info": lambda meta: get_assigned_to_info(meta),
             "utctimestamp": lambda dt: utctimestamp(dt),
         }
     )
