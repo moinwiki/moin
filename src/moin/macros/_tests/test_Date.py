@@ -30,11 +30,8 @@ class TestMacroDateTimeBase:
 
         flaskg.user.valid = True  # show_time creates ISO 8601 dates if user is not logged in
         result = format_date_time(utcfromtimestamp(ts))
-        expected = [
-            "Aug 7, 2023, 5:38:11\u202fAM",
-            "Aug 7, 2023, 5:38:11 AM",
-        ]  # TODO: The second entry can be removed later
-        assert result in expected
+        expected = "Aug 7, 2023, 5:38:11\u202fAM"
+        assert result == expected
 
         with pytest.raises(ValueError):
             # Dates beyond the next 10,000 years can't be predicted.

@@ -30,11 +30,8 @@ def test_Macro():
 
     arguments = ["2023-08-07T11:11:11", "argument2"]
     result = macro_obj.macro("content", arguments, "page_url", "alternative")
-    expected = [
-        "Aug 7, 2023, 11:11:11\u202fAM",
-        "Aug 7, 2023, 11:11:11 AM",
-    ]  # TODO: The second entry can be removed in the future
-    assert result in expected
+    expected = "Aug 7, 2023, 11:11:11\u202fAM"
+    assert result == expected
 
     flaskg.user.valid = False
     result = macro_obj.macro("content", arguments, "page_url", "alternative")
