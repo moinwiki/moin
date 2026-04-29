@@ -82,8 +82,12 @@ class MoinApp(Flask):
         if (info_name == "moin" and cmd_name == "cli") or info_name == "help":
             return
 
+        # if we have a config class, determine the configuration directory
+        if not (config_dir := getattr(moin_config_class, "wikiconfig_dir", None)):
+            config_dir = os.getcwd()
+
         with clock.timeit("create_app load config"):
-            self.configure_flask(info_name, flask_config_file, flask_config_dict)
+            self.configure_flask(info_name, config_dir, flask_config_file, flask_config_dict)
             self.load_moin_config(moin_config_class, warn_default, **kwargs)
 
         with clock.timeit("create_app register"):
@@ -137,25 +141,25 @@ class MoinApp(Flask):
     def configure_flask(
         self,
         info_name: str,
+        wikiconfig_dir: str,
         flask_config_file: str | PathLike[str] | None = None,
         flask_config_dict: dict[str, Any] | None = None,
     ) -> None:
         if flask_config_file:
             self.config.from_pyfile(path.abspath(flask_config_file))
-        else:
-            if not self.config.from_envvar("MOINCFG", silent=True):
-                # no MOINCFG env variable set, try stuff in cwd:
-                flask_config_file = path.abspath("wikiconfig_local.py")
+        elif not self.config.from_envvar("MOINCFG", silent=True):
+            # no MOINCFG env variable set, try stuff in wikiconfig_dir:
+            flask_config_file = path.join(wikiconfig_dir, "wikiconfig_local.py")
+            if not path.exists(flask_config_file):
+                flask_config_file = path.join(wikiconfig_dir, "wikiconfig.py")
                 if not path.exists(flask_config_file):
-                    flask_config_file = path.abspath("wikiconfig.py")
-                    if not path.exists(flask_config_file):
-                        if info_name == "create-instance":  # moin CLI
-                            config_path = path.dirname(config.__file__)
-                            flask_config_file = path.join(config_path, "wikiconfig.py")
-                        else:
-                            flask_config_file = None
-                if flask_config_file:
-                    self.config.from_pyfile(path.abspath(flask_config_file))
+                    if info_name == "create-instance":  # moin CLI
+                        wikiconfig_dir = path.dirname(config.__file__)
+                        flask_config_file = path.join(wikiconfig_dir, "wikiconfig.py")
+                    else:
+                        flask_config_file = None
+            if flask_config_file:
+                self.config.from_pyfile(path.abspath(flask_config_file))
 
         if flask_config_dict:
             self.config.update(flask_config_dict)
