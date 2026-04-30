@@ -136,19 +136,24 @@ name of the authentication method.
 
 from __future__ import annotations
 
+from typing import Any, cast, TYPE_CHECKING
+
 from urllib.parse import quote, quote_plus
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from flask import url_for, session, request
 
-from moin import user
+from moin import current_app, flaskg
 from moin.i18n import _
+from moin.log import getLogger
+from moin.user import User
 from moin.utils.markup import safe_markup
 
-from moin import current_app, flaskg, log
+if TYPE_CHECKING:
+    from markupsafe import Markup
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 def get_multistage_continuation_url(auth_name, extra_fields={}):
@@ -167,14 +172,23 @@ def get_multistage_continuation_url(auth_name, extra_fields={}):
 
     # the url should be absolute so we use _external
     url = url_for("frontend.login", login_submit="1", stage=auth_name, _external=True, **extra_fields)
-    logging.debug(f"multistage_continuation_url: {url}")
+    logger.debug(f"multistage_continuation_url: {url}")
     return url
 
 
 class LoginReturn:
-    """LoginReturn - base class for auth method login() return value"""
+    """
+    LoginReturn - base class for auth method login() return value
+    """
 
-    def __init__(self, user_obj, continue_flag, message=None, multistage=None, redirect_to=None):
+    def __init__(
+        self,
+        user_obj: User | None,
+        continue_flag: bool,
+        message: str | None = None,
+        multistage: bool | None = None,
+        redirect_to: str | None = None,
+    ) -> None:
         self.user_obj = user_obj
         self.continue_flag = continue_flag
         self.message = message
@@ -183,94 +197,105 @@ class LoginReturn:
 
 
 class ContinueLogin(LoginReturn):
-    """ContinueLogin - helper for auth method login that just continues"""
+    """
+    ContinueLogin - helper for auth method login that just continues
+    """
 
-    def __init__(self, user_obj, message=None):
-        LoginReturn.__init__(self, user_obj, True, message=message)
+    def __init__(self, user_obj: User | None, message: str | None = None) -> None:
+        super().__init__(user_obj, True, message=message)
 
 
 class CancelLogin(LoginReturn):
-    """CancelLogin - cancel login showing a message"""
+    """
+    CancelLogin - cancel login showing a message
+    """
 
-    def __init__(self, message):
-        LoginReturn.__init__(self, None, False, message=message)
+    def __init__(self, message: str) -> None:
+        super().__init__(None, False, message=message)
 
 
 class MultistageFormLogin(LoginReturn):
-    """MultistageFormLogin - require user to fill in another form"""
+    """
+    MultistageFormLogin - require user to fill in another form
+    """
 
-    def __init__(self, multistage):
-        LoginReturn.__init__(self, None, False, multistage=multistage)
+    def __init__(self, multistage: bool) -> None:
+        super().__init__(None, False, multistage=multistage)
 
 
 class MultistageRedirectLogin(LoginReturn):
-    """MultistageRedirectLogin - redirect user to another site before continuing login"""
+    """
+    MultistageRedirectLogin - redirect user to another site before continuing login
+    """
 
-    def __init__(self, url):
-        LoginReturn.__init__(self, None, False, redirect_to=url)
+    def __init__(self, url: str) -> None:
+        super().__init__(None, False, redirect_to=url)
 
 
 class BaseAuth:
+
     name: str | None = None
     login_inputs: list[str] = []
     logout_possible: bool = False
 
-    def __init__(self, trusted=False, **kw):
+    def __init__(self, trusted: bool = False, **kw: Any) -> None:
         self.trusted = trusted
         if kw:
             raise TypeError(f"got unexpected arguments {kw!r}")
 
-    def login(self, user_obj, **kw):
+    def login(self, user_obj, **kw: Any) -> ContinueLogin:
         return ContinueLogin(user_obj)
 
-    def request(self, user_obj, **kw):
+    def request(self, user_obj, **kw: Any) -> tuple[User | None, bool]:
         return user_obj, True
 
-    def logout(self, user_obj, **kw):
+    def logout(self, user_obj, **kw: Any) -> tuple[User | None, bool]:
         if self.name and user_obj and user_obj.auth_method == self.name:
-            logging.debug(f"{self.name}: logout - invalidating user {user_obj.name!r}")
+            logger.debug(f"{self.name}: logout - invalidating user {user_obj.name!r}")
             user_obj.valid = False
         return user_obj, True
 
-    def login_hint(self):
+    def login_hint(self) -> Markup | None:
         return None
 
 
 class MoinAuth(BaseAuth):
-    """handle login from moin login form"""
+    """
+    Handle login from moin login form.
+    """
 
-    def __init__(self, **kw):
-        super().__init__(**kw)
-
-    login_inputs = ["username", "password"]
     name = "moin"
+    login_inputs = ["username", "password", "persistent"]
     logout_possible = True
 
-    def login(self, user_obj, **kw):
-        username = kw.get("username")
-        password = kw.get("password")
+    def __init__(self, **kw: Any) -> None:
+        super().__init__(**kw)
+
+    def login(self, user_obj: User | None, **kw: Any) -> ContinueLogin:
+        username = cast(str | None, kw.get("username"))
+        password = cast(str | None, kw.get("password"))
 
         # simply continue if something else already logged in successfully
         if user_obj and user_obj.valid:
             return ContinueLogin(user_obj)
 
-        if not username and not password:
+        if not username:
             return ContinueLogin(user_obj)
 
-        logging.debug(f"{self.name}: performing login action")
-
-        if username and not password:
+        if not password:
             return ContinueLogin(user_obj, _("Missing password. Please enter user name and password."))
 
-        u = user.User(name=username, password=password, auth_method=self.name, trusted=self.trusted)
-        if u.valid:
-            logging.debug(f"{self.name}: successfully authenticated user {u.name!r} (valid)")
-            return ContinueLogin(u)
-        else:
-            logging.debug(f"{self.name}: could not authenticate user {username!r} (not valid)")
-            return ContinueLogin(user_obj, _("Invalid username or password."))
+        logger.debug(f"{self.name}: performing login action")
 
-    def login_hint(self):
+        user = User(name=username, password=password, auth_method=self.name, trusted=self.trusted)
+        if user.valid:
+            logger.debug(f"{self.name}: successfully authenticated user {user.name!r} (valid)")
+            return ContinueLogin(user)
+
+        logger.debug(f"{self.name}: could not authenticate user {username!r} (not valid)")
+        return ContinueLogin(user_obj, _("Invalid username or password."))
+
+    def login_hint(self) -> Markup:
         if current_app.cfg.registration_only_by_superuser:
             msg = current_app.cfg.registration_hint + " "
         else:
@@ -346,13 +371,13 @@ class GivenAuth(BaseAuth):
         return name
 
     def request(self, user_obj, **kw):
-        u = None
+        user = None
         # always revalidate auth
         if user_obj and user_obj.auth_method == self.name:
             user_obj = None
         # something else authenticated before us
         if user_obj:
-            logging.debug("already authenticated, doing nothing")
+            logger.debug("already authenticated, doing nothing")
             return user_obj, True
 
         if self.user_name is not None:
@@ -362,51 +387,60 @@ class GivenAuth(BaseAuth):
         else:
             auth_username = request.environ.get(self.env_var)
 
-        logging.debug(f"auth_username = {auth_username!r}")
+        logger.debug(f"auth_username = {auth_username!r}")
         if auth_username:
             auth_username = self.decode_username(auth_username)
             auth_username = self.transform_username(auth_username)
-            logging.debug(f"auth_username (after decode/transform) = {auth_username!r}")
-            u = user.User(
+            logger.debug(f"auth_username (after decode/transform) = {auth_username!r}")
+            user = User(
                 auth_username=auth_username,
                 auth_method=self.name,
                 auth_attribs=("name", "password"),
                 trusted=self.trusted,
             )
 
-        logging.debug(f"u: {u!r}")
-        if u and self.autocreate:
-            logging.debug("autocreating user")
-            u.create_or_update()
-        if u and u.valid:
-            logging.debug(f"returning valid user {u!r}")
-            return u, True  # True to get other methods called, too
-        else:
-            logging.debug(f"returning {user_obj!r}")
-            return user_obj, True
+        logger.debug(f"user: {user!r}")
+        if user and self.autocreate:
+            logger.debug("autocreating user")
+            user.create_or_update()
+
+        if user and user.valid:
+            logger.debug(f"returning valid user {user!r}")
+            return user, True  # True to get other methods called, too
+
+        logger.debug(f"returning {user_obj!r}")
+        return user_obj, True
 
 
-def handle_login(userobj, **kw):
+from moin.utils.parse import parse_bool
+
+
+def handle_login(userobj: User | None, **kw: Any) -> User | None:
     """
     Process a 'login' request by going through the configured authentication
     methods in turn. The passable keyword arguments are explained in more
     detail at the top of this file.
     """
 
-    stage = kw.get("stage")
+    stage = kw.pop("stage", None)
+    persistent = parse_bool(kw.pop("login_persistent", "false"))
+
     params = {
-        "username": kw.get("login_username"),
-        "password": kw.get("login_password"),
-        "multistage": (stage and True) or None,
+        "username": kw.pop("login_username", None),
+        "password": kw.pop("login_password", None),
+        "multistage": bool(stage) or None,
         "attended": True,
     }
+
     # add the other parameters from the form
     for param in kw.keys():
         params[param] = kw.get(param)
 
     for authmethod in current_app.cfg.auth:
+
         if stage and authmethod.name != stage:
             continue
+
         ret = authmethod.login(userobj, **params)
 
         userobj = ret.user_obj
@@ -426,6 +460,7 @@ def handle_login(userobj, **kw):
             url = url.replace("%return_form", quote_plus(nextstage))
             url = url.replace("%return", quote(nextstage))
             abort(redirect(url))
+
         msg = ret.message
         if msg and msg not in flaskg._login_messages:
             flaskg._login_messages.append(msg)
@@ -433,11 +468,16 @@ def handle_login(userobj, **kw):
         if not cont:
             break
 
+    if userobj and userobj.valid:
+        session.permanent = persistent
+
     return userobj
 
 
 def handle_logout(userobj):
-    """Logout the passed user from every configured authentication method."""
+    """
+    Logout the passed user from every configured authentication method.
+    """
     if userobj is None:
         # not logged in
         return userobj
@@ -450,7 +490,9 @@ def handle_logout(userobj):
 
 
 def handle_request(userobj):
-    """Handle the per-request callbacks of the configured authentication methods."""
+    """
+    Handle the per-request callbacks of the configured authentication methods.
+    """
     for authmethod in current_app.cfg.auth:
         userobj, cont = authmethod.request(userobj)
         if not cont:
@@ -466,15 +508,15 @@ def setup_from_session():
         auth_method = session["user.auth_method"]
         auth_attribs = session["user.auth_attribs"]
         session_token = session["user.session_token"]
-        logging.debug(f"got from session: {itemid!r} {trusted!r} {auth_method!r} {auth_attribs!r}")
-        logging.debug(f"current auth methods: {current_app.cfg.auth_methods!r}")
+        logger.debug(f"got from session: {itemid!r} {trusted!r} {auth_method!r} {auth_attribs!r}")
+        logger.debug(f"current auth methods: {current_app.cfg.auth_methods!r}")
         if auth_method and auth_method in current_app.cfg.auth_methods:
-            userobj = user.User(itemid, auth_method=auth_method, auth_attribs=auth_attribs, trusted=trusted)
+            userobj = User(itemid, auth_method=auth_method, auth_attribs=auth_attribs, trusted=trusted)
             if not userobj.validate_session(session_token):
-                logging.debug("session token doesn't validate")
+                logger.debug("session token doesn't validate")
                 # Destroy current session since it's no longer valid.
                 userobj.logout_session(False)
                 # We didn't find user in session data.
                 userobj = None
-    logging.debug(f"session started for user {userobj!r}")
+    logger.debug(f"session started for user {userobj!r}")
     return userobj

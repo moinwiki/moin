@@ -9,10 +9,11 @@ MoinMoin - moin.user tests.
 
 import pytest
 
-from moin import flaskg, user
+from moin import flaskg
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_USERPROFILE
 from moin.constants.keys import ITEMID, ITEMTYPE, NAME, NAMEPREFIX, NAMERE, NAMESPACE, REV_NUMBER, TAGS
 from moin.items import Item
+from moin.user import create_user, is_valid_username, User
 
 
 @pytest.mark.usefixtures("_req_ctx")
@@ -22,21 +23,21 @@ class TestSimple:
         password = "barbaz4711"
         email = "foo@example.org"
         # nonexisting user
-        u = user.User(name=name, password=password)
-        assert u.name == [name]
-        assert not u.valid
-        assert not u.exists()
+        user = User(name=name, password=password)
+        assert user.name == [name]
+        assert not user.valid
+        assert not user.exists()
         # create a user
-        ret = user.create_user(name, password, email, validate=False)
+        ret = create_user(name, password, email, validate=False)
         assert ret is None, f"create_user returned: {ret}"
         # existing user
-        u = user.User(name=name, password=password)
-        assert u.name == [name]
-        assert u.email == email
-        assert u.valid
-        assert u.exists()
-        assert u.profile[ITEMTYPE] == ITEMTYPE_USERPROFILE
-        assert u.profile[REV_NUMBER] == 1
+        user = User(name=name, password=password)
+        assert user.name == [name]
+        assert user.email == email
+        assert user.valid
+        assert user.exists()
+        assert user.profile[ITEMTYPE] == ITEMTYPE_USERPROFILE
+        assert user.profile[REV_NUMBER] == 1
 
 
 @pytest.mark.usefixtures("_req_ctx", "saved_user")
@@ -45,7 +46,7 @@ class TestUser:
     @pytest.fixture
     def saved_user(self):
         orig_user = flaskg.user
-        flaskg.user = user.User()
+        flaskg.user = User()
         yield flaskg.user
         flaskg.user = orig_user
 
@@ -59,8 +60,8 @@ class TestUser:
         self.createUser(name, password)
 
         # Try to "login"
-        theUser = user.User(name=name, password=password)
-        assert theUser.valid
+        user = User(name=name, password=password)
+        assert user.valid
 
     def testUnicodePassword(self):
         """User: login with non-ASCII password."""
@@ -70,8 +71,8 @@ class TestUser:
         self.createUser(name, password)
 
         # Try to "login"
-        theUser = user.User(name=name, password=password)
-        assert theUser.valid
+        user = User(name=name, password=password)
+        assert user.valid
 
     def testInvalidatePassword(self):
         """User: test invalidation of password."""
@@ -81,20 +82,20 @@ class TestUser:
         self.createUser(name, password)
 
         # Try to "login"
-        theUser = user.User(name=name, password=password)
-        assert theUser.valid
+        user = User(name=name, password=password)
+        assert user.valid
 
         # Invalidate the stored password (hash)
-        theUser.set_password("")  # empty str or None means "invalidate"
-        theUser.save()
+        user.set_password("")  # empty str or None means "invalidate"
+        user.save()
 
         # Try to "login" with previous password
-        theUser = user.User(name=name, password=password)
-        assert not theUser.valid
+        user = User(name=name, password=password)
+        assert not user.valid
 
         # Try to "login" with empty password
-        theUser = user.User(name=name, password="")
-        assert not theUser.valid
+        user = User(name=name, password="")
+        assert not user.valid
 
     def testPasswordHash(self):
         """
@@ -111,12 +112,12 @@ class TestUser:
         self.createUser(name, pw_hash, True)
 
         # Try to "login" with correct password
-        theuser = user.User(name=name, password="12345")
-        assert theuser.valid
+        user = User(name=name, password="12345")
+        assert user.valid
 
         # Try to "login" with a wrong password
-        theuser = user.User(name=name, password="wrong")
-        assert not theuser.valid
+        user = User(name=name, password="wrong")
+        assert not user.valid
 
     # Subscriptions ---------------------------------------------------
 
@@ -132,11 +133,11 @@ class TestUser:
         name = "bar"
         password = name
         email = "bar@example.org"
-        user.create_user(name, password, email)
-        the_user = user.User(name=name, password=password)
-        assert not the_user.is_subscribed_to(item)
-        the_user.subscribe(NAME, "SomeOtherPageName", "")
-        result = the_user.unsubscribe(NAME, "OneMorePageName", "")
+        create_user(name, password, email)
+        user = User(name=name, password=password)
+        assert not user.is_subscribed_to(item)
+        user.subscribe(NAME, "SomeOtherPageName", "")
+        result = user.unsubscribe(NAME, "OneMorePageName", "")
         assert result is False
 
         subscriptions = [
@@ -148,10 +149,10 @@ class TestUser:
         ]
         for subscription in subscriptions:
             keyword, value, namespace = subscription
-            the_user.subscribe(keyword, value, namespace)
-            assert the_user.is_subscribed_to(item)
-            the_user.unsubscribe(keyword, value, namespace, item)
-            assert not the_user.is_subscribed_to(item)
+            user.subscribe(keyword, value, namespace)
+            assert user.is_subscribed_to(item)
+            user.unsubscribe(keyword, value, namespace, item)
+            assert not user.is_subscribed_to(item)
 
     # Bookmarks -------------------------------------------------------
 
@@ -159,19 +160,19 @@ class TestUser:
         name = "Test_User_bookmark"
         password = name
         self.createUser(name, password)
-        theUser = user.User(name=name, password=password)
+        user = User(name=name, password=password)
 
         # set / retrieve the bookmark
         bookmark = 1234567
-        theUser.bookmark = bookmark
-        theUser = user.User(name=name, password=password)
-        result = theUser.bookmark
+        user.bookmark = bookmark
+        user = User(name=name, password=password)
+        result = user.bookmark
         assert result == bookmark
 
         # delete the bookmark
-        theUser.bookmark = None
-        theUser = user.User(name=name, password=password)
-        result = theUser.bookmark
+        user.bookmark = None
+        user = User(name=name, password=password)
+        result = user.bookmark
         assert result is None
 
     # Quicklinks ------------------------------------------------------
@@ -184,24 +185,24 @@ class TestUser:
         name = "Test_User_quicklink"
         password = name
         self.createUser(name, password)
-        theUser = user.User(name=name, password=password)
+        user = User(name=name, password=password)
 
         # no quick links exist yet
-        result_before = theUser.quicklinks
+        result_before = user.quicklinks
         assert result_before == []
 
-        result = theUser.is_quicklinked_to([pagename])
+        result = user.is_quicklinked_to([pagename])
         assert not result
 
         # add quicklink
-        theUser.quicklink("Test_page_added")
-        result_on_addition = theUser.quicklinks
+        user.quicklink("Test_page_added")
+        result_on_addition = user.quicklinks
         expected = ["MoinTest/Test_page_added"]
         assert result_on_addition == expected
 
         # remove quicklink
-        theUser.quickunlink("Test_page_added")
-        result_on_removal = theUser.quicklinks
+        user.quickunlink("Test_page_added")
+        result_on_removal = user.quicklinks
         expected = []
         assert result_on_removal == expected
 
@@ -211,17 +212,17 @@ class TestUser:
         name = "Test_User_trail"
         password = name
         self.createUser(name, password)
-        theUser = user.User(name=name, password=password)
+        user = User(name=name, password=password)
 
         # no item name added to trail
-        result = theUser.get_trail()
+        result = user.get_trail()
         expected = []
         assert result == expected
 
         # item name added to trail
-        theUser.add_trail("item_added", [])
-        theUser = user.User(name=name, password=password)
-        result = theUser.get_trail()
+        user.add_trail("item_added", [])
+        user = User(name=name, password=password)
+        result = user.get_trail()
         expected = [("MoinTest/item_added", [])]
         assert result == expected
 
@@ -231,20 +232,20 @@ class TestUser:
         name = "Test_User_sessions"
         password = name
         self.createUser(name, password)
-        theUser = user.User(name=name, password=password)
+        user = User(name=name, password=password)
 
         # generate test token and validate it
-        test_token = theUser.generate_session_token()
-        result_success = theUser.validate_session(test_token)
+        test_token = user.generate_session_token()
+        result_success = user.validate_session(test_token)
         assert result_success
 
         # check if the token is saved
-        test_new_token = theUser.get_session_token()
+        test_new_token = user.get_session_token()
         assert test_token == test_new_token
 
         # check if password change invalidates the token
-        theUser.set_password(password, False)
-        result_failure = theUser.validate_session(test_token)
+        user.set_password(password, False)
+        result_failure = user.validate_session(test_token)
         assert not result_failure
 
     # Other ----------------------------------------------------------
@@ -253,21 +254,21 @@ class TestUser:
         name = "Test_User_other"
         password = name
         self.createUser(name, password)
-        theUser = user.User(name=name, password=password)
+        user = User(name=name, password=password)
 
         # use recovery token to generate new password
-        test_token = theUser.generate_recovery_token()
-        result_success = theUser.apply_recovery_token(test_token, "test_newpass")
+        test_token = user.generate_recovery_token()
+        result_success = user.apply_recovery_token(test_token, "test_newpass")
         assert result_success
 
         # wrong token
-        result_failure = theUser.apply_recovery_token("test_wrong_token", "test_newpass")
+        result_failure = user.apply_recovery_token("test_wrong_token", "test_newpass")
         assert not result_failure
 
     # Helpers ---------------------------------------------------------
 
     def createUser(self, name, password, pwencoded=False, email=None, validate=False):
-        ret = user.create_user(name, password, email, validate=validate, is_encrypted=pwencoded)
+        ret = create_user(name, password, email, validate=validate, is_encrypted=pwencoded)
         assert ret is None, f"create_user returned: {ret}"
 
 
@@ -275,16 +276,16 @@ class TestGroupName:
 
     @pytest.mark.usefixtures("_app_ctx")
     def test_group_names(self):
-        """User: isValidName: reject group names."""
+        """is_valid_username: reject group names."""
         test = "AdminGroup"
-        assert not user.isValidName(test)
+        assert not is_valid_username(test)
 
 
 @pytest.mark.usefixtures("_app_ctx")
-class TestIsValidName:
+class TestIsValidUserName:
 
     def test_non_alnum_characters(self):
-        """User: isValidName: reject Unicode non-alphanumeric characters.
+        """User: is_valid_username: reject Unicode non-alphanumeric characters.
 
         ':' and ',' are used in ACL rules; we might add more characters to the syntax.
         """
@@ -292,16 +293,16 @@ class TestIsValidName:
         base = "User{0}Name"
         for c in invalid:
             name = base.format(c)
-            assert not user.isValidName(name)
+            assert not is_valid_username(name)
 
     def test_whitespace(self):
-        """User: isValidName: reject leading, trailing, or multiple whitespace."""
+        """is_valid_username: reject leading, trailing, or multiple whitespace."""
         cases = (" User Name", "User Name ", "User   Name")
         for test in cases:
-            assert not user.isValidName(test)
+            assert not is_valid_username(test)
 
     def test_valid(self):
-        """User: isValidName: accept names in any language, with spaces."""
+        """is_valid_username: accept names in any language, with spaces."""
         cases = (
             "Jürgen Hermann",  # German
             "ניר סופר",  # Hebrew
@@ -309,7 +310,7 @@ class TestIsValidName:
             "가각간갇갈 갉갊감 갬갯걀갼",  # Hangul (gibberish)
         )
         for test in cases:
-            assert user.isValidName(test)
+            assert is_valid_username(test)
 
 
 coverage_modules = ["moin.user"]

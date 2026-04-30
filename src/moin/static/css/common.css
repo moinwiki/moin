@@ -595,7 +595,7 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-subitem-list { font-size: 1.25em; color: var(--alert); }
 
 .moin-form dd { float: left; width: 70%; margin: .3em 0; }
-.moin-form dd input { width: 75%; }
+.moin-form dd input:not([type="checkbox"], [type="radio"]) { width: 75%; }
 .moin-form dd select { width: 76%; }
 .moin-form dt { clear: both; float: left; width: 25%; text-align: right; margin-top: .3em; padding-right: 1em; }
 .moin-form dt label.required:after { content: '*'; color: var(--primary); }

@@ -89,13 +89,13 @@ from moin.items import (
     find_matches,
 )
 from moin.items.content import content_registry, conv_serialize
-from moin import user
 from moin.constants.keys import *  # noqa
 from moin.constants.namespaces import *  # noqa
 from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_NONEXISTENT
 from moin.constants.contenttypes import *  # noqa
 from moin.constants.rights import SUPERUSER
 from moin.constants.misc import FLASH_REPEAT
+from moin.user import create_user, normalize_username, search_users, User
 from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item
@@ -2015,15 +2015,15 @@ def orphaned_items():
 @frontend.route("/+quicklink/<itemname:item_name>")
 def quicklink_item(item_name):
     """Add/Remove the current wiki page to/from the user quicklinks"""
-    u = flaskg.user
+    user = flaskg.user
     msg = None
-    if not u.valid:
+    if not user.valid:
         msg = _("You must login to use this action: {action}.").format(action="quicklink/quickunlink"), "error"
     elif not flaskg.user.is_quicklinked_to([item_name]):
-        if not u.quicklink(item_name):
+        if not user.quicklink(item_name):
             msg = _("A quicklink to this page could not be added for you."), "error"
     else:
-        if not u.quickunlink(item_name):
+        if not user.quickunlink(item_name):
             msg = _("Your quicklink to this page could not be removed."), "error"
     if msg:
         flash(*msg)
@@ -2033,7 +2033,7 @@ def quicklink_item(item_name):
 @frontend.route("/+subscribe/<itemname:item_name>")
 def subscribe_item(item_name):
     """Add/Remove the current wiki item to/from the user's subscriptions"""
-    u = flaskg.user
+    user = flaskg.user
     msg = None
     try:
         item = Item.create(item_name)
@@ -2041,13 +2041,13 @@ def subscribe_item(item_name):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    if not u.valid:
+    if not user.valid:
         msg = _("You must login to use this action: {action}.").format(action="subscribe/unsubscribe"), "error"
-    elif not u.may.read(item_name):
+    elif not user.may.read(item_name):
         msg = _("You are not allowed to subscribe to an item you may not read."), "error"
-    elif u.is_subscribed_to(item):
+    elif user.is_subscribed_to(item):
         # Try to unsubscribe
-        if not u.unsubscribe(ITEMID, item.meta[ITEMID]):
+        if not user.unsubscribe(ITEMID, item.meta[ITEMID]):
             msg = (
                 _("Can't remove the subscription! You are subscribed to this page, but not by itemid.")
                 + " "
@@ -2056,7 +2056,7 @@ def subscribe_item(item_name):
             )
     else:
         # Try to subscribe
-        if not u.subscribe(ITEMID, item.meta[ITEMID]):
+        if not user.subscribe(ITEMID, item.meta[ITEMID]):
             msg = _("You could not get subscribed to this item."), "error"
     if msg:
         flash(*msg)
@@ -2136,13 +2136,13 @@ def register():
             if current_app.cfg.user_email_verification:
                 user_kwargs["is_disabled"] = True
                 user_kwargs["verify_email"] = True
-            msg = user.create_user(**user_kwargs)
+            msg = create_user(**user_kwargs)
             if msg:
                 flash(msg, "error")
             else:
                 if current_app.cfg.user_email_verification:
-                    u = user.User(auth_username=user_kwargs["username"])
-                    is_ok, msg = u.mail_email_verification()
+                    user = User(auth_username=user_kwargs["username"])
+                    is_ok, msg = user.mail_email_verification()
                     if is_ok:
                         flash(_("Account verification required, please see the email we sent to your address."), "info")
                     else:
@@ -2162,29 +2162,29 @@ def register():
 
 @frontend.route("/+verifyemail", methods=["GET"])
 def verifyemail():
-    u = token = None
+    user = token = None
     if "username" in request.values and "token" in request.values:
-        u = user.User(auth_username=request.values["username"])
+        user = User(auth_username=request.values["username"])
         token = request.values["token"]
     success = False
-    if u and token and u.validate_recovery_token(token):
-        unvalidated_email = u.profile[EMAIL_UNVALIDATED]
-        if current_app.cfg.user_email_unique and user.search_users(**{EMAIL: unvalidated_email}):
+    if user and token and user.validate_recovery_token(token):
+        unvalidated_email = user.profile[EMAIL_UNVALIDATED]
+        if current_app.cfg.user_email_unique and search_users(**{EMAIL: unvalidated_email}):
             msg = _("This email is already in use.")
         else:
-            if u.disabled:
-                u.profile[DISABLED] = False
+            if user.disabled:
+                user.profile[DISABLED] = False
                 msg = _("Your account has been activated, you can log in now.")
             else:
                 msg = _("Your new email address has been confirmed.")
-            u.profile[EMAIL] = unvalidated_email
-            del u.profile[EMAIL_UNVALIDATED]
-            del u.profile[RECOVERPASS_KEY]
+            user.profile[EMAIL] = unvalidated_email
+            del user.profile[EMAIL_UNVALIDATED]
+            del user.profile[RECOVERPASS_KEY]
             success = True
     else:
         msg = _("Your username and/or token is invalid!")
     if success:
-        u.save()
+        user.save()
         flash(msg, "info")
     else:
         flash(msg, "error")
@@ -2229,16 +2229,16 @@ def lostpass():
     elif request.method == "POST":
         form = PasswordLostForm.from_flat(request.form)
         if form.validate():
-            u = None
+            user = None
             username = form["username"].value
             if username:
-                u = user.User(auth_username=username)
+                user = User(auth_username=username)
             email = form["email"].value
             if form["email"].valid and email:
-                users = user.search_users(email=email)
-                u = users and user.User(users[0].meta[ITEMID])
-            if u and u.valid:
-                is_ok, msg = u.mail_password_recovery()
+                users = search_users(email=email)
+                user = users and User(users[0].meta[ITEMID])
+            if user and user.valid:
+                is_ok, msg = user.mail_password_recovery()
                 if not is_ok:
                     flash(msg, "error")
             flash(_("If this account exists, you will be notified."), "info")
@@ -2298,8 +2298,8 @@ def recoverpass():
     elif request.method == "POST":
         form = PasswordRecoveryForm.from_flat(request.form)
         if form.validate():
-            u = user.User(auth_username=form["username"].value)
-            if u and u.valid and u.apply_recovery_token(form["token"].value, form["password1"].value):
+            user = User(auth_username=form["username"].value)
+            if user and user.valid and user.apply_recovery_token(form["token"].value, form["password1"].value):
                 flash(_("Your password has been changed, you can log in now."), "info")
             else:
                 flash(_("Your token is invalid!"), "error")
@@ -2339,6 +2339,7 @@ class LoginForm(Form):
 
     username = RequiredText.using(label=L_("Username"), optional=False).with_properties(autofocus=True)
     password = RequiredPassword
+    persistent = Checkbox.using(label=_("Remember me"), default=False)
     nexturl = Hidden.using(default="")
     # This field results in a login_submit field in the POST form, which is in
     # turn looked for by setup_user() in app.py as marker for login requests.
@@ -2399,7 +2400,7 @@ class ValidChangePass(Validator):
         if not (element["password_current"].valid and element["password1"].valid and element["password2"].valid):
             return False
 
-        if not user.User(name=flaskg.user.name, password=element["password_current"].value).valid:
+        if not User(name=flaskg.user.name, password=element["password_current"].value).valid:
             return self.note_error(element, state, "current_password_wrong_msg")
 
         if element["password1"].value != element["password2"].value:
@@ -2552,14 +2553,14 @@ def usersettings():
             if set(form["name"].value) != set(flaskg.user.name):
                 new_names = set(form["name"].value) - set(flaskg.user.name)
                 for name in new_names:
-                    if user.search_users(**{NAME_EXACT: name}):
+                    if search_users(**{NAME_EXACT: name}):
                         # duplicate name
                         errors.append(invalid_id_in_use_msg + name)
-                if not user.normalizeName(name) == name:
+                if not normalize_username(name) == name:
                     errors.append(invalid_character_message + name)
             display_name = form[DISPLAY_NAME].value
             if display_name:
-                if not user.normalizeName(display_name) == display_name:
+                if not normalize_username(display_name) == display_name:
                     errors.append(invalid_character_msg + display_name)
             if errors:
                 return self.note_error(element, state, message=", ".join(errors))
@@ -2644,7 +2645,7 @@ def usersettings():
                     if part == "notification":
                         if (
                             form["email"].value != flaskg.user.email
-                            and user.search_users(**{EMAIL: form["email"].value})
+                            and search_users(**{EMAIL: form["email"].value})
                             and current_app.cfg.user_email_unique
                         ):
                             # duplicate email

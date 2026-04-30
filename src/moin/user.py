@@ -19,6 +19,8 @@ some specific user (name, password, email, bookmark, trail, settings, ...).
 
 from __future__ import annotations
 
+from typing import Any
+
 import copy
 import hashlib
 from io import BytesIO
@@ -58,6 +60,7 @@ from moin.constants.keys import (
 
 from moin.constants.misc import ANON
 from moin.i18n import _
+from moin.log import getLogger
 from moin.mail import sendmail
 from moin.utils.interwiki import getInterwikiHome, getInterwikiName
 from moin.utils.crypto import generate_token, valid_token, make_uuid
@@ -65,12 +68,18 @@ from moin.utils.names import CompositeName
 from moin.utils.subscriptions import get_matched_subscription_patterns
 from moin.storage.error import NoSuchItemError, NoSuchRevisionError
 
-from moin import log
-
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
-def create_user(username, password, email, validate=True, is_encrypted=False, verify_email=False, **meta):
+def create_user(
+    username: str,
+    password: str,
+    email: str | None,
+    validate: bool = True,
+    is_encrypted: bool = False,
+    verify_email: bool = False,
+    **meta: Any,
+) -> str | None:
     """
     Create a new user.
 
@@ -86,10 +95,10 @@ def create_user(username, password, email, validate=True, is_encrypted=False, ve
     :param meta: a dictionary of key-value pairs that represent user metadata and
                         will be stored into user profile metadata
     """
-    theuser = User(auth_method="new-user")
+    user = User(auth_method="new-user")
 
     # Don't allow creating users with invalid names
-    if validate and not isValidName(username):
+    if validate and not is_valid_username(username):
         return _("""Invalid user name '{name}'.
 Name may contain any Unicode alpha numeric character, with optional one
 space between words. Group page name is not allowed.""").format(name=username)
@@ -99,7 +108,7 @@ space between words. Group page name is not allowed.""").format(name=username)
         return _("This user name already belongs to somebody else.")
 
     # XXX currently we just support creating with 1 name:
-    theuser.profile[NAME] = [str(username)]
+    user.profile[NAME] = [str(username)]
 
     pw_checker = current_app.cfg.password_checker
     if validate and pw_checker:
@@ -107,7 +116,7 @@ space between words. Group page name is not allowed.""").format(name=username)
         if pw_error:
             return _("Password not acceptable: {msg}").format(msg=pw_error)
 
-    theuser.set_password(password, is_encrypted)
+    user.set_password(password, is_encrypted)
 
     # try to get the email, for new users it is required
     if validate and not email:
@@ -120,42 +129,44 @@ space between words. Group page name is not allowed.""").format(name=username)
 
     if verify_email and email:
         # caller must send verification email to user
-        theuser.profile[EMAIL_UNVALIDATED] = email
+        user.profile[EMAIL_UNVALIDATED] = email
     elif email:
-        theuser.profile[EMAIL] = email
+        user.profile[EMAIL] = email
 
-    theuser.profile[DISABLED] = meta.get("is_disabled", False)
+    user.profile[DISABLED] = meta.get("is_disabled", False)
 
     # TODO requires validation (preferably using flatland)
     for key, value in meta.items():
-        theuser.profile[key] = value
-    theuser.save()
+        user.profile[key] = value
+
+    user.save()
+    return None
 
 
 def get_user_backend():
     return current_app.storage
 
 
-def update_user_query(**q):
+def update_user_query(**query):
     USER_QUERY_STDARGS = {
         NAMESPACE: NAMESPACE_USERPROFILES,
         CONTENTTYPE: CONTENTTYPE_USER,
         # maybe add option to not index wiki users
         # separately, but share them in the index also.
     }
-    q.update(USER_QUERY_STDARGS)
-    return q
+    query.update(USER_QUERY_STDARGS)
+    return query
 
 
-def search_users(**q):
+def search_users(**query):
     """Searches for a users with given query keys/values"""
     # Since item name is a list, it's possible a list have been passed as parameter.
     # No problem, since user always have just one name (TODO: validate single name for user)
-    if q.get(NAME_EXACT) and isinstance(q.get(NAME_EXACT), list):
-        q[NAME_EXACT] = q[NAME_EXACT][0]
-    q = update_user_query(**q)
+    if query.get(NAME_EXACT) and isinstance(query.get(NAME_EXACT), list):
+        query[NAME_EXACT] = query[NAME_EXACT][0]
+    query = update_user_query(**query)
     backend = get_user_backend()
-    docs = backend.documents(**q)
+    docs = backend.documents(**query)
     return list(docs)
 
 
@@ -180,8 +191,9 @@ def get_editor(userid, addr, hostname):
     return result
 
 
-def normalizeName(name):
-    """Make normalized user name
+def normalize_username(name: str) -> str:
+    """
+    Make normalized user name
 
     Prevent impersonating another user with names containing leading,
     trailing or multiple whitespace, or using invisible unicode
@@ -200,22 +212,21 @@ def normalizeName(name):
     # "," and ":" must not be allowed (ACL delimiters).
     # We also allow _ in usernames for nicer URLs.
     username_allowedchars = "'@.-_"
+
     # Strip non alpha numeric characters (except username_allowedchars), keep white space
     name = "".join([c for c in name if c.isalnum() or c.isspace() or c in username_allowedchars])
 
     # Normalize white space. Each name can contain multiple
     # words separated with only one space.
-    name = " ".join(name.split())
-
-    return name
+    return " ".join(name.split())
 
 
-def isValidName(name):
+def is_valid_username(name: str) -> bool:
     """Validate user name
 
     :param name: user name, unicode
     """
-    normalized = normalizeName(name)
+    normalized = normalize_username(name)
     return (name == normalized) and not wikiutil.isGroupItem(name)
 
 
@@ -241,24 +252,25 @@ def assemble_subscription(keyword, value, namespace=None):
 
 
 class UserProfile:
-    """A User Profile"""
+    """
+    A User Profile
+    """
 
-    def __init__(self, **q):
+    def __init__(self, **query) -> None:
         self._defaults = copy.deepcopy(current_app.cfg.user_defaults)
-        self._meta = {ITEMTYPE: ITEMTYPE_USERPROFILE}
+        self._meta: dict[str, Any] = {ITEMTYPE: ITEMTYPE_USERPROFILE}
         self._stored = False
         self._changed = False
-        if q:
-            self.load(**q)
+        if query:
+            self.load(**query)
 
     @property
-    def stored(self):
+    def stored(self) -> bool:
         return self._stored
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str) -> Any:
         """
-        get a value from the profile or,
-        if not present, from the configured defaults
+        Get a value from the profile or, if not present, from the configured defaults.
         """
         try:
             return self._meta[name]
@@ -268,37 +280,37 @@ class UserProfile:
                 self._meta[name] = v
             return v
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name: str, value: Any) -> None:
         """
-        set a value, update changed status
+        Set a value, update changed status.
         """
         prev_value = self._meta.get(name)
         self._meta[name] = value
         if value != prev_value:
             self._changed = True
 
-    def __delitem__(self, name):
+    def __delitem__(self, name: str) -> None:
         """
-        delete a value, update changed status
+        Delete a value, update changed status.
         """
         del self._meta[name]
         self._changed = True
 
-    def load(self, **q):
+    def load(self, **query) -> None:
         """
-        load a user profile, the query q can use any indexed (unique) field
+        Load a user profile, the query q can use any indexed (unique) field.
         """
-        q = update_user_query(**q)
-        item = get_user_backend().existing_item(**q)
+        query = update_user_query(**query)
+        item = get_user_backend().existing_item(**query)
         rev = item[CURRENT]
         self._meta = dict(rev.meta)
         self._stored = True
         self._changed = False
         rev.data.close()
 
-    def save(self, force=False):
+    def save(self, force: bool = False) -> None:
         """
-        save a user profile (if it was changed since loading it)
+        Save a user profile (if it was changed since loading it).
 
         Note: if mutable profile values were modified, you need to use
               force=True because these changes are not detected!
@@ -317,10 +329,21 @@ class UserProfile:
 
 
 class User:
-    """A MoinMoin User"""
+    """
+    A MoinMoin User
+    """
 
-    def __init__(self, uid=None, name="", password=None, auth_username="", trusted=False, **kw):
-        """Initialize User object
+    def __init__(
+        self,
+        uid: str | None = None,
+        name: str = "",
+        password: str | None = None,
+        auth_username: str = "",
+        trusted: bool = False,
+        **kw: Any,
+    ) -> None:
+        """
+        Initialize User object
 
         :param uid: (optional) user ID (user itemid)
         :param name: (optional) user name
@@ -420,7 +443,7 @@ class User:
         email = self.email
 
         if not email:
-            logging.warning(f"User {self.name0} has no valid email, cannot create an avatar.")
+            logger.warning(f"User {self.name0} has no valid email, cannot create an avatar.")
             return None
 
         email_encoded = email.lower().encode("utf-8")
@@ -499,7 +522,7 @@ class User:
         try:
             password_correct, recomputed_hash = pwd_hasher.verify_and_update(password, pw_hash)
         except (ValueError, TypeError) as err:
-            logging.error(
+            logger.error(
                 "in user profile %r, verifying the passlib pw hash raised an Exception [%s]" % (self.name, str(err))
             )
         else:
@@ -771,7 +794,7 @@ class User:
                 item_name = entry
                 aliases = []
             else:
-                logging.warning(f"Invalid page trail entry, type is {type(entry)}.")
+                logger.warning(f"Invalid page trail entry, type is {type(entry)}.")
                 continue
             trail.append((item_name, aliases))
         return trail
