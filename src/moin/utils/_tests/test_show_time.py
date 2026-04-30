@@ -67,15 +67,9 @@ class TestShowTime:
         formatted_date = show_time.format_date(utc_dt=0)
         assert formatted_date == "Dec 31, 1969"
         formatted_time = show_time.format_time(utc_dt=0)
-        assert formatted_time in [
-            "5:00:00\u202fPM",
-            "5:00:00 PM",
-        ]  # TODO: The second string can be removed in the future
+        assert formatted_time == "5:00:00\u202fPM"
         formatted_date_time = show_time.format_date_time(utc_dt=0)
-        assert formatted_date_time in [
-            "Dec 31, 1969, 5:00:00\u202fPM",
-            "Dec 31, 1969, 5:00:00 PM",
-        ]  # TODO: Same as above
+        assert formatted_date_time == "Dec 31, 1969, 5:00:00\u202fPM"
 
 
 coverage_modules = ["moin.utils.show_time"]
