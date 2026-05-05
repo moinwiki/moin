@@ -18,16 +18,19 @@ support in libldap2 (see dependency on gnutls) and also in python-ldap.
 TODO: allow more configuration (display name, ...) by using callables as parameters
 """
 
-from moin import log, user
+from __future__ import annotations
+
 from moin.i18n import _
 from moin.auth import BaseAuth, CancelLogin, ContinueLogin
+from moin.log import getLogger
+from moin.user import User
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 try:
     import ldap
 except ImportError as err:
-    logging.error(f"You need to have python-ldap installed ({err!s}).")
+    logger.error(f"You need to have python-ldap installed ({err!s}).")
     raise
 
 
@@ -37,9 +40,9 @@ class LDAPAuth(BaseAuth):
     for that user. The session is kept by Moin automatically.
     """
 
+    name = "ldap"
     login_inputs = ["username", "password"]
     logout_possible = True
-    name = "ldap"
 
     def __init__(
         self,
@@ -106,7 +109,7 @@ class LDAPAuth(BaseAuth):
         self.email_callback = email_callback
         self.name_callback = name_callback
 
-        self.coding = coding
+        self.encoding = coding
         self.timeout = timeout
 
         self.start_tls = start_tls
@@ -122,9 +125,98 @@ class LDAPAuth(BaseAuth):
 
         self.report_invalid_credentials = report_invalid_credentials
 
-    def login(self, user_obj, **kw):
-        username = kw.get("username")
-        password = kw.get("password")
+    def _connect(self):
+        server = self.server_uri
+
+        logger.debug(f"Trying to initialize {server!r}.")
+        conn = ldap.initialize(server)
+        logger.debug(f"Connected to LDAP server {server!r}.")
+
+        if self.start_tls and server.startswith("ldap:"):
+            logger.debug(f"Trying to start TLS to {server!r}.")
+            try:
+                conn.start_tls_s()
+                logger.debug(f"Using TLS to {server!r}.")
+            except (ldap.SERVER_DOWN, ldap.CONNECT_ERROR) as err:
+                logger.warning(f"Couldn't establish TLS to {server!r} (err: {err!s}).")
+                raise
+
+        return conn
+
+    def _search(self, conn, **arguments):
+
+        # you can use %(username)s and %(password)s here to get the stuff entered in the form:
+        binddn = self.bind_dn % arguments
+        bindpw = self.bind_pw % arguments
+        conn.simple_bind_s(binddn, bindpw)
+        logger.debug(f"Bound with binddn {binddn!r}")
+
+        # you can use %(username)s here to get the stuff entered in the form:
+        filterstr = self.search_filter % arguments
+        logger.debug(f"Searching {filterstr!r}")
+
+        attrs = [
+            getattr(self, attr)
+            for attr in ["email_attribute", "displayname_attribute", "surname_attribute", "givenname_attribute"]
+            if getattr(self, attr) is not None
+        ]
+
+        lusers = conn.search_st(self.base_dn, self.scope, filterstr, attrlist=attrs, timeout=self.timeout)
+
+        # we remove entries with dn == None to get the real result list:
+        lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
+        for _dn, _ldap_dict in lusers:
+            logger.debug(f"dn:{_dn!r}")
+            for key, val in _ldap_dict.items():
+                if key == "userPassword":
+                    val = "****"
+                logger.debug(f"    {key!r}: {val!r}")
+
+        if (result_length := len(lusers)) != 1:
+            error_message = None
+            if result_length > 1:
+                logger.warning(f"Search found more than one ({result_length}) matches for {filterstr!r}.")
+            if result_length == 0:
+                logger.debug(f"Search found no matches for {filterstr!r}.")
+            if self.report_invalid_credentials:
+                error_message = _("Invalid username or password.")
+            return None, error_message
+
+        return lusers[0], None
+
+    def _username(self, ldap_dict, username) -> str | None:
+        if self.name_callback:
+            username = self.name_callback(ldap_dict)
+        return username
+
+    def _display_name(self, ldap_dict) -> str | None:
+        try:
+            display_name = ldap_dict[self.displayname_attribute][0]
+        except (KeyError, IndexError):
+            display_name = ""
+        if not display_name:
+            sn = ldap_dict.get(self.surname_attribute, [""])[0]
+            gn = ldap_dict.get(self.givenname_attribute, [""])[0]
+            if sn and gn:
+                display_name = f"{sn}, {gn}"
+            elif sn:
+                display_name = sn
+        return display_name
+
+    def _email(self, ldap_dict) -> str | None:
+        if self.email_callback is None:
+            if self.email_attribute:
+                email = ldap_dict.get(self.email_attribute, [""])[0]
+            else:
+                email = None
+        else:
+            email = self.email_callback(ldap_dict)
+        return email
+
+    def login(self, user_obj, **kwargs):
+
+        username = kwargs.get("username")
+        password = kwargs.get("password")
 
         # we require non-empty password as ldap bind does a anon (not password
         # protected) bind if the password is empty and SUCCEEDS!
@@ -132,12 +224,11 @@ class LDAPAuth(BaseAuth):
             return ContinueLogin(user_obj, _("Missing password. Please enter user name and password."))
 
         try:
+            user = None
+            dn = None
+
             try:
-                u = None
-                dn = None
-                server = self.server_uri
-                coding = self.coding
-                logging.debug("Setting misc. ldap options...")
+                logger.debug("Setting misc. ldap options...")
                 ldap.set_option(ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # ldap v2 is outdated
                 ldap.set_option(ldap.OPT_REFERRALS, self.referrals)
                 ldap.set_option(ldap.OPT_NETWORK_TIMEOUT, self.timeout)
@@ -155,122 +246,66 @@ class LDAPAuth(BaseAuth):
                         if value is not None:
                             ldap.set_option(option, value)
 
-                logging.debug(f"Trying to initialize {server!r}.")
-                conn = ldap.initialize(server)
-                logging.debug(f"Connected to LDAP server {server!r}.")
+                conn = self._connect()
 
-                if self.start_tls and server.startswith("ldap:"):
-                    logging.debug(f"Trying to start TLS to {server!r}.")
-                    try:
-                        conn.start_tls_s()
-                        logging.debug(f"Using TLS to {server!r}.")
-                    except (ldap.SERVER_DOWN, ldap.CONNECT_ERROR) as err:
-                        logging.warning(f"Couldn't establish TLS to {server!r} (err: {err!s}).")
-                        raise
+                ldap_user, error_message = self._search(conn, username=username, password=password)
 
-                # you can use %(username)s and %(password)s here to get the stuff entered in the form:
-                binddn = self.bind_dn % locals()
-                bindpw = self.bind_pw % locals()
-                conn.simple_bind_s(binddn, bindpw)
-                logging.debug(f"Bound with binddn {binddn!r}")
+                if ldap_user is None:
+                    return ContinueLogin(user_obj, error_message)
 
-                # you can use %(username)s here to get the stuff entered in the form:
-                filterstr = self.search_filter % locals()
-                logging.debug(f"Searching {filterstr!r}")
-                attrs = [
-                    getattr(self, attr)
-                    for attr in ["email_attribute", "displayname_attribute", "surname_attribute", "givenname_attribute"]
-                    if getattr(self, attr) is not None
-                ]
-                lusers = conn.search_st(self.base_dn, self.scope, filterstr, attrlist=attrs, timeout=self.timeout)
-                # we remove entries with dn == None to get the real result list:
-                lusers = [(_dn, _ldap_dict) for _dn, _ldap_dict in lusers if _dn is not None]
-                for _dn, _ldap_dict in lusers:
-                    logging.debug(f"dn:{_dn!r}")
-                    for key, val in _ldap_dict.items():
-                        logging.debug(f"    {key!r}: {val!r}")
-
-                result_length = len(lusers)
-                if result_length != 1:
-                    if result_length > 1:
-                        logging.warning(f"Search found more than one ({result_length}) matches for {filterstr!r}.")
-                    if result_length == 0:
-                        logging.debug(f"Search found no matches for {filterstr!r}.")
-                    if self.report_invalid_credentials:
-                        return ContinueLogin(user_obj, _("Invalid username or password."))
-                    else:
-                        return ContinueLogin(user_obj)
-
-                dn, ldap_dict = lusers[0]
+                dn, ldap_dict = ldap_user
                 if not self.bind_once:
-                    logging.debug(f"DN found is {dn!r}, trying to bind with pw")
+                    logger.debug(f"DN found is {dn!r}, trying to bind with pw")
                     conn.simple_bind_s(dn, password)
-                    logging.debug(f"Bound with dn {dn!r} (username: {username!r})")
+                    logger.debug(f"Bound with dn {dn!r} (username: {username!r})")
 
-                if self.email_callback is None:
-                    if self.email_attribute:
-                        email = ldap_dict.get(self.email_attribute, [""])[0]
-                    else:
-                        email = None
-                else:
-                    email = self.email_callback(ldap_dict)
-
-                display_name = ""
-                try:
-                    display_name = ldap_dict[self.displayname_attribute][0]
-                except (KeyError, IndexError):
-                    pass
-                if not display_name:
-                    sn = ldap_dict.get(self.surname_attribute, [""])[0]
-                    gn = ldap_dict.get(self.givenname_attribute, [""])[0]
-                    if sn and gn:
-                        display_name = f"{sn}, {gn}"
-                    elif sn:
-                        display_name = sn
-
-                if self.name_callback:
-                    username = self.name_callback(ldap_dict)
+                email = self._email(ldap_dict)
+                display_name = self._display_name(ldap_dict)
+                username = self._username(ldap_dict, username)
 
                 if email:
-                    u = user.User(
+                    user = User(
                         auth_username=username,
                         auth_method=self.name,
                         auth_attribs=("name", "password", "email", "mailto_author"),
                         trusted=self.trusted,
                     )
-                    u.email = email
+                    user.email = email
                 else:
-                    u = user.User(
+                    user = User(
                         auth_username=username,
                         auth_method=self.name,
                         auth_attribs=("name", "password", "mailto_author"),
                         trusted=self.trusted,
                     )
-                u.name = username
-                u.display_name = display_name
-                logging.debug(
+                user.name = username
+                user.display_name = display_name
+                logger.debug(
                     "creating user object with name {!r} email {!r} display name {!r}".format(
                         username, email, display_name
                     )
                 )
 
             except ldap.INVALID_CREDENTIALS:
-                logging.debug(f"invalid credentials (wrong password?) for dn {dn!r} (username: {username!r})")
+                logger.debug(f"invalid credentials (wrong password?) for dn {dn!r} (username: {username!r})")
                 return CancelLogin(_("Invalid username or password."))
 
-            if u and self.autocreate:
-                logging.debug(f"calling create_or_update to autocreate user {u.name!r}")
-                u.create_or_update(True)
-            return ContinueLogin(u)
+            if user and self.autocreate:
+                logger.debug(f"calling create_or_update to autocreate user {user.name!r}")
+                user.create_or_update(True)
+
+            return ContinueLogin(user)
 
         except ldap.SERVER_DOWN as err:
             # looks like this LDAP server isn't working, so we just try the next
             # authenticator object in cfg.auth list (there could be some second
             # ldap authenticator that queries a backup server or any other auth
             # method).
-            logging.error(f"LDAP server {server} failed ({err!s}). Trying to authenticate with next auth list entry.")
-            return ContinueLogin(user_obj, _("LDAP server {server} failed.").format(server=server))
+            logger.error(
+                f"LDAP server {self.server_uri} failed ({err!s}). Trying to authenticate with next auth list entry."
+            )
+            return ContinueLogin(user_obj, _("LDAP server {server} failed.").format(server=self.server_uri))
 
         except:  # noqa
-            logging.exception("caught an exception, traceback follows...")
+            logger.exception("caught an exception, traceback follows...")
             return ContinueLogin(user_obj)
