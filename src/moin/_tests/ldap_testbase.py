@@ -40,10 +40,11 @@ import shutil
 import tempfile
 import time
 import base64
-from io import StringIO
 import signal
 import subprocess
 import hashlib
+
+from io import StringIO
 
 try:
     # needs python-ldap
@@ -57,6 +58,15 @@ except ImportError:
 # filename of LDAP server executable - if it is not
 # in your PATH, you have to give full path/filename.
 SLAPD_EXECUTABLE = "slapd"
+
+LDAP_PORT = 13890
+LDAP_SERVER_URI = f"ldap://127.0.0.1:{LDAP_PORT}"
+LDAP_SCHEMA_DIR = "/etc/openldap/schema"
+LDAP_MODULE_PATH = "/usr/lib/openldap"
+
+LDAP_BASEDN = "ou=testing,dc=example,dc=org"
+LDAP_ROOTDN = f"cn=root,{LDAP_BASEDN}"
+LDAP_ROOTPW = "secret"
 
 
 def check_environ():
@@ -93,7 +103,7 @@ class Slapd:
         debug_flags="",  # None,  # for -d stats,acl,args,trace,sync,config
         proto="ldap",
         ip="127.0.0.1",
-        port=3890,  # use -h proto://ip:port
+        port=LDAP_PORT,  # use -h proto://ip:port
         service_name="",  # defaults to -n executable:port, use None to not use -n
     ):
         self.executable = executable
@@ -164,16 +174,18 @@ class LdapEnvironment:
         rootdn,
         rootpw,
         instance=0,  # use different values when running multiple LdapEnvironments
-        schema_dir="/etc/ldap/schema",  # directory with schemas
-        coding="utf-8",  # coding used for config files
+        module_path=LDAP_MODULE_PATH,
+        schema_dir=LDAP_SCHEMA_DIR,  # directory with schemas
+        encoding="utf-8",  # coding used for config files
         timeout=10,  # how long to wait for slapd starting [s]
     ):
         self.basedn = basedn
         self.rootdn = rootdn
         self.rootpw = rootpw
         self.instance = instance
+        self.module_path = module_path
         self.schema_dir = schema_dir
-        self.coding = coding
+        self.encoding = encoding
         self.ldap_dir = None
         self.slapd_conf = None
         self.timeout = timeout
@@ -189,29 +201,29 @@ class LdapEnvironment:
 
         # create DB_CONFIG for bdb backend
         db_config_fname = os.path.join(self.ldap_db_dir, "DB_CONFIG")
-        f = open(db_config_fname, "w")
-        f.write(db_config)
-        f.close()
+        with open(db_config_fname, "w", encoding=self.encoding) as f:
+            f.write(db_config)
 
-        hash_pw = hashlib.new("md5", self.rootpw.encode(self.coding))
+        hash_pw = hashlib.new("md5", self.rootpw.encode(self.encoding))
         rootpw = "{MD5}" + base64.b64encode(hash_pw.digest()).decode()
 
         # create slapd.conf from content template in slapd_config
         slapd_config = slapd_config % {
             "ldap_dir": self.ldap_dir,
             "ldap_db_dir": self.ldap_db_dir,
+            "module_path": self.module_path,
             "schema_dir": self.schema_dir,
             "basedn": self.basedn,
             "rootdn": self.rootdn,
             "rootpw": rootpw,
         }
         self.slapd_conf = os.path.join(self.ldap_dir, "slapd.conf")
-        with open(self.slapd_conf, "w", encoding=self.coding) as f:
+        with open(self.slapd_conf, "w", encoding=self.encoding) as f:
             f.write(slapd_config)
 
     def start_slapd(self):
         """Start a slapd and optionally wait until it responds."""
-        self.slapd = Slapd(config=self.slapd_conf, port=3890 + self.instance)
+        self.slapd = Slapd(config=self.slapd_conf, port=LDAP_PORT + self.instance)
         started = self.slapd.start(timeout=self.timeout)
         return started
 
@@ -240,7 +252,7 @@ class LdapEnvironment:
 try:
     import pytest
 
-    class LDAPTstBase:
+    class LDAPTestBase:
         """Test base class for pytest-based tests that need an LDAP server.
 
         Inherit your test class from this base class to test LDAP functionality.
