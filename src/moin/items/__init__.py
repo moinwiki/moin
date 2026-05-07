@@ -25,6 +25,7 @@ import difflib
 import json
 import re
 
+from dataclasses import asdict, dataclass, field
 from io import BytesIO, IOBase
 from time import time, strftime
 from operator import attrgetter
@@ -115,11 +116,26 @@ if TYPE_CHECKING:
 
 logging = log.getLogger(__name__)
 
-
 PreviewDiffItem: TypeAlias = tuple[int, Markup, int, Markup]
 
 COLS = 80
 ROWS_META = 10
+
+
+@dataclass
+class ItemDeletionResult:
+
+    messages: list[str] = field(default_factory=list)
+    itemnames: list[str] = field(default_factory=list)
+
+    def __iadd__(self, other: ItemDeletionResult) -> ItemDeletionResult:
+        assert other is not self
+        self.itemnames += other.itemnames
+        self.messages += other.messages
+        return self
+
+    def as_dict(self) -> dict[str, list[str]]:
+        return asdict(self)
 
 
 def find_matches(fq_name, s_re=None, e_re=None):
@@ -851,41 +867,26 @@ class Item:
         return meta
 
     def _rename(
-        self,
-        names: list[str],
-        comment: str,
-        action: str,
-        delete: bool = False,
-        do_subitems: bool = True,
-        ajax: bool = False,
-    ) -> tuple[list[str], list[str]]:
+        self, names: list[str], comment: str, action: str, delete: bool = False, do_subitems: bool = True
+    ) -> ItemDeletionResult:
         """
         Process Delete and Rename actions.
 
         Delete removes all alias names, and at users option (do_subitems=True) all subitems of all aliases.
         Rename changes subitem names only when the parent name is removed/changed.
         """
-        messages: list[str] = []
-        subitem_names: list[str] = []
+        assert self.content
+        result = ItemDeletionResult()
         self._save(self.meta, self.content.data, names=names, action=action, comment=comment, delete=delete)
         old_name = self.names if len(self.names) > 1 else self.names[0]
         new_name = names if len(names) > 1 else names[0]
         if delete:
-            if ajax:
-                messages.append(L_('The item "{name}" was deleted.').format(name=old_name))
-            else:
-                flash(L_('The item "{name}" was deleted.').format(name=old_name), "info")
+            result.messages.append(L_('The item "{name}" was deleted.').format(name=old_name))
         else:
             # rename
-            if ajax:
-                messages.append(
-                    L_('The item "{name}" was renamed to "{new_name}".').format(name=old_name, new_name=new_name)
-                )
-            else:
-                flash(
-                    L_('The item "{name}" was renamed to "{new_name}".').format(name=old_name, new_name=new_name),
-                    "info",
-                )
+            result.messages.append(
+                L_('The item "{name}" was renamed to "{new_name}".').format(name=old_name, new_name=new_name)
+            )
         removed_names = set(self.meta[NAME]) - set(names)
         removed_names = tuple(x + "/" for x in removed_names)
         if removed_names or delete:
@@ -900,12 +901,9 @@ class Item:
                     item._save(
                         item.meta, item.content.data, names=child_newname, action=action, comment=comment, delete=delete
                     )
-                    if ajax:
-                        messages.append(L_('The subitem "{name}" was deleted.').format(name=old_name))
-                    else:
-                        flash(L_('The item "{name}" was deleted.').format(name=old_name), "info")
+                    result.messages.append(L_('The subitem "{name}" was deleted.').format(name=old_name))
                     close_file(item.rev.data)
-                    subitem_names += [x.fullname for x in child.meta.revision.fqnames]
+                    result.itemnames += [x.fullname for x in child.meta.revision.fqnames]
                 else:  # rename
                     working_name = child.meta[NAME][:]
                     for child_oldname in child.meta[NAME]:
@@ -925,14 +923,13 @@ class Item:
                                     delete=delete,
                                 )
                                 new_name = working_name if len(working_name) > 1 else working_name[0]
-                                flash(
+                                result.messages.append(
                                     L_('The item "{name}" was renamed to "{new_name}".').format(
                                         name=old_name, new_name=new_name
-                                    ),
-                                    "info",
+                                    )
                                 )
                                 close_file(item.rev.data)
-        return messages, subitem_names
+        return result
 
     def rename(self, names: str | list[str], comment: str = "") -> None:
         """
@@ -955,24 +952,22 @@ class Item:
                 _verify_parents(self, name, self.fqname.namespace, old_name=self.fqname.value)
         self._rename(names, comment, action=ACTION_RENAME)
 
-    def delete(self, comment: str = "", do_subitems: bool = True, ajax: bool = False) -> tuple[list[str], list[str]]:
+    def delete(self, comment: str = "", do_subitems: bool = True) -> ItemDeletionResult:
         """
         delete this item
         """
         item_modified.send(current_app, fqname=self.fqname, action=ACTION_TRASH, data=self.rev.data, meta=self.meta)
-        ret = self._rename(self.names, comment, action=ACTION_TRASH, delete=True, do_subitems=do_subitems, ajax=ajax)
-        return ret
+        return self._rename(self.names, comment, action=ACTION_TRASH, delete=True, do_subitems=do_subitems)
 
     def revert(self, comment: str = "") -> tuple[str, int] | None:
+        assert self.content
         meta = dict(self.meta)
         meta[TRASH] = False
         if not self.meta[NAME]:
             meta[NAME] = meta[NAME_OLD]
         return self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
 
-    def destroy(
-        self, comment: str = "", destroy_item: bool = False, subitem_names: list = [], ajax: bool = False
-    ) -> tuple[list[str], list[str]]:
+    def destroy(self, comment: str = "", destroy_item: bool = False, subitem_names: list = []) -> ItemDeletionResult:
         """
         If destroy_item is false destroy current revision; else destroy current item and
         any items passed in subitem_names.
@@ -981,8 +976,8 @@ class Item:
 
         Return a list of messages and a list of destroyed names and alias names.
         """
-        messages = []
-        destroyed_names = self.names
+        result = ItemDeletionResult()
+        result.itemnames += self.names
         action = DESTROY_ALL if destroy_item else DESTROY_REV
         item_modified.send(current_app, fqname=self.fqname, action=action, data=self.rev.data, meta=self.meta)
         close_file(self.rev.data)
@@ -993,10 +988,7 @@ class Item:
         if destroy_item:
             # destroy complete item with all revisions, metadata, etc.
             self.rev.item.destroy_all_revisions()
-            if ajax:
-                messages.append(L_('The item "{name}" was destroyed.').format(name=old_name))
-            else:
-                flash(L_('The item "{name}" was destroyed.').format(name=old_name), "info")
+            result.messages.append(L_('The item "{name}" was destroyed.').format(name=old_name))
             # destroy all subitems
             for subitem_name in subitem_names:
                 first_name = subitem_name[0] if isinstance(subitem_name, list) else subitem_name
@@ -1005,35 +997,21 @@ class Item:
                 old_name = subitem_name if len(subitem_name) > 1 else subitem_name[0]
                 if flaskg.user.may.destroy(item.fqname):
                     item.rev.item.destroy_all_revisions()
-                    if ajax:
-                        messages.append(L_('The subitem "{name}" was destroyed.').format(name=old_name))
-                    else:
-                        flash(L_('The item "{name}" was destroyed.').format(name=old_name), "info")
-                    destroyed_names += item.names
+                    result.messages.append(L_('The subitem "{name}" was destroyed.').format(name=old_name))
+                    result.itemnames += item.names
                 else:
-                    if ajax:
-                        messages.append(
-                            L_('Error: The subitem "{name}" was not destroyed, permission denied.').format(
-                                name=old_name
-                            )
-                        )
-                    else:
-                        flash(
-                            L_('Error: The subitem "{name}" was not destroyed, permission denied.').format(
-                                name=old_name
-                            ),
-                            "info",
-                        )
+                    result.messages.append(
+                        L_('Error: The subitem "{name}" was not destroyed, permission denied.').format(name=old_name)
+                    )
         else:
             # just destroy this revision
             self.rev.item.destroy_revision(self.rev.revid)
-            flash(
+            result.messages.append(
                 L_('Rev Number {rev_number} of the item "{name}" was destroyed.').format(
                     rev_number=self.meta[REV_NUMBER], name=old_name
-                ),
-                "info",
+                )
             )
-        return messages, destroyed_names
+        return result
 
     def modify(
         self,

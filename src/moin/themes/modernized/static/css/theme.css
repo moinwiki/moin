@@ -42,7 +42,7 @@ table.navigation { background:var(--page_color); float:right; margin:2px; }
 #moin-create-table tbody tr td a {color:var(--link_color); }
 
 /* forms */
-label { display:block; font-weight:bold; }
+label { font-weight:bold; }
 input,
 select { padding:3px; background:var(--page_color); border:var(--border_style);
     border-radius:2px; }

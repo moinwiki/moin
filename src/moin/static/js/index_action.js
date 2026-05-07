@@ -8,13 +8,15 @@
 /*global $:true, _:true */
 
 // This anonymous function is executed once after a global index page loads.
-$("document").ready(function () {
+$(function () {
+
     "use strict";
 
-    var POPUP_FADE_TIME = 200, // fade in, fade out times for selected popups
-        IFRAME_REMOVE_DELAY = 3000, // life expectancy of iframe used for file downloads
-        // delete and destroy process started and completed messages
-        ACTION_LOADING = {'delete': _("Deleting.."),
+    // life expectancy of iframe used for file downloads
+    const IFRAME_REMOVE_DELAY = 3000;
+
+    // delete and destroy process started and completed messages
+    var ACTION_LOADING = {'delete': _("Deleting.."),
                           'destroy': _("Destroying..")},
         ACTION_DONE = {'delete': _("Items deleted: "),
                        'destroy': _("Items destroyed: ")},
@@ -46,6 +48,7 @@ $("document").ready(function () {
             dataType: "json",
             data: {item_names: checked_names, action_auth: action},
             success: (function(response) {
+                $('input[name="selected-names"]').val(JSON.stringify(response.selected_names));
                 if (response.rejected_names.length) {
                     $('p.popup-rejected-names > span').text(response.rejected_names.join(', '));
                     $('p.popup-rejected-names').removeClass("hidden");
@@ -65,10 +68,9 @@ $("document").ready(function () {
     }
 
     // called by click handlers Delete item, and Destroy item within Actions dropdown menu
-    function showpop(action) {
+    function show_popup(action) {
+        $('input[name="delete-action"]').val(action);
         // hide Actions popup and show Comment popup
-        $(".popup-container").css("display", "none");
-        $("#popup-for-action").css("display", "block");
         $(".popup-comment").val("");
         $(".popup-action").val(action);
         if (action === "delete") {
@@ -77,15 +79,14 @@ $("document").ready(function () {
             $(".popup-header > span").html(POPUP_DESTROY_HEADER);
         }
         get_subitem_names(action);
-        $("#popup").fadeIn();
+        $("#popup").removeClass("hidden");
         $(".popup-comment").focus();
         $("#lightbox").css("display", "block");
     }
 
     // called by click handlers within "Create new item" and "Please provide comment" popups
-    function hidepop() {
-        // hide popup
-        $("#popup").css("display", "none");
+    function hide_popup() {
+        $("#popup").addClass("hidden");
         $("#lightbox").css("display", "none");
     }
 
@@ -99,42 +100,39 @@ $("document").ready(function () {
     }
 
     // executed via the "provide comment" popup triggered by an Actions Delete or Destroy selection
-    function do_action(comment, action) {
-        var links = [],
-            itemnames,
-            actionTrigger,
-            url;
-        // create an array of selected item names
-        $("input.moin-item:checked").each(function () {
-            var itemname = $(this).attr("value");
-            links.push(itemname);
-        });
+    function do_action(itemnames, comment, action) {
+        $("#popup").addClass("hidden");
         // remove any flash messages, display "deleting..." or "destroying..." flash msg while process is in progress
-        $("#popup").css("display", "none");
         // note the parent of .moin-flash messages is #moin-flash; moin-flash is used as both id and class
         $(".moin-flash").remove();
         MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, ACTION_LOADING[action]);
         // create a transaction to delete or destroy selected items
-        itemnames = JSON.stringify(links);
-        actionTrigger = "moin-" + action + "-trigger";
-        url = $("#" + actionTrigger).attr("data-actionurl");
+        const actionTrigger = `moin-${action}-trigger`;
+        const url = $("#" + actionTrigger).attr("data-actionurl");
         // outgoing itemnames is an array of checked item names; comment is from text field of popup,
         // do_subitems is state of checkbox - true if subitems are to be processed
-        $.post(url, {
+        const data = {
+            action: action,
             itemnames: itemnames,
             comment: comment,
-            do_subitems: $("#moin-do-subitems").is(":checked") ? "true" : "false"
-        }, function (data) {
+            do_subitems: $('input[name="moin-do-subitems"]').is(":checked")
+        };
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(data),
+            dataType: "json",
+        }).done(function (data) {
             // incoming itemnames is list of item names (including alias names) successfully deleted/destroyed
-            var itemnames = data.itemnames,
-                idx;
+            const itemnames = data.itemnames;
             // display success/fail flash messages created by server for each selected item and subitem
-            for (idx = 0; idx < data.messages.length; idx += 1) {
+            for (let idx = 0; idx < data.messages.length; idx += 1) {
                 MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, data.messages[idx]);
             }
             // remove index rows for all deleted/destroyed items; including alias names (items with alias names have multiple rows)
             $.each(itemnames, function (itemindex, itemname) {
-                var isLastElement = itemindex == itemnames.length -1;
+                const isLastElement = itemindex == itemnames.length - 1;
                 $('input[value="' + itemname + '"]').parent().parent().parent().remove();
                 if (isLastElement) {
                     MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHINFO, _("Action complete."));
@@ -144,11 +142,14 @@ $("document").ready(function () {
                     $('#moin-flash').find('p').first().remove();
                 }
             });
-        }, "json");
+        });
     }
 
+    // hide the upload button (used when javascript is disabled)
+    $("#upload-file-btn").addClass("hidden");
+
     // add click handler to "Select All" tab to select/deselect all items
-    $(".moin-select-toggle").change(function () {
+    $(".moin-select-toggle").on("change", function () {
         if ($(this).find("input").prop("checked")) {
             $(".moin-select-item > input.moin-item").each(function () {
                 $(this).prop('checked', true);
@@ -161,12 +162,14 @@ $("document").ready(function () {
     });
 
     // add click handler to Cancel buttons and red "X" on Delete, Destroy popups
-    $(".popup-cancel").click(function () {
-        hidepop();
+    $('button[name="popup-cancel"], button[name="popup-close"]').on("click", function () {
+        hide_popup();
+        return false;
     });
 
     // add click handler to "Download" button of Actions dropdown
-    $("#moin-download-trigger").click(function () {
+    $("#moin-download-trigger").on("click", function (event) {
+        event.preventDefault();
         if (!($(".moin-item:checked").length)) {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, _("Download failed, no items were selected."));
@@ -180,36 +183,36 @@ $("document").ready(function () {
     });
 
     // add click handler to "Delete" and "Destroy" buttons of Actions dropdown
-    $(".moin-action-tab").click(function () {
-        var action = this.innerText;
+    $(".moin-action-tab").on("click", function (event) {
+        event.preventDefault();
+        const action = this.getAttribute("data-action");
         // Show error msg if nothing selected, else show comment popup. Hide actions dropdown.
         if (!($(".moin-item:checked").length)) {
             $(".moin-flash").remove();
             MoinMoin.prototype.moinFlashMessage(MoinMoin.prototype.MOINFLASHWARNING, action + ' failed, no items were selected.');
         } else {
-            if (this.id === "moin-delete-trigger") {
-                showpop("delete");
-            } else {
-                showpop("destroy");
-            }
+            show_popup(action);
         }
+        return false;
     });
 
     // add click handler to "Submit" button on "Please provide comment..." popup
-    $("#popup-form").submit(function (event) {
+    $('button[name="popup-submit"]').on("click", function (event) {
         event.preventDefault();
         // process delete or destroy action
-        var comment = $(".popup-comment").val(),
-            action = $(".popup-action").val();
-        comment = comment.trim();
-        do_action(comment, action);
-        hidepop();
+        const itemnames = JSON.parse($('input[name="selected-names"]').val());
+        const comment = $('input[name="moin-comment"]').val().trim();
+        const action = $('input[name="delete-action"]').val();
+        do_action(itemnames, comment, action);
+        hide_popup();
+        return false;
     });
 
     // add click handler to "Toggle" button on "Filter by content type" dropdown
-    $(".moin-filter-toggle").click(function () {
+    $(".moin-filter-toggle").on("click", function (event) {
+        event.preventDefault();
         // reverse checked/unchecked for each content type
-        $(".moin-contenttype-selection form").find("input[type='checkbox']").each(function () {
+        $(".moin-contenttype-selection").find("input[type='checkbox']").each(function () {
             $(this).prop('checked', !$(this).is(':checked'));
         });
         return false;
@@ -217,31 +220,37 @@ $("document").ready(function () {
 
     // Filter, Namespace, New Item buttons have similar actions, show last clicked action, hide others
     // add click handler to toggle button for content type "Filter" dropdown
-    $(".moin-ct-toggle").click(function () {
+    $(".moin-ct-toggle").on("click", function (event) {
+        event.preventDefault();
         // show/hide content type selection
-        $(".moin-contenttype-selection").toggle();
-        $(".moin-namespace-selection").css("display", "none");
-        $(".moin-newitem-selection").css("display", "none");
+        $(".moin-contenttype-selection").toggleClass("hidden");
+        $(".moin-namespace-selection").addClass("hidden");
+        $(".moin-newitem-selection").addClass("hidden");
+        return false;
     });
 
     // add click handler to toggle button on "Namespace" dropdown
-    $(".moin-ns-toggle").click(function () {
+    $(".moin-ns-toggle").on("click", function (event) {
+        event.preventDefault();
         // show/hide namespace selection
-        $(".moin-namespace-selection").toggle();
-        $(".moin-contenttype-selection").css("display", "none");
-        $(".moin-newitem-selection").css("display", "none");
+        $(".moin-namespace-selection").toggleClass("hidden");
+        $(".moin-contenttype-selection").addClass("hidden");
+        $(".moin-newitem-selection").addClass("hidden");
+        return false;
     });
 
     // add click handler to toggle button on "New Item" dropdown
-    $(".moin-newitem-toggle").click(function () {
+    $(".moin-newitem-toggle").on("click", function (event) {
+        event.preventDefault();
         // show/hide new item selection
-        $(".moin-newitem-selection").toggle();
-        $(".moin-contenttype-selection").css("display", "none");
-        $(".moin-namespace-selection").css("display", "none");
+        $(".moin-newitem-selection").toggleClass("hidden");
+        $(".moin-contenttype-selection").addClass("hidden");
+        $(".moin-namespace-selection").addClass("hidden");
+        return false;
     });
 
     // add click handlers to all items shown on global index page
-    $(".moin-select-item").click(function () {
+    $(".moin-select-item").on("click", function () {
         // toggle selection classes
         $(this > "input[type='checkbox']").prop('checked', !$(this > "input[type='checkbox']").is(':checked'));
         if ($(this).parent().hasClass("selected-item")) {
@@ -256,5 +265,4 @@ $("document").ready(function () {
 
     // add item count to upper left of table
     $(".moin-num-rows").text($('.moin-index tbody tr').length);
-
-    });
+});

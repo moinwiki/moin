@@ -473,7 +473,7 @@ a.moin-button:visited,
 a.moin-button:hover,
 a.moin-button:active { color: var(--primary); text-decoration: none; }
 .moin-button { background: var(--bg-button); border: 1px solid var(--border-button);
-    border-radius: 6px; cursor: pointer; font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; display: inline-block; }
+    border-radius: 6px; cursor: pointer; font-size: 0.75em; font-weight: bold; padding: 4px 15px; margin: .3em; }
 .moin-button.moin-button-disabled { background: var(--bg-disabled); }
 .moin-button:hover,
 .moin-button:focus { box-shadow: 2px 2px 1px var(--border-button-hover); outline: none; }
@@ -518,31 +518,29 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 .moin-index-menu li { display: inline-block; }
 .moin-select-allitem { display: inline-block; cursor: default; text-align: left; }
 .moin-download-link { display: none; }
-.moin-contenttype-selection { margin: .5em 0; display: none; }
-.moin-contenttype-selection div { cursor: pointer; margin: 0 0 .5em; padding: .5em 1.2em .5em .5em; height: 1em; text-align: center; }
 
-.moin-contenttype-selection form { z-index: 2;  background: var(--bg-primary);
-    border: 3px solid var(--border); padding: .2em; border-radius: 7px; }
+.moin-contenttype-selection { background: var(--bg-primary); border: 3px solid var(--border); border-radius: 7px; padding: 1em; }
+.moin-contenttype-selection div { padding: 0 0 .5em 0; height: 1em; text-align: center; }
+.moin-contenttype-selection form { z-index: 2; padding: .2em; }
 .moin-contenttype-selection ul li { list-style-type: none; }
-.moin-contenttype-selection ul li label { display: inline; vertical-align: middle; font-size: 1.25em; }
+.moin-contenttype-selection ul li label { display: inline; vertical-align: middle; font-size: 1em; }
 .moin-contenttype-selection ul li .helper-text { margin-left: 1em; font-size: .85em; color: var(--muted); }
 .moin-contenttype-selection form input[type="submit"] { font-size: .9em; }
-.moin-filter-toggle { margin: .5em 2em; font-size: 90%; }
+.moin-filter-toggle { margin: .5em 2em; }
 .moin-index-path { margin-left: .5em; margin-top: 2em; font-size: 1.33em; }
 .moin-path-separator { font-size: 120%; color: var(--primary); }
 .moin-index-separator { clear: both; border-top: 3px solid var(--border);
     width: 99%; margin-left: .5%; margin-bottom: 1.5em; display: none; }
 
-.moin-namespace-selection { background: var(--bg-primary); border-radius: 7px;
-    border: 3px solid var(--border); padding: .2em; display: none; }
+.moin-namespace-selection { background: var(--bg-primary); border: 3px solid var(--border); border-radius: 7px; padding: .2em 1em; }
 .moin-namespace-selection ul li { list-style-type: none; font-size: 1.25em; }
+
+.moin-newitem-selection { background: var(--bg-primary); border: 3px solid var(--border); border-radius: 7px; padding: 1em; }
 .moin-newitem-toggle,
 .moin-ns-toggle,
 .moin-ct-toggle { color: var(--primary); }
 #moin-newitem { width: 50%; }
 .moin-new-item { margin-left: 1em; }
-.moin-newitem-selection { background: var(--bg-primary); border-radius: 7px;
-    border: 3px solid var(--border); padding: .2em; display: none; }
 #moin-initials { width: 90%; margin: 1em auto; text-align: center; }
 #moin-initials a { display: inline-block; margin: 2px 1px; padding: 4px 5px; }
 #moin-initials a.selected { background: var(--bg-inverse); border-radius: 5px;
@@ -554,7 +552,7 @@ span.db-inlinemediaobject span.db-caption { display: none; } /* inline captions 
 p.moin-selected-groups { font-size: 1.25em; font-weight: bold; }
 li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 
-#popup { padding: 0; width: 80%; position: absolute; top: 10em; left: 10%; display: none; z-index: 10;
+#popup { padding: 0; width: 80%; position: absolute; top: 10em; left: 10%; z-index: 10;
     border: 3px solid var(--border-popup); }
 .popup-header { background: var(--bg-popup-header); color: var(--inverse);
     font-size: 1.25em; padding: 10px; margin: 0; font-weight: bold; }
@@ -574,7 +572,6 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
    background-position: right bottom; transition:all 1s ease; padding: 1em; }
 .jfu-file.jfu-failed { background: linear-gradient(to right, var(--jfu-failed) 100%, transparent 100%); }
 .jfu-bar { margin-top: 1em; font-weight: bold; background: var(--jfu-progress); width: 0%; }
-#jfu-fileupload { margin-left: 1em; }
 
 /* Forms - User Settings, rename, delete, destroy, register, diff... */
 

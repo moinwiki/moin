@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Iterable
 from io import BytesIO
 
+import json
 import pytest
 
 from flask import url_for
@@ -30,8 +31,7 @@ def client_request(
     if user is not None:
         set_user_in_client_session(client, user)
     print(f"client request: {method} {url}")
-    response = client.open(url, method=method, **kwargs)
-    return response
+    return client.open(url, method=method, **kwargs)
 
 
 @pytest.mark.usefixtures("_req_ctx")
@@ -44,19 +44,19 @@ class TestFrontend:
         status: str = "200 OK",
         data: Iterable[str] = ("<html>", "</html>"),
         content_types: Iterable[str] = ("text/html; charset=utf-8",),
-        viewopts: dict[str, Any] | None = None,
+        viewargs: dict[str, Any] | None = None,
         params: dict[str, Any] | None = None,
         user: user.User | None = None,
     ) -> TestResponse:
 
-        if viewopts is None:
-            viewopts = {}
+        if viewargs is None:
+            viewargs = {}
         if params is None:
             params = {}
 
         with current_app.test_client() as client:
 
-            request_url = url_for(viewname, **viewopts)
+            request_url = url_for(viewname, **viewargs)
 
             response = client_request(client, "HEAD", request_url, user=user, data=params)
             assert response.status == status
@@ -79,19 +79,19 @@ class TestFrontend:
         content_types: Iterable[str] = ("text/html; charset=utf-8",),
         data: Iterable[str] = ("<html>", "</html>"),
         form: dict[str, Any] | None = None,
-        viewopts: dict[str, Any] | None = None,
+        viewargs: dict[str, Any] | None = None,
         params: dict[str, Any] | None = None,
         user: user.User | None = None,
     ) -> TestResponse:
 
         if params is None:
             params = {}
-        if viewopts is None:
-            viewopts = {}
+        if viewargs is None:
+            viewargs = {}
         if form is None:
             form = {}
 
-        request_url = url_for(viewname, **viewopts)
+        request_url = url_for(viewname, **viewargs)
         print("POST %s" % request_url)
 
         with current_app.test_client() as client:
@@ -103,46 +103,82 @@ class TestFrontend:
                 assert item in rv_data
             return response
 
+    def post_xhr_request(
+        self,
+        viewname: str,
+        *,
+        status: str = "302 FOUND",
+        data: dict[str, Any] | None = None,
+        viewargs: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        user: user.User | None = None,
+        expected: dict[str, Any] = {},
+    ) -> TestResponse:
+
+        if params is None:
+            params = {}
+        if viewargs is None:
+            viewargs = {}
+
+        request_url = url_for(viewname, **viewargs)
+        print("POST %s" % request_url)
+
+        with current_app.test_client() as client:
+            response = client_request(
+                client,
+                "POST",
+                request_url,
+                user=user,
+                query_string=params,
+                data=json.dumps(data),
+                content_type="application/json; charset=utf-8",
+            )
+            assert response.status == status
+            assert response.headers["Content-Type"] == "application/json"
+            assert response.is_json
+            rv_data = response.json
+            assert isinstance(rv_data, dict)
+            for key, val in expected.items():
+                assert key in rv_data
+                assert val == rv_data[key]
+            return response
+
     def test_ajaxdelete_item_name_route(self):
-        self._test_view_post(
+        self.post_xhr_request(
             "frontend.ajaxdelete",
             status="200 OK",
-            content_types=["application/json"],
-            data=["{", "}"],
-            form=dict(comment="Test", itemnames='["DoesntExist"]'),
-            viewopts=dict(item_name="DoesntExist"),
+            viewargs=dict(item_name="DoesntExist"),
+            data=dict(itemnames='["DoesntExist"]', comment="Test"),
+            expected={"itemnames": []},
         )
 
     def test_ajaxdelete_no_item_name_route(self):
-        self._test_view_post(
+        self.post_xhr_request(
             "frontend.ajaxdelete",
             status="200 OK",
-            content_types=["application/json"],
-            data=["{", "}"],
-            form=dict(comment="Test", itemnames='["DoesntExist"]'),
+            data=dict(itemnames='["DoesntExist"]', comment="Test"),
+            expected={"itemnames": []},
         )
 
     def test_ajaxdestroy_item_name_route(self):
-        self._test_view_post(
+        self.post_xhr_request(
             "frontend.ajaxdestroy",
             status="200 OK",
-            content_types=["application/json"],
-            data=["{", "}"],
-            form=dict(comment="Test", itemnames='["DoesntExist"]'),
-            viewopts=dict(item_name="DoesntExist"),
+            viewargs=dict(item_name="DoesntExist"),
+            data=dict(itemnames='["DoesntExist"]', comment="Test"),
+            expected={"itemnames": []},
         )
 
     def test_ajaxdestroy_no_item_name_route(self):
-        self._test_view_post(
+        self.post_xhr_request(
             "frontend.ajaxdestroy",
             status="200 OK",
-            content_types=["application/json"],
-            data=["{", "}"],
-            form=dict(comment="Test", itemnames='["DoesntExist"]'),
+            data=dict(comment="Test", itemnames='["DoesntExist"]'),
+            expected={"itemnames": []},
         )
 
     def test_ajaxmodify(self):
-        self._test_view_post("frontend.ajaxmodify", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view_post("frontend.ajaxmodify", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_jfu_server(self):
         self._test_view_post(
@@ -157,49 +193,49 @@ class TestFrontend:
                     content_type="text/plain; charset=utf-8",
                 )
             ),
-            viewopts=dict(item_name="WillBeCreated"),
+            viewargs=dict(item_name="WillBeCreated"),
         )
 
     def test_show_item(self):
-        self._test_view("frontend.show_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.show_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_show_dom(self):
         self._test_view(
             "frontend.show_dom",
             status="404 NOT FOUND",
             data=["<?xml", ">"],
-            viewopts=dict(item_name="DoesntExist"),
+            viewargs=dict(item_name="DoesntExist"),
             content_types=["text/xml; charset=utf-8"],
         )
 
     def test_indexable(self):
-        self._test_view("frontend.indexable", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.indexable", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_highlight_item(self):
-        self._test_view("frontend.highlight_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.highlight_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_show_item_meta(self):
-        self._test_view("frontend.show_item_meta", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.show_item_meta", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_content_item(self):
-        self._test_view("frontend.content_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.content_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_get_item(self):
-        self._test_view("frontend.get_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.get_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_download_item(self):
-        self._test_view("frontend.download_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.download_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_convert_item(self):
         self._test_view(
             "frontend.convert_item",
             status="404 NOT FOUND",
-            viewopts=dict(item_name="DoesntExist"),
+            viewargs=dict(item_name="DoesntExist"),
             params=dict(contenttype="text/plain"),
         )
 
     def test_modify_item(self):
-        self._test_view("frontend.modify_item", status="200 OK", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.modify_item", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
     def test_modify_item_show_preview(self):
 
@@ -211,42 +247,42 @@ class TestFrontend:
         self._test_view_post(
             "frontend.modify_item",
             status="200 OK",
-            viewopts=dict(item_name="quokka"),
+            viewargs=dict(item_name="quokka"),
             params={"itemtype": "default", "contenttype": "text/x.moin.wiki;charset=utf-8", "template": ""},
             form=make_modify_form_data("quokka", content=content, preview="Preview"),
             user=test_user,
         )
 
     def test_rename_item(self):
-        self._test_view("frontend.rename_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.rename_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_delete_item(self):
-        self._test_view("frontend.delete_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.delete_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_index(self):
-        self._test_view("frontend.index", status="200 OK", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.index", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
     def test_forwardrefs(self):
-        self._test_view("frontend.forwardrefs", status="200 OK", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.forwardrefs", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
     def test_backrefs(self):
-        self._test_view("frontend.backrefs", status="200 OK", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.backrefs", status="200 OK", viewargs=dict(item_name="DoesntExist"))
 
     def test_history(self):
-        self._test_view("frontend.history", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.history", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_diff(self):
         # TODO: Add another test with valid rev1 and rev2 URL args and an existing item.
-        self._test_view("frontend.diff", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.diff", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_similar_names(self):
-        self._test_view("frontend.similar_names", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.similar_names", viewargs=dict(item_name="DoesntExist"))
 
     def test_sitemap(self):
-        self._test_view("frontend.sitemap", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.sitemap", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_tagged_items(self):
-        self._test_view("frontend.tagged_items", status="200 OK", viewopts=dict(tag="DoesntExist"))
+        self._test_view("frontend.tagged_items", status="200 OK", viewargs=dict(tag="DoesntExist"))
 
     def test_root(self):
         self._test_view("frontend.index")
@@ -259,11 +295,11 @@ class TestFrontend:
 
     def test_revert_item(self):
         self._test_view(
-            "frontend.revert_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist", rev="000000")
+            "frontend.revert_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist", rev="000000")
         )
 
     def test_mychanges(self):
-        self._test_view("frontend.mychanges", viewopts=dict(userid="000000"))
+        self._test_view("frontend.mychanges", viewargs=dict(userid="000000"))
 
     def test_global_history(self):
         self._test_view("frontend.global_history")
@@ -278,12 +314,12 @@ class TestFrontend:
         self._test_view(
             "frontend.quicklink_item",
             status="302 FOUND",
-            viewopts=dict(item_name="DoesntExist"),
+            viewargs=dict(item_name="DoesntExist"),
             data=["<!doctype html"],
         )
 
     def test_subscribe_item(self):
-        self._test_view("frontend.subscribe_item", status="404 NOT FOUND", viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.subscribe_item", status="404 NOT FOUND", viewargs=dict(item_name="DoesntExist"))
 
     def test_register(self):
         self._test_view("frontend.register")
@@ -330,7 +366,7 @@ class TestFrontend:
 
     def test_diffraw(self):
         # TODO: Add another test with valid rev1 and rev2 URL args and an existing item.
-        self._test_view("frontend.diffraw", status="404 NOT FOUND", data=[], viewopts=dict(item_name="DoesntExist"))
+        self._test_view("frontend.diffraw", status="404 NOT FOUND", data=[], viewargs=dict(item_name="DoesntExist"))
 
     def test_global_tags(self):
         self._test_view("frontend.global_tags")
