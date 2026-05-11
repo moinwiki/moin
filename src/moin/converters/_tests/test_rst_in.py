@@ -250,7 +250,7 @@ class TestConverter:
         (
             "Leading text\n\n:Last Changed: 2001-08-16\n:*Version*: 1\n:Name: Joe Doe",
             "<p>Leading text</p>"
-            '<table xhtml:class="moin-rst-fieldlist"><table-body>'
+            '<table xhtml:class="rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Last Changed:</strong></table-cell>"
             "<table-cell><p>2001-08-16</p></table-cell></table-row>"
             "<table-row><table-cell><strong><emphasis>Version</emphasis>:</strong></table-cell>"
@@ -263,7 +263,7 @@ class TestConverter:
         # bibliographic data (visible meta-data)
         (
             ":Date: 2001-08-16\n:Author: Joe Doe\n:Version:  $Revision: 1.17 $\n",
-            '<table xhtml:class="moin-rst-fieldlist"><table-body>'
+            '<table xhtml:class="rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Date:</strong></table-cell><table-cell>2001-08-16</table-cell></table-row>"
             "<table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row>"
             "<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row>"
@@ -271,7 +271,7 @@ class TestConverter:
         ),
         (
             ":Authors: Pat, Patagon\n:Copyright: © 2026 Pat\n:Address: 100 Acre Wood\n:Test: custom field",
-            '<table xhtml:class="moin-rst-fieldlist"><table-body>'
+            '<table xhtml:class="rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Authors:</strong></table-cell>"
             "<table-cell><p>Pat</p><p>Patagon</p></table-cell></table-row>"
             "<table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>© 2026 Pat</table-cell></table-row>"
@@ -286,7 +286,7 @@ class TestConverter:
             "--print arg  Output just arg.\n"
             "-f FILE, --file=FILE  These two options are synonyms;\n"
             "                      both have arguments.\n",
-            '<table xhtml:class="moin-rst-optionlist"><table-body>'
+            '<table xhtml:class="rst-optionlist"><table-body>'
             '<table-row><table-cell><span xhtml:class="kbd option">-a</span></table-cell>'
             "<table-cell><p>Output all.</p></table-cell></table-row>"
             '<table-row><table-cell><span xhtml:class="kbd option">--print arg</span></table-cell>'

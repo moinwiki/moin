@@ -329,7 +329,7 @@ class Converter:
         "dedication",
         "epigraph",
         "example",
-        "figure",
+        "figure",  # TODO there is a moinpage.figure!
         "equation",
         "part",
         "partintro",
