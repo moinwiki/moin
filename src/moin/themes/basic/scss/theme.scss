@@ -1,11 +1,11 @@
-@use "variables" as *;
+@use "variables_basic" as *;
 @use 'sass:color';
 
 @import "notice";
 
-/* start of bootstrap.scss */
-@import "bootstrap";
-/* end of bootstrap.scss */
+/* start of bootstrap_basic.scss */
+@import "bootstrap_basic";
+/* end of bootstrap_basic.scss */
 
 /* start of basic theme custom css for moin2 */
 
@@ -80,7 +80,7 @@ h1 + p.moin-subheading {
 }
 
 .moin-logo {
-  @extend .text-center;
+  @extend .text-center !optional;
   position: relative;
   padding-top: 23px;
   padding-bottom: 23px;
