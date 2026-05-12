@@ -417,7 +417,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_figure(self, node):
-        self.open_moin_page_node(moin_page.figure(attrib={moin_page.class_: "moin-figure"}), node)
+        self.open_moin_page_node(moin_page.figure(), node)
 
     def depart_figure(self, node):
         self.close_moin_page_node()

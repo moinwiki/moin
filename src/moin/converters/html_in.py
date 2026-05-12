@@ -53,6 +53,8 @@ class HtmlTags:
         "code",
         "del",
         "div",
+        "figure",
+        "figcaption",
         "ins",
         "kbd",
         "p",

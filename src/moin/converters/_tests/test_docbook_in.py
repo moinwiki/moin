@@ -565,7 +565,18 @@ class TestConverter(Base):
             # '/page/body/div/div[@html-tag="aside"][@html:class="sidebar"][@html:title="Title"]',
             '/page/body/div/aside[@html:class="sidebar"]',
         ),
-        # TODO: figures
+        (
+            '<article><figure><mediaobject><imageobject><imagedata fileref="test.png"/></imageobject></mediaobject><title>Testbild</title></figure></article>',
+            # <page><body><div html:class="db-article"><figure><div html:class="db-mediaobject"><xinclude:include type="image/" html:alt="test.png" xinclude:href="wiki.local:test.png" /></div><figcaption>Testbild</figcaption></figure></div></body></page>
+            '/page/body/div/figure/div/xinclude:include[@xinclude:href="wiki.local:test.png"]',
+            # TODO: <title> -> <figcaption>
+            # '/page/body/div/figure/figcaption[text()="Testbild"]',
+        ),
+        (
+            '<article><informalfigure><mediaobject><imageobject><imagedata fileref="test.png"/></imageobject></mediaobject></informalfigure></article>',
+            # <page><body><div html:class="db-article"><figure><div html:class="db-mediaobject"><xinclude:include type="image/" html:alt="test.png" xinclude:href="wiki.local:test.png" /></div></figure></div></body></page>
+            '/page/body/div/figure/div/xinclude:include[@xinclude:href="wiki.local:test.png"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

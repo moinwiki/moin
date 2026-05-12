@@ -200,7 +200,12 @@ class TestConverter(Base):
     data = [
         # ('<html><div><img src="uri:test" /></div></html>',
         #  '/page/body/div/object/@xlink:href="uri:test"'),
-        ('<html><div><object data="href"></object></div></html>', '/div/div/object[@data="href"]')
+        ('<html><div><object data="href"></object></div></html>', '/div/div/object[@data="href"]'),
+        (
+            '<html><figure><img src="uri:test" /><figcaption>Testbild</figcaption></figure></html>',
+            # <page><body><figure><object xlink:href="uri:test" /><figcaption>Testbild</figcaption></figure></body></page>
+            '/div/figure/figcaption[text()="Testbild"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
