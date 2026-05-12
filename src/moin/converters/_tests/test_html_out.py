@@ -107,6 +107,10 @@ class TestConverter(Base):
             "<page:page><page:body><page:div><page:p><page:quote>Quotation</page:quote></page:p></page:div></page:body></page:page>",
             '/div/div/p/q[text()="Quotation"]',
         ),
+        (
+            "<page:page><page:body><page:aside><page:p>tangentially related</page:p></page:aside></page:body></page:page>",
+            '/div/aside[p="tangentially related"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

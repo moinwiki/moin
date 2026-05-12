@@ -336,7 +336,6 @@ class Converter:
         "screenshoot",
         "set",
         "setindex",
-        "sidebar",
         "simplesect",
         "subtitle",
         "synopsis",
@@ -1062,6 +1061,13 @@ class Converter:
             else:
                 new.append(child)
         return ET.Element(moin_page.list, attrib={}, children=new)
+
+    def visit_docbook_sidebar(self, element, depth):
+        """
+        <sidebar> --> <aside html:class="sidebar">
+        """
+        attrib = {html.class_: "sidebar"}
+        return self.new_copy(moin_page("aside"), element, depth, attrib=attrib)
 
     def visit_docbook_simplelist(self, element, depth):
         """

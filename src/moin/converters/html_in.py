@@ -48,6 +48,7 @@ class HtmlTags:
 
     # HTML tags which can be converted directly to the moin_page namespace
     symmetric_tags: Final = {
+        "aside",
         "blockquote",
         "code",
         "del",
@@ -93,7 +94,6 @@ class HtmlTags:
     indirect_tags: Final = {
         "abbr": moin_page.span,  # abbreviation
         "address": moin_page.div,  # contact info
-        "aside": moin_page.div,  # content that is tangentially related to the main content
         "cite": moin_page.emphasis,  # title of a creative work
         "dfn": moin_page.emphasis,  # defining instance of a term
         "i": moin_page.emphasis,  # alternate voice

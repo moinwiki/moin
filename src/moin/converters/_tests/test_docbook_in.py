@@ -559,6 +559,20 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
+        # Test misc block-level elements
+        (  # TODO: test also for title and content
+            "<article><sidebar><title>Title</title><para>content</para></sidebar></article>",
+            # '/page/body/div/div[@html-tag="aside"][@html:class="sidebar"][@html:title="Title"]',
+            '/page/body/div/aside[@html:class="sidebar"]',
+        ),
+        # TODO: figures
+    ]
+
+    @pytest.mark.parametrize("input,xpath", data)
+    def test_block_elements(self, input, xpath):
+        self.do(input, xpath)
+
+    data = [
         (
             '<article><para><trademark class="copyright">MoinMoin</trademark></para></article>',
             # <page><body><div html:class="db-article"><p><span html:class="db-trademark">\xa9  MoinMoin</span></p></div></body></page>

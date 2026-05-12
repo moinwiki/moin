@@ -177,6 +177,11 @@ class TestConverter(Base):
             '/page/body/p/span[text()="smaller"][@html:class="moin-small"]',
         ),
         (
+            "<html><div><p><q>Inline quote</q></p></div></html>",
+            # <page><body><div><p><quote>Inline quote</quote></p></body></page>
+            '/page/body/div/p[quote="Inline quote"]',
+        ),
+        (
             "<html><p><ins>underline</ins></p></html>",
             # <page><body><p><ins>underline</ins></p></body></page>
             '/page/body/p/ins[text()="underline"]',
@@ -202,6 +207,24 @@ class TestConverter(Base):
     def test_inline_elements(self, input, xpath):
         self.do(input, xpath)
 
+    # Many HTML elements have an equivalent Moin DOM tree element
+    data = [
+        (
+            "<html><aside><p>tangentially related</p></aside></html>",
+            # <page><body><aside><p>tangentially related</p></aside></body></page>
+            '/page/body/aside/p[text()="tangentially related"]',
+        ),
+        (
+            "<html><div><blockquote>Block quote</blockquote></div></html>",
+            # <page><body><div><blockquote>Block quote</blockquote></body></page>
+            '/page/body/div[blockquote="Block quote"]',
+        ),
+    ]
+
+    @pytest.mark.parametrize("input,xpath", data)
+    def test_symmetric_elements(self, input, xpath):
+        self.do(input, xpath)
+
     # HTML elements without equivalent Moin DOM tree elements
     # are represented by the "html-tag" attribute:
     data = [
@@ -219,11 +242,6 @@ class TestConverter(Base):
             "<html><address>webmaster@example.org</address></html>",
             # <page><body><div html-tag="address">webmaster@example.org</div></body></page>
             '/page/body/div[text()="webmaster@example.org"][@html-tag="address"]',
-        ),
-        (  # <aside> is a block-level element
-            "<html><aside><p>tangentially related</p></aside></html>",
-            # <page><body><div html-tag="aside"><p>tangentially related</p></div></body></page>
-            '/page/body/div[@html-tag="aside"]/p[text()="tangentially related"]',
         ),
         (
             "<html><p><cite>Hamlet</cite></p></html>",
@@ -335,23 +353,6 @@ class TestConverter(Base):
 
     @pytest.mark.parametrize("input,xpath", data)
     def test_code(self, input, xpath):
-        self.do(input, xpath)
-
-    data = [
-        (
-            "<html><div><p><q>Inline quote</q></p></div></html>",
-            # <page><body><div><p><quote>Inline quote</quote></p></body></page>
-            '/page/body/div/p[quote="Inline quote"]',
-        ),
-        (
-            "<html><div><blockquote>Block quote</blockquote></div></html>",
-            # <page><body><div><blockquote>Block quote</blockquote></body></page>
-            '/page/body/div[blockquote="Block quote"]',
-        ),
-    ]
-
-    @pytest.mark.parametrize("input,xpath", data)
-    def test_quote(self, input, xpath):
         self.do(input, xpath)
 
     data = [

@@ -241,6 +241,9 @@ class Converter:
             attrib[html.class_] = cls
         return self.new_copy(html.div, elem, attrib)
 
+    def visit_moinpage_aside(self, elem):
+        return self.new_copy(html.aside, elem)
+
     def visit_moinpage_audio(self, elem):
         href = elem.get(xlink.href, None)
         attrib = {html.src: href} if href else {}

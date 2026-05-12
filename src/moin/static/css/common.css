@@ -423,7 +423,7 @@ li > p { margin-top: 0; margin-bottom: 0; }
 
 /* rST topic and rST/DocBook sidebar */
 aside { margin-left: 2em; } /* content outside of the document's main text */
-aside.rst-sidebar, div.db-sidebar {
+aside.sidebar {
     color: var(--primary); border: var(--border-style);
     margin: 10px 30px; padding: 8px; }
 

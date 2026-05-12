@@ -517,14 +517,14 @@ text""",
         # Topics, Sidebars, and Rubrics
         (
             ".. topic:: Topic Title\n   :class: custom\n\n   topic content",
-            '<div html-tag="aside" xhtml:class="custom"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></div>',
+            '<aside xhtml:class="custom"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></aside>',
         ),
         (
             ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n   :class: float-right\n\n   sidebar content",
-            '<div html-tag="aside" xhtml:class="rst-sidebar float-right">'
+            '<aside xhtml:class="sidebar float-right">'
             '<p xhtml:class="moin-title">Sidebar Title</p>'
             '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
-            "<p>sidebar content</p></div>",
+            "<p>sidebar content</p></aside>",
         ),
         (
             ".. rubric:: Informal Heading\n  :class: custom",
