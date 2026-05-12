@@ -550,7 +550,7 @@ class NodeVisitor:
 
     def visit_line(self, node):
         """| line of a line_block"""
-        self.open_moin_page_node(moin_page.line_blk())
+        self.open_moin_page_node(moin_page.line_block_line())
 
     def depart_line(self, node):
         self.close_moin_page_node()

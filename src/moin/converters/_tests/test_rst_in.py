@@ -106,10 +106,13 @@ class TestConverter:
             "</list-item-body></list-item><list-item><list-item-body><p>B</p></list-item-body></list-item></list>"
             "</blockquote>",
         ),
-        ("| line 1\n| line2", "<line-block><line-blk>line 1</line-blk><line-blk>line2</line-blk></line-block>"),
+        (
+            "| line 1\n| line2",
+            "<line-block><line-block-line>line 1</line-block-line><line-block-line>line2</line-block-line></line-block>",
+        ),
         (
             "| line 1\n|  nested line-block",
-            "<line-block><line-blk>line 1</line-blk><line-block><line-blk>nested line-block</line-blk></line-block></line-block>",
+            "<line-block><line-block-line>line 1</line-block-line><line-block><line-block-line>nested line-block</line-block-line></line-block></line-block>",
         ),
     ]
 

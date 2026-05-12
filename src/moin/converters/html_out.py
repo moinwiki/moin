@@ -348,8 +348,8 @@ class Converter:
         # TODO: attributes?
         return html.br()
 
-    def visit_moinpage_line_blk(self, elem):
-        return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-blk"})
+    def visit_moinpage_line_block_line(self, elem):
+        return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-block-line"})
 
     def visit_moinpage_line_block(self, elem):
         """

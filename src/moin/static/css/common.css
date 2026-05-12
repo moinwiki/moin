@@ -417,9 +417,9 @@ li > p { margin-top: 0; margin-bottom: 0; }
 .rst-attribution { font-style: italic; }
 .rst-attribution:before { content: "—"; }
 
-/* rST line-blocks */
+/* moinpage elements for rST line-blocks */
 .moin-line-block > .moin-line-block { margin-left: 2em; }
-.moin-line-blk:empty { min-height: 1em; }
+.moin-line-block-line:empty { min-height: 1em; }
 
 /* rST topic and rST/DocBook sidebar */
 aside { margin-left: 2em; } /* content outside of the document's main text */

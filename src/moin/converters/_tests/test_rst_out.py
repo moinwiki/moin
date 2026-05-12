@@ -63,7 +63,7 @@ class TestConverter(Base):
             "\n..\n comment\n",
         ),
         (
-            "<page><body><line-block><line-blk>Lend us a couple of bob till Thursday.</line-blk></line-block></body></page>",
+            "<page><body><line-block><line-block-line>Lend us a couple of bob till Thursday.</line-block-line></line-block></body></page>",
             "\n| Lend us a couple of bob till Thursday.\n",
         ),
     ]
