@@ -35,7 +35,7 @@ from moin.security import AccessControlList, DefaultSecurityPolicy
 if TYPE_CHECKING:
     from collections.abc import Callable
     from moin.auth import BaseAuth
-    from moin.config import AclMapping, BackendMapping, ItemViews, NamespaceMapping, NaviBarEntries
+    from moin.config import AclMapping, BackendMapping, ItemViews, NamespaceMapping, NaviBarEntries, PasswordChecker
     from moin.datastructures.backends import BaseDictsBackend, BaseGroupsBackend
 
 logging = log.getLogger(__name__)
@@ -124,6 +124,7 @@ class ConfigFunctionality:
     mimetypes_to_index_as_empty: list[str] = []
     namespace_mapping: NamespaceMapping
     navi_bar: NaviBarEntries
+    password_checker: PasswordChecker | None
     password_hasher_config: PasswordHasherConfig
     registration_hint: str
     registration_only_by_superuser: bool
@@ -358,51 +359,58 @@ class DefaultConfig(ConfigFunctionality):
     # the options dictionary.
 
 
-def _default_password_checker(
-    cfg, username: str, password: str, min_length: int = 8, min_different: int = 5
-) -> str | None:
-    """Check if a password is secure enough.
-    We use a built-in check to get rid of the worst passwords.
+class DefaultPasswordChecker:
 
-    We do NOT use cracklib / python-crack here any more because it is
-    not thread-safe (we experienced segmentation faults when using it).
-
-    If you don't want to check passwords, use password_checker = None.
-
-    :returns: None if there is no problem with the password,
-             some unicode object with an error msg, if the password is problematic.
-    """
-    # in any case, do a very simple built-in check to avoid the worst passwords
-    if len(password) < min_length:
-        return _(
-            "For a password a minimum length of {min_length} characters is required.".format(min_length=min_length)
-        )
-    if len(set(password)) < min_different:
-        return _(
-            "For a password a minimum of {min_different:d} different characters is required.".format(
-                min_different=min_different
-            )
-        )
-
-    username_lower = username.lower()
-    password_lower = password.lower()
-    if (
-        username in password
-        or password in username
-        or username_lower in password_lower
-        or password_lower in username_lower
-    ):
-        return _("Password is too easy to guess (password contains name or name contains password).")
-
-    keyboards = (
+    # TODO add more keyboards
+    keyboards: Final[tuple[str, ...]] = (
         r"`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./",  # US kbd
         r"^1234567890ß´qwertzuiopü+asdfghjklöä#yxcvbnm,.-",  # german kbd
-    )  # TODO add more keyboards!
-    for kbd in keyboards:
-        rev_kbd = kbd[::-1]
-        if password in kbd or password in rev_kbd or password_lower in kbd or password_lower in rev_kbd:
-            return _("Password is too easy to guess (keyboard sequence).")
-    return None
+    )
+
+    def __init__(self, min_length: int = 8, min_different: int = 5) -> None:
+        self.min_length = min_length
+        self.min_different = min_different
+
+    def __call__(self, username: str, password: str) -> str | None:
+        """
+        Check if a password is secure enough.
+        We use a built-in check to get rid of the worst passwords.
+
+        We do NOT use cracklib / python-crack here any more because it is
+        not thread-safe (we experienced segmentation faults when using it).
+
+        If you don't want to check passwords, use password_checker = None.
+
+        :returns: None if there is no problem with the password,
+                some unicode object with an error msg, if the password is problematic.
+        """
+
+        # in any case, do a very simple built-in check to avoid the worst passwords
+        if len(password) < self.min_length:
+            return _("For a password a minimum length of {min_length} characters is required.").format(
+                min_length=self.min_length
+            )
+        if len(set(password)) < self.min_different:
+            return _("For a password a minimum of {min_different:d} different characters is required.").format(
+                min_different=self.min_different
+            )
+
+        username_lower = username.lower()
+        password_lower = password.lower()
+        if (
+            username in password
+            or password in username
+            or username_lower in password_lower
+            or password_lower in username_lower
+        ):
+            return _("Password is too easy to guess (password contains name or name contains password).")
+
+        for kbd in self.keyboards:
+            rev_kbd = kbd[::-1]
+            if password in kbd or password in rev_kbd or password_lower in kbd or password_lower in rev_kbd:
+                return _("Password is too easy to guess (keyboard sequence).")
+
+        return None
 
 
 class DefaultExpression:
@@ -469,7 +477,7 @@ options_no_group_name: dict[str, OptionsGroup] = {
             Option("endpoints_excluded", [], "Exclude unwanted endpoints (list of strings)"),
             Option(
                 "password_checker",
-                DefaultExpression("_default_password_checker"),
+                DefaultExpression("DefaultPasswordChecker()"),
                 'does simple checks whether a password is acceptable (you can switch this off by using "None" or enhance it by using a custom checker)',
             ),
             Option(
