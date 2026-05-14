@@ -18,6 +18,9 @@ $(function () {
     "use strict";
     $('#jfu-fileupload').fileupload({
         dataType: 'json',
+        start: function (e) {
+            $("#jfu-progress").removeClass("hidden");
+        },
         add: function(e, data) {
             // show file upload progress bar and overall progress bar after user selects files
             data.context = $('<p class="jfu-file"></p>')

@@ -29,11 +29,14 @@ import threading
 import urllib.request
 import urllib.parse
 import urllib.error
+
+from ast import literal_eval
 from io import BytesIO
 from datetime import datetime
 from datetime import timezone
 from collections import namedtuple
 from functools import wraps, partial
+from itertools import chain
 
 from werkzeug.exceptions import BadRequest
 from werkzeug.utils import secure_filename
@@ -56,9 +59,16 @@ from whoosh.query.qcore import QueryError, TermNotFound
 from whoosh.analysis import StandardAnalyzer
 
 from moin import current_app, flaskg, log
-from moin.i18n import _, L_
-from moin.themes import render_template, contenttype_to_class, get_editor_info
+from moin.constants.contenttypes import *  # noqa
+from moin.constants.forms import WIDGET_HIDDEN
+from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_NONEXISTENT
+from moin.constants.keys import *  # noqa
+from moin.constants.misc import FLASH_REPEAT
+from moin.constants.namespaces import *  # noqa
+from moin.constants.rights import SUPERUSER
+from moin.converters import default_registry as reg
 from moin.forms import (
+    Boolean,
     OptionalText,
     RequiredText,
     YourEmail,
@@ -78,9 +88,11 @@ from moin.forms import (
     validate_name,
     NameNotValidError,
 )
+from moin.i18n import _, L_
 from moin.items import (
     BaseChangeForm,
     Item,
+    ItemDeletionResult,
     NonExistent,
     NameNotUniqueError,
     MissingParentError,
@@ -89,12 +101,13 @@ from moin.items import (
     find_matches,
 )
 from moin.items.content import content_registry, conv_serialize
-from moin.constants.keys import *  # noqa
-from moin.constants.namespaces import *  # noqa
-from moin.constants.itemtypes import ITEMTYPE_DEFAULT, ITEMTYPE_NONEXISTENT
-from moin.constants.contenttypes import *  # noqa
-from moin.constants.rights import SUPERUSER
-from moin.constants.misc import FLASH_REPEAT
+from moin.search import SearchForm
+from moin.search.analyzers import item_name_analyzer
+from moin.security.csp import add_csp_headers
+from moin.signalling import item_displayed, item_modified
+from moin.storage.middleware.exceptions import AccessDenied
+from moin.storage.middleware.validation import validate_data
+from moin.themes import render_template, contenttype_to_class, get_editor_info
 from moin.user import create_user, normalize_username, search_users, User
 from moin.utils import crypto, rev_navigation, close_file, show_time, utcfromtimestamp
 from moin.utils.crypto import make_uuid, hash_hexdigest
@@ -103,13 +116,6 @@ from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
 from moin.utils.tree import html, docbook
-from moin.search import SearchForm
-from moin.search.analyzers import item_name_analyzer
-from moin.security.csp import add_csp_headers
-from moin.signalling import item_displayed, item_modified
-from moin.storage.middleware.exceptions import AccessDenied
-from moin.converters import default_registry as reg
-from moin.storage.middleware.validation import validate_data
 import moin.utils.mimetype as mime_type
 
 if TYPE_CHECKING:
@@ -1163,31 +1169,10 @@ def delete_item(item_name):
     return ret
 
 
-@frontend.route("/+ajaxdelete/<itemname:item_name>", methods=["POST"])
-@frontend.route("/+ajaxdelete", defaults=dict(item_name=""), methods=["POST"])
-def ajaxdelete(item_name):
-    return ajaxdestroy(item_name, req="delete")
+def _delete_items(itemnames: list[str], comment: str, do_subitems: bool, do_destroy: bool) -> ItemDeletionResult:
 
+    result = ItemDeletionResult()
 
-@frontend.route("/+ajaxdestroy/<itemname:item_name>", methods=["POST"])
-@frontend.route("/+ajaxdestroy", defaults=dict(item_name=""), methods=["POST"])
-def ajaxdestroy(item_name, req="destroy"):
-    """
-    Handles both ajax delete and ajax destroy.
-
-    Incoming item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
-
-    Json response object includes these lists:
-        - itemnames: list of item names and subnames successfully deleted/destroyed in url format
-        - messages: formatted success/fail message for each item processed
-    """
-    args = request.values.to_dict()
-    comment = args.get("comment")
-    itemnames = args.get("itemnames")
-    do_subitems = True if args.get("do_subitems") == "true" else False
-    itemnames = json.loads(itemnames)
-    response = {"itemnames": [], "messages": []}
-    messages = []
     for itemname_url in itemnames:
         itemname = urllib.parse.unquote(itemname_url)  # itemname is url quoted str
         try:
@@ -1195,47 +1180,197 @@ def ajaxdestroy(item_name, req="destroy"):
             if isinstance(item, NonExistent):
                 # we should not try to destroy a nonexistent item,
                 # user probably checked a subitem and checked do subitems
-                response["messages"].append(
-                    _("Item '{bad_name}' does not exist or you do not have permission to access it.").format(
-                        bad_name=item.name
-                    )
+                message = _("Item '{bad_name}' does not exist or you do not have permission to access it.").format(
+                    bad_name=item.name
                 )
+                result.messages.append(message)
                 continue
-            subitem_names = []
-            if req == "destroy":
+
+            if do_destroy:
+                subitem_names: list[str] = []
                 if do_subitems:
                     subitems = item.get_subitem_revs()
                     # if subitem has alias of unselected sibling or ancester, it will be included
-                    subitem_names = [x.meta.revision.names for x in subitems]
-                messages, subitem_names = item.destroy(
-                    comment=comment, destroy_item=True, subitem_names=subitem_names, ajax=True
-                )
+                    subitem_names += chain.from_iterable([x.meta.revision.names for x in subitems])
+                result += item.destroy(comment=comment, destroy_item=True, subitem_names=subitem_names)
                 log_destroy_action(item, subitem_names, comment)
+                result.itemnames += subitem_names
             else:
                 try:
-                    messages, subitem_names = item.delete(comment, do_subitems=do_subitems, ajax=True)
+                    result += item.delete(comment, do_subitems=do_subitems)
                 except AccessDenied:
                     # some deletes may have succeeded, one failed, there may be unprocessed items
                     msg = _("Access denied for a subitem of {bad_name}, check History for status.").format(
                         bad_name=itemname
                     )
-                    response["messages"].append(msg)
-            response["messages"] += messages
-            response["itemnames"] += subitem_names + itemnames
+                    result.messages.append(msg)
+            result.itemnames += itemnames
+            close_file(item.rev.data)
         except AccessDenied:
-            response["messages"].append(_("Access denied processing '{bad_name}'.").format(bad_name=itemname))
-    return jsonify(response)
+            result.messages.append(_("Access denied processing '{bad_name}'.").format(bad_name=itemname))
+
+    return result
 
 
-@frontend.route("/+ajaxmodify/<itemname:item_name>", methods=["POST"])
+@frontend.route("/+ajaxdelete", defaults=dict(item_name=""), methods=["POST"])
+@frontend.route("/+ajaxdelete/<itemname:item_name>", methods=["POST"])
+def ajaxdelete(item_name: str) -> Response:
+    """
+    Handles an ajax delete request.
+
+    Incoming item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+
+    JSON response object includes these lists:
+        - itemnames: list of item names and subnames successfully deleted/destroyed in url format
+        - messages: formatted success/fail message for each item processed
+    """
+    assert request.is_json
+    data = request.json
+    itemnames = data["itemnames"]
+    comment = data["comment"]
+    do_subitems = data.get("do_subitems", False)
+    result = _delete_items(itemnames, comment, do_subitems, do_destroy=False)
+    return jsonify(result.as_dict())
+
+
+@frontend.route("/+ajaxdestroy", defaults=dict(item_name=""), methods=["POST"])
+@frontend.route("/+ajaxdestroy/<itemname:item_name>", methods=["POST"])
+def ajaxdestroy(item_name: str) -> Response:
+    """
+    Handles an ajax destroy request.
+
+    Incoming item_name not currently used, contains parent name of items to be deleted/destroyed or ''.
+
+    JSON response object includes these lists:
+        - itemnames: list of item names and subnames successfully deleted/destroyed in url format
+        - messages: formatted success/fail message for each item processed
+    """
+    assert request.is_json
+    data = request.json
+    itemnames = data["itemnames"]
+    comment = data["comment"]
+    do_subitems = data.get("do_subitems", False)
+    result = _delete_items(itemnames, comment, do_subitems, do_destroy=True)
+    return jsonify(result.as_dict())
+
+
+def _create_item_from_file_upload(item_name, data_file):
+    message = ""
+    base_file_name = os.path.basename(data_file.filename)
+    file_name = secure_filename(base_file_name)
+    if file_name != base_file_name:
+        message = _("File Successfully uploaded and renamed from {bad_name} to {good_name}. ").format(
+            bad_name=base_file_name, good_name=file_name
+        )
+    subitem_name = file_name
+    item_name = f"{item_name}/{subitem_name}" if item_name else subitem_name
+    mt = mime_type.MimeType(filename=file_name)
+    contenttype = mt.content_type(charset="utf-8")
+    small_meta = {CONTENTTYPE: contenttype}
+
+    details = dict(file=item_name, name=subitem_name, message=message, contenttype=contenttype_to_class(contenttype))
+
+    valid = validate_data(small_meta, data_file.stream)
+    if not valid:
+        message = _(
+            "UnicodeDecodeError, upload failed, not a text file, nothing saved: '{file_name}'. "
+            "Try changing the name."
+        ).format(file_name=file_name)
+        details["message"] = message
+        return None, details
+
+    with jfu_server_lock:
+        try:
+            item = Item.create(item_name)
+            if not isinstance(item, NonExistent):
+                message += _("File Successfully uploaded, existing file overwritten: '{file_name}'.").format(
+                    file_name=file_name
+                )
+            revid, size = item.modify({"itemtype": ITEMTYPE_DEFAULT}, data_file.stream, contenttype_guessed=contenttype)
+        except AccessDenied:
+            # return 200 status with error message
+            message = _("Permission denied, upload failed: '{file_name}'.").format(file_name=file_name)
+            details["message"] = message
+            return None, details
+
+    item_modified.send(current_app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
+
+    message = _("File Successfully uploaded: '{item_name}'.").format(item_name=item_name)
+    details["message"] = message
+    details["revid"] = revid
+    details["size"] = str(size)
+
+    return item, details
+
+
 @frontend.route("/+ajaxmodify", methods=["POST"], defaults=dict(item_name=""))
+@frontend.route("/+ajaxmodify/<path:item_name>", methods=["POST"])
 def ajaxmodify(item_name):
-    newitem = request.values.get("newitem")
-    if not newitem:
-        abort(404, item_name)
+    new_name = request.values.get("new_name")
+    if not new_name:
+        abort(404, new_name)
     if item_name:
-        newitem = item_name + "/" + newitem
-    return redirect(url_for_item(newitem))
+        new_name = f"{item_name}/{new_name}"
+    return redirect(url_for_item(new_name))
+
+
+def _get_subitems(item_names: list[str], action_auth: str):
+
+    all_alias_names: set[str] = set()
+    all_subitem_names: set[str] = set()
+    all_selected_names: set[str] = set()
+    all_rejected_names: set[str] = set()
+
+    for item_name in item_names:
+        item_name = urllib.parse.unquote(item_name)
+        try:
+            item = Item.create(item_name, rev_id=CURRENT)
+        except AccessDenied:
+            abort(403)  # should never happen
+
+        if isinstance(item, NonExistent):
+            # user deletes item with alias, then tries to delete same item with other alias
+            all_rejected_names.add(item_name)
+            continue
+
+        fqname = item.fqname
+        if action_auth == "destroy":
+            if not flaskg.user.may.destroy(fqname):
+                # user can read this item, but not destroy
+                all_rejected_names.add(item_name)
+                continue
+        else:
+            if not flaskg.user.may.write(fqname):
+                # user can read this item, but not delete
+                all_rejected_names.add(item_name)
+                continue
+
+        alias_names = []
+        subitems = list(item.get_subitem_revs())
+
+        # TODO: add check for delete/destroy auth, add to rejected names,
+        # subitems may have alias names pointing to sibling or parent of user selected items
+
+        if fqname.namespace:
+            namespace_prefix = f"{fqname.namespace}/"  # used to build fullname for aliases and subitems
+        else:
+            namespace_prefix = ""
+
+        subitem_names = [f"{namespace_prefix}{y}" for x in subitems for y in x.meta[NAME]]
+
+        if not [item.name] == item.names:
+            alias_names = [f"{namespace_prefix}{x}" for x in item.names if not x == item.name]
+
+        all_alias_names.update(alias_names)
+        all_subitem_names.update(subitem_names)
+        all_selected_names.add(item_name)
+
+    return {
+        "subitem_names": sorted(list(all_subitem_names)),
+        "alias_names": list(all_alias_names),
+        "selected_names": list(all_selected_names),
+        "rejected_names": list(all_rejected_names),
+    }
 
 
 @frontend.route("/+ajaxsubitems", methods=["POST"])
@@ -1249,60 +1384,14 @@ def ajaxsubitems():
     """
     item_names = request.values.getlist("item_names[]")
     action_auth = request.values.get("action_auth")
-    all_alias_names = []
-    all_subitem_names = []
-    all_selected_names = []
-    all_rejected_names = []
-    for item_name in item_names:
-        item_name = urllib.parse.unquote(item_name)
-        try:
-            item = Item.create(item_name, rev_id=CURRENT)
-        except AccessDenied:
-            abort(403)  # should never happen
-        if isinstance(item, NonExistent):
-            # user deletes item with alias, then tries to delete same item with other alias
-            all_rejected_names.append(item_name)
-            continue
-        fqname = item.fqname
-        if action_auth == "destroy":
-            if not flaskg.user.may.destroy(fqname):
-                # user can read this item, but not destroy
-                all_rejected_names.append(item_name)
-                continue
-        else:
-            if not flaskg.user.may.write(fqname):
-                # user can read this item, but not delete
-                all_rejected_names.append(item_name)
-                continue
-        alias_names = []
-        subitems = list(item.get_subitem_revs())
-        # TODO: add check for delete/destroy auth, add to rejected names,
-        # subitems may have alias names pointing to sibling or parent of user selected items
-
-        if fqname.namespace:
-            namespace_prefix = f"{fqname.namespace}/"  # used to build fullname for aliases and subitems
-        else:
-            namespace_prefix = ""
-
-        subitem_names = [f"{namespace_prefix}{y}" for x in subitems for y in x.meta[NAME]]
-
-        if not [item.name] == item.names:
-            alias_names = [f"{namespace_prefix}{x}" for x in item.names if not x == item.name]
-        all_alias_names += alias_names
-        all_subitem_names += subitem_names
-        all_selected_names.append(item_name)
-    all_subitem_names = set(all_subitem_names)
-    response = {
-        "subitem_names": list(all_subitem_names),
-        "alias_names": all_alias_names,
-        "selected_names": all_selected_names,
-        "rejected_names": all_rejected_names,
-    }
-    return jsonify(response)
+    result = _get_subitems(item_names, action_auth)
+    return jsonify(result)
 
 
 def log_destroy_action(item, subitem_names, comment, revision=None):
-    """Document the destruction of an item or item revision."""
+    """
+    Document the destruction of an item or item revision.
+    """
     destroy_info = [
         ("An item has been destroyed", ""),
         ("  Names", item.meta[NAME]),
@@ -1353,17 +1442,22 @@ def destroy_item(item_name, rev):
     else:
         _rev = rev
         destroy_item = False
+
     try:
         item = Item.create(item_name, rev_id=_rev)
     except AccessDenied:
         abort(403)
+
     fqname = item.fqname
     if not flaskg.user.may.destroy(fqname):
         abort(403)
+
     if isinstance(item, NonExistent):
         abort(404, fqname.fullname)
+
     item_may = get_item_permissions(fqname, item)
     item_is_deleted = flash_if_item_deleted(item_name, rev, item)
+
     subitem_names = []
     alias_names = []
     if rev is None and item_is_deleted:
@@ -1388,13 +1482,16 @@ def destroy_item(item_name, rev):
             if not do_subitems:
                 subitem_names = []
             try:
-                item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
+                result = item.destroy(comment=comment, destroy_item=destroy_item, subitem_names=subitem_names)
+                for message in result.messages:
+                    flash(message, "info")
             except AccessDenied:
                 abort(403)
             log_destroy_action(item, subitem_names, comment, revision=rev)
             # show user item is deleted by showing "item does not exist, create it?" page
             return redirect(url_for_item(item_name))
-    ret = render_template(
+
+    response = render_template(
         "destroy.html",
         item=item,
         item_name=item_name if item.meta[NAME] else item.meta[NAME_OLD][0],
@@ -1407,9 +1504,26 @@ def destroy_item(item_name, rev):
         item_is_deleted=item_is_deleted,
         may=item_may,
     )
+
     close_file(item.meta.revision.data)
     close_file(item.rev.data)
-    return ret
+
+    return response
+
+
+def _upload_file(item_name: str) -> tuple[Item | None, dict[str, str]]:
+
+    file_storage = request.files.get("file_storage")
+
+    try:
+        item, details = _create_item_from_file_upload(item_name, file_storage)
+    except Exception as err:
+        item = None
+        details = {"message": str(err)}
+    finally:
+        file_storage.close()
+
+    return item, details
 
 
 @frontend.route("/+jfu-server/<itemname:item_name>", methods=["POST"])
@@ -1418,83 +1532,12 @@ def jfu_server(item_name):
     """
     jquery-file-upload server component, returns a json response
     """
-    msg = ""
-    data_file = request.files.get("file_storage")
-    base_file_name = os.path.basename(data_file.filename)
-    file_name = secure_filename(base_file_name)
-    if not file_name == base_file_name:
-        msg = _("File Successfully uploaded and renamed from {bad_name} to {good_name}. ").format(
-            bad_name=base_file_name, good_name=file_name
-        )
-    subitem_name = file_name
-    data = data_file.stream
-    mt = mime_type.MimeType(filename=file_name)
-    contenttype = mt.content_type(charset="utf-8")
-    small_meta = {CONTENTTYPE: contenttype}
-    valid = validate_data(small_meta, data)
-    if not valid:
-        msg = _(
-            "UnicodeDecodeError, upload failed, not a text file, nothing saved: '{file_name}'. "
-            "Try changing the name."
-        ).format(file_name=file_name)
-        ret = make_response(
-            jsonify(
-                file=item_name,
-                name=subitem_name,
-                message=msg,
-                css_class="jfu-failed",
-                contenttype=contenttype_to_class(contenttype),
-            ),
-            200,
-        )
-        return ret
-
-    if item_name:
-        subitem_prefix = item_name + "/"
+    item, details = _upload_file(item_name)
+    if item is None:
+        details.update(css_class="jfu-failed")
     else:
-        subitem_prefix = ""
-    item_name = subitem_prefix + subitem_name
-    jfu_server_lock.acquire()
-    try:
-        item = Item.create(item_name)
-        if not isinstance(item, NonExistent):
-            msg += _("File Successfully uploaded, existing file overwritten: '{file_name}'.").format(
-                file_name=file_name
-            )
-        revid, size = item.modify({"itemtype": ITEMTYPE_DEFAULT}, data, contenttype_guessed=contenttype)
-        jfu_server_lock.release()
-    except AccessDenied:
-        # return 200 status with error message
-        jfu_server_lock.release()
-        msg = _("Permission denied, upload failed: '{file_name}'.").format(file_name=file_name)
-        ret = make_response(
-            jsonify(
-                file=item_name,
-                name=subitem_name,
-                message=msg,
-                css_class="jfu-failed",
-                contenttype=contenttype_to_class(contenttype),
-            ),
-            200,
-        )
-        return ret
-
-    data_file.close()
-    item_modified.send(current_app, fqname=item.fqname, action=ACTION_SAVE, new_meta=item.meta)
-    if not msg:
-        msg = _("File Successfully uploaded: '{item_name}'.").format(item_name=item_name)
-    ret = make_response(
-        jsonify(
-            file=item_name,
-            name=subitem_name,
-            size=size,
-            url=url_for(".show_item", item_name=item_name),
-            contenttype=contenttype_to_class(contenttype),
-            message=msg,
-        ),
-        200,
-    )
-    return ret
+        details.update(url=url_for(".show_item", item_name=item.fqname))
+    return make_response(jsonify(**details), 200)
 
 
 def contenttype_selects_gen():
@@ -1509,16 +1552,97 @@ ContenttypeGroup = MultiSelect.of(Enum.out_of(contenttype_selects_gen())).using(
 
 class IndexForm(Form):
     contenttype = ContenttypeGroup
+    show_create_item = Boolean.with_properties(widget=WIDGET_HIDDEN).using(default=False)
+    show_namespace_list = Boolean.with_properties(widget=WIDGET_HIDDEN).using(default=False)
+    show_content_filter = Boolean.with_properties(widget=WIDGET_HIDDEN).using(default=False)
     submit_label = L_("Apply Filter")
 
 
-@frontend.route("/+index/", defaults=dict(item_name=""), methods=["GET", "POST"])
-@frontend.route("/+index/<itemname:item_name>", methods=["GET", "POST"])
-def index(item_name):
+@frontend.route("/+index", defaults=dict(item_name=""), methods=["GET", "POST"])
+@frontend.route("/+index/<path:item_name>", methods=["GET", "POST"])
+def index(item_name: str):
     """
     Generate data for various index reports: global, sub-item, starts with character,
     or namespace. Identify missing items causing orphan sub-items.
     """
+
+    form = IndexForm.from_flat(list(request.args.items(multi=True)) + list(request.form.items(multi=True)))
+
+    action = request.args.get("action")
+
+    selected_names = []
+    alias_names = []
+    rejected_names = []
+    subitem_names = []
+
+    if request.method == "POST":
+
+        if action == "cancel" or action == "close":
+            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
+            return redirect(redirect_target)
+
+        elif action == "download-file":
+            item_names = request.form.getlist("itemname")
+            if len(item_names) == 1:
+                fqname = split_fqname(item_names[0])
+                item = Item.create(item_names[0], rev_id=CURRENT)
+                if item is not None and item.itemtype != ITEMTYPE_NONEXISTENT:
+                    return item.content.do_get(force_attachment=True)
+                else:
+                    flash("Item not found.", "info")
+            else:
+                flash("Only a single file can be downloaded", "info")
+
+            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
+            return redirect(redirect_target)
+
+        elif action == "upload-file":
+            uploaded_item, details = _upload_file(item_name)
+            flash(details.get("message", "Upload finished"), "info")
+            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
+            return redirect(redirect_target)
+
+        elif action == "delete" or action == "destroy":
+            item_names = request.form.getlist("itemname")
+            result = _get_subitems(item_names, action)
+            selected_names = result["selected_names"]
+            alias_names = result["alias_names"]
+            rejected_names = result["rejected_names"]
+            subitem_names = result["subitem_names"]
+
+        elif action == "submit-deletion":
+            item_names = literal_eval(request.form.get("selected-names"))
+            comment = request.form.get("comment")
+            do_subitems = request.form.get("do_subitems", type=bool)
+            do_destroy = request.form.get("delete-action") == "destroy"
+            result = _delete_items(item_names, comment, do_subitems, do_destroy)
+            for message in result.messages:
+                flash(message, "info")
+            redirect_target = urllib.parse.urlparse(request.referrer)._replace(query="").geturl()
+            return redirect(redirect_target)
+
+        elif action == "create-new-item":
+            new_name = request.values.get("new_name")
+            if not new_name:
+                abort(404, new_name)
+            if item_name:
+                new_name = f"{item_name}/{new_name}"
+            return redirect(url_for_item(new_name))
+
+        elif action == "toggle-create-item":
+            form["show_create_item"] = not form["show_create_item"]
+            form["show_namespace_list"] = False
+            form["show_content_filter"] = False
+
+        elif action == "toggle-namespace-display":
+            form["show_create_item"] = False
+            form["show_namespace_list"] = not form["show_namespace_list"]
+            form["show_content_filter"] = False
+
+        elif action == "toggle-content-filter":
+            form["show_create_item"] = False
+            form["show_namespace_list"] = False
+            form["show_content_filter"] = not form["show_content_filter"]
 
     def name_initial(files, uppercase=False, lowercase=False):
         """
@@ -1539,15 +1663,14 @@ def index(item_name):
         item = Item.create(item_name)  # when item_name='', it gives toplevel index
     except AccessDenied:
         abort(403)
+
     item_may = get_item_permissions(item_name, item)
 
-    # request.args is a MultiDict instance, which degenerates into a normal
-    # single-valued dict on most occasions (making the first value the *only*
-    # value for a specific key) unless explicitly told to expose multiple
-    # values, e.g. calling items with multi=True. See Werkzeug documentation for
-    # more.
+    # request.args is a MultiDict instance, which degenerates into a normal single-valued dict on most
+    # occasions (making the first value the *only* value for a specific key) unless explicitly told to
+    # expose multiple values, e.g. calling items with multi=True.
+    # See the Werkzeug documentation for more.
 
-    form = IndexForm.from_flat(request.args.items(multi=True))
     selected_groups = form["contenttype"].value
     startswith = request.values.get("startswith")
     dirs, files = item.get_index(startswith, selected_groups, short=True)
@@ -1603,6 +1726,10 @@ def index(item_name):
         item_names=item_names,
         item_name=item_name,
         fqname=fqname,
+        selected_names=selected_names,
+        alias_names=alias_names,
+        rejected_names=rejected_names,
+        subitem_names=subitem_names,
         files=files,
         dirs=dirs,
         dirs_fullname=dirs_fullname,
@@ -1610,6 +1737,7 @@ def index(item_name):
         initials=initials,
         startswith=startswith,
         form=form,
+        action=action,
         item=item,
         title=title,
         NAMESPACE_USERPROFILES=NAMESPACE_USERPROFILES,
