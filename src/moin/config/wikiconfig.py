@@ -113,11 +113,12 @@ class Config(DefaultConfig):
     # to edit style attributes in HTML and Markdown items
     # allow_style_attributes = True
 
-    # default passwords are required to be => 8 characters with minimum of 5 unique characters
-    # password_checker = None  # no password length or quality checking
-    # from moin.config.default import _default_password_checker
-    # password_checker = lambda cfg, name, pw: \
-    #     _default_password_checker(cfg, name, pw, min_length=8, min_different=5)  # default
+    # Password checker configuration
+    # - Default: passwords are required to be => 8 characters with minimum of 5 unique characters
+    # from moin.config.default import DefaultPasswordChecker
+    # password_checker = DefaultPasswordChecker(min_length=8, min_different=5)
+    # - No password length or quality checking
+    # password_checker = None
 
     # configure email, set mail_from and mail_smarthost to enable email functionality
     # mail_from = "wiki <wiki@example.org>"  # the "from:" address [Unicode]

@@ -21,6 +21,8 @@ ItemViews: TypeAlias = list[tuple[str, str, str, bool]]
 
 NaviBarEntries: TypeAlias = list[tuple[str, str, dict[str, Any], str, str]]
 
+PasswordChecker: TypeAlias = Callable[[str, str], str | None]
+
 
 class AclConfig(TypedDict):
     before: str
@@ -93,6 +95,7 @@ class WikiConfigProtocol(Protocol):
     mimetypes_to_index_as_empty: list[str] = []
     namespace_mapping: NamespaceMapping
     navi_bar: NaviBarEntries
+    password_checker: PasswordChecker | None
     registration_hint: str
     registration_only_by_superuser: bool
     root_mapping: dict[str, str]
