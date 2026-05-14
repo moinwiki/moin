@@ -234,7 +234,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_attribution(self, node):
-        attrib = {html.class_: "moin-rst-attribution"}
+        attrib = {html.class_: "rst-attribution"}
         self.open_moin_page_node(moin_page.p(attrib=attrib), node)
 
     def depart_attribution(self, node):
@@ -266,7 +266,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_docinfo(self, node):
-        self.open_moin_page_node(moin_page.table(attrib={html.class_: "moin-rst-fieldlist"}), node)
+        self.open_moin_page_node(moin_page.table(attrib={html.class_: "rst-fieldlist"}), node)
         self.open_moin_page_node(moin_page.table_body())
 
     def depart_docinfo(self, node):
@@ -399,7 +399,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_field_list(self, node):
-        attrib = {html.class_: "moin-rst-fieldlist"}
+        attrib = {html.class_: "rst-fieldlist"}
         self.open_moin_page_node(moin_page.table(attrib=attrib), node)
         self.open_moin_page_node(moin_page.table_body())
 
@@ -540,7 +540,7 @@ class NodeVisitor:
         if self.status[-1] == "footnote":
             self.footnote_lable = node.astext()
             raise nodes.SkipNode
-        attrib = {html.class_: "moin-rst-label float-left"}
+        attrib = {html.class_: "rst-label float-left"}
         self.open_moin_page_node(moin_page.div(attrib=attrib), node)
         self.current_node.append("[")
 
@@ -549,8 +549,8 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_line(self, node):
-        """| first line of a line_block"""
-        self.open_moin_page_node(moin_page.line_blk())
+        """| line of a line_block"""
+        self.open_moin_page_node(moin_page.line_block_line())
 
     def depart_line(self, node):
         self.close_moin_page_node()
@@ -605,7 +605,7 @@ class NodeVisitor:
         self.close_moin_page_node()
 
     def visit_option_list(self, node):
-        attrib = {html.class_: "moin-rst-optionlist"}
+        attrib = {html.class_: "rst-optionlist"}
         self.open_moin_page_node(moin_page.table(attrib=attrib), node)
         self.open_moin_page_node(moin_page.table_body())
 
@@ -782,8 +782,8 @@ class NodeVisitor:
 
     def visit_sidebar(self, node):
         # analogous to the DocBook <sidebar> and HTML <aside> element
-        attrib = {moin_page("html-tag"): "aside", html.class_: "rst-sidebar"}
-        self.open_moin_page_node(moin_page.div(attrib=attrib), node)
+        attrib = {html.class_: "sidebar"}
+        self.open_moin_page_node(moin_page.aside(attrib=attrib), node)
 
     def depart_sidebar(self, node):
         self.close_moin_page_node()
@@ -916,8 +916,7 @@ class NodeVisitor:
     def visit_topic(self, node):
         # content outside the flow of the main content of the document
         # analogous to the HTML <aside> element
-        attrib = {moin_page("html-tag"): "aside"}
-        self.open_moin_page_node(moin_page.div(attrib=attrib), node)
+        self.open_moin_page_node(moin_page.aside(), node)
 
     def depart_topic(self, node):
         self.close_moin_page_node()

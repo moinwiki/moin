@@ -241,6 +241,9 @@ class Converter:
             attrib[html.class_] = cls
         return self.new_copy(html.div, elem, attrib)
 
+    def visit_moinpage_aside(self, elem):
+        return self.new_copy(html.aside, elem)
+
     def visit_moinpage_audio(self, elem):
         href = elem.get(xlink.href, None)
         attrib = {html.src: href} if href else {}
@@ -348,8 +351,8 @@ class Converter:
         # TODO: attributes?
         return html.br()
 
-    def visit_moinpage_line_blk(self, elem):
-        return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-blk"})
+    def visit_moinpage_line_block_line(self, elem):
+        return self.new_copy(html.div, elem, attrib={html.class_: "moin-line-block-line"})
 
     def visit_moinpage_line_block(self, elem):
         """

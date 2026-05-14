@@ -516,7 +516,7 @@ class Converter:
             ret[0] = ret[0].replace("image", "include")
         return "\n".join(ret) + "\n"
 
-    def open_moinpage_line_blk(self, elem):
+    def open_moinpage_line_block_line(self, elem):
         out = self.open_children(elem)
         if out.startswith("\n"):
             out = out[1:]
