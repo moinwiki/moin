@@ -219,6 +219,11 @@ class TestConverter(Base):
             # <page><body><div><blockquote>Block quote</blockquote></body></page>
             '/page/body/div[blockquote="Block quote"]',
         ),
+        (
+            '<html><figure><img src="uri:test" /><figcaption>Testbild</figcaption></figure></html>',
+            # <page><body><figure><object xlink:href="uri:test" /><figcaption>Testbild</figcaption></figure></body></page>
+            '/page/body/figure/figcaption[text()="Testbild"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

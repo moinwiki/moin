@@ -329,7 +329,6 @@ class Converter:
         "dedication",
         "epigraph",
         "example",
-        "figure",  # TODO there is a moinpage.figure!
         "equation",
         "part",
         "partintro",
@@ -344,7 +343,7 @@ class Converter:
         "taskprerequisites",
         "taskrelated",
         "tasksummary",
-        "title",
+        "title",  # TODO: <title> in a <figure> should become a <figcaption>
     }
 
     # DocBook has admonition as individual element, but the DOM Tree
@@ -378,10 +377,13 @@ class Converter:
     simple_tags: Final = {
         "code": moin_page.code,
         "computeroutput": moin_page.samp,
+        "figure": moin_page.figure,
         "glossdef": moin_page("list-item-body"),
         "glossentry": moin_page("list-item"),
         "glosslist": moin_page("list"),
         "glossterm": moin_page("list-item-label"),
+        "informalfigure": moin_page.figure,
+        "listitem": moin_page("list-item-body"),
         "literal": moin_page.literal,
         "markup": moin_page.code,
         "para": moin_page.p,
@@ -394,7 +396,6 @@ class Converter:
         "subscript": moin_page.sub,
         "superscript": moin_page.sup,
         "term": moin_page("list-item-label"),
-        "listitem": moin_page("list-item-body"),
         "thead": moin_page("table-header"),
         "tfoot": moin_page("table-footer"),
         "tbody": moin_page("table-body"),
@@ -410,7 +411,6 @@ class Converter:
         "formalpara",
         "informalequation",
         "informalexample",
-        "informalfigure",
         "informalfigure",
         "orderedlist",
         "sect1",
@@ -807,14 +807,6 @@ class Converter:
         """
         attrib = {}
         attrib[html.class_] = "db-example"
-        return self.new_copy(moin_page("div"), element, depth, attrib=attrib)
-
-    def visit_docbook_informalfigure(self, element, depth):
-        """
-        <informalfigure> --> <div html:class="figure">
-        """
-        attrib = {}
-        attrib[html.class_] = "db-figure"
         return self.new_copy(moin_page("div"), element, depth, attrib=attrib)
 
     def visit_docbook_inline(self, element, depth):

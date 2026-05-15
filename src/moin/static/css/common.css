@@ -676,9 +676,9 @@ li.moin-selected-groups { font-size: 1em; font-weight: bold; }
 .moin-wikiconfighelp i.fa:hover { cursor: pointer; }
 .moin-wikiconfighelp table { width: 100%; }
 
-/* reST figures */
+/* figures */
 
-.moin-figure { text-align: center; }
+figure { text-align: center; }
 figcaption { font-weight: bold; }
 
 /* moin-flash */
