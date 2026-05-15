@@ -69,32 +69,10 @@ LDAP_ROOTDN = f"cn=root,{LDAP_BASEDN}"
 LDAP_ROOTPW = "secret"
 
 
-def check_environ():
-    """Check whether the system environment can run these tests.
-
-    Return a failure reason string if we can't, or None if everything looks OK.
-    """
-    if ldap is None:
-        return "You need python-ldap installed to use ldap_testbase."
-    slapd = False
-    try:
-        p = subprocess.Popen([SLAPD_EXECUTABLE, "-V"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        pid = p.pid
-        rc = p.wait()
-        if pid and rc == 1:
-            slapd = True  # it works
-    except OSError as err:
-        import errno
-
-        if not (err.errno == errno.ENOENT or (err.errno == 3 and os.name == "nt")):
-            raise
-    if not slapd:
-        return f"Can't start {SLAPD_EXECUTABLE} (see SLAPD_EXECUTABLE)."
-    return None
-
-
 class Slapd:
-    """Manage a slapd process for testing purposes."""
+    """
+    Manage a slapd process for testing purposes.
+    """
 
     def __init__(
         self,
@@ -152,7 +130,9 @@ class Slapd:
 
 
 class LdapEnvironment:
-    """Manage a (temporary) environment for running a slapd."""
+    """
+    Manage a (temporary) environment for running a slapd.
+    """
 
     # default DB_CONFIG bdb configuration file contents
     DB_CONFIG = """\
@@ -167,6 +147,37 @@ class LdapEnvironment:
 
 #set_tas_spins 0
 """
+
+    @staticmethod
+    def check() -> str | None:
+        """
+        Check whether the system environment can run these tests.
+
+        Return a failure reason string if we can't, or None if everything looks OK.
+        """
+        if ldap is None:
+            return "You need python-ldap installed to use ldap_testbase."
+
+        if not os.path.exists(LDAP_SCHEMA_DIR) or not os.path.exists(LDAP_MODULE_PATH):
+            return "Your LDAP test configuration seems to be invalid."
+
+        slapd = False
+        try:
+            p = subprocess.Popen([SLAPD_EXECUTABLE, "-V"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            pid = p.pid
+            rc = p.wait()
+            if pid and rc == 1:
+                slapd = True  # it works
+        except OSError as err:
+            import errno
+
+            if not (err.errno == errno.ENOENT or (err.errno == 3 and os.name == "nt")):
+                raise
+
+        if not slapd:
+            return f"Can't start {SLAPD_EXECUTABLE} (see SLAPD_EXECUTABLE)."
+
+        return None
 
     def __init__(
         self,

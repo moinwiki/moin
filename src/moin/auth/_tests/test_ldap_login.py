@@ -18,14 +18,14 @@ from moin._tests.ldap_testbase import (
     LDAP_ROOTPW,
     SLAPD_EXECUTABLE,
 )
-from moin._tests.ldap_testbase import LDAPTestBase, LdapEnvironment, check_environ
+from moin._tests.ldap_testbase import LDAPTestBase, LdapEnvironment
 from moin._tests.ldap_testdata import LDIF_CONTENT, SLAPD_CONFIG
 from moin._tests import wikiconfig
 
-msg = check_environ()
-if msg:
-    pytestmark = pytest.mark.skip(msg)
-del msg
+if message := LdapEnvironment.check():
+    pytestmark = pytest.mark.skip(reason=message)
+
+del message
 
 ldap = pytest.importorskip("ldap")
 
