@@ -324,6 +324,13 @@ class Converter:
                     error = item
 
         if body:
+            child = body[0] if len(body) == 1 else None
+
+            if getattr(child, "tag", None):
+                if child.tag.name == "table":
+                    # table not allowed as child of span
+                    return self.new_copy(html.div, body)
+
             return self.new_copy(html.span, item)
 
         if error:

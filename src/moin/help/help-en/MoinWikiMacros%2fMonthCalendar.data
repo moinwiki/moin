@@ -24,26 +24,26 @@ To get a summary in that pop-up, put the summary in a heading 1 case, like {{{= 
 The simplest version looks like this:
 ||<rowclass="lightyellow"> '''Markup'''       ||  '''Result'''   ||
 || `<<MonthCalendar>>`                   || <<MonthCalendar>>  ||
-||||||<class="no-borders"> <<BR>>The previous month's calendar for page "OtherUser" looks like that: ||
+||<rowclass="no-borders"> <<BR>>The previous month's calendar for page "OtherUser" looks like that: ||||
 ||<rowclass="lightyellow"> '''Markup'''       || '''Result'''   ||
 || `<<MonthCalendar(item="OtherUser",month_offset=-1)>>` || <<MonthCalendar(item="OtherUser",month_offset=-1)>> ||
-||||||<class="no-borders"> <<BR>>Calendar of Page SampleUser, this year's december:  ||
+||<rowclass="no-borders"> <<BR>>Calendar of Page SampleUser, this year's december:  ||||
 ||<rowclass="lightyellow"> '''Markup'''       || '''Result'''   ||
 || `<<MonthCalendar(item="SampleUser",month=12)>>` || <<MonthCalendar(item="SampleUser",month=12)>> ||
-||||||<class="no-borders"> <<BR>>Calendar of current Page, this year's december: ||
+||<rowclass="no-borders"> <<BR>>Calendar of current Page, this year's december: ||||
 ||<rowclass="lightyellow"> '''Markup'''       || '''Result'''   ||
 || `<<MonthCalendar(month=12)>>`         || <<MonthCalendar(month=12)>>       ||
-||||||<class="no-borders"> <<BR>>Calendar of December, 2024: ||
+||<rowclass="no-borders"> <<BR>>Calendar of December, 2024: ||||
 ||<rowclass="lightyellow"> '''Markup'''       || '''Result'''   ||
 || `<<MonthCalendar(year=2024,month=12)>>` || <<MonthCalendar(year=2024,month=12)>>  ||
-||||||<class="no-borders"> <<BR>>Calendar of the month two months after December, 2024 (maybe doesn't make much sense, but is possible) ||
+||<rowclass="no-borders"> <<BR>>Calendar of the month two months after December, 2024 (maybe doesn't make much sense, but is possible) ||||
 ||<rowclass="lightyellow"> '''Markup'''       || '''Result'''   ||
 || `<<MonthCalendar(year=2024,month=12,month_offset=+2)>>` || <<MonthCalendar(year=2024,month=12,month_offset=+2)>> ||
 Calendar of year 2023 (every month padded to height of 6 rows):
 
 '''Markup''':
 {{{
-||||||||<rowclass="lightyellow"> '''Year 2023''' ||
+||<rowclass="lightyellow">||<class="center">'''Year 2023'''||||
 ||<<MonthCalendar(year=2023,month=1,fixed_height=true)>>||<<MonthCalendar(year=2023,month=2,fixed_height=true)>>||<<MonthCalendar(year=2023,month=3,fixed_height=true)>>||
 ||<<MonthCalendar(year=2023,month=4,fixed_height=true)>>||<<MonthCalendar(year=2023,month=5,fixed_height=true)>>||<<MonthCalendar(year=2023,month=6,fixed_height=true)>>||
 ||<<MonthCalendar(year=2023,month=7,fixed_height=true)>>||<<MonthCalendar(year=2023,month=8,fixed_height=true)>>||<<MonthCalendar(year=2023,month=9,fixed_height=true)>>||
@@ -52,14 +52,14 @@ Calendar of year 2023 (every month padded to height of 6 rows):
 
 '''Result''':
 {{{#!wiki
-||||||||<rowclass="lightyellow"> '''Year 2023''' ||
+||<rowclass="lightyellow">||<class="center">'''Year 2023'''||||
 ||<<MonthCalendar(year=2023,month=1,fixed_height=true)>>||<<MonthCalendar(year=2023,month=2,fixed_height=true)>>||<<MonthCalendar(year=2023,month=3,fixed_height=true)>>||
 ||<<MonthCalendar(year=2023,month=4,fixed_height=true)>>||<<MonthCalendar(year=2023,month=5,fixed_height=true)>>||<<MonthCalendar(year=2023,month=6,fixed_height=true)>>||
 ||<<MonthCalendar(year=2023,month=7,fixed_height=true)>>||<<MonthCalendar(year=2023,month=8,fixed_height=true)>>||<<MonthCalendar(year=2023,month=9,fixed_height=true)>>||
 ||<<MonthCalendar(year=2023,month=10,fixed_height=true)>>||<<MonthCalendar(year=2023,month=11,fixed_height=true)>>||<<MonthCalendar(year=2023,month=12,fixed_height=true)>>||
 }}}
 
-||||||<class="no-borders"> <<BR>>Anniversary Calendars: (no year data) ||
+||<class="no-borders"> <<BR>>Anniversary Calendars: (no year data) ||<class="no-borders">||
 ||<rowclass="lightyellow"> '''Markup''' || '''Result'''  ||
 || `<<MonthCalendar(item="Yearly",month_offset=+1,`<<BR>>`fixed_height=True,anniversary=True)>>`    || <<MonthCalendar(item="Yearly",month_offset=+1,fixed_height=True,anniversary=True)>> ||
 This creates calendars of the format Yearly/MM-DD. By leaving out the year, you can set birthdays, and anniversaries in this calendar and not have to re-enter each year.
