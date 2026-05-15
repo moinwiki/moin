@@ -57,12 +57,12 @@ except ImportError:
 
 # filename of LDAP server executable - if it is not
 # in your PATH, you have to give full path/filename.
-SLAPD_EXECUTABLE = "slapd"
+SLAPD_EXECUTABLE = os.getenv("SLAPD_EXECUTABLE", "slapd")
 
-LDAP_PORT = 13890
+LDAP_PORT = int(os.getenv("LDAP_PORT", "3890"))
 LDAP_SERVER_URI = f"ldap://127.0.0.1:{LDAP_PORT}"
-LDAP_SCHEMA_DIR = "/etc/openldap/schema"
-LDAP_MODULE_PATH = "/usr/lib/openldap"
+LDAP_SCHEMA_DIR = os.getenv("LDAP_SCHEMA_DIR", "/etc/ldap/schema")
+LDAP_MODULE_PATH = os.getenv("LDAP_MODULE_PATH", "/usr/lib/ldap")
 
 LDAP_BASEDN = "ou=testing,dc=example,dc=org"
 LDAP_ROOTDN = f"cn=root,{LDAP_BASEDN}"
