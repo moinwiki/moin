@@ -255,7 +255,6 @@ class Converter:
 
     def visit_moinpage_emphasis(self, element):
         # emphasized text
-        print(element.attrib.get(moin_page("html-tag")))
         if element.attrib.get(moin_page("html-tag")) == "cite":
             return self.new_copy(docbook.citetitle, element, attrib={})
         return self.new_copy(docbook.emphasis, element, attrib={})
