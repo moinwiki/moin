@@ -44,7 +44,6 @@ class Converter:
     # element, without attributes.
     simple_tags = {
         "code": docbook.code,
-        "emphasis": docbook.emphasis,
         "kbd": docbook.userinput,
         "list-item": docbook.varlistentry,
         "list-item-label": docbook.term,
@@ -253,6 +252,13 @@ class Converter:
         children = self.do_children(element)
         para = self.new(docbook("simpara"), attrib={}, children=children)
         return self.new(docbook("blockquote"), attrib={}, children=[attribution, para])
+
+    def visit_moinpage_emphasis(self, element):
+        # emphasized text
+        print(element.attrib.get(moin_page("html-tag")))
+        if element.attrib.get(moin_page("html-tag")) == "cite":
+            return self.new_copy(docbook.citetitle, element, attrib={})
+        return self.new_copy(docbook.emphasis, element, attrib={})
 
     def visit_moinpage_h(self, element):
         """
