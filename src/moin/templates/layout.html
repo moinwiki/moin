@@ -52,7 +52,10 @@
         </header>
         {{ after_header }}
 
-        <div id="moin-page" role="main" lang="{{ theme_supp.content_lang }}" dir="{{ theme_supp.content_dir }}">
+        <div id="moin-page" role="main"
+            {%- if theme_supp.content_lang %} lang="{{ theme_supp.content_lang }}"{% endif -%}
+            {%- if theme_supp.content_dir %} dir="{{ theme_supp.content_dir }}"{% endif -%}>
+
             {% block item -%}
                 {# If you want itemviews in your template, extend from show.html, not from here. #}
                 <div id="moin-content">
