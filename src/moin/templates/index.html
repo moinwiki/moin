@@ -28,7 +28,7 @@ a checkbox, an invisible link used by js for download, a link to the item
     <tr>
         <td class="moin-index-icons">
             <span class="moin-select-item">
-                <input class="moin-item" type="checkbox" name="itemname" value="{{ e.fullname }}"/>
+                <input class="moin-item" type="checkbox" name="itemname" value="{{ e.fullname }}">
                 {% set mimetype = "application/x.moin.download" %}
                 {# invisible link below is used by js to download item #}
                 <a href="{{ url_for('.download_item', item_name=e.fullname, mimetype=mimetype) }}" class="moin-download-link">
@@ -66,9 +66,9 @@ a checkbox, an invisible link used by js for download, a link to the item
         {%- if e.meta.userid %}
             {%- set editor_name, editor_email = editors[e.meta.userid] %}
             {%- if editor_email %}
-                <td><a href="mailto:{{ editor_email }}" title="{{ e.meta.address }}">{{ editor_name }}</td>
+                <td><a href="mailto:{{ editor_email }}" title="{{ e.meta.address }}">{{ editor_name }}</a></td>
             {%- else %}
-                <td><a href="{{ url_for_item(editor_name, wiki_name=app.cfg.user_homewiki, namespace='users') }}" title="{{ e.meta.address }}">{{ editor_name }}</td>
+                <td><a href="{{ url_for_item(editor_name, wiki_name=app.cfg.user_homewiki, namespace='users') }}" title="{{ e.meta.address }}">{{ editor_name }}</a></td>
             {%- endif %}
         {%- else %}
             <td>{{ e.meta.address }}</td>
@@ -102,9 +102,9 @@ a checkbox, an invisible link used by js for download, a link to the item
 
     {{ gen.form.open(form, method="post", action=url_for('frontend.index', item_name=item_name), enctype="multipart/form-data") }}
 
-        <input type="hidden" name="show_content_filter" value="{{ form['show_content_filter'] }}" />
-        <input type="hidden" name="show_namespace_list" value="{{ form['show_namespace_list'] }}" />
-        <input type="hidden" name="show_create_item" value="{{ form['show_create_item'] }}" />
+        <input type="hidden" name="show_content_filter" value="{{ form['show_content_filter'] }}">
+        <input type="hidden" name="show_namespace_list" value="{{ form['show_namespace_list'] }}">
+        <input type="hidden" name="show_create_item" value="{{ form['show_create_item'] }}">
 
         <div class="moin-index-menu">
             {% if not (dirs or files) %}
@@ -115,7 +115,7 @@ a checkbox, an invisible link used by js for download, a link to the item
             {% else %}
             {# display the row of action buttons: Select All, Download, Delete, Destroy, Filter, Namespace, New Item #}
             <span class="moin-select-toggle moin-button" title="{{ _('Toggle item selections') }}">
-                <input type="checkbox" id="moin-select-all"/>
+                <input type="checkbox" id="moin-select-all">
                 <label for="moin-select-all">{{ _("Select All") }}</label>
             </span>
             <button type="submit" formaction="{{ url_for('frontend.index', item_name=item_name, action='download-file') }}" id="moin-download-trigger" class="moin-button">
@@ -304,7 +304,7 @@ a checkbox, an invisible link used by js for download, a link to the item
     <div id="popup" {% if action != 'delete' and action != 'destroy' %}class="hidden"{% endif %}>
         <div id="popup-for-action" class="popup-container">
             <div class="popup-header">
-                <button name="popup-close" class="popup-closer" title="{{ _("Close") }} formaction="{{ url_for('frontend.index', item_name=item_name, action='close') }}"">{{ _("X") }}</button>
+                <button name="popup-close" class="popup-closer" title="{{ _("Close") }}" formaction="{{ url_for('frontend.index', item_name=item_name, action='close') }}">{{ _("X") }}</button>
                 <span>{{ _("Add optional comment for change log.") }}</span>
             </div>
             <div class="popup-body">
@@ -322,7 +322,7 @@ a checkbox, an invisible link used by js for download, a link to the item
                     <p class="popup-rejected-names{% if not rejected_names %} hidden{% endif %}">{{ _("Rejected names, permission denied: ") }}<span class="popup-names">{{ ', '.join(rejected_names) }}</span></p>
                 </div>
                 <input type="text" class="popup-comment" name="moin-comment" placeholder="{{ _("Enter your comment") }}">
-                <br/>
+                <br>
                 <button type="submit" name="popup-submit" class="moin-button" formaction="{{ url_for('frontend.index', item_name=item_name, action='submit-deletion') }}">{{ _("Submit") }}</button>
                 <button type="submit" name="popup-cancel" class="moin-button" formaction="{{ url_for('frontend.index', item_name=item_name, action='cancel') }}">{{ _("Cancel") }}</button>
                 </form>

@@ -8,24 +8,32 @@ MoinMoin - moin.auth.ldap tests.
 
 import pytest
 
-
-from moin._tests.ldap_testbase import LDAPTstBase, LdapEnvironment, check_environ, SLAPD_EXECUTABLE
-from moin._tests.ldap_testdata import BASEDN, LDIF_CONTENT, ROOTDN, ROOTPW, SLAPD_CONFIG
-from moin._tests import wikiconfig
 from moin.auth import handle_login
 
-msg = check_environ()
-if msg:
-    pytestmark = pytest.mark.skip(msg)
-del msg
+from moin._tests.ldap_testbase import (
+    LDAP_SERVER_URI,
+    LDAP_PORT,
+    LDAP_BASEDN,
+    LDAP_ROOTDN,
+    LDAP_ROOTPW,
+    SLAPD_EXECUTABLE,
+)
+from moin._tests.ldap_testbase import LDAPTestBase, LdapEnvironment
+from moin._tests.ldap_testdata import LDIF_CONTENT, SLAPD_CONFIG
+from moin._tests import wikiconfig
+
+if message := LdapEnvironment.check():
+    pytestmark = pytest.mark.skip(reason=message)
+
+del message
 
 ldap = pytest.importorskip("ldap")
 
 
-class TestLDAPServer(LDAPTstBase):
-    basedn = BASEDN
-    rootdn = ROOTDN
-    rootpw = ROOTPW
+class TestLDAPServer(LDAPTestBase):
+    basedn = LDAP_BASEDN
+    rootdn = LDAP_ROOTDN
+    rootpw = LDAP_ROOTPW
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
@@ -42,10 +50,10 @@ class TestLDAPServer(LDAPTstBase):
         assert b"userb" in uids
 
 
-class TestMoinLDAPLogin(LDAPTstBase):
-    basedn = BASEDN
-    rootdn = ROOTDN
-    rootpw = ROOTPW
+class TestMoinLDAPLogin(LDAPTestBase):
+    basedn = LDAP_BASEDN
+    rootdn = LDAP_ROOTDN
+    rootpw = LDAP_ROOTPW
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
@@ -54,44 +62,44 @@ class TestMoinLDAPLogin(LDAPTstBase):
         class Config(wikiconfig.Config):
             from moin.auth.ldap_login import LDAPAuth
 
-            # TODO: get these vars from the test environment
-            server_uri = "ldap://127.0.0.1:3890"
-            base_dn = "ou=testing,dc=example,dc=org"
+            server_uri = LDAP_SERVER_URI
+            base_dn = LDAP_BASEDN
             ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
             auth = [ldap_auth1]
 
         return Config
 
+    @pytest.mark.usefixtures("_req_ctx")
     def testMoinLDAPLogin(self):
         """Just try accessing the LDAP server and see if usera and userb are in LDAP."""
 
         # tests that must not authenticate:
-        u = handle_login(None, username="", password="")
-        assert u is None
-        u = handle_login(None, username="usera", password="")
-        assert u is None
-        u = handle_login(None, username="usera", password="userawrong")
-        assert u is None
-        u = handle_login(None, username="userawrong", password="usera")
-        assert u is None
+        user = handle_login(None, username="", password="")
+        assert user is None
+        user = handle_login(None, username="usera", password="")
+        assert user is None
+        user = handle_login(None, username="usera", password="userawrong")
+        assert user is None
+        user = handle_login(None, username="userawrong", password="usera")
+        assert user is None
 
         # tests that must authenticate:
-        u1 = handle_login(None, username="usera", password="usera")
-        assert u1 is not None
-        assert u1.valid
+        user1 = handle_login(None, username="usera", password="usera")
+        assert user1 is not None
+        assert user1.valid
 
-        u2 = handle_login(None, username="userb", password="userb")
-        assert u2 is not None
-        assert u2.valid
+        user2 = handle_login(None, username="userb", password="userb")
+        assert user2 is not None
+        assert user2.valid
 
         # check if usera and userb have different ids:
-        assert u1.profile["itemid"] != u2.profile["itemid"]
+        assert user1.profile["itemid"] != user2.profile["itemid"]
 
 
-class TestBugDefaultPasswd(LDAPTstBase):
-    basedn = BASEDN
-    rootdn = ROOTDN
-    rootpw = ROOTPW
+class TestBugDefaultPasswd(LDAPTestBase):
+    basedn = LDAP_BASEDN
+    rootdn = LDAP_ROOTDN
+    rootpw = LDAP_ROOTPW
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
@@ -101,9 +109,8 @@ class TestBugDefaultPasswd(LDAPTstBase):
             from moin.auth.ldap_login import LDAPAuth
             from moin.auth import MoinAuth
 
-            # TODO: get these vars from the test environment
-            server_uri = "ldap://127.0.0.1:3890"
-            base_dn = "ou=testing,dc=example,dc=org"
+            server_uri = LDAP_SERVER_URI
+            base_dn = LDAP_BASEDN
             ldap_auth = LDAPAuth(server_uri=server_uri, base_dn=base_dn, autocreate=True)
             moin_auth = MoinAuth()
             auth = [ldap_auth, moin_auth]
@@ -115,37 +122,38 @@ class TestBugDefaultPasswd(LDAPTstBase):
         self.ldap_env.stop_slapd()
         self.ldap_env.destroy_env()
 
+    @pytest.mark.usefixtures("_req_ctx")
     def testBugDefaultPasswd(self):
         """Login via LDAP (this creates user profile and up to 1.7.0rc1 it put
         a default password there), then try logging in via moin login using
         that default password or an empty password.
         """
         # do a LDAPAuth login (as a side effect, this autocreates the user profile):
-        u1 = handle_login(None, username="usera", password="usera")
-        assert u1 is not None
-        assert u1.valid
+        user1 = handle_login(None, username="usera", password="usera")
+        assert user1 is not None
+        assert user1.valid
 
         # now we kill the LDAP server:
         # self.ldap_env.slapd.stop()
 
         # now try a MoinAuth login:
         # try the default password that worked in 1.7 up to rc1:
-        u2 = handle_login(None, username="usera", password="{SHA}NotStored")
-        assert u2 is None
+        user2 = handle_login(None, username="usera", password="{SHA}NotStored")
+        assert user2 is None
 
         # try using no password:
-        u2 = handle_login(None, username="usera", password="")
-        assert u2 is None
+        user2 = handle_login(None, username="usera", password="")
+        assert user2 is None
 
         # try using wrong password:
-        u2 = handle_login(None, username="usera", password="wrong")
-        assert u2 is None
+        user2 = handle_login(None, username="usera", password="wrong")
+        assert user2 is None
 
 
 class TestTwoLdapServers:
-    basedn = BASEDN
-    rootdn = ROOTDN
-    rootpw = ROOTPW
+    basedn = LDAP_BASEDN
+    rootdn = LDAP_ROOTDN
+    rootpw = LDAP_ROOTPW
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
@@ -185,9 +193,9 @@ class TestTwoLdapServers:
 
 
 class TestLdapFailover:
-    basedn = BASEDN
-    rootdn = ROOTDN
-    rootpw = ROOTPW
+    basedn = LDAP_BASEDN
+    rootdn = LDAP_ROOTDN
+    rootpw = LDAP_ROOTPW
     slapd_config = SLAPD_CONFIG
     ldif_content = LDIF_CONTENT
 
@@ -211,12 +219,11 @@ class TestLdapFailover:
         class Config(wikiconfig.Config):
             from moin.auth.ldap_login import LDAPAuth
 
-            # TODO: get these vars from the test environment
-            server_uri = "ldap://127.0.0.1:3891"
-            base_dn = "ou=testing,dc=example,dc=org"
+            server_uri = LDAP_SERVER_URI
+            base_dn = LDAP_BASEDN
             ldap_auth1 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, name="ldap1", autocreate=True, timeout=1)
             # short timeout, faster testing
-            server_uri = "ldap://127.0.0.1:3892"
+            server_uri = f"ldap://127.0.0.1:{LDAP_PORT + 1}"
             ldap_auth2 = LDAPAuth(server_uri=server_uri, base_dn=base_dn, name="ldap2", autocreate=True, timeout=1)
             auth = [ldap_auth1, ldap_auth2]
 
@@ -231,18 +238,19 @@ class TestLdapFailover:
                 pass  # One will fail, because it is already stopped
             ldap_env.destroy_env()
 
+    @pytest.mark.usefixtures("_req_ctx")
     def testMoinLDAPFailOver(self):
         """Try if it does a failover to a secondary LDAP, if the primary fails."""
 
         # authenticate user (with primary slapd):
-        u1 = handle_login(None, username="usera", password="usera")
-        assert u1 is not None
-        assert u1.valid
+        user1 = handle_login(None, username="usera", password="usera")
+        assert user1 is not None
+        assert user1.valid
 
         # now we kill our primary LDAP server:
         self.ldap_envs[0].slapd.stop()
 
         # try if we can still authenticate (with the second slapd):
-        u2 = handle_login(None, username="usera", password="usera")
-        assert u2 is not None
-        assert u2.valid
+        user2 = handle_login(None, username="usera", password="usera")
+        assert user2 is not None
+        assert user2.valid

@@ -111,6 +111,7 @@ strict = false
 minversion = "9.0.0"
 addopts = ["--ignore=_ui_tests"]
 norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
+env_files = [".env", ".env.test"]
 
 [tool.ruff]
 line-length = 120
