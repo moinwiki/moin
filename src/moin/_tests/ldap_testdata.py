@@ -5,10 +5,6 @@
 MoinMoin - LDAP test data.
 """
 
-BASEDN = "ou=testing,dc=example,dc=org"
-ROOTDN = f"cn=root,{BASEDN}"
-ROOTPW = "secret"
-
 SLAPD_CONFIG = """\
 # See slapd.conf(5) for details on configuration options.
 
@@ -17,7 +13,10 @@ include %(schema_dir)s/cosine.schema
 include %(schema_dir)s/inetorgperson.schema
 #include %(schema_dir)s/misc.schema
 
-moduleload back_bdb.la
+modulepath %(module_path)s
+moduleload back_mdb.la
+
+loglevel 255
 
 threads 2
 
@@ -35,7 +34,7 @@ allow bind_anon_dn
 
 # Test-Datenbank ou=testing,dc=example,dc=org ################
 
-database bdb
+database mdb
 
 directory %(ldap_db_dir)s
 suffix "%(basedn)s"
@@ -46,11 +45,6 @@ lastmod on
 index uid eq
 
 checkpoint 200 5
-
-# Entries to cache in memory
-cachesize 500
-# Search results to cache in memory
-idlcachesize 50
 
 sizelimit -1
 """
