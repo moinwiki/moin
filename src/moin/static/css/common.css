@@ -5,15 +5,7 @@
     "theme.css" files.
 
     Any theme may have a variables.css file that redefines the colors used within
-    div.moin-content. Because IE11 does not support CSS variables; CSS rules defined
-    here use redundant properties similar to:
-
-        color: #ff2727; color: var(--error);
-
-    The first color property defines a color IE11 and all other browsers recognize.
-    The second color property is ignored by IE11 but all other browsers will use the
-    CSS variable value.
-
+    div.moin-content.
     Themes may also override any of the rules defined here by adding rules to the theme.css file.
 */
 
@@ -345,7 +337,7 @@ ul.moin-tags li.weight8 { font-size: 260%; }
 ul.moin-tags li.weight9 { font-size: 280%; }
 
 /* footnotes */
-.moin-footnotes { border-top: 1px solid gray; border-top: 1px solid var(--border-footnotes); margin: 2em; }
+.moin-footnotes { border-top: 1px solid var(--border-footnotes); margin: 2em; }
 .moin-footnotes p { margin: 1em; }
 
 /* moin default table styling */
