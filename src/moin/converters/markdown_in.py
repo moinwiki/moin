@@ -49,7 +49,9 @@ if TYPE_CHECKING:
 
 logging = log.getLogger(__name__)
 
-block_elements = "p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table".split()
+block_elements = (
+    "p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table table-of-content".split()
+)
 BLOCK_ELEMENTS = {moin_page(x) for x in block_elements}
 
 
