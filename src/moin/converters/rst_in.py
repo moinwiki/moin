@@ -441,7 +441,8 @@ class NodeVisitor:
         attrib = {moin_page.note_class: "footnote"}
         self.open_moin_page_node(moin_page.note(attrib=attrib))
         self.open_moin_page_node(moin_page.note_body())
-        self.current_node.append("\n".join(child.astext() for child in footnote.children[1:]))
+        for child in footnote.children[1:]:
+            walkabout(child, self)
         self.close_moin_page_node()
         self.close_moin_page_node()
         raise nodes.SkipNode
