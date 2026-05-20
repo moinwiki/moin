@@ -67,8 +67,6 @@ class NodeVisitor:
         self.root = moin_page.page(children=(self.current_node,))
         self.path = [self.root, self.current_node]
         self.header_size = 1
-        self.status = ["document"]
-        self.footnotes = dict()
         self.last_lineno = 0
         self.current_lineno = 0
 
@@ -429,25 +427,33 @@ class NodeVisitor:
         pass
 
     def visit_footnote(self, node):
-        self.status.append("footnote")
+        # Footnotes are handled in visit_footnote_reference()
+        raise nodes.SkipNode
         # TODO:
-        # * if there are more footnotes than footnote-marks,
-        #   some footnotes are dropped
-        # * handle multiple marks to one footnote (\footnoteref)
+        # * footnotes without footnote-reference are dropped
 
     def depart_footnote(self, node):
-        self.status.pop()
+        pass
 
     def visit_footnote_reference(self, node):
-        self.open_moin_page_node(moin_page.note(attrib={moin_page.note_class: "footnote"}))
-        moin_footnote = moin_page.note_body()
-        self.open_moin_page_node(moin_footnote)
-        self.footnotes[node.children[-1]] = moin_footnote
-        node.children = []
+        # insert the referenced footnote here
+        footnote = node.document.ids[node["refid"]]  # get matching footnote element
+        attrib = {moin_page.note_class: "footnote"}
+        self.open_moin_page_node(moin_page.note(attrib=attrib))
+        self.open_moin_page_node(moin_page.note_body())
+        self.current_node.append("\n".join(child.astext() for child in footnote.children[1:]))
+        self.close_moin_page_node()
+        self.close_moin_page_node()
+        raise nodes.SkipNode
+        # TODO:
+        # * Multiple references to one footnote print the same footnote text
+        #   several times.
+        # * Handle markup in footnote content.
+        #   (Footnotes contain block-elements in rST, DocBook, and Markdown
+        #   and may contain inline elements in Moin and Mediawiki.)
 
     def depart_footnote_reference(self, node):
-        self.close_moin_page_node()
-        self.close_moin_page_node()
+        pass
 
     def visit_header(self, node):
         pass
@@ -537,7 +543,7 @@ class NodeVisitor:
 
     def visit_label(self, node):
         # label of a footnote or citation
-        if self.status[-1] == "footnote":
+        if isinstance(node.parent, nodes.footnote):
             self.footnote_lable = node.astext()
             raise nodes.SkipNode
         attrib = {html.class_: "rst-label float-left"}
@@ -646,18 +652,10 @@ class NodeVisitor:
         self.depart_docinfo_item(node)
 
     def visit_paragraph(self, node):
-        if self.status[-1] == "footnote":
-            footnote_node = self.footnotes.get(self.footnote_lable, None)
-            if footnote_node:
-                # TODO: `node.astext()` ignores all markup!
-                # "moin" footnotes support inline markup
-                footnote_node.append(node.astext())
-            raise nodes.SkipNode
         self.open_moin_page_node(moin_page.p(), node)
 
     def depart_paragraph(self, node):
-        if self.status[-1] != "footnote":
-            self.close_moin_page_node()
+        self.close_moin_page_node()
 
     def visit_problematic(self, node):
         if node.hasattr("refid"):

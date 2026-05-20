@@ -151,7 +151,6 @@ class Converter:
         "bibliorelation",
         "citation",
         "citerefentry",
-        "citetitle",
         # Callout elements
         "callout",
         "calloutlist",
@@ -731,6 +730,11 @@ class Converter:
         attrib = {}
         attrib[moin_page("source")] = source[0]
         return self.new(moin_page.blockquote, attrib=attrib, children=children)
+
+    def visit_docbook_citetitle(self, element, depth):
+        # title of a creative work (analogous to HTML <cite>)
+        attrib = {moin_page("html-tag"): "cite"}
+        return self.new_copy(moin_page.emphasis, element, depth, attrib=attrib)
 
     def visit_docbook_emphasis(self, element, depth):
         """

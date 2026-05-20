@@ -300,3 +300,15 @@ class TestConverter(Base):
     @pytest.mark.parametrize("input,xpath", data)
     def test_object(self, input, xpath):
         self.do(input, xpath)
+
+    data = [
+        (
+            '<page><body><div html:class="db-article"><p>a <emphasis page:html-tag="cite">Title of Cited Work</emphasis></p></div></body></page>',
+            # <article><para>a <citetitle>Title of Cited Work</citetitle></para></article>
+            '/article/simpara/citetitle[text()="Title of Cited Work"]',
+        )
+    ]
+
+    @pytest.mark.parametrize("input,xpath", data)
+    def test_inline_elements(self, input, xpath):
+        self.do(input, xpath)

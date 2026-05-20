@@ -585,6 +585,18 @@ class TestConverter(Base):
 
     data = [
         (
+            "<article><para>a <citetitle>Title of Cited Work</citetitle></para></article>",
+            # <page><body><div html:class="db-article"><p>a <emphasis html-tag="cite">Title of Cited Work</emphasis></p></div></body></page>
+            '/page/body/div/p/emphasis[@html-tag="cite"][text()="Title of Cited Work"]',
+        )
+    ]
+
+    @pytest.mark.parametrize("input,xpath", data)
+    def test_inline_elements(self, input, xpath):
+        self.do(input, xpath)
+
+    data = [
+        (
             '<article><para><trademark class="copyright">MoinMoin</trademark></para></article>',
             # <page><body><div html:class="db-article"><p><span html:class="db-trademark">\xa9  MoinMoin</span></p></div></body></page>
             '/page/body/div/p/span[@html:class="db-trademark"][text()="\xa9 MoinMoin"]',
