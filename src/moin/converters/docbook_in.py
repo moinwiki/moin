@@ -765,7 +765,7 @@ class Converter:
         key = moin_page("note-class")
         attrib[key] = "footnote"
         children = self.new(moin_page("note-body"), attrib={}, children=self.do_children(element, depth))
-        if len(children) > 1:
+        if len(children) > 1 and html.data_lineno in children._children[1].attrib:
             # must delete lineno because footnote will be placed near end of page and out of sequence
             del children._children[1].attrib[html.data_lineno]
         return self.new(moin_page.note, attrib=attrib, children=[children])
