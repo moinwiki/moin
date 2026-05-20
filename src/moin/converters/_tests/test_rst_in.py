@@ -248,6 +248,11 @@ class TestConverter:
             '<p>Text<note note-class="footnote"><note-body>'
             "<p>auto-numbered <emphasis>footnote</emphasis></p></note-body></note></p>",
         ),
+        (  # TODO: keep the footnote ID
+            "Text [#fn42]_\n\n.. [#fn42] auto-label *footnote*",
+            '<p>Text<note note-class="footnote"><note-body>'
+            "<p>auto-label <emphasis>footnote</emphasis></p></note-body></note></p>",
+        ),
         (
             "Text [*]_\n\n.. [*] auto-symbol footnote\n\n   with second paragraph",
             '<p>Text<note note-class="footnote"><note-body><p>auto-symbol footnote</p>'

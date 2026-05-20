@@ -289,9 +289,10 @@ class TestConverter(Base):
             '/page/body/div/p[text()="Text Para"]/note[@note-class="footnote"]/note-body/p[text()="Text Footnote"]',
         ),
         (
-            "<article><para>Text Para<footnote><para>Text Footnote</para><para>second paragraph</para></footnote></para></article>",
-            # <page><body><div html:class="article"><p>Text Para<note note-class="footnote"><note-body><p>Text Footnote</p><p>Second paragraph</p></note-body></note></p></div></body></page>
-            '/page/body/div/p[text()="Text Para"]/note[@note-class="footnote"]/note-body/p[text()="second paragraph"]',
+            '<article><para>text<footnote xml:id="fn42"><para>footnote with id</para><para>second paragraph</para></footnote></para></article>',
+            # TODO: the footnote's ID should go to the <note>, not its first content element.
+            # <div html:class="db-article"><p>text<note note-class="footnote"><note-body><p xml:id="fn42">footnote with id</p><p>second paragraph</p></note-body></note></p></div>
+            '/page/body/div/p[text()="text"]/note[@note-class="footnote"]/note-body/p[text()="second paragraph"]',
         ),
         (
             "<article><para><quote>text</quote></para></article>",
