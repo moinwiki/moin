@@ -854,9 +854,9 @@ class ConverterPage(Converter):
             "</html:sup>"
         )
         elem_note = ET.XML(
-            f'<html:p xmlns:html="{html}" html:id="note-{id}">'
+            f'<html:aside xmlns:html="{html}" html:id="note-{id}" html:role="doc-footnote">'
             f'<html:sup><html:a html:href="#note-{id}-ref">{label}</html:a></html:sup>'
-            "</html:p>"
+            "</html:aside>"
         )
         elem_note.extend(body)
         top.add_footnote(elem_note)
