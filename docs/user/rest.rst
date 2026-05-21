@@ -43,7 +43,7 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#sections
 
   The first adornment style encountered is registered as page title style
   (<h1> in HTML), the second style is assigned to level 2,
-  the third style to level 3, and so on.\ [#fn:document-title]_
+  the third style to level 3, and so on. [#fn:document-title]_
 
 * Once established, adornment styles must be consistent.
   Skipping a heading level results in a parsing error.
@@ -61,7 +61,7 @@ __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#sections
            =======
 
      - The first encountered style becomes the `page title`_ (if it is
-       unique)\ [#fn:document-title]_.
+       unique) [#fn:document-title]_.
 
    * - ::
 
