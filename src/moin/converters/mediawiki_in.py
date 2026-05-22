@@ -499,7 +499,7 @@ class Converter(ConverterMacro):
         # stack.top_check('emphasis'):
         if footnote_begin is not None:
             stack.push(moin_page.note(attrib={moin_page.note_class: "footnote"}))
-            stack.push(moin_page.note_body())
+            stack.push(moin_page.p())
         elif footnote_end is not None:
             stack.pop()
             stack.pop()

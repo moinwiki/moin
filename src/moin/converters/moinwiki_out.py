@@ -343,11 +343,13 @@ class Converter:
         return f'{Moinwiki.literal}{"".join(elem.itertext())}{Moinwiki.literal}'
 
     def open_moinpage_note(self, elem):
-        class_ = elem.get(moin_page.note_class, "")
-        if class_:
-            if class_ == "footnote":
-                return f"<<FootNote({self.open_children(elem)})>>"
-        return "\n<<FootNote()>>\n"
+        if len(elem) == 0:  # empty <note> (placeholder for a "footnotes" list)
+            return "\n<<FootNote()>>\n"
+        note_class = elem.get(moin_page.note_class, "")
+        if note_class == "footnote":  # as of 2026/05, all notes are footnotes
+            # macro content must be on one line
+            content = self.open_children(elem).rstrip().replace("\n", " ")
+            return f"<<FootNote({content})>>"
 
     def open_moinpage_nowiki(self, elem):
         """{{{#!wiki ... or {{{#!highlight ... etc."""

@@ -440,18 +440,13 @@ class NodeVisitor:
         footnote = node.document.ids[node["refid"]]  # get matching footnote element
         attrib = {moin_page.note_class: "footnote"}
         self.open_moin_page_node(moin_page.note(attrib=attrib))
-        self.open_moin_page_node(moin_page.note_body())
         for child in footnote.children[1:]:
             walkabout(child, self)
-        self.close_moin_page_node()
         self.close_moin_page_node()
         raise nodes.SkipNode
         # TODO:
         # * Multiple references to one footnote print the same footnote text
         #   several times.
-        # * Handle markup in footnote content.
-        #   (Footnotes contain block-elements in rST, DocBook, and Markdown
-        #   and may contain inline elements in Moin and Mediawiki.)
 
     def depart_footnote_reference(self, node):
         pass

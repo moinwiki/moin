@@ -581,11 +581,14 @@ class Converter:
         return ret
 
     def open_moinpage_note(self, elem):
-        class_ = elem.get(moin_page.note_class, "")
-        if class_:
+        if len(elem) == 0:
+            # Moin uses an empty <note> as placeholder for a "footnotes" list;
+            # the rST ``.. footnotes::`` directive is not yet implemented
+            return ""
+        note_class = elem.get(moin_page.note_class, "")
+        if note_class == "footnote":  # as of 2026/05, all notes are footnotes
             self.status.append("list")
-            if class_ == "footnote":
-                self.footnotes.append(self.open_children(elem))
+            self.footnotes.append(self.open_children(elem))
             self.status.pop()
         return " [#]_ "
 

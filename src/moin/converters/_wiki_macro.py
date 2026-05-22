@@ -37,7 +37,7 @@ class ConverterMacro(ConverterBase):
 
         text = args
         text = self.macro_text(text)  # footnotes may have markup, macro_text is likely overridden
-        elem_body = moin_page.note_body(children=text)
+        elem_body = moin_page.p(children=text)
         attrib = {moin_page.note_class: "footnote"}
         elem = moin_page.note(attrib=attrib, children=[elem_body])
 

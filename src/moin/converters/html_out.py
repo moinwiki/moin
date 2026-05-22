@@ -825,7 +825,7 @@ class ConverterPage(Converter):
 
     def visit_moinpage_note(self, elem):
         # TODO: Check note-class? (As of 2026-05-20, it is always "footnote".)
-        #       cls = elem.get(moin_page.note_class, "")
+        #       note_class = elem.get(moin_page.note_class, "")
         top = self._special_stack[-1]
         if len(elem) == 0:
             # <<FootNote>> without argument
@@ -839,12 +839,7 @@ class ConverterPage(Converter):
             self._id.gen_id("note-placement")
             return footnotes_div
 
-        body = None
-        for child in elem:
-            if child.tag.uri == moin_page:
-                if child.tag.name == "note-body":
-                    body = self.do_children(child)
-
+        body = self.do_children(elem)
         label = self._id.gen_id("note")
         id = f'{self._id.get_id("note-placement")}-{label}'
 
