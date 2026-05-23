@@ -824,13 +824,14 @@ class ConverterPage(Converter):
         return footnotes_div
 
     def visit_moinpage_note(self, elem):
-        # TODO: Check note-class
+        # TODO: Check note-class? (As of 2026-05-20, it is always "footnote".)
+        #       cls = elem.get(moin_page.note_class, "")
         top = self._special_stack[-1]
         if len(elem) == 0:
+            # <<FootNote>> without argument
             # explicit footnote placement:  show prior footnotes, empty stack, reset counter
             if len(top._footnotes) == 0:
                 return
-
             footnotes_div = self.create_footnotes(top)
             top.remove_footnotes()
             self._id.zero_id("note")
@@ -844,21 +845,19 @@ class ConverterPage(Converter):
                 if child.tag.name == "note-body":
                     body = self.do_children(child)
 
-        id = self._id.gen_id("note")
-        prefixed_id = "%s-%s" % (self._id.get_id("note-placement"), id)
+        label = self._id.gen_id("note")
+        id = f'{self._id.get_id("note-placement")}-{label}'
 
-        elem_ref = ET.XML("""
-<html:sup xmlns:html="{}" html:id="note-{}-ref" html:class="moin-footnote">
-<html:a html:href="#note-{}">{}</html:a>
-</html:sup>
-""".format(html, prefixed_id, prefixed_id, id))
-
-        elem_note = ET.XML("""
-<html:p xmlns:html="{}" html:id="note-{}">
-<html:sup><html:a html:href="#note-{}-ref">{}</html:a></html:sup>
-</html:p>
-""".format(html, prefixed_id, prefixed_id, id))
-
+        elem_ref = ET.XML(
+            f'<html:sup xmlns:html="{html}" html:id="note-{id}-ref" html:class="moin-footnote">'
+            f'<html:a html:href="#note-{id}">{label}</html:a>'
+            "</html:sup>"
+        )
+        elem_note = ET.XML(
+            f'<html:aside xmlns:html="{html}" html:id="note-{id}" html:role="doc-footnote">'
+            f'<html:sup><html:a html:href="#note-{id}-ref">{label}</html:a></html:sup>'
+            "</html:aside>"
+        )
         elem_note.extend(body)
         top.add_footnote(elem_note)
 

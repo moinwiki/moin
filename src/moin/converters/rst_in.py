@@ -441,7 +441,8 @@ class NodeVisitor:
         attrib = {moin_page.note_class: "footnote"}
         self.open_moin_page_node(moin_page.note(attrib=attrib))
         self.open_moin_page_node(moin_page.note_body())
-        self.current_node.append("\n".join(child.astext() for child in footnote.children[1:]))
+        for child in footnote.children[1:]:
+            walkabout(child, self)
         self.close_moin_page_node()
         self.close_moin_page_node()
         raise nodes.SkipNode
@@ -987,9 +988,10 @@ class Parser(docutils.parsers.rst.Parser):
     __ https://docutils.sourceforge.io/docs/ref/doctree.html#target
     """
 
-    # Use class values matching the pre-defined CSS highlight rules
-    settings_default_overrides = {"syntax_highlight": "short"}
-
+    settings_default_overrides = {
+        "syntax_highlight": "short",  # use class values matching the pre-defined CSS highlight rules
+        "trim_footnote_reference_space": True,  # remove spaces before footnote references
+    }
     config_section = "MoinMoin parser"
     config_section_dependencies = ("parsers", "restructuredtext parser")
 

@@ -338,7 +338,9 @@ ul.moin-tags li.weight9 { font-size: 280%; }
 
 /* footnotes */
 .moin-footnotes { border-top: 1px solid var(--border-footnotes); margin: 2em; }
-.moin-footnotes p { margin: 1em; }
+[role="doc-footnote"] { margin: 1em; }  /* also overrides the generic "aside" styling below */
+[role="doc-footnote"] > sup:first-child { margin-left: -0.8em; padding-right: 0.2em; }  /* hanging indent */
+[role="doc-footnote"] > sup:first-child + * { display: inline-block; margin: 0; vertical-align: top; }
 
 /* moin default table styling */
 table { margin: .5em 0; }

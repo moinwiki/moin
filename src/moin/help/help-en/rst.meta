@@ -9,6 +9,7 @@
     "https://docs.python.org/3/_static/py.svg",
     "https://docs.python.org/3/library/csv.html",
     "https://docutils.sourceforge.io/FAQ.html#restructuredtext",
+    "https://docutils.sourceforge.io/docs/api/transforms.html#doctitle",
     "https://docutils.sourceforge.io/docs/peps/pep-0258.html#error-handling",
     "https://docutils.sourceforge.io/docs/ref/rst/definitions.html",
     "https://docutils.sourceforge.io/docs/ref/rst/directives.html",
@@ -108,8 +109,8 @@
   "namespace": "help-en",
   "rev_number": 1,
   "revid": "3938500a53bc47c89ad919a462787352",
-  "sha1": "6fc13cfef64fe3f9c0e0668b254c725fc917170b",
-  "size": 49418,
+  "sha1": "feb41a5e0764370db84e9cc081d3f702211a7fb9",
+  "size": 49416,
   "summary": "",
   "tags": [
     "parser",

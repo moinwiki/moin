@@ -331,8 +331,8 @@ class TestConverterPage(Base):
         (  # footnote at the bottom
             '<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
             # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">\n<a href="#note-0-1">1</a>\n</sup></p>
-            # <div class="moin-footnotes"><p id="note-0-1"><sup><a href="#note-0-1-ref">1</a></sup>\nNote</p></div></div>
-            '/div/div/p[@id="note-0-1"][text()="\nNote"]/sup/a[@href="#note-0-1-ref"][text()="1"]',
+            # <div class="moin-footnotes"><aside id="note-0-1" role="doc-footnote"><sup><a href="#note-0-1-ref">1</a></sup>Note</aside></div></div>
+            '/div/div/aside[@id="note-0-1"][text()="Note"]/sup/a[@href="#note-0-1-ref"][text()="1"]',
         ),
     ]
 

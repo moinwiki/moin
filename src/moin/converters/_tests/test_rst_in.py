@@ -238,11 +238,20 @@ class TestConverter:
         self.do(input, output)
 
     data = [
-        ("Abra [1]_\n\n.. [1] arba", '<p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p>'),
-        ("Abra [#]_\n\n.. [#] arba", '<p>Abra <note note-class="footnote"><note-body>arba</note-body></note></p>'),
         (
-            "Text [*]_\n\n.. [*] auto-symbol footnote",
-            '<p>Text <note note-class="footnote"><note-body>auto-symbol footnote</note-body></note></p>',
+            "Text [1]_\n\n.. [1] manually numbered *footnote*",
+            '<p>Text<note note-class="footnote"><note-body>'
+            "<p>manually numbered <emphasis>footnote</emphasis></p></note-body></note></p>",
+        ),
+        (
+            "Text [#]_\n\n.. [#] auto-numbered *footnote*",
+            '<p>Text<note note-class="footnote"><note-body>'
+            "<p>auto-numbered <emphasis>footnote</emphasis></p></note-body></note></p>",
+        ),
+        (
+            "Text [*]_\n\n.. [*] auto-symbol footnote\n\n   with second paragraph",
+            '<p>Text<note note-class="footnote"><note-body><p>auto-symbol footnote</p>'
+            "<p>with second paragraph</p></note-body></note></p>",
         ),
     ]
 
