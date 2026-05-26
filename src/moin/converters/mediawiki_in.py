@@ -738,7 +738,7 @@ class Converter(ConverterMacro):
             </nowiki>
             |
             <pre>
-            (?P<nowiki_text_pre> .*? )
+            (?P<nowiki_text_pre> [\s\S]*? )
             </pre>
             |
             <code>
@@ -903,7 +903,10 @@ class Converter(ConverterMacro):
                 # text may be None
                 if pre_text:
                     if len(tags):
-                        tags[-1].text.append(pre_text)
+                        if self.nowiki_tag == "pre":
+                            tags[-1].text.append(pre_text + "\n")
+                        else:
+                            tags[-1].text.append(pre_text)
                         post_line = []
                     else:
                         post_line = [pre_text]
