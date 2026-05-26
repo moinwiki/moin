@@ -348,7 +348,9 @@ class Converter:
         note_class = elem.get(moin_page.note_class, "")
         if note_class == "footnote":  # as of 2026/05, all notes are footnotes
             # macro content must be on one line
+            self.status.append("macro")
             content = self.open_children(elem).rstrip().replace("\n", " ")
+            self.status.pop()
             return f"<<FootNote({content})>>"
 
     def open_moinpage_nowiki(self, elem):
@@ -458,6 +460,11 @@ class Converter:
                 ret = Moinwiki.p + self.open_children(elem) + Moinwiki.p
             else:
                 ret = self.open_children(elem) + Moinwiki.p
+        elif self.status[-2] == "macro":  # macro content, must be on one line
+            if self.last_closed == "p":
+                ret = Moinwiki.linebreak + self.open_children(elem)
+            else:
+                ret = self.open_children(elem)
         elif self.status[-2] == "table":
             if self.last_closed and self.last_closed != "table_cell" and self.last_closed != "table_row":
                 ret = Moinwiki.linebreak + self.open_children(elem)

@@ -182,9 +182,9 @@ class TestConverter(Base):
 
     data = [
         ('<page:note page:note-class="footnote"><page:p>test</page:p></page:note>', "<<FootNote(test)>>"),
-        (  # TODO: start second paragraph on a new line.
+        (
             '<page:note page:note-class="footnote"><page:p>first\nparagraph</page:p><page:p>second\nparagraph</page:p></page:note>',
-            "<<FootNote(first paragraph  second paragraph)>>",
+            "<<FootNote(first paragraph<<BR>>second paragraph)>>",
         ),
         ('<page:tag><page:table-of-content page:outline-level="2" /></page:tag>', "<<TableOfContents(2)>>\n"),
         (
