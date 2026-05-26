@@ -3,6 +3,7 @@
 # Copyright: 2007 MoinMoin:ReimarBauer
 # Copyright: 2008-2010 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:DmitryAndreev
+# Copyright: 2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -196,7 +197,7 @@ class Converter(ConverterMacro):
                 element = moin_page.table_row()
                 stack.push(element)
             cells = m.group("cells")
-            if cells:
+            if cells is not None:
                 cells = cells.split("||")
                 for cell in cells:
                     if stack.top_check("table-cell"):
