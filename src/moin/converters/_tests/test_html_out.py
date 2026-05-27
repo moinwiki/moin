@@ -325,7 +325,7 @@ class TestConverterPage(Base):
         (
             '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
             # <div>
-            #   <p>Text<sup class="moin-footnote" id="note-0-1-ref"><a href="#note-0-1">1</a></sup></p>
+            #   <p>Text<sup role="doc-noteref" id="note-0-1-ref"><a href="#note-0-1">1</a></sup></p>
             #   <div class="moin-footnotes">
             #     <aside id="note-0-1" role="doc-footnote">
             #        <sup><a href="#note-0-1-ref">1</a></sup>
@@ -334,13 +334,13 @@ class TestConverterPage(Base):
             #   </div>
             # </div>
             # check footnote reference:
-            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"]/a[@href="#note-0-1"][text()="1"]]',
+            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]',
         ),
         (
             '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
             # <same output as above>
             # check footnote (at end of document)
-            '/div/div[@class="moin-footnotes"]/aside[@id="note-0-1"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
+            '/div/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
         ),
     ]
 

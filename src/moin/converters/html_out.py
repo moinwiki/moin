@@ -844,7 +844,7 @@ class ConverterPage(Converter):
         id = f'{self._id.get_id("note-placement")}-{label}'
 
         elem_ref = ET.XML(
-            f'<html:sup xmlns:html="{html}" html:id="note-{id}-ref" html:class="moin-footnote">'
+            f'<html:sup xmlns:html="{html}" html:id="note-{id}-ref" html:role="doc-noteref">'
             f'<html:a html:href="#note-{id}">{label}</html:a>'
             "</html:sup>"
         )
