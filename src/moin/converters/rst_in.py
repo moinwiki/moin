@@ -69,6 +69,7 @@ class NodeVisitor:
         self.header_size = 1
         self.last_lineno = 0
         self.current_lineno = 0
+        self.footnote_ids = set()  # IDs of already handled footnotes
 
     def dispatch_visit(self, node):
         """
@@ -437,8 +438,13 @@ class NodeVisitor:
 
     def visit_footnote_reference(self, node):
         # insert the referenced footnote here
-        footnote = node.document.ids[node["refid"]]  # get matching footnote element
+        refid = node["refid"]
+        footnote = node.document.ids[refid]  # get matching footnote element
         attrib = {moin_page.note_class: "footnote"}
+        # keep footnote ID for additional references (unless it is already used)
+        if refid not in self.footnote_ids:
+            attrib[moin_page.id] = refid
+            self.footnote_ids.add(refid)
         self.open_moin_page_node(moin_page.note(attrib=attrib))
         for child in footnote.children[1:]:
             walkabout(child, self)
