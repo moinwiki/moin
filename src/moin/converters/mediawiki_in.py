@@ -3,6 +3,7 @@
 # Copyright: 2007 MoinMoin:ReimarBauer
 # Copyright: 2008-2010 MoinMoin:BastianBlank
 # Copyright: 2010 MoinMoin:DmitryAndreev
+# Copyright: 2026 MoinMoin:UlrichB
 # License: GNU GPL v2 (or any later version), see LICENSE.txt for details.
 
 """
@@ -196,7 +197,7 @@ class Converter(ConverterMacro):
                 element = moin_page.table_row()
                 stack.push(element)
             cells = m.group("cells")
-            if cells:
+            if cells is not None:
                 cells = cells.split("||")
                 for cell in cells:
                     if stack.top_check("table-cell"):
@@ -737,7 +738,7 @@ class Converter(ConverterMacro):
             </nowiki>
             |
             <pre>
-            (?P<nowiki_text_pre> .*? )
+            (?P<nowiki_text_pre> [\s\S]*? )
             </pre>
             |
             <code>
@@ -902,7 +903,10 @@ class Converter(ConverterMacro):
                 # text may be None
                 if pre_text:
                     if len(tags):
-                        tags[-1].text.append(pre_text)
+                        if self.nowiki_tag == "pre":
+                            tags[-1].text.append(pre_text + "\n")
+                        else:
+                            tags[-1].text.append(pre_text)
                         post_line = []
                     else:
                         post_line = [pre_text]
