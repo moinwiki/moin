@@ -240,18 +240,20 @@ class TestConverter:
     data = [
         (
             "Text [1]_\n\n.. [1] manually numbered *footnote*",
-            '<p>Text<note note-class="footnote"><note-body>'
-            "<p>manually numbered <emphasis>footnote</emphasis></p></note-body></note></p>",
+            '<p>Text<note id="footnote-1" note-class="footnote"><p>manually numbered <emphasis>footnote</emphasis></p></note></p>',
         ),
         (
             "Text [#]_\n\n.. [#] auto-numbered *footnote*",
-            '<p>Text<note note-class="footnote"><note-body>'
-            "<p>auto-numbered <emphasis>footnote</emphasis></p></note-body></note></p>",
+            '<p>Text<note id="footnote-1" note-class="footnote"><p>auto-numbered <emphasis>footnote</emphasis></p></note></p>',
+        ),
+        (
+            "Two references [#fn42]_ to the same footnote [#fn42]_\n\n.. [#fn42] auto-label *footnote*",
+            '<p>Two references<note id="fn42" note-class="footnote"><p>auto-label <emphasis>footnote</emphasis></p></note>'
+            ' to the same footnote<note note-class="footnote"><p>auto-label <emphasis>footnote</emphasis></p></note></p>',
         ),
         (
             "Text [*]_\n\n.. [*] auto-symbol footnote\n\n   with second paragraph",
-            '<p>Text<note note-class="footnote"><note-body><p>auto-symbol footnote</p>'
-            "<p>with second paragraph</p></note-body></note></p>",
+            '<p>Text<note id="footnote-1" note-class="footnote"><p>auto-symbol footnote</p><p>with second paragraph</p></note></p>',
         ),
     ]
 

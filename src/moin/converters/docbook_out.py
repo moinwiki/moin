@@ -349,27 +349,16 @@ class Converter:
 
     def visit_moinpage_note(self, element):
         """
-        <note note-class="footnote"><note-body>text</note-body></note>
+        <note note-class="footnote"><p>text</p></note>
           --> <footnote><simpara>text</simpara></footnote>
         """
+        if len(element) == 0:
+            # Moin uses an empty <note> as placeholder for a "footnotes" list;
+            # there is no such placeholder in DocBook.
+            return
         note_class = element.get(moin_page("note-class"))
-        # We only convert footnote, we do not convert endnote yet
-        if note_class != "footnote":
-            return
-
-        # We will check the presence of a body
-        body = None
-        for child in element:
-            if isinstance(child, ET.Element):
-                if child.tag.uri == moin_page:
-                    if child.tag.name == "note-body":
-                        body = self.do_children(child)
-        # We process note only with note-body child
-        if not body:
-            return
-
-        body = self.new(docbook.simpara, attrib={}, children=body)
-        return self.new(docbook.footnote, attrib={}, children=[body])
+        if note_class == "footnote":  # as of 2026/05, all notes are footnotes
+            return self.new(docbook.footnote, attrib={}, children=self.do_children(element))
 
     def visit_moinpage_object(self, element):
         """

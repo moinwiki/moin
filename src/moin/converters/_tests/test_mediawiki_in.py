@@ -55,7 +55,7 @@ class TestConverter:
         ("aaa<br />bbb", "<page><body><p>aaa<line-break />bbb</p></body></page>"),
         (
             "aaa <ref> sdf </ref> test\n\n asd",
-            '<page><body><p>aaa <note note-class="footnote"><note-body> sdf </note-body></note> test</p><p> asd</p></body></page>',
+            '<page><body><p>aaa <note note-class="footnote"><p> sdf </p></note> test</p><p> asd</p></body></page>',
         ),
         (
             """=level 1=

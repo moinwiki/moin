@@ -76,8 +76,8 @@ class TestConverter:
             "FootNote",
             "note",
             "text",
-            '<p><note note-class="footnote"><note-body>note</note-body></note></p>',
-            '<note note-class="footnote"><note-body>note</note-body></note>',
+            '<p><note note-class="footnote"><p>note</p></note></p>',
+            '<note note-class="footnote"><p>note</p></note>',
         ),
         ("TableOfContents", None, "text", "<table-of-content />", "text"),
         (

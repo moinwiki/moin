@@ -321,18 +321,26 @@ class TestConverterPage(Base):
         self.conv = ConverterPage()
 
     data = [
-        # Footnotes are replaced by a footnote-reference and moved to the bottom.
-        (  # footnote-reference
-            '<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
-            # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">\n<a href="#note-0-1">1</a>\n</sup></p>
-            # <div class="moin-footnotes"><p id="note-0-1"><sup><a href="#note-0-1-ref">1</a></sup>\nNote</p></div></div>
-            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"]/a[@href="#note-0-1"][text()="1"]]',
+        # Footnotes are replaced by a footnote-reference and rendered at the page bottom.
+        (
+            '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
+            # <div>
+            #   <p>Text<sup role="doc-noteref" id="note-0-1-ref"><a href="#note-0-1">1</a></sup></p>
+            #   <div class="moin-footnotes">
+            #     <aside id="note-0-1" role="doc-footnote">
+            #        <sup><a href="#note-0-1-ref">1</a></sup>
+            #        <p>Note</p>
+            #      </aside>
+            #   </div>
+            # </div>
+            # check footnote reference:
+            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]',
         ),
-        (  # footnote at the bottom
-            '<page><body><p>Text<note note-class="footnote"><note-body>Note</note-body></note></p></body></page>',
-            # <div><p>Text<sup class="moin-footnote" id="note-0-1-ref">\n<a href="#note-0-1">1</a>\n</sup></p>
-            # <div class="moin-footnotes"><aside id="note-0-1" role="doc-footnote"><sup><a href="#note-0-1-ref">1</a></sup>Note</aside></div></div>
-            '/div/div/aside[@id="note-0-1"][text()="Note"]/sup/a[@href="#note-0-1-ref"][text()="1"]',
+        (
+            '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
+            # <same output as above>
+            # check footnote (at end of document)
+            '/div/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
         ),
     ]
 

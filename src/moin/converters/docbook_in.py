@@ -759,16 +759,16 @@ class Converter:
 
     def visit_docbook_footnote(self, element, depth):
         """
-        <footnote> --> <note note-class="footnote"><note-body>
+        <footnote> --> <note note-class="footnote">
         """
-        attrib = {}
-        key = moin_page("note-class")
-        attrib[key] = "footnote"
-        children = self.new(moin_page("note-body"), attrib={}, children=self.do_children(element, depth))
-        if len(children) > 1 and html.data_lineno in children._children[1].attrib:
+        attrib = {moin_page.note_class: "footnote"}
+        note = self.new(moin_page.note, attrib=attrib, children=[])
+        children = self.do_children(element, depth)
+        if len(children) > 1 and html.data_lineno in children[1].attrib:
             # must delete lineno because footnote will be placed near end of page and out of sequence
-            del children._children[1].attrib[html.data_lineno]
-        return self.new(moin_page.note, attrib=attrib, children=[children])
+            del children[1].attrib[html.data_lineno]
+        note.extend(children)
+        return note
 
     def visit_docbook_formalpara(self, element, depth):
         """

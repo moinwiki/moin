@@ -185,9 +185,9 @@ class TestConverter(Base):
     data = [
         # Footnote conversion
         (
-            '<page><body><p>Text simpara<note page:note-class="footnote"><note-body>Text Footnote</note-body></note></p></body></page>',
-            # <article><simpara>Text simpara<footnote>Text Footnote</footnote></simpara></article>
-            '/article/simpara[text()="Text simpara"]/footnote[simpara="Text Footnote"]',
+            '<page><body><p>simple text<note page:note-class="footnote"><p>footnote content</p></note></p></body></page>',
+            # <article><simpara>simple text<footnote>footnote content</footnote></simpara></article>
+            '/article/simpara[text()="simple text"]/footnote[simpara="footnote content"]',
         ),
         # Link conversion
         (

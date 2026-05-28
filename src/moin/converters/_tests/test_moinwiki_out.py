@@ -181,9 +181,10 @@ class TestConverter(Base):
         self.do(input, output)
 
     data = [
+        ('<page:note page:note-class="footnote"><page:p>test</page:p></page:note>', "<<FootNote(test)>>"),
         (
-            '<page:note page:note-class="footnote"><page:note-body>test</page:note-body></page:note>',
-            "<<FootNote(test)>>",
+            '<page:note page:note-class="footnote"><page:p>first\nparagraph</page:p><page:p>second\nparagraph</page:p></page:note>',
+            "<<FootNote(first paragraph<<BR>>second paragraph)>>",
         ),
         ('<page:tag><page:table-of-content page:outline-level="2" /></page:tag>', "<<TableOfContents(2)>>\n"),
         (
