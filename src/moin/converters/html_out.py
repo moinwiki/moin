@@ -839,24 +839,20 @@ class ConverterPage(Converter):
             self._id.gen_id("note-placement")
             return footnotes_div
 
-        body = self.do_children(elem)
-        label = self._id.gen_id("note")
-        id = f'{self._id.get_id("note-placement")}-{label}'
+        label = self._id.gen_id("note")  # 1, 2, 3, ...
+        ID = f'note-{self._id.get_id("note-placement")}-{label}'  # note-1-1, note-1-2, ...
 
-        elem_ref = ET.XML(
-            f'<html:sup xmlns:html="{html}" html:id="note-{id}-ref" html:role="doc-noteref">'
-            f'<html:a html:href="#note-{id}">{label}</html:a>'
-            "</html:sup>"
-        )
         elem_note = ET.XML(
-            f'<html:aside xmlns:html="{html}" html:id="note-{id}" html:role="doc-footnote">'
-            f'<html:sup><html:a html:href="#note-{id}-ref">{label}</html:a></html:sup>'
+            f'<html:aside xmlns:html="{html}" html:id="{ID}" html:role="doc-footnote">'
+            f'<html:sup><html:a html:href="#{ID}-ref">{label}</html:a></html:sup>'
             "</html:aside>"
         )
-        elem_note.extend(body)
+        elem_note.extend(self.do_children(elem))
         top.add_footnote(elem_note)
 
-        return elem_ref
+        ref_attrib = {html.role: "doc-noteref", html.id_: f"{ID}-ref"}
+        ref_child = html.a(attrib={html.href: f"#{ID}"}, children=[label])
+        return html.sup(attrib=ref_attrib, children=[ref_child])
 
     def visit_moinpage_table_of_content(self, elem):
         try:

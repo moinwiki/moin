@@ -333,15 +333,9 @@ class TestConverterPage(Base):
             #      </aside>
             #   </div>
             # </div>
-            # check footnote reference:
-            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]',
-        ),
-        (
-            '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
-            # <same output as above>
-            # check footnote (at end of document)
-            '/div/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
-        ),
+            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]'
+            '/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
+        )
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
