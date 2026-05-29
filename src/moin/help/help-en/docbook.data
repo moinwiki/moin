@@ -391,15 +391,6 @@ Remove blanks from "] ] >" below:
   <entry>a5</entry>
 </row>
 </thead>
-<tfoot>
-<row>
-  <entry>f1</entry>
-  <entry>f2</entry>
-  <entry>f3</entry>
-  <entry>f4</entry>
-  <entry>f5</entry>
-</row>
-</tfoot>
 <tbody>
 <row>
   <entry>b1</entry>
@@ -420,6 +411,15 @@ Remove blanks from "] ] >" below:
   <entry>d5</entry>
 </row>
 </tbody>
+<tfoot>
+<row>
+  <entry>f1</entry>
+  <entry>f2</entry>
+  <entry>f3</entry>
+  <entry>f4</entry>
+  <entry>f5</entry>
+</row>
+</tfoot>
 </tgroup>
 </table>
 ]]></screen>
@@ -440,15 +440,6 @@ Remove blanks from "] ] >" below:
   <entry>a5</entry>
 </row>
 </thead>
-<tfoot>
-<row>
-  <entry>f1</entry>
-  <entry>f2</entry>
-  <entry>f3</entry>
-  <entry>f4</entry>
-  <entry>f5</entry>
-</row>
-</tfoot>
 <tbody>
 <row>
   <entry>b1</entry>
@@ -469,6 +460,15 @@ Remove blanks from "] ] >" below:
   <entry>d5</entry>
 </row>
 </tbody>
+<tfoot>
+<row>
+  <entry>f1</entry>
+  <entry>f2</entry>
+  <entry>f3</entry>
+  <entry>f4</entry>
+  <entry>f5</entry>
+</row>
+</tfoot>
 </tgroup>
 </table>
 
