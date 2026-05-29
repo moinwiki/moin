@@ -841,12 +841,16 @@ class ConverterPage(Converter):
 
         label = self._id.gen_id("note")  # 1, 2, 3, ...
         ID = f'note-{self._id.get_id("note-placement")}-{label}'  # note-1-1, note-1-2, ...
+        attrib = Attributes(elem).convert()
+        if attrib.get(html.id_):
+            ID = attrib[html.id]
 
         elem_note = ET.XML(
             f'<html:aside xmlns:html="{html}" html:id="{ID}" html:role="doc-footnote">'
             f'<html:sup><html:a html:href="#{ID}-ref">{label}</html:a></html:sup>'
             "</html:aside>"
         )
+        elem_note.attrib.update(attrib)
         elem_note.extend(self.do_children(elem))
         top.add_footnote(elem_note)
 
