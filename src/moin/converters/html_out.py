@@ -679,6 +679,7 @@ class SpecialPage:
         self._footnotes = []
         self._headings = []
         self._tocs = []
+        self._footnote_labels = {}  # mapping of footnote IDs to visible labels
 
     def add_footnote(self, elem):
         self._footnotes.append(elem)
@@ -853,10 +854,19 @@ class ConverterPage(Converter):
         elem_note.attrib.update(attrib)
         elem_note.extend(self.do_children(elem))
         top.add_footnote(elem_note)
+        top._footnote_labels[ID] = label  # save mapping for additional references
 
         ref_attrib = {html.role: "doc-noteref", html.id_: f"{ID}-ref"}
         ref_child = html.a(attrib={html.href: f"#{ID}"}, children=[label])
         return html.sup(attrib=ref_attrib, children=[ref_child])
+
+    def visit_moinpage_noteref(self, elem):
+        # additional references to a note (footnote, ...)
+        top = self._special_stack[-1]  # SpecialPage instance `special_root`
+        href = elem.get(xlink.href)
+        label = top._footnote_labels.get(href[1:], href)
+        child = html.a(attrib={html.href: href}, children=[label])
+        return html.sup(attrib={html.role: "doc-noteref"}, children=[child])
 
     def visit_moinpage_table_of_content(self, elem):
         try:

@@ -357,6 +357,13 @@ class TestConverterPage(Base):
             # <same output as above>
             '/div[p[text()="text"]/sup[@id="fn42-ref"][@role="doc-noteref"]/a[@href="#fn42"][text()="1"]]',
         ),
+        (
+            '<page><body><p>Two refs<note id="fn42" note-class="footnote"><p>labeled footnote</p></note></p>'
+            '<p>... to the same footnote.<noteref xlink:href="#fn42" /></p></body></page>',
+            #
+            '/div[p[text()="Two refs"]/sup[@id="fn42-ref"][@role="doc-noteref"]/a[@href="#fn42"][text()="1"]]'
+            '/p[text()="... to the same footnote."]/sup[@role="doc-noteref"]/a[@href="#fn42"][text()="1"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
