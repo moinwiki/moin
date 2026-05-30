@@ -2215,10 +2215,14 @@ class RegistrationForm(Form):
     name = "register"
 
     username = RequiredText.using(label=L_("Username")).with_properties(
-        placeholder=L_("The login username you want to use"), autofocus=True
+        autocomplete="username", autofocus=True, placeholder=L_("The login username you want to use")
     )
-    password1 = RequiredPassword.with_properties(placeholder=L_("The login password you want to use"))
-    password2 = RequiredPassword.with_properties(placeholder=L_("Repeat the same password"))
+    password1 = RequiredPassword.with_properties(
+        autocomplete="new-password", placeholder=L_("The login password you want to use")
+    )
+    password2 = RequiredPassword.with_properties(
+        autocomplete="new-password", placeholder=L_("Repeat the same password")
+    )
     email = YourEmail
     submit_label = L_("Register")
 
@@ -2403,10 +2407,10 @@ class PasswordRecoveryForm(Form):
         placeholder=L_("The recovery token that has been sent to you")
     )
     password1 = RequiredPassword.using(label=L_("New password")).with_properties(
-        placeholder=L_("The login password you want to use")
+        autocomplete="new-password", placeholder=L_("The login password you want to use")
     )
     password2 = RequiredPassword.using(label=L_("New password (repeat)")).with_properties(
-        placeholder=L_("Repeat the same password")
+        autocomplete="new-password", placeholder=L_("Repeat the same password")
     )
     submit_label = L_("Change password")
 
@@ -2465,8 +2469,10 @@ class LoginForm(Form):
 
     name = "login"
 
-    username = RequiredText.using(label=L_("Username"), optional=False).with_properties(autofocus=True)
-    password = RequiredPassword
+    username = RequiredText.using(label=L_("Username"), optional=False).with_properties(
+        autocomplete="username", autofocus=True
+    )
+    password = RequiredPassword.with_properties(autocomplete="current-password")
     persistent = Checkbox.using(label=_("Remember me"), default=False)
     nexturl = Hidden.using(default="")
     # This field results in a login_submit field in the POST form, which is in
@@ -2552,13 +2558,13 @@ class UserSettingsPasswordForm(Form):
     validators = [ValidChangePass()]
 
     password_current = RequiredPassword.using(label=L_("Current Password")).with_properties(
-        placeholder=L_("Your current login password")
+        autocomplete="current-password", placeholder=L_("Your current login password")
     )
     password1 = RequiredPassword.using(label=L_("New password")).with_properties(
-        placeholder=L_("The login password you want to use")
+        autocomplete="new-password", placeholder=L_("The login password you want to use")
     )
     password2 = RequiredPassword.using(label=L_("New password (repeat)")).with_properties(
-        placeholder=L_("Repeat the same password")
+        autocomplete="new-password", placeholder=L_("Repeat the same password")
     )
     submit_label = L_("Change password")
 
@@ -2697,7 +2703,9 @@ def usersettings():
     # these forms can't be global because we need app object, which is only available within a request:
     class UserSettingsPersonalForm(Form):
         form_name = "usersettings_personal"
-        name = Names.using(label=L_("Usernames")).with_properties(placeholder=L_("The login usernames you want to use"))
+        name = Names.using(label=L_("Usernames")).with_properties(
+            autocomplete="username", placeholder=L_("The login usernames you want to use")
+        )
         display_name = OptionalText.using(label=L_("Display-Name")).with_properties(
             placeholder=L_("Your display name (optional, rarely used)")
         )
