@@ -439,12 +439,16 @@ class NodeVisitor:
     def visit_footnote_reference(self, node):
         # insert the referenced footnote here
         refid = node["refid"]
+        if refid in self.footnote_ids:
+            attrib = {xlink.href: f"#{refid}"}
+            self.open_moin_page_node(moin_page.noteref(attrib=attrib))
+            self.close_moin_page_node()
+            raise nodes.SkipNode
         footnote = node.document.ids[refid]  # get matching footnote element
         attrib = {moin_page.note_class: "footnote"}
         # keep footnote ID for additional references (unless it is already used)
-        if refid not in self.footnote_ids:
-            attrib[moin_page.id] = refid
-            self.footnote_ids.add(refid)
+        attrib[moin_page.id] = refid
+        self.footnote_ids.add(refid)
         self.open_moin_page_node(moin_page.note(attrib=attrib))
         for child in footnote.children[1:]:
             walkabout(child, self)

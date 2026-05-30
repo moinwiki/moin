@@ -249,7 +249,7 @@ class TestConverter:
         (
             "Two references [#fn42]_ to the same footnote [#fn42]_\n\n.. [#fn42] auto-label *footnote*",
             '<p>Two references<note id="fn42" note-class="footnote"><p>auto-label <emphasis>footnote</emphasis></p></note>'
-            ' to the same footnote<note note-class="footnote"><p>auto-label <emphasis>footnote</emphasis></p></note></p>',
+            ' to the same footnote<noteref xlink:href="#fn42" /></p>',
         ),
         (
             "Text [*]_\n\n.. [*] auto-symbol footnote\n\n   with second paragraph",

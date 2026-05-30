@@ -770,6 +770,13 @@ class Converter:
         note.extend(children)
         return note
 
+    def visit_docbook_footnoteref(self, element, depth):
+        """
+        <footnoteref linkend='fn' /> --> <noteref xlink:href='#fn' />
+        """
+        href = "#" + element.get("linkend")
+        return self.new(moin_page.noteref, attrib={xlink.href: href}, children=[])
+
     def visit_docbook_formalpara(self, element, depth):
         """
         <formalpara>
