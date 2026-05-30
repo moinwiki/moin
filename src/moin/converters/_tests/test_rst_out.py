@@ -191,6 +191,15 @@ class TestConverter(Base):
             '<page:page><page:body><page:p>Abra <page:note page:note-class="footnote">arba</page:note></page:p><page:p>Abra <page:note page:note-class="footnote">arba</page:note></page:p><page:p>Abra <page:note page:note-class="footnote">arba</page:note><page:note page:note-class="footnote">arba</page:note></page:p></page:body></page:page>',
             "Abra  [#]_ \n\nAbra  [#]_ \n\nAbra  [#]_  [#]_ \n\n\n.. [#] arba\n\n.. [#] arba\n\n.. [#] arba\n\n.. [#] arba\n\n",
         ),
+        (
+            '<page:page><page:body><page:p>Text<page:note xml:id="fn42" page:note-class="footnote">footnote with ID</page:note></page:p></page:body></page:page>',
+            "Text [#fn42]_ \n\n\n.. [#fn42] footnote with ID\n\n",
+        ),
+        (
+            '<page:page><page:body><page:p>Text<page:note xml:id="fn42" page:note-class="footnote"><page:p>footnote with ID</page:p></page:note></page:p>'
+            '<page:p>Additional footnote reference<page:noteref xlink:href="#fn42" /></page:p></page:body></page:page>',
+            "Text [#fn42]_ \n\nAdditional footnote reference [#fn42]_ \n\n\n.. [#fn42] footnote with ID\n\n",
+        ),
     ]
 
     @pytest.mark.parametrize("input,output", data)

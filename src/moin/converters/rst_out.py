@@ -21,7 +21,7 @@ from emeraldtree import ElementTree as ET
 from . import ElementException
 
 from moin.utils.mime import Type, type_moin_document
-from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.tree import html, moin_page, xlink, xinclude, xml
 from moin.utils.iri import Iri
 
 from . import default_registry
@@ -316,7 +316,7 @@ class Converter:
         self.delete_newlines = False
         self.line_block_indent = -4
         ret = self.open(root)
-        notes = "\n\n".join(".. [#] {}".format(note.replace("\n", "\n  ")) for note in self.footnotes)
+        notes = "\n\n".join(self.footnotes)
         if notes:
             return ret + self.define_references() + f"\n\n{notes}\n\n"
 
@@ -586,11 +586,18 @@ class Converter:
             # the rST ``.. footnotes::`` directive is not yet implemented
             return ""
         note_class = elem.get(moin_page.note_class, "")
+        ID = elem.get(moin_page.id, "") or elem.get(xml.id, "")
         if note_class == "footnote":  # as of 2026/05, all notes are footnotes
             self.status.append("list")
-            self.footnotes.append(self.open_children(elem))
+            content = self.open_children(elem).strip()
+            self.footnotes.append(f".. [#{ID}] " + content.replace("\n", "\n  "))
             self.status.pop()
-        return " [#]_ "
+        return f" [#{ID}]_ "
+
+    def open_moinpage_noteref(self, elem):
+        # <noteref xlink:href='#fn' /> --> [#fn]_
+        href = elem.get(xlink.href, None)
+        return f" [{href}]_ "
 
     def open_moinpage_object(self, elem):
         # TODO: object parameters support
