@@ -59,7 +59,7 @@ See utils.html for more macros.
 {%- endmacro %}
 
 {% macro raw_input(field, type=none) %}
-    {{ gen.input(field, type=type or field.properties.widget, class=field.properties.class_ or '', **kwargs) }}
+    {{ gen.input(field, type=type or field.properties.widget, class=field.properties.class_ or '', **kwargs ) }}
 {%- endmacro %}
 
 {% macro annotated_input(field, type=none) %}
@@ -68,7 +68,7 @@ See utils.html for more macros.
         {{ gen.label(field) }}
     </dt>
     <dd>
-        {{ raw_input(field, type) }}
+        {{ raw_input(field, type, **kwargs) }}
         {{ render_errors(field) }}
         {#- TODO make the helper more explicit and look better #}
         {%- if field.properties.helper %}
