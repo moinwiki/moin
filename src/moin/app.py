@@ -422,12 +422,20 @@ def before_wiki():
     """
     Setup environment for wiki requests, start timers.
     """
+
     request_path = getattr(request, "path", "") if request else ""
+
     if is_static_content(request_path) or request_path == "/+cspreport/log":
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"skipping variable injection in before_wiki for {request.path}")
         setattr(flaskg, "no_variable_injection", True)
         return
+
+    # Ignore any well-known uri request.
+    # Chromium DevTools for example sends this kind of request: '.well-known/appspecific/com.chrome.devtools.json'.
+    # See <https://en.wikipedia.org/wiki/Well-known_URI> for details.
+    if request_path.startswith("/.well-known/"):
+        return "", 204
 
     logger.debug("running before_wiki")
 
