@@ -82,14 +82,14 @@
     {{ gen.form.open(form, method="post", action=url_for('frontend.usersettings')) }}
         {{ forms.render_errors(form) -}}
         <dl>
-            {{ forms.render(form['iso_8601']) }}
-            {{ forms.render(form['mailto_author']) }}
-            {{ forms.render(form['edit_on_doubleclick']) }}
-            {{ forms.render(form['use_html_editor']) }}
-            {{ forms.render(form['use_markdown_editor']) }}
-            {{ forms.render(form['scroll_page_after_edit']) }}
-            {{ forms.render(form['show_comments']) }}
-            {{ forms.render(form['disabled']) }}
+            {{ forms.render(form['iso_8601'], id='f_iso_8601') }}
+            {{ forms.render(form['mailto_author'], id='f_mailto_author') }}
+            {{ forms.render(form['edit_on_doubleclick'], id='f_edit_on_doubleclick') }}
+            {{ forms.render(form['use_html_editor'], id='f_use_html_editor') }}
+            {{ forms.render(form['use_markdown_editor'], id='f_use_markdown_editor') }}
+            {{ forms.render(form['scroll_page_after_edit'], id='f_scroll_page_after_edit') }}
+            {{ forms.render(form['show_comments'], id='f_show_comments') }}
+            {{ forms.render(form['disabled'], id='f_disabled') }}
         </dl>
         {{ forms.render_submit(form, 'part', 'options') }}
     {{ gen.form.close() }}
