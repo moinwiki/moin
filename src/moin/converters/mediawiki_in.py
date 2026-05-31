@@ -926,31 +926,32 @@ class Converter(ConverterMacro):
                 while next_text:
                     match = re.match(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))", next_text)
                     if match:
-                        tag = match.group(1)
+                        raw_tag = match.group(1)
                         next_text = match.group(3)
                         text = match.group(2) or match.group(4)
                         if not text:
                             text = ""
-                        tag_match = re.match(r"/\s*(.*)", tag)
-                        status = not tag_match
-                        if tag_match:
-                            tag_name = tag_match.group(1).split(" ")[0]
+
+                        is_opening_tag = not raw_tag.startswith("/")
+                        if is_opening_tag:
+                            tag_name = raw_tag.split(" ")[0]
                         else:
-                            tag_name = tag.split(" ")[0]
+                            tag_name = raw_tag[1:].strip().split(" ")[0]
+
                         if (
                             tag_name not in self.all_tags
-                            or re.match(r".*/\s*$", tag)
+                            or re.match(r".*/\s*$", raw_tag)
                             or self.nowiki
-                            and (status or tag_name != self.nowiki_tag)
+                            and (is_opening_tag or tag_name != self.nowiki_tag)
                         ):
                             if not tags:
-                                post_line.append(f"<{tag}>")
+                                post_line.append(f"<{raw_tag}>")
                                 post_line.append(text)
                             else:
-                                tags[-1].text.append(f"<{tag}>")
+                                tags[-1].text.append(f"<{raw_tag}>")
                                 tags[-1].text.append(text)
                         else:
-                            if not status:
+                            if not is_opening_tag:
                                 if self.nowiki:
                                     if tag_name == self.nowiki_tag:
                                         self.nowiki_tag = ""
@@ -980,7 +981,7 @@ class Converter(ConverterMacro):
                                 if tag_name in self.nowiki_tags:
                                     self.nowiki = True
                                     self.nowiki_tag = tag_name
-                                tags.append(self.Preprocessor_tag(tag_name, text, tag))
+                                tags.append(self.Preprocessor_tag(tag_name, text, raw_tag))
                     else:
                         post_line.append(next_text)
                         break
