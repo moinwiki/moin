@@ -83,6 +83,16 @@ def test_autofocus_filter():
     assert attribute_result == "autofocus"
 
 
+def test_autocomplete_filter():
+    test_bind.properties = {"autocomplete": "off"}
+    content_result = forms.autocomplete_filter(
+        "test_tagname", test_attributes, "new_content", "test_context", test_bind
+    )
+    assert content_result == "new_content"
+    attribute_result = test_attributes["autocomplete"]
+    assert attribute_result == "off"
+
+
 def test_placeholder_filter():
     test_bind.properties["placeholder"] = "test_placeholder"
     content_result = forms.placeholder_filter("test_tagname", test_attributes, "new_content", "test_context", test_bind)

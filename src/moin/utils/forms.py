@@ -50,6 +50,17 @@ def required_filter(tagname, attributes, contents, context, bind):
 required_filter.tags = {"input", "label"}  # type: ignore[attr-defined]  # function attribute
 
 
+def autocomplete_filter(tagname, attributes, contents, context, bind):
+    if bind is not None:
+        autocomplete = bind.properties.get("autocomplete")
+        if autocomplete:
+            attributes["autocomplete"] = autocomplete
+    return contents
+
+
+autocomplete_filter.tags = {"input"}  # type: ignore[attr-defined]  # function attribute
+
+
 def autofocus_filter(tagname, attributes, contents, context, bind):
     if bind is not None:
         autofocus = bind.properties.get("autofocus")
@@ -102,7 +113,15 @@ def make_generator():
         auto_for=True,
         auto_filter=True,
         markup_wrapper=Markup,
-        filters=[label_filter, button_filter, error_filter, required_filter, placeholder_filter, autofocus_filter],
+        filters=[
+            label_filter,
+            button_filter,
+            error_filter,
+            required_filter,
+            placeholder_filter,
+            autocomplete_filter,
+            autofocus_filter,
+        ],
     )
 
 

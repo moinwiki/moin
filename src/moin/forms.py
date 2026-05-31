@@ -238,7 +238,7 @@ Email = (
     .validated_by(IsEmail())
 )
 
-YourEmail = Email.with_properties(placeholder=L_("Your E-Mail address"))
+YourEmail = Email.with_properties(placeholder=L_("Your E-Mail address"), autocomplete="off")
 
 Password = Text.with_properties(widget=WIDGET_PASSWORD).using(label=L_("Password"))
 
