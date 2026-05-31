@@ -220,7 +220,7 @@ class Converter(ConverterMacro):
                     preprocessor_status = self.preprocessor.pop()
             elif m.group("text"):
                 self.preprocessor.push(preprocessor_status)
-                self.parse_inline("\n{}".format(m.group("text")), stack, self.inline_re)
+                self.parse_inline(f"\n{m.group('text')}", stack, self.inline_re)
                 preprocessor_status = self.preprocessor.pop()
         stack.pop_name("table")
 
@@ -275,9 +275,8 @@ class Converter(ConverterMacro):
                 if is_list:
                     iter_content.push(line)
                     return
-                else:
-                    yield line
-                    break
+                yield line
+                break
 
             if match.group("indent"):
                 new_level = len(match.group("indent"))
@@ -790,8 +789,6 @@ class Converter(ConverterMacro):
             # TODO: pre_args parsing
             text = nowiki_text_pre
             stack.top_append(moin_page.blockcode(children=[text]))
-        else:
-            return
 
     table = block_table
 
@@ -871,7 +868,7 @@ class Converter(ConverterMacro):
                 self.text = [text]
                 self.status = status
 
-        all_tags: Final = ["br", "blockquote" "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
+        all_tags: Final = ["br", "blockquote", "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
 
         nowiki_tags: Final = ["pre", "code", "tt", "nowiki"]
 
@@ -895,7 +892,7 @@ class Converter(ConverterMacro):
                     self.nowiki_tag = ""
 
         def pop(self):
-            if len(self._stack):
+            if self._stack:
                 self.opened_tags = self._stack.pop()
             else:
                 self.opened_tags = []
@@ -915,7 +912,7 @@ class Converter(ConverterMacro):
                 pre_text = match.group(1) or match.group(3)
                 # text may be None
                 if pre_text:
-                    if len(tags):
+                    if tags:
                         if self.nowiki_tag == "pre":
                             tags[-1].text.append(pre_text + "\n")
                         else:
@@ -946,7 +943,7 @@ class Converter(ConverterMacro):
                             or self.nowiki
                             and (status or tag_name != self.nowiki_tag)
                         ):
-                            if not len(tags):
+                            if not tags:
                                 post_line.append(f"<{tag}>")
                                 post_line.append(text)
                             else:
@@ -964,16 +961,14 @@ class Converter(ConverterMacro):
                                     close_tag = self.Preprocessor_tag()
                                     while tag_name != close_tag.tag_name:
                                         close_tag = tags.pop()
-                                        tmp_line = "<{}>{}{}</{}>".format(
-                                            close_tag.tag, "".join(close_tag.text), tmp_line, close_tag.tag_name
-                                        )
-                                        if not len(tags):
+                                        tmp_line = f"<{close_tag.tag}>{''.join(close_tag.text)}{tmp_line}</{close_tag.tag_name}>"
+                                        if not tags:
                                             post_line.append(tmp_line)
                                         else:
                                             tags[-1].text.append(tmp_line)
                                         open_tags.append(close_tag)
                                     open_tags = open_tags[:-1]
-                                    if not len(tags):
+                                    if not tags:
                                         post_line.append(text)
                                     else:
                                         tags[-1].text.append(text)
