@@ -93,9 +93,11 @@ class WikiConfigProtocol(Protocol):
     mail_smarthost: str | None
     markdown_extensions: list[str] = []
     mimetypes_to_index_as_empty: list[str] = []
+    mimetypes_xss_protect: list[str]
     namespace_mapping: NamespaceMapping
     navi_bar: NaviBarEntries
     password_checker: PasswordChecker | None
+    plugin_dirs: list[str]
     registration_hint: str
     registration_only_by_superuser: bool
     root_mapping: dict[str, str]
