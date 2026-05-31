@@ -138,7 +138,7 @@ class Converter:
         self.list_item_labels = [""]
         self.list_item_label = ""
         self.list_level = 0
-        self.unknown_macro_list = []
+        self.unknown_macro_list: list[str] = []
 
         # 'text' - default status - <p> = '/n' and </p> = '/n'
         # 'table' - text inside table - <p> = '<<BR>>' and </p> = ''
