@@ -148,7 +148,9 @@ class Converter:
     def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
-        self.list_item_label = []
+        self.list_item_label = ""
+        self.list_item_labels = [""]
+        self.list_level = 0
         content = self.open(root)
         while "\n\n\n" in content:
             content = content.replace("\n\n\n", "\n\n")
