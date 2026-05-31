@@ -790,11 +790,7 @@ class Converter(ConverterMacro):
                 link_item, fragment = link_item.rsplit("#", 1)
             else:
                 link_item, fragment = link_item, None
-            if "?" in link_item:
-                path, link_query = link_item.rsplit("?", 1)
-                query.insert(0, link_query)
-            else:
-                path, link_query = link_item, None
+            path = link_item
             if query:
                 query = "&" + "&".join(query)
             else:
