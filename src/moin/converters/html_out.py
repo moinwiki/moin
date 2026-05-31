@@ -679,6 +679,7 @@ class SpecialPage:
         self._footnotes = []
         self._headings = []
         self._tocs = []
+        self._footnote_labels = {}  # mapping of footnote IDs to visible labels
 
     def add_footnote(self, elem):
         self._footnotes.append(elem)
@@ -839,24 +840,33 @@ class ConverterPage(Converter):
             self._id.gen_id("note-placement")
             return footnotes_div
 
-        body = self.do_children(elem)
-        label = self._id.gen_id("note")
-        id = f'{self._id.get_id("note-placement")}-{label}'
+        label = self._id.gen_id("note")  # 1, 2, 3, ...
+        ID = f'note-{self._id.get_id("note-placement")}-{label}'  # note-1-1, note-1-2, ...
+        attrib = Attributes(elem).convert()
+        if attrib.get(html.id_):
+            ID = attrib[html.id]
 
-        elem_ref = ET.XML(
-            f'<html:sup xmlns:html="{html}" html:id="note-{id}-ref" html:role="doc-noteref">'
-            f'<html:a html:href="#note-{id}">{label}</html:a>'
-            "</html:sup>"
-        )
         elem_note = ET.XML(
-            f'<html:aside xmlns:html="{html}" html:id="note-{id}" html:role="doc-footnote">'
-            f'<html:sup><html:a html:href="#note-{id}-ref">{label}</html:a></html:sup>'
+            f'<html:aside xmlns:html="{html}" html:id="{ID}" html:role="doc-footnote">'
+            f'<html:sup><html:a html:href="#{ID}-ref">{label}</html:a></html:sup>'
             "</html:aside>"
         )
-        elem_note.extend(body)
+        elem_note.attrib.update(attrib)
+        elem_note.extend(self.do_children(elem))
         top.add_footnote(elem_note)
+        top._footnote_labels[ID] = label  # save mapping for additional references
 
-        return elem_ref
+        ref_attrib = {html.role: "doc-noteref", html.id_: f"{ID}-ref"}
+        ref_child = html.a(attrib={html.href: f"#{ID}"}, children=[label])
+        return html.sup(attrib=ref_attrib, children=[ref_child])
+
+    def visit_moinpage_noteref(self, elem):
+        # additional references to a note (footnote, ...)
+        top = self._special_stack[-1]  # SpecialPage instance `special_root`
+        href = elem.get(xlink.href)
+        label = top._footnote_labels.get(href[1:], href)
+        child = html.a(attrib={html.href: href}, children=[label])
+        return html.sup(attrib={html.role: "doc-noteref"}, children=[child])
 
     def visit_moinpage_table_of_content(self, elem):
         try:

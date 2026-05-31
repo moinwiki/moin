@@ -294,6 +294,11 @@ class TestConverter(Base):
             '/page/body/div/p[text()="text"]/note[@note-class="footnote"][@xml:id="fn42"][p[text()="footnote with id"]]/p[text()="second paragraph"]',
         ),
         (
+            '<article><para>additional footnote reference<footnoteref linkend="fn42" /></para></article>',
+            # <div html:class="db-article"><p>additional footnoteref reference<noteref xlink:href="#fn42" /></p></div>
+            '/page/body/div/p[text()="additional footnote reference"]/noteref[@xlink:href="#fn42"]',
+        ),
+        (
             "<article><para><quote>text</quote></para></article>",
             # <page><body><div html:class="article"><p><quote>text</quote></para></article>
             '/page/body/div/p[quote="text"]',

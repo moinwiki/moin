@@ -333,14 +333,36 @@ class TestConverterPage(Base):
             #      </aside>
             #   </div>
             # </div>
-            # check footnote reference:
-            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]',
+            '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]'
+            '/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
         ),
         (
-            '<page><body><p>Text<note note-class="footnote"><p>Note</p></note></p></body></page>',
+            '<page><body><p>text<note id="fn42" html:class="custom" note-class="footnote"><p>footnote with ID</p></note></p></body></page>',
+            # <div>
+            #   <p>text<sup id="fn42-ref" role="doc-noteref"><a href="#fn42">1</a></sup></p>
+            #   <div class="moin-footnotes">
+            #     <aside class="custom" id="fn42" role="doc-footnote">
+            #       <sup><a href="#fn42-ref">1</a></sup>
+            #       <p>footnote with ID</p>
+            #     </aside>
+            #   </div>
+            # </div>
+            '/div[p[text()="text"]/sup[@id="fn42-ref"][@role="doc-noteref"]/a[@href="#fn42"][text()="1"]]'
+            '/div[@class="moin-footnotes"]'
+            '/aside[@class="custom"][@id="fn42"][@role="doc-footnote"][sup/a[@href="#fn42-ref"][text()="1"]]'
+            '/p[text()="footnote with ID"]',
+        ),
+        (  # DocBook IDs are converted to ``xml:id``
+            '<page><body><p>text<note xml:id="fn42" html:class="custom" note-class="footnote"><p>footnote with ID</p></note></p></body></page>',
             # <same output as above>
-            # check footnote (at end of document)
-            '/div/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
+            '/div[p[text()="text"]/sup[@id="fn42-ref"][@role="doc-noteref"]/a[@href="#fn42"][text()="1"]]',
+        ),
+        (
+            '<page><body><p>Two refs<note id="fn42" note-class="footnote"><p>labeled footnote</p></note></p>'
+            '<p>... to the same footnote.<noteref xlink:href="#fn42" /></p></body></page>',
+            #
+            '/div[p[text()="Two refs"]/sup[@id="fn42-ref"][@role="doc-noteref"]/a[@href="#fn42"][text()="1"]]'
+            '/p[text()="... to the same footnote."]/sup[@role="doc-noteref"]/a[@href="#fn42"][text()="1"]',
         ),
     ]
 
