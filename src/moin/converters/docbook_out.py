@@ -114,11 +114,18 @@ class Converter:
         """
         Copy one element to the DocBook tree.
 
-        It first converts the children of the element,
-        and then the element itself.
+        Convert the element, its attributes, and children.
         """
-        children = self.do_children(element)
-        return self.new(tag, attrib, children)
+        # new_element = self.new(tag, attrib, children=[])
+        if self.standard_attribute:
+            attrib.update(self.standard_attribute)
+            self.standard_attribute = {}
+        new_element = ET.Element(tag, attrib=attrib, children=[])
+        new_element.extend(self.do_children(element))
+        if self.current_section > 0:
+            self.section_children[self.current_section].append(new_element)
+        else:
+            return new_element
 
     def get_standard_attributes(self, element):
         """
