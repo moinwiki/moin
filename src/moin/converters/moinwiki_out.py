@@ -138,7 +138,7 @@ class Converter:
         self.list_item_labels = [""]
         self.list_item_label = ""
         self.list_level = 0
-        self.unknown_macro_list = []
+        self.unknown_macro_list: list[str] = []
 
         # 'text' - default status - <p> = '/n' and </p> = '/n'
         # 'table' - text inside table - <p> = '<<BR>>' and </p> = ''
@@ -148,7 +148,9 @@ class Converter:
     def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
-        self.list_item_label = []
+        self.list_item_label = ""
+        self.list_item_labels = [""]
+        self.list_level = 0
         content = self.open(root)
         while "\n\n\n" in content:
             content = content.replace("\n\n\n", "\n\n")
@@ -656,13 +658,13 @@ class Converter:
         return ret + Moinwiki.table_marker + "\n"
 
     def open_moinpage_th(self, elem):
-        return self.open_moinpage_table_cell_head(self, elem)
+        return self.open_moinpage_table_cell_head(elem)
 
     def open_moinpage_table_cell_head(self, elem):
         return self.open_moinpage_table_cell(elem)
 
     def open_moinpage_td(self, elem):
-        return self.open_moinpage_table_cell(self, elem)
+        return self.open_moinpage_table_cell(elem)
 
     def open_moinpage_table_cell(self, elem):
         table_cellclass = elem.attrib.get(moin_page.class_, "")
