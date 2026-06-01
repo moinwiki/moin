@@ -880,30 +880,28 @@ class Converter(ConverterMacro):
             self.nowiki_tag = ""
             self._stack = []
 
-        def push(self, status=[]):
+        def push(self, opened_tags=None):
+            opened_tags = opened_tags or []
             self._stack.append(self.opened_tags)
-            self.opened_tags = status
-            if self.opened_tags:
-                if self.opened_tags[-1].tag_name in self.nowiki_tags:
-                    self.nowiki = True
-                    self.nowiki_tag = self.opened_tags[-1].tag_name
-                else:
-                    self.nowiki = False
-                    self.nowiki_tag = ""
+            self.opened_tags = opened_tags
+            self._update_nowiki_state()
 
         def pop(self):
             if self._stack:
                 self.opened_tags = self._stack.pop()
             else:
                 self.opened_tags = []
-            if self.opened_tags:
-                if self.opened_tags[-1].tag_name in self.nowiki_tags:
-                    self.nowiki = True
-                    self.nowiki_tag = self.opened_tags[-1].tag_name
-                else:
-                    self.nowiki = False
-                    self.nowiki_tag = ""
+            self._update_nowiki_state()
             return self.opened_tags
+
+        def _update_nowiki_state(self):
+            if self.opened_tags:
+                tag_name = self.opened_tags[-1].tag_name
+                self.nowiki = tag_name in self.nowiki_tags
+                self.nowiki_tag = tag_name if self.nowiki else ""
+            else:
+                self.nowiki = False
+                self.nowiki_tag = ""
 
         def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
@@ -922,6 +920,7 @@ class Converter(ConverterMacro):
                         post_line = [pre_text]
                 else:
                     post_line = []
+
                 next_text = match.group(2)
                 while next_text:
                     match = re.match(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))", next_text)
@@ -998,6 +997,7 @@ class Converter(ConverterMacro):
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):
+        """parse the whole document"""
         attrib = {}
         if arguments:
             for key, value in arguments.keyword.items():
