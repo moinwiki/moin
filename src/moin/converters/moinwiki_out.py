@@ -290,7 +290,7 @@ class Converter:
 
     def open_moinpage_kbd(self, elem):
         # there is no specific markup for user input (<kbd>)
-        self.open_moinpage_literal()
+        return f'{Moinwiki.literal}{"".join(elem.itertext())}{Moinwiki.literal}'
 
     def open_moinpage_line_break(self, elem):
         return Moinwiki.linebreak
@@ -558,7 +558,7 @@ class Converter:
 
     def open_moinpage_samp(self, elem):
         # there is no specific markup for computer output (<samp>)
-        self.open_moinpage_literal()
+        return f'{Moinwiki.literal}{"".join(elem.itertext())}{Moinwiki.literal}'
 
     def open_moinpage_separator(self, elem, hr_class_prefix="moin-hr"):
         hr_ending = "\n"
