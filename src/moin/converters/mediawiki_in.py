@@ -906,8 +906,8 @@ class Converter(ConverterMacro):
         def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
             match = re.match(r"(.*?)(<.*>.*)?$", line)
-            pre_text = match.group(1)
-            next_text = match.group(2)
+            pre_text = match.group(1)  # text before first tag or full line if no tag
+            next_text = match.group(2)  # remaining text beginning with the tag or None
             post_line = []
 
             if pre_text:
@@ -922,9 +922,9 @@ class Converter(ConverterMacro):
             while next_text:
                 match = re.match(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))", next_text)
                 if match:
-                    raw_tag = match.group(1)
-                    next_text = match.group(3)
-                    text = match.group(2) or match.group(4)
+                    raw_tag = match.group(1)  # tag contents
+                    next_text = match.group(3)  # next tag and remainder
+                    text = match.group(2) or match.group(4)  # text between tags or remaining text if no tags
                     if not text:
                         text = ""
 
@@ -934,11 +934,11 @@ class Converter(ConverterMacro):
                     else:
                         tag_name = raw_tag[1:].strip().split(" ")[0]
 
+                    # tag should be treated as literal text if unsupported tag, self-closing tag or inside nowiki
                     if (
                         tag_name not in self.all_tags
                         or re.match(r".*/\s*$", raw_tag)
-                        or self.nowiki
-                        and (is_opening_tag or tag_name != self.nowiki_tag)
+                        or (self.nowiki and (is_opening_tag or tag_name != self.nowiki_tag))
                     ):
                         if not tags:
                             post_line.append(f"<{raw_tag}>")
@@ -947,11 +947,17 @@ class Converter(ConverterMacro):
                             tags[-1].text.append(f"<{raw_tag}>")
                             tags[-1].text.append(text)
                     else:
-                        if not is_opening_tag:
+                        if is_opening_tag:
+                            if tag_name in self.nowiki_tags:
+                                self.nowiki = True
+                                self.nowiki_tag = tag_name
+                            tags.append(self.Preprocessor_tag(tag_name, text, raw_tag))
+                        else:  # is closing tag
                             if self.nowiki:
                                 if tag_name == self.nowiki_tag:
                                     self.nowiki_tag = ""
                                     self.nowiki = False
+                            # if matching tag in stack: auto-close everything above
                             if tag_name in [t.tag_name for t in tags]:
                                 open_tags = []
                                 tmp_line = ""
@@ -971,16 +977,11 @@ class Converter(ConverterMacro):
                                     post_line.append(text)
                                 else:
                                     tags[-1].text.append(text)
-                                if open_tags:
-                                    for t in open_tags[:-1].reverse():
+                                if open_tags:  # re-open temporarily closed nested tags
+                                    for t in reversed(open_tags):
                                         t.text = ""
                                         tags.append(t)
-                        else:
-                            if tag_name in self.nowiki_tags:
-                                self.nowiki = True
-                                self.nowiki_tag = tag_name
-                            tags.append(self.Preprocessor_tag(tag_name, text, raw_tag))
-                else:
+                else:  # all tags processed, append remainder unchanged
                     post_line.append(next_text)
                     break
             return "".join(post_line)
