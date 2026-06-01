@@ -863,7 +863,7 @@ class ConverterPage(Converter):
     def visit_moinpage_noteref(self, elem):
         # additional references to a note (footnote, ...)
         top = self._special_stack[-1]  # SpecialPage instance `special_root`
-        href = elem.get(xlink.href)
+        href = elem.get(xlink.href, "#noteref with missing href")
         label = top._footnote_labels.get(href[1:], href)
         child = html.a(attrib={html.href: href}, children=[label])
         return html.sup(attrib={html.role: "doc-noteref"}, children=[child])

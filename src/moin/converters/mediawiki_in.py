@@ -497,10 +497,23 @@ class Converter(ConverterMacro):
     def inline_footnote_repl(
         self, stack, footnote, footnote_begin=None, footnote_text=None, footnote_end=None, footnote_start=None
     ):
-        # stack.top_check('emphasis'):
-        if footnote_begin is not None:
-            stack.push(moin_page.note(attrib={moin_page.note_class: "footnote"}))
-            stack.push(moin_page.p())
+        if footnote.startswith("<references"):
+            # custom placement (https://www.mediawiki.org/wiki/Help:Cite)
+            stack.top_append(moin_page.note())
+        elif footnote_begin is not None:
+            # extract ID (e.g. 'fn3' from '<ref name="fn3">')
+            arguments = _TableArguments()(footnote_begin)  # '_TableArguments' works also for XML-style attributes
+            if footnote_begin.endswith("/>"):  # empty tag -> additional reference to footnote with ID
+                attrib = {}
+                if "name" in arguments:
+                    attrib[xlink.href] = "#" + arguments["name"]
+                stack.top_append(moin_page.noteref(attrib=attrib))
+            else:
+                attrib = {moin_page.note_class: "footnote"}
+                if "name" in arguments:
+                    attrib[moin_page.id] = arguments["name"]
+                stack.push(moin_page.note(attrib=attrib))
+                stack.push(moin_page.p())
         elif footnote_end is not None:
             stack.pop()
             stack.pop()

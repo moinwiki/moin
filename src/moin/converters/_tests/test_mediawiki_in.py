@@ -58,6 +58,18 @@ class TestConverter:
             '<page><body><p>aaa <note note-class="footnote"><p> sdf </p></note> test</p><p> asd</p></body></page>',
         ),
         (
+            'aaa<ref name="fn42">labeled footnote</ref>',
+            '<page><body><p>aaa<note id="fn42" note-class="footnote"><p>labeled footnote</p></note></p></body></page>',
+        ),
+        (
+            'additional reference<ref name="fn42" /> to a footnote',
+            '<page><body><p>additional reference<noteref xlink:href="#fn42" /> to a footnote</p></body></page>',
+        ),
+        (
+            "custom placement of footnotes\n\n<references />",
+            "<page><body><p>custom placement of footnotes</p><p><note /></p></body></page>",
+        ),
+        (
             """=level 1=
 == level 2 ==
 ===level 3===
