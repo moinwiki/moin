@@ -16,7 +16,7 @@ from typing import Any, Final, TYPE_CHECKING
 import re
 
 from flask import request
-from urllib.parse import urlencode
+from urllib.parse import urlencode, unquote
 
 from moin import log
 from moin.constants.contenttypes import CHARSET
@@ -790,17 +790,13 @@ class Converter(ConverterMacro):
                 link_item, fragment = link_item.rsplit("#", 1)
             else:
                 link_item, fragment = link_item, None
-            if "?" in link_item:
-                path, link_query = link_item.rsplit("?", 1)
-                query.insert(0, link_query)
-            else:
-                path, link_query = link_item, None
+            path = link_item
             if query:
                 query = "&" + "&".join(query)
             else:
                 query = None
             target = Iri(scheme="wiki.local", path=path, query=query, fragment=fragment)
-            text = link_item
+            text = unquote(link_item)
         else:
             target = Iri(link_url)
             text = link_url
