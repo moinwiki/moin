@@ -76,18 +76,17 @@ class TestConverter(Base):
         # Unknown admonition
         ('<page><body><admonition page:type="none"><p>Text</p></admonition></body></page>', '/article[simpara="Text"]'),
         # XML attributes: we support all the xml standard attributes
-        (  # TODO: the values end up on the first child element!
-            '<page><body><p xml:base="http://base.tld" xml:id="myid" xml:lang="en">emphasised  <emphasis>text</emphasis></p></body></page>',
-            # actual:  <simpara>emphasised  <emphasis xml:base="http://base.tld" xml:id="myid" xml:lang="en">text</emphasis></simpara>
-            '/article/simpara/emphasis[@xml:base="http://base.tld"][@xml:id="myid"][@xml:lang="en"][text()="text"]',
-            # desired: <simpara xml:base="http://base.tld" xml:id="myid" xml:lang="en">emphasised  <emphasis>text</emphasis></simpara>
-            # '/article/simpara[@xml:base="http://base.tld"][@xml:id="myid"][@xml:lang="en"]/emphasis[text()="text"]',
-        ),
-        # Para with title
         (
-            '<page><body><p html:title="Title">Text</p></body></page>',
-            # <article><simpara xml:base="http://base.tld" xml:id="id" xml:lang="en">Text</p></body></page>
-            '/article/para[text()="Text"][title="Title"]',
+            '<page><body><p xml:base="http://base.tld" xml:id="myid" xml:lang="en">emphasised  <emphasis>text</emphasis></p></body></page>',
+            # <article><simpara xml:base="http://base.tld" xml:id="myid" xml:lang="en">emphasised  <emphasis>text</emphasis></simpara></article>
+            '/article/simpara[@xml:base="http://base.tld"][@xml:id="myid"][@xml:lang="en"]/emphasis[text()="text"]',
+        ),
+        # Para with title/tooltip
+        # TODO: fix handling (see `docbook_out.Converter.visit_moinpage_p()`)
+        (
+            '<page><body><p html:title="tooltip" xml:id="myid">Text</p></body></page>',
+            # <article><para><title>Title</title>Text</para></article>
+            '/article/para[@xml:id="myid"][text()="Text"][title="tooltip"]',
         ),
     ]
 
@@ -169,9 +168,9 @@ class TestConverter(Base):
             '/article/table[caption="Title"][thead/tr[td="Header"]][tfoot/tr[td="Footer"]][tbody/tr[td="Cell"]]',
         ),
         (
-            '<page><body><table><table-body><table-row><table-cell page:number-columns-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
-            # <article><table><tbody><tr><td colspan="2">Cell</td></tr></tbody></table></article>
-            '/article/table/tbody/tr/td[@colspan="2"][text()="Cell"]',
+            '<page><body><table xml:id="myid"><table-body><table-row><table-cell page:number-columns-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
+            # <article><table xml:id="myid"><tbody><tr><td colspan="2">Cell</td></tr></tbody></table></article>
+            '/article/table[@xml:id="myid"]/tbody/tr/td[@colspan="2"][text()="Cell"]',
         ),
         (
             '<page><body><table><table-body><table-row><table-cell page:number-rows-spanned="2">Cell</table-cell></table-row></table-body></table></body></page>',
@@ -187,9 +186,9 @@ class TestConverter(Base):
     data = [
         # Footnote conversion
         (
-            '<page><body><p>simple text<note page:note-class="footnote"><p>footnote content</p></note></p></body></page>',
-            # <article><simpara>simple text<footnote>footnote content</footnote></simpara></article>
-            '/article/simpara[text()="simple text"]/footnote[simpara="footnote content"]',
+            '<page><body><p>simple text<note page:note-class="footnote" xml:id="myid"><p>footnote content</p></note></p></body></page>',
+            # <article><simpara>simple text<footnote xml:id="myid">footnote content</footnote></simpara></article>
+            '/article/simpara[text()="simple text"]/footnote[@xml:id="myid"][simpara="footnote content"]',
         ),
         # Link conversion
         (
@@ -271,9 +270,9 @@ class TestConverter(Base):
         ),
         # BLOCKQUOTE --> BLOCKQUOTE
         (
-            '<page><body><blockquote page:source="Socrates">One thing only I know, and that is that I know nothing.</blockquote></body></page>',
-            # <article><blockquote><attribution>Socrates</attribution><simpara>One thing ... nothing</simpara></blockquote></article>
-            '/article/blockquote[attribution="Socrates"][simpara="One thing only I know, and that is that I know nothing."]',
+            '<page><body><blockquote page:source="Socrates" xml:id="myid">One thing only I know, and that is that I know nothing.</blockquote></body></page>',
+            # <article><blockquote xml:id="myid"><attribution>Socrates</attribution><simpara>One thing ... nothing</simpara></blockquote></article>
+            '/article/blockquote[@xml:id="myid"][attribution="Socrates"][simpara="One thing only I know, and that is that I know nothing."]',
         ),
     ]
 
@@ -288,9 +287,9 @@ class TestConverter(Base):
             '/article/simpara/inlinemediaobject/imageobject/imagedata[@fileref="pics.png"]',
         ),
         (
-            '<page><body><p><object xlink:href="sound.wav" page:type="audio/" /></p></body></page>',
-            # <article><simpara><inlinemediaobject><audioobject><audiodata fileref="sound.wav"></audioobject></inlinemediaobject></simpara></article>
-            '/article/simpara/inlinemediaobject/audioobject/audiodata[@fileref="sound.wav"]',
+            '<page><body><p><object xlink:href="sound.wav" page:type="audio/" xml:lang="fr" /></p></body></page>',
+            # <article><simpara><inlinemediaobject xml:lang="fr"><audioobject><audiodata fileref="sound.wav"></audioobject></inlinemediaobject></simpara></article>
+            '/article/simpara/inlinemediaobject[@xml:lang="fr"]/audioobject/audiodata[@fileref="sound.wav"]',
         ),
         (
             '<page><body><p><object xlink:href="video.ogg" page:type="video/" /></p></body></page>',
@@ -306,7 +305,7 @@ class TestConverter(Base):
     data = [
         (
             '<page><body><div html:class="db-article"><p>a <emphasis page:html-tag="cite">Title of Cited Work</emphasis></p></div></body></page>',
-            # <article><para>a <citetitle>Title of Cited Work</citetitle></para></article>
+            # <article><simpara>a <citetitle>Title of Cited Work</citetitle></simpara></article>
             '/article/simpara/citetitle[text()="Title of Cited Work"]',
         )
     ]
