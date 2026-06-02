@@ -135,7 +135,7 @@ class Backend(BackendBase):
             size = 0
         elif stat.S_ISREG(st.st_mode):
             # normal file
-            ct = str(MimeType(filename=itemname).content_type())
+            ct = str(MimeType.from_filename(itemname).content_type())
             size = int(st.st_size)  # use int instead of long
         else:
             # symlink, device file, etc.

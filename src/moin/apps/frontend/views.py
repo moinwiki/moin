@@ -114,9 +114,9 @@ from moin.utils.crypto import make_uuid, hash_hexdigest
 from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.mimetype import MimeType
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
 from moin.utils.tree import html, docbook
-import moin.utils.mimetype as mime_type
 
 if TYPE_CHECKING:
     from werkzeug.wrappers import Response as ResponseBase
@@ -1264,7 +1264,7 @@ def _create_item_from_file_upload(item_name, data_file):
         )
     subitem_name = file_name
     item_name = f"{item_name}/{subitem_name}" if item_name else subitem_name
-    mt = mime_type.MimeType(filename=file_name)
+    mt = MimeType.from_filename(file_name)
     contenttype = mt.content_type(charset="utf-8")
     small_meta = {CONTENTTYPE: contenttype}
 

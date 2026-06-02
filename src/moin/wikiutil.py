@@ -251,7 +251,7 @@ def file_headers(filename=None, content_type=None, content_length=None):
     if filename:
         # make sure we just have a simple filename (without path)
         filename = os.path.basename(filename)
-        mt = MimeType(filename=filename)
+        mt = MimeType.from_filename(filename)
     else:
         mt = None
 
@@ -261,7 +261,7 @@ def file_headers(filename=None, content_type=None, content_length=None):
         else:
             content_type = "application/octet-stream"
     else:
-        mt = MimeType(mimestr=content_type)
+        mt = MimeType(content_type)
 
     headers = [("Content-Type", content_type)]
     if content_length is not None:
