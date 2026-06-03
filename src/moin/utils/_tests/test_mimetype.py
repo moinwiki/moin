@@ -68,7 +68,7 @@ class TestMimeType:
             assert result == expected
 
         # when mimestr is not None
-        mimetype = MimeType('image/jpeg;charset="utf-8";misc=moin_misc', filename="test_file")
+        mimetype = MimeType('image/jpeg;charset="utf-8";misc=moin_misc')
         result = mimetype.mime_type()
         assert result == "image/jpeg"
 

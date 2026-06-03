@@ -103,13 +103,12 @@ class MimeType:
     Represents a MIME type such as text/plain.
     """
 
-    def __init__(self, mimestr: str, filename: str | None = None) -> None:
+    def __init__(self, mimestr: str) -> None:
         self.major: str | None = None  # sanitized mime type
         self.minor: str | None = None  # sanitized subtype
         self.params: dict[str, str] = {}  # parameters like "charset" or others
         self.charset = None  # this stays None until we know for sure!
         self.raw_mimestr = mimestr
-        self.filename = filename
         if mimestr:
             self.parse_mimetype(mimestr)
 
@@ -125,7 +124,7 @@ class MimeType:
                 mtype = "application/x-xz"
             else:
                 mtype = "application/octet-stream"
-        return cls(mtype, filename)
+        return cls(mtype)
 
     def parse_mimetype(self, mimestr: str) -> None:
         """
