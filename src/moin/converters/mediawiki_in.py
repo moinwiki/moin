@@ -868,10 +868,12 @@ class Converter(ConverterMacro):
                 self.text = [text]
                 self.status = status
 
+        FIRST_TAG_RE = re.compile(r"(.*?)(<.*>.*)?$")
+        TAG_W_REMAINDER_RE = re.compile(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))")
+        SELF_CLOSING_TAG_RE = re.compile(r".*/\s*$")
+
         all_tags: Final = ["br", "blockquote", "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
-
         nowiki_tags: Final = ["pre", "code", "tt", "nowiki"]
-
         block_tags: Final = ["blockquote"]
 
         def __init__(self):
@@ -881,9 +883,8 @@ class Converter(ConverterMacro):
             self._stack = []
 
         def push(self, opened_tags=None):
-            opened_tags = opened_tags or []
             self._stack.append(self.opened_tags)
-            self.opened_tags = opened_tags
+            self.opened_tags = opened_tags or []
             self._update_nowiki_state()
 
         def pop(self):
@@ -905,7 +906,7 @@ class Converter(ConverterMacro):
 
         def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
-            match = re.match(r"(.*?)(<.*>.*)?$", line)
+            match = self.FIRST_TAG_RE.match(line)
             pre_text = match.group(1)  # text before first tag or full line if no tag
             next_text = match.group(2)  # remaining text beginning with the tag or None
             post_line = []
@@ -920,7 +921,7 @@ class Converter(ConverterMacro):
                     post_line.append(pre_text)
 
             while next_text:
-                match = re.match(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))", next_text)
+                match = self.TAG_W_REMAINDER_RE.match(next_text)
                 if match:
                     raw_tag = match.group(1)  # tag contents
                     next_text = match.group(3)  # next tag and remainder
@@ -937,7 +938,7 @@ class Converter(ConverterMacro):
                     # tag should be treated as literal text if unsupported tag, self-closing tag or inside nowiki
                     if (
                         tag_name not in self.all_tags
-                        or re.match(r".*/\s*$", raw_tag)
+                        or self.SELF_CLOSING_TAG_RE.match(raw_tag)
                         or (self.nowiki and (is_opening_tag or tag_name != self.nowiki_tag))
                     ):
                         if not tags:
