@@ -64,7 +64,8 @@ class Macro(MacroInlineBase):
 
         result = random.choice(quotes)
         # quote may use some sort of markup, convert it to dom
-        input_conv = reg.get(Type(item.contenttype), type_moin_document, includes="expandall")
-        if not input_conv:
+        try:
+            input_conv = reg.get(Type(item.contenttype), type_moin_document, includes="expandall")
+        except LookupError:
             raise TypeError(f"We cannot handle the conversion from {item.contenttype} to the DOM tree")
         return input_conv(result)
