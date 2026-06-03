@@ -115,7 +115,7 @@ from moin.utils.interwiki import url_for_item
 from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
-from moin.utils.tree import html, docbook
+from moin.utils.tree import html, docbook, xlink, xml
 import moin.utils.mimetype as mime_type
 
 if TYPE_CHECKING:
@@ -900,7 +900,7 @@ def convert_item(item_name):
         out = conv_serialize(out, {html.namespace: ""})
         meta[CONTENTTYPE] = "text/html;charset=utf-8"
     elif form["new_type"].value == "application/docbook+xml;charset=utf-8":
-        namespaces = {docbook.namespace: ""}
+        namespaces = {docbook.namespace: "", xlink.namespace: "xlink", xml.namespace: "xml"}
         out = conv_serialize(out, namespaces)
         meta[CONTENTTYPE] = form["new_type"].value
     else:
