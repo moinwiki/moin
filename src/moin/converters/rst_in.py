@@ -430,8 +430,7 @@ class NodeVisitor:
     def visit_footnote(self, node):
         # Footnotes are handled in visit_footnote_reference()
         raise nodes.SkipNode
-        # TODO:
-        # * footnotes without footnote-reference are dropped
+        # TODO: footnotes without footnote-reference are dropped
 
     def depart_footnote(self, node):
         pass
@@ -454,9 +453,6 @@ class NodeVisitor:
             walkabout(child, self)
         self.close_moin_page_node()
         raise nodes.SkipNode
-        # TODO:
-        # * Multiple references to one footnote print the same footnote text
-        #   several times.
 
     def depart_footnote_reference(self, node):
         pass
@@ -1106,9 +1102,8 @@ class MoinDirectives:
             `<<SomeMacro>>`_
         """
 
-        # TODO:
-        # Currently just adds a node to the document tree which is a
-        # reference, but through a much better user interface.
+        # TODO: The `Macro` class currently just adds a <reference> node
+        # to the document tree (but through a much better user interface).
         #
         # * use a <pending> node instead of the "reference hack".
         # * add a "macro" role for inline use,
@@ -1142,7 +1137,7 @@ class MoinDirectives:
     class ParseWith(Directive):
         """Parse the content with specified parser."""
 
-        # TODO: currently fails :(
+        # TODO: `ParseWith` directive currently fails :(
         #       use standard directive syntax with blank line before content
         #       use <pending> node
 

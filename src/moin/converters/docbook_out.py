@@ -187,10 +187,10 @@ class Converter:
         """
         LINK Conversion.
 
-        Link are defined using the XLINK namespace either
-        for the DOM Tree and in DocBook specification, so
+        Links are defined using the XLINK namespace in both,
+        the Moinpage DOM Tree and the DocBook specification, so
         the converter can just copy each xlink: attribute
-        into an <link> tag.
+        into a <link> tag.
         """
         attrib = {}
         for key, value in element.attrib.items():
@@ -200,7 +200,7 @@ class Converter:
 
     def visit_moinpage_admonition(self, element):
         """
-        There is 5 admonition in DocBook, which are also supported
+        There are 5 admonition types in DocBook, out of 9 supported
         in the DOM Tree.
 
         For instance: <caution> --> <admonition type='caution'>
@@ -490,12 +490,12 @@ class Converter:
         If we have a title attribute for p, we return a para,
         with a <title> child.
         Otherwise we return a <simpara>.
-
-        TODO: select the correct element type, the correct representation of a title or tooltip!
-              * `html:title` == "tooltip" != <db:title>  https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute
-              * paragraph with title requires <formalpara> (<para> does not allow <title> as child),
-              * <para> allows "block-level"/"body" elements as children, <simpara> only inline children.
         """
+        # TODO: select the correct element types for paragraph and optional title.
+        # * `html:title` == "tooltip" == <db:alt> != <db:title>
+        #   https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute
+        # * <para> allows "block-level"/"body" elements as children but
+        #   paragraph with <title> requires <formalpara>
         title_attr = element.get(html("title"))
         if title_attr:
             attrib = self.get_standard_attributes(element)

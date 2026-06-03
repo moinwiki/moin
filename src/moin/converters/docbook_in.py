@@ -385,7 +385,7 @@ class Converter:
         "listitem": moin_page("list-item-body"),
         "literal": moin_page.literal,
         "markup": moin_page.code,
-        "para": moin_page.p,
+        "para": moin_page.p,  # TODO: <db:para> can contain block elements: convert to <div>
         "phrase": moin_page.span,
         "programlisting": moin_page.blockcode,
         "quote": moin_page.quote,

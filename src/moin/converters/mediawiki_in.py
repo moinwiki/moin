@@ -388,7 +388,7 @@ class Converter(ConverterMacro):
     """
 
     def inline_comment_repl(self, stack, comment, comment_begin=None, comment_end=None):
-        # TODO
+        # TODO implement inline comment conversion
         pass
 
     inline_emphstrong: Final = r"""
