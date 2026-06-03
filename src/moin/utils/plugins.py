@@ -10,6 +10,10 @@
 MoinMoin - Plugin loader.
 """
 
+from __future__ import annotations
+
+from typing import Generator
+
 import os
 import sys
 import importlib
@@ -169,13 +173,35 @@ def getPlugins(kind, cfg):
     return all_plugins
 
 
+def _gen_possible_module_names_from_mimetype(mimetype: MimeType) -> Generator[str]:
+    """
+    Convert MIME type to strings usable as Python module names.
+
+    We yield the most specific module name first and then proceed to shorter
+    names (useful for falling back if a more specific module is not found),
+    e.g., first "text_python", then "text". Finally, we yield
+    "application_octet_stream" as the most general MIME type.
+
+    Hint: the fallback handler module for text/* should be implemented
+    in module "text" (not "text_plain").
+    """
+    mt_string = mimetype.mime_type()
+    modname = mt_string.replace("/", "_").replace("-", "_").replace(".", "_")
+    fragments = modname.split("_")
+    for length in range(len(fragments), 1, -1):
+        yield "_".join(fragments[:length])
+    yield mimetype.raw_mimestr
+    yield fragments[0]
+    yield "application_octet_stream"
+
+
 def searchAndImportPlugin(cfg, type, name, what=None):
     type2classname = {}
     if what is None:
         what = type2classname[type]
     mt = MimeType(name)
     plugin = None
-    for module_name in mt.module_name():
+    for module_name in _gen_possible_module_names_from_mimetype(mt):
         try:
             plugin = importPlugin(cfg, type, module_name, what)
             break

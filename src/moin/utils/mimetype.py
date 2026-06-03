@@ -8,7 +8,7 @@ MoinMoin - MIME type support.
 
 from __future__ import annotations
 
-from typing import Generator, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import mimetypes
 
@@ -219,24 +219,3 @@ class MimeType:
         # For safe files, we display them inline (this also works better for IE).
         mime_type = self.mime_type()
         return mime_type in cfg.mimetypes_xss_protect
-
-    def module_name(self) -> Generator[str]:
-        """
-        Convert this MIME type to strings usable as Python module names.
-
-        We yield the most specific module name first and then proceed to shorter
-        names (useful for falling back if a more specific module is not found),
-        e.g., first "text_python", then "text". Finally, we yield
-        "application_octet_stream" as the most general MIME type.
-
-        Hint: the fallback handler module for text/* should be implemented
-        in module "text" (not "text_plain").
-        """
-        mimetype = self.mime_type()
-        modname = mimetype.replace("/", "_").replace("-", "_").replace(".", "_")
-        fragments = modname.split("_")
-        for length in range(len(fragments), 1, -1):
-            yield "_".join(fragments[:length])
-        yield self.raw_mimestr
-        yield fragments[0]
-        yield "application_octet_stream"
