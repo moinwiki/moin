@@ -110,6 +110,11 @@ class TestConverter(Base):
             # <page><body><div html:class="article"><p xml:base="http://base.tld" xml:id="id" xml:lang="en">Text</p></div></body></page>
             '/page/body/div/p[@xml:base="http://base.tld"][@xml:id="id"][@xml:lang="en"][text()="Text"]',
         ),
+        (  # place standard attributes at the element, not its first child
+            '<article><para xml:id="myid">emphasised  <emphasis>text</emphasis></para></article>',
+            # <page><body><div html:class="db-article"><p xml:id="myid">emphasised  <emphasis>text</emphasis></p></div></body></page>
+            '/page/body/div/p[@xml:id="myid"]/emphasis[text()="text"]',
+        ),
         # ANCHOR --> SPAN
         (
             '<article><para>bla bla<anchor xml:id="point_1" />bla bla</para></article>',
