@@ -113,10 +113,13 @@ class Converter:
         It first converts the children of the element,
         and then the element itself.
 
+        The "standard attributes" `xml:id`, `xml:base`, `xml:lang`,
+        and `data-lineno` are copied to the new element. Attributes
+        in `attrib` have precedence.
+
         TODO: consistently return an element or None (see `new()` above).
         """
-        # TODO: should element attribs override explicitely given attribs or vice versa?
-        attrib.update(self.get_standard_attributes(element))
+        attrib = self.get_standard_attributes(element) | attrib
         children = self.do_children(element)
         return self.new(tag, attrib, children)
 
