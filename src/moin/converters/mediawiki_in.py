@@ -220,7 +220,7 @@ class Converter(ConverterMacro):
                     preprocessor_status = self.preprocessor.pop()
             elif m.group("text"):
                 self.preprocessor.push(preprocessor_status)
-                self.parse_inline("\n{}".format(m.group("text")), stack, self.inline_re)
+                self.parse_inline(f"\n{m.group('text')}", stack, self.inline_re)
                 preprocessor_status = self.preprocessor.pop()
         stack.pop_name("table")
 
@@ -275,9 +275,8 @@ class Converter(ConverterMacro):
                 if is_list:
                     iter_content.push(line)
                     return
-                else:
-                    yield line
-                    break
+                yield line
+                break
 
             if match.group("indent"):
                 new_level = len(match.group("indent"))
@@ -790,8 +789,6 @@ class Converter(ConverterMacro):
             # TODO: pre_args parsing
             text = nowiki_text_pre
             stack.top_append(moin_page.blockcode(children=[text]))
-        else:
-            return
 
     table = block_table
 
@@ -871,10 +868,12 @@ class Converter(ConverterMacro):
                 self.text = [text]
                 self.status = status
 
-        all_tags: Final = ["br", "blockquote" "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
+        FIRST_TAG_RE = re.compile(r"(.*?)(<.*>.*)?$")
+        TAG_W_REMAINDER_RE = re.compile(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))")
+        SELF_CLOSING_TAG_RE = re.compile(r".*/\s*$")
 
+        all_tags: Final = ["br", "blockquote", "del", "pre", "code", "tt", "nowiki", "ref", "s", "sub", "sup"]
         nowiki_tags: Final = ["pre", "code", "tt", "nowiki"]
-
         block_tags: Final = ["blockquote"]
 
         def __init__(self):
@@ -883,114 +882,110 @@ class Converter(ConverterMacro):
             self.nowiki_tag = ""
             self._stack = []
 
-        def push(self, status=[]):
+        def push(self, opened_tags=None):
             self._stack.append(self.opened_tags)
-            self.opened_tags = status
-            if self.opened_tags:
-                if self.opened_tags[-1].tag_name in self.nowiki_tags:
-                    self.nowiki = True
-                    self.nowiki_tag = self.opened_tags[-1].tag_name
-                else:
-                    self.nowiki = False
-                    self.nowiki_tag = ""
+            self.opened_tags = opened_tags or []
+            self._update_nowiki_state()
 
         def pop(self):
-            if len(self._stack):
+            if self._stack:
                 self.opened_tags = self._stack.pop()
             else:
                 self.opened_tags = []
-            if self.opened_tags:
-                if self.opened_tags[-1].tag_name in self.nowiki_tags:
-                    self.nowiki = True
-                    self.nowiki_tag = self.opened_tags[-1].tag_name
-                else:
-                    self.nowiki = False
-                    self.nowiki_tag = ""
+            self._update_nowiki_state()
             return self.opened_tags
+
+        def _update_nowiki_state(self):
+            if self.opened_tags:
+                tag_name = self.opened_tags[-1].tag_name
+                self.nowiki = tag_name in self.nowiki_tags
+                self.nowiki_tag = tag_name if self.nowiki else ""
+            else:
+                self.nowiki = False
+                self.nowiki_tag = ""
 
         def __call__(self, line, tags=[]):
             tags = tags or self.opened_tags
-            match = re.match(r"(.*?)(<.*>.*)|(.*)", line)
-            if match:
-                pre_text = match.group(1) or match.group(3)
-                # text may be None
-                if pre_text:
-                    if len(tags):
-                        if self.nowiki_tag == "pre":
-                            tags[-1].text.append(pre_text + "\n")
-                        else:
-                            tags[-1].text.append(pre_text)
-                        post_line = []
+            match = self.FIRST_TAG_RE.match(line)
+            pre_text = match.group(1)  # text before first tag or full line if no tag
+            next_text = match.group(2)  # remaining text beginning with the tag or None
+            post_line = []
+
+            if pre_text:
+                if tags:
+                    if self.nowiki_tag == "pre":
+                        tags[-1].text.append(pre_text + "\n")
                     else:
-                        post_line = [pre_text]
+                        tags[-1].text.append(pre_text)
                 else:
-                    post_line = []
-                next_text = match.group(2)
-                while next_text:
-                    match = re.match(r"<\s*([^>]*)>(?:(.*?)(<[^>]*>.*)|(.*))", next_text)
-                    if match:
-                        tag = match.group(1)
-                        next_text = match.group(3)
-                        text = match.group(2) or match.group(4)
-                        if not text:
-                            text = ""
-                        tag_match = re.match(r"/\s*(.*)", tag)
-                        status = not tag_match
-                        if tag_match:
-                            tag_name = tag_match.group(1).split(" ")[0]
-                        else:
-                            tag_name = tag.split(" ")[0]
-                        if (
-                            tag_name not in self.all_tags
-                            or re.match(r".*/\s*$", tag)
-                            or self.nowiki
-                            and (status or tag_name != self.nowiki_tag)
-                        ):
-                            if not len(tags):
-                                post_line.append(f"<{tag}>")
-                                post_line.append(text)
-                            else:
-                                tags[-1].text.append(f"<{tag}>")
-                                tags[-1].text.append(text)
-                        else:
-                            if not status:
-                                if self.nowiki:
-                                    if tag_name == self.nowiki_tag:
-                                        self.nowiki_tag = ""
-                                        self.nowiki = False
-                                if tag_name in [t.tag_name for t in tags]:
-                                    open_tags = []
-                                    tmp_line = ""
-                                    close_tag = self.Preprocessor_tag()
-                                    while tag_name != close_tag.tag_name:
-                                        close_tag = tags.pop()
-                                        tmp_line = "<{}>{}{}</{}>".format(
-                                            close_tag.tag, "".join(close_tag.text), tmp_line, close_tag.tag_name
-                                        )
-                                        if not len(tags):
-                                            post_line.append(tmp_line)
-                                        else:
-                                            tags[-1].text.append(tmp_line)
-                                        open_tags.append(close_tag)
-                                    open_tags = open_tags[:-1]
-                                    if not len(tags):
-                                        post_line.append(text)
-                                    else:
-                                        tags[-1].text.append(text)
-                                    if open_tags:
-                                        for t in open_tags[:-1].reverse():
-                                            t.text = ""
-                                            tags.append(t)
-                            else:
-                                if tag_name in self.nowiki_tags:
-                                    self.nowiki = True
-                                    self.nowiki_tag = tag_name
-                                tags.append(self.Preprocessor_tag(tag_name, text, tag))
+                    post_line.append(pre_text)
+
+            while next_text:
+                match = self.TAG_W_REMAINDER_RE.match(next_text)
+                if match:
+                    raw_tag = match.group(1)  # tag contents
+                    next_text = match.group(3)  # next tag and remainder
+                    text = match.group(2) or match.group(4)  # text between tags or remaining text if no tags
+                    if not text:
+                        text = ""
+
+                    is_opening_tag = not raw_tag.startswith("/")
+                    if is_opening_tag:
+                        tag_name = raw_tag.split(" ")[0]
                     else:
-                        post_line.append(next_text)
-                        break
-                return "".join(post_line)
-            self.opened_tags = tags
+                        tag_name = raw_tag[1:].strip().split(" ")[0]
+
+                    # tag should be treated as literal text if unsupported tag, self-closing tag or inside nowiki
+                    if (
+                        tag_name not in self.all_tags
+                        or self.SELF_CLOSING_TAG_RE.match(raw_tag)
+                        or (self.nowiki and (is_opening_tag or tag_name != self.nowiki_tag))
+                    ):
+                        if not tags:
+                            post_line.append(f"<{raw_tag}>")
+                            post_line.append(text)
+                        else:
+                            tags[-1].text.append(f"<{raw_tag}>")
+                            tags[-1].text.append(text)
+                    else:
+                        if is_opening_tag:
+                            if tag_name in self.nowiki_tags:
+                                self.nowiki = True
+                                self.nowiki_tag = tag_name
+                            tags.append(self.Preprocessor_tag(tag_name, text, raw_tag))
+                        else:  # is closing tag
+                            if self.nowiki:
+                                if tag_name == self.nowiki_tag:
+                                    self.nowiki_tag = ""
+                                    self.nowiki = False
+                            # if matching tag in stack: auto-close everything above
+                            if tag_name in [t.tag_name for t in tags]:
+                                open_tags = []
+                                tmp_line = ""
+                                close_tag = self.Preprocessor_tag()
+                                while tag_name != close_tag.tag_name:
+                                    close_tag = tags.pop()
+                                    tmp_line = (
+                                        f"<{close_tag.tag}>{''.join(close_tag.text)}{tmp_line}</{close_tag.tag_name}>"
+                                    )
+                                    if not tags:
+                                        post_line.append(tmp_line)
+                                    else:
+                                        tags[-1].text.append(tmp_line)
+                                    open_tags.append(close_tag)
+                                open_tags = open_tags[:-1]
+                                if not tags:
+                                    post_line.append(text)
+                                else:
+                                    tags[-1].text.append(text)
+                                if open_tags:  # re-open temporarily closed nested tags
+                                    for t in reversed(open_tags):
+                                        t.text = ""
+                                        tags.append(t)
+                else:  # all tags processed, append remainder unchanged
+                    post_line.append(next_text)
+                    break
+            return "".join(post_line)
 
     def _apply(self, match, prefix, *args):
         """
@@ -1002,6 +997,7 @@ class Converter(ConverterMacro):
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):
+        """parse the whole document"""
         attrib = {}
         if arguments:
             for key, value in arguments.keyword.items():
