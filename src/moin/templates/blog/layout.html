@@ -4,7 +4,7 @@
 {% import "itemviews.html" as itemviews with context %}
 
 {% if blog_item %}
-    {% set blog_header = blog_item.content._render_data()|safe %}
+    {% set blog_header = blog_item.content.render_data()|safe %}
     {% set blog_name = blog_item.name %}
     {% set supertags = blog_item.meta['supertags'] %}
 {% endif %}

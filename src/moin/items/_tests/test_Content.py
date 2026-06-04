@@ -138,7 +138,7 @@ class TestTransformableBitmapImage:
             result = TransformableBitmapImage._transform(item.content, contenttype)
             assert result == ("image/jpeg", b"")
 
-    def test__render_data_diff(self):
+    def test_render_data_diff(self):
         item_name = "image_Item"
         item = Item.create(item_name)
         contenttype = "image/jpeg"
@@ -148,7 +148,7 @@ class TestTransformableBitmapImage:
         try:
             from PIL import Image as PILImage  # noqa
 
-            result = Markup(TransformableBitmapImage._render_data_diff(item1.content, item.rev, item1.rev))
+            result = Markup(TransformableBitmapImage.render_data_diff(item1.content, item.rev, item1.rev))
             # On Werkzeug 0.8.2+, URLs with '+' are automatically encoded to '%2B'
             # The assert statement works with both older and newer versions of Werkzeug
             # Probably not an intentional change on the Werkzeug side; see issue:
@@ -160,7 +160,7 @@ class TestTransformableBitmapImage:
             # No PIL
             pass
 
-    def test__render_data_diff_text(self):
+    def test_render_data_diff_text(self):
         item_name = "image_Item"
         item = Item.create(item_name)
         contenttype = "image/jpeg"
@@ -174,7 +174,7 @@ class TestTransformableBitmapImage:
         try:
             from PIL import Image as PILImage  # noqa
 
-            result = TransformableBitmapImage._render_data_diff_text(item1.content, item1.rev, item2.rev)
+            result = TransformableBitmapImage.render_data_diff_text(item1.content, item1.rev, item2.rev)
             expected = "The items have different data."
             assert result == expected
         except ImportError:
@@ -207,7 +207,7 @@ class TestText:
         expected = test_text
         assert result == expected
 
-    def test__render_data_diff(self):
+    def test_render_data_diff(self):
         item_name = "Html_Item"
         fqname = split_fqname(item_name)
         empty_html = "<span></span>"
@@ -219,17 +219,17 @@ class TestText:
         # Unicode test: HTML escaping
         rev1 = update_item(item_name, meta, html)
         rev2 = update_item(item_name, {}, "     ")
-        result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
+        result = Text.render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert escape(html) in result
         # Unicode test: whitespace
         rev1 = update_item(item_name, {}, "\n\n")
         rev2 = update_item(item_name, {}, "\n     \n")
-        result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
+        result = Text.render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>" in result
         # Check whether fairly similar diffs are correctly spanned; also check indentation.
         rev1 = update_item(item_name, {}, "One Two Three Four\nSix\n\ud55c")
         rev2 = update_item(item_name, {}, "Two Three Seven Four\nSix\n\ud55c")
-        result = Text._render_data_diff(item.content, rev1, rev2, fqname=fqname)
+        result = Text.render_data_diff(item.content, rev1, rev2, fqname=fqname)
         assert "<span>One </span>Two Three Four" in result
         assert "Two Three <span>Seven </span>Four" in result
         # Check the return types of diff_html.diff
@@ -242,7 +242,7 @@ class TestText:
             True,
         )
 
-    def test__render_data_diff_text(self):
+    def test_render_data_diff_text(self):
         item_name = "Text_Item"
         item = Item.create(item_name)
         contenttype = "text/plain;charset=utf-8"
@@ -254,12 +254,12 @@ class TestText:
         comment = "next revision"
         item1._save(meta, data2, comment=comment)
         item2 = Item.create(item_name)
-        result = Text._render_data_diff_text(item1.content, item1.rev, item2.rev)
+        result = Text.render_data_diff_text(item1.content, item1.rev, item2.rev)
         expected = "- old_data\n+ new_data"
         assert result == expected
         assert item2.content.data == b""
 
-    def test__render_data_highlight(self):
+    def test_render_data_highlight(self):
         item_name = "Text_Item"
         item = Item.create(item_name)
         contenttype = "text/plain;charset=utf-8"
@@ -270,7 +270,7 @@ class TestText:
         comment = "next revision"
         item1._save(meta, data, comment=comment)
         item2 = Item.create(item_name)
-        result = Text._render_data_highlight(item2.content)
+        result = Text.render_data_highlight(item2.content)
         assert '<pre class="highlight">test_data\n' in result
         assert item2.content.data == b""
 
