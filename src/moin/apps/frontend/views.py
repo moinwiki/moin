@@ -901,7 +901,7 @@ def convert_item(item_name):
         meta[CONTENTTYPE] = "text/html;charset=utf-8"
     elif form["new_type"].value == "application/docbook+xml;charset=utf-8":
         namespaces = {docbook.namespace: "", xlink.namespace: "xlink", xml.namespace: "xml"}
-        out = conv_serialize(out, namespaces)
+        out = conv_serialize(out, namespaces, "xml")
         meta[CONTENTTYPE] = form["new_type"].value
     else:
         meta[CONTENTTYPE] = form["new_type"].value
