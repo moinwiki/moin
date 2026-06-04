@@ -764,8 +764,9 @@ class Item:
             # wiki has old ticket item, for compatibility only
             itemtype = ITEMTYPE_DEFAULT
 
-        item = item_registry.get(itemtype, fqname, rev=rev, content=content)
-        if item is None:
+        try:
+            item = item_registry.get(itemtype, fqname, rev=rev, content=content)
+        except LookupError:
             raise UnsupportedItemType(f"{itemtype}")
 
         logging.debug(f"Item class {item.__class__!r} handles {itemtype!r}")

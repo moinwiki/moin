@@ -223,7 +223,6 @@ class Content:
     @classmethod
     def create(cls, contenttype: str, item: Item | None = None) -> Content:
         content = content_registry.get(contenttype, item)
-        assert content is not None
         logging.debug(f"Content class {content.__class__!r} handles {contenttype!r}")
         return content
 
@@ -282,9 +281,11 @@ class Content:
             # if so we perform the transformation, otherwise we don't
             from moin.converters import default_registry as reg
 
-            input_conv = reg.get(Type(self.contenttype), type_moin_document)
-            if not input_conv:
+            try:
+                input_conv = reg.get(Type(self.contenttype), type_moin_document)
+            except LookupError:
                 raise TypeError(f"We cannot handle the conversion from {self.contenttype} to the DOM tree")
+
             smiley_conv = reg.get(type_moin_document, type_moin_document, icon="smiley")
 
             # We can process the conversion

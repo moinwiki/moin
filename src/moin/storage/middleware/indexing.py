@@ -239,19 +239,23 @@ def convert_to_indexable(meta: MetaData, data: ItemData, item_name: str | None =
 
         # first try a direct conversion (this could be useful for extraction
         # of (meta)data from binary types, like from images or audio):
-        converter = converter_registry.get(type_input_contenttype, type_output_contenttype)
-        if converter:
-            document = converter(revision, input_contenttype)
-            return document
+        try:
+            converter = converter_registry.get(type_input_contenttype, type_output_contenttype)
+            return converter(revision, input_contenttype)
+        except LookupError:
+            pass
 
         # otherwise try via DOM as intermediate format (this is useful if
         # input type is markup, to get rid of the markup):
-        input_conv = converter_registry.get(type_input_contenttype, type_moin_document)
-        refs_conv = converter_registry.get(type_moin_document, type_moin_document, items="refs")
-        output_conv = converter_registry.get(type_moin_document, type_output_contenttype)
-        if not input_conv or not output_conv:
+        try:
+            input_conv = converter_registry.get(type_input_contenttype, type_moin_document)
+            output_conv = converter_registry.get(type_moin_document, type_output_contenttype)
+        except LookupError:
             # no way
             raise TypeError(f"No converter for {input_contenttype} --> {output_contenttype}")
+
+        refs_conv = converter_registry.get(type_moin_document, type_moin_document, items="refs")
+
         document = input_conv(revision, input_contenttype)
 
         # We do not convert smileys, includes, macros, links, because
