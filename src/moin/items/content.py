@@ -529,7 +529,7 @@ class Binary(Content):
     def _do_get(self, hash, member=None, force_attachment=False, mimetype=None):
         if member:  # content = file contained within a archive item revision
             path, filename = os.path.split(member)
-            mt = MimeType(filename=filename)
+            mt = MimeType.from_filename(filename)
             file_to_send = self.get_member(member)
             # force attachment download, so it uses attachment_filename
             # otherwise it will use the itemname from the URL for saving
@@ -540,9 +540,9 @@ class Binary(Content):
             try:
                 mimestr = rev.meta[CONTENTTYPE]
             except KeyError:
-                mt = MimeType(filename=filename)
+                mt = MimeType.from_filename(filename)
             else:
-                mt = MimeType(mimestr=mimestr)
+                mt = MimeType(mimestr)
             file_to_send = rev.data
         if mimetype:
             content_type = mimetype

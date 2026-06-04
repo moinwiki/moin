@@ -761,7 +761,7 @@ class AttachmentRevision:
         logging.debug(f"Migrating attachment {meta[NAME]}")
         if acl is not None:
             meta[ACL] = acl
-        meta[CONTENTTYPE] = str(MimeType(filename=attach_name).content_type())
+        meta[CONTENTTYPE] = str(MimeType.from_filename(attach_name).content_type())
         f = open(attpath, "rb")
         size, hash_name, hash_digest = hash_hexdigest(f)
         f.seek(0)

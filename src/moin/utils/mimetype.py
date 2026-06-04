@@ -6,11 +6,19 @@
 MoinMoin - MIME type support.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import mimetypes
 
 import pygments.lexers
 
 from moin.constants.contenttypes import PARSER_TEXT_MIMETYPE
+
+if TYPE_CHECKING:
+    from moin.config import WikiConfigProtocol
+    from typing_extensions import Self
 
 # Prevent unexpected results on Windows.
 # See https://bugs.python.org/issue10551
@@ -95,18 +103,17 @@ class MimeType:
     Represents a MIME type such as text/plain.
     """
 
-    def __init__(self, mimestr: str | None = None, filename: str | None = None) -> None:
-        self.major = self.minor = None  # sanitized mime type and subtype
-        self.params = {}  # parameters like "charset" or others
+    def __init__(self, mimestr: str) -> None:
+        self.major: str | None = None  # sanitized mime type
+        self.minor: str | None = None  # sanitized subtype
+        self.params: dict[str, str] = {}  # parameters like "charset" or others
         self.charset = None  # this stays None until we know for sure!
         self.raw_mimestr = mimestr
-        self.filename = filename
         if mimestr:
             self.parse_mimetype(mimestr)
-        elif filename:
-            self.parse_filename(filename)
 
-    def parse_filename(self, filename):
+    @classmethod
+    def from_filename(cls, filename: str) -> Self:
         mtype, encoding = mimetypes.guess_type(filename)
         if (not mtype) or (mtype not in ("application/x-tar", "application/x-gtar") and encoding):
             if encoding == "bzip2":
@@ -117,10 +124,11 @@ class MimeType:
                 mtype = "application/x-xz"
             else:
                 mtype = "application/octet-stream"
-        self.parse_mimetype(mtype)
+        return cls(mtype)
 
-    def parse_mimetype(self, mimestr):
-        """Parse a Content-Type-like string into components.
+    def parse_mimetype(self, mimestr: str) -> None:
+        """
+        Parse a Content-Type-like string into components.
 
         Also accepts abbreviated forms such as "wiki".
         """
@@ -143,8 +151,9 @@ class MimeType:
             self.charset = self.params["charset"].lower()
         self.sanitize()
 
-    def parse_format(self, format):
-        """Map on-page #format values to a sanitized (major, minor) MIME type tuple.
+    def parse_format(self, format: str) -> tuple[str, str]:
+        """
+        Map on-page #format values to a sanitized (major, minor) MIME type tuple.
 
         This can also be used for easier user input, so a user can type
         "wiki" instead of "text/x.moin.wiki".
@@ -160,8 +169,9 @@ class MimeType:
                 mimetype = "text", f"x-{format}"
         return mimetype
 
-    def sanitize(self):
-        """Convert to a sensible representation.
+    def sanitize(self) -> None:
+        """
+        Convert to a sensible representation.
 
         This is not necessarily conformant to /etc/mime.types or the IANA listing,
         but if something is readable text, we return a ``text/*`` MIME type, not
@@ -170,16 +180,21 @@ class MimeType:
         """
         self.major, self.minor = MIMETYPES_sanitize_mapping.get((self.major, self.minor), (self.major, self.minor))
 
-    def spoil(self):
-        """Return a string conformant to /etc/mime.types or IANA.
+    def spoil(self) -> str:
+        """
+        Return a string conformant to /etc/mime.types or IANA.
 
         This is the inverse operation of sanitize(), but it does not modify self.
         """
         major, minor = MIMETYPES_spoil_mapping.get((self.major, self.minor), (self.major, self.minor))
         return self.content_type(major, minor)
 
-    def content_type(self, major=None, minor=None, charset=None, params=None):
-        """Return a string suitable for a Content-Type header."""
+    def content_type(
+        self, major: str | None = None, minor: str | None = None, charset=None, params: dict[str, str] | None = None
+    ) -> str:
+        """
+        Return a string suitable for a Content-Type header.
+        """
         major = major or self.major
         minor = minor or self.minor
         params = params or self.params or {}
@@ -192,33 +207,15 @@ class MimeType:
         params.insert(0, mimestr)
         return ";".join(params)
 
-    def mime_type(self):
-        """Return a string containing only major/minor, no parameters."""
+    def mime_type(self) -> str:
+        """
+        Return a string containing only major/minor, no parameters.
+        """
         return f"{self.major}/{self.minor}"
 
-    def as_attachment(self, cfg):
+    def as_attachment(self, cfg: WikiConfigProtocol):
         # For dangerous files (like .html) where cross-site-scripting attacks are a risk,
         # we let the user store them to disk (as an 'attachment').
         # For safe files, we display them inline (this also works better for IE).
         mime_type = self.mime_type()
         return mime_type in cfg.mimetypes_xss_protect
-
-    def module_name(self):
-        """Convert this MIME type to strings usable as Python module names.
-
-        We yield the most specific module name first and then proceed to shorter
-        names (useful for falling back if a more specific module is not found),
-        e.g., first "text_python", then "text". Finally, we yield
-        "application_octet_stream" as the most general MIME type.
-
-        Hint: the fallback handler module for text/* should be implemented
-        in module "text" (not "text_plain").
-        """
-        mimetype = self.mime_type()
-        modname = mimetype.replace("/", "_").replace("-", "_").replace(".", "_")
-        fragments = modname.split("_")
-        for length in range(len(fragments), 1, -1):
-            yield "_".join(fragments[:length])
-        yield self.raw_mimestr
-        yield fragments[0]
-        yield "application_octet_stream"
