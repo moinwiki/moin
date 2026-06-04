@@ -113,9 +113,8 @@ class Converter:
         It first converts the children of the element,
         and then the element itself.
 
-        The "standard attributes" `xml:id`, `xml:base`, `xml:lang`,
-        and `data-lineno` are copied to the new element. Attributes
-        in `attrib` have precedence.
+        The "standard attributes" `xml:id`, `xml:base`, and `xml:lang` are
+        copied to the new element. Attributes in `attrib` have precedence.
 
         TODO: consistently return an element or None (see `new()` above).
         """
@@ -125,21 +124,15 @@ class Converter:
 
     def get_standard_attributes(self, element) -> dict:
         """
-        Return the "standard attributes" of the element.
+        Return the "standard attributes" of `element`.
 
-        TODO:
-          * Clear the intention of this method, rename or fix:
-
-            This method extracts all attributes of the "xml" namespace.
-            DocBook elements support 34 `common attributes`__.  Out of them
-            3 use the "xml" namespace (xml:base, xml:id, xml:lang) and
-            10 use the "xlink" namespace (but hrefs use "linkend" instead of "xlink:href").
-
-          * Convert  "moin:id" to "xml:id".
-            Convert ``xlink:href=``#target-id`` to ``linkend="target-id"``.
+        Return a dictionary with the `common attributes`_
+        "xml:id", "xml:base", and "xml:lang".
 
         __ https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
         """
+        # TODO: Also return "moinpage:id" and "moinpage:lang"
+        # (converted to "xml" namespace)?
         result = {}
         for key, value in element.attrib.items():
             if key.uri == xml:
