@@ -54,11 +54,6 @@ class Converter:
         "sup": docbook.superscript,
     }
 
-    # We store the standard attributes of an element.
-    # Once we have been able to put it into an output element,
-    # we clear this attribute.
-    standard_attribute = {}
-
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls()
@@ -100,11 +95,12 @@ class Converter:
 
     def new(self, tag, attrib, children):
         """
-        Return a new element in the DocBook tree.
+        Return a new element in the DocBook tree or attach it to the section.
+
+        TODO: consistently return an element or None.
+              Suggestion: always attach the new element at the "right place"
+              and also return (for additions from the calling method).
         """
-        if self.standard_attribute:
-            attrib.update(self.standard_attribute)
-            self.standard_attribute = {}
         if self.current_section > 0:
             self.section_children[self.current_section].append(ET.Element(tag, attrib=attrib, children=children))
         else:
@@ -114,33 +110,41 @@ class Converter:
         """
         Copy one element to the DocBook tree.
 
-        Convert the element, its attributes, and children.
-        """
-        # new_element = self.new(tag, attrib, children=[])
-        if self.standard_attribute:
-            attrib.update(self.standard_attribute)
-            self.standard_attribute = {}
-        new_element = ET.Element(tag, attrib=attrib, children=[])
-        new_element.extend(self.do_children(element))
-        if self.current_section > 0:
-            self.section_children[self.current_section].append(new_element)
-        else:
-            return new_element
+        It first converts the children of the element,
+        and then the element itself.
 
-    def get_standard_attributes(self, element):
+        The "standard attributes" `xml:id`, `xml:base`, `xml:lang`,
+        and `data-lineno` are copied to the new element. Attributes
+        in `attrib` have precedence.
+
+        TODO: consistently return an element or None (see `new()` above).
         """
-        We will extract the standard attributes of the element, if any.
-        We save the result in standard_attribute.
+        attrib = self.get_standard_attributes(element) | attrib
+        children = self.do_children(element)
+        return self.new(tag, attrib, children)
+
+    def get_standard_attributes(self, element) -> dict:
+        """
+        Return the "standard attributes" of the element.
+
+        TODO:
+          * Clear the intention of this method, rename or fix:
+
+            This method extracts all attributes of the "xml" namespace.
+            DocBook elements support 34 `common attributes`__.  Out of them
+            3 use the "xml" namespace (xml:base, xml:id, xml:lang) and
+            10 use the "xlink" namespace (but hrefs use "linkend" instead of "xlink:href").
+
+          * Convert  "moin:id" to "xml:id".
+            Convert ``xlink:href=``#target-id`` to ``linkend="target-id"``.
+
+        __ https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
         """
         result = {}
         for key, value in element.attrib.items():
             if key.uri == xml:
                 result[key] = value
-        if result:
-            # We clear standard_attribute, if ancestror attribute
-            # was stored and has not been written in to the output,
-            # anyway the new standard attributes will get higher priority
-            self.standard_attribute = result
+        return result
 
     def visit(self, element):
         """
@@ -168,9 +172,6 @@ class Converter:
         We will choose the most appropriate procedure to convert
         the element according to the tag name
         """
-        # Save the standard attribute of the element
-        self.get_standard_attributes(element)
-
         # Check if we can a simple conversion
         if element.tag.name in self.simple_tags:
             return self.visit_simple_tag(element)
@@ -224,8 +225,9 @@ class Converter:
         <blockcode>text</blockcode> --> <screen><![CDATA[text]]></scren>
         """
         code_str = "".join(element)
+        attrib = self.get_standard_attributes(element)
         children = "".join(["<![CDATA[", code_str, "]]>"])
-        return self.new(docbook.screen, attrib={}, children=children)
+        return self.new(docbook.screen, attrib, children)
 
     def visit_moinpage_blockquote(self, element):
         """
@@ -240,6 +242,10 @@ class Converter:
                 <simpara>text</text>
             </blockquote>
 
+        TODO: Do we really want to add an attribution to "Unknown"?
+              The <attribution> is optional in DocBook 5.1.
+              https://tdg.docbook.org/tdg/5.1/blockquote.html
+
         Expand::
 
         <blockquote source="author">text</blockquote>
@@ -253,12 +259,13 @@ class Converter:
         """
         author = element.get(moin_page("source"))
         if not author:
-            # TODO: Internationalization
+            # TODO: Internationalization (or just leave out)
             author = "Unknown"
         attribution = self.new(docbook("attribution"), attrib={}, children=[author])
         children = self.do_children(element)
         para = self.new(docbook("simpara"), attrib={}, children=children)
-        return self.new(docbook("blockquote"), attrib={}, children=[attribution, para])
+        attrib = self.get_standard_attributes(element)
+        return self.new(docbook("blockquote"), attrib, children=[attribution, para])
 
     def visit_moinpage_emphasis(self, element):
         # emphasized text
@@ -365,7 +372,8 @@ class Converter:
             return
         note_class = element.get(moin_page("note-class"))
         if note_class == "footnote":  # as of 2026/05, all notes are footnotes
-            return self.new(docbook.footnote, attrib={}, children=self.do_children(element))
+            attrib = self.get_standard_attributes(element)
+            return self.new(docbook.footnote, attrib, children=self.do_children(element))
 
     def visit_moinpage_object(self, element):
         """
@@ -401,7 +409,8 @@ class Converter:
                 return
         else:
             return
-        return self.new(docbook.inlinemediaobject, attrib={}, children=[object_element])
+        object_attrib = self.get_standard_attributes(element)
+        return self.new(docbook.inlinemediaobject, attrib=object_attrib, children=[object_element])
 
     def visit_moinpage_table(self, element):
         # TODO: Attributes conversion
@@ -411,9 +420,9 @@ class Converter:
             title = f"Table {self.table_counter}"
         self.table_counter += 1
         caption = ET.Element(docbook("caption"), attrib={}, children=[title])
-        children = [caption]
-        children.extend(self.do_children(element))
-        return self.new(docbook.table, attrib={}, children=children)
+        attrib = self.get_standard_attributes(element)
+        children = [caption, *self.do_children(element)]
+        return self.new(docbook.table, attrib, children)
 
     def visit_moinpage_table_body(self, element):
         # TODO: Attributes conversion
@@ -488,15 +497,20 @@ class Converter:
         If we have a title attribute for p, we return a para,
         with a <title> child.
         Otherwise we return a <simpara>.
+
+        TODO: select the correct element type, the correct representation of a title or tooltip!
+              * `html:title` == "tooltip" != <db:title>  https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute
+              * paragraph with title requires <formalpara> (<para> does not allow <title> as child),
+              * <para> allows "block-level"/"body" elements as children, <simpara> only inline children.
         """
         title_attr = element.get(html("title"))
         if title_attr:
-            print(title_attr)
+            attrib = self.get_standard_attributes(element)
             children = []
             title_elem = self.new(docbook("title"), attrib={}, children=[title_attr])
             children.append(title_elem)
             children.extend(self.do_children(element))
-            return self.new(docbook.para, attrib={}, children=children)
+            return self.new(docbook.para, attrib, children)
         else:
             return self.new_copy(docbook.simpara, element, attrib={})
 

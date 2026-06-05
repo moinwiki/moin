@@ -43,17 +43,20 @@ class RegistryBase(Generic[T]):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: {self._entries!r}>"
 
-    def get(self, *args: Any, **kwargs: Any) -> T | None:
+    def get(self, *args: Any, **kwargs: Any) -> T:
         """
-        Look up a matching module.
+        Look up a matching entry.
 
         Each registered factory is called with the given arguments, and
         the first match wins.
+
+        Raises a LookupError if no matching entry was found.
         """
         for entry in self._entries:
             if (conv := entry(*args, **kwargs)) is not None:
                 return conv
-        return None
+
+        raise LookupError("Found no matching entry")
 
     def _register(self, entry: _RegistryEntry[T]) -> None:
         if entry not in self._entries:

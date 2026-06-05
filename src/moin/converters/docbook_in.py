@@ -441,11 +441,6 @@ class Converter:
         self.heading_level = 0
         self.is_section = False
 
-        # We store the standard attributes of an element.
-        # Once we have been able to put it into an output element,
-        # we clear this attribute.
-        self.standard_attribute = {}
-
         # We will create an element tree from the DocBook content
         try:
             # XXX: The XML parser need bytestring.
@@ -497,9 +492,6 @@ class Converter:
         """
         Return a new element for the DocBook Tree.
         """
-        if self.standard_attribute:
-            attrib.update(self.standard_attribute)
-            self.standard_attribute = {}
         return ET.Element(tag, attrib=attrib, children=children)
 
     def new_copy(self, tag, element, depth, attrib):
@@ -508,24 +500,27 @@ class Converter:
 
         It first converts the children of the element,
         and then the element itself.
+
+        The "standard attributes" `xml:id`, `xml:base`, `xml:lang`,
+        and `data-lineno` are copied to the new element. Attributes
+        in `attrib` have precedence.
         """
+        attrib = self.get_standard_attributes(element) | attrib
         children = self.do_children(element, depth)
         return self.new(tag, attrib, children)
 
-    def get_standard_attributes(self, element):
+    def get_standard_attributes(self, element) -> dict:
         """
-        We will extract the standard attributes of the element, if any.
-        We save the result in our standard attribute.
+        Return the "standard attributes" of the element.
+
+        TODO: Clear the intention of this method, rename or fix.
+              (see docbook_out.Converter.get_standard_attributes()).
         """
         result = {}
         for key, value in element.attrib.items():
             if key.uri == xml and key.name in ["id", "base", "lang"] or key.name == "data-lineno":
                 result[key] = value
-        if result:
-            # We clear standard_attribute, if ancestror attribute
-            # was stored and has not been written in to the output,
-            # anyway the new standard attributes will get higher priority
-            self.standard_attribute = result
+        return result
 
     def visit(self, element, depth):
         """
@@ -628,14 +623,14 @@ class Converter:
         object_data. If it is not possible, we return a paragraph
         with the content of text_object.
         """
-        attrib = {}
+        attrib = self.get_standard_attributes(element)
         preferred_format, data_tag, mimetype = self.media_tags[element.tag.name]
         if not object_data:
             if not text_object:
                 return
             else:
                 children = self.do_children(element, depth + 1)
-                return self.new(moin_page.p, attrib={}, children=children)
+                return self.new(moin_page.p, attrib, children)
         # We try to determine the best object to show
         for obj in object_data:
             format = obj.get("format")  # format is optional: <imagedata format="jpeg" fileref="jpeg.jpg"/>
@@ -654,7 +649,7 @@ class Converter:
         if object_to_show is None:
             # we could not find any suitable object, return the text_object replacement.
             children = self.do_children(text_object, depth + 1)
-            return self.new(moin_page.p, attrib={}, children=children)
+            return self.new(moin_page.p, attrib, children)
 
         href = object_to_show.get("fileref")
         if not href:
@@ -727,7 +722,7 @@ class Converter:
                     children.extend(self.do_children(child, depth + 1))
             else:
                 children.append(child)
-        attrib = {}
+        attrib = self.get_standard_attributes(element)
         attrib[moin_page("source")] = source[0]
         return self.new(moin_page.blockquote, attrib=attrib, children=children)
 
@@ -754,6 +749,7 @@ class Converter:
         """
         Return a table within a table-cell.
         """
+        # "standard_attributes" go to the `table_element`
         table_element = self.new_copy(moin_page.table, element, depth, attrib={})
         return self.new(moin_page("table-cell"), attrib={}, children=[table_element])
 
@@ -761,21 +757,20 @@ class Converter:
         """
         <footnote> --> <note note-class="footnote">
         """
-        attrib = {moin_page.note_class: "footnote"}
-        note = self.new(moin_page.note, attrib=attrib, children=[])
+        attrib = self.get_standard_attributes(element) | {moin_page.note_class: "footnote"}
         children = self.do_children(element, depth)
         if len(children) > 1 and html.data_lineno in children[1].attrib:
             # must delete lineno because footnote will be placed near end of page and out of sequence
             del children[1].attrib[html.data_lineno]
-        note.extend(children)
-        return note
+        return self.new(moin_page.note, attrib, children)
 
     def visit_docbook_footnoteref(self, element, depth):
         """
         <footnoteref linkend='fn' /> --> <noteref xlink:href='#fn' />
         """
-        href = "#" + element.get("linkend")
-        return self.new(moin_page.noteref, attrib={xlink.href: href}, children=[])
+        attrib = self.get_standard_attributes(element)
+        attrib[xlink.href] = "#" + element.get("linkend")
+        return self.new(moin_page.noteref, attrib, children=[])
 
     def visit_docbook_formalpara(self, element, depth):
         """
@@ -785,6 +780,8 @@ class Converter:
         </formalpara>
           --> <p html:title="Heading">Text</p>
         """
+        # TODO: despite its name, the "html:title" attribute is not a heading
+        # but a "tooltip". (rST uses ``moin_page.p(attrib={html.class_: "moin-title"})``)
         for child in element:
             if isinstance(child, ET.Element):
                 if child.tag.name == "title":
@@ -799,8 +796,8 @@ class Converter:
             # XXX: Improve error
             raise SyntaxError("para child missing for formalpara element")
 
+        attrib = self.get_standard_attributes(element)
         children = self.do_children(para_element, depth + 1)[0]
-        attrib = {}
         attrib[html("title")] = title_element[0]
         return self.new(moin_page.p, attrib=attrib, children=children)
 
@@ -840,7 +837,8 @@ class Converter:
 
     def visit_docbook_inlinemediaobject(self, element, depth):
         data_element = self.visit_data_object(element, depth)
-        attrib = {html.class_: "db-inlinemediaobject"}
+        attrib = self.get_standard_attributes(element)
+        attrib[html.class_] = "db-inlinemediaobject"
         return self.new(moin_page.span, attrib=attrib, children=[data_element])
 
     def visit_docbook_itemizedlist(self, element, depth):
@@ -886,7 +884,8 @@ class Converter:
 
     def visit_docbook_mediaobject(self, element, depth):
         data_element = self.visit_data_object(element, depth)
-        attrib = {html.class_: "db-mediaobject"}
+        attrib = self.get_standard_attributes(element)
+        attrib[html.class_] = "db-mediaobject"
         return self.new(moin_page.div, attrib=attrib, children=[data_element])
 
     def visit_docbook_olink(self, element, depth):
@@ -926,7 +925,8 @@ class Converter:
         """
         <sbr /> --> <line-break />
         """
-        return self.new(moin_page("line-break"), attrib={}, children={})
+        attrib = self.get_standard_attributes(element)
+        return self.new(moin_page("line-break"), attrib, children=[])
 
     def visit_docbook_sect(self, element, depth):
         """
@@ -955,7 +955,7 @@ class Converter:
                     element.remove(child)
         heading_level = element.tag.name[4]
         key = moin_page("outline-level")
-        attrib = {}
+        attrib = self.get_standard_attributes(element)
         attrib[key] = heading_level
         return self.new(moin_page.h, attrib=attrib, children=title)
 
@@ -990,7 +990,7 @@ class Converter:
                     # Remove the title element to avoid double conversion
                     element.remove(child)
         key = moin_page("outline-level")
-        attrib = {}
+        attrib = self.get_standard_attributes(element)
         attrib[key] = self.heading_level
         result.append(self.new(moin_page.h, attrib=attrib, children=title))
         result.extend(self.do_children(element, depth))
@@ -1135,7 +1135,7 @@ class Converter:
         class_attribute = element.get("class")
         namespace_attribute = element.get("namespace")
         # We create the attribute for our final element
-        attrib = {}
+        attrib = self.get_standard_attributes(element)
         children = []
         if class_attribute:
             attrib[html.class_] = "".join(["db-tag-", class_attribute])
@@ -1379,10 +1379,7 @@ class Converter:
 
         We also add a <table-of-content> element if needed.
         """
-        attrib = {}
-        if self.standard_attribute:
-            attrib.update(self.standard_attribute)
-            self.standard_attribute = {}
+        attrib = self.get_standard_attributes(element)
         children = []
         children.append(self.visit(element, depth))
         # We show the table of content only if it is not empty
