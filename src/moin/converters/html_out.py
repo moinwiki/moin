@@ -24,7 +24,7 @@ from moin.i18n import _
 from moin.log import getLogger
 from moin.items import Item
 from moin.utils.iri import Iri
-from moin.utils.tree import html, moin_page, xlink, xml
+from moin.utils.tree import html, moin_page, Name, xlink, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT, CHARSET
 from moin.utils.mime import Type, type_moin_document
 from moin.constants.keys import LANGUAGE
@@ -198,6 +198,9 @@ class Converter(ConverterBase):
         html_tagname = element.get(moin_page.html_tag)
         if html_tagname:
             tag = html(html_tagname)
+        # Unknown elements have a tag of type QName but we require Name instances
+        if not isinstance(tag, Name):
+            tag = Name(tag.name, tag.uri)
         # Convert attributes and children:
         attrib_new = Attributes(element).convert()
         attrib_new.update(attrib)
