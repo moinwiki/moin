@@ -1526,7 +1526,7 @@ class Default(Contentful):
             rev=self.rev,
             contenttype=self.contenttype,
             rev_navigation_ids_dates=rev_navigation_ids_dates,
-            data_rendered=safe_markup(self.content._render_data()),
+            data_rendered=safe_markup(self.content.render_data()),
             html_head_meta=html_head_meta,
             item_is_deleted=item_is_deleted,
             may=item_may,
@@ -1629,7 +1629,7 @@ class Default(Contentful):
                     ]
                 else:
                     preview_diffs = None
-                preview_rendered = item.content._render_data(preview=data)
+                preview_rendered = item.content.render_data(preview=data)
                 return preview_diffs, preview_rendered
             finally:
                 close_file(old_item.rev.data)

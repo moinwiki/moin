@@ -346,7 +346,7 @@ class Content:
 
         return doc
 
-    def _render_data(self, preview: Any = None) -> str:
+    def render_data(self, preview: Any = None) -> str:
         try:
             from moin.converters import default_registry as reg
 
@@ -363,17 +363,17 @@ class Content:
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
             error_id = uuid.uuid4()
-            logging.exception(f'An exception happened in _render_data (error_id={error_id}, name="{self.name}"):')
+            logging.exception(f'An exception happened in render_data (error_id={error_id}, name="{self.name}"):')
             rendered_data = render_template(
                 "crash.html", server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"), url=request.url, error_id=error_id
             )
         return rendered_data
 
-    def _render_data_xml(self):
+    def render_data_xml(self):
         doc = self.internal_representation()
         return conv_serialize(doc, {moin_page.namespace: "", xlink.namespace: "xlink", html.namespace: "html"}, "xml")
 
-    def _render_data_highlight(self):
+    def render_data_highlight(self):
         # override this in child classes
         return ""
 
@@ -386,7 +386,7 @@ class Content:
         """
         return []
 
-    def _render_data_slide(self, preview=None):
+    def render_data_slide(self, preview=None):
         try:
             from moin.converters import default_registry as reg
 
@@ -427,7 +427,7 @@ class Content:
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
             error_id = uuid.uuid4()
-            logging.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
+            logging.exception(f"An exception happened in render_data_slide (error_id = {error_id} ):")
             rendered_data = [
                 render_template(
                     "crash.html", server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"), url=request.url, error_id=error_id
@@ -496,19 +496,19 @@ class Binary(Content):
             else:
                 return None, None
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
+    def render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         hash_name = HASH_ALGORITHM
         if oldrev.meta[hash_name] == newrev.meta[hash_name]:
             return _("The items have the same data hash code (that means they very likely have the same data).")
         else:
             return _("The items have different data.")
 
-    _render_data_diff_text = _render_data_diff
-    _render_data_diff_raw = _render_data_diff
+    render_data_diff_text = render_data_diff
+    render_data_diff_raw = render_data_diff
 
-    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
+    def render_data_diff_atom(self, oldrev, newrev, fqname=None):
         return render_template(
-            "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=safe_markup(self._render_data())
+            "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=safe_markup(self.render_data())
         )
 
     def _convert(self, doc):
@@ -919,23 +919,23 @@ class TransformableBitmapImage(RenderableBitmapImage):
         else:
             return self._do_get(hash, force_attachment=force_attachment, mimetype=mimetype)
 
-    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
+    def render_data_diff_atom(self, oldrev, newrev, fqname=None):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
-            return super()._render_data_diff_atom(oldrev, newrev, fqname=None)
+            return super().render_data_diff_atom(oldrev, newrev, fqname=None)
         url = url_for("frontend.diffraw", _external=True, item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return render_template(
             "atom.html", oldrev=oldrev, newrev=newrev, get="binary", content=safe_markup(f'<img src="{escape(url)}" />')
         )
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
+    def render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
         if PIL is None:
             # no PIL, we can't do anything, we just call the base class method
-            return super()._render_data_diff(oldrev, newrev)
+            return super().render_data_diff(oldrev, newrev)
         url = url_for("frontend.diffraw", item_name=self.name, rev1=oldrev.revid, rev2=newrev.revid)
         return safe_markup(f'<img src="{escape(url)}" />')
 
-    def _render_data_diff_raw(self, oldrev, newrev):
+    def render_data_diff_raw(self, oldrev, newrev):
         hash_name = HASH_ALGORITHM
         cid = cache_key(
             usage="ImageDiff", hash_name=hash_name, hash_old=oldrev.meta[hash_name], hash_new=newrev.meta[hash_name]
@@ -971,8 +971,8 @@ class TransformableBitmapImage(RenderableBitmapImage):
             headers, data = c
         return Response(data, headers=headers)
 
-    def _render_data_diff_text(self, oldrev, newrev):
-        return super()._render_data_diff_text(oldrev, newrev)
+    def render_data_diff_text(self, oldrev, newrev):
+        return super().render_data_diff_text(oldrev, newrev)
 
 
 @register
@@ -1055,7 +1055,7 @@ class Text(Binary):
         """convert data from storage format to memory format"""
         return data.decode(CHARSET).replace("\r\n", "\n")
 
-    def _render_data_diff_html(self, oldrev, newrev, template, rev_links={}, fqname=None):
+    def render_data_diff_html(self, oldrev, newrev, template, rev_links={}, fqname=None):
         """Render HTML formatted meta and content diff of 2 revisions
 
         :param oldrev: old revision object
@@ -1067,7 +1067,7 @@ class Text(Binary):
 
         diffs = self._get_data_diff_html(oldrev.data, newrev.data)
         item = Item.create(fqname.fullname, rev_id=newrev.meta[REVID])
-        rendered = safe_markup(item.content._render_data())
+        rendered = safe_markup(item.content.render_data())
         return render_template(
             template,
             item_name=fqname.fullname,
@@ -1101,14 +1101,14 @@ class Text(Binary):
         new_text = self.data_storage_to_internal(newfile.read())
         return text_diff(old_text.splitlines(), new_text.splitlines())
 
-    def _render_data_diff_atom(self, oldrev, newrev, fqname=None):
+    def render_data_diff_atom(self, oldrev, newrev, fqname=None):
         """renders diff in HTML for atom feed"""
-        return self._render_data_diff_html(oldrev, newrev, "diff_text_atom.html", fqname=fqname)
+        return self.render_data_diff_html(oldrev, newrev, "diff_text_atom.html", fqname=fqname)
 
-    def _render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
-        return self._render_data_diff_html(oldrev, newrev, "diff_text.html", rev_links=rev_links, fqname=fqname)
+    def render_data_diff(self, oldrev, newrev, rev_links={}, fqname=None):
+        return self.render_data_diff_html(oldrev, newrev, "diff_text.html", rev_links=rev_links, fqname=fqname)
 
-    def _render_data_diff_text(self, oldrev, newrev):
+    def render_data_diff_text(self, oldrev, newrev):
         """Render text diff of 2 revisions' contents
 
         :param oldrev: old revision object
@@ -1118,9 +1118,9 @@ class Text(Binary):
         difflines = self._get_data_diff_text(oldrev.data, newrev.data)
         return "\n".join(difflines)
 
-    _render_data_diff_raw = _render_data_diff
+    render_data_diff_raw = render_data_diff
 
-    def _render_data_highlight(self):
+    def render_data_highlight(self):
         from moin.converters import default_registry as reg
 
         data_text = self.data_storage_to_internal(self.data)
@@ -1320,7 +1320,7 @@ class DrawPNGMap(Draw):
     def _transform_map(self, image_map, title):
         raise NotImplementedError
 
-    def _render_data(self):
+    def render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         png_url = url_for("frontend.get_item", item_name=self.name, member="drawing.png", rev=self.rev.revid)
@@ -1358,7 +1358,7 @@ class SvgDraw(Draw):
         self.put_member("drawing.svg", svg_content, None, True, False)
         self.put_member("drawing.png", png_content, None, False, True)
 
-    def _render_data(self):
+    def render_data(self):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         revid = self.rev.revid

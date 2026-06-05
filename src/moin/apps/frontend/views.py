@@ -727,7 +727,7 @@ def show_dom(item):
         status = 404
     else:
         status = 200
-    content = render_template("dom.xml", data_xml=safe_markup(item.content._render_data_xml()))
+    content = render_template("dom.xml", data_xml=safe_markup(item.content.render_data_xml()))
     return Response(content, status, mimetype="text/xml")
 
 
@@ -757,7 +757,7 @@ def highlight_item(item):
             item=item,
             item_name=item.name,
             fqname=item.fqname,
-            data_text=safe_markup(item.content._render_data_highlight()),
+            data_text=safe_markup(item.content.render_data_highlight()),
             rev=item.rev,
             rev_navigation_ids_dates=rev_navigation_ids_dates,
             meta=item._meta_info(),
@@ -803,7 +803,7 @@ def content_item(item_name: str, rev: str):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    return render_template("content.html", item_name=item.name, data_rendered=safe_markup(item.content._render_data()))
+    return render_template("content.html", item_name=item.name, data_rendered=safe_markup(item.content.render_data()))
 
 
 @frontend.route("/+slideshow/<itemname:item_name>", defaults=dict(rev=CURRENT))
@@ -817,7 +817,7 @@ def slide_item(item_name, rev):
         abort(403)
     if isinstance(item, NonExistent):
         abort(404, item_name)
-    data_rendered = safe_markup(item.content._render_data_slide())
+    data_rendered = safe_markup(item.content.render_data_slide())
     return render_template("slideshow.html", item_name=item.name, data_rendered=data_rendered)
 
 
@@ -1063,7 +1063,7 @@ def revert_item(item_name, rev):
         fqname=item.fqname,
         rev_id=rev,
         form=form,
-        data_rendered=safe_markup(item.content._render_data()),
+        data_rendered=safe_markup(item.content.render_data()),
     )
     close_file(item.rev.data)
     return ret
@@ -1115,7 +1115,7 @@ def rename_item(item_name):
         subitem_names=subitem_names,
         fqname=item.fqname,
         form=form,
-        data_rendered=safe_markup(item.content._render_data()),
+        data_rendered=safe_markup(item.content.render_data()),
         len=len,
         may=item_may,
     )
@@ -1141,7 +1141,7 @@ def delete_item(item_name):
         item_names = tuple(x + "/" for x in item.names)
         subitem_names = [y for x in subitems for y in x.meta[NAME] if y.startswith(item_names)]
 
-        data_rendered = safe_markup(item.content._render_data())
+        data_rendered = safe_markup(item.content.render_data())
         alias_names = set(item.names) - {item_name}
     elif request.method == "POST":
         form = DeleteItemForm.from_flat(request.form)
@@ -1500,7 +1500,7 @@ def destroy_item(item_name, rev):
         fqname=fqname,
         rev_id=rev,
         form=form,
-        data_rendered=safe_markup(item.content._render_data()),
+        data_rendered=safe_markup(item.content.render_data()),
         item_is_deleted=item_is_deleted,
         may=item_may,
     )
@@ -3011,7 +3011,7 @@ def _common_type(ct1, ct2):
 def _crash(item, oldrev, newrev):
     """This is called from several places, need to handle passed message"""
     error_id = uuid.uuid4()
-    logger.exception(f"An exception happened in _render_data (error_id = {error_id} ):")
+    logger.exception(f"An exception happened in render_data (error_id = {error_id} ):")
     return render_template(
         "crash_view.html",
         server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"),
@@ -3067,7 +3067,7 @@ def _diff(item, revid1, revid2, fqname, rev_ids):
             rev_links["revid2"] = revid2
 
         try:
-            diff_html = safe_markup(item.content._render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
+            diff_html = safe_markup(item.content.render_data_diff(oldrev, newrev, rev_links=rev_links, fqname=fqname))
         except Exception:
             return _crash(item, oldrev, newrev)
     else:
@@ -3104,7 +3104,7 @@ def _diff_raw(item, revid1, revid2):
         item = Item.create(item.name, contenttype=commonmt, rev_id=newrev.revid)
     except AccessDenied:
         abort(403)
-    return item.content._render_data_diff_raw(oldrev, newrev)
+    return item.content.render_data_diff_raw(oldrev, newrev)
 
 
 @frontend.route("/+similar_names/<itemname:item_name>")

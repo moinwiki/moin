@@ -20,7 +20,7 @@
             {% endif %}
         </div>
         <div class="moin-blog-entry-content">
-            {{ entry_item.content._render_data()|safe }} {# rendered blog entry content #}
+            {{ entry_item.content.render_data()|safe }} {# rendered blog entry content #}
         </div>
         <div class="moin-blog-entry-bottominfo">
             {% set tags = entry_item.meta['tags']|sort %}
