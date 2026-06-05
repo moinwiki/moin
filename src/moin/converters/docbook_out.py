@@ -113,9 +113,8 @@ class Converter:
         It first converts the children of the element,
         and then the element itself.
 
-        The "standard attributes" `xml:id`, `xml:base`, `xml:lang`,
-        and `data-lineno` are copied to the new element. Attributes
-        in `attrib` have precedence.
+        The "standard attributes" `xml:id`, `xml:base`, and `xml:lang` are
+        copied to the new element. Attributes in `attrib` have precedence.
 
         TODO: consistently return an element or None (see `new()` above).
         """
@@ -125,21 +124,15 @@ class Converter:
 
     def get_standard_attributes(self, element) -> dict:
         """
-        Return the "standard attributes" of the element.
+        Return the "standard attributes" of `element`.
 
-        TODO:
-          * Clear the intention of this method, rename or fix:
-
-            This method extracts all attributes of the "xml" namespace.
-            DocBook elements support 34 `common attributes`__.  Out of them
-            3 use the "xml" namespace (xml:base, xml:id, xml:lang) and
-            10 use the "xlink" namespace (but hrefs use "linkend" instead of "xlink:href").
-
-          * Convert  "moin:id" to "xml:id".
-            Convert ``xlink:href=``#target-id`` to ``linkend="target-id"``.
+        Return a dictionary with the `common attributes`_
+        "xml:id", "xml:base", and "xml:lang".
 
         __ https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
         """
+        # TODO: Also return "moinpage:id" and "moinpage:lang"
+        # (converted to "xml" namespace)?
         result = {}
         for key, value in element.attrib.items():
             if key.uri == xml:
@@ -194,10 +187,10 @@ class Converter:
         """
         LINK Conversion.
 
-        Link are defined using the XLINK namespace either
-        for the DOM Tree and in DocBook specification, so
+        Links are defined using the XLINK namespace in both,
+        the Moinpage DOM Tree and the DocBook specification, so
         the converter can just copy each xlink: attribute
-        into an <link> tag.
+        into a <link> tag.
         """
         attrib = {}
         for key, value in element.attrib.items():
@@ -207,7 +200,7 @@ class Converter:
 
     def visit_moinpage_admonition(self, element):
         """
-        There is 5 admonition in DocBook, which are also supported
+        There are 5 admonition types in DocBook, out of 9 supported
         in the DOM Tree.
 
         For instance: <caution> --> <admonition type='caution'>
@@ -497,12 +490,12 @@ class Converter:
         If we have a title attribute for p, we return a para,
         with a <title> child.
         Otherwise we return a <simpara>.
-
-        TODO: select the correct element type, the correct representation of a title or tooltip!
-              * `html:title` == "tooltip" != <db:title>  https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute
-              * paragraph with title requires <formalpara> (<para> does not allow <title> as child),
-              * <para> allows "block-level"/"body" elements as children, <simpara> only inline children.
         """
+        # TODO: select the correct element types for paragraph and optional title.
+        # * `html:title` == "tooltip" == <db:alt> != <db:title>
+        #   https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute
+        # * <para> allows "block-level"/"body" elements as children but
+        #   paragraph with <title> requires <formalpara>
         title_attr = element.get(html("title"))
         if title_attr:
             attrib = self.get_standard_attributes(element)

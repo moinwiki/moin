@@ -112,9 +112,8 @@ class Attributes:
 
     def __init__(self, element):
         self.element = element
-
-        # Detect if we either namespace of the element matches the input or the
-        # output.
+        # Detect if the namespace of the element matches either the input
+        # or the output:
         self.default_uri_input = self.default_uri_output = None
         if element.tag.uri == moin_page:
             self.default_uri_input = element.tag.uri
@@ -146,7 +145,7 @@ class Attributes:
                         f(value, new)
             elif key.uri in self.namespaces_valid_output:
                 new[key] = value
-            # We convert xml:id
+            # We convert xml:id and xml:lang
             elif key.uri == xml.namespace:
                 if key.name == "id" or key.name == "lang":
                     new[ET.QName(key.name, html.namespace)] = value
@@ -209,7 +208,7 @@ class Converter:
             if f is not None:
                 return f(elem)
 
-        # Element with unknown namespaces are just copied
+        # Elements with unknown namespaces are just copied
         return self.new_copy(elem.tag, elem)
 
     def visit_moinpage(self, elem):
@@ -218,7 +217,7 @@ class Converter:
         if f:
             return f(elem)
 
-        # Unknown element are just copied
+        # Unknown elements are just copied
         return self.new_copy(elem.tag, elem)
 
     def visit_moinpage_a(self, elem):

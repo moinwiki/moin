@@ -385,7 +385,7 @@ class Converter:
         "listitem": moin_page("list-item-body"),
         "literal": moin_page.literal,
         "markup": moin_page.code,
-        "para": moin_page.p,
+        "para": moin_page.p,  # TODO: <db:para> can contain block elements: convert to <div>
         "phrase": moin_page.span,
         "programlisting": moin_page.blockcode,
         "quote": moin_page.quote,
@@ -511,11 +511,14 @@ class Converter:
 
     def get_standard_attributes(self, element) -> dict:
         """
-        Return the "standard attributes" of the element.
+        Return the "standard attributes" of `element`.
 
-        TODO: Clear the intention of this method, rename or fix.
-              (see docbook_out.Converter.get_standard_attributes()).
+        Return a dictionary with the `common attributes`_ "xml:id",
+        "xml:base", and "xml:lang", and the Moin-added "data-lineno".
+
+        __ https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
         """
+        # TODO: Convert "xml:id" and "xml:lang" to "moinpage" namespace?
         result = {}
         for key, value in element.attrib.items():
             if key.uri == xml and key.name in ["id", "base", "lang"] or key.name == "data-lineno":
