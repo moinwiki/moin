@@ -177,7 +177,11 @@ class Converter(ConverterBase):
     namespaces_visit: Final = {moin_page: "moinpage"}
 
     def __call__(self, element: Any) -> Any:
-        return self.visit(element)
+        result = self.visit(element)
+        # toplevel element of conversion result is expected to have html namespace
+        if result.tag.uri != html:
+            raise ElementException("Not a HTML document")
+        return result
 
     def do_children(self, element):
         new = []
