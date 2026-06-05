@@ -190,6 +190,11 @@ class TestConverter(Base):
             # <article><simpara>simple text<footnote xml:id="myid">footnote content</footnote></simpara></article>
             '/article/simpara[text()="simple text"]/footnote[@xml:id="myid"][simpara="footnote content"]',
         ),
+        (  # additional reference to a footnote with ID
+            '<page><body><p>additonal footnote reference<noteref xlink:href="#fn42" /></p></body></page>',
+            # <article><simpara>additonal footnote reference<footnoteref linkend="fn42" /></simpara></article>
+            '/article/simpara[text()="additonal footnote reference"]/footnoteref[@linkend="fn42"]',
+        ),
         # Link conversion
         (
             '<page><body><p><a xlink:href="uri:test" xlink:title="title">link</a></p></body></page>',

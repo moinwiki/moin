@@ -368,6 +368,13 @@ class Converter:
             attrib = self.get_standard_attributes(element)
             return self.new(docbook.footnote, attrib, children=self.do_children(element))
 
+    def visit_moinpage_noteref(self, element):
+        """
+        <noteref xlink:href='#fn' /> --> <footnoteref linkend='fn' />
+        """
+        href = element.get(xlink.href, None)
+        return self.new(docbook.footnoteref, attrib={docbook.linkend: href.removeprefix("#")}, children=[])
+
     def visit_moinpage_object(self, element):
         """
         Convert::
