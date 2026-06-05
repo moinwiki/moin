@@ -117,8 +117,6 @@ from moin.utils.mime import Type, type_moin_document
 from moin.utils.mimetype import MimeType
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
 from moin.utils.tree import html, docbook, xlink, xml
-import moin.utils.mimetype as mime_type
-from moin.utils.tree import html, docbook
 
 if TYPE_CHECKING:
     from werkzeug.wrappers import Response as ResponseBase
