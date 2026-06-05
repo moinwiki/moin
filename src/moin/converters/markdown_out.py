@@ -21,6 +21,7 @@ import urllib.error
 from emeraldtree import ElementTree as ET
 
 from moin.converters import html_out
+from moin.converters.base import ConverterBase
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
@@ -75,7 +76,7 @@ class Markdown:
         pass
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert application/x.moin.document to Markdown markup.
     """
@@ -87,9 +88,10 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(*kwargs)
         self.list_item_labels = [""]
         self.list_item_label = ""
         self.list_level = 0

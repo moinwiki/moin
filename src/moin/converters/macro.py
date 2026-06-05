@@ -14,12 +14,12 @@ from typing import Any, TYPE_CHECKING
 from emeraldtree import ElementTree as ET
 
 from moin import current_app, log
-from moin.utils import plugins
+from moin.converters.base import ConverterBase
 from moin.i18n import _
 from moin.utils import iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
-from moin.utils.plugins import PluginMissingError
+from moin.utils.plugins import importPlugin, PluginMissingError
 
 from . import default_registry
 
@@ -29,11 +29,11 @@ if TYPE_CHECKING:
 logging = log.getLogger(__name__)
 
 
-class Converter:
+class Converter(ConverterBase):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, macros: str | None = None, **kwargs: Any) -> Self | None:
-        return cls() if macros == "expandall" else None
+        return cls(**kwargs) if macros == "expandall" else None
 
     def handle_macro(self, elem, page):
         logging.debug(f"handle_macro elem: {elem!r}")
@@ -55,7 +55,7 @@ class Converter:
         elem_error = moin_page.error()
 
         try:
-            cls = plugins.importPlugin(current_app.cfg, "macros", name, function="Macro")
+            cls = importPlugin(current_app.cfg, "macros", name, function="Macro")
             macro = cls()
             ret = macro((), args, page, alt, context_block)
             elem_body.append(ret)

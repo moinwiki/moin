@@ -455,8 +455,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
 
         self.html_in_converter = html_in.Converter()
 
@@ -480,7 +480,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     newlines_re = re.compile(r"(?<=\n) +\n")
 

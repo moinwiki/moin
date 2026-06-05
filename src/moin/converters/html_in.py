@@ -173,7 +173,7 @@ class Converter(ConverterBase, HtmlTags):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         """

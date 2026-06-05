@@ -19,6 +19,7 @@ from . import default_registry
 from ._table import TableMixin
 
 from moin import log
+from moin.converters.base import ConverterBase
 from moin.i18n import _
 from moin.utils import utcfromtimestamp
 from moin.utils.iri import Iri
@@ -41,7 +42,7 @@ class ArchiveException(Exception):
     """
 
 
-class ArchiveConverter(TableMixin):
+class ArchiveConverter(ConverterBase, TableMixin):
     """
     Base class for archive converters, convert an archive to a DOM table
     with an archive listing.
@@ -49,7 +50,7 @@ class ArchiveConverter(TableMixin):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def process_name(self, member_name):
         attrib = {

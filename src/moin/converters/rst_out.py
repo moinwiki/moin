@@ -18,13 +18,12 @@ import re
 
 from emeraldtree import ElementTree as ET
 
-from . import ElementException
+from . import default_registry, ElementException
 
+from moin.converters.base import ConverterBase
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import html, moin_page, xlink, xinclude, xml
 from moin.utils.iri import Iri
-
-from . import default_registry
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -244,7 +243,7 @@ class ReST:
     }
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Converter application/x.moin.document -> text/x.moin.rst
     """
@@ -281,9 +280,11 @@ class Converter:
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
         # TODO: create class containing all table attributes
         self.table_tableclass = ""
         self.table_tablestyle = ""

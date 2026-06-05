@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import io
+
 from datetime import datetime, timedelta
 import logging as stdlogging
 
@@ -21,6 +22,7 @@ from pdfminer.layout import LAParams
 
 from . import default_registry
 from moin import log
+from moin.converters.base import ConverterBase
 from moin.utils.mime import Type, type_text_plain
 
 if TYPE_CHECKING:
@@ -32,17 +34,17 @@ logging = log.getLogger(__name__)
 
 
 # PDFMiner creates many unwanted info messages
-stdlogging.getLogger("pdfminer").setLevel(logging.WARNING)
+stdlogging.getLogger("pdfminer").setLevel(stdlogging.WARNING)
 
 
 LAPARAMS = LAParams()
 
 
-class PDFIndexingConverter:
+class PDFIndexingConverter(ConverterBase):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, revision: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         rsrcmgr = PDFResourceManager()

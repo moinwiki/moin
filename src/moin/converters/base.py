@@ -13,7 +13,7 @@ logger = getLogger(__name__)
 
 class ConverterBase:
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
         self.messages: set[ConverterMessage] = set()
 
     def log(self, message: str, category: str) -> None:

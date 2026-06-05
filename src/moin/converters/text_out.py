@@ -16,6 +16,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 from . import default_registry
+from moin.converters.base import ConverterBase
 from moin.utils.mime import type_moin_document, type_text_plain
 
 if TYPE_CHECKING:
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Converter application/x.moin.document -> text/plain
     """

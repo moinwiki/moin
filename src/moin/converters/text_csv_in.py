@@ -11,13 +11,14 @@ from typing import Any, TYPE_CHECKING
 
 import csv
 
+from . import default_registry
 from ._table import TableMixin
 from ._util import decode_data, normalize_split_text
-from moin.utils.tree import moin_page
-from moin.i18n import _
 
-from . import default_registry
+from moin.i18n import _
+from moin.converters.base import ConverterBase
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import moin_page
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter(TableMixin):
+class Converter(ConverterBase, TableMixin):
     """
     Parse the raw text and create a document object
     that can be converted into output using Emitter.
@@ -33,7 +34,7 @@ class Converter(TableMixin):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)

@@ -100,7 +100,7 @@ from whoosh.query import Regex
 
 from moin import flaskg, log
 from moin.constants.keys import NAME_EXACT
-from moin.converters.html_out import mark_item_as_transclusion, Attributes
+from moin.converters.html_out import mark_item_as_transclusion, Attributes, ConverterBase
 from moin.i18n import _
 from moin.items import Item
 from moin.utils import close_file
@@ -196,11 +196,11 @@ class XPointer(list):
             self.append(self.Entry("".join(name), None))
 
 
-class Converter:
+class Converter(ConverterBase):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, includes: str | None = None, **kwargs: Any) -> Self | None:
-        return cls() if includes == "expandall" else None
+        return cls(**kwargs) if includes == "expandall" else None
 
     def recurse(self, elem, page_href):
         # on first call, elem.tag.name=='page'.

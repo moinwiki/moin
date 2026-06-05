@@ -22,6 +22,7 @@ from emeraldtree import ElementTree as ET
 from markupsafe import Markup
 
 from moin import log
+from moin.converters.base import ConverterBase
 from moin.macros import modules as macro_modules
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.iri import Iri
@@ -84,7 +85,7 @@ class Moinwiki:
         pass
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert application/x.moin.document to text/x.moin.wiki.
     """
@@ -123,9 +124,10 @@ class Converter:
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(*kwargs)
 
         # TODO: create class containing all table attributes
         self.table_tableclass = ""

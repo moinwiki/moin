@@ -29,6 +29,7 @@ except ImportError:
     flaskg = None
 
 from moin import log
+from moin.converters.base import ConverterBase
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
@@ -74,7 +75,7 @@ class XMLParser(ET.XMLParser):
         return elem
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert application/docbook+xml -> x.moin.document.
     """
@@ -440,7 +441,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Element:
         text = decode_data(data, contenttype)

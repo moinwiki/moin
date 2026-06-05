@@ -35,7 +35,7 @@ class ConverterFormat19(Converter):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     inline_freelink: Final = r"""
          (?:

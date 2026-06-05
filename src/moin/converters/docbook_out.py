@@ -14,9 +14,10 @@ from typing import Any, TYPE_CHECKING
 
 from emeraldtree import ElementTree as ET
 
-from moin.utils.tree import html, moin_page, xlink, docbook, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.converters.base import ConverterBase
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import html, moin_page, xlink, docbook, xml
 
 from . import default_registry, ElementException
 
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
 logging = log.getLogger(__name__)
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Converter application/x.moin.document -> application/docbook+xml
     """
@@ -57,7 +58,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, **kwargs: Any) -> Any:
         self.section_children = {}

@@ -39,6 +39,7 @@ except ImportError:
     flaskg = None
 
 from moin import log
+from moin.converters.base import ConverterBase
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
@@ -1151,11 +1152,11 @@ class MoinDirectives:
             return [block]
 
 
-class Converter:
+class Converter(ConverterBase):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
