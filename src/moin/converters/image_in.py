@@ -42,7 +42,7 @@ class Converter(ConverterBase):
         super().__init__(**kwargs)
         self.input_type = input_type
 
-    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> None:
+    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         item_name = rev.item.name
         query_keys = {"do": ["get"], "rev": [rev.revid]}
         attrib = {}

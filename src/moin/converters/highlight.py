@@ -38,7 +38,7 @@ class Converter(ConverterBase):
             # treat each word separately and ignore case sensitivity
             self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
-    def __call__(self, tree: Any) -> Any | None:
+    def __call__(self, tree: Any) -> Any:
         self.recurse(tree)
         return tree
 
