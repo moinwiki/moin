@@ -9,13 +9,8 @@ MoinMoin - converter utilities.
 from __future__ import annotations
 
 from typing import Any
-from emeraldtree import ElementTree as ET
 
-try:
-    from moin import flaskg
-except ImportError:
-    # in case converters become an independent package
-    flaskg = None
+from emeraldtree import ElementTree as ET
 
 from moin.constants.misc import URI_SCHEMES
 from moin.log import getLogger
@@ -115,6 +110,7 @@ class _Iter:
 
 
 class _Stack:
+
     class Item:
         def __init__(self, elem):
             self.elem = elem
@@ -123,12 +119,13 @@ class _Stack:
             else:
                 self.name = None
 
-    def __init__(self, bottom=None, iter_content=None):
+    def __init__(self, bottom=None, iter_content=None, add_lineno: bool = False) -> None:
         self._list = []
         if bottom:
             self._list.append(self.Item(bottom))
         self.iter_content = iter_content
-        self.last_lineno = 0
+        self.last_lineno_attr = 0
+        self._add_lineno = add_lineno
 
     def __len__(self):
         return len(self._list)
@@ -137,11 +134,10 @@ class _Stack:
         """
         Add a custom attribute (data-lineno=nn) that will be used by Javascript to scroll edit textarea.
         """
-        if flaskg and getattr(flaskg, "add_lineno_attr", False):
-            if self.last_lineno != self.iter_content.lineno:
-                # avoid adding same lineno to parent and multiple children or grand-children
-                elem.attrib[html.data_lineno] = self.iter_content.lineno
-                self.last_lineno = self.iter_content.lineno
+        if self._add_lineno and self.last_lineno != self.iter_content.lineno:
+            # avoid adding same lineno to parent and multiple children or grand-children
+            elem.attrib[html.data_lineno] = self.iter_content.lineno
+            self.last_lineno = self.iter_content.lineno
 
     def clear(self):
         del self._list[1:]

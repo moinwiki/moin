@@ -22,12 +22,6 @@ import re
 
 from emeraldtree import ElementTree as ET
 
-try:
-    from moin import flaskg
-except ImportError:
-    # in case converters become an independent package
-    flaskg = None
-
 from moin.converters.base import ConverterBase
 from moin.log import getLogger
 from moin.utils.iri import Iri
@@ -49,12 +43,12 @@ class NameSpaceError(Exception):
     pass
 
 
-def XML(text, parser=None):
+def XML(text, add_lineno: bool, parser: XMLParser | None = None) -> Element:
     """
     Copied from EmeraldTree/tree.py to force use of local XMLParser class override.
     """
     if not parser:
-        parser = XMLParser(target=ET.TreeBuilder())
+        parser = XMLParser(target=ET.TreeBuilder(), add_lineno=add_lineno)
     parser.feed(text)
     return parser.close()
 
@@ -65,12 +59,16 @@ class XMLParser(ET.XMLParser):
 
     There is no need to subclass all tree.py classes and procedures with stubs because this
     modified _start_list is only needed during the initial construction of the DOM when
-    flaskg.add_lineno_attr may be True.
+    `add_lineno` may be True.
     """
+
+    def __init__(self, html=0, target=None, encoding=None, add_lineno=False):
+        super().__init__(html, target, encoding)
+        self.add_lineno = add_lineno
 
     def _start_list(self, tag, attrib_in):
         elem = super()._start_list(tag, attrib_in)
-        if flaskg and getattr(flaskg, "add_lineno_attr", False):
+        if self.add_lineno:
             elem.attrib[html.data_lineno] = self._parser.CurrentLineNumber
         return elem
 
@@ -456,7 +454,7 @@ class Converter(ConverterBase):
         # We will create an element tree from the DocBook content
         try:
             # using local XML override, not ET.XML
-            tree = XML(content)
+            tree = XML(content, self.add_lineno)
         except ET.ParseError as detail:
             return self.error(str(detail))
 

@@ -35,7 +35,7 @@ from moin.utils.mime import Type, type_moin_document
 from . import default_registry
 from ._args import Arguments
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text, _Iter, _Stack
+from ._util import decode_data, normalize_split_text, _Iter
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
@@ -343,7 +343,7 @@ class Converter(ConverterMacro):
             if list_definition:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label, iter_content=iter_content)
+                new_stack = self.make_stack(element_label, iter_content=iter_content)
                 # TODO: definition list doesn't work,
                 #       if definition of the term on the next line
                 splited_text = text.split(":")
@@ -356,7 +356,7 @@ class Converter(ConverterMacro):
             element_body.level, element_body.type = level, type
 
             stack.push(element_body)
-            new_stack = _Stack(element_body, iter_content=iter_content)
+            new_stack = self.make_stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
             level = 0
@@ -1008,7 +1008,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body, iter_content=iter_content)
+        stack = self.make_stack(body, iter_content=iter_content)
 
         for line in iter_content:
             match = self.indent_re.match(line)

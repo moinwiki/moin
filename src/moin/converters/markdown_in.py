@@ -30,12 +30,6 @@ from ._util import decode_data, sanitise_uri_scheme
 
 from emeraldtree import ElementTree as ET
 
-try:
-    from moin import flaskg
-except ImportError:
-    # in case converters become an independent package
-    flaskg = None
-
 from markdown import Markdown  # https://python-markdown.github.io/
 import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
@@ -263,7 +257,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         return text
 
-    def do_children(self, element, add_lineno=False) -> list[ET.Element | str]:
+    def do_children(self, element) -> list[ET.Element | str]:
         """
         Convert the children of `element` to EmeraldTree nodes.
 
@@ -287,7 +281,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
             if r is None:
                 r = ()
             elif not isinstance(r, (list, tuple)):
-                if add_lineno and self.line_numbers:
+                if self.add_lineno and self.line_numbers:
                     # the line numbers for the start of each block were counted and saved before preprocessors were run
                     r.attrib[html.data_lineno] = self.line_numbers.popleft()
                 r = (r,)
@@ -458,7 +452,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
-        self.html_in_converter = html_in.Converter()
+        self.html_in_converter = html_in.Converter(**kwargs)
 
         # share messages with the HTML-In converter
         self.html_in_converter.messages = self.messages
@@ -535,10 +529,8 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         # }}} end Markdown 3.0.0 core.py convert method
 
-        # run markdown post processors and convert from ElementTree
-        # to a list of EmeraldTree nodes:
-        add_lineno = bool(flaskg and getattr(flaskg, "add_lineno_attr", False))
-        page_children = self.do_children(root, add_lineno=add_lineno)
+        # run markdown post processors and convert from ElementTree to a list of EmeraldTree nodes
+        page_children = self.do_children(root)
 
         # convert HTML markup in text strings to EmeraldTree elements
         self.convert_html_markup(page_children)
