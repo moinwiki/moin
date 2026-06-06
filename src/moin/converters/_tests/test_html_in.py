@@ -11,12 +11,11 @@ import pytest
 
 from . import serialize, XMLNS_RE3
 
-from moin.utils.tree import html, moin_page, xlink, xml
 from moin.converters.html_in import Converter
+from moin.log import getLogger
+from moin.utils.tree import html, moin_page, xlink, xml
 
-from moin import log
-
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 etree = pytest.importorskip("lxml.etree")  # noqa
 
@@ -35,7 +34,7 @@ class Base:
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
-        logging.debug(f"After the HTML_IN conversion : {string_to_parse}")
+        logger.debug(f"After the HTML_IN conversion : {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         print("string_to_parse = %s" % string_to_parse)
         assert tree.xpath(path, namespaces=self.namespaces_xpath)

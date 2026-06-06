@@ -11,9 +11,9 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import io
+import logging
 
 from datetime import datetime, timedelta
-import logging as stdlogging
 
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -21,8 +21,8 @@ from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 
 from . import default_registry
-from moin import log
 from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.mime import Type, type_text_plain
 
 if TYPE_CHECKING:
@@ -30,11 +30,11 @@ if TYPE_CHECKING:
     from moin.storage.middleware.indexing import Revision
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 # PDFMiner creates many unwanted info messages
-stdlogging.getLogger("pdfminer").setLevel(stdlogging.WARNING)
+logging.getLogger("pdfminer").setLevel(logging.WARNING)
 
 
 LAPARAMS = LAParams()
@@ -53,12 +53,12 @@ class PDFIndexingConverter(ConverterBase):
         with io.StringIO() as f, TextConverter(rsrcmgr, f, laparams=LAPARAMS) as device:
             interpreter = PDFPageInterpreter(rsrcmgr, device)
             for page_idx, page in enumerate(PDFPage.get_pages(revision)):
-                logging.debug("Processing PDF page %d", page_idx)
+                logger.debug("Processing PDF page %d", page_idx)
                 interpreter.process_page(page)
                 if datetime.now() - start > max_parse_time:
-                    logging.info("PDF parsing timed out after %d pages", page_idx)
+                    logger.info("PDF parsing timed out after %d pages", page_idx)
                     break
-            logging.debug("PDF text extraction took: %s", datetime.now() - start)
+            logger.debug("PDF text extraction took: %s", datetime.now() - start)
             return f.getvalue()
 
 

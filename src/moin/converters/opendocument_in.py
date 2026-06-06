@@ -16,18 +16,17 @@ import zipfile
 
 from moin.constants.keys import NAME
 from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.mime import Type, type_text_plain
 
 from . import default_registry
 from .xml_in import strip_xml
 
-from moin import log
-
 if TYPE_CHECKING:
     from moin.storage.middleware.indexing import Revision
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class OpenDocumentIndexingConverter(ConverterBase):
@@ -44,7 +43,7 @@ class OpenDocumentIndexingConverter(ConverterBase):
             text = strip_xml(text)
             return text
         except AttributeError as e:
-            logging.warning(f"Content of file {rev.meta[NAME]} is not seekable. {str(e)}")
+            logger.warning(f"Content of file {rev.meta[NAME]} is not seekable. {str(e)}")
             return ""
         finally:
             zf.close()

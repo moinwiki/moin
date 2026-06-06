@@ -18,8 +18,8 @@ try:
 except ImportError:
     pygments = None
 
-from moin import log
 from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 if pygments:
@@ -90,7 +90,7 @@ if pygments:
                 else:
                     pygments_name = None
 
-            logging.debug("pygments_name: %r" % pygments_name)
+            logger.debug("pygments_name: %r" % pygments_name)
             if pygments_name:
                 lexer = pygments.lexers.find_lexer_class(pygments_name)
                 return cls(lexer())

@@ -25,9 +25,9 @@ from html.entities import name2codepoint
 
 from urllib.parse import urlencode
 
-from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xinclude, xlink
 from moin.utils.mime import Type, type_moin_document
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class _TableArguments:
@@ -993,7 +993,7 @@ class Converter(ConverterMacro):
         """
         data = {str(k): v for k, v in match.groupdict().items() if v is not None}
         func = f"{prefix}_{match.lastgroup}_repl"
-        # logging.debug("calling %s(%r, %r)" % (func, args, data))
+        # logger.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):

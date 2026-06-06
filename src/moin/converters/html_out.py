@@ -18,9 +18,10 @@ from emeraldtree import ElementTree as ET
 from urllib.parse import urlencode
 from babel import Locale
 
-from moin import current_app, flaskg, log, wikiutil
+from moin import current_app, flaskg, wikiutil
 from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.items import Item
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
@@ -33,7 +34,7 @@ from . import default_registry, ElementException
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 # strings not allowed in style attributes

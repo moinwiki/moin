@@ -16,12 +16,13 @@ import re
 from emeraldtree import ElementTree as ET
 
 import pygments
+
 from .pygments_in import TreeFormatter
 from pygments.util import ClassNotFound
 
-from moin import log
 from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.utils.tree import moin_page
 from moin.utils.mime import type_moin_document
 
@@ -34,7 +35,7 @@ if TYPE_CHECKING:
     from moin.utils.mime import Type
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class Converter(ConverterBase):
@@ -53,7 +54,7 @@ class Converter(ConverterBase):
 
     def handle_nowiki(self, elem, page):
         """{{{* where * may be #!wiki, #!csv, #!highlight python, "", etc., or an invalid argument."""
-        logging.debug("handle_nowiki elem: %r" % elem)
+        logger.debug("handle_nowiki elem: %r" % elem)
         marker_len, all_nowiki_args, content = elem._children
         nowiki_args = all_nowiki_args[0].strip()
 

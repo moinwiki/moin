@@ -10,16 +10,16 @@ Base class for wiki parser with macro support.
 
 from __future__ import annotations
 
-from moin import log
 from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.utils import iri
 from moin.utils.mime import Type
 from moin.utils.tree import moin_page, xinclude
 from ._args_wiki import parse as parse_arguments
 from ._args_wiki import include_re
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class ConverterMacro(ConverterBase):
@@ -177,7 +177,7 @@ class ConverterMacro(ConverterBase):
             type = Type(name)
         else:
             type = Type(type="x-moin", subtype="format", parameters={"name": name})
-        logging.debug("parser type: %r" % (type,))
+        logger.debug("parser type: %r" % (type,))
 
         elem = moin_page.part(attrib={moin_page.content_type: type})
 

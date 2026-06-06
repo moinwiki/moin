@@ -21,8 +21,8 @@ from re import findall, sub
 from emeraldtree import ElementTree as ET
 from markupsafe import Markup
 
-from moin import log
 from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.macros import modules as macro_modules
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.iri import Iri
@@ -34,7 +34,7 @@ from . import default_registry
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class Moinwiki:
@@ -530,7 +530,7 @@ class Converter(ConverterBase):
             if type[0] == "x-moin/macro":
                 name = type[1].split("=")[1]
                 if name not in macro_modules:
-                    logging.debug(f"Unknown macro {name} found.")
+                    logger.debug(f"Unknown macro {name} found.")
                     if name not in self.unknown_macro_list:
                         self.unknown_macro_list.append(name)
                 eol = "\n\n" if elem.tag.name == "part" else ""

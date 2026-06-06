@@ -18,9 +18,12 @@ import re
 from html import unescape as html_unescape
 from collections import deque
 
+from moin import current_app
 from moin.converters import html_in
 from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.iri import Iri
+from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xml, html, xlink, xinclude
 
 from ._util import decode_data, sanitise_uri_scheme
@@ -38,16 +41,13 @@ import markdown.util as md_util
 from markdown.extensions.extra import ExtraExtension
 from markdown.extensions.codehilite import CodeHiliteExtension
 
-from moin import current_app, log
-from moin.utils.mime import Type, type_moin_document
-
 from . import default_registry
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Any, Generator, Iterable, Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 block_elements = (
     "p h blockcode ol ul pre address blockquote dl div fieldset form hr noscript table table-of-content".split()
@@ -238,10 +238,10 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         # We should ignore this tag
         if element.tag in self.ignored_tags:
-            logging.info(f"INFO : Ignored tag : {element.tag}")
+            logger.info(f"INFO : Ignored tag : {element.tag}")
             return
 
-        logging.info(f"INFO : Unhandled tag : {element.tag}")
+        logger.info(f"INFO : Unhandled tag : {element.tag}")
         return
 
     # }}} end of Markdown parser output element conversion methods
@@ -366,7 +366,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
             html_tree = html_in.HTML(start_tag + end_tag)
             element = self.html_in_converter.visit(html_tree)
         except (AssertionError, IndexError) as ex:
-            logging.debug(f"Exception in HTML markup: {ex}")
+            logger.debug(f"Exception in HTML markup: {ex}")
             element = None
         return element
 

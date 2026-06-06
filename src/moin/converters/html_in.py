@@ -21,21 +21,20 @@ from emeraldtree.html import HTML
 
 from markupsafe import escape
 
+from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.utils.tree import html, moin_page, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
 from ._util import decode_data, normalize_split_text, sanitise_uri_scheme
 
-from moin import log
-from moin.converters.base import ConverterBase
-
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class HtmlTags:
@@ -332,7 +331,7 @@ class Converter(ConverterBase, HtmlTags):
                 invalid_tag=element.tag.name
             )
             self.log(msg, "info")
-            logging.debug(f"WARNING : Ignored tag : {element.tag.name}")
+            logger.debug(f"WARNING : Ignored tag : {element.tag.name}")
             return
 
         # Otherwise we process children of the unknown element

@@ -18,9 +18,9 @@ import zipfile
 from . import default_registry
 from ._table import TableMixin
 
-from moin import log
 from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.utils import utcfromtimestamp
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from moin.storage.middleware.indexing import Revision
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class ArchiveException(Exception):
@@ -77,7 +77,7 @@ class ArchiveConverter(ConverterBase, TableMixin):
             body = moin_page.body(children=(table,))
             return moin_page.page(children=(body,))
         except ArchiveException as err:
-            logging.exception("An exception within archive file handling occurred:")
+            logger.exception("An exception within archive file handling occurred:")
             # XXX we also use a table for error reporting, could be
             # something more adequate, though:
             return self.build_dom_table([[str(err)]])

@@ -8,20 +8,22 @@ MoinMoin - converter utilities.
 
 from __future__ import annotations
 
-import logging
 from typing import Any
+from emeraldtree import ElementTree as ET
 
 try:
     from moin import flaskg
 except ImportError:
     # in case converters become an independent package
     flaskg = None
-from emeraldtree import ElementTree as ET
 
 from moin.constants.misc import URI_SCHEMES
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.mime import Type
 from moin.utils.tree import html, moin_page
+
+logger = getLogger(__name__)
 
 
 def allowed_uri_scheme(uri):
@@ -161,7 +163,7 @@ class _Stack:
 
     def top(self):
         if not self._list:
-            logging.error("Internal error: Stack underflow; markup is likely malformed")
+            logger.error("Internal error: Stack underflow; markup is likely malformed")
             # the exception will be handled in the calling converter module
         return self._list[-1].elem
 

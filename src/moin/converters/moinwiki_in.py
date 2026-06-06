@@ -18,9 +18,9 @@ import re
 from flask import request
 from urllib.parse import urlencode, unquote
 
-from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink, xinclude, html
 from moin.utils.interwiki import is_known_wiki
@@ -36,7 +36,7 @@ from . import default_registry
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class _TableArguments:
@@ -96,7 +96,7 @@ class _TableArguments:
             else:
                 args.positional.append(value)
         elif key:
-            logging.warning(f"No value supplied for {key} attribute, ignored.")
+            logger.warning(f"No value supplied for {key} attribute, ignored.")
 
     def number_columns_spanned_repl(self, args, number_columns_spanned):
         args.keyword["number-columns-spanned"] = int(number_columns_spanned)
@@ -645,7 +645,7 @@ class Converter(ConverterMacro):
             stack.pop()
         else:
             msg = f"unbalanced use of moin size element {size}"
-            logging.warning(msg)
+            logger.warning(msg)
             try:
                 self.log(msg, "warning")
             except RuntimeError:  # CLI call has no valid request context
@@ -1079,7 +1079,7 @@ class Converter(ConverterMacro):
         """
         data = {str(k): v for k, v in match.groupdict().items() if v is not None}
         func = f"{prefix}_{match.lastgroup}_repl"
-        # logging.debug("calling %s(%r, %r)" % (func, args, data))
+        # logger.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):

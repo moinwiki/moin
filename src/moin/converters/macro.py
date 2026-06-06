@@ -13,9 +13,10 @@ from typing import Any, TYPE_CHECKING
 
 from emeraldtree import ElementTree as ET
 
-from moin import current_app, log
+from moin import current_app
 from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.utils import iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
@@ -26,7 +27,7 @@ from . import default_registry
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class Converter(ConverterBase):
@@ -36,7 +37,7 @@ class Converter(ConverterBase):
         return cls(**kwargs) if macros == "expandall" else None
 
     def handle_macro(self, elem, page):
-        logging.debug(f"handle_macro elem: {elem!r}")
+        logger.debug(f"handle_macro elem: {elem!r}")
         type = elem.get(moin_page.content_type)
         alt = elem.get(moin_page.alt)
 
@@ -45,7 +46,7 @@ class Converter(ConverterBase):
 
         type = Type(type)
         if not (type.type == "x-moin" and type.subtype == "macro"):
-            logging.debug(f"not a macro, skipping: {type!r}")
+            logger.debug(f"not a macro, skipping: {type!r}")
             return
 
         name = type.parameters["name"]
@@ -68,7 +69,7 @@ class Converter(ConverterBase):
             # and make the wiki UI unusable (by emitting a Server Error),
             # thus, in case of exceptions, we just log the problem and return
             # some standard text.
-            logging.exception(f"Macro {name} raised an exception:")
+            logger.exception(f"Macro {name} raised an exception:")
             elem_error.append(
                 _("<<{macro_name}: execution failed [{error_msg}] (see also the log)>>").format(
                     macro_name=name, error_msg=str(e)

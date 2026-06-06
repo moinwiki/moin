@@ -28,8 +28,8 @@ except ImportError:
     # in case converters become an independent package
     flaskg = None
 
-from moin import log
 from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class NameSpaceError(Exception):
@@ -588,7 +588,7 @@ class Converter(ConverterBase):
 
         # We should ignore this element
         if element.tag.name in self.ignored_tags:
-            logging.warning(f"Ignored tag:{element.tag.name}")
+            logger.warning(f"Ignored tag:{element.tag.name}")
             return
 
         # We have an admonition element
