@@ -41,7 +41,7 @@ class Converter:
     admonition_tags = {"caution", "important", "note", "tip", "warning"}
 
     # DOM tree elements that can be easily converted into a DocBook
-    # element, without attributes.
+    # element, without extra attributes ("standard attributes" are copied).
     simple_tags = {
         "code": docbook.code,
         "kbd": docbook.userinput,
@@ -50,6 +50,7 @@ class Converter:
         "literal": docbook.literal,
         "quote": docbook.quote,
         "samp": docbook.computeroutput,
+        "p": docbook.simpara,
         "sub": docbook.subscript,
         "sup": docbook.superscript,
     }
@@ -259,6 +260,23 @@ class Converter:
         para = self.new(docbook("simpara"), attrib={}, children=children)
         attrib = self.get_standard_attributes(element)
         return self.new(docbook("blockquote"), attrib, children=[attribution, para])
+
+    def visit_moinpage_div(self, element):
+        """
+        Convert <div> element.
+
+        There is no <div> analogue in DocBook, check for a
+        compatibility "html:class" refering to a block element,
+        otherwise just process the children.
+        """
+        if cls := element.get(html.class_):
+            if cls.startswith("db-"):
+                tagname = cls.removeprefix("db-")
+                if tagname == "article":
+                    # see visit_moinpage_page()
+                    return self.do_children(element)
+                return self.new_copy(docbook(tagname), element, attrib={})
+        return self.do_children(element)
 
     def visit_moinpage_emphasis(self, element):
         # emphasized text
@@ -492,28 +510,6 @@ class Converter:
 
         raise RuntimeError(f"page:page need to contain exactly one page body tag, got {element[:]!r}")
 
-    def visit_moinpage_p(self, element):
-        """
-        If we have a title attribute for p, we return a para,
-        with a <title> child.
-        Otherwise we return a <simpara>.
-        """
-        # TODO: select the correct element types for paragraph and optional title.
-        # * `html:title` == "tooltip" == <db:alt> != <db:title>
-        #   https://html.spec.whatwg.org/multipage/dom.html#the-title-attribute
-        # * <para> allows "block-level"/"body" elements as children but
-        #   paragraph with <title> requires <formalpara>
-        title_attr = element.get(html("title"))
-        if title_attr:
-            attrib = self.get_standard_attributes(element)
-            children = []
-            title_elem = self.new(docbook("title"), attrib={}, children=[title_attr])
-            children.append(title_elem)
-            children.extend(self.do_children(element))
-            return self.new(docbook.para, attrib, children)
-        else:
-            return self.new_copy(docbook.simpara, element, attrib={})
-
     def visit_moinpage_span(self, element):
         """
         Handle generic inline container.
@@ -522,8 +518,11 @@ class Converter:
         "Moinpage" tree to define specific element (sub)types or formatting.
         So it may stand for different inline elements (cf. html_in/html_out).
         """
-        # TODO: Add support for the "html-tag" attribute.
-        #       Add support for special "html:class" attribute values.
+        # TODO: Add support for special "html:class" attribute values.
+        if cls := element.get(html.class_):
+            if cls.startswith("db-"):
+                tagname = cls.removeprefix("db-")
+                return self.new_copy(docbook(tagname), element, attrib={})
         return self.new_copy(docbook.phrase, element, attrib={})
 
     def visit_moinpage_strong(self, element):

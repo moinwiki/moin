@@ -81,12 +81,17 @@ class TestConverter(Base):
             # <article><simpara xml:base="http://base.tld" xml:id="myid" xml:lang="en">emphasised  <emphasis>text</emphasis></simpara></article>
             '/article/simpara[@xml:base="http://base.tld"][@xml:id="myid"][@xml:lang="en"]/emphasis[text()="text"]',
         ),
-        # Para with title/tooltip
-        # TODO: fix handling (see `docbook_out.Converter.visit_moinpage_p()`)
+        # "Formal" paragraph with title
         (
-            '<page><body><p html:title="tooltip" xml:id="myid">Text</p></body></page>',
-            # <article><para><title>Title</title>Text</para></article>
-            '/article/para[@xml:id="myid"][text()="Text"][title="tooltip"]',
+            '<page><body><div html:class="db-formalpara" xml:id="myid"><div html:class="db-title">Heading</div><p>Text</p></div></body></page>',
+            # <article><formalpara xml:id="myid"><title>Heading</title><simpara>Text</simpara></formalpara></article>
+            '/article/formalpara[@xml:id="myid"][./title[text()="Heading"]]/simpara[text()="Text"]',
+        ),
+        # Paragraph with block-level child
+        (
+            '<page><body><div html:class="db-article"><div html:class="db-para">pre text <div html:class="db-example"><p>example</p></div> post text</div></div></body></page>',
+            # <article><para>pre text <informalexample><para>example</para></informalexample> post text</para></article>
+            "/article/para",
         ),
     ]
 
