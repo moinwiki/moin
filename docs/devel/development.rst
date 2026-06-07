@@ -384,8 +384,8 @@ input and output mimetypes / contenttypes.
 For example, if the contenttype is `text/x-moin-wiki;charset=utf-8`, it will
 find that the input converter handling this is the one defined in
 `converters.moinwiki_in`. It then feeds the data of this item into this
-converter. The converter parses this input and creates an in-memory `dom tree`
-representation from it.
+converter. The converter parses this input and creates an in-memory
+`DOM tree` representation from it (see :ref:`moinpage-dom`).
 
 This dom tree is then transformed through multiple dom-to-dom converters for example:
 
