@@ -90,11 +90,12 @@ In the example above, only class="comment" will be applied to detail.csv.
 
 from __future__ import annotations
 
-from typing import Any, Final, TYPE_CHECKING
+from typing import Any, Final, NamedTuple, TYPE_CHECKING
 
-from emeraldtree import ElementTree as ET
 import re
 import copy
+
+from emeraldtree import ElementTree as ET
 
 from whoosh.query import Regex
 
@@ -106,8 +107,8 @@ from moin.items import Item
 from moin.log import getLogger
 from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
-from moin.utils.tree import html, moin_page, xinclude, xlink
 from moin.utils.mime import type_moin_document
+from moin.utils.tree import html, moin_page, xinclude, xlink
 
 from . import default_registry
 from ._args import Arguments
@@ -156,20 +157,18 @@ class XPointer(list):
     """
     tokenizer_re: Final = re.compile(tokenizer_rules, re.X)
 
-    class Entry:
-        __slots__ = "name", "data"
-
-        def __init__(self, name, data):
-            self.name, self.data = name, data
+    class Entry(NamedTuple):
+        name: str
+        data: str | None
 
         @property
         def data_unescape(self):
             data = self.data.replace("^(", "(").replace("^)", ")")
             return data.replace("^^", "^")
 
-    def __init__(self, input) -> None:
-        name = []
-        stack = []
+    def __init__(self, input: str) -> None:
+        name: list[str] = []
+        stack: list[list[str]] = []
 
         for match in self.tokenizer_re.finditer(input):
             if match.group("bracket_open"):
@@ -203,7 +202,16 @@ class Converter(ConverterBase):
     def _factory(cls, input: Type, output: Type, includes: str | None = None, **kwargs: Any) -> Self | None:
         return cls(**kwargs) if includes == "expandall" else None
 
-    def recurse(self, elem, page_href):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.stack: list[Iri | None] = []
+
+    def __call__(self, tree: Any) -> Any:
+        self.stack.clear()
+        self.recurse(tree, None)
+        return tree
+
+    def recurse(self, elem: ET.Element, page_href: Iri | None):
         # on first call, elem.tag.name=='page'.
         # Descendants (body, div, p, include, page, etc.) are processed by recursing through DOM
 
@@ -238,7 +246,7 @@ class Converter(ConverterBase):
                     # we are working on an <<Include(abc)>> macro, not a {{transclusion}}
                     xp = XPointer(xpointer)
                     xp_include = None
-                    xp_namespaces = {}
+                    xp_namespaces: dict[str, str] = {}
                     for entry in xp:
                         uri = None
                         name = entry.name.split(":", 1)
@@ -274,7 +282,7 @@ class Converter(ConverterBase):
                             elif name == "level":
                                 xp_include_level = data
 
-                included_elements = []
+                included_elements: list[ET.Element] = []
                 if href:
                     # We have a single page to transclude or include
                     href = Iri(href)
@@ -308,8 +316,8 @@ class Converter(ConverterBase):
                         message = moin_page.p(children=(_("Access Denied, transcluded content suppressed.")))
                         attrib = {html.class_: "warning moin-read-denied"}
                         div = ET.Element(moin_page.div, attrib, children=(message,))
-                        container = ET.Element(moin_page.body, children=(div,))
-                        return [container, 0]  # replace transclusion with container's child
+                        body = ET.Element(moin_page.body, children=(div,))
+                        return [body, 0]  # replace transclusion with container's child
 
                 elif xp_include_pages:
                     # we have regex of pages to include:  <<Include(^qqq)>>
@@ -370,7 +378,7 @@ class Converter(ConverterBase):
 
             # Traverse the DOM by calling self.recurse with each child of the current elem.
             # Starting elem.tag.name=='page'.
-            container = []
+            container: list[ET.Element] = []
             i = 0
             while i < len(elem):
                 child = elem[i]
@@ -475,11 +483,6 @@ class Converter(ConverterBase):
 
         finally:
             self.stack.pop()
-
-    def __call__(self, tree: Any) -> Any:
-        self.stack = []
-        self.recurse(tree, None)
-        return tree
 
 
 default_registry.register(Converter._factory, type_moin_document, type_moin_document)
