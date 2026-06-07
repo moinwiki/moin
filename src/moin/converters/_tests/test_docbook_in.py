@@ -83,11 +83,6 @@ class TestConverter(Base):
             '/page/body/div[p="Test"]',
         ),
         (
-            "<article><formalpara><title>Title</title><para>Test</para></formalpara></article>",
-            # <page><body><div html:class="article"><p html:title="Title">Test</p></div></body></page>
-            '/page/body/div/p[text()="Test"][@html:title="Title"]',
-        ),
-        (
             "<article><sect1><title>Heading 1</title> <para>First Paragraph</para></sect1></article>",
             # <page><body><div html:class="article"><h outline-level="1">Heading 1</h><p>First Paragraph</p></div></body></page>
             '/page/body/div[./h[@outline-level="1"][text()="Heading 1"]][./p[text()="First Paragraph"]]',
@@ -484,8 +479,8 @@ class TestConverter(Base):
         # Test for video object
         (
             '<article><para><mediaobject><videoobject><videodata fileref="test.avi"/></videoobject></mediaobject></para></article>',
-            # <page><body><div html:class="db-article"><p><div html:class="db-mediaobject"><xinclude:include type="video/" html:alt="test.avi" xinclude:href="wiki.local:test.avi" /></div></p></div></body></page>
-            '/page/body/div/p/div[@html:class="db-mediaobject"]/xinclude:include[@xinclude:href="wiki.local:test.avi"][@type="video/"]',
+            # <page><body><div html:class="db-article"><div html:class="db-para"><div html:class="db-mediaobject"><xinclude:include type="video/" html:alt="test.avi" xinclude:href="wiki.local:test.avi" /></div></div></div></body></page>
+            '/page/body/div/div[@html:class="db-para"]/div[@html:class="db-mediaobject"]/xinclude:include[@xinclude:href="wiki.local:test.avi"][@type="video/"]',
         ),
         # Test for image object with different imagedata
         (
@@ -575,6 +570,18 @@ class TestConverter(Base):
 
     data = [
         # Test misc block-level elements
+        # DocBook <para> may contain block elements
+        (
+            "<article><para>pre text <informalexample><para>ex ample</para></informalexample> post text</para></article>",
+            # <page><body><div html:class="db-article"><div html:class="db-para">pre text <div html:class="db-example"><p>ex ample</p></div> post text</div></div></body></page>
+            '/page/body/div/div[@html:class="db-para"]/div[@html:class="db-example"]/p[text()="ex ample"]',
+        ),
+        # "Formal paragraph" with title (typically set as run-in heading)
+        (
+            "<article><formalpara><title>Heading</title><para>Test</para></formalpara></article>",
+            # <page><body><div html:class="db-article"><div html:class="db-formalpara"><div html:class="db-title">Heading</div><p>Test</p></div></div></body></page>
+            '/page/body/div/div[@html:class="db-formalpara"][./div[@html:class="db-title"][text()="Heading"]]/p[text()="Test"]',
+        ),
         (  # TODO: test also for title and content
             "<article><sidebar><title>Title</title><para>content</para></sidebar></article>",
             # '/page/body/div/div[@html-tag="aside"][@html:class="sidebar"][@html:title="Title"]',

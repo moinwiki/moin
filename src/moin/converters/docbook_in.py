@@ -82,7 +82,7 @@ class Converter:
     # Namespace of our input data
     docbook_namespace: Final = {docbook.namespace: "docbook"}
 
-    # DocBook elements that are completely ignored by our converter
+    # DocBook elements that are completely and silently ignored by our converter
     # We do not even process children of these elements
     ignored_tags: Final = {
         # Info elements
@@ -329,6 +329,7 @@ class Converter:
         "epigraph",
         "example",
         "equation",
+        "formalpara",
         "part",
         "partintro",
         "screenshoot",
@@ -373,35 +374,38 @@ class Converter:
     }
 
     # DocBook tags which can be convert directly to a DOM Tree element
-    simple_tags: Final = {
+    simple_inline_tags: Final = {
         "code": moin_page.code,
         "computeroutput": moin_page.samp,
+        "glossterm": moin_page("list-item-label"),
+        "literal": moin_page.literal,
+        "markup": moin_page.code,
+        "phrase": moin_page.span,
+        "quote": moin_page.quote,
+        "subscript": moin_page.sub,
+        "superscript": moin_page.sup,
+        "userinput": moin_page.kbd,
+    }
+
+    simple_tags: Final = {
         "figure": moin_page.figure,
         "glossdef": moin_page("list-item-body"),
         "glossentry": moin_page("list-item"),
         "glosslist": moin_page("list"),
-        "glossterm": moin_page("list-item-label"),
         "informalfigure": moin_page.figure,
         "listitem": moin_page("list-item-body"),
-        "literal": moin_page.literal,
-        "markup": moin_page.code,
-        "para": moin_page.p,  # TODO: <db:para> can contain block elements: convert to <div>
-        "phrase": moin_page.span,
         "programlisting": moin_page.blockcode,
-        "quote": moin_page.quote,
         "row": moin_page("table-row"),
         "screen": moin_page.blockcode,
         "simpara": moin_page.p,
-        "subscript": moin_page.sub,
-        "superscript": moin_page.sup,
         "term": moin_page("list-item-label"),
         "thead": moin_page("table-header"),
         "tfoot": moin_page("table-footer"),
         "tbody": moin_page("table-body"),
         "tr": moin_page("table-row"),
-        "userinput": moin_page.kbd,
         "variablelist": moin_page("list"),
         "varlistentry": moin_page("list-item"),
+        **simple_inline_tags,
     }
 
     # Other block elements which can be root element.
@@ -775,35 +779,6 @@ class Converter:
         attrib[xlink.href] = "#" + element.get("linkend")
         return self.new(moin_page.noteref, attrib, children=[])
 
-    def visit_docbook_formalpara(self, element, depth):
-        """
-        <formalpara>
-          <title>Heading</title>
-          <para>Text</para>
-        </formalpara>
-          --> <p html:title="Heading">Text</p>
-        """
-        # TODO: despite its name, the "html:title" attribute is not a heading
-        # but a "tooltip". (rST uses ``moin_page.p(attrib={html.class_: "moin-title"})``)
-        for child in element:
-            if isinstance(child, ET.Element):
-                if child.tag.name == "title":
-                    title_element = child
-                if child.tag.name == "para":
-                    para_element = child
-
-        if not title_element:
-            # XXX: Improve error
-            raise SyntaxError("title child missing for formalpara element")
-        if not para_element:
-            # XXX: Improve error
-            raise SyntaxError("para child missing for formalpara element")
-
-        attrib = self.get_standard_attributes(element)
-        children = self.do_children(para_element, depth + 1)[0]
-        attrib[html("title")] = title_element[0]
-        return self.new(moin_page.p, attrib=attrib, children=children)
-
     def visit_docbook_informalequation(self, element, depth):
         """
         <informalequation> --> <div html:class="equation">
@@ -923,6 +898,40 @@ class Converter:
             key = moin_page("list-style-type")
             attrib[key] = attribute_conversion[numeration]
         return self.visit_simple_list(moin_page.list, attrib, element, depth)
+
+    def visit_docbook_para(self, element, depth):
+        """
+        Convert DocBook paragraph.
+
+        The <para> element may contain block elements, so we need a <div>.
+        However, <para> is often used instead of <simplepara>,
+        so we check the content and convert to <p> if possible.
+        """
+        harmless_tags = (
+            self.ignored_tags  # ignored inclusive potential children
+            | self.inline_tags  # inline tags without matching moinpage element
+            | self.simple_inline_tags.keys()  # inline tags with homonymous moinpage element
+            | {  # inline tags with specific `visit_docbook_*()` method
+                "citetitle",
+                "emphasis",
+                "footnote",
+                "footnoteref",
+                "inlinequation",
+                "inlinemediaobject",
+                "link",
+                "olink",
+                "sbr",
+                "tag",
+                "trademark",
+                "ulink",
+            }
+        )
+        for child in element:
+            if isinstance(child, ET.Element):
+                if child.tag.name not in harmless_tags:
+                    # may be a block element -> return a <div>
+                    return self.visit_docbook_block(element, depth)
+        return self.new_copy(moin_page.p, element, depth, attrib={})
 
     def visit_docbook_sbr(self, element, depth):
         """
