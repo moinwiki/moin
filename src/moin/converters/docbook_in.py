@@ -433,8 +433,8 @@ class Converter:
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Element:
         text = decode_data(data, contenttype)
-        content = normalize_split_text(text)
-        docbook_str = "\n".join(content)
+        lines = normalize_split_text(text)
+        content = "\n".join(lines)
 
         # Initalize our attributes
         self.section_depth = 0
@@ -443,8 +443,8 @@ class Converter:
 
         # We will create an element tree from the DocBook content
         try:
-            # XXX: The XML parser need bytestring.
-            tree = XML(docbook_str.encode("utf-8"))  # using local XML override, not ET.XML
+            # using local XML override, not ET.XML
+            tree = XML(content)
         except ET.ParseError as detail:
             return self.error(str(detail))
 
