@@ -231,12 +231,23 @@ class Converter:
         # html attributes are copied by default (html.target, html.class, html.download...
         return self.new_copy(html.a, elem, attrib)
 
+    valid_admonition_classes: Final = {
+        "attention",
+        "caution",
+        "danger",
+        "error",
+        "hint",
+        "important",
+        "note",
+        "tip",
+        "warning",
+    }
+
     def visit_moinpage_admonition(self, elem):
         """Used by reST and docbook."""
         attrib = {}
-        valid_classes = {"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning"}
         cls = elem.attrib.pop(moin_page.type, None)
-        if cls in valid_classes:
+        if cls in self.valid_admonition_classes:
             attrib[html.class_] = cls
         return self.new_copy(html.div, elem, attrib)
 
@@ -458,6 +469,8 @@ class Converter:
             # Nothing else worked...try using <object>
             return "object"
 
+    object_attr_whitelist: Final = ["width", "height", "alt", "class", "data-href", "style", "title"]
+
     def visit_moinpage_object(self, elem):
         """
         elem of type img are converted to img tags here, others are left as object tags.
@@ -468,9 +481,8 @@ class Converter:
         href = elem.get(xlink.href, None)
         attrib = {}
 
-        whitelist = ["width", "height", "alt", "class", "data-href", "style", "title"]
         for key in elem.attrib:
-            if key.name in whitelist:
+            if key.name in self.object_attr_whitelist:
                 if key.name == "style":
                     attrib[key] = style_attr_filter(elem.attrib[key])
                 else:
