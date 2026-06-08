@@ -64,6 +64,7 @@ Developing MoinMoin
    :maxdepth: 2
 
    devel/development
+   devel/moinpage
 
 Auto-generated API Docs
 =========================
