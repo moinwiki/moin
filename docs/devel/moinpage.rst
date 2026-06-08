@@ -62,8 +62,6 @@ namespace.
 However, elements and attributes may use "foreign" namespaces to
 "inherit" definitions from external specifications or to prevent naming
 collisions.
-Converters may use "foreign" namespaces on moin DOM elements to attach
-additional information for round-trips or for the HTML rendering.
 
 * `xinclude` is used for transclusions (<include> element and some
   of its attributes).
@@ -77,8 +75,21 @@ additional information for round-trips or for the HTML rendering.
 
   TODO: consistently use "xml:id"?
 
-* `html` is used for the "data-lines" attribute added by Moin
-  to moin DOM elements.
+  It may be related to the question `xml:lang` vs. `moinpage:lang`.
+  According to
+  https://www.w3.org/International/questions/qa-when-xmllang.en.html#answer,
+  one should use `xml:lang` to describe the (natural) language of the
+  document or a part of it and an own element or attribute (like
+  `moinpage:lang`) for a value describing an external source (like
+  languages supported by a program). Therefore, DocBook deprecated the
+  "language" attribute in favour of "xml:lang".
+
+
+Converters may use "foreign" namespaces on moin DOM elements to attach
+additional information for round-trips or for the HTML rendering.
+
+
+* `html` is used for the "data-lines" attribute added by Moin.
   `html` is also used by various ``…-in`` converters for attributes defined
   in the HTML standard ("alt", "class", "style", "href", ...).
 
@@ -90,7 +101,7 @@ In addition to a generic "literal text" markup, MoinPage supports three,
 more specific "monospace-styled" elements:
 
 =========  ===========  ============  ===========  ================
-           generic      source code   user input   computer output
+..         generic      source code   user input   computer output
 =========  ===========  ============  ===========  ================
 MoinPage   <literal>    <code>        <kbd>        <samp>
 
