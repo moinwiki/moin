@@ -73,13 +73,13 @@ class TestConverter(Base):
 
     data = [
         (
-            "<article><para>Test</para></article>",
-            # <page><body><div html:class="db-article"><p>Test</p></div></body></page>
-            '/page/body/div[@html:class="db-article"][p="Test"]',
-        ),
-        (
             "<article><simpara>Test</simpara></article>",
             # <page><body><div html:class="article"><p>Test</p></div></body></page>
+            '/page/body/div[@html:class="db-article"][p="Test"]',
+        ),
+        (  # see also test of <para> with block children below
+            "<article><para>Test</para></article>",
+            # <page><body><div html:class="db-article"><p>Test</p></div></body></page>
             '/page/body/div[p="Test"]',
         ),
         (
