@@ -11,7 +11,7 @@ https://daringfireball.net/projects/markdown/
 
 from __future__ import annotations
 
-from typing import Final, TYPE_CHECKING
+from typing import Deque, Final, TYPE_CHECKING
 
 import re
 
@@ -70,7 +70,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         self.markdown = self.create_markdown()
 
-    def create_markdown(self):
+    def create_markdown(self) -> Markdown:
 
         extensions = [ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]
         extensions += current_app.cfg.markdown_extensions
@@ -345,11 +345,10 @@ class Converter(ConverterBase, html_in.HtmlTags):
             return
 
         logger.info(f"INFO : Unhandled tag : {element.tag}")
-        return
 
     # }}} end of Markdown parser output element conversion methods
 
-    def postproc_text(self, text: str, tag: str) -> str:
+    def postproc_text(self, text: str, tag: str) -> ET.Element | str:
         """
         Run `markdown` post-processors.
 
@@ -379,7 +378,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
         Add data-lineno attributes to children if requested.
         """
 
-        new = []
+        new: list[ET.Element | str] = []
 
         # post-process leading text
         if (text := getattr(element, "text")) and text != "\n":
@@ -402,7 +401,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
 
         return new
 
-    def count_lines(self, text):
+    def count_lines(self, text: str) -> None:
         """
         Create a list of line numbers corresponding to the first line of each markdown block.
 
@@ -421,7 +420,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
         The net result is we either have too few or too many line numbers in the generated list which
         will cause the double-click-to-edit autoscroll textarea to sometimes be off by several lines.
         """
-        line_numbers = deque()
+        line_numbers: Deque[int] = deque()
         lineno = 1
         in_blockquote = False
         blocks = text.split("\n\n")
@@ -490,7 +489,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
         """
 
         nodes = self.separate_html_tags(node_or_children)
-        result = []
+        result: list[ET.Element | str] = []
 
         for node in nodes:
             if isinstance(node, ET.Element):
@@ -508,9 +507,10 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 # Convert character references to corresponding Unicode characters:
                 result.append(html_unescape(node))
                 continue
+
             # we have a HTML start-tag
             # Collect children:
-            children = []
+            children: list[ET.Element | str] = []
             tag_name, self_closing = match.group(1, 2)
             if tag_name in self.void_tags or self_closing:
                 end_tag = ""
@@ -540,6 +540,7 @@ class Converter(ConverterBase, html_in.HtmlTags):
                 continue
             else:  # unknown tag, keep children.
                 result.extend(children)
+
         # update in-place
         node_or_children[:] = result
 
