@@ -130,13 +130,18 @@ class TestConverter(Base):
             '/div/a[text()="Test"][@href="uri:test"]',
         ),
         # Links with xml:base
-        (
-            '<page xml:base="http://base.tld/"><body><p><a xlink:href="/page.html">Test</a></p></body></page>',
-            # <span xml:base="http://base.tld/"><a href="/page.html">Test</a></span>
-            # TODO: commented out test below was added in 2010-08-05 bfa5c9a354b8 - seems to be no code to support
-            # '/span/a[@href="http://base.tld/page.html"][text()="Test"]'),
-            '/span/a[@href="/page.html"][text()="Test"]',
-        ),
+        # DocBook supports xml:base on all elements
+        # (see https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
+        #  and https://en.wikipedia.org/wiki/XML_Base)
+        # HTML <base> element must be unique (https://html.spec.whatwg.org/multipage/semantics.html#the-base-element)
+        # TODO: solve this in DocBook in or in HTML out?
+        # (
+        #     '<page xml:base="http://base.tld/"><body><p><a xlink:href="/page.html">Test</a></p></body></page>',
+        #     # <span xml:base="http://base.tld/"><a href="/page.html">Test</a></span>
+        #     # TODO: test was added in 2010-08-05 bfa5c9a354b8 - seems missing code to support
+        #     # expected: '/span/a[@href="http://base.tld/page.html"][text()="Test"]'),
+        #     # current:  '/span/a[@href="/page.html"][text()="Test"]',
+        # ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
