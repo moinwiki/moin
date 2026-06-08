@@ -55,6 +55,19 @@ class Converter(ConverterBase):
         "sup": docbook.superscript,
     }
 
+    # HTML tags that do not have equivalents in the Moinpage DOM tree are
+    # stored in the html-tag attribute, e.g. <emphasis html-tag="cite">
+    html_tags = {
+        "abbr": docbook.abbrev,
+        # "address": ??? # contact info != docbook.address == postal address
+        "cite": docbook.citetitle,
+        "dfn": docbook.firstterm,
+        "i": docbook.foreignphrase,
+        # "mark": ???  # marked or highlighted for reference purposes
+        # "small": ???  # side comment (small print)
+        "var": docbook.varname,
+    }
+
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
         return cls(**kwargs)
@@ -277,9 +290,9 @@ class Converter(ConverterBase):
         return self.do_children(element)
 
     def visit_moinpage_emphasis(self, element):
-        # emphasized text
-        if element.attrib.get(moin_page("html-tag")) == "cite":
-            return self.new_copy(docbook.citetitle, element, attrib={})
+        # emphasized text, typically styled italic
+        if element.get(moin_page.html_tag) in self.html_tags:
+            return self.new_copy(self.html_tags[element.get(moin_page.html_tag)], element, attrib={})
         return self.new_copy(docbook.emphasis, element, attrib={})
 
     def visit_moinpage_h(self, element):
@@ -516,7 +529,8 @@ class Converter(ConverterBase):
         "Moinpage" tree to define specific element (sub)types or formatting.
         So it may stand for different inline elements (cf. html_in/html_out).
         """
-        # TODO: Add support for special "html:class" attribute values.
+        if element.get(moin_page.html_tag) in self.html_tags:
+            return self.new_copy(self.html_tags[element.get(moin_page.html_tag)], element, attrib={})
         if cls := element.get(html.class_):
             if cls.startswith("db-"):
                 tagname = cls.removeprefix("db-")
