@@ -610,7 +610,17 @@ class TestConverter(Base):
             "<article><para>a <citetitle>Title of Cited Work</citetitle></para></article>",
             # <page><body><div html:class="db-article"><p>a <emphasis html-tag="cite">Title of Cited Work</emphasis></p></div></body></page>
             '/page/body/div/p/emphasis[@html-tag="cite"][text()="Title of Cited Work"]',
-        )
+        ),
+        (
+            "<article><para>Adapt <envar>PATH</envar>.</para></article>",
+            # <page><body><div html:class="db-article"><p>Adapt <span html:class="db-envar">PATH</span>.</p></div></body></page>
+            '/page/body/div/p/span[@html:class="db-envar"][text()="PATH"]',
+        ),
+        (
+            "<article><simpara><inlineequation><mathphrase>𝐸 = 𝑚𝑐²</mathphrase></inlineequation></simpara></article>",
+            # <page><body><div html:class="db-article"><p><span html:class="db-inlineequation"><span html:class="db-mathphrase">𝐸 = 𝑚𝑐²</span></span></p></div></body></page>
+            '/page/body/div/p/span[@html:class="db-inlineequation"]/span[@html:class="db-mathphrase"][text()="𝐸 = 𝑚𝑐²"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
