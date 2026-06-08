@@ -56,6 +56,99 @@ class Converter(ConverterBase, html_in.HtmlTags):
     Also handle HTML tags that are supported by Moin.
     """
 
+    @classmethod
+    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
+        return cls(**kwargs)
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
+        self.html_in_converter = html_in.Converter(**kwargs)
+
+        # share messages with the HTML-In converter
+        self.html_in_converter.messages = self.messages
+
+        # The Moin configuration
+        self.app_configuration = current_app.cfg
+
+        self.markdown = Markdown(
+            extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]
+            + self.app_configuration.markdown_extensions,
+            extension_configs={
+                "mdx_wikilink_plus": {
+                    "html_class": None,
+                    "image_class": None,
+                    "label_case": "none",  # do not automatically CamelCase the label, keep it untouched
+                }
+            },
+        )
+
+    newlines_re = re.compile(r"(?<=\n) +\n")
+
+    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
+        """
+        Convert markdown to moin DOM.
+
+        data is a pointer to an open file (ProtectedRevision object)
+        contenttype is likely == 'text/x-markdown;charset=utf-8'
+        arguments is not used
+
+        Markdown processing takes place in five steps:
+
+        1. A bunch of "preprocessors" munge the input text.
+        2. BlockParser() parses the high-level structural elements of the
+           pre-processed text into an ElementTree.
+        3. A bunch of "treeprocessors" are run against the ElementTree. One
+           such treeprocessor runs InlinePatterns against the ElementTree,
+           detecting inline markup.
+        4. Some post-processors are run against the ElementTree nodes containing text
+           and the ElementTree is converted to an EmeraldTree.
+        5. The root of the EmeraldTree is returned.
+
+        """
+        # read the data from wiki storage and convert to unicode
+        text = decode_data(data, contenttype)
+
+        # Normalize whitespace for consistent parsing. - copied from NormalizeWhitespace in markdown/preprocessors.py
+        text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
+        text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
+        text = text.expandtabs(self.markdown.tab_length)
+        text = self.newlines_re.sub("\n", text)
+
+        # save line counts for start of each block, used later for edit autoscroll
+        self.count_lines(text)
+
+        # {{{ similar to parts of Markdown 3.0.0 core.py convert method
+
+        # Split into lines and run the line preprocessors.
+        lines = text.split("\n")
+        for prep in self.markdown.preprocessors:
+            lines = prep.run(lines)
+
+        # Parse the high-level elements.
+        root = self.markdown.parser.parseDocument(lines).getroot()
+
+        # Run the tree-processors
+        for treeprocessor in self.markdown.treeprocessors:
+            newRoot = treeprocessor.run(root)
+            if newRoot is not None:
+                root = newRoot
+
+        # }}} end Markdown 3.0.0 core.py convert method
+
+        # run markdown post processors and convert from ElementTree to a list of EmeraldTree nodes
+        page_children = self.do_children(root)
+
+        # convert HTML markup in text strings to EmeraldTree elements
+        self.convert_html_markup(page_children)
+        # convert <paragraph> elements containing block elements to <div>
+        self.convert_invalid_p_nodes(page_children)
+
+        body = moin_page.body(children=page_children)
+        root = moin_page.page(children=[body])
+
+        return root
+
     # {{{ Markdown parser output element to moin_page EmeraldTree element conversion methods
 
     # HTML tags that can be converted into a DOM tag without additional attributes
@@ -448,99 +541,6 @@ class Converter(ConverterBase, html_in.HtmlTags):
                         if not isinstance(grandchild, str) and grandchild.tag in BLOCK_ELEMENTS:
                             child.tag = moin_page.div
                 self.convert_invalid_p_nodes(child)
-
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-
-        self.html_in_converter = html_in.Converter(**kwargs)
-
-        # share messages with the HTML-In converter
-        self.html_in_converter.messages = self.messages
-
-        # The Moin configuration
-        self.app_configuration = current_app.cfg
-
-        self.markdown = Markdown(
-            extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]
-            + self.app_configuration.markdown_extensions,
-            extension_configs={
-                "mdx_wikilink_plus": {
-                    "html_class": None,
-                    "image_class": None,
-                    "label_case": "none",  # do not automatically CamelCase the label, keep it untouched
-                }
-            },
-        )
-
-    @classmethod
-    def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls(**kwargs)
-
-    newlines_re = re.compile(r"(?<=\n) +\n")
-
-    def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
-        """
-        Convert markdown to moin DOM.
-
-        data is a pointer to an open file (ProtectedRevision object)
-        contenttype is likely == 'text/x-markdown;charset=utf-8'
-        arguments is not used
-
-        Markdown processing takes place in five steps:
-
-        1. A bunch of "preprocessors" munge the input text.
-        2. BlockParser() parses the high-level structural elements of the
-           pre-processed text into an ElementTree.
-        3. A bunch of "treeprocessors" are run against the ElementTree. One
-           such treeprocessor runs InlinePatterns against the ElementTree,
-           detecting inline markup.
-        4. Some post-processors are run against the ElementTree nodes containing text
-           and the ElementTree is converted to an EmeraldTree.
-        5. The root of the EmeraldTree is returned.
-
-        """
-        # read the data from wiki storage and convert to unicode
-        text = decode_data(data, contenttype)
-
-        # Normalize whitespace for consistent parsing. - copied from NormalizeWhitespace in markdown/preprocessors.py
-        text = text.replace(md_util.STX, "").replace(md_util.ETX, "")
-        text = text.replace("\r\n", "\n").replace("\r", "\n") + "\n\n"
-        text = text.expandtabs(self.markdown.tab_length)
-        text = self.newlines_re.sub("\n", text)
-
-        # save line counts for start of each block, used later for edit autoscroll
-        self.count_lines(text)
-
-        # {{{ similar to parts of Markdown 3.0.0 core.py convert method
-
-        # Split into lines and run the line preprocessors.
-        lines = text.split("\n")
-        for prep in self.markdown.preprocessors:
-            lines = prep.run(lines)
-
-        # Parse the high-level elements.
-        root = self.markdown.parser.parseDocument(lines).getroot()
-
-        # Run the tree-processors
-        for treeprocessor in self.markdown.treeprocessors:
-            newRoot = treeprocessor.run(root)
-            if newRoot is not None:
-                root = newRoot
-
-        # }}} end Markdown 3.0.0 core.py convert method
-
-        # run markdown post processors and convert from ElementTree to a list of EmeraldTree nodes
-        page_children = self.do_children(root)
-
-        # convert HTML markup in text strings to EmeraldTree elements
-        self.convert_html_markup(page_children)
-        # convert <paragraph> elements containing block elements to <div>
-        self.convert_invalid_p_nodes(page_children)
-
-        body = moin_page.body(children=page_children)
-        root = moin_page.page(children=[body])
-
-        return root
 
 
 default_registry.register(Converter._factory, Type("text/x-markdown"), type_moin_document)
