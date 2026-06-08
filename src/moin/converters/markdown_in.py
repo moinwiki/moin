@@ -11,7 +11,7 @@ https://daringfireball.net/projects/markdown/
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Final, TYPE_CHECKING
 
 import re
 
@@ -68,20 +68,22 @@ class Converter(ConverterBase, html_in.HtmlTags):
         # share messages with the HTML-In converter
         self.html_in_converter.messages = self.messages
 
-        # The Moin configuration
-        self.app_configuration = current_app.cfg
+        self.markdown = self.create_markdown()
 
-        self.markdown = Markdown(
-            extensions=[ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]
-            + self.app_configuration.markdown_extensions,
-            extension_configs={
-                "mdx_wikilink_plus": {
-                    "html_class": None,
-                    "image_class": None,
-                    "label_case": "none",  # do not automatically CamelCase the label, keep it untouched
-                }
-            },
-        )
+    def create_markdown(self):
+
+        extensions = [ExtraExtension(), CodeHiliteExtension(guess_lang=False), "mdx_wikilink_plus", "admonition"]
+        extensions += current_app.cfg.markdown_extensions
+
+        extension_configs = {
+            "mdx_wikilink_plus": {
+                "html_class": None,
+                "image_class": None,
+                "label_case": "none",  # do not automatically CamelCase the label, keep it untouched
+            }
+        }
+
+        return Markdown(extensions=extensions, extension_configs=extension_configs)
 
     newlines_re = re.compile(r"(?<=\n) +\n")
 
@@ -157,7 +159,21 @@ class Converter(ConverterBase, html_in.HtmlTags):
     simple_tags["dl"] = moin_page.list_item
     simple_tags["table"] = moin_page.table
 
-    void_tags = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+    void_tags: Final = {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "source",
+        "track",
+        "wbr",
+    }
 
     _open_tag_re = re.compile(r"^(.*?)(<(\w+)(?:\s[^>]*)?>)(.*)$", re.DOTALL)
 
