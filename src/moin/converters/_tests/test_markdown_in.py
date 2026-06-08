@@ -433,3 +433,16 @@ class TestConverter:
         Test HTML markup containing Markdown markup
         """
         self.do(input, output)
+
+    @pytest.mark.parametrize(
+        "input,output",
+        [
+            ("Text", '<p html:data-lineno="1">Text</p>'),
+            (
+                "* Item 1\n* Item 2",
+                '<list item-label-generate="unordered"><list-item html:data-lineno="1"><list-item-body>Item 1</list-item-body></list-item><list-item><list-item-body>Item 2</list-item-body></list-item></list>',
+            ),
+        ],
+    )
+    def test_add_lineno(self, input, output):
+        self.do(input, output, add_lineno=True)
