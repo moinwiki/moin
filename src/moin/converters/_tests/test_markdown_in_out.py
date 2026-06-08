@@ -7,6 +7,8 @@
 MoinMoin - Tests for Markdown->DOM->Markdown using markdown_in and markdown_out converters
 """
 
+from typing import Final
+
 import pytest
 
 from collections import namedtuple
@@ -21,7 +23,6 @@ from moin.converters.markdown_in import Converter as ConverterIn
 from moin.converters.markdown_out import Converter as ConverterOut
 
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions",))
-config = DefaultConfig(markdown_extensions=[])
 
 
 @pytest.fixture
@@ -31,7 +32,7 @@ def _app_context_with_markdown_extensions_config():
     settings required by the markdown_in_out converter.
     """
     app = Flask(__name__)
-    app.cfg = config
+    app.cfg = DefaultConfig(markdown_extensions=[])
     with app.app_context() as context:
         yield context
 
@@ -43,7 +44,7 @@ class TestConverter:
         moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace
     )
 
-    namespaces = {
+    namespaces: Final = {
         moin_page.namespace: "page",
         xlink.namespace: "xlink",
         xinclude.namespace: "xinclude",
@@ -53,6 +54,27 @@ class TestConverter:
 
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
+
+    def handle_input(self, input):
+        i = self.input_re.sub(r"\1 " + self.input_namespaces, input)
+        return ET.XML(i)
+
+    def handle_output(self, elem, **options):
+        return elem
+
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub("", result)
+
+    def do(self, input, output, args={}):
+        conv_in = ConverterIn()
+        out = conv_in(input, "text/x-markdown;charset=utf-8", **args)
+        conv_out = ConverterOut()
+        out = conv_out(self.handle_input(self.serialize_strip(out)), **args)
+        # assert self.handle_output(out) == output
+        assert (
+            self.handle_output(out).strip() == output.strip()
+        )  # TODO: revert to above when number of \n between blocks in moinwiki_out.py is stable
 
     # simple input: the round-trip results in the same output
     data = [
@@ -220,24 +242,3 @@ class TestConverter:
     @pytest.mark.parametrize("input,output", data)
     def test_images(self, input, output):
         self.do(input, output)
-
-    def handle_input(self, input):
-        i = self.input_re.sub(r"\1 " + self.input_namespaces, input)
-        return ET.XML(i)
-
-    def handle_output(self, elem, **options):
-        return elem
-
-    def serialize_strip(self, elem, **options):
-        result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub("", result)
-
-    def do(self, input, output, args={}):
-        conv_in = ConverterIn()
-        out = conv_in(input, "text/x-markdown;charset=utf-8", **args)
-        conv_out = ConverterOut()
-        out = conv_out(self.handle_input(self.serialize_strip(out)), **args)
-        # assert self.handle_output(out) == output
-        assert (
-            self.handle_output(out).strip() == output.strip()
-        )  # TODO: revert to above when number of \n between blocks in moinwiki_out.py is stable

@@ -6,6 +6,10 @@
 MoinMoin - moin.converters.markdown_in tests.
 """
 
+from __future__ import annotations
+
+from typing import Final, TYPE_CHECKING
+
 import pytest
 
 from collections import namedtuple
@@ -17,8 +21,10 @@ from moin.i18n import i18n_init
 
 from . import serialize, XMLNS_RE
 
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+
 DefaultConfig = namedtuple("DefaultConfig", ("markdown_extensions", "locale_default"))
-config = DefaultConfig(markdown_extensions=[], locale_default="en")
 
 
 @pytest.fixture
@@ -28,7 +34,7 @@ def _app_context_with_markdown_extensions_config():
     settings required by the markdown_in converter.
     """
     app = Flask(__name__)
-    app.cfg = config
+    app.cfg = DefaultConfig(markdown_extensions=[], locale_default="en")
     i18n_init(app)
     with app.app_context() as context:
         yield context
@@ -36,9 +42,26 @@ def _app_context_with_markdown_extensions_config():
 
 @pytest.mark.usefixtures("_app_context_with_markdown_extensions_config")
 class TestConverter:
-    namespaces = {moin_page: "", xlink: "xlink", xinclude: "xinclude", html: "html"}
+
+    namespaces: Final = {moin_page: "", xlink: "xlink", xinclude: "xinclude", html: "html"}
 
     output_re = XMLNS_RE
+
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        return self.output_re.sub("", result)
+
+    def do(self, input, output, arguments: Arguments | None = None, /, **kwargs) -> None:
+        conv = Converter(**kwargs)
+        out = conv(input, "text/x-markdown;charset=utf-8", arguments)
+        got_output = self.serialize_strip(out)
+        desired_output = "<page><body>%s</body></page>" % output
+        print("------------------------------------")
+        print("WANTED:")
+        print(desired_output)
+        print("GOT:")
+        print(got_output)
+        assert got_output == desired_output
 
     @pytest.mark.parametrize(
         "input,output",
@@ -406,21 +429,7 @@ class TestConverter:
         ],
     )
     def test_inline_html_with_embedded_markdown(self, input, output):
-        """Test HTML markup containing Markdown markup"""
+        """
+        Test HTML markup containing Markdown markup
+        """
         self.do(input, output)
-
-    def serialize_strip(self, elem, **options):
-        result = serialize(elem, namespaces=self.namespaces, **options)
-        return self.output_re.sub("", result)
-
-    def do(self, input, output, args={}):
-        conv = Converter()
-        out = conv(input, "text/x-markdown;charset=utf-8", **args)
-        got_output = self.serialize_strip(out)
-        desired_output = "<page><body>%s</body></page>" % output
-        print("------------------------------------")
-        print("WANTED:")
-        print(desired_output)
-        print("GOT:")
-        print(got_output)
-        assert got_output == desired_output
