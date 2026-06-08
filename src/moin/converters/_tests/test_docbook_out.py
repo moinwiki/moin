@@ -81,12 +81,17 @@ class TestConverter(Base):
             # <article><simpara xml:base="http://base.tld" xml:id="myid" xml:lang="en">emphasised  <emphasis>text</emphasis></simpara></article>
             '/article/simpara[@xml:base="http://base.tld"][@xml:id="myid"][@xml:lang="en"]/emphasis[text()="text"]',
         ),
-        # Para with title/tooltip
-        # TODO: fix handling (see `docbook_out.Converter.visit_moinpage_p()`)
+        # "Formal" paragraph with title
         (
-            '<page><body><p html:title="tooltip" xml:id="myid">Text</p></body></page>',
-            # <article><para><title>Title</title>Text</para></article>
-            '/article/para[@xml:id="myid"][text()="Text"][title="tooltip"]',
+            '<page><body><div html:class="db-formalpara" xml:id="myid"><div html:class="db-title">Heading</div><p>Text</p></div></body></page>',
+            # <article><formalpara xml:id="myid"><title>Heading</title><simpara>Text</simpara></formalpara></article>
+            '/article/formalpara[@xml:id="myid"][./title[text()="Heading"]]/simpara[text()="Text"]',
+        ),
+        # Paragraph with block-level child
+        (
+            '<page><body><div html:class="db-article"><div html:class="db-para">pre text <div html:class="db-example"><p>example</p></div> post text</div></div></body></page>',
+            # <article><para>pre text <informalexample><para>example</para></informalexample> post text</para></article>
+            "/article/para",
         ),
     ]
 
@@ -184,23 +189,22 @@ class TestConverter(Base):
         self.do(input, xpath)
 
     data = [
-        # Footnote conversion
-        (
+        # Inline elements:
+        (  # footnotes
             '<page><body><p>simple text<note page:note-class="footnote" xml:id="myid"><p>footnote content</p></note></p></body></page>',
             # <article><simpara>simple text<footnote xml:id="myid">footnote content</footnote></simpara></article>
             '/article/simpara[text()="simple text"]/footnote[@xml:id="myid"][simpara="footnote content"]',
+        ),
+        (  # additional reference to a footnote with ID
+            '<page><body><p>additonal footnote reference<noteref xlink:href="#fn42" /></p></body></page>',
+            # <article><simpara>additonal footnote reference<footnoteref linkend="fn42" /></simpara></article>
+            '/article/simpara[text()="additonal footnote reference"]/footnoteref[@linkend="fn42"]',
         ),
         # Link conversion
         (
             '<page><body><p><a xlink:href="uri:test" xlink:title="title">link</a></p></body></page>',
             # <article><simpara><link xlink:href="uri:test" xlink:title="title">link</link></simpara></article>
             '/article/simpara/link[@xlink:href="uri:test"][@xlink:title="title"][text()="link"]',
-        ),
-        # Blockcode conversion into <screen> with CDATA
-        (
-            "<page><body><blockcode>Text</blockcode></body></page>",
-            # <article><screen><![CDATA[Text]]></screen></article>
-            '/article[screen="<![CDATA[Text]]>"]',
         ),
         # CODE --> CODE
         (
@@ -268,19 +272,50 @@ class TestConverter(Base):
             # <article><simpara>Text<quote>quotation</quote></simpara></body></page>
             '/article/simpara[text()="Text"][quote="quotation"]',
         ),
-        # BLOCKQUOTE --> BLOCKQUOTE
-        (
-            '<page><body><blockquote page:source="Socrates" xml:id="myid">One thing only I know, and that is that I know nothing.</blockquote></body></page>',
-            # <article><blockquote xml:id="myid"><attribution>Socrates</attribution><simpara>One thing ... nothing</simpara></blockquote></article>
-            '/article/blockquote[@xml:id="myid"][attribution="Socrates"][simpara="One thing only I know, and that is that I know nothing."]',
+        # restore original DocBook tag from ``html:class`` attribute:
+        (  # <span html:class="db-shortcut"> --> <shortcut>
+            '<page><body><p>press<span html:class="db-shortcut">Alt-X</span></p></body></page>',
+            # <article><simpara>press<shortcut>Alt-X</shortcut></simpara></article>
+            '/article/simpara/shortcut[text()="Alt-X"]',
+        ),
+        # restore original DocBook tag from ``page:html-tag`` attribute:
+        (  # <emphasis page:html-tag="cite"> --> <citetitle>
+            '<page><body><p>a <emphasis page:html-tag="cite">Title of Cited Work</emphasis></p></body></page>',
+            # <article><simpara>a <citetitle>Title of Cited Work</citetitle></simpara></article>
+            '/article/simpara/citetitle[text()="Title of Cited Work"]',
         ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
-    def test_simparagraph_elements(self, input, xpath):
+    def test_inline_elements(self, input, xpath):
         self.do(input, xpath)
 
     data = [
+        # Block elements
+        (  # <blockcode> --> <screen> with CDATA
+            "<page><body><blockcode>Text</blockcode></body></page>",
+            # <article><screen><![CDATA[Text]]></screen></article>
+            '/article[screen="<![CDATA[Text]]>"]',
+        ),
+        (  # BLOCKQUOTE --> BLOCKQUOTE
+            '<page><body><blockquote page:source="Socrates" xml:id="myid">One thing only I know, and that is that I know nothing.</blockquote></body></page>',
+            # <article><blockquote xml:id="myid"><attribution>Socrates</attribution><simpara>One thing ... nothing</simpara></blockquote></article>
+            '/article/blockquote[@xml:id="myid"][attribution="Socrates"][simpara="One thing only I know, and that is that I know nothing."]',
+        ),
+        # restore original DocBook tag from ``html:class`` attribute:
+        (  # <div html:class="db-epigraph"> --> <epigraph>
+            '<page><body><div html:class="db-epigraph"><p>to my wife</p></div></body></page>',
+            # <article><epigraph><simpara>to my wife</simpara></epigraph></article>
+            '/article/epigraph/simpara[text()="to my wife"]',
+        ),
+    ]
+
+    @pytest.mark.parametrize("input,xpath", data)
+    def test_block_elements(self, input, xpath):
+        self.do(input, xpath)
+
+    data = [
+        # media objects
         (
             '<page><body><p><object xlink:href="pics.png" page:type="image/" /></p></body></page>',
             # <article><simpara><inlinemediaobject><imageobject><imagedata fileref="pics.png"></imageobject></inlinemediaobject></simpara></article>
@@ -300,16 +335,4 @@ class TestConverter(Base):
 
     @pytest.mark.parametrize("input,xpath", data)
     def test_object(self, input, xpath):
-        self.do(input, xpath)
-
-    data = [
-        (
-            '<page><body><div html:class="db-article"><p>a <emphasis page:html-tag="cite">Title of Cited Work</emphasis></p></div></body></page>',
-            # <article><simpara>a <citetitle>Title of Cited Work</citetitle></simpara></article>
-            '/article/simpara/citetitle[text()="Title of Cited Work"]',
-        )
-    ]
-
-    @pytest.mark.parametrize("input,xpath", data)
-    def test_inline_elements(self, input, xpath):
         self.do(input, xpath)

@@ -73,19 +73,14 @@ class TestConverter(Base):
 
     data = [
         (
-            "<article><para>Test</para></article>",
-            # <page><body><div html:class="db-article"><p>Test</p></div></body></page>
-            '/page/body/div[@html:class="db-article"][p="Test"]',
-        ),
-        (
             "<article><simpara>Test</simpara></article>",
             # <page><body><div html:class="article"><p>Test</p></div></body></page>
-            '/page/body/div[p="Test"]',
+            '/page/body/div[@html:class="db-article"][p="Test"]',
         ),
-        (
-            "<article><formalpara><title>Title</title><para>Test</para></formalpara></article>",
-            # <page><body><div html:class="article"><p html:title="Title">Test</p></div></body></page>
-            '/page/body/div/p[text()="Test"][@html:title="Title"]',
+        (  # see also test of <para> with block children below
+            "<article><para>Test</para></article>",
+            # <page><body><div html:class="db-article"><p>Test</p></div></body></page>
+            '/page/body/div[p="Test"]',
         ),
         (
             "<article><sect1><title>Heading 1</title> <para>First Paragraph</para></sect1></article>",
@@ -484,8 +479,8 @@ class TestConverter(Base):
         # Test for video object
         (
             '<article><para><mediaobject><videoobject><videodata fileref="test.avi"/></videoobject></mediaobject></para></article>',
-            # <page><body><div html:class="db-article"><p><div html:class="db-mediaobject"><xinclude:include type="video/" html:alt="test.avi" xinclude:href="wiki.local:test.avi" /></div></p></div></body></page>
-            '/page/body/div/p/div[@html:class="db-mediaobject"]/xinclude:include[@xinclude:href="wiki.local:test.avi"][@type="video/"]',
+            # <page><body><div html:class="db-article"><div html:class="db-para"><div html:class="db-mediaobject"><xinclude:include type="video/" html:alt="test.avi" xinclude:href="wiki.local:test.avi" /></div></div></div></body></page>
+            '/page/body/div/div[@html:class="db-para"]/div[@html:class="db-mediaobject"]/xinclude:include[@xinclude:href="wiki.local:test.avi"][@type="video/"]',
         ),
         # Test for image object with different imagedata
         (
@@ -575,6 +570,18 @@ class TestConverter(Base):
 
     data = [
         # Test misc block-level elements
+        # DocBook <para> may contain block elements
+        (
+            "<article><para>pre text <informalexample><para>ex ample</para></informalexample> post text</para></article>",
+            # <page><body><div html:class="db-article"><div html:class="db-para">pre text <div html:class="db-example"><p>ex ample</p></div> post text</div></div></body></page>
+            '/page/body/div/div[@html:class="db-para"]/div[@html:class="db-example"]/p[text()="ex ample"]',
+        ),
+        # "Formal paragraph" with title (typically set as run-in heading)
+        (
+            "<article><formalpara><title>Heading</title><para>Test</para></formalpara></article>",
+            # <page><body><div html:class="db-article"><div html:class="db-formalpara"><div html:class="db-title">Heading</div><p>Test</p></div></div></body></page>
+            '/page/body/div/div[@html:class="db-formalpara"][./div[@html:class="db-title"][text()="Heading"]]/p[text()="Test"]',
+        ),
         (  # TODO: test also for title and content
             "<article><sidebar><title>Title</title><para>content</para></sidebar></article>",
             # '/page/body/div/div[@html-tag="aside"][@html:class="sidebar"][@html:title="Title"]',
@@ -603,7 +610,17 @@ class TestConverter(Base):
             "<article><para>a <citetitle>Title of Cited Work</citetitle></para></article>",
             # <page><body><div html:class="db-article"><p>a <emphasis html-tag="cite">Title of Cited Work</emphasis></p></div></body></page>
             '/page/body/div/p/emphasis[@html-tag="cite"][text()="Title of Cited Work"]',
-        )
+        ),
+        (
+            "<article><para>Adapt <envar>PATH</envar>.</para></article>",
+            # <page><body><div html:class="db-article"><p>Adapt <span html:class="db-envar">PATH</span>.</p></div></body></page>
+            '/page/body/div/p/span[@html:class="db-envar"][text()="PATH"]',
+        ),
+        (
+            "<article><simpara><inlineequation><mathphrase>𝐸 = 𝑚𝑐²</mathphrase></inlineequation></simpara></article>",
+            # <page><body><div html:class="db-article"><p><span html:class="db-inlineequation"><span html:class="db-mathphrase">𝐸 = 𝑚𝑐²</span></span></p></div></body></page>
+            '/page/body/div/p/span[@html:class="db-inlineequation"]/span[@html:class="db-mathphrase"][text()="𝐸 = 𝑚𝑐²"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)

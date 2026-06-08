@@ -190,8 +190,10 @@ a.moin-nonexistent object {  background: var(--bg-disabled);  border: 3px dashed
 .moin-disabled { color: var(--disabled); }
 .moin-summary { margin-top: .5em; font-style: italic; }
 .moin-icon-macro { color: var(--error); }
-.moin-p { margin: 1em 0; }  /* when we need a div styled like a p */
 /* end misc highlighting */
+
+/* a <div> styled like a <p> */
+.moin-p, .db-formalpara, .db-para { margin: 1em 0; } /* DocBook paragraphs may contain block elements */
 
 /* create item view */
 #moin-create-table {width: 95%; margin-left: auto; margin-right: auto; border:none; }
@@ -453,7 +455,9 @@ h6 { border-bottom: 3px solid var(--border); }
 .moin-permalink:after { content: "\f0c1"; font-family: FontAwesome; }
 
 /* informal headings (rST rubric or title in admonition, sidebar, or topic) */
-p.moin-title { font-weight: bold; }
+.moin-title, .db-title { font-weight: bold; }
+/* run-in heading/title of a DocBook <formalpara> */
+.db-formalpara > .db-title { float: left; margin-right: 1ex; }
 /* subheadings */
 :has(+p.moin-subheading) { border-bottom: none; padding-bottom: 0; margin-bottom: .2em; }
 p.moin-subheading { font-weight: bold; font-size: .83em; margin-top: .2em; }
@@ -496,7 +500,7 @@ div.moin-table-of-contents li,
 div.toc li { margin: .12em 0 0; padding: 0; list-style: none; }
 div.moin-table-of-contents-heading { font-weight: bold; padding: 0; margin: 0 0 .5em 1em; letter-spacing: .075em; }
 
-/* docbook captions for video and audio */
+/* DocBook captions for video and audio */
 div.db-mediaobject > span,
 div.db-mediaobject > span > span.moin-item-wrapper,
 div.db-mediaobject > span > span.db.caption { display: block; text-align: center; }
