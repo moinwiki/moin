@@ -22,7 +22,7 @@ from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
-from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 from moin.utils.interwiki import is_known_wiki
 from moin.utils.mime import Type, type_moin_document, type_moin_wiki
 from moin.i18n import _
@@ -997,11 +997,11 @@ class Converter(ConverterMacro):
                     if no_errors:
                         add_attr_to_style(element.attrib, value)
                 elif key == "tableid":
-                    table.attrib[moin_page("id")] = value
+                    table.attrib[xml.id] = value
                 elif key == "rowid":
-                    row.attrib[moin_page("id")] = value
+                    row.attrib[xml.id] = value
                 elif key == "id":
-                    element.attrib[moin_page("id")] = value
+                    element.attrib[xml.id] = value
                 elif key == "number-columns-spanned":
                     element.attrib[moin_page(key)] = value
                 elif key == "number-rows-spanned":

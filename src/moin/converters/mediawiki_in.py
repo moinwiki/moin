@@ -29,7 +29,7 @@ from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
 from moin.utils.iri import Iri
-from moin.utils.tree import moin_page, xinclude, xlink
+from moin.utils.tree import moin_page, xinclude, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 
 from . import default_registry
@@ -510,7 +510,7 @@ class Converter(ConverterMacro):
             else:
                 attrib = {moin_page.note_class: "footnote"}
                 if "name" in arguments:
-                    attrib[moin_page.id] = arguments["name"]
+                    attrib[xml.id] = arguments["name"]
                 stack.push(moin_page.note(attrib=attrib))
                 stack.push(moin_page.p())
         elif footnote_end is not None:

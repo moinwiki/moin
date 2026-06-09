@@ -12,15 +12,15 @@ from emeraldtree import ElementTree as ET
 
 from . import XMLNS_RE, TAGSTART_RE
 
-from moin.utils.tree import html, moin_page, xlink
+from moin.utils.tree import html, moin_page, xlink, xml
 from moin.converters.moinwiki_out import Converter
 
 
 class Base:
-    input_namespaces = ns_all = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:html="{}"'.format(
-        moin_page.namespace, moin_page.namespace, xlink.namespace, html.namespace
+    input_namespaces = ns_all = (
+        f'xmlns="{moin_page}" xmlns:page="{moin_page}" xmlns:html="{html}" xmlns:xlink="{xlink}" xmlns:xml="{xml}"'
     )
-    output_namespaces = {moin_page.namespace: "page"}
+    output_namespaces = {moin_page: "page"}
 
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
@@ -174,6 +174,10 @@ class TestConverter(Base):
             '<page:table><page:table-body><page:table-row><page:table-cell page:number-rows-spanned="2">cell spanning 2 rows</page:table-cell><page:table-cell>cell in the 2nd column</page:table-cell></page:table-row><page:table-row><page:table-cell>cell in the 2nd column of the 2nd row</page:table-cell></page:table-row><page:table-row><page:table-cell page:number-columns-spanned="2">test</page:table-cell></page:table-row><page:table-row><page:table-cell page:number-columns-spanned="2">test</page:table-cell></page:table-row></page:table-body></page:table>',
             '||<rowspan="2">cell spanning 2 rows||cell in the 2nd column||\n||cell in the 2nd column of the 2nd row||\n||<colspan="2">test||\n||<colspan="2">test||\n',
         ),
+        # (  # TODO: support export of IDs
+        #     '<page><body><table class="moin-wiki-table"><table-body><table-row xml:id="my-id"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
+        #     '||<rowid="my-id">Cell||\n',
+        # ),
     ]
 
     @pytest.mark.parametrize("input,output", data)

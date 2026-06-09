@@ -11,11 +11,11 @@ from . import serialize, XMLNS_RE
 
 from moin.converters._args import Arguments
 from moin.converters.moinwiki_in import Converter
-from moin.utils.tree import moin_page, xlink, html, xinclude
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 
 
 class TestConverter:
-    namespaces = {moin_page: "", xlink: "xlink", html: "xhtml", xinclude: "xinclude"}
+    namespaces = {moin_page: "", html: "xhtml", xinclude: "xinclude", xlink: "xlink", xml: "xml"}
 
     output_re = XMLNS_RE
 
@@ -369,15 +369,15 @@ class TestConverter:
         ),
         (
             '||<tableid="my-id">Cell||\n',
-            '<page><body><table class="moin-wiki-table" id="my-id"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table" xml:id="my-id"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
         ),
         (
             '||<rowid="my-id">Cell||\n',
-            '<page><body><table class="moin-wiki-table"><table-body><table-row id="my-id"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row xml:id="my-id"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
         ),
         (
             '||<id="my-id">Cell||\n',
-            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell id="my-id">Cell</table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell xml:id="my-id">Cell</table-cell></table-row></table-body></table></body></page>',
         ),
         (
             '||<rowspan="2">Cell||\n',

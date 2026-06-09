@@ -10,12 +10,13 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 from moin.converters.rst_in import Converter
 
 
 class TestConverter:
-    namespaces = {moin_page.namespace: "", xlink.namespace: "xlink", html: "xhtml", xinclude: "xinclude"}
+
+    namespaces = {moin_page: "", html: "xhtml", xlink: "xlink", xml: "xml", xinclude: "xinclude"}
 
     output_re = XMLNS_RE
 
@@ -29,7 +30,7 @@ class TestConverter:
         ("**Text**", "<p><strong>Text</strong></p>"),
         ("*Text*", "<p><emphasis>Text</emphasis></p>"),
         ("``literal``", "<p><literal>literal</literal></p>"),
-        ("a _`Link`", '<p>a <span id="link">Link</span></p>'),
+        ("a _`Link`", '<p>a <span xml:id="link">Link</span></p>'),
         ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator xhtml:class="moin-hr2" /><p>break</p>'),
         (".. comment", '<div class="comment dashed">comment</div>'),
         ("..\n comment", '<div class="comment dashed">comment</div>'),
@@ -145,7 +146,7 @@ class TestConverter:
     :width: 200
     :scale: 50
     :alt: alternate text""",
-            '<span id="biohazard-logo" /><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" />',
+            '<span xml:id="biohazard-logo" /><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" />',
         ),
         (
             "abc |test| cba\n\n.. |test| image:: test.png",
@@ -240,20 +241,20 @@ class TestConverter:
     data = [
         (
             "Text [1]_\n\n.. [1] manually numbered *footnote*",
-            '<p>Text<note id="footnote-1" note-class="footnote"><p>manually numbered <emphasis>footnote</emphasis></p></note></p>',
+            '<p>Text<note note-class="footnote" xml:id="footnote-1"><p>manually numbered <emphasis>footnote</emphasis></p></note></p>',
         ),
         (
             "Text [#]_\n\n.. [#] auto-numbered *footnote*",
-            '<p>Text<note id="footnote-1" note-class="footnote"><p>auto-numbered <emphasis>footnote</emphasis></p></note></p>',
+            '<p>Text<note note-class="footnote" xml:id="footnote-1"><p>auto-numbered <emphasis>footnote</emphasis></p></note></p>',
         ),
         (
             "Two references [#fn42]_ to the same footnote [#fn42]_\n\n.. [#fn42] auto-label *footnote*",
-            '<p>Two references<note id="fn42" note-class="footnote"><p>auto-label <emphasis>footnote</emphasis></p></note>'
+            '<p>Two references<note note-class="footnote" xml:id="fn42"><p>auto-label <emphasis>footnote</emphasis></p></note>'
             ' to the same footnote<noteref xlink:href="#fn42" /></p>',
         ),
         (
             "Text [*]_\n\n.. [*] auto-symbol footnote\n\n   with second paragraph",
-            '<p>Text<note id="footnote-1" note-class="footnote"><p>auto-symbol footnote</p><p>with second paragraph</p></note></p>',
+            '<p>Text<note note-class="footnote" xml:id="footnote-1"><p>auto-symbol footnote</p><p>with second paragraph</p></note></p>',
         ),
     ]
 
@@ -331,7 +332,7 @@ class TestConverter:
         ("Abra test__ arba\n\n.. __: http://python.org", '<p>Abra <a xlink:href="http://python.org">test</a> arba</p>'),
         (
             "Abra\n\n.. _example:\n\nAbra example_ arba\n",
-            '<p>Abra</p><span id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
+            '<p>Abra</p><span xml:id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
         ),
         (
             """
@@ -341,7 +342,7 @@ Abra example_ arba
 .. _alias:
 
 text""",
-            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p>',
+            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span xml:id="alias" /><span xml:id="example" /><p>text</p>',
         ),
         (  # A reference_ with no matching target links to a local Wiki item.
             "wiki references: `item`_, `namespace/item`_, `ns/item/subitem`_, `../sibling`_, `/subitem`_",
@@ -499,7 +500,7 @@ text""",
         # admonitions (hint, info, warning, error, ...)
         (
             '.. note::\n   :name: note-id\n\n   An admonition of type "note"',
-            '<span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition>',
+            '<span xml:id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition>',
         ),
         # use an attention for a generic admonition
         (
@@ -511,10 +512,10 @@ text""",
         # Moin uses admonitions also for system messages
         (
             "Unbalanced *inline markup.",
-            '<p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
-            '<span id="system-message-1" /><admonition type="caution">'
+            '<p>Unbalanced <span xml:id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
+            '<span xml:id="system-message-1" /><admonition type="caution">'
             '<p xhtml:class="moin-title">System Message: WARNING/2 (rST input line 1) '
-            '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
+            '<span xml:id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition>",
         ),
