@@ -81,7 +81,7 @@ class Converter(ConverterBase):
     Convert application/x.moin.document to Markdown markup.
     """
 
-    namespaces = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
+    namespaces = {moin_page.namespace: "moinpage", xinclude.namespace: "xinclude", xlink.namespace: "xlink"}
 
     # elements with identical tagname in Moinpage and Markdown and no special handling
     simple_inline_tags = {"del", "ins", "kbd", "s", "samp", "sub", "sup"}
@@ -186,6 +186,7 @@ class Converter(ConverterBase):
                 "span",
                 "table",
                 "a",
+                "object",
             ):
                 attrib = self.attribute_list(elem)
                 if attrib:
@@ -366,7 +367,7 @@ class Converter(ConverterBase):
 
         Transcluded objects are expanded in output because Markdown does not support transclusions.
         """
-        href = elem.get(xlink.href, elem.get(xinclude.href, ""))
+        href = elem.get(xinclude.href, elem.get(xlink.href, ""))
         if isinstance(href, Iri):
             href = str(href)
             href = urllib.parse.unquote(href)
