@@ -132,11 +132,9 @@ class Converter:
 
         __ https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
         """
-        # TODO: Also return "moinpage:id" and "moinpage:lang"
-        # (converted to "xml" namespace)?
         result = {}
         for key, value in element.attrib.items():
-            if key.uri == xml:
+            if key in (xml.id, xml.base, xml.lang):
                 result[key] = value
         return result
 
