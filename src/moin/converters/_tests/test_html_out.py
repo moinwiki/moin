@@ -333,13 +333,13 @@ class TestConverterPage(Base):
             #   <p>Text<sup role="doc-noteref" id="note-0-1-ref"><a href="#note-0-1">1</a></sup></p>
             #   <div class="moin-footnotes">
             #     <aside id="note-0-1" role="doc-footnote">
-            #        <sup><a href="#note-0-1-ref">1</a></sup>
+            #        <a href="#note-0-1-ref">1</a>
             #        <p>Note</p>
             #      </aside>
             #   </div>
             # </div>
             '/div[p[text()="Text"]/sup[@id="note-0-1-ref"][@role="doc-noteref"]/a[@href="#note-0-1"][text()="1"]]'
-            '/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][sup/a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
+            '/div[@class="moin-footnotes"]/aside[@id="note-0-1"][@role="doc-footnote"][a[@href="#note-0-1-ref"][text()="1"]]/p[text()="Note"]',
         ),
         (
             '<page><body><p>text<note id="fn42" html:class="custom" note-class="footnote"><p>footnote with ID</p></note></p></body></page>',
@@ -347,14 +347,14 @@ class TestConverterPage(Base):
             #   <p>text<sup id="fn42-ref" role="doc-noteref"><a href="#fn42">1</a></sup></p>
             #   <div class="moin-footnotes">
             #     <aside class="custom" id="fn42" role="doc-footnote">
-            #       <sup><a href="#fn42-ref">1</a></sup>
+            #       <a href="#fn42-ref">1</a>
             #       <p>footnote with ID</p>
             #     </aside>
             #   </div>
             # </div>
             '/div[p[text()="text"]/sup[@id="fn42-ref"][@role="doc-noteref"]/a[@href="#fn42"][text()="1"]]'
             '/div[@class="moin-footnotes"]'
-            '/aside[@class="custom"][@id="fn42"][@role="doc-footnote"][sup/a[@href="#fn42-ref"][text()="1"]]'
+            '/aside[@class="custom"][@id="fn42"][@role="doc-footnote"][a[@href="#fn42-ref"][text()="1"]]'
             '/p[text()="footnote with ID"]',
         ),
         (  # DocBook IDs are converted to ``xml:id``
