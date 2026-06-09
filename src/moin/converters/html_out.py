@@ -18,8 +18,10 @@ from emeraldtree import ElementTree as ET
 from urllib.parse import urlencode
 from babel import Locale
 
-from moin import current_app, flaskg, log, wikiutil
+from moin import current_app, flaskg, wikiutil
+from moin.converters.base import ConverterBase
 from moin.i18n import _
+from moin.log import getLogger
 from moin.items import Item
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xml
@@ -32,7 +34,7 @@ from . import default_registry, ElementException
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 # strings not allowed in style attributes
@@ -164,7 +166,7 @@ class Attributes:
         return new_default
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Converter application/x.moin.document -> application/x.moin.document
     """
@@ -738,7 +740,7 @@ class ConverterPage(Converter):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, element: Any) -> Any:
         special_root = SpecialPage()

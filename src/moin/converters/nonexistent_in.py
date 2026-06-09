@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.converters.base import ConverterBase
 from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
@@ -25,14 +26,14 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert a nonexistent item to a DOM tree.
     """
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         item_name = rev.item.fqname.fullname

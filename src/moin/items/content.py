@@ -282,7 +282,8 @@ class Content:
             from moin.converters import default_registry as reg
 
             try:
-                input_conv = reg.get(Type(self.contenttype), type_moin_document)
+                kwargs = {"add_lineno": flaskg.add_lineno_attr}
+                input_conv = reg.get(Type(self.contenttype), type_moin_document, **kwargs)
             except LookupError:
                 raise TypeError(f"We cannot handle the conversion from {self.contenttype} to the DOM tree")
 
@@ -315,7 +316,6 @@ class Content:
     def _expand_document(self, doc: Element):
         from moin.converters import default_registry as reg
 
-        flaskg.add_lineno_attr = False  # do not add data-lineno attr for transclusions, footnotes, etc.
         include_conv = reg.get(type_moin_document, type_moin_document, includes="expandall")
         macro_conv = reg.get(type_moin_document, type_moin_document, macros="expandall")
         nowiki_conv = reg.get(type_moin_document, type_moin_document, nowiki="expandall")

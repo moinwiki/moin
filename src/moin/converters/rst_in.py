@@ -32,13 +32,8 @@ from docutils import core, nodes, transforms, utils
 from docutils.parsers.rst import Directive, directives
 import docutils.parsers.rst.directives.misc
 
-try:
-    from moin import flaskg
-except ImportError:
-    # in case converters become an independent package
-    flaskg = None
-
-from moin import log
+from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.utils.mime import Type, type_moin_document
@@ -51,7 +46,7 @@ if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class NodeVisitor:
@@ -62,11 +57,12 @@ class NodeVisitor:
     https://docutils.sourceforge.io/docs/ref/doctree.html
     """
 
-    def __init__(self):
+    def __init__(self, add_lineno: bool) -> None:
         self.current_node = moin_page.body()
         self.root = moin_page.page(children=(self.current_node,))
         self.path = [self.root, self.current_node]
         self.header_size = 1
+        self.add_lineno = add_lineno
         self.last_lineno = 0
         self.current_lineno = 0
         self.footnote_ids = set()  # IDs of already handled footnotes
@@ -115,7 +111,7 @@ class NodeVisitor:
     # -----------------
 
     def open_moin_page_node(self, mointree_element, node=None):
-        if flaskg and getattr(flaskg, "add_lineno_attr", False):
+        if self.add_lineno:
             # add data-lineno attribute for auto-scrolling edit textarea
             if self.last_lineno < self.current_lineno:
                 mointree_element.attrib[html.data_lineno] = self.current_lineno
@@ -1151,11 +1147,11 @@ class MoinDirectives:
             return [block]
 
 
-class Converter:
+class Converter(ConverterBase):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
@@ -1191,7 +1187,7 @@ class Converter:
                     input = [".. error::\n ::\n\n  {}\n\n".format(str(inst).replace("\n", "\n  "))]
                 raise inst
             break
-        visitor = NodeVisitor()
+        visitor = NodeVisitor(self.add_lineno)
         walkabout(docutils_tree, visitor)
         ret = visitor.tree()
         return ret

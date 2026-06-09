@@ -14,12 +14,11 @@ from emeraldtree import ElementTree as ET
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.utils.tree import html, moin_page, xml, xlink
 from moin.converters.html_out import Converter, ConverterPage, ElementException
+from moin.log import getLogger
+from moin.utils.tree import html, moin_page, xml, xlink
 
-from moin import log
-
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 etree = pytest.importorskip("lxml.etree")  # noqa
 
@@ -44,7 +43,7 @@ class Base:
     def do(self, input, xpath, args={}):
         out = self.conv(self.handle_input(input), **args)
         string_to_parse = self.handle_output(out)
-        logging.debug(f"After the HTML out conversion: {string_to_parse}")
+        logger.debug(f"After the HTML out conversion: {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         assert tree.xpath(xpath)
 

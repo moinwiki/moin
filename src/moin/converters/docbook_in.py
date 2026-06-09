@@ -22,13 +22,8 @@ import re
 
 from emeraldtree import ElementTree as ET
 
-try:
-    from moin import flaskg
-except ImportError:
-    # in case converters become an independent package
-    flaskg = None
-
-from moin import log
+from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, docbook, xml, html, xinclude
@@ -41,19 +36,19 @@ if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class NameSpaceError(Exception):
     pass
 
 
-def XML(text, parser=None):
+def XML(text, add_lineno: bool, parser: XMLParser | None = None) -> Element:
     """
     Copied from EmeraldTree/tree.py to force use of local XMLParser class override.
     """
     if not parser:
-        parser = XMLParser(target=ET.TreeBuilder())
+        parser = XMLParser(target=ET.TreeBuilder(), add_lineno=add_lineno)
     parser.feed(text)
     return parser.close()
 
@@ -64,17 +59,21 @@ class XMLParser(ET.XMLParser):
 
     There is no need to subclass all tree.py classes and procedures with stubs because this
     modified _start_list is only needed during the initial construction of the DOM when
-    flaskg.add_lineno_attr may be True.
+    `add_lineno` may be True.
     """
+
+    def __init__(self, html=0, target=None, encoding=None, add_lineno=False):
+        super().__init__(html, target, encoding)
+        self.add_lineno = add_lineno
 
     def _start_list(self, tag, attrib_in):
         elem = super()._start_list(tag, attrib_in)
-        if flaskg and getattr(flaskg, "add_lineno_attr", False):
+        if self.add_lineno:
             elem.attrib[html.data_lineno] = self._parser.CurrentLineNumber
         return elem
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert application/docbook+xml -> x.moin.document.
     """
@@ -440,7 +439,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Element:
         text = decode_data(data, contenttype)
@@ -455,7 +454,7 @@ class Converter:
         # We will create an element tree from the DocBook content
         try:
             # using local XML override, not ET.XML
-            tree = XML(content)
+            tree = XML(content, self.add_lineno)
         except ET.ParseError as detail:
             return self.error(str(detail))
 
@@ -587,7 +586,7 @@ class Converter:
 
         # We should ignore this element
         if element.tag.name in self.ignored_tags:
-            logging.warning(f"Ignored tag:{element.tag.name}")
+            logger.warning(f"Ignored tag:{element.tag.name}")
             return
 
         # We have an admonition element

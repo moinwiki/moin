@@ -12,6 +12,7 @@ from typing import Any, TYPE_CHECKING
 
 import re
 
+from moin.converters.base import ConverterBase
 from moin.utils.mime import type_moin_document
 from moin.utils.tree import html, moin_page
 
@@ -22,13 +23,14 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter:
+class Converter(ConverterBase):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, highlight: str = "", regex: str = "", **kwargs: Any) -> Self | None:
-        return cls(regex) if highlight == "highlight" else None
+        return cls(regex, **kwargs) if highlight == "highlight" else None
 
-    def __init__(self, regex: str) -> None:
+    def __init__(self, regex: str, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         if match := re.fullmatch('r"([^"]*)"', regex):
             # extract the real regex from Whoosh regex search term
             self.pattern = re.compile(match.group(1))
@@ -36,7 +38,7 @@ class Converter:
             # treat each word separately and ignore case sensitivity
             self.pattern = re.compile(regex.replace(" ", "|"), re.IGNORECASE)
 
-    def __call__(self, tree: Any) -> Any | None:
+    def __call__(self, tree: Any) -> Any:
         self.recurse(tree)
         return tree
 

@@ -25,9 +25,9 @@ from html.entities import name2codepoint
 
 from urllib.parse import urlencode
 
-from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xinclude, xlink
 from moin.utils.mime import Type, type_moin_document
@@ -35,13 +35,13 @@ from moin.utils.mime import Type, type_moin_document
 from . import default_registry
 from ._args import Arguments
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text, _Iter, _Stack
+from ._util import decode_data, normalize_split_text, _Iter
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class _TableArguments:
@@ -98,7 +98,7 @@ class Converter(ConverterMacro):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
@@ -343,7 +343,7 @@ class Converter(ConverterMacro):
             if list_definition:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label, iter_content=iter_content)
+                new_stack = self.make_stack(element_label, iter_content=iter_content)
                 # TODO: definition list doesn't work,
                 #       if definition of the term on the next line
                 splited_text = text.split(":")
@@ -356,7 +356,7 @@ class Converter(ConverterMacro):
             element_body.level, element_body.type = level, type
 
             stack.push(element_body)
-            new_stack = _Stack(element_body, iter_content=iter_content)
+            new_stack = self.make_stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
             level = 0
@@ -993,7 +993,7 @@ class Converter(ConverterMacro):
         """
         data = {str(k): v for k, v in match.groupdict().items() if v is not None}
         func = f"{prefix}_{match.lastgroup}_repl"
-        # logging.debug("calling %s(%r, %r)" % (func, args, data))
+        # logger.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):
@@ -1008,7 +1008,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body, iter_content=iter_content)
+        stack = self.make_stack(body, iter_content=iter_content)
 
         for line in iter_content:
             match = self.indent_re.match(line)

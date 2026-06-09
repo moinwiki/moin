@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
+from moin.converters.base import ConverterBase
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page
 
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Parse the raw text and create a document object
     that can be converted into output using Emitter.
@@ -35,7 +36,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)

@@ -18,7 +18,8 @@ try:
 except ImportError:
     pygments = None
 
-from moin import log
+from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.tree import moin_page
 from ._util import decode_data, normalize_split_text
 
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
     from moin.converters._args import Arguments
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 if pygments:
@@ -57,7 +58,7 @@ if pygments:
             if lastval:
                 self._append(lasttype, lastval, element)
 
-    class Converter:
+    class Converter(ConverterBase):
 
         @classmethod
         def _factory(cls, type_input: Type, type_output: Type, **kwargs: Any) -> Self | None:
@@ -89,20 +90,22 @@ if pygments:
                 else:
                     pygments_name = None
 
-            logging.debug("pygments_name: %r" % pygments_name)
+            logger.debug("pygments_name: %r" % pygments_name)
             if pygments_name:
                 lexer = pygments.lexers.find_lexer_class(pygments_name)
                 return cls(lexer())
 
             return None
 
-        def __init__(self, lexer: Any | None = None, contenttype: str | None = None) -> None:
+        def __init__(self, lexer: Any | None = None, contenttype: str | None = None, **kwargs: Any) -> None:
             """
             Create a Pygments Converter.
 
             :param lexer: pygments lexer instance
             :param contenttype: contenttype to get a lexer for
             """
+            super().__init__(**kwargs)
+
             if lexer is None and contenttype is not None:
                 ct = Type(contenttype)
                 # pygments can't process parameters (like e.g. ...;charset=utf-8):
@@ -139,10 +142,10 @@ if pygments:
 
 else:
     # we have no Pygments, minimal Converter replacement, so highlight view does not crash
-    class Converter:
+    class Converter(ConverterBase):
 
-        def __init__(self, lexer: Any | None = None, contenttype: str | None = None) -> None:
-            pass
+        def __init__(self, lexer: Any | None = None, contenttype: str | None = None, **kwargs: Any) -> None:
+            super().__init__(**kwargs)
 
         def __call__(self, content: Any, arguments: Arguments | None = None) -> Any:
             """Parse the text and return DOM tree."""

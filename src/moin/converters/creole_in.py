@@ -37,7 +37,7 @@ from moin.utils.mime import Type, type_moin_document, type_moin_creole
 from . import default_registry
 from ._args_wiki import parse as parse_arguments
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text, _Iter, _Stack
+from ._util import decode_data, normalize_split_text, _Iter
 
 if TYPE_CHECKING:
     from moin.converters._args import Arguments
@@ -48,7 +48,7 @@ class Converter(ConverterMacro):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
@@ -637,7 +637,7 @@ class Converter(ConverterMacro):
 
         body = moin_page.body(attrib=attrib)
 
-        stack = _Stack(body, iter_content=iter_content)
+        stack = self.make_stack(body, iter_content=iter_content)
 
         # Please note that the iterator can be modified by other functions
         for line in iter_content:
@@ -666,7 +666,7 @@ class Converter(ConverterMacro):
         """
         p = moin_page.p()
         iter_content = _Iter(text)
-        stack = _Stack(p, iter_content=iter_content)
+        stack = self.make_stack(p, iter_content=iter_content)
         self.parse_inline(text, stack, self.inline_re)
         return p
 

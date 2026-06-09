@@ -15,6 +15,7 @@ from typing import Any, TYPE_CHECKING
 from urllib.parse import urlencode, parse_qs
 
 from moin.constants.contenttypes import CHARSET
+from moin.converters.base import ConverterBase
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.tree import moin_page, xlink, xinclude, html
@@ -28,19 +29,20 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert an image to the corresponding <object> in the DOM tree.
     """
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls(input_type=input)
+        return cls(input_type=input, **kwargs)
 
-    def __init__(self, input_type: Type) -> None:
+    def __init__(self, input_type: Type, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.input_type = input_type
 
-    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> None:
+    def __call__(self, rev: Revision, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         item_name = rev.item.name
         query_keys = {"do": ["get"], "rev": [rev.revid]}
         attrib = {}

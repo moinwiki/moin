@@ -15,11 +15,10 @@ from . import serialize, XMLNS_RE3
 
 from moin.converters.html_in import Converter as HTML_IN
 from moin.converters.html_out import Converter as HTML_OUT
+from moin.log import getLogger
 from moin.utils.tree import html, moin_page, xlink
 
-from moin import log
-
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 etree = pytest.importorskip("lxml.etree")  # noqa
 
@@ -33,14 +32,14 @@ class Base:
     def handle_input(self, input, args):
         out = self.conv_html_dom(input, **args)
         output = serialize(out, namespaces=self.namespaces)
-        logging.debug("After the HTML_IN conversion : {}".format(self.output_re.sub("", output)))
+        logger.debug("After the HTML_IN conversion : {}".format(self.output_re.sub("", output)))
         out = self.conv_dom_html(out, **args)
         output = serialize(out, namespaces=self.namespaces)
         return self.output_re.sub("", output)
 
     def do(self, input, path):
         string_to_parse = self.handle_input(input, args={})
-        logging.debug(f"After the roundtrip : {string_to_parse}")
+        logger.debug(f"After the roundtrip : {string_to_parse}")
         print("string_to_parse = %s" % string_to_parse)
         tree = etree.parse(StringIO(string_to_parse))
         assert tree.xpath(path)

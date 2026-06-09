@@ -14,21 +14,21 @@ from typing import Any, TYPE_CHECKING
 
 from emeraldtree import ElementTree as ET
 
-from moin.utils.tree import html, moin_page, xlink, docbook, xml
 from moin.constants.contenttypes import CONTENTTYPE_NONEXISTENT
+from moin.converters.base import ConverterBase
+from moin.log import getLogger
 from moin.utils.mime import Type, type_moin_document
+from moin.utils.tree import html, moin_page, xlink, docbook, xml
 
 from . import default_registry, ElementException
-
-from moin import log
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Converter application/x.moin.document -> application/docbook+xml
     """
@@ -57,7 +57,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, **kwargs: Any) -> Any:
         self.section_children = {}
@@ -172,7 +172,7 @@ class Converter:
 
         # Check that the tag is supported
         if element.tag.name in self.unsupported_tags:
-            logging.warning(f"Unsupported tag : {element.tag.name}")
+            logger.warning(f"Unsupported tag : {element.tag.name}")
             return self.do_children(element)
 
         method_name = "visit_moinpage_" + element.tag.name.replace("-", "_")
@@ -181,7 +181,7 @@ class Converter:
             return method(element)
 
         # Otherwise we process the children of the unknown element
-        logging.warning(f"Unknown tag : {element.tag.name}")
+        logger.warning(f"Unknown tag : {element.tag.name}")
         return self.do_children(element)
 
     def visit_moinpage_a(self, element):

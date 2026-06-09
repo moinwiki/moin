@@ -6,6 +6,10 @@
 MoinMoin - moin.converters.rst_in tests.
 """
 
+from __future__ import annotations
+
+from typing import Final, TYPE_CHECKING
+
 import pytest
 
 from . import serialize, XMLNS_RE
@@ -13,14 +17,29 @@ from . import serialize, XMLNS_RE
 from moin.utils.tree import html, moin_page, xlink, xinclude
 from moin.converters.rst_in import Converter
 
+if TYPE_CHECKING:
+    from moin.converters._args import Arguments
+
 
 class TestConverter:
-    namespaces = {moin_page.namespace: "", xlink.namespace: "xlink", html: "xhtml", xinclude: "xinclude"}
+
+    namespaces: Final = {moin_page.namespace: "", xlink.namespace: "xlink", html: "xhtml", xinclude: "xinclude"}
 
     output_re = XMLNS_RE
 
     def setup_class(self):
         self.conv = Converter()
+
+    def serialize_strip(self, elem, **options):
+        result = serialize(elem, namespaces=self.namespaces, **options)
+        result = self.output_re.sub("", result)
+        if result == "<page><body /></page>":  # empty document
+            return ""
+        return result.removeprefix("<page><body>").removesuffix("</body></page>")
+
+    def do(self, input, output, arguments: Arguments | None = None):
+        out = self.conv(input, "text/x-rst;charset=utf-8", arguments)
+        assert self.serialize_strip(out) == output
 
     data = [
         ("paragraph", "<p>paragraph</p>"),
@@ -550,19 +569,6 @@ text""",
     @pytest.mark.parametrize("input,output", data)
     def test_docutils_feature(self, input, output):
         self.do(input, output)
-
-    def serialize_strip(self, elem, **options):
-        result = serialize(elem, namespaces=self.namespaces, **options)
-        result = self.output_re.sub("", result)
-        if result == "<page><body /></page>":  # empty document
-            return ""
-        result = result.removeprefix("<page><body>")
-        result = result.removesuffix("</body></page>")
-        return result
-
-    def do(self, input, output, args={}, skip=None):
-        out = self.conv(input, "text/x-rst;charset=utf-8", **args)
-        assert self.serialize_strip(out) == output
 
 
 coverage_modules = ["moin.converters.rst_in"]
