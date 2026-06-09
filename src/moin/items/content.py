@@ -93,7 +93,7 @@ from moin.utils.mime import Type, type_moin_document
 from moin.utils.mimetype import MimeType
 from moin.utils.registry import RegistryBase
 from moin.utils.send_file import send_file
-from moin.utils.tree import moin_page, html, xlink, docbook
+from moin.utils.tree import moin_page, html, xinclude, xlink, docbook
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -371,7 +371,11 @@ class Content:
 
     def render_data_xml(self):
         doc = self.internal_representation()
-        return conv_serialize(doc, {moin_page.namespace: "", xlink.namespace: "xlink", html.namespace: "html"}, "xml")
+        return conv_serialize(
+            doc,
+            {moin_page.namespace: "", xinclude.namespace: "xinclude", xlink.namespace: "xlink", html.namespace: "html"},
+            "xml",
+        )
 
     def render_data_highlight(self):
         # override this in child classes
