@@ -230,13 +230,11 @@ class TestConverter:
         ('\n![Alt text](png "Optional title")', '\n![Alt text](png "Optional title")\n'),
         ("![Alt text](png)", "![Alt text](png)\n"),
         ('![Alt text][logo]\n[logo]: png "Optional title attribute"', '![Alt text](png "Optional title attribute")\n'),
-        # alt defined twice
         (
             "![remote image](http://static.moinmo.in/logos/moinmoin.png)",
-            '![remote image](http://static.moinmo.in/logos/moinmoin.png){: alt="remote image"}\n',
+            "![remote image](http://static.moinmo.in/logos/moinmoin.png)\n",
         ),
-        # alt defined twice
-        ("![Alt text](http://test.moinmo.in/png)", '![Alt text](http://test.moinmo.in/png){: alt="Alt text"}\n'),
+        ("![Alt text](http://test.moinmo.in/png)", "![Alt text](http://test.moinmo.in/png)\n"),
     ]
 
     @pytest.mark.parametrize("input,output", data)
