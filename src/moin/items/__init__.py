@@ -964,11 +964,23 @@ class Item:
 
     def revert(self, comment: str = "") -> tuple[str, int] | None:
         assert self.content
+
         meta = dict(self.meta)
         meta[TRASH] = False
         if not self.meta[NAME]:
             meta[NAME] = meta[NAME_OLD]
-        return self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
+
+        result = self._save(meta, self.content.data, names=meta[NAME], action=ACTION_REVERT, comment=comment)
+
+        # remove a possibly existing draft document stored before
+        try:
+            edit_utils = Edit_Utils(self)
+            edit_utils.delete_draft()
+            edit_utils.cursor_close()
+        except Exception as err:
+            logging.error(f"caught exception in deleting draft: {err}")
+
+        return result
 
     def destroy(self, comment: str = "", destroy_item: bool = False, subitem_names: list = []) -> ItemDeletionResult:
         """
