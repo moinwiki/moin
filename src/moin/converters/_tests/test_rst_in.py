@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 class TestConverter:
 
-    namespaces: Final = {moin_page.namespace: "", xlink.namespace: "xlink", html: "xhtml", xinclude: "xinclude"}
+    namespaces: Final = {moin_page: "", html: "xhtml", xlink: "xlink", xml: "xml", xinclude: "xinclude"}
 
     output_re = XMLNS_RE
 
