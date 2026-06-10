@@ -16,7 +16,7 @@ from ..creole_in import Converter
 
 
 class TestConverter:
-    namespaces = {moin_page: "", xlink: "xlink", html: "xhtml", xinclude: "xinclude"}
+    namespaces = {moin_page: "", xlink: "xlink", html: "html", xinclude: "xinclude"}
 
     output_re = XMLNS_RE
 
@@ -69,7 +69,7 @@ class TestConverter:
         ),
         (
             "{{http://moinmo.in/|MoinMoin}}",
-            '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/">Your Browser does not support HTML5 audio/video element.</object></p></body></page>',
+            '<page><body><p><object html:alt="MoinMoin" xlink:href="http://moinmo.in/">Your Browser does not support HTML5 audio/video element.</object></p></body></page>',
         ),
         ("{{my.png}}", '<page><body><p><xinclude:include xinclude:href="wiki.local:my.png" /></p></body></page>'),
         ("----", '<page><body><separator class="moin-hr3" /></body></page>'),
