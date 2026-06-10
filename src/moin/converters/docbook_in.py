@@ -512,8 +512,8 @@ class Converter(ConverterBase):
         and then the element itself.
 
         The "standard attributes" `xml:id`, `xml:base`, `xml:lang`,
-        and `data-lineno` are copied to the new element. Attributes
-        in `attrib` have precedence.
+        and `html:data-lineno` are copied to the new element.
+        Attributes in `attrib` have precedence.
         """
         attrib = self.get_standard_attributes(element) | attrib
         children = self.do_children(element, depth)
@@ -524,14 +524,13 @@ class Converter(ConverterBase):
         Return the "standard attributes" of `element`.
 
         Return a dictionary with the `common attributes`_ "xml:id",
-        "xml:base", and "xml:lang", and the Moin-added "data-lineno".
+        "xml:base", and "xml:lang", and the Moin-added "html:data-lineno".
 
         __ https://tdg.docbook.org/tdg/5.1/ref-elements.html#common.attributes
         """
-        # TODO: Convert "xml:id" and "xml:lang" to "moinpage" namespace?
         result = {}
         for key, value in element.attrib.items():
-            if key.uri == xml and key.name in ["id", "base", "lang"] or key.name == "data-lineno":
+            if key in (xml.id, xml.base, xml.lang, html.data_lineno):
                 result[key] = value
         return result
 

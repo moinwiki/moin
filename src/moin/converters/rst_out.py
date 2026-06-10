@@ -248,7 +248,7 @@ class Converter(ConverterBase):
     Converter application/x.moin.document -> text/x.moin.rst
     """
 
-    namespaces: Final = {moin_page.namespace: "moinpage", xinclude: "xinclude"}
+    namespaces: Final = {moin_page: "moinpage", xinclude: "xinclude", xml: "xml"}
 
     supported_tag: Final = {
         "moinpage": (
@@ -587,7 +587,7 @@ class Converter(ConverterBase):
             # the rST ``.. footnotes::`` directive is not yet implemented
             return ""
         note_class = elem.get(moin_page.note_class, "")
-        ID = elem.get(moin_page.id, "") or elem.get(xml.id, "")
+        ID = elem.get(xml.id, "")
         if note_class == "footnote":  # as of 2026/05, all notes are footnotes
             self.status.append("list")
             content = self.open_children(elem).strip()
@@ -726,7 +726,7 @@ class Converter(ConverterBase):
         return "\n\n" + ReST.separator + "\n\n"
 
     def open_moinpage_span(self, elem):
-        id = elem.get(moin_page.id, "")
+        id = elem.get(xml.id, "")
         if id:
             self.headings.append(id)
             return f"\n.. _{id}:\n"

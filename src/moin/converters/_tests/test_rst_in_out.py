@@ -19,7 +19,7 @@ except ImportError:
 
 from . import serialize, XMLNS_RE, TAGSTART_RE
 
-from moin.utils.tree import moin_page, xlink, xinclude, html
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 
 from moin.converters.rst_in import Converter as conv_in
 from moin.converters.rst_out import Converter as conv_out
@@ -30,16 +30,12 @@ pytest.importorskip("docutils")  # noqa
 
 class TestConverter:
 
-    input_namespaces = 'xmlns="{}" xmlns:page="{}" xmlns:xlink="{}" xmlns:xinclude="{}" xmlns:html="{}"'.format(
-        moin_page.namespace, moin_page.namespace, xlink.namespace, xinclude.namespace, html.namespace
+    input_namespaces = (
+        f'xmlns="{moin_page}" xmlns:page="{moin_page}" xmlns:xlink="{xlink}"'
+        f' xmlns:xinclude="{xinclude}" xmlns:xml="{xml}" xmlns:html="{html}"'
     )
 
-    namespaces = {
-        moin_page.namespace: "page",
-        xlink.namespace: "xlink",
-        xinclude.namespace: "xinclude",
-        html.namespace: "html",
-    }
+    namespaces = {html: "html", moin_page: "page", xinclude: "xinclude", xlink: "xlink", xml: "xml"}
     input_re = TAGSTART_RE
     output_re = XMLNS_RE
 

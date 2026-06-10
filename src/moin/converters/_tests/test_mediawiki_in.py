@@ -10,13 +10,13 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.utils.tree import html, moin_page, xinclude, xlink
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 from moin.converters.mediawiki_in import Converter
 
 
 class TestConverter:
 
-    namespaces = {moin_page.namespace: "", html.namespace: "html", xinclude.namespace: "xi", xlink.namespace: "xlink"}
+    namespaces = {moin_page: "", html: "html", xinclude: "xi", xlink: "xlink", xml: "xml"}
 
     output_re = XMLNS_RE
 
@@ -59,7 +59,7 @@ class TestConverter:
         ),
         (
             'aaa<ref name="fn42">labeled footnote</ref>',
-            '<page><body><p>aaa<note id="fn42" note-class="footnote"><p>labeled footnote</p></note></p></body></page>',
+            '<page><body><p>aaa<note note-class="footnote" xml:id="fn42"><p>labeled footnote</p></note></p></body></page>',
         ),
         (
             'additional reference<ref name="fn42" /> to a footnote',
@@ -210,6 +210,15 @@ Apple
                 "[[SomeLink|Some text]]",
                 '<page><body><p><a xlink:href="wiki.local:SomeLink">Some text</a></p></body></page>',
             ),
+            (
+                "[[#myid|See also]] the anchor on the same page.",
+                '<page><body><p><a xlink:href="wiki.local:#myid">See also</a> the anchor on the same page.</p></body></page>',
+            ),
+            # TODO: Setting custom anchors is currently not supported.
+            # (
+            #     'An <span id="myid">anchor</span> for an incoming link.',
+            #     '<page><body><p>An <span xml:id="myid">anchor</span> for an incoming link.</p></body></page>',
+            # ),
             (
                 "[[SomeLink|arg1=value|arg2=otherval|Some text]]",
                 '<page><body><p><a xlink:href="wiki.local:SomeLink?arg1=value&amp;arg2=otherval">Some text</a></p></body></page>',

@@ -91,7 +91,7 @@ class HtmlTags:
 
     # HTML tags that do not have equivalents in the Moinpage DOM tree
     # we use a more generic element and store the original tag
-    # e.g. <cite> → <emphasis html-tag="cite}">
+    # e.g. <cite> → <emphasis html-tag="cite">
     indirect_tags: Final = {
         "abbr": moin_page.span,  # abbreviation
         "address": moin_page.div,  # contact info

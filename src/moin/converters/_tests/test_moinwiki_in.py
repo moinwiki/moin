@@ -11,11 +11,11 @@ from . import serialize, XMLNS_RE
 
 from moin.converters._args import Arguments
 from moin.converters.moinwiki_in import Converter
-from moin.utils.tree import moin_page, xlink, html, xinclude
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 
 
 class TestConverter:
-    namespaces = {moin_page: "", xlink: "xlink", html: "xhtml", xinclude: "xinclude"}
+    namespaces = {moin_page: "", html: "html", xinclude: "xinclude", xlink: "xlink", xml: "xml"}
 
     output_re = XMLNS_RE
 
@@ -46,20 +46,20 @@ class TestConverter:
         ("[[#Heading]]", '<page><body><p><a xlink:href="wiki.local:#Heading"></a></p></body></page>'),
         (
             "[[/inner2.png|{{/inner2.png||width=500}}]]",
-            '<page><body><p><a xlink:href="wiki.local:/inner2.png"><xinclude:include xhtml:width="500" xinclude:href="wiki.local:/inner2.png?" /></a></p></body></page>',
+            '<page><body><p><a xlink:href="wiki.local:/inner2.png"><xinclude:include html:width="500" xinclude:href="wiki.local:/inner2.png?" /></a></p></body></page>',
         ),
         (
             "{{somelocalimage|my alt text|width=10, height=10}}",
-            '<page><body><p><xinclude:include xhtml:alt="my alt text" xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>',
+            '<page><body><p><xinclude:include html:alt="my alt text" html:height="10" html:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>',
         ),
         # HTML5 requires img tags to have an alt attribute; html_out.py will add any required attributes that are missing
         (
             "{{somelocalimage||width=10, height=10}}",
-            '<page><body><p><xinclude:include xhtml:height="10" xhtml:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>',
+            '<page><body><p><xinclude:include html:height="10" html:width="10" xinclude:href="wiki.local:somelocalimage?" /></p></body></page>',
         ),
         (
             "{{somelocalimage||width=10, &h=10}}",
-            '<page><body><p><xinclude:include xhtml:width="10" xinclude:href="wiki.local:somelocalimage?h=10" /></p></body></page>',
+            '<page><body><p><xinclude:include html:width="10" xinclude:href="wiki.local:somelocalimage?h=10" /></p></body></page>',
         ),
         (
             "before {{somelocalimage}} middle {{somelocalimage}} after",
@@ -72,12 +72,12 @@ class TestConverter:
         # In HTML5, object tags must not have alt attributes; html_out.py will adjust this so alt text is placed before the </object>
         (
             "{{http://moinmo.in/|test|width=10, height=10}}",
-            '<page><body><p><object xhtml:alt="test" xhtml:height="10" xhtml:width="10" xlink:href="http://moinmo.in/" /></p></body></page>',
+            '<page><body><p><object html:alt="test" html:height="10" html:width="10" xlink:href="http://moinmo.in/" /></p></body></page>',
         ),
         ("{{http://moinmo.in/}}", '<page><body><p><object xlink:href="http://moinmo.in/" /></p></body></page>'),
         (
             "{{http://moinmo.in/|MoinMoin}}",
-            '<page><body><p><object xhtml:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>',
+            '<page><body><p><object html:alt="MoinMoin" xlink:href="http://moinmo.in/" /></p></body></page>',
         ),
         ("----", '<page><body><separator class="moin-hr1" /></body></page>'),
     ]
@@ -146,12 +146,12 @@ class TestConverter:
         ("__underline__", "<page><body><p><ins>underline</ins></p></body></page>"),
         (",,sub,,script", "<page><body><p><sub>sub</sub>script</p></body></page>"),
         ("^super^script", "<page><body><p><sup>super</sup>script</p></body></page>"),
-        ("~-smaller-~", '<page><body><p><span xhtml:class="moin-small">smaller</span></p></body></page>'),
-        ("~+larger+~", '<page><body><p><span xhtml:class="moin-big">larger</span></p></body></page>'),
+        ("~-smaller-~", '<page><body><p><span html:class="moin-small">smaller</span></p></body></page>'),
+        ("~+larger+~", '<page><body><p><span html:class="moin-big">larger</span></p></body></page>'),
         ("--(strike through)--", "<page><body><p><del>strike through</del></p></body></page>"),
         (
             "normal ~+big __underline__ big+~ normal",
-            '<page><body><p>normal <span xhtml:class="moin-big">big <ins>underline</ins> big</span> normal</p></body></page>',
+            '<page><body><p>normal <span html:class="moin-big">big <ins>underline</ins> big</span> normal</p></body></page>',
         ),
         (
             "/* normal __underline__ normal */",
@@ -309,15 +309,15 @@ class TestConverter:
         ),
         (
             "||{{cat|kitty}}||",
-            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xhtml:alt="kitty" xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include html:alt="kitty" xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>',
         ),
         (
             "||{{cat|kitty|width=160}}||",
-            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xhtml:alt="kitty" xhtml:width="160" xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include html:alt="kitty" html:width="160" xinclude:href="wiki.local:cat?" /></table-cell></table-row></table-body></table></body></page>',
         ),
         (
             "||{{cat||width=160}} text {{cat||width=160}} text [[link]]||",
-            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include xhtml:width="160" xinclude:href="wiki.local:cat?" /> text <xinclude:include xhtml:width="160" xinclude:href="wiki.local:cat?" /> text <a xlink:href="wiki.local:link">link</a></table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell><xinclude:include html:width="160" xinclude:href="wiki.local:cat?" /> text <xinclude:include html:width="160" xinclude:href="wiki.local:cat?" /> text <a xlink:href="wiki.local:link">link</a></table-cell></table-row></table-body></table></body></page>',
         ),
     ]
 
@@ -369,15 +369,15 @@ class TestConverter:
         ),
         (
             '||<tableid="my-id">Cell||\n',
-            '<page><body><table class="moin-wiki-table" id="my-id"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table" xml:id="my-id"><table-body><table-row><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
         ),
         (
             '||<rowid="my-id">Cell||\n',
-            '<page><body><table class="moin-wiki-table"><table-body><table-row id="my-id"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row xml:id="my-id"><table-cell>Cell</table-cell></table-row></table-body></table></body></page>',
         ),
         (
             '||<id="my-id">Cell||\n',
-            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell id="my-id">Cell</table-cell></table-row></table-body></table></body></page>',
+            '<page><body><table class="moin-wiki-table"><table-body><table-row><table-cell xml:id="my-id">Cell</table-cell></table-row></table-body></table></body></page>',
         ),
         (
             '||<rowspan="2">Cell||\n',

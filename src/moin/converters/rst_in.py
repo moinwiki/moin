@@ -35,7 +35,7 @@ import docutils.parsers.rst.directives.misc
 from moin.converters.base import ConverterBase
 from moin.log import getLogger
 from moin.utils.iri import Iri
-from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 from moin.utils.mime import Type, type_moin_document
 from moin.wikiutil import anchor_name_from_text
 
@@ -119,7 +119,7 @@ class NodeVisitor:
         if node and node["ids"]:
             # IDs are prepended in empty <span> mointree elements
             for _id in node["ids"]:
-                self.open_moin_page_node(moin_page.span(attrib={moin_page.id: _id}))
+                self.open_moin_page_node(moin_page.span(attrib={xml.id: _id}))
                 self.close_moin_page_node()
         if node and node["classes"]:
             classes = node["classes"][:]
@@ -442,7 +442,7 @@ class NodeVisitor:
         footnote = node.document.ids[refid]  # get matching footnote element
         attrib = {moin_page.note_class: "footnote"}
         # keep footnote ID for additional references (unless it is already used)
-        attrib[moin_page.id] = refid
+        attrib[xml.id] = refid
         self.footnote_ids.add(refid)
         self.open_moin_page_node(moin_page.note(attrib=attrib))
         for child in footnote.children[1:]:
@@ -855,7 +855,7 @@ class NodeVisitor:
             return  # already handled by Docutils "transforms"
         moin_target = moin_page.span()
         if node["ids"]:
-            moin_target.attrib[moin_page.id] = node["ids"][0]
+            moin_target.set(xml.id, node["ids"][0])
         self.open_moin_page_node(moin_target)
 
     def depart_target(self, node):

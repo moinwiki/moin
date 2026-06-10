@@ -83,7 +83,7 @@ def mark_item_as_transclusion(elem, href_or_item):
     else:  # isinstance(href_or_item, Iri)
         href = href_or_item
     elem.attrib[html.data_href] = href
-    classes = elem.attrib.get(html.class_, "").split()
+    classes = elem.get(html.class_, "").split()
     classes.append("moin-transclusion")
     elem.attrib[html.class_] = " ".join(classes)
     return elem
@@ -102,6 +102,10 @@ class Attribute:
 
 
 class Attributes:
+    """Convert element attributes."""
+
+    # This class is also used in ``markdown_out.py`` and ``includes.py``.
+
     namespaces_valid_output = frozenset([html])
 
     visit_class = Attribute("class")
@@ -118,7 +122,7 @@ class Attributes:
         # or the output:
         self.default_uri_input = self.default_uri_output = None
         if element.tag.uri == moin_page:
-            self.default_uri_input = element.tag.uri
+            self.default_uri_input = moin_page
         if element.tag.uri in self.namespaces_valid_output:
             self.default_uri_output = element.tag.uri
 
@@ -142,21 +146,20 @@ class Attributes:
                 # create ambigues matches.
                 if "_" not in key.name:
                     n = "visit_" + key.name.replace("-", "_")
-                    f = getattr(self, n, None)
-                    if f is not None:
-                        f(value, new)
+                    visitor = getattr(self, n, None)
+                    if visitor:
+                        visitor(value, new)
             elif key.uri in self.namespaces_valid_output:
                 new[key] = value
             # We convert xml:id and xml:lang
-            elif key.uri == xml.namespace:
-                if key.name == "id" or key.name == "lang":
-                    new[ET.QName(key.name, html.namespace)] = value
+            elif key in (xml.id, xml.lang):
+                new[html(key.name)] = value
             elif key.uri is None:
                 if self.default_uri_input and "_" not in key.name:
                     n = "visit_" + key.name.replace("-", "_")
-                    f = getattr(self, n, None)
-                    if f is not None:
-                        f(value, new_default)
+                    visitor = getattr(self, n, None)
+                    if visitor:
+                        visitor(value, new_default)
                 elif self.default_uri_output:
                     new_default[ET.QName(key.name, self.default_uri_output)] = value
 
@@ -192,7 +195,7 @@ class Converter(ConverterBase):
 
     def new_copy(self, tag, element, attrib={}):
         # Check for an alternative_tagname:
-        html_tagname = element.attrib.get(moin_page("html-tag"))
+        html_tagname = element.get(moin_page.html_tag)
         if html_tagname:
             tag = html(html_tagname)
         # Convert attributes and children:
@@ -204,11 +207,10 @@ class Converter(ConverterBase):
     def visit(self, elem):
         uri = elem.tag.uri
         name = self.namespaces_visit.get(uri, None)
-        if name is not None:
-            n = "visit_" + name
-            f = getattr(self, n, None)
-            if f is not None:
-                return f(elem)
+        if name:
+            visitor = getattr(self, "visit_" + name, None)
+            if visitor:
+                return visitor(elem)
 
         # Elements with unknown namespaces are just copied
         return self.new_copy(elem.tag, elem)
@@ -270,15 +272,15 @@ class Converter(ConverterBase):
         """
         Avoid creation of a div used only for its data-lineno attrib.
         """
-        if elem.attrib.get(html.data_lineno, None) and isinstance(elem[0][0], ET.Element):
+        if elem.get(html.data_lineno) and isinstance(elem[0][0], ET.Element):
             # {{{#!wiki\ntext\n}}}
             elem[0][0].attrib[html.data_lineno] = elem.attrib[html.data_lineno]
-            elem[0][0].attrib[moin_page.class_] = elem[0][0].attrib.get(moin_page.class_, "") + " moin-nowiki"
+            elem[0][0].attrib[moin_page.class_] = elem[0][0].get(moin_page.class_, "") + " moin-nowiki"
             return self.do_children(elem)
-        if elem.attrib.get(html.data_lineno, None) and isinstance(elem[0][0], str) and isinstance(elem[0], ET.Element):
+        if elem.get(html.data_lineno) and isinstance(elem[0][0], str) and isinstance(elem[0], ET.Element):
             # {{{\ntext\n}}} OR {{{#!highlight python\ndef xx:\n}}}
             elem[0].attrib[html.data_lineno] = elem.attrib[html.data_lineno]
-            elem[0].attrib[moin_page.class_] = elem[0].attrib.get(moin_page.class_, "") + " moin-nowiki"
+            elem[0].attrib[moin_page.class_] = elem[0].get(moin_page.class_, "") + " moin-nowiki"
             return self.do_children(elem)
         # {{{\n{{{{{\ntext\n}}}}}\n}}}  # data_lineno not available, parent will have class=moin-nowiki
         return self.new_copy(html.div, elem)
@@ -392,21 +394,21 @@ class Converter(ConverterBase):
                 style = attrib.get("list-style-type")
                 if style:
                     if style == "upper-alpha":
-                        attrib_new[html("class")] = "moin-upperalpha-list"
+                        attrib_new[html.class_] = "moin-upperalpha-list"
                     elif style == "upper-roman":
-                        attrib_new[html("class")] = "moin-upperroman-list"
+                        attrib_new[html.class_] = "moin-upperroman-list"
                     elif style == "lower-roman":
-                        attrib_new[html("class")] = "moin-lowerroman-list"
+                        attrib_new[html.class_] = "moin-lowerroman-list"
                     elif style == "lower-alpha":
-                        attrib_new[html("class")] = "moin-loweralpha-list"
+                        attrib_new[html.class_] = "moin-loweralpha-list"
                 start_number = attrib.get("list-start")
                 if start_number:
-                    attrib_new[html("start")] = start_number
+                    attrib_new[html.start] = start_number
                 ret = html.ol(attrib_new)
             elif generate == "unordered":
                 style = attrib.get("list-style-type")
                 if style and style == "no-bullet":
-                    attrib_new[html("class")] = "moin-nobullet-list"
+                    attrib_new[html.class_] = "moin-nobullet-list"
                 ret = html.ul(attrib=attrib_new)
             else:
                 raise ElementException(f'page:item-label-generate does not support "{generate}"')
@@ -502,7 +504,7 @@ class Converter(ConverterBase):
         # The return element
         new_elem = None
 
-        if href is not None:
+        if href:
             # Set the attribute of the returned element appropriately
             attrib[attr] = href
         alt = convert_getlink_to_showlink(str(href))
@@ -524,10 +526,10 @@ class Converter(ConverterBase):
                 new_elem = html.object(attrib=attrib)
             # alt attr is invalid within object, audio, and video tags , append alt text to existing child
             # alt text will be transclusion alt field, item meta summary, or item name
-            if new_elem.attrib.get(html.alt):
+            if new_elem.get(html.alt):
                 if new_elem.text:
                     new_elem.append(" - ")
-                new_elem.append(new_elem.attrib.get(html.alt))
+                new_elem.append(new_elem.get(html.alt))
                 del new_elem.attrib[html.alt]
             else:
                 if new_elem.text:
@@ -627,7 +629,7 @@ class Converter(ConverterBase):
         for idx, item in enumerate(elem):
             tag = None
             if item.tag.uri == moin_page:
-                if len(elem) > 1 + caption and html("class") in attrib and "moin-wiki-table" in attrib[html("class")]:
+                if len(elem) > 1 + caption and html.class_ in attrib and "moin-wiki-table" in attrib[html.class_]:
                     # moinwiki tables require special handling because
                     # moinwiki_in converts "||header||\n===\n||body||\n===\n||footer||" into multiple table-body's
                     if idx == 0 + caption:
@@ -648,7 +650,7 @@ class Converter(ConverterBase):
                     tag = html.caption
             elif item.tag.uri == html and item.tag.name in ("tbody", "thead", "tfoot"):
                 tag = item.tag
-            if tag is not None:
+            if tag:
                 ret.append(self.new_copy(tag, item))
         return ret
 
@@ -861,7 +863,7 @@ class ConverterPage(Converter):
 
         elem_note = ET.XML(
             f'<html:aside xmlns:html="{html}" html:id="{ID}" html:role="doc-footnote">'
-            f'<html:sup><html:a html:href="#{ID}-ref">{label}</html:a></html:sup>'
+            f'<html:a html:href="#{ID}-ref">{label}</html:a>'
             "</html:aside>"
         )
         elem_note.attrib.update(attrib)

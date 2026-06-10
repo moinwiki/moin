@@ -20,7 +20,7 @@ from moin.utils.tree import moin_page, xlink, html, xinclude
 
 from unittest.mock import Mock
 
-namespaces = {moin_page: "", xlink: "xlink", html: "xhtml", xinclude: "xinclude"}
+namespaces = {moin_page: "", xlink: "xlink", html: "html", xinclude: "xinclude"}
 
 meta = {CONTENTTYPE: "binary/blob", ITEMTYPE: "default", REV_NUMBER: 1}
 

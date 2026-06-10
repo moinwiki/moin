@@ -14,7 +14,7 @@ import pytest
 
 from . import serialize, XMLNS_RE
 
-from moin.utils.tree import html, moin_page, xlink, xinclude
+from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 from moin.converters.rst_in import Converter
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 class TestConverter:
 
-    namespaces: Final = {moin_page.namespace: "", xlink.namespace: "xlink", html: "xhtml", xinclude: "xinclude"}
+    namespaces: Final = {moin_page: "", html: "html", xlink: "xlink", xml: "xml", xinclude: "xinclude"}
 
     output_re = XMLNS_RE
 
@@ -48,8 +48,8 @@ class TestConverter:
         ("**Text**", "<p><strong>Text</strong></p>"),
         ("*Text*", "<p><emphasis>Text</emphasis></p>"),
         ("``literal``", "<p><literal>literal</literal></p>"),
-        ("a _`Link`", '<p>a <span id="link">Link</span></p>'),
-        ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator xhtml:class="moin-hr2" /><p>break</p>'),
+        ("a _`Link`", '<p>a <span xml:id="link">Link</span></p>'),
+        ("thematic\n\n~~~~~\n\nbreak", '<p>thematic</p><separator html:class="moin-hr2" /><p>break</p>'),
         (".. comment", '<div class="comment dashed">comment</div>'),
         ("..\n comment", '<div class="comment dashed">comment</div>'),
     ]
@@ -72,7 +72,7 @@ class TestConverter:
         ("E = mc\\ :sup:`2`", "<p>E = mc<sup>2</sup></p>"),
         (":title-reference:`Hamlet`", '<p><emphasis html-tag="cite">Hamlet</emphasis></p>'),
         # custom roles
-        (".. role:: orange\n\n:orange:`colourful` text", '<p><span xhtml:class="orange">colourful</span> text</p>'),
+        (".. role:: orange\n\n:orange:`colourful` text", '<p><span html:class="orange">colourful</span> text</p>'),
         # custom roles with matching Moin element
         (".. role:: del\n\n:del:`deleted` text", "<p><del>deleted</del> text</p>"),
         (".. role:: ins\n\n:ins:`inserted` text", "<p><ins>inserted</ins> text</p>"),
@@ -85,10 +85,10 @@ class TestConverter:
         (".. role:: samp(literal)\n\n:samp:`Error 303`", "<p><samp>Error 303</samp></p>"),
         (  # custom role derived from "code" with syntax highlight
             '.. role:: python(code)\n   :language: python\n\nInline code like :python:`print(3*"Hurra!")`.',
-            '<p>Inline code like <code xhtml:class="python">'
-            '<span xhtml:class="nb">print</span><span xhtml:class="p">(</span>'
-            '<span xhtml:class="mi">3</span><span xhtml:class="o">*</span>'
-            '<span xhtml:class="s2">"Hurra!"</span><span xhtml:class="p">)</span>'
+            '<p>Inline code like <code html:class="python">'
+            '<span html:class="nb">print</span><span html:class="p">(</span>'
+            '<span html:class="mi">3</span><span html:class="o">*</span>'
+            '<span html:class="s2">"Hurra!"</span><span html:class="p">)</span>'
             "</code>.</p>",
         ),
     ]
@@ -164,11 +164,11 @@ class TestConverter:
     :width: 200
     :scale: 50
     :alt: alternate text""",
-            '<span id="biohazard-logo" /><xinclude:include xhtml:alt="alternate text" xhtml:height="50" xhtml:width="100" xinclude:href="wiki.local:images/biohazard.png" />',
+            '<span xml:id="biohazard-logo" /><xinclude:include html:alt="alternate text" html:height="50" html:width="100" xinclude:href="wiki.local:images/biohazard.png" />',
         ),
         (
             "abc |test| cba\n\n.. |test| image:: test.png",
-            '<p>abc <xinclude:include xhtml:alt="test" xinclude:href="wiki.local:test.png" /> cba</p>',
+            '<p>abc <xinclude:include html:alt="test" xinclude:href="wiki.local:test.png" /> cba</p>',
         ),
     ]
 
@@ -186,7 +186,7 @@ class TestConverter:
             "Heading 5\n:::::::::\n\n"
             "Heading 6\n+++++++++\n",
             '<h outline-level="1">Heading 1</h>'
-            '<p xhtml:class="moin-subheading">Heading 2</p>'
+            '<p html:class="moin-subheading">Heading 2</p>'
             '<h outline-level="2">Heading 3</h>'
             '<h outline-level="3">Heading 4</h>'
             '<h outline-level="4">Heading 5</h>'
@@ -224,7 +224,7 @@ class TestConverter:
             "Heading 3\n~~~~~~~~~\n\n"
             "Heading 4\n=============\n",
             '<h outline-level="1">Heading 1</h>'
-            '<p xhtml:class="moin-subheading">Heading 2</p>'
+            '<p html:class="moin-subheading">Heading 2</p>'
             '<h outline-level="2">Heading 3</h>'
             '<h outline-level="3">Heading 4</h>',
         ),
@@ -259,20 +259,20 @@ class TestConverter:
     data = [
         (
             "Text [1]_\n\n.. [1] manually numbered *footnote*",
-            '<p>Text<note id="footnote-1" note-class="footnote"><p>manually numbered <emphasis>footnote</emphasis></p></note></p>',
+            '<p>Text<note note-class="footnote" xml:id="footnote-1"><p>manually numbered <emphasis>footnote</emphasis></p></note></p>',
         ),
         (
             "Text [#]_\n\n.. [#] auto-numbered *footnote*",
-            '<p>Text<note id="footnote-1" note-class="footnote"><p>auto-numbered <emphasis>footnote</emphasis></p></note></p>',
+            '<p>Text<note note-class="footnote" xml:id="footnote-1"><p>auto-numbered <emphasis>footnote</emphasis></p></note></p>',
         ),
         (
             "Two references [#fn42]_ to the same footnote [#fn42]_\n\n.. [#fn42] auto-label *footnote*",
-            '<p>Two references<note id="fn42" note-class="footnote"><p>auto-label <emphasis>footnote</emphasis></p></note>'
+            '<p>Two references<note note-class="footnote" xml:id="fn42"><p>auto-label <emphasis>footnote</emphasis></p></note>'
             ' to the same footnote<noteref xlink:href="#fn42" /></p>',
         ),
         (
             "Text [*]_\n\n.. [*] auto-symbol footnote\n\n   with second paragraph",
-            '<p>Text<note id="footnote-1" note-class="footnote"><p>auto-symbol footnote</p><p>with second paragraph</p></note></p>',
+            '<p>Text<note note-class="footnote" xml:id="footnote-1"><p>auto-symbol footnote</p><p>with second paragraph</p></note></p>',
         ),
     ]
 
@@ -287,7 +287,7 @@ class TestConverter:
         (
             "Leading text\n\n:Last Changed: 2001-08-16\n:*Version*: 1\n:Name: Joe Doe",
             "<p>Leading text</p>"
-            '<table xhtml:class="rst-fieldlist"><table-body>'
+            '<table html:class="rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Last Changed:</strong></table-cell>"
             "<table-cell><p>2001-08-16</p></table-cell></table-row>"
             "<table-row><table-cell><strong><emphasis>Version</emphasis>:</strong></table-cell>"
@@ -300,7 +300,7 @@ class TestConverter:
         # bibliographic data (visible meta-data)
         (
             ":Date: 2001-08-16\n:Author: Joe Doe\n:Version:  $Revision: 1.17 $\n",
-            '<table xhtml:class="rst-fieldlist"><table-body>'
+            '<table html:class="rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Date:</strong></table-cell><table-cell>2001-08-16</table-cell></table-row>"
             "<table-row><table-cell><strong>Author:</strong></table-cell><table-cell>Joe Doe</table-cell></table-row>"
             "<table-row><table-cell><strong>Version:</strong></table-cell><table-cell>1.17</table-cell></table-row>"
@@ -308,12 +308,12 @@ class TestConverter:
         ),
         (
             ":Authors: Pat, Patagon\n:Copyright: © 2026 Pat\n:Address: 100 Acre Wood\n:Test: custom field",
-            '<table xhtml:class="rst-fieldlist"><table-body>'
+            '<table html:class="rst-fieldlist"><table-body>'
             "<table-row><table-cell><strong>Authors:</strong></table-cell>"
             "<table-cell><p>Pat</p><p>Patagon</p></table-cell></table-row>"
             "<table-row><table-cell><strong>Copyright:</strong></table-cell><table-cell>© 2026 Pat</table-cell></table-row>"
             "<table-row><table-cell><strong>Address:</strong></table-cell><table-cell>100 Acre Wood</table-cell></table-row>"
-            '<table-row xhtml:class="test"><table-cell><strong>Test:</strong></table-cell>'
+            '<table-row html:class="test"><table-cell><strong>Test:</strong></table-cell>'
             "<table-cell><p>custom field</p></table-cell></table-row>"
             "</table-body></table>",
         ),
@@ -323,12 +323,12 @@ class TestConverter:
             "--print arg  Output just arg.\n"
             "-f FILE, --file=FILE  These two options are synonyms;\n"
             "                      both have arguments.\n",
-            '<table xhtml:class="rst-optionlist"><table-body>'
-            '<table-row><table-cell><span xhtml:class="kbd option">-a</span></table-cell>'
+            '<table html:class="rst-optionlist"><table-body>'
+            '<table-row><table-cell><span html:class="kbd option">-a</span></table-cell>'
             "<table-cell><p>Output all.</p></table-cell></table-row>"
-            '<table-row><table-cell><span xhtml:class="kbd option">--print arg</span></table-cell>'
+            '<table-row><table-cell><span html:class="kbd option">--print arg</span></table-cell>'
             "<table-cell><p>Output just arg.</p></table-cell></table-row>"
-            '<table-row><table-cell><span xhtml:class="kbd option">-f FILE</span>, <span xhtml:class="kbd option">--file=FILE</span></table-cell>'
+            '<table-row><table-cell><span html:class="kbd option">-f FILE</span>, <span html:class="kbd option">--file=FILE</span></table-cell>'
             "<table-cell><p>These two options are synonyms;\nboth have arguments.</p></table-cell></table-row>"
             "</table-body></table>",
         ),
@@ -350,7 +350,7 @@ class TestConverter:
         ("Abra test__ arba\n\n.. __: http://python.org", '<p>Abra <a xlink:href="http://python.org">test</a> arba</p>'),
         (
             "Abra\n\n.. _example:\n\nAbra example_ arba\n",
-            '<p>Abra</p><span id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
+            '<p>Abra</p><span xml:id="example" /><p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p>',
         ),
         (
             """
@@ -360,7 +360,7 @@ Abra example_ arba
 .. _alias:
 
 text""",
-            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span id="alias" /><span id="example" /><p>text</p>',
+            '<p>Abra <a xlink:href="wiki.local:#example">example</a> arba</p><span xml:id="alias" /><span xml:id="example" /><p>text</p>',
         ),
         (  # A reference_ with no matching target links to a local Wiki item.
             "wiki references: `item`_, `namespace/item`_, `ns/item/subitem`_, `../sibling`_, `/subitem`_",
@@ -447,7 +447,7 @@ text""",
         (
             ".. raw:: html\n\n   <div>potentially harmfull content</div>",
             '<admonition type="error">'
-            '<p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 1) </p>'
+            '<p html:class="moin-title">System Message: ERROR/3 (rST input line 1) </p>'
             "<p>Raw HTML is not supported in Moin.</p>"
             "<blockcode>&lt;div&gt;potentially harmfull content&lt;/div&gt;</blockcode>"
             "</admonition>",
@@ -456,7 +456,7 @@ text""",
             ".. role:: raw-html(raw)\n  :format: html\n\nParagraph with :raw-html:`potentially harmfull` inline HTML.",
             "<p>Paragraph with "
             '<admonition type="error">'
-            '<p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 4) </p>'
+            '<p html:class="moin-title">System Message: ERROR/3 (rST input line 4) </p>'
             "<p>Raw HTML is not supported in Moin.</p>"
             "<blockcode>potentially harmfull</blockcode>"
             "</admonition>"
@@ -518,22 +518,22 @@ text""",
         # admonitions (hint, info, warning, error, ...)
         (
             '.. note::\n   :name: note-id\n\n   An admonition of type "note"',
-            '<span id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition>',
+            '<span xml:id="note-id" /><admonition type="note"><p>An admonition of type "note"</p></admonition>',
         ),
         # use an attention for a generic admonition
         (
             ".. admonition:: Generic Admonition\n\n   Be alert!",
-            '<admonition type="attention" xhtml:class="admonition-generic-admonition">'
-            '<p xhtml:class="moin-title">Generic Admonition</p>'
+            '<admonition type="attention" html:class="admonition-generic-admonition">'
+            '<p html:class="moin-title">Generic Admonition</p>'
             "<p>Be alert!</p></admonition>",
         ),
         # Moin uses admonitions also for system messages
         (
             "Unbalanced *inline markup.",
-            '<p>Unbalanced <span id="problematic-1" /><a xhtml:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
-            '<span id="system-message-1" /><admonition type="caution">'
-            '<p xhtml:class="moin-title">System Message: WARNING/2 (rST input line 1) '
-            '<span id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
+            '<p>Unbalanced <span xml:id="problematic-1" /><a html:class="red" xlink:href="#system-message-1">*</a>inline markup.</p>'
+            '<span xml:id="system-message-1" /><admonition type="caution">'
+            '<p html:class="moin-title">System Message: WARNING/2 (rST input line 1) '
+            '<span xml:id="system-message-1" /><a xlink:href="#problematic-1">backlink</a></p>'
             "<p>Inline emphasis start-string without end-string.</p>"
             "</admonition>",
         ),
@@ -543,7 +543,7 @@ text""",
         #     "  not allowed\n"
         #     "  -----------\n",
         #     "<p>Sections must not be nested in body elements.</p><blockquote>"
-        #     '<admonition type="error"><p xhtml:class="moin-title">System Message: ERROR/3 (rST input line 4)</p>'
+        #     '<admonition type="error"><p html:class="moin-title">System Message: ERROR/3 (rST input line 4)</p>'
         #     "<p>Unexpected section title.</p>"
         #     "<blockcode>not allowed\n-----------</blockcode>"
         #     "</admonition></blockquote>"
@@ -551,18 +551,18 @@ text""",
         # Topics, Sidebars, and Rubrics
         (
             ".. topic:: Topic Title\n   :class: custom\n\n   topic content",
-            '<aside xhtml:class="custom"><p xhtml:class="moin-title">Topic Title</p><p>topic content</p></aside>',
+            '<aside html:class="custom"><p html:class="moin-title">Topic Title</p><p>topic content</p></aside>',
         ),
         (
             ".. sidebar:: Sidebar Title\n   :subtitle: Sidebar Subtitle\n   :class: float-right\n\n   sidebar content",
-            '<aside xhtml:class="sidebar float-right">'
-            '<p xhtml:class="moin-title">Sidebar Title</p>'
-            '<p xhtml:class="moin-subheading">Sidebar Subtitle</p>'
+            '<aside html:class="sidebar float-right">'
+            '<p html:class="moin-title">Sidebar Title</p>'
+            '<p html:class="moin-subheading">Sidebar Subtitle</p>'
             "<p>sidebar content</p></aside>",
         ),
         (
             ".. rubric:: Informal Heading\n  :class: custom",
-            '<p xhtml:class="moin-title moin-rubric custom">Informal Heading</p>',
+            '<p html:class="moin-title moin-rubric custom">Informal Heading</p>',
         ),
     ]
 

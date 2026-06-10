@@ -339,11 +339,13 @@ ul.moin-tags li.weight8 { font-size: 260%; }
 ul.moin-tags li.weight9 { font-size: 280%; }
 
 /* footnotes */
-.moin-footnotes { border-top: 1px solid var(--border-footnotes); margin: 2em; }
-[role="doc-footnote"] { margin: 1em; }  /* also overrides the generic "aside" styling below */
-[role="doc-footnote"] > sup:first-child { margin-left: -0.8em; padding-right: 0.2em; }  /* hanging indent */
-[role="doc-footnote"] > sup:first-child + * { display: inline-block; margin: 0; vertical-align: top; }
-
+.moin-footnotes { border-top: 1px solid var(--border-footnotes); margin: 2em 0 0 0; }
+[role="doc-footnote"] { margin: 0.5em 1.5em }  /* also overrides the generic "aside" styling below */
+[role="doc-footnote"] > :first-child { display: inline-block; min-width: 1.2em;
+    text-align: right; margin: 0  0.3em 0 -1.5em; }  /* hanging indent */
+[role="doc-footnote"] > :first-child + * { display: inline-block; margin: 0; vertical-align: top; }
+[role="doc-noteref"] { margin-left: 0.25ex; }
+[role="doc-noteref"] + [role="doc-noteref"] { margin-left: 0.5ex; }
 /* moin default table styling */
 table { margin: .5em 0; }
 caption { border: 1px solid var(--border); border-bottom: 0;

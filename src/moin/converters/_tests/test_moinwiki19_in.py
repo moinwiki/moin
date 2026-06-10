@@ -14,7 +14,7 @@ from moin.utils.tree import moin_page, xlink, html, xinclude
 
 
 class TestConverter:
-    namespaces = {moin_page: "", xlink: "xlink", html: "xhtml", xinclude: "xinclude"}
+    namespaces = {moin_page: "", xlink: "xlink", html: "html", xinclude: "xinclude"}
 
     output_re = XMLNS_RE
 

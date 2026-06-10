@@ -100,9 +100,9 @@ class TestConverter(Base):
         ),
         # XML attributes: We support all the xml standard attributes
         (
-            '<article><para xml:base="http://base.tld" xml:id="id" xml:lang="en">Text</para></article>',
-            # <page><body><div html:class="article"><p xml:base="http://base.tld" xml:id="id" xml:lang="en">Text</p></div></body></page>
-            '/page/body/div/p[@xml:base="http://base.tld"][@xml:id="id"][@xml:lang="en"][text()="Text"]',
+            '<article><para xml:base="http://base.tld" xml:id="myid" xml:lang="en">Text</para></article>',
+            # <page><body><div html:class="article"><p xml:base="http://base.tld" xml:id="myid" xml:lang="en">Text</p></div></body></page>
+            '/page/body/div/p[@xml:base="http://base.tld"][@xml:id="myid"][@xml:lang="en"][text()="Text"]',
         ),
         (  # place standard attributes at the element, not its first child
             '<article><para xml:id="myid">emphasised  <emphasis>text</emphasis></para></article>',
