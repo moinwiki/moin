@@ -11,12 +11,11 @@ import pytest
 
 from . import serialize, XMLNS_RE3, TAGSTART_RE
 
-from moin.utils.tree import html, moin_page, xlink, xml, docbook, xinclude
 from moin.converters.docbook_in import Converter
+from moin.log import getLogger
+from moin.utils.tree import html, moin_page, xlink, xml, docbook, xinclude
 
-from moin import log
-
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 etree = pytest.importorskip("lxml.etree")  # noqa
 
@@ -55,14 +54,14 @@ class Base:
 
     def do(self, input, xpath_query):
         string_to_parse = self.handle_output(input)
-        logging.debug(f"After the DocBook in conversion: {string_to_parse}")
+        logger.debug(f"After the DocBook in conversion: {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         print("string_to_parse = %s" % string_to_parse)  # provide a clue for failing tests
         assert tree.xpath(xpath_query, namespaces=self.namespaces_xpath)
 
     def do_nonamespace(self, input, xpath_query):
         string_to_parse = self.handle_output(input, nonamespace=True)
-        logging.debug(f"After the DocBook in conversion: {string_to_parse}")
+        logger.debug(f"After the DocBook in conversion: {string_to_parse}")
         tree = etree.parse(StringIO(string_to_parse))
         assert tree.xpath(xpath_query, namespaces=self.namespaces_xpath)
 

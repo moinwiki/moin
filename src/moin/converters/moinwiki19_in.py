@@ -14,9 +14,10 @@ from typing import Any, Final, TYPE_CHECKING
 
 import re
 
-from moin import log, wikiutil
+from moin import wikiutil
 from moin.constants.misc import URI_SCHEMES
 from moin.constants.chartypes import CHARS_LOWER, CHARS_UPPER
+from moin.log import getLogger
 from moin.utils.interwiki import is_known_wiki
 from moin.utils.iri import Iri
 from moin.utils.mime import Type, type_moin_document
@@ -28,14 +29,14 @@ from .moinwiki_in import Converter
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class ConverterFormat19(Converter):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     inline_freelink: Final = r"""
          (?:

@@ -17,6 +17,7 @@ import re
 
 from emeraldtree import ElementTree as ET
 
+from moin.converters.base import ConverterBase
 from moin.utils.mime import type_moin_document
 from moin.utils.tree import moin_page
 
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Replace each smiley with the corresponding element in the DOM tree.
     """
@@ -80,7 +81,7 @@ class Converter:
 
     @classmethod
     def _factory(cls, input: Type, output: Type, icon: str | None = None, **kwargs: Any) -> Self | None:
-        return cls() if icon == "smiley" else None
+        return cls(**kwargs) if icon == "smiley" else None
 
     def __call__(self, content: Any) -> Any:
         self.do_children(content)

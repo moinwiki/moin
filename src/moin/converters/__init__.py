@@ -53,12 +53,12 @@ class Converter(Protocol):
     @property
     def messages(self) -> set[ConverterMessage]: ...
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any | None: ...
+    def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
 
     def reset_messages(self) -> None: ...
 
 
-class RegistryConverter(RegistryBase[Converter]):
+class ConverterRegistry(RegistryBase[Converter]):
 
     class Entry(NamedTuple):
         factory: Callable[[Type, Type], Converter | None]
@@ -97,5 +97,5 @@ class RegistryConverter(RegistryBase[Converter]):
         self._register(self.Entry(factory, type_input, type_output, priority))
 
 
-default_registry = RegistryConverter()
+default_registry = ConverterRegistry()
 load_package_modules(__name__, __path__)

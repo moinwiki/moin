@@ -16,6 +16,7 @@ from typing import Any, TYPE_CHECKING
 from emeraldtree.ElementTree import Element
 
 from moin import current_app, flaskg
+from moin.converters.base import ConverterBase
 from moin.utils.interwiki import is_known_wiki, url_for_item
 from moin.utils.iri import Iri, IriPath
 from moin.utils.mime import type_moin_document
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class ConverterBase:
+class LinkConverterBase(ConverterBase):
 
     _tag_xlink_href = xlink.href
     _tag_xinclude_href = xinclude.href
@@ -125,11 +126,11 @@ class ConverterBase:
         return abs_path
 
 
-class ConverterExternOutput(ConverterBase):
+class ConverterExternOutput(LinkConverterBase):
 
     @classmethod
     def _factory(cls, input: Type, output: Type, links: str | None = None, **kwargs) -> Self | None:
-        return cls() if links == "extern" else None
+        return cls(**kwargs) if links == "extern" else None
 
     def _get_do_rev(self, query):
         """
@@ -174,7 +175,7 @@ class ConverterExternOutput(ConverterBase):
         endpoint = do_to_endpoint[do or "show"]
         return endpoint, rev, query
 
-    def handle_wiki_links(self, elem: Element, input: Iri, to_tag=ConverterBase._tag_xlink_href):
+    def handle_wiki_links(self, elem: Element, input: Iri, to_tag=LinkConverterBase._tag_xlink_href):
         wiki_name = "Self"
         if input.authority and input.authority.host:
             wn = str(input.authority.host)
@@ -192,7 +193,9 @@ class ConverterExternOutput(ConverterBase):
         link = Iri(url, query=query, fragment=input.fragment)
         elem.set(to_tag, link)
 
-    def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri | None, to_tag=ConverterBase._tag_xlink_href):
+    def handle_wikilocal_links(
+        self, elem: Element, input: Iri, page: Iri | None, to_tag=LinkConverterBase._tag_xlink_href
+    ):
         endpoint = "frontend.show_item"
         if input.path:
             item_name = str(input.path)
@@ -222,7 +225,7 @@ class ConverterExternOutput(ConverterBase):
         link = Iri(url, query=query, fragment=input.fragment)
         elem.set(to_tag, link)
 
-    def handle_external_links(self, elem: Element, input: Iri, to_tag=ConverterBase._tag_xlink_href):
+    def handle_external_links(self, elem: Element, input: Iri, to_tag=LinkConverterBase._tag_xlink_href):
         elem.set(to_tag, input)
         # rst_in.py may create a link similar to "http:Home", we check input.authority to verify link is external
         if elem.tag == moin_page.a and input.authority:
@@ -230,15 +233,14 @@ class ConverterExternOutput(ConverterBase):
             elem.set(html.class_, elem.attrib.get(html.class_, "") + " moin-" + input.scheme)
 
 
-class ConverterItemRefs(ConverterBase):
+class ConverterItemRefs(LinkConverterBase):
     """
     determine all links and transclusions to other wiki items in this document
     """
 
     @classmethod
     def _factory(cls, input: Type, output: Type, items: str | None = None, **kwargs: Any) -> Self | None:
-        if items == "refs":
-            return cls()
+        return cls(**kwargs) if items == "refs" else None
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -258,7 +260,7 @@ class ConverterItemRefs(ConverterBase):
 
         super().__call__(*args, **kwargs)
 
-    def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri, to_tag=ConverterBase._tag_xlink_href):
+    def handle_wikilocal_links(self, elem: Element, input: Iri, page: Iri, to_tag=LinkConverterBase._tag_xlink_href):
         """
         Adds the link item from the input param to self.links
         :param elem: the element of the link
@@ -291,7 +293,7 @@ class ConverterItemRefs(ConverterBase):
         path = self.absolute_path(path, page.path)
         self.transclusions.add(str(path))
 
-    def handle_external_links(self, elem, input: Iri, to_tag=ConverterBase._tag_xlink_href):
+    def handle_external_links(self, elem, input: Iri, to_tag=LinkConverterBase._tag_xlink_href):
         """
         Adds the link item from the input param to self.external_links
         :param elem: the element of the link

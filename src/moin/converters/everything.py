@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from moin.constants.keys import NAME
+from moin.converters.base import ConverterBase
 from moin.i18n import _
 from moin.utils.iri import Iri
 from moin.utils.tree import moin_page, xlink
@@ -32,14 +33,14 @@ def make_message_page(text: str, class_: str = "error") -> Element:
     return moin_page.page(children=(body,))
 
 
-class Converter:
+class Converter(ConverterBase):
     """
     Convert an unsupported item to a DOM tree.
     """
 
     @classmethod
     def _factory(cls, input: Type, output: Type, **kwargs) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(
         self, revision: Revision, contenttype: str | None = None, arguments: Arguments | None = None

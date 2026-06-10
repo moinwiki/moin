@@ -18,25 +18,25 @@ import re
 from flask import request
 from urllib.parse import urlencode, unquote
 
-from moin import log
 from moin.constants.contenttypes import CHARSET
 from moin.constants.misc import URI_SCHEMES
+from moin.i18n import _
+from moin.log import getLogger
 from moin.utils.iri import Iri
 from moin.utils.tree import html, moin_page, xinclude, xlink, xml
 from moin.utils.interwiki import is_known_wiki
 from moin.utils.mime import Type, type_moin_document, type_moin_wiki
-from moin.i18n import _
 
 from ._args import Arguments
 from ._args_wiki import parse as parse_arguments, object_re
 from ._wiki_macro import ConverterMacro
-from ._util import decode_data, normalize_split_text, _Iter, _Stack
+from ._util import decode_data, normalize_split_text, _Iter
 from . import default_registry
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class _TableArguments:
@@ -96,7 +96,7 @@ class _TableArguments:
             else:
                 args.positional.append(value)
         elif key:
-            logging.warning(f"No value supplied for {key} attribute, ignored.")
+            logger.warning(f"No value supplied for {key} attribute, ignored.")
 
     def number_columns_spanned_repl(self, args, number_columns_spanned):
         args.keyword["number-columns-spanned"] = int(number_columns_spanned)
@@ -145,7 +145,7 @@ class Converter(ConverterMacro):
 
     @classmethod
     def factory(cls, input: Type, output: Type, **kwargs: Any) -> Self:
-        return cls()
+        return cls(**kwargs)
 
     def __call__(self, data: Any, contenttype: str | None = None, arguments: Arguments | None = None) -> Any:
         text = decode_data(data, contenttype)
@@ -502,7 +502,7 @@ class Converter(ConverterMacro):
             if list_definition_text:
                 element_label = moin_page.list_item_label()
                 stack.top_append(element_label)
-                new_stack = _Stack(element_label, iter_content=iter_content)
+                new_stack = self.make_stack(element_label, iter_content=iter_content)
 
                 self.parse_inline(list_definition_text, new_stack, self.inline_re)
             if not list_definition_text or text:
@@ -511,7 +511,7 @@ class Converter(ConverterMacro):
                 element_body.level, element_body.type = level, type
 
                 stack.push(element_body)
-                new_stack = _Stack(element_body, iter_content=iter_content)
+                new_stack = self.make_stack(element_body, iter_content=iter_content)
         else:
             new_stack = stack
 
@@ -645,7 +645,7 @@ class Converter(ConverterMacro):
             stack.pop()
         else:
             msg = f"unbalanced use of moin size element {size}"
-            logging.warning(msg)
+            logger.warning(msg)
             try:
                 self.log(msg, "warning")
             except RuntimeError:  # CLI call has no valid request context
@@ -1079,7 +1079,7 @@ class Converter(ConverterMacro):
         """
         data = {str(k): v for k, v in match.groupdict().items() if v is not None}
         func = f"{prefix}_{match.lastgroup}_repl"
-        # logging.debug("calling %s(%r, %r)" % (func, args, data))
+        # logger.debug("calling %s(%r, %r)" % (func, args, data))
         getattr(self, func)(*args, **data)
 
     def parse_block(self, iter_content, arguments):
@@ -1090,7 +1090,7 @@ class Converter(ConverterMacro):
                     attrib[moin_page(key)] = value
 
         body = moin_page.body(attrib=attrib)
-        stack = _Stack(body, iter_content=iter_content)
+        stack = self.make_stack(body, iter_content=iter_content)
 
         for line in iter_content:
             data = {str(k): v for k, v in self.indent_re.match(line).groupdict().items() if v is not None}
@@ -1124,7 +1124,7 @@ class Converter(ConverterMacro):
         """
         p = moin_page.p()
         iter_content = _Iter(text)
-        stack = _Stack(p, iter_content=iter_content)
+        stack = self.make_stack(p, iter_content=iter_content)
         self.parse_inline(text, stack, self.inline_re)
         return p
 
