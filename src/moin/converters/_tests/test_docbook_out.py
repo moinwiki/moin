@@ -283,6 +283,26 @@ class TestConverter(Base):
             # <article><simpara>a <citetitle>Title of Cited Work</citetitle></simpara></article>
             '/article/simpara/citetitle[text()="Title of Cited Work"]',
         ),
+        (  # <emphasis page:html-tag="dfn"> --> <firstterm>
+            '<page><body><p>A <emphasis page:html-tag="dfn">mopple</emphasis> is …</p></body></page>',
+            # <article><simpara>A <firstterm>mopple</firstterm> is …</simpara></article>
+            '/article/simpara/firstterm[text()="mopple"]',
+        ),
+        (  # <emphasis page:html-tag="i"> --> <foreignphrase>
+            '<page><body><p>They reached a <emphasis page:html-tag="i">cul de sac</emphasis>.</p></body></page>',
+            # <article><simpara>They reached a <foreignphrase>cul de sac</foreignphrase>.</simpara></article>
+            '/article/simpara/foreignphrase[text()="cul de sac"]',
+        ),
+        (  # <emphasis page:html-tag="var"> --> <varname>
+            '<page><body><p><emphasis page:html-tag="var">x</emphasis> = 3</p></body></page>',
+            # <article><simpara><varname>x</varname> = 3</simpara></article>
+            '/article/simpara/varname[text()="x"]',
+        ),
+        (  # <span page:html-tag="abbr"> --> <abbrev>
+            '<page><body><p><span page:html-tag="abbr">DOM</span> stands for …</p></body></page>',
+            # <article><simpara><abbrev>DOM</abbrev> stands for …</simpara></article>
+            '/article/simpara/abbrev[text()="DOM"]',
+        ),
     ]
 
     @pytest.mark.parametrize("input,xpath", data)
