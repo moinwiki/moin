@@ -11,6 +11,7 @@ initially hidden by CSS, and displayed when the user clicks a button.
 #}
 
 {% extends theme("layout.html") %}
+{% import "utils.html" as utils with context %}
 {% import "forms.html" as forms with context %}
 {% import theme("itemviews.html") as itemviews with context %}
 
@@ -336,7 +337,7 @@ a checkbox, an invisible link used by js for download, a link to the item
 
 {% block body_scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', filename='js/index_action.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jfu.js') }}"></script>
-    {{ forms.file_uploader_scripts() }}
+    <script src="{{ url_for('static', filename='js/index_action.js') }}" {{ utils.nonce() }}"></script>
+    <script src="{{ url_for('static', filename='js/jfu.js') }}" {{ utils.nonce() }}"></script>
+    {{ utils.file_uploader_scripts() }}
 {% endblock %}
