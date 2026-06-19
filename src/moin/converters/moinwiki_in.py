@@ -877,19 +877,22 @@ class Converter(ConverterMacro):
         )
     """
 
+    inline_object_attr_whitelist: Final[tuple[str, ...]] = ("width", "height", "class")
+
     def inline_object_repl(self, stack, object, object_url=None, object_item=None, object_text=None, object_args=None):
-        """Handles objects transcluded within the page."""
+        """
+        Handles objects transcluded within the page.
+        """
         if object_args:
             args = parse_arguments(object_args, parse_re=object_re).keyword
         else:
             args = {}
         query_keys = {}
         attrib = {}
-        whitelist = ["width", "height", "class"]
         for attr, value in args.items():
             if attr.startswith("&"):
                 query_keys[attr[1:]] = value
-            elif attr in whitelist:
+            elif attr in self.inline_object_attr_whitelist:
                 attrib[html(attr)] = value
         if object_text:
             attrib[html.alt] = object_text
