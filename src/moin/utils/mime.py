@@ -130,6 +130,8 @@ class Type(_Type, AutoNe):
 # Own types, application type
 type_moin_document = Type(type="application", subtype="x.moin.document")
 
+type_xhtml_moin_page = Type("application/x-xhtml-moin-page")
+
 # Own types, text type
 type_moin_creole = Type(type="text", subtype="x.moin.creole")
 type_moin_wiki = Type(type="text", subtype="x.moin.wiki")
