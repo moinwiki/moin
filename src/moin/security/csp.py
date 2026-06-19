@@ -127,7 +127,7 @@ def set_csp_nonce(request: Request) -> None:
         setattr(request, NONCE_ATTR, make_csp_nonce())
 
 
-def set_csp_headers(response, profile, nonce):
+def set_csp_headers(response: Response, profile: CspProfile, nonce: str | None) -> None:
 
     def append_directive(policy, directive):
         return f"{policy}; {directive}" if policy else directive
@@ -135,7 +135,7 @@ def set_csp_headers(response, profile, nonce):
     # enforcing policy
     if policy_value := profile.rules:
         if nonce:
-            policy_value = policy_value.replace("{NONCE}", nonce)
+            policy_value = policy_value.replace("@nonce", f"'nonce-{nonce}'")
         if profile.report_uri:
             policy_value = append_directive(policy_value, f"report-uri { url_for('frontend.cspreport') }")
         response.headers["Content-Security-Policy"] = policy_value
@@ -143,7 +143,7 @@ def set_csp_headers(response, profile, nonce):
     # report only policy
     if policy_value := profile.rules_report_only:
         if nonce:
-            policy_value = policy_value.replace("{NONCE}", nonce)
+            policy_value = policy_value.replace("@nonce", f"'nonce-{nonce}'")
         for endpoint_name in profile.report_endpoints:
             policy_value = append_directive(policy_value, f"report-to {endpoint_name}")
         if profile.report_uri:
@@ -161,7 +161,7 @@ def add_csp_headers(response: Response) -> Response:
     Add Content-Security-Policy headers to the HTTP response.
     """
     assert csp_config
-    profile = csp_config.profiles.get("default")
-    nonce_value = get_csp_nonce() if csp_config.use_nonces else None
-    set_csp_headers(response, profile, nonce_value)
+    if profile := csp_config.profiles.get("default"):
+        nonce_value = get_csp_nonce() if csp_config.use_nonces else None
+        set_csp_headers(response, profile, nonce_value)
     return response

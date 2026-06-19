@@ -101,13 +101,16 @@ from whoosh.query import Regex
 
 from moin import flaskg
 from moin.constants.keys import NAME_EXACT
-from moin.converters.html_out import mark_item_as_transclusion, Attributes, ConverterBase
+from moin.converters._util import StyleAttrFilter, StyleConverter
+from moin.converters.base import ConverterBase
+from moin.converters.html_out import mark_item_as_transclusion, Attributes
 from moin.i18n import _
 from moin.items import Item
 from moin.log import getLogger
 from moin.utils import close_file
 from moin.utils.iri import Iri, IriPath
 from moin.utils.mime import type_moin_document
+from moin.utils.render import RenderContext
 from moin.utils.tree import html, moin_page, xinclude, xlink
 
 from . import default_registry
@@ -202,14 +205,19 @@ class Converter(ConverterBase):
     def _factory(cls, input: Type, output: Type, includes: str | None = None, **kwargs: Any) -> Self | None:
         return cls(**kwargs) if includes == "expandall" else None
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, context: RenderContext, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.stack: list[Iri | None] = []
+        self.style_attr_filter = StyleAttrFilter(context.allow_style_attributes)
+        self.style_converter = StyleConverter() if context.convert_inline_style else None
 
     def __call__(self, tree: Any) -> Any:
         self.stack.clear()
         self.recurse(tree, None)
         return tree
+
+    def make_attributes(self, elem) -> Attributes:
+        return Attributes(elem, self.style_attr_filter, self.style_converter)
 
     def recurse(self, elem: ET.Element, page_href: Iri | None):
         # on first call, elem.tag.name=='page'.
@@ -393,7 +401,7 @@ class Converter(ConverterBase):
                             body = ret[0]
                             if len(body) == 0:
                                 # the transcluded item is empty, insert an empty span into DOM
-                                attrib = Attributes(ret).convert()
+                                attrib = self.make_attributes(ret).convert()
                                 elem[i] = ET.Element(moin_page.span, attrib=attrib)
                             elif isinstance(body[0], ET.Node) and (
                                 len(body) > 1 or body[0].tag.name not in ("p", "object", "a")
@@ -413,7 +421,7 @@ class Converter(ConverterBase):
                                 new_trans_ptr = len(container)
                                 # get attributes from page node;
                                 # we expect {class: "moin-transclusion"; data-href: "http://some.org/somepage"}
-                                attrib = Attributes(ret).convert()
+                                attrib = self.make_attributes(ret).convert()
                                 # current elem will likely be replaced by container so we need to copy data-lineno attr
                                 if html.data_lineno in elem.attrib:
                                     attrib[html.data_lineno] = elem.attrib[html.data_lineno]

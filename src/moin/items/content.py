@@ -45,8 +45,6 @@ from werkzeug.http import is_resource_modified
 
 from whoosh.query import Term, And
 
-from moin import current_app, flaskg
-
 try:
     import PIL
     from PIL import Image as PILImage
@@ -54,7 +52,7 @@ try:
 except ImportError:
     PIL = PILImage = PILdiff = None
 
-from moin import log, wikiutil
+from moin import current_app, flaskg, log
 from moin.constants.contenttypes import (
     GROUP_MARKUP_TEXT,
     GROUP_OTHER_TEXT,
@@ -89,11 +87,13 @@ from moin.utils.diff_text import diff as text_diff
 from moin.utils.interwiki import get_download_file_name
 from moin.utils.iri import Iri
 from moin.utils.markup import safe_markup
-from moin.utils.mime import Type, type_moin_document
+from moin.utils.mime import Type, type_moin_document, type_xhtml_moin_page
 from moin.utils.mimetype import MimeType
 from moin.utils.registry import RegistryBase
+from moin.utils.render import RenderContext
 from moin.utils.send_file import send_file
 from moin.utils.tree import moin_page, html, xinclude, xlink, docbook
+from moin.wikiutil import file_headers
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -279,15 +279,15 @@ class Content:
             # We will see if we can perform the conversion:
             # FROM_mimetype --> DOM
             # if so we perform the transformation, otherwise we don't
-            from moin.converters import default_registry as reg
+            from moin.converters import default_registry as converter_registry
 
             try:
                 kwargs = {"add_lineno": flaskg.add_lineno_attr}
-                input_conv = reg.get(Type(self.contenttype), type_moin_document, **kwargs)
+                input_conv = converter_registry.get(Type(self.contenttype), type_moin_document, **kwargs)
             except LookupError:
                 raise TypeError(f"We cannot handle the conversion from {self.contenttype} to the DOM tree")
 
-            smiley_conv = reg.get(type_moin_document, type_moin_document, icon="smiley")
+            smiley_conv = converter_registry.get(type_moin_document, type_moin_document, icon="smiley")
 
             # We can process the conversion
             name = self.rev.fqname.fullname if self.rev else self.name
@@ -313,13 +313,15 @@ class Content:
 
         return doc
 
-    def _expand_document(self, doc: Element):
-        from moin.converters import default_registry as reg
+    def _expand_document(self, doc: Element, context: RenderContext):
+        from moin.converters import default_registry as converter_registry
 
-        include_conv = reg.get(type_moin_document, type_moin_document, includes="expandall")
-        macro_conv = reg.get(type_moin_document, type_moin_document, macros="expandall")
-        nowiki_conv = reg.get(type_moin_document, type_moin_document, nowiki="expandall")
-        link_conv = reg.get(type_moin_document, type_moin_document, links="extern")
+        include_conv = converter_registry.get(
+            type_moin_document, type_moin_document, includes="expandall", context=context
+        )
+        macro_conv = converter_registry.get(type_moin_document, type_moin_document, macros="expandall")
+        nowiki_conv = converter_registry.get(type_moin_document, type_moin_document, nowiki="expandall")
+        link_conv = converter_registry.get(type_moin_document, type_moin_document, links="extern")
 
         flaskg.clock.start("nowiki")
         doc = nowiki_conv(doc)
@@ -339,35 +341,39 @@ class Content:
 
         if "regex" in request.args:
             regex = request.args["regex"]
-            highlight_conv = reg.get(type_moin_document, type_moin_document, highlight="highlight", regex=regex)
+            highlight_conv = converter_registry.get(
+                type_moin_document, type_moin_document, highlight="highlight", regex=regex
+            )
             flaskg.clock.start("highlight")
             doc = highlight_conv(doc)
             flaskg.clock.stop("highlight")
 
         return doc
 
-    def render_data(self, preview: Any = None) -> str:
+    def render_data(self, context: RenderContext | None = None) -> str:
         try:
-            from moin.converters import default_registry as reg
+            from moin.converters import default_registry as converter_registry
 
-            # TODO: Real output format
-            doc = self.internal_representation(preview=preview)
-            doc = self._expand_document(doc)
+            if context is None:
+                context = RenderContext(allow_style_attributes=current_app.cfg.allow_style_attributes)
+
+            document = self.internal_representation(preview=context.preview)
+            document = self._expand_document(document, context)
             flaskg.clock.start("conv_dom_html")
-            html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"))
-            doc = html_conv(doc)
+            converter = converter_registry.get(type_moin_document, type_xhtml_moin_page, context=context)
+            document = converter(document)
             flaskg.clock.stop("conv_dom_html")
-            rendered_data = conv_serialize(doc, {html.namespace: ""})
+            output = conv_serialize(document, {html.namespace: ""})
         except Exception:
             # we really want to make sure that invalid data or a malfunctioning
             # converter does not crash the item view (otherwise a user might
             # not be able to fix it from the UI).
             error_id = uuid.uuid4()
             logging.exception(f'An exception happened in render_data (error_id={error_id}, name="{self.name}"):')
-            rendered_data = render_template(
+            output = render_template(
                 "crash.html", server_time=time.strftime("%Y-%m-%d %H:%M:%S %Z"), url=request.url, error_id=error_id
             )
-        return rendered_data
+        return output
 
     def render_data_xml(self):
         doc = self.internal_representation()
@@ -394,8 +400,10 @@ class Content:
         try:
             from moin.converters import default_registry as reg
 
+            render_context = RenderContext()
+
             doc = self.internal_representation(preview=preview)
-            doc = self._expand_document(doc)
+            doc = self._expand_document(doc, render_context)
 
             slide_pages = []
             before_first_header = True
@@ -413,7 +421,7 @@ class Content:
             print(f"{len(slide_pages)} slides found.")
 
             flaskg.clock.start("conv_dom_html")
-            html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"))
+            html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"), context=render_context)
 
             slide_content = []
             attrib = {moin_page.class_: "moin-slides"}
@@ -914,7 +922,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                     content_type = self.rev.meta[CONTENTTYPE]
                 size = (width or 99999, height or 99999)
                 content_type, data = self._transform(content_type, size=size, transpose_op=transpose)
-                headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
+                headers = file_headers(content_type=content_type, content_length=len(data))
                 current_app.cache.set(cid, (headers, data))
             else:
                 # XXX TODO check ACL behaviour
@@ -965,7 +973,7 @@ class TransformableBitmapImage(RenderableBitmapImage):
                 diffimage.save(outfile, output_type)
                 data = outfile.getvalue()
                 outfile.close()
-                headers = wikiutil.file_headers(content_type=content_type, content_length=len(data))
+                headers = file_headers(content_type=content_type, content_length=len(data))
                 current_app.cache.set(cid, (headers, data))
             except (OSError, ValueError) as err:
                 logging.exception(f"error during PILdiff: {err}")
@@ -1133,8 +1141,9 @@ class Text(Binary):
 
         pygments_conv = PygmentsConverter(contenttype=self.contenttype)
         doc = pygments_conv(data_text)
+        context = RenderContext(allow_style_attributes=current_app.cfg.allow_style_attributes)
         # TODO: Real output format
-        html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"))
+        html_conv = reg.get(type_moin_document, Type("application/x-xhtml-moin-page"), context=context)
         doc = html_conv(doc)
         return conv_serialize(doc, {html.namespace: ""})
 
@@ -1221,7 +1230,7 @@ class DocBook(MarkupItem):
         from emeraldtree import ElementTree as ET
         from moin.converters import default_registry as reg
 
-        doc = self._expand_document(doc)
+        doc = self._expand_document(doc, RenderContext())
 
         # We convert the internal representation of the document
         # into a DocBook document
@@ -1324,20 +1333,18 @@ class DrawPNGMap(Draw):
     def _transform_map(self, image_map, title):
         raise NotImplementedError
 
-    def render_data(self):
+    def render_data(self, context):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         png_url = url_for("frontend.get_item", item_name=self.name, member="drawing.png", rev=self.rev.revid)
         title = _("Edit drawing {filename} (opens in new window)").format(filename=self.name)
-        image_map = self._read_map()
-        if image_map:
+        if image_map := self._read_map():
             mapid, image_map = self._transform_map(image_map, title)
             title = _("Clickable drawing: {filename}").format(filename=self.name)
-            return safe_markup(
-                image_map + f'<img src="{escape(png_url)}" alt="{escape(title)}" usemap="#{escape(mapid)}" />'
-            )
+            markup = image_map + f'<img src="{escape(png_url)}" alt="{escape(title)}" usemap="#{escape(mapid)}" />'
         else:
-            return safe_markup(f'<img src="{escape(png_url)}" alt="{escape(title)}" />')
+            markup = f'<img src="{escape(png_url)}" alt="{escape(title)}" />'
+        return safe_markup(markup)
 
 
 @register
@@ -1362,11 +1369,12 @@ class SvgDraw(Draw):
         self.put_member("drawing.svg", svg_content, None, True, False)
         self.put_member("drawing.png", png_content, None, False, True)
 
-    def render_data(self):
+    def render_data(self, context):
         # TODO: this could be a converter -> dom, then transcluding this kind
         # of items and also rendering them with the code in base class could work
         revid = self.rev.revid
         item_name = self.name
         drawing_url = url_for("frontend.get_item", item_name=item_name, member="drawing.svg", rev=revid)
         png_url = url_for("frontend.get_item", item_name=item_name, member="drawing.png", rev=revid)
+        # FIXME: don't escape urls here
         return safe_markup(f'<img src="{escape(png_url)}" alt="{escape(drawing_url)}" />')

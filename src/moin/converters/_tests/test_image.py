@@ -12,11 +12,14 @@ from emeraldtree import ElementTree as ET
 from . import serialize
 
 from moin.converters.html_out import ConverterPage
+from moin.utils.render import RenderContext
+
+render_context = RenderContext(allow_style_attributes=True, use_nonces=False, convert_inline_style=False)
 
 
 def run_test(tree_xml, output):
     tree = ET.XML(tree_xml)
-    converter = ConverterPage()
+    converter = ConverterPage(render_context)
     tree = converter(tree)
     assert serialize(tree, method="html") == output
 

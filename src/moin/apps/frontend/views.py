@@ -116,6 +116,7 @@ from moin.utils.markup import safe_markup
 from moin.utils.mime import Type, type_moin_document
 from moin.utils.mimetype import MimeType
 from moin.utils.names import CompositeName, gen_fqnames, split_fqname
+from moin.utils.render import RenderContext
 from moin.utils.tree import html, docbook, xlink, xml
 
 if TYPE_CHECKING:
@@ -886,7 +887,7 @@ def convert_item(item_name):
                 item.contenttype in CONTENTTYPE_NO_EXPANSION and form["new_type"].value in CONTENTTYPE_NO_EXPANSION
             ):
                 # expand DOM only when converting to dissimilar item types (moin and creole are similar)
-                dom = item.content._expand_document(dom)
+                dom = item.content._expand_document(dom, RenderContext())
 
         conv_out = reg.get(type_moin_document, Type(form["new_type"].value))
         out = conv_out(dom)

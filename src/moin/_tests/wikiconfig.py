@@ -34,6 +34,8 @@ class Config(DefaultConfig):
     interwiki_map[interwikiname] = "http://localhost:8080/"
     email_tracebacks = False
 
+    csp_profiles = {}
+
     password_hasher_config = PasswordHasherConfig(
         # For tests, use minimal Argon2 parameters for speed
         # DO NOT use these values in production!
