@@ -294,7 +294,8 @@ def fixup_page_link(m: re.Match) -> str:
     if is_raw_url(target):
         filename = target.rsplit("/", 1)[-1]
         target = adjust_raw_url_suffix(target)
-        extra = f' download="{filename}"'
+        if m.group(1).startswith("href"):
+            extra = f' download="{filename}"'
     elif is_page_url(target):
         parsed = urlparse(target)
         target = parsed._replace(path=parsed.path + ".html").geturl()
@@ -305,7 +306,7 @@ INVALID_SRC = re.compile(r' src="/\+get/\+[0-9a-f]{32}/')
 
 INVALID_HREF = re.compile(r' href="/\+get/\+[0-9a-f]{32}/')
 
-LINK_REGEX = re.compile(r"((?:href|src)\s*=\s*[\"\']?)([^\"\'\s>]+)([\"\'])(\s?)")
+LINK_REGEX = re.compile(r"((?<![a-zA-Z0-9_-])(?:href|src)\s*=\s*[\"\']?)([^\"\'\s>]+)([\"\'])(\s?)")
 
 INDEX_REGEX = re.compile(r"(href=\"(?:../)*)(\+index)(\">)")
 
