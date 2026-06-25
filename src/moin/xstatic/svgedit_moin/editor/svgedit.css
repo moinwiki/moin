@@ -140,6 +140,10 @@ hr {
   padding: 0;
 }
 
+#layerlist td.layerempty {
+  color: white;
+}
+
 #layerlist tr.layersel {
   border: 1px solid var(--border-color);
   background-color: #CCCCCC;

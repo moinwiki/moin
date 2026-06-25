@@ -1,13 +1,12 @@
-const uk = {
-  name: "eyedropper",
-  buttons: [
-    {
-      title: "Піпетка",
-      key: "I"
-    }
-  ]
+//#region src/editor/extensions/ext-eyedropper/locale/uk.js
+var uk_default = {
+	name: "eyedropper",
+	buttons: [{
+		title: "Піпетка",
+		key: "I"
+	}]
 };
-export {
-  uk as default
-};
+//#endregion
+export { uk_default as default };
+
 //# sourceMappingURL=uk.js.map
