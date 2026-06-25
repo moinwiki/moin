@@ -117,8 +117,9 @@ class NodeVisitor:
                 mointree_element.attrib[html.data_lineno] = self.current_lineno
                 self.last_lineno = self.current_lineno
         if node and node["ids"]:
-            # IDs are prepended in empty <span> mointree elements
-            for _id in node["ids"]:
+            mointree_element.attrib[xml.id] = node["ids"][-1]
+            # additional ids are prepended in empty <span> MoinPage elements
+            for _id in node["ids"][:-1]:
                 self.open_moin_page_node(moin_page.span(attrib={xml.id: _id}))
                 self.close_moin_page_node()
         if node and node["classes"]:
