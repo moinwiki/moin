@@ -1058,6 +1058,34 @@ class IndexingMiddleware:
             item = Item(self, short=True, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
         return bool(item)
 
+    def existing_items(self, names, idx_name: str = LATEST_META) -> set:
+        """
+        Given an iterable of item names, return the set of those that exist.
+
+        Batched equivalent of calling has_item() for each name: it reuses a
+        single searcher and only checks for a matching document (no Item
+        objects, no stored field retrieval), which is much cheaper when many
+        names have to be checked - e.g. styling every wikilink on a page.
+        """
+        existing: set = set()
+        lookups: dict = {}  # name -> (namespace, value) needing an index lookup
+        for name in names:
+            if name in lookups or name in existing:
+                continue
+            if name.startswith("@itemid/"):
+                # rare; fall back to the regular (per-name) existence check
+                if self.has_item(name):
+                    existing.add(name)
+                continue
+            fqname = split_fqname(name)
+            lookups[name] = (fqname.namespace, fqname.value)
+        if lookups:
+            with self._searcher(idx_name) as searcher:
+                for name, (namespace, value) in lookups.items():
+                    if searcher.document_number(**{NAME_EXACT: value, NAMESPACE: namespace}) is not None:
+                        existing.add(name)
+        return existing
+
     def __getitem__(self, name: str) -> Item:
         """
         Return item with <name> (may be a new or existing item).
