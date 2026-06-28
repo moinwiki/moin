@@ -700,10 +700,10 @@ def show_item(item_name: str, rev: str) -> ResponseBase | str:
     except AccessDenied:
         abort(403)
     except FieldNotUniqueError:
-        revs = flaskg.storage.documents(**fqname.query)
-        fq_names = []
-        for rev in revs:
-            fq_names.extend(rev.fqnames)
+        revisions = flaskg.storage.documents(**fqname.query)
+        fq_names: list[CompositeName] = []
+        for revision in revisions:
+            fq_names.extend(revision.fqnames)
         return render_template(
             "link_list_no_item_panel.html",
             headline=_("Items with {field} {value}").format(field=fqname.field, value=fqname.value),

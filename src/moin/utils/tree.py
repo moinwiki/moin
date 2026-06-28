@@ -22,7 +22,7 @@ class Namespace(str):
     Represents a namespace and a factory for Names within this namespace.
     """
 
-    def __call__(self, name):
+    def __call__(self, name: str) -> Name:
         """
         Create a Name within this namespace.
 
@@ -31,7 +31,7 @@ class Namespace(str):
         """
         return Name(name, self)
 
-    def __getattr__(self, key):
+    def __getattr__(self, key: str) -> Name:
         """
         Create a Name within this namespace
 
