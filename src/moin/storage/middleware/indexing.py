@@ -60,6 +60,7 @@ import shutil
 import time
 
 from collections.abc import Mapping
+from contextlib import contextmanager
 
 from flask import request
 
@@ -504,9 +505,94 @@ class IndexingMiddleware:
         """
         Close all indexes.
         """
+        self.close_searchers()
         for name in self.ix:
             self.ix[name].close()
         self.ix = {}
+
+    # Searcher reuse -----------------------------------------------------
+    # Opening a whoosh searcher re-opens a reader over all index segments,
+    # which costs ~0.5-1ms - far more than the ~20us actual lookup. As moin
+    # does one lookup per searcher (e.g. has_item() for every wikilink while
+    # rendering a page), that overhead dominated. We therefore keep one
+    # searcher per index alive for the duration of the (app/request) context
+    # and reuse it for all read-only lookups. Writers invalidate the cache so
+    # reads following a write in the same context still see fresh data.
+
+    def _searcher_cache(self, create: bool = True):
+        """
+        Return the per-context dict caching one searcher per index name.
+
+        Cached on flaskg (the flask app-context global), so it is request-
+        scoped for web requests and command-scoped for CLI. Returns None if
+        there is no app context to cache on (then callers open fresh searchers).
+        """
+        try:
+            cache = getattr(flaskg, "_whoosh_searchers", None)
+        except RuntimeError:
+            # no application context bound
+            return None
+        if cache is None and create:
+            cache = {}
+            flaskg._whoosh_searchers = cache
+            flaskg._whoosh_retired_searchers = []
+        return cache
+
+    @contextmanager
+    def _searcher(self, idx_name: str):
+        """
+        Yield a searcher for idx_name, reusing a context-cached one if possible.
+
+        The yielded searcher is NOT closed on exit when it comes from the cache;
+        its lifetime is tied to the context and it is closed by close_searchers()
+        at request teardown (or index close()). When there is no context to cache
+        on, a fresh searcher is opened and closed per call.
+        """
+        cache = self._searcher_cache()
+        if cache is None:
+            with self.ix[idx_name].searcher() as searcher:
+                yield searcher
+            return
+        searcher = cache.get(idx_name)
+        if searcher is None:
+            searcher = self.ix[idx_name].searcher()
+            cache[idx_name] = searcher
+        yield searcher
+
+    def invalidate_searchers(self):
+        """
+        Drop cached searchers after an index write so later reads reopen and
+        see fresh data.
+
+        The searchers are NOT closed here, only retired: a read helper may still
+        be lazily iterating one (e.g. a documents() generator that writes while
+        iterating). Closing it now would raise ReaderClosed; instead we keep it
+        open until close_searchers() runs at teardown. Reads after this point
+        open new searchers reflecting the write.
+        """
+        cache = self._searcher_cache(create=False)
+        if not cache:
+            return
+        flaskg._whoosh_retired_searchers.extend(cache.values())
+        cache.clear()
+
+    def close_searchers(self):
+        """
+        Close all cached and retired searchers and forget them.
+
+        Called at request teardown and on close() to release file handles.
+        """
+        cache = self._searcher_cache(create=False)
+        if cache is None:
+            return
+        searchers = list(cache.values()) + list(getattr(flaskg, "_whoosh_retired_searchers", []))
+        cache.clear()
+        flaskg._whoosh_retired_searchers = []
+        for searcher in searchers:
+            try:
+                searcher.close()
+            except Exception as e:  # closing must never break the caller
+                logging.debug("closing cached searcher failed: %s", e)
 
     def create(self, tmp=False):
         """
@@ -580,6 +666,8 @@ class IndexingMiddleware:
                     writer = self.ix[idx_name].writer()
                 with writer as writer:
                     writer.update_document(**doc)
+        # the index changed: drop cached searchers so later reads see fresh data
+        self.invalidate_searchers()
 
     def remove_index_revision(self, revid: str, async_: bool = True, idx_name: str = LATEST_REVS) -> None:
         if async_:
@@ -625,6 +713,8 @@ class IndexingMiddleware:
             writer.delete_by_term(REVID, revid)
         for idx_name in [LATEST_REVS, LATEST_META]:
             self.remove_index_revision(revid, async_=async_, idx_name=idx_name)
+        # the index changed: drop cached searchers so later reads see fresh data
+        self.invalidate_searchers()
 
     def _modify_index(
         self,
@@ -661,6 +751,8 @@ class IndexingMiddleware:
                     writer.delete_by_term(REVID, revid)
                 else:
                     raise ValueError(f"mode must be 'update', 'add' or 'delete', not '{mode}'")
+        # the index changed: drop cached searchers so later reads see fresh data
+        self.invalidate_searchers()
 
     def _find_latest_backends_revids(self, index: FileIndex, query=None) -> list[tuple[str, str]]:
         """
@@ -864,7 +956,7 @@ class IndexingMiddleware:
         """
         Search with query q, yield Revisions.
         """
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search(q, **kw):
@@ -877,7 +969,7 @@ class IndexingMiddleware:
         """
         Same as search, but with paging support.
         """
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
@@ -890,7 +982,7 @@ class IndexingMiddleware:
         """
         Search with query q, yield Revision metadata from index.
         """
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             if regex:
@@ -905,7 +997,7 @@ class IndexingMiddleware:
         """
         Same as search_meta, but with paging support.
         """
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             for hit in searcher.search_page(q, pagenum, pagelen=pagelen, **kw):
@@ -916,7 +1008,7 @@ class IndexingMiddleware:
         """
         Return the number of matching revisions.
         """
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             return len(searcher.search(q, **kw))
 
     def documents(self, idx_name: str = LATEST_REVS, **kw) -> Generator[Revision]:
@@ -934,7 +1026,7 @@ class IndexingMiddleware:
 
         If no kw args are given, this yields all documents.
         """
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             # Note: callers must consume everything we yield, so the for loop
             # ends and the "with" is left to close the index files.
             yield from searcher.documents(**kw)
@@ -955,7 +1047,7 @@ class IndexingMiddleware:
         """
         if short:
             idx_name = LATEST_META
-        with self.ix[idx_name].searcher() as searcher:
+        with self._searcher(idx_name) as searcher:
             return searcher.document(**kw)
 
     def has_item(self, name: str) -> bool:
