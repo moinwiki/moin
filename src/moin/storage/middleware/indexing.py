@@ -1052,11 +1052,15 @@ class IndexingMiddleware:
 
     def has_item(self, name: str) -> bool:
         if name.startswith("@itemid/"):
-            item = Item(self, short=True, **{ITEMID: name[8:]})
-        else:
-            fqname = split_fqname(name)
-            item = Item(self, short=True, **{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace})
-        return bool(item)
+            # uncommon; keep the original Item-based behavior
+            return bool(Item(self, short=True, **{ITEMID: name[8:]}))
+        # common path: a lean existence test on the read-hot LATEST_META index -
+        # avoids building an Item and retrieving its stored fields. Equivalent to
+        # bool(Item(...)) because stored docs always carry ITEMID (so __bool__,
+        # i.e. "itemid is not None", is true exactly when a document matches).
+        fqname = split_fqname(name)
+        with self._searcher(LATEST_META) as searcher:
+            return searcher.document_number(**{NAME_EXACT: fqname.value, NAMESPACE: fqname.namespace}) is not None
 
     def existing_items(self, names, idx_name: str = LATEST_META) -> set:
         """
