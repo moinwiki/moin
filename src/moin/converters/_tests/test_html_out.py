@@ -49,6 +49,7 @@ class Base:
 
 
 class TestConverter(Base):
+
     def setup_class(self):
         self.conv = Converter()
 
@@ -321,6 +322,7 @@ class TestConverter(Base):
 
 
 class TestConverterPage(Base):
+
     def setup_class(self):
         self.conv = ConverterPage()
 
@@ -375,7 +377,7 @@ class TestConverterPage(Base):
         # pytest.skip("this test requires footnote plugin")  # XXX TODO
         self.do(input, xpath)
 
-    @pytest.mark.xfail
     def test_unknown(self):
         page = ET.XML(f"<page:unknown {self.input_namespaces}/>")
-        pytest.raises(ElementException, self.conv.__call__, page)
+        with pytest.raises(ElementException):
+            self.conv(page)
