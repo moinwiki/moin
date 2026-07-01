@@ -482,6 +482,14 @@ def teardown_wiki(response):
         except AttributeError:
             pass
 
+    # release any whoosh searchers we kept open and reused during this request
+    storage = getattr(flaskg, "unprotected_storage", None)
+    if storage is not None:
+        try:
+            storage.close_searchers()
+        except AttributeError:
+            pass
+
     if logger.isEnabledFor(logging.DEBUG):
         try:
             # whoosh cache performance

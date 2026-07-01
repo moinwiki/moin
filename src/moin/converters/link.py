@@ -132,6 +132,23 @@ class ConverterExternOutput(LinkConverterBase):
     def _factory(cls, input: Type, output: Type, links: str | None = None, **kwargs) -> Self | None:
         return cls(**kwargs) if links == "extern" else None
 
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        Traverse the tree once, collecting wikilink existence checks, then
+        resolve them all with a single batched index query.
+
+        This avoids one index lookup per wikilink (which dominated render time
+        for link-heavy pages); see handle_wikilocal_links().
+        """
+        self._wikilocal_checks: list[tuple[Element, str]] = []
+        result = self.traverse_tree(*args, **kwargs)
+        if self._wikilocal_checks:
+            existing = flaskg.storage.existing_items([name for _, name in self._wikilocal_checks])
+            for elem, name in self._wikilocal_checks:
+                if name not in existing:
+                    elem.set(moin_page.class_, "moin-nonexistent")
+        return result
+
     def _get_do_rev(self, query):
         """
         get 'do' and 'rev' values from query string and remove them from querystring
@@ -210,9 +227,15 @@ class ConverterExternOutput(LinkConverterBase):
                         item_name = str(self.absolute_path(IriPath(item_name), page.path))
                 else:
                     item_name = info.item_name
-                if not flaskg.storage.has_item(item_name):
-                    # XXX these index accesses slow down the link converter quite a bit
-                    elem.set(moin_page.class_, "moin-nonexistent")
+                checks = getattr(self, "_wikilocal_checks", None)
+                if checks is None:
+                    # called outside __call__ (e.g. a unit test): check at once
+                    if not flaskg.storage.has_item(item_name):
+                        elem.set(moin_page.class_, "moin-nonexistent")
+                else:
+                    # defer: resolved together with all other wikilinks in one
+                    # batched query, see __call__()
+                    checks.append((elem, item_name))
         else:
             # link to current item
             item_name = str(page.path[1:]) if page else ""
