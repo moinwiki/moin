@@ -124,7 +124,7 @@ class _Stack:
         if bottom:
             self._list.append(self.Item(bottom))
         self.iter_content = iter_content
-        self.last_lineno_attr = 0
+        self.last_lineno = 0
         self._add_lineno = add_lineno
 
     def __len__(self):
