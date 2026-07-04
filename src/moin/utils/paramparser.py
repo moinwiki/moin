@@ -18,13 +18,13 @@ class BracketError(Exception):
 class BracketUnexpectedCloseError(BracketError):
     def __init__(self, bracket):
         self.bracket = bracket
-        BracketError.__init__(self, f"Unexpected closing bracket {bracket}")
+        super().__init__(f"Unexpected closing bracket {bracket}")
 
 
 class BracketMissingCloseError(BracketError):
     def __init__(self, bracket):
         self.bracket = bracket
-        BracketError.__init__(self, f"Missing closing bracket {bracket}")
+        super().__init__(f"Missing closing bracket {bracket}")
 
 
 class ParserPrefix:
@@ -527,7 +527,7 @@ class UnitArgument(IEFArgument):
         Initialise a UnitArgument giving the default,
         argument type and the permitted units.
         """
-        IEFArgument.__init__(self)
+        super().__init__()
         self._units = list(units)
         self._units.sort(key=cmp_to_key(lambda x, y: len(y) - len(x)))
         self._type = argtype
