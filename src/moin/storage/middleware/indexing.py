@@ -1287,7 +1287,7 @@ class Item(PropertiesMixin):
         """
         parent_ids = set()
         for parent_name in self.parentnames:
-            rev = self.indexer._document(idx_name=LATEST_META, **{NAME_EXACT: parent_name})
+            rev = self.indexer._document(idx_name=LATEST_META, **{NAMESPACE: self.namespace, NAME_EXACT: parent_name})
             if rev:
                 parent_ids.add(rev[ITEMID])
         return parent_ids
