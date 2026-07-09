@@ -786,7 +786,7 @@ class EditLog(LogFile):
     """Access the edit-log and return metadata as the new api wants it."""
 
     def __init__(self, filename, buffer_size=4096):
-        LogFile.__init__(self, filename, buffer_size)
+        super().__init__(filename, buffer_size)
         self._NUM_FIELDS = 9
 
     def parser(self, line):
