@@ -7,6 +7,8 @@ MoinMoin - tests for moin.cli scrapy crawl.
 Crawl a Moin site and report errors.
 """
 
+from __future__ import annotations
+
 import pytest
 
 try:
@@ -15,55 +17,52 @@ except ImportError:
     from moin.cli._tests import default_settings as settings
 from moin.cli._tests.scrapy.moincrawler.items import CrawlResultMatch
 from moin.cli._tests.conftest import get_crawl_log_path
+from moin.log import getLogger
 from moin.utils.iri import Iri
-from moin import log
 
-logging = log.getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class TestSiteCrawl:
+
     EXPECTED_404 = [
         CrawlResultMatch(
             url_path_components=["MissingSubItem", "MissingSubitem", "MissingPage", "MissingItem", "MissingSibling"]
         )
     ]
+
     KNOWN_ISSUES = [
         CrawlResultMatch(
-            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path="/+get/help-common/logo.png"),
-            from_url="/markdown",
-        ),  # only with wiki_root
-        CrawlResultMatch(
-            url="http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif", from_url="/html"
-        ),
-        CrawlResultMatch(
-            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path="/users/Home"), from_url="/html"
-        ),  # only with wiki_root
+            url=Iri("http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif"),
+            from_url=Iri("/html"),
+        )
     ]
-    line_number = 0
-    line_buffer = []
-    gathered_log_lines = {}
+
+    line_number: int = 0
+    line_buffer: list[tuple[int, str]] = []
+    gathered_log_lines: dict[int, str] = {}
 
     @staticmethod
-    def _matches_one_of(r, matches):
+    def _matches_one_of(r: CrawlResultMatch, matches) -> bool:
         for m in matches:
             if m.match(r):
                 return True
         return False
 
-    def is_known_issue(self, r):
+    def is_known_issue(self, r: CrawlResultMatch) -> bool:
         return self._matches_one_of(r, self.KNOWN_ISSUES)
 
-    def is_expected_404(self, r):
+    def is_expected_404(self, r: CrawlResultMatch) -> bool:
         return self._matches_one_of(r, self.EXPECTED_404)
 
     def test_home_page(self, crawl_results):
         assert crawl_results[1], f"crawl failed, check {get_crawl_log_path()}"
         for line in open(get_crawl_log_path(), "rb"):
             if b"crawl.csv" in line:
-                logging.info(f"{line} from {get_crawl_log_path()}")
+                logger.info(f"{line} from {get_crawl_log_path()}")
         assert len(crawl_results[0]) > 0
         r = crawl_results[0][0]
-        expected = CrawlResultMatch(url="/Home")
+        expected = CrawlResultMatch(url=Iri("/Home"))
         assert expected.match(r), f"unexpected redirect for / {r}"
 
     def test_200(self, crawl_results):
@@ -82,7 +81,7 @@ class TestSiteCrawl:
                 expected = {200}
             if r.response_code not in expected:
                 failures.append(r)
-                logging.error(f"expected {expected} got {r.response_code} for {r}")
+                logger.error(f"expected {expected} got {r.response_code} for {r}")
         assert len(failures) == 0
 
     @pytest.mark.xfail(reason="issue #1414 - remaining bad links in help")
@@ -91,13 +90,14 @@ class TestSiteCrawl:
         failures = []
         for r in [r for r in crawl_results[0] if self.is_known_issue(r)]:
             if r.response_code != 200:
-                logging.info(f"known issue {r}")
+                logger.info(f"known issue {r}")
                 failures.append(r)
         assert len(failures) == 0
 
     @pytest.mark.skip
     def test_known_issues_exist(self, crawl_results):
-        """Enable this test to check for KNOWN_ISSUES which can be removed.
+        """
+        Enable this test to check for KNOWN_ISSUES which can be removed.
         After removing, be sure to confirm by crawling a host with a non-blank SITE_WIKI_ROOT,
         as some issues exist only when Moin is running behind Apache.
         """
@@ -115,10 +115,10 @@ class TestSiteCrawl:
                     my_not_fixed.append(r)
             if not my_not_fixed:
                 for r in my_fixed:
-                    logging.error(f"{r} matching {m} is fixed")
+                    logger.error(f"{r} matching {m} is fixed")
                     fixed.append((m, r))
             if not seen:
-                logging.error(f"match {m} not seen")
+                logger.error(f"match {m} not seen")
                 fixed.append((m, None))
         assert len(fixed) == 0
 
@@ -127,7 +127,7 @@ class TestSiteCrawl:
         failures = []
         for r in [r for r in crawl_results[0] if not self.is_known_issue(r)]:
             if not r.response_code:
-                logging.error(f"no response code for {r}")
+                logger.error(f"no response code for {r}")
                 failures.append(r)
         assert len(failures) == 0
 
@@ -148,7 +148,8 @@ class TestSiteCrawl:
         return True
 
     def test_server_log(self, server_crawl_log):
-        """Validate that there is no ERROR or Traceback in the log.
+        """
+        Validate that there is no ERROR or Traceback in the log.
 
         See https://github.com/moinwiki/moin/pull/1399
         """
@@ -181,5 +182,5 @@ class TestSiteCrawl:
                         if not (self.line.startswith(" ") or start_traceback):
                             is_traceback = False
         for i, server_log_line in self.gathered_log_lines.items():
-            logging.info(f"{server_crawl_log.name} {i}: {server_log_line.strip()}")
+            logger.info(f"{server_crawl_log.name} {i}: {server_log_line.strip()}")
         assert 0 == error_count, f"{error_count} errors in {str(server_crawl_log)}"

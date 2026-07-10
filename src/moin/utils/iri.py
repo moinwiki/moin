@@ -151,6 +151,15 @@ class Iri(AutoNe):
         else:
             self._fragment = _fragment
 
+    def __bool__(self):
+        return (
+            self._scheme is not None
+            or self._path is not None
+            or self._authority is not None
+            or self._query is not None
+            or self._fragment is not None
+        )
+
     def __eq__(self, other):
         if isinstance(other, str):
             return str(self) == other

@@ -110,7 +110,7 @@ strict = false
 [tool.pytest]
 minversion = "9.0.0"
 addopts = ["--ignore=_ui_tests"]
-norecursedirs = [".git", "_build", "tmp*", "env*", "dlc", "wiki", "support"]
+norecursedirs = [".*", "*.egg", "_build", "build", "contrib", "dlc", "env*", "support", "tmp*", "wiki"]
 env_files = [".env", ".env.test"]
 
 [tool.ruff]
