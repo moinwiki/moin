@@ -33,17 +33,9 @@ class TestSiteCrawl:
 
     KNOWN_ISSUES = [
         CrawlResultMatch(
-            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path="/+get/help-common/logo.png"),
-            from_url=Iri("/markdown"),
-        ),  # only with wiki_root
-        CrawlResultMatch(
             url=Iri("http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif"),
             from_url=Iri("/html"),
-        ),
-        CrawlResultMatch(
-            url=Iri(scheme=settings.SITE_SCHEME, authority=settings.SITE_HOST, path="/users/Home"),
-            from_url=Iri("/html"),
-        ),  # only with wiki_root
+        )
     ]
 
     line_number: int = 0
