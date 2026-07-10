@@ -7,9 +7,9 @@ on: [push, pull_request]
 
 jobs:
   lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v6
       - uses: psf/black@stable
         with:
-            version: "~= 26.1"
+            version: "~= 26.5"

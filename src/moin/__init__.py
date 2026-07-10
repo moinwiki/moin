@@ -32,7 +32,7 @@ from ._version import version  # noqa
 
 project = "MoinMoin"
 
-MIN_PYTHON_VERSION = (3, 10)
+MIN_PYTHON_VERSION = (3, 11)
 
 if sys.version_info < MIN_PYTHON_VERSION:
     sys.exit(
