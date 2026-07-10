@@ -213,7 +213,7 @@ def do_crawl(request, artifacts_dir):
 
 
 @pytest.fixture(scope="package")
-def crawl_results(request, artifacts_dir) -> list[CrawlResult]:
+def crawl_results(request, artifacts_dir) -> tuple[list[CrawlResult], bool]:
     _, artifacts_base_dir = get_dirs("")
     crawl_success = True
     if settings.DO_CRAWL:
@@ -229,7 +229,7 @@ def crawl_results(request, artifacts_dir) -> list[CrawlResult]:
             logging.error(f"exception reading crawl.csv {repr(e)}")
     if not crawl_success:
         logging.error("crawl failed")
-        return [], crawl_success
+    return [], crawl_success
 
 
 @pytest.fixture(scope="package")

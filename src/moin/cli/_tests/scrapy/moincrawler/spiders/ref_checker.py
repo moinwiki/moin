@@ -8,9 +8,13 @@ Spider a Moin site and report 404 and other errors for href, src, data, and data
 This spider is run via moin.cli._tests.conftest.do_crawl from moin.cli._tests.test_scrapy_crawl.
 """
 
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import csv
-from dataclasses import fields, astuple
 import os
+from dataclasses import fields, astuple
 from traceback import print_exc
 
 import scrapy
@@ -27,60 +31,72 @@ except ImportError:
 
 from moin.cli._tests.conftest import get_crawl_csv_path
 from moin.utils.iri import Iri
-from moin import log
+from moin.log import getLogger
 
-logging = log.getLogger(__name__)
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
+    from scrapy.http import Request, Response
+    from typing import Generator
+    from typing_extensions import Self
+
+logger = getLogger(__name__)
 
 
 class RefCheckerSpider(scrapy.Spider):
-    """Crawl Moin pages following href, src, data, and data-href attributes.
+    """
+    Crawl Moin pages following href, src, data, and data-href attributes.
 
     This spider is run via moin.cli._tests.conftest.do_crawl from moin.cli._tests.test_scrapy_crawl.
     On close, the spider writes results to _test_artifacts/crawl.csv.
     The file crawl.csv is then read by test_scrapy_crawl.
+
     Original design adapted (with permission) from:
         https://www.linode.com/docs/guides/use-scrapy-to-extract-data-from-html-tags/
     """
 
     name = "ref_checker"
 
-    def __init__(self, url="http://127.0.0.1:8080/", *args, **kwargs):
-        """:param url: Start URL for the crawl; overridden by settings.CRAWL_START in moin.cli.conftest.do_crawl."""
+    def __init__(self, url="http://127.0.0.1:8080/", *args: Any, **kwargs: Any) -> None:
+        """
+        :param url: Start URL for the crawl; overridden by settings.CRAWL_START in moin.cli.conftest.do_crawl.
+        """
         super().__init__(*args, **kwargs)
         self.start_urls = [url]
         self.no_crawl_paths = ["/MoinWikiMacros/MonthCalendar"]  # lots of 404s for the dates
-        self.results = []
+        self.results: list[CrawlResult] = []
         self.domain = ""
+        self.allowed_domains = [Iri(url).authority.host]  # no port accepted by scrapy
 
     @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs):
+    def from_crawler(cls, crawler: Crawler, *args: Any, **kwargs: Any) -> Self:
         spider = super().from_crawler(crawler, *args, **kwargs)
         # Register the spider_closed handler on spider_closed signal
         crawler.signals.connect(spider.spider_closed, signals.spider_closed)
         return spider
 
-    def spider_closed(self):
-        logging.info("entering spider_closed")
+    def spider_closed(self) -> None:
+        logger.info("entering spider_closed")
         try:
             _, artifacts_base_dir = get_dirs("")
             for k, c in self.crawler.stats.get_stats().items():  # bubble up spider exceptions into test failures
                 if k.startswith("spider_exceptions"):
-                    logging.error(f"spider_exception: {c}")
+                    logger.error(f"spider_exception: {c}")
                     self.results.append(CrawlResult(response_exc=f"crawler stats: {k} = {c}"))
             crawl_csv_path = os.environ.get("MOIN_SCRAPY_CRAWL_CSV", get_crawl_csv_path())
-            logging.info(f"writing {len(self.results)} to {crawl_csv_path}")
+            logger.info(f"writing {len(self.results)} to {crawl_csv_path}")
             with open(crawl_csv_path, "w") as fh:
                 out_csv = csv.writer(fh, lineterminator="\n")
                 out_csv.writerow([f.name for f in fields(CrawlResult)])
                 for result in self.results:
                     out_csv.writerow(astuple(result))
         except Exception as e:  # noqa
-            logging.error(f"exception in spider_closed {repr(e)}")
+            logger.error(f"exception in spider_closed {repr(e)}")
             print_exc()
             raise
 
-    def _parse(self, response, **kwargs):
-        """Main method that parses downloaded pages.
+    def _parse(self, response: Response, **kwargs: Any) -> Generator[Request, Any, None]:
+        """
+        Main method that parses downloaded pages.
 
         Requests yielded from this method are added to the crawl queue.
         """
@@ -102,32 +118,37 @@ class RefCheckerSpider(scrapy.Spider):
         parsed_uri = Iri(response.url)
         result.url = parsed_uri  # in case of redirect show final url in crawl.csv
         if not (url_path := parsed_uri.path):
-            logging.debug(f"not crawling blank path {response.url}")
+            logger.debug(f"not crawling blank path {response.url}")
             follow = False
+
         if "Content-Type" in response.headers and response.headers["Content-Type"] != b"text/html; charset=utf-8":
-            logging.debug(f'not crawling Content-Type {response.headers["Content-Type"]} {response.url}')
+            logger.debug(f'not crawling Content-Type {response.headers["Content-Type"]} {response.url}')
             follow = False
+
         # If first response, update domain (to manage redirect cases)
         if not self.domain:
             self.domain = parsed_uri.authority
+
         if parsed_uri.authority != self.domain:
-            logging.debug(f"not crawling external link {response.url}")
+            logger.debug(f"not crawling external link {response.url}")
             follow = False
+
         if follow and parsed_uri.path:
             if "+history" in url_path:
-                logging.debug(f"not crawling history {response.url}")
+                logger.debug(f"not crawling history {response.url}")
                 follow = False
             url_path_str = parsed_uri.path.fullquoted
             for no_crawl_path in self.no_crawl_paths:
                 if no_crawl_path in url_path_str:
                     follow = False
-                    logging.debug(f"not crawling no_crawl_path {response.url}")
+                    logger.debug(f"not crawling no_crawl_path {response.url}")
                     break
             if settings.CRAWL_NAMESPACE and not url_path_str.startswith(
                 f"{settings.SITE_WIKI_ROOT}{settings.CRAWL_NAMESPACE}"
             ):
-                logging.debug(f'not crawling outside of CRAWL_NAMESPACE "{settings.CRAWL_NAMESPACE}" {url_path_str}')
+                logger.debug(f'not crawling outside of CRAWL_NAMESPACE "{settings.CRAWL_NAMESPACE}" {url_path_str}')
                 follow = False
+
         if follow:
             for attrib in ["href", "data-href", "src", "data"]:
                 attrib_selectors = response.xpath(f"//*[@{attrib}]")
@@ -152,17 +173,21 @@ class RefCheckerSpider(scrapy.Spider):
                     request.meta["my_data"] = new_result
                     yield request
 
-    def parse(self, response, **kwargs):
-        """Called by the Scrapy framework."""
+    def parse(self, response: Response, **kwargs: Any):
+        """
+        Called by the Scrapy framework.
+        """
         try:
             yield from self._parse(response, **kwargs)
         except Exception as e:  # noqa
-            logging.error(f"parse exception : {repr(e)}")
+            logger.error(f"parse exception : {repr(e)}")
             print_exc()
             raise
 
     def errback(self, failure):
-        """called when request comes back with anything other than a 200 OK response"""
+        """
+        Called when request comes back with anything other than a 200 OK response.
+        """
         if failure.value.__class__ is IgnoreRequest:  # ignore urls disallowed by robots.txt
             return
         request = failure.request
