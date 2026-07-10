@@ -274,7 +274,6 @@ class TestConverter(Base):
 
     @pytest.mark.parametrize("input,output", data)
     def test_page_note(self, input, output):
-        self.conv = Converter()  # footnote never reset by __call__., so added this
         self.do(input, output)
 
     data = [
