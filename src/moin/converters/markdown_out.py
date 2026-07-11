@@ -14,9 +14,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import re
-import urllib.request
 import urllib.parse
-import urllib.error
 
 from emeraldtree import ElementTree as ET
 
@@ -92,16 +90,22 @@ class Converter(ConverterBase):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(*kwargs)
-        self.list_item_labels = [""]
-        self.list_item_label = ""
+        self.status: list[str] = ["text"]
+        self.last_closed: str | None = None
+        self.list_item_labels: list[str] = [""]
+        self.list_item_label: str = ""
         self.list_level = 0
-        self.footnotes = []  # tuple of (name, text)
+        self.footnotes: list[tuple[str, str]] = []  # tuple of (name, text)
         self.footnote_number = 0  # incremented if a footnote name was not passed
 
     def __call__(self, root: Any) -> Any:
         self.status = ["text"]
         self.last_closed = None
-        self.list_item_label = []
+        self.list_item_labels = [""]
+        self.list_item_label = ""
+        self.list_level = 0
+        self.footnotes.clear()
+        self.footnote_number = 0
         content = self.open(root)
         while "\n\n\n" in content:
             content = content.replace("\n\n\n", "\n\n")
