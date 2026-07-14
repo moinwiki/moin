@@ -31,12 +31,7 @@ class TestSiteCrawl:
         )
     ]
 
-    KNOWN_ISSUES = [
-        CrawlResultMatch(
-            url=Iri("http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif"),
-            from_url=Iri("/html"),
-        )
-    ]
+    KNOWN_ISSUES = []
 
     line_number: int = 0
     line_buffer: list[tuple[int, str]] = []
