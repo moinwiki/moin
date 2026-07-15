@@ -1,7 +1,7 @@
 <h1>
 	HTML Wiki Documents</h1>
 <p>
-	<span style="font-size: 16px;">HTML documents are edited through the use of the CKEditor.&nbsp; See <a href="http://ckeditor.com">http://ckeditor.com</a> (version 3.6) for more information or click the Modify link to edit this document. Unless otherwise noted, the examples below were created by keying or pasting text, selecting text, and clicking the various CKEditor styling buttons.</span></p>
+	<span style="font-size: 16px;">HTML documents are edited through the use of the CKEditor.&nbsp; See <a href="https://ckeditor.com">https://ckeditor.com</a> (CKEditor 5 v47.4.0) for more information or click the Modify link to edit this document. Unless otherwise noted, the examples below were created by keying or pasting text, selecting text, and clicking the various CKEditor styling buttons.</span></p>
 <p>
 	<span style="font-size: 16px;">The CKEditor uses style attributes to support colored text, background colors, and image positioning and resizing. Default configuration settings suppress these because style attributes are vulnerable to XSS attacks. If all wiki editors are trusted, then add the following line to wikiconfig.py. Read the configuration docs for more information.</span></p>
 <p>
@@ -182,9 +182,9 @@
 <h2>
 	Smileys and Icons</h2>
 <p>
-	<img alt="cool" src="http://localhost:8080/+serve/ckeditor/plugins/smiley/images/shades_smile.gif" style="width: 20px; height: 20px;" title="cool" /></p>
+	<img alt="smile" src="/static/img/icons/smile.png" style="width: 20px; height: 20px;" title="smile" /></p>
 <p>
-	<span style="font-size: 16px;"><strong>HTMLTODO: </strong>The CKEditor smiley tool creates static URLs. The URL for the smiley above is valid for the moin2 built in server running at port 8080.</span></p>
+	<span style="font-size: 16px;"><strong>HTMLTODO: </strong>The URL for the smiley above is valid for the moin2 built in server running at port 8080.</span></p>
 <h2>
 	Admonitions</h2>
 <p>
